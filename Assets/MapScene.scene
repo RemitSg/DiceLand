@@ -620,9 +620,7 @@ MonoBehaviour:
     startingCurrentHP: 25
   startingLoot: []
   startingWeapons:
-  - weaponData: {fileID: 11400000, guid: 4b3e2d650c5c8744181da8df8b3099f3, type: 2}
-    amount: 1
-  - weaponData: {fileID: 11400000, guid: 642840a5e0c7c6c4d8a869204625c9d1, type: 2}
+  - weaponData: {fileID: 11400000, guid: 998e946055f570348bd95fb4c7137e5a, type: 2}
     amount: 1
   startingBlueprints: []
   startingRelics:

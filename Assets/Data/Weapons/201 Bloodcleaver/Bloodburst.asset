@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Bloodburst
   m_EditorClassIdentifier: 
   skillName: "\u5D29\u8840\u65A9"
-  description: "\u201C\u5D29\u8840\u65A9\uFF01\uFF01\uFF01\uFF01\uFF01\u201D\n\u201C\u6240\u4EE5\u4ED6\u771F\u4E0D\u77E5\u9053\u81EA\u5DF1\u558A\u51FA\u6765\u7684\u65F6\u5019\u6709\u591A\u4E2D\u4E8C\uFF1F\u201D"
+  description: "\u201C\u5D29\u8840\u65A9\uFF01\uFF01\uFF01\uFF01\uFF01\u201D\n\u201C\u2014\u2014\u6240\u4EE5\u4ED6\u771F\u4E0D\u77E5\u9053\u81EA\u5DF1\u558A\u51FA\u6765\u7684\u65F6\u5019\u6709\u591A\u4E2D\u4E8C\u2026\u2026\uFF1F\u201D"
   skillCategory: 0
   energyCost: 6
   transformEnemyToStageIndex: -1
@@ -68,9 +68,9 @@ MonoBehaviour:
       targetMode: 3
       statusData: {fileID: 11400000, guid: 118df0d370613694cbe82414757783e7, type: 2}
       statusType: 0
-      applyTiming: 0
-      applyAfterRoundStarts: 0
-      applyRepeatCount: 0
+      applyTiming: 1
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
       stackAmount: 1
       randomTargetCount: 1
     powerModifiers: []
