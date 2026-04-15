@@ -1,0 +1,105 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "\u5E9F\u5F03\u77FF\u4E95"
+  m_EditorClassIdentifier: 
+  eventId: 3
+  eventName: "\u5E9F\u5F03\u77FF\u4E95"
+  eventContent: "\u5728\u63A2\u7D22\u7684\u8FC7\u7A0B\u4E2D\uFF0C\u4F60\u9047\u5230\u4E86\u4E00\u4E2A\u5E9F\u5F03\u7684\u77FF\u4E95\uFF0C\u873F\u8712\u7684\u77FF\u9053\u6D88\u5931\u5728\u8FDC\u5904\u7684\u9ED1\u6697\u4E2D\uFF0C\u4F60\u51B3\u5B9A\u2026\u2026"
+  eventIllustration: {fileID: 0}
+  options:
+  - optionId: 1
+    optionLabel: "\u6DF1\u5165\u63A2\u7D22"
+    consequenceDescription: "\u5F00\u542F\u4E00\u573A\u8270\u96BE\u7684\u6218\u6597\uFF0C\u80DC\u5229\u540E\u83B7\u5F97\u4E00\u4E2A\u7279\u6B8A\u9057\u7269"
+    resultContent: "\u4F60\u51B3\u5B9A\u6DF1\u5165\u77FF\u4E95\u2026\u2026\n\u5F00\u59CB\u65F6\u662F\u4E00\u62B9\u9ED1\u6697\uFF0C\u7136\u540E\u662F\u4E00\u56E2\uFF0C\u4E00\u5806\uFF0C\u6700\u540E\u5B83\u7AD9\u5728\u4E86\u4F60\u9762\u524D\u3002"
+    builtInEffectType: 10
+    effectAmount: 0
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicRewards: []
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    encounterSelectionMode: 0
+    encounterEnemyGroups:
+    - {fileID: 11400000, guid: 086d5e20b91f56c4aa0cb3072571561b, type: 2}
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
+    additionalBuiltInEffects:
+    - effectType: 11
+      effectAmount: 1
+      lootRewards:
+      - lootItem: {fileID: 0}
+        amountMin: 0
+        amountMax: 0
+      lootPickCountMin: 0
+      lootPickCountMax: 0
+      relicRewards:
+      - relicData: {fileID: 11400000, guid: 9961dfc28a6d01f478c0ba98ea275f55, type: 2}
+      relicPickCountMin: 1
+      relicPickCountMax: 1
+      encounterSelectionMode: 0
+      encounterEnemyGroups: []
+      encounterEnemies: []
+      encounterEnemyCountMin: 0
+      encounterEnemyCountMax: 0
+    resolveEvent: 0
+    customHandler: {fileID: 0}
+  - optionId: 2
+    optionLabel: "\u901B\u901B\u5C31\u8D70"
+    consequenceDescription: "\u83B7\u5F97 1 \u4E2A \u94C1\u77FF"
+    resultContent: "\u4F60\u51B3\u5B9A\u901B\u901B\u6D45\u5C42\u7684\u77FF\u4E95\uFF0C\u773C\u5C16\u7684\u4F60\u53D1\u73B0\u4E86\u51E0\u5757\u6CA1\u6709\u88AB\u6361\u8D70\u7684\u94C1\u77FF\u77F3"
+    builtInEffectType: 5
+    effectAmount: 1
+    lootRewards:
+    - lootItem: {fileID: 11400000, guid: 6e1752dc4702a1c44905a3559cb5f924, type: 2}
+      amountMin: 1
+      amountMax: 1
+    lootPickCountMin: 1
+    lootPickCountMax: 1
+    relicRewards: []
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    encounterSelectionMode: 0
+    encounterEnemyGroups:
+    - {fileID: 11400000, guid: 086d5e20b91f56c4aa0cb3072571561b, type: 2}
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
+    additionalBuiltInEffects: []
+    resolveEvent: 0
+    customHandler: {fileID: 0}
+  - optionId: 3
+    optionLabel: "\u76F4\u63A5\u79BB\u5F00"
+    consequenceDescription: "\u8FD4\u8FD8 2 \u884C\u52A8\u70B9"
+    resultContent: "\u524D\u9762\u7684\u8DEF\u8FD8\u8FD9\u4E48\u8FDC\uFF0C\u8282\u7701\u4E00\u4E9B\u4F53\u529B\u4E3A\u5999"
+    builtInEffectType: 7
+    effectAmount: 2
+    lootRewards:
+    - lootItem: {fileID: 11400000, guid: 6e1752dc4702a1c44905a3559cb5f924, type: 2}
+      amountMin: 1
+      amountMax: 1
+    lootPickCountMin: 1
+    lootPickCountMax: 1
+    relicRewards: []
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    encounterSelectionMode: 0
+    encounterEnemyGroups:
+    - {fileID: 11400000, guid: 086d5e20b91f56c4aa0cb3072571561b, type: 2}
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
+    additionalBuiltInEffects: []
+    resolveEvent: 0
+    customHandler: {fileID: 0}

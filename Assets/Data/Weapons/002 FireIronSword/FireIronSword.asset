@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 057dbb9ab39f5f74bafd7272cac75c4d, type: 3}
+  m_Name: FireIronSword
+  m_EditorClassIdentifier: 
+  id: 2
+  weaponName: "\u7194\u706B\u94C1\u5251"
+  description: "\u5200\u8EAB\u6563\u53D1\u7740\u70ED\u91CF\uFF0C\u5076\u5C14\u6709\u51E0\u9897\u706B\u661F\u6E85\u5C04\u51FA\u6765\uFF0C\u4E0D\u4E60\u60EF\u7684\u8BDD\u53EF\u4EE5\u6234\u4E2A\u624B\u5957\u3002"
+  rarity: 1
+  weaponType: 0
+  icon: {fileID: 21300000, guid: 97c36b654027be641a97f3de0fd07f79, type: 3}
+  weaponPrefab: {fileID: 3707895792862375319, guid: a82e93a019d38644da9c9e636bdd9449, type: 3}
+  minPower: 1
+  maxPower: 3
+  skillPool:
+  - {fileID: 11400000, guid: caf2b20d2198a7f4fa1f2b07eda9b85e, type: 2}
+  - {fileID: 11400000, guid: 6d9ef194a51bac74bbabf724ee149fc7, type: 2}
+  - {fileID: 11400000, guid: 80d648f30688ca5419a071413b90cc65, type: 2}

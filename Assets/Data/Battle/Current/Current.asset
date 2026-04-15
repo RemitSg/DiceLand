@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e392a4d75ff41fd4b82ace7efd8b72e3, type: 3}
+  m_Name: Current
+  m_EditorClassIdentifier: 
+  statusId: current
+  displayName: "\u7535\u6D41"
+  description: "\u7535\u78C1\u7206\u53D1\u65F6\uFF0C\u53D7\u5230\u7535\u78C1\u7206\u53D1\u500D\u6570\u7684\u4F24\u5BB3"
+  iconSprite: {fileID: 21300000, guid: 11cd61b2222569f43af7c20a59daad31, type: 3}
+  accentColor: {r: 1, g: 1, b: 1, a: 1}
+  tickEffectPrefab: {fileID: 0}
+  tickEffectPositionOffset: {x: 0, y: 0, z: 0}
+  tickEffectRotationOffset: {x: 0, y: 0, z: 0}
+  tickEffectScale: {x: 1, y: 1, z: 1}
+  tickEffectSortingOrderOffset: 0
+  overrideTickEffectDuration: 0
+  tickEffectDuration: 0.5
+  behaviorType: 0
+  powerPerStack: 1
+  roundStartDecayMode: 0
+  roundEndDecayMode: 0

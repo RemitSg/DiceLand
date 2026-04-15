@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: RedLamp_Data
+  m_EditorClassIdentifier: 
+  enemyID: 8
+  enemyName: "\u7EA2\u706F\u7B3C"
+  baseHP: 40
+  minSpeed: 2
+  maxSpeed: 4
+  baseSpeedButtonCount: 1
+  enemySprite: {fileID: 21300000, guid: bf1fe140e9e454641afb52c8b874eaba, type: 3}
+  stageSprites:
+  - stageName: "\u706D"
+    stageSprite: {fileID: 21300000, guid: bf1fe140e9e454641afb52c8b874eaba, type: 3}
+    minSpeedOverride: 1
+    maxSpeedOverride: 1
+    speedButtonCountOverride: 1
+  - stageName: "\u71C3"
+    stageSprite: {fileID: 21300000, guid: ac9521f7f87f2834492696e1078e0f5a, type: 3}
+    minSpeedOverride: 3
+    maxSpeedOverride: 5
+    speedButtonCountOverride: 2
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.2
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules:
+  - ruleName: "\u70B9\u706F"
+    statusData: {fileID: 11400000, guid: f9527c3eb2f8085418c8ae9a04a00b9a, type: 2}
+    targetMode: 0
+    specificEnemyData: {fileID: 0}
+    specificCharacterData: {fileID: 0}
+    comparisonType: 0
+    stackThreshold: 3
+    targetStageIndex: 2
+    priority: 1
+  statusImmunityRules:
+  - statusData: {fileID: 11400000, guid: f9527c3eb2f8085418c8ae9a04a00b9a, type: 2}
+    allowApplicationWhileImmune: 1
+  enemyDescription: "\u4E00\u76CF\u706B\u7EA2\u7684\u706F\u7B3C\uFF0C\u4E0D\u5B89\u7684\u70ED\u91CF\u76D8\u7ED5\u5728\u5B83\u8EAB\u8FB9"
+  passiveDescriptions:
+  - passiveName: "\u71C3\u5C3D"
+    displayColorType: 1
+    description: "\u4E00\u5B9A\u56DE\u5408\u540E\u4F7F\u7528\u7279\u6B8A\u6280\u80FD"
+  - passiveName: "\u70B9\u706F"
+    displayColorType: 2
+    description: "\u5F53\u81EA\u8EAB\u71C3\u70E7\u5C42\u6570\u8FBE\u5230 3 \u5C42\uFF0C\u8F6C\u6362\u5F62\u6001"
+  - passiveName: "\u706B\u706F\u7B3C"
+    displayColorType: 2
+    description: "\u514D\u75AB \" \u71C3\u70E7 \" \u6548\u679C"
+  enemyVisualScale: 2
+  enemyVisualOffset: {x: 0, y: 1, z: 0}
+  skillPool:
+  - {fileID: 11400000, guid: 7b300725e87ceba478d73ee6faab50a8, type: 2}
+  - {fileID: 11400000, guid: 7dd17191c6426b949aa1c9cc792e9bdf, type: 2}
+  - {fileID: 11400000, guid: b476f7e3d20f3c34d995619c0cecde58, type: 2}
+  conditionalSkillRules:
+  - ruleName: 
+    skill: {fileID: 11400000, guid: 6f9012295a16e0c449eae37b28a201a1, type: 2}
+    conditionType: 1
+    healthThresholdNormalized: 0
+    firstTriggerRound: 6
+    repeatEveryNRounds: 6
+    priority: 1
+    maxSlotsPerRound: 1
+    useOncePerBattle: 0

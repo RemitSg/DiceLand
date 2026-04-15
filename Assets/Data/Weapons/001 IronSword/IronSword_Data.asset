@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 057dbb9ab39f5f74bafd7272cac75c4d, type: 3}
+  m_Name: IronSword_Data
+  m_EditorClassIdentifier: 
+  id: 1
+  weaponName: "\u94C1\u5251"
+  description: "\u7528\u7CBE\u70BC\u540E\u7684\u94C1\u77FF\u6253\u9020\u7684\u94C1\u5251\uFF0C\u867D\u6CA1\u6709\u4EC0\u4E48\u9B54\u529B\uFF0C\u4F46\u8D81\u624B\u4E14\u6709\u6548"
+  rarity: 0
+  weaponType: 0
+  icon: {fileID: 21300000, guid: 55bd9238914f124458226939d46b9397, type: 3}
+  weaponPrefab: {fileID: 4234885632351337337, guid: 8618acdd402427546bd5609bd073c351, type: 3}
+  minPower: 2
+  maxPower: 4
+  skillPool:
+  - {fileID: 11400000, guid: 9e003dc77410eba42b1806f317e54580, type: 2}
+  - {fileID: 11400000, guid: 078246cde6431a94c8b86186526d6bbd, type: 2}

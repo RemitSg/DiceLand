@@ -1,0 +1,125 @@
+using UnityEngine;
+
+public static class RestSceneRuntime
+{
+    private static string returnSceneName;
+    private static Vector2Int sourceCoord;
+    private static CharacterRoster_SO recruitRoster;
+    private static DifficultyConfig_SO difficultyConfig;
+    private static readonly System.Collections.Generic.List<CharacterData_SO> recruitCandidates = new System.Collections.Generic.List<CharacterData_SO>();
+    private static bool recruitCandidatesGenerated;
+
+    public static bool HasPendingVisit => !string.IsNullOrWhiteSpace(returnSceneName);
+    public static string ReturnSceneName => returnSceneName;
+    public static Vector2Int SourceCoord => sourceCoord;
+    public static CharacterRoster_SO RecruitRoster => recruitRoster;
+    public static DifficultyConfig_SO DifficultyConfig => difficultyConfig;
+
+    public static void BeginVisit(string sourceScene, Vector2Int tileCoord, CharacterRoster_SO recruitRosterData = null, DifficultyConfig_SO difficultyData = null)
+    {
+        returnSceneName = sourceScene;
+        sourceCoord = tileCoord;
+        recruitRoster = recruitRosterData;
+        difficultyConfig = difficultyData;
+        recruitCandidates.Clear();
+        recruitCandidatesGenerated = false;
+    }
+
+    public static bool TryConfirmRestAndReturn()
+    {
+        if (!HasPendingVisit)
+            return false;
+
+        MapRunRuntime.ApplyRestResult(returnSceneName, sourceCoord);
+        string targetScene = returnSceneName;
+        Clear();
+        SceneCurtainTransitionController.Instance.TransitionToScene(targetScene);
+        return true;
+    }
+
+    public static bool TryConfirmRestoreActionPointsAndReturn()
+    {
+        if (!HasPendingVisit)
+            return false;
+
+        MapRunRuntime.ApplyRestoreActionPointsResult(returnSceneName, sourceCoord);
+        string targetScene = returnSceneName;
+        Clear();
+        SceneCurtainTransitionController.Instance.TransitionToScene(targetScene);
+        return true;
+    }
+
+    public static bool TryGetCurrentSnapshot(out MapRunSnapshot snapshot)
+    {
+        if (!HasPendingVisit)
+        {
+            snapshot = null;
+            return false;
+        }
+
+        return MapRunRuntime.TryGetSnapshot(returnSceneName, out snapshot);
+    }
+
+    public static System.Collections.Generic.IReadOnlyList<CharacterData_SO> GetRecruitCandidates()
+    {
+        if (recruitCandidatesGenerated)
+            return recruitCandidates;
+
+        recruitCandidates.Clear();
+        recruitCandidatesGenerated = true;
+
+        if (!HasPendingVisit || recruitRoster == null || difficultyConfig == null)
+            return recruitCandidates;
+
+        if (!TryGetCurrentSnapshot(out MapRunSnapshot snapshot) || snapshot?.runState == null)
+            return recruitCandidates;
+
+        int maxRecruitCount = Mathf.Max(1, difficultyConfig.maxRecruitCount);
+        if (snapshot.runState.recruitedMemberCount >= maxRecruitCount)
+            return recruitCandidates;
+
+        int seed = sourceCoord.x * 73856093 ^ sourceCoord.y * 19349663 ^ returnSceneName.GetHashCode();
+        System.Random rng = new System.Random(seed);
+        recruitCandidates.AddRange(recruitRoster.GetRandomUnownedCharacters(snapshot.runState, 0, 2, rng));
+        return recruitCandidates;
+    }
+
+    public static int GetRecruitCost()
+    {
+        if (difficultyConfig == null)
+            return 0;
+        if (!TryGetCurrentSnapshot(out MapRunSnapshot snapshot) || snapshot?.runState == null)
+            return 0;
+
+        return difficultyConfig.GetRecruitCostForCurrentRecruitCount(snapshot.runState.recruitedMemberCount);
+    }
+
+    public static bool TryRecruitAndReturn(CharacterData_SO characterData, out string errorMessage)
+    {
+        if (!HasPendingVisit)
+        {
+            errorMessage = "\u5f53\u524d\u4e0d\u5728\u4f11\u606f\u573a\u666f\u8bbf\u95ee\u6d41\u7a0b\u4e2d\u3002";
+            return false;
+        }
+
+        int maxRecruitCount = difficultyConfig != null ? Mathf.Max(1, difficultyConfig.maxRecruitCount) : 4;
+        int recruitCost = GetRecruitCost();
+        if (!MapRunRuntime.TryApplyRecruitResult(returnSceneName, sourceCoord, characterData, recruitCost, maxRecruitCount, out errorMessage))
+            return false;
+
+        string targetScene = returnSceneName;
+        Clear();
+        SceneCurtainTransitionController.Instance.TransitionToScene(targetScene);
+        return true;
+    }
+
+    public static void Clear()
+    {
+        returnSceneName = string.Empty;
+        sourceCoord = new Vector2Int(int.MinValue, int.MinValue);
+        recruitRoster = null;
+        difficultyConfig = null;
+        recruitCandidates.Clear();
+        recruitCandidatesGenerated = false;
+    }
+}

@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: FlameMoth_Ignite
+  m_EditorClassIdentifier: 
+  skillName: "\u70B9\u71C3"
+  description: 
+  minPower: 2
+  maxPower: 2
+  diceCount: 1
+  dicePowerRanges: []
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 7602651996890092456, guid: ffd52b918a96d14499004b67c5f58402, type: 3}
+    hitEffectPrefab: {fileID: 7602651996890092456, guid: ffd52b918a96d14499004b67c5f58402, type: 3}
+    clashPositionOffset: {x: 1, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 1
+    clashDuration: 0.5
+    hitPositionOffset: {x: 2, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 1
+    hitDamageDelay: 0.5
+    overrideHitReactionDelay: 1
+    hitReactionDelay: 0.5
+    skillSpriteOverride: {fileID: 21300000, guid: 10c4cfc03ffb52745ab49450d503740d, type: 3}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 1, y: 1, z: 1}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects:
+    - effectName: 
+      trigger: 0
+      targetMode: 0
+      statusData: {fileID: 11400000, guid: f9527c3eb2f8085418c8ae9a04a00b9a, type: 2}
+      statusType: 0
+      stackAmount: 2
+      randomTargetCount: 1

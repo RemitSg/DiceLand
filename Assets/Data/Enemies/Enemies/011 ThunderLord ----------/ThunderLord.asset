@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: ThunderLord
+  m_EditorClassIdentifier: 
+  enemyID: 11
+  enemyName: "\u7A79\u96F7\u5DE8\u7075"
+  baseHP: 60
+  damageReductionPercent: 0
+  minSpeed: 2
+  maxSpeed: 6
+  baseSpeedButtonCount: 2
+  enemySprite: {fileID: 21300000, guid: d9d8941e26a7cfb42a98fb54bf4a72b3, type: 3}
+  stageSprites:
+  - stageName: 
+    stageSprite: {fileID: 21300000, guid: d9d8941e26a7cfb42a98fb54bf4a72b3, type: 3}
+    minSpeedOverride: 2
+    maxSpeedOverride: 6
+    speedButtonCountOverride: 2
+  - stageName: 
+    stageSprite: {fileID: 21300000, guid: 80a9b32e27a153642b2661b38e3fef2f, type: 3}
+    minSpeedOverride: 2
+    maxSpeedOverride: 6
+    speedButtonCountOverride: 3
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules:
+  - statusData: {fileID: 11400000, guid: 504abc372b3b3644bae0ccb7da7e9ce1, type: 2}
+    allowApplicationWhileImmune: 1
+  battleStartGrantedAllySkills: []
+  onSpecificEnemyDeathStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  enemyDescription: 
+  passiveDescriptions:
+  - passiveName: "\u7535\u8D28\u4F53"
+    displayColorType: 2
+    description: "\u514D\u75AB\u96F7\u5C5E\u6027\u72B6\u6001"
+  enemyVisualScale: 4
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: -2}
+  skillPool:
+  - {fileID: 11400000, guid: 6c900b8f5042fcf40a566db5529cdaab, type: 2}
+  conditionalSkillRules: []

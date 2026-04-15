@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "\u4F1A\u8BF4\u8BDD\u7684\u8611\u83C7"
+  m_EditorClassIdentifier: 
+  eventId: 5
+  eventName: "\u4F1A\u8BF4\u8BDD\u7684\u8611\u83C7"
+  eventContent: "\u4F60\u4EEC\u8D76\u8DEF\u7684\u65F6\u5019\uFF0C\u4E00\u4E2A\u7A1A\u5AE9\u7684\u58F0\u97F3\u5728\u4E0D\u77E5\u4F55\u5904\u54CD\u8D77\uFF0C\u4F60\u627E\u4E86\u534A\u5929\uFF0C\u53D1\u73B0\u7ADF\u7136\u662F\u4E00\u4E2A\u5F69\u8272\u7684\u8611\u83C7\u5728\u8BF4\u8BDD\u3002\u4F60\u8E72\u4E0B\u8EAB\u4ED4\u7EC6\u542C\uFF0C\u201C\u4F60\u597D\u5440\uFF01\u4F60\u597D\u5440\uFF01\u6211\u662F\u4E00\u4E2A\u9B54\u6CD5\u8611\u83C7\uFF01\u6211\u53EF\u4EE5\u5B9E\u73B0\u4F60\u7684\u613F\u671B\uFF01\u201D\n\u4F60\u51B3\u5B9A\u2026\u2026"
+  eventIllustration: {fileID: 0}
+  options:
+  - optionId: 1
+    optionLabel: "\u8BB8\u613F\u8D22\u5BCC"
+    requiredMoney: 0
+    consequenceDescription: "\u83B7\u5F97 10 ~ 20 \u91D1\u5E01"
+    resultContent: "\u4F60\u8BF4\u4F60\u60F3\u8981\u5F88\u591A\u5F88\u591A\u94B1\u3002\n\u201C\u6211\u53EA\u662F\u4E00\u4E2A\u5C0F\u8611\u83C7\uFF0C\u4E0D\u662F\u5F88\u6709\u94B1\uFF0C\u4F46\u662F\u6211\u53EF\u4EE5\u628A\u6211\u6709\u7684\u90FD\u7ED9\u4F60\uFF01\u6316\u5F00\u4F60\u811A\u4E0B\u7684\u571F\u5730\u5427\uFF01\u201D\n\u4F60\u6316\u5F00\u4E86\u81EA\u5DF1\u811A\u4E0B\u7684\u571F\u5730\uFF0C\u53D1\u73B0\u771F\u7684\u6709\u4E00\u5806\u91D1\u5E01\u3002"
+    builtInEffectType: 13
+    effectAmount: 0
+    randomMoneyMin: 10
+    randomMoneyMax: 20
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicRewards: []
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    blueprintRewards: []
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    additionalBuiltInEffects: []
+    resolveEvent: 0
+    customHandler: {fileID: 0}
+  - optionId: 2
+    optionLabel: "\u8BB8\u613F\u7269\u54C1"
+    requiredMoney: 0
+    consequenceDescription: "\u83B7\u5F97 1 ~ 2 \u4E2A\u6BD2\u5C5E\u6027\u6218\u5229\u54C1"
+    resultContent: "\u4F60\u8BF4\u4F60\u60F3\u8981\u4E00\u4E9B\u6218\u5229\u54C1\u3002\n\u201C\u6811\u4E0A\uFF01\u6811\u4E0A\u6709\uFF01\u201D\n\u4F60\u722C\u4E0A\u4E86\u6811\uFF0C"
+    builtInEffectType: 5
+    effectAmount: 0
+    randomMoneyMin: 10
+    randomMoneyMax: 20
+    lootRewards:
+    - lootItem: {fileID: 11400000, guid: ea9793b0c90ae0c4f9dbaf13a832f375, type: 2}
+      amountMin: 1
+      amountMax: 2
+    lootPickCountMin: 1
+    lootPickCountMax: 1
+    relicRewards: []
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    blueprintRewards: []
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    additionalBuiltInEffects: []
+    resolveEvent: 0
+    customHandler: {fileID: 0}
+  - optionId: 3
+    optionLabel: "\u8BB8\u613F\u518D\u6765\u51E0\u4E2A\u613F\u671B"
+    requiredMoney: 0
+    consequenceDescription: "\uFF1F\uFF1F\uFF1F"
+    resultContent: "\u4F60\u8BF4\u4F60\u8BB8\u613F\u60F3\u518D\u8981\u51E0\u4E2A\u613F\u671B\u3002\n\u201C\u5514\uFF0C\u53EF\u662F\u6211\u6CA1\u6709\u90A3\u4E48\u591A\u9B54\u529B\u2026\u2026\u201D\n\u5C0F\u8611\u83C7\u61CA\u607C\u5730\u8BF4\u3002\n\u201C\u4F46\u662F\u6211\u53EF\u4EE5\u4E3A\u4F60\u8BD5\u4E00\u8BD5\uFF01\u201D\n\u5B83\u5FAE\u5FAE\u5730\u6296\u52A8\u7740\uFF0C\u4F3C\u4E4E\u5F88\u7528\u529B\u7684\u6837\u5B50\u3002\n\u4F60\u6CE8\u610F\u5230\u5B83\u8EAB\u4E0A\u7684\u8272\u5F69\u5728\u6E10\u6E10\u6D88\u5931\u3002\n\u201C\u2014\u2014\u2014\u2014\u201D\n\u5B83\u9010\u6E10\u6CA1\u4E86\u52A8\u9759\uFF0C\u597D\u50CF\u5DF2\u7ECF\u67AF\u840E\u4E86\u3002\n\u4F60\u4EC0\u4E48\u4E5F\u6CA1\u5F97\u5230\u3002"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 10
+    randomMoneyMax: 20
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicRewards: []
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    blueprintRewards: []
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    additionalBuiltInEffects: []
+    resolveEvent: 0
+    customHandler: {fileID: 0}

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92a6c8410a56dcb4db5bca4c318c5c64, type: 3}
+  m_Name: WorldMap
+  m_EditorClassIdentifier: 
+  relicId: 1
+  relicName: "\u4E16\u754C\u5730\u56FE"
+  description: "\u5728\u8FDB\u884C\u5730\u56FE\u63A2\u7D22\u65F6\uFF0C\u524D\u5F80\u4E00\u4E2A\u672A\u63A2\u7D22\u7684\u683C\u5B50\u6709
+    5% \u6982\u7387\u4E0D\u6D88\u8017\u884C\u52A8\u70B9"
+  rarity: 0
+  icon: {fileID: 21300000, guid: 3e592696d9e5ff94eb24de37c010b2b5, type: 3}
+  builtInEffects:
+  - effectName: 
+    trigger: 0
+    effectType: 1
+    chance: 0.05
+    requireUnvisitedTile: 1
+    statusData: {fileID: 0}
+    amount: 0
+    conditionStatusData: {fileID: 0}
+    requiredStatusStacks: 1
+    powerAmount: 0
+    minPowerAmount: 0
+    maxPowerAmount: 0
+  customEffectHandler: {fileID: 0}

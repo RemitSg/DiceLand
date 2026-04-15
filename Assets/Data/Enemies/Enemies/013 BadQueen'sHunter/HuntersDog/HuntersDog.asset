@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: HuntersDog
+  m_EditorClassIdentifier: 
+  enemyID: 1301
+  enemyName: "\u730E\u4EBA\u7684\u730E\u72AC"
+  baseHP: 25
+  damageReductionPercent: 0
+  minSpeed: 5
+  maxSpeed: 6
+  baseSpeedButtonCount: 1
+  enemySprite: {fileID: 21300000, guid: d5a7bd08f38a8f94eabc6918bd48d015, type: 3}
+  stageSprites: []
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.2
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules: []
+  battleStartGrantedAllySkills: []
+  onSpecificEnemyDeathStatusGains:
+  - watchedEnemyData: {fileID: 11400000, guid: 9a20040849f4382498a1ee2a263055bd, type: 2}
+    statusData: {fileID: 11400000, guid: a935da6047588bc4e8040f2e21468051, type: 2}
+    stackAmount: 5
+    additionalRoundStartApplications: 99
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  enemyDescription: "\u5B83\u4E0D\u61C2\u4EC0\u4E48\u662F\u975E\u5BF9\u9519\u795E\u9B54\u5584\u6076\u3002\n\u5B83\u53EA\u77E5\u9053\u4E3B\u4EBA\u8BF4\u54AC\u8C01\uFF0C\u5B83\u5C31\u54AC\u8C01\u3002"
+  passiveDescriptions:
+  - passiveName: "\u5FE0\u72AC"
+    displayColorType: 2
+    description: "\u5F53 \u3010\u574F\u7687\u540E\u7684\u730E\u4EBA\u3011 \u6B7B\u4EA1\u540E\uFF0C\u81EA\u8EAB\u901F\u5EA6
+      -5"
+  - passiveName: "\u7D27\u8DDF\u76EE\u6807"
+    displayColorType: 2
+    description: "\u5F53\u573A\u4E0A\u5B58\u5728\u88AB\u6807\u8BB0\u7684\u76EE\u6807\u65F6\uFF0C\u59CB\u7EC8\u653B\u51FB\u88AB\u6807\u8BB0\u7684\u76EE\u6807"
+  enemyVisualScale: 1
+  enemyVisualOffset: {x: 0, y: -0.1, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: d9c59b083d479c24ab4195a489a873dd, type: 2}
+  conditionalSkillRules: []

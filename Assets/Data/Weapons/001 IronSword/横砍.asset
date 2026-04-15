@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: "\u6A2A\u780D"
+  m_EditorClassIdentifier: 
+  skillName: "\u6A2A\u780D"
+  description: "\u5927\u529B\u6A2A\u5288\uFF0C\u5229\u7528\u6325\u5251\u7684\u5E7F\u5EA6\u653B\u51FB\u6240\u6709\u654C\u4EBA"
+  energyCost: 3
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  minPower: 3
+  maxPower: 5
+  diceCount: 1
+  dicePowerRanges: []
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 9176160909759621810, guid: f47b5681f054b4346b8555f42aa771a1, type: 3}
+    hitEffectPrefab: {fileID: 9176160909759621810, guid: f47b5681f054b4346b8555f42aa771a1, type: 3}
+    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashRotationOffset: {x: 90, y: 200, z: 0}
+    clashScale: {x: 2, y: 2, z: 2}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitRotationOffset: {x: 90, y: 200, z: 0}
+    hitScale: {x: 6, y: 6, z: 6}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 0}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
+  diceEffectSettings:
+  - damageEffects:
+    - effectName: "\u6A2A\u780D"
+      trigger: 0
+      targetMode: 2
+      damageAmount: 1
+      randomTargetCount: 1
+    statusEffects: []
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []

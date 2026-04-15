@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: "\u707C\u70ED\u6A2A\u65A9"
+  m_EditorClassIdentifier: 
+  skillName: "\u707C\u70ED\u6A2A\u65A9"
+  description: "\u7528\u707C\u70ED\u7684\u5251\u5203\u501F\u529B\u6A2A\u5288\u654C\u4EBA\uFF0C\u8BA9\u654C\u4EBA\u611F\u53D7\u53CC\u91CD\u75DB\u82E6"
+  energyCost: 4
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  minPower: 3
+  maxPower: 5
+  diceCount: 1
+  dicePowerRanges: []
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 7336644444123945357, guid: aca0a21d01e496443933c923b06b60e1, type: 3}
+    hitEffectPrefab: {fileID: 5771472496795921052, guid: f29dc0bbfbba14542b2f1e53b71b875f, type: 3}
+    clashPositionOffset: {x: 1, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitRotationOffset: {x: 90, y: 180, z: 0}
+    hitScale: {x: 3, y: 3, z: 3}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 1
+    hitReactionDelay: 0.2
+    skillSpriteOverride: {fileID: 0}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects:
+    - effectName: 
+      trigger: 0
+      targetMode: 0
+      statusData: {fileID: 11400000, guid: f9527c3eb2f8085418c8ae9a04a00b9a, type: 2}
+      statusType: 0
+      applyTiming: 0
+      applyAfterRoundStarts: 0
+      applyRepeatCount: 0
+      stackAmount: 2
+      randomTargetCount: 1
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []

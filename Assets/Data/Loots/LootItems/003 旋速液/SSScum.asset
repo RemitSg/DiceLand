@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3abebfccfa94bb4f844818d7206d4dc, type: 3}
+  m_Name: SSScum
+  m_EditorClassIdentifier: 
+  lootID: 3
+  lootName: "\u65CB\u901F\u6DB2"
+  description: "\u770B\u8D77\u6765\u5B83\u597D\u50CF\u4E00\u76F4\u5C1D\u8BD5\u5728\u6D41\u52A8\uFF1F"
+  attribute: {fileID: 11400000, guid: 9aa4715be30964e45af4e11e1cc3d447, type: 2}
+  rarity: 0
+  icon: {fileID: 21300000, guid: 3293747a70b883c439dfb2564766318d, type: 3}

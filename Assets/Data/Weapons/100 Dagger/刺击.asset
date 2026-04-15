@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: "\u523A\u51FB"
+  m_EditorClassIdentifier: 
+  skillName: "\u523A\u51FB"
+  description: "\u7528\u5315\u9996\u523A\u5165\u654C\u4EBA\u8EAB\u4F53\uFF0C\u4E00\u79CD\u6709\u6548\u7684\u653B\u51FB"
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  minPower: 2
+  maxPower: 4
+  diceCount: 1
+  dicePowerRanges: []
+  dicePresentationSettings: []
+  diceEffectSettings: []

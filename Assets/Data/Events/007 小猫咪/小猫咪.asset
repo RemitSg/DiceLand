@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "\u5C0F\u732B\u54AA"
+  m_EditorClassIdentifier: 
+  eventId: 7
+  eventName: "\u5C0F\u732B\u54AA"
+  eventContent: "\u8DEF\u8FB9\u7684\u5C0F\u732B\u54AA\u7A81\u7136\u51B2\u4F60\u4E00\u76F4\u54C8\u6C14\uFF0C\u4F60\u51B3\u5B9A"
+  eventIllustration: {fileID: 0}
+  options:
+  - optionId: 1
+    optionLabel: "\u5582\u5B83\u5403\u7684"
+    requiredMoney: 0
+    consequenceDescription: "\uFF1F\uFF1F\uFF1F"
+    resultContent: "\u4F60\u628A\u81EA\u5DF1\u5582\u7ED9\u4E86\u732B\u54AA\u2026\u2026\uFF1F"
+    builtInEffectType: 6
+    effectAmount: -5
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicRewards: []
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    blueprintRewards: []
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    additionalBuiltInEffects: []
+    resolveEvent: 0
+    customHandler: {fileID: 0}
+  - optionId: 2
+    optionLabel: "\u6478\u6478\u5B83"
+    requiredMoney: 0
+    consequenceDescription: "\uFF1F\uFF1F\uFF1F"
+    resultContent: "\u732B\u54AA\u5411\u4F60\u53D1\u8D77\u4E86\u653B\u51FB\uFF01"
+    builtInEffectType: 10
+    effectAmount: 1
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicRewards: []
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    blueprintRewards: []
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    encounterSelectionMode: 0
+    encounterEnemyGroups:
+    - {fileID: 11400000, guid: 81649270dc37feb4dacff9032283be26, type: 2}
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    additionalBuiltInEffects: []
+    resolveEvent: 0
+    customHandler: {fileID: 0}
+  - optionId: 3
+    optionLabel: "\u51B2\u5B83\u54AA\u54AA\u53EB"
+    requiredMoney: 0
+    consequenceDescription: "\uFF1F\uFF1F\uFF1F"
+    resultContent: "\u4F60\u4EEC\u4F3C\u4E4E\u5EFA\u7ACB\u4E86\u67D0\u79CD\u6C9F\u901A\uFF0C\u5B83\u597D\u50CF\u628A\u4F60\u8BA4\u6210\u4E86\u540C\u7C7B\uFF1F\n\u4F60\u83B7\u5F97\u4E86\u4E00\u4E9B\u732B\u54AA\u7684\u50A8\u84C4"
+    builtInEffectType: 13
+    effectAmount: 1
+    randomMoneyMin: 6
+    randomMoneyMax: 16
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicRewards: []
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    blueprintRewards: []
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    additionalBuiltInEffects: []
+    resolveEvent: 0
+    customHandler: {fileID: 0}

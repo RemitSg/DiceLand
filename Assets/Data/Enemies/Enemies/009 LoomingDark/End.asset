@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: End
+  m_EditorClassIdentifier: 
+  skillName: "\u5230\u6765"
+  description: "\u9ED1\u6697\u5230\u6765\u3002"
+  energyCost: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  minPower: 1
+  maxPower: 1
+  diceCount: 1
+  dicePowerRanges: []
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 4796216664092894923, guid: ce2e72cf7d3351d44b19b1604a7506f2, type: 3}
+    hitEffectPrefab: {fileID: 4796216664092894923, guid: ce2e72cf7d3351d44b19b1604a7506f2, type: 3}
+    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 3, y: 3, z: 3}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 1
+    clashDuration: 3
+    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 0}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
+  diceEffectSettings:
+  - damageEffects:
+    - effectName: 
+      trigger: 0
+      targetMode: 2
+      damageAmount: 44444
+      randomTargetCount: 1
+    - effectName: 
+      trigger: 1
+      targetMode: 3
+      damageAmount: 44444
+      randomTargetCount: 1
+    statusEffects: []
+    powerModifiers:
+    - effectName: 
+      trigger: 3
+      useCondition: 1
+      condition: 4
+      targetStatusData: {fileID: 11400000, guid: 3732a63112346b545a395695e35c0110, type: 2}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredStatusStacks: 10
+      powerBonus: 444
+      powerBonusPerStep: 1
+    statusBurstEffects: []
+    healingEffects: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []

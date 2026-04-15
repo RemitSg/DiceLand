@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 589a62cbecf7043409093d118633bd86, type: 3}
+  m_Name: MoneyRewardTable
+  m_EditorClassIdentifier: 
+  rewardEntries:
+  - tileType: 1
+    dangerBand: 0
+    minMoney: 10
+    maxMoney: 15
+  - tileType: 2
+    dangerBand: 0
+    minMoney: 25
+    maxMoney: 35

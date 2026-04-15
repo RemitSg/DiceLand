@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92a6c8410a56dcb4db5bca4c318c5c64, type: 3}
+  m_Name: LoomingDark
+  m_EditorClassIdentifier: 
+  relicId: 2
+  relicName: "\u8FEB\u8FD1\u7684\u9ED1\u6697"
+  description: "\u53CB\u65B9\u89D2\u8272\u62E5\u6709\u9ED1\u6697\u72B6\u6001\u65F6\uFF0C\u6280\u80FD\u5A01\u529B
+    +1"
+  rarity: 2
+  icon: {fileID: 21300000, guid: 7970847a42dbe17478bc99134762011e, type: 3}
+  builtInEffects:
+  - effectName: 
+    trigger: 2
+    effectType: 3
+    chance: 1
+    requireUnvisitedTile: 0
+    statusData: {fileID: 11400000, guid: 3732a63112346b545a395695e35c0110, type: 2}
+    amount: 0
+    conditionStatusData: {fileID: 11400000, guid: 3732a63112346b545a395695e35c0110, type: 2}
+    requiredStatusStacks: 1
+    powerAmount: 1
+    minPowerAmount: 0
+    maxPowerAmount: 0
+  customEffectHandler: {fileID: 0}

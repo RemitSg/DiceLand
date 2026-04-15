@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92a6c8410a56dcb4db5bca4c318c5c64, type: 3}
+  m_Name: Kiity's Pardon
+  m_EditorClassIdentifier: 
+  relicId: 3
+  relicName: "\u732B\u54AA\u7684\u539F\u8C05"
+  description: "\u5F53\u53CB\u65B9\u89D2\u8272\u5C06\u8981\u53D7\u5230\u5355\u65B9\u9762\u653B\u51FB\u65F6\uFF0C\u4F7F\u5373\u5C06\u53D7\u5230\u7684\u4F24\u5BB3
+    -1"
+  rarity: 1
+  icon: {fileID: 21300000, guid: d15689f270bec534096c26ed6d301ba4, type: 3}
+  builtInEffects:
+  - effectName: 
+    trigger: 3
+    effectType: 4
+    chance: 1
+    requireUnvisitedTile: 0
+    statusData: {fileID: 0}
+    amount: 1
+    conditionStatusData: {fileID: 0}
+    requiredStatusStacks: 0
+    powerAmount: 1
+    minPowerAmount: 0
+    maxPowerAmount: 0
+  customEffectHandler: {fileID: 0}
