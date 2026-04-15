@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e392a4d75ff41fd4b82ace7efd8b72e3, type: 3}
   m_Name: Weakness_Temp
   m_EditorClassIdentifier: 
-  statusId: burn
-  displayName: "\u71C3\u70E7"
-  description: "\u6BCF\u56DE\u5408\u5F00\u59CB\u65F6\u53D7\u5230\u7B49\u540C\u4E8E\u5C42\u6570\u7684\u4F24\u5BB3\u3002"
-  iconSprite: {fileID: 0}
+  statusId: weaknessTemp
+  displayName: "\u4E34\u65F6\u865A\u5F31"
+  description: "\u653B\u51FB\u63B7\u9AB0\u7684\u5A01\u529B\u51CF\u5C11\u76F8\u5F53\u4E8E\u5C42\u6570\u7684\u6570\u503C\uFF0C\u56DE\u5408\u7ED3\u675F\u65F6\u5931\u53BB\u6240\u6709\u5C42\u6570"
+  iconSprite: {fileID: 21300000, guid: fc7962efbfb5b8943bf0d862733f04c4, type: 3}
   accentColor: {r: 1, g: 1, b: 1, a: 1}
   tickEffectPrefab: {fileID: 0}
   tickEffectPositionOffset: {x: 0, y: 0, z: 0}
@@ -29,4 +29,4 @@ MonoBehaviour:
   linkedStatusData: {fileID: 0}
   onHitDecayMode: 0
   roundStartDecayMode: 0
-  roundEndDecayMode: 0
+  roundEndDecayMode: 2
