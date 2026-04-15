@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 057dbb9ab39f5f74bafd7272cac75c4d, type: 3}
+  m_Name: Bloodcleaver
+  m_EditorClassIdentifier: 
+  id: 201
+  weaponName: "\u6DEC\u8840\u88C2\u65A7"
+  description: "\u7528\u70C8\u706B\u4E0E\u70ED\u8840\u6DEC\u6210\u7684\u5DE8\u65A7\uFF0CMan
+    \u7684\u6700\u7231"
+  rarity: 1
+  weaponType: 1
+  icon: {fileID: 21300000, guid: 625d45054e4d4fb48b8ddeb50141c72b, type: 3}
+  weaponPrefab: {fileID: 8918444715761420384, guid: 16824291264d1934a9df80ac6fe09101, type: 3}
+  minPower: 1
+  maxPower: 3
+  skillPool:
+  - {fileID: 11400000, guid: d3167787aa8286541ae1c8b57d05d2c0, type: 2}
+  - {fileID: 11400000, guid: 45e85b53a253a7e429339cf418bb5d80, type: 2}
+  - {fileID: 11400000, guid: 229eb92eb16f4e44fa80eb2cf869c9a7, type: 2}

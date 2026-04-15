@@ -201,7 +201,10 @@ public class SpeedButton : MonoBehaviour
     {
         isHovering = true;
         if (buttonType == ButtonType.Enemy)
+        {
             currentlyHoveredEnemy = this;
+            TryShowEnemyHoverSkillInfo();
+        }
         UpdateHoverOutlineVisibility();
     }
 
@@ -210,6 +213,8 @@ public class SpeedButton : MonoBehaviour
         isHovering = false;
         if (buttonType == ButtonType.Enemy && currentlyHoveredEnemy == this)
             currentlyHoveredEnemy = null;
+        if (buttonType == ButtonType.Enemy)
+            HideEnemyHoverSkillInfo();
         UpdateHoverOutlineVisibility();
     }
 
@@ -1388,6 +1393,28 @@ public class SpeedButton : MonoBehaviour
             return;
 
         overlay.ShowEnemySkillInfo(enemy, this);
+    }
+
+    private void TryShowEnemyHoverSkillInfo()
+    {
+        BattleEnemyController enemy = GetComponentInParent<BattleEnemyController>();
+        if (enemy == null)
+            return;
+
+        BattleSkillInfoOverlay overlay = GetSkillOverlay();
+        if (overlay == null)
+            return;
+
+        overlay.ShowEnemyHoverSkillInfo(enemy, this);
+    }
+
+    private void HideEnemyHoverSkillInfo()
+    {
+        BattleSkillInfoOverlay overlay = GetSkillOverlay();
+        if (overlay == null)
+            return;
+
+        overlay.HideEnemyHoverSkillInfo(this);
     }
 
     private BattleSkillInfoOverlay GetSkillOverlay()

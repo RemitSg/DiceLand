@@ -611,6 +611,13 @@ MonoBehaviour:
     startingExperience: 0
     startingMaxHP: 24
     startingCurrentHP: 24
+  - memberId: 2
+    characterData: {fileID: 11400000, guid: fce426096f554744093a4718f5aa0f45, type: 2}
+    equippedWeapon: {fileID: 11400000, guid: 66e425e32f62902418159abffd6dedc5, type: 2}
+    startingLevel: 1
+    startingExperience: 0
+    startingMaxHP: 25
+    startingCurrentHP: 25
   startingLoot: []
   startingWeapons:
   - weaponData: {fileID: 11400000, guid: 4b3e2d650c5c8744181da8df8b3099f3, type: 2}

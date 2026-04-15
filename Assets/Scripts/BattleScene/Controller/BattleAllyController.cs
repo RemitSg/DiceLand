@@ -414,6 +414,17 @@ public class BattleAllyController : MonoBehaviour
         return Mathf.Max(0, totalAmount);
     }
 
+    public int GetStatusFlatPowerModifier(bool isDefenseSkill)
+    {
+        int flatPowerBonus = isDefenseSkill
+            ? ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType.DefensePowerBonusFlat)
+            : ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType.PowerBonusFlat);
+        int flatPowerPenalty = isDefenseSkill
+            ? ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType.DefensePowerPenaltyFlat)
+            : ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType.PowerPenaltyFlat);
+        return flatPowerBonus - flatPowerPenalty;
+    }
+
     public int Heal(int amount)
     {
         if (IsDead || amount <= 0)

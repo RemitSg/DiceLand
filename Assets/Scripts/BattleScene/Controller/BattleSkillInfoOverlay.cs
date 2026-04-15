@@ -50,7 +50,13 @@ public class BattleSkillInfoOverlay : MonoBehaviour
     [SerializeField] private float detailInnerPadding = 12f;
     [SerializeField] private float detailScrollbarWidth = 18f;
 
-    public bool IsVisible => canvasRoot != null && canvasRoot.gameObject.activeSelf;
+    [Header("Enemy Hover Layout")]
+    [SerializeField] private Vector2 enemyHoverPanelSize = new Vector2(560f, 360f);
+    [SerializeField] private Vector2 enemyHoverPanelOffset = new Vector2(-36f, -36f);
+    [SerializeField] private int enemyHoverTitleFontSize = 32;
+    [SerializeField] private int enemyHoverBodyFontSize = 24;
+
+    public bool IsVisible => panelRoot != null && panelRoot.gameObject.activeSelf;
 
     private Canvas canvas;
     private RectTransform canvasRoot;
@@ -64,11 +70,15 @@ public class BattleSkillInfoOverlay : MonoBehaviour
     private RectTransform detailViewport;
     private RectTransform detailContent;
     private RectTransform skillListRoot;
+    private RectTransform hoverPanelRoot;
+    private TextMeshProUGUI hoverTitleText;
+    private TextMeshProUGUI hoverDetailText;
     private readonly List<Button> skillButtons = new List<Button>();
     private readonly List<TextMeshProUGUI> skillButtonTexts = new List<TextMeshProUGUI>();
     private Action hideCallback;
     private BattleAllyController currentAlly;
     private BattleEnemyController currentEnemy;
+    private SpeedButton currentHoverSourceButton;
     private BattleButton cachedBattleButton;
 
     private void Awake()
@@ -132,6 +142,38 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         ClearSkillButtons();
     }
 
+    public void ShowEnemyHoverSkillInfo(BattleEnemyController enemy, SpeedButton sourceButton)
+    {
+        if (enemy == null)
+            return;
+
+        EnsureUi();
+        if (IsVisible)
+            return;
+
+        EnemySkill_SO skill = sourceButton != null ? enemy.GetSelectedSkillForButton(sourceButton) : enemy.SelectedSkill;
+        if (skill == null || hoverPanelRoot == null || hoverTitleText == null || hoverDetailText == null)
+            return;
+
+        currentHoverSourceButton = sourceButton;
+        hoverTitleText.text = skill.skillName;
+        hoverDetailText.text = BuildCompactEnemyHoverDetail(enemy, skill);
+        hoverPanelRoot.gameObject.SetActive(true);
+    }
+
+    public void HideEnemyHoverSkillInfo(SpeedButton sourceButton = null)
+    {
+        if (hoverPanelRoot == null)
+            return;
+
+        if (sourceButton != null && currentHoverSourceButton != null && sourceButton != currentHoverSourceButton)
+            return;
+
+        hoverPanelRoot.gameObject.SetActive(false);
+        if (sourceButton == null || sourceButton == currentHoverSourceButton)
+            currentHoverSourceButton = null;
+    }
+
     public void ShowEnemyDetail(BattleEnemyController enemy)
     {
         if (enemy == null)
@@ -177,8 +219,12 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
     public void Hide(bool invokeCallback)
     {
-        if (canvasRoot != null)
-            canvasRoot.gameObject.SetActive(false);
+        if (backdropButton != null)
+            backdropButton.gameObject.SetActive(false);
+        if (panelRoot != null)
+            panelRoot.gameObject.SetActive(false);
+
+        HideEnemyHoverSkillInfo();
 
         SpeedButton.InputSuppressed = false;
 
@@ -196,11 +242,17 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
     private void ShowForActor(string title, string subtitle, string detail, Action onHide)
     {
+        HideEnemyHoverSkillInfo();
+        if (canvasRoot != null)
+            canvasRoot.gameObject.SetActive(true);
+        if (backdropButton != null)
+            backdropButton.gameObject.SetActive(true);
+        if (panelRoot != null)
+            panelRoot.gameObject.SetActive(true);
         titleText.text = title;
         subtitleText.text = subtitle;
         detailText.text = detail;
         hideCallback = onHide;
-        canvasRoot.gameObject.SetActive(true);
         ResetDetailScrollToTop();
         SpeedButton.InputSuppressed = true;
     }
@@ -390,6 +442,33 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         closeLabel.rectTransform.offsetMax = Vector2.zero;
         closeLabel.text = "X";
 
+        GameObject hoverPanelGo = new GameObject("EnemyHoverPanel", typeof(RectTransform), typeof(Image));
+        hoverPanelGo.transform.SetParent(canvasRoot, false);
+        hoverPanelRoot = hoverPanelGo.GetComponent<RectTransform>();
+        hoverPanelRoot.anchorMin = new Vector2(1f, 1f);
+        hoverPanelRoot.anchorMax = new Vector2(1f, 1f);
+        hoverPanelRoot.pivot = new Vector2(1f, 1f);
+        hoverPanelRoot.anchoredPosition = enemyHoverPanelOffset;
+        hoverPanelRoot.sizeDelta = enemyHoverPanelSize;
+
+        Image hoverPanelImage = hoverPanelGo.GetComponent<Image>();
+        if (panelBackgroundSprite != null)
+        {
+            hoverPanelImage.sprite = panelBackgroundSprite;
+            hoverPanelImage.type = Image.Type.Sliced;
+            hoverPanelImage.color = Color.white;
+        }
+        else
+        {
+            hoverPanelImage.color = panelColor;
+        }
+
+        hoverTitleText = CreateText(hoverPanelRoot, "HoverTitle", new Vector2(24f, -20f), new Vector2(enemyHoverPanelSize.x - 48f, 42f), enemyHoverTitleFontSize, titleColor, true, TextAlignmentOptions.TopLeft);
+        hoverDetailText = CreateText(hoverPanelRoot, "HoverDetail", new Vector2(24f, -68f), new Vector2(enemyHoverPanelSize.x - 48f, enemyHoverPanelSize.y - 92f), enemyHoverBodyFontSize, bodyColor, false, TextAlignmentOptions.TopLeft);
+        hoverDetailText.enableWordWrapping = true;
+        hoverDetailText.overflowMode = TextOverflowModes.Overflow;
+        hoverPanelRoot.gameObject.SetActive(false);
+
         ApplyFonts();
     }
 
@@ -474,6 +553,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         ApplyFont(titleText, GetKeywordFont());
         ApplyFont(subtitleText, GetKeywordFont());
         ApplyFont(detailText, GetBodyFont());
+        ApplyFont(hoverTitleText, GetKeywordFont());
+        ApplyFont(hoverDetailText, GetBodyFont());
 
         for (int i = 0; i < skillButtonTexts.Count; i++)
             ApplyFont(skillButtonTexts[i], GetKeywordFont());
@@ -608,7 +689,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         return string.Join("\n", lines);
     }
 
-    private string BuildSkillDetail(EnemySkill_SO skill, string header, bool attackerIsAlly)
+    private string BuildSkillDetail(EnemySkill_SO skill, string header, bool attackerIsAlly, Func<int, EnemySkill_SO.DicePowerRange> rangeResolver = null)
     {
         if (skill == null)
             return $"{header}\n\u672a\u914d\u7f6e\u6280\u80fd\u3002";
@@ -618,7 +699,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         Color dicePowerColor = GetDicePowerDisplayColor(skill);
         for (int i = 0; i < skill.diceCount; i++)
         {
-            EnemySkill_SO.DicePowerRange range = skill.GetDicePowerRange(i);
+            EnemySkill_SO.DicePowerRange range = rangeResolver != null ? rangeResolver(i) : skill.GetDicePowerRange(i);
             string diceLabel = BuildDiceDisplayLabel(skill, i);
             string diceEffectLabel = BuildDiceEffectLabel(skill, i);
             string minLabel = BuildColoredToken(range.minPower.ToString(), dicePowerColor);
@@ -793,6 +874,204 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             ? $"\n\n\u8bcd\u6761\uff1a\n{string.Join("\n", effectLines)}"
             : string.Empty;
         return $"{header}\n\u6280\u80fd\uff1a{skill.skillName}\n\u80fd\u8017\uff1a{Mathf.Max(0, skill.energyCost)}\n\u9ab0\u5b50\u6570\uff1a{skill.diceCount}\n{string.Join("\n", rangeLines)}{targetPrioritySection}{effectSection}\n\n\u63cf\u8ff0\uff1a\n{description}";
+    }
+
+    private string BuildCompactSkillHoverDetail(EnemySkill_SO skill, bool attackerIsAlly)
+    {
+        if (skill == null)
+            return "未配置技能。";
+
+        List<string> rangeLines = new List<string>();
+        List<string> effectLines = new List<string>();
+        Color dicePowerColor = GetDicePowerDisplayColor(skill);
+
+        for (int i = 0; i < skill.diceCount; i++)
+        {
+            EnemySkill_SO.DicePowerRange range = skill.GetDicePowerRange(i);
+            string diceLabel = BuildDiceDisplayLabel(skill, i);
+            string diceEffectLabel = BuildDiceEffectLabel(skill, i);
+            string minLabel = BuildColoredToken(range.minPower.ToString(), dicePowerColor);
+            string maxLabel = BuildColoredToken(range.maxPower.ToString(), dicePowerColor);
+            rangeLines.Add($"{diceLabel}：{minLabel} ~ {maxLabel}");
+
+            EnemySkill_SO.DiceEffectSettings effectSettings = skill.GetDiceEffectSettings(i);
+            AppendEffectLines(effectLines, diceEffectLabel, effectSettings, attackerIsAlly);
+        }
+
+        return effectLines.Count > 0
+            ? $"{string.Join("\n", rangeLines)}\n\n词条：\n{string.Join("\n", effectLines)}"
+            : $"{string.Join("\n", rangeLines)}\n\n词条：\n无";
+    }
+
+    private string BuildCompactEnemyHoverDetail(BattleEnemyController enemy, EnemySkill_SO skill)
+    {
+        if (enemy == null)
+            return BuildCompactSkillHoverDetail(skill, false);
+
+        if (skill == null)
+            return "未配置技能。";
+
+        List<string> rangeLines = new List<string>();
+        List<string> effectLines = new List<string>();
+        Color dicePowerColor = GetDicePowerDisplayColor(skill);
+
+        for (int i = 0; i < skill.diceCount; i++)
+        {
+            EnemySkill_SO.DicePowerRange range = enemy.GetDicePowerRange(i);
+            string diceLabel = BuildDiceDisplayLabel(skill, i);
+            string diceEffectLabel = BuildDiceEffectLabel(skill, i);
+            string minLabel = BuildColoredToken(range.minPower.ToString(), dicePowerColor);
+            string maxLabel = BuildColoredToken(range.maxPower.ToString(), dicePowerColor);
+            rangeLines.Add($"{diceLabel}：{minLabel} ~ {maxLabel}");
+
+            EnemySkill_SO.DiceEffectSettings effectSettings = skill.GetDiceEffectSettings(i);
+            AppendEffectLines(effectLines, diceEffectLabel, effectSettings, false);
+        }
+
+        return effectLines.Count > 0
+            ? $"{string.Join("\n", rangeLines)}\n\n词条：\n{string.Join("\n", effectLines)}"
+            : $"{string.Join("\n", rangeLines)}\n\n词条：\n无";
+    }
+
+    private void AppendEffectLines(List<string> effectLines, string diceEffectLabel, EnemySkill_SO.DiceEffectSettings effectSettings, bool attackerIsAlly)
+    {
+        if (effectSettings.damageEffects != null)
+        {
+            for (int effectIndex = 0; effectIndex < effectSettings.damageEffects.Length; effectIndex++)
+            {
+                EnemySkill_SO.DamageEffectEntry effect = effectSettings.damageEffects[effectIndex];
+                if (effect.damageAmount <= 0)
+                    continue;
+
+                string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
+                string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
+                string valueLabel = BuildColoredToken(effect.damageAmount.ToString(), valueHighlightColor);
+                effectLines.Add($"{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 造成 {valueLabel} 点伤害");
+            }
+        }
+
+        if (effectSettings.statusEffects != null)
+        {
+            for (int effectIndex = 0; effectIndex < effectSettings.statusEffects.Length; effectIndex++)
+            {
+                EnemySkill_SO.StatusEffectEntry effect = effectSettings.statusEffects[effectIndex];
+                if (effect.stackAmount <= 0)
+                    continue;
+
+                string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
+                string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
+                string stackLabel = BuildColoredToken(effect.stackAmount.ToString(), valueHighlightColor);
+                string statusLabel = BuildColoredToken(GetStatusLabel(effect), valueHighlightColor);
+                string timingLabel = effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
+                    ? BuildColoredToken(
+                        Mathf.Max(1, effect.applyRepeatCount) > 1
+                            ? $"接下来 {Mathf.Max(1, effect.applyRepeatCount)} 个回合开始时"
+                            : $"下 {Mathf.Max(1, effect.applyAfterRoundStarts)} 个回合开始时",
+                        triggerHighlightColor)
+                    : string.Empty;
+                effectLines.Add(effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
+                    ? $"{diceEffectLabel}：{triggerLabel} 使 {targetLabel} 于 {timingLabel} 获得 {stackLabel} 层 {statusLabel}"
+                    : $"{diceEffectLabel}：{triggerLabel} 使 {targetLabel} 获得 {stackLabel} 层 {statusLabel}");
+            }
+        }
+
+        if (effectSettings.statusBurstEffects != null)
+        {
+            for (int effectIndex = 0; effectIndex < effectSettings.statusBurstEffects.Length; effectIndex++)
+            {
+                EnemySkill_SO.StatusBurstDamageEffectEntry effect = effectSettings.statusBurstEffects[effectIndex];
+                if (effect.damagePerStack <= 0)
+                    continue;
+
+                string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
+                string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
+                string multiplierLabel = BuildColoredToken(effect.damagePerStack.ToString(), valueHighlightColor);
+                string statusLabel = BuildColoredToken(GetStatusLabel(effect), targetHighlightColor);
+                effectLines.Add(effect.clearStacksAfterBurst
+                    ? $"{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 引发 {multiplierLabel} 重 {statusLabel} 爆发，造成 {multiplierLabel} x 层数 的额外伤害，并清空 {statusLabel}"
+                    : $"{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 引发 {multiplierLabel} 重 {statusLabel} 爆发，造成 {multiplierLabel} x 层数 的额外伤害");
+            }
+        }
+
+        if (effectSettings.statusStackOperationEffects != null)
+        {
+            for (int effectIndex = 0; effectIndex < effectSettings.statusStackOperationEffects.Length; effectIndex++)
+            {
+                EnemySkill_SO.StatusStackOperationEffectEntry effect = effectSettings.statusStackOperationEffects[effectIndex];
+                string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
+                string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
+                string statusLabel = BuildColoredToken(GetStatusLabel(effect), targetHighlightColor);
+
+                if (effect.operationType == EnemySkill_SO.StatusStackOperationType.ClearStacks)
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 清空 {targetLabel} 的 {statusLabel}");
+                else
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 使 {targetLabel} 的 {statusLabel} 减少 {BuildColoredToken(Mathf.Max(1, effect.stackAmount).ToString(), valueHighlightColor)} 层");
+            }
+        }
+
+        if (effectSettings.enemyStageTransitionEffects != null)
+        {
+            for (int effectIndex = 0; effectIndex < effectSettings.enemyStageTransitionEffects.Length; effectIndex++)
+            {
+                EnemySkill_SO.EnemyStageTransitionEffectEntry effect = effectSettings.enemyStageTransitionEffects[effectIndex];
+                string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
+                string valueLabel = BuildColoredToken((effect.targetStageIndex + 1).ToString(), valueHighlightColor);
+                effectLines.Add(effect.applyTiming == EnemySkill_SO.EnemyStageTransitionApplyTiming.NextRoundStart
+                    ? $"{diceEffectLabel}：{triggerLabel} 于 下个回合开始时 切换至 第 {valueLabel} 阶段"
+                    : $"{diceEffectLabel}：{triggerLabel} 切换至 第 {valueLabel} 阶段");
+            }
+        }
+
+        if (effectSettings.healingEffects != null)
+        {
+            for (int effectIndex = 0; effectIndex < effectSettings.healingEffects.Length; effectIndex++)
+            {
+                EnemySkill_SO.HealingEffectEntry effect = effectSettings.healingEffects[effectIndex];
+                string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
+                string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
+                string conditionPrefix = string.Empty;
+                if (effect.useCondition)
+                    conditionPrefix = $"若 {BuildColoredToken(GetHealingConditionLabel(effect), targetHighlightColor)} ，则 ";
+
+                switch (effect.amountMode)
+                {
+                    case EnemySkill_SO.HealAmountMode.DamageDealt:
+                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 恢复 相当于 造成伤害 的生命");
+                        break;
+                    case EnemySkill_SO.HealAmountMode.StatusStacks:
+                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 根据 {BuildColoredToken(GetDamageTargetLabel(effect.statusStackSourceMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor)} 的 {BuildColoredToken(GetStatusLabel(effect), targetHighlightColor)} 层数，每层 恢复 {BuildColoredToken(Mathf.Max(1, effect.healAmount).ToString(), valueHighlightColor)} 点生命");
+                        break;
+                    default:
+                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 恢复 {BuildColoredToken(effect.healAmount.ToString(), valueHighlightColor)} 点生命");
+                        break;
+                }
+            }
+        }
+
+        if (effectSettings.powerModifiers != null)
+        {
+            for (int effectIndex = 0; effectIndex < effectSettings.powerModifiers.Length; effectIndex++)
+            {
+                EnemySkill_SO.ConditionalPowerModifierEntry effect = effectSettings.powerModifiers[effectIndex];
+                bool hasFlatBonus = effect.powerBonus != 0;
+                bool hasScalingBonus = effect.condition == EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold && effect.powerBonusPerStep != 0;
+                if (!hasFlatBonus && !hasScalingBonus)
+                    continue;
+
+                string triggerLabel = BuildColoredToken(GetPowerModifierTriggerLabel(effect.trigger), triggerHighlightColor);
+                if (effect.useCondition)
+                {
+                    string conditionLabel = BuildColoredToken(GetPowerModifierConditionLabel(effect), targetHighlightColor);
+                    effectLines.Add(effect.condition == EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold
+                        ? $"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 每达成一次条件，威力 {BuildColoredToken(FormatSignedInt(effect.powerBonusPerStep), valueHighlightColor)}"
+                        : $"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 威力 {BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor)}");
+                }
+                else
+                {
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 威力 {BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor)}");
+                }
+            }
+        }
     }
 
     private static string BuildSkillButtonLabel(EnemySkill_SO skill, bool isSelected, bool canSelect)

@@ -24,7 +24,7 @@ MonoBehaviour:
   tickEffectSortingOrderOffset: 0
   overrideTickEffectDuration: 0
   tickEffectDuration: 0.5
-  behaviorType: 10
+  behaviorType: 8
   powerPerStack: 1
   linkedStatusData: {fileID: 0}
   onHitDecayMode: 0
