@@ -14,8 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: "\u9AD8\u901F\u65CB\u8F6C"
   description: "\u628A\u81EA\u5DF1\u65CB\u8F6C\u6210\u4E00\u4E2A\u7403\u51B2\u5411\u654C\u4EBA\u3002"
+  skillCategory: 0
+  energyCost: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
   minPower: 1
   maxPower: 2
   diceCount: 1
@@ -55,8 +61,11 @@ MonoBehaviour:
       useCondition: 1
       condition: 0
       targetStatusData: {fileID: 0}
+      targetSkillData: {fileID: 0}
       targetStatusType: 0
       requiredStatusStacks: 1
+      requiredSpeedValue: 0
+      requiredSpeedDifference: 1
       powerBonus: 1
       powerBonusPerStep: 1
     statusBurstEffects: []

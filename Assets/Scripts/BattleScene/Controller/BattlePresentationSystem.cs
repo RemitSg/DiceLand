@@ -208,7 +208,9 @@ public class BattlePresentationSystem : MonoBehaviour
         EnemySkill_SO.DicePresentationSettings allyClashFx,
         EnemySkill_SO.DicePresentationSettings enemyClashFx,
         EnemySkill_SO.DicePresentationSettings hitFx,
-        Action onImpact)
+        Action onImpact,
+        bool moveIntoPosition = true,
+        bool returnToOrigin = true)
     {
         if (ally == null || enemy == null)
             yield break;
@@ -226,7 +228,8 @@ public class BattlePresentationSystem : MonoBehaviour
         BattleFeedbackSystem.ClashDiceDisplayHandle allyDiceDisplay = feedbackSystem?.ShowClashDiceRange(ally, false, allyRange);
         BattleFeedbackSystem.ClashDiceDisplayHandle enemyDiceDisplay = feedbackSystem?.ShowClashDiceRange(enemy, true, enemyRange);
 
-        yield return MovePair(ally, plane.firstStart, allyTarget, enemy, plane.secondStart, enemyTarget, advanceDuration);
+        if (moveIntoPosition)
+            yield return MovePair(ally, plane.firstStart, allyTarget, enemy, plane.secondStart, enemyTarget, advanceDuration);
         int clashShotId = StartCloseupShot(ally, enemy, plane.midpoint + Vector3.up * impactHeightOffset, Mathf.Max(clashCameraPower, hitCameraPower));
         BeginCloseupRangePulse(clashCloseupLeadDuration + delayBeforeClashDiceReveal);
         if (clashShotId != 0 && clashCloseupLeadDuration > 0f)
@@ -271,7 +274,8 @@ public class BattlePresentationSystem : MonoBehaviour
                 onImpact);
         }
 
-        yield return MovePair(ally, ally.position, plane.firstStart, enemy, enemy.position, plane.secondStart, returnDuration);
+        if (returnToOrigin)
+            yield return MovePair(ally, ally.position, plane.firstStart, enemy, enemy.position, plane.secondStart, returnDuration);
         feedbackSystem?.HideClashDiceDisplay(allyDiceDisplay);
         feedbackSystem?.HideClashDiceDisplay(enemyDiceDisplay);
         yield return EndCloseupShot(clashShotId, hasWinner ? hitCloseupHoldDuration : clashCloseupHoldDuration);
@@ -286,7 +290,9 @@ public class BattlePresentationSystem : MonoBehaviour
         int attackPowerModifier,
         float hitCameraPower,
         EnemySkill_SO.DicePresentationSettings fx,
-        Action onImpact)
+        Action onImpact,
+        bool moveIntoPosition = true,
+        bool returnToOrigin = true)
     {
         if (attacker == null || defender == null)
             yield break;
@@ -305,7 +311,8 @@ public class BattlePresentationSystem : MonoBehaviour
         Vector3 attackerCenter = BattleActorVisualUtility.GetActorCenterWorld(attacker);
         Vector3 defenderCenter = BattleActorVisualUtility.GetActorCenterWorld(defender);
 
-        yield return MovePair(attacker, plane.firstStart, attackerTarget, defender, plane.secondStart, defenderTarget, advanceDuration);
+        if (moveIntoPosition)
+            yield return MovePair(attacker, plane.firstStart, attackerTarget, defender, plane.secondStart, defenderTarget, advanceDuration);
 
         int hitShotId = StartCloseupShot(attacker, defender, Project(attackerCenter, plane.z) + Vector3.up * impactHeightOffset, hitCameraPower);
         diceDisplay = feedbackSystem?.ShowClashDiceRange(attacker, !attackerIsAlly, attackRange);
@@ -340,7 +347,8 @@ public class BattlePresentationSystem : MonoBehaviour
             yield return new WaitForSeconds(Mathf.Max(0.08f, hitEffectDuration * 0.35f));
         }
         yield return EndCloseupShot(hitShotId, hitCloseupHoldDuration);
-        yield return MovePair(attacker, attacker.position, plane.firstStart, defender, defender.position, plane.secondStart, returnDuration);
+        if (returnToOrigin)
+            yield return MovePair(attacker, attacker.position, plane.firstStart, defender, defender.position, plane.secondStart, returnDuration);
         feedbackSystem?.HideClashDiceDisplay(diceDisplay);
     }
 

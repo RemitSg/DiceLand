@@ -1098,6 +1098,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
     {
         switch (trigger)
         {
+            case EnemySkill_SO.DiceEffectTrigger.OnHit:
+                return "[ 命中时 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnMiss:
                 return "[ 未击中时 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnClash:

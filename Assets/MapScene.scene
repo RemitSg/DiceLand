@@ -615,9 +615,11 @@ MonoBehaviour:
   startingWeapons:
   - weaponData: {fileID: 11400000, guid: 4b3e2d650c5c8744181da8df8b3099f3, type: 2}
     amount: 1
+  - weaponData: {fileID: 11400000, guid: 642840a5e0c7c6c4d8a869204625c9d1, type: 2}
+    amount: 1
   startingBlueprints: []
   startingRelics:
-  - relicData: {fileID: 11400000, guid: e39d6e275a468134b9b6222e525bb8a3, type: 2}
+  - relicData: {fileID: 11400000, guid: 8251f8c81966de64bac464798dfca421, type: 2}
     amount: 1
   autoStartOnAwake: 1
   battleSceneName: SampleScene
@@ -970,7 +972,7 @@ MonoBehaviour:
   inventoryDetailRelicAdditionalDescriptionColor: {r: 0.9433962, g: 0.8469799, b: 0.60223085, a: 1}
   inventoryDetailActionStatusOffset: {x: 35, y: -460}
   inventoryDetailActionStatusSize: {x: 320, y: 28}
-  inventoryDetailActionButtonOffset: {x: 300, y: -450}
+  inventoryDetailActionButtonOffset: {x: 570, y: -450}
   inventoryDetailActionButtonSize: {x: 140, y: 42}
   inventoryDetailActionButtonSprite: {fileID: 0}
   inventoryDetailActionButtonColor: {r: 1, g: 0.84, b: 0.36, a: 1}

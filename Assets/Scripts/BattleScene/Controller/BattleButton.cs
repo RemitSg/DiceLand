@@ -752,7 +752,9 @@ public class BattleButton : MonoBehaviour
         EnemySkill_SO.DicePresentationSettings allyClashPresentationSettings,
         EnemySkill_SO.DicePresentationSettings enemyClashPresentationSettings,
         EnemySkill_SO.DicePresentationSettings hitPresentationSettings,
-        System.Action onImpactResolved)
+        System.Action onImpactResolved,
+        bool moveIntoPosition = true,
+        bool returnToOrigin = true)
     {
         if (battlePresentationSystem == null)
             yield break;
@@ -773,7 +775,9 @@ public class BattleButton : MonoBehaviour
             allyClashPresentationSettings,
             enemyClashPresentationSettings,
             hitPresentationSettings,
-            onImpactResolved);
+            onImpactResolved,
+            moveIntoPosition,
+            returnToOrigin);
     }
 
     private IEnumerator PlaySingleAttackPresentation(
@@ -785,7 +789,9 @@ public class BattleButton : MonoBehaviour
         int attackPowerModifier,
         float hitCameraPower,
         EnemySkill_SO.DicePresentationSettings dicePresentationSettings,
-        System.Action onImpactResolved)
+        System.Action onImpactResolved,
+        bool moveIntoPosition = true,
+        bool returnToOrigin = true)
     {
         if (battlePresentationSystem == null)
             yield break;
@@ -799,7 +805,9 @@ public class BattleButton : MonoBehaviour
             attackPowerModifier,
             hitCameraPower,
             dicePresentationSettings,
-            onImpactResolved);
+            onImpactResolved,
+            moveIntoPosition,
+            returnToOrigin);
     }
 
     private List<CombatAction> BuildCombatActions(BattleAllyController[] allies, BattleEnemyController[] enemies)
@@ -1239,6 +1247,8 @@ public class BattleButton : MonoBehaviour
                 postClashLog = $"-> 双方均为防御技能，本次拼点不会造成伤害（{allyPower} vs {enemyPower}）";
             }
 
+            bool moveIntoPosition = i == 0;
+            bool returnToOrigin = i == clashCount - 1;
             yield return PlayClashPresentation(
                 ally,
                 enemy,
@@ -1255,7 +1265,9 @@ public class BattleButton : MonoBehaviour
                 allyFx,
                 enemyFx,
                 hitFx,
-                resolveImpactAction);
+                resolveImpactAction,
+                moveIntoPosition,
+                returnToOrigin);
 
             BattleLog($"\u7b2c {i + 1} \u6bb5\u62fc\u70b9\uff1a{ally.GetDebugDisplayName()}({FormatPowerWithBonus(allyBasePower, allyBonusPower)}) vs {enemy.GetDebugDisplayName()}({FormatPowerWithBonus(enemyBasePower, enemyBonusPower)})");
             BattleLog(postClashLog);
@@ -1300,6 +1312,8 @@ public class BattleButton : MonoBehaviour
                 continue;
             }
 
+            bool moveIntoPosition = i == startIndex;
+            bool returnToOrigin = i == totalDiceCount - 1;
             ApplyAllyTriggeredEffects(ally, enemy, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
             yield return PlaySingleAttackPresentation(
                 ally.transform,
@@ -1310,7 +1324,9 @@ public class BattleButton : MonoBehaviour
                 allyBonusPower,
                 allyPower,
                 diceFx,
-                isDefenseSkill ? null : () => ApplyAllyHit(ally, enemy, allyPower, i, true, allyBonusPower));
+                isDefenseSkill ? null : () => ApplyAllyHit(ally, enemy, allyPower, i, true, allyBonusPower),
+                moveIntoPosition,
+                returnToOrigin);
 
             BattleLog($"\u7b2c {i + 1} \u6bb5\uff08\u53cb\u65b9\u4f59\u9ab0\u5355\u65b9\u9762\uff09\uff1a{ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(allyBasePower, allyBonusPower)}) -> {enemy.GetDebugDisplayName()}\uff0c\u5269\u4f59HP {enemy.CurrentHP}/{enemy.MaxHP}");
         }
@@ -1340,6 +1356,8 @@ public class BattleButton : MonoBehaviour
                 continue;
             }
 
+            bool moveIntoPosition = i == startIndex;
+            bool returnToOrigin = i == totalDiceCount - 1;
             ApplyEnemyTriggeredEffects(enemy, ally, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
             yield return PlaySingleAttackPresentation(
                 enemy.transform,
@@ -1350,7 +1368,9 @@ public class BattleButton : MonoBehaviour
                 enemyBonusPower,
                 enemyPower,
                 diceFx,
-                isDefenseSkill ? null : () => ApplyEnemyHit(enemy, ally, enemyPower, i, true, enemyBonusPower));
+                isDefenseSkill ? null : () => ApplyEnemyHit(enemy, ally, enemyPower, i, true, enemyBonusPower),
+                moveIntoPosition,
+                returnToOrigin);
 
             BattleLog($"\u7b2c {i + 1} \u6bb5\uff08\u654c\u65b9\u4f59\u9ab0\u5355\u65b9\u9762\uff09\uff1a{enemy.GetDebugDisplayName()}[{enemy.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(enemyBasePower, enemyBonusPower)}) -> {ally.GetDebugDisplayName()}\uff0c\u5269\u4f59HP {ally.CurrentHP}/{ally.MaxHP}");
         }
@@ -1394,6 +1414,8 @@ public class BattleButton : MonoBehaviour
                 EvaluatePowerModifier(ally.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks);
             int allyPower = ClampFinalPower(allyBasePower, allyBonusPower);
             EnemySkill_SO.DicePresentationSettings diceFx = ally.GetDicePresentationSettings(i);
+            bool moveIntoPosition = i == 0;
+            bool returnToOrigin = i == ally.DiceCount - 1;
             ApplyAllyTriggeredEffects(ally, enemy, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
             yield return PlaySingleAttackPresentation(
                 ally.transform,
@@ -1404,7 +1426,9 @@ public class BattleButton : MonoBehaviour
                 allyBonusPower,
                 allyPower,
                 diceFx,
-                () => ApplyAllyHit(ally, enemy, allyPower, i, true, allyBonusPower));
+                () => ApplyAllyHit(ally, enemy, allyPower, i, true, allyBonusPower),
+                moveIntoPosition,
+                returnToOrigin);
 
             BattleLog($"\u7b2c {i + 1} \u6bb5\uff1a{ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(allyBasePower, allyBonusPower)}) -> {enemy.GetDebugDisplayName()}\uff0c\u5269\u4f59HP {enemy.CurrentHP}/{enemy.MaxHP}");
         }
@@ -1439,6 +1463,8 @@ public class BattleButton : MonoBehaviour
                 EvaluatePowerModifier(enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, enemy.Speed, targetAlly.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, targetAlly.GetStatusStacks, targetAlly.GetStatusStacks);
             int enemyPower = ClampFinalPower(enemyBasePower, enemyBonusPower);
             EnemySkill_SO.DicePresentationSettings diceFx = enemy.GetDicePresentationSettings(i);
+            bool moveIntoPosition = i == 0;
+            bool returnToOrigin = i == enemy.DiceCount - 1;
             ApplyEnemyTriggeredEffects(enemy, targetAlly, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
             yield return PlaySingleAttackPresentation(
                 enemy.transform,
@@ -1449,7 +1475,9 @@ public class BattleButton : MonoBehaviour
                 enemyBonusPower,
                 enemyPower,
                 diceFx,
-                () => ApplyEnemyHit(enemy, targetAlly, enemyPower, i, true, enemyBonusPower));
+                () => ApplyEnemyHit(enemy, targetAlly, enemyPower, i, true, enemyBonusPower),
+                moveIntoPosition,
+                returnToOrigin);
 
             BattleLog($"\u7b2c {i + 1} \u6bb5\uff1a{enemy.GetDebugDisplayName()}[{enemy.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(enemyBasePower, enemyBonusPower)}) -> {targetAlly.GetDebugDisplayName()}\uff0c\u5269\u4f59HP {targetAlly.CurrentHP}/{targetAlly.MaxHP}");
         }

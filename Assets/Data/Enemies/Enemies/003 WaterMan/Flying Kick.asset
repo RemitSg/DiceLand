@@ -18,9 +18,13 @@ MonoBehaviour:
   energyCost: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
   minPower: 1
   maxPower: 3
-  diceCount: 2
+  diceCount: 1
   dicePowerRanges:
   - minPower: 1
     maxPower: 3

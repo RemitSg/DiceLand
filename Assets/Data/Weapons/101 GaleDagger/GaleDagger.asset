@@ -15,10 +15,13 @@ MonoBehaviour:
   id: 101
   weaponName: "\u63A0\u98CE\u77ED\u5315"
   description: "\u94C1\u5320\u8BF4\u8FD9\u628A\u5315\u9996\u5FEB\u7684\u98CE\u90FD\u80FD\u88AB\u5207\u5F00\u2014\u2014\n\u4F60\u89C9\u5F97\u4ED6\u7EAF\u5728\u80E1\u8BF4\u516B\u9053\u3002"
-  rarity: 0
+  rarity: 1
   weaponType: 4
   icon: {fileID: 21300000, guid: 84e433b6888287b438b8cc7eab2358da, type: 3}
   weaponPrefab: {fileID: 307950581403952243, guid: 7cbbe5d7aa81c8a4fa3dde0a719e86ec, type: 3}
   minPower: 1
   maxPower: 3
-  skillPool: []
+  skillPool:
+  - {fileID: 11400000, guid: 4f46e0545514a794e946ceb2f8f9c3cb, type: 2}
+  - {fileID: 11400000, guid: 52be59ce67e18e442928e076efe6df69, type: 2}
+  - {fileID: 11400000, guid: 0e56f4866db35f2428568776fad92119, type: 2}

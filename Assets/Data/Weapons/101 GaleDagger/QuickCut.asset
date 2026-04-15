@@ -22,20 +22,43 @@ MonoBehaviour:
   targetPriorityStatusData: {fileID: 0}
   targetPriorityStatusType: 0
   targetPriorityRequiredStacks: 1
-  minPower: 2
+  minPower: 1
   maxPower: 4
   diceCount: 1
   dicePowerRanges:
   - minPower: 2
     maxPower: 4
-  dicePresentationSettings: []
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 7336644444123945357, guid: f1b3b5aba6f697c438731d6a6adbeb97, type: 3}
+    hitEffectPrefab: {fileID: 4253044909704469718, guid: 5d8c4ebab98b0224d971ebf8162424d5, type: 3}
+    clashPositionOffset: {x: 1, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitPositionOffset: {x: 2, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 0}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
   diceEffectSettings:
   - damageEffects: []
     statusEffects: []
     powerModifiers:
     - effectName: 
       trigger: 0
-      useCondition: 0
+      useCondition: 1
       condition: 0
       targetStatusData: {fileID: 0}
       targetSkillData: {fileID: 0}

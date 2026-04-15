@@ -233,6 +233,15 @@ public class SpeedButton : MonoBehaviour
     // 当鼠标/手指抬起时停止
     private void OnMouseUp()
     {
+        if (buttonType == ButtonType.Ally && isInteractable && isPointerPressed && !longPressTriggered && !isDragging)
+        {
+            if (Vector3.Distance(Input.mousePosition, pressStartScreenPosition) < dragStartThresholdPixels)
+            {
+                AllyLongPressed?.Invoke(this);
+                TryShowAllySkillSelection();
+            }
+        }
+
         if (buttonType == ButtonType.Enemy && isPointerPressed && !longPressTriggered)
         {
             if (Vector3.Distance(Input.mousePosition, pressStartScreenPosition) < dragStartThresholdPixels)
