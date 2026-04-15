@@ -617,7 +617,7 @@ MonoBehaviour:
     amount: 1
   startingBlueprints: []
   startingRelics:
-  - relicData: {fileID: 11400000, guid: 46785947940ce524da1ac7301e4964a2, type: 2}
+  - relicData: {fileID: 11400000, guid: e39d6e275a468134b9b6222e525bb8a3, type: 2}
     amount: 1
   autoStartOnAwake: 1
   battleSceneName: SampleScene

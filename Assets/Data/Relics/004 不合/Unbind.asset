@@ -15,7 +15,7 @@ MonoBehaviour:
   relicId: unbind
   relicName: "\u4E0D\u5408"
   description: "\u82E5\u53CB\u65B9\u89D2\u8272\u672C\u56DE\u5408\u4F7F\u7528\u7684\u6280\u80FD\u4E0E\u4E0A\u56DE\u5408\u76F8\u540C\uFF0C\u5219\u5A01\u529B-1\uFF1B\u82E5\u4E0D\u540C\uFF0C\u5219\u5A01\u529B+1\u3002"
-  additionalDescription: "\u4F60\u5F88\u96BE\u8BF4\u662F\u4EC0\u4E48\u611F\u89C9\uFF0C\u4F46\u90A3\u5C31\u50CF\u4E00\u80A1\u7075\u9B42\u6DF1\u5904\u7684\u4E0D\u5408\u3002"
+  additionalDescription: "\u4F60\u5F88\u96BE\u8BF4\u662F\u4EC0\u4E48\u611F\u89C9\uFF0C\n\u4F46\u90A3\u5C31\u50CF\u4E00\u80A1\u7075\u9B42\u6DF1\u5904\u7684\u4E0D\u5408\u3002"
   rarity: 1
   icon: {fileID: 21300000, guid: 752f8df8675603e4eac909f4c5aab754, type: 3}
   builtInEffects:
@@ -28,6 +28,7 @@ MonoBehaviour:
     amount: 1
     conditionStatusData: {fileID: 0}
     requiredStatusStacks: 1
+    requiredSpeed: 1
     powerAmount: 0
     minPowerAmount: 0
     maxPowerAmount: 0

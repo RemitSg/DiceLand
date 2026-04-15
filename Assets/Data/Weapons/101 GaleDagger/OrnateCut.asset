@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: OrnateCut
+  m_EditorClassIdentifier: 
+  skillName: "\u82B1\u5207"
+  description: "\u7CBE\u51C6\u800C\u534E\u4E3D\u7684\u6740\u62DB"
+  skillCategory: 0
+  energyCost: 3
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 2
+  maxPower: 4
+  diceCount: 1
+  dicePowerRanges:
+  - minPower: 1
+    maxPower: 3
+  - minPower: 1
+    maxPower: 3
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 7336644444123945357, guid: f1b3b5aba6f697c438731d6a6adbeb97, type: 3}
+    hitEffectPrefab: {fileID: 0}
+    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 0}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers:
+    - effectName: 
+      trigger: 0
+      useCondition: 0
+      condition: 0
+      targetStatusData: {fileID: 0}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredStatusStacks: 1
+      requiredSpeedValue: 0
+      requiredSpeedDifference: 0
+      powerBonus: 0
+      powerBonusPerStep: 0
+    statusBurstEffects: []
+    healingEffects: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers:
+    - effectName: 
+      trigger: 0
+      useCondition: 0
+      condition: 0
+      targetStatusData: {fileID: 0}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredStatusStacks: 1
+      requiredSpeedValue: 0
+      requiredSpeedDifference: 0
+      powerBonus: 0
+      powerBonusPerStep: 0
+    statusBurstEffects: []
+    healingEffects: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []

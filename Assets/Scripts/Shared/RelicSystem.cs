@@ -144,6 +144,25 @@ public static class RelicSystem
 
                     context.merchantDiscountPercent += discountPercent;
                     break;
+
+                case Relic_SO.RelicBuiltInEffectType.ApplyStatusToPlayerWhenSpeedEquals:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnPlayerRoundStart || !context.sourceIsPlayer)
+                        continue;
+
+                    BattleAllyController roundStartAlly = context.source as BattleAllyController;
+                    if (roundStartAlly == null || effect.statusData == null)
+                        continue;
+
+                    if (context.currentSpeed != Mathf.Max(0, effect.requiredSpeed))
+                        continue;
+
+                    int stacksToApply = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+                    if (stacksToApply <= 0)
+                        continue;
+
+                    if (roundStartAlly.AddStatus(effect.statusData, effect.statusData.StatusId, effect.statusData.DisplayName, stacksToApply) && context.feedbackMessages != null)
+                        context.feedbackMessages.Add($"{relicData.DisplayName} 生效：{roundStartAlly.GetDebugDisplayName()} 获得 {stacksToApply} 层 {effect.statusData.DisplayName}。");
+                    break;
             }
         }
     }

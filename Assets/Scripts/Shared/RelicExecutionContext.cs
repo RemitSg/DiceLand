@@ -26,6 +26,7 @@ public sealed class RelicExecutionContext
     public int additionalMaxPowerBonus;
     public int incomingDamage;
     public int incomingDamageFlatModifier;
+    public int currentSpeed;
     public List<string> feedbackMessages;
 
     public static RelicExecutionContext CreateMove(RunState runState, RunGameManager runGameManager, BoardTileData tile, int moveCost, bool isDestinationUnvisited)
@@ -118,6 +119,22 @@ public sealed class RelicExecutionContext
             runState = runState,
             merchantOffer = merchantOffer,
             merchantBasePrice = Mathf.Max(0, merchantBasePrice),
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreatePlayerRoundStart(
+        RunState runState,
+        Object source,
+        int currentSpeed)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnPlayerRoundStart,
+            runState = runState,
+            sourceIsPlayer = true,
+            source = source,
+            currentSpeed = Mathf.Max(0, currentSpeed),
             feedbackMessages = new List<string>()
         };
     }

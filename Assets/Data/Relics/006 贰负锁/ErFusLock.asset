@@ -14,9 +14,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicId: 6
   relicName: "\u8D30\u8D1F\u9501"
-  description: "\u56DE\u5408\u5F00\u59CB\u65F6\uFF0C\u901F\u5EA6\u4E3A 1 \u7684\u53CB\u65B9\u89D2\u8272\u83B7\u5F97"
-  additionalDescription: 
+  description: "\u56DE\u5408\u5F00\u59CB\u65F6\uFF0C\u901F\u5EA6\u4E3A 1 \u7684\u53CB\u65B9\u89D2\u8272\u83B7\u5F97
+    1 \u5C42\u4E34\u65F6\u5F3A\u58EE"
+  additionalDescription: "\"\u5E1D\u4E43\u688F\u4E4B\u758F\u5C5E\u4E4B\u5C71\uFF0C\u684E\u5176\u53F3\u8DB3\uFF0C\u53CD\u7F1A\u4E24\u624B\u4E0E\u53D1\uFF0C\u7CFB\u4E4B\u5C71\u4E0A\u6728\u3002\""
   rarity: 0
-  icon: {fileID: 0}
-  builtInEffects: []
+  icon: {fileID: 21300000, guid: 9fefd78cb77d6f44f987de62f22722ba, type: 3}
+  builtInEffects:
+  - effectName: 
+    trigger: 5
+    effectType: 7
+    chance: 1
+    requireUnvisitedTile: 0
+    statusData: {fileID: 0}
+    amount: 0
+    conditionStatusData: {fileID: 0}
+    requiredStatusStacks: 0
+    requiredSpeed: 1
+    powerAmount: 1
+    minPowerAmount: 0
+    maxPowerAmount: 0
   customEffectHandler: {fileID: 0}

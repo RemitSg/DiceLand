@@ -293,13 +293,19 @@ public class BattleEnemyController : MonoBehaviour
         SelectedSkill = GetSelectedSkillForButton(button);
     }
 
-    public int TakeDamage(int amount, int powerModifierAmount = 0)
+    public int TakeDamage(int amount, int powerModifierAmount = 0, int originalReferenceDamage = -1)
     {
         LastPowerModifierAmount = powerModifierAmount;
-        if (IsDead || amount <= 0)
+        if (IsDead)
             return 0;
 
-        int originalDamage = amount;
+        if (amount <= 0)
+        {
+            LastDamageModifierRatioPercent = 0;
+            return 0;
+        }
+
+        int originalDamage = originalReferenceDamage > 0 ? originalReferenceDamage : amount;
         amount = ApplyIncomingDamageStatusModifiers(amount);
         amount = ApplyBaseDamageReduction(amount);
         if (amount <= 0)

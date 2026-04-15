@@ -71,7 +71,9 @@ public class EnemySkill_SO : ScriptableObject
         SelfStatusStacksGreaterOrEqual = 8,
         SelfStatusStacksLessThan = 9,
         SelfStatusStacksLessOrEqual = 10,
-        TargetSkillIsSpecific = 11
+        TargetSkillIsSpecific = 11,
+        SelfSpeedHigherThanValue = 12,
+        SelfSpeedLowerThanValue = 13
     }
 
     public enum SkillCategory
@@ -243,6 +245,13 @@ public class EnemySkill_SO : ScriptableObject
         [Tooltip("Required stack count when using TargetStatusStacksAtLeast, or the threshold size when using TargetStatusStacksPerThreshold.")]
         public int requiredStatusStacks;
 
+        [Tooltip("Required self speed value when using fixed-speed conditions.")]
+        public int requiredSpeedValue;
+
+        [Min(0)]
+        [Tooltip("Required speed difference when comparing against the target. Values are inclusive, and 0 falls back to 1 for backwards compatibility.")]
+        public int requiredSpeedDifference;
+
         [Tooltip("How much power should be added when the condition is met.")]
         public int powerBonus;
 
@@ -320,6 +329,13 @@ public class EnemySkill_SO : ScriptableObject
         [Min(1)]
         [Tooltip("Required stack count when using TargetStatusStacksAtLeast, or the threshold size when using TargetStatusStacksPerThreshold.")]
         public int requiredConditionStatusStacks;
+
+        [Tooltip("Required self speed value when using fixed-speed conditions.")]
+        public int requiredConditionSpeedValue;
+
+        [Min(0)]
+        [Tooltip("Required speed difference when comparing against the target. Values are inclusive, and 0 falls back to 1 for backwards compatibility.")]
+        public int requiredConditionSpeedDifference;
 
         [Tooltip("Whose status stacks should be sampled when using status-stack healing.")]
         public DamageTargetMode statusStackSourceMode;
@@ -679,6 +695,8 @@ public class EnemySkill_SO : ScriptableObject
                 ConditionalPowerModifierEntry entry = settings.powerModifiers[i];
                 if (entry.requiredStatusStacks < 1)
                     entry.requiredStatusStacks = 1;
+                if (entry.requiredSpeedDifference < 0)
+                    entry.requiredSpeedDifference = 0;
                 settings.powerModifiers[i] = entry;
             }
         }
@@ -705,6 +723,8 @@ public class EnemySkill_SO : ScriptableObject
                     entry.healAmount = 0;
                 if (entry.requiredConditionStatusStacks < 1)
                     entry.requiredConditionStatusStacks = 1;
+                if (entry.requiredConditionSpeedDifference < 0)
+                    entry.requiredConditionSpeedDifference = 0;
                 if (entry.randomTargetCount < 1)
                     entry.randomTargetCount = 1;
                 settings.healingEffects[i] = entry;

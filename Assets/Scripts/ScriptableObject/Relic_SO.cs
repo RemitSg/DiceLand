@@ -11,7 +11,8 @@ public class Relic_SO : ScriptableObject
         OnStatusApplied = 1,
         OnPlayerDicePrepared = 2,
         OnPlayerAboutToTakeSingleAttackDamage = 3,
-        OnMerchantPriceCalculated = 4
+        OnMerchantPriceCalculated = 4,
+        OnPlayerRoundStart = 5
     }
 
     public enum RelicBuiltInEffectType
@@ -22,7 +23,8 @@ public class Relic_SO : ScriptableObject
         ModifyPlayerDiceWhenSelfHasStatus = 3,
         ReduceIncomingSingleAttackDamageFlat = 4,
         ModifyPlayerDiceBasedOnLastRoundSkillMatch = 5,
-        ReduceMerchantPricePercent = 6
+        ReduceMerchantPricePercent = 6,
+        ApplyStatusToPlayerWhenSpeedEquals = 7
     }
 
     [Serializable]
@@ -37,6 +39,7 @@ public class Relic_SO : ScriptableObject
         [Min(0)] public int amount = 1;
         public BattleStatus_SO conditionStatusData;
         [Min(1)] public int requiredStatusStacks = 1;
+        public int requiredSpeed = 1;
         public int powerAmount;
         public int minPowerAmount;
         public int maxPowerAmount;

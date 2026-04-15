@@ -985,11 +985,15 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         switch (effect.condition)
         {
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanTarget:
-                return "\u81ea\u8eab\u901f\u5ea6 \u9ad8\u4e8e \u76ee\u6807\u5355\u4f4d\u901f\u5ea6";
+                return $"自身速度 高出 目标单位速度 {Mathf.Max(1, effect.requiredConditionSpeedDifference)} 点（含）";
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanTarget:
-                return "\u81ea\u8eab\u901f\u5ea6 \u4f4e\u4e8e \u76ee\u6807\u5355\u4f4d\u901f\u5ea6";
+                return $"自身速度 低于 目标单位速度 {Mathf.Max(1, effect.requiredConditionSpeedDifference)} 点（含）";
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedEqualToTarget:
                 return "\u81ea\u8eab\u901f\u5ea6 \u7b49\u4e8e \u76ee\u6807\u5355\u4f4d\u901f\u5ea6";
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanValue:
+                return $"自身速度 高于 {effect.requiredConditionSpeedValue}（含）";
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanValue:
+                return $"自身速度 低于 {effect.requiredConditionSpeedValue}（含）";
             case EnemySkill_SO.PowerModifierCondition.SelfHasStatus:
                 return $"自身拥有 {GetHealingConditionStatusLabel(effect)}";
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterThan:
@@ -1035,11 +1039,15 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         switch (effect.condition)
         {
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanTarget:
-                return "\u81ea\u8eab\u901f\u5ea6 \u9ad8\u4e8e \u76ee\u6807\u5355\u4f4d\u901f\u5ea6";
+                return $"自身速度 高出 目标单位速度 {Mathf.Max(1, effect.requiredSpeedDifference)} 点（含）";
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanTarget:
-                return "\u81ea\u8eab\u901f\u5ea6 \u4f4e\u4e8e \u76ee\u6807\u5355\u4f4d\u901f\u5ea6";
+                return $"自身速度 低于 目标单位速度 {Mathf.Max(1, effect.requiredSpeedDifference)} 点（含）";
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedEqualToTarget:
                 return "\u81ea\u8eab\u901f\u5ea6 \u7b49\u4e8e \u76ee\u6807\u5355\u4f4d\u901f\u5ea6";
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanValue:
+                return $"自身速度 高于 {effect.requiredSpeedValue}（含）";
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanValue:
+                return $"自身速度 低于 {effect.requiredSpeedValue}（含）";
             case EnemySkill_SO.PowerModifierCondition.SelfHasStatus:
                 return $"自身拥有 {GetPowerModifierStatusLabel(effect)}";
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterThan:

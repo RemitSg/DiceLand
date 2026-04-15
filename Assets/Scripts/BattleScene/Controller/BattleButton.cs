@@ -253,6 +253,7 @@ public class BattleButton : MonoBehaviour
                 continue;
 
             ally.GenerateRandomSpeed(speedMin, speedMax);
+            ApplyPlayerRoundStartRelics(ally);
             ally.SelectDefaultSkill(currentRound);
             BattleLog($"\u53cb\u65b9 {ally.GetDebugDisplayName()} \u901f\u5ea6={ally.Speed} HP={ally.CurrentHP}/{ally.MaxHP}");
         }
@@ -998,7 +999,7 @@ public class BattleButton : MonoBehaviour
                     return Mathf.Max(0, steps) * modifier.powerBonusPerStep;
                 }
             default:
-                return IsPowerModifierConditionMet(modifier.condition, selfSpeed, targetSpeed)
+                return IsPowerModifierConditionMet(modifier.condition, selfSpeed, targetSpeed, modifier.requiredSpeedValue, modifier.requiredSpeedDifference)
                     ? modifier.powerBonus
                     : 0;
         }
@@ -1018,16 +1019,20 @@ public class BattleButton : MonoBehaviour
         return 0;
     }
 
-    private static bool IsPowerModifierConditionMet(EnemySkill_SO.PowerModifierCondition condition, int selfSpeed, int targetSpeed)
+    private static bool IsPowerModifierConditionMet(EnemySkill_SO.PowerModifierCondition condition, int selfSpeed, int targetSpeed, int requiredSpeedValue = 0, int requiredSpeedDifference = 0)
     {
         switch (condition)
         {
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanTarget:
-                return selfSpeed > targetSpeed;
+                return selfSpeed - targetSpeed >= Mathf.Max(1, requiredSpeedDifference);
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanTarget:
-                return selfSpeed < targetSpeed;
+                return targetSpeed - selfSpeed >= Mathf.Max(1, requiredSpeedDifference);
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedEqualToTarget:
                 return selfSpeed == targetSpeed;
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanValue:
+                return selfSpeed >= requiredSpeedValue;
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanValue:
+                return selfSpeed <= requiredSpeedValue;
             default:
                 return false;
         }
@@ -1456,7 +1461,7 @@ public class BattleButton : MonoBehaviour
             return;
 
         bool targetWasAlive = !target.IsDead;
-        int dealtDamage = target.TakeDamage(baseDamage, powerModifierAmount);
+        int dealtDamage = target.TakeDamage(baseDamage, powerModifierAmount, baseDamage);
         if (dealtDamage <= 0)
         {
             battleFeedbackSystem?.ShowDamageResultPopup(
@@ -1491,7 +1496,7 @@ public class BattleButton : MonoBehaviour
         if (isSingleAttack)
             incomingDamage = ApplyPlayerRelicIncomingSingleAttackDamageModifiers(attacker, target, diceIndex, incomingDamage);
 
-        int dealtDamage = target.TakeDamage(incomingDamage, powerModifierAmount);
+        int dealtDamage = target.TakeDamage(incomingDamage, powerModifierAmount, baseDamage);
         if (dealtDamage <= 0)
         {
             battleFeedbackSystem?.ShowDamageResultPopup(
@@ -1700,7 +1705,7 @@ public class BattleButton : MonoBehaviour
                     continue;
 
                 int modifiedDamage = ApplyEnemyCalamityDamageModifiers(effect.damageAmount);
-                target.TakeDamage(modifiedDamage);
+                target.TakeDamage(modifiedDamage, 0, effect.damageAmount);
                 BattleLog($"\u8bcd\u6761\u89e6\u53d1\uff1a{attacker.GetDebugDisplayName()}[{BuildEffectLabel(effect, i)}] \u5bf9 {target.GetDebugDisplayName()} \u9020\u6210 {modifiedDamage} \u989d\u5916\u4f24\u5bb3\uff0c\u5269\u4f59HP {target.CurrentHP}/{target.MaxHP}");
             }
         }
@@ -2170,6 +2175,31 @@ public class BattleButton : MonoBehaviour
         return UnityEngine.Random.Range(minPower, maxPower + 1);
     }
 
+    private void ApplyPlayerRoundStartRelics(BattleAllyController ally)
+    {
+        if (ally == null)
+            return;
+
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return;
+
+        RelicExecutionContext context = RelicExecutionContext.CreatePlayerRoundStart(
+            null,
+            ally,
+            ally.Speed);
+        RelicSystem.Process(activeEncounter.relicInventory, context);
+
+        if (context.feedbackMessages == null || context.feedbackMessages.Count == 0)
+            return;
+
+        for (int i = 0; i < context.feedbackMessages.Count; i++)
+        {
+            if (!string.IsNullOrWhiteSpace(context.feedbackMessages[i]))
+                BattleLog(context.feedbackMessages[i]);
+        }
+    }
+
     private void ApplyRoundStartStatusEffectsGeneric(BattleAllyController[] allies, BattleEnemyController[] enemies)
     {
         if (allies != null)
@@ -2529,7 +2559,7 @@ public class BattleButton : MonoBehaviour
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
                 return ResolveConditionStatusStacks(currentTarget, effect) >= Mathf.Max(1, effect.requiredConditionStatusStacks);
             default:
-                return IsPowerModifierConditionMet(effect.condition, selfSpeed, targetSpeed);
+                return IsPowerModifierConditionMet(effect.condition, selfSpeed, targetSpeed, effect.requiredConditionSpeedValue, effect.requiredConditionSpeedDifference);
         }
     }
 
@@ -2547,7 +2577,7 @@ public class BattleButton : MonoBehaviour
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
                 return ResolveConditionStatusStacks(currentTarget, effect) >= Mathf.Max(1, effect.requiredConditionStatusStacks);
             default:
-                return IsPowerModifierConditionMet(effect.condition, selfSpeed, targetSpeed);
+                return IsPowerModifierConditionMet(effect.condition, selfSpeed, targetSpeed, effect.requiredConditionSpeedValue, effect.requiredConditionSpeedDifference);
         }
     }
 
@@ -2742,7 +2772,7 @@ public class BattleButton : MonoBehaviour
             return;
 
         int modifiedDamage = ApplyEnemyCalamityDamageModifiers(burstDamage);
-        target.TakeDamage(modifiedDamage);
+        target.TakeDamage(modifiedDamage, 0, burstDamage);
         if (effect.clearStacksAfterBurst)
             target.ClearStatus(effect.statusData, statusId, statusName);
 
