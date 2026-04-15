@@ -10,6 +10,7 @@ public class MapInventoryDetailView : MonoBehaviour
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI metaText;
     [SerializeField] private TextMeshProUGUI descriptionText;
+    [SerializeField] private TextMeshProUGUI relicAdditionalDescriptionText;
     [SerializeField] private TextMeshProUGUI actionStatusText;
     [SerializeField] private Button actionButton;
     [SerializeField] private Button closeButton;
@@ -20,12 +21,13 @@ public class MapInventoryDetailView : MonoBehaviour
             closeButton.onClick.AddListener(Hide);
     }
 
-    public void ConfigureRuntime(Image icon, TextMeshProUGUI title, TextMeshProUGUI meta, TextMeshProUGUI description, TextMeshProUGUI actionStatus, Button action, Button close)
+    public void ConfigureRuntime(Image icon, TextMeshProUGUI title, TextMeshProUGUI meta, TextMeshProUGUI description, TextMeshProUGUI relicAdditionalDescription, TextMeshProUGUI actionStatus, Button action, Button close)
     {
         iconImage = icon;
         titleText = title;
         metaText = meta;
         descriptionText = description;
+        relicAdditionalDescriptionText = relicAdditionalDescription;
         actionStatusText = actionStatus;
         actionButton = action;
 
@@ -43,6 +45,7 @@ public class MapInventoryDetailView : MonoBehaviour
         ApplyFont(titleText, keywordFont);
         ApplyFont(metaText, keywordFont);
         ApplyFont(descriptionText, bodyFont != null ? bodyFont : keywordFont);
+        ApplyFont(relicAdditionalDescriptionText, bodyFont != null ? bodyFont : keywordFont);
         ApplyFont(actionStatusText, bodyFont != null ? bodyFont : keywordFont);
 
         if (actionButton != null)
@@ -89,6 +92,7 @@ public class MapInventoryDetailView : MonoBehaviour
         if (descriptionText != null)
             descriptionText.text = string.IsNullOrWhiteSpace(item.description) ? "\u6682\u65e0\u63cf\u8ff0\u3002" : item.description;
 
+        SetRelicAdditionalDescription(string.Empty);
         ConfigureActionButton(string.Empty, false, null, string.Empty);
         gameObject.SetActive(true);
     }
@@ -117,6 +121,7 @@ public class MapInventoryDetailView : MonoBehaviour
         if (descriptionText != null)
             descriptionText.text = string.IsNullOrWhiteSpace(weapon.description) ? "\u6682\u65e0\u63cf\u8ff0\u3002" : weapon.description;
 
+        SetRelicAdditionalDescription(string.Empty);
         gameObject.SetActive(true);
     }
 
@@ -149,6 +154,7 @@ public class MapInventoryDetailView : MonoBehaviour
         if (descriptionText != null)
             descriptionText.text = BuildBlueprintDescription(blueprint);
 
+        SetRelicAdditionalDescription(string.Empty);
         ConfigureActionButton(string.Empty, false, null, string.Empty);
         gameObject.SetActive(true);
     }
@@ -177,6 +183,7 @@ public class MapInventoryDetailView : MonoBehaviour
         if (descriptionText != null)
             descriptionText.text = string.IsNullOrWhiteSpace(relic.description) ? "\u6682\u65e0\u63cf\u8ff0\u3002" : relic.description;
 
+        SetRelicAdditionalDescription(relic.additionalDescription);
         ConfigureActionButton(string.Empty, false, null, string.Empty);
         gameObject.SetActive(true);
     }
@@ -203,8 +210,19 @@ public class MapInventoryDetailView : MonoBehaviour
 
     public void Hide()
     {
+        SetRelicAdditionalDescription(string.Empty);
         ConfigureActionButton(string.Empty, false, null, string.Empty);
         gameObject.SetActive(false);
+    }
+
+    private void SetRelicAdditionalDescription(string value)
+    {
+        if (relicAdditionalDescriptionText == null)
+            return;
+
+        bool hasContent = !string.IsNullOrWhiteSpace(value);
+        relicAdditionalDescriptionText.gameObject.SetActive(hasContent);
+        relicAdditionalDescriptionText.text = hasContent ? value : string.Empty;
     }
 
     private static string BuildColoredLootRarityLabel(LootRarity rarity)

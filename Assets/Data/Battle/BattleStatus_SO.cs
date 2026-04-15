@@ -12,7 +12,11 @@ public class BattleStatus_SO : ScriptableObject
         DamageTakenBonusPercent = 4,
         ApplyLinkedStatusAtRoundStart = 5,
         SpeedPenaltyAtRoundStart = 6,
-        MinPowerPenalty = 7
+        MinPowerPenalty = 7,
+        PowerBonusFlat = 8,
+        PowerPenaltyFlat = 9,
+        DefensePowerBonusFlat = 10,
+        DefensePowerPenaltyFlat = 11
     }
 
     public enum StackDecayMode

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92a6c8410a56dcb4db5bca4c318c5c64, type: 3}
+  m_Name: ErFusLock
+  m_EditorClassIdentifier: 
+  relicId: 6
+  relicName: "\u8D30\u8D1F\u9501"
+  description: "\u56DE\u5408\u5F00\u59CB\u65F6\uFF0C\u901F\u5EA6\u4E3A 1 \u7684\u53CB\u65B9\u89D2\u8272\u83B7\u5F97"
+  additionalDescription: 
+  rarity: 0
+  icon: {fileID: 0}
+  builtInEffects: []
+  customEffectHandler: {fileID: 0}

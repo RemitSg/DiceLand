@@ -889,6 +889,7 @@ MonoBehaviour:
   titleText: {fileID: 0}
   metaText: {fileID: 0}
   descriptionText: {fileID: 0}
+  relicAdditionalDescriptionText: {fileID: 0}
   actionStatusText: {fileID: 0}
   actionButton: {fileID: 0}
   closeButton: {fileID: 0}
@@ -964,6 +965,9 @@ MonoBehaviour:
   inventoryDetailOffset: {x: 0, y: 0}
   inventoryDetailIconOffset: {x: 28, y: -28}
   inventoryDetailIconSize: {x: 112, y: 112}
+  inventoryDetailRelicAdditionalDescriptionOffset: {x: 162, y: -430}
+  inventoryDetailRelicAdditionalDescriptionSize: {x: 440, y: 58}
+  inventoryDetailRelicAdditionalDescriptionColor: {r: 0.9433962, g: 0.8469799, b: 0.60223085, a: 1}
   inventoryDetailActionStatusOffset: {x: 35, y: -460}
   inventoryDetailActionStatusSize: {x: 320, y: 28}
   inventoryDetailActionButtonOffset: {x: 300, y: -450}

@@ -209,11 +209,13 @@ public class BattleEnemyController : MonoBehaviour
 
     public int RollDice(int diceIndex = 0)
     {
-        if (IsDead || SelectedSkill == null)
+        if (IsDead)
             return 1;
 
-        EnemySkill_SO.DicePowerRange range = SelectedSkill.GetDicePowerRange(diceIndex);
-        return UnityEngine.Random.Range(range.minPower, range.maxPower + 1);
+        EnemySkill_SO.DicePowerRange range = GetDicePowerRange(diceIndex);
+        int minPower = Mathf.Max(1, range.minPower);
+        int maxPower = Mathf.Max(minPower, range.maxPower);
+        return UnityEngine.Random.Range(minPower, maxPower + 1);
     }
 
     public int RollCombatPower()
@@ -245,7 +247,8 @@ public class BattleEnemyController : MonoBehaviour
             range = SelectedSkill.GetDicePowerRange(diceIndex);
         }
 
-        return ApplyStatusDiceRangeModifiers(range);
+        bool isDefenseSkill = SelectedSkill != null && SelectedSkill.IsDefenseSkill;
+        return ApplyStatusDiceRangeModifiers(range, isDefenseSkill);
     }
 
     public string GetDebugDisplayName()
@@ -407,11 +410,18 @@ public class BattleEnemyController : MonoBehaviour
         return Mathf.Max(0, Mathf.FloorToInt(damage * reductionMultiplier));
     }
 
-    private EnemySkill_SO.DicePowerRange ApplyStatusDiceRangeModifiers(EnemySkill_SO.DicePowerRange baseRange)
+    private EnemySkill_SO.DicePowerRange ApplyStatusDiceRangeModifiers(EnemySkill_SO.DicePowerRange baseRange, bool isDefenseSkill)
     {
+        int flatPowerBonus = isDefenseSkill
+            ? ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType.DefensePowerBonusFlat)
+            : ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType.PowerBonusFlat);
+        int flatPowerPenalty = isDefenseSkill
+            ? ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType.DefensePowerPenaltyFlat)
+            : ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType.PowerPenaltyFlat);
+        int netPowerAdjustment = flatPowerBonus - flatPowerPenalty;
         int minPowerPenalty = ResolveStatusMinPowerPenalty();
-        int minPower = Mathf.Max(0, baseRange.minPower - minPowerPenalty);
-        int maxPower = Mathf.Max(minPower, baseRange.maxPower);
+        int minPower = Mathf.Max(1, baseRange.minPower + netPowerAdjustment - minPowerPenalty);
+        int maxPower = Mathf.Max(minPower, baseRange.maxPower + netPowerAdjustment);
         return new EnemySkill_SO.DicePowerRange
         {
             minPower = minPower,
@@ -439,6 +449,28 @@ public class BattleEnemyController : MonoBehaviour
         }
 
         return Mathf.Max(0, totalPenalty);
+    }
+
+    private int ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType behaviorType)
+    {
+        if (statusEntries.Count == 0)
+            return 0;
+
+        int totalAmount = 0;
+        for (int i = 0; i < statusEntries.Count; i++)
+        {
+            BattleStatusRuntimeEntry entry = statusEntries[i];
+            if (entry == null || entry.stacks <= 0 || entry.statusData == null)
+                continue;
+            if (IsStatusEffectSuppressed(entry))
+                continue;
+            if (entry.statusData.BehaviorType != behaviorType)
+                continue;
+
+            totalAmount += entry.stacks * Mathf.Max(0, entry.statusData.PowerPerStack);
+        }
+
+        return Mathf.Max(0, totalAmount);
     }
 
     public int Heal(int amount)

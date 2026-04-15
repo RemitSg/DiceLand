@@ -2154,7 +2154,7 @@ public class BattleButton : MonoBehaviour
 
     private static EnemySkill_SO.DicePowerRange ApplyPlayerRelicDiceRangeModifier(EnemySkill_SO.DicePowerRange baseRange, PlayerRelicDiceModifier modifier)
     {
-        int minPower = Mathf.Max(0, baseRange.minPower + modifier.minPowerBonus);
+        int minPower = Mathf.Max(1, baseRange.minPower + modifier.minPowerBonus);
         int maxPower = Mathf.Max(minPower, baseRange.maxPower + modifier.maxPowerBonus);
         return new EnemySkill_SO.DicePowerRange
         {
@@ -2165,7 +2165,7 @@ public class BattleButton : MonoBehaviour
 
     private static int RollDiceFromRange(EnemySkill_SO.DicePowerRange range)
     {
-        int minPower = Mathf.Max(0, range.minPower);
+        int minPower = Mathf.Max(1, range.minPower);
         int maxPower = Mathf.Max(minPower, range.maxPower);
         return UnityEngine.Random.Range(minPower, maxPower + 1);
     }

@@ -93,6 +93,9 @@ public class MapHUD : MonoBehaviour
     [SerializeField] private Vector2 inventoryDetailOffset = Vector2.zero;
     [SerializeField] private Vector2 inventoryDetailIconOffset = new Vector2(28f, -28f);
     [SerializeField] private Vector2 inventoryDetailIconSize = new Vector2(112f, 112f);
+    [SerializeField] private Vector2 inventoryDetailRelicAdditionalDescriptionOffset = new Vector2(162f, -156f);
+    [SerializeField] private Vector2 inventoryDetailRelicAdditionalDescriptionSize = new Vector2(440f, 58f);
+    [SerializeField] private Color inventoryDetailRelicAdditionalDescriptionColor = new Color(0.92f, 0.82f, 0.56f, 1f);
     [SerializeField] private Vector2 inventoryDetailActionStatusOffset = new Vector2(162f, -168f);
     [SerializeField] private Vector2 inventoryDetailActionStatusSize = new Vector2(320f, 28f);
     [SerializeField] private Vector2 inventoryDetailActionButtonOffset = new Vector2(162f, -198f);
@@ -385,12 +388,16 @@ public class MapHUD : MonoBehaviour
         TextMeshProUGUI description = CreateText(detailRoot, "Description", new Vector2(162f, -112f), new Vector2(inventoryDetailSize.x - 200f, inventoryDetailSize.y - 132f), bodyFontSize, bodyColor, string.Empty, bodyFont);
         description.enableWordWrapping = true;
         description.overflowMode = TextOverflowModes.Overflow;
+        TextMeshProUGUI relicAdditionalDescription = CreateText(detailRoot, "RelicAdditionalDescription", inventoryDetailRelicAdditionalDescriptionOffset, inventoryDetailRelicAdditionalDescriptionSize, bodyFontSize - 2, inventoryDetailRelicAdditionalDescriptionColor, string.Empty, bodyFont);
+        relicAdditionalDescription.enableWordWrapping = true;
+        relicAdditionalDescription.overflowMode = TextOverflowModes.Overflow;
+        relicAdditionalDescription.gameObject.SetActive(false);
         TextMeshProUGUI actionStatus = CreateText(detailRoot, "ActionStatus", inventoryDetailActionStatusOffset, inventoryDetailActionStatusSize, bodyFontSize - 2, accentColor, string.Empty, bodyFont);
         Button action = BuildInventoryActionButton(detailRoot, "ActionButton", inventoryDetailActionButtonOffset, inventoryDetailActionButtonSize, string.Empty, null);
 
         Button close = BuildSimpleButton(detailRoot, "CloseButton", new Vector2(inventoryDetailSize.x - 66f, -18f), new Vector2(48f, 48f), "X", HideInventoryDetail);
         runtimeInventoryDetailView = detailRoot.gameObject.AddComponent<MapInventoryDetailView>();
-        runtimeInventoryDetailView.ConfigureRuntime(icon, title, meta, description, actionStatus, action, close);
+        runtimeInventoryDetailView.ConfigureRuntime(icon, title, meta, description, relicAdditionalDescription, actionStatus, action, close);
         runtimeInventoryDetailView.ConfigureFonts(keywordFont, bodyFont);
     }
 
@@ -500,6 +507,15 @@ public class MapHUD : MonoBehaviour
             Transform actionStatus = runtimeInventoryDetailView.transform.Find("ActionStatus");
             if (actionStatus is RectTransform actionStatusRect)
                 ApplyRect(actionStatusRect, new Vector2(0f, 1f), inventoryDetailActionStatusOffset, inventoryDetailActionStatusSize);
+
+            Transform relicAdditionalDescription = runtimeInventoryDetailView.transform.Find("RelicAdditionalDescription");
+            if (relicAdditionalDescription is RectTransform relicAdditionalDescriptionRect)
+            {
+                ApplyRect(relicAdditionalDescriptionRect, new Vector2(0f, 1f), inventoryDetailRelicAdditionalDescriptionOffset, inventoryDetailRelicAdditionalDescriptionSize);
+                TMP_Text relicAdditionalDescriptionText = relicAdditionalDescriptionRect.GetComponent<TMP_Text>();
+                if (relicAdditionalDescriptionText != null)
+                    relicAdditionalDescriptionText.color = inventoryDetailRelicAdditionalDescriptionColor;
+            }
 
             Transform actionButton = runtimeInventoryDetailView.transform.Find("ActionButton");
             if (actionButton is RectTransform actionButtonRect)

@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: MemberCard
   m_EditorClassIdentifier: 
   relicId: 5
-  relicName: MemberCard
+  relicName: "\u4F1A\u5458\u5361"
   description: "\u5546\u5E97\u6240\u6709\u5546\u54C1\u6253 7 \u6298"
+  additionalDescription: "\u4E0D\u77E5\u9053\u662F\u8C01\u5F00\u59CB\u7684\u8FD9\u79CD\u6F6E\u6D41\uFF0C\u603B\u4E4B\u5230\u6700\u540E\u5404\u79CD\u5546\u5E97\u90FD\u5F00\u59CB\u529E\u4F1A\u5458\u5361\uFF0C\u5305\u62EC\u8FD9\u91CC"
   rarity: 1
   icon: {fileID: 21300000, guid: 293580d2e6d53724396454c3c4c6b447, type: 3}
   builtInEffects:

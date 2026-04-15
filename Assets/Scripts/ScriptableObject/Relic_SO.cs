@@ -49,6 +49,9 @@ public class Relic_SO : ScriptableObject
     [TextArea(2, 5)]
     public string description;
 
+    [TextArea(2, 5)]
+    public string additionalDescription;
+
     [Header("Presentation")]
     public LootRarity rarity = LootRarity.Common;
     public Sprite icon;
