@@ -964,9 +964,9 @@ MonoBehaviour:
   inventoryDetailOffset: {x: 0, y: 0}
   inventoryDetailIconOffset: {x: 28, y: -28}
   inventoryDetailIconSize: {x: 112, y: 112}
-  inventoryDetailActionStatusOffset: {x: 162, y: -176}
+  inventoryDetailActionStatusOffset: {x: 35, y: -460}
   inventoryDetailActionStatusSize: {x: 320, y: 28}
-  inventoryDetailActionButtonOffset: {x: 162, y: -265}
+  inventoryDetailActionButtonOffset: {x: 300, y: -450}
   inventoryDetailActionButtonSize: {x: 140, y: 42}
   inventoryDetailActionButtonSprite: {fileID: 0}
   inventoryDetailActionButtonColor: {r: 1, g: 0.84, b: 0.36, a: 1}
