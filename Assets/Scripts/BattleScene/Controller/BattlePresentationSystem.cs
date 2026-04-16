@@ -352,6 +352,23 @@ public class BattlePresentationSystem : MonoBehaviour
         feedbackSystem?.HideClashDiceDisplay(diceDisplay);
     }
 
+    public IEnumerator ReturnActorsToPositions(
+        Transform first,
+        Vector3 firstTarget,
+        Transform second,
+        Vector3 secondTarget)
+    {
+        if (first == null || second == null)
+            yield break;
+
+        Vector3 currentFirst = first.position;
+        Vector3 currentSecond = second.position;
+        if ((currentFirst - firstTarget).sqrMagnitude <= 0.0001f && (currentSecond - secondTarget).sqrMagnitude <= 0.0001f)
+            yield break;
+
+        yield return MovePair(first, currentFirst, firstTarget, second, currentSecond, secondTarget, returnDuration);
+    }
+
     public void PlayStatusTickEffect(Transform target, BattleStatus_SO statusData)
     {
         if (target == null || statusData == null || statusData.TickEffectPrefab == null)

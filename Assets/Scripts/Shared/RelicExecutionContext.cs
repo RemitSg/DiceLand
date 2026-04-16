@@ -27,6 +27,8 @@ public sealed class RelicExecutionContext
     public int incomingDamage;
     public int incomingDamageFlatModifier;
     public int currentSpeed;
+    public int currentRound;
+    public BattleEnemyController[] enemies;
     public List<string> feedbackMessages;
 
     public static RelicExecutionContext CreateMove(RunState runState, RunGameManager runGameManager, BoardTileData tile, int moveCost, bool isDestinationUnvisited)
@@ -126,7 +128,8 @@ public sealed class RelicExecutionContext
     public static RelicExecutionContext CreatePlayerRoundStart(
         RunState runState,
         Object source,
-        int currentSpeed)
+        int currentSpeed,
+        int currentRound = 1)
     {
         return new RelicExecutionContext
         {
@@ -135,6 +138,22 @@ public sealed class RelicExecutionContext
             sourceIsPlayer = true,
             source = source,
             currentSpeed = Mathf.Max(0, currentSpeed),
+            currentRound = Mathf.Max(1, currentRound),
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateBattleRoundStart(
+        RunState runState,
+        int currentRound,
+        BattleEnemyController[] enemies)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnBattleRoundStart,
+            runState = runState,
+            currentRound = Mathf.Max(1, currentRound),
+            enemies = enemies,
             feedbackMessages = new List<string>()
         };
     }

@@ -203,6 +203,7 @@ public class BattleButton : MonoBehaviour
             return;
 
         ApplyEnemyBattleStartEffectsIfNeeded(allies, enemies);
+        ApplyBattleRoundStartRelics(enemies);
 
         foreach (BattleAllyController ally in allies)
         {
@@ -1097,6 +1098,9 @@ public class BattleButton : MonoBehaviour
         if (ally == null || enemy == null || ally.IsDead || enemy.IsDead)
             yield break;
 
+        Vector3 allyStartPosition = ally.transform.position;
+        Vector3 enemyStartPosition = enemy.transform.position;
+
         ally.MarkCurrentRoundSkillUsed();
         enemy.ActivateSelectedSkillForButton(enemyButton);
         TryApplyEnemySkillStageTransition(enemy, enemy.SelectedSkill);
@@ -1110,7 +1114,10 @@ public class BattleButton : MonoBehaviour
         for (int i = 0; i < clashCount; i++)
         {
             if (ally.IsDead || enemy.IsDead)
+            {
+                yield return ReturnClashActorsToOrigin(ally, allyStartPosition, enemy, enemyStartPosition);
                 yield break;
+            }
 
             bool allyDefenseSkill = IsDefenseSkill(ally.SelectedSkill);
             bool enemyDefenseSkill = IsDefenseSkill(enemy.SelectedSkill);
@@ -1290,6 +1297,8 @@ public class BattleButton : MonoBehaviour
             yield return ResolveRemainingEnemyClashDice(enemy, ally, clashCount, enemyDiceCount);
             yield return ResolveRemainingAllyClashDice(ally, enemy, clashCount, allyDiceCount);
         }
+
+        yield return ReturnClashActorsToOrigin(ally, allyStartPosition, enemy, enemyStartPosition);
     }
 
     private IEnumerator ResolveRemainingAllyClashDice(BattleAllyController ally, BattleEnemyController enemy, int startIndex, int totalDiceCount)
@@ -1499,6 +1508,22 @@ public class BattleButton : MonoBehaviour
 
             BattleLog($"\u7b2c {i + 1} \u6bb5\uff1a{enemy.GetDebugDisplayName()}[{enemy.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(enemyBasePower, enemyBonusPower)}) -> {targetAlly.GetDebugDisplayName()}\uff0c\u5269\u4f59HP {targetAlly.CurrentHP}/{targetAlly.MaxHP}");
         }
+    }
+
+    private IEnumerator ReturnClashActorsToOrigin(
+        BattleAllyController ally,
+        Vector3 allyStartPosition,
+        BattleEnemyController enemy,
+        Vector3 enemyStartPosition)
+    {
+        if (battlePresentationSystem == null || ally == null || enemy == null)
+            yield break;
+
+        yield return battlePresentationSystem.ReturnActorsToPositions(
+            ally.transform,
+            allyStartPosition,
+            enemy.transform,
+            enemyStartPosition);
     }
 
     private void ApplyAllyHit(BattleAllyController attacker, BattleEnemyController target, int baseDamage, int diceIndex, bool isSingleAttack = false, int powerModifierAmount = 0)
@@ -2233,7 +2258,30 @@ public class BattleButton : MonoBehaviour
         RelicExecutionContext context = RelicExecutionContext.CreatePlayerRoundStart(
             null,
             ally,
-            ally.Speed);
+            ally.Speed,
+            currentRound);
+        RelicSystem.Process(activeEncounter.relicInventory, context);
+
+        if (context.feedbackMessages == null || context.feedbackMessages.Count == 0)
+            return;
+
+        for (int i = 0; i < context.feedbackMessages.Count; i++)
+        {
+            if (!string.IsNullOrWhiteSpace(context.feedbackMessages[i]))
+                BattleLog(context.feedbackMessages[i]);
+        }
+    }
+
+    private void ApplyBattleRoundStartRelics(BattleEnemyController[] enemies)
+    {
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return;
+
+        RelicExecutionContext context = RelicExecutionContext.CreateBattleRoundStart(
+            null,
+            currentRound,
+            enemies);
         RelicSystem.Process(activeEncounter.relicInventory, context);
 
         if (context.feedbackMessages == null || context.feedbackMessages.Count == 0)

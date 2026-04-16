@@ -917,7 +917,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
         for (int i = 0; i < skill.diceCount; i++)
         {
-            EnemySkill_SO.DicePowerRange range = enemy.GetDicePowerRange(i);
+            EnemySkill_SO.DicePowerRange range = skill.GetDicePowerRange(i);
             string diceLabel = BuildDiceDisplayLabel(skill, i);
             string diceEffectLabel = BuildDiceEffectLabel(skill, i);
             string minLabel = BuildColoredToken(range.minPower.ToString(), dicePowerColor);

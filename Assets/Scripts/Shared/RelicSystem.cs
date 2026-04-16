@@ -153,15 +153,106 @@ public static class RelicSystem
                     if (roundStartAlly == null || effect.statusData == null)
                         continue;
 
-                    if (context.currentSpeed != Mathf.Max(0, effect.requiredSpeed))
+                    int speedMin = effect.requiredSpeedMin;
+                    int speedMax = effect.requiredSpeedMax;
+                    if (speedMax < speedMin || (speedMin == 1 && speedMax == 1 && effect.requiredSpeed != 1))
+                    {
+                        int fallbackSpeed = Mathf.Max(0, effect.requiredSpeed);
+                        speedMin = fallbackSpeed;
+                        speedMax = fallbackSpeed;
+                    }
+
+                    if (context.currentSpeed < Mathf.Max(0, speedMin) || context.currentSpeed > Mathf.Max(speedMin, speedMax))
                         continue;
 
                     int stacksToApply = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
                     if (stacksToApply <= 0)
                         continue;
 
-                    if (roundStartAlly.AddStatus(effect.statusData, effect.statusData.StatusId, effect.statusData.DisplayName, stacksToApply) && context.feedbackMessages != null)
-                        context.feedbackMessages.Add($"{relicData.DisplayName} 生效：{roundStartAlly.GetDebugDisplayName()} 获得 {stacksToApply} 层 {effect.statusData.DisplayName}。");
+                    bool applied;
+                    if (effect.statusApplyTiming == Relic_SO.RelicStatusApplyTiming.NextRoundStart)
+                    {
+                        int delayRounds = Mathf.Max(1, effect.applyAfterRoundStarts);
+                        applied = roundStartAlly.QueueStatusForRoundStart(
+                            effect.statusData,
+                            effect.statusData.StatusId,
+                            effect.statusData.DisplayName,
+                            stacksToApply,
+                            delayRounds,
+                            1);
+
+                        if (applied && context.feedbackMessages != null)
+                            context.feedbackMessages.Add($"{relicData.DisplayName} 生效：{roundStartAlly.GetDebugDisplayName()} 将于下 {delayRounds} 个回合开始时获得 {stacksToApply} 层 {effect.statusData.DisplayName}。");
+                    }
+                    else
+                    {
+                        applied = roundStartAlly.AddStatus(
+                            effect.statusData,
+                            effect.statusData.StatusId,
+                            effect.statusData.DisplayName,
+                            stacksToApply);
+
+                        if (applied && context.feedbackMessages != null)
+                            context.feedbackMessages.Add($"{relicData.DisplayName} 生效：{roundStartAlly.GetDebugDisplayName()} 获得 {stacksToApply} 层 {effect.statusData.DisplayName}。");
+                    }
+
+                    break;
+
+                case Relic_SO.RelicBuiltInEffectType.ApplyStatusToAllEnemiesOnSpecificRound:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnBattleRoundStart)
+                        continue;
+                    if (effect.statusData == null || context.enemies == null || context.enemies.Length == 0)
+                        continue;
+                    if (context.currentRound != Mathf.Max(1, effect.requiredRound))
+                        continue;
+
+                    int enemyStacksToApply = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+                    if (enemyStacksToApply <= 0)
+                        continue;
+
+                    int appliedEnemyCount = 0;
+                    for (int enemyIndex = 0; enemyIndex < context.enemies.Length; enemyIndex++)
+                    {
+                        BattleEnemyController enemy = context.enemies[enemyIndex];
+                        if (enemy == null || enemy.IsDead)
+                            continue;
+
+                        bool enemyApplied = false;
+                        if (effect.statusApplyTiming == Relic_SO.RelicStatusApplyTiming.NextRoundStart)
+                        {
+                            enemyApplied = enemy.QueueStatusForRoundStart(
+                                effect.statusData,
+                                effect.statusData.StatusId,
+                                effect.statusData.DisplayName,
+                                enemyStacksToApply,
+                                Mathf.Max(1, effect.applyAfterRoundStarts),
+                                1);
+                        }
+                        else
+                        {
+                            enemyApplied = enemy.AddStatus(
+                                effect.statusData,
+                                effect.statusData.StatusId,
+                                effect.statusData.DisplayName,
+                                enemyStacksToApply);
+                        }
+
+                        if (enemyApplied)
+                            appliedEnemyCount += 1;
+                    }
+
+                    if (appliedEnemyCount > 0 && context.feedbackMessages != null)
+                    {
+                        if (effect.statusApplyTiming == Relic_SO.RelicStatusApplyTiming.NextRoundStart)
+                        {
+                            int delayRounds = Mathf.Max(1, effect.applyAfterRoundStarts);
+                            context.feedbackMessages.Add($"{relicData.DisplayName} 生效：将在下 {delayRounds} 个回合开始时使 {appliedEnemyCount} 名敌人获得 {enemyStacksToApply} 层 {effect.statusData.DisplayName}。");
+                        }
+                        else
+                        {
+                            context.feedbackMessages.Add($"{relicData.DisplayName} 生效：使 {appliedEnemyCount} 名敌人获得 {enemyStacksToApply} 层 {effect.statusData.DisplayName}。");
+                        }
+                    }
                     break;
             }
         }
