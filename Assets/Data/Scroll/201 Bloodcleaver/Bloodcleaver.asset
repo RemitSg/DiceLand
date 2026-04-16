@@ -12,10 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19ce612b365eeb7448eee7f17b18ada8, type: 3}
   m_Name: Bloodcleaver
   m_EditorClassIdentifier: 
-  blueprintID: 0
-  blueprintName: 
-  description: 
-  rarity: 0
-  icon: {fileID: 0}
-  targetWeapon: {fileID: 0}
-  materialRequirements: []
+  blueprintID: 201
+  blueprintName: "\u8840\u65A7\u4E4B\u5377"
+  description: "\u8BB0\u8F7D\u7740\u5982\u4F55\u6253\u9020 \u3010\u6DEC\u8840\u88C2\u65A7\u3011
+    \u7684\u5377\u8F74"
+  rarity: 1
+  icon: {fileID: 21300000, guid: 0aa97b04df5cc8842a600b631f650034, type: 3}
+  targetWeapon: {fileID: 11400000, guid: 998e946055f570348bd95fb4c7137e5a, type: 2}
+  materialRequirements:
+  - lootItem: {fileID: 11400000, guid: 2a5a440bab2e42f499a7fabcd4b29ead, type: 2}
+    amount: 2
+  - lootItem: {fileID: 11400000, guid: 6e1752dc4702a1c44905a3559cb5f924, type: 2}
+    amount: 2
+  - lootItem: {fileID: 11400000, guid: ea9793b0c90ae0c4f9dbaf13a832f375, type: 2}
+    amount: 1

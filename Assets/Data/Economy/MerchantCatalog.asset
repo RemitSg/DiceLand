@@ -29,18 +29,18 @@ MonoBehaviour:
   lootEntries:
   - goodsId: 1
     lootItem: {fileID: 11400000, guid: ea9793b0c90ae0c4f9dbaf13a832f375, type: 2}
-    minPrice: 3
-    maxPrice: 4
+    minPrice: 5
+    maxPrice: 7
     weight: 5
   - goodsId: 2
     lootItem: {fileID: 11400000, guid: 1a247d2fcfd14c141bd79e8a82154b1f, type: 2}
-    minPrice: 6
-    maxPrice: 7
+    minPrice: 8
+    maxPrice: 12
     weight: 5
   - goodsId: 3
     lootItem: {fileID: 11400000, guid: 2a5a440bab2e42f499a7fabcd4b29ead, type: 2}
-    minPrice: 6
-    maxPrice: 7
+    minPrice: 8
+    maxPrice: 12
     weight: 5
   - goodsId: 4
     lootItem: {fileID: 11400000, guid: 6e1752dc4702a1c44905a3559cb5f924, type: 2}
@@ -49,18 +49,18 @@ MonoBehaviour:
     weight: 25
   - goodsId: 5
     lootItem: {fileID: 11400000, guid: 3e23e2fc8a9e85945adee34acbb745f4, type: 2}
-    minPrice: 6
-    maxPrice: 7
+    minPrice: 8
+    maxPrice: 12
     weight: 5
   - goodsId: 6
     lootItem: {fileID: 11400000, guid: 868997ae4239f844f9ea876d8ad4057e, type: 2}
-    minPrice: 3
-    maxPrice: 5
+    minPrice: 8
+    maxPrice: 12
     weight: 5
   - goodsId: 7
     lootItem: {fileID: 11400000, guid: f7d97cfbea961c84ebb552d194bd09f1, type: 2}
-    minPrice: 6
-    maxPrice: 7
+    minPrice: 8
+    maxPrice: 12
     weight: 5
   - goodsId: 8
     lootItem: {fileID: 11400000, guid: 4ae5af66b58deb64bb0942a685e955c5, type: 2}
@@ -114,15 +114,40 @@ MonoBehaviour:
     minPrice: 12
     maxPrice: 15
     weight: 5
+  - goodsId: 204
+    blueprintData: {fileID: 11400000, guid: bdeb33f1340563042ada84d8f5030c62, type: 2}
+    minPrice: 15
+    maxPrice: 20
+    weight: 5
+  - goodsId: 205
+    blueprintData: {fileID: 11400000, guid: 92acecee0fb6482439cf2377650ec517, type: 2}
+    minPrice: 15
+    maxPrice: 20
+    weight: 5
   relicEntries:
   - goodsId: 301
     relicData: {fileID: 11400000, guid: 1ef333859ab5e5849aa088cf48b6d705, type: 2}
-    minPrice: 7
-    maxPrice: 10
+    minPrice: 14
+    maxPrice: 20
     weight: 10
   - goodsId: 302
     relicData: {fileID: 11400000, guid: 46785947940ce524da1ac7301e4964a2, type: 2}
-    minPrice: 25
-    maxPrice: 35
-    weight: 4
+    minPrice: 35
+    maxPrice: 43
+    weight: 5
+  - goodsId: 302
+    relicData: {fileID: 11400000, guid: 8251f8c81966de64bac464798dfca421, type: 2}
+    minPrice: 16
+    maxPrice: 24
+    weight: 10
+  - goodsId: 302
+    relicData: {fileID: 11400000, guid: 1214a92f0246a25439d39ec661edda12, type: 2}
+    minPrice: 16
+    maxPrice: 24
+    weight: 10
+  - goodsId: 302
+    relicData: {fileID: 11400000, guid: 69044cffd7ccfe34c8287e1a5045253d, type: 2}
+    minPrice: 34
+    maxPrice: 42
+    weight: 10
   goodsEntries: []

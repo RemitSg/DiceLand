@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3abebfccfa94bb4f844818d7206d4dc, type: 3}
+  m_Name: "\u79FD\u8680\u5C16\u7259"
+  m_EditorClassIdentifier: 
+  lootID: 11
+  lootName: "\u79FD\u8680\u5C16\u7259"
+  description: "\u556E\u9F20\u7684\u7259\u9F7F\uFF0C\u5E38\u5E74\u5543\u54AC\u3001\u6495\u54AC\u8840\u8089\u7559\u4E0B\u4E86\u539F\u59CB\u75D5\u8FF9\u3002\u6709\u70B9\u6076\u5FC3\u3002"
+  attribute: {fileID: 11400000, guid: 7410f76d819bb1845b5681798475b133, type: 2}
+  rarity: 0
+  icon: {fileID: 21300000, guid: 4fe3049eb9157dc40a382600e42a7a05, type: 3}

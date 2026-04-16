@@ -12,11 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92a6c8410a56dcb4db5bca4c318c5c64, type: 3}
   m_Name: DrearmistPouch
   m_EditorClassIdentifier: 
-  relicId: 
-  relicName: 
-  description: 
-  additionalDescription: 
-  rarity: 0
-  icon: {fileID: 0}
-  builtInEffects: []
+  relicId: 8
+  relicName: "\u9893\u96FE\u7ED2\u56CA"
+  description: "\u7B2C\u4E00\u56DE\u5408\u5F00\u59CB\u65F6\uFF0C\u7ED9\u6240\u6709\u654C\u4EBA\u65BD\u52A0
+    2 \u5C42\u4E34\u65F6\u865A\u5F31"
+  additionalDescription: "\u4E00\u679A\u638C\u5FC3\u5927\u5C0F\u7684\u6D45\u7070\u7ED2\u5E03\u5C0F\u56CA\uFF0C\u5C01\u5370\u7740\u4E00\u79CD\u81F4\u4EBA\u75B2\u8F6F\u65E0\u529B\u7684\u6BD2\u96FE"
+  rarity: 1
+  icon: {fileID: 21300000, guid: 976dfcc3f91754b48b1858c56d50fb51, type: 3}
+  builtInEffects:
+  - effectName: 
+    trigger: 6
+    effectType: 8
+    chance: 1
+    requireUnvisitedTile: 0
+    statusData: {fileID: 11400000, guid: 118df0d370613694cbe82414757783e7, type: 2}
+    amount: 2
+    conditionStatusData: {fileID: 0}
+    requiredStatusStacks: 0
+    requiredSpeed: 0
+    requiredSpeedMin: 0
+    requiredSpeedMax: 0
+    statusApplyTiming: 0
+    applyAfterRoundStarts: 1
+    requiredRound: 1
+    powerAmount: 0
+    minPowerAmount: 0
+    maxPowerAmount: 0
   customEffectHandler: {fileID: 0}

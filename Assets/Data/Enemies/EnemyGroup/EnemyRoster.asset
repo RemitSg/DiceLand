@@ -21,6 +21,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 343e731a268f2f348b9251dee3029e8e, type: 2}
     - {fileID: 11400000, guid: 25672f3a16da3634b88dc1f15d48cec3, type: 2}
     - {fileID: 11400000, guid: 8fb7ce831cb95fc43a391b2e28650764, type: 2}
+    - {fileID: 11400000, guid: f7a60d3190ad3b6408d1f77d462d8e96, type: 2}
     eliteGroups:
     - {fileID: 11400000, guid: 651db9f9027b1e040b6e6bdbdcd2f664, type: 2}
     - {fileID: 11400000, guid: d29fa34182c025348bfac3395647be29, type: 2}

@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: BloodRat
+  m_EditorClassIdentifier: 
+  enemyID: 14
+  enemyName: "\u55DC\u8840\u556E\u9F20"
+  baseHP: 4
+  damageReductionPercent: 0
+  minSpeed: 3
+  maxSpeed: 6
+  baseSpeedButtonCount: 1
+  enemySprite: {fileID: 21300000, guid: bb3f1f7d5034102419c6e9f4e3626a1a, type: 3}
+  stageSprites: []
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.2
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules: []
+  battleStartGrantedAllySkills: []
+  onSpecificEnemyDeathStatusGains:
+  - watchedEnemyData: {fileID: 11400000}
+    statusData: {fileID: 11400000, guid: ee9ef48e819c49747b799796ea9b589c, type: 2}
+    stackAmount: 1
+    additionalRoundStartApplications: 0
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  enemyDescription: "\u80AE\u810F\u8E81\u52A8\u3001\u8D2A\u5A6A\u51F6\u623E\uFF0C\u5178\u578B\u7684\u556E\u9F7F\u52A8\u7269\uFF0C\u559C\u6B22\u6210\u5806\u51FA\u73B0"
+  passiveDescriptions: []
+  enemyVisualScale: 1
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: b21c21c6e56f02843b0a1193d64b47be, type: 2}
+  conditionalSkillRules: []
