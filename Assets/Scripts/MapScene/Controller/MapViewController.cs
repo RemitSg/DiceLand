@@ -47,8 +47,14 @@ public class MapViewController : MonoBehaviour
     private bool dragging;
     private bool longPressTriggered;
     private Coroutine introRoutine;
+    private Func<bool> inputBlockedEvaluator;
 
     public event Action<BoardTileData> TileLongPressed;
+
+    public void SetInputBlockedEvaluator(Func<bool> evaluator)
+    {
+        inputBlockedEvaluator = evaluator;
+    }
 
     public void Initialize(Camera mapCamera, BoardManager board, float padding)
     {
@@ -96,6 +102,13 @@ public class MapViewController : MonoBehaviour
 
         if (introRoutine != null)
             return;
+
+        if (IsInputBlocked())
+        {
+            ResetPointerState();
+            ApplyCameraSmoothing();
+            return;
+        }
 
         if (Input.touchCount > 0)
         {
@@ -363,6 +376,11 @@ public class MapViewController : MonoBehaviour
         return pointerId >= 0
             ? EventSystem.current.IsPointerOverGameObject(pointerId)
             : EventSystem.current.IsPointerOverGameObject();
+    }
+
+    private bool IsInputBlocked()
+    {
+        return inputBlockedEvaluator != null && inputBlockedEvaluator.Invoke();
     }
 
     private IEnumerator PlaySpawnIntroRoutine(Vector3 focusWorldPosition)

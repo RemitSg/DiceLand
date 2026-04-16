@@ -182,6 +182,7 @@ public class RunGameManager : MonoBehaviour
 
         RefreshHUD("地图已生成，点击任意格子可查看详情。");
         mapViewController.Initialize(mapCamera, boardManager, cameraPadding);
+        mapViewController.SetInputBlockedEvaluator(IsMapViewInputBlocked);
         mapViewController.PlaySpawnIntro(boardManager.GridToWorld(boardManager.SpawnCoord));
     }
 
@@ -239,6 +240,7 @@ public class RunGameManager : MonoBehaviour
         }
 
         mapViewController.Initialize(mapCamera, boardManager, cameraPadding);
+        mapViewController.SetInputBlockedEvaluator(IsMapViewInputBlocked);
         RefreshHUD("已恢复地图进度。");
         TryPresentPendingCalamity();
         return true;
@@ -1908,6 +1910,20 @@ public class RunGameManager : MonoBehaviour
     {
         deferPendingCalamityUntilOverlayClosed = false;
         TryPresentPendingCalamity();
+    }
+
+    private bool IsMapViewInputBlocked()
+    {
+        if (mapEventOverlay != null && mapEventOverlay.IsVisible)
+            return true;
+        if (mapMerchantOverlay != null && mapMerchantOverlay.IsVisible)
+            return true;
+        if (mapCraftingOverlay != null && mapCraftingOverlay.IsVisible)
+            return true;
+        if (mapCalamityOverlay != null && mapCalamityOverlay.IsVisible)
+            return true;
+
+        return false;
     }
 
     private void TryPresentPendingCalamity()
