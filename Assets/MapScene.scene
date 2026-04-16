@@ -299,7 +299,7 @@ MonoBehaviour:
   panelBackgroundColor: {r: 0.08, g: 0.1, b: 0.14, a: 0.92}
   panelOffset: {x: 0, y: 0}
   offerListOffset: {x: 24, y: -78}
-  offerListViewportSize: {x: 296, y: 430}
+  offerListViewportSize: {x: 296, y: 463}
   offerButtonSize: {x: 280, y: 76}
   offerButtonSpacing: 12
   offerIconSize: {x: 52, y: 52}
