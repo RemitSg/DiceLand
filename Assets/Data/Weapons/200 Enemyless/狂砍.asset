@@ -26,7 +26,7 @@ MonoBehaviour:
   maxPower: 3
   diceCount: 2
   dicePowerRanges:
-  - minPower: 2
+  - minPower: 1
     maxPower: 3
   - minPower: 1
     maxPower: 2
