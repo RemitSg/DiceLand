@@ -48,6 +48,12 @@ public class RunGameManager : MonoBehaviour
         [Min(1)] public int amount = 1;
     }
 
+    private sealed class EventRandomLootDiscardPreview
+    {
+        public LootItem_SO lootItem;
+        public int amount;
+    }
+
     [Header("Config")]
     [SerializeField] private DifficultyConfig_SO difficultyConfig;
     [SerializeField] private EnemyRoster_SO enemyRoster;
@@ -108,6 +114,7 @@ public class RunGameManager : MonoBehaviour
     private BattleEncounterData pendingEventEncounterData;
     private BoardTileData currentEventExecutionTile;
     private string pendingMoveRelicStatusMessage;
+    private readonly Dictionary<string, EventRandomLootDiscardPreview> eventRandomLootDiscardPreviewCache = new Dictionary<string, EventRandomLootDiscardPreview>(StringComparer.Ordinal);
 
     private void Awake()
     {
@@ -1073,9 +1080,80 @@ public class RunGameManager : MonoBehaviour
             return false;
         }
 
-        mapEventOverlay.Show(tile, tile.assignedEvent, HandleEventOptionSelected);
+        eventRandomLootDiscardPreviewCache.Clear();
+        mapEventOverlay.Show(tile, tile.assignedEvent, HandleEventOptionSelected, BuildEventOptionPreview);
         RefreshHUD($"触发事件：{tile.assignedEvent.DisplayName}");
         return true;
+    }
+
+    private MapEventOverlay.EventOptionPreviewData BuildEventOptionPreview(BoardTileData tile, MapEvent_SO eventData, MapEventOptionData optionData)
+    {
+        MapEventOverlay.EventOptionPreviewData preview = new MapEventOverlay.EventOptionPreviewData();
+        if (optionData == null || runState == null)
+            return preview;
+
+        List<MapEventBuiltInEffectData> allEffects = BuildAllEventEffects(optionData);
+        List<string> detailLines = new List<string>();
+
+        for (int i = 0; i < allEffects.Count; i++)
+        {
+            MapEventBuiltInEffectData effectData = allEffects[i];
+            if (effectData == null)
+                continue;
+
+            switch (effectData.effectType)
+            {
+                case MapEventOptionBuiltInEffectType.LoseOwnedRandomLoot:
+                {
+                    EventRandomLootDiscardPreview discardPreview = GetOrCreateRandomLootDiscardPreview(optionData, i, effectData);
+                    if (discardPreview == null || discardPreview.lootItem == null || discardPreview.amount <= 0)
+                    {
+                        preview.isSelectable = false;
+                        preview.unavailableReason = "背包中没有可丢弃的战利品。";
+                        break;
+                    }
+
+                    detailLines.Add($"将随机丢弃：{discardPreview.lootItem.lootName} x{discardPreview.amount}");
+                    break;
+                }
+                case MapEventOptionBuiltInEffectType.LoseSpecificLoot:
+                {
+                    bool hasValidRequirement = false;
+                    bool requirementsSatisfied = true;
+                    if (effectData.lootRewards != null)
+                    {
+                        for (int rewardIndex = 0; rewardIndex < effectData.lootRewards.Count; rewardIndex++)
+                        {
+                            MapEventLootRewardEntry reward = effectData.lootRewards[rewardIndex];
+                            if (reward == null || reward.lootItem == null)
+                                continue;
+
+                            hasValidRequirement = true;
+                            int requiredAmount = GetFixedLootDiscardAmount(reward);
+                            detailLines.Add($"将失去：{reward.lootItem.lootName} x{requiredAmount}");
+                            if (runState.GetLootAmount(reward.lootItem) < requiredAmount)
+                                requirementsSatisfied = false;
+                        }
+                    }
+
+                    if (!hasValidRequirement)
+                    {
+                        preview.isSelectable = false;
+                        preview.unavailableReason = "该选项未配置可丢弃的战利品。";
+                    }
+                    else if (!requirementsSatisfied)
+                    {
+                        preview.isSelectable = false;
+                        preview.unavailableReason = "背包中缺少所需的指定战利品。";
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        preview.additionalDetail = detailLines.Count > 0 ? string.Join("\n", detailLines) : string.Empty;
+        return preview;
     }
 
     private bool HandleEventOptionSelected(BoardTileData tile, MapEvent_SO eventData, MapEventOptionData optionData, out string message)
@@ -1155,21 +1233,7 @@ public class RunGameManager : MonoBehaviour
     private bool ExecuteEventOptionBuiltInEffects(MapEventOptionData optionData, out string message)
     {
         List<string> effectMessages = new List<string>();
-        List<MapEventBuiltInEffectData> allEffects = new List<MapEventBuiltInEffectData>();
-
-        MapEventBuiltInEffectData primaryEffect = BuildPrimaryEventEffectData(optionData);
-        if (primaryEffect != null)
-            allEffects.Add(primaryEffect);
-
-        if (optionData.additionalBuiltInEffects != null)
-        {
-            for (int i = 0; i < optionData.additionalBuiltInEffects.Count; i++)
-            {
-                MapEventBuiltInEffectData effectData = optionData.additionalBuiltInEffects[i];
-                if (effectData != null)
-                    allEffects.Add(effectData);
-            }
-        }
+        List<MapEventBuiltInEffectData> allEffects = BuildAllEventEffects(optionData);
 
         int encounterEffectIndex = -1;
         for (int i = 0; i < allEffects.Count; i++)
@@ -1183,7 +1247,7 @@ public class RunGameManager : MonoBehaviour
 
         if (encounterEffectIndex >= 0)
         {
-            if (!ExecuteEventBuiltInEffect(allEffects[encounterEffectIndex], out string encounterMessage))
+            if (!ExecuteEventBuiltInEffect(optionData, encounterEffectIndex, allEffects[encounterEffectIndex], out string encounterMessage))
             {
                 message = encounterMessage;
                 return false;
@@ -1214,7 +1278,7 @@ public class RunGameManager : MonoBehaviour
                 continue;
             }
 
-            if (!ExecuteEventBuiltInEffect(effectData, out string effectMessage))
+            if (!ExecuteEventBuiltInEffect(optionData, i, effectData, out string effectMessage))
             {
                 message = effectMessage;
                 return false;
@@ -1238,6 +1302,86 @@ public class RunGameManager : MonoBehaviour
         return true;
     }
 
+    private List<MapEventBuiltInEffectData> BuildAllEventEffects(MapEventOptionData optionData)
+    {
+        List<MapEventBuiltInEffectData> allEffects = new List<MapEventBuiltInEffectData>();
+        MapEventBuiltInEffectData primaryEffect = BuildPrimaryEventEffectData(optionData);
+        if (primaryEffect != null)
+            allEffects.Add(primaryEffect);
+
+        if (optionData != null && optionData.additionalBuiltInEffects != null)
+        {
+            for (int i = 0; i < optionData.additionalBuiltInEffects.Count; i++)
+            {
+                MapEventBuiltInEffectData effectData = optionData.additionalBuiltInEffects[i];
+                if (effectData != null)
+                    allEffects.Add(effectData);
+            }
+        }
+
+        return allEffects;
+    }
+
+    private static int GetFixedLootDiscardAmount(MapEventLootRewardEntry reward)
+    {
+        if (reward == null)
+            return 0;
+
+        return Mathf.Max(1, reward.amountMin);
+    }
+
+    private static string BuildEventRandomLootDiscardPreviewKey(MapEventOptionData optionData, int effectIndex)
+    {
+        string optionId = optionData != null && !string.IsNullOrWhiteSpace(optionData.optionId) ? optionData.optionId : "Option";
+        return $"{optionId}::{effectIndex}";
+    }
+
+    private EventRandomLootDiscardPreview GetOrCreateRandomLootDiscardPreview(MapEventOptionData optionData, int effectIndex, MapEventBuiltInEffectData effectData)
+    {
+        string cacheKey = BuildEventRandomLootDiscardPreviewKey(optionData, effectIndex);
+        if (eventRandomLootDiscardPreviewCache.TryGetValue(cacheKey, out EventRandomLootDiscardPreview cachedPreview))
+        {
+            if (cachedPreview != null &&
+                cachedPreview.lootItem != null &&
+                runState.GetLootAmount(cachedPreview.lootItem) >= cachedPreview.amount)
+            {
+                return cachedPreview;
+            }
+
+            eventRandomLootDiscardPreviewCache.Remove(cacheKey);
+        }
+
+        if (runState == null || runState.lootInventory == null || effectData == null)
+            return null;
+
+        List<RunLootState> ownedLoot = new List<RunLootState>();
+        for (int i = 0; i < runState.lootInventory.Count; i++)
+        {
+            RunLootState lootState = runState.lootInventory[i];
+            if (lootState == null || lootState.lootItem == null || lootState.amount <= 0)
+                continue;
+
+            ownedLoot.Add(lootState);
+        }
+
+        if (ownedLoot.Count == 0)
+            return null;
+
+        RunLootState selectedLoot = ownedLoot[UnityEngine.Random.Range(0, ownedLoot.Count)];
+        int amountMin = Mathf.Max(1, effectData.randomOwnedLootAmountMin);
+        int amountMax = Mathf.Max(amountMin, effectData.randomOwnedLootAmountMax);
+        int amount = Mathf.Min(selectedLoot.amount, UnityEngine.Random.Range(amountMin, amountMax + 1));
+        amount = Mathf.Max(1, amount);
+
+        EventRandomLootDiscardPreview preview = new EventRandomLootDiscardPreview
+        {
+            lootItem = selectedLoot.lootItem,
+            amount = amount
+        };
+        eventRandomLootDiscardPreviewCache[cacheKey] = preview;
+        return preview;
+    }
+
     private MapEventBuiltInEffectData BuildPrimaryEventEffectData(MapEventOptionData optionData)
     {
         return new MapEventBuiltInEffectData
@@ -1246,6 +1390,8 @@ public class RunGameManager : MonoBehaviour
             effectAmount = optionData.effectAmount,
             randomMoneyMin = optionData.randomMoneyMin,
             randomMoneyMax = optionData.randomMoneyMax,
+            randomOwnedLootAmountMin = optionData.randomOwnedLootAmountMin,
+            randomOwnedLootAmountMax = optionData.randomOwnedLootAmountMax,
             lootRewards = optionData.lootRewards != null ? new List<MapEventLootRewardEntry>(optionData.lootRewards) : new List<MapEventLootRewardEntry>(),
             lootPickCountMin = optionData.lootPickCountMin,
             lootPickCountMax = optionData.lootPickCountMax,
@@ -1263,7 +1409,7 @@ public class RunGameManager : MonoBehaviour
         };
     }
 
-    private bool ExecuteEventBuiltInEffect(MapEventBuiltInEffectData effectData, out string message)
+    private bool ExecuteEventBuiltInEffect(MapEventOptionData optionData, int effectIndex, MapEventBuiltInEffectData effectData, out string message)
     {
         if (effectData == null)
         {
@@ -1393,12 +1539,87 @@ public class RunGameManager : MonoBehaviour
                 return TryExecuteRelicRewardEffect(effectData, out message);
             case MapEventOptionBuiltInEffectType.GainBlueprints:
                 return TryExecuteBlueprintRewardEffect(effectData, out message);
+            case MapEventOptionBuiltInEffectType.LoseOwnedRandomLoot:
+                return TryExecuteRandomLootDiscardEffect(optionData, effectIndex, effectData, out message);
+            case MapEventOptionBuiltInEffectType.LoseSpecificLoot:
+                return TryExecuteSpecificLootDiscardEffect(effectData, out message);
             case MapEventOptionBuiltInEffectType.StartEncounter:
                 return TryPrepareEventEncounter(effectData, out message);
             default:
                 message = "未知事件效果。";
                 return false;
         }
+    }
+
+    private bool TryExecuteRandomLootDiscardEffect(MapEventOptionData optionData, int effectIndex, MapEventBuiltInEffectData effectData, out string message)
+    {
+        EventRandomLootDiscardPreview preview = GetOrCreateRandomLootDiscardPreview(optionData, effectIndex, effectData);
+        if (preview == null || preview.lootItem == null || preview.amount <= 0)
+        {
+            message = "背包中没有可丢弃的战利品。";
+            return false;
+        }
+
+        if (!runState.TryConsumeLoot(preview.lootItem, preview.amount))
+        {
+            message = $"无法丢弃 {preview.lootItem.lootName} x{preview.amount}。";
+            return false;
+        }
+
+        message = $"失去战利品：{preview.lootItem.lootName} x{preview.amount}。";
+        eventRandomLootDiscardPreviewCache.Remove(BuildEventRandomLootDiscardPreviewKey(optionData, effectIndex));
+        return true;
+    }
+
+    private bool TryExecuteSpecificLootDiscardEffect(MapEventBuiltInEffectData effectData, out string message)
+    {
+        if (effectData == null || effectData.lootRewards == null || effectData.lootRewards.Count == 0)
+        {
+            message = "该事件效果未配置可丢弃的战利品。";
+            return false;
+        }
+
+        List<string> descriptions = new List<string>();
+        for (int i = 0; i < effectData.lootRewards.Count; i++)
+        {
+            MapEventLootRewardEntry reward = effectData.lootRewards[i];
+            if (reward == null || reward.lootItem == null)
+                continue;
+
+            int requiredAmount = GetFixedLootDiscardAmount(reward);
+            if (runState.GetLootAmount(reward.lootItem) < requiredAmount)
+            {
+                message = $"背包中缺少 {reward.lootItem.lootName} x{requiredAmount}。";
+                return false;
+            }
+        }
+
+        bool consumedAny = false;
+        for (int i = 0; i < effectData.lootRewards.Count; i++)
+        {
+            MapEventLootRewardEntry reward = effectData.lootRewards[i];
+            if (reward == null || reward.lootItem == null)
+                continue;
+
+            int requiredAmount = GetFixedLootDiscardAmount(reward);
+            if (!runState.TryConsumeLoot(reward.lootItem, requiredAmount))
+            {
+                message = $"无法丢弃 {reward.lootItem.lootName} x{requiredAmount}。";
+                return false;
+            }
+
+            consumedAny = true;
+            descriptions.Add($"{reward.lootItem.lootName} x{requiredAmount}");
+        }
+
+        if (!consumedAny)
+        {
+            message = "该事件效果未配置有效的战利品。";
+            return false;
+        }
+
+        message = $"失去战利品：{string.Join("，", descriptions)}。";
+        return true;
     }
 
     private bool TryPrepareEventEncounter(MapEventBuiltInEffectData effectData, out string message)
@@ -1868,6 +2089,7 @@ public class RunGameManager : MonoBehaviour
 
     private void HandleMapEventOverlayHidden()
     {
+        eventRandomLootDiscardPreviewCache.Clear();
         deferPendingCalamityUntilOverlayClosed = false;
         if (pendingEventEncounterData != null)
         {

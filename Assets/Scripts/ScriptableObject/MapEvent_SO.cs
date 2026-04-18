@@ -18,7 +18,9 @@ public enum MapEventOptionBuiltInEffectType
     GainRelics = 11,
     GainBlueprints = 12,
     GainRandomMoney = 13,
-    GainExperience = 14
+    GainExperience = 14,
+    LoseOwnedRandomLoot = 15,
+    LoseSpecificLoot = 16
 }
 
 public enum MapEventEncounterSelectionMode
@@ -54,6 +56,8 @@ public class MapEventBuiltInEffectData
     public int effectAmount;
     public int randomMoneyMin;
     public int randomMoneyMax;
+    [Min(1)] public int randomOwnedLootAmountMin = 1;
+    [Min(1)] public int randomOwnedLootAmountMax = 1;
     public List<MapEventLootRewardEntry> lootRewards = new List<MapEventLootRewardEntry>();
     [Min(1)] public int lootPickCountMin = 1;
     [Min(1)] public int lootPickCountMax = 1;
@@ -82,6 +86,8 @@ public class MapEventOptionData
     public int effectAmount;
     public int randomMoneyMin;
     public int randomMoneyMax;
+    [Min(1)] public int randomOwnedLootAmountMin = 1;
+    [Min(1)] public int randomOwnedLootAmountMax = 1;
     public List<MapEventLootRewardEntry> lootRewards = new List<MapEventLootRewardEntry>();
     [Min(1)] public int lootPickCountMin = 1;
     [Min(1)] public int lootPickCountMax = 1;
