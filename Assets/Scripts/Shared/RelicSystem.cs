@@ -338,6 +338,63 @@ public static class RelicSystem
                         }
                     }
                     break;
+
+                case Relic_SO.RelicBuiltInEffectType.ApplyStatusToRemainingAlliesOnPlayerDeath:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnPlayerDeath)
+                        continue;
+                    if (effect.statusData == null || context.allies == null || context.allies.Length == 0)
+                        continue;
+
+                    BattleAllyController defeatedAlly = context.target as BattleAllyController;
+                    int allyDeathStacksToApply = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+                    if (allyDeathStacksToApply <= 0)
+                        continue;
+
+                    int affectedAllyCount = 0;
+                    for (int allyIndex = 0; allyIndex < context.allies.Length; allyIndex++)
+                    {
+                        BattleAllyController allyTarget = context.allies[allyIndex];
+                        if (allyTarget == null || allyTarget.IsDead || allyTarget == defeatedAlly)
+                            continue;
+
+                        bool allyApplied = false;
+                        if (effect.statusApplyTiming == Relic_SO.RelicStatusApplyTiming.NextRoundStart)
+                        {
+                            allyApplied = allyTarget.QueueStatusForRoundStart(
+                                effect.statusData,
+                                effect.statusData.StatusId,
+                                effect.statusData.DisplayName,
+                                allyDeathStacksToApply,
+                                Mathf.Max(1, effect.applyAfterRoundStarts),
+                                1);
+                        }
+                        else
+                        {
+                            allyApplied = allyTarget.AddStatus(
+                                effect.statusData,
+                                effect.statusData.StatusId,
+                                effect.statusData.DisplayName,
+                                allyDeathStacksToApply);
+                        }
+
+                        if (allyApplied)
+                            affectedAllyCount += 1;
+                    }
+
+                    if (affectedAllyCount > 0 && context.feedbackMessages != null)
+                    {
+                        string defeatedName = defeatedAlly != null ? defeatedAlly.GetDebugDisplayName() : "友方角色";
+                        if (effect.statusApplyTiming == Relic_SO.RelicStatusApplyTiming.NextRoundStart)
+                        {
+                            int delayRounds = Mathf.Max(1, effect.applyAfterRoundStarts);
+                            context.feedbackMessages.Add($"{relicData.DisplayName} 生效：{defeatedName} 死亡后，其余 {affectedAllyCount} 名友方将于下 {delayRounds} 个回合开始时获得 {allyDeathStacksToApply} 层{effect.statusData.DisplayName}。");
+                        }
+                        else
+                        {
+                            context.feedbackMessages.Add($"{relicData.DisplayName} 生效：{defeatedName} 死亡后，其余 {affectedAllyCount} 名友方获得 {allyDeathStacksToApply} 层{effect.statusData.DisplayName}。");
+                        }
+                    }
+                    break;
             }
         }
     }

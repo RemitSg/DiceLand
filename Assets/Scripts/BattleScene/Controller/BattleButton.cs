@@ -1355,10 +1355,25 @@ public class BattleButton : MonoBehaviour
         if (enemy == null || ally == null)
             yield break;
 
+        Vector3 enemyStartPosition = enemy.transform.position;
+        Vector3 allyStartPosition = ally.transform.position;
+        bool needsReturnToOrigin = false;
+
         for (int i = startIndex; i < totalDiceCount; i++)
         {
             if (enemy.IsDead || ally.IsDead)
+            {
+                if (needsReturnToOrigin && battlePresentationSystem != null)
+                {
+                    yield return battlePresentationSystem.ReturnActorsToPositions(
+                        enemy.transform,
+                        enemyStartPosition,
+                        ally.transform,
+                        allyStartPosition);
+                }
+
                 yield break;
+            }
 
             EnemySkill_SO.DicePowerRange enemyRange = enemy.GetDicePowerRange(i);
             EnemySkill_SO.DicePowerRange enemyDisplayRange = enemy.SelectedSkill != null ? enemy.SelectedSkill.GetDicePowerRange(i) : enemyRange;
@@ -1378,7 +1393,9 @@ public class BattleButton : MonoBehaviour
             }
 
             bool moveIntoPosition = i == startIndex;
-            bool returnToOrigin = i == totalDiceCount - 1;
+            bool returnToOrigin = false;
+            if (moveIntoPosition)
+                needsReturnToOrigin = true;
             ApplyEnemyTriggeredEffects(enemy, ally, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
             yield return PlaySingleAttackPresentation(
                 enemy.transform,
@@ -1395,12 +1412,25 @@ public class BattleButton : MonoBehaviour
 
             BattleLog($"\u7b2c {i + 1} \u6bb5\uff08\u654c\u65b9\u4f59\u9ab0\u5355\u65b9\u9762\uff09\uff1a{enemy.GetDebugDisplayName()}[{enemy.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(enemyBasePower, enemyBonusPower)}) -> {ally.GetDebugDisplayName()}\uff0c\u5269\u4f59HP {ally.CurrentHP}/{ally.MaxHP}");
         }
+
+        if (needsReturnToOrigin && battlePresentationSystem != null)
+        {
+            yield return battlePresentationSystem.ReturnActorsToPositions(
+                enemy.transform,
+                enemyStartPosition,
+                ally.transform,
+                allyStartPosition);
+        }
     }
 
     private IEnumerator ResolveAllySingleAttackAction(BattleAllyController ally, BattleEnemyController enemy)
     {
         if (ally == null || enemy == null || ally.IsDead || enemy.IsDead)
             yield break;
+
+        Vector3 allyStartPosition = ally.transform.position;
+        Vector3 enemyStartPosition = enemy.transform.position;
+        bool needsReturnToOrigin = false;
 
         bool isDefenseSkill = IsDefenseSkill(ally.SelectedSkill);
         if (isDefenseSkill)
@@ -1424,7 +1454,18 @@ public class BattleButton : MonoBehaviour
         for (int i = 0; i < ally.DiceCount; i++)
         {
             if (ally.IsDead || enemy.IsDead)
+            {
+                if (needsReturnToOrigin && battlePresentationSystem != null)
+                {
+                    yield return battlePresentationSystem.ReturnActorsToPositions(
+                        ally.transform,
+                        allyStartPosition,
+                        enemy.transform,
+                        enemyStartPosition);
+                }
+
                 yield break;
+            }
 
             PlayerRelicDiceModifier allyRelicModifier = ResolvePlayerRelicDiceModifier(ally, enemy, i);
             EnemySkill_SO.DicePowerRange allyRange = ApplyPlayerRelicDiceRangeModifier(ally.GetDicePowerRange(i), allyRelicModifier);
@@ -1439,7 +1480,9 @@ public class BattleButton : MonoBehaviour
             int allyDisplayPowerModifier = allyStatusPowerModifier + allyBonusPower;
             EnemySkill_SO.DicePresentationSettings diceFx = ally.GetDicePresentationSettings(i);
             bool moveIntoPosition = i == 0;
-            bool returnToOrigin = i == ally.DiceCount - 1;
+            bool returnToOrigin = false;
+            if (moveIntoPosition)
+                needsReturnToOrigin = true;
             ApplyAllyTriggeredEffects(ally, enemy, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
             yield return PlaySingleAttackPresentation(
                 ally.transform,
@@ -1456,12 +1499,25 @@ public class BattleButton : MonoBehaviour
 
             BattleLog($"\u7b2c {i + 1} \u6bb5\uff1a{ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(allyBasePower, allyBonusPower)}) -> {enemy.GetDebugDisplayName()}\uff0c\u5269\u4f59HP {enemy.CurrentHP}/{enemy.MaxHP}");
         }
+
+        if (ally.DiceCount > 0 && battlePresentationSystem != null)
+        {
+            yield return battlePresentationSystem.ReturnActorsToPositions(
+                ally.transform,
+                allyStartPosition,
+                enemy.transform,
+                enemyStartPosition);
+        }
     }
 
     private IEnumerator ResolveEnemySingleAttackAction(BattleEnemyController enemy, BattleAllyController targetAlly, SpeedButton enemyButton)
     {
         if (enemy == null || targetAlly == null || enemy.IsDead || targetAlly.IsDead)
             yield break;
+
+        Vector3 enemyStartPosition = enemy.transform.position;
+        Vector3 allyStartPosition = targetAlly.transform.position;
+        bool needsReturnToOrigin = false;
 
         enemy.ActivateSelectedSkillForButton(enemyButton);
         TryApplyEnemySkillStageTransition(enemy, enemy.SelectedSkill);
@@ -1478,7 +1534,18 @@ public class BattleButton : MonoBehaviour
         for (int i = 0; i < enemy.DiceCount; i++)
         {
             if (enemy.IsDead || targetAlly.IsDead)
+            {
+                if (needsReturnToOrigin && battlePresentationSystem != null)
+                {
+                    yield return battlePresentationSystem.ReturnActorsToPositions(
+                        enemy.transform,
+                        enemyStartPosition,
+                        targetAlly.transform,
+                        allyStartPosition);
+                }
+
                 yield break;
+            }
 
             EnemySkill_SO.DicePowerRange enemyRange = enemy.GetDicePowerRange(i);
             EnemySkill_SO.DicePowerRange enemyDisplayRange = enemy.SelectedSkill != null ? enemy.SelectedSkill.GetDicePowerRange(i) : enemyRange;
@@ -1491,7 +1558,9 @@ public class BattleButton : MonoBehaviour
             int enemyDisplayPowerModifier = enemyStatusPowerModifier + enemyBonusPower;
             EnemySkill_SO.DicePresentationSettings diceFx = enemy.GetDicePresentationSettings(i);
             bool moveIntoPosition = i == 0;
-            bool returnToOrigin = i == enemy.DiceCount - 1;
+            bool returnToOrigin = false;
+            if (moveIntoPosition)
+                needsReturnToOrigin = true;
             ApplyEnemyTriggeredEffects(enemy, targetAlly, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
             yield return PlaySingleAttackPresentation(
                 enemy.transform,
@@ -1507,6 +1576,15 @@ public class BattleButton : MonoBehaviour
                 returnToOrigin);
 
             BattleLog($"\u7b2c {i + 1} \u6bb5\uff1a{enemy.GetDebugDisplayName()}[{enemy.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(enemyBasePower, enemyBonusPower)}) -> {targetAlly.GetDebugDisplayName()}\uff0c\u5269\u4f59HP {targetAlly.CurrentHP}/{targetAlly.MaxHP}");
+        }
+
+        if (needsReturnToOrigin && battlePresentationSystem != null)
+        {
+            yield return battlePresentationSystem.ReturnActorsToPositions(
+                enemy.transform,
+                enemyStartPosition,
+                targetAlly.transform,
+                allyStartPosition);
         }
     }
 
@@ -1563,6 +1641,7 @@ public class BattleButton : MonoBehaviour
         if (attacker == null || target == null || attacker.IsDead)
             return;
 
+        bool targetWasAlive = !target.IsDead;
         int incomingDamage = ApplyEnemyCalamityDamageModifiers(baseDamage);
         if (isSingleAttack)
             incomingDamage = ApplyPlayerRelicIncomingSingleAttackDamageModifiers(attacker, target, diceIndex, incomingDamage);
@@ -1585,10 +1664,34 @@ public class BattleButton : MonoBehaviour
             if (isSingleAttack)
                 ApplyEnemyStatusEffectsOnly(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack);
             ApplyEnemyStatusEffectsOnly(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnHit);
+            if (targetWasAlive && target.IsDead)
+                ApplyPlayerDeathRelics(target, activeRoundAllies);
             return;
         }
 
         ApplyEnemyTriggeredEffects(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnMiss, dealtDamage);
+    }
+
+    private void ApplyPlayerDeathRelics(BattleAllyController defeatedAlly, BattleAllyController[] allies)
+    {
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (defeatedAlly == null || activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return;
+
+        RelicExecutionContext context = RelicExecutionContext.CreatePlayerDeath(
+            null,
+            defeatedAlly,
+            allies);
+        RelicSystem.Process(activeEncounter.relicInventory, context);
+
+        if (context.feedbackMessages == null || context.feedbackMessages.Count == 0)
+            return;
+
+        for (int i = 0; i < context.feedbackMessages.Count; i++)
+        {
+            if (!string.IsNullOrWhiteSpace(context.feedbackMessages[i]))
+                BattleLog(context.feedbackMessages[i]);
+        }
     }
 
     private int ApplyPlayerRelicIncomingSingleAttackDamageModifiers(

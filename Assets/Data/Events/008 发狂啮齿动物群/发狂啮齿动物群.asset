@@ -26,6 +26,8 @@ MonoBehaviour:
     effectAmount: 0
     randomMoneyMin: 0
     randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
     lootRewards: []
     lootPickCountMin: 0
     lootPickCountMax: 0
@@ -47,12 +49,14 @@ MonoBehaviour:
   - optionId: 2
     optionLabel: "\u6254\u98DF\u7269\u5F15\u5F00"
     requiredMoney: 0
-    consequenceDescription: "\u906D\u9047\u4E00\u573A\u6218\u6597"
+    consequenceDescription: "\u4E22\u5F03\u80CC\u5305\u4E2D\u7684\u6218\u5229\u54C1"
     resultContent: "\u4F60\u673A\u667A\u7684\u6254\u51FA\u4E86\u80CC\u5305\u91CC\u7684\u98DF\u7269\uFF08\u6216\u8BB8\u5BF9\u4ED6\u4EEC\u6765\u8BF4\u662F\uFF09\uFF0C\u968F\u540E\u5B89\u5168\u7684\u79BB\u5F00\u4E86\u8FD9\u91CC"
-    builtInEffectType: 10
-    effectAmount: 0
+    builtInEffectType: 15
+    effectAmount: 1
     randomMoneyMin: 0
     randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
     lootRewards: []
     lootPickCountMin: 0
     lootPickCountMax: 0
@@ -81,6 +85,8 @@ MonoBehaviour:
     effectAmount: 20
     randomMoneyMin: 0
     randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
     lootRewards: []
     lootPickCountMin: 0
     lootPickCountMax: 0

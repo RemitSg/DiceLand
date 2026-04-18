@@ -12,20 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92a6c8410a56dcb4db5bca4c318c5c64, type: 3}
   m_Name: "\u75BE\u65F6\u7EBA\u68AD"
   m_EditorClassIdentifier: 
-  relicId: NewRelic
-  relicName: 
-  description: 
-  additionalDescription: 
+  relicId: 9
+  relicName: "\u75BE\u65F6\u7EBA\u68AD"
+  description: "\u6218\u6597\u7684\u524D 3 \u4E2A\u56DE\u5408\u5F00\u59CB\u65F6\uFF0C\u7ED9\u6240\u6709\u6211\u65B9\u5355\u4F4D\u65BD\u52A0
+    1 \u5C42\u6025\u901F"
+  additionalDescription: "\u201C\u5FEB\u4E9B\u7F16\u7EC7\u5427\uFF0C\u8D81\u8FD8\u6765\u5F97\u53CA\u3002\u201D\n\u201C\u5FEB\u4E9B\u7F16\u7EC7\u5427\uFF0C\u8D81\u5348\u591C\u7684\u949F\u58F0\u8FD8\u672A\u54CD\u8D77\u3002\u201D"
   rarity: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 4c8d317d8a4ff0b43abd3d077a628b12, type: 3}
   builtInEffects:
   - effectName: 
     trigger: 6
     effectType: 9
     chance: 1
     requireUnvisitedTile: 0
-    statusData: {fileID: 0}
-    amount: 0
+    statusData: {fileID: 11400000, guid: 7f108d87b0c1dac4880a4175cdcf1741, type: 2}
+    amount: 1
     conditionStatusData: {fileID: 0}
     requiredStatusStacks: 0
     requiredSpeed: 0

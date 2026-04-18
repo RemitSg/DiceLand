@@ -611,10 +611,21 @@ MonoBehaviour:
     startingExperience: 0
     startingMaxHP: 24
     startingCurrentHP: 24
-  startingLoot: []
+  - memberId: 2
+    characterData: {fileID: 11400000, guid: fce426096f554744093a4718f5aa0f45, type: 2}
+    equippedWeapon: {fileID: 11400000, guid: 66e425e32f62902418159abffd6dedc5, type: 2}
+    startingLevel: 1
+    startingExperience: 0
+    startingMaxHP: 1
+    startingCurrentHP: 1
+  startingLoot:
+  - lootItem: {fileID: 11400000, guid: 2a5a440bab2e42f499a7fabcd4b29ead, type: 2}
+    amount: 1
   startingWeapons: []
   startingBlueprints: []
-  startingRelics: []
+  startingRelics:
+  - relicData: {fileID: 11400000, guid: f97a61a3848b6b7438dd41cc3d57fbe6, type: 2}
+    amount: 1
   autoStartOnAwake: 1
   battleSceneName: SampleScene
   restSceneName: RestScene

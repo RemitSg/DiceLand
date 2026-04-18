@@ -160,4 +160,20 @@ public sealed class RelicExecutionContext
             feedbackMessages = new List<string>()
         };
     }
+
+    public static RelicExecutionContext CreatePlayerDeath(
+        RunState runState,
+        BattleAllyController defeatedAlly,
+        BattleAllyController[] allies)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnPlayerDeath,
+            runState = runState,
+            sourceIsPlayer = true,
+            target = defeatedAlly,
+            allies = allies,
+            feedbackMessages = new List<string>()
+        };
+    }
 }

@@ -19,7 +19,8 @@ public class Relic_SO : ScriptableObject
         OnPlayerAboutToTakeSingleAttackDamage = 3,
         OnMerchantPriceCalculated = 4,
         OnPlayerRoundStart = 5,
-        OnBattleRoundStart = 6
+        OnBattleRoundStart = 6,
+        OnPlayerDeath = 7
     }
 
     public enum RelicBuiltInEffectType
@@ -33,7 +34,8 @@ public class Relic_SO : ScriptableObject
         ReduceMerchantPricePercent = 6,
         ApplyStatusToPlayerWhenSpeedEquals = 7,
         ApplyStatusToAllEnemiesOnSpecificRound = 8,
-        ApplyStatusToAllAlliesOnSpecificRound = 9
+        ApplyStatusToAllAlliesOnSpecificRound = 9,
+        ApplyStatusToRemainingAlliesOnPlayerDeath = 10
     }
 
     [Serializable]
