@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92a6c8410a56dcb4db5bca4c318c5c64, type: 3}
+  m_Name: "\u75BE\u65F6\u7EBA\u68AD"
+  m_EditorClassIdentifier: 
+  relicId: NewRelic
+  relicName: 
+  description: 
+  additionalDescription: 
+  rarity: 0
+  icon: {fileID: 0}
+  builtInEffects:
+  - effectName: 
+    trigger: 6
+    effectType: 9
+    chance: 1
+    requireUnvisitedTile: 0
+    statusData: {fileID: 0}
+    amount: 0
+    conditionStatusData: {fileID: 0}
+    requiredStatusStacks: 0
+    requiredSpeed: 0
+    requiredSpeedMin: 0
+    requiredSpeedMax: 0
+    statusApplyTiming: 0
+    applyAfterRoundStarts: 1
+    requiredRound: 1
+    requiredRoundMin: 1
+    requiredRoundMax: 3
+    powerAmount: 0
+    minPowerAmount: 0
+    maxPowerAmount: 0
+  customEffectHandler: {fileID: 0}

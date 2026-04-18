@@ -28,6 +28,7 @@ public sealed class RelicExecutionContext
     public int incomingDamageFlatModifier;
     public int currentSpeed;
     public int currentRound;
+    public BattleAllyController[] allies;
     public BattleEnemyController[] enemies;
     public List<string> feedbackMessages;
 
@@ -146,6 +147,7 @@ public sealed class RelicExecutionContext
     public static RelicExecutionContext CreateBattleRoundStart(
         RunState runState,
         int currentRound,
+        BattleAllyController[] allies,
         BattleEnemyController[] enemies)
     {
         return new RelicExecutionContext
@@ -153,6 +155,7 @@ public sealed class RelicExecutionContext
             trigger = Relic_SO.RelicTrigger.OnBattleRoundStart,
             runState = runState,
             currentRound = Mathf.Max(1, currentRound),
+            allies = allies,
             enemies = enemies,
             feedbackMessages = new List<string>()
         };

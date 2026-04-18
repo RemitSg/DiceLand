@@ -32,7 +32,8 @@ public class Relic_SO : ScriptableObject
         ModifyPlayerDiceBasedOnLastRoundSkillMatch = 5,
         ReduceMerchantPricePercent = 6,
         ApplyStatusToPlayerWhenSpeedEquals = 7,
-        ApplyStatusToAllEnemiesOnSpecificRound = 8
+        ApplyStatusToAllEnemiesOnSpecificRound = 8,
+        ApplyStatusToAllAlliesOnSpecificRound = 9
     }
 
     [Serializable]
@@ -53,6 +54,8 @@ public class Relic_SO : ScriptableObject
         public RelicStatusApplyTiming statusApplyTiming = RelicStatusApplyTiming.Immediate;
         [Min(1)] public int applyAfterRoundStarts = 1;
         [Min(1)] public int requiredRound = 1;
+        [Min(1)] public int requiredRoundMin = 1;
+        [Min(1)] public int requiredRoundMax = 1;
         public int powerAmount;
         public int minPowerAmount;
         public int maxPowerAmount;
@@ -95,12 +98,24 @@ public class Relic_SO : ScriptableObject
             effect.requiredSpeedMin = Mathf.Max(0, effect.requiredSpeedMin);
             effect.requiredSpeedMax = Mathf.Max(0, effect.requiredSpeedMax);
             effect.applyAfterRoundStarts = Mathf.Max(1, effect.applyAfterRoundStarts);
+            effect.requiredRound = Mathf.Max(1, effect.requiredRound);
+            effect.requiredRoundMin = Mathf.Max(1, effect.requiredRoundMin);
+            effect.requiredRoundMax = Mathf.Max(1, effect.requiredRoundMax);
 
             if (effect.requiredSpeed != 1 && effect.requiredSpeedMin == 1 && effect.requiredSpeedMax == 1)
             {
                 effect.requiredSpeedMin = effect.requiredSpeed;
                 effect.requiredSpeedMax = effect.requiredSpeed;
             }
+
+            if (effect.requiredRound != 1 && effect.requiredRoundMin == 1 && effect.requiredRoundMax == 1)
+            {
+                effect.requiredRoundMin = effect.requiredRound;
+                effect.requiredRoundMax = effect.requiredRound;
+            }
+
+            if (effect.requiredRoundMax < effect.requiredRoundMin)
+                effect.requiredRoundMax = effect.requiredRoundMin;
         }
     }
 }

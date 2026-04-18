@@ -203,7 +203,7 @@ public class BattleButton : MonoBehaviour
             return;
 
         ApplyEnemyBattleStartEffectsIfNeeded(allies, enemies);
-        ApplyBattleRoundStartRelics(enemies);
+        ApplyBattleRoundStartRelics(allies, enemies);
 
         foreach (BattleAllyController ally in allies)
         {
@@ -2272,7 +2272,7 @@ public class BattleButton : MonoBehaviour
         }
     }
 
-    private void ApplyBattleRoundStartRelics(BattleEnemyController[] enemies)
+    private void ApplyBattleRoundStartRelics(BattleAllyController[] allies, BattleEnemyController[] enemies)
     {
         BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
         if (activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
@@ -2281,6 +2281,7 @@ public class BattleButton : MonoBehaviour
         RelicExecutionContext context = RelicExecutionContext.CreateBattleRoundStart(
             null,
             currentRound,
+            allies,
             enemies);
         RelicSystem.Process(activeEncounter.relicInventory, context);
 
