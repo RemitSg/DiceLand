@@ -15,6 +15,7 @@ public class DemoScenesGalleryManager : GalleryLevelSelectionManager
     [SerializeField] private string tutorialSceneName = string.Empty;
     [SerializeField] private string optionsSceneName = string.Empty;
     [SerializeField] private string contributorsSceneName = string.Empty;
+    [SerializeField] private GameObject settingsPanelPrefab;
 
     private readonly List<MenuEntry> runtimeEntries = new List<MenuEntry>();
 
@@ -42,9 +43,18 @@ public class DemoScenesGalleryManager : GalleryLevelSelectionManager
         }
     }
 
+    private bool HasContinueSnapshot()
+    {
+        if (string.IsNullOrWhiteSpace(continueGameSceneName))
+            return false;
+
+        return MapRunRuntime.TryGetSnapshot(continueGameSceneName, out _);
+    }
+
     public override void Start()
     {
         PrepareMainMenuItems();
+        EnsureOptionsSettingsPanel();
         base.Start();
     }
 
@@ -162,8 +172,15 @@ public class DemoScenesGalleryManager : GalleryLevelSelectionManager
         item.gameObject.name = entry.label;
         item.gameObject.SetActive(true);
 
+        bool continueAvailable = entry.action != MenuAction.ContinueGame || HasContinueSnapshot();
+
         if (item.text != null)
+        {
             item.text.text = entry.label;
+            item.text.color = continueAvailable
+                ? new Color(item.text.color.r, item.text.color.g, item.text.color.b, 1f)
+                : new Color(item.text.color.r, item.text.color.g, item.text.color.b, 0.45f);
+        }
 
         Text[] textComponents = item.GetComponentsInChildren<Text>(true);
         for (int i = 0; i < textComponents.Length; i++)
@@ -173,6 +190,9 @@ public class DemoScenesGalleryManager : GalleryLevelSelectionManager
                 continue;
 
             textComponent.text = entry.label;
+            textComponent.color = continueAvailable
+                ? new Color(textComponent.color.r, textComponent.color.g, textComponent.color.b, 1f)
+                : new Color(textComponent.color.r, textComponent.color.g, textComponent.color.b, 0.45f);
         }
 
         if (item is DemoGalleryMenuItem demoItem)
@@ -207,11 +227,11 @@ public class DemoScenesGalleryManager : GalleryLevelSelectionManager
             case MenuAction.NewGame:
                 return "Select Difficulty";
             case MenuAction.ContinueGame:
-                return "Continue Game";
+                return HasContinueSnapshot() ? "Continue Game" : "No Saved Game";
             case MenuAction.Tutorial:
                 return "Open Tutorial";
             case MenuAction.Options:
-                return "Open Options";
+                return "Settings";
             case MenuAction.Contributors:
                 return "View Contributors";
             case MenuAction.Exit:
@@ -228,10 +248,11 @@ public class DemoScenesGalleryManager : GalleryLevelSelectionManager
             case MenuAction.NewGame:
                 return "Choose";
             case MenuAction.ContinueGame:
-                return "Continue";
+                return HasContinueSnapshot() ? "Continue" : "Unavailable";
             case MenuAction.Tutorial:
-            case MenuAction.Options:
                 return "Open";
+            case MenuAction.Options:
+                return "Adjust";
             case MenuAction.Contributors:
                 return "View";
             case MenuAction.Exit:
@@ -248,16 +269,62 @@ public class DemoScenesGalleryManager : GalleryLevelSelectionManager
             case MenuAction.NewGame:
                 return;
             case MenuAction.ContinueGame:
+                if (!HasContinueSnapshot())
+                    return;
                 ContinueGame(entry.sceneName);
                 break;
             case MenuAction.Tutorial:
-            case MenuAction.Options:
             case MenuAction.Contributors:
                 OpenOptionalScene(entry.sceneName, entry.label);
                 break;
+            case MenuAction.Options:
+                return;
             case MenuAction.Exit:
                 ExitGame();
                 break;
+        }
+    }
+
+    private void EnsureOptionsSettingsPanel()
+    {
+        if (settingsPanelPrefab == null)
+            return;
+
+        for (int i = 0; i < runtimeEntries.Count && i < items.Length; i++)
+        {
+            if (runtimeEntries[i].action != MenuAction.Options)
+                continue;
+
+            if (!(items[i] is DemoGalleryMenuItem demoItem) || demoItem.contentToShow == null)
+                return;
+
+            MainMenuSettingsPanelController controller = demoItem.contentToShow.GetComponentInChildren<MainMenuSettingsPanelController>(true);
+            if (controller == null)
+            {
+                for (int childIndex = 0; childIndex < demoItem.contentToShow.transform.childCount; childIndex++)
+                    demoItem.contentToShow.transform.GetChild(childIndex).gameObject.SetActive(false);
+
+                GameObject instance = Instantiate(settingsPanelPrefab, demoItem.contentToShow.transform, false);
+                instance.name = "Settings Panel";
+
+                RectTransform instanceRect = instance.transform as RectTransform;
+                if (instanceRect != null)
+                {
+                    instanceRect.anchorMin = Vector2.zero;
+                    instanceRect.anchorMax = Vector2.one;
+                    instanceRect.offsetMin = Vector2.zero;
+                    instanceRect.offsetMax = Vector2.zero;
+                    instanceRect.anchoredPosition = Vector2.zero;
+                    instanceRect.localScale = Vector3.one;
+                }
+
+                controller = instance.GetComponent<MainMenuSettingsPanelController>();
+                if (controller == null)
+                    controller = instance.AddComponent<MainMenuSettingsPanelController>();
+            }
+
+            controller.Initialize(this);
+            return;
         }
     }
 
