@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 009ab5ebf2ca24c4485d6304a45b5e8f, type: 3}
   m_Name: NormalConfig
   m_EditorClassIdentifier: 
-  difficultyName: Normal
+  difficultyName: Medium
   boardSize: 9
   startingActionPoints: 6
   requiredKeys: 2

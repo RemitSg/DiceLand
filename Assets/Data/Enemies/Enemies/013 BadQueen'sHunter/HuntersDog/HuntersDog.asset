@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: HuntersDog
   m_EditorClassIdentifier: 
   enemyID: 1301
-  enemyName: "\u730E\u4EBA\u7684\u730E\u72AC"
+  enemyName: "\u730E\u4EBA\u7684\u5FE0\u72AC"
   baseHP: 25
   damageReductionPercent: 0
   minSpeed: 5

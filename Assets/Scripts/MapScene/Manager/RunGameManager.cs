@@ -157,7 +157,7 @@ public class RunGameManager : MonoBehaviour
         suppressPendingCalamityOnNextRestActionPointRestore = false;
         pendingEventEncounterData = null;
 
-        DifficultyConfig_SO config = difficultyConfig != null ? difficultyConfig : CreateFallbackDifficulty();
+        DifficultyConfig_SO config = ResolvePreferredDifficultyForNewRun();
         activeDifficultyConfig = config;
         runState = new RunState
         {
@@ -210,7 +210,7 @@ public class RunGameManager : MonoBehaviour
         if (runState == null)
             return false;
 
-        activeDifficultyConfig = difficultyConfig != null ? difficultyConfig : CreateFallbackDifficulty();
+        activeDifficultyConfig = ResolvePreferredDifficultyForRestore(runState != null ? runState.difficultyName : string.Empty);
 
         boardManager.LoadBoard(
             snapshot.boardSize,
@@ -774,6 +774,30 @@ public class RunGameManager : MonoBehaviour
             new DifficultyConfig_SO.TileWeightEntry { tileType = MapTileType.Rest, weight = 1 }
         };
         return fallback;
+    }
+
+    private DifficultyConfig_SO ResolvePreferredDifficultyForNewRun()
+    {
+        DifficultyConfig_SO selectedConfig = MainMenuRuntime.SelectedDifficultyConfig;
+        if (selectedConfig != null)
+            return selectedConfig;
+
+        return difficultyConfig != null ? difficultyConfig : CreateFallbackDifficulty();
+    }
+
+    private DifficultyConfig_SO ResolvePreferredDifficultyForRestore(string difficultyName)
+    {
+        DifficultyConfig_SO selectedConfig = MainMenuRuntime.SelectedDifficultyConfig;
+        if (selectedConfig != null)
+        {
+            if (string.IsNullOrWhiteSpace(difficultyName) ||
+                string.Equals(selectedConfig.difficultyName, difficultyName, StringComparison.OrdinalIgnoreCase))
+            {
+                return selectedConfig;
+            }
+        }
+
+        return difficultyConfig != null ? difficultyConfig : CreateFallbackDifficulty();
     }
 
     private int ResolveActionPointLimitForCurrentTier()
