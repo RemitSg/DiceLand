@@ -9,6 +9,18 @@ public class MapHUD : MonoBehaviour
 {
     private const int DefaultCanvasSortingOrder = 8000;
 
+    private sealed class PartyMemberHudView
+    {
+        public RectTransform root;
+        public Image backgroundImage;
+        public Image iconImage;
+        public TextMeshProUGUI nameText;
+        public Image hpFillImage;
+        public TextMeshProUGUI hpText;
+        public Image expFillImage;
+        public TextMeshProUGUI expText;
+    }
+
     private enum InventoryTab
     {
         Loot,
@@ -25,11 +37,51 @@ public class MapHUD : MonoBehaviour
     [SerializeField] private int titleFontSize = 26;
     [SerializeField] private int bodyFontSize = 22;
 
+    [Header("Party Fonts")]
+    [SerializeField] private TMP_FontAsset partyTitleFont;
+    [SerializeField] private TMP_FontAsset partyNameFont;
+    [SerializeField] private TMP_FontAsset partyStatFont;
+    [SerializeField] private int partyTitleFontSize = 26;
+    [SerializeField] private int partyNameFontSize = 22;
+    [SerializeField] private int partyStatFontSize = 17;
+
     [Header("Common Colors")]
     [SerializeField] private Color panelColor = new Color(0.1f, 0.12f, 0.18f, 0.92f);
     [SerializeField] private Color titleColor = Color.white;
     [SerializeField] private Color bodyColor = new Color(0.94f, 0.96f, 1f, 1f);
     [SerializeField] private Color accentColor = new Color(1f, 0.84f, 0.36f, 1f);
+
+    [Header("Party Panel")]
+    [SerializeField] private Vector2 partyPanelSize = new Vector2(420f, 420f);
+    [SerializeField] private Vector2 partyPanelOffset = new Vector2(22f, -256f);
+    [SerializeField] private Sprite partyPanelBackgroundSprite;
+    [SerializeField] private Color partyPanelColor = new Color(0.1f, 0.12f, 0.18f, 0.94f);
+    [SerializeField] private Vector2 partyPanelTitleOffset = new Vector2(18f, -18f);
+    [SerializeField] private Vector2 partyPanelTitleSize = new Vector2(360f, 36f);
+    [SerializeField] private Vector2 partyListOffset = new Vector2(16f, -60f);
+    [SerializeField] private Vector2 partyMemberCardSize = new Vector2(388f, 108f);
+    [SerializeField] private float partyMemberCardSpacing = 12f;
+    [SerializeField] private Sprite partyMemberCardSprite;
+    [SerializeField] private Color partyMemberCardColor = new Color(0.18f, 0.2f, 0.28f, 0.96f);
+    [SerializeField] private Vector2 partyMemberIconOffset = new Vector2(12f, -12f);
+    [SerializeField] private Vector2 partyMemberIconSize = new Vector2(84f, 84f);
+    [SerializeField] private Vector2 partyMemberNameOffset = new Vector2(108f, -12f);
+    [SerializeField] private Vector2 partyMemberNameSize = new Vector2(220f, 28f);
+    [SerializeField] private Vector2 partyMemberHpBarOffset = new Vector2(108f, -46f);
+    [SerializeField] private Vector2 partyMemberHpBarSize = new Vector2(204f, 18f);
+    [SerializeField] private Vector2 partyMemberHpTextOffset = new Vector2(320f, -44f);
+    [SerializeField] private Vector2 partyMemberHpTextSize = new Vector2(56f, 22f);
+    [SerializeField] private Vector2 partyMemberExpBarOffset = new Vector2(108f, -74f);
+    [SerializeField] private Vector2 partyMemberExpBarSize = new Vector2(204f, 14f);
+    [SerializeField] private Vector2 partyMemberExpTextOffset = new Vector2(108f, -90f);
+    [SerializeField] private Vector2 partyMemberExpTextSize = new Vector2(268f, 18f);
+    [SerializeField] private Color partyMemberNameColor = Color.white;
+    [SerializeField] private Color partyMemberHpBackgroundColor = new Color(0.2f, 0.12f, 0.14f, 0.95f);
+    [SerializeField] private Color partyMemberHpFillColor = new Color(0.92f, 0.28f, 0.32f, 1f);
+    [SerializeField] private Color partyMemberHpTextColor = new Color(1f, 0.95f, 0.95f, 1f);
+    [SerializeField] private Color partyMemberExpBackgroundColor = new Color(0.12f, 0.18f, 0.28f, 0.95f);
+    [SerializeField] private Color partyMemberExpFillColor = new Color(0.3f, 0.78f, 1f, 1f);
+    [SerializeField] private Color partyMemberExpTextColor = new Color(0.88f, 0.96f, 1f, 1f);
 
     [Header("Tile Detail")]
     [SerializeField] private Vector2 tilePanelSize = new Vector2(460f, 260f);
@@ -119,6 +171,12 @@ public class MapHUD : MonoBehaviour
     private TextMeshProUGUI tileAttributeLabelText;
     private TextMeshProUGUI tileAttributeValueText;
     private TextMeshProUGUI statusText;
+    private RectTransform partyPanelRect;
+    private Image partyPanelImage;
+    private TextMeshProUGUI partyPanelTitleText;
+    private TextMeshProUGUI partyEmptyText;
+    private RectTransform partyListRoot;
+    private readonly List<PartyMemberHudView> partyMemberViews = new List<PartyMemberHudView>();
     private Button inventoryButton;
     private RectTransform inventoryPanelRect;
     private Image inventoryPanelImage;
@@ -133,6 +191,7 @@ public class MapHUD : MonoBehaviour
     private InventoryTab currentInventoryTab = InventoryTab.Loot;
     private RunState currentRunState;
     private ActionPointSystem currentActionPointSystem;
+    private LevelTable_SO levelTable;
     private BoardTileData currentTile;
     private int currentMoveCost;
     private bool currentDetailed;
@@ -143,8 +202,10 @@ public class MapHUD : MonoBehaviour
     {
         EnsureUi();
         ApplyFonts();
+        ApplyPartyPanelLayout();
         ApplyTilePanelLayout();
         ApplyInventoryPanelLayout();
+        RefreshPartyPanel();
         RefreshInventoryView();
     }
 
@@ -171,6 +232,12 @@ public class MapHUD : MonoBehaviour
             attributeFont = attributeFontAsset;
 
         Initialize();
+    }
+
+    public void ConfigureLevelTable(LevelTable_SO configuredLevelTable)
+    {
+        levelTable = configuredLevelTable;
+        RefreshPartyPanel();
     }
 
     public void Refresh(RunState runState, ActionPointSystem actionPointSystem)
@@ -205,6 +272,7 @@ public class MapHUD : MonoBehaviour
         if (currentTile != null)
             ShowTile(currentTile, currentMoveCost, currentDetailed);
 
+        RefreshPartyPanel();
         RefreshInventoryView();
     }
 
@@ -294,6 +362,7 @@ public class MapHUD : MonoBehaviour
         rootRect.offsetMax = Vector2.zero;
 
         BuildTopLeftHud();
+        BuildPartyPanel();
         BuildTilePanel();
         BuildStatusText();
         BuildInventoryButton();
@@ -312,6 +381,17 @@ public class MapHUD : MonoBehaviour
         keysText = CreateText(panel, "Keys", new Vector2(18f, -94f), new Vector2(240f, 30f), bodyFontSize, bodyColor, string.Empty, bodyFont);
         calamityText = CreateText(panel, "Calamity", new Vector2(18f, -130f), new Vector2(240f, 30f), bodyFontSize, bodyColor, string.Empty, bodyFont);
         difficultyText = CreateText(panel, "Difficulty", new Vector2(248f, -18f), new Vector2(154f, 30f), bodyFontSize, accentColor, string.Empty, keywordFont);
+    }
+
+    private void BuildPartyPanel()
+    {
+        partyPanelRect = CreateRect("PartyPanel", rootRect, new Vector2(0f, 1f), partyPanelOffset, partyPanelSize);
+        partyPanelImage = partyPanelRect.gameObject.AddComponent<Image>();
+        partyPanelImage.type = Image.Type.Sliced;
+
+        partyPanelTitleText = CreateText(partyPanelRect, "PartyTitle", partyPanelTitleOffset, partyPanelTitleSize, partyTitleFontSize, titleColor, "当前队伍", GetPartyTitleFont());
+        partyEmptyText = CreateText(partyPanelRect, "PartyEmpty", partyListOffset, new Vector2(partyPanelSize.x - 32f, 28f), partyStatFontSize, bodyColor, "当前没有队伍成员。", GetPartyStatFont());
+        partyListRoot = CreateRect("PartyList", partyPanelRect, new Vector2(0f, 1f), partyListOffset, new Vector2(partyPanelSize.x - 32f, partyPanelSize.y - 76f));
     }
 
     private void BuildTilePanel()
@@ -401,15 +481,205 @@ public class MapHUD : MonoBehaviour
         runtimeInventoryDetailView.ConfigureFonts(keywordFont, bodyFont);
     }
 
+    private void RefreshPartyPanel()
+    {
+        if (partyPanelRect == null)
+            return;
+
+        IReadOnlyList<RunPartyMemberState> members = currentRunState != null && currentRunState.partyMembers != null
+            ? currentRunState.partyMembers
+            : null;
+        int memberCount = members != null ? members.Count : 0;
+
+        if (partyEmptyText != null)
+            partyEmptyText.gameObject.SetActive(memberCount <= 0);
+
+        for (int i = 0; i < memberCount; i++)
+        {
+            PartyMemberHudView view = GetOrCreatePartyMemberView(i);
+            RunPartyMemberState member = members[i];
+            if (view.root != null)
+                view.root.gameObject.SetActive(true);
+
+            ApplyPartyMemberView(view, member);
+        }
+
+        for (int i = memberCount; i < partyMemberViews.Count; i++)
+        {
+            PartyMemberHudView view = partyMemberViews[i];
+            if (view != null && view.root != null)
+                view.root.gameObject.SetActive(false);
+        }
+
+        ApplyPartyPanelLayout();
+    }
+
+    private Vector2 ResolvePartyPanelSize()
+    {
+        int memberCount = currentRunState != null && currentRunState.partyMembers != null ? currentRunState.partyMembers.Count : 0;
+        if (memberCount <= 0)
+            return partyPanelSize;
+
+        float requiredHeight = 76f + memberCount * partyMemberCardSize.y + Mathf.Max(0, memberCount - 1) * partyMemberCardSpacing + 16f;
+        return new Vector2(partyPanelSize.x, Mathf.Max(partyPanelSize.y, requiredHeight));
+    }
+
+    private PartyMemberHudView GetOrCreatePartyMemberView(int index)
+    {
+        while (partyMemberViews.Count <= index)
+            partyMemberViews.Add(CreatePartyMemberView(partyMemberViews.Count));
+
+        return partyMemberViews[index];
+    }
+
+    private PartyMemberHudView CreatePartyMemberView(int index)
+    {
+        PartyMemberHudView view = new PartyMemberHudView();
+        view.root = CreateRect($"PartyMember_{index}", partyListRoot, new Vector2(0f, 1f), Vector2.zero, partyMemberCardSize);
+        view.backgroundImage = view.root.gameObject.AddComponent<Image>();
+        view.backgroundImage.sprite = partyMemberCardSprite;
+        view.backgroundImage.type = partyMemberCardSprite != null ? Image.Type.Sliced : Image.Type.Simple;
+        view.backgroundImage.color = partyMemberCardSprite != null ? Color.white : partyMemberCardColor;
+
+        view.iconImage = CreateImage(view.root, "Icon", partyMemberIconOffset, partyMemberIconSize, GetFallbackSprite(), Color.white);
+        view.iconImage.preserveAspect = true;
+
+        view.nameText = CreateText(view.root, "Name", partyMemberNameOffset, partyMemberNameSize, partyNameFontSize, partyMemberNameColor, string.Empty, GetPartyNameFont());
+        view.hpFillImage = CreateStatusBar(view.root, "HpBar", partyMemberHpBarOffset, partyMemberHpBarSize, partyMemberHpBackgroundColor, partyMemberHpFillColor);
+        view.hpText = CreateText(view.root, "HpText", partyMemberHpTextOffset, partyMemberHpTextSize, partyStatFontSize, partyMemberHpTextColor, string.Empty, GetPartyStatFont());
+        view.expFillImage = CreateStatusBar(view.root, "ExpBar", partyMemberExpBarOffset, partyMemberExpBarSize, partyMemberExpBackgroundColor, partyMemberExpFillColor);
+        view.expText = CreateText(view.root, "ExpText", partyMemberExpTextOffset, partyMemberExpTextSize, partyStatFontSize, partyMemberExpTextColor, string.Empty, GetPartyStatFont());
+
+        ApplyPartyMemberCardLayout(view, index);
+        return view;
+    }
+
+    private void ApplyPartyMemberCardLayout(PartyMemberHudView view, int index)
+    {
+        if (view == null || view.root == null)
+            return;
+
+        ApplyRect(
+            view.root,
+            new Vector2(0f, 1f),
+            new Vector2(0f, -index * (partyMemberCardSize.y + partyMemberCardSpacing)),
+            partyMemberCardSize);
+
+        if (view.iconImage != null)
+            ApplyRect(view.iconImage.rectTransform, new Vector2(0f, 1f), partyMemberIconOffset, partyMemberIconSize);
+        if (view.nameText != null)
+            ApplyRect(view.nameText.rectTransform, new Vector2(0f, 1f), partyMemberNameOffset, partyMemberNameSize);
+        if (view.hpText != null)
+            ApplyRect(view.hpText.rectTransform, new Vector2(0f, 1f), partyMemberHpTextOffset, partyMemberHpTextSize);
+        if (view.expText != null)
+            ApplyRect(view.expText.rectTransform, new Vector2(0f, 1f), partyMemberExpTextOffset, partyMemberExpTextSize);
+
+        RectTransform hpBarRoot = view.hpFillImage != null ? view.hpFillImage.transform.parent as RectTransform : null;
+        if (hpBarRoot != null)
+            ApplyRect(hpBarRoot, new Vector2(0f, 1f), partyMemberHpBarOffset, partyMemberHpBarSize);
+
+        RectTransform expBarRoot = view.expFillImage != null ? view.expFillImage.transform.parent as RectTransform : null;
+        if (expBarRoot != null)
+            ApplyRect(expBarRoot, new Vector2(0f, 1f), partyMemberExpBarOffset, partyMemberExpBarSize);
+    }
+
+    private void ApplyPartyMemberView(PartyMemberHudView view, RunPartyMemberState member)
+    {
+        if (view == null)
+            return;
+
+        string memberName = member != null ? member.DisplayName : "未知成员";
+        int level = member != null ? Mathf.Max(1, member.level) : 1;
+        int maxHP = member != null ? Mathf.Max(1, member.maxHP) : 1;
+        int currentHP = member != null ? Mathf.Clamp(member.currentHP, 0, maxHP) : 0;
+        int currentExp = member != null ? Mathf.Max(0, member.experience) : 0;
+        int expToNext = levelTable != null ? Mathf.Max(0, levelTable.GetExperienceToNextLevel(level)) : 0;
+        float hpRatio = maxHP > 0 ? Mathf.Clamp01(currentHP / (float)maxHP) : 0f;
+        float expRatio = expToNext > 0 ? Mathf.Clamp01(currentExp / (float)expToNext) : 1f;
+
+        if (view.iconImage != null)
+        {
+            Sprite iconSprite = ResolvePartyMemberIcon(member);
+            view.iconImage.sprite = iconSprite != null ? iconSprite : GetFallbackSprite();
+            view.iconImage.color = Color.white;
+            view.iconImage.preserveAspect = true;
+        }
+
+        if (view.nameText != null)
+            view.nameText.text = $"{memberName}  Lv.{level}";
+        if (view.hpText != null)
+            view.hpText.text = $"{currentHP}/{maxHP}";
+        if (view.expText != null)
+            view.expText.text = expToNext > 0 ? $"EXP {currentExp}/{expToNext}" : "EXP MAX";
+
+        SetBarFill(view.hpFillImage, hpRatio);
+        SetBarFill(view.expFillImage, expRatio);
+    }
+
+    private Sprite ResolvePartyMemberIcon(RunPartyMemberState member)
+    {
+        if (member == null)
+            return GetFallbackSprite();
+
+        if (member.characterData != null)
+        {
+            if (member.characterData.icon != null)
+                return member.characterData.icon;
+            if (member.characterData.battleSprite != null)
+                return member.characterData.battleSprite;
+        }
+
+        return member.BattleSprite != null ? member.BattleSprite : GetFallbackSprite();
+    }
+
+    private Image CreateStatusBar(RectTransform parent, string name, Vector2 anchoredPosition, Vector2 size, Color backgroundColor, Color fillColor)
+    {
+        RectTransform root = CreateRect(name, parent, new Vector2(0f, 1f), anchoredPosition, size);
+        Image background = root.gameObject.AddComponent<Image>();
+        background.color = backgroundColor;
+
+        RectTransform fillRect = CreateRect("Fill", root, new Vector2(0f, 0.5f), Vector2.zero, size);
+        fillRect.anchorMin = new Vector2(0f, 0f);
+        fillRect.anchorMax = new Vector2(1f, 1f);
+        fillRect.offsetMin = Vector2.zero;
+        fillRect.offsetMax = Vector2.zero;
+
+        Image fillImage = fillRect.gameObject.AddComponent<Image>();
+        fillImage.color = fillColor;
+        fillImage.type = Image.Type.Simple;
+        return fillImage;
+    }
+
+    private static void SetBarFill(Image fillImage, float ratio)
+    {
+        if (fillImage == null)
+            return;
+
+        RectTransform rect = fillImage.rectTransform;
+        rect.anchorMin = new Vector2(0f, 0f);
+        rect.anchorMax = new Vector2(Mathf.Clamp01(ratio), 1f);
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+    }
+
     private void ApplyFonts()
     {
         RegisterFontAsset(keywordFont);
         RegisterFontAsset(bodyFont);
         RegisterFontAsset(attributeFont);
+        RegisterFontAsset(partyTitleFont);
+        RegisterFontAsset(partyNameFont);
+        RegisterFontAsset(partyStatFont);
 
         EnsureFontFallback(keywordFont, bodyFont);
         EnsureFontFallback(attributeFont, bodyFont);
         EnsureFontFallback(attributeFont, keywordFont);
+        EnsureFontFallback(partyTitleFont, keywordFont);
+        EnsureFontFallback(partyTitleFont, bodyFont);
+        EnsureFontFallback(partyNameFont, keywordFont);
+        EnsureFontFallback(partyNameFont, bodyFont);
+        EnsureFontFallback(partyStatFont, bodyFont);
+        EnsureFontFallback(partyStatFont, keywordFont);
 
         ApplyFont(actionPointText, keywordFont);
         ApplyFont(moneyText, keywordFont);
@@ -421,6 +691,19 @@ public class MapHUD : MonoBehaviour
         ApplyFont(tileAttributeLabelText, bodyFont != null ? bodyFont : keywordFont);
         ApplyFont(tileAttributeValueText, attributeFont != null ? attributeFont : (bodyFont != null ? bodyFont : keywordFont));
         ApplyFont(statusText, bodyFont != null ? bodyFont : keywordFont);
+        ApplyTextStyle(partyPanelTitleText, GetPartyTitleFont(), partyTitleFontSize);
+        ApplyTextStyle(partyEmptyText, GetPartyStatFont(), partyStatFontSize);
+
+        for (int i = 0; i < partyMemberViews.Count; i++)
+        {
+            PartyMemberHudView view = partyMemberViews[i];
+            if (view == null)
+                continue;
+
+            ApplyTextStyle(view.nameText, GetPartyNameFont(), partyNameFontSize);
+            ApplyTextStyle(view.hpText, GetPartyStatFont(), partyStatFontSize);
+            ApplyTextStyle(view.expText, GetPartyStatFont(), partyStatFontSize);
+        }
 
         ApplyFontToButton(lootTabButton, keywordFont);
         ApplyFontToButton(weaponTabButton, keywordFont);
@@ -452,6 +735,31 @@ public class MapHUD : MonoBehaviour
         ApplyRect(tileBodyText.rectTransform, new Vector2(0f, 1f), tileBodyOffset, tileBodySize);
         ApplyRect(tileAttributeLabelText.rectTransform, new Vector2(0f, 1f), tileAttributeLabelOffset, tileAttributeLabelSize);
         ApplyRect(tileAttributeValueText.rectTransform, new Vector2(0f, 1f), tileAttributeValueOffset, tileAttributeValueSize);
+    }
+
+    private void ApplyPartyPanelLayout()
+    {
+        if (partyPanelRect == null)
+            return;
+
+        Vector2 resolvedPanelSize = ResolvePartyPanelSize();
+        ApplyRect(partyPanelRect, new Vector2(0f, 1f), partyPanelOffset, resolvedPanelSize);
+        if (partyPanelImage != null)
+        {
+            partyPanelImage.sprite = partyPanelBackgroundSprite;
+            partyPanelImage.color = partyPanelBackgroundSprite != null ? Color.white : partyPanelColor;
+            partyPanelImage.type = Image.Type.Sliced;
+        }
+
+        if (partyPanelTitleText != null)
+            ApplyRect(partyPanelTitleText.rectTransform, new Vector2(0f, 1f), partyPanelTitleOffset, partyPanelTitleSize);
+        if (partyEmptyText != null)
+            ApplyRect(partyEmptyText.rectTransform, new Vector2(0f, 1f), partyListOffset, new Vector2(resolvedPanelSize.x - 32f, 28f));
+        if (partyListRoot != null)
+            ApplyRect(partyListRoot, new Vector2(0f, 1f), partyListOffset, new Vector2(resolvedPanelSize.x - 32f, resolvedPanelSize.y - 76f));
+
+        for (int i = 0; i < partyMemberViews.Count; i++)
+            ApplyPartyMemberCardLayout(partyMemberViews[i], i);
     }
 
     private void ApplyInventoryPanelLayout()
@@ -896,6 +1204,42 @@ public class MapHUD : MonoBehaviour
         text.font = font;
         text.UpdateMeshPadding();
         text.SetAllDirty();
+    }
+
+    private void ApplyTextStyle(TMP_Text text, TMP_FontAsset font, int fontSize)
+    {
+        if (text == null)
+            return;
+
+        text.fontSize = Mathf.Max(1, fontSize);
+        ApplyFont(text, font);
+    }
+
+    private TMP_FontAsset GetPartyTitleFont()
+    {
+        if (partyTitleFont != null)
+            return partyTitleFont;
+        if (keywordFont != null)
+            return keywordFont;
+        return bodyFont;
+    }
+
+    private TMP_FontAsset GetPartyNameFont()
+    {
+        if (partyNameFont != null)
+            return partyNameFont;
+        if (keywordFont != null)
+            return keywordFont;
+        return bodyFont;
+    }
+
+    private TMP_FontAsset GetPartyStatFont()
+    {
+        if (partyStatFont != null)
+            return partyStatFont;
+        if (bodyFont != null)
+            return bodyFont;
+        return keywordFont;
     }
 
     private static void EnsureFontFallback(TMP_FontAsset primary, TMP_FontAsset fallback)

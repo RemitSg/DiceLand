@@ -576,6 +576,7 @@ public class RunGameManager : MonoBehaviour
         mapHUD = GetOrCreateHud();
         if (mapKeywordFont != null || mapBodyFont != null || mapAttributeFont != null)
             mapHUD.ConfigureFonts(mapKeywordFont, mapBodyFont, mapAttributeFont);
+        mapHUD.ConfigureLevelTable(levelTable);
         mapCraftingOverlay = GetOrCreateCraftingOverlay();
         if (mapKeywordFont != null || mapBodyFont != null)
             mapCraftingOverlay.ConfigureFonts(mapKeywordFont, mapBodyFont);
