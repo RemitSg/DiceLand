@@ -61,7 +61,7 @@ MonoBehaviour:
   - damageEffects: []
     statusEffects:
     - effectName: 
-      trigger: 0
+      trigger: 3
       targetMode: 3
       statusData: {fileID: 11400000, guid: 15e54805ff58a7a49951aa1a35672df6, type: 2}
       statusType: 0

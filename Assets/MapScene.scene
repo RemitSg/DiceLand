@@ -917,14 +917,50 @@ MonoBehaviour:
   attributeFont: {fileID: 11400000, guid: 1927579a4b7620b428469b73f8d5046f, type: 2}
   titleFontSize: 34
   bodyFontSize: 24
+  partyTitleFont: {fileID: 11400000, guid: 1927579a4b7620b428469b73f8d5046f, type: 2}
+  partyNameFont: {fileID: 11400000, guid: 1927579a4b7620b428469b73f8d5046f, type: 2}
+  partyStatFont: {fileID: 11400000, guid: 1927579a4b7620b428469b73f8d5046f, type: 2}
+  partyTitleFontSize: 26
+  partyNameFontSize: 22
+  partyStatFontSize: 17
   panelColor: {r: 0.08, g: 0.1, b: 0.14, a: 0.88}
   titleColor: {r: 1, g: 1, b: 1, a: 1}
   bodyColor: {r: 0.92, g: 0.96, b: 1, a: 1}
   accentColor: {r: 1, g: 0.83, b: 0.35, a: 1}
+  partyPanelSize: {x: 420, y: 420}
+  partyPanelOffset: {x: 22, y: -256}
+  partyPanelBackgroundSprite: {fileID: 0}
+  partyPanelColor: {r: 0, g: 0, b: 0, a: 0.41960785}
+  partyPanelTitleOffset: {x: 18, y: -18}
+  partyPanelTitleSize: {x: 360, y: 36}
+  partyListOffset: {x: 16, y: -60}
+  partyMemberCardSize: {x: 388, y: 118}
+  partyMemberCardSpacing: 12
+  partyMemberCardSprite: {fileID: 21300000, guid: 6b49917353831254bbff082b5f1e9ea1, type: 3}
+  partyMemberCardColor: {r: 0.30817598, g: 0.30817598, b: 0.30817598, a: 0.96}
+  partyMemberIconOffset: {x: 12, y: -12}
+  partyMemberIconSize: {x: 84, y: 84}
+  partyMemberNameOffset: {x: 108, y: -12}
+  partyMemberNameSize: {x: 220, y: 28}
+  partyMemberHpBarOffset: {x: 108, y: -46}
+  partyMemberHpBarSize: {x: 204, y: 18}
+  partyMemberHpTextOffset: {x: 320, y: -44}
+  partyMemberHpTextSize: {x: 56, y: 22}
+  partyMemberExpBarOffset: {x: 108, y: -74}
+  partyMemberExpBarSize: {x: 204, y: 14}
+  partyMemberExpTextOffset: {x: 108, y: -90}
+  partyMemberExpTextSize: {x: 268, y: 18}
+  partyMemberNameColor: {r: 1, g: 1, b: 1, a: 1}
+  partyMemberHpBackgroundColor: {r: 0.2, g: 0.12, b: 0.14, a: 0.95}
+  partyMemberHpFillColor: {r: 0.92, g: 0.28, b: 0.32, a: 1}
+  partyMemberHpTextColor: {r: 1, g: 0.19182372, b: 0.19182372, a: 1}
+  partyMemberExpBackgroundColor: {r: 0.20220716, g: 0.23958702, b: 0.3018868, a: 0.95}
+  partyMemberExpFillColor: {r: 0.3, g: 0.78, b: 1, a: 1}
+  partyMemberExpTextColor: {r: 0.5691823, g: 0.86102647, b: 1, a: 1}
   tilePanelSize: {x: 460, y: 300}
   tilePanelOffset: {x: -24, y: 24}
-  tilePanelBackgroundSprite: {fileID: 21300000, guid: aeb1aaed687499940bfa1c79c274096f, type: 3}
-  tilePanelBackgroundColor: {r: 0.24528301, g: 0.24528301, b: 0.24528301, a: 0.88}
+  tilePanelBackgroundSprite: {fileID: 0}
+  tilePanelBackgroundColor: {r: 0.26415092, g: 0.26415092, b: 0.26415092, a: 0.5372549}
   tileTitleOffset: {x: 30, y: -16}
   tileTitleSize: {x: 420, y: 40}
   tileBodyOffset: {x: 30, y: -62}
