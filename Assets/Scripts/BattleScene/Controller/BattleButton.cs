@@ -3658,6 +3658,7 @@ public class BattleButton : MonoBehaviour
         System.Random rng = new System.Random(encounter.seed ^ 0x51A7);
         Dictionary<LootItem_SO, int> aggregated = new Dictionary<LootItem_SO, int>();
         Dictionary<Relic_SO, int> aggregatedRelics = new Dictionary<Relic_SO, int>();
+        HashSet<Relic_SO> ownedRelics = BuildOwnedRelicSet(encounter != null ? encounter.relicInventory : null);
 
         for (int i = 0; i < lootTables.Count; i++)
         {
@@ -3713,7 +3714,7 @@ public class BattleButton : MonoBehaviour
 
                 for (int rewardIndex = 0; rewardIndex < amount; rewardIndex++)
                 {
-                    Relic_SO rolledRelic = drop.relicTable.DrawRandomRelic(rng);
+                    Relic_SO rolledRelic = drop.relicTable.DrawRandomRelic(rng, ownedRelics);
                     if (rolledRelic == null)
                         continue;
 
@@ -3772,6 +3773,24 @@ public class BattleButton : MonoBehaviour
         });
 
         return results;
+    }
+
+    private static HashSet<Relic_SO> BuildOwnedRelicSet(IReadOnlyList<RunRelicState> relicInventory)
+    {
+        HashSet<Relic_SO> ownedRelics = new HashSet<Relic_SO>();
+        if (relicInventory == null)
+            return ownedRelics;
+
+        for (int i = 0; i < relicInventory.Count; i++)
+        {
+            RunRelicState relicState = relicInventory[i];
+            if (relicState == null || relicState.relicData == null || relicState.amount <= 0)
+                continue;
+
+            ownedRelics.Add(relicState.relicData);
+        }
+
+        return ownedRelics;
     }
 
     private static List<LootTable_SO> CloneLootTables(IReadOnlyList<LootTable_SO> source)

@@ -47,7 +47,7 @@ public class RelicTable_SO : ScriptableObject
         }
     }
 
-    public Relic_SO DrawRandomRelic(System.Random rng)
+    public Relic_SO DrawRandomRelic(System.Random rng, ICollection<Relic_SO> excludedRelics = null)
     {
         if (rng == null)
             rng = new System.Random();
@@ -62,6 +62,8 @@ public class RelicTable_SO : ScriptableObject
         {
             Relic_SO relic = relics[i];
             if (relic == null)
+                continue;
+            if (excludedRelics != null && excludedRelics.Contains(relic))
                 continue;
 
             validRelics.Add(relic);
@@ -80,17 +82,15 @@ public class RelicTable_SO : ScriptableObject
         float totalWeight = 0f;
         List<LootRarity> weightedRarities = new List<LootRarity>();
         List<float> cumulativeWeights = new List<float>();
-        foreach (KeyValuePair<LootRarity, List<Relic_SO>> pair in rarityBuckets)
+        for (int rarityIndex = 0; rarityIndex <= (int)LootRarity.Legendary; rarityIndex++)
         {
-            if (pair.Value == null || pair.Value.Count == 0)
-                continue;
-
-            float weight = Mathf.Max(0f, GetRarityWeight(pair.Key));
+            LootRarity rarity = (LootRarity)rarityIndex;
+            float weight = Mathf.Max(0f, GetRarityWeight(rarity));
             if (weight <= 0f)
                 continue;
 
             totalWeight += weight;
-            weightedRarities.Add(pair.Key);
+            weightedRarities.Add(rarity);
             cumulativeWeights.Add(totalWeight);
         }
 
@@ -108,11 +108,49 @@ public class RelicTable_SO : ScriptableObject
             }
         }
 
-        List<Relic_SO> selectedBucket = rarityBuckets[selectedRarity];
+        List<Relic_SO> selectedBucket = ResolveBucketWithRarityFallback(rarityBuckets, selectedRarity);
         if (selectedBucket == null || selectedBucket.Count == 0)
-            return validRelics[rng.Next(validRelics.Count)];
+            return null;
 
         return selectedBucket[rng.Next(selectedBucket.Count)];
+    }
+
+    private static List<Relic_SO> ResolveBucketWithRarityFallback(
+        Dictionary<LootRarity, List<Relic_SO>> rarityBuckets,
+        LootRarity selectedRarity)
+    {
+        if (TryGetNonEmptyBucket(rarityBuckets, selectedRarity, out List<Relic_SO> directBucket))
+            return directBucket;
+
+        for (int rarityIndex = (int)selectedRarity - 1; rarityIndex >= (int)LootRarity.Common; rarityIndex--)
+        {
+            if (TryGetNonEmptyBucket(rarityBuckets, (LootRarity)rarityIndex, out List<Relic_SO> lowerBucket))
+                return lowerBucket;
+        }
+
+        for (int rarityIndex = (int)selectedRarity + 1; rarityIndex <= (int)LootRarity.Legendary; rarityIndex++)
+        {
+            if (TryGetNonEmptyBucket(rarityBuckets, (LootRarity)rarityIndex, out List<Relic_SO> higherBucket))
+                return higherBucket;
+        }
+
+        return null;
+    }
+
+    private static bool TryGetNonEmptyBucket(
+        Dictionary<LootRarity, List<Relic_SO>> rarityBuckets,
+        LootRarity rarity,
+        out List<Relic_SO> bucket)
+    {
+        bucket = null;
+        if (rarityBuckets == null)
+            return false;
+
+        if (!rarityBuckets.TryGetValue(rarity, out List<Relic_SO> foundBucket) || foundBucket == null || foundBucket.Count == 0)
+            return false;
+
+        bucket = foundBucket;
+        return true;
     }
 
     private float GetRarityWeight(LootRarity rarity)

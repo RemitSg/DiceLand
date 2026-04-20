@@ -534,7 +534,11 @@ public class BattlePresentationSystem : MonoBehaviour
         float damageDelay;
         if (useCustom)
         {
-            Vector3 anchorPosition = customAnchor != null ? BattleActorVisualUtility.GetActorCenterWorld(customAnchor) : position;
+            // Keep the intended impact height from this attack step instead of recomputing
+            // it from the current sprite bounds, which can shift while multi-dice sprite swaps
+            // are still active.
+            Vector3 anchorPosition = customAnchor != null ? customAnchor.position : position;
+            anchorPosition.y = position.y;
             anchorPosition.z = position.z;
 
             float life = SpawnCustomEffect(
