@@ -40,3 +40,19 @@ MonoBehaviour:
       maxHP: 20
     - level: 3
       maxHP: 24
+  - characterData: {fileID: 11400000, guid: fce426096f554744093a4718f5aa0f45, type: 2}
+    maxHPByLevel:
+    - level: 1
+      maxHP: 30
+    - level: 2
+      maxHP: 35
+    - level: 3
+      maxHP: 40
+  - characterData: {fileID: 11400000, guid: 658e22cc7dec223479091c6817751025, type: 2}
+    maxHPByLevel:
+    - level: 1
+      maxHP: 24
+    - level: 2
+      maxHP: 28
+    - level: 3
+      maxHP: 32

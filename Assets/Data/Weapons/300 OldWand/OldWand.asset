@@ -22,4 +22,6 @@ MonoBehaviour:
   minPower: 1
   maxPower: 3
   skillPool:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: b60e3e1c70b6afe4a9016d18febc5b6a, type: 2}
+  - {fileID: 11400000, guid: 9afa03908bac668459f24e4ea4b53341, type: 2}
+  - {fileID: 11400000, guid: 6f323dbfc6080254aa17d3baedb126ba, type: 2}

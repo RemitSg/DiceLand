@@ -12,10 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "\u968F\u610F\u9632\u5FA1"
   m_EditorClassIdentifier: 
-  skillName: "\u968F\u610F\u65BD\u6CD5"
-  description: "\u7B80\u5355\u800C\u5B9E\u7528\u7684\u6CD5\u672F\uFF0C\u53EF\u4EE5\u4E3A\u968F\u540E\u7684\u6280\u80FD\u79EF\u6512\u529B\u6C14"
-  skillCategory: 0
-  energyCost: 0
+  skillName: "\u968F\u610F\u9632\u5FA1"
+  description: "\u7B80\u5355\u800C\u5B9E\u7528\u7684\u6CD5\u672F\uFF0C\u53EF\u4EE5\u4E3A\u81EA\u8EAB\u65BD\u52A0\u9632\u5FA1\u6CD5\u672F\u6765\u62B5\u6321\u653B\u51FB"
+  skillCategory: 1
+  energyCost: 1
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 
   targetPriorityMode: 0
@@ -25,17 +28,21 @@ MonoBehaviour:
   minPower: 2
   maxPower: 3
   diceCount: 1
-  dicePowerRanges: []
+  dicePowerRanges:
+  - minPower: 2
+    maxPower: 3
   dicePresentationSettings:
-  - clashEffectPrefab: {fileID: 7336644444123945357, guid: 39b08074cd2406c48aa5ebd78c268f4d, type: 3}
-    hitEffectPrefab: {fileID: 3552457256477788183, guid: 644bfac477756ad44b867e608d87e739, type: 3}
-    clashPositionOffset: {x: 1, y: 0, z: 0}
+  - clashEffectPrefab: {fileID: 4264934743671495442, guid: 9865a9a6d5d3c76428494f7635d8c560, type: 3}
+    hitEffectPrefab: {fileID: 0}
+    clashOffsetSpace: 0
+    clashPositionOffset: {x: 0, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 0, y: 0, z: 0}
     clashSortingOrderOffset: 0
     overrideClashDuration: 0
     clashDuration: 0
-    hitPositionOffset: {x: 2, y: 0, z: 0}
+    hitOffsetSpace: 0
+    hitPositionOffset: {x: 0, y: 0, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
     hitScale: {x: 0, y: 0, z: 0}
     hitSortingOrderOffset: 0
