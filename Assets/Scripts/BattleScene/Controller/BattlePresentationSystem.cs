@@ -275,7 +275,7 @@ public class BattlePresentationSystem : MonoBehaviour
                 hitCameraPower,
                 hitFx,
                 useCustomHit,
-                defender,
+                defenderCenter,
                 attackerCenter,
                 plane.z,
                 onImpact);
@@ -344,7 +344,7 @@ public class BattlePresentationSystem : MonoBehaviour
                 hitCameraPower,
                 fx,
                 useCustomHit,
-                attacker,
+                attackerCenter,
                 attackerCenter,
                 plane.z,
                 onImpact);
@@ -525,7 +525,7 @@ public class BattlePresentationSystem : MonoBehaviour
         float cameraImpactPower,
         EnemySkill_SO.DicePresentationSettings fx,
         bool useCustom,
-        Transform customAnchor,
+        Vector3 customAnchorPosition,
         Vector3 attackerPosition,
         float planeZ,
         Action onImpact)
@@ -534,10 +534,7 @@ public class BattlePresentationSystem : MonoBehaviour
         float damageDelay;
         if (useCustom)
         {
-            // Keep the intended impact height from this attack step instead of recomputing
-            // it from the current sprite bounds, which can shift while multi-dice sprite swaps
-            // are still active.
-            Vector3 anchorPosition = customAnchor != null ? customAnchor.position : position;
+            Vector3 anchorPosition = customAnchorPosition;
             anchorPosition.y = position.y;
             anchorPosition.z = position.z;
 
