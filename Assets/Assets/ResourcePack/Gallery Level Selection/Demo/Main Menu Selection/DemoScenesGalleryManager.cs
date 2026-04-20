@@ -10,14 +10,38 @@ using UnityEditor;
 
 public class DemoScenesGalleryManager : GalleryLevelSelectionManager
 {
+    [System.Serializable]
+    public class ContributorsRollSettings
+    {
+        public string confirmTitle = "View Contributors?";
+        public string confirmActionLabel = "Yes";
+        public string rollTitle = "Contributors";
+        [TextArea(2, 8)] public string openingText = "A small game by people who care a lot.";
+        [TextArea(10, 40)] public string creditsText = "Director\nName\n\nProgramming\nName\n\nArt\nName\n\nMusic\nName";
+        [TextArea(2, 8)] public string endingText = "Thank you for playing.";
+        [Min(0f)] public float fadeDuration = 1.2f;
+        [Min(0f)] public float startDelay = 0.6f;
+        [Min(1f)] public float scrollSpeed = 90f;
+        [Min(0f)] public float endDelay = 1.5f;
+        [Min(200f)] public float contentWidth = 900f;
+        [Min(0f)] public float horizontalPadding = 120f;
+        [Min(0f)] public float verticalPadding = 180f;
+        public Color backgroundColor = new Color(0f, 0f, 0f, 1f);
+        public Color textColor = Color.white;
+        [Min(16f)] public float titleFontSize = 60f;
+        [Min(12f)] public float bodyFontSize = 36f;
+    }
+
     [SerializeField] private string newGameSceneName = "MapScene";
     [SerializeField] private string continueGameSceneName = "MapScene";
     [SerializeField] private string tutorialSceneName = string.Empty;
     [SerializeField] private string optionsSceneName = string.Empty;
     [SerializeField] private string contributorsSceneName = string.Empty;
     [SerializeField] private GameObject settingsPanelPrefab;
+    [SerializeField] private ContributorsRollSettings contributorsRollSettings = new ContributorsRollSettings();
 
     private readonly List<MenuEntry> runtimeEntries = new List<MenuEntry>();
+    private MainMenuContributorsRollController contributorsRollController;
 
     private enum MenuAction
     {
@@ -55,6 +79,7 @@ public class DemoScenesGalleryManager : GalleryLevelSelectionManager
     {
         PrepareMainMenuItems();
         EnsureOptionsSettingsPanel();
+        EnsureContributorsRollController();
         base.Start();
     }
 
@@ -233,7 +258,9 @@ public class DemoScenesGalleryManager : GalleryLevelSelectionManager
             case MenuAction.Options:
                 return "Settings";
             case MenuAction.Contributors:
-                return "View Contributors";
+                return string.IsNullOrWhiteSpace(contributorsRollSettings.confirmTitle)
+                    ? "View Contributors?"
+                    : contributorsRollSettings.confirmTitle;
             case MenuAction.Exit:
                 return "Exit Game";
             default:
@@ -254,7 +281,9 @@ public class DemoScenesGalleryManager : GalleryLevelSelectionManager
             case MenuAction.Options:
                 return "Adjust";
             case MenuAction.Contributors:
-                return "View";
+                return string.IsNullOrWhiteSpace(contributorsRollSettings.confirmActionLabel)
+                    ? "Yes"
+                    : contributorsRollSettings.confirmActionLabel;
             case MenuAction.Exit:
                 return "Exit";
             default:
@@ -274,8 +303,10 @@ public class DemoScenesGalleryManager : GalleryLevelSelectionManager
                 ContinueGame(entry.sceneName);
                 break;
             case MenuAction.Tutorial:
-            case MenuAction.Contributors:
                 OpenOptionalScene(entry.sceneName, entry.label);
+                break;
+            case MenuAction.Contributors:
+                PlayContributorsRoll();
                 break;
             case MenuAction.Options:
                 return;
@@ -326,6 +357,38 @@ public class DemoScenesGalleryManager : GalleryLevelSelectionManager
             controller.Initialize(this);
             return;
         }
+    }
+
+    private void EnsureContributorsRollController()
+    {
+        if (contributorsRollController != null)
+            return;
+
+        contributorsRollController = GetComponentInChildren<MainMenuContributorsRollController>(true);
+        if (contributorsRollController != null)
+            return;
+
+        GameObject controllerObject = new GameObject("Contributors Roll Controller", typeof(RectTransform));
+        controllerObject.transform.SetParent(transform, false);
+
+        RectTransform rectTransform = controllerObject.GetComponent<RectTransform>();
+        rectTransform.anchorMin = Vector2.zero;
+        rectTransform.anchorMax = Vector2.one;
+        rectTransform.offsetMin = Vector2.zero;
+        rectTransform.offsetMax = Vector2.zero;
+        rectTransform.localScale = Vector3.one;
+
+        contributorsRollController = controllerObject.AddComponent<MainMenuContributorsRollController>();
+        contributorsRollController.Initialize(this);
+    }
+
+    private void PlayContributorsRoll()
+    {
+        EnsureContributorsRollController();
+        if (contributorsRollController == null)
+            return;
+
+        contributorsRollController.Play(contributorsRollSettings);
     }
 
     private void StartNewGame(string sceneName)

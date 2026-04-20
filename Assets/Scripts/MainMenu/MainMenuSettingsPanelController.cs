@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,17 +12,19 @@ public class MainMenuSettingsPanelController : MonoBehaviour
     private const string QualityIndexKey = "mainmenu.settings.quality_index";
 
     private DemoScenesGalleryManager owner;
+    private TMP_FontAsset sharedFont;
 
-    private Slider masterVolumeSlider;
-    private Slider effectsVolumeSlider;
-    private Button backButton;
+    private RectTransform layoutRoot;
+    private Slider masterSlider;
+    private Slider effectsSlider;
     private Button fullscreenButton;
     private Button vibrationButton;
     private Button qualityButton;
     private Button resetButton;
+    private Button backButton;
 
-    private float masterVolume = 1f;
-    private float effectsVolume = 1f;
+    private float masterVolume = 0.8f;
+    private float effectsVolume = 0.8f;
     private bool fullscreenEnabled = true;
     private bool vibrationEnabled = true;
     private int qualityIndex;
@@ -36,8 +36,9 @@ public class MainMenuSettingsPanelController : MonoBehaviour
 
         if (!initialized)
         {
-            CacheControls();
-            NormalizeStaticLabels();
+            sharedFont = GetComponentsInChildren<TextMeshProUGUI>(true)[0].font;
+            PrepareThemedBackground();
+            BuildRuntimeLayout();
             HookEvents();
             initialized = true;
         }
@@ -49,129 +50,95 @@ public class MainMenuSettingsPanelController : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (masterVolumeSlider != null)
-            masterVolumeSlider.onValueChanged.RemoveListener(HandleMasterVolumeChanged);
+        if (masterSlider != null)
+            masterSlider.onValueChanged.RemoveListener(HandleMasterSliderChanged);
 
-        if (effectsVolumeSlider != null)
-            effectsVolumeSlider.onValueChanged.RemoveListener(HandleEffectsVolumeChanged);
-
-        if (backButton != null)
-            backButton.onClick.RemoveListener(HandleBackClicked);
+        if (effectsSlider != null)
+            effectsSlider.onValueChanged.RemoveListener(HandleEffectsSliderChanged);
 
         if (fullscreenButton != null)
-            fullscreenButton.onClick.RemoveListener(HandleFullscreenClicked);
+            fullscreenButton.onClick.RemoveListener(ToggleFullscreen);
 
         if (vibrationButton != null)
-            vibrationButton.onClick.RemoveListener(HandleVibrationClicked);
+            vibrationButton.onClick.RemoveListener(ToggleVibration);
 
         if (qualityButton != null)
-            qualityButton.onClick.RemoveListener(HandleQualityClicked);
+            qualityButton.onClick.RemoveListener(CycleQuality);
 
         if (resetButton != null)
-            resetButton.onClick.RemoveListener(HandleResetClicked);
+            resetButton.onClick.RemoveListener(ResetDefaults);
+
+        if (backButton != null)
+            backButton.onClick.RemoveListener(GoBack);
     }
 
-    private void CacheControls()
+    private void PrepareThemedBackground()
     {
-        List<Slider> sliders = GetComponentsInChildren<Slider>(true)
-            .OrderByDescending(GetVisualY)
-            .ToList();
+        Transform themedRoot = transform.Find("Settings");
+        if (themedRoot == null)
+            return;
 
-        masterVolumeSlider = sliders.ElementAtOrDefault(0);
-        effectsVolumeSlider = sliders.ElementAtOrDefault(1);
-
-        foreach (Slider slider in sliders)
-            slider.interactable = true;
-
-        Button[] buttons = GetComponentsInChildren<Button>(true);
-        List<Button> blueGrayButtons = new List<Button>();
-        foreach (Button button in buttons)
+        for (int i = 0; i < themedRoot.childCount; i++)
         {
-            if (button == null)
-                continue;
-
-            button.interactable = true;
-
-            switch (button.gameObject.name)
-            {
-                case "Button_Back":
-                    backButton = button;
-                    break;
-                case "Button_Connect":
-                    fullscreenButton = button;
-                    break;
-                case "Button_Connected":
-                    vibrationButton = button;
-                    break;
-                case "Button_BlueGray":
-                    blueGrayButtons.Add(button);
-                    break;
-            }
+            Transform child = themedRoot.GetChild(i);
+            child.gameObject.SetActive(string.Equals(child.name, "Background", StringComparison.Ordinal));
         }
 
-        blueGrayButtons = blueGrayButtons
-            .OrderByDescending(GetVisualY)
-            .ToList();
+        Transform background = themedRoot.Find("Background");
+        if (background == null)
+            return;
 
-        qualityButton = blueGrayButtons.ElementAtOrDefault(0);
-        resetButton = blueGrayButtons.ElementAtOrDefault(1);
+        for (int i = 0; i < background.childCount; i++)
+            background.GetChild(i).gameObject.SetActive(false);
     }
 
-    private void NormalizeStaticLabels()
+    private void BuildRuntimeLayout()
     {
-        ReplaceText("Music", "Master Volume");
-        ReplaceText("Sound Fx", "Effects Volume");
-        ReplaceText("Push Alram", "Fullscreen");
-        ReplaceText("Vibration", "Vibration");
-        ReplaceText("English", "Graphics");
-        ReplaceText("About", "Reset");
+        layoutRoot = new GameObject("RuntimeSettingsLayout", typeof(RectTransform)).GetComponent<RectTransform>();
+        layoutRoot.SetParent(transform, false);
+        layoutRoot.anchorMin = Vector2.zero;
+        layoutRoot.anchorMax = Vector2.one;
+        layoutRoot.offsetMin = Vector2.zero;
+        layoutRoot.offsetMax = Vector2.zero;
+        layoutRoot.localScale = Vector3.one;
 
-        SetButtonLabel(backButton, "Back");
+        CreateLabel(layoutRoot, "SettingsTitle", "Settings", new Vector2(0f, 330f), new Vector2(640f, 80f), 56, FontStyles.Bold, TextAlignmentOptions.Center);
+
+        CreateLabel(layoutRoot, "MasterLabel", "Master Volume", new Vector2(0f, 215f), new Vector2(560f, 40f), 32, FontStyles.Bold, TextAlignmentOptions.Center);
+        masterSlider = CreateSlider(layoutRoot, "MasterSlider", new Vector2(0f, 155f), new Vector2(640f, 28f));
+
+        CreateLabel(layoutRoot, "EffectsLabel", "Effects Volume", new Vector2(0f, 80f), new Vector2(560f, 40f), 32, FontStyles.Bold, TextAlignmentOptions.Center);
+        effectsSlider = CreateSlider(layoutRoot, "EffectsSlider", new Vector2(0f, 20f), new Vector2(640f, 28f));
+
+        fullscreenButton = CreateButton(layoutRoot, "FullscreenButton", new Vector2(-230f, -120f), new Vector2(260f, 78f), "Fullscreen");
+        vibrationButton = CreateButton(layoutRoot, "VibrationButton", new Vector2(230f, -120f), new Vector2(260f, 78f), "Vibration");
+        qualityButton = CreateButton(layoutRoot, "QualityButton", new Vector2(-230f, -235f), new Vector2(260f, 78f), "Graphics");
+        resetButton = CreateButton(layoutRoot, "ResetButton", new Vector2(230f, -235f), new Vector2(260f, 78f), "Defaults");
+        backButton = CreateButton(layoutRoot, "BackButton", new Vector2(0f, -355f), new Vector2(300f, 82f), "Back");
     }
 
     private void HookEvents()
     {
-        if (masterVolumeSlider != null)
-        {
-            masterVolumeSlider.onValueChanged.RemoveListener(HandleMasterVolumeChanged);
-            masterVolumeSlider.onValueChanged.AddListener(HandleMasterVolumeChanged);
-        }
+        masterSlider.onValueChanged.RemoveListener(HandleMasterSliderChanged);
+        masterSlider.onValueChanged.AddListener(HandleMasterSliderChanged);
 
-        if (effectsVolumeSlider != null)
-        {
-            effectsVolumeSlider.onValueChanged.RemoveListener(HandleEffectsVolumeChanged);
-            effectsVolumeSlider.onValueChanged.AddListener(HandleEffectsVolumeChanged);
-        }
+        effectsSlider.onValueChanged.RemoveListener(HandleEffectsSliderChanged);
+        effectsSlider.onValueChanged.AddListener(HandleEffectsSliderChanged);
 
-        if (backButton != null)
-        {
-            backButton.onClick.RemoveListener(HandleBackClicked);
-            backButton.onClick.AddListener(HandleBackClicked);
-        }
+        fullscreenButton.onClick.RemoveListener(ToggleFullscreen);
+        fullscreenButton.onClick.AddListener(ToggleFullscreen);
 
-        if (fullscreenButton != null)
-        {
-            fullscreenButton.onClick.RemoveListener(HandleFullscreenClicked);
-            fullscreenButton.onClick.AddListener(HandleFullscreenClicked);
-        }
+        vibrationButton.onClick.RemoveListener(ToggleVibration);
+        vibrationButton.onClick.AddListener(ToggleVibration);
 
-        if (vibrationButton != null)
-        {
-            vibrationButton.onClick.RemoveListener(HandleVibrationClicked);
-            vibrationButton.onClick.AddListener(HandleVibrationClicked);
-        }
+        qualityButton.onClick.RemoveListener(CycleQuality);
+        qualityButton.onClick.AddListener(CycleQuality);
 
-        if (qualityButton != null)
-        {
-            qualityButton.onClick.RemoveListener(HandleQualityClicked);
-            qualityButton.onClick.AddListener(HandleQualityClicked);
-        }
+        resetButton.onClick.RemoveListener(ResetDefaults);
+        resetButton.onClick.AddListener(ResetDefaults);
 
-        if (resetButton != null)
-        {
-            resetButton.onClick.RemoveListener(HandleResetClicked);
-            resetButton.onClick.AddListener(HandleResetClicked);
-        }
+        backButton.onClick.RemoveListener(GoBack);
+        backButton.onClick.AddListener(GoBack);
     }
 
     private void LoadSettings()
@@ -182,8 +149,8 @@ public class MainMenuSettingsPanelController : MonoBehaviour
         vibrationEnabled = PlayerPrefs.GetInt(VibrationKey, 1) != 0;
 
         int maxQualityIndex = Mathf.Max(0, QualitySettings.names.Length - 1);
-        int defaultQuality = Mathf.Clamp(QualitySettings.GetQualityLevel(), 0, maxQualityIndex);
-        qualityIndex = Mathf.Clamp(PlayerPrefs.GetInt(QualityIndexKey, defaultQuality), 0, maxQualityIndex);
+        int defaultQualityIndex = Mathf.Clamp(QualitySettings.GetQualityLevel(), 0, maxQualityIndex);
+        qualityIndex = Mathf.Clamp(PlayerPrefs.GetInt(QualityIndexKey, defaultQualityIndex), 0, maxQualityIndex);
     }
 
     private void ApplySettings()
@@ -205,39 +172,31 @@ public class MainMenuSettingsPanelController : MonoBehaviour
 
     private void RefreshVisuals()
     {
-        if (masterVolumeSlider != null)
-            masterVolumeSlider.SetValueWithoutNotify(masterVolume);
+        masterSlider.SetValueWithoutNotify(masterVolume);
+        effectsSlider.SetValueWithoutNotify(effectsVolume);
 
-        if (effectsVolumeSlider != null)
-            effectsVolumeSlider.SetValueWithoutNotify(effectsVolume);
-
-        SetButtonLabel(fullscreenButton, fullscreenEnabled ? "On" : "Off");
-        SetButtonLabel(vibrationButton, vibrationEnabled ? "On" : "Off");
-        SetButtonLabel(qualityButton, GetQualityLabel());
+        SetButtonLabel(fullscreenButton, fullscreenEnabled ? "Fullscreen: On" : "Fullscreen: Off");
+        SetButtonLabel(vibrationButton, vibrationEnabled ? "Vibration: On" : "Vibration: Off");
+        SetButtonLabel(qualityButton, $"Graphics: {GetQualityLabel()}");
         SetButtonLabel(resetButton, "Defaults");
+        SetButtonLabel(backButton, "Back");
     }
 
-    private void HandleMasterVolumeChanged(float value)
+    private void HandleMasterSliderChanged(float value)
     {
         masterVolume = value;
         ApplySettings();
         SaveSettings();
     }
 
-    private void HandleEffectsVolumeChanged(float value)
+    private void HandleEffectsSliderChanged(float value)
     {
         effectsVolume = value;
         ApplySettings();
         SaveSettings();
     }
 
-    private void HandleBackClicked()
-    {
-        if (owner != null)
-            owner.ShowItem(0, true);
-    }
-
-    private void HandleFullscreenClicked()
+    private void ToggleFullscreen()
     {
         fullscreenEnabled = !fullscreenEnabled;
         ApplySettings();
@@ -245,14 +204,14 @@ public class MainMenuSettingsPanelController : MonoBehaviour
         RefreshVisuals();
     }
 
-    private void HandleVibrationClicked()
+    private void ToggleVibration()
     {
         vibrationEnabled = !vibrationEnabled;
         SaveSettings();
         RefreshVisuals();
     }
 
-    private void HandleQualityClicked()
+    private void CycleQuality()
     {
         int qualityCount = Mathf.Max(1, QualitySettings.names.Length);
         qualityIndex = (qualityIndex + 1) % qualityCount;
@@ -261,7 +220,7 @@ public class MainMenuSettingsPanelController : MonoBehaviour
         RefreshVisuals();
     }
 
-    private void HandleResetClicked()
+    private void ResetDefaults()
     {
         masterVolume = 0.8f;
         effectsVolume = 0.8f;
@@ -274,34 +233,125 @@ public class MainMenuSettingsPanelController : MonoBehaviour
         RefreshVisuals();
     }
 
+    private void GoBack()
+    {
+        if (owner != null)
+            owner.ShowItem(0, true);
+    }
+
     private string GetQualityLabel()
     {
-        string[] qualityNames = QualitySettings.names;
-        if (qualityNames == null || qualityNames.Length == 0)
+        if (QualitySettings.names == null || QualitySettings.names.Length == 0)
             return "Auto";
 
-        int clampedIndex = Mathf.Clamp(qualityIndex, 0, qualityNames.Length - 1);
-        return qualityNames[clampedIndex];
+        return QualitySettings.names[Mathf.Clamp(qualityIndex, 0, QualitySettings.names.Length - 1)];
     }
 
-    private static float GetVisualY(Component component)
+    private TextMeshProUGUI CreateLabel(Transform parent, string objectName, string text, Vector2 anchoredPosition, Vector2 size, float fontSize, FontStyles style, TextAlignmentOptions alignment)
     {
-        RectTransform rectTransform = component != null ? component.transform as RectTransform : null;
-        return rectTransform != null ? rectTransform.position.y : 0f;
+        GameObject labelObject = new GameObject(objectName, typeof(RectTransform));
+        labelObject.transform.SetParent(parent, false);
+
+        RectTransform rectTransform = labelObject.GetComponent<RectTransform>();
+        rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+        rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        rectTransform.anchoredPosition = anchoredPosition;
+        rectTransform.sizeDelta = size;
+
+        TextMeshProUGUI textComponent = labelObject.AddComponent<TextMeshProUGUI>();
+        textComponent.font = sharedFont;
+        textComponent.text = text;
+        textComponent.fontSize = fontSize;
+        textComponent.fontStyle = style;
+        textComponent.alignment = alignment;
+        textComponent.color = Color.white;
+        textComponent.raycastTarget = false;
+        return textComponent;
     }
 
-    private void ReplaceText(string current, string replacement)
+    private Slider CreateSlider(Transform parent, string objectName, Vector2 anchoredPosition, Vector2 size)
     {
-        TextMeshProUGUI[] textComponents = GetComponentsInChildren<TextMeshProUGUI>(true);
-        for (int i = 0; i < textComponents.Length; i++)
-        {
-            TextMeshProUGUI textComponent = textComponents[i];
-            if (textComponent == null)
-                continue;
+        GameObject root = new GameObject(objectName, typeof(RectTransform), typeof(Image), typeof(Slider));
+        root.transform.SetParent(parent, false);
 
-            if (string.Equals(textComponent.text, current, StringComparison.OrdinalIgnoreCase))
-                textComponent.text = replacement;
-        }
+        RectTransform rectTransform = root.GetComponent<RectTransform>();
+        rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+        rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        rectTransform.anchoredPosition = anchoredPosition;
+        rectTransform.sizeDelta = size;
+
+        Image backgroundImage = root.GetComponent<Image>();
+        backgroundImage.color = new Color(0.15f, 0.17f, 0.24f, 0.95f);
+
+        Slider slider = root.GetComponent<Slider>();
+        slider.transition = Selectable.Transition.ColorTint;
+
+        RectTransform fillArea = new GameObject("Fill Area", typeof(RectTransform)).GetComponent<RectTransform>();
+        fillArea.SetParent(root.transform, false);
+        fillArea.anchorMin = Vector2.zero;
+        fillArea.anchorMax = Vector2.one;
+        fillArea.offsetMin = new Vector2(12f, 6f);
+        fillArea.offsetMax = new Vector2(-12f, -6f);
+
+        RectTransform fill = new GameObject("Fill", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
+        fill.SetParent(fillArea, false);
+        fill.anchorMin = Vector2.zero;
+        fill.anchorMax = Vector2.one;
+        fill.offsetMin = Vector2.zero;
+        fill.offsetMax = Vector2.zero;
+        fill.GetComponent<Image>().color = new Color(0.23f, 0.68f, 0.96f, 1f);
+
+        RectTransform handleArea = new GameObject("Handle Area", typeof(RectTransform)).GetComponent<RectTransform>();
+        handleArea.SetParent(root.transform, false);
+        handleArea.anchorMin = Vector2.zero;
+        handleArea.anchorMax = Vector2.one;
+        handleArea.offsetMin = new Vector2(12f, 0f);
+        handleArea.offsetMax = new Vector2(-12f, 0f);
+
+        RectTransform handle = new GameObject("Handle", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
+        handle.SetParent(handleArea, false);
+        handle.anchorMin = new Vector2(0f, 0.5f);
+        handle.anchorMax = new Vector2(0f, 0.5f);
+        handle.pivot = new Vector2(0.5f, 0.5f);
+        handle.sizeDelta = new Vector2(28f, 40f);
+        handle.GetComponent<Image>().color = new Color(1f, 0.85f, 0.3f, 1f);
+
+        slider.fillRect = fill;
+        slider.handleRect = handle;
+        slider.targetGraphic = handle.GetComponent<Image>();
+        slider.direction = Slider.Direction.LeftToRight;
+
+        return slider;
+    }
+
+    private Button CreateButton(Transform parent, string objectName, Vector2 anchoredPosition, Vector2 size, string label)
+    {
+        GameObject root = new GameObject(objectName, typeof(RectTransform), typeof(Image), typeof(Button));
+        root.transform.SetParent(parent, false);
+
+        RectTransform rectTransform = root.GetComponent<RectTransform>();
+        rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+        rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        rectTransform.anchoredPosition = anchoredPosition;
+        rectTransform.sizeDelta = size;
+
+        Image image = root.GetComponent<Image>();
+        image.color = new Color(0.18f, 0.52f, 0.83f, 0.96f);
+
+        Button button = root.GetComponent<Button>();
+        button.transition = Selectable.Transition.ColorTint;
+        ColorBlock colors = button.colors;
+        colors.normalColor = image.color;
+        colors.highlightedColor = new Color(0.24f, 0.6f, 0.92f, 1f);
+        colors.pressedColor = new Color(0.12f, 0.38f, 0.64f, 1f);
+        colors.selectedColor = colors.highlightedColor;
+        button.colors = colors;
+
+        CreateLabel(root.transform, "Label", label, Vector2.zero, size - new Vector2(24f, 18f), 30f, FontStyles.Bold, TextAlignmentOptions.Center);
+        return button;
     }
 
     private void SetButtonLabel(Button button, string label)
