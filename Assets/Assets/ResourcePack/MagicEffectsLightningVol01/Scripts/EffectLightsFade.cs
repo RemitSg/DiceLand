@@ -46,8 +46,8 @@ public class EffectLightsFade : MonoBehaviour {
       AnimationCurve curve = new AnimationCurve(keyList.ToArray());
       AnimationClip clip = new AnimationClip();
       clip.SetCurve("", typeof(Light), "m_Intensity", curve);
-      GetComponent<Animation>().clip = clip;
-      GetComponent<Animation>().clip.name = "light_fade";
+      this.GetComponent<Animation>().clip = clip;
+      this.GetComponent<Animation>().clip.name = "light_fade";
       gameObject.SetActive(false);
       gameObject.SetActive(true);
     }

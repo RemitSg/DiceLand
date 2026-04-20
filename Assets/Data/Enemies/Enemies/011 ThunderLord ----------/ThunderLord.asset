@@ -55,12 +55,13 @@ MonoBehaviour:
   speedButtonOffset: {x: 0, y: -2}
   skillPool:
   - {fileID: 11400000, guid: 6c900b8f5042fcf40a566db5529cdaab, type: 2}
+  - {fileID: 11400000, guid: 6cd2d239a580ecc44afc27c199a0a083, type: 2}
   conditionalSkillRules:
   - ruleName: 
     skill: {fileID: 11400000, guid: 215bc62163817044abd65b7d262ec35d, type: 2}
     conditionType: 1
     healthThresholdNormalized: 0
-    firstTriggerRound: 3
+    firstTriggerRound: 5
     repeatEveryNRounds: 1
     priority: 1
     maxSlotsPerRound: 1

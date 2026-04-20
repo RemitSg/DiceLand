@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: "\u4E07\u96F7\u5F52\u589F"
   m_EditorClassIdentifier: 
   skillName: "\u4E07\u96F7\u5F52\u589F"
-  description: "\u4E0D\u597D\u610F\u601D\uFF0C\u5B83\u751F\u6C14\u4E86"
-  skillCategory: 1
+  description: "\u4E0D\u597D\u610F\u601D\uFF0C\u5B83\u751F\u6C14\u4E86\uFF01"
+  skillCategory: 0
   energyCost: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 
   targetPriorityMode: 0
   targetPriorityStatusData: {fileID: 0}
-  targetPriorityStatusType: 0
+  targetPriorityStatusType: 1
   targetPriorityRequiredStacks: 1
   minPower: 1
   maxPower: 1
@@ -29,14 +29,14 @@ MonoBehaviour:
   - minPower: 1
     maxPower: 1
   dicePresentationSettings:
-  - clashEffectPrefab: {fileID: 2109421402926446704, guid: ae6687a9014e0c141862584fe714f5ac, type: 3}
+  - clashEffectPrefab: {fileID: 9151672545368748336, guid: ec33a12ec46698b4d9d90e28b50c372b, type: 3}
     hitEffectPrefab: {fileID: 0}
     clashPositionOffset: {x: 0, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
-    clashScale: {x: 0, y: 0, z: 0}
+    clashScale: {x: 2, y: 2, z: 2}
     clashSortingOrderOffset: 0
-    overrideClashDuration: 0
-    clashDuration: 0
+    overrideClashDuration: 1
+    clashDuration: 2
     hitPositionOffset: {x: 0, y: 0, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
     hitScale: {x: 0, y: 0, z: 0}
@@ -51,7 +51,7 @@ MonoBehaviour:
     skillSpriteScale: {x: 0, y: 0, z: 0}
     skillSpriteSortingOrderOffset: 0
     overrideSkillSpriteDuration: 1
-    skillSpriteDuration: 1
+    skillSpriteDuration: 0.5
   diceEffectSettings:
   - damageEffects: []
     statusEffects: []
@@ -63,5 +63,5 @@ MonoBehaviour:
     - effectName: 
       trigger: 3
       targetMode: 0
-      applyTiming: 1
+      applyTiming: 0
       targetStageIndex: 1

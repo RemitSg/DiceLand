@@ -20,7 +20,7 @@ MonoBehaviour:
   allowedEnemyStages: 01000000
   targetPriorityMode: 0
   targetPriorityStatusData: {fileID: 0}
-  targetPriorityStatusType: 0
+  targetPriorityStatusType: 1
   targetPriorityRequiredStacks: 1
   minPower: 1
   maxPower: 3
@@ -53,7 +53,7 @@ MonoBehaviour:
     skillSpriteScale: {x: 0, y: 0, z: 0}
     skillSpriteSortingOrderOffset: 0
     overrideSkillSpriteDuration: 1
-    skillSpriteDuration: 0.01
+    skillSpriteDuration: 0.5
   diceEffectSettings:
   - damageEffects: []
     statusEffects:
