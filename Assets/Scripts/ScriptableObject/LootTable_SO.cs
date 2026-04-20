@@ -17,7 +17,8 @@ public class LootTable_SO : ScriptableObject
     [Serializable]
     public class RelicDropEntry
     {
-        public Relic_SO relicData;
+        [Tooltip("Random relic rewards are drawn from this relic table.")]
+        public RelicTable_SO relicTable;
         [Min(0f)] public float dropChance = 1f;
         [Min(1)] public int minAmount = 1;
         [Min(1)] public int maxAmount = 1;

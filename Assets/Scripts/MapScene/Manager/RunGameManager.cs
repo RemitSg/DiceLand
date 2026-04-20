@@ -3206,8 +3206,12 @@ public class RunGameManager : MonoBehaviour
         for (int i = 0; i < relicDrops.Count; i++)
         {
             LootTable_SO.RelicDropEntry entry = relicDrops[i];
-            if (entry != null)
-                catalog.Add(entry.relicData);
+            if (entry == null || entry.relicTable == null)
+                continue;
+
+            IReadOnlyList<Relic_SO> relics = entry.relicTable.Relics;
+            for (int relicIndex = 0; relicIndex < relics.Count; relicIndex++)
+                catalog.Add(relics[relicIndex]);
         }
     }
 

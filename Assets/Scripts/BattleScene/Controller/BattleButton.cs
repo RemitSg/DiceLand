@@ -3698,7 +3698,7 @@ public class BattleButton : MonoBehaviour
             for (int j = 0; j < relicDrops.Count; j++)
             {
                 LootTable_SO.RelicDropEntry drop = relicDrops[j];
-                if (drop == null || drop.relicData == null || drop.dropChance <= 0f)
+                if (drop == null || drop.relicTable == null || drop.dropChance <= 0f)
                     continue;
 
                 if (rng.NextDouble() > Mathf.Clamp01(drop.dropChance))
@@ -3711,10 +3711,17 @@ public class BattleButton : MonoBehaviour
                 if (amount <= 0)
                     continue;
 
-                if (aggregatedRelics.ContainsKey(drop.relicData))
-                    aggregatedRelics[drop.relicData] += amount;
-                else
-                    aggregatedRelics.Add(drop.relicData, amount);
+                for (int rewardIndex = 0; rewardIndex < amount; rewardIndex++)
+                {
+                    Relic_SO rolledRelic = drop.relicTable.DrawRandomRelic(rng);
+                    if (rolledRelic == null)
+                        continue;
+
+                    if (aggregatedRelics.ContainsKey(rolledRelic))
+                        aggregatedRelics[rolledRelic] += 1;
+                    else
+                        aggregatedRelics.Add(rolledRelic, 1);
+                }
             }
         }
 

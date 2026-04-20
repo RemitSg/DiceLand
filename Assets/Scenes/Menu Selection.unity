@@ -11309,6 +11309,7 @@ MonoBehaviour:
   noSaveSuffix: (No Save)
   contributorsConfig:
     title: Contributors
+<<<<<<< Updated upstream
     openingText: A small game by people who care a lot.
     creditsText: 'Director
 
@@ -11329,6 +11330,11 @@ MonoBehaviour:
 
       Name'
     endingText: Thank you for playing.
+=======
+    openingText: "\u4E00\u4E2A\u5C0F\u6E38\u620F\uFF0C\u4F46\u56E0\u4E3A\u4F60\u4EEC\u7684\u4ED8\u51FA\u624D\u5F97\u4EE5\u5B9E\u73B0"
+    creditsText: "\u7B56\u5212\r\n\u9B4F\u79B9\u8C0B\r\n\r\n\u7A0B\u5E8F\r\n\u9B4F\u79B9\u8C0B\u3001\u5415\u535A\u6D69\u3001\u8D64\u70C8\u6C5F\u63AA\r\n\r\n\u573A\u666F\u8BBE\u8BA1\r\n\u5415\u535A\u6D69\u3001\u9B4F\u79B9\u8C0B\r\n\r\n\u7D20\u6750\u6536\u96C6\r\n\u8D64\u5217\u6C5F\u63AA\u3001\u5415\u535A\u6D69\r\n\r\n\u7279\u522B\u9E23\u8C22\r\n\u674E\u609F\u3001\u5F00"
+    endingText: "\u8C22\u8C22\u4F60\u7684\u6E38\u73A9"
+>>>>>>> Stashed changes
     fadeDuration: 1.2
     startDelay: 0.6
     scrollSpeed: 90
