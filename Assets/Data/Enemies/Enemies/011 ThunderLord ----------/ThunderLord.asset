@@ -59,6 +59,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6c900b8f5042fcf40a566db5529cdaab, type: 2}
   - {fileID: 11400000, guid: 6cd2d239a580ecc44afc27c199a0a083, type: 2}
   - {fileID: 11400000, guid: f2fa6c823e4f8b74b92df5c95b6cf1f9, type: 2}
+  - {fileID: 11400000, guid: a4e331e87fe65d54f9f0e4e589c79f1d, type: 2}
+  - {fileID: 11400000, guid: c441f4121808eaa4b877c26e3d6825e6, type: 2}
+  - {fileID: 11400000, guid: 679d067fabf2d66488157397b7933261, type: 2}
   conditionalSkillRules:
   - ruleName: 
     skill: {fileID: 11400000, guid: 215bc62163817044abd65b7d262ec35d, type: 2}

@@ -63,8 +63,8 @@ MonoBehaviour:
       applyTiming: 0
       applyAfterRoundStarts: 0
       applyRepeatCount: 0
-      stackAmount: 1
-      randomTargetCount: 1
+      stackAmount: 2
+      randomTargetCount: 3
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []
