@@ -345,7 +345,7 @@ public class BattlePresentationSystem : MonoBehaviour
                 hitCameraPower,
                 fx,
                 useCustomHit,
-                attacker,
+                defender,
                 attackerCenter,
                 plane.z,
                 onImpact);
