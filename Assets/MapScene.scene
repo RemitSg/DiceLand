@@ -594,7 +594,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 816dc79930c8f8a458b082d8217b6393, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  difficultyConfig: {fileID: 11400000, guid: b771fb897b72afe4f94eddc32d6ca690, type: 2}
+  difficultyConfig: {fileID: 11400000, guid: 4f6f34f8c8bf4cc0b5d8d5d65d4790e1, type: 2}
   enemyRoster: {fileID: 11400000, guid: dd3f26742821e6f45afc31e04ccad4a5, type: 2}
   recruitCharacterRoster: {fileID: 11400000, guid: 5802743c86761f344ba093fffc0e03f2, type: 2}
   eventPool: {fileID: 11400000, guid: 5e7a7adcedb04f34f885440bc8e82c0e, type: 2}
@@ -609,8 +609,8 @@ MonoBehaviour:
     equippedWeapon: {fileID: 11400000, guid: 9b8c5d177c240334a9734636830a139f, type: 2}
     startingLevel: 1
     startingExperience: 0
-    startingMaxHP: 24
-    startingCurrentHP: 24
+    startingMaxHP: 999
+    startingCurrentHP: 999
   - memberId: 2
     characterData: {fileID: 11400000, guid: fce426096f554744093a4718f5aa0f45, type: 2}
     equippedWeapon: {fileID: 11400000, guid: 66e425e32f62902418159abffd6dedc5, type: 2}
