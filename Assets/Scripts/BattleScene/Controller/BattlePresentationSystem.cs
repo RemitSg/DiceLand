@@ -61,6 +61,12 @@ public class BattlePresentationSystem : MonoBehaviour
         public int sortingOrder;
     }
 
+    private sealed class ActiveSpriteSwap
+    {
+        public Coroutine coroutine;
+        public SpriteSwapState originalState;
+    }
+
     [Header("Plane")]
     [SerializeField] private bool useFixedPlaneZ;
     [SerializeField] private float fixedPlaneZ;
@@ -176,6 +182,7 @@ public class BattlePresentationSystem : MonoBehaviour
     private Coroutine activeCloseupShotRoutine;
     private BattleFeedbackSystem battleFeedbackSystem;
     private int activeCloseupShotId;
+    private readonly System.Collections.Generic.Dictionary<SpriteRenderer, ActiveSpriteSwap> activeSpriteSwaps = new System.Collections.Generic.Dictionary<SpriteRenderer, ActiveSpriteSwap>();
     private bool closeupDefaultsCached;
     private Vector3 closeupDefaultPosition;
     private Quaternion closeupDefaultRotation;
@@ -777,18 +784,22 @@ public class BattlePresentationSystem : MonoBehaviour
         if (source == null || fx.skillSpriteOverride == null)
             return;
 
+        SpriteRenderer primaryRenderer = FindPrimaryCombatSpriteRenderer(source);
+        if (primaryRenderer == null)
+            return;
+
         float duration = fx.overrideSkillSpriteDuration
             ? Mathf.Max(0.01f, fx.skillSpriteDuration)
             : Mathf.Max(0.01f, fallbackDuration);
 
-        StartCoroutine(PlaySkillSpriteSwap(source, fx, duration));
-    }
+        if (activeSpriteSwaps.TryGetValue(primaryRenderer, out ActiveSpriteSwap existingSwap))
+        {
+            if (existingSwap.coroutine != null)
+                StopCoroutine(existingSwap.coroutine);
 
-    private IEnumerator PlaySkillSpriteSwap(Transform source, EnemySkill_SO.DicePresentationSettings fx, float duration)
-    {
-        SpriteRenderer primaryRenderer = FindPrimaryCombatSpriteRenderer(source);
-        if (primaryRenderer == null)
-            yield break;
+            RestoreSpriteSwapState(existingSwap.originalState);
+            activeSpriteSwaps.Remove(primaryRenderer);
+        }
 
         Transform spriteTransform = primaryRenderer.transform;
         SpriteSwapState state = new SpriteSwapState
@@ -801,6 +812,22 @@ public class BattlePresentationSystem : MonoBehaviour
             sortingOrder = primaryRenderer.sortingOrder
         };
 
+        ActiveSpriteSwap swap = new ActiveSpriteSwap
+        {
+            originalState = state
+        };
+        swap.coroutine = StartCoroutine(PlaySkillSpriteSwap(primaryRenderer, fx, duration, swap));
+        activeSpriteSwaps[primaryRenderer] = swap;
+    }
+
+    private IEnumerator PlaySkillSpriteSwap(SpriteRenderer primaryRenderer, EnemySkill_SO.DicePresentationSettings fx, float duration, ActiveSpriteSwap swap)
+    {
+        if (primaryRenderer == null)
+            yield break;
+
+        Transform spriteTransform = primaryRenderer.transform;
+        SpriteSwapState state = swap != null ? swap.originalState : default;
+
         primaryRenderer.sprite = fx.skillSpriteOverride;
         spriteTransform.localPosition = state.localPosition + fx.skillSpritePositionOffset;
         spriteTransform.localRotation = state.localRotation * Quaternion.Euler(fx.skillSpriteRotationOffset);
@@ -811,6 +838,17 @@ public class BattlePresentationSystem : MonoBehaviour
 
         if (state.renderer == null)
             yield break;
+
+        RestoreSpriteSwapState(state);
+
+        if (swap != null && activeSpriteSwaps.TryGetValue(primaryRenderer, out ActiveSpriteSwap currentSwap) && ReferenceEquals(currentSwap, swap))
+            activeSpriteSwaps.Remove(primaryRenderer);
+    }
+
+    private static void RestoreSpriteSwapState(SpriteSwapState state)
+    {
+        if (state.renderer == null)
+            return;
 
         Transform restoreTransform = state.renderer.transform;
         state.renderer.sprite = state.sprite;
