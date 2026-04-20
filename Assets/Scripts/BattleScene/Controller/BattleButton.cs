@@ -384,11 +384,27 @@ public class BattleButton : MonoBehaviour
 
     public bool CanSelectSkillForAlly(BattleAllyController ally, EnemySkill_SO skill)
     {
+        return string.IsNullOrEmpty(GetAllySkillUnavailableReason(ally, skill));
+    }
+
+    public string GetAllySkillUnavailableReason(BattleAllyController ally, EnemySkill_SO skill)
+    {
         if (ally == null || skill == null)
-            return false;
+            return "技能未配置";
 
         int availableEnergyExcludingCurrentReservation = currentSharedEnergy - Mathf.Max(0, reservedSharedEnergy - GetReservedEnergyCostForAlly(ally));
-        return skill.energyCost <= Mathf.Max(0, availableEnergyExcludingCurrentReservation);
+        if (skill.energyCost > Mathf.Max(0, availableEnergyExcludingCurrentReservation))
+            return "能量不足";
+
+        if (skill.RequiresSelfStatusToUse)
+        {
+            int requiredStacks = Mathf.Max(1, skill.requiredSelfStatusStacks);
+            int currentStacks = ally.GetStatusStacks(skill.requiredSelfStatusData);
+            if (currentStacks < requiredStacks)
+                return $"{skill.requiredSelfStatusData.DisplayName}不足";
+        }
+
+        return string.Empty;
     }
 
     private void RegisterSharedEnergyListeners(BattleAllyController[] allies)
@@ -420,7 +436,8 @@ public class BattleButton : MonoBehaviour
 
         int previousReserved = reservedSharedEnergy;
 
-        if (ally.speedButton != null && ally.speedButton.ConnectedTarget != null && !CanSelectSkillForAlly(ally, ally.SelectedSkill))
+        string unavailableReason = GetAllySkillUnavailableReason(ally, ally.SelectedSkill);
+        if (ally.speedButton != null && ally.speedButton.ConnectedTarget != null && !string.IsNullOrEmpty(unavailableReason))
         {
             if (!isRefreshingSharedEnergyReservations)
             {
@@ -429,7 +446,7 @@ public class BattleButton : MonoBehaviour
                 isRefreshingSharedEnergyReservations = false;
             }
 
-            BattleLog($"能量不足：{ally.GetDebugDisplayName()} 当前技能 {ally.SelectedSkill?.skillName ?? "未配置"} 无法维持连线。");
+            BattleLog($"{unavailableReason}：{ally.GetDebugDisplayName()} 当前技能 {ally.SelectedSkill?.skillName ?? "未配置"} 无法维持连线。");
         }
 
         RefreshSharedEnergyReservations(activeRoundAllies);
@@ -448,12 +465,13 @@ public class BattleButton : MonoBehaviour
 
         int previousReserved = reservedSharedEnergy;
 
-        if (button.ConnectedTarget != null && !CanSelectSkillForAlly(ally, ally.SelectedSkill))
+        string unavailableReason = GetAllySkillUnavailableReason(ally, ally.SelectedSkill);
+        if (button.ConnectedTarget != null && !string.IsNullOrEmpty(unavailableReason))
         {
             isRefreshingSharedEnergyReservations = true;
             button.DisconnectLine();
             isRefreshingSharedEnergyReservations = false;
-            BattleLog($"能量不足：{ally.GetDebugDisplayName()} 无法使用技能 {ally.SelectedSkill?.skillName ?? "未配置"} 进行目标指定。");
+            BattleLog($"{unavailableReason}：{ally.GetDebugDisplayName()} 无法使用技能 {ally.SelectedSkill?.skillName ?? "未配置"} 进行目标指定。");
         }
 
         RefreshSharedEnergyReservations(activeRoundAllies);
@@ -513,6 +531,48 @@ public class BattleButton : MonoBehaviour
         if (restored > 0)
             RefreshSharedEnergyUi();
         return restored;
+    }
+
+    private void ShowSharedEnergyRefundPopupIfNeeded(BattleAllyController ally, int refundedEnergy)
+    {
+        if (ally == null || battleFeedbackSystem == null || refundedEnergy <= 0)
+            return;
+
+        battleFeedbackSystem.ShowCustomPopup(
+            BattleActorVisualUtility.GetActorCenterWorld(ally.transform) + new Vector3(0f, 1.1f, 0f),
+            $"+{refundedEnergy}",
+            sharedEnergyBarFillColor);
+    }
+
+    private bool TryConsumeAllySkillRequirement(BattleAllyController ally, EnemySkill_SO skill, string actionLabel, bool refundEnergyOnFailure)
+    {
+        if (ally == null || skill == null || !skill.RequiresSelfStatusToUse)
+            return true;
+
+        BattleStatus_SO requiredStatus = skill.requiredSelfStatusData;
+        int requiredStacks = Mathf.Max(1, skill.requiredSelfStatusStacks);
+        int currentStacks = ally.GetStatusStacks(requiredStatus);
+        if (currentStacks < requiredStacks)
+        {
+            if (refundEnergyOnFailure)
+            {
+                int refundedEnergy = RestoreSharedEnergy(Mathf.Max(0, skill.energyCost));
+                ShowSharedEnergyRefundPopupIfNeeded(ally, refundedEnergy);
+            }
+
+            string statusName = requiredStatus != null ? requiredStatus.DisplayName : "状态";
+            BattleLog($"{actionLabel}：{ally.GetDebugDisplayName()} 施放 {skill.skillName} 需要 {requiredStacks} 层 {statusName}，当前仅 {currentStacks} 层，技能未能施放。");
+            return false;
+        }
+
+        if (skill.keepRequiredSelfStatusAfterUse)
+            return true;
+
+        int removedStacks = ally.RemoveStatusStacks(requiredStatus, requiredStatus != null ? requiredStatus.StatusId : null, requiredStacks, requiredStatus != null ? requiredStatus.DisplayName : null);
+        string consumedStatusName = requiredStatus != null ? requiredStatus.DisplayName : "状态";
+        int remainingStacks = requiredStatus != null ? ally.GetStatusStacks(requiredStatus) : 0;
+        BattleLog($"{actionLabel}：{ally.GetDebugDisplayName()} 施放 {skill.skillName} 消耗 {removedStacks} 层 {consumedStatusName}，当前 {consumedStatusName} {remainingStacks} 层。");
+        return true;
     }
 
     private void EnsureSharedEnergyUi()
@@ -1130,6 +1190,12 @@ public class BattleButton : MonoBehaviour
         if (ally == null || enemy == null || ally.IsDead || enemy.IsDead)
             yield break;
 
+        if (!TryConsumeAllySkillRequirement(ally, ally.SelectedSkill, "[拼点]", true))
+        {
+            yield return ResolveEnemySingleAttackAction(enemy, ally, enemyButton);
+            yield break;
+        }
+
         Vector3 allyStartPosition = ally.transform.position;
         Vector3 enemyStartPosition = enemy.transform.position;
 
@@ -1468,17 +1534,14 @@ public class BattleButton : MonoBehaviour
         if (isDefenseSkill)
         {
             int refundedEnergy = RestoreSharedEnergy(Mathf.Max(0, ally.SelectedSkill != null ? ally.SelectedSkill.energyCost : 0));
-            if (refundedEnergy > 0)
-            {
-                battleFeedbackSystem?.ShowCustomPopup(
-                    BattleActorVisualUtility.GetActorCenterWorld(ally.transform) + new Vector3(0f, 1.1f, 0f),
-                    $"+{refundedEnergy}",
-                    sharedEnergyBarFillColor);
-            }
+            ShowSharedEnergyRefundPopupIfNeeded(ally, refundedEnergy);
 
             BattleLog($"[友方单方面攻击] {ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}] 为防御技能，未与攻击骰拼点，本次无效。");
             yield break;
         }
+
+        if (!TryConsumeAllySkillRequirement(ally, ally.SelectedSkill, "[友方单方面攻击]", true))
+            yield break;
 
         ally.MarkCurrentRoundSkillUsed();
         BattleLog($"[\u53cb\u65b9\u5355\u65b9\u9762\u653b\u51fb] {ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}] -> {enemy.GetDebugDisplayName()}");

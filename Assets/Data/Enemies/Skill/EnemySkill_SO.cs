@@ -88,6 +88,12 @@ public class EnemySkill_SO : ScriptableObject
         PreferTargetsWithStatusAtLeast = 1
     }
 
+    public enum TransformOffsetSpace
+    {
+        Local = 0,
+        Global = 1
+    }
+
     [System.Serializable]
     public struct DicePowerRange
     {
@@ -112,6 +118,9 @@ public class EnemySkill_SO : ScriptableObject
         public GameObject hitEffectPrefab;
 
         [Header("Clash Transform")]
+        [Tooltip("How clash position and rotation offsets should be interpreted. Local keeps the legacy behavior.")]
+        public TransformOffsetSpace clashOffsetSpace;
+
         [Tooltip("Local position offset for the clash effect.")]
         public Vector3 clashPositionOffset;
 
@@ -133,6 +142,9 @@ public class EnemySkill_SO : ScriptableObject
         public float clashDuration;
 
         [Header("Hit Transform")]
+        [Tooltip("How hit position and rotation offsets should be interpreted. Local keeps the legacy behavior.")]
+        public TransformOffsetSpace hitOffsetSpace;
+
         [Tooltip("Local position offset for the hit effect.")]
         public Vector3 hitPositionOffset;
 
@@ -474,6 +486,17 @@ public class EnemySkill_SO : ScriptableObject
     [Tooltip("Shared energy cost consumed by allies when this skill is used. Enemies ignore this value.")]
     public int energyCost;
 
+    [Header("Ally Status Requirement")]
+    [Tooltip("Optional status required for player-controlled allies to cast this skill. Enemies ignore this requirement.")]
+    public BattleStatus_SO requiredSelfStatusData;
+
+    [Min(0)]
+    [Tooltip("Minimum required stacks of the status above for player-controlled allies to cast this skill. 0 disables the requirement.")]
+    public int requiredSelfStatusStacks;
+
+    [Tooltip("When enabled, allies keep the required status after using the skill. Disabled by default, so the required stacks are consumed on use.")]
+    public bool keepRequiredSelfStatusAfterUse;
+
     [Header("Enemy Stage Transition")]
     [Tooltip("When set to 0 or above, an enemy using this skill will immediately switch to the target stage index.")]
     public int transformEnemyToStageIndex = -1;
@@ -580,11 +603,15 @@ public class EnemySkill_SO : ScriptableObject
     }
 
     public bool IsDefenseSkill => skillCategory == SkillCategory.Defense;
+    public bool RequiresSelfStatusToUse => requiredSelfStatusData != null && requiredSelfStatusStacks > 0;
 
     private void OnValidate()
     {
         if (energyCost < 0)
             energyCost = 0;
+
+        if (requiredSelfStatusStacks < 0)
+            requiredSelfStatusStacks = 0;
 
         if (transformEnemyToStageIndex < -1)
             transformEnemyToStageIndex = -1;

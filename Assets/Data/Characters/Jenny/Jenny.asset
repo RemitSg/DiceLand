@@ -21,4 +21,4 @@ MonoBehaviour:
   initialWeaponData: {fileID: 0}
   icon: {fileID: 0}
   battleSprite: {fileID: 21300000, guid: 228f0f2faa31282489ab4effce2e3006, type: 3}
-  characterPrefab: {fileID: 0}
+  characterPrefab: {fileID: 6493901180683519030, guid: 00c39108fa451214fb870cf8f893fbe0, type: 3}

@@ -396,6 +396,7 @@ public class BattlePresentationSystem : MonoBehaviour
             Vector3.right,
             statusData.TickEffectPositionOffset,
             statusData.TickEffectRotationOffset,
+            EnemySkill_SO.TransformOffsetSpace.Local,
             statusData.TickEffectScale,
             fallbackDuration,
             statusData.TickEffectSortingOrderOffset,
@@ -490,16 +491,17 @@ public class BattlePresentationSystem : MonoBehaviour
         if (fx.clashEffectPrefab != null)
         {
             float fallbackDuration = fx.overrideClashDuration ? Mathf.Max(0.01f, fx.clashDuration) : clashEffectDuration;
-        SpawnCustomEffect(
-            fx.clashEffectPrefab,
-            sourcePosition,
-            direction,
-            fx.clashPositionOffset,
-            fx.clashRotationOffset,
-            fx.SafeClashScale,
-            fallbackDuration,
-            fx.clashSortingOrderOffset,
-            true);
+            SpawnCustomEffect(
+                fx.clashEffectPrefab,
+                sourcePosition,
+                direction,
+                fx.clashPositionOffset,
+                fx.clashRotationOffset,
+                fx.clashOffsetSpace,
+                fx.SafeClashScale,
+                fallbackDuration,
+                fx.clashSortingOrderOffset,
+                true);
             return;
         }
 
@@ -548,6 +550,7 @@ public class BattlePresentationSystem : MonoBehaviour
                 direction,
                 fx.hitPositionOffset,
                 fx.hitRotationOffset,
+                fx.hitOffsetSpace,
                 fx.SafeHitScale,
                 hitEffectDuration,
                 fx.hitSortingOrderOffset,
@@ -689,6 +692,7 @@ public class BattlePresentationSystem : MonoBehaviour
                 direction,
                 allyDefenderReactionOffset,
                 allyDefenderReactionRotationOffset,
+                EnemySkill_SO.TransformOffsetSpace.Local,
                 SafeScale(allyDefenderReactionScale),
                 fallbackDuration,
                 allyDefenderReactionSortingOrderOffset);
@@ -992,13 +996,28 @@ public class BattlePresentationSystem : MonoBehaviour
         return root;
     }
 
-    private float SpawnCustomEffect(GameObject prefab, Vector3 basePosition, Vector3 direction, Vector3 localOffset, Vector3 rotationOffset, Vector3 scale, float fallbackDuration, int sortingOrderOffset, bool forceDuration = false)
+    private float SpawnCustomEffect(
+        GameObject prefab,
+        Vector3 basePosition,
+        Vector3 direction,
+        Vector3 positionOffset,
+        Vector3 rotationOffset,
+        EnemySkill_SO.TransformOffsetSpace offsetSpace,
+        Vector3 scale,
+        float fallbackDuration,
+        int sortingOrderOffset,
+        bool forceDuration = false)
     {
         if (prefab == null)
             return fallbackDuration;
 
-        Quaternion rotation = BuildFacingRotation(direction) * Quaternion.Euler(rotationOffset);
-        Vector3 spawnPosition = basePosition + rotation * localOffset;
+        Quaternion facingRotation = BuildFacingRotation(direction);
+        Quaternion eulerRotationOffset = Quaternion.Euler(rotationOffset);
+        bool useGlobalOffset = offsetSpace == EnemySkill_SO.TransformOffsetSpace.Global;
+        Quaternion rotation = useGlobalOffset
+            ? eulerRotationOffset * facingRotation
+            : facingRotation * eulerRotationOffset;
+        Vector3 spawnPosition = basePosition + (useGlobalOffset ? positionOffset : rotation * positionOffset);
         spawnPosition.z += effectDepthOffset;
         GameObject instance = Instantiate(prefab, spawnPosition, rotation);
         instance.transform.localScale = Vector3.Scale(instance.transform.localScale, scale);

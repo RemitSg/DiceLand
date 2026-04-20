@@ -502,7 +502,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
             Image image = buttonGo.GetComponent<Image>();
             bool isSelected = capturedIndex == ally.CurrentSkillIndex;
-            bool canSelect = cachedBattleButton == null || cachedBattleButton.CanSelectSkillForAlly(ally, skill);
+            string unavailableReason = cachedBattleButton != null ? cachedBattleButton.GetAllySkillUnavailableReason(ally, skill) : string.Empty;
+            bool canSelect = string.IsNullOrEmpty(unavailableReason);
             Color baseColor = isSelected ? selectedSkillButtonColor : skillButtonColor;
             image.color = canSelect ? baseColor : new Color(baseColor.r * 0.45f, baseColor.g * 0.45f, baseColor.b * 0.45f, baseColor.a * 0.75f);
             image.sprite = isSelected && selectedSkillButtonSprite != null ? selectedSkillButtonSprite : skillButtonSprite;
@@ -525,7 +526,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
             TextMeshProUGUI label = CreateText(rect, "Label", new Vector2(16f, -14f), new Vector2(skillButtonSize.x - 24f, skillButtonSize.y - 24f), buttonFontSize, isSelected ? selectedSkillButtonTextColor : skillButtonTextColor, true, TextAlignmentOptions.MidlineLeft);
             label.enableWordWrapping = true;
-            label.text = BuildSkillButtonLabel(skill, isSelected, canSelect);
+            label.text = BuildSkillButtonLabel(skill, isSelected, unavailableReason);
 
             skillButtons.Add(button);
             skillButtonTexts.Add(label);
@@ -633,7 +634,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         if (ally == null)
             return "\u672a\u627e\u5230\u89d2\u8272\u6570\u636e\u3002";
 
-        return BuildSkillDetail(ally.SelectedSkill, "\u5f53\u524d\u6280\u80fd", true);
+        return BuildSkillDetail(ally.SelectedSkill, "\u5f53\u524d\u6280\u80fd", true, null, ally);
     }
 
     private string BuildEnemyDetail(BattleEnemyController enemy)
@@ -689,7 +690,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         return string.Join("\n", lines);
     }
 
-    private string BuildSkillDetail(EnemySkill_SO skill, string header, bool attackerIsAlly, Func<int, EnemySkill_SO.DicePowerRange> rangeResolver = null)
+    private string BuildSkillDetail(EnemySkill_SO skill, string header, bool attackerIsAlly, Func<int, EnemySkill_SO.DicePowerRange> rangeResolver = null, BattleAllyController allyContext = null)
     {
         if (skill == null)
             return $"{header}\n\u672a\u914d\u7f6e\u6280\u80fd\u3002";
@@ -870,10 +871,19 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
         string description = string.IsNullOrWhiteSpace(skill.description) ? "\u6682\u65e0\u63cf\u8ff0\u3002" : skill.description;
         string targetPrioritySection = BuildTargetPrioritySummary(skill);
+        string requirementSection = string.Empty;
+        if (attackerIsAlly && skill.RequiresSelfStatusToUse && skill.requiredSelfStatusData != null)
+        {
+            int requiredStacks = Mathf.Max(1, skill.requiredSelfStatusStacks);
+            int currentStacks = allyContext != null ? allyContext.GetStatusStacks(skill.requiredSelfStatusData) : 0;
+            string currentSuffix = allyContext != null ? $"（当前 {currentStacks} 层）" : string.Empty;
+            string consumeSuffix = skill.keepRequiredSelfStatusAfterUse ? "，施放后不消耗" : "，施放后消耗";
+            requirementSection = $"\n施放条件：自身至少拥有 {requiredStacks} 层 {skill.requiredSelfStatusData.DisplayName}{currentSuffix}{consumeSuffix}";
+        }
         string effectSection = effectLines.Count > 0
             ? $"\n\n\u8bcd\u6761\uff1a\n{string.Join("\n", effectLines)}"
             : string.Empty;
-        return $"{header}\n\u6280\u80fd\uff1a{skill.skillName}\n\u80fd\u8017\uff1a{Mathf.Max(0, skill.energyCost)}\n\u9ab0\u5b50\u6570\uff1a{skill.diceCount}\n{string.Join("\n", rangeLines)}{targetPrioritySection}{effectSection}\n\n\u63cf\u8ff0\uff1a\n{description}";
+        return $"{header}\n\u6280\u80fd\uff1a{skill.skillName}\n\u80fd\u8017\uff1a{Mathf.Max(0, skill.energyCost)}{requirementSection}\n\u9ab0\u5b50\u6570\uff1a{skill.diceCount}\n{string.Join("\n", rangeLines)}{targetPrioritySection}{effectSection}\n\n\u63cf\u8ff0\uff1a\n{description}";
     }
 
     private string BuildCompactSkillHoverDetail(EnemySkill_SO skill, bool attackerIsAlly)
@@ -1074,13 +1084,13 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         }
     }
 
-    private static string BuildSkillButtonLabel(EnemySkill_SO skill, bool isSelected, bool canSelect)
+    private static string BuildSkillButtonLabel(EnemySkill_SO skill, bool isSelected, string unavailableReason)
     {
         if (skill == null)
             return isSelected ? "\u5df2\u88c5\u5907\u6280\u80fd" : "\u672a\u547d\u540d\u6280\u80fd";
 
         string equippedSuffix = isSelected ? "  [已装备]" : string.Empty;
-        string disabledSuffix = canSelect ? string.Empty : "  [能量不足]";
+        string disabledSuffix = string.IsNullOrWhiteSpace(unavailableReason) ? string.Empty : $"  [{unavailableReason}]";
         return $"{skill.skillName}{equippedSuffix}\n能耗 {Mathf.Max(0, skill.energyCost)}{disabledSuffix}";
     }
 

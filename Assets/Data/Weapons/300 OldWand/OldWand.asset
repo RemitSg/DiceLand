@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 057dbb9ab39f5f74bafd7272cac75c4d, type: 3}
+  m_Name: OldWand
+  m_EditorClassIdentifier: 
+  id: 300
+  weaponName: "\u8001\u65E7\u6CD5\u6756"
+  description: "Jenny \u7684\u6BCD\u4EB2\u9001\u7ED9 Jenny \u7684\uFF0C\u5979\u4E00\u76F4\u4F7F\u7528\u5230\u73B0\u5728\u3002"
+  rarity: 0
+  weaponType: 3
+  icon: {fileID: 21300000, guid: 66562994ffac30f4dbf74955c523b086, type: 3}
+  weaponPrefab: {fileID: 7009954298366525949, guid: 04b3acc967269ae4197ab012c8e05984, type: 3}
+  minPower: 1
+  maxPower: 3
+  skillPool:
+  - {fileID: 0}
