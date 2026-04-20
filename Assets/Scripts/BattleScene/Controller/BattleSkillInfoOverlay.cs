@@ -1089,9 +1089,13 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         if (skill == null)
             return isSelected ? "\u5df2\u88c5\u5907\u6280\u80fd" : "\u672a\u547d\u540d\u6280\u80fd";
 
+        string requirementSuffix = string.Empty;
+        if (skill.RequiresSelfStatusToUse && skill.requiredSelfStatusData != null)
+            requirementSuffix = $" [{skill.requiredSelfStatusData.DisplayName} {Mathf.Max(1, skill.requiredSelfStatusStacks)}]";
+
         string equippedSuffix = isSelected ? "  [已装备]" : string.Empty;
         string disabledSuffix = string.IsNullOrWhiteSpace(unavailableReason) ? string.Empty : $"  [{unavailableReason}]";
-        return $"{skill.skillName}{equippedSuffix}\n能耗 {Mathf.Max(0, skill.energyCost)}{disabledSuffix}";
+        return $"{skill.skillName}{requirementSuffix}{equippedSuffix}\n能耗 {Mathf.Max(0, skill.energyCost)}{disabledSuffix}";
     }
 
     private void ResetDetailScrollToTop()
