@@ -337,10 +337,13 @@ public class BattlePresentationSystem : MonoBehaviour
 
         if (onImpact != null)
         {
+            Vector3 hitPosition = ImpactPoint(attackerCenter, defenderCenter, plane.z);
+            Vector3 hitDirection = FlatDir(attackerCenter, defenderCenter, plane.z);
+
             yield return PlayHitMoment(
                 defender,
-                Project(attackerCenter, plane.z) + FlatDir(attackerCenter, defenderCenter, plane.z) * 0.18f + Vector3.up * impactHeightOffset,
-                FlatDir(attackerCenter, defenderCenter, plane.z),
+                hitPosition,
+                hitDirection,
                 hitColor,
                 hitCameraPower,
                 fx,
