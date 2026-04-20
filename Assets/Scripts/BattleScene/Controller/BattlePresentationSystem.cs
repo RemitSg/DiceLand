@@ -275,7 +275,7 @@ public class BattlePresentationSystem : MonoBehaviour
                 hitCameraPower,
                 hitFx,
                 useCustomHit,
-                defenderCenter,
+                defender,
                 attackerCenter,
                 plane.z,
                 onImpact);
@@ -315,11 +315,12 @@ public class BattlePresentationSystem : MonoBehaviour
 
         Color hitColor = attackerIsAlly ? allyHitColor : enemyHitColor;
         bool useCustomHit = fx.hitEffectPrefab != null;
-        Vector3 attackerCenter = BattleActorVisualUtility.GetActorCenterWorld(attacker);
-        Vector3 defenderCenter = BattleActorVisualUtility.GetActorCenterWorld(defender);
 
         if (moveIntoPosition)
             yield return MovePair(attacker, plane.firstStart, attackerTarget, defender, plane.secondStart, defenderTarget, advanceDuration);
+
+        Vector3 attackerCenter = BattleActorVisualUtility.GetActorCenterWorld(attacker);
+        Vector3 defenderCenter = BattleActorVisualUtility.GetActorCenterWorld(defender);
 
         int hitShotId = StartCloseupShot(attacker, defender, Project(attackerCenter, plane.z) + Vector3.up * impactHeightOffset, hitCameraPower);
         diceDisplay = feedbackSystem?.ShowClashDiceRange(attacker, !attackerIsAlly, attackRange);
@@ -344,7 +345,7 @@ public class BattlePresentationSystem : MonoBehaviour
                 hitCameraPower,
                 fx,
                 useCustomHit,
-                attackerCenter,
+                attacker,
                 attackerCenter,
                 plane.z,
                 onImpact);
@@ -525,7 +526,7 @@ public class BattlePresentationSystem : MonoBehaviour
         float cameraImpactPower,
         EnemySkill_SO.DicePresentationSettings fx,
         bool useCustom,
-        Vector3 customAnchorPosition,
+        Transform customAnchor,
         Vector3 attackerPosition,
         float planeZ,
         Action onImpact)
@@ -534,7 +535,7 @@ public class BattlePresentationSystem : MonoBehaviour
         float damageDelay;
         if (useCustom)
         {
-            Vector3 anchorPosition = customAnchorPosition;
+            Vector3 anchorPosition = customAnchor != null ? customAnchor.position : position;
             anchorPosition.y = position.y;
             anchorPosition.z = position.z;
 
