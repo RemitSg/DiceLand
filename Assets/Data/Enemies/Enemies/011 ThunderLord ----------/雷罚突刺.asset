@@ -18,6 +18,10 @@ MonoBehaviour:
   energyCost: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 01000000
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
   minPower: 1
   maxPower: 3
   diceCount: 2
@@ -48,8 +52,8 @@ MonoBehaviour:
     skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
     skillSpriteScale: {x: 0, y: 0, z: 0}
     skillSpriteSortingOrderOffset: 0
-    overrideSkillSpriteDuration: 0
-    skillSpriteDuration: 0
+    overrideSkillSpriteDuration: 1
+    skillSpriteDuration: 0.01
   diceEffectSettings:
   - damageEffects: []
     statusEffects:

@@ -50,8 +50,8 @@ MonoBehaviour:
     skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
     skillSpriteScale: {x: 0, y: 0, z: 0}
     skillSpriteSortingOrderOffset: 0
-    overrideSkillSpriteDuration: 0
-    skillSpriteDuration: 0
+    overrideSkillSpriteDuration: 1
+    skillSpriteDuration: 1
   diceEffectSettings:
   - damageEffects: []
     statusEffects: []
