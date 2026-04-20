@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "\u4E00\u67AA\u788E\u7A79"
   m_EditorClassIdentifier: 
   skillName: "\u4E00\u67AA\u788E\u7A79"
-  description: "\u523A\u7834\u5929\u7A79\u7684\u4E00\u67AA"
+  description: "\u523A\u7834\u5929\u7A79\u7684\u4E00\u67AA\uFF0C\u4F60\u63A5\u5F97\u4F4F\u5417\uFF1F"
   skillCategory: 0
   energyCost: 0
   transformEnemyToStageIndex: -1

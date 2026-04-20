@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ThunderLord
   m_EditorClassIdentifier: 
   enemyID: 11
-  enemyName: "\u7A79\u96F7\u5DE8\u7075"
+  enemyName: "\u96F7\u5BF0\u9738\u4E3B"
   baseHP: 60
   damageReductionPercent: 0
   minSpeed: 2
