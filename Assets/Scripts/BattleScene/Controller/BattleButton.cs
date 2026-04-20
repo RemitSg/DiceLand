@@ -203,6 +203,7 @@ public class BattleButton : MonoBehaviour
             return;
 
         ApplyEnemyBattleStartEffectsIfNeeded(allies, enemies);
+        ApplyEnemyRepeatRoundStartStatusGains(allies, enemies);
         ApplyBattleRoundStartRelics(allies, enemies);
 
         foreach (BattleAllyController ally in allies)
@@ -327,26 +328,57 @@ public class BattleButton : MonoBehaviour
                 continue;
 
             List<EnemyData_SO.BattleStartAllySkillGrantEntry> grants = enemy.enemyData.battleStartGrantedAllySkills;
-            if (grants == null || grants.Count == 0)
-                continue;
-
-            for (int grantIndex = 0; grantIndex < grants.Count; grantIndex++)
+            if (grants != null)
             {
-                EnemyData_SO.BattleStartAllySkillGrantEntry grant = grants[grantIndex];
-                if (grant.skill == null)
-                    continue;
-
-                for (int allyIndex = 0; allyIndex < allies.Length; allyIndex++)
+                for (int grantIndex = 0; grantIndex < grants.Count; grantIndex++)
                 {
-                    BattleAllyController ally = allies[allyIndex];
-                    if (ally == null || ally.IsDead)
+                    EnemyData_SO.BattleStartAllySkillGrantEntry grant = grants[grantIndex];
+                    if (grant.skill == null)
                         continue;
 
-                    ally.GrantTemporarySkill(grant.skill, grant.replaceWeaponSkills);
-                }
+                    for (int allyIndex = 0; allyIndex < allies.Length; allyIndex++)
+                    {
+                        BattleAllyController ally = allies[allyIndex];
+                        if (ally == null || ally.IsDead)
+                            continue;
 
-                BattleLog($"\u654c\u65b9 {enemy.GetDebugDisplayName()} \u5728\u6218\u6597\u5f00\u59cb\u65f6\u8d4b\u4e88\u53cb\u65b9\u4e34\u65f6\u6280\u80fd\uff1a{grant.skill.skillName}");
+                        ally.GrantTemporarySkill(grant.skill, grant.replaceWeaponSkills);
+                    }
+
+                    BattleLog($"\u654c\u65b9 {enemy.GetDebugDisplayName()} \u5728\u6218\u6597\u5f00\u59cb\u65f6\u8d4b\u4e88\u53cb\u65b9\u4e34\u65f6\u6280\u80fd\uff1a{grant.skill.skillName}");
+                }
             }
+
+            bool gainedBattleStartStatuses = ApplyEnemyStatusGains(
+                enemy,
+                enemy.enemyData.battleStartStatusGains,
+                (statusName, appliedStacks, currentStacks) =>
+                    $"敌方战斗开始效果：{enemy.GetDebugDisplayName()} 获得 {appliedStacks} 层 {statusName}，当前 {statusName} {currentStacks} 层");
+
+            if (gainedBattleStartStatuses)
+                TryLogEnemyStatusDrivenStageTransition(enemy, allies, enemies);
+        }
+    }
+
+    private void ApplyEnemyRepeatRoundStartStatusGains(BattleAllyController[] allies, BattleEnemyController[] enemies)
+    {
+        if (currentRound <= 1 || enemies == null)
+            return;
+
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            BattleEnemyController enemy = enemies[i];
+            if (enemy == null || enemy.IsDead || enemy.enemyData == null)
+                continue;
+
+            bool gainedStatuses = ApplyEnemyStatusGains(
+                enemy,
+                enemy.enemyData.repeatRoundStartStatusGains,
+                (statusName, appliedStacks, currentStacks) =>
+                    $"敌方回合效果：第 {currentRound} 回合开始时，{enemy.GetDebugDisplayName()} 获得 {appliedStacks} 层 {statusName}，当前 {statusName} {currentStacks} 层");
+
+            if (gainedStatuses)
+                TryLogEnemyStatusDrivenStageTransition(enemy, allies, enemies);
         }
     }
 
@@ -1780,6 +1812,43 @@ public class BattleButton : MonoBehaviour
                 }
             }
         }
+    }
+
+    private bool ApplyEnemyStatusGains(
+        BattleEnemyController enemy,
+        List<EnemyData_SO.StatusGainEntry> entries,
+        Func<string, int, int, string> buildLogMessage)
+    {
+        if (enemy == null || enemy.IsDead || entries == null || entries.Count == 0)
+            return false;
+
+        bool appliedAny = false;
+        for (int i = 0; i < entries.Count; i++)
+        {
+            EnemyData_SO.StatusGainEntry entry = entries[i];
+            if (entry.statusData == null || entry.stackAmount <= 0)
+                continue;
+
+            if (!enemy.AddStatus(entry.statusData, entry.statusData.StatusId, entry.statusData.DisplayName, entry.stackAmount))
+                continue;
+
+            appliedAny = true;
+            int currentStacks = enemy.GetStatusStacks(entry.statusData);
+            if (buildLogMessage != null)
+                BattleLog(buildLogMessage(entry.statusData.DisplayName, entry.stackAmount, currentStacks));
+        }
+
+        return appliedAny;
+    }
+
+    private void TryLogEnemyStatusDrivenStageTransition(BattleEnemyController enemy, BattleAllyController[] allies, BattleEnemyController[] enemies)
+    {
+        if (enemy == null || enemy.IsDead || enemy.AppliedPendingStageTransitionThisRoundStart)
+            return;
+
+        int previousStage = enemy.CurrentStageIndex;
+        if (enemy.TryApplyStatusDrivenStageTransition(allies, enemies))
+            BattleLog($"阶段切换：{enemy.GetDebugDisplayName()} 因状态条件由第 {previousStage + 1} 阶段切换到第 {enemy.CurrentStageIndex + 1} 阶段");
     }
 
     private void ApplyReactiveOnHitStatusEffects(BattleAllyController target)

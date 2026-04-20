@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: Call
+  m_EditorClassIdentifier: 
+  skillName: "\u547C\u5524"
+  description: "\u4F60\u542C\u5230\u4E86\u8FDC\u65B9\u7684\u6078\u54ED"
+  skillCategory: 0
+  energyCost: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 02000000
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 2
+  maxPower: 4
+  diceCount: 1
+  dicePowerRanges: []
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 0}
+    hitEffectPrefab: {fileID: 5209871788123057028, guid: 0003db5265684304284e5dc0e0fb3c03, type: 3}
+    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitPositionOffset: {x: 2, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 2, y: 2, z: 2}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 0}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects:
+    - effectName: 
+      trigger: 0
+      targetMode: 0
+      statusData: {fileID: 11400000, guid: c8249c4cafb55cd4f8587aa0410e54d3, type: 2}
+      statusType: 0
+      applyTiming: 0
+      applyAfterRoundStarts: 0
+      applyRepeatCount: 0
+      stackAmount: 2
+      randomTargetCount: 1
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    statusStackOperationEffects:
+    - effectName: 
+      trigger: 3
+      targetMode: 3
+      statusData: {fileID: 11400000, guid: 15e54805ff58a7a49951aa1a35672df6, type: 2}
+      statusType: 0
+      operationType: 0
+      stackAmount: 1
+      randomTargetCount: 1
+    enemyStageTransitionEffects: []

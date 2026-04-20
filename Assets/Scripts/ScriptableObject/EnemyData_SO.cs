@@ -107,6 +107,13 @@ public class EnemyData_SO : ScriptableObject
     }
 
     [System.Serializable]
+    public struct StatusGainEntry
+    {
+        public BattleStatus_SO statusData;
+        [Min(1)] public int stackAmount;
+    }
+
+    [System.Serializable]
     public struct RoundStartRetreatRule
     {
         [Tooltip("Enable this rule to make the enemy leave combat at the start of a fixed round.")]
@@ -152,10 +159,16 @@ public class EnemyData_SO : ScriptableObject
     [Header("Battle Start Effects")]
     [Tooltip("Temporary skills granted to all allied characters when this enemy enters battle.")]
     public List<BattleStartAllySkillGrantEntry> battleStartGrantedAllySkills;
+    [Tooltip("Statuses granted to this enemy once when the battle begins.")]
+    public List<StatusGainEntry> battleStartStatusGains;
 
     [Header("On Enemy Death Effects")]
     [Tooltip("When the specified enemy dies during this battle, this enemy gains the configured status stacks.")]
     public List<OnSpecificEnemyDeathStatusGainEntry> onSpecificEnemyDeathStatusGains;
+
+    [Header("Round Start Status Gains")]
+    [Tooltip("Statuses granted to this enemy at the start of each round after round 1.")]
+    public List<StatusGainEntry> repeatRoundStartStatusGains;
 
     [Header("Round Start Retreat")]
     [Tooltip("Optional retreat rule. When triggered, the encounter settles immediately with the configured loot tables.")]
@@ -274,8 +287,12 @@ public class EnemyData_SO : ScriptableObject
             statusImmunityRules = new List<StatusImmunityRule>();
         if (battleStartGrantedAllySkills == null)
             battleStartGrantedAllySkills = new List<BattleStartAllySkillGrantEntry>();
+        if (battleStartStatusGains == null)
+            battleStartStatusGains = new List<StatusGainEntry>();
         if (onSpecificEnemyDeathStatusGains == null)
             onSpecificEnemyDeathStatusGains = new List<OnSpecificEnemyDeathStatusGainEntry>();
+        if (repeatRoundStartStatusGains == null)
+            repeatRoundStartStatusGains = new List<StatusGainEntry>();
         if (roundStartRetreatRule.settlementLootTables == null)
             roundStartRetreatRule.settlementLootTables = new List<LootTable_SO>();
         roundStartRetreatRule.triggerRound = Mathf.Max(1, roundStartRetreatRule.triggerRound);
@@ -298,6 +315,28 @@ public class EnemyData_SO : ScriptableObject
             rule.targetStageIndex = Mathf.Max(0, rule.targetStageIndex);
             rule.priority = Mathf.Max(0, rule.priority);
             statusStageTransitionRules[i] = rule;
+        }
+
+        for (int i = 0; i < battleStartStatusGains.Count; i++)
+        {
+            StatusGainEntry entry = battleStartStatusGains[i];
+            entry.stackAmount = Mathf.Max(1, entry.stackAmount);
+            battleStartStatusGains[i] = entry;
+        }
+
+        for (int i = 0; i < onSpecificEnemyDeathStatusGains.Count; i++)
+        {
+            OnSpecificEnemyDeathStatusGainEntry entry = onSpecificEnemyDeathStatusGains[i];
+            entry.stackAmount = Mathf.Max(1, entry.stackAmount);
+            entry.additionalRoundStartApplications = Mathf.Max(0, entry.additionalRoundStartApplications);
+            onSpecificEnemyDeathStatusGains[i] = entry;
+        }
+
+        for (int i = 0; i < repeatRoundStartStatusGains.Count; i++)
+        {
+            StatusGainEntry entry = repeatRoundStartStatusGains[i];
+            entry.stackAmount = Mathf.Max(1, entry.stackAmount);
+            repeatRoundStartStatusGains[i] = entry;
         }
     }
 

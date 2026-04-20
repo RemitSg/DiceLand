@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: CallFromBeyond_Data_Sleep
+  m_EditorClassIdentifier: 
+  enemyID: 15
+  enemyName: "\u81EA\u5F7C\u5CB8\u7684\u547C\u5524"
+  baseHP: 23
+  damageReductionPercent: 0
+  minSpeed: 2
+  maxSpeed: 6
+  baseSpeedButtonCount: 2
+  enemySprite: {fileID: 21300000, guid: f5d611ae990a6a541a9346a6b6497435, type: 3}
+  stageSprites:
+  - stageName: 
+    stageSprite: {fileID: 21300000, guid: f5d611ae990a6a541a9346a6b6497435, type: 3}
+    minSpeedOverride: 0
+    maxSpeedOverride: 0
+    speedButtonCountOverride: 0
+  - stageName: 
+    stageSprite: {fileID: 21300000, guid: ec88965a3d4c15e44a9b6c9dc616cdf8, type: 3}
+    minSpeedOverride: 0
+    maxSpeedOverride: 0
+    speedButtonCountOverride: 0
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.2
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules:
+  - ruleName: 
+    statusData: {fileID: 11400000, guid: 15e54805ff58a7a49951aa1a35672df6, type: 2}
+    targetMode: 0
+    specificEnemyData: {fileID: 0}
+    specificCharacterData: {fileID: 0}
+    comparisonType: 0
+    stackThreshold: 3
+    targetStageIndex: 1
+    priority: 1
+  - ruleName: 
+    statusData: {fileID: 11400000, guid: 15e54805ff58a7a49951aa1a35672df6, type: 2}
+    targetMode: 0
+    specificEnemyData: {fileID: 0}
+    specificCharacterData: {fileID: 0}
+    comparisonType: 2
+    stackThreshold: 1
+    targetStageIndex: 0
+    priority: 1
+  statusImmunityRules: []
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains:
+  - statusData: {fileID: 11400000, guid: 15e54805ff58a7a49951aa1a35672df6, type: 2}
+    stackAmount: 4
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  enemyDescription: "\u4ECE\u5F7C\u5CB8\u5BFB\u6765\u7684\u673A\u68B0\u3002\n\u5B83\u5728\u5BFB\u627E\u4F55\u4EBA\uFF1F\u5B83\u8981\u53BB\u5411\u4F55\u65B9\uFF1F"
+  passiveDescriptions:
+  - passiveName: "\u6B64\u975E\u5F7C\u5CB8"
+    displayColorType: 2
+    description: "\u5468\u671F\u6027\u9677\u5165\u4F11\u7720\u4E00\u5B9A\u56DE\u5408"
+  enemyVisualScale: 1.7
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: be7af11c702dd2f4b89ebe3bcbc9a737, type: 2}
+  - {fileID: 11400000, guid: 8eed6d6e83fac69458c44b766ef34c39, type: 2}
+  conditionalSkillRules: []

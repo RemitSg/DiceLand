@@ -14,6 +14,8 @@ public class CalamityPool_SO : ScriptableObject
 
     [SerializeField] private List<CalamityTierEntry> calamityTiers = new List<CalamityTierEntry>();
 
+    public IReadOnlyList<CalamityTierEntry> CalamityTiers => calamityTiers;
+
     public int GetHighestConfiguredTier()
     {
         int highestTier = 0;

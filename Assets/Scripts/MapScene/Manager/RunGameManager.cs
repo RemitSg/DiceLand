@@ -146,6 +146,17 @@ public class RunGameManager : MonoBehaviour
             mapCraftingOverlay.Hidden -= HandleMapCraftingOverlayHidden;
     }
 
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        if (pauseStatus)
+            PersistCurrentRunSave();
+    }
+
+    private void OnApplicationQuit()
+    {
+        PersistCurrentRunSave();
+    }
+
     public void StartRun()
     {
         EnsureSetup();
@@ -195,8 +206,17 @@ public class RunGameManager : MonoBehaviour
 
     private bool TryRestoreRun()
     {
-        if (!MapRunRuntime.TryGetSnapshot(SceneManager.GetActiveScene().name, out MapRunSnapshot snapshot) || snapshot == null)
-            return false;
+        string sceneName = SceneManager.GetActiveScene().name;
+        bool hasRuntimeSnapshot = MapRunRuntime.TryGetSnapshot(sceneName, out MapRunSnapshot snapshot) && snapshot != null;
+        if (!hasRuntimeSnapshot)
+        {
+            bool continueRequested = MainMenuRuntime.ConsumeContinueRequest();
+            if (!continueRequested)
+                return false;
+
+            if (!MainMenuRunSaveSystem.TryLoadSnapshot(sceneName, BuildSaveAssetCatalog(), out snapshot) || snapshot == null)
+                return false;
+        }
 
         EnsureSetup();
         RestSceneRuntime.Clear();
@@ -540,6 +560,8 @@ public class RunGameManager : MonoBehaviour
         mapHUD.Refresh(runState, actionPointSystem);
         if (!string.IsNullOrEmpty(status))
             mapHUD.ShowStatus(status);
+
+        PersistCurrentRunSave();
     }
 
     private void EnsureSetup()
@@ -2855,6 +2877,463 @@ public class RunGameManager : MonoBehaviour
 
             targetRunState.AddWeapon(member.weaponData, 1);
         }
+    }
+
+    private void PersistCurrentRunSave()
+    {
+        if (runState == null || boardManager == null || actionPointSystem == null)
+            return;
+
+        if (!SceneManager.GetActiveScene().name.Equals("MapScene", StringComparison.OrdinalIgnoreCase))
+            return;
+
+        MainMenuRunSaveSystem.SaveSnapshot(
+            SceneManager.GetActiveScene().name,
+            runState,
+            boardManager,
+            actionPointSystem,
+            pendingCalamityTiers,
+            suppressPendingCalamityOnNextRestActionPointRestore);
+    }
+
+    private MainMenuSaveAssetCatalog BuildSaveAssetCatalog()
+    {
+        MainMenuSaveAssetCatalog catalog = new MainMenuSaveAssetCatalog();
+
+        DifficultyConfig_SO selectedDifficulty = MainMenuRuntime.SelectedDifficultyConfig;
+        AddDifficultyAssets(catalog, difficultyConfig);
+        AddDifficultyAssets(catalog, activeDifficultyConfig);
+        AddDifficultyAssets(catalog, selectedDifficulty);
+
+        if (startingPartyMembers != null)
+        {
+            for (int i = 0; i < startingPartyMembers.Count; i++)
+            {
+                StartingPartyMemberDefinition definition = startingPartyMembers[i];
+                if (definition == null)
+                    continue;
+
+                AddCharacterAssets(catalog, definition.characterData);
+                AddWeaponAssets(catalog, definition.equippedWeapon);
+            }
+        }
+
+        if (startingLoot != null)
+        {
+            for (int i = 0; i < startingLoot.Count; i++)
+            {
+                StartingLootDefinition definition = startingLoot[i];
+                if (definition != null)
+                    catalog.Add(definition.lootItem);
+            }
+        }
+
+        if (startingWeapons != null)
+        {
+            for (int i = 0; i < startingWeapons.Count; i++)
+            {
+                StartingWeaponDefinition definition = startingWeapons[i];
+                if (definition != null)
+                    AddWeaponAssets(catalog, definition.weaponData);
+            }
+        }
+
+        if (startingBlueprints != null)
+        {
+            for (int i = 0; i < startingBlueprints.Count; i++)
+            {
+                StartingBlueprintDefinition definition = startingBlueprints[i];
+                if (definition != null)
+                    AddBlueprintAssets(catalog, definition.blueprintData);
+            }
+        }
+
+        if (startingRelics != null)
+        {
+            for (int i = 0; i < startingRelics.Count; i++)
+            {
+                StartingRelicDefinition definition = startingRelics[i];
+                if (definition != null)
+                    catalog.Add(definition.relicData);
+            }
+        }
+
+        if (recruitCharacterRoster != null && recruitCharacterRoster.Characters != null)
+        {
+            for (int i = 0; i < recruitCharacterRoster.Characters.Count; i++)
+                AddCharacterAssets(catalog, recruitCharacterRoster.Characters[i]);
+        }
+
+        if (enemyRoster != null)
+        {
+            IReadOnlyList<EnemyRoster_SO.DangerPool> pools = enemyRoster.Pools;
+            if (pools != null)
+            {
+                for (int i = 0; i < pools.Count; i++)
+                {
+                    EnemyRoster_SO.DangerPool pool = pools[i];
+                    if (pool == null)
+                        continue;
+
+                    AddEnemyGroupList(catalog, pool.standardGroups);
+                    AddEnemyGroupList(catalog, pool.eliteGroups);
+                }
+            }
+
+            AddEnemyGroupList(catalog, enemyRoster.BossGroups);
+        }
+
+        if (eventPool != null)
+        {
+            IReadOnlyList<MapEvent_SO> events = eventPool.GetValidEvents();
+            for (int i = 0; i < events.Count; i++)
+                AddEventAssets(catalog, events[i]);
+        }
+
+        if (merchantCatalog != null)
+            AddMerchantCatalogAssets(catalog, merchantCatalog);
+
+        if (calamityPool != null && calamityPool.CalamityTiers != null)
+        {
+            for (int i = 0; i < calamityPool.CalamityTiers.Count; i++)
+            {
+                CalamityPool_SO.CalamityTierEntry tierEntry = calamityPool.CalamityTiers[i];
+                if (tierEntry == null || tierEntry.calamities == null)
+                    continue;
+
+                for (int calamityIndex = 0; calamityIndex < tierEntry.calamities.Count; calamityIndex++)
+                    catalog.Add(tierEntry.calamities[calamityIndex]);
+            }
+        }
+
+        if (runState != null)
+        {
+            if (runState.partyMembers != null)
+            {
+                for (int i = 0; i < runState.partyMembers.Count; i++)
+                {
+                    RunPartyMemberState member = runState.partyMembers[i];
+                    if (member == null)
+                        continue;
+
+                    AddCharacterAssets(catalog, member.characterData);
+                    AddWeaponAssets(catalog, member.weaponData);
+                }
+            }
+
+            if (runState.lootInventory != null)
+            {
+                for (int i = 0; i < runState.lootInventory.Count; i++)
+                {
+                    RunLootState loot = runState.lootInventory[i];
+                    if (loot != null)
+                        catalog.Add(loot.lootItem);
+                }
+            }
+
+            if (runState.weaponInventory != null)
+            {
+                for (int i = 0; i < runState.weaponInventory.Count; i++)
+                {
+                    RunWeaponState weapon = runState.weaponInventory[i];
+                    if (weapon != null)
+                        AddWeaponAssets(catalog, weapon.weaponData);
+                }
+            }
+
+            if (runState.blueprintInventory != null)
+            {
+                for (int i = 0; i < runState.blueprintInventory.Count; i++)
+                {
+                    RunBlueprintState blueprint = runState.blueprintInventory[i];
+                    if (blueprint != null)
+                        AddBlueprintAssets(catalog, blueprint.blueprintData);
+                }
+            }
+
+            if (runState.relicInventory != null)
+            {
+                for (int i = 0; i < runState.relicInventory.Count; i++)
+                {
+                    RunRelicState relic = runState.relicInventory[i];
+                    if (relic != null)
+                        catalog.Add(relic.relicData);
+                }
+            }
+
+            if (runState.activeCalamities != null)
+            {
+                for (int i = 0; i < runState.activeCalamities.Count; i++)
+                {
+                    RunCalamityState calamity = runState.activeCalamities[i];
+                    if (calamity != null)
+                        catalog.Add(calamity.calamityData);
+                }
+            }
+        }
+
+        if (boardManager != null)
+        {
+            foreach (BoardTileData tile in boardManager.GetAllTiles())
+            {
+                if (tile == null)
+                    continue;
+
+                catalog.Add(tile.assignedEnemyGroup);
+                catalog.Add(tile.assignedEvent);
+
+                if (tile.merchantOffers == null)
+                    continue;
+
+                for (int i = 0; i < tile.merchantOffers.Count; i++)
+                {
+                    MerchantOfferState offer = tile.merchantOffers[i];
+                    if (offer == null)
+                        continue;
+
+                    catalog.Add(offer.lootItem);
+                    AddWeaponAssets(catalog, offer.weaponData);
+                    AddBlueprintAssets(catalog, offer.blueprintData);
+                    catalog.Add(offer.relicData);
+                }
+            }
+        }
+
+        return catalog;
+    }
+
+    private void AddDifficultyAssets(MainMenuSaveAssetCatalog catalog, DifficultyConfig_SO config)
+    {
+        if (catalog == null || config == null)
+            return;
+
+        if (!string.IsNullOrWhiteSpace(config.difficultyName) && config.difficultyName.Equals("Easy", StringComparison.OrdinalIgnoreCase))
+        {
+            // no-op, kept to ensure config is considered in ordering by the menu runtime
+        }
+    }
+
+    private void AddCharacterAssets(MainMenuSaveAssetCatalog catalog, CharacterData_SO characterData)
+    {
+        if (catalog == null || characterData == null)
+            return;
+
+        catalog.Add(characterData);
+        AddWeaponAssets(catalog, characterData.initialWeaponData);
+    }
+
+    private void AddWeaponAssets(MainMenuSaveAssetCatalog catalog, Weapon_SO weaponData)
+    {
+        if (catalog == null || weaponData == null)
+            return;
+
+        catalog.Add(weaponData);
+    }
+
+    private void AddBlueprintAssets(MainMenuSaveAssetCatalog catalog, CraftingBlueprint_SO blueprintData)
+    {
+        if (catalog == null || blueprintData == null)
+            return;
+
+        catalog.Add(blueprintData);
+        AddWeaponAssets(catalog, blueprintData.targetWeapon);
+
+        if (blueprintData.materialRequirements == null)
+            return;
+
+        for (int i = 0; i < blueprintData.materialRequirements.Count; i++)
+        {
+            CraftingMaterialRequirement requirement = blueprintData.materialRequirements[i];
+            if (requirement != null)
+                catalog.Add(requirement.lootItem);
+        }
+    }
+
+    private void AddEnemyGroupList(MainMenuSaveAssetCatalog catalog, IReadOnlyList<EnemyGroup_SO> groups)
+    {
+        if (groups == null)
+            return;
+
+        for (int i = 0; i < groups.Count; i++)
+            AddEnemyGroupAssets(catalog, groups[i]);
+    }
+
+    private void AddEnemyGroupAssets(MainMenuSaveAssetCatalog catalog, EnemyGroup_SO enemyGroup)
+    {
+        if (catalog == null || enemyGroup == null)
+            return;
+
+        catalog.Add(enemyGroup);
+
+        IReadOnlyList<EnemyData_SO> enemies = enemyGroup.GetEnemies();
+        for (int i = 0; i < enemies.Count; i++)
+            AddEnemyDataAssets(catalog, enemies[i]);
+
+        IReadOnlyList<LootTable_SO> lootTables = enemyGroup.GetLootTables();
+        for (int i = 0; i < lootTables.Count; i++)
+            AddLootTableAssets(catalog, lootTables[i]);
+    }
+
+    private void AddEnemyDataAssets(MainMenuSaveAssetCatalog catalog, EnemyData_SO enemyData)
+    {
+        if (enemyData == null)
+            return;
+
+        if (enemyData.onSpecificEnemyDeathStatusGains != null)
+        {
+            for (int i = 0; i < enemyData.onSpecificEnemyDeathStatusGains.Count; i++)
+            {
+                EnemyData_SO.OnSpecificEnemyDeathStatusGainEntry entry = enemyData.onSpecificEnemyDeathStatusGains[i];
+                AddEnemyDataAssets(catalog, entry.watchedEnemyData);
+            }
+        }
+    }
+
+    private void AddLootTableAssets(MainMenuSaveAssetCatalog catalog, LootTable_SO lootTable)
+    {
+        if (catalog == null || lootTable == null)
+            return;
+
+        IReadOnlyList<LootTable_SO.LootDropEntry> drops = lootTable.Drops;
+        for (int i = 0; i < drops.Count; i++)
+        {
+            LootTable_SO.LootDropEntry entry = drops[i];
+            if (entry != null)
+                catalog.Add(entry.lootItem);
+        }
+
+        IReadOnlyList<LootTable_SO.RelicDropEntry> relicDrops = lootTable.RelicDrops;
+        for (int i = 0; i < relicDrops.Count; i++)
+        {
+            LootTable_SO.RelicDropEntry entry = relicDrops[i];
+            if (entry != null)
+                catalog.Add(entry.relicData);
+        }
+    }
+
+    private void AddEventAssets(MainMenuSaveAssetCatalog catalog, MapEvent_SO eventData)
+    {
+        if (catalog == null || eventData == null)
+            return;
+
+        catalog.Add(eventData);
+        IReadOnlyList<MapEventOptionData> options = eventData.GetValidOptions();
+        for (int i = 0; i < options.Count; i++)
+            AddEventOptionAssets(catalog, options[i]);
+    }
+
+    private void AddEventOptionAssets(MainMenuSaveAssetCatalog catalog, MapEventOptionData optionData)
+    {
+        if (catalog == null || optionData == null)
+            return;
+
+        AddEventEffectAssets(catalog, BuildPrimaryEventEffect(optionData));
+
+        if (optionData.additionalBuiltInEffects == null)
+            return;
+
+        for (int i = 0; i < optionData.additionalBuiltInEffects.Count; i++)
+            AddEventEffectAssets(catalog, optionData.additionalBuiltInEffects[i]);
+    }
+
+    private MapEventBuiltInEffectData BuildPrimaryEventEffect(MapEventOptionData optionData)
+    {
+        if (optionData == null)
+            return null;
+
+        return new MapEventBuiltInEffectData
+        {
+            effectType = optionData.builtInEffectType,
+            effectAmount = optionData.effectAmount,
+            randomMoneyMin = optionData.randomMoneyMin,
+            randomMoneyMax = optionData.randomMoneyMax,
+            randomOwnedLootAmountMin = optionData.randomOwnedLootAmountMin,
+            randomOwnedLootAmountMax = optionData.randomOwnedLootAmountMax,
+            lootRewards = optionData.lootRewards,
+            lootPickCountMin = optionData.lootPickCountMin,
+            lootPickCountMax = optionData.lootPickCountMax,
+            relicRewards = optionData.relicRewards,
+            relicPickCountMin = optionData.relicPickCountMin,
+            relicPickCountMax = optionData.relicPickCountMax,
+            blueprintRewards = optionData.blueprintRewards,
+            blueprintPickCountMin = optionData.blueprintPickCountMin,
+            blueprintPickCountMax = optionData.blueprintPickCountMax,
+            encounterSelectionMode = optionData.encounterSelectionMode,
+            encounterEnemyGroups = optionData.encounterEnemyGroups,
+            encounterEnemies = optionData.encounterEnemies,
+            encounterEnemyCountMin = optionData.encounterEnemyCountMin,
+            encounterEnemyCountMax = optionData.encounterEnemyCountMax
+        };
+    }
+
+    private void AddEventEffectAssets(MainMenuSaveAssetCatalog catalog, MapEventBuiltInEffectData effectData)
+    {
+        if (catalog == null || effectData == null)
+            return;
+
+        if (effectData.lootRewards != null)
+        {
+            for (int i = 0; i < effectData.lootRewards.Count; i++)
+            {
+                MapEventLootRewardEntry entry = effectData.lootRewards[i];
+                if (entry != null)
+                    catalog.Add(entry.lootItem);
+            }
+        }
+
+        if (effectData.relicRewards != null)
+        {
+            for (int i = 0; i < effectData.relicRewards.Count; i++)
+            {
+                MapEventRelicRewardEntry entry = effectData.relicRewards[i];
+                if (entry != null)
+                    catalog.Add(entry.relicData);
+            }
+        }
+
+        if (effectData.blueprintRewards != null)
+        {
+            for (int i = 0; i < effectData.blueprintRewards.Count; i++)
+            {
+                MapEventBlueprintRewardEntry entry = effectData.blueprintRewards[i];
+                if (entry != null)
+                    AddBlueprintAssets(catalog, entry.blueprintData);
+            }
+        }
+
+        if (effectData.encounterEnemyGroups != null)
+        {
+            for (int i = 0; i < effectData.encounterEnemyGroups.Count; i++)
+                AddEnemyGroupAssets(catalog, effectData.encounterEnemyGroups[i]);
+        }
+
+        if (effectData.encounterEnemies != null)
+        {
+            for (int i = 0; i < effectData.encounterEnemies.Count; i++)
+                AddEnemyDataAssets(catalog, effectData.encounterEnemies[i]);
+        }
+    }
+
+    private void AddMerchantCatalogAssets(MainMenuSaveAssetCatalog catalog, MerchantCatalog_SO merchantCatalogData)
+    {
+        if (catalog == null || merchantCatalogData == null)
+            return;
+
+        IReadOnlyList<MerchantCatalog_SO.LootGoodsEntry> lootEntries = merchantCatalogData.GetValidLootEntries();
+        for (int i = 0; i < lootEntries.Count; i++)
+            catalog.Add(lootEntries[i].lootItem);
+
+        IReadOnlyList<MerchantCatalog_SO.WeaponGoodsEntry> weaponEntries = merchantCatalogData.GetValidWeaponEntries();
+        for (int i = 0; i < weaponEntries.Count; i++)
+            AddWeaponAssets(catalog, weaponEntries[i].weaponData);
+
+        IReadOnlyList<MerchantCatalog_SO.BlueprintGoodsEntry> blueprintEntries = merchantCatalogData.GetValidBlueprintEntries();
+        for (int i = 0; i < blueprintEntries.Count; i++)
+            AddBlueprintAssets(catalog, blueprintEntries[i].blueprintData);
+
+        IReadOnlyList<MerchantCatalog_SO.RelicGoodsEntry> relicEntries = merchantCatalogData.GetValidRelicEntries();
+        for (int i = 0; i < relicEntries.Count; i++)
+            catalog.Add(relicEntries[i].relicData);
     }
 
     private static string GetTileTypeLabel(MapTileType tileType)
