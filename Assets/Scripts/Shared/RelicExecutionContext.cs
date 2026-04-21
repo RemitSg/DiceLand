@@ -26,6 +26,9 @@ public sealed class RelicExecutionContext
     public int additionalMaxPowerBonus;
     public int incomingDamage;
     public int incomingDamageFlatModifier;
+    public int incomingDamagePercentModifier;
+    public int incomingSourceSpeed;
+    public int incomingTargetSpeed;
     public int currentSpeed;
     public int currentRound;
     public BattleAllyController[] allies;
@@ -94,6 +97,8 @@ public sealed class RelicExecutionContext
         EnemySkill_SO skillData,
         int diceIndex,
         int incomingDamage,
+        int incomingSourceSpeed,
+        int incomingTargetSpeed,
         Object source,
         Object target)
     {
@@ -107,6 +112,34 @@ public sealed class RelicExecutionContext
             skillData = skillData,
             diceIndex = diceIndex,
             incomingDamage = Mathf.Max(0, incomingDamage),
+            incomingSourceSpeed = Mathf.Max(0, incomingSourceSpeed),
+            incomingTargetSpeed = Mathf.Max(0, incomingTargetSpeed),
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreatePlayerAboutToTakeAttackDamage(
+        RunState runState,
+        EnemySkill_SO skillData,
+        int diceIndex,
+        int incomingDamage,
+        int incomingSourceSpeed,
+        int incomingTargetSpeed,
+        Object source,
+        Object target)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnPlayerAboutToTakeAttackDamage,
+            runState = runState,
+            sourceIsPlayer = false,
+            source = source,
+            target = target,
+            skillData = skillData,
+            diceIndex = diceIndex,
+            incomingDamage = Mathf.Max(0, incomingDamage),
+            incomingSourceSpeed = Mathf.Max(0, incomingSourceSpeed),
+            incomingTargetSpeed = Mathf.Max(0, incomingTargetSpeed),
             feedbackMessages = new List<string>()
         };
     }

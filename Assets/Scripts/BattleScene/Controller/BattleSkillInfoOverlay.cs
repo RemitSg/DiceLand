@@ -1399,8 +1399,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "[ \u62fc\u70b9\u65f6 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnSkillUse:
                 return "[ \u4f7f\u7528\u8be5\u6280\u80fd\u65f6 ]";
-            case EnemySkill_SO.DiceEffectTrigger.OnClashWinAttack:
-                return "[ \u62fc\u70b9\u80dc\u5229\u8ffd\u51fb\u65f6 ]";
+            case EnemySkill_SO.DiceEffectTrigger.OnClashWin:
+                return "[ \u62fc\u70b9\u80dc\u5229\u65f6 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnSingleAttack:
                 return "[ 单方面攻击时 ]";
             default:
@@ -1420,8 +1420,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "[ \u4f7f\u7528\u65f6 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnClash:
                 return "[ \u62fc\u70b9\u65f6 ]";
-            case EnemySkill_SO.DiceEffectTrigger.OnClashWinAttack:
-                return "[ \u62fc\u70b9\u80dc\u5229\u8ffd\u51fb\u65f6 ]";
+            case EnemySkill_SO.DiceEffectTrigger.OnClashWin:
+                return "[ \u62fc\u70b9\u80dc\u5229\u65f6 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnSingleAttack:
                 return "[ 单方面攻击时 ]";
             default:

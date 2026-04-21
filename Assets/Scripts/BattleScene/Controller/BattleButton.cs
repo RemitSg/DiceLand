@@ -1229,15 +1229,21 @@ public class BattleButton : MonoBehaviour
             int enemyBasePower = enemy.RollDice(i);
             int allyStatusPowerModifier = ally.GetStatusFlatPowerModifier(allyDefenseSkill);
             int enemyStatusPowerModifier = enemy.GetStatusFlatPowerModifier(enemyDefenseSkill);
-            int allyBonusPower =
+            int allySkillUseBonus =
                 allyRelicModifier.powerBonus +
-                EvaluatePowerModifier(ally.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClash, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks, enemy.SelectedSkill) +
                 EvaluatePowerModifier(ally.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks, enemy.SelectedSkill);
-            int enemyBonusPower =
-                EvaluatePowerModifier(enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClash, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks, ally.SelectedSkill) +
+            int enemySkillUseBonus =
                 EvaluatePowerModifier(enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks, ally.SelectedSkill);
+            int allyClashOnlyBonus =
+                EvaluatePowerModifier(ally.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClash, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks, enemy.SelectedSkill);
+            int enemyClashOnlyBonus =
+                EvaluatePowerModifier(enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClash, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks, ally.SelectedSkill);
+            int allyBonusPower = allySkillUseBonus + allyClashOnlyBonus;
+            int enemyBonusPower = enemySkillUseBonus + enemyClashOnlyBonus;
             int allyPower = ClampFinalPower(allyBasePower, allyBonusPower);
             int enemyPower = ClampFinalPower(enemyBasePower, enemyBonusPower);
+            int allyFollowUpBasePower = ClampFinalPower(allyBasePower, allySkillUseBonus);
+            int enemyFollowUpBasePower = ClampFinalPower(enemyBasePower, enemySkillUseBonus);
             int allyDisplayPowerModifier = allyStatusPowerModifier + allyBonusPower;
             int enemyDisplayPowerModifier = enemyStatusPowerModifier + enemyBonusPower;
             bool hasWinner = false;
@@ -1261,25 +1267,27 @@ public class BattleButton : MonoBehaviour
                 hasWinner = allyPower != enemyPower;
                 allyWon = allyPower > enemyPower;
                 allyWinAttackBonus = allyWon
-                    ? EvaluatePowerModifier(ally.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClashWinAttack, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks, enemy.SelectedSkill)
+                    ? EvaluatePowerModifier(ally.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks, enemy.SelectedSkill)
                     : 0;
                 enemyWinAttackBonus = !allyWon && enemyPower > allyPower
-                    ? EvaluatePowerModifier(enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClashWinAttack, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks, ally.SelectedSkill)
+                    ? EvaluatePowerModifier(enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks, ally.SelectedSkill)
                     : 0;
-                allyHitPower = Mathf.Max(1, allyPower + allyWinAttackBonus);
-                enemyHitPower = Mathf.Max(1, enemyPower + enemyWinAttackBonus);
+                allyHitPower = Mathf.Max(1, allyFollowUpBasePower + allyWinAttackBonus);
+                enemyHitPower = Mathf.Max(1, enemyFollowUpBasePower + enemyWinAttackBonus);
                 hitFx = allyWon ? allyFx : enemyFx;
 
                 resolveImpactAction = () =>
                 {
                     if (allyWon)
                     {
-                        ApplyAllyHit(ally, enemy, allyHitPower, i, false, allyBonusPower + allyWinAttackBonus);
+                        ApplyAllyTriggeredEffects(ally, enemy, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, 0);
+                        ApplyAllyHit(ally, enemy, allyHitPower, i, false, allySkillUseBonus + allyWinAttackBonus);
                         ApplyEnemyTriggeredEffects(enemy, ally, i, EnemySkill_SO.DiceEffectTrigger.OnMiss, 0);
                     }
                     else if (enemyPower > allyPower)
                     {
-                        ApplyEnemyHit(enemy, ally, enemyHitPower, i, false, enemyBonusPower + enemyWinAttackBonus);
+                        ApplyEnemyTriggeredEffects(enemy, ally, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, 0);
+                        ApplyEnemyHit(enemy, ally, enemyHitPower, i, false, enemySkillUseBonus + enemyWinAttackBonus);
                         ApplyAllyTriggeredEffects(ally, enemy, i, EnemySkill_SO.DiceEffectTrigger.OnMiss, 0);
                     }
                     else
@@ -1290,9 +1298,9 @@ public class BattleButton : MonoBehaviour
                 };
 
                 if (allyWon)
-                    postClashLog = $"-> 友方胜！追击威力 {FormatPowerWithBonus(allyPower, allyWinAttackBonus)} ，对 {enemy.GetDebugDisplayName()} 造成 {allyHitPower} 伤害，剩余HP {enemy.CurrentHP}/{enemy.MaxHP}";
+                    postClashLog = $"-> 友方胜！追击威力 {FormatPowerWithBonus(allyFollowUpBasePower, allyWinAttackBonus)} ，对 {enemy.GetDebugDisplayName()} 造成 {allyHitPower} 伤害，剩余HP {enemy.CurrentHP}/{enemy.MaxHP}";
                 else if (enemyPower > allyPower)
-                    postClashLog = $"-> 敌方胜！追击威力 {FormatPowerWithBonus(enemyPower, enemyWinAttackBonus)} ，{enemy.GetDebugDisplayName()} 对 {ally.GetDebugDisplayName()} 造成 {enemyHitPower} 伤害，剩余HP {ally.CurrentHP}/{ally.MaxHP}";
+                    postClashLog = $"-> 敌方胜！追击威力 {FormatPowerWithBonus(enemyFollowUpBasePower, enemyWinAttackBonus)} ，{enemy.GetDebugDisplayName()} 对 {ally.GetDebugDisplayName()} 造成 {enemyHitPower} 伤害，剩余HP {ally.CurrentHP}/{ally.MaxHP}";
                 else
                     postClashLog = $"-> 平局（{allyPower} = {enemyPower}），双方无伤害";
             }
@@ -1301,19 +1309,27 @@ public class BattleButton : MonoBehaviour
                 bool attackBreaksDefense = allyPower > enemyPower;
                 hasWinner = attackBreaksDefense;
                 allyWon = attackBreaksDefense;
-                allyHitPower = Mathf.Max(0, allyPower - enemyPower);
+                allyHitPower = Mathf.Max(1, allyFollowUpBasePower - enemyFollowUpBasePower);
                 hitFx = allyFx;
 
                 resolveImpactAction = () =>
                 {
                     if (attackBreaksDefense && allyHitPower > 0)
-                        ApplyAllyHit(ally, enemy, allyHitPower, i, false, allyBonusPower);
+                    {
+                        ApplyAllyTriggeredEffects(ally, enemy, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, 0);
+                        ApplyAllyHit(ally, enemy, allyHitPower, i, false, allySkillUseBonus);
+                    }
+                    else if (enemyPower > allyPower)
+                    {
+                        ApplyEnemyTriggeredEffects(enemy, ally, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, 0);
+                        ShowZeroDamagePopup(enemy.transform, true, allyBonusPower);
+                    }
                     else
                         ShowZeroDamagePopup(enemy.transform, true, allyBonusPower);
                 };
 
                 postClashLog = attackBreaksDefense
-                    ? $"-> 敌方防御骰抵消 {enemyPower} 点伤害，{ally.GetDebugDisplayName()} 仍造成 {allyHitPower} 伤害，{enemy.GetDebugDisplayName()} 剩余HP {enemy.CurrentHP}/{enemy.MaxHP}"
+                    ? $"-> 敌方防御骰拼点落败，{ally.GetDebugDisplayName()} 在还原拼点修正后造成 {allyHitPower} 伤害，{enemy.GetDebugDisplayName()} 剩余HP {enemy.CurrentHP}/{enemy.MaxHP}"
                     : enemyPower > allyPower
                         ? $"-> 敌方防御成功！完全免疫本次伤害与命中时词条（{enemyPower} > {allyPower}）"
                         : $"-> 敌方格挡住了本次攻击，最终伤害为 0（{enemyPower} = {allyPower}）";
@@ -1323,14 +1339,22 @@ public class BattleButton : MonoBehaviour
                 bool attackBreaksDefense = enemyPower > allyPower;
                 hasWinner = attackBreaksDefense;
                 allyWon = false;
-                enemyHitPower = Mathf.Max(0, enemyPower - allyPower);
+                enemyHitPower = Mathf.Max(1, enemyFollowUpBasePower - allyFollowUpBasePower);
                 hitFx = enemyFx;
                 int restoredDefenseEnergy = 0;
 
                 resolveImpactAction = () =>
                 {
                     if (attackBreaksDefense && enemyHitPower > 0)
-                        ApplyEnemyHit(enemy, ally, enemyHitPower, i, false, enemyBonusPower);
+                    {
+                        ApplyEnemyTriggeredEffects(enemy, ally, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, 0);
+                        ApplyEnemyHit(enemy, ally, enemyHitPower, i, false, enemySkillUseBonus);
+                    }
+                    else if (allyPower > enemyPower)
+                    {
+                        ApplyAllyTriggeredEffects(ally, enemy, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, 0);
+                        ShowZeroDamagePopup(ally.transform, false, enemyBonusPower);
+                    }
                     else
                         ShowZeroDamagePopup(ally.transform, false, enemyBonusPower);
                 };
@@ -1348,14 +1372,20 @@ public class BattleButton : MonoBehaviour
                 }
 
                 postClashLog = attackBreaksDefense
-                    ? $"-> 友方防御骰抵消 {allyPower} 点伤害，{enemy.GetDebugDisplayName()} 仍造成 {enemyHitPower} 伤害，{ally.GetDebugDisplayName()} 剩余HP {ally.CurrentHP}/{ally.MaxHP}"
+                    ? $"-> 友方防御骰拼点落败，{enemy.GetDebugDisplayName()} 在还原拼点修正后造成 {enemyHitPower} 伤害，{ally.GetDebugDisplayName()} 剩余HP {ally.CurrentHP}/{ally.MaxHP}"
                     : allyPower > enemyPower
                         ? $"-> 友方防御成功！完全免疫本次伤害与命中时词条（{allyPower} > {enemyPower}），并恢复 {restoredDefenseEnergy} 能量"
                         : $"-> 友方格挡住了本次攻击，最终伤害为 0（{allyPower} = {enemyPower}）";
             }
             else
             {
-                resolveImpactAction = () => { };
+                resolveImpactAction = () =>
+                {
+                    if (allyPower > enemyPower)
+                        ApplyAllyTriggeredEffects(ally, enemy, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, 0);
+                    else if (enemyPower > allyPower)
+                        ApplyEnemyTriggeredEffects(enemy, ally, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, 0);
+                };
                 postClashLog = $"-> 双方均为防御技能，本次拼点不会造成伤害（{allyPower} vs {enemyPower}）";
             }
 
@@ -1423,15 +1453,15 @@ public class BattleButton : MonoBehaviour
             int allyPower = ClampFinalPower(allyBasePower, allyBonusPower);
             int allyDisplayPowerModifier = allyStatusPowerModifier + allyBonusPower;
             EnemySkill_SO.DicePresentationSettings diceFx = ally.GetDicePresentationSettings(i);
+            ApplyAllyTriggeredEffects(ally, enemy, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
             if (isDefenseSkill)
             {
-                BattleLog($"第 {i + 1} 段（友方余骰单方面）：{ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(allyBasePower, allyBonusPower)}) 为防御技能，未与攻击骰拼点，本次无效");
+                BattleLog($"第 {i + 1} 段（友方余骰单方面）：{ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(allyBasePower, allyBonusPower)}) 为防御技能，未与攻击骰拼点，不会造成拼点/伤害结算，但【使用时】词条已生效");
                 continue;
             }
 
             bool moveIntoPosition = i == startIndex;
             bool returnToOrigin = i == totalDiceCount - 1;
-            ApplyAllyTriggeredEffects(ally, enemy, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
             yield return PlaySingleAttackPresentation(
                 ally.transform,
                 enemy.transform,
@@ -1485,9 +1515,10 @@ public class BattleButton : MonoBehaviour
             int enemyPower = ClampFinalPower(enemyBasePower, enemyBonusPower);
             int enemyDisplayPowerModifier = enemyStatusPowerModifier + enemyBonusPower;
             EnemySkill_SO.DicePresentationSettings diceFx = enemy.GetDicePresentationSettings(i);
+            ApplyEnemyTriggeredEffects(enemy, ally, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
             if (isDefenseSkill)
             {
-                BattleLog($"第 {i + 1} 段（敌方余骰单方面）：{enemy.GetDebugDisplayName()}[{enemy.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(enemyBasePower, enemyBonusPower)}) 为防御技能，未与攻击骰拼点，本次无效");
+                BattleLog($"第 {i + 1} 段（敌方余骰单方面）：{enemy.GetDebugDisplayName()}[{enemy.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(enemyBasePower, enemyBonusPower)}) 为防御技能，未与攻击骰拼点，不会造成拼点/伤害结算，但【使用时】词条已生效");
                 continue;
             }
 
@@ -1495,7 +1526,6 @@ public class BattleButton : MonoBehaviour
             bool returnToOrigin = false;
             if (moveIntoPosition)
                 needsReturnToOrigin = true;
-            ApplyEnemyTriggeredEffects(enemy, ally, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
             yield return PlaySingleAttackPresentation(
                 enemy.transform,
                 ally.transform,
@@ -1532,19 +1562,26 @@ public class BattleButton : MonoBehaviour
         bool needsReturnToOrigin = false;
 
         bool isDefenseSkill = IsDefenseSkill(ally.SelectedSkill);
-        if (isDefenseSkill)
-        {
-            int refundedEnergy = RestoreSharedEnergy(Mathf.Max(0, ally.SelectedSkill != null ? ally.SelectedSkill.energyCost : 0));
-            ShowSharedEnergyRefundPopupIfNeeded(ally, refundedEnergy);
-
-            BattleLog($"[友方单方面攻击] {ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}] 为防御技能，未与攻击骰拼点，本次无效。");
-            yield break;
-        }
-
         if (!TryConsumeAllySkillRequirement(ally, ally.SelectedSkill, "[友方单方面攻击]", true))
             yield break;
 
         ally.MarkCurrentRoundSkillUsed();
+        if (isDefenseSkill)
+        {
+            BattleLog($"[友方单方面攻击] {ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}] 为防御技能，未与攻击骰拼点，不会造成拼点/伤害结算，但【使用时】词条会正常生效。");
+
+            for (int i = 0; i < ally.DiceCount; i++)
+            {
+                if (ally.IsDead || enemy.IsDead)
+                    yield break;
+
+                ApplyAllyTriggeredEffects(ally, enemy, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
+                BattleLog($"第 {i + 1} 段：{ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}] 为防御技能，本段仅触发【使用时】词条。");
+            }
+
+            yield break;
+        }
+
         BattleLog($"[\u53cb\u65b9\u5355\u65b9\u9762\u653b\u51fb] {ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}] -> {enemy.GetDebugDisplayName()}");
 
         for (int i = 0; i < ally.DiceCount; i++)
@@ -1621,7 +1658,17 @@ public class BattleButton : MonoBehaviour
         bool isDefenseSkill = IsDefenseSkill(enemy.SelectedSkill);
         if (isDefenseSkill)
         {
-            BattleLog($"[敌方单方面攻击] {enemy.GetDebugDisplayName()}[{enemy.GetSelectedSkillDebugSummary()}] 为防御技能，未与攻击骰拼点，本次无效。");
+            BattleLog($"[敌方单方面攻击] {enemy.GetDebugDisplayName()}[{enemy.GetSelectedSkillDebugSummary()}] 为防御技能，未与攻击骰拼点，不会造成拼点/伤害结算，但【使用时】词条会正常生效。");
+
+            for (int i = 0; i < enemy.DiceCount; i++)
+            {
+                if (enemy.IsDead || targetAlly.IsDead)
+                    yield break;
+
+                ApplyEnemyTriggeredEffects(enemy, targetAlly, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
+                BattleLog($"第 {i + 1} 段：{enemy.GetDebugDisplayName()}[{enemy.GetSelectedSkillDebugSummary()}] 为防御技能，本段仅触发【使用时】词条。");
+            }
+
             yield break;
         }
 
@@ -1739,6 +1786,7 @@ public class BattleButton : MonoBehaviour
 
         bool targetWasAlive = !target.IsDead;
         int incomingDamage = ApplyEnemyCalamityDamageModifiers(baseDamage);
+        incomingDamage = ApplyPlayerRelicIncomingAttackDamageModifiers(attacker, target, diceIndex, incomingDamage);
         if (isSingleAttack)
             incomingDamage = ApplyPlayerRelicIncomingSingleAttackDamageModifiers(attacker, target, diceIndex, incomingDamage);
 
@@ -1766,6 +1814,47 @@ public class BattleButton : MonoBehaviour
         }
 
         ApplyEnemyTriggeredEffects(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnMiss, dealtDamage);
+    }
+
+    private int ApplyPlayerRelicIncomingAttackDamageModifiers(
+        BattleEnemyController attacker,
+        BattleAllyController target,
+        int diceIndex,
+        int incomingDamage)
+    {
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return Mathf.Max(0, incomingDamage);
+
+        RelicExecutionContext context = RelicExecutionContext.CreatePlayerAboutToTakeAttackDamage(
+            null,
+            attacker != null ? attacker.SelectedSkill : null,
+            diceIndex,
+            incomingDamage,
+            attacker != null ? attacker.Speed : 0,
+            target != null ? target.Speed : 0,
+            attacker,
+            target);
+        RelicSystem.Process(activeEncounter.relicInventory, context);
+
+        int adjustedDamage = Mathf.Max(0, incomingDamage + context.incomingDamageFlatModifier);
+        int reductionPercent = Mathf.Max(0, context.incomingDamagePercentModifier);
+        if (reductionPercent > 0)
+        {
+            float multiplier = Mathf.Max(0f, 1f - (reductionPercent / 100f));
+            adjustedDamage = Mathf.Max(0, Mathf.FloorToInt((adjustedDamage * multiplier) + 0.5f));
+        }
+
+        if (adjustedDamage < incomingDamage && context.feedbackMessages != null)
+        {
+            for (int i = 0; i < context.feedbackMessages.Count; i++)
+            {
+                if (!string.IsNullOrWhiteSpace(context.feedbackMessages[i]))
+                    BattleLog(context.feedbackMessages[i]);
+            }
+        }
+
+        return adjustedDamage;
     }
 
     private void ApplyPlayerDeathRelics(BattleAllyController defeatedAlly, BattleAllyController[] allies)
@@ -1805,11 +1894,20 @@ public class BattleButton : MonoBehaviour
             attacker != null ? attacker.SelectedSkill : null,
             diceIndex,
             incomingDamage,
+            attacker != null ? attacker.Speed : 0,
+            target != null ? target.Speed : 0,
             attacker,
             target);
         RelicSystem.Process(activeEncounter.relicInventory, context);
 
         int adjustedDamage = Mathf.Max(0, incomingDamage + context.incomingDamageFlatModifier);
+        int reductionPercent = Mathf.Max(0, context.incomingDamagePercentModifier);
+        if (reductionPercent > 0)
+        {
+            float multiplier = Mathf.Max(0f, 1f - (reductionPercent / 100f));
+            adjustedDamage = Mathf.Max(0, Mathf.FloorToInt((adjustedDamage * multiplier) + 0.5f));
+        }
+
         if (adjustedDamage < incomingDamage && context.feedbackMessages != null)
         {
             for (int i = 0; i < context.feedbackMessages.Count; i++)

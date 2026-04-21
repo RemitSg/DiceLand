@@ -118,6 +118,54 @@ public static class RelicSystem
                         context.feedbackMessages.Add($"{relicData.DisplayName} 生效：本次单方面攻击伤害 -{reductionAmount}。");
                     break;
 
+                case Relic_SO.RelicBuiltInEffectType.ReduceIncomingSingleAttackDamagePercentWhenAttackerSlowerThanTarget:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnPlayerAboutToTakeSingleAttackDamage)
+                        continue;
+
+                    BattleAllyController percentReductionTarget = context.target as BattleAllyController;
+                    BattleEnemyController percentReductionSource = context.source as BattleEnemyController;
+                    if (percentReductionTarget == null || percentReductionSource == null)
+                        continue;
+
+                    if (context.incomingSourceSpeed >= context.incomingTargetSpeed)
+                        continue;
+
+                    int reductionPercent = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+                    if (reductionPercent <= 0)
+                        continue;
+
+                    context.incomingDamagePercentModifier += reductionPercent;
+                    if (context.feedbackMessages != null)
+                    {
+                        context.feedbackMessages.Add(
+                            $"{relicData.DisplayName} 生效：{percentReductionSource.GetDebugDisplayName()} 速度低于 {percentReductionTarget.GetDebugDisplayName()}，本次即将到来的伤害 -{reductionPercent}% 。");
+                    }
+                    break;
+
+                case Relic_SO.RelicBuiltInEffectType.ReduceIncomingAttackDamagePercentWhenAttackerSlowerThanTarget:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnPlayerAboutToTakeAttackDamage)
+                        continue;
+
+                    BattleAllyController attackReductionTarget = context.target as BattleAllyController;
+                    BattleEnemyController attackReductionSource = context.source as BattleEnemyController;
+                    if (attackReductionTarget == null || attackReductionSource == null)
+                        continue;
+
+                    if (context.incomingSourceSpeed >= context.incomingTargetSpeed)
+                        continue;
+
+                    int attackReductionPercent = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+                    if (attackReductionPercent <= 0)
+                        continue;
+
+                    context.incomingDamagePercentModifier += attackReductionPercent;
+                    if (context.feedbackMessages != null)
+                    {
+                        context.feedbackMessages.Add(
+                            $"{relicData.DisplayName} 生效：{attackReductionSource.GetDebugDisplayName()} 速度低于 {attackReductionTarget.GetDebugDisplayName()}，本次即将到来的伤害 -{attackReductionPercent}%。");
+                    }
+                    break;
+
                 case Relic_SO.RelicBuiltInEffectType.ModifyPlayerDiceBasedOnLastRoundSkillMatch:
                     if (context.trigger != Relic_SO.RelicTrigger.OnPlayerDicePrepared || !context.sourceIsPlayer)
                         continue;

@@ -10,7 +10,7 @@ public class EnemySkill_SO : ScriptableObject
         OnMiss = 1,
         OnClash = 2,
         OnSkillUse = 3,
-        OnClashWinAttack = 4,
+        OnClashWin = 4,
         OnSingleAttack = 5
     }
 
