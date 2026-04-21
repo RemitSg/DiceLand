@@ -113,7 +113,12 @@ public static class RestSceneRuntime
         return true;
     }
 
-    public static bool TryApplyLootReforge(LootItem_SO firstLoot, LootItem_SO secondLoot, LootItem_SO resultLoot, out string errorMessage)
+    public static bool TryApplyLootReforge(
+        LootItem_SO firstLoot,
+        LootItem_SO secondLoot,
+        LootItem_SO resultLoot,
+        System.Collections.Generic.IReadOnlyList<LootItem_SO> lootReforgePool,
+        out string errorMessage)
     {
         if (!HasPendingVisit)
         {
@@ -121,7 +126,7 @@ public static class RestSceneRuntime
             return false;
         }
 
-        return MapRunRuntime.TryApplyLootReforgeResult(returnSceneName, firstLoot, secondLoot, resultLoot, out errorMessage);
+        return MapRunRuntime.TryApplyLootReforgeResult(returnSceneName, firstLoot, secondLoot, resultLoot, lootReforgePool, out errorMessage);
     }
 
     public static bool TryApplyRelicReforge(Relic_SO firstRelic, Relic_SO secondRelic, Relic_SO resultRelic, out string errorMessage)

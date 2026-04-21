@@ -326,7 +326,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour
             return false;
         }
 
-        if (!RestSceneRuntime.TryApplyLootReforge(selectedLootA, selectedLootB, resultLoot, out string applyError))
+        if (!RestSceneRuntime.TryApplyLootReforge(selectedLootA, selectedLootB, resultLoot, GetResolvedLootReforgePool(), out string applyError))
         {
             SetStatus(string.IsNullOrWhiteSpace(applyError) ? "战利品重铸失败。" : applyError, true);
             return false;

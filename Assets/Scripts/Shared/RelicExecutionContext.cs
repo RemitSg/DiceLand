@@ -21,6 +21,7 @@ public sealed class RelicExecutionContext
     public int merchantBasePrice;
     public int merchantDiscountPercent;
     public int diceIndex;
+    public bool isClashPreparation;
     public int additionalPowerBonus;
     public int additionalMinPowerBonus;
     public int additionalMaxPowerBonus;
@@ -29,6 +30,15 @@ public sealed class RelicExecutionContext
     public int incomingDamagePercentModifier;
     public int incomingSourceSpeed;
     public int incomingTargetSpeed;
+    public LootItem_SO firstReforgeLootMaterial;
+    public LootItem_SO secondReforgeLootMaterial;
+    public LootItem_SO reforgeResultLoot;
+    public IReadOnlyList<LootItem_SO> lootReforgePool;
+    public Relic_SO firstReforgeRelicMaterial;
+    public Relic_SO secondReforgeRelicMaterial;
+    public Relic_SO reforgeResultRelic;
+    public int preservedReforgeMaterialSlot = -1;
+    public List<LootItem_SO> bonusLootReforgeRewards;
     public int currentSpeed;
     public int currentRound;
     public BattleAllyController[] allies;
@@ -76,6 +86,7 @@ public sealed class RelicExecutionContext
         RunState runState,
         EnemySkill_SO skillData,
         int diceIndex,
+        bool isClashPreparation,
         Object source,
         Object target)
     {
@@ -88,6 +99,7 @@ public sealed class RelicExecutionContext
             target = target,
             skillData = skillData,
             diceIndex = diceIndex,
+            isClashPreparation = isClashPreparation,
             feedbackMessages = new List<string>()
         };
     }
@@ -223,6 +235,44 @@ public sealed class RelicExecutionContext
             currentRound = Mathf.Max(1, currentRound),
             allies = allies,
             enemies = enemies,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateLootReforge(
+        RunState runState,
+        LootItem_SO firstLootMaterial,
+        LootItem_SO secondLootMaterial,
+        LootItem_SO resultLoot,
+        IReadOnlyList<LootItem_SO> lootPool)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnLootReforge,
+            runState = runState,
+            firstReforgeLootMaterial = firstLootMaterial,
+            secondReforgeLootMaterial = secondLootMaterial,
+            reforgeResultLoot = resultLoot,
+            lootReforgePool = lootPool,
+            bonusLootReforgeRewards = new List<LootItem_SO>(),
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateRelicReforge(
+        RunState runState,
+        Relic_SO firstRelicMaterial,
+        Relic_SO secondRelicMaterial,
+        Relic_SO resultRelic)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnRelicReforge,
+            runState = runState,
+            firstReforgeRelicMaterial = firstRelicMaterial,
+            secondReforgeRelicMaterial = secondRelicMaterial,
+            reforgeResultRelic = resultRelic,
+            preservedReforgeMaterialSlot = -1,
             feedbackMessages = new List<string>()
         };
     }

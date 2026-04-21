@@ -22,7 +22,9 @@ public class Relic_SO : ScriptableObject
         OnBattleRoundStart = 6,
         OnPlayerDeath = 7,
         OnBattleRoundEnd = 8,
-        OnPlayerAboutToTakeAttackDamage = 9
+        OnPlayerAboutToTakeAttackDamage = 9,
+        OnRelicReforge = 10,
+        OnLootReforge = 11
     }
 
     public enum RelicBuiltInEffectType
@@ -40,7 +42,10 @@ public class Relic_SO : ScriptableObject
         ApplyStatusToRemainingAlliesOnPlayerDeath = 10,
         HealRandomDamagedAllyOnBattleRoundEnd = 11,
         ReduceIncomingSingleAttackDamagePercentWhenAttackerSlowerThanTarget = 12,
-        ReduceIncomingAttackDamagePercentWhenAttackerSlowerThanTarget = 13
+        ReduceIncomingAttackDamagePercentWhenAttackerSlowerThanTarget = 13,
+        ModifyPlayerClashDiceWhenFasterThanTarget = 14,
+        PreserveRandomRelicMaterialOnReforge = 15,
+        GrantRandomLootOfSameRarityOnLootReforge = 16
     }
 
     [Serializable]

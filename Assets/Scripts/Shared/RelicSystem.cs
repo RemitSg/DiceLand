@@ -182,6 +182,83 @@ public static class RelicSystem
                     context.additionalPowerBonus += sameAsLastRound ? -magnitude : magnitude;
                     break;
 
+                case Relic_SO.RelicBuiltInEffectType.ModifyPlayerClashDiceWhenFasterThanTarget:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnPlayerDicePrepared || !context.sourceIsPlayer || !context.isClashPreparation)
+                        continue;
+
+                    BattleAllyController fasterSourceAlly = context.source as BattleAllyController;
+                    BattleEnemyController slowerTargetEnemy = context.target as BattleEnemyController;
+                    if (fasterSourceAlly == null || slowerTargetEnemy == null)
+                        continue;
+
+                    if (fasterSourceAlly.Speed <= slowerTargetEnemy.Speed)
+                        continue;
+
+                    int clashBonus = effect.powerAmount * Mathf.Max(1, relicState.amount);
+                    if (clashBonus <= 0)
+                        continue;
+
+                    context.additionalPowerBonus += clashBonus;
+                    break;
+
+                case Relic_SO.RelicBuiltInEffectType.PreserveRandomRelicMaterialOnReforge:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnRelicReforge)
+                        continue;
+                    if (context.firstReforgeRelicMaterial == null || context.secondReforgeRelicMaterial == null)
+                        continue;
+                    if (context.preservedReforgeMaterialSlot >= 0)
+                        continue;
+
+                    context.preservedReforgeMaterialSlot = context.firstReforgeRelicMaterial == context.secondReforgeRelicMaterial
+                        ? 0
+                        : Random.Range(0, 2);
+
+                    if (context.feedbackMessages != null)
+                    {
+                        Relic_SO preservedRelic = context.preservedReforgeMaterialSlot == 0
+                            ? context.firstReforgeRelicMaterial
+                            : context.secondReforgeRelicMaterial;
+
+                        if (preservedRelic != null)
+                            context.feedbackMessages.Add($"{relicData.DisplayName} 生效：遗物锻造时保留了 {preservedRelic.DisplayName}。");
+                    }
+                    break;
+
+                case Relic_SO.RelicBuiltInEffectType.GrantRandomLootOfSameRarityOnLootReforge:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnLootReforge)
+                        continue;
+                    if (context.reforgeResultLoot == null || context.lootReforgePool == null || context.lootReforgePool.Count == 0)
+                        continue;
+
+                    int bonusLootCount = Mathf.Max(1, effect.amount * Mathf.Max(1, relicState.amount));
+                    List<LootItem_SO> sameRarityCandidates = new List<LootItem_SO>();
+                    for (int lootIndex = 0; lootIndex < context.lootReforgePool.Count; lootIndex++)
+                    {
+                        LootItem_SO candidate = context.lootReforgePool[lootIndex];
+                        if (candidate == null || candidate.rarity != context.reforgeResultLoot.rarity)
+                            continue;
+
+                        sameRarityCandidates.Add(candidate);
+                    }
+
+                    if (sameRarityCandidates.Count <= 0)
+                        continue;
+
+                    if (context.bonusLootReforgeRewards == null)
+                        context.bonusLootReforgeRewards = new List<LootItem_SO>();
+
+                    for (int rewardIndex = 0; rewardIndex < bonusLootCount; rewardIndex++)
+                    {
+                        LootItem_SO bonusLoot = sameRarityCandidates[Random.Range(0, sameRarityCandidates.Count)];
+                        if (bonusLoot == null)
+                            continue;
+
+                        context.bonusLootReforgeRewards.Add(bonusLoot);
+                        if (context.feedbackMessages != null)
+                            context.feedbackMessages.Add($"{relicData.DisplayName} 生效：额外获得了 {(!string.IsNullOrWhiteSpace(bonusLoot.lootName) ? bonusLoot.lootName : bonusLoot.name)}。");
+                    }
+                    break;
+
                 case Relic_SO.RelicBuiltInEffectType.ReduceMerchantPricePercent:
                     if (context.trigger != Relic_SO.RelicTrigger.OnMerchantPriceCalculated || context.merchantOffer == null)
                         continue;

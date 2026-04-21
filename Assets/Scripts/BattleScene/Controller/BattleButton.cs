@@ -1220,7 +1220,7 @@ public class BattleButton : MonoBehaviour
 
             bool allyDefenseSkill = IsDefenseSkill(ally.SelectedSkill);
             bool enemyDefenseSkill = IsDefenseSkill(enemy.SelectedSkill);
-            PlayerRelicDiceModifier allyRelicModifier = ResolvePlayerRelicDiceModifier(ally, enemy, i);
+            PlayerRelicDiceModifier allyRelicModifier = ResolvePlayerRelicDiceModifier(ally, enemy, i, true);
             EnemySkill_SO.DicePowerRange allyRange = ApplyPlayerRelicDiceRangeModifier(ally.GetDicePowerRange(i), allyRelicModifier);
             EnemySkill_SO.DicePowerRange enemyRange = enemy.GetDicePowerRange(i);
             EnemySkill_SO.DicePowerRange allyDisplayRange = ally.SelectedSkill != null ? ally.SelectedSkill.GetDicePowerRange(i) : allyRange;
@@ -1440,7 +1440,7 @@ public class BattleButton : MonoBehaviour
             if (ally.IsDead || enemy.IsDead)
                 yield break;
 
-            PlayerRelicDiceModifier allyRelicModifier = ResolvePlayerRelicDiceModifier(ally, enemy, i);
+            PlayerRelicDiceModifier allyRelicModifier = ResolvePlayerRelicDiceModifier(ally, enemy, i, false);
             EnemySkill_SO.DicePowerRange allyRange = ApplyPlayerRelicDiceRangeModifier(ally.GetDicePowerRange(i), allyRelicModifier);
             EnemySkill_SO.DicePowerRange allyDisplayRange = ally.SelectedSkill != null ? ally.SelectedSkill.GetDicePowerRange(i) : allyRange;
             int allyBasePower = RollDiceFromRange(allyRange);
@@ -1600,7 +1600,7 @@ public class BattleButton : MonoBehaviour
                 yield break;
             }
 
-            PlayerRelicDiceModifier allyRelicModifier = ResolvePlayerRelicDiceModifier(ally, enemy, i);
+            PlayerRelicDiceModifier allyRelicModifier = ResolvePlayerRelicDiceModifier(ally, enemy, i, false);
             EnemySkill_SO.DicePowerRange allyRange = ApplyPlayerRelicDiceRangeModifier(ally.GetDicePowerRange(i), allyRelicModifier);
             EnemySkill_SO.DicePowerRange allyDisplayRange = ally.SelectedSkill != null ? ally.SelectedSkill.GetDicePowerRange(i) : allyRange;
             int allyBasePower = RollDiceFromRange(allyRange);
@@ -2539,7 +2539,7 @@ public class BattleButton : MonoBehaviour
         return Mathf.Max(0, baseStacks + context.additionalStatusStacks);
     }
 
-    private static PlayerRelicDiceModifier ResolvePlayerRelicDiceModifier(BattleAllyController attacker, BattleEnemyController target, int diceIndex)
+    private static PlayerRelicDiceModifier ResolvePlayerRelicDiceModifier(BattleAllyController attacker, BattleEnemyController target, int diceIndex, bool isClashPreparation)
     {
         PlayerRelicDiceModifier modifier = default;
         if (attacker == null)
@@ -2553,6 +2553,7 @@ public class BattleButton : MonoBehaviour
             null,
             attacker.SelectedSkill,
             diceIndex,
+            isClashPreparation,
             attacker,
             target);
         RelicSystem.Process(activeEncounter.relicInventory, context);

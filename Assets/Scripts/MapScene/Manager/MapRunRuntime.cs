@@ -340,6 +340,7 @@ public static class MapRunRuntime
         LootItem_SO firstLoot,
         LootItem_SO secondLoot,
         LootItem_SO resultLoot,
+        IReadOnlyList<LootItem_SO> lootReforgePool,
         out string errorMessage)
     {
         if (currentSnapshot == null || string.IsNullOrWhiteSpace(sceneName))
@@ -391,6 +392,14 @@ public static class MapRunRuntime
             return false;
         }
 
+        RelicExecutionContext lootReforgeContext = RelicExecutionContext.CreateLootReforge(
+            currentSnapshot.runState,
+            firstLoot,
+            secondLoot,
+            resultLoot,
+            lootReforgePool);
+        RelicSystem.Process(currentSnapshot.runState, Relic_SO.RelicTrigger.OnLootReforge, lootReforgeContext);
+
         if (!currentSnapshot.runState.TryConsumeLoot(firstLoot, 1))
         {
             errorMessage = $"无法消耗材料：{GetLootDisplayName(firstLoot)}";
@@ -405,6 +414,15 @@ public static class MapRunRuntime
         }
 
         currentSnapshot.runState.AddLoot(resultLoot, 1);
+        if (lootReforgeContext.bonusLootReforgeRewards != null)
+        {
+            for (int bonusIndex = 0; bonusIndex < lootReforgeContext.bonusLootReforgeRewards.Count; bonusIndex++)
+            {
+                LootItem_SO bonusLoot = lootReforgeContext.bonusLootReforgeRewards[bonusIndex];
+                if (bonusLoot != null)
+                    currentSnapshot.runState.AddLoot(bonusLoot, 1);
+            }
+        }
         errorMessage = string.Empty;
         return true;
     }
@@ -465,6 +483,19 @@ public static class MapRunRuntime
             return false;
         }
 
+        RelicExecutionContext reforgeContext = RelicExecutionContext.CreateRelicReforge(
+            currentSnapshot.runState,
+            firstRelic,
+            secondRelic,
+            resultRelic);
+        RelicSystem.Process(currentSnapshot.runState, Relic_SO.RelicTrigger.OnRelicReforge, reforgeContext);
+
+        Relic_SO preservedMaterial = null;
+        if (reforgeContext.preservedReforgeMaterialSlot == 0)
+            preservedMaterial = firstRelic;
+        else if (reforgeContext.preservedReforgeMaterialSlot == 1)
+            preservedMaterial = secondRelic;
+
         if (!currentSnapshot.runState.TryConsumeRelic(firstRelic, 1))
         {
             errorMessage = $"无法消耗材料：{GetRelicDisplayName(firstRelic)}";
@@ -479,6 +510,8 @@ public static class MapRunRuntime
         }
 
         currentSnapshot.runState.AddRelic(resultRelic, 1);
+        if (preservedMaterial != null)
+            currentSnapshot.runState.AddRelic(preservedMaterial, 1);
         errorMessage = string.Empty;
         return true;
     }
