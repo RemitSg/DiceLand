@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: Siphon
+  m_EditorClassIdentifier: 
+  skillName: "\u56de\u6d41\u8679\u5438"
+  description: "\u5b83\u6b63\u5728\u6536\u56de\u6d12\u51fa\u7684\u8840"
+  skillCategory: 0
+  energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  targetPriorityMode: 1
+  targetPriorityStatusData: {fileID: 11400000, guid: c8249c4cafb55cd4f8587aa0410e54d3, type: 2}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 2
+  minPower: 2
+  maxPower: 4
+  diceCount: 1
+  dicePowerRanges:
+  - minPower: 2
+    maxPower: 4
+  dicePresentationSettings: []
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects:
+    - effectName: 
+      trigger: 0
+      targetMode: 3
+      useCondition: 1
+      condition: 4
+      amountMode: 2
+      healAmount: 1
+      statusData: {fileID: 11400000, guid: c8249c4cafb55cd4f8587aa0410e54d3, type: 2}
+      statusType: 0
+      conditionStatusData: {fileID: 11400000, guid: c8249c4cafb55cd4f8587aa0410e54d3, type: 2}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 2
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
+      statusStackSourceMode: 0
+      randomTargetCount: 1
+    statusStackOperationEffects:
+    - effectName: 
+      trigger: 0
+      targetMode: 0
+      statusData: {fileID: 11400000, guid: c8249c4cafb55cd4f8587aa0410e54d3, type: 2}
+      statusType: 0
+      operationType: 0
+      stackAmount: 2
+      randomTargetCount: 1
+    enemyStageTransitionEffects: []

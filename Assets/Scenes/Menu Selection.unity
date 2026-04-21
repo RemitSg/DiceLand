@@ -11323,7 +11323,7 @@ MonoBehaviour:
     titleFontSize: 60
     bodyFontSize: 36
   demoTestEncounterLabel: Demo Battle Test
-  demoTestEnemyGroup: {fileID: 11400000, guid: a8df06d99102ea7408c19bf4a2c6312e, type: 2}
+  demoTestEnemyGroup: {fileID: 11400000, guid: 4bb958f73b584ae080fc87519f7742cd, type: 2}
   demoTestPartyMembers:
   - memberId: 
     characterData: {fileID: 11400000, guid: 27e817266af382946804dea6afd2e374, type: 2}
@@ -11332,15 +11332,22 @@ MonoBehaviour:
     startingExperience: 0
     startingMaxHP: 999
     startingCurrentHP: 999
-  settingsTitleFont: {fileID: 0}
-  settingsBodyFont: {fileID: 0}
-  settingsLabelFont: {fileID: 0}
-  settingsValueFont: {fileID: 0}
-  settingsToggleStateFont: {fileID: 0}
-  settingsDropdownFont: {fileID: 0}
-  settingsButtonFont: {fileID: 0}
-  contributorsTitleFont: {fileID: 0}
-  contributorsBodyFont: {fileID: 0}
+  - memberId: 
+    characterData: {fileID: 11400000, guid: 658e22cc7dec223479091c6817751025, type: 2}
+    equippedWeapon: {fileID: 11400000, guid: 6c1aed0bff9b3a74ba193a8ff2895f74, type: 2}
+    startingLevel: 1
+    startingExperience: 0
+    startingMaxHP: 999
+    startingCurrentHP: 999
+  settingsTitleFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
+  settingsBodyFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
+  settingsLabelFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
+  settingsValueFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
+  settingsToggleStateFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
+  settingsDropdownFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
+  settingsButtonFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
+  contributorsTitleFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
+  contributorsBodyFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
 --- !u!1 &1612790337
 GameObject:
   m_ObjectHideFlags: 0

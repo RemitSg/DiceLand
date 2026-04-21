@@ -18,7 +18,7 @@ MonoBehaviour:
     -30%"
   additionalDescription: "\u5B83\u4E0D\u8FFD\u9010\u65F6\u95F4\uFF0C\u53EA\u5728\u7F1D\u9699\u91CC\u8F7B\u8F7B\u62E8\u52A8\u7ED3\u5C40"
   rarity: 2
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: efc58f0853d31de46ab13067d0fd2558, type: 3}
   builtInEffects:
   - effectName: 
     trigger: 9

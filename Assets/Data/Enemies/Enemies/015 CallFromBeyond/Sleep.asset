@@ -16,6 +16,9 @@ MonoBehaviour:
   description: "\u547C\u5524\u505C\u6B62\u4E86\u2026\u2026\u6682\u65F6\u3002"
   skillCategory: 1
   energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 01000000
   targetPriorityMode: 0
@@ -31,12 +34,14 @@ MonoBehaviour:
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 4264934743671495442, guid: 2c62bc4b5fb27a447919e35dd02464c1, type: 3}
     hitEffectPrefab: {fileID: 0}
+    clashOffsetSpace: 0
     clashPositionOffset: {x: -1, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 1.5, y: 1.5, z: 1.5}
     clashSortingOrderOffset: 0
     overrideClashDuration: 1
     clashDuration: 1
+    hitOffsetSpace: 0
     hitPositionOffset: {x: 0, y: 0, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
     hitScale: {x: 0, y: 0, z: 0}
@@ -63,7 +68,7 @@ MonoBehaviour:
       applyTiming: 0
       applyAfterRoundStarts: 0
       applyRepeatCount: 0
-      stackAmount: 2
+      stackAmount: 1
       randomTargetCount: 1
     powerModifiers: []
     statusBurstEffects: []

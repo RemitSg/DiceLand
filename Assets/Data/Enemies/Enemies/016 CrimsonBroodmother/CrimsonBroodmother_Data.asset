@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: CrimsonBroodmother_Data
+  m_EditorClassIdentifier: 
+  enemyID: 16
+  enemyName: "\u7EEF\u8109\u5DE2\u6BCD"
+  baseHP: 28
+  damageReductionPercent: 0
+  minSpeed: 2
+  maxSpeed: 5
+  baseSpeedButtonCount: 1
+  enemySprite: {fileID: 21300000, guid: 0d260784fb1d2ce4dbe7fcff357d887f, type: 3}
+  stageSprites:
+  - stageName: "\u6F5C\u8840"
+    stageSprite: {fileID: 21300000, guid: 0d260784fb1d2ce4dbe7fcff357d887f, type: 3}
+    minSpeedOverride: 2
+    maxSpeedOverride: 5
+    speedButtonCountOverride: 1
+  - stageName: "\u72C2\u5BB4"
+    stageSprite: {fileID: 21300000, guid: 55ab8ca38d29e3448bba9258ef3ac69c, type: 3}
+    minSpeedOverride: 3
+    maxSpeedOverride: 6
+    speedButtonCountOverride: 2
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.2
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules:
+  - ruleName: "\u95FB\u8840\u89C9\u9192"
+    statusData: {fileID: 11400000, guid: c8249c4cafb55cd4f8587aa0410e54d3, type: 2}
+    targetMode: 1
+    specificEnemyData: {fileID: 0}
+    specificCharacterData: {fileID: 0}
+    comparisonType: 1
+    stackThreshold: 6
+    targetStageIndex: 1
+    priority: 1
+  statusImmunityRules: []
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains: []
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  enemyDescription: "\u7531\u805A\u5408\u8840\u8089\u6784\u6210\u7684\u5DE2\u6BCD\u3002\u5B83\u4F1A\u8010\u5FC3\u7B49\u5F85\u730E\u7269\u4F53\u5185\u7684\u8840\u8109\u5931\u63A7\uFF0C\u518D\u5C06\u730E\u7269\u6495\u5F00\u3002"
+  passiveDescriptions:
+  - passiveName: "\u95FB\u8840\u89C9\u9192"
+    displayColorType: 1
+    description: "\u573A\u4E0A\u4EFB\u610F\u5355\u4F4D\u7684\u6D41\u8840\u5C42\u6570\u8FBE\u5230
+      6 \u5C42\u65F6\uFF0C\u8F6C\u5165\u7B2C 2 \u9636\u6BB5"
+  - passiveName: "\u56DE\u6D41\u8679\u5438"
+    displayColorType: 1
+    description: "\u547D\u4E2D\u5E26\u6709\u6D41\u8840\u7684\u76EE\u6807\u65F6\uFF0C\u6839\u636E\u5176\u6D41\u8840\u5C42\u6570\u56DE\u590D\u751F\u547D\uFF0C\u5E76\u5438\u8D70\u5176\u90E8\u5206\u6D41\u8840"
+  - passiveName: "\u51DD\u8109\u5904\u5211"
+    displayColorType: 2
+    description: "\u8FDB\u5165\u7B2C 2 \u9636\u6BB5\u540E\uFF0C\u6BCF 3 \u56DE\u5408\u4F7F\u7528\u4E00\u6B21\u5F3A\u529B\u5904\u5211\u6280"
+  enemyVisualScale: 1.6
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: 2774bd98ecea4c25ad56d2bd69757ef4, type: 2}
+  - {fileID: 11400000, guid: d0e277072662436191a1a98a5e1bdd80, type: 2}
+  - {fileID: 11400000, guid: fa112ee78dfb4e4c995a2a0f991f3660, type: 2}
+  conditionalSkillRules:
+  - ruleName: "\u51DD\u8109\u5904\u5211"
+    skill: {fileID: 11400000, guid: b54d82479d4249829d0803017516b8a7, type: 2}
+    conditionType: 1
+    healthThresholdNormalized: 0
+    firstTriggerRound: 3
+    repeatEveryNRounds: 3
+    priority: 2
+    maxSlotsPerRound: 1
+    useOncePerBattle: 0

@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: Execute
+  m_EditorClassIdentifier: 
+  skillName: "\u51dd\u8109\u5904\u5211"
+  description: "\u6240\u6709\u6d41\u51fa\u7684\u8840\uff0c\u90fd\u4f1a\u6210\u4e3a\u5b83\u5904\u5211\u7684\u5200\u5203"
+  skillCategory: 0
+  energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 02000000
+  targetPriorityMode: 1
+  targetPriorityStatusData: {fileID: 11400000, guid: c8249c4cafb55cd4f8587aa0410e54d3, type: 2}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 3
+  minPower: 3
+  maxPower: 6
+  diceCount: 1
+  dicePowerRanges:
+  - minPower: 3
+    maxPower: 6
+  dicePresentationSettings: []
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers: []
+    statusBurstEffects:
+    - effectName: 
+      trigger: 0
+      targetMode: 0
+      statusData: {fileID: 11400000, guid: c8249c4cafb55cd4f8587aa0410e54d3, type: 2}
+      statusType: 0
+      damagePerStack: 1
+      randomTargetCount: 1
+      clearStacksAfterBurst: 1
+    healingEffects: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []

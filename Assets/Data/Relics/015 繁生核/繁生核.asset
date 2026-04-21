@@ -17,7 +17,7 @@ MonoBehaviour:
   description: "\u5F53\u8FDB\u884C\u6389\u843D\u7269\u953B\u9020\u65F6\uFF0C\u989D\u5916\u83B7\u5F97\u4E00\u4E2A\u968F\u673A\u76F8\u540C\u7EA7\u522B\u7684\u968F\u673A\u5C5E\u6027\u6389\u843D\u7269"
   additionalDescription: "\u5F53\u7ED3\u6784\u88AB\u6253\u5F00\u65F6\uFF0C\u5B83\u603B\u4F1A\u518D\u884D\u751F\u51FA\u4E00\u4EFD\u610F\u6599\u4E4B\u5916\u7684\u6210\u679C"
   rarity: 1
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 8d27576100d2534469dcf3efcc5e9987, type: 3}
   builtInEffects:
   - effectName: 
     trigger: 11
