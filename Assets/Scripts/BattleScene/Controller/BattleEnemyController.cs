@@ -28,6 +28,7 @@ public class BattleEnemyController : MonoBehaviour
     public EnemySkill_SO SelectedSkill { get; private set; }
     public int DiceCount => SelectedSkill != null ? SelectedSkill.diceCount : 1;
     public bool IsDead { get; private set; }
+    public static bool HasAnyAliveBleedDecayPreventer => aliveBleedDecayPreventerCount > 0;
     public int BurnStacks => GetLegacyStatusStacks(BurnStatusId);
     public int PendingRoundStartSpeedBonus { get; private set; }
     public IReadOnlyList<BattleStatusRuntimeEntry> StatusEntries => statusEntries;
@@ -52,9 +53,11 @@ public class BattleEnemyController : MonoBehaviour
     private Vector2 speedButtonMultiGroupOffset = Vector2.zero;
     private float speedButtonHorizontalSpacing = 0.82f;
     private const string BurnStatusId = "burn";
+    private static int aliveBleedDecayPreventerCount;
     private int pendingStageTransitionIndex = -1;
     private bool consumedHealthBasedStageTransition;
     private bool consumedRoundStartRetreat;
+    private bool registeredAsBleedDecayPreventer;
 
     private void Awake()
     {
@@ -67,15 +70,18 @@ public class BattleEnemyController : MonoBehaviour
         CurrentStageIndex = 0;
         MaxHP = CurrentHP = ResolveAdjustedBaseMaxHP();
         ApplyCurrentStageVisual();
+        RefreshBleedDecayPreventerRegistration();
     }
 
     public void ApplyEnemyData(EnemyData_SO data, bool resetHealth = true)
     {
+        UnregisterBleedDecayPreventer();
         enemyData = data;
         consumedConditionalSkillRules.Clear();
         pendingStageTransitionIndex = -1;
         consumedHealthBasedStageTransition = false;
         consumedRoundStartRetreat = false;
+        IsDead = false;
         CurrentStageIndex = 0;
         if (enemyData == null)
             return;
@@ -87,6 +93,17 @@ public class BattleEnemyController : MonoBehaviour
 
         ApplyCurrentStageVisual();
         RefreshActiveSpeedButtons();
+        RefreshBleedDecayPreventerRegistration();
+    }
+
+    private void OnDisable()
+    {
+        UnregisterBleedDecayPreventer();
+    }
+
+    private void OnDestroy()
+    {
+        UnregisterBleedDecayPreventer();
     }
 
     private int ResolveAdjustedBaseMaxHP()
@@ -770,6 +787,7 @@ public class BattleEnemyController : MonoBehaviour
             return;
 
         IsDead = true;
+        UnregisterBleedDecayPreventer();
         Speed = 0;
         SelectedSkill = null;
         selectedSkillsPerButton.Clear();
@@ -784,6 +802,31 @@ public class BattleEnemyController : MonoBehaviour
         }
 
         Died?.Invoke(this);
+    }
+
+    private void RefreshBleedDecayPreventerRegistration()
+    {
+        bool shouldRegister = !IsDead && isActiveAndEnabled && enemyData != null && enemyData.preventAllyBleedDecayOnHitWhileAlive;
+        if (shouldRegister == registeredAsBleedDecayPreventer)
+            return;
+
+        if (shouldRegister)
+        {
+            aliveBleedDecayPreventerCount += 1;
+            registeredAsBleedDecayPreventer = true;
+            return;
+        }
+
+        UnregisterBleedDecayPreventer();
+    }
+
+    private void UnregisterBleedDecayPreventer()
+    {
+        if (!registeredAsBleedDecayPreventer)
+            return;
+
+        aliveBleedDecayPreventerCount = Mathf.Max(0, aliveBleedDecayPreventerCount - 1);
+        registeredAsBleedDecayPreventer = false;
     }
 
     private EnemySkill_SO ResolveRandomSkillForSlot(

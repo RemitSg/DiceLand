@@ -174,6 +174,10 @@ public class EnemyData_SO : ScriptableObject
     [Tooltip("Optional retreat rule. When triggered, the encounter settles immediately with the configured loot tables.")]
     public RoundStartRetreatRule roundStartRetreatRule;
 
+    [Header("Battlefield Aura")]
+    [Tooltip("When enabled, allied characters keep their bleed stacks after being hit while this enemy remains alive on the battlefield.")]
+    public bool preventAllyBleedDecayOnHitWhileAlive;
+
     [TextArea(2, 5)]
     public string enemyDescription;
     public List<PassiveDescriptionEntry> passiveDescriptions;

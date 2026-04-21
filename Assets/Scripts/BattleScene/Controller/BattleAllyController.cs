@@ -42,6 +42,7 @@ public class BattleAllyController : MonoBehaviour
     private readonly List<PendingBattleStatusApplication> pendingStatusApplications = new List<PendingBattleStatusApplication>();
     private readonly List<EnemySkill_SO> temporarySkills = new List<EnemySkill_SO>();
     private const string BurnStatusId = "burn";
+    private const string BleedStatusId = "bleed";
 
     private void Awake()
     {
@@ -844,6 +845,8 @@ public class BattleAllyController : MonoBehaviour
             return stacksBeforeTrigger;
         if (ShouldPreservePersistentStatusStacks(entry))
             return stacksBeforeTrigger;
+        if (ShouldPreventBleedDecayOnHit(entry))
+            return stacksBeforeTrigger;
 
         switch (entry.statusData.OnHitDecayMode)
         {
@@ -896,6 +899,20 @@ public class BattleAllyController : MonoBehaviour
             default:
                 return stacksBeforeDecay;
         }
+    }
+
+    private static bool ShouldPreventBleedDecayOnHit(BattleStatusRuntimeEntry entry)
+    {
+        if (entry == null)
+            return false;
+
+        string statusKey = entry.statusData != null && !string.IsNullOrWhiteSpace(entry.statusData.StatusId)
+            ? entry.statusData.StatusId
+            : entry.Key;
+        if (!string.Equals(statusKey, BleedStatusId, StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        return BattleEnemyController.HasAnyAliveBleedDecayPreventer;
     }
 
     private static bool ShouldPreservePersistentStatusStacks(BattleStatusRuntimeEntry entry)

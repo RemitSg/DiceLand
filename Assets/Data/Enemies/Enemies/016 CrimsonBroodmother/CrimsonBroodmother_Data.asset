@@ -19,15 +19,15 @@ MonoBehaviour:
   minSpeed: 2
   maxSpeed: 5
   baseSpeedButtonCount: 1
-  enemySprite: {fileID: 21300000, guid: 0d260784fb1d2ce4dbe7fcff357d887f, type: 3}
+  enemySprite: {fileID: 21300000, guid: b04180dd25ec1f1419448edc5a1176b1, type: 3}
   stageSprites:
   - stageName: "\u6F5C\u8840"
-    stageSprite: {fileID: 21300000, guid: 0d260784fb1d2ce4dbe7fcff357d887f, type: 3}
+    stageSprite: {fileID: 21300000, guid: b04180dd25ec1f1419448edc5a1176b1, type: 3}
     minSpeedOverride: 2
     maxSpeedOverride: 5
     speedButtonCountOverride: 1
   - stageName: "\u72C2\u5BB4"
-    stageSprite: {fileID: 21300000, guid: 55ab8ca38d29e3448bba9258ef3ac69c, type: 3}
+    stageSprite: {fileID: 21300000, guid: 7254d288c331fe144986506c2ad4f6dc, type: 3}
     minSpeedOverride: 3
     maxSpeedOverride: 6
     speedButtonCountOverride: 2
@@ -42,7 +42,7 @@ MonoBehaviour:
     specificEnemyData: {fileID: 0}
     specificCharacterData: {fileID: 0}
     comparisonType: 1
-    stackThreshold: 6
+    stackThreshold: 3
     targetStageIndex: 1
     priority: 1
   statusImmunityRules: []
@@ -54,15 +54,16 @@ MonoBehaviour:
     enabled: 0
     triggerRound: 1
     settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 1
   enemyDescription: "\u7531\u805A\u5408\u8840\u8089\u6784\u6210\u7684\u5DE2\u6BCD\u3002\u5B83\u4F1A\u8010\u5FC3\u7B49\u5F85\u730E\u7269\u4F53\u5185\u7684\u8840\u8109\u5931\u63A7\uFF0C\u518D\u5C06\u730E\u7269\u6495\u5F00\u3002"
   passiveDescriptions:
+  - passiveName: "\u51DD\u8840\u5F02\u5E38"
+    displayColorType: 1
+    description: "\u5728\u573A\u65F6\uFF0C\u53CB\u65B9\u89D2\u8272\u53D7\u5230\u653B\u51FB\u4E0D\u518D\u635F\u5931\u6D41\u8840\u5C42\u6570"
   - passiveName: "\u95FB\u8840\u89C9\u9192"
     displayColorType: 1
     description: "\u573A\u4E0A\u4EFB\u610F\u5355\u4F4D\u7684\u6D41\u8840\u5C42\u6570\u8FBE\u5230
-      6 \u5C42\u65F6\uFF0C\u8F6C\u5165\u7B2C 2 \u9636\u6BB5"
-  - passiveName: "\u56DE\u6D41\u8679\u5438"
-    displayColorType: 1
-    description: "\u547D\u4E2D\u5E26\u6709\u6D41\u8840\u7684\u76EE\u6807\u65F6\uFF0C\u6839\u636E\u5176\u6D41\u8840\u5C42\u6570\u56DE\u590D\u751F\u547D\uFF0C\u5E76\u5438\u8D70\u5176\u90E8\u5206\u6D41\u8840"
+      3 \u5C42\u65F6\uFF0C\u8F6C\u5165\u7B2C 2 \u9636\u6BB5"
   - passiveName: "\u51DD\u8109\u5904\u5211"
     displayColorType: 2
     description: "\u8FDB\u5165\u7B2C 2 \u9636\u6BB5\u540E\uFF0C\u6BCF 3 \u56DE\u5408\u4F7F\u7528\u4E00\u6B21\u5F3A\u529B\u5904\u5211\u6280"

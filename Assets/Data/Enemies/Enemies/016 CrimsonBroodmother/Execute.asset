@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Execute
   m_EditorClassIdentifier: 
-  skillName: "\u51dd\u8109\u5904\u5211"
-  description: "\u6240\u6709\u6d41\u51fa\u7684\u8840\uff0c\u90fd\u4f1a\u6210\u4e3a\u5b83\u5904\u5211\u7684\u5200\u5203"
+  skillName: "\u51DD\u8109\u5904\u5211"
+  description: "\u6240\u6709\u6D41\u51FA\u7684\u8840\uFF0C\u90FD\u4F1A\u6210\u4E3A\u5B83\u5904\u5211\u7684\u5200\u5203"
   skillCategory: 0
   energyCost: 0
   requiredSelfStatusData: {fileID: 0}
@@ -31,7 +31,32 @@ MonoBehaviour:
   dicePowerRanges:
   - minPower: 3
     maxPower: 6
-  dicePresentationSettings: []
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 0}
+    hitEffectPrefab: {fileID: 4598350221025203266, guid: dd51634a7d6c91440a0ad6287c61a333, type: 3}
+    clashOffsetSpace: 0
+    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitOffsetSpace: 0
+    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0.3, y: 0.3, z: 0.3}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 1
+    hitDamageDelay: 0.5
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 21300000, guid: 7261f907b5b4aa94690e31949c75fca1, type: 3}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
   diceEffectSettings:
   - damageEffects: []
     statusEffects: []
@@ -42,7 +67,7 @@ MonoBehaviour:
       targetMode: 0
       statusData: {fileID: 11400000, guid: c8249c4cafb55cd4f8587aa0410e54d3, type: 2}
       statusType: 0
-      damagePerStack: 1
+      damagePerStack: 2
       randomTargetCount: 1
       clearStacksAfterBurst: 1
     healingEffects: []
