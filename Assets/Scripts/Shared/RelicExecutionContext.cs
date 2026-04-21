@@ -25,6 +25,7 @@ public sealed class RelicExecutionContext
     public int additionalPowerBonus;
     public int additionalMinPowerBonus;
     public int additionalMaxPowerBonus;
+    public int additionalTargetMinPowerBonus;
     public int incomingDamage;
     public int incomingDamageFlatModifier;
     public int incomingDamagePercentModifier;
@@ -39,6 +40,8 @@ public sealed class RelicExecutionContext
     public Relic_SO reforgeResultRelic;
     public int preservedReforgeMaterialSlot = -1;
     public List<LootItem_SO> bonusLootReforgeRewards;
+    public int baseRestReforgeCount;
+    public int additionalRestReforgeCount;
     public int currentSpeed;
     public int currentRound;
     public BattleAllyController[] allies;
@@ -273,6 +276,19 @@ public sealed class RelicExecutionContext
             secondReforgeRelicMaterial = secondRelicMaterial,
             reforgeResultRelic = resultRelic,
             preservedReforgeMaterialSlot = -1,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateRestReforgeLimitCalculation(
+        RunState runState,
+        int baseRestReforgeCount)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnRestReforgeLimitCalculated,
+            runState = runState,
+            baseRestReforgeCount = Mathf.Max(0, baseRestReforgeCount),
             feedbackMessages = new List<string>()
         };
     }

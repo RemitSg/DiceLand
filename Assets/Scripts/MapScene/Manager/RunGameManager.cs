@@ -955,9 +955,18 @@ public class RunGameManager : MonoBehaviour
                     continue;
                 if (effect.trigger != Relic_SO.RelicTrigger.OnMoveCostAboutToSpend)
                     continue;
-                if (effect.effectType != Relic_SO.RelicBuiltInEffectType.ChanceToIgnoreMoveCost)
-                    continue;
-                if (effect.requireUnvisitedTile && !requireUnvisited)
+                bool canIgnoreMoveCost =
+                    effect.effectType == Relic_SO.RelicBuiltInEffectType.ChanceToIgnoreMoveCost &&
+                    (!effect.requireUnvisitedTile || requireUnvisited);
+
+                if (!canIgnoreMoveCost &&
+                    effect.effectType == Relic_SO.RelicBuiltInEffectType.IgnoreMoveCostWhenDestinationVisited &&
+                    !requireUnvisited)
+                {
+                    canIgnoreMoveCost = true;
+                }
+
+                if (!canIgnoreMoveCost)
                     continue;
                 if (effect.chance <= 0f)
                     continue;

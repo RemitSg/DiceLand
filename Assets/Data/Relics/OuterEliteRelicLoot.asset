@@ -24,6 +24,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f97a61a3848b6b7438dd41cc3d57fbe6, type: 2}
   - {fileID: 11400000, guid: c01c9fadf4cf9ba4d9316b11827e04c1, type: 2}
   - {fileID: 11400000, guid: 02cdabd30b49977478fe5147bc6a3d63, type: 2}
+  - {fileID: 11400000, guid: 2246f59cf82216d4d82d8ea492579438, type: 2}
+  - {fileID: 11400000, guid: 669bb278f0d7bee438fdeea4987d4a8b, type: 2}
+  - {fileID: 11400000, guid: 503faefca411e404ca4ebc4fccca72fd, type: 2}
+  - {fileID: 11400000, guid: 011f553ed170d914aaf6528a931af025, type: 2}
+  - {fileID: 11400000, guid: fc3668b4268cf5242a14f9db846a634c, type: 2}
+  - {fileID: 11400000, guid: 11db17d9fc3a4bfa83aa846a69adc169, type: 2}
+  - {fileID: 11400000, guid: 11db17d9fc3a4bfa83aa846a69adc169, type: 2}
   rarityWeights:
   - rarity: 0
     weight: 20

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92a6c8410a56dcb4db5bca4c318c5c64, type: 3}
   m_Name: "\u7E41\u751F\u6838"
   m_EditorClassIdentifier: 
-  relicId: 16
+  relicId: 15
   relicName: "\u7E41\u751F\u6838"
   description: "\u5F53\u8FDB\u884C\u6389\u843D\u7269\u953B\u9020\u65F6\uFF0C\u989D\u5916\u83B7\u5F97\u4E00\u4E2A\u968F\u673A\u76F8\u540C\u7EA7\u522B\u7684\u968F\u673A\u5C5E\u6027\u6389\u843D\u7269"
   additionalDescription: "\u5F53\u7ED3\u6784\u88AB\u6253\u5F00\u65F6\uFF0C\u5B83\u603B\u4F1A\u518D\u884D\u751F\u51FA\u4E00\u4EFD\u610F\u6599\u4E4B\u5916\u7684\u6210\u679C"

@@ -16,6 +16,17 @@ public static class RelicSystem
         return Mathf.Max(0, Mathf.FloorToInt((basePrice * multiplier) + 0.5f));
     }
 
+    public static int CalculateRestReforgeLimit(RunState runState, int baseLimit)
+    {
+        int resolvedBaseLimit = Mathf.Max(0, baseLimit);
+        if (runState == null)
+            return resolvedBaseLimit;
+
+        RelicExecutionContext context = RelicExecutionContext.CreateRestReforgeLimitCalculation(runState, resolvedBaseLimit);
+        Process(runState, Relic_SO.RelicTrigger.OnRestReforgeLimitCalculated, context);
+        return Mathf.Max(0, context.baseRestReforgeCount + context.additionalRestReforgeCount);
+    }
+
     public static void Process(RunState runState, Relic_SO.RelicTrigger trigger, RelicExecutionContext context)
     {
         if (runState == null)
@@ -72,6 +83,17 @@ public static class RelicSystem
                     context.ignoreMoveCost = true;
                     if (context.feedbackMessages != null)
                         context.feedbackMessages.Add($"{relicData.DisplayName} 生效：本次探索不消耗行动点。");
+                    break;
+
+                case Relic_SO.RelicBuiltInEffectType.IgnoreMoveCostWhenDestinationVisited:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnMoveCostAboutToSpend)
+                        continue;
+                    if (context.isDestinationUnvisited)
+                        continue;
+
+                    context.ignoreMoveCost = true;
+                    if (context.feedbackMessages != null)
+                        context.feedbackMessages.Add($"{relicData.DisplayName} 生效：前往已探索过的格子不消耗行动点。");
                     break;
 
                 case Relic_SO.RelicBuiltInEffectType.AddExtraStatusStacksOnApply:
@@ -201,6 +223,25 @@ public static class RelicSystem
                     context.additionalPowerBonus += clashBonus;
                     break;
 
+                case Relic_SO.RelicBuiltInEffectType.ReduceTargetClashMinPowerWhenTargetHasStatus:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnPlayerDicePrepared || !context.sourceIsPlayer || !context.isClashPreparation)
+                        continue;
+
+                    BattleEnemyController statusTargetEnemy = context.target as BattleEnemyController;
+                    if (statusTargetEnemy == null || effect.conditionStatusData == null)
+                        continue;
+
+                    int requiredTargetStatusStacks = Mathf.Max(1, effect.requiredStatusStacks);
+                    if (statusTargetEnemy.GetStatusStacks(effect.conditionStatusData) < requiredTargetStatusStacks)
+                        continue;
+
+                    int targetMinReduction = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+                    if (targetMinReduction <= 0)
+                        continue;
+
+                    context.additionalTargetMinPowerBonus -= targetMinReduction;
+                    break;
+
                 case Relic_SO.RelicBuiltInEffectType.PreserveRandomRelicMaterialOnReforge:
                     if (context.trigger != Relic_SO.RelicTrigger.OnRelicReforge)
                         continue;
@@ -257,6 +298,17 @@ public static class RelicSystem
                         if (context.feedbackMessages != null)
                             context.feedbackMessages.Add($"{relicData.DisplayName} 生效：额外获得了 {(!string.IsNullOrWhiteSpace(bonusLoot.lootName) ? bonusLoot.lootName : bonusLoot.name)}。");
                     }
+                    break;
+
+                case Relic_SO.RelicBuiltInEffectType.IncreaseRestReforgeLimit:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnRestReforgeLimitCalculated)
+                        continue;
+
+                    int addedReforgeCount = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+                    if (addedReforgeCount <= 0)
+                        continue;
+
+                    context.additionalRestReforgeCount += addedReforgeCount;
                     break;
 
                 case Relic_SO.RelicBuiltInEffectType.ReduceMerchantPricePercent:

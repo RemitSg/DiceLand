@@ -24,7 +24,8 @@ public class Relic_SO : ScriptableObject
         OnBattleRoundEnd = 8,
         OnPlayerAboutToTakeAttackDamage = 9,
         OnRelicReforge = 10,
-        OnLootReforge = 11
+        OnLootReforge = 11,
+        OnRestReforgeLimitCalculated = 12
     }
 
     public enum RelicBuiltInEffectType
@@ -45,7 +46,10 @@ public class Relic_SO : ScriptableObject
         ReduceIncomingAttackDamagePercentWhenAttackerSlowerThanTarget = 13,
         ModifyPlayerClashDiceWhenFasterThanTarget = 14,
         PreserveRandomRelicMaterialOnReforge = 15,
-        GrantRandomLootOfSameRarityOnLootReforge = 16
+        GrantRandomLootOfSameRarityOnLootReforge = 16,
+        IncreaseRestReforgeLimit = 17,
+        IgnoreMoveCostWhenDestinationVisited = 18,
+        ReduceTargetClashMinPowerWhenTargetHasStatus = 19
     }
 
     [Serializable]

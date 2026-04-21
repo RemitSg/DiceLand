@@ -93,6 +93,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour
     private Button relicModeButton;
     private Button actionButton;
     private Button secondaryButton;
+    private TextMeshProUGUI promptBodyRuntimeText;
     private TextMeshProUGUI titleText;
     private TextMeshProUGUI remainingText;
     private TextMeshProUGUI hintText;
@@ -216,6 +217,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour
 
         ownsModalLock = true;
         EnsureUi();
+        RefreshPromptText();
         SetMainPanelVisible(false);
         SetPromptVisible(true);
     }
@@ -297,17 +299,20 @@ public class RestSceneReforgeInteractable : MonoBehaviour
         if (!succeeded)
             return;
 
-        successfulReforgeCount = Mathf.Clamp(successfulReforgeCount + 1, 0, 2);
+        int maxReforgeCount = GetMaxReforgeCount();
+        successfulReforgeCount = Mathf.Clamp(successfulReforgeCount + 1, 0, maxReforgeCount);
         ClearCurrentModeSelection();
         RefreshMainPanel();
 
-        if (successfulReforgeCount >= 2)
+        if (successfulReforgeCount >= maxReforgeCount)
         {
             RestSceneRuntime.TryConfirmReforgeExitAndReturn();
             return;
         }
 
         SetStatus($"重铸成功：获得 {resultName}\n还可以继续重铸 1 次，或直接离开休息场景。", false);
+        int remainingReforgeCount = Mathf.Max(0, maxReforgeCount - successfulReforgeCount);
+        SetStatus($"重铸成功：获得 {resultName}\n还可以继续重铸 {remainingReforgeCount} 次，或直接离开休息场景。", false);
     }
 
     private bool TryExecuteLootReforge(out string resultName)
@@ -534,6 +539,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour
     private void RefreshMainPanel()
     {
         EnsureUi();
+        RefreshPromptText();
         ValidateSelectionsAgainstInventory();
         RefreshModeButtonStates();
         RefreshItemSection();
@@ -695,6 +701,9 @@ public class RestSceneReforgeInteractable : MonoBehaviour
                 : "消耗两件同阶级遗物，重铸为一件更高阶的随机遗物。";
         }
 
+        if (remainingText != null)
+            remainingText.text = $"剩余次数 {Mathf.Max(0, GetMaxReforgeCount() - successfulReforgeCount)}/{GetMaxReforgeCount()}";
+
         if (selectionSummaryText != null)
             selectionSummaryText.text = BuildSelectionSummary();
         if (resultPreviewText != null)
@@ -707,6 +716,12 @@ public class RestSceneReforgeInteractable : MonoBehaviour
                 : CanExecuteRelicReforge());
             actionButton.interactable = interactable;
             ApplyActionButtonVisual(actionButton, interactable);
+
+            bool dynamicInteractable = successfulReforgeCount < GetMaxReforgeCount() && (currentMode == ReforgeMode.Loot
+                ? CanExecuteLootReforge()
+                : CanExecuteRelicReforge());
+            actionButton.interactable = dynamicInteractable;
+            ApplyActionButtonVisual(actionButton, dynamicInteractable);
 
             TextMeshProUGUI label = actionButton.GetComponentInChildren<TextMeshProUGUI>(true);
             if (label != null)
@@ -879,6 +894,24 @@ public class RestSceneReforgeInteractable : MonoBehaviour
     private bool HasCommittedFirstReforge()
     {
         return successfulReforgeCount > 0;
+    }
+
+    private int GetMaxReforgeCount()
+    {
+        const int baseReforgeCount = 2;
+        if (!RestSceneRuntime.TryGetCurrentSnapshot(out MapRunSnapshot snapshot) || snapshot?.runState == null)
+            return baseReforgeCount;
+
+        return Mathf.Max(baseReforgeCount, RelicSystem.CalculateRestReforgeLimit(snapshot.runState, baseReforgeCount));
+    }
+
+    private void RefreshPromptText()
+    {
+        if (promptBodyRuntimeText == null)
+            return;
+
+        int maxReforgeCount = GetMaxReforgeCount();
+        promptBodyRuntimeText.text = $"确定要开始重铸吗？\n每次休息访问最多可进行 {maxReforgeCount} 次重铸。";
     }
 
     private void ClearCurrentModeSelection()
@@ -1160,6 +1193,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour
         promptTitle.text = promptTitleText;
 
         TextMeshProUGUI promptBody = CreateText("PromptBody", promptPanelRect, bodyFont, bodyFontSize, bodyColor, TextAlignmentOptions.Center);
+        promptBodyRuntimeText = promptBody;
         promptBody.enableWordWrapping = true;
         RectTransform promptBodyRect = promptBody.rectTransform;
         promptBodyRect.anchorMin = new Vector2(0.5f, 0.5f);

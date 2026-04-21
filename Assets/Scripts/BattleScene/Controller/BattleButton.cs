@@ -53,6 +53,7 @@ public class BattleButton : MonoBehaviour
         public int powerBonus;
         public int minPowerBonus;
         public int maxPowerBonus;
+        public int targetMinPowerBonus;
     }
 
     [Header("References")]
@@ -1223,10 +1224,12 @@ public class BattleButton : MonoBehaviour
             PlayerRelicDiceModifier allyRelicModifier = ResolvePlayerRelicDiceModifier(ally, enemy, i, true);
             EnemySkill_SO.DicePowerRange allyRange = ApplyPlayerRelicDiceRangeModifier(ally.GetDicePowerRange(i), allyRelicModifier);
             EnemySkill_SO.DicePowerRange enemyRange = enemy.GetDicePowerRange(i);
+            enemyRange.minPower = Mathf.Max(1, enemyRange.minPower + allyRelicModifier.targetMinPowerBonus);
+            enemyRange.maxPower = Mathf.Max(enemyRange.minPower, enemyRange.maxPower);
             EnemySkill_SO.DicePowerRange allyDisplayRange = ally.SelectedSkill != null ? ally.SelectedSkill.GetDicePowerRange(i) : allyRange;
             EnemySkill_SO.DicePowerRange enemyDisplayRange = enemy.SelectedSkill != null ? enemy.SelectedSkill.GetDicePowerRange(i) : enemyRange;
             int allyBasePower = RollDiceFromRange(allyRange);
-            int enemyBasePower = enemy.RollDice(i);
+            int enemyBasePower = RollDiceFromRange(enemyRange);
             int allyStatusPowerModifier = ally.GetStatusFlatPowerModifier(allyDefenseSkill);
             int enemyStatusPowerModifier = enemy.GetStatusFlatPowerModifier(enemyDefenseSkill);
             int allySkillUseBonus =
@@ -2560,6 +2563,7 @@ public class BattleButton : MonoBehaviour
         modifier.powerBonus = context.additionalPowerBonus;
         modifier.minPowerBonus = context.additionalMinPowerBonus;
         modifier.maxPowerBonus = context.additionalMaxPowerBonus;
+        modifier.targetMinPowerBonus = context.additionalTargetMinPowerBonus;
         return modifier;
     }
 
