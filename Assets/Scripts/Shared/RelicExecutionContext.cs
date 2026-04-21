@@ -176,4 +176,21 @@ public sealed class RelicExecutionContext
             feedbackMessages = new List<string>()
         };
     }
+
+    public static RelicExecutionContext CreateBattleRoundEnd(
+        RunState runState,
+        int currentRound,
+        BattleAllyController[] allies,
+        BattleEnemyController[] enemies)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnBattleRoundEnd,
+            runState = runState,
+            currentRound = Mathf.Max(1, currentRound),
+            allies = allies,
+            enemies = enemies,
+            feedbackMessages = new List<string>()
+        };
+    }
 }

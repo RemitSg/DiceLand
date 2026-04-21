@@ -20,7 +20,8 @@ public class Relic_SO : ScriptableObject
         OnMerchantPriceCalculated = 4,
         OnPlayerRoundStart = 5,
         OnBattleRoundStart = 6,
-        OnPlayerDeath = 7
+        OnPlayerDeath = 7,
+        OnBattleRoundEnd = 8
     }
 
     public enum RelicBuiltInEffectType
@@ -35,7 +36,8 @@ public class Relic_SO : ScriptableObject
         ApplyStatusToPlayerWhenSpeedEquals = 7,
         ApplyStatusToAllEnemiesOnSpecificRound = 8,
         ApplyStatusToAllAlliesOnSpecificRound = 9,
-        ApplyStatusToRemainingAlliesOnPlayerDeath = 10
+        ApplyStatusToRemainingAlliesOnPlayerDeath = 10,
+        HealRandomDamagedAllyOnBattleRoundEnd = 11
     }
 
     [Serializable]

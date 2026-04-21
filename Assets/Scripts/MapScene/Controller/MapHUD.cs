@@ -53,12 +53,23 @@ public class MapHUD : MonoBehaviour
 
     [Header("Party Panel")]
     [SerializeField] private Vector2 partyPanelSize = new Vector2(420f, 420f);
+    [SerializeField] private Vector2 partyPanelCollapsedSize = new Vector2(420f, 64f);
     [SerializeField] private Vector2 partyPanelOffset = new Vector2(22f, -256f);
     [SerializeField] private Sprite partyPanelBackgroundSprite;
     [SerializeField] private Color partyPanelColor = new Color(0.1f, 0.12f, 0.18f, 0.94f);
     [SerializeField] private Vector2 partyPanelTitleOffset = new Vector2(18f, -18f);
     [SerializeField] private Vector2 partyPanelTitleSize = new Vector2(360f, 36f);
+    [SerializeField] private Vector2 partyToggleButtonOffset = new Vector2(326f, -14f);
+    [SerializeField] private Vector2 partyToggleButtonSize = new Vector2(76f, 34f);
+    [SerializeField] private Sprite partyToggleButtonSprite;
+    [SerializeField] private Color partyToggleButtonColor = new Color(1f, 0.84f, 0.36f, 1f);
+    [SerializeField] private Color partyToggleButtonTextColor = Color.black;
+    [SerializeField] private string partyExpandedButtonLabel = "折叠";
+    [SerializeField] private string partyCollapsedButtonLabel = "展开";
+    [SerializeField] private bool partyStartCollapsed;
     [SerializeField] private Vector2 partyListOffset = new Vector2(16f, -60f);
+    [SerializeField, Min(0.01f)] private float partyToggleAnimationDuration = 0.22f;
+    [SerializeField] private AnimationCurve partyToggleAnimationCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
     [SerializeField] private Vector2 partyMemberCardSize = new Vector2(388f, 108f);
     [SerializeField] private float partyMemberCardSpacing = 12f;
     [SerializeField] private Sprite partyMemberCardSprite;
@@ -73,8 +84,8 @@ public class MapHUD : MonoBehaviour
     [SerializeField] private Vector2 partyMemberHpTextSize = new Vector2(56f, 22f);
     [SerializeField] private Vector2 partyMemberExpBarOffset = new Vector2(108f, -74f);
     [SerializeField] private Vector2 partyMemberExpBarSize = new Vector2(204f, 14f);
-    [SerializeField] private Vector2 partyMemberExpTextOffset = new Vector2(108f, -90f);
-    [SerializeField] private Vector2 partyMemberExpTextSize = new Vector2(268f, 18f);
+    [SerializeField] private Vector2 partyMemberExpTextOffset = new Vector2(320f, -72f);
+    [SerializeField] private Vector2 partyMemberExpTextSize = new Vector2(96f, 22f);
     [SerializeField] private Color partyMemberNameColor = Color.white;
     [SerializeField] private Color partyMemberHpBackgroundColor = new Color(0.2f, 0.12f, 0.14f, 0.95f);
     [SerializeField] private Color partyMemberHpFillColor = new Color(0.92f, 0.28f, 0.32f, 1f);
@@ -175,7 +186,11 @@ public class MapHUD : MonoBehaviour
     private Image partyPanelImage;
     private TextMeshProUGUI partyPanelTitleText;
     private TextMeshProUGUI partyEmptyText;
+    private RectTransform partyListViewport;
+    private RectMask2D partyListMask;
     private RectTransform partyListRoot;
+    private Button partyToggleButton;
+    private TextMeshProUGUI partyToggleButtonText;
     private readonly List<PartyMemberHudView> partyMemberViews = new List<PartyMemberHudView>();
     private Button inventoryButton;
     private RectTransform inventoryPanelRect;
@@ -197,6 +212,10 @@ public class MapHUD : MonoBehaviour
     private bool currentDetailed;
     private object selectedInventoryState;
     private Sprite runtimeFallbackSprite;
+    private bool isPartyPanelCollapsed;
+    private bool partyCollapseStateInitialized;
+    private float partyPanelReveal = 1f;
+    private Coroutine partyToggleAnimationRoutine;
 
     public void Initialize()
     {
@@ -390,8 +409,19 @@ public class MapHUD : MonoBehaviour
         partyPanelImage.type = Image.Type.Sliced;
 
         partyPanelTitleText = CreateText(partyPanelRect, "PartyTitle", partyPanelTitleOffset, partyPanelTitleSize, partyTitleFontSize, titleColor, "当前队伍", GetPartyTitleFont());
-        partyEmptyText = CreateText(partyPanelRect, "PartyEmpty", partyListOffset, new Vector2(partyPanelSize.x - 32f, 28f), partyStatFontSize, bodyColor, "当前没有队伍成员。", GetPartyStatFont());
-        partyListRoot = CreateRect("PartyList", partyPanelRect, new Vector2(0f, 1f), partyListOffset, new Vector2(partyPanelSize.x - 32f, partyPanelSize.y - 76f));
+        partyToggleButton = BuildPartyToggleButton(partyPanelRect);
+        partyToggleButtonText = partyToggleButton != null ? partyToggleButton.GetComponentInChildren<TextMeshProUGUI>(true) : null;
+        partyListViewport = CreateRect("PartyListViewport", partyPanelRect, new Vector2(0f, 1f), partyListOffset, new Vector2(partyPanelSize.x - 32f, partyPanelSize.y - 76f));
+        partyListMask = partyListViewport.gameObject.AddComponent<RectMask2D>();
+        partyEmptyText = CreateText(partyListViewport, "PartyEmpty", Vector2.zero, new Vector2(partyPanelSize.x - 32f, 28f), partyStatFontSize, bodyColor, "当前没有队伍成员。", GetPartyStatFont());
+        partyListRoot = CreateRect("PartyList", partyListViewport, new Vector2(0f, 1f), Vector2.zero, new Vector2(partyPanelSize.x - 32f, partyPanelSize.y - 76f));
+
+        if (!partyCollapseStateInitialized)
+        {
+            isPartyPanelCollapsed = partyStartCollapsed;
+            partyPanelReveal = isPartyPanelCollapsed ? 0f : 1f;
+            partyCollapseStateInitialized = true;
+        }
     }
 
     private void BuildTilePanel()
@@ -491,9 +521,6 @@ public class MapHUD : MonoBehaviour
             : null;
         int memberCount = members != null ? members.Count : 0;
 
-        if (partyEmptyText != null)
-            partyEmptyText.gameObject.SetActive(memberCount <= 0);
-
         for (int i = 0; i < memberCount; i++)
         {
             PartyMemberHudView view = GetOrCreatePartyMemberView(i);
@@ -549,6 +576,10 @@ public class MapHUD : MonoBehaviour
         view.hpText = CreateText(view.root, "HpText", partyMemberHpTextOffset, partyMemberHpTextSize, partyStatFontSize, partyMemberHpTextColor, string.Empty, GetPartyStatFont());
         view.expFillImage = CreateStatusBar(view.root, "ExpBar", partyMemberExpBarOffset, partyMemberExpBarSize, partyMemberExpBackgroundColor, partyMemberExpFillColor);
         view.expText = CreateText(view.root, "ExpText", partyMemberExpTextOffset, partyMemberExpTextSize, partyStatFontSize, partyMemberExpTextColor, string.Empty, GetPartyStatFont());
+        if (view.hpText != null)
+            view.hpText.alignment = TextAlignmentOptions.TopRight;
+        if (view.expText != null)
+            view.expText.alignment = TextAlignmentOptions.TopRight;
 
         ApplyPartyMemberCardLayout(view, index);
         return view;
@@ -610,7 +641,7 @@ public class MapHUD : MonoBehaviour
         if (view.hpText != null)
             view.hpText.text = $"{currentHP}/{maxHP}";
         if (view.expText != null)
-            view.expText.text = expToNext > 0 ? $"EXP {currentExp}/{expToNext}" : "EXP MAX";
+            view.expText.text = expToNext > 0 ? $"{currentExp}/{expToNext}" : "满级";
 
         SetBarFill(view.hpFillImage, hpRatio);
         SetBarFill(view.expFillImage, expRatio);
@@ -693,6 +724,7 @@ public class MapHUD : MonoBehaviour
         ApplyFont(statusText, bodyFont != null ? bodyFont : keywordFont);
         ApplyTextStyle(partyPanelTitleText, GetPartyTitleFont(), partyTitleFontSize);
         ApplyTextStyle(partyEmptyText, GetPartyStatFont(), partyStatFontSize);
+        ApplyTextStyle(partyToggleButtonText, GetPartyStatFont(), partyStatFontSize);
 
         for (int i = 0; i < partyMemberViews.Count; i++)
         {
@@ -742,7 +774,14 @@ public class MapHUD : MonoBehaviour
         if (partyPanelRect == null)
             return;
 
-        Vector2 resolvedPanelSize = ResolvePartyPanelSize();
+        Vector2 expandedPanelSize = ResolvePartyPanelSize();
+        Vector2 resolvedPanelSize = Vector2.Lerp(partyPanelCollapsedSize, expandedPanelSize, Mathf.Clamp01(partyPanelReveal));
+        float titleAvailableWidth = Mathf.Max(140f, partyToggleButtonOffset.x - partyPanelTitleOffset.x - 12f);
+        Vector2 resolvedTitleSize = new Vector2(Mathf.Min(partyPanelTitleSize.x, titleAvailableWidth), partyPanelTitleSize.y);
+        float fullListHeight = Mathf.Max(0f, expandedPanelSize.y - 76f);
+        float viewportHeight = Mathf.Max(0f, fullListHeight * Mathf.Clamp01(partyPanelReveal));
+        int memberCount = currentRunState != null && currentRunState.partyMembers != null ? currentRunState.partyMembers.Count : 0;
+        bool showPartyDetails = partyPanelReveal > 0.001f;
         ApplyRect(partyPanelRect, new Vector2(0f, 1f), partyPanelOffset, resolvedPanelSize);
         if (partyPanelImage != null)
         {
@@ -752,11 +791,39 @@ public class MapHUD : MonoBehaviour
         }
 
         if (partyPanelTitleText != null)
-            ApplyRect(partyPanelTitleText.rectTransform, new Vector2(0f, 1f), partyPanelTitleOffset, partyPanelTitleSize);
+            ApplyRect(partyPanelTitleText.rectTransform, new Vector2(0f, 1f), partyPanelTitleOffset, resolvedTitleSize);
+        if (partyToggleButton != null)
+        {
+            ApplyRect(partyToggleButton.GetComponent<RectTransform>(), new Vector2(0f, 1f), partyToggleButtonOffset, partyToggleButtonSize);
+            Image toggleImage = partyToggleButton.GetComponent<Image>();
+            if (toggleImage != null)
+            {
+                toggleImage.sprite = partyToggleButtonSprite;
+                toggleImage.type = partyToggleButtonSprite != null ? Image.Type.Sliced : Image.Type.Simple;
+                toggleImage.color = partyToggleButtonSprite != null ? Color.white : partyToggleButtonColor;
+            }
+        }
+        if (partyListViewport != null)
+        {
+            ApplyRect(partyListViewport, new Vector2(0f, 1f), partyListOffset, new Vector2(expandedPanelSize.x - 32f, viewportHeight));
+            partyListViewport.gameObject.SetActive(showPartyDetails);
+        }
         if (partyEmptyText != null)
-            ApplyRect(partyEmptyText.rectTransform, new Vector2(0f, 1f), partyListOffset, new Vector2(resolvedPanelSize.x - 32f, 28f));
+        {
+            ApplyRect(partyEmptyText.rectTransform, new Vector2(0f, 1f), Vector2.zero, new Vector2(expandedPanelSize.x - 32f, 28f));
+            partyEmptyText.gameObject.SetActive(showPartyDetails && memberCount <= 0);
+        }
         if (partyListRoot != null)
-            ApplyRect(partyListRoot, new Vector2(0f, 1f), partyListOffset, new Vector2(resolvedPanelSize.x - 32f, resolvedPanelSize.y - 76f));
+        {
+            ApplyRect(partyListRoot, new Vector2(0f, 1f), Vector2.zero, new Vector2(expandedPanelSize.x - 32f, fullListHeight));
+            partyListRoot.gameObject.SetActive(showPartyDetails);
+        }
+
+        if (partyToggleButtonText != null)
+        {
+            partyToggleButtonText.text = isPartyPanelCollapsed ? partyCollapsedButtonLabel : partyExpandedButtonLabel;
+            partyToggleButtonText.color = partyToggleButtonTextColor;
+        }
 
         for (int i = 0; i < partyMemberViews.Count; i++)
             ApplyPartyMemberCardLayout(partyMemberViews[i], i);
@@ -1119,6 +1186,22 @@ public class MapHUD : MonoBehaviour
         return button;
     }
 
+    private Button BuildPartyToggleButton(RectTransform parent)
+    {
+        RectTransform rect = CreateRect("PartyToggleButton", parent, new Vector2(0f, 1f), partyToggleButtonOffset, partyToggleButtonSize);
+        Image image = rect.gameObject.AddComponent<Image>();
+        image.sprite = partyToggleButtonSprite;
+        image.type = partyToggleButtonSprite != null ? Image.Type.Sliced : Image.Type.Simple;
+        image.color = partyToggleButtonSprite != null ? Color.white : partyToggleButtonColor;
+
+        Button button = rect.gameObject.AddComponent<Button>();
+        button.onClick.AddListener(TogglePartyPanelCollapsed);
+
+        TextMeshProUGUI text = CreateText(rect, "Label", Vector2.zero, partyToggleButtonSize, partyStatFontSize, partyToggleButtonTextColor, string.Empty, GetPartyStatFont());
+        text.alignment = TextAlignmentOptions.Center;
+        return button;
+    }
+
     private Button BuildInventoryActionButton(RectTransform parent, string name, Vector2 anchoredPosition, Vector2 size, string label, UnityEngine.Events.UnityAction onClick)
     {
         RectTransform rect = CreateRect(name, parent, new Vector2(0f, 1f), anchoredPosition, size);
@@ -1194,6 +1277,39 @@ public class MapHUD : MonoBehaviour
         TMP_Text[] texts = button.GetComponentsInChildren<TMP_Text>(true);
         for (int i = 0; i < texts.Length; i++)
             ApplyFont(texts[i], font);
+    }
+
+    private void TogglePartyPanelCollapsed()
+    {
+        isPartyPanelCollapsed = !isPartyPanelCollapsed;
+        if (partyToggleAnimationRoutine != null)
+            StopCoroutine(partyToggleAnimationRoutine);
+
+        float targetReveal = isPartyPanelCollapsed ? 0f : 1f;
+        partyToggleAnimationRoutine = StartCoroutine(AnimatePartyPanelReveal(targetReveal));
+    }
+
+    private System.Collections.IEnumerator AnimatePartyPanelReveal(float targetReveal)
+    {
+        float startReveal = partyPanelReveal;
+        float duration = Mathf.Max(0.01f, partyToggleAnimationDuration);
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float normalized = Mathf.Clamp01(elapsed / duration);
+            float eased = partyToggleAnimationCurve != null
+                ? partyToggleAnimationCurve.Evaluate(normalized)
+                : normalized;
+            partyPanelReveal = Mathf.Lerp(startReveal, targetReveal, eased);
+            ApplyPartyPanelLayout();
+            yield return null;
+        }
+
+        partyPanelReveal = targetReveal;
+        ApplyPartyPanelLayout();
+        partyToggleAnimationRoutine = null;
     }
 
     private void ApplyFont(TMP_Text text, TMP_FontAsset font)

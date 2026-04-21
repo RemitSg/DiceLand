@@ -395,6 +395,38 @@ public static class RelicSystem
                         }
                     }
                     break;
+
+                case Relic_SO.RelicBuiltInEffectType.HealRandomDamagedAllyOnBattleRoundEnd:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnBattleRoundEnd)
+                        continue;
+                    if (context.allies == null || context.allies.Length == 0)
+                        continue;
+
+                    int healAmount = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+                    if (healAmount <= 0)
+                        continue;
+
+                    List<BattleAllyController> damagedAllies = new List<BattleAllyController>();
+                    for (int allyIndex = 0; allyIndex < context.allies.Length; allyIndex++)
+                    {
+                        BattleAllyController allyTarget = context.allies[allyIndex];
+                        if (allyTarget == null || allyTarget.IsDead || allyTarget.CurrentHP >= allyTarget.MaxHP)
+                            continue;
+
+                        damagedAllies.Add(allyTarget);
+                    }
+
+                    if (damagedAllies.Count <= 0)
+                        continue;
+
+                    BattleAllyController selectedAlly = damagedAllies[Random.Range(0, damagedAllies.Count)];
+                    int actualHeal = selectedAlly.Heal(healAmount);
+                    if (actualHeal <= 0)
+                        continue;
+
+                    if (context.feedbackMessages != null)
+                        context.feedbackMessages.Add($"{relicData.DisplayName} 生效：回合结束时，{selectedAlly.GetDebugDisplayName()} 恢复 {actualHeal} 点生命。");
+                    break;
             }
         }
     }

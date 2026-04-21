@@ -818,6 +818,7 @@ public class BattleButton : MonoBehaviour
         }
 
         ApplyRoundEndStatusEffectsGeneric(allies, enemies);
+        ApplyBattleRoundEndRelics(allies, enemies);
 
         SpeedButton.CombatLocked = false;
         BattleLog("\u518d\u6b21\u6309\u4e0b\u6218\u6597\u6309\u94ae\u5f00\u59cb\u4e0b\u4e00\u56de\u5408\u76ee\u6807\u6307\u5b9a\u3002");
@@ -2514,6 +2515,29 @@ public class BattleButton : MonoBehaviour
             return;
 
         RelicExecutionContext context = RelicExecutionContext.CreateBattleRoundStart(
+            null,
+            currentRound,
+            allies,
+            enemies);
+        RelicSystem.Process(activeEncounter.relicInventory, context);
+
+        if (context.feedbackMessages == null || context.feedbackMessages.Count == 0)
+            return;
+
+        for (int i = 0; i < context.feedbackMessages.Count; i++)
+        {
+            if (!string.IsNullOrWhiteSpace(context.feedbackMessages[i]))
+                BattleLog(context.feedbackMessages[i]);
+        }
+    }
+
+    private void ApplyBattleRoundEndRelics(BattleAllyController[] allies, BattleEnemyController[] enemies)
+    {
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return;
+
+        RelicExecutionContext context = RelicExecutionContext.CreateBattleRoundEnd(
             null,
             currentRound,
             allies,
