@@ -113,6 +113,40 @@ public static class RestSceneRuntime
         return true;
     }
 
+    public static bool TryApplyLootReforge(LootItem_SO firstLoot, LootItem_SO secondLoot, LootItem_SO resultLoot, out string errorMessage)
+    {
+        if (!HasPendingVisit)
+        {
+            errorMessage = "当前不在休息场景访问流程中。";
+            return false;
+        }
+
+        return MapRunRuntime.TryApplyLootReforgeResult(returnSceneName, firstLoot, secondLoot, resultLoot, out errorMessage);
+    }
+
+    public static bool TryApplyRelicReforge(Relic_SO firstRelic, Relic_SO secondRelic, Relic_SO resultRelic, out string errorMessage)
+    {
+        if (!HasPendingVisit)
+        {
+            errorMessage = "当前不在休息场景访问流程中。";
+            return false;
+        }
+
+        return MapRunRuntime.TryApplyRelicReforgeResult(returnSceneName, firstRelic, secondRelic, resultRelic, out errorMessage);
+    }
+
+    public static bool TryConfirmReforgeExitAndReturn()
+    {
+        if (!HasPendingVisit)
+            return false;
+
+        MapRunRuntime.ApplyRestVisitConsumedResult(returnSceneName, sourceCoord);
+        string targetScene = returnSceneName;
+        Clear();
+        SceneCurtainTransitionController.Instance.TransitionToScene(targetScene);
+        return true;
+    }
+
     public static void Clear()
     {
         returnSceneName = string.Empty;

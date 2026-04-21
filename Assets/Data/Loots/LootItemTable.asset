@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06b7aa56190832e459f63e6d7eb5b436, type: 3}
+  m_Name: LootItemTable
+  m_EditorClassIdentifier: 
+  tableID: 0
+  tableName: 
+  description: 
+  lootItems:
+  - {fileID: 11400000, guid: d472eb76e6a877043b3a98578a2db396, type: 2}
+  - {fileID: 11400000, guid: 2a5a440bab2e42f499a7fabcd4b29ead, type: 2}
+  - {fileID: 11400000, guid: 1a247d2fcfd14c141bd79e8a82154b1f, type: 2}
+  - {fileID: 11400000, guid: 3e23e2fc8a9e85945adee34acbb745f4, type: 2}
+  - {fileID: 11400000, guid: a86c6504bc8104048a4271c991a686c2, type: 2}
+  - {fileID: 11400000, guid: 264958ff28a8e5242b8197ce9765edbe, type: 2}
+  - {fileID: 11400000, guid: ea9793b0c90ae0c4f9dbaf13a832f375, type: 2}
+  - {fileID: 11400000, guid: 868997ae4239f844f9ea876d8ad4057e, type: 2}
+  - {fileID: 11400000, guid: f7d97cfbea961c84ebb552d194bd09f1, type: 2}
+  - {fileID: 11400000, guid: 4ae5af66b58deb64bb0942a685e955c5, type: 2}
+  - {fileID: 11400000, guid: d1eb5424360bc9f40a2b6a89faa718cb, type: 2}
+  - {fileID: 11400000, guid: 86cf119c5ff77594f96939517d1506a7, type: 2}

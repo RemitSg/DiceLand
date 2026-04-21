@@ -125,29 +125,10 @@ MonoBehaviour:
     maxPrice: 20
     weight: 5
   relicEntries:
-  - goodsId: 301
-    relicData: {fileID: 11400000, guid: 1ef333859ab5e5849aa088cf48b6d705, type: 2}
-    minPrice: 14
-    maxPrice: 20
-    weight: 10
-  - goodsId: 302
-    relicData: {fileID: 11400000, guid: 46785947940ce524da1ac7301e4964a2, type: 2}
-    minPrice: 35
-    maxPrice: 43
-    weight: 5
-  - goodsId: 302
-    relicData: {fileID: 11400000, guid: 8251f8c81966de64bac464798dfca421, type: 2}
-    minPrice: 16
-    maxPrice: 24
-    weight: 10
-  - goodsId: 302
-    relicData: {fileID: 11400000, guid: 1214a92f0246a25439d39ec661edda12, type: 2}
-    minPrice: 16
-    maxPrice: 24
-    weight: 10
-  - goodsId: 302
-    relicData: {fileID: 11400000, guid: 69044cffd7ccfe34c8287e1a5045253d, type: 2}
-    minPrice: 34
-    maxPrice: 42
-    weight: 10
+  - goodsId: 1
+    relicTable: {fileID: 11400000, guid: 6650ae7fed330b7408b1cad987b54259, type: 2}
+    legacyRelicData: {fileID: 0}
+    minPrice: 1
+    maxPrice: 1
+    weight: 1
   goodsEntries: []

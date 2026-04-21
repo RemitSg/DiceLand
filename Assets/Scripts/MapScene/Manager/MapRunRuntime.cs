@@ -335,6 +335,190 @@ public static class MapRunRuntime
         return true;
     }
 
+    public static bool TryApplyLootReforgeResult(
+        string sceneName,
+        LootItem_SO firstLoot,
+        LootItem_SO secondLoot,
+        LootItem_SO resultLoot,
+        out string errorMessage)
+    {
+        if (currentSnapshot == null || string.IsNullOrWhiteSpace(sceneName))
+        {
+            errorMessage = "未找到地图进度快照。";
+            return false;
+        }
+
+        if (!string.Equals(currentSnapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
+        {
+            errorMessage = "当前地图进度与休息场景不匹配。";
+            return false;
+        }
+
+        if (currentSnapshot.runState == null)
+        {
+            errorMessage = "运行中的队伍数据丢失。";
+            return false;
+        }
+
+        if (firstLoot == null || secondLoot == null || resultLoot == null)
+        {
+            errorMessage = "重铸材料或结果未配置。";
+            return false;
+        }
+
+        if (firstLoot.rarity != secondLoot.rarity)
+        {
+            errorMessage = "两件战利品必须为同阶级。";
+            return false;
+        }
+
+        if (resultLoot.rarity != firstLoot.rarity)
+        {
+            errorMessage = "目标战利品的阶级与材料不匹配。";
+            return false;
+        }
+
+        int requiredFirstAmount = firstLoot == secondLoot ? 2 : 1;
+        if (currentSnapshot.runState.GetLootAmount(firstLoot) < requiredFirstAmount)
+        {
+            errorMessage = $"材料不足：{GetLootDisplayName(firstLoot)}";
+            return false;
+        }
+
+        if (firstLoot != secondLoot && currentSnapshot.runState.GetLootAmount(secondLoot) < 1)
+        {
+            errorMessage = $"材料不足：{GetLootDisplayName(secondLoot)}";
+            return false;
+        }
+
+        if (!currentSnapshot.runState.TryConsumeLoot(firstLoot, 1))
+        {
+            errorMessage = $"无法消耗材料：{GetLootDisplayName(firstLoot)}";
+            return false;
+        }
+
+        if (!currentSnapshot.runState.TryConsumeLoot(secondLoot, 1))
+        {
+            currentSnapshot.runState.AddLoot(firstLoot, 1);
+            errorMessage = $"无法消耗材料：{GetLootDisplayName(secondLoot)}";
+            return false;
+        }
+
+        currentSnapshot.runState.AddLoot(resultLoot, 1);
+        errorMessage = string.Empty;
+        return true;
+    }
+
+    public static bool TryApplyRelicReforgeResult(
+        string sceneName,
+        Relic_SO firstRelic,
+        Relic_SO secondRelic,
+        Relic_SO resultRelic,
+        out string errorMessage)
+    {
+        if (currentSnapshot == null || string.IsNullOrWhiteSpace(sceneName))
+        {
+            errorMessage = "未找到地图进度快照。";
+            return false;
+        }
+
+        if (!string.Equals(currentSnapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
+        {
+            errorMessage = "当前地图进度与休息场景不匹配。";
+            return false;
+        }
+
+        if (currentSnapshot.runState == null)
+        {
+            errorMessage = "运行中的队伍数据丢失。";
+            return false;
+        }
+
+        if (firstRelic == null || secondRelic == null || resultRelic == null)
+        {
+            errorMessage = "重铸遗物或结果未配置。";
+            return false;
+        }
+
+        if (firstRelic.rarity != secondRelic.rarity)
+        {
+            errorMessage = "两件遗物必须为同阶级。";
+            return false;
+        }
+
+        if (resultRelic.rarity <= firstRelic.rarity)
+        {
+            errorMessage = "结果遗物必须高于材料阶级。";
+            return false;
+        }
+
+        int requiredFirstAmount = firstRelic == secondRelic ? 2 : 1;
+        if (currentSnapshot.runState.GetRelicAmount(firstRelic) < requiredFirstAmount)
+        {
+            errorMessage = $"材料不足：{GetRelicDisplayName(firstRelic)}";
+            return false;
+        }
+
+        if (firstRelic != secondRelic && currentSnapshot.runState.GetRelicAmount(secondRelic) < 1)
+        {
+            errorMessage = $"材料不足：{GetRelicDisplayName(secondRelic)}";
+            return false;
+        }
+
+        if (!currentSnapshot.runState.TryConsumeRelic(firstRelic, 1))
+        {
+            errorMessage = $"无法消耗材料：{GetRelicDisplayName(firstRelic)}";
+            return false;
+        }
+
+        if (!currentSnapshot.runState.TryConsumeRelic(secondRelic, 1))
+        {
+            currentSnapshot.runState.AddRelic(firstRelic, 1);
+            errorMessage = $"无法消耗材料：{GetRelicDisplayName(secondRelic)}";
+            return false;
+        }
+
+        currentSnapshot.runState.AddRelic(resultRelic, 1);
+        errorMessage = string.Empty;
+        return true;
+    }
+
+    public static void ApplyRestVisitConsumedResult(string sceneName, Vector2Int sourceCoord)
+    {
+        if (currentSnapshot == null || string.IsNullOrWhiteSpace(sceneName))
+            return;
+
+        if (!string.Equals(currentSnapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
+            return;
+
+        for (int i = 0; i < currentSnapshot.tiles.Count; i++)
+        {
+            BoardTileData tile = currentSnapshot.tiles[i];
+            if (tile == null || tile.coord != sourceCoord)
+                continue;
+
+            tile.isVisited = true;
+            tile.isResolved = true;
+            break;
+        }
+    }
+
+    private static string GetLootDisplayName(LootItem_SO lootItem)
+    {
+        if (lootItem == null)
+            return "战利品";
+
+        return !string.IsNullOrWhiteSpace(lootItem.lootName) ? lootItem.lootName : lootItem.name;
+    }
+
+    private static string GetRelicDisplayName(Relic_SO relicData)
+    {
+        if (relicData == null)
+            return "遗物";
+
+        return !string.IsNullOrWhiteSpace(relicData.DisplayName) ? relicData.DisplayName : relicData.name;
+    }
+
     public static void Clear(string sceneName = null)
     {
         if (string.IsNullOrWhiteSpace(sceneName))

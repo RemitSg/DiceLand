@@ -319,6 +319,10 @@ MonoBehaviour:
   actionButtonColor: {r: 1, g: 0.83, b: 0.35, a: 1}
   disabledButtonColor: {r: 0.4, g: 0.4, b: 0.4, a: 0.9}
   actionButtonTextColor: {r: 0, g: 0, b: 0, a: 1}
+  refreshButtonOffset: {x: -392, y: 24}
+  buyButtonOffset: {x: -208, y: 24}
+  closeButtonOffset: {x: -24, y: 24}
+  refreshButtonLabel: "\u5237\u65B0"
   buyButtonLabel: "\u8D2D\u4E70"
   closeButtonLabel: "\u5173\u95ED"
   detailOffset: {x: 350.4, y: -72}
@@ -602,7 +606,7 @@ MonoBehaviour:
   moneyRewardTable: {fileID: 11400000, guid: 4b72f55d3933abd4594a3f21f07ef446, type: 2}
   merchantCatalog: {fileID: 11400000, guid: bf1d0124c102c504baf7a222df99def6, type: 2}
   levelTable: {fileID: 11400000, guid: 1c8dd34d2260a1b4a90e6e6e6e759828, type: 2}
-  startingMoney: 20
+  startingMoney: 10000
   startingPartyMembers:
   - memberId: 0
     characterData: {fileID: 11400000, guid: 27e817266af382946804dea6afd2e374, type: 2}
@@ -619,12 +623,18 @@ MonoBehaviour:
     startingMaxHP: 20
     startingCurrentHP: 20
   startingLoot:
+  - lootItem: {fileID: 11400000, guid: 1a247d2fcfd14c141bd79e8a82154b1f, type: 2}
+    amount: 2
   - lootItem: {fileID: 11400000, guid: 2a5a440bab2e42f499a7fabcd4b29ead, type: 2}
-    amount: 1
+    amount: 2
   startingWeapons: []
   startingBlueprints: []
   startingRelics:
-  - relicData: {fileID: 11400000, guid: f97a61a3848b6b7438dd41cc3d57fbe6, type: 2}
+  - relicData: {fileID: 11400000, guid: 8251f8c81966de64bac464798dfca421, type: 2}
+    amount: 1
+  - relicData: {fileID: 11400000, guid: 02cdabd30b49977478fe5147bc6a3d63, type: 2}
+    amount: 1
+  - relicData: {fileID: 11400000, guid: 1ef333859ab5e5849aa088cf48b6d705, type: 2}
     amount: 1
   autoStartOnAwake: 1
   battleSceneName: SampleScene
@@ -928,12 +938,46 @@ MonoBehaviour:
   bodyColor: {r: 0.92, g: 0.96, b: 1, a: 1}
   accentColor: {r: 1, g: 0.83, b: 0.35, a: 1}
   partyPanelSize: {x: 420, y: 420}
+  partyPanelCollapsedSize: {x: 420, y: 64}
   partyPanelOffset: {x: 22, y: -256}
   partyPanelBackgroundSprite: {fileID: 0}
-  partyPanelColor: {r: 0, g: 0, b: 0, a: 0.41960785}
+  partyPanelColor: {r: 0, g: 0, b: 0, a: 0.63529414}
   partyPanelTitleOffset: {x: 18, y: -18}
   partyPanelTitleSize: {x: 360, y: 36}
+  partyToggleButtonOffset: {x: 326, y: -14}
+  partyToggleButtonSize: {x: 76, y: 34}
+  partyToggleButtonSprite: {fileID: 0}
+  partyToggleButtonColor: {r: 1, g: 0.84, b: 0.36, a: 1}
+  partyToggleButtonTextColor: {r: 0, g: 0, b: 0, a: 1}
+  partyExpandedButtonLabel: "\u6298\u53E0"
+  partyCollapsedButtonLabel: "\u5C55\u5F00"
+  partyStartCollapsed: 0
   partyListOffset: {x: 16, y: -60}
+  partyToggleAnimationDuration: 0.22
+  partyToggleAnimationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   partyMemberCardSize: {x: 388, y: 118}
   partyMemberCardSpacing: 12
   partyMemberCardSprite: {fileID: 21300000, guid: 6b49917353831254bbff082b5f1e9ea1, type: 3}
@@ -948,7 +992,7 @@ MonoBehaviour:
   partyMemberHpTextSize: {x: 56, y: 22}
   partyMemberExpBarOffset: {x: 108, y: -74}
   partyMemberExpBarSize: {x: 204, y: 14}
-  partyMemberExpTextOffset: {x: 108, y: -90}
+  partyMemberExpTextOffset: {x: 104, y: -72}
   partyMemberExpTextSize: {x: 268, y: 18}
   partyMemberNameColor: {r: 1, g: 1, b: 1, a: 1}
   partyMemberHpBackgroundColor: {r: 0.2, g: 0.12, b: 0.14, a: 0.95}

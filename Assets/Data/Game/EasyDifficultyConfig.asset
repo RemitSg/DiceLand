@@ -24,7 +24,7 @@ MonoBehaviour:
     actionPointLimit: 14
   - calamityTier: 3
     actionPointLimit: 16
-  requiredKeys: 1
+  requiredKeys: 2
   generatedKeyTileCount: 3
   spawnMinRingDistance: 2
   tileWeights:
@@ -57,3 +57,21 @@ MonoBehaviour:
     minimumCount: 2
   maxRecruitCount: 4
   recruitCostTiers: 320000005000000078000000b4000000
+  legacyMerchantRefreshCost: 20
+  merchantRefreshCostTiers: 14000000190000001e0000002300000028000000
+  merchantRelicPrices:
+  - rarity: 0
+    minPrice: 14
+    maxPrice: 22
+  - rarity: 1
+    minPrice: 24
+    maxPrice: 32
+  - rarity: 2
+    minPrice: 32
+    maxPrice: 48
+  - rarity: 3
+    minPrice: 48
+    maxPrice: 70
+  - rarity: 4
+    minPrice: 80
+    maxPrice: 110

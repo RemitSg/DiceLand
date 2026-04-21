@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 
   drops: []
   relicDrops:
-  - relicData: {fileID: 11400000, guid: 8b721f24056af5f4081701cf219aa37e, type: 2}
+  - relicTable: {fileID: 11400000, guid: ee83c089e88b89c4cb696db5c356bdaf, type: 2}
     dropChance: 1
     minAmount: 1
     maxAmount: 1

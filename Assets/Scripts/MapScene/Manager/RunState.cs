@@ -494,6 +494,29 @@ public class RunState
         return 0;
     }
 
+    public bool TryConsumeRelic(Relic_SO relicData, int amount)
+    {
+        if (relicData == null || amount <= 0 || relicInventory == null)
+            return false;
+
+        for (int i = 0; i < relicInventory.Count; i++)
+        {
+            RunRelicState stack = relicInventory[i];
+            if (stack == null || stack.relicData != relicData)
+                continue;
+
+            if (stack.amount < amount)
+                return false;
+
+            stack.amount -= amount;
+            if (stack.amount <= 0)
+                relicInventory.RemoveAt(i);
+            return true;
+        }
+
+        return false;
+    }
+
     public bool HasDrawnCalamity(Calamity_SO calamityData)
     {
         string calamityId = GetCalamityIdentity(calamityData);
