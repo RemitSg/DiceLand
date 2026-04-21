@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public enum MerchantItemType
 {
@@ -70,12 +71,15 @@ public class MerchantCatalog_SO : ScriptableObject
     public sealed class RelicGoodsEntry
     {
         public string goodsId;
-        public Relic_SO relicData;
+        public RelicTable_SO relicTable;
+        [FormerlySerializedAs("relicData")]
+        [SerializeField, HideInInspector] private Relic_SO legacyRelicData;
         [Min(1)] public int minPrice = 1;
         [Min(1)] public int maxPrice = 5;
         [Min(1)] public int weight = 1;
 
-        public bool IsValid => relicData != null;
+        public Relic_SO LegacyRelicData => legacyRelicData;
+        public bool IsValid => (relicTable != null && relicTable.IsValid) || legacyRelicData != null;
     }
 
     [Serializable]
@@ -110,7 +114,7 @@ public class MerchantCatalog_SO : ScriptableObject
     [Header("Blueprint Pool")]
     public List<BlueprintGoodsEntry> blueprintEntries = new List<BlueprintGoodsEntry>();
 
-    [Header("Relic Pool")]
+    [Header("Relic Table Pool")]
     public List<RelicGoodsEntry> relicEntries = new List<RelicGoodsEntry>();
 
     [SerializeField, HideInInspector] private List<LegacyMerchantGoodsEntry> goodsEntries = new List<LegacyMerchantGoodsEntry>();

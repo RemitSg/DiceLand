@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "DifficultyConfig", menuName = "Map/DifficultyConfig")]
 public class DifficultyConfig_SO : ScriptableObject
@@ -26,6 +27,15 @@ public class DifficultyConfig_SO : ScriptableObject
         [Min(1)] public int actionPointLimit = 6;
     }
 
+    [Serializable]
+    public class MerchantRelicPriceEntry
+    {
+        public LootRarity rarity = LootRarity.Common;
+        [FormerlySerializedAs("price")]
+        [Min(0)] public int minPrice = 18;
+        [Min(0)] public int maxPrice = 18;
+    }
+
     public string difficultyName = "Normal";
     [Range(7, 13)] public int boardSize = 9;
     [Min(1)] public int startingActionPoints = 6;
@@ -40,6 +50,17 @@ public class DifficultyConfig_SO : ScriptableObject
     public List<TileMinimumEntry> tileMinimums = new List<TileMinimumEntry>();
     [Min(1)] public int maxRecruitCount = 4;
     public List<int> recruitCostTiers = new List<int> { 50, 80, 120, 180 };
+    [FormerlySerializedAs("merchantRefreshCost")]
+    [SerializeField, HideInInspector] private int legacyMerchantRefreshCost = 30;
+    public List<int> merchantRefreshCostTiers = new List<int> { 30, 45, 60 };
+    public List<MerchantRelicPriceEntry> merchantRelicPrices = new List<MerchantRelicPriceEntry>
+    {
+        new MerchantRelicPriceEntry { rarity = LootRarity.Common, minPrice = 14, maxPrice = 20 },
+        new MerchantRelicPriceEntry { rarity = LootRarity.Uncommon, minPrice = 18, maxPrice = 26 },
+        new MerchantRelicPriceEntry { rarity = LootRarity.Rare, minPrice = 26, maxPrice = 34 },
+        new MerchantRelicPriceEntry { rarity = LootRarity.Epic, minPrice = 34, maxPrice = 42 },
+        new MerchantRelicPriceEntry { rarity = LootRarity.Legendary, minPrice = 42, maxPrice = 52 }
+    };
 
     public int BoardSize
     {
@@ -71,6 +92,43 @@ public class DifficultyConfig_SO : ScriptableObject
 
         int tierIndex = Mathf.Clamp(Mathf.Max(0, recruitedCount), 0, recruitCostTiers.Count - 1);
         return Mathf.Max(0, recruitCostTiers[tierIndex]);
+    }
+
+    public int GetMerchantRefreshCost(int refreshCount)
+    {
+        if (merchantRefreshCostTiers == null || merchantRefreshCostTiers.Count == 0)
+            return Mathf.Max(0, legacyMerchantRefreshCost);
+
+        int clampedIndex = Mathf.Clamp(Mathf.Max(0, refreshCount), 0, merchantRefreshCostTiers.Count - 1);
+        return Mathf.Max(0, merchantRefreshCostTiers[clampedIndex]);
+    }
+
+    public int GetMerchantRelicPrice(LootRarity rarity, System.Random rng)
+    {
+        GetMerchantRelicPriceRange(rarity, out int minPrice, out int maxPrice);
+        if (rng == null || maxPrice <= minPrice)
+            return minPrice;
+
+        return rng.Next(minPrice, maxPrice + 1);
+    }
+
+    public void GetMerchantRelicPriceRange(LootRarity rarity, out int minPrice, out int maxPrice)
+    {
+        if (merchantRelicPrices != null)
+        {
+            for (int i = 0; i < merchantRelicPrices.Count; i++)
+            {
+                MerchantRelicPriceEntry entry = merchantRelicPrices[i];
+                if (entry == null || entry.rarity != rarity)
+                    continue;
+
+                minPrice = Mathf.Max(0, entry.minPrice);
+                maxPrice = Mathf.Max(minPrice, entry.maxPrice);
+                return;
+            }
+        }
+
+        GetDefaultMerchantRelicPriceRange(rarity, out minPrice, out maxPrice);
     }
 
     public int GetMinimumCount(MapTileType tileType)
@@ -174,6 +232,9 @@ public class DifficultyConfig_SO : ScriptableObject
         generatedKeyTileCount = Mathf.Max(requiredKeys, generatedKeyTileCount);
         spawnMinRingDistance = Mathf.Max(0, spawnMinRingDistance);
         maxRecruitCount = Mathf.Max(1, maxRecruitCount);
+        legacyMerchantRefreshCost = Mathf.Max(0, legacyMerchantRefreshCost);
+        EnsureMerchantRefreshCosts();
+        EnsureMerchantRelicPrices();
 
         if (recruitCostTiers == null || recruitCostTiers.Count == 0)
             recruitCostTiers = new List<int> { 50, 80, 120, 180 };
@@ -225,6 +286,108 @@ public class DifficultyConfig_SO : ScriptableObject
             }
 
             tileMinimums[i].minimumCount = Mathf.Max(0, tileMinimums[i].minimumCount);
+        }
+    }
+
+    private void EnsureMerchantRefreshCosts()
+    {
+        if (merchantRefreshCostTiers == null)
+            merchantRefreshCostTiers = new List<int>();
+
+        if (merchantRefreshCostTiers.Count == 0)
+        {
+            int fallbackCost = Mathf.Max(0, legacyMerchantRefreshCost);
+            if (fallbackCost <= 0)
+                fallbackCost = 30;
+
+            merchantRefreshCostTiers.Add(fallbackCost);
+        }
+
+        for (int i = 0; i < merchantRefreshCostTiers.Count; i++)
+            merchantRefreshCostTiers[i] = Mathf.Max(0, merchantRefreshCostTiers[i]);
+    }
+
+    private void EnsureMerchantRelicPrices()
+    {
+        if (merchantRelicPrices == null)
+            merchantRelicPrices = new List<MerchantRelicPriceEntry>();
+
+        Array enumValues = Enum.GetValues(typeof(LootRarity));
+        HashSet<LootRarity> seenRarities = new HashSet<LootRarity>();
+        List<MerchantRelicPriceEntry> sanitizedEntries = new List<MerchantRelicPriceEntry>();
+
+        for (int i = 0; i < merchantRelicPrices.Count; i++)
+        {
+            MerchantRelicPriceEntry entry = merchantRelicPrices[i];
+            if (entry == null)
+                continue;
+
+            entry.minPrice = Mathf.Max(0, entry.minPrice);
+            entry.maxPrice = Mathf.Max(entry.minPrice, entry.maxPrice);
+            if (!seenRarities.Add(entry.rarity))
+                continue;
+
+            sanitizedEntries.Add(entry);
+        }
+
+        merchantRelicPrices = sanitizedEntries;
+
+        for (int i = 0; i < enumValues.Length; i++)
+        {
+            LootRarity rarity = (LootRarity)enumValues.GetValue(i);
+            if (seenRarities.Contains(rarity))
+                continue;
+
+            merchantRelicPrices.Add(new MerchantRelicPriceEntry
+            {
+                rarity = rarity,
+                minPrice = GetDefaultMerchantRelicMinPrice(rarity),
+                maxPrice = GetDefaultMerchantRelicMaxPrice(rarity)
+            });
+        }
+
+        merchantRelicPrices.Sort((left, right) => left.rarity.CompareTo(right.rarity));
+    }
+
+    private static void GetDefaultMerchantRelicPriceRange(LootRarity rarity, out int minPrice, out int maxPrice)
+    {
+        minPrice = GetDefaultMerchantRelicMinPrice(rarity);
+        maxPrice = GetDefaultMerchantRelicMaxPrice(rarity);
+    }
+
+    private static int GetDefaultMerchantRelicMinPrice(LootRarity rarity)
+    {
+        switch (rarity)
+        {
+            case LootRarity.Uncommon:
+                return 18;
+            case LootRarity.Rare:
+                return 26;
+            case LootRarity.Epic:
+                return 34;
+            case LootRarity.Legendary:
+                return 42;
+            case LootRarity.Common:
+            default:
+                return 14;
+        }
+    }
+
+    private static int GetDefaultMerchantRelicMaxPrice(LootRarity rarity)
+    {
+        switch (rarity)
+        {
+            case LootRarity.Uncommon:
+                return 26;
+            case LootRarity.Rare:
+                return 34;
+            case LootRarity.Epic:
+                return 42;
+            case LootRarity.Legendary:
+                return 52;
+            case LootRarity.Common:
+            default:
+                return 20;
         }
     }
 

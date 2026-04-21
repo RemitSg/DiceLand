@@ -46,6 +46,10 @@ public class MapMerchantOverlay : MonoBehaviour
     [SerializeField] private Color actionButtonColor = new Color(1f, 0.83f, 0.35f, 1f);
     [SerializeField] private Color disabledButtonColor = new Color(0.4f, 0.4f, 0.4f, 0.9f);
     [SerializeField] private Color actionButtonTextColor = Color.black;
+    [SerializeField] private Vector2 refreshButtonOffset = new Vector2(-392f, 24f);
+    [SerializeField] private Vector2 buyButtonOffset = new Vector2(-208f, 24f);
+    [SerializeField] private Vector2 closeButtonOffset = new Vector2(-24f, 24f);
+    [SerializeField] private string refreshButtonLabel = "刷新";
     [SerializeField] private string buyButtonLabel = "购买";
     [SerializeField] private string closeButtonLabel = "关闭";
 
@@ -73,6 +77,7 @@ public class MapMerchantOverlay : MonoBehaviour
     private TextMeshProUGUI descriptionText;
     private TextMeshProUGUI statusText;
     private Image iconImage;
+    private Button refreshButton;
     private Button buyButton;
     private Button closeButton;
     private readonly List<Button> offerButtons = new List<Button>();
@@ -83,6 +88,8 @@ public class MapMerchantOverlay : MonoBehaviour
     private BoardTileData currentTile;
     private MerchantOfferState selectedOffer;
     private Func<BoardTileData, MerchantOfferState, string> buyHandler;
+    private Func<BoardTileData, string> refreshHandler;
+    private Func<BoardTileData, int> refreshCostResolver;
 
     public bool IsVisible =>
         panelRect != null &&
@@ -98,16 +105,23 @@ public class MapMerchantOverlay : MonoBehaviour
         ApplyFonts();
     }
 
-    public void Show(RunState runState, BoardTileData tile, Func<BoardTileData, MerchantOfferState, string> onBuy)
+    public void Show(
+        RunState runState,
+        BoardTileData tile,
+        Func<BoardTileData, MerchantOfferState, string> onBuy,
+        Func<BoardTileData, string> onRefresh,
+        Func<BoardTileData, int> onResolveRefreshCost)
     {
         EnsureUi();
         currentRunState = runState;
         currentTile = tile;
         buyHandler = onBuy;
+        refreshHandler = onRefresh;
+        refreshCostResolver = onResolveRefreshCost;
         gameObject.SetActive(true);
 
         RefreshOfferList();
-        SelectOffer(GetFirstOffer());
+        SelectOffer(ResolveSelectableOffer(selectedOffer));
     }
 
     public void Hide()
@@ -167,8 +181,9 @@ public class MapMerchantOverlay : MonoBehaviour
         descriptionText.overflowMode = TextOverflowModes.Overflow;
         statusText = CreateText(detailRoot, "Status", new Vector2(0f, -306f), new Vector2(detailSize.x - 12f, 36f), bodyFontSize - 2, accentColor, string.Empty);
 
-        buyButton = BuildActionButton(panelRect, "BuyButton", new Vector2(-208f, 24f), buyButtonLabel, OnBuyClicked);
-        closeButton = BuildActionButton(panelRect, "CloseButton", new Vector2(-24f, 24f), closeButtonLabel, Hide);
+        refreshButton = BuildActionButton(panelRect, "RefreshButton", refreshButtonOffset, refreshButtonLabel, OnRefreshClicked);
+        buyButton = BuildActionButton(panelRect, "BuyButton", buyButtonOffset, buyButtonLabel, OnBuyClicked);
+        closeButton = BuildActionButton(panelRect, "CloseButton", closeButtonOffset, closeButtonLabel, Hide);
 
         ApplyFonts();
         panelRect.gameObject.SetActive(true);
@@ -186,7 +201,10 @@ public class MapMerchantOverlay : MonoBehaviour
             moneyText.text = $"金钱 {Mathf.Max(0, currentRunState != null ? currentRunState.money : 0)}";
 
         if (currentTile?.merchantOffers == null)
+        {
+            RefreshRefreshButtonState();
             return;
+        }
 
         float y = 0f;
         for (int i = 0; i < currentTile.merchantOffers.Count; i++)
@@ -207,6 +225,8 @@ public class MapMerchantOverlay : MonoBehaviour
 
         if (offerScrollRect != null)
             offerScrollRect.verticalNormalizedPosition = 1f;
+
+        RefreshRefreshButtonState();
     }
 
     private void SelectOffer(MerchantOfferState offer)
@@ -229,6 +249,7 @@ public class MapMerchantOverlay : MonoBehaviour
             if (descriptionText != null)
                 descriptionText.text = "请选择一个商品来查看详情。";
             SetBuyButtonInteractable(false);
+            RefreshRefreshButtonState();
             return;
         }
 
@@ -252,7 +273,9 @@ public class MapMerchantOverlay : MonoBehaviour
         if (descriptionText != null)
             descriptionText.text = string.IsNullOrWhiteSpace(selectedOffer.Description) ? "暂无商品描述。" : selectedOffer.Description;
 
-        SetBuyButtonInteractable(!selectedOffer.isSoldOut && currentRunState != null && currentRunState.money >= Mathf.Max(0, selectedOffer.price));
+        int resolvedPrice = ResolveDisplayPrice(selectedOffer);
+        SetBuyButtonInteractable(!selectedOffer.isSoldOut && currentRunState != null && currentRunState.money >= Mathf.Max(0, resolvedPrice));
+        RefreshRefreshButtonState();
     }
 
     private void OnBuyClicked()
@@ -264,8 +287,23 @@ public class MapMerchantOverlay : MonoBehaviour
         if (statusText != null)
             statusText.text = result ?? string.Empty;
 
+        MerchantOfferState retainedOffer = selectedOffer;
         RefreshOfferList();
-        RefreshDetail();
+        SelectOffer(ResolveSelectableOffer(retainedOffer));
+    }
+
+    private void OnRefreshClicked()
+    {
+        if (refreshHandler == null || currentTile == null)
+            return;
+
+        string result = refreshHandler.Invoke(currentTile);
+        if (statusText != null)
+            statusText.text = result ?? string.Empty;
+
+        MerchantOfferState retainedOffer = selectedOffer;
+        RefreshOfferList();
+        SelectOffer(ResolveSelectableOffer(retainedOffer));
     }
 
     private MerchantOfferState GetFirstOffer()
@@ -352,6 +390,54 @@ public class MapMerchantOverlay : MonoBehaviour
         Image image = buyButton.GetComponent<Image>();
         if (image != null)
             image.color = interactable ? actionButtonColor : disabledButtonColor;
+    }
+
+    private void RefreshRefreshButtonState()
+    {
+        if (refreshButton == null)
+            return;
+
+        int refreshCost = ResolveRefreshCost();
+
+        TMP_Text label = refreshButton.GetComponentInChildren<TMP_Text>(true);
+        if (label != null)
+        {
+            label.text = refreshCost > 0
+                ? $"{refreshButtonLabel}\n{refreshCost} 金钱"
+                : refreshButtonLabel;
+        }
+
+        bool hasOffer = false;
+        if (currentTile != null && currentTile.merchantOffers != null)
+        {
+            for (int i = 0; i < currentTile.merchantOffers.Count; i++)
+            {
+                if (currentTile.merchantOffers[i] != null)
+                {
+                    hasOffer = true;
+                    break;
+                }
+            }
+        }
+
+        bool interactable =
+            refreshHandler != null &&
+            currentTile != null &&
+            hasOffer &&
+            currentRunState != null &&
+            currentRunState.money >= refreshCost;
+
+        refreshButton.interactable = interactable;
+        Image image = refreshButton.GetComponent<Image>();
+        if (image != null)
+            image.color = interactable ? actionButtonColor : disabledButtonColor;
+    }
+
+    private int ResolveRefreshCost()
+    {
+        return refreshCostResolver != null && currentTile != null
+            ? Mathf.Max(0, refreshCostResolver.Invoke(currentTile))
+            : 0;
     }
 
     private void ApplyFonts()
@@ -542,7 +628,7 @@ public class MapMerchantOverlay : MonoBehaviour
         Image image = buttonGo.GetComponent<Image>();
         image.color = actionButtonColor;
         image.sprite = actionButtonSprite;
-        image.type = Image.Type.Sliced;
+        image.type = actionButtonSprite != null ? Image.Type.Sliced : Image.Type.Simple;
 
         TextMeshProUGUI text = CreateText(rect, "Label", Vector2.zero, actionButtonSize, buttonFontSize, actionButtonTextColor, label, true);
         text.rectTransform.anchorMin = Vector2.zero;
@@ -554,6 +640,20 @@ public class MapMerchantOverlay : MonoBehaviour
         Button button = buttonGo.GetComponent<Button>();
         button.onClick.AddListener(onClick);
         return button;
+    }
+
+    private MerchantOfferState ResolveSelectableOffer(MerchantOfferState preferredOffer)
+    {
+        if (preferredOffer != null && currentTile != null && currentTile.merchantOffers != null)
+        {
+            for (int i = 0; i < currentTile.merchantOffers.Count; i++)
+            {
+                if (currentTile.merchantOffers[i] == preferredOffer)
+                    return preferredOffer;
+            }
+        }
+
+        return GetFirstOffer();
     }
 
     private TextMeshProUGUI CreateText(RectTransform parent, string name, Vector2 anchoredPosition, Vector2 size, int fontSize, Color color, string value, bool useKeywordFont = false)

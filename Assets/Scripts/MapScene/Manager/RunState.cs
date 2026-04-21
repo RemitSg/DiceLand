@@ -435,6 +435,23 @@ public class RunState
         });
     }
 
+    public int GetBlueprintAmount(CraftingBlueprint_SO blueprintData)
+    {
+        if (blueprintData == null || blueprintInventory == null)
+            return 0;
+
+        for (int i = 0; i < blueprintInventory.Count; i++)
+        {
+            RunBlueprintState stack = blueprintInventory[i];
+            if (stack == null || stack.blueprintData != blueprintData)
+                continue;
+
+            return Mathf.Max(0, stack.amount);
+        }
+
+        return 0;
+    }
+
     public void AddRelic(Relic_SO relicData, int amount = 1)
     {
         if (relicData == null || amount <= 0)
