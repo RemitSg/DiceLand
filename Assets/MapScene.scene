@@ -653,6 +653,18 @@ MonoBehaviour:
   mapViewController: {fileID: 0}
   mapBackgroundController: {fileID: 0}
   sceneTransitionController: {fileID: 0}
+  tutorialOpeningEnemyGroup: {fileID: 0}
+  tutorialEliteEnemyGroup: {fileID: 0}
+  tutorialBossEnemyGroup: {fileID: 0}
+  tutorialOpeningBattleDefinition: {fileID: 0}
+  tutorialEliteBattleDefinition: {fileID: 0}
+  tutorialBossBattleDefinition: {fileID: 0}
+  tutorialCompletionSceneName: Menu Selection
+  tutorialEnemyVisualTemplates:
+    openingPrimaryTemplate: {fileID: 11400000, guid: a79c03a19f046ad478a2a1e9f339c1a2, type: 2}
+    openingSecondaryTemplate: {fileID: 11400000, guid: a79c03a19f046ad478a2a1e9f339c1a2, type: 2}
+    eliteTemplate: {fileID: 11400000, guid: 644a91785052d164390c08fd48468a74, type: 2}
+    bossTemplate: {fileID: 11400000, guid: f3b54da2b2fd4a5584c0fb85294411ef, type: 2}
   cameraBackgroundColor: {r: 0.08, g: 0.11, b: 0.16, a: 1}
   cameraPadding: 2.8
 --- !u!114 &1019032849

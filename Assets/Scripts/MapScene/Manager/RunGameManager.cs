@@ -8,6 +8,10 @@ using UnityEngine.Serialization;
 [DisallowMultipleComponent]
 public class RunGameManager : MonoBehaviour
 {
+    private const int TutorialBoardSize = 11;
+    private const int TutorialEncounterSeedBase = 26000;
+    private const string TutorialCatalogResourcePath = "TutorialMenuCatalog";
+
     [System.Serializable]
     private class StartingPartyMemberDefinition
     {
@@ -100,6 +104,16 @@ public class RunGameManager : MonoBehaviour
     [SerializeField] private MapBackgroundController mapBackgroundController;
     [SerializeField] private SceneCurtainTransitionController sceneTransitionController;
 
+    [Header("Tutorial Battle Content")]
+    [SerializeField] private EnemyGroup_SO tutorialOpeningEnemyGroup;
+    [SerializeField] private EnemyGroup_SO tutorialEliteEnemyGroup;
+    [SerializeField] private EnemyGroup_SO tutorialBossEnemyGroup;
+    [SerializeField] private TutorialBattleDefinition_SO tutorialOpeningBattleDefinition;
+    [SerializeField] private TutorialBattleDefinition_SO tutorialEliteBattleDefinition;
+    [SerializeField] private TutorialBattleDefinition_SO tutorialBossBattleDefinition;
+    [SerializeField] private string tutorialCompletionSceneName = "Menu Selection";
+    [SerializeField] private TutorialEnemyVisualTemplateSet tutorialEnemyVisualTemplates = new TutorialEnemyVisualTemplateSet();
+
     [Header("Camera")]
     [SerializeField] private Color cameraBackgroundColor = new Color(0.08f, 0.11f, 0.16f, 1f);
     [SerializeField] private float cameraPadding = 2.8f;
@@ -115,12 +129,20 @@ public class RunGameManager : MonoBehaviour
     private BoardTileData currentEventExecutionTile;
     private string pendingMoveRelicStatusMessage;
     private readonly Dictionary<string, EventRandomLootDiscardPreview> eventRandomLootDiscardPreviewCache = new Dictionary<string, EventRandomLootDiscardPreview>(StringComparer.Ordinal);
+    private bool isTutorialRun;
+    private MainMenuTutorialOverlay tutorialOverlay;
 
     private void Awake()
     {
         EnsureSetup();
         if (autoStartOnAwake)
         {
+            if (MainMenuRuntime.ConsumeTutorialRequest())
+            {
+                StartTutorialRun();
+                return;
+            }
+
             if (!TryRestoreRun())
                 StartRun();
         }
@@ -160,6 +182,8 @@ public class RunGameManager : MonoBehaviour
     public void StartRun()
     {
         EnsureSetup();
+        isTutorialRun = false;
+        MainMenuRuntime.ClearTutorialRequest();
         MapRunRuntime.Clear(SceneManager.GetActiveScene().name);
         RestSceneRuntime.Clear();
         pendingCalamityTiers.Clear();
@@ -204,6 +228,59 @@ public class RunGameManager : MonoBehaviour
         mapViewController.PlaySpawnIntro(boardManager.GridToWorld(boardManager.SpawnCoord));
     }
 
+    private void StartTutorialRun()
+    {
+        EnsureSetup();
+        isTutorialRun = true;
+        MapRunRuntime.Clear(SceneManager.GetActiveScene().name);
+        RestSceneRuntime.Clear();
+        pendingCalamityTiers.Clear();
+        deferPendingCalamityUntilMapResume = false;
+        deferPendingCalamityUntilOverlayClosed = false;
+        suppressPendingCalamityOnNextRestActionPointRestore = false;
+        pendingEventEncounterData = null;
+
+        DifficultyConfig_SO config = ResolvePreferredDifficultyForNewRun();
+        activeDifficultyConfig = config;
+        runState = new RunState
+        {
+            difficultyName = string.IsNullOrEmpty(config != null ? config.difficultyName : null) ? "Tutorial" : config.difficultyName,
+            boardSize = TutorialBoardSize,
+            requiredKeys = 1,
+            currentCycle = 1,
+            money = Mathf.Max(0, startingMoney),
+            partyMembers = BuildStartingPartyMembers()
+        };
+
+        ApplyStartingInventory(runState);
+        runState.SyncLegacyPlayerFieldsFromParty();
+
+        actionPointSystem.Initialize(ResolveActionPointLimitForTier(config, 0));
+
+        List<BoardTileData> tutorialTiles = BuildTutorialBoardTiles(TutorialBoardSize);
+        Vector2Int spawnCoord = tutorialTiles[0].coord;
+        Vector2Int bossCoord = tutorialTiles[tutorialTiles.Count - 1].coord;
+        boardManager.LoadBoard(TutorialBoardSize, spawnCoord, bossCoord, spawnCoord, tutorialTiles);
+        AssignEnemyGroupsToHostileTiles();
+        mapBackgroundController.Initialize(backgroundRoot, mapCamera, boardManager);
+        playerMapController.Initialize(unitsRoot, boardManager, actionPointSystem, tileResolver, runState);
+
+        if (boardManager.TryGetTile(boardManager.SpawnCoord, out BoardTileData spawnTile))
+        {
+            spawnTile.isVisited = true;
+            playerMapController.SetSpawn(spawnTile);
+            boardManager.SetSelectedTile(spawnTile.coord);
+            boardManager.RefreshAllViews();
+            mapHUD.ShowTile(spawnTile, 0);
+        }
+
+        RefreshHUD("教程已开始：先点击相邻格子查看详情，再次点击即可沿固定路线推进。");
+        mapViewController.Initialize(mapCamera, boardManager, cameraPadding);
+        mapViewController.SetInputBlockedEvaluator(IsMapViewInputBlocked);
+        mapViewController.PlaySpawnIntro(boardManager.GridToWorld(boardManager.SpawnCoord));
+        ShowTutorialGuideOverlay();
+    }
+
     private bool TryRestoreRun()
     {
         string sceneName = SceneManager.GetActiveScene().name;
@@ -231,6 +308,7 @@ public class RunGameManager : MonoBehaviour
             return false;
 
         activeDifficultyConfig = ResolvePreferredDifficultyForRestore(runState != null ? runState.difficultyName : string.Empty);
+        isTutorialRun = MainMenuRuntime.TutorialActive;
 
         boardManager.LoadBoard(
             snapshot.boardSize,
@@ -271,6 +349,128 @@ public class RunGameManager : MonoBehaviour
         RefreshHUD("已恢复地图进度。");
         TryPresentPendingCalamity();
         return true;
+    }
+
+    private static List<BoardTileData> BuildTutorialBoardTiles(int boardSize)
+    {
+        int row = Mathf.Max(1, boardSize / 2);
+        MapTileType[] sequence =
+        {
+            MapTileType.Empty,
+            MapTileType.Empty,
+            MapTileType.Battle,
+            MapTileType.Event,
+            MapTileType.Rest,
+            MapTileType.Merchant,
+            MapTileType.Forge,
+            MapTileType.Elite,
+            MapTileType.Key,
+            MapTileType.Boss
+        };
+
+        List<BoardTileData> tiles = new List<BoardTileData>(sequence.Length);
+        for (int i = 0; i < sequence.Length; i++)
+        {
+            MapTileType tileType = sequence[i];
+            tiles.Add(new BoardTileData
+            {
+                coord = new Vector2Int(i, row),
+                tileType = tileType,
+                dangerBand = ResolveTutorialDangerBand(i),
+                isVisited = i == 0,
+                isResolved = tileType == MapTileType.Empty,
+                isSpawnTile = i == 0,
+                encounterSeed = TutorialEncounterSeedBase + i,
+                previewEnemyCount = ResolveTutorialPreviewEnemyCount(tileType),
+                previewDangerRating = ResolveTutorialPreviewDanger(tileType),
+                previewTag = ResolveTutorialPreviewTag(tileType)
+            });
+        }
+
+        return tiles;
+    }
+
+    private static MapDangerBand ResolveTutorialDangerBand(int sequenceIndex)
+    {
+        if (sequenceIndex <= 2)
+            return MapDangerBand.Outer;
+        if (sequenceIndex <= 5)
+            return MapDangerBand.Mid;
+        if (sequenceIndex <= 7)
+            return MapDangerBand.Inner;
+        return MapDangerBand.Core;
+    }
+
+    private static int ResolveTutorialPreviewEnemyCount(MapTileType tileType)
+    {
+        switch (tileType)
+        {
+            case MapTileType.Battle:
+                return 2;
+            case MapTileType.Elite:
+                return 3;
+            case MapTileType.Boss:
+                return 1;
+            default:
+                return 0;
+        }
+    }
+
+    private static int ResolveTutorialPreviewDanger(MapTileType tileType)
+    {
+        switch (tileType)
+        {
+            case MapTileType.Battle:
+                return 1;
+            case MapTileType.Elite:
+                return 3;
+            case MapTileType.Boss:
+                return 5;
+            default:
+                return 0;
+        }
+    }
+
+    private static string ResolveTutorialPreviewTag(MapTileType tileType)
+    {
+        switch (tileType)
+        {
+            case MapTileType.Battle:
+                return "教程战斗";
+            case MapTileType.Event:
+                return "教程事件";
+            case MapTileType.Rest:
+                return "教程营地";
+            case MapTileType.Merchant:
+                return "教程商店";
+            case MapTileType.Forge:
+                return "教程锻造";
+            case MapTileType.Elite:
+                return "教程精英";
+            case MapTileType.Key:
+                return "教程钥匙";
+            case MapTileType.Boss:
+                return "教程首领";
+            default:
+                return "教程路线";
+        }
+    }
+
+    private void ShowTutorialGuideOverlay()
+    {
+        TutorialMenuCatalog_SO catalog = Resources.Load<TutorialMenuCatalog_SO>(TutorialCatalogResourcePath);
+        if (catalog == null)
+            return;
+
+        if (tutorialOverlay == null)
+            tutorialOverlay = gameObject.GetComponent<MainMenuTutorialOverlay>() ?? gameObject.AddComponent<MainMenuTutorialOverlay>();
+
+        tutorialOverlay.Show(
+            catalog,
+            () => tutorialOverlay.Hide(),
+            null,
+            "继续",
+            "关闭");
     }
 
     private void HandleTileClicked(BoardTileData tile)
@@ -1088,11 +1288,25 @@ public class RunGameManager : MonoBehaviour
             return false;
         }
 
-        EnemyGroup_SO encounterGroup = tile.assignedEnemyGroup;
-        if (encounterGroup == null || !encounterGroup.IsValid)
+        EnemyGroup_SO encounterGroup = isTutorialRun
+            ? ResolveTutorialEnemyGroup(tile)
+            : tile.assignedEnemyGroup;
+        TutorialBattleDefinition_SO tutorialBattleDefinition = null;
+        bool tutorialReturnsToMainMenu = false;
+        if (!isTutorialRun && (encounterGroup == null || !encounterGroup.IsValid))
         {
             encounterGroup = SelectEnemyGroupForTile(tile);
             tile.assignedEnemyGroup = encounterGroup;
+        }
+        else if (isTutorialRun)
+        {
+            tile.assignedEnemyGroup = encounterGroup;
+        }
+
+        if (isTutorialRun)
+        {
+            tutorialBattleDefinition = ResolveTutorialBattleDefinition(tile.tileType);
+            tutorialReturnsToMainMenu = tile.tileType == MapTileType.Boss;
         }
 
         if (encounterGroup == null || !encounterGroup.IsValid)
@@ -1110,16 +1324,21 @@ public class RunGameManager : MonoBehaviour
         {
             sourceSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name,
             targetSceneName = battleSceneName,
+            tutorialCompletionSceneName = tutorialCompletionSceneName,
             encounterLabel = $"{tile.tileType} [{tile.coord.x},{tile.coord.y}]",
             tileType = tile.tileType,
             dangerBand = tile.dangerBand,
             sourceCoord = tile.coord,
             enemyGroup = encounterGroup,
+            tutorialBattleDefinition = tutorialBattleDefinition,
             partyMembers = new List<RunPartyMemberState>(runState.GetLivingPartyMembers()),
             relicInventory = runState.relicInventory != null ? new List<RunRelicState>(runState.relicInventory.Count) : new List<RunRelicState>(),
             activeCalamities = runState.activeCalamities != null ? new List<RunCalamityState>(runState.activeCalamities.Count) : new List<RunCalamityState>(),
             seed = tile.encounterSeed,
-            moneyGained = moneyRewardTable != null ? moneyRewardTable.RollReward(tile.tileType, tile.dangerBand, tile.encounterSeed) : 0
+            moneyGained = moneyRewardTable != null ? moneyRewardTable.RollReward(tile.tileType, tile.dangerBand, tile.encounterSeed) : 0,
+            isTutorialEncounter = isTutorialRun,
+            returnToMainMenuOnVictory = tutorialReturnsToMainMenu,
+            restartBattleOnDefeat = isTutorialRun
         });
 
         if (runState.relicInventory != null)
@@ -1145,6 +1364,51 @@ public class RunGameManager : MonoBehaviour
         RefreshHUD($"进入战斗：{encounterGroup.groupName}");
         sceneTransitionController.TransitionToScene(battleSceneName);
         return true;
+    }
+
+    private EnemyGroup_SO ResolveTutorialEnemyGroup(BoardTileData tile)
+    {
+        if (tile == null)
+            return null;
+
+        switch (tile.tileType)
+        {
+            case MapTileType.Battle:
+                return tutorialOpeningEnemyGroup != null && tutorialOpeningEnemyGroup.IsValid
+                    ? tutorialOpeningEnemyGroup
+                    : TutorialBattleContentFactory.CreateRuntimeEnemyGroup(MapTileType.Battle, tutorialEnemyVisualTemplates);
+            case MapTileType.Elite:
+                return tutorialEliteEnemyGroup != null && tutorialEliteEnemyGroup.IsValid
+                    ? tutorialEliteEnemyGroup
+                    : TutorialBattleContentFactory.CreateRuntimeEnemyGroup(MapTileType.Elite, tutorialEnemyVisualTemplates);
+            case MapTileType.Boss:
+                return tutorialBossEnemyGroup != null && tutorialBossEnemyGroup.IsValid
+                    ? tutorialBossEnemyGroup
+                    : TutorialBattleContentFactory.CreateRuntimeEnemyGroup(MapTileType.Boss, tutorialEnemyVisualTemplates);
+            default:
+                return SelectEnemyGroupForTile(tile);
+        }
+    }
+
+    private TutorialBattleDefinition_SO ResolveTutorialBattleDefinition(MapTileType tileType)
+    {
+        switch (tileType)
+        {
+            case MapTileType.Battle:
+                return tutorialOpeningBattleDefinition != null
+                    ? tutorialOpeningBattleDefinition
+                    : TutorialBattleContentFactory.CreateRuntimeDefinition(MapTileType.Battle);
+            case MapTileType.Elite:
+                return tutorialEliteBattleDefinition != null
+                    ? tutorialEliteBattleDefinition
+                    : TutorialBattleContentFactory.CreateRuntimeDefinition(MapTileType.Elite);
+            case MapTileType.Boss:
+                return tutorialBossBattleDefinition != null
+                    ? tutorialBossBattleDefinition
+                    : TutorialBattleContentFactory.CreateRuntimeDefinition(MapTileType.Boss);
+            default:
+                return null;
+        }
     }
 
     private bool TryEnterRestScene(BoardTileData tile)
@@ -3367,6 +3631,9 @@ public class RunGameManager : MonoBehaviour
     private void PersistCurrentRunSave()
     {
         if (runState == null || boardManager == null || actionPointSystem == null)
+            return;
+
+        if (isTutorialRun || MainMenuRuntime.TutorialActive)
             return;
 
         if (!SceneManager.GetActiveScene().name.Equals("MapScene", StringComparison.OrdinalIgnoreCase))

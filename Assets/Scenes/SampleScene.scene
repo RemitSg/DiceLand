@@ -1819,6 +1819,7 @@ MonoBehaviour:
   battleFeedbackSystem: {fileID: 0}
   battleSettlementOverlay: {fileID: 0}
   battleSkillInfoOverlay: {fileID: 0}
+  tutorialBattleGuideOverlay: {fileID: 0}
   initialSharedEnergyMax: 10
   sharedEnergyFont: {fileID: 11400000, guid: 1927579a4b7620b428469b73f8d5046f, type: 2}
   sharedEnergyFontSize: 34
@@ -1830,6 +1831,8 @@ MonoBehaviour:
   sharedEnergyPanelBgColor: {r: 0, g: 0, b: 0, a: 0.55}
   sharedEnergyBarBgColor: {r: 0.18, g: 0.18, b: 0.18, a: 0.9}
   sharedEnergyBarFillColor: {r: 0.28, g: 0.78, b: 1, a: 1}
+  tutorialGuideKeywordFont: {fileID: 11400000, guid: 1927579a4b7620b428469b73f8d5046f, type: 2}
+  tutorialGuideBodyFont: {fileID: 11400000, guid: c6e7143cd2df45b45a784ef8c61a210f, type: 2}
   speedMin: 2
   speedMax: 6
 --- !u!114 &1208075593

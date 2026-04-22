@@ -58,6 +58,11 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
     public bool IsVisible => panelRoot != null && panelRoot.gameObject.activeSelf;
 
+    public event Action Hidden;
+    public event Action<BattleAllyController> AllySkillSelectionShown;
+    public event Action<BattleEnemyController, SpeedButton> EnemySkillInfoShown;
+    public event Action<BattleEnemyController> EnemyDetailShown;
+
     private Canvas canvas;
     private RectTransform canvasRoot;
     private RectTransform panelRoot;
@@ -117,6 +122,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             null);
 
         RebuildSkillButtons(ally);
+        AllySkillSelectionShown?.Invoke(ally);
     }
 
     public void ShowEnemySkillInfo(BattleEnemyController enemy)
@@ -140,6 +146,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             null);
 
         ClearSkillButtons();
+        EnemySkillInfoShown?.Invoke(enemy, sourceButton);
     }
 
     public void ShowEnemyHoverSkillInfo(BattleEnemyController enemy, SpeedButton sourceButton)
@@ -189,6 +196,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             null);
 
         ClearSkillButtons();
+        EnemyDetailShown?.Invoke(enemy);
     }
 
     public void RefreshCurrentView()
@@ -219,6 +227,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
     public void Hide(bool invokeCallback)
     {
+        bool wasVisible = IsVisible;
         if (backdropButton != null)
             backdropButton.gameObject.SetActive(false);
         if (panelRoot != null)
@@ -238,6 +247,9 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         {
             hideCallback = null;
         }
+
+        if (wasVisible)
+            Hidden?.Invoke();
     }
 
     private void ShowForActor(string title, string subtitle, string detail, Action onHide)

@@ -68,6 +68,7 @@ public class BattleButton : MonoBehaviour
     public BattleFeedbackSystem battleFeedbackSystem;
     public BattleSettlementOverlay battleSettlementOverlay;
     public BattleSkillInfoOverlay battleSkillInfoOverlay;
+    public TutorialBattleGuideOverlay tutorialBattleGuideOverlay;
 
     [Header("Shared Energy")]
     [SerializeField] private int initialSharedEnergyMax = 10;
@@ -84,6 +85,10 @@ public class BattleButton : MonoBehaviour
     [SerializeField] private Color sharedEnergyPanelBgColor = new Color(0f, 0f, 0f, 0.55f);
     [SerializeField] private Color sharedEnergyBarBgColor = new Color(0.18f, 0.18f, 0.18f, 0.9f);
     [SerializeField] private Color sharedEnergyBarFillColor = new Color(0.28f, 0.78f, 1f, 1f);
+
+    [Header("Tutorial Guide")]
+    [SerializeField] private TMP_FontAsset tutorialGuideKeywordFont;
+    [SerializeField] private TMP_FontAsset tutorialGuideBodyFont;
 
     [Header("Speed Settings")]
     [Tooltip("\u968f\u673a\u901f\u5ea6\u4e0b\u9650\uff0c\u5305\u542b\u8be5\u503c")]
@@ -134,8 +139,10 @@ public class BattleButton : MonoBehaviour
         ResolveFeedbackSystem();
         ResolveSettlementOverlay();
         ResolveSkillInfoOverlay();
+        ResolveTutorialGuideOverlay();
         EnsureSharedEnergyUi();
         RefreshSharedEnergyUi();
+        InitializeTutorialBattleForEncounter();
     }
 
     public void OnBattleButtonClicked()
@@ -160,10 +167,13 @@ public class BattleButton : MonoBehaviour
         ResolveFeedbackSystem();
         ResolveSettlementOverlay();
         ResolveSkillInfoOverlay();
+        ResolveTutorialGuideOverlay();
 
         if (battleSettlementOverlay != null && battleSettlementOverlay.IsVisible)
             return;
         if (battleSkillInfoOverlay != null && battleSkillInfoOverlay.IsVisible)
+            return;
+        if (tutorialBattleGuideOverlay != null && tutorialBattleGuideOverlay.IsVisible)
             return;
 
         if (battleManager.alliesParent == null || battleManager.enemiesParent == null)
@@ -181,6 +191,14 @@ public class BattleButton : MonoBehaviour
         {
             SetupTargetingPhase(allies, enemies);
             currentPhase = BattlePhase.Targeting;
+            return;
+        }
+
+        if (!TutorialBattleRuntime.TryRequestCombatExecution(out string blockedMessage))
+        {
+            if (!string.IsNullOrWhiteSpace(blockedMessage))
+                BattleLog(blockedMessage);
+            TryShowPendingTutorialStep();
             return;
         }
 
@@ -305,6 +323,7 @@ public class BattleButton : MonoBehaviour
         }
 
         BattleLog("\u654c\u65b9\u5df2\u5b8c\u6210\u81ea\u52a8\u6307\u5b9a\u76ee\u6807\u3002\u8bf7\u73a9\u5bb6\u5b8c\u6210\u753b\u7ebf\u540e\u518d\u6b21\u6309\u4e0b\u6218\u6597\u6309\u94ae\u8fdb\u5165\u7ed3\u7b97\u3002");
+        TryShowPendingTutorialStep();
     }
 
     private void ApplyEnemyBattleStartEffectsIfNeeded(BattleAllyController[] allies, BattleEnemyController[] enemies)
@@ -421,11 +440,26 @@ public class BattleButton : MonoBehaviour
 
             ally.SelectedSkillChanged -= HandleAllySelectedSkillChanged;
             ally.SelectedSkillChanged += HandleAllySelectedSkillChanged;
+            ally.StatusChanged -= HandleAllyStatusChanged;
+            ally.StatusChanged += HandleAllyStatusChanged;
 
             if (ally.speedButton != null)
             {
                 ally.speedButton.ConnectionChanged -= HandleAllyConnectionChanged;
                 ally.speedButton.ConnectionChanged += HandleAllyConnectionChanged;
+            }
+        }
+
+        if (activeRoundEnemies != null)
+        {
+            for (int i = 0; i < activeRoundEnemies.Length; i++)
+            {
+                BattleEnemyController enemy = activeRoundEnemies[i];
+                if (enemy == null)
+                    continue;
+
+                enemy.StatusChanged -= HandleEnemyStatusChanged;
+                enemy.StatusChanged += HandleEnemyStatusChanged;
             }
         }
     }
@@ -453,6 +487,7 @@ public class BattleButton : MonoBehaviour
         RefreshSharedEnergyReservations(activeRoundAllies);
         ShowSharedEnergySpendPopupIfNeeded(ally, previousReserved, reservedSharedEnergy);
         battleSkillInfoOverlay?.RefreshCurrentView();
+        HandleTutorialProgress(TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.SkillSwitched), false);
     }
 
     private void HandleAllyConnectionChanged(SpeedButton button)
@@ -478,6 +513,30 @@ public class BattleButton : MonoBehaviour
         RefreshSharedEnergyReservations(activeRoundAllies);
         ShowSharedEnergySpendPopupIfNeeded(ally, previousReserved, reservedSharedEnergy);
         battleSkillInfoOverlay?.RefreshCurrentView();
+
+        if (button.ConnectedTarget != null)
+        {
+            TutorialBattleProgressResult progress = TutorialBattleRuntime.NotifyEvent(GetReservedEnergyCostForAlly(ally) > 0
+                ? TutorialBattleEventType.EnergyLineCreated
+                : TutorialBattleEventType.LineCreated);
+            HandleTutorialProgress(progress, true);
+        }
+    }
+
+    private void HandleAllyStatusChanged(BattleAllyController ally)
+    {
+        if (ally == null || ally.StatusEntries == null || ally.StatusEntries.Count == 0)
+            return;
+
+        HandleTutorialProgress(TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.StatusApplied), false);
+    }
+
+    private void HandleEnemyStatusChanged(BattleEnemyController enemy)
+    {
+        if (enemy == null || enemy.StatusEntries == null || enemy.StatusEntries.Count == 0)
+            return;
+
+        HandleTutorialProgress(TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.StatusApplied), false);
     }
 
     private int GetReservedEnergyCostForAlly(BattleAllyController ally)
@@ -1431,6 +1490,7 @@ public class BattleButton : MonoBehaviour
         }
 
         yield return ReturnClashActorsToOrigin(ally, allyStartPosition, enemy, enemyStartPosition);
+        yield return ShowTutorialReactionIfNeeded(TutorialBattleEventType.ClashResolved);
     }
 
     private IEnumerator ResolveRemainingAllyClashDice(BattleAllyController ally, BattleEnemyController enemy, int startIndex, int totalDiceCount)
@@ -1644,6 +1704,8 @@ public class BattleButton : MonoBehaviour
                 enemy.transform,
                 enemyStartPosition);
         }
+
+        yield return ShowTutorialReactionIfNeeded(TutorialBattleEventType.AllyOneSidedAttackResolved);
     }
 
     private IEnumerator ResolveEnemySingleAttackAction(BattleEnemyController enemy, BattleAllyController targetAlly, SpeedButton enemyButton)
@@ -1732,6 +1794,8 @@ public class BattleButton : MonoBehaviour
                 targetAlly.transform,
                 allyStartPosition);
         }
+
+        yield return ShowTutorialReactionIfNeeded(TutorialBattleEventType.EnemyOneSidedAttackResolved);
     }
 
     private IEnumerator ReturnClashActorsToOrigin(
@@ -3463,17 +3527,140 @@ public class BattleButton : MonoBehaviour
 
     private void ResolveSkillInfoOverlay()
     {
-        if (battleSkillInfoOverlay != null)
-            return;
-
-        battleSkillInfoOverlay = FindObjectOfType<BattleSkillInfoOverlay>(true);
-        if (battleSkillInfoOverlay != null)
-            return;
-
-        GameObject host = battleManager != null ? battleManager.gameObject : gameObject;
-        battleSkillInfoOverlay = host.GetComponent<BattleSkillInfoOverlay>();
         if (battleSkillInfoOverlay == null)
-            battleSkillInfoOverlay = host.AddComponent<BattleSkillInfoOverlay>();
+        {
+            battleSkillInfoOverlay = FindObjectOfType<BattleSkillInfoOverlay>(true);
+            if (battleSkillInfoOverlay == null)
+            {
+                GameObject host = battleManager != null ? battleManager.gameObject : gameObject;
+                battleSkillInfoOverlay = host.GetComponent<BattleSkillInfoOverlay>();
+                if (battleSkillInfoOverlay == null)
+                    battleSkillInfoOverlay = host.AddComponent<BattleSkillInfoOverlay>();
+            }
+        }
+
+        if (battleSkillInfoOverlay == null)
+            return;
+
+        battleSkillInfoOverlay.Hidden -= HandleSkillInfoOverlayHidden;
+        battleSkillInfoOverlay.Hidden += HandleSkillInfoOverlayHidden;
+        battleSkillInfoOverlay.AllySkillSelectionShown -= HandleAllySkillSelectionShown;
+        battleSkillInfoOverlay.AllySkillSelectionShown += HandleAllySkillSelectionShown;
+        battleSkillInfoOverlay.EnemySkillInfoShown -= HandleEnemySkillInfoShown;
+        battleSkillInfoOverlay.EnemySkillInfoShown += HandleEnemySkillInfoShown;
+        battleSkillInfoOverlay.EnemyDetailShown -= HandleEnemyDetailShown;
+        battleSkillInfoOverlay.EnemyDetailShown += HandleEnemyDetailShown;
+    }
+
+    private void ResolveTutorialGuideOverlay()
+    {
+        if (tutorialBattleGuideOverlay == null)
+        {
+            tutorialBattleGuideOverlay = FindObjectOfType<TutorialBattleGuideOverlay>(true);
+            if (tutorialBattleGuideOverlay == null)
+            {
+                GameObject host = battleManager != null ? battleManager.gameObject : gameObject;
+                tutorialBattleGuideOverlay = host.GetComponent<TutorialBattleGuideOverlay>();
+                if (tutorialBattleGuideOverlay == null)
+                    tutorialBattleGuideOverlay = host.AddComponent<TutorialBattleGuideOverlay>();
+            }
+        }
+
+        if (tutorialBattleGuideOverlay != null)
+        {
+            tutorialBattleGuideOverlay.ConfigureFonts(
+                tutorialGuideKeywordFont != null ? tutorialGuideKeywordFont : sharedEnergyFont,
+                tutorialGuideBodyFont != null ? tutorialGuideBodyFont : sharedEnergyFont);
+        }
+    }
+
+    private void InitializeTutorialBattleForEncounter()
+    {
+        BattleEncounterData encounter = BattleEncounterRuntime.ActiveEncounter;
+        if (encounter == null)
+            encounter = BattleEncounterRuntime.CurrentEncounter;
+
+        if (encounter != null && encounter.isTutorialEncounter && encounter.tutorialBattleDefinition != null)
+        {
+            TutorialBattleRuntime.BeginBattle(encounter.tutorialBattleDefinition);
+            return;
+        }
+
+        TutorialBattleRuntime.Clear();
+    }
+
+    private void HandleSkillInfoOverlayHidden()
+    {
+        TryShowPendingTutorialStep();
+    }
+
+    private void HandleAllySkillSelectionShown(BattleAllyController ally)
+    {
+        HandleTutorialProgress(TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.AllySkillViewed), false);
+    }
+
+    private void HandleEnemySkillInfoShown(BattleEnemyController enemy, SpeedButton sourceButton)
+    {
+        HandleTutorialProgress(TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.EnemySkillViewed), false);
+    }
+
+    private void HandleEnemyDetailShown(BattleEnemyController enemy)
+    {
+        HandleTutorialProgress(TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.EnemyDetailViewed), false);
+    }
+
+    private void HandleTutorialProgress(TutorialBattleProgressResult progress, bool showPendingImmediately)
+    {
+        if (progress == null)
+            return;
+
+        if (progress.reactionToShow != null)
+        {
+            ShowTutorialReaction(progress.reactionToShow);
+            return;
+        }
+
+        if (showPendingImmediately)
+            TryShowPendingTutorialStep();
+    }
+
+    private void TryShowPendingTutorialStep()
+    {
+        if (tutorialBattleGuideOverlay == null || tutorialBattleGuideOverlay.IsVisible)
+            return;
+        if (battleSkillInfoOverlay != null && battleSkillInfoOverlay.IsVisible)
+            return;
+        if (!TutorialBattleRuntime.HasPendingStepPopup)
+            return;
+
+        TutorialBattleStepDefinition step = TutorialBattleRuntime.ConsumePendingStepPopup();
+        if (step == null)
+            return;
+
+        tutorialBattleGuideOverlay.Show(step.title, step.body, step.continueButtonLabel, () =>
+        {
+            TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.ContinuePressed);
+            TryShowPendingTutorialStep();
+        });
+    }
+
+    private void ShowTutorialReaction(TutorialBattleReactionDefinition reaction)
+    {
+        if (tutorialBattleGuideOverlay == null || reaction == null)
+            return;
+
+        tutorialBattleGuideOverlay.Show(reaction.title, reaction.body, reaction.continueButtonLabel, null);
+    }
+
+    private IEnumerator ShowTutorialReactionIfNeeded(TutorialBattleEventType eventType)
+    {
+        TutorialBattleProgressResult progress = TutorialBattleRuntime.NotifyEvent(eventType);
+        if (progress == null || progress.reactionToShow == null)
+            yield break;
+
+        ShowTutorialReaction(progress.reactionToShow);
+        while (tutorialBattleGuideOverlay != null && tutorialBattleGuideOverlay.IsVisible)
+            yield return null;
     }
 
     private void BattleLog(string message)
@@ -3569,6 +3756,7 @@ public class BattleButton : MonoBehaviour
             return false;
 
         bool victory = livingAllies > 0 && livingEnemies == 0;
+        TutorialBattleRuntime.NotifyEvent(victory ? TutorialBattleEventType.BattleWon : TutorialBattleEventType.BattleLost);
         int expReward = victory ? CalculateVictoryExperienceReward(enemies) : 0;
         int moneyReward = victory && activeEncounter != null
             ? CalamitySystem.ApplyBattleMoneyModifiers(Mathf.Max(0, activeEncounter.moneyGained), activeEncounter.activeCalamities)
@@ -3599,14 +3787,18 @@ public class BattleButton : MonoBehaviour
             battleSettlementOverlay.ShowResult(new BattleSettlementData
             {
                 isVictory = victory,
-                title = victory ? "Victory" : "Defeat",
+                title = victory ? "Victory" : (activeEncounter != null && activeEncounter.isTutorialEncounter ? "Tutorial Failed" : "Defeat"),
                 subtitle = victory
                     ? (!string.IsNullOrWhiteSpace(activeEncounter?.resolutionOverride?.subtitleOverride)
                         ? activeEncounter.resolutionOverride.subtitleOverride
                         : $"\u6218\u6597\u80dc\u5229\uff0c\u5269\u4f59\u53ef\u884c\u52a8\u89d2\u8272\uff1a{livingAllies}")
-                    : "\u961f\u4f0d\u5df2\u5728\u6218\u6597\u4e2d\u5168\u706d\u3002",
+                    : (activeEncounter != null && activeEncounter.isTutorialEncounter
+                        ? "\u672c\u6b21\u6559\u5b66\u6218\u6597\u5931\u8d25\u3002\u53ef\u4ee5\u76f4\u63a5\u91cd\u8bd5\u5f53\u524d\u6218\u6597\uff0c\u4e0d\u4f1a\u5199\u5165\u6b63\u5e38\u5b58\u6863\u3002"
+                        : "\u961f\u4f0d\u5df2\u5728\u6218\u6597\u4e2d\u5168\u706d\u3002"),
                 experienceGained = expReward,
-                returnSceneName = activeEncounter != null ? activeEncounter.sourceSceneName : "MapScene",
+                returnSceneName = victory && activeEncounter != null && activeEncounter.returnToMainMenuOnVictory
+                    ? (!string.IsNullOrWhiteSpace(activeEncounter.tutorialCompletionSceneName) ? activeEncounter.tutorialCompletionSceneName : "Menu Selection")
+                    : (activeEncounter != null ? activeEncounter.sourceSceneName : "MapScene"),
                 retrySceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name,
                 partyEntries = BuildSettlementEntries(allies, victory ? expReward : 0),
                 lootEntries = BuildSettlementLootEntries(lootRewards, dropResults.relicRewards)

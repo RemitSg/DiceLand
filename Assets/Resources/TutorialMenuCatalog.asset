@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f977b0265ed2854489bac94e87ffad7e, type: 3}
+  m_Name: TutorialMenuCatalog
+  m_EditorClassIdentifier: 
+  tutorialId: main_menu_tutorial_center
+  displayName: Tutorial
+  summaryTitle: 新手教程
+  summaryBody: 通过章节总览快速了解地图推进、战斗操作与成长系统。当前版本先提供主菜单教程中心入口与内容骨架，后续可以继续扩展章节状态、分步指引、完成度记录和跳转逻辑。
+  startButtonLabel: 开始教程
+  backButtonLabel: 返回主菜单
+  sections:
+  - sectionId: overview
+    title: 教程总览
+    summary: 先理解整体流程，知道后续会覆盖地图、战斗、成长与资源管理。
+    details: 本章节用于承接主菜单入口，未来可扩展为章节索引、完成度摘要和推荐游玩顺序。
+    statusLabel: 已就绪
+    sortOrder: 0
+    isAvailable: 1
+    isFeatured: 1
+  - sectionId: map
+    title: 地图推进
+    summary: 认识节点路线、关键房间与推进节奏，帮助第一次进入地图时快速建立方向感。
+    details: 后续可接入固定路线、地图提示和教学节点高亮。
+    statusLabel: 已规划
+    sortOrder: 10
+    isAvailable: 1
+    isFeatured: 0
+  - sectionId: battle
+    title: 战斗基础
+    summary: 学会选中技能、连接目标、处理碰撞与单方面攻击等核心操作。
+    details: 后续可接入战斗内分步限制、提示浮层和失败重试检查点。
+    statusLabel: 已规划
+    sortOrder: 20
+    isAvailable: 1
+    isFeatured: 1
+  - sectionId: growth
+    title: 成长与养成
+    summary: 了解武器、角色成长、恢复与强化之间的关系，建立长期推进认知。
+    details: 后续可扩展为装备更换、资源消耗与收益对比教学。
+    statusLabel: 扩展预留
+    sortOrder: 30
+    isAvailable: 1
+    isFeatured: 0
+  - sectionId: systems
+    title: 系统进阶
+    summary: 为状态词、商店、锻造、事件和高难机制预留独立章节空间。
+    details: 当前先作为占位信息区，后续可以按模块拆分成多个独立专题。
+    statusLabel: 预留扩展
+    sortOrder: 40
+    isAvailable: 0
+    isFeatured: 0

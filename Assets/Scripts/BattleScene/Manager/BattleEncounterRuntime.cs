@@ -16,10 +16,12 @@ public sealed class BattleEncounterData
     public string sourceSceneName;
     public string targetSceneName;
     public string encounterLabel;
+    public string tutorialCompletionSceneName;
     public MapTileType tileType;
     public MapDangerBand dangerBand;
     public Vector2Int sourceCoord;
     public EnemyGroup_SO enemyGroup;
+    public TutorialBattleDefinition_SO tutorialBattleDefinition;
     public List<RunPartyMemberState> partyMembers = new List<RunPartyMemberState>();
     public List<RunPartyMemberState> resolvedPartyMembers = new List<RunPartyMemberState>();
     public List<RunLootState> resolvedLoot = new List<RunLootState>();
@@ -34,6 +36,9 @@ public sealed class BattleEncounterData
     public bool wasVictory;
     public int experienceGained;
     public int moneyGained;
+    public bool isTutorialEncounter;
+    public bool returnToMainMenuOnVictory;
+    public bool restartBattleOnDefeat = true;
 
     public IReadOnlyList<EnemyData_SO> Enemies =>
         enemyGroup != null ? enemyGroup.GetEnemies() : Array.Empty<EnemyData_SO>();

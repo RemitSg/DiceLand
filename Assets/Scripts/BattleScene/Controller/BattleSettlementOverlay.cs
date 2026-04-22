@@ -533,11 +533,23 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private void HandleReturnToMap(string sceneName)
     {
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
         string targetScene = !string.IsNullOrWhiteSpace(sceneName)
             ? sceneName
             : "MapScene";
 
-        MapRunRuntime.ApplyEncounterResult(BattleEncounterRuntime.ActiveEncounter);
+        if (activeEncounter != null && activeEncounter.isTutorialEncounter && activeEncounter.returnToMainMenuOnVictory)
+        {
+            MapRunRuntime.Clear(activeEncounter.sourceSceneName);
+            MainMenuRuntime.ClearTutorialRequest();
+            TutorialBattleRuntime.Clear();
+        }
+        else
+        {
+            MapRunRuntime.ApplyEncounterResult(activeEncounter);
+            TutorialBattleRuntime.Clear();
+        }
+
         BattleEncounterRuntime.CompleteActiveEncounter();
         SpeedButton.CombatLocked = false;
         HideResult();
@@ -551,6 +563,7 @@ public class BattleSettlementOverlay : MonoBehaviour
             : SceneManager.GetActiveScene().name;
 
         BattleEncounterRuntime.RequeueActiveEncounter();
+        TutorialBattleRuntime.Clear();
         SpeedButton.CombatLocked = false;
         HideResult();
         SceneCurtainTransitionController.Instance.TransitionToScene(targetScene);

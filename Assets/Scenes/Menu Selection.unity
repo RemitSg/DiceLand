@@ -11351,12 +11351,15 @@ MonoBehaviour:
   demoTestSceneName: SampleScene
   newGameLabel: NewGame
   continueLabel: Continue
+  tutorialLabel: Tutorial
   contributorsLabel: Contributors
   settingsLabel: Settings
   exitLabel: Exit
   demoTestLabel: DemoTest
   disabledContinueColor: {r: 0.55, g: 0.55, b: 0.55, a: 0.9}
   noSaveSuffix: (No Save)
+  tutorialCatalog: {fileID: 0}
+  tutorialCatalogResourcesPath: TutorialMenuCatalog
   contributorsConfig:
     title: Contributors
     openingText: "\u4E00\u4E2A\u5C0F\u6E38\u620F\uFF0C\u4F46\u56E0\u4E3A\u4F60\u4EEC\u7684\u4ED8\u51FA\u624D\u5F97\u4EE5\u5B9E\u73B0"

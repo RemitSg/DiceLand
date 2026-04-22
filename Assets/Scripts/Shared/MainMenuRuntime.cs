@@ -4,6 +4,8 @@ public static class MainMenuRuntime
 {
     public static DifficultyConfig_SO SelectedDifficultyConfig { get; private set; }
     public static bool ContinueRequested { get; private set; }
+    public static bool TutorialRequested { get; private set; }
+    public static bool TutorialActive { get; private set; }
 
     public static void SetSelectedDifficulty(DifficultyConfig_SO difficultyConfig)
     {
@@ -30,5 +32,26 @@ public static class MainMenuRuntime
     public static void ClearContinueRequest()
     {
         ContinueRequested = false;
+    }
+
+    public static void RequestTutorialStart()
+    {
+        TutorialRequested = true;
+        TutorialActive = false;
+    }
+
+    public static bool ConsumeTutorialRequest()
+    {
+        bool requested = TutorialRequested;
+        TutorialRequested = false;
+        if (requested)
+            TutorialActive = true;
+        return requested;
+    }
+
+    public static void ClearTutorialRequest()
+    {
+        TutorialRequested = false;
+        TutorialActive = false;
     }
 }
