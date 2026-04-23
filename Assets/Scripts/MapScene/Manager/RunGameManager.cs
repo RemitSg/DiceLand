@@ -8,9 +8,25 @@ using UnityEngine.Serialization;
 [DisallowMultipleComponent]
 public class RunGameManager : MonoBehaviour
 {
-    private const int TutorialBoardSize = 11;
+    private const int TutorialBoardSize = 13;
     private const int TutorialEncounterSeedBase = 26000;
     private const string TutorialCatalogResourcePath = "TutorialMenuCatalog";
+    private static readonly MapTileType[] TutorialTileSequence =
+    {
+        MapTileType.Empty,
+        MapTileType.Empty,
+        MapTileType.Battle,
+        MapTileType.Battle,
+        MapTileType.Rest,
+        MapTileType.Battle,
+        MapTileType.Merchant,
+        MapTileType.Battle,
+        MapTileType.Forge,
+        MapTileType.Battle,
+        MapTileType.Key,
+        MapTileType.Battle,
+        MapTileType.Boss
+    };
 
     [System.Serializable]
     private class StartingPartyMemberDefinition
@@ -52,6 +68,14 @@ public class RunGameManager : MonoBehaviour
         [Min(1)] public int amount = 1;
     }
 
+    [System.Serializable]
+    private class TutorialBattleStageContentOverride
+    {
+        public TutorialBattleStageId stageId = TutorialBattleStageId.None;
+        public EnemyGroup_SO enemyGroup = null;
+        public TutorialBattleDefinition_SO battleDefinition = null;
+    }
+
     private sealed class EventRandomLootDiscardPreview
     {
         public LootItem_SO lootItem;
@@ -69,6 +93,7 @@ public class RunGameManager : MonoBehaviour
     [SerializeField] private LevelTable_SO levelTable;
     [SerializeField] [Min(0)] private int startingMoney;
     [SerializeField] private List<StartingPartyMemberDefinition> startingPartyMembers = new List<StartingPartyMemberDefinition>();
+    [SerializeField] private List<StartingPartyMemberDefinition> tutorialStartingPartyMembers = new List<StartingPartyMemberDefinition>();
     [SerializeField] private List<StartingLootDefinition> startingLoot = new List<StartingLootDefinition>();
     [SerializeField] private List<StartingWeaponDefinition> startingWeapons = new List<StartingWeaponDefinition>();
     [SerializeField] private List<StartingBlueprintDefinition> startingBlueprints = new List<StartingBlueprintDefinition>();
@@ -111,6 +136,7 @@ public class RunGameManager : MonoBehaviour
     [SerializeField] private TutorialBattleDefinition_SO tutorialOpeningBattleDefinition;
     [SerializeField] private TutorialBattleDefinition_SO tutorialEliteBattleDefinition;
     [SerializeField] private TutorialBattleDefinition_SO tutorialBossBattleDefinition;
+    [SerializeField] private List<TutorialBattleStageContentOverride> tutorialBattleStageOverrides = new List<TutorialBattleStageContentOverride>();
     [SerializeField] private string tutorialCompletionSceneName = "Menu Selection";
     [SerializeField] private TutorialEnemyVisualTemplateSet tutorialEnemyVisualTemplates = new TutorialEnemyVisualTemplateSet();
 
@@ -201,7 +227,7 @@ public class RunGameManager : MonoBehaviour
             requiredKeys = config.requiredKeys,
             currentCycle = 1,
             money = Mathf.Max(0, startingMoney),
-            partyMembers = BuildStartingPartyMembers()
+            partyMembers = BuildStartingPartyMembers(startingPartyMembers)
         };
 
         ApplyStartingInventory(runState);
@@ -249,7 +275,7 @@ public class RunGameManager : MonoBehaviour
             requiredKeys = 1,
             currentCycle = 1,
             money = Mathf.Max(0, startingMoney),
-            partyMembers = BuildStartingPartyMembers()
+            partyMembers = BuildTutorialStartingPartyMembers()
         };
 
         ApplyStartingInventory(runState);
@@ -354,24 +380,11 @@ public class RunGameManager : MonoBehaviour
     private static List<BoardTileData> BuildTutorialBoardTiles(int boardSize)
     {
         int row = Mathf.Max(1, boardSize / 2);
-        MapTileType[] sequence =
+        List<BoardTileData> tiles = new List<BoardTileData>(TutorialTileSequence.Length);
+        for (int i = 0; i < TutorialTileSequence.Length; i++)
         {
-            MapTileType.Empty,
-            MapTileType.Empty,
-            MapTileType.Battle,
-            MapTileType.Event,
-            MapTileType.Rest,
-            MapTileType.Merchant,
-            MapTileType.Forge,
-            MapTileType.Elite,
-            MapTileType.Key,
-            MapTileType.Boss
-        };
-
-        List<BoardTileData> tiles = new List<BoardTileData>(sequence.Length);
-        for (int i = 0; i < sequence.Length; i++)
-        {
-            MapTileType tileType = sequence[i];
+            MapTileType tileType = TutorialTileSequence[i];
+            TutorialBattleStageId stageId = ResolveTutorialStageId(i);
             tiles.Add(new BoardTileData
             {
                 coord = new Vector2Int(i, row),
@@ -381,13 +394,34 @@ public class RunGameManager : MonoBehaviour
                 isResolved = tileType == MapTileType.Empty,
                 isSpawnTile = i == 0,
                 encounterSeed = TutorialEncounterSeedBase + i,
-                previewEnemyCount = ResolveTutorialPreviewEnemyCount(tileType),
-                previewDangerRating = ResolveTutorialPreviewDanger(tileType),
-                previewTag = ResolveTutorialPreviewTag(tileType)
+                previewEnemyCount = ResolveTutorialPreviewEnemyCount(tileType, stageId),
+                previewDangerRating = ResolveTutorialPreviewDanger(tileType, stageId),
+                previewTag = ResolveTutorialPreviewTag(tileType, stageId)
             });
         }
 
         return tiles;
+    }
+
+    private static TutorialBattleStageId ResolveTutorialStageId(int sequenceIndex)
+    {
+        switch (sequenceIndex)
+        {
+            case 2:
+                return TutorialBattleStageId.Battle01;
+            case 3:
+                return TutorialBattleStageId.Battle02;
+            case 5:
+                return TutorialBattleStageId.Battle03;
+            case 7:
+                return TutorialBattleStageId.Battle04;
+            case 9:
+                return TutorialBattleStageId.Battle05;
+            case 11:
+                return TutorialBattleStageId.Battle07;
+            default:
+                return TutorialBattleStageId.None;
+        }
     }
 
     private static MapDangerBand ResolveTutorialDangerBand(int sequenceIndex)
@@ -401,52 +435,43 @@ public class RunGameManager : MonoBehaviour
         return MapDangerBand.Core;
     }
 
-    private static int ResolveTutorialPreviewEnemyCount(MapTileType tileType)
+    private static int ResolveTutorialPreviewEnemyCount(MapTileType tileType, TutorialBattleStageId stageId)
     {
-        switch (tileType)
-        {
-            case MapTileType.Battle:
-                return 2;
-            case MapTileType.Elite:
-                return 3;
-            case MapTileType.Boss:
-                return 1;
-            default:
-                return 0;
-        }
+        return TutorialBattleStageUtility.IsBattleStage(stageId) || tileType == MapTileType.Boss ? 1 : 0;
     }
 
-    private static int ResolveTutorialPreviewDanger(MapTileType tileType)
+    private static int ResolveTutorialPreviewDanger(MapTileType tileType, TutorialBattleStageId stageId)
     {
-        switch (tileType)
+        switch (stageId)
         {
-            case MapTileType.Battle:
+            case TutorialBattleStageId.Battle01:
+            case TutorialBattleStageId.Battle02:
                 return 1;
-            case MapTileType.Elite:
-                return 3;
-            case MapTileType.Boss:
+            case TutorialBattleStageId.Battle03:
+            case TutorialBattleStageId.Battle04:
+                return 2;
+            case TutorialBattleStageId.Battle05:
+                return 4;
+            case TutorialBattleStageId.Battle07:
                 return 5;
             default:
                 return 0;
         }
     }
 
-    private static string ResolveTutorialPreviewTag(MapTileType tileType)
+    private static string ResolveTutorialPreviewTag(MapTileType tileType, TutorialBattleStageId stageId)
     {
+        if (TutorialBattleStageUtility.IsBattleStage(stageId))
+            return TutorialBattleStageUtility.IsFinalStage(stageId) ? "教程终战" : "教程战斗";
+
         switch (tileType)
         {
-            case MapTileType.Battle:
-                return "教程战斗";
-            case MapTileType.Event:
-                return "教程事件";
             case MapTileType.Rest:
                 return "教程营地";
             case MapTileType.Merchant:
                 return "教程商店";
             case MapTileType.Forge:
                 return "教程锻造";
-            case MapTileType.Elite:
-                return "教程精英";
             case MapTileType.Key:
                 return "教程钥匙";
             case MapTileType.Boss:
@@ -711,7 +736,7 @@ public class RunGameManager : MonoBehaviour
         if (offer.itemType == MerchantItemType.Relic && offer.relicData == null)
             return "商品未配置遗物。";
 
-        int price = Mathf.Max(0, RelicSystem.CalculateMerchantOfferPrice(runState, offer));
+        int price = Mathf.Max(0, RelicSystem.CalculateMerchantOfferPrice(runState, tile, offer));
         if (!runState.TrySpendMoney(price))
             return $"金钱不足，需要 {price} 金钱。";
 
@@ -734,6 +759,7 @@ public class RunGameManager : MonoBehaviour
         }
 
         offer.isSoldOut = true;
+        RelicSystem.NotifyMerchantPurchaseCompleted(runState, tile, offer);
         RefreshHUD($"购买成功：{offer.DisplayName} - {price} 金钱");
         return $"购买成功：{offer.DisplayName}";
     }
@@ -1288,8 +1314,11 @@ public class RunGameManager : MonoBehaviour
             return false;
         }
 
+        TutorialBattleStageId tutorialBattleStageId = isTutorialRun
+            ? ResolveTutorialStageId(tile.coord.x)
+            : TutorialBattleStageId.None;
         EnemyGroup_SO encounterGroup = isTutorialRun
-            ? ResolveTutorialEnemyGroup(tile)
+            ? ResolveTutorialEnemyGroup(tile, tutorialBattleStageId)
             : tile.assignedEnemyGroup;
         TutorialBattleDefinition_SO tutorialBattleDefinition = null;
         bool tutorialReturnsToMainMenu = false;
@@ -1305,8 +1334,8 @@ public class RunGameManager : MonoBehaviour
 
         if (isTutorialRun)
         {
-            tutorialBattleDefinition = ResolveTutorialBattleDefinition(tile.tileType);
-            tutorialReturnsToMainMenu = tile.tileType == MapTileType.Boss;
+            tutorialBattleDefinition = ResolveTutorialBattleDefinition(tile.tileType, tutorialBattleStageId);
+            tutorialReturnsToMainMenu = TutorialBattleStageUtility.IsFinalStage(tutorialBattleStageId);
         }
 
         if (encounterGroup == null || !encounterGroup.IsValid)
@@ -1324,8 +1353,9 @@ public class RunGameManager : MonoBehaviour
         {
             sourceSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name,
             targetSceneName = battleSceneName,
-            tutorialCompletionSceneName = tutorialCompletionSceneName,
+            tutorialCompletionSceneName = ResolveTutorialCompletionSceneName(),
             encounterLabel = $"{tile.tileType} [{tile.coord.x},{tile.coord.y}]",
+            tutorialBattleStageId = tutorialBattleStageId,
             tileType = tile.tileType,
             dangerBand = tile.dangerBand,
             sourceCoord = tile.coord,
@@ -1366,49 +1396,81 @@ public class RunGameManager : MonoBehaviour
         return true;
     }
 
-    private EnemyGroup_SO ResolveTutorialEnemyGroup(BoardTileData tile)
+    private EnemyGroup_SO ResolveTutorialEnemyGroup(BoardTileData tile, TutorialBattleStageId stageId)
     {
         if (tile == null)
             return null;
 
+        if (TryResolveTutorialStageOverride(stageId, out TutorialBattleStageContentOverride stageOverride)
+            && stageOverride.enemyGroup != null
+            && stageOverride.enemyGroup.IsValid)
+        {
+            return stageOverride.enemyGroup;
+        }
+
         switch (tile.tileType)
         {
             case MapTileType.Battle:
-                return tutorialOpeningEnemyGroup != null && tutorialOpeningEnemyGroup.IsValid
-                    ? tutorialOpeningEnemyGroup
-                    : TutorialBattleContentFactory.CreateRuntimeEnemyGroup(MapTileType.Battle, tutorialEnemyVisualTemplates);
-            case MapTileType.Elite:
-                return tutorialEliteEnemyGroup != null && tutorialEliteEnemyGroup.IsValid
-                    ? tutorialEliteEnemyGroup
-                    : TutorialBattleContentFactory.CreateRuntimeEnemyGroup(MapTileType.Elite, tutorialEnemyVisualTemplates);
+                if (stageId == TutorialBattleStageId.Battle01
+                    && tutorialOpeningEnemyGroup != null
+                    && tutorialOpeningEnemyGroup.IsValid)
+                {
+                    return tutorialOpeningEnemyGroup;
+                }
+
+                return TutorialBattleContentFactory.CreateRuntimeEnemyGroup(stageId, tutorialEnemyVisualTemplates);
             case MapTileType.Boss:
-                return tutorialBossEnemyGroup != null && tutorialBossEnemyGroup.IsValid
-                    ? tutorialBossEnemyGroup
-                    : TutorialBattleContentFactory.CreateRuntimeEnemyGroup(MapTileType.Boss, tutorialEnemyVisualTemplates);
+                if (tutorialBossEnemyGroup != null && tutorialBossEnemyGroup.IsValid)
+                    return tutorialBossEnemyGroup;
+
+                return TutorialBattleContentFactory.CreateRuntimeEnemyGroup(stageId, tutorialEnemyVisualTemplates);
             default:
                 return SelectEnemyGroupForTile(tile);
         }
     }
 
-    private TutorialBattleDefinition_SO ResolveTutorialBattleDefinition(MapTileType tileType)
+    private TutorialBattleDefinition_SO ResolveTutorialBattleDefinition(MapTileType tileType, TutorialBattleStageId stageId)
     {
+        if (TryResolveTutorialStageOverride(stageId, out TutorialBattleStageContentOverride stageOverride)
+            && stageOverride.battleDefinition != null)
+        {
+            return stageOverride.battleDefinition;
+        }
+
         switch (tileType)
         {
             case MapTileType.Battle:
-                return tutorialOpeningBattleDefinition != null
-                    ? tutorialOpeningBattleDefinition
-                    : TutorialBattleContentFactory.CreateRuntimeDefinition(MapTileType.Battle);
-            case MapTileType.Elite:
-                return tutorialEliteBattleDefinition != null
-                    ? tutorialEliteBattleDefinition
-                    : TutorialBattleContentFactory.CreateRuntimeDefinition(MapTileType.Elite);
+                if (stageId == TutorialBattleStageId.Battle01 && tutorialOpeningBattleDefinition != null)
+                    return tutorialOpeningBattleDefinition;
+
+                return TutorialBattleContentFactory.CreateRuntimeDefinition(stageId);
             case MapTileType.Boss:
-                return tutorialBossBattleDefinition != null
-                    ? tutorialBossBattleDefinition
-                    : TutorialBattleContentFactory.CreateRuntimeDefinition(MapTileType.Boss);
+                if (tutorialBossBattleDefinition != null)
+                    return tutorialBossBattleDefinition;
+
+                return TutorialBattleContentFactory.CreateRuntimeDefinition(stageId);
             default:
                 return null;
         }
+    }
+
+    private bool TryResolveTutorialStageOverride(TutorialBattleStageId stageId, out TutorialBattleStageContentOverride stageOverride)
+    {
+        if (tutorialBattleStageOverrides != null)
+        {
+            for (int i = 0; i < tutorialBattleStageOverrides.Count; i++)
+            {
+                TutorialBattleStageContentOverride candidate = tutorialBattleStageOverrides[i];
+                if (candidate == null || candidate.stageId != stageId)
+                    continue;
+
+                stageOverride = candidate;
+                return true;
+            }
+        }
+
+        stageOverride = null;
+        return false;
     }
 
     private bool TryEnterRestScene(BoardTileData tile)
@@ -2515,6 +2577,10 @@ public class RunGameManager : MonoBehaviour
 
     private void HandleMapMerchantOverlayHidden()
     {
+        if (boardManager != null && runState != null && boardManager.TryGetTile(runState.playerGridPosition, out BoardTileData currentTile) && currentTile.tileType == MapTileType.Merchant)
+            RelicSystem.ResetMerchantVisitState(currentTile);
+
+        PersistCurrentRunSave();
         deferPendingCalamityUntilOverlayClosed = false;
         TryPresentPendingCalamity();
     }
@@ -3520,31 +3586,51 @@ public class RunGameManager : MonoBehaviour
         return Mathf.Max(1, levelTable.GetMaxHP(characterData, level, fallbackMaxHP));
     }
 
-    private List<RunPartyMemberState> BuildStartingPartyMembers()
+    private string ResolveTutorialCompletionSceneName()
+    {
+        if (!string.IsNullOrWhiteSpace(MainMenuRuntime.TutorialReturnSceneName))
+            return MainMenuRuntime.TutorialReturnSceneName;
+
+        return tutorialCompletionSceneName;
+    }
+
+    private List<RunPartyMemberState> BuildTutorialStartingPartyMembers()
+    {
+        List<StartingPartyMemberDefinition> source = tutorialStartingPartyMembers;
+        if (source == null || source.Count == 0)
+            source = startingPartyMembers;
+
+        return BuildStartingPartyMembers(source);
+    }
+
+    private List<RunPartyMemberState> BuildStartingPartyMembers(List<StartingPartyMemberDefinition> sourceDefinitions)
     {
         List<RunPartyMemberState> result = new List<RunPartyMemberState>();
-        for (int i = 0; i < startingPartyMembers.Count; i++)
+        if (sourceDefinitions != null)
         {
-            StartingPartyMemberDefinition definition = startingPartyMembers[i];
-            if (definition == null || definition.characterData == null)
-                continue;
-
-            int baseHP = Mathf.Max(1, definition.characterData.baseHP);
-            Weapon_SO resolvedStartingWeapon = definition.equippedWeapon != null
-                ? definition.equippedWeapon
-                : definition.characterData.initialWeaponData;
-            result.Add(new RunPartyMemberState
+            for (int i = 0; i < sourceDefinitions.Count; i++)
             {
-                memberId = string.IsNullOrWhiteSpace(definition.memberId) ? definition.characterData.characterName : definition.memberId,
-                characterData = definition.characterData,
-                weaponData = resolvedStartingWeapon,
-                level = Mathf.Max(1, definition.startingLevel),
-                experience = Mathf.Max(0, definition.startingExperience),
-                maxHP = definition.startingMaxHP > 0 ? Mathf.Max(1, definition.startingMaxHP) : baseHP,
-                currentHP = definition.startingCurrentHP > 0
-                    ? Mathf.Clamp(definition.startingCurrentHP, 0, definition.startingMaxHP > 0 ? Mathf.Max(1, definition.startingMaxHP) : baseHP)
-                    : (definition.startingMaxHP > 0 ? Mathf.Max(1, definition.startingMaxHP) : baseHP)
-            });
+                StartingPartyMemberDefinition definition = sourceDefinitions[i];
+                if (definition == null || definition.characterData == null)
+                    continue;
+
+                int baseHP = Mathf.Max(1, definition.characterData.baseHP);
+                Weapon_SO resolvedStartingWeapon = definition.equippedWeapon != null
+                    ? definition.equippedWeapon
+                    : definition.characterData.initialWeaponData;
+                result.Add(new RunPartyMemberState
+                {
+                    memberId = string.IsNullOrWhiteSpace(definition.memberId) ? definition.characterData.characterName : definition.memberId,
+                    characterData = definition.characterData,
+                    weaponData = resolvedStartingWeapon,
+                    level = Mathf.Max(1, definition.startingLevel),
+                    experience = Mathf.Max(0, definition.startingExperience),
+                    maxHP = definition.startingMaxHP > 0 ? Mathf.Max(1, definition.startingMaxHP) : baseHP,
+                    currentHP = definition.startingCurrentHP > 0
+                        ? Mathf.Clamp(definition.startingCurrentHP, 0, definition.startingMaxHP > 0 ? Mathf.Max(1, definition.startingMaxHP) : baseHP)
+                        : (definition.startingMaxHP > 0 ? Mathf.Max(1, definition.startingMaxHP) : baseHP)
+                });
+            }
         }
 
         if (result.Count == 0)

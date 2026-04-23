@@ -41,8 +41,12 @@ public class BattleAllyController : MonoBehaviour
     private readonly List<BattleStatusRuntimeEntry> statusEntries = new List<BattleStatusRuntimeEntry>();
     private readonly List<PendingBattleStatusApplication> pendingStatusApplications = new List<PendingBattleStatusApplication>();
     private readonly List<EnemySkill_SO> temporarySkills = new List<EnemySkill_SO>();
+    private readonly HashSet<string> consumedLethalProtectionRelicIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     private const string BurnStatusId = "burn";
     private const string BleedStatusId = "bleed";
+    private EnemySkill_SO consecutiveSkillTracker;
+    private int consecutiveSkillUseCount;
+    private EnemySkill_SO pendingConsecutiveSkillResetSkill;
 
     private void Awake()
     {
@@ -176,6 +180,7 @@ public class BattleAllyController : MonoBehaviour
 
     public void MarkCurrentRoundSkillUsed()
     {
+        RegisterCurrentSkillUsage(SelectedSkill);
         CurrentRoundUsedSkill = SelectedSkill;
     }
 
@@ -183,6 +188,38 @@ public class BattleAllyController : MonoBehaviour
     {
         LastRoundUsedSkill = CurrentRoundUsedSkill;
         CurrentRoundUsedSkill = null;
+    }
+
+    public int GetCompletedConsecutiveSkillUses(EnemySkill_SO skill)
+    {
+        if (skill == null || consecutiveSkillTracker != skill)
+            return 0;
+
+        return Mathf.Max(0, consecutiveSkillUseCount);
+    }
+
+    public void MarkConsecutiveSkillResetAfterCurrentUse(EnemySkill_SO skill)
+    {
+        if (skill == null)
+            return;
+
+        pendingConsecutiveSkillResetSkill = skill;
+    }
+
+    public bool HasConsumedLethalProtection(string relicId)
+    {
+        if (string.IsNullOrWhiteSpace(relicId))
+            return false;
+
+        return consumedLethalProtectionRelicIds.Contains(relicId);
+    }
+
+    public bool TryConsumeLethalProtection(string relicId)
+    {
+        if (string.IsNullOrWhiteSpace(relicId))
+            return false;
+
+        return consumedLethalProtectionRelicIds.Add(relicId);
     }
 
     public void ClearTemporarySkills()
@@ -302,6 +339,18 @@ public class BattleAllyController : MonoBehaviour
 
         int originalDamage = originalReferenceDamage > 0 ? originalReferenceDamage : amount;
         amount = ApplyIncomingDamageStatusModifiers(amount);
+        amount = ApplyIncomingDamageRelicModifiers(amount);
+        if (amount <= 0)
+        {
+            LastDamageModifierRatioPercent = 0;
+            return 0;
+        }
+
+        if (CurrentHP - amount <= 0 && TryPreventLethalDamage(amount, out int minimumSurvivingHp))
+        {
+            amount = Mathf.Max(0, CurrentHP - Mathf.Max(1, minimumSurvivingHp));
+        }
+
         if (amount <= 0)
         {
             LastDamageModifierRatioPercent = 0;
@@ -352,6 +401,56 @@ public class BattleAllyController : MonoBehaviour
         float bonusMultiplier = Mathf.Max(0f, multiplier - 1f);
         int bonusDamage = Mathf.FloorToInt(baseDamage * bonusMultiplier);
         return Mathf.Max(0, baseDamage + bonusDamage);
+    }
+
+    private int ApplyIncomingDamageRelicModifiers(int baseDamage)
+    {
+        if (baseDamage <= 0)
+            return 0;
+
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return Mathf.Max(0, baseDamage);
+
+        RelicExecutionContext context = RelicExecutionContext.CreatePlayerAboutToTakeDamage(
+            null,
+            null,
+            -1,
+            baseDamage,
+            Speed,
+            null,
+            this);
+        RelicSystem.Process(activeEncounter.relicInventory, context);
+
+        int adjustedDamage = Mathf.Max(0, baseDamage + context.incomingDamageFlatModifier);
+        int reductionPercent = Mathf.Max(0, context.incomingDamagePercentModifier);
+        if (reductionPercent > 0)
+        {
+            float multiplier = Mathf.Max(0f, 1f - (reductionPercent / 100f));
+            adjustedDamage = Mathf.Max(0, Mathf.FloorToInt((adjustedDamage * multiplier) + 0.5f));
+        }
+
+        return adjustedDamage;
+    }
+
+    private bool TryPreventLethalDamage(int incomingDamage, out int minimumSurvivingHp)
+    {
+        minimumSurvivingHp = 1;
+        if (incomingDamage <= 0)
+            return false;
+
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return false;
+
+        RelicExecutionContext context = RelicExecutionContext.CreatePlayerAboutToTakeLethalDamage(
+            null,
+            incomingDamage,
+            null,
+            this);
+        RelicSystem.Process(activeEncounter.relicInventory, context);
+        minimumSurvivingHp = Mathf.Max(1, context.minimumSurvivingHp);
+        return context.preventLethalDamage;
     }
 
     private EnemySkill_SO.DicePowerRange ApplyStatusDiceRangeModifiers(EnemySkill_SO.DicePowerRange baseRange, bool isDefenseSkill)
@@ -711,6 +810,30 @@ public class BattleAllyController : MonoBehaviour
         }
 
         Died?.Invoke(this);
+    }
+
+    private void RegisterCurrentSkillUsage(EnemySkill_SO skill)
+    {
+        if (skill == null)
+            return;
+
+        if (pendingConsecutiveSkillResetSkill == skill)
+        {
+            consecutiveSkillTracker = skill;
+            consecutiveSkillUseCount = 0;
+            pendingConsecutiveSkillResetSkill = null;
+            return;
+        }
+
+        if (consecutiveSkillTracker == skill)
+            consecutiveSkillUseCount = consecutiveSkillUseCount > 0 ? consecutiveSkillUseCount + 1 : 1;
+        else
+        {
+            consecutiveSkillTracker = skill;
+            consecutiveSkillUseCount = 1;
+        }
+
+        pendingConsecutiveSkillResetSkill = null;
     }
 
     private BattleStatusRuntimeEntry GetOrCreateStatusEntry(BattleStatus_SO statusData, string fallbackStatusId, string fallbackDisplayName)

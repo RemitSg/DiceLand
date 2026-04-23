@@ -5,15 +5,38 @@ public static class RelicSystem
 {
     public static int CalculateMerchantOfferPrice(RunState runState, MerchantOfferState offer)
     {
+        return CalculateMerchantOfferPrice(runState, null, offer);
+    }
+
+    public static int CalculateMerchantOfferPrice(RunState runState, BoardTileData tile, MerchantOfferState offer)
+    {
         int basePrice = Mathf.Max(0, offer != null ? offer.price : 0);
         if (runState == null || offer == null)
             return basePrice;
 
-        RelicExecutionContext context = RelicExecutionContext.CreateMerchantPriceCalculation(runState, offer, basePrice);
+        RelicExecutionContext context = RelicExecutionContext.CreateMerchantPriceCalculation(runState, tile, offer, basePrice);
         Process(runState, Relic_SO.RelicTrigger.OnMerchantPriceCalculated, context);
 
         float multiplier = Mathf.Max(0f, 1f - (Mathf.Max(0, context.merchantDiscountPercent) / 100f));
+        multiplier *= Mathf.Max(0f, context.merchantPriceMultiplier);
         return Mathf.Max(0, Mathf.FloorToInt((basePrice * multiplier) + 0.5f));
+    }
+
+    public static void NotifyMerchantPurchaseCompleted(RunState runState, BoardTileData tile, MerchantOfferState offer)
+    {
+        if (runState == null || tile == null || offer == null)
+            return;
+
+        RelicExecutionContext context = RelicExecutionContext.CreateMerchantPurchaseCompleted(runState, tile, offer);
+        Process(runState, Relic_SO.RelicTrigger.OnMerchantPurchaseCompleted, context);
+    }
+
+    public static void ResetMerchantVisitState(BoardTileData tile)
+    {
+        if (tile == null)
+            return;
+
+        tile.merchantPurchaseDiscountStacks = 0;
     }
 
     public static int CalculateRestReforgeLimit(RunState runState, int baseLimit)
@@ -188,6 +211,24 @@ public static class RelicSystem
                     }
                     break;
 
+                case Relic_SO.RelicBuiltInEffectType.ReduceIncomingDamagePercentWhenSpeedGreaterThan:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnPlayerAboutToTakeDamage)
+                        continue;
+
+                    BattleAllyController speedProtectedAlly = context.target as BattleAllyController;
+                    if (speedProtectedAlly == null)
+                        continue;
+
+                    if (context.currentSpeed <= Mathf.Max(0, effect.requiredSpeed))
+                        continue;
+
+                    int generalReductionPercent = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+                    if (generalReductionPercent <= 0)
+                        continue;
+
+                    context.incomingDamagePercentModifier += generalReductionPercent;
+                    break;
+
                 case Relic_SO.RelicBuiltInEffectType.ModifyPlayerDiceBasedOnLastRoundSkillMatch:
                     if (context.trigger != Relic_SO.RelicTrigger.OnPlayerDicePrepared || !context.sourceIsPlayer)
                         continue;
@@ -311,6 +352,34 @@ public static class RelicSystem
                     context.additionalRestReforgeCount += addedReforgeCount;
                     break;
 
+                case Relic_SO.RelicBuiltInEffectType.AddMerchantPurchaseDiscountStackOnPurchase:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnMerchantPurchaseCompleted || context.tile == null)
+                        continue;
+
+                    int maxDiscountStacks = Mathf.Max(1, effect.maxStacks);
+                    context.tile.merchantPurchaseDiscountStacks = Mathf.Min(
+                        maxDiscountStacks,
+                        Mathf.Max(0, context.tile.merchantPurchaseDiscountStacks) + Mathf.Max(1, relicState.amount));
+                    break;
+
+                case Relic_SO.RelicBuiltInEffectType.ReduceMerchantPricePercentPerPurchaseStack:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnMerchantPriceCalculated || context.tile == null)
+                        continue;
+
+                    int purchaseDiscountStacks = Mathf.Clamp(
+                        Mathf.Max(0, context.tile.merchantPurchaseDiscountStacks),
+                        0,
+                        Mathf.Max(1, effect.maxStacks));
+                    if (purchaseDiscountStacks <= 0)
+                        continue;
+
+                    int extraDiscountPercent = Mathf.Max(0, effect.amount) * purchaseDiscountStacks * Mathf.Max(1, relicState.amount);
+                    if (extraDiscountPercent <= 0)
+                        continue;
+
+                    context.merchantPriceMultiplier *= Mathf.Max(0f, 1f - (extraDiscountPercent / 100f));
+                    break;
+
                 case Relic_SO.RelicBuiltInEffectType.ReduceMerchantPricePercent:
                     if (context.trigger != Relic_SO.RelicTrigger.OnMerchantPriceCalculated || context.merchantOffer == null)
                         continue;
@@ -320,6 +389,29 @@ public static class RelicSystem
                         continue;
 
                     context.merchantDiscountPercent += discountPercent;
+                    break;
+
+                case Relic_SO.RelicBuiltInEffectType.HealAllAlliesOnEnemyDeath:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnEnemyDeath || context.allies == null || context.allies.Length == 0)
+                        continue;
+
+                    int healAllAmount = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+                    if (healAllAmount <= 0)
+                        continue;
+
+                    int healedCount = 0;
+                    for (int allyIndex = 0; allyIndex < context.allies.Length; allyIndex++)
+                    {
+                        BattleAllyController allyTarget = context.allies[allyIndex];
+                        if (allyTarget == null || allyTarget.IsDead)
+                            continue;
+
+                        if (allyTarget.Heal(healAllAmount) > 0)
+                            healedCount += 1;
+                    }
+
+                    if (healedCount > 0 && context.feedbackMessages != null)
+                        context.feedbackMessages.Add($"{relicData.DisplayName} 生效：敌人倒下后，{healedCount} 名友方各回复 {healAllAmount} 点生命。");
                     break;
 
                 case Relic_SO.RelicBuiltInEffectType.ApplyStatusToPlayerWhenSpeedEquals:
@@ -516,6 +608,114 @@ public static class RelicSystem
                     }
                     break;
 
+                case Relic_SO.RelicBuiltInEffectType.ApplyStatusToRandomAllyOnSpecificRound:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnBattleRoundStart)
+                        continue;
+                    if (effect.statusData == null || context.allies == null || context.allies.Length == 0)
+                        continue;
+
+                    int randomAllyRequiredRoundMin = Mathf.Max(1, effect.requiredRoundMin);
+                    int randomAllyRequiredRoundMax = Mathf.Max(randomAllyRequiredRoundMin, effect.requiredRoundMax);
+                    if (randomAllyRequiredRoundMin == 1 && randomAllyRequiredRoundMax == 1 && effect.requiredRound != 1)
+                    {
+                        randomAllyRequiredRoundMin = Mathf.Max(1, effect.requiredRound);
+                        randomAllyRequiredRoundMax = randomAllyRequiredRoundMin;
+                    }
+
+                    if (context.currentRound < randomAllyRequiredRoundMin || context.currentRound > randomAllyRequiredRoundMax)
+                        continue;
+
+                    int randomAllyStacksToApply = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+                    if (randomAllyStacksToApply <= 0)
+                        continue;
+
+                    List<BattleAllyController> aliveAllies = new List<BattleAllyController>();
+                    for (int allyIndex = 0; allyIndex < context.allies.Length; allyIndex++)
+                    {
+                        BattleAllyController candidate = context.allies[allyIndex];
+                        if (candidate != null && !candidate.IsDead)
+                            aliveAllies.Add(candidate);
+                    }
+
+                    if (aliveAllies.Count <= 0)
+                        continue;
+
+                    BattleAllyController randomAlly = aliveAllies[Random.Range(0, aliveAllies.Count)];
+                    bool randomAllyApplied = effect.statusApplyTiming == Relic_SO.RelicStatusApplyTiming.NextRoundStart
+                        ? randomAlly.QueueStatusForRoundStart(
+                            effect.statusData,
+                            effect.statusData.StatusId,
+                            effect.statusData.DisplayName,
+                            randomAllyStacksToApply,
+                            Mathf.Max(1, effect.applyAfterRoundStarts),
+                            1)
+                        : randomAlly.AddStatus(
+                            effect.statusData,
+                            effect.statusData.StatusId,
+                            effect.statusData.DisplayName,
+                            randomAllyStacksToApply);
+
+                    if (randomAllyApplied && context.feedbackMessages != null)
+                    {
+                        string roundLabel = BuildRoundRangeLabel(randomAllyRequiredRoundMin, randomAllyRequiredRoundMax);
+                        context.feedbackMessages.Add($"{relicData.DisplayName} 生效：{roundLabel}时，{randomAlly.GetDebugDisplayName()} 获得 {randomAllyStacksToApply} 层{effect.statusData.DisplayName}。");
+                    }
+                    break;
+
+                case Relic_SO.RelicBuiltInEffectType.ApplyStatusToRandomEnemyOnSpecificRound:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnBattleRoundStart)
+                        continue;
+                    if (effect.statusData == null || context.enemies == null || context.enemies.Length == 0)
+                        continue;
+
+                    int randomEnemyRequiredRoundMin = Mathf.Max(1, effect.requiredRoundMin);
+                    int randomEnemyRequiredRoundMax = Mathf.Max(randomEnemyRequiredRoundMin, effect.requiredRoundMax);
+                    if (randomEnemyRequiredRoundMin == 1 && randomEnemyRequiredRoundMax == 1 && effect.requiredRound != 1)
+                    {
+                        randomEnemyRequiredRoundMin = Mathf.Max(1, effect.requiredRound);
+                        randomEnemyRequiredRoundMax = randomEnemyRequiredRoundMin;
+                    }
+
+                    if (context.currentRound < randomEnemyRequiredRoundMin || context.currentRound > randomEnemyRequiredRoundMax)
+                        continue;
+
+                    int randomEnemyStacksToApply = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+                    if (randomEnemyStacksToApply <= 0)
+                        continue;
+
+                    List<BattleEnemyController> aliveEnemies = new List<BattleEnemyController>();
+                    for (int enemyIndex = 0; enemyIndex < context.enemies.Length; enemyIndex++)
+                    {
+                        BattleEnemyController candidate = context.enemies[enemyIndex];
+                        if (candidate != null && !candidate.IsDead)
+                            aliveEnemies.Add(candidate);
+                    }
+
+                    if (aliveEnemies.Count <= 0)
+                        continue;
+
+                    BattleEnemyController randomEnemy = aliveEnemies[Random.Range(0, aliveEnemies.Count)];
+                    bool randomEnemyApplied = effect.statusApplyTiming == Relic_SO.RelicStatusApplyTiming.NextRoundStart
+                        ? randomEnemy.QueueStatusForRoundStart(
+                            effect.statusData,
+                            effect.statusData.StatusId,
+                            effect.statusData.DisplayName,
+                            randomEnemyStacksToApply,
+                            Mathf.Max(1, effect.applyAfterRoundStarts),
+                            1)
+                        : randomEnemy.AddStatus(
+                            effect.statusData,
+                            effect.statusData.StatusId,
+                            effect.statusData.DisplayName,
+                            randomEnemyStacksToApply);
+
+                    if (randomEnemyApplied && context.feedbackMessages != null)
+                    {
+                        string roundLabel = BuildRoundRangeLabel(randomEnemyRequiredRoundMin, randomEnemyRequiredRoundMax);
+                        context.feedbackMessages.Add($"{relicData.DisplayName} 生效：{roundLabel}时，{randomEnemy.GetDebugDisplayName()} 获得 {randomEnemyStacksToApply} 层{effect.statusData.DisplayName}。");
+                    }
+                    break;
+
                 case Relic_SO.RelicBuiltInEffectType.ApplyStatusToRemainingAlliesOnPlayerDeath:
                     if (context.trigger != Relic_SO.RelicTrigger.OnPlayerDeath)
                         continue;
@@ -604,7 +804,123 @@ public static class RelicSystem
                     if (context.feedbackMessages != null)
                         context.feedbackMessages.Add($"{relicData.DisplayName} 生效：回合结束时，{selectedAlly.GetDebugDisplayName()} 恢复 {actualHeal} 点生命。");
                     break;
+
+                case Relic_SO.RelicBuiltInEffectType.ModifyOutgoingDamagePercentWhenTargetHasDistinctStatuses:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnPlayerAboutToDealDamage)
+                        continue;
+
+                    BattleEnemyController outgoingPercentTarget = context.target as BattleEnemyController;
+                    if (outgoingPercentTarget == null)
+                        continue;
+
+                    if (CountDistinctStatuses(outgoingPercentTarget.StatusEntries) < Mathf.Max(1, effect.requiredDistinctStatusCount))
+                        continue;
+
+                    int outgoingPercentBonus = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+                    if (outgoingPercentBonus <= 0)
+                        continue;
+
+                    context.outgoingDamagePercentModifier += outgoingPercentBonus;
+                    break;
+
+                case Relic_SO.RelicBuiltInEffectType.ModifyOutgoingDamageFlatWhenTargetHasStatus:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnPlayerAboutToDealDamage)
+                        continue;
+
+                    BattleEnemyController outgoingFlatTarget = context.target as BattleEnemyController;
+                    if (outgoingFlatTarget == null || effect.conditionStatusData == null)
+                        continue;
+
+                    if (outgoingFlatTarget.GetStatusStacks(effect.conditionStatusData) < Mathf.Max(1, effect.requiredStatusStacks))
+                        continue;
+
+                    int outgoingFlatBonus = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+                    if (outgoingFlatBonus <= 0)
+                        continue;
+
+                    context.outgoingDamageFlatModifier += outgoingFlatBonus;
+                    break;
+
+                case Relic_SO.RelicBuiltInEffectType.SurviveLethalDamageOncePerBattleAndApplyStatus:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnPlayerAboutToTakeLethalDamage)
+                        continue;
+
+                    BattleAllyController lethalTarget = context.target as BattleAllyController;
+                    if (lethalTarget == null)
+                        continue;
+
+                    string relicId = !string.IsNullOrWhiteSpace(relicData.relicId) ? relicData.relicId : relicData.name;
+                    if (lethalTarget.HasConsumedLethalProtection(relicId))
+                        continue;
+
+                    if (!lethalTarget.TryConsumeLethalProtection(relicId))
+                        continue;
+
+                    context.preventLethalDamage = true;
+                    context.minimumSurvivingHp = Mathf.Max(1, context.minimumSurvivingHp);
+
+                    int lethalStatusStacks = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+                    if (effect.statusData != null && lethalStatusStacks > 0)
+                    {
+                        lethalTarget.AddStatus(
+                            effect.statusData,
+                            effect.statusData.StatusId,
+                            effect.statusData.DisplayName,
+                            lethalStatusStacks);
+                    }
+
+                    if (context.feedbackMessages != null)
+                        context.feedbackMessages.Add($"{relicData.DisplayName} 生效：{lethalTarget.GetDebugDisplayName()} 以 {context.minimumSurvivingHp} 点生命幸存。");
+                    break;
+
+                case Relic_SO.RelicBuiltInEffectType.ModifyPlayerDiceWhenSkillUsedConsecutively:
+                    if (context.trigger != Relic_SO.RelicTrigger.OnPlayerDicePrepared || !context.sourceIsPlayer)
+                        continue;
+
+                    BattleAllyController skillChainAlly = context.source as BattleAllyController;
+                    if (skillChainAlly == null || context.skillData == null)
+                        continue;
+
+                    if (skillChainAlly.GetCompletedConsecutiveSkillUses(context.skillData) < Mathf.Max(1, effect.requiredConsecutiveSkillUses))
+                        continue;
+
+                    int skillChainPowerBonus = Mathf.Max(0, effect.powerAmount * Mathf.Max(1, relicState.amount));
+                    if (skillChainPowerBonus <= 0)
+                        continue;
+
+                    context.additionalPowerBonus += skillChainPowerBonus;
+                    skillChainAlly.MarkConsecutiveSkillResetAfterCurrentUse(context.skillData);
+                    break;
             }
         }
+    }
+
+    private static string BuildRoundRangeLabel(int minRound, int maxRound)
+    {
+        return minRound == maxRound
+            ? $"第 {minRound} 回合"
+            : $"第 {minRound}-{maxRound} 回合";
+    }
+
+    private static int CountDistinctStatuses(IReadOnlyList<BattleStatusRuntimeEntry> statusEntries)
+    {
+        if (statusEntries == null || statusEntries.Count == 0)
+            return 0;
+
+        int count = 0;
+        for (int i = 0; i < statusEntries.Count; i++)
+        {
+            BattleStatusRuntimeEntry entry = statusEntries[i];
+            if (entry == null || entry.stacks <= 0)
+                continue;
+
+            string key = entry.Key;
+            if (string.IsNullOrWhiteSpace(key))
+                continue;
+
+            count += 1;
+        }
+
+        return count;
     }
 }

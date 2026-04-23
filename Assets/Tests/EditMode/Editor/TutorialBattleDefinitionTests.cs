@@ -30,54 +30,27 @@ public class TutorialBattleDefinitionTests
     }
 
     [Test]
-    public void CreateRuntimeDefault_ForEliteBattle_IncludesStatusTeachingContent()
+    public void CreateRuntimeDefinition_Battle04_IncludesModifierTimingTeaching()
     {
-        TutorialBattleDefinition_SO definition = TutorialBattleContentFactory.CreateRuntimeDefinition(MapTileType.Elite);
+        TutorialBattleDefinition_SO definition = TutorialBattleContentFactory.CreateRuntimeDefinition(TutorialBattleStageId.Battle04);
 
         Assert.IsNotNull(definition);
-        Assert.AreEqual("tutorial_battle_elite", definition.tutorialBattleId);
+        Assert.AreEqual("tutorial_battle_04_modifier_intro", definition.tutorialBattleId);
         Assert.GreaterOrEqual(definition.GetOrderedSteps().Count, 3);
         Assert.IsTrue(definition.GetOrderedReactions().Count > 0);
-        Assert.IsTrue(ContainsText(definition, "状态"));
-        Assert.IsTrue(ContainsText(definition, "技能"));
+        Assert.IsTrue(ContainsText(definition, "[拼点时]"));
+        Assert.IsTrue(ContainsText(definition, "[单方面攻击时]"));
     }
 
     [Test]
-    public void CreateRuntimeDefault_ForOpeningBattle_TeachesModifierTimingThroughInspectAndCombatEvents()
+    public void CreateRuntimeDefinition_Battle01_FocusesOnSpeedBeforeAdvancedTiming()
     {
-        TutorialBattleDefinition_SO definition = TutorialBattleContentFactory.CreateRuntimeDefinition(MapTileType.Battle);
+        TutorialBattleDefinition_SO definition = TutorialBattleContentFactory.CreateRuntimeDefinition(TutorialBattleStageId.Battle01);
 
         Assert.IsNotNull(definition);
-
-        bool hasAllyInspectStep = false;
-        bool hasClashReaction = false;
-        bool hasAllySingleReaction = false;
-        bool hasEnemySingleReaction = false;
-
-        var steps = definition.GetOrderedSteps();
-        for (int i = 0; i < steps.Count; i++)
-        {
-            TutorialBattleStepDefinition step = steps[i];
-            if (step != null && step.completionEvent == TutorialBattleEventType.AllySkillViewed)
-                hasAllyInspectStep = true;
-        }
-
-        var reactions = definition.GetOrderedReactions();
-        for (int i = 0; i < reactions.Count; i++)
-        {
-            TutorialBattleReactionDefinition reaction = reactions[i];
-            if (reaction == null)
-                continue;
-
-            hasClashReaction |= reaction.triggerEvent == TutorialBattleEventType.ClashResolved;
-            hasAllySingleReaction |= reaction.triggerEvent == TutorialBattleEventType.AllyOneSidedAttackResolved;
-            hasEnemySingleReaction |= reaction.triggerEvent == TutorialBattleEventType.EnemyOneSidedAttackResolved;
-        }
-
-        Assert.IsTrue(hasAllyInspectStep);
-        Assert.IsTrue(hasClashReaction);
-        Assert.IsTrue(hasAllySingleReaction);
-        Assert.IsTrue(hasEnemySingleReaction);
+        Assert.IsTrue(ContainsText(definition, "速度"));
+        Assert.IsFalse(ContainsText(definition, "[拼点时]"));
+        Assert.IsFalse(ContainsText(definition, "[单方面攻击时]"));
     }
 
     private static bool ContainsText(TutorialBattleDefinition_SO definition, string text)

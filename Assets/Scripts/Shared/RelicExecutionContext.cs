@@ -20,6 +20,7 @@ public sealed class RelicExecutionContext
     public MerchantOfferState merchantOffer;
     public int merchantBasePrice;
     public int merchantDiscountPercent;
+    public float merchantPriceMultiplier = 1f;
     public int diceIndex;
     public bool isClashPreparation;
     public int additionalPowerBonus;
@@ -31,6 +32,11 @@ public sealed class RelicExecutionContext
     public int incomingDamagePercentModifier;
     public int incomingSourceSpeed;
     public int incomingTargetSpeed;
+    public int outgoingDamage;
+    public int outgoingDamageFlatModifier;
+    public int outgoingDamagePercentModifier;
+    public bool preventLethalDamage;
+    public int minimumSurvivingHp = 1;
     public LootItem_SO firstReforgeLootMaterial;
     public LootItem_SO secondReforgeLootMaterial;
     public LootItem_SO reforgeResultLoot;
@@ -170,6 +176,25 @@ public sealed class RelicExecutionContext
             runState = runState,
             merchantOffer = merchantOffer,
             merchantBasePrice = Mathf.Max(0, merchantBasePrice),
+            merchantPriceMultiplier = 1f,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateMerchantPriceCalculation(
+        RunState runState,
+        BoardTileData tile,
+        MerchantOfferState merchantOffer,
+        int merchantBasePrice)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnMerchantPriceCalculated,
+            runState = runState,
+            tile = tile,
+            merchantOffer = merchantOffer,
+            merchantBasePrice = Mathf.Max(0, merchantBasePrice),
+            merchantPriceMultiplier = 1f,
             feedbackMessages = new List<string>()
         };
     }
@@ -188,6 +213,105 @@ public sealed class RelicExecutionContext
             source = source,
             currentSpeed = Mathf.Max(0, currentSpeed),
             currentRound = Mathf.Max(1, currentRound),
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreatePlayerAboutToTakeDamage(
+        RunState runState,
+        EnemySkill_SO skillData,
+        int diceIndex,
+        int incomingDamage,
+        int currentSpeed,
+        Object source,
+        Object target)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnPlayerAboutToTakeDamage,
+            runState = runState,
+            sourceIsPlayer = false,
+            source = source,
+            target = target,
+            skillData = skillData,
+            diceIndex = diceIndex,
+            incomingDamage = Mathf.Max(0, incomingDamage),
+            currentSpeed = Mathf.Max(0, currentSpeed),
+            minimumSurvivingHp = 1,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreatePlayerAboutToDealDamage(
+        RunState runState,
+        EnemySkill_SO skillData,
+        int diceIndex,
+        int outgoingDamage,
+        Object source,
+        Object target)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnPlayerAboutToDealDamage,
+            runState = runState,
+            sourceIsPlayer = true,
+            source = source,
+            target = target,
+            skillData = skillData,
+            diceIndex = diceIndex,
+            outgoingDamage = Mathf.Max(0, outgoingDamage),
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateEnemyDeath(
+        RunState runState,
+        BattleEnemyController defeatedEnemy,
+        BattleAllyController[] allies,
+        BattleEnemyController[] enemies)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnEnemyDeath,
+            runState = runState,
+            sourceIsPlayer = false,
+            target = defeatedEnemy,
+            allies = allies,
+            enemies = enemies,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreatePlayerAboutToTakeLethalDamage(
+        RunState runState,
+        int incomingDamage,
+        Object source,
+        Object target)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnPlayerAboutToTakeLethalDamage,
+            runState = runState,
+            sourceIsPlayer = false,
+            source = source,
+            target = target,
+            incomingDamage = Mathf.Max(0, incomingDamage),
+            minimumSurvivingHp = 1,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateMerchantPurchaseCompleted(
+        RunState runState,
+        BoardTileData tile,
+        MerchantOfferState merchantOffer)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnMerchantPurchaseCompleted,
+            runState = runState,
+            tile = tile,
+            merchantOffer = merchantOffer,
             feedbackMessages = new List<string>()
         };
     }

@@ -25,7 +25,12 @@ public class Relic_SO : ScriptableObject
         OnPlayerAboutToTakeAttackDamage = 9,
         OnRelicReforge = 10,
         OnLootReforge = 11,
-        OnRestReforgeLimitCalculated = 12
+        OnRestReforgeLimitCalculated = 12,
+        OnPlayerAboutToTakeDamage = 13,
+        OnPlayerAboutToDealDamage = 14,
+        OnEnemyDeath = 15,
+        OnPlayerAboutToTakeLethalDamage = 16,
+        OnMerchantPurchaseCompleted = 17
     }
 
     public enum RelicBuiltInEffectType
@@ -49,7 +54,17 @@ public class Relic_SO : ScriptableObject
         GrantRandomLootOfSameRarityOnLootReforge = 16,
         IncreaseRestReforgeLimit = 17,
         IgnoreMoveCostWhenDestinationVisited = 18,
-        ReduceTargetClashMinPowerWhenTargetHasStatus = 19
+        ReduceTargetClashMinPowerWhenTargetHasStatus = 19,
+        ReduceIncomingDamagePercentWhenSpeedGreaterThan = 20,
+        AddMerchantPurchaseDiscountStackOnPurchase = 21,
+        ReduceMerchantPricePercentPerPurchaseStack = 22,
+        HealAllAlliesOnEnemyDeath = 23,
+        ApplyStatusToRandomAllyOnSpecificRound = 24,
+        ModifyOutgoingDamagePercentWhenTargetHasDistinctStatuses = 25,
+        ApplyStatusToRandomEnemyOnSpecificRound = 26,
+        ModifyOutgoingDamageFlatWhenTargetHasStatus = 27,
+        SurviveLethalDamageOncePerBattleAndApplyStatus = 28,
+        ModifyPlayerDiceWhenSkillUsedConsecutively = 29
     }
 
     [Serializable]
@@ -75,6 +90,9 @@ public class Relic_SO : ScriptableObject
         public int powerAmount;
         public int minPowerAmount;
         public int maxPowerAmount;
+        [Min(1)] public int maxStacks = 1;
+        [Min(1)] public int requiredDistinctStatusCount = 1;
+        [Min(1)] public int requiredConsecutiveSkillUses = 1;
     }
 
     [Header("Identity")]
@@ -117,6 +135,9 @@ public class Relic_SO : ScriptableObject
             effect.requiredRound = Mathf.Max(1, effect.requiredRound);
             effect.requiredRoundMin = Mathf.Max(1, effect.requiredRoundMin);
             effect.requiredRoundMax = Mathf.Max(1, effect.requiredRoundMax);
+            effect.maxStacks = Mathf.Max(1, effect.maxStacks);
+            effect.requiredDistinctStatusCount = Mathf.Max(1, effect.requiredDistinctStatusCount);
+            effect.requiredConsecutiveSkillUses = Mathf.Max(1, effect.requiredConsecutiveSkillUses);
 
             if (effect.requiredSpeed != 1 && effect.requiredSpeedMin == 1 && effect.requiredSpeedMax == 1)
             {

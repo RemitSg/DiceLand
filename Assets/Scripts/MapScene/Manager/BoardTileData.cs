@@ -40,6 +40,7 @@ public class BoardTileData
     public MapEvent_SO assignedEvent;
     public bool merchantStockGenerated;
     public int merchantRefreshCount;
+    public int merchantPurchaseDiscountStacks;
     public List<MerchantOfferState> merchantOffers = new List<MerchantOfferState>();
 
     public bool IsHostileTile =>
@@ -65,6 +66,7 @@ public class BoardTileData
             assignedEvent = assignedEvent,
             merchantStockGenerated = merchantStockGenerated,
             merchantRefreshCount = merchantRefreshCount,
+            merchantPurchaseDiscountStacks = merchantPurchaseDiscountStacks,
             merchantOffers = CloneMerchantOffers()
         };
     }

@@ -699,7 +699,7 @@ public class MapMerchantOverlay : MonoBehaviour
     private int ResolveDisplayPrice(MerchantOfferState offer)
     {
         return currentRunState != null && offer != null
-            ? RelicSystem.CalculateMerchantOfferPrice(currentRunState, offer)
+            ? RelicSystem.CalculateMerchantOfferPrice(currentRunState, currentTile, offer)
             : Mathf.Max(0, offer != null ? offer.price : 0);
     }
 

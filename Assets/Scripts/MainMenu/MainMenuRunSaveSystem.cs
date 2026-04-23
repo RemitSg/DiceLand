@@ -203,6 +203,7 @@ internal sealed class SavedBoardTileData
     public string assignedEventId;
     public bool merchantStockGenerated;
     public int merchantRefreshCount;
+    public int merchantPurchaseDiscountStacks;
     public List<SavedMerchantOfferState> merchantOffers = new List<SavedMerchantOfferState>();
 }
 
@@ -507,7 +508,8 @@ public static class MainMenuRunSaveSystem
             assignedEnemyGroupId = GetEnemyGroupId(tile.assignedEnemyGroup),
             assignedEventId = GetEventId(tile.assignedEvent),
             merchantStockGenerated = tile.merchantStockGenerated,
-            merchantRefreshCount = tile.merchantRefreshCount
+            merchantRefreshCount = tile.merchantRefreshCount,
+            merchantPurchaseDiscountStacks = tile.merchantPurchaseDiscountStacks
         };
 
         if (tile.merchantOffers != null)
@@ -723,7 +725,8 @@ public static class MainMenuRunSaveSystem
             assignedEnemyGroup = catalog.ResolveEnemyGroup(savedTile.assignedEnemyGroupId),
             assignedEvent = catalog.ResolveEvent(savedTile.assignedEventId),
             merchantStockGenerated = savedTile.merchantStockGenerated,
-            merchantRefreshCount = savedTile.merchantRefreshCount
+            merchantRefreshCount = savedTile.merchantRefreshCount,
+            merchantPurchaseDiscountStacks = savedTile.merchantPurchaseDiscountStacks
         };
 
         if (savedTile.merchantOffers != null)

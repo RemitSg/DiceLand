@@ -17,6 +17,7 @@ public class MainMenuRuntimeTutorialTests
 
         Assert.IsTrue(MainMenuRuntime.TutorialRequested);
         Assert.IsFalse(MainMenuRuntime.TutorialActive);
+        Assert.IsNull(MainMenuRuntime.TutorialReturnSceneName);
     }
 
     [Test]
@@ -48,5 +49,18 @@ public class MainMenuRuntimeTutorialTests
         Assert.IsFalse(MainMenuRuntime.TutorialRequested);
         Assert.IsFalse(MainMenuRuntime.TutorialActive);
         Assert.IsTrue(MainMenuRuntime.ConsumeContinueRequest());
+    }
+
+    [Test]
+    public void RequestTutorialStart_CachesReturnSceneNameUntilCleared()
+    {
+        MainMenuRuntime.RequestTutorialStart("ConfiguredMainMenu");
+
+        Assert.IsTrue(MainMenuRuntime.TutorialRequested);
+        Assert.AreEqual("ConfiguredMainMenu", MainMenuRuntime.TutorialReturnSceneName);
+
+        MainMenuRuntime.ClearTutorialRequest();
+
+        Assert.IsNull(MainMenuRuntime.TutorialReturnSceneName);
     }
 }

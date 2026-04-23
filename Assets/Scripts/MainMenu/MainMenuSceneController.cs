@@ -615,7 +615,7 @@ public class MainMenuSceneController : MonoBehaviour
     {
         MainMenuRuntime.ClearContinueRequest();
         MainMenuRuntime.ClearSelectedDifficulty();
-        MainMenuRuntime.RequestTutorialStart();
+        MainMenuRuntime.RequestTutorialStart(SceneManager.GetActiveScene().name);
         MapRunRuntime.Clear();
         BattleEncounterRuntime.Clear();
         RestSceneRuntime.Clear();

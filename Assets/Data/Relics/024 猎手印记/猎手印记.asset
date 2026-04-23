@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92a6c8410a56dcb4db5bca4c318c5c64, type: 3}
+  m_Name: "\u730E\u624B\u5370\u8BB0"
+  m_EditorClassIdentifier: 
+  relicId: 24
+  relicName: "\u730E\u624B\u5370\u8BB0"
+  description: "\u6BCF\u56DE\u5408\u5F00\u59CB\u65F6\u7ED9\u4E88\u968F\u673A\u654C\u4EBA 1 \u5C42\u6807\u8BB0\uFF0C\u53CB\u65B9\u653B\u51FB\u88AB\u6807\u8BB0\u7684\u654C\u4EBA\u65F6\u4F24\u5BB3 +1"
+  additionalDescription: "\u731B\u517D\u4F1A\u91CD\u590D\u6495\u54AC\u88AB\u5212\u51FA\u75D5\u8FF9\u7684\u90E8\u4F4D\uFF0C\u730E\u624B\u4E5F\u4E00\u6837\u3002"
+  rarity: 2
+  icon: {fileID: 0}
+  builtInEffects:
+  - effectName: 
+    trigger: 6
+    effectType: 26
+    chance: 1
+    requireUnvisitedTile: 0
+    statusData: {fileID: 11400000, guid: 6b25ae09b0051bc45bb594fe153c832b, type: 2}
+    amount: 1
+    conditionStatusData: {fileID: 0}
+    requiredStatusStacks: 1
+    requiredSpeed: 1
+    requiredSpeedMin: 1
+    requiredSpeedMax: 1
+    statusApplyTiming: 0
+    applyAfterRoundStarts: 1
+    requiredRound: 1
+    requiredRoundMin: 1
+    requiredRoundMax: 99
+    powerAmount: 0
+    minPowerAmount: 0
+    maxPowerAmount: 0
+    maxStacks: 1
+    requiredDistinctStatusCount: 1
+    requiredConsecutiveSkillUses: 1
+  - effectName: 
+    trigger: 14
+    effectType: 27
+    chance: 1
+    requireUnvisitedTile: 0
+    statusData: {fileID: 0}
+    amount: 1
+    conditionStatusData: {fileID: 11400000, guid: 6b25ae09b0051bc45bb594fe153c832b, type: 2}
+    requiredStatusStacks: 1
+    requiredSpeed: 1
+    requiredSpeedMin: 1
+    requiredSpeedMax: 1
+    statusApplyTiming: 0
+    applyAfterRoundStarts: 1
+    requiredRound: 1
+    requiredRoundMin: 1
+    requiredRoundMax: 1
+    powerAmount: 0
+    minPowerAmount: 0
+    maxPowerAmount: 0
+    maxStacks: 1
+    requiredDistinctStatusCount: 1
+    requiredConsecutiveSkillUses: 1
+  customEffectHandler: {fileID: 0}

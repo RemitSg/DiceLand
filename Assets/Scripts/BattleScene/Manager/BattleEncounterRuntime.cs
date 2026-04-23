@@ -17,6 +17,7 @@ public sealed class BattleEncounterData
     public string targetSceneName;
     public string encounterLabel;
     public string tutorialCompletionSceneName;
+    public TutorialBattleStageId tutorialBattleStageId;
     public MapTileType tileType;
     public MapDangerBand dangerBand;
     public Vector2Int sourceCoord;

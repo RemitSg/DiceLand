@@ -1,5 +1,5 @@
-using NUnit.Framework;
 using System.Reflection;
+using NUnit.Framework;
 using UnityEngine;
 
 public class TutorialBattleContentFactoryTests
@@ -19,7 +19,7 @@ public class TutorialBattleContentFactoryTests
             openingPrimaryTemplate = template
         };
 
-        EnemyGroup_SO group = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(MapTileType.Battle, templates);
+        EnemyGroup_SO group = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle01, templates);
 
         Assert.IsNotNull(group);
         Assert.IsNotNull(group.enemies);
@@ -36,19 +36,19 @@ public class TutorialBattleContentFactoryTests
     }
 
     [Test]
-    public void CreateRuntimeEnemyGroup_EliteAndBossUseTwoSpeedButtons()
+    public void CreateRuntimeEnemyGroup_Battle02AndBattle03UseTwoSpeedButtons()
     {
-        EnemyGroup_SO elite = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(MapTileType.Elite);
-        EnemyGroup_SO boss = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(MapTileType.Boss);
+        EnemyGroup_SO battle02 = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle02);
+        EnemyGroup_SO battle03 = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle03);
 
-        Assert.IsNotNull(elite);
-        Assert.IsNotNull(boss);
-        Assert.IsNotNull(elite.enemies);
-        Assert.IsNotNull(boss.enemies);
-        Assert.Greater(elite.enemies.Count, 0);
-        Assert.Greater(boss.enemies.Count, 0);
-        Assert.AreEqual(2, elite.enemies[0].baseSpeedButtonCount);
-        Assert.AreEqual(2, boss.enemies[0].baseSpeedButtonCount);
+        Assert.IsNotNull(battle02);
+        Assert.IsNotNull(battle03);
+        Assert.IsNotNull(battle02.enemies);
+        Assert.IsNotNull(battle03.enemies);
+        Assert.Greater(battle02.enemies.Count, 0);
+        Assert.Greater(battle03.enemies.Count, 0);
+        Assert.AreEqual(2, battle02.enemies[0].baseSpeedButtonCount);
+        Assert.AreEqual(2, battle03.enemies[0].baseSpeedButtonCount);
     }
 
     [Test]
@@ -66,71 +66,123 @@ public class TutorialBattleContentFactoryTests
 
         TutorialEnemyVisualTemplateSet templates = new TutorialEnemyVisualTemplateSet
         {
-            eliteTemplate = template,
+            openingSecondaryTemplate = template,
             bossTemplate = template
         };
 
-        EnemyGroup_SO elite = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(MapTileType.Elite, templates);
-        EnemyGroup_SO boss = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(MapTileType.Boss, templates);
+        EnemyGroup_SO battle02 = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle02, templates);
+        EnemyGroup_SO battle07 = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle07, templates);
 
-        Assert.AreEqual(2, elite.enemies[0].GetStageSpeedButtonCount(0));
-        Assert.AreEqual(2, boss.enemies[0].GetStageSpeedButtonCount(0));
+        Assert.AreEqual(2, battle02.enemies[0].GetStageSpeedButtonCount(0));
+        Assert.AreEqual(2, battle07.enemies[0].GetStageSpeedButtonCount(0));
 
         Object.DestroyImmediate(template);
-        Object.DestroyImmediate(elite);
-        Object.DestroyImmediate(boss);
+        Object.DestroyImmediate(battle02);
+        Object.DestroyImmediate(battle07);
     }
 
     [Test]
-    public void CreateRuntimeEnemyGroup_OpeningBattleGrantsSkillsForUseClashAndSingleAttackTiming()
+    public void CreateRuntimeEnemyGroup_AllTutorialBattleStagesUseDeterministicRoundSequenceRules()
     {
-        EnemyGroup_SO group = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(MapTileType.Battle);
+        for (int i = 1; i <= 7; i++)
+            AssertTutorialEnemiesUseRoundSequenceRules(TutorialBattleContentFactory.CreateRuntimeEnemyGroup((TutorialBattleStageId)i));
+    }
 
-        Assert.IsNotNull(group);
-        Assert.IsNotNull(group.enemies);
-        Assert.Greater(group.enemies.Count, 0);
+    [Test]
+    public void CreateRuntimeDefinition_Battle01_DoesNotIncludeAdvancedModifierTimingTeaching()
+    {
+        TutorialBattleDefinition_SO definition = TutorialBattleContentFactory.CreateRuntimeDefinition(TutorialBattleStageId.Battle01);
 
-        EnemyData_SO tutorialTeacher = group.enemies[0];
-        Assert.IsNotNull(tutorialTeacher);
-        Assert.IsNotNull(tutorialTeacher.battleStartGrantedAllySkills);
-        Assert.GreaterOrEqual(tutorialTeacher.battleStartGrantedAllySkills.Count, 3);
+        Assert.IsNotNull(definition);
+        string combined = CombineDefinitionText(definition);
+        StringAssert.Contains("速度", combined);
+        StringAssert.DoesNotContain("[拼点时]", combined);
+        StringAssert.DoesNotContain("[单方面攻击时]", combined);
+    }
 
-        bool hasOnUseSkill = false;
-        bool hasOnClashSkill = false;
-        bool hasOnSingleAttackSkill = false;
-        for (int i = 0; i < tutorialTeacher.battleStartGrantedAllySkills.Count; i++)
+    [Test]
+    public void CreateRuntimeDefinition_Battle04_ExplicitlyTeachesThreeModifierTimings()
+    {
+        TutorialBattleDefinition_SO definition = TutorialBattleContentFactory.CreateRuntimeDefinition(TutorialBattleStageId.Battle04);
+
+        Assert.IsNotNull(definition);
+        string combined = CombineDefinitionText(definition);
+        StringAssert.Contains("[拼点时]", combined);
+        StringAssert.Contains("[使用时]", combined);
+        StringAssert.Contains("[单方面攻击时]", combined);
+    }
+
+    [Test]
+    public void CreateRuntimeDefinition_Battle03_AdvancesWhenAllySkillIsViewed()
+    {
+        TutorialBattleDefinition_SO definition = TutorialBattleContentFactory.CreateRuntimeDefinition(TutorialBattleStageId.Battle03);
+
+        Assert.IsNotNull(definition);
+        Assert.Greater(definition.GetOrderedSteps().Count, 0);
+        Assert.AreEqual(TutorialBattleEventType.AllySkillViewed, definition.GetOrderedSteps()[0].completionEvent);
+    }
+
+    [Test]
+    public void CreateRuntimeEnemyGroup_UsesRequestedTutorialHpCurve()
+    {
+        EnemyGroup_SO battle01 = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle01);
+        EnemyGroup_SO battle02 = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle02);
+        EnemyGroup_SO battle05 = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle05);
+        EnemyGroup_SO battle06 = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle06);
+
+        Assert.IsNotNull(battle01);
+        Assert.IsNotNull(battle02);
+        Assert.IsNotNull(battle05);
+        Assert.IsNotNull(battle06);
+        Assert.Greater(battle01.enemies.Count, 0);
+        Assert.Greater(battle02.enemies.Count, 0);
+        Assert.Greater(battle05.enemies.Count, 0);
+        Assert.Greater(battle06.enemies.Count, 0);
+        Assert.AreEqual(12, battle01.enemies[0].baseHP);
+        Assert.AreEqual(16, battle02.enemies[0].baseHP);
+        Assert.AreEqual(20, battle05.enemies[0].baseHP);
+        Assert.AreEqual(20, battle06.enemies[0].baseHP);
+    }
+
+    [Test]
+    public void CreateRuntimeBattle06_ReusesBattle05MergedTutorialContent()
+    {
+        TutorialBattleDefinition_SO battle05Definition = TutorialBattleContentFactory.CreateRuntimeDefinition(TutorialBattleStageId.Battle05);
+        TutorialBattleDefinition_SO battle06Definition = TutorialBattleContentFactory.CreateRuntimeDefinition(TutorialBattleStageId.Battle06);
+        EnemyGroup_SO battle05Group = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle05);
+        EnemyGroup_SO battle06Group = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle06);
+
+        Assert.IsNotNull(battle05Definition);
+        Assert.IsNotNull(battle06Definition);
+        Assert.IsNotNull(battle05Group);
+        Assert.IsNotNull(battle06Group);
+        Assert.AreEqual(CombineDefinitionText(battle05Definition), CombineDefinitionText(battle06Definition));
+        Assert.AreEqual(battle05Group.enemies[0].baseHP, battle06Group.enemies[0].baseHP);
+        Assert.AreEqual(battle05Group.enemies[0].baseSpeedButtonCount, battle06Group.enemies[0].baseSpeedButtonCount);
+        Assert.AreEqual(battle05Group.enemies[0].conditionalSkillRules.Count, battle06Group.enemies[0].conditionalSkillRules.Count);
+    }
+
+    [Test]
+    public void CreateRuntimeEnemyGroup_Battle07_UsesConfiguredBurnStatusResource()
+    {
+        BattleStatus_SO burnStatus = ScriptableObject.CreateInstance<BattleStatus_SO>();
+        TutorialEnemyVisualTemplateSet templates = new TutorialEnemyVisualTemplateSet
         {
-            EnemySkill_SO skill = tutorialTeacher.battleStartGrantedAllySkills[i].skill;
-            if (skill == null || skill.diceEffectSettings == null)
-                continue;
+            burnStatusTemplate = burnStatus
+        };
 
-            for (int diceIndex = 0; diceIndex < skill.diceEffectSettings.Length; diceIndex++)
-            {
-                EnemySkill_SO.DiceEffectSettings settings = skill.diceEffectSettings[diceIndex];
-                if (settings.powerModifiers == null)
-                    continue;
+        EnemyGroup_SO battle07 = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle07, templates);
 
-                for (int modifierIndex = 0; modifierIndex < settings.powerModifiers.Length; modifierIndex++)
-                {
-                    EnemySkill_SO.ConditionalPowerModifierEntry modifier = settings.powerModifiers[modifierIndex];
-                    hasOnUseSkill |= modifier.trigger == EnemySkill_SO.DiceEffectTrigger.OnSkillUse;
-                    hasOnClashSkill |= modifier.trigger == EnemySkill_SO.DiceEffectTrigger.OnClash;
-                    hasOnSingleAttackSkill |= modifier.trigger == EnemySkill_SO.DiceEffectTrigger.OnSingleAttack;
-                }
-            }
-        }
+        Assert.IsNotNull(battle07);
+        Assert.Greater(battle07.enemies.Count, 0);
+        Assert.IsNotNull(battle07.enemies[0].skillPool);
+        Assert.Greater(battle07.enemies[0].skillPool.Count, 0);
+        Assert.AreSame(
+            burnStatus,
+            battle07.enemies[0].skillPool[0].diceEffectSettings[0].statusEffects[0].statusData);
 
-        Assert.IsTrue(hasOnUseSkill);
-        Assert.IsTrue(hasOnClashSkill);
-        Assert.IsTrue(hasOnSingleAttackSkill);
-    }
-
-    [Test]
-    public void CreateRuntimeEnemyGroup_TutorialEnemiesUseDeterministicRoundSequenceRules()
-    {
-        AssertTutorialEnemiesUseRoundSequenceRules(TutorialBattleContentFactory.CreateRuntimeEnemyGroup(MapTileType.Battle));
-        AssertTutorialEnemiesUseRoundSequenceRules(TutorialBattleContentFactory.CreateRuntimeEnemyGroup(MapTileType.Elite));
-        AssertTutorialEnemiesUseRoundSequenceRules(TutorialBattleContentFactory.CreateRuntimeEnemyGroup(MapTileType.Boss));
+        Object.DestroyImmediate(burnStatus);
+        Object.DestroyImmediate(battle07);
     }
 
     [Test]
@@ -143,6 +195,32 @@ public class TutorialBattleContentFactoryTests
         Assert.IsNotNull(bodyField);
         Assert.AreEqual(typeof(TMPro.TMP_FontAsset), keywordField.FieldType);
         Assert.AreEqual(typeof(TMPro.TMP_FontAsset), bodyField.FieldType);
+    }
+
+    private static string CombineDefinitionText(TutorialBattleDefinition_SO definition)
+    {
+        System.Text.StringBuilder builder = new System.Text.StringBuilder();
+        var steps = definition.GetOrderedSteps();
+        for (int i = 0; i < steps.Count; i++)
+        {
+            if (steps[i] == null)
+                continue;
+
+            builder.Append(steps[i].title);
+            builder.Append(steps[i].body);
+        }
+
+        var reactions = definition.GetOrderedReactions();
+        for (int i = 0; i < reactions.Count; i++)
+        {
+            if (reactions[i] == null)
+                continue;
+
+            builder.Append(reactions[i].title);
+            builder.Append(reactions[i].body);
+        }
+
+        return builder.ToString();
     }
 
     private static Sprite CreateTestSprite()

@@ -115,6 +115,18 @@ public static class MapRunRuntime
                     currentSnapshot.runState.partyMembers.Add(member.Clone());
             }
 
+            if (encounter.wasVictory && encounter.isTutorialEncounter)
+            {
+                for (int i = 0; i < currentSnapshot.runState.partyMembers.Count; i++)
+                {
+                    RunPartyMemberState member = currentSnapshot.runState.partyMembers[i];
+                    if (member == null)
+                        continue;
+
+                    member.currentHP = Mathf.Clamp(member.maxHP, 0, Mathf.Max(0, member.maxHP));
+                }
+            }
+
             currentSnapshot.runState.SyncLegacyPlayerFieldsFromParty();
         }
 

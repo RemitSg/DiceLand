@@ -145,6 +145,11 @@ public class BattleButton : MonoBehaviour
         InitializeTutorialBattleForEncounter();
     }
 
+    private void OnDisable()
+    {
+        ClearActiveRoundCombatants();
+    }
+
     public void OnBattleButtonClicked()
     {
         if (isResolvingCombat)
@@ -205,10 +210,87 @@ public class BattleButton : MonoBehaviour
         StartCoroutine(ExecuteCombatPhaseRoutine(allies, enemies));
     }
 
-    private void SetupTargetingPhase(BattleAllyController[] allies, BattleEnemyController[] enemies)
+    private void SetActiveRoundCombatants(BattleAllyController[] allies, BattleEnemyController[] enemies)
     {
+        ClearActiveRoundCombatants();
         activeRoundAllies = allies;
         activeRoundEnemies = enemies;
+        BindActiveRoundCombatantEvents();
+    }
+
+    private void ClearActiveRoundCombatants()
+    {
+        UnbindActiveRoundCombatantEvents();
+        activeRoundAllies = null;
+        activeRoundEnemies = null;
+    }
+
+    private void BindActiveRoundCombatantEvents()
+    {
+        if (activeRoundAllies != null)
+        {
+            for (int i = 0; i < activeRoundAllies.Length; i++)
+            {
+                BattleAllyController ally = activeRoundAllies[i];
+                if (ally == null)
+                    continue;
+
+                ally.Died -= HandleActiveRoundAllyDied;
+                ally.Died += HandleActiveRoundAllyDied;
+            }
+        }
+
+        if (activeRoundEnemies != null)
+        {
+            for (int i = 0; i < activeRoundEnemies.Length; i++)
+            {
+                BattleEnemyController enemy = activeRoundEnemies[i];
+                if (enemy == null)
+                    continue;
+
+                enemy.Died -= HandleActiveRoundEnemyDied;
+                enemy.Died += HandleActiveRoundEnemyDied;
+            }
+        }
+    }
+
+    private void UnbindActiveRoundCombatantEvents()
+    {
+        if (activeRoundAllies != null)
+        {
+            for (int i = 0; i < activeRoundAllies.Length; i++)
+            {
+                BattleAllyController ally = activeRoundAllies[i];
+                if (ally != null)
+                    ally.Died -= HandleActiveRoundAllyDied;
+            }
+        }
+
+        if (activeRoundEnemies != null)
+        {
+            for (int i = 0; i < activeRoundEnemies.Length; i++)
+            {
+                BattleEnemyController enemy = activeRoundEnemies[i];
+                if (enemy != null)
+                    enemy.Died -= HandleActiveRoundEnemyDied;
+            }
+        }
+    }
+
+    private void HandleActiveRoundAllyDied(BattleAllyController defeatedAlly)
+    {
+        ApplyPlayerDeathRelics(defeatedAlly, activeRoundAllies);
+    }
+
+    private void HandleActiveRoundEnemyDied(BattleEnemyController defeatedEnemy)
+    {
+        ApplyEnemyDeathTriggeredStatusGains(defeatedEnemy);
+        ApplyEnemyDeathRelics(defeatedEnemy, activeRoundAllies, activeRoundEnemies);
+    }
+
+    private void SetupTargetingPhase(BattleAllyController[] allies, BattleEnemyController[] enemies)
+    {
+        SetActiveRoundCombatants(allies, enemies);
         currentSharedEnergy = Mathf.Clamp(currentSharedEnergy + 1, 0, currentSharedEnergyMax);
         reservedSharedEnergy = 0;
         RefreshSharedEnergyUi();
@@ -804,8 +886,7 @@ public class BattleButton : MonoBehaviour
     private IEnumerator ExecuteCombatPhaseRoutine(BattleAllyController[] allies, BattleEnemyController[] enemies)
     {
         isResolvingCombat = true;
-        activeRoundAllies = allies;
-        activeRoundEnemies = enemies;
+        SetActiveRoundCombatants(allies, enemies);
         CommitReservedSharedEnergy();
         BattleLog("\u25c6\u25c6\u25c6 \u6218\u6597\u7ed3\u7b97\u9636\u6bb5 \u25c6\u25c6\u25c6");
 
@@ -851,8 +932,7 @@ public class BattleButton : MonoBehaviour
 
             if (TryHandleBattleCompletion(allies, enemies))
             {
-                activeRoundAllies = null;
-                activeRoundEnemies = null;
+                ClearActiveRoundCombatants();
                 isResolvingCombat = false;
                 yield break;
             }
@@ -885,8 +965,7 @@ public class BattleButton : MonoBehaviour
 
         currentPhase = BattlePhase.Ready;
         currentRound++;
-        activeRoundAllies = null;
-        activeRoundEnemies = null;
+        ClearActiveRoundCombatants();
         isResolvingCombat = false;
     }
 
@@ -1819,8 +1898,8 @@ public class BattleButton : MonoBehaviour
         if (attacker == null || target == null || attacker.IsDead)
             return;
 
-        bool targetWasAlive = !target.IsDead;
-        int dealtDamage = target.TakeDamage(baseDamage, powerModifierAmount, baseDamage);
+        int modifiedDamage = ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, diceIndex, baseDamage);
+        int dealtDamage = target.TakeDamage(modifiedDamage, powerModifierAmount, baseDamage);
         if (dealtDamage <= 0)
         {
             battleFeedbackSystem?.ShowDamageResultPopup(
@@ -1838,8 +1917,6 @@ public class BattleButton : MonoBehaviour
             if (isSingleAttack)
                 ApplyAllyStatusEffectsOnly(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack);
             ApplyAllyStatusEffectsOnly(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnHit);
-            if (targetWasAlive && target.IsDead)
-                ApplyEnemyDeathTriggeredStatusGains(target);
             return;
         }
 
@@ -1851,7 +1928,6 @@ public class BattleButton : MonoBehaviour
         if (attacker == null || target == null || attacker.IsDead)
             return;
 
-        bool targetWasAlive = !target.IsDead;
         int incomingDamage = ApplyEnemyCalamityDamageModifiers(baseDamage);
         incomingDamage = ApplyPlayerRelicIncomingAttackDamageModifiers(attacker, target, diceIndex, incomingDamage);
         if (isSingleAttack)
@@ -1875,8 +1951,6 @@ public class BattleButton : MonoBehaviour
             if (isSingleAttack)
                 ApplyEnemyStatusEffectsOnly(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack);
             ApplyEnemyStatusEffectsOnly(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnHit);
-            if (targetWasAlive && target.IsDead)
-                ApplyPlayerDeathRelics(target, activeRoundAllies);
             return;
         }
 
@@ -1913,6 +1987,48 @@ public class BattleButton : MonoBehaviour
         }
 
         if (adjustedDamage < incomingDamage && context.feedbackMessages != null)
+        {
+            for (int i = 0; i < context.feedbackMessages.Count; i++)
+            {
+                if (!string.IsNullOrWhiteSpace(context.feedbackMessages[i]))
+                    BattleLog(context.feedbackMessages[i]);
+            }
+        }
+
+        return adjustedDamage;
+    }
+
+    private int ApplyPlayerRelicOutgoingDamageModifiers(
+        BattleAllyController attacker,
+        BattleEnemyController target,
+        int diceIndex,
+        int outgoingDamage)
+    {
+        if (outgoingDamage <= 0 || attacker == null || target == null)
+            return Mathf.Max(0, outgoingDamage);
+
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return Mathf.Max(0, outgoingDamage);
+
+        RelicExecutionContext context = RelicExecutionContext.CreatePlayerAboutToDealDamage(
+            null,
+            attacker.SelectedSkill,
+            diceIndex,
+            outgoingDamage,
+            attacker,
+            target);
+        RelicSystem.Process(activeEncounter.relicInventory, context);
+
+        int adjustedDamage = Mathf.Max(0, outgoingDamage + context.outgoingDamageFlatModifier);
+        int bonusPercent = Mathf.Max(0, context.outgoingDamagePercentModifier);
+        if (bonusPercent > 0)
+        {
+            float multiplier = 1f + (bonusPercent / 100f);
+            adjustedDamage = Mathf.Max(0, Mathf.FloorToInt((adjustedDamage * multiplier) + 0.5f));
+        }
+
+        if (adjustedDamage > outgoingDamage && context.feedbackMessages != null)
         {
             for (int i = 0; i < context.feedbackMessages.Count; i++)
             {
@@ -2139,8 +2255,9 @@ public class BattleButton : MonoBehaviour
                 if (target == null || target.IsDead)
                     continue;
 
-                target.TakeDamage(effect.damageAmount);
-                BattleLog($"\u8bcd\u6761\u89e6\u53d1\uff1a{attacker.GetDebugDisplayName()}[{BuildEffectLabel(effect, i)}] \u5bf9 {target.GetDebugDisplayName()} \u9020\u6210 {effect.damageAmount} \u989d\u5916\u4f24\u5bb3\uff0c\u5269\u4f59HP {target.CurrentHP}/{target.MaxHP}");
+                int modifiedDamage = ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, diceIndex, effect.damageAmount);
+                target.TakeDamage(modifiedDamage, 0, effect.damageAmount);
+                BattleLog($"\u8bcd\u6761\u89e6\u53d1\uff1a{attacker.GetDebugDisplayName()}[{BuildEffectLabel(effect, i)}] \u5bf9 {target.GetDebugDisplayName()} \u9020\u6210 {modifiedDamage} \u989d\u5916\u4f24\u5bb3\uff0c\u5269\u4f59HP {target.CurrentHP}/{target.MaxHP}");
             }
         }
     }
@@ -2684,6 +2801,29 @@ public class BattleButton : MonoBehaviour
         RelicExecutionContext context = RelicExecutionContext.CreateBattleRoundStart(
             null,
             currentRound,
+            allies,
+            enemies);
+        RelicSystem.Process(activeEncounter.relicInventory, context);
+
+        if (context.feedbackMessages == null || context.feedbackMessages.Count == 0)
+            return;
+
+        for (int i = 0; i < context.feedbackMessages.Count; i++)
+        {
+            if (!string.IsNullOrWhiteSpace(context.feedbackMessages[i]))
+                BattleLog(context.feedbackMessages[i]);
+        }
+    }
+
+    private void ApplyEnemyDeathRelics(BattleEnemyController defeatedEnemy, BattleAllyController[] allies, BattleEnemyController[] enemies)
+    {
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (defeatedEnemy == null || activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return;
+
+        RelicExecutionContext context = RelicExecutionContext.CreateEnemyDeath(
+            null,
+            defeatedEnemy,
             allies,
             enemies);
         RelicSystem.Process(activeEncounter.relicInventory, context);
@@ -3273,11 +3413,12 @@ public class BattleButton : MonoBehaviour
         if (burstDamage <= 0)
             return;
 
-        target.TakeDamage(burstDamage);
+        int modifiedDamage = ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, -1, burstDamage);
+        target.TakeDamage(modifiedDamage, 0, burstDamage);
         if (effect.clearStacksAfterBurst)
             target.ClearStatus(effect.statusData, statusId, statusName);
 
-        BattleLog($"\u8bcd\u6761\u89e6\u53d1\uff1a{attacker.GetDebugDisplayName()}[{BuildStatusBurstEffectLabel(effect, effectIndex)}] \u5f15\u53d1 {target.GetDebugDisplayName()} \u7684 {statusName}\uff0c\u9020\u6210 {burstDamage} \u70b9\u989d\u5916\u4f24\u5bb3\uff08{effect.damagePerStack} x {stacks}\uff09{(effect.clearStacksAfterBurst ? $"\uff0c\u5e76\u6e05\u7a7a {statusName}" : string.Empty)}\uff0c\u5269\u4f59HP {target.CurrentHP}/{target.MaxHP}");
+        BattleLog($"\u8bcd\u6761\u89e6\u53d1\uff1a{attacker.GetDebugDisplayName()}[{BuildStatusBurstEffectLabel(effect, effectIndex)}] \u5f15\u53d1 {target.GetDebugDisplayName()} \u7684 {statusName}\uff0c\u9020\u6210 {modifiedDamage} \u70b9\u989d\u5916\u4f24\u5bb3\uff08{effect.damagePerStack} x {stacks}\uff09{(effect.clearStacksAfterBurst ? $"\uff0c\u5e76\u6e05\u7a7a {statusName}" : string.Empty)}\uff0c\u5269\u4f59HP {target.CurrentHP}/{target.MaxHP}");
     }
 
     private void ApplyStatusBurst(BattleEnemyController attacker, BattleAllyController target, EnemySkill_SO.StatusBurstDamageEffectEntry effect, int effectIndex)

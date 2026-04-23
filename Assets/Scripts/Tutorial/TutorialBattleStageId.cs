@@ -14,7 +14,8 @@ public static class TutorialBattleStageUtility
 {
     public static bool IsBattleStage(TutorialBattleStageId stageId)
     {
-        return stageId != TutorialBattleStageId.None;
+        return stageId >= TutorialBattleStageId.Battle01
+            && stageId <= TutorialBattleStageId.Battle07;
     }
 
     public static bool IsFinalStage(TutorialBattleStageId stageId)
