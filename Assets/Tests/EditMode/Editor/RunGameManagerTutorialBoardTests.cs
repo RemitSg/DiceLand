@@ -12,9 +12,9 @@ public class RunGameManagerTutorialBoardTests
 
         Assert.IsNotNull(method);
 
-        List<BoardTileData> tiles = method.Invoke(null, new object[] { 13 }) as List<BoardTileData>;
+        List<BoardTileData> tiles = method.Invoke(null, new object[] { 12 }) as List<BoardTileData>;
         Assert.IsNotNull(tiles);
-        Assert.AreEqual(13, tiles.Count);
+        Assert.AreEqual(12, tiles.Count);
 
         MapTileType[] expectedSequence =
         {
@@ -29,7 +29,6 @@ public class RunGameManagerTutorialBoardTests
             MapTileType.Forge,
             MapTileType.Battle,
             MapTileType.Key,
-            MapTileType.Battle,
             MapTileType.Boss
         };
 
@@ -55,10 +54,6 @@ public class RunGameManagerTutorialBoardTests
         Assert.AreEqual(1, tiles[11].previewEnemyCount);
         Assert.AreEqual(5, tiles[11].previewDangerRating);
         Assert.AreEqual("教程终战", tiles[11].previewTag);
-
-        Assert.AreEqual(1, tiles[12].previewEnemyCount);
-        Assert.AreEqual(0, tiles[12].previewDangerRating);
-        Assert.AreEqual("教程首领", tiles[12].previewTag);
     }
 
     [Test]

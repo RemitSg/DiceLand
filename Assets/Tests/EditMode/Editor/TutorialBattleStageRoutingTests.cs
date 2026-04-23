@@ -31,7 +31,6 @@ public class TutorialBattleStageRoutingTests
     [TestCase(10, TutorialBattleStageId.None)]
     [TestCase(11, TutorialBattleStageId.Battle07)]
     [TestCase(12, TutorialBattleStageId.None)]
-    [TestCase(13, TutorialBattleStageId.None)]
     public void ResolveTutorialStageId_MapsTutorialRouteIndices(int sequenceIndex, TutorialBattleStageId expected)
     {
         MethodInfo method = typeof(RunGameManager).GetMethod("ResolveTutorialStageId", BindingFlags.Static | BindingFlags.NonPublic);

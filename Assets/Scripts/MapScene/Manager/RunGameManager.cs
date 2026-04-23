@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 [DisallowMultipleComponent]
 public class RunGameManager : MonoBehaviour
 {
-    private const int TutorialBoardSize = 13;
+    private const int TutorialBoardSize = 12;
     private const int TutorialEncounterSeedBase = 26000;
     private const string TutorialCatalogResourcePath = "TutorialMenuCatalog";
     private static readonly MapTileType[] TutorialTileSequence =
@@ -24,7 +24,6 @@ public class RunGameManager : MonoBehaviour
         MapTileType.Forge,
         MapTileType.Battle,
         MapTileType.Key,
-        MapTileType.Battle,
         MapTileType.Boss
     };
 
