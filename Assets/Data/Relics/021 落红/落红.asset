@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicId: 21
   relicName: "\u843D\u7EA2"
-  description: "\u654C\u65B9\u89D2\u8272\u6B7B\u4EA1\u65F6\uFF0C\u7ACB\u5373\u4E3A\u6240\u6709\u6211\u65B9\u89D2\u8272\u6062\u590D 2 \u70B9\u751F\u547D"
-  additionalDescription: "\u8D25\u8005\u7684\u4F59\u6E29\u4F1A\u6E17\u56DE\u6218\u573A\uFF0C\u6210\u4E3A\u6211\u65B9\u7EE7\u7EED\u8FFD\u51FB\u7684\u517B\u5206\u3002"
+  description: "\u654C\u65B9\u89D2\u8272\u6B7B\u4EA1\u65F6\uFF0C\u7ACB\u5373\u4E3A\u6240\u6709\u6211\u65B9\u89D2\u8272\u6062\u590D
+    2 \u70B9\u751F\u547D"
+  additionalDescription: "\u8D25\u8005\u7684\u4F59\u6E29\u4F1A\u6E17\u56DE\u6218\u573A\uFF0C\u6210\u4E3A\u517B\u5206\u3002"
   rarity: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: edc441b635ffe2c43a9fed667fc70538, type: 3}
   builtInEffects:
   - effectName: 
     trigger: 15

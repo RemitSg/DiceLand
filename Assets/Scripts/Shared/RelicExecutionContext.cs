@@ -7,6 +7,7 @@ public sealed class RelicExecutionContext
     public RunState runState;
     public RunGameManager runGameManager;
     public BoardTileData tile;
+    public ActionPointSystem actionPointSystem;
     public int moveCost;
     public bool isDestinationUnvisited;
     public bool ignoreMoveCost;
@@ -28,6 +29,7 @@ public sealed class RelicExecutionContext
     public int additionalMaxPowerBonus;
     public int additionalTargetMinPowerBonus;
     public int incomingDamage;
+    public int resolvedDamage;
     public int incomingDamageFlatModifier;
     public int incomingDamagePercentModifier;
     public int incomingSourceSpeed;
@@ -46,10 +48,18 @@ public sealed class RelicExecutionContext
     public Relic_SO reforgeResultRelic;
     public int preservedReforgeMaterialSlot = -1;
     public List<LootItem_SO> bonusLootReforgeRewards;
+    public LootItem_SO grantedBattleLoot;
+    public IReadOnlyList<LootItem_SO> battleLootPool;
+    public List<LootItem_SO> bonusBattleLootRewards;
     public int baseRestReforgeCount;
     public int additionalRestReforgeCount;
+    public int additionalSharedEnergyRecovery;
+    public int additionalTemporaryAllySpeedButtons;
     public int currentSpeed;
     public int currentRound;
+    public string eventInstanceKey;
+    public Calamity_SO calamityData;
+    public int calamityTier;
     public BattleAllyController[] allies;
     public BattleEnemyController[] enemies;
     public List<string> feedbackMessages;
@@ -64,6 +74,40 @@ public sealed class RelicExecutionContext
             tile = tile,
             moveCost = moveCost,
             isDestinationUnvisited = isDestinationUnvisited,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateKeyCollected(
+        RunState runState,
+        RunGameManager runGameManager,
+        BoardTileData tile,
+        ActionPointSystem actionPointSystem)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnKeyCollected,
+            runState = runState,
+            runGameManager = runGameManager,
+            tile = tile,
+            actionPointSystem = actionPointSystem,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateCalamityApplied(
+        RunState runState,
+        RunGameManager runGameManager,
+        Calamity_SO calamityData,
+        int calamityTier)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnCalamityApplied,
+            runState = runState,
+            runGameManager = runGameManager,
+            calamityData = calamityData,
+            calamityTier = Mathf.Max(0, calamityTier),
             feedbackMessages = new List<string>()
         };
     }
@@ -161,6 +205,126 @@ public sealed class RelicExecutionContext
             incomingDamage = Mathf.Max(0, incomingDamage),
             incomingSourceSpeed = Mathf.Max(0, incomingSourceSpeed),
             incomingTargetSpeed = Mathf.Max(0, incomingTargetSpeed),
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreatePlayerTookSingleAttackDamage(
+        RunState runState,
+        EnemySkill_SO skillData,
+        int diceIndex,
+        int resolvedDamage,
+        int incomingSourceSpeed,
+        int incomingTargetSpeed,
+        int currentRound,
+        string eventInstanceKey,
+        Object source,
+        Object target)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnPlayerTookSingleAttackDamage,
+            runState = runState,
+            sourceIsPlayer = false,
+            source = source,
+            target = target,
+            skillData = skillData,
+            diceIndex = diceIndex,
+            resolvedDamage = Mathf.Max(0, resolvedDamage),
+            incomingSourceSpeed = Mathf.Max(0, incomingSourceSpeed),
+            incomingTargetSpeed = Mathf.Max(0, incomingTargetSpeed),
+            currentRound = Mathf.Max(1, currentRound),
+            eventInstanceKey = eventInstanceKey,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreatePlayerHitEnemy(
+        RunState runState,
+        EnemySkill_SO skillData,
+        int diceIndex,
+        int resolvedDamage,
+        int sourceSpeed,
+        int targetSpeed,
+        int currentRound,
+        string eventInstanceKey,
+        Object source,
+        Object target)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnPlayerHitEnemy,
+            runState = runState,
+            sourceIsPlayer = true,
+            source = source,
+            target = target,
+            skillData = skillData,
+            diceIndex = diceIndex,
+            resolvedDamage = Mathf.Max(0, resolvedDamage),
+            incomingSourceSpeed = Mathf.Max(0, sourceSpeed),
+            incomingTargetSpeed = Mathf.Max(0, targetSpeed),
+            currentRound = Mathf.Max(1, currentRound),
+            eventInstanceKey = eventInstanceKey,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreatePlayerDefenseClashWin(
+        RunState runState,
+        EnemySkill_SO skillData,
+        int diceIndex,
+        int currentRound,
+        Object source,
+        Object target)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnPlayerDefenseClashWin,
+            runState = runState,
+            sourceIsPlayer = true,
+            source = source,
+            target = target,
+            skillData = skillData,
+            diceIndex = diceIndex,
+            currentRound = Mathf.Max(1, currentRound),
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateEnemyKilledByPlayer(
+        RunState runState,
+        EnemySkill_SO skillData,
+        int diceIndex,
+        int resolvedDamage,
+        Object source,
+        Object target)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnEnemyKilledByPlayer,
+            runState = runState,
+            sourceIsPlayer = true,
+            source = source,
+            target = target,
+            skillData = skillData,
+            diceIndex = diceIndex,
+            resolvedDamage = Mathf.Max(0, resolvedDamage),
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateBattleLootRewardGranted(
+        RunState runState,
+        LootItem_SO grantedBattleLoot,
+        IReadOnlyList<LootItem_SO> battleLootPool)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnBattleLootRewardGranted,
+            runState = runState,
+            grantedBattleLoot = grantedBattleLoot,
+            battleLootPool = battleLootPool,
+            bonusBattleLootRewards = new List<LootItem_SO>(),
             feedbackMessages = new List<string>()
         };
     }
@@ -325,6 +489,23 @@ public sealed class RelicExecutionContext
         return new RelicExecutionContext
         {
             trigger = Relic_SO.RelicTrigger.OnBattleRoundStart,
+            runState = runState,
+            currentRound = Mathf.Max(1, currentRound),
+            allies = allies,
+            enemies = enemies,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateBattleSetup(
+        RunState runState,
+        int currentRound,
+        BattleAllyController[] allies,
+        BattleEnemyController[] enemies)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnBattleSetup,
             runState = runState,
             currentRound = Mathf.Max(1, currentRound),
             allies = allies,

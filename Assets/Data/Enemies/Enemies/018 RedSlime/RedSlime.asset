@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: RedSlime
+  m_EditorClassIdentifier: 
+  enemyID: 18
+  enemyName: "\u7EA2\u8272\u53F2\u83B1\u59C6"
+  baseHP: 30
+  damageReductionPercent: 0
+  minSpeed: 3
+  maxSpeed: 7
+  baseSpeedButtonCount: 1
+  enemySprite: {fileID: 21300000, guid: c60cc52c21dc364478ee76f9d723e7fd, type: 3}
+  stageSprites: []
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.2
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules:
+  - statusData: {fileID: 11400000, guid: 5c2d83ddce914792abd7211bb94635f6, type: 2}
+    allowApplicationWhileImmune: 1
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains: []
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  enemyDescription: "\u505A\u4E3A\u4E8B\u4EF6\u602A\u7269\u51FA\u73B0\u7684\u7EA2\u8272\u53F2\u83B1\u59C6\u3002\u5B83\u4F1A\u7528\u6BD2\u6DB2\u6D78\u8680\u76EE\u6807\uFF0C\u4E5F\u4F1A\u901A\u8FC7\u5F02\u5316\u8BA9\u81EA\u8EAB\u66F4\u5177\u653B\u51FB\u6027"
+  passiveDescriptions:
+  - passiveName: "\u7EA2\u6DB2\u514D\u75AB"
+    displayColorType: 2
+    description: "\u514D\u75AB \" \u4E2D\u6BD2 \" \u6548\u679C"
+  - passiveName: "\u5F02\u5316\u7206\u53D1"
+    displayColorType: 1
+    description: "\u4F7F\u7528 \" \u5F02\u5316 \" \u540E\u83B7\u5F97 1 \u5C42\u4E34\u65F6\u5F3A\u58EE"
+  enemyVisualScale: 1.65
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: a57f606e4e6f4d1faa847e9a1fcfde18, type: 2}
+  - {fileID: 11400000, guid: 9664abfedc1d4b33815cf95233d79cbc, type: 2}
+  - {fileID: 11400000, guid: 21d1d6fa74d144d88c352ff4390157c8, type: 2}
+  conditionalSkillRules: []

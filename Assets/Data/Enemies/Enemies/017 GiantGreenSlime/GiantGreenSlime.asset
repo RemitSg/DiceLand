@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: GiantGreenSlime
+  m_EditorClassIdentifier: 
+  enemyID: 17
+  enemyName: "\u5DE8\u578B\u7EFF\u8272\u53F2\u83B1\u59C6"
+  baseHP: 30
+  damageReductionPercent: 0
+  minSpeed: 3
+  maxSpeed: 6
+  baseSpeedButtonCount: 1
+  enemySprite: {fileID: 21300000, guid: c60cc52c21dc364478ee76f9d723e7fd, type: 3}
+  stageSprites: []
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.2
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules:
+  - statusData: {fileID: 11400000, guid: 5c2d83ddce914792abd7211bb94635f6, type: 2}
+    allowApplicationWhileImmune: 1
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains: []
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  enemyDescription: "\u6BD2\u6DB2\u5728\u5B83\u4F53\u5185\u6EDA\u52A8\u3002\u8FD9\u53EA\u66F4\u5927\u7684\u53F2\u83B1\u59C6\u64C5\u957F\u4EE5\u81EA\u635F\u6362\u53D6\u538B\u8FEB\uFF0C\u4E5F\u80FD\u5728\u5B64\u8EAB\u65F6\u518D\u5EA6\u5206\u88C2"
+  passiveDescriptions:
+  - passiveName: "\u6BD2\u6DB2\u6838"
+    displayColorType: 2
+    description: "\u514D\u75AB \" \u4E2D\u6BD2 \" \u6548\u679C"
+  - passiveName: "\u5206\u88C2\u672C\u80FD"
+    displayColorType: 1
+    description: "\u5F53\u573A\u4E0A\u53EA\u5269\u81EA\u8EAB\u65F6\uFF0C\u4F1A\u4F18\u5148\u4F7F\u7528 \" \u5206\u88C2 \""
+  enemyVisualScale: 1.85
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: 98ea46dc0fe048dbb02d089aa6e549a7, type: 2}
+  - {fileID: 11400000, guid: 829df911f2394f0980e812a042563889, type: 2}
+  conditionalSkillRules:
+  - ruleName: "\u5B64\u7ACB\u5206\u88C2"
+    skill: {fileID: 11400000, guid: 786582b09e334d52ad3604bfe33a2aeb, type: 2}
+    conditionType: 2
+    healthThresholdNormalized: 0
+    firstTriggerRound: 1
+    repeatEveryNRounds: 1
+    priority: 10
+    maxSlotsPerRound: 1
+    useOncePerBattle: 0
+    requiredAliveEnemyCount: 1

@@ -6,6 +6,7 @@ public class BattleAllyController : MonoBehaviour
 {
     [Header("References")]
     public SpeedButton speedButton;
+    [SerializeField] private List<SpeedButton> speedButtons = new List<SpeedButton>();
 
     public int Speed { get; private set; }
     public int CurrentHP { get; private set; }
@@ -24,6 +25,7 @@ public class BattleAllyController : MonoBehaviour
     public int BurnStacks => GetLegacyStatusStacks(BurnStatusId);
     public int PendingRoundStartSpeedBonus { get; private set; }
     public IReadOnlyList<BattleStatusRuntimeEntry> StatusEntries => statusEntries;
+    public IReadOnlyList<SpeedButton> SpeedButtons => activeSpeedButtons;
     public bool HasTemporarySkills => temporarySkills.Count > 0;
     public bool TemporarySkillsOverrideWeaponPool => temporarySkillsOverrideWeaponPool;
     public Vector3 LastHitDirection { get; private set; } = Vector3.up;
@@ -41,19 +43,24 @@ public class BattleAllyController : MonoBehaviour
     private readonly List<BattleStatusRuntimeEntry> statusEntries = new List<BattleStatusRuntimeEntry>();
     private readonly List<PendingBattleStatusApplication> pendingStatusApplications = new List<PendingBattleStatusApplication>();
     private readonly List<EnemySkill_SO> temporarySkills = new List<EnemySkill_SO>();
+    private readonly List<SpeedButton> activeSpeedButtons = new List<SpeedButton>();
     private readonly HashSet<string> consumedLethalProtectionRelicIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     private const string BurnStatusId = "burn";
     private const string BleedStatusId = "bleed";
     private EnemySkill_SO consecutiveSkillTracker;
     private int consecutiveSkillUseCount;
     private EnemySkill_SO pendingConsecutiveSkillResetSkill;
+    private GameObject speedButtonTemplateObject;
+    private float speedButtonTopLocalY;
+    private Vector2 speedButtonBaseOffset = new Vector2(0f, 1f);
+    private Vector2 speedButtonMultiGroupOffset = Vector2.zero;
+    private float speedButtonHorizontalSpacing = 0.82f;
+    private int temporaryExtraSpeedButtons;
+    private int inheritedExtraSpeedButtons;
 
     private void Awake()
     {
-        if (speedButton == null)
-            speedButton = GetComponentInChildren<SpeedButton>(true);
-        if (speedButton == null)
-            speedButton = GetComponent<SpeedButton>();
+        RefreshSpeedButtonsFromHierarchy();
         if (speedButton == null)
             Debug.LogWarning($"[BattleAllyController] {gameObject.name} is missing a SpeedButton reference.");
 
@@ -92,6 +99,7 @@ public class BattleAllyController : MonoBehaviour
         MaxHP = Mathf.Max(1, partyMemberState.maxHP);
         CurrentHP = Mathf.Clamp(partyMemberState.currentHP, 0, MaxHP);
         IsDead = CurrentHP <= 0;
+        RefreshActiveSpeedButtons();
     }
 
     public void GenerateRandomSpeed(int min = 2, int max = 6)
@@ -99,8 +107,11 @@ public class BattleAllyController : MonoBehaviour
         if (IsDead)
         {
             Speed = 0;
-            if (speedButton != null)
-                speedButton.Speed = 0;
+            for (int i = 0; i < activeSpeedButtons.Count; i++)
+            {
+                if (activeSpeedButtons[i] != null)
+                    activeSpeedButtons[i].Speed = 0;
+            }
             return;
         }
 
@@ -109,8 +120,78 @@ public class BattleAllyController : MonoBehaviour
         int effectiveMax = characterData != null ? Mathf.Max(effectiveMin, characterData.maxSpeed) : Mathf.Max(effectiveMin, max);
 
         Speed = Mathf.Max(1, UnityEngine.Random.Range(effectiveMin, effectiveMax + 1) + PendingRoundStartSpeedBonus);
+        for (int i = 0; i < activeSpeedButtons.Count; i++)
+        {
+            if (activeSpeedButtons[i] != null)
+                activeSpeedButtons[i].Speed = Speed;
+        }
+    }
+
+    public void RegisterSpeedButtons(IEnumerable<SpeedButton> buttons)
+    {
+        speedButtons.Clear();
+        if (buttons != null)
+        {
+            foreach (SpeedButton button in buttons)
+            {
+                if (button != null && !speedButtons.Contains(button))
+                    speedButtons.Add(button);
+            }
+        }
+
+        speedButton = speedButtons.Count > 0 ? speedButtons[0] : null;
         if (speedButton != null)
-            speedButton.Speed = Speed;
+            speedButtonTemplateObject = speedButton.gameObject;
+        RefreshActiveSpeedButtons();
+    }
+
+    public void ConfigureSpeedButtonLayout(
+        SpeedButton templateButton,
+        float topLocalY,
+        Vector2 baseOffset,
+        Vector2 multiGroupOffset,
+        float horizontalSpacing)
+    {
+        if (templateButton != null)
+            speedButtonTemplateObject = templateButton.gameObject;
+
+        speedButtonTopLocalY = topLocalY;
+        speedButtonBaseOffset = baseOffset;
+        speedButtonMultiGroupOffset = multiGroupOffset;
+        speedButtonHorizontalSpacing = horizontalSpacing;
+        RefreshActiveSpeedButtons();
+    }
+
+    public void SetTemporaryExtraSpeedButtons(int extraCount)
+    {
+        int resolved = Mathf.Max(0, extraCount);
+        if (temporaryExtraSpeedButtons == resolved)
+            return;
+
+        temporaryExtraSpeedButtons = resolved;
+        RefreshActiveSpeedButtons();
+    }
+
+    public void SetInheritedExtraSpeedButtons(int extraCount)
+    {
+        inheritedExtraSpeedButtons = Mathf.Max(0, extraCount);
+        RefreshActiveSpeedButtons();
+    }
+
+    public bool TransferInheritableSpeedButtonsTo(BattleAllyController recipient)
+    {
+        if (recipient == null || recipient == this)
+            return false;
+
+        int transferCount = Mathf.Max(0, 1 + inheritedExtraSpeedButtons);
+        if (transferCount <= 0)
+            return false;
+
+        recipient.SetInheritedExtraSpeedButtons(recipient.inheritedExtraSpeedButtons + transferCount);
+        inheritedExtraSpeedButtons = 0;
+        temporaryExtraSpeedButtons = 0;
+        RefreshActiveSpeedButtons();
+        return true;
     }
 
     public void SelectDefaultSkill(int roundNumber = -1)
@@ -257,7 +338,16 @@ public class BattleAllyController : MonoBehaviour
         EnemySkill_SO.DicePowerRange range = GetDicePowerRange(diceIndex);
         int min = Mathf.Max(1, range.minPower);
         int max = Mathf.Max(min, range.maxPower);
-        return UnityEngine.Random.Range(min, max + 1);
+
+        switch (ResolveForcedRollMode())
+        {
+            case ForcedRollMode.Min:
+                return min;
+            case ForcedRollMode.Max:
+                return max;
+            default:
+                return UnityEngine.Random.Range(min, max + 1);
+        }
     }
 
     public int RollCombatPower()
@@ -463,8 +553,9 @@ public class BattleAllyController : MonoBehaviour
             : ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType.PowerPenaltyFlat);
         int netPowerAdjustment = flatPowerBonus - flatPowerPenalty;
         int minPowerPenalty = ResolveStatusMinPowerPenalty();
+        int maxPowerPenalty = ResolveStatusMaxPowerPenalty();
         int minPower = Mathf.Max(1, baseRange.minPower + netPowerAdjustment - minPowerPenalty);
-        int maxPower = Mathf.Max(minPower, baseRange.maxPower + netPowerAdjustment);
+        int maxPower = Mathf.Max(minPower, baseRange.maxPower + netPowerAdjustment - maxPowerPenalty);
         return new EnemySkill_SO.DicePowerRange
         {
             minPower = minPower,
@@ -491,6 +582,56 @@ public class BattleAllyController : MonoBehaviour
         }
 
         return Mathf.Max(0, totalPenalty);
+    }
+
+    private int ResolveStatusMaxPowerPenalty()
+    {
+        if (statusEntries.Count == 0)
+            return 0;
+
+        int totalPenalty = 0;
+        for (int i = 0; i < statusEntries.Count; i++)
+        {
+            BattleStatusRuntimeEntry entry = statusEntries[i];
+            if (entry == null || entry.stacks <= 0 || entry.statusData == null)
+                continue;
+
+            if (entry.statusData.BehaviorType != BattleStatus_SO.StatusBehaviorType.MaxPowerPenalty)
+                continue;
+
+            totalPenalty += entry.stacks * Mathf.Max(0, entry.statusData.PowerPerStack);
+        }
+
+        return Mathf.Max(0, totalPenalty);
+    }
+
+    private ForcedRollMode ResolveForcedRollMode()
+    {
+        bool forceMax = false;
+        for (int i = 0; i < statusEntries.Count; i++)
+        {
+            BattleStatusRuntimeEntry entry = statusEntries[i];
+            if (entry == null || entry.stacks <= 0 || entry.statusData == null)
+                continue;
+
+            switch (entry.statusData.BehaviorType)
+            {
+                case BattleStatus_SO.StatusBehaviorType.ForceRollToMin:
+                    return ForcedRollMode.Min;
+                case BattleStatus_SO.StatusBehaviorType.ForceRollToMax:
+                    forceMax = true;
+                    break;
+            }
+        }
+
+        return forceMax ? ForcedRollMode.Max : ForcedRollMode.None;
+    }
+
+    private enum ForcedRollMode
+    {
+        None = 0,
+        Min = 1,
+        Max = 2
     }
 
     private int ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType behaviorType)
@@ -801,15 +942,121 @@ public class BattleAllyController : MonoBehaviour
         Speed = 0;
         SelectedSkill = null;
         CurrentRoundUsedSkill = null;
-
-        if (speedButton != null)
-        {
-            speedButton.ResetConnection();
-            speedButton.IsInteractable = false;
-            speedButton.HideForCombat();
-        }
+        RefreshActiveSpeedButtons();
 
         Died?.Invoke(this);
+    }
+
+    private int GetDesiredActiveSpeedButtonCount()
+    {
+        if (IsDead)
+            return 0;
+
+        return Mathf.Max(1, 1 + inheritedExtraSpeedButtons + temporaryExtraSpeedButtons);
+    }
+
+    private void RefreshSpeedButtonsFromHierarchy()
+    {
+        speedButtons.Clear();
+
+        SpeedButton[] foundButtons = GetComponentsInChildren<SpeedButton>(true);
+        for (int i = 0; i < foundButtons.Length; i++)
+        {
+            if (foundButtons[i] != null && !speedButtons.Contains(foundButtons[i]))
+                speedButtons.Add(foundButtons[i]);
+        }
+
+        if (speedButtons.Count == 0)
+        {
+            SpeedButton ownButton = GetComponent<SpeedButton>();
+            if (ownButton != null)
+                speedButtons.Add(ownButton);
+        }
+
+        speedButton = speedButtons.Count > 0 ? speedButtons[0] : null;
+        if (speedButton != null)
+        {
+            speedButtonTemplateObject = speedButton.gameObject;
+            speedButtonTopLocalY = speedButton.transform.localPosition.y - speedButtonBaseOffset.y;
+        }
+
+        RefreshActiveSpeedButtons();
+    }
+
+    private void RefreshActiveSpeedButtons()
+    {
+        EnsureSpeedButtonCount();
+        activeSpeedButtons.Clear();
+
+        int desiredCount = GetDesiredActiveSpeedButtonCount();
+        float effectiveSpacing = Mathf.Abs(speedButtonHorizontalSpacing);
+        float xStart = -((Mathf.Max(1, desiredCount) - 1) * effectiveSpacing) * 0.5f;
+
+        for (int i = 0; i < speedButtons.Count; i++)
+        {
+            SpeedButton button = speedButtons[i];
+            if (button == null)
+                continue;
+
+            bool shouldBeActive = i < desiredCount;
+            button.gameObject.SetActive(shouldBeActive);
+            if (!shouldBeActive)
+            {
+                button.ResetConnection();
+                button.HideForCombat();
+                button.IsInteractable = false;
+                continue;
+            }
+
+            float x = speedButtonBaseOffset.x + (desiredCount > 1 ? speedButtonMultiGroupOffset.x + xStart + i * effectiveSpacing : 0f);
+            float y = speedButtonTopLocalY + speedButtonBaseOffset.y + (desiredCount > 1 ? speedButtonMultiGroupOffset.y : 0f);
+            Transform buttonTransform = button.transform;
+            if (buttonTransform.parent != transform)
+                buttonTransform.SetParent(transform, true);
+            buttonTransform.localPosition = new Vector3(x, y, buttonTransform.localPosition.z);
+            buttonTransform.localRotation = Quaternion.identity;
+            buttonTransform.localScale = Vector3.one;
+            button.SetButtonType(SpeedButton.ButtonType.Ally);
+            button.IsInteractable = false;
+            button.Speed = Speed;
+            activeSpeedButtons.Add(button);
+        }
+
+        speedButton = activeSpeedButtons.Count > 0 ? activeSpeedButtons[0] : null;
+    }
+
+    private void EnsureSpeedButtonCount()
+    {
+        int desiredCount = GetDesiredActiveSpeedButtonCount();
+        if (speedButtons.Count >= desiredCount)
+            return;
+
+        if (speedButtonTemplateObject == null)
+        {
+            SpeedButton existingTemplate = speedButton != null ? speedButton : (speedButtons.Count > 0 ? speedButtons[0] : null);
+            if (existingTemplate != null)
+                speedButtonTemplateObject = existingTemplate.gameObject;
+        }
+
+        if (speedButtonTemplateObject == null)
+            return;
+
+        while (speedButtons.Count < desiredCount)
+        {
+            GameObject buttonObject = Instantiate(speedButtonTemplateObject, transform);
+            buttonObject.name = desiredCount > 1 ? $"SpeedButton_{speedButtons.Count + 1}" : "SpeedButton";
+            buttonObject.transform.localRotation = Quaternion.identity;
+            buttonObject.transform.localScale = Vector3.one;
+            buttonObject.SetActive(true);
+
+            SpeedButton created = buttonObject.GetComponent<SpeedButton>() ?? buttonObject.GetComponentInChildren<SpeedButton>(true);
+            if (created == null)
+                break;
+
+            created.SetButtonType(SpeedButton.ButtonType.Ally);
+            created.IsInteractable = false;
+            speedButtons.Add(created);
+        }
     }
 
     private void RegisterCurrentSkillUsage(EnemySkill_SO skill)

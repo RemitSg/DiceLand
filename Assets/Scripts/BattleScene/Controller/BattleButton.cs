@@ -7,25 +7,6 @@ using UnityEngine.UI;
 
 public class BattleButton : MonoBehaviour
 {
-    private enum CombatActionType
-    {
-        Clash,
-        AllySingleAttack,
-        EnemySingleAttack
-    }
-
-    private sealed class CombatAction
-    {
-        public CombatActionType Type;
-        public BattleAllyController Ally;
-        public BattleEnemyController Enemy;
-        public SpeedButton EnemyButton;
-        public BattleAllyController TargetAlly;
-        public int PrioritySpeed;
-        public int TiePriority;
-        public int SequenceIndex;
-    }
-
     private sealed class AllyProgressionResult
     {
         public CharacterData_SO CharacterData;
@@ -291,6 +272,7 @@ public class BattleButton : MonoBehaviour
     private void SetupTargetingPhase(BattleAllyController[] allies, BattleEnemyController[] enemies)
     {
         SetActiveRoundCombatants(allies, enemies);
+        BattleEncounterRuntime.ActiveEncounter?.ResetRoundRelicProcKeys();
         currentSharedEnergy = Mathf.Clamp(currentSharedEnergy + 1, 0, currentSharedEnergyMax);
         reservedSharedEnergy = 0;
         RefreshSharedEnergyUi();
@@ -303,25 +285,40 @@ public class BattleButton : MonoBehaviour
         if (TryHandleBattleCompletion(allies, enemies))
             return;
 
+        ApplyPendingBattleStartAllyStatusGrants(allies);
         ApplyEnemyBattleStartEffectsIfNeeded(allies, enemies);
         ApplyEnemyRepeatRoundStartStatusGains(allies, enemies);
+        ApplyBattleSetupRelics(allies, enemies);
         ApplyBattleRoundStartRelics(allies, enemies);
 
         foreach (BattleAllyController ally in allies)
         {
-            if (ally.speedButton == null)
+            IReadOnlyList<SpeedButton> allyButtons = GetAllySpeedButtons(ally);
+            if (allyButtons.Count == 0)
                 continue;
 
             if (ally.IsDead)
             {
-                ally.speedButton.ResetConnection();
-                ally.speedButton.HideForCombat();
-                ally.speedButton.IsInteractable = false;
+                for (int i = 0; i < allyButtons.Count; i++)
+                {
+                    if (allyButtons[i] == null)
+                        continue;
+
+                    allyButtons[i].ResetConnection();
+                    allyButtons[i].HideForCombat();
+                    allyButtons[i].IsInteractable = false;
+                }
                 continue;
             }
 
-            ally.speedButton.ShowForTargeting();
-            ally.speedButton.ResetConnection();
+            for (int i = 0; i < allyButtons.Count; i++)
+            {
+                if (allyButtons[i] == null)
+                    continue;
+
+                allyButtons[i].ShowForTargeting();
+                allyButtons[i].ResetConnection();
+            }
         }
 
         foreach (BattleEnemyController enemy in enemies)
@@ -374,14 +371,22 @@ public class BattleButton : MonoBehaviour
             BattleLog($"\u654c\u65b9 {enemy.GetDebugDisplayName()} \u901f\u5ea6={enemy.Speed} HP={enemy.CurrentHP}/{enemy.MaxHP}");
         }
 
-        List<SpeedButton> allyButtons = new List<SpeedButton>();
+        List<SpeedButton> interactableAllyButtons = new List<SpeedButton>();
         foreach (BattleAllyController ally in allies)
         {
-            if (ally.IsDead || ally.speedButton == null)
+            if (ally.IsDead)
                 continue;
 
-            ally.speedButton.IsInteractable = true;
-            allyButtons.Add(ally.speedButton);
+            IReadOnlyList<SpeedButton> allySpeedButtons = GetAllySpeedButtons(ally);
+            for (int i = 0; i < allySpeedButtons.Count; i++)
+            {
+                SpeedButton allyButton = allySpeedButtons[i];
+                if (allyButton == null)
+                    continue;
+
+                allyButton.IsInteractable = true;
+                interactableAllyButtons.Add(allyButton);
+            }
         }
 
         foreach (BattleEnemyController enemy in enemies)
@@ -389,7 +394,7 @@ public class BattleButton : MonoBehaviour
             if (enemy.IsDead)
                 continue;
 
-            enemy.AutoConnectToRandomAlly(allyButtons);
+            enemy.AutoConnectToRandomAlly(interactableAllyButtons);
             IReadOnlyList<SpeedButton> enemyButtons = GetEnemySpeedButtons(enemy);
             for (int i = 0; i < enemyButtons.Count; i++)
             {
@@ -494,8 +499,11 @@ public class BattleButton : MonoBehaviour
         if (ally == null || skill == null)
             return "技能未配置";
 
-        int availableEnergyExcludingCurrentReservation = currentSharedEnergy - Mathf.Max(0, reservedSharedEnergy - GetReservedEnergyCostForAlly(ally));
-        if (skill.energyCost > Mathf.Max(0, availableEnergyExcludingCurrentReservation))
+        int connectedButtonCount = GetConnectedAllyButtonCount(ally);
+        int otherReservedEnergy = Mathf.Max(0, reservedSharedEnergy - GetReservedEnergyCostForAlly(ally));
+        int availableEnergyForAlly = Mathf.Max(0, currentSharedEnergy - otherReservedEnergy);
+        int requiredEnergyForAlly = connectedButtonCount * Mathf.Max(0, skill.energyCost);
+        if (requiredEnergyForAlly > availableEnergyForAlly)
             return "能量不足";
 
         if (skill.RequiresSelfStatusToUse)
@@ -525,10 +533,15 @@ public class BattleButton : MonoBehaviour
             ally.StatusChanged -= HandleAllyStatusChanged;
             ally.StatusChanged += HandleAllyStatusChanged;
 
-            if (ally.speedButton != null)
+            IReadOnlyList<SpeedButton> allyButtons = GetAllySpeedButtons(ally);
+            for (int buttonIndex = 0; buttonIndex < allyButtons.Count; buttonIndex++)
             {
-                ally.speedButton.ConnectionChanged -= HandleAllyConnectionChanged;
-                ally.speedButton.ConnectionChanged += HandleAllyConnectionChanged;
+                SpeedButton allyButton = allyButtons[buttonIndex];
+                if (allyButton == null)
+                    continue;
+
+                allyButton.ConnectionChanged -= HandleAllyConnectionChanged;
+                allyButton.ConnectionChanged += HandleAllyConnectionChanged;
             }
         }
 
@@ -554,12 +567,27 @@ public class BattleButton : MonoBehaviour
         int previousReserved = reservedSharedEnergy;
 
         string unavailableReason = GetAllySkillUnavailableReason(ally, ally.SelectedSkill);
-        if (ally.speedButton != null && ally.speedButton.ConnectedTarget != null && !string.IsNullOrEmpty(unavailableReason))
+        IReadOnlyList<SpeedButton> allyButtons = GetAllySpeedButtons(ally);
+        bool hasConnectedButton = false;
+        for (int i = 0; i < allyButtons.Count; i++)
+        {
+            if (allyButtons[i] != null && allyButtons[i].ConnectedTarget != null)
+            {
+                hasConnectedButton = true;
+                break;
+            }
+        }
+
+        if (hasConnectedButton && !string.IsNullOrEmpty(unavailableReason))
         {
             if (!isRefreshingSharedEnergyReservations)
             {
                 isRefreshingSharedEnergyReservations = true;
-                ally.speedButton.DisconnectLine();
+                for (int i = 0; i < allyButtons.Count; i++)
+                {
+                    if (allyButtons[i] != null && allyButtons[i].ConnectedTarget != null)
+                        allyButtons[i].DisconnectLine();
+                }
                 isRefreshingSharedEnergyReservations = false;
             }
 
@@ -623,10 +651,30 @@ public class BattleButton : MonoBehaviour
 
     private int GetReservedEnergyCostForAlly(BattleAllyController ally)
     {
-        if (ally == null || ally.IsDead || ally.speedButton == null || ally.speedButton.ConnectedTarget == null)
+        if (ally == null || ally.IsDead)
             return 0;
 
-        return Mathf.Max(0, ally.SelectedSkill != null ? ally.SelectedSkill.energyCost : 0);
+        int connectedButtonCount = GetConnectedAllyButtonCount(ally);
+        if (connectedButtonCount <= 0)
+            return 0;
+
+        return connectedButtonCount * Mathf.Max(0, ally.SelectedSkill != null ? ally.SelectedSkill.energyCost : 0);
+    }
+
+    private int GetConnectedAllyButtonCount(BattleAllyController ally)
+    {
+        if (ally == null || ally.IsDead)
+            return 0;
+
+        int connectedButtonCount = 0;
+        IReadOnlyList<SpeedButton> allyButtons = GetAllySpeedButtons(ally);
+        for (int i = 0; i < allyButtons.Count; i++)
+        {
+            if (allyButtons[i] != null && allyButtons[i].ConnectedTarget != null)
+                connectedButtonCount += 1;
+        }
+
+        return connectedButtonCount;
     }
 
     private void RefreshSharedEnergyReservations(BattleAllyController[] allies)
@@ -894,11 +942,15 @@ public class BattleButton : MonoBehaviour
 
         foreach (BattleAllyController ally in allies)
         {
-            if (ally.speedButton == null)
-                continue;
+            IReadOnlyList<SpeedButton> allyButtons = GetAllySpeedButtons(ally);
+            for (int i = 0; i < allyButtons.Count; i++)
+            {
+                if (allyButtons[i] == null)
+                    continue;
 
-            ally.speedButton.IsInteractable = false;
-            ally.speedButton.HideForCombat();
+                allyButtons[i].IsInteractable = false;
+                allyButtons[i].HideForCombat();
+            }
         }
 
         foreach (BattleEnemyController enemy in enemies)
@@ -914,18 +966,18 @@ public class BattleButton : MonoBehaviour
         if (battleSkillInfoOverlay != null && battleSkillInfoOverlay.IsVisible)
             battleSkillInfoOverlay.Hide(false);
 
-        List<CombatAction> actions = BuildCombatActions(allies, enemies);
-        foreach (CombatAction action in actions)
+        List<BattleCombatAction> actions = BuildCombatActions(allies, enemies);
+        foreach (BattleCombatAction action in actions)
         {
             switch (action.Type)
             {
-                case CombatActionType.Clash:
+                case BattleCombatActionType.Clash:
                     yield return ResolveClashAction(action.Ally, action.Enemy, action.EnemyButton);
                     break;
-                case CombatActionType.AllySingleAttack:
+                case BattleCombatActionType.AllySingleAttack:
                     yield return ResolveAllySingleAttackAction(action.Ally, action.Enemy);
                     break;
-                case CombatActionType.EnemySingleAttack:
+                case BattleCombatActionType.EnemySingleAttack:
                     yield return ResolveEnemySingleAttackAction(action.Enemy, action.TargetAlly, action.EnemyButton);
                     break;
             }
@@ -1043,88 +1095,9 @@ public class BattleButton : MonoBehaviour
             returnToOrigin);
     }
 
-    private List<CombatAction> BuildCombatActions(BattleAllyController[] allies, BattleEnemyController[] enemies)
+    private List<BattleCombatAction> BuildCombatActions(BattleAllyController[] allies, BattleEnemyController[] enemies)
     {
-        List<CombatAction> actions = new List<CombatAction>();
-        HashSet<SpeedButton> clashEnemyButtons = new HashSet<SpeedButton>();
-        int sequenceIndex = 0;
-
-        foreach (BattleAllyController ally in allies)
-        {
-            if (ally.IsDead || ally.speedButton == null)
-                continue;
-
-            SpeedButton enemyButton = ally.speedButton.ConnectedTarget;
-            if (enemyButton == null)
-            {
-                BattleLog($"{ally.GetDebugDisplayName()} \u672a\u6307\u5b9a\u76ee\u6807\uff0c\u672c\u56de\u5408\u8df3\u8fc7\u3002");
-                continue;
-            }
-
-            BattleEnemyController enemy = enemyButton.GetComponentInParent<BattleEnemyController>();
-            if (enemy == null || enemy.IsDead)
-                continue;
-
-            CombatAction action = new CombatAction
-            {
-                Ally = ally,
-                Enemy = enemy,
-                EnemyButton = enemyButton,
-                SequenceIndex = sequenceIndex++
-            };
-
-            if (ally.speedButton.IsContestedConnection && !clashEnemyButtons.Contains(enemyButton))
-            {
-                action.Type = CombatActionType.Clash;
-                action.PrioritySpeed = Mathf.Max(ally.Speed, enemy.Speed);
-                action.TiePriority = 0;
-                clashEnemyButtons.Add(enemyButton);
-            }
-            else
-            {
-                action.Type = CombatActionType.AllySingleAttack;
-                action.PrioritySpeed = ally.Speed;
-                action.TiePriority = 1;
-            }
-
-            actions.Add(action);
-        }
-
-        foreach (BattleEnemyController enemy in enemies)
-        {
-            if (enemy.IsDead)
-                continue;
-
-            IReadOnlyList<SpeedButton> enemyButtons = GetEnemySpeedButtons(enemy);
-            for (int i = 0; i < enemyButtons.Count; i++)
-            {
-                SpeedButton enemyButton = enemyButtons[i];
-                if (enemyButton == null || clashEnemyButtons.Contains(enemyButton))
-                    continue;
-
-                SpeedButton targetAllyButton = enemyButton.ConnectedTarget;
-                if (targetAllyButton == null)
-                    continue;
-
-                BattleAllyController targetAlly = targetAllyButton.GetComponentInParent<BattleAllyController>();
-                if (targetAlly == null || targetAlly.IsDead)
-                    continue;
-
-                actions.Add(new CombatAction
-                {
-                    Type = CombatActionType.EnemySingleAttack,
-                    Enemy = enemy,
-                    EnemyButton = enemyButton,
-                    TargetAlly = targetAlly,
-                    PrioritySpeed = enemy.Speed,
-                    TiePriority = 1,
-                    SequenceIndex = sequenceIndex++
-                });
-            }
-        }
-
-        actions.Sort(CompareCombatAction);
-        return actions;
+        return BattleCombatActionBuilder.Build(allies, enemies, BattleLog);
     }
 
     private static IReadOnlyList<SpeedButton> GetEnemySpeedButtons(BattleEnemyController enemy)
@@ -1138,6 +1111,20 @@ public class BattleButton : MonoBehaviour
 
         return enemy.speedButton != null
             ? new[] { enemy.speedButton }
+            : Array.Empty<SpeedButton>();
+    }
+
+    private static IReadOnlyList<SpeedButton> GetAllySpeedButtons(BattleAllyController ally)
+    {
+        if (ally == null)
+            return Array.Empty<SpeedButton>();
+
+        IReadOnlyList<SpeedButton> buttons = ally.SpeedButtons;
+        if (buttons != null && buttons.Count > 0)
+            return buttons;
+
+        return ally.speedButton != null
+            ? new[] { ally.speedButton }
             : Array.Empty<SpeedButton>();
     }
 
@@ -1494,6 +1481,7 @@ public class BattleButton : MonoBehaviour
                     else if (allyPower > enemyPower)
                     {
                         ApplyAllyTriggeredEffects(ally, enemy, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, 0);
+                        ApplyPlayerDefenseClashWinRelics(ally, enemy, i);
                         ShowZeroDamagePopup(ally.transform, false, enemyBonusPower);
                     }
                     else
@@ -1523,7 +1511,10 @@ public class BattleButton : MonoBehaviour
                 resolveImpactAction = () =>
                 {
                     if (allyPower > enemyPower)
+                    {
                         ApplyAllyTriggeredEffects(ally, enemy, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, 0);
+                        ApplyPlayerDefenseClashWinRelics(ally, enemy, i);
+                    }
                     else if (enemyPower > allyPower)
                         ApplyEnemyTriggeredEffects(enemy, ally, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, 0);
                 };
@@ -1910,6 +1901,10 @@ public class BattleButton : MonoBehaviour
         }
         if (dealtDamage > 0)
         {
+            ApplyPlayerHitRelics(attacker, target, diceIndex, dealtDamage);
+            if (target.IsDead)
+                ApplyEnemyKilledByPlayerRelics(attacker, target, diceIndex, dealtDamage);
+
             if (isSingleAttack)
                 ApplyAllyImmediateTriggeredEffects(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, dealtDamage);
             ApplyAllyImmediateTriggeredEffects(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnHit, dealtDamage);
@@ -1944,6 +1939,9 @@ public class BattleButton : MonoBehaviour
         }
         if (dealtDamage > 0)
         {
+            if (isSingleAttack)
+                ApplyPlayerTookSingleAttackRelics(attacker, target, diceIndex, dealtDamage);
+
             if (isSingleAttack)
                 ApplyEnemyImmediateTriggeredEffects(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, dealtDamage);
             ApplyEnemyImmediateTriggeredEffects(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnHit, dealtDamage);
@@ -2101,6 +2099,136 @@ public class BattleButton : MonoBehaviour
         }
 
         return adjustedDamage;
+    }
+
+    private void ApplyPlayerTookSingleAttackRelics(
+        BattleEnemyController attacker,
+        BattleAllyController target,
+        int diceIndex,
+        int dealtDamage)
+    {
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (attacker == null || target == null || dealtDamage <= 0 || activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return;
+
+        RelicExecutionContext context = RelicExecutionContext.CreatePlayerTookSingleAttackDamage(
+            null,
+            attacker.SelectedSkill,
+            diceIndex,
+            dealtDamage,
+            attacker.Speed,
+            target.Speed,
+            currentRound,
+            $"{attacker.GetInstanceID()}:{target.GetInstanceID()}:{currentRound}:{diceIndex}",
+            attacker,
+            target);
+        RelicSystem.Process(activeEncounter.relicInventory, context);
+
+        if (context.feedbackMessages == null)
+            return;
+
+        for (int i = 0; i < context.feedbackMessages.Count; i++)
+        {
+            if (!string.IsNullOrWhiteSpace(context.feedbackMessages[i]))
+                BattleLog(context.feedbackMessages[i]);
+        }
+    }
+
+    private void ApplyPlayerHitRelics(
+        BattleAllyController attacker,
+        BattleEnemyController target,
+        int diceIndex,
+        int dealtDamage)
+    {
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (attacker == null || target == null || dealtDamage <= 0 || activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return;
+
+        RelicExecutionContext context = RelicExecutionContext.CreatePlayerHitEnemy(
+            null,
+            attacker.SelectedSkill,
+            diceIndex,
+            dealtDamage,
+            attacker.Speed,
+            target.Speed,
+            currentRound,
+            BuildAllySkillUseRelicEventKey(attacker),
+            attacker,
+            target);
+        RelicSystem.Process(activeEncounter.relicInventory, context);
+
+        if (context.feedbackMessages == null)
+            return;
+
+        for (int i = 0; i < context.feedbackMessages.Count; i++)
+        {
+            if (!string.IsNullOrWhiteSpace(context.feedbackMessages[i]))
+                BattleLog(context.feedbackMessages[i]);
+        }
+    }
+
+    private void ApplyEnemyKilledByPlayerRelics(
+        BattleAllyController attacker,
+        BattleEnemyController target,
+        int diceIndex,
+        int dealtDamage)
+    {
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (attacker == null || target == null || dealtDamage <= 0 || activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return;
+
+        RelicExecutionContext context = RelicExecutionContext.CreateEnemyKilledByPlayer(
+            null,
+            attacker.SelectedSkill,
+            diceIndex,
+            dealtDamage,
+            attacker,
+            target);
+        RelicSystem.Process(activeEncounter.relicInventory, context);
+
+        if (context.feedbackMessages == null)
+            return;
+
+        for (int i = 0; i < context.feedbackMessages.Count; i++)
+        {
+            if (!string.IsNullOrWhiteSpace(context.feedbackMessages[i]))
+                BattleLog(context.feedbackMessages[i]);
+        }
+    }
+
+    private void ApplyPlayerDefenseClashWinRelics(BattleAllyController ally, BattleEnemyController enemy, int diceIndex)
+    {
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (ally == null || activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return;
+
+        RelicExecutionContext context = RelicExecutionContext.CreatePlayerDefenseClashWin(
+            null,
+            ally.SelectedSkill,
+            diceIndex,
+            currentRound,
+            ally,
+            enemy);
+        RelicSystem.Process(activeEncounter.relicInventory, context);
+
+        if (context.feedbackMessages == null)
+            return;
+
+        for (int i = 0; i < context.feedbackMessages.Count; i++)
+        {
+            if (!string.IsNullOrWhiteSpace(context.feedbackMessages[i]))
+                BattleLog(context.feedbackMessages[i]);
+        }
+    }
+
+    private string BuildAllySkillUseRelicEventKey(BattleAllyController attacker)
+    {
+        if (attacker == null)
+            return $"ally:none:{currentRound}";
+
+        EnemySkill_SO skill = attacker.SelectedSkill;
+        int skillId = skill != null ? skill.GetInstanceID() : 0;
+        return $"{attacker.GetInstanceID()}:{skillId}:{currentRound}";
     }
 
     private void ApplyReactiveOnHitStatusEffects(BattleEnemyController target)
@@ -2326,6 +2454,7 @@ public class BattleButton : MonoBehaviour
         ApplyEnemyStatusBurstEffects(attacker, currentTarget, diceIndex, trigger);
         ApplyEnemyHealingEffects(attacker, currentTarget, diceIndex, trigger, dealtDamage);
         ApplyEnemyStatusStackOperationEffects(attacker, currentTarget, diceIndex, trigger);
+        ApplyEnemySummonEffects(attacker, diceIndex, trigger);
         ApplyEnemyStageTransitionEffects(attacker, diceIndex, trigger);
     }
 
@@ -2805,6 +2934,9 @@ public class BattleButton : MonoBehaviour
             enemies);
         RelicSystem.Process(activeEncounter.relicInventory, context);
 
+        if (context.additionalSharedEnergyRecovery > 0)
+            RestoreSharedEnergy(context.additionalSharedEnergyRecovery);
+
         if (context.feedbackMessages == null || context.feedbackMessages.Count == 0)
             return;
 
@@ -2812,6 +2944,40 @@ public class BattleButton : MonoBehaviour
         {
             if (!string.IsNullOrWhiteSpace(context.feedbackMessages[i]))
                 BattleLog(context.feedbackMessages[i]);
+        }
+    }
+
+    private void ApplyBattleSetupRelics(BattleAllyController[] allies, BattleEnemyController[] enemies)
+    {
+        int extraButtonsPerAlly = 0;
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (activeEncounter != null && activeEncounter.relicInventory != null && activeEncounter.relicInventory.Count > 0)
+        {
+            RelicExecutionContext context = RelicExecutionContext.CreateBattleSetup(
+                null,
+                currentRound,
+                allies,
+                enemies);
+            RelicSystem.Process(activeEncounter.relicInventory, context);
+            extraButtonsPerAlly = currentRound == 1 ? Mathf.Max(0, context.additionalTemporaryAllySpeedButtons) : 0;
+
+            if (context.feedbackMessages != null)
+            {
+                for (int i = 0; i < context.feedbackMessages.Count; i++)
+                {
+                    if (!string.IsNullOrWhiteSpace(context.feedbackMessages[i]))
+                        BattleLog(context.feedbackMessages[i]);
+                }
+            }
+        }
+
+        if (allies == null)
+            return;
+
+        for (int i = 0; i < allies.Length; i++)
+        {
+            if (allies[i] != null)
+                allies[i].SetTemporaryExtraSpeedButtons(extraButtonsPerAlly);
         }
     }
 
@@ -2851,6 +3017,9 @@ public class BattleButton : MonoBehaviour
             enemies);
         RelicSystem.Process(activeEncounter.relicInventory, context);
 
+        if (context.additionalSharedEnergyRecovery > 0)
+            RestoreSharedEnergy(context.additionalSharedEnergyRecovery);
+
         if (context.feedbackMessages == null || context.feedbackMessages.Count == 0)
             return;
 
@@ -2859,6 +3028,42 @@ public class BattleButton : MonoBehaviour
             if (!string.IsNullOrWhiteSpace(context.feedbackMessages[i]))
                 BattleLog(context.feedbackMessages[i]);
         }
+    }
+
+    private void ApplyPendingBattleStartAllyStatusGrants(BattleAllyController[] allies)
+    {
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (activeEncounter == null || activeEncounter.battleStartAllyStatusGrantsApplied)
+            return;
+        if (activeEncounter.pendingBattleStartAllyStatusGrants == null || activeEncounter.pendingBattleStartAllyStatusGrants.Count == 0)
+        {
+            activeEncounter.battleStartAllyStatusGrantsApplied = true;
+            return;
+        }
+        if (allies == null || allies.Length == 0)
+        {
+            activeEncounter.battleStartAllyStatusGrantsApplied = true;
+            return;
+        }
+
+        for (int grantIndex = 0; grantIndex < activeEncounter.pendingBattleStartAllyStatusGrants.Count; grantIndex++)
+        {
+            PendingBattleStatusGrant grant = activeEncounter.pendingBattleStartAllyStatusGrants[grantIndex];
+            if (grant == null || grant.statusData == null || grant.stacks <= 0)
+                continue;
+
+            for (int allyIndex = 0; allyIndex < allies.Length; allyIndex++)
+            {
+                BattleAllyController ally = allies[allyIndex];
+                if (ally == null || ally.IsDead)
+                    continue;
+
+                if (ally.AddStatus(grant.statusData, grant.statusData.StatusId, grant.statusData.DisplayName, grant.stacks))
+                    BattleLog($"战斗开始：{ally.GetDebugDisplayName()} 获得 {grant.stacks} 层{grant.statusData.DisplayName}");
+            }
+        }
+
+        activeEncounter.battleStartAllyStatusGrantsApplied = true;
     }
 
     private void ApplyRoundStartStatusEffectsGeneric(BattleAllyController[] allies, BattleEnemyController[] enemies)
@@ -3132,6 +3337,64 @@ public class BattleButton : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void ApplyEnemySummonEffects(BattleEnemyController attacker, int diceIndex, EnemySkill_SO.DiceEffectTrigger trigger)
+    {
+        EnemySkill_SO skill = attacker != null ? attacker.SelectedSkill : null;
+        if (skill == null)
+            return;
+
+        EnemySkill_SO.DiceEffectSettings settings = skill.GetDiceEffectSettings(diceIndex);
+        if (settings.summonEffects == null || settings.summonEffects.Length == 0)
+            return;
+
+        BattleSceneEncounterBootstrap bootstrap = FindObjectOfType<BattleSceneEncounterBootstrap>();
+        if (bootstrap == null)
+            return;
+
+        for (int i = 0; i < settings.summonEffects.Length; i++)
+        {
+            EnemySkill_SO.SummonEnemyEffectEntry effect = settings.summonEffects[i];
+            if (effect.trigger != trigger || effect.enemyData == null)
+                continue;
+
+            int summonCount = Mathf.Max(1, effect.summonCount);
+            int summoned = 0;
+            for (int summonIndex = 0; summonIndex < summonCount; summonIndex++)
+            {
+                BattleEnemyController summonedEnemy = bootstrap.SpawnEnemyDuringBattle(effect.enemyData);
+                if (summonedEnemy == null)
+                    continue;
+
+                summoned++;
+                BattleLog($"词条触发：{attacker.GetDebugDisplayName()}[{BuildSummonEffectLabel(effect, i)}] 召唤了 {summonedEnemy.GetDebugDisplayName()}");
+            }
+
+            if (summoned > 0)
+                RefreshActiveRoundEnemiesFromScene();
+        }
+    }
+
+    private void RefreshActiveRoundEnemiesFromScene()
+    {
+        if (battleManager == null || battleManager.enemiesParent == null)
+            return;
+
+        BattleEnemyController[] enemies = battleManager.enemiesParent.GetComponentsInChildren<BattleEnemyController>(false);
+        SetActiveRoundCombatants(activeRoundAllies, enemies);
+
+        if (battleFeedbackSystem != null && activeRoundAllies != null)
+            battleFeedbackSystem.BindCombatants(activeRoundAllies, activeRoundEnemies);
+    }
+
+    private static string BuildSummonEffectLabel(EnemySkill_SO.SummonEnemyEffectEntry effect, int effectIndex)
+    {
+        if (!string.IsNullOrWhiteSpace(effect.effectName))
+            return effect.effectName;
+        if (effect.enemyData != null && !string.IsNullOrWhiteSpace(effect.enemyData.enemyName))
+            return effect.enemyData.enemyName;
+        return $"召唤效果#{effectIndex + 1}";
     }
 
     private static int ResolveAllyHealingAmount(BattleAllyController attacker, BattleEnemyController currentTarget, List<BattleEnemyController> opponents, EnemySkill_SO.HealingEffectEntry effect, int dealtDamage)
@@ -4182,6 +4445,7 @@ public class BattleButton : MonoBehaviour
         Dictionary<LootItem_SO, int> aggregated = new Dictionary<LootItem_SO, int>();
         Dictionary<Relic_SO, int> aggregatedRelics = new Dictionary<Relic_SO, int>();
         HashSet<Relic_SO> ownedRelics = BuildOwnedRelicSet(encounter != null ? encounter.relicInventory : null);
+        List<LootItem_SO> lootPool = new List<LootItem_SO>();
 
         for (int i = 0; i < lootTables.Count; i++)
         {
@@ -4198,6 +4462,9 @@ public class BattleButton : MonoBehaviour
                 LootTable_SO.LootDropEntry drop = drops[j];
                 if (drop == null || drop.lootItem == null || drop.dropChance <= 0f)
                     continue;
+
+                if (!lootPool.Contains(drop.lootItem))
+                    lootPool.Add(drop.lootItem);
 
                 if (rng.NextDouble() > Mathf.Clamp01(drop.dropChance))
                     continue;
@@ -4271,6 +4538,92 @@ public class BattleButton : MonoBehaviour
 
             return string.Compare(a.DisplayName, b.DisplayName, StringComparison.Ordinal);
         });
+
+        if (encounter != null
+            && encounter.relicInventory != null
+            && encounter.relicInventory.Count > 0
+            && results.lootRewards.Count > 0
+            && lootPool.Count > 0)
+        {
+            Dictionary<LootItem_SO, int> bonusLoot = new Dictionary<LootItem_SO, int>();
+            for (int rewardIndex = 0; rewardIndex < results.lootRewards.Count; rewardIndex++)
+            {
+                RunLootState reward = results.lootRewards[rewardIndex];
+                if (reward == null || reward.lootItem == null || reward.amount <= 0)
+                    continue;
+
+                for (int amountIndex = 0; amountIndex < reward.amount; amountIndex++)
+                {
+                    RelicExecutionContext lootContext = RelicExecutionContext.CreateBattleLootRewardGranted(
+                        null,
+                        reward.lootItem,
+                        lootPool);
+                    RelicSystem.Process(encounter.relicInventory, lootContext);
+
+                    if (lootContext.bonusBattleLootRewards != null)
+                    {
+                        for (int bonusIndex = 0; bonusIndex < lootContext.bonusBattleLootRewards.Count; bonusIndex++)
+                        {
+                            LootItem_SO bonusItem = lootContext.bonusBattleLootRewards[bonusIndex];
+                            if (bonusItem == null)
+                                continue;
+
+                            if (bonusLoot.ContainsKey(bonusItem))
+                                bonusLoot[bonusItem] += 1;
+                            else
+                                bonusLoot.Add(bonusItem, 1);
+                        }
+                    }
+
+                    if (lootContext.feedbackMessages != null)
+                    {
+                        for (int messageIndex = 0; messageIndex < lootContext.feedbackMessages.Count; messageIndex++)
+                        {
+                            if (!string.IsNullOrWhiteSpace(lootContext.feedbackMessages[messageIndex]))
+                                BattleLog(lootContext.feedbackMessages[messageIndex]);
+                        }
+                    }
+                }
+            }
+
+            foreach (KeyValuePair<LootItem_SO, int> pair in bonusLoot)
+            {
+                bool merged = false;
+                for (int i = 0; i < results.lootRewards.Count; i++)
+                {
+                    RunLootState existing = results.lootRewards[i];
+                    if (existing == null || existing.lootItem != pair.Key)
+                        continue;
+
+                    existing.amount += pair.Value;
+                    merged = true;
+                    break;
+                }
+
+                if (!merged)
+                {
+                    results.lootRewards.Add(new RunLootState
+                    {
+                        lootItem = pair.Key,
+                        amount = pair.Value
+                    });
+                }
+            }
+
+            results.lootRewards.Sort((a, b) =>
+            {
+                if (a == null || a.lootItem == null)
+                    return 1;
+                if (b == null || b.lootItem == null)
+                    return -1;
+
+                int rarityCompare = b.lootItem.rarity.CompareTo(a.lootItem.rarity);
+                if (rarityCompare != 0)
+                    return rarityCompare;
+
+                return string.Compare(a.DisplayName, b.DisplayName, StringComparison.Ordinal);
+            });
+        }
 
         foreach (KeyValuePair<Relic_SO, int> pair in aggregatedRelics)
         {
@@ -4409,19 +4762,6 @@ public class BattleButton : MonoBehaviour
         }
 
         return entries;
-    }
-
-    private static int CompareCombatAction(CombatAction a, CombatAction b)
-    {
-        int speedCompare = b.PrioritySpeed.CompareTo(a.PrioritySpeed);
-        if (speedCompare != 0)
-            return speedCompare;
-
-        int tieCompare = a.TiePriority.CompareTo(b.TiePriority);
-        if (tieCompare != 0)
-            return tieCompare;
-
-        return a.SequenceIndex.CompareTo(b.SequenceIndex);
     }
 
     private static int CountLiving(BattleAllyController[] allies)

@@ -232,7 +232,16 @@ public class BattleEnemyController : MonoBehaviour
         EnemySkill_SO.DicePowerRange range = GetDicePowerRange(diceIndex);
         int minPower = Mathf.Max(1, range.minPower);
         int maxPower = Mathf.Max(minPower, range.maxPower);
-        return UnityEngine.Random.Range(minPower, maxPower + 1);
+
+        switch (ResolveForcedRollMode())
+        {
+            case ForcedRollMode.Min:
+                return minPower;
+            case ForcedRollMode.Max:
+                return maxPower;
+            default:
+                return UnityEngine.Random.Range(minPower, maxPower + 1);
+        }
     }
 
     public int RollCombatPower()
@@ -443,8 +452,9 @@ public class BattleEnemyController : MonoBehaviour
             : ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType.PowerPenaltyFlat);
         int netPowerAdjustment = flatPowerBonus - flatPowerPenalty;
         int minPowerPenalty = ResolveStatusMinPowerPenalty();
+        int maxPowerPenalty = ResolveStatusMaxPowerPenalty();
         int minPower = Mathf.Max(1, baseRange.minPower + netPowerAdjustment - minPowerPenalty);
-        int maxPower = Mathf.Max(minPower, baseRange.maxPower + netPowerAdjustment);
+        int maxPower = Mathf.Max(minPower, baseRange.maxPower + netPowerAdjustment - maxPowerPenalty);
         return new EnemySkill_SO.DicePowerRange
         {
             minPower = minPower,
@@ -472,6 +482,59 @@ public class BattleEnemyController : MonoBehaviour
         }
 
         return Mathf.Max(0, totalPenalty);
+    }
+
+    private int ResolveStatusMaxPowerPenalty()
+    {
+        if (statusEntries.Count == 0)
+            return 0;
+
+        int totalPenalty = 0;
+        for (int i = 0; i < statusEntries.Count; i++)
+        {
+            BattleStatusRuntimeEntry entry = statusEntries[i];
+            if (entry == null || entry.stacks <= 0 || entry.statusData == null)
+                continue;
+            if (IsStatusEffectSuppressed(entry))
+                continue;
+            if (entry.statusData.BehaviorType != BattleStatus_SO.StatusBehaviorType.MaxPowerPenalty)
+                continue;
+
+            totalPenalty += entry.stacks * Mathf.Max(0, entry.statusData.PowerPerStack);
+        }
+
+        return Mathf.Max(0, totalPenalty);
+    }
+
+    private ForcedRollMode ResolveForcedRollMode()
+    {
+        bool forceMax = false;
+        for (int i = 0; i < statusEntries.Count; i++)
+        {
+            BattleStatusRuntimeEntry entry = statusEntries[i];
+            if (entry == null || entry.stacks <= 0 || entry.statusData == null)
+                continue;
+            if (IsStatusEffectSuppressed(entry))
+                continue;
+
+            switch (entry.statusData.BehaviorType)
+            {
+                case BattleStatus_SO.StatusBehaviorType.ForceRollToMin:
+                    return ForcedRollMode.Min;
+                case BattleStatus_SO.StatusBehaviorType.ForceRollToMax:
+                    forceMax = true;
+                    break;
+            }
+        }
+
+        return forceMax ? ForcedRollMode.Max : ForcedRollMode.None;
+    }
+
+    private enum ForcedRollMode
+    {
+        None = 0,
+        Min = 1,
+        Max = 2
     }
 
     private int ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType behaviorType)
@@ -1081,9 +1144,25 @@ public class BattleEnemyController : MonoBehaviour
                     return false;
 
                 return (roundNumber - firstRound) % repeatInterval == 0;
+            case EnemyData_SO.ConditionalSkillConditionType.AliveEnemyCountAtMost:
+                return CountAliveEnemiesOnBattlefield() <= Mathf.Max(1, rule.requiredAliveEnemyCount);
             default:
                 return false;
         }
+    }
+
+    private int CountAliveEnemiesOnBattlefield()
+    {
+        BattleEnemyController[] enemies = FindObjectsOfType<BattleEnemyController>(false);
+        int aliveCount = 0;
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            BattleEnemyController enemy = enemies[i];
+            if (enemy != null && !enemy.IsDead)
+                aliveCount++;
+        }
+
+        return aliveCount;
     }
 
     private bool IsStatusStageTransitionRuleSatisfied(

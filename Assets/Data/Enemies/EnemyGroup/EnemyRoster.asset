@@ -28,7 +28,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 12c5d83ad6e87b242b18183fc3df8aca, type: 2}
     - {fileID: 11400000, guid: 4bb958f73b584ae080fc87519f7742cd, type: 2}
   - dangerBand: 1
-    standardGroups: []
+    standardGroups:
+    - {fileID: 11400000, guid: abec5439fa064a5b83642213a7e7b57b, type: 2}
     eliteGroups: []
   - dangerBand: 2
     standardGroups: []

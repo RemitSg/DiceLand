@@ -30,7 +30,15 @@ public class Relic_SO : ScriptableObject
         OnPlayerAboutToDealDamage = 14,
         OnEnemyDeath = 15,
         OnPlayerAboutToTakeLethalDamage = 16,
-        OnMerchantPurchaseCompleted = 17
+        OnMerchantPurchaseCompleted = 17,
+        OnKeyCollected = 18,
+        OnCalamityApplied = 19,
+        OnPlayerTookSingleAttackDamage = 20,
+        OnPlayerHitEnemy = 21,
+        OnPlayerDefenseClashWin = 22,
+        OnEnemyKilledByPlayer = 23,
+        OnBattleLootRewardGranted = 24,
+        OnBattleSetup = 25
     }
 
     public enum RelicBuiltInEffectType
@@ -64,7 +72,25 @@ public class Relic_SO : ScriptableObject
         ApplyStatusToRandomEnemyOnSpecificRound = 26,
         ModifyOutgoingDamageFlatWhenTargetHasStatus = 27,
         SurviveLethalDamageOncePerBattleAndApplyStatus = 28,
-        ModifyPlayerDiceWhenSkillUsedConsecutively = 29
+        ModifyPlayerDiceWhenSkillUsedConsecutively = 29,
+        HealPartyPercentOnEnteringUnvisitedMerchantTile = 30,
+        ReduceIncomingAttackDamagePercentWhenAttackerHasStatus = 31,
+        RestoreActionPointsOnKeyCollectedByPercentMax = 32,
+        ApplyStatusToAllAlliesOnOddRounds = 33,
+        ReduceIncomingDamageFlatPerStatusStacks = 34,
+        ApplyStatusToAttackerAfterTakingSingleAttackDamageOncePerRound = 35,
+        ReflectSingleAttackDamageToAttackerPercent = 36,
+        ChanceToQueueStatusOnHitWhenSlowerOncePerSkillUse = 37,
+        ApplyStatusToSelfOnDefenseClashWin = 38,
+        ApplyStatusToSelfOnEnemyKilledByPlayer = 39,
+        GrantExtraRandomLootOfSameRarityAfterBattle = 40,
+        QueueNextBattleAllyStatusOnCalamity = 41,
+        IncreasePartyMaxHpAndHealOnCalamity = 42,
+        TransferStatusToHighestHpAllyOnPlayerDeath = 43,
+        RestoreSharedEnergyAtBattleStartInEliteOrBoss = 44,
+        GrantTemporaryExtraAllySpeedButtonsOnFirstRound = 45,
+        TransferSpeedButtonsToLowestHpAllyOnPlayerDeath = 46,
+        ModifyDefenseSkillMaxPower = 47
     }
 
     [Serializable]

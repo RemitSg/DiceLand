@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92a6c8410a56dcb4db5bca4c318c5c64, type: 3}
+  m_Name: "\u81EA\u9002\u5E94\u80CC\u5FC3"
+  m_EditorClassIdentifier: 
+  relicId: 42
+  relicName: "\u81EA\u9002\u5E94\u80CC\u5FC3"
+  description: "\u89E6\u53D1\u707E\u5384\u540E\uFF0C\u4E0B\u4E00\u573A\u6218\u6597\u6240\u6709\u53CB\u65B9\u89D2\u8272\u83B7\u5F97
+    1 \u5C42\u5F3A\u58EE\u4E0E 1 \u5C42\u91CD\u9632"
+  additionalDescription: 
+  rarity: 2
+  icon: {fileID: 21300000, guid: 5910d9a6dc38a484c8e271e7f93e3ffc, type: 3}
+  builtInEffects:
+  - effectName: 
+    trigger: 19
+    effectType: 41
+    chance: 1
+    requireUnvisitedTile: 0
+    statusData: {fileID: 11400000, guid: 876070f0ec664a02a8c175b8de80baf1, type: 2}
+    amount: 1
+    conditionStatusData: {fileID: 0}
+    requiredStatusStacks: 1
+    requiredSpeed: 1
+    requiredSpeedMin: 1
+    requiredSpeedMax: 1
+    statusApplyTiming: 0
+    applyAfterRoundStarts: 1
+    requiredRound: 1
+    requiredRoundMin: 1
+    requiredRoundMax: 1
+    powerAmount: 0
+    minPowerAmount: 0
+    maxPowerAmount: 0
+    maxStacks: 1
+    requiredDistinctStatusCount: 1
+    requiredConsecutiveSkillUses: 1
+  - effectName: 
+    trigger: 19
+    effectType: 41
+    chance: 1
+    requireUnvisitedTile: 0
+    statusData: {fileID: 11400000, guid: d24636f27461444cb38f48046ab1dcd9, type: 2}
+    amount: 1
+    conditionStatusData: {fileID: 0}
+    requiredStatusStacks: 1
+    requiredSpeed: 1
+    requiredSpeedMin: 1
+    requiredSpeedMax: 1
+    statusApplyTiming: 0
+    applyAfterRoundStarts: 1
+    requiredRound: 1
+    requiredRoundMin: 1
+    requiredRoundMax: 1
+    powerAmount: 0
+    minPowerAmount: 0
+    maxPowerAmount: 0
+    maxStacks: 1
+    requiredDistinctStatusCount: 1
+    requiredConsecutiveSkillUses: 1
+  customEffectHandler: {fileID: 0}

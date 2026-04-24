@@ -32,7 +32,8 @@ public class EnemyData_SO : ScriptableObject
     public enum ConditionalSkillConditionType
     {
         HealthBelowPercent = 0,
-        RoundSequence = 1
+        RoundSequence = 1,
+        AliveEnemyCountAtMost = 2
     }
 
     public enum StageStatusTargetMode
@@ -63,6 +64,7 @@ public class EnemyData_SO : ScriptableObject
         [Min(0)] public int priority;
         [Min(1)] public int maxSlotsPerRound;
         public bool useOncePerBattle;
+        [Min(1)] public int requiredAliveEnemyCount;
     }
 
     [System.Serializable]
@@ -309,6 +311,7 @@ public class EnemyData_SO : ScriptableObject
             rule.repeatEveryNRounds = Mathf.Max(1, rule.repeatEveryNRounds);
             rule.priority = Mathf.Max(0, rule.priority);
             rule.maxSlotsPerRound = Mathf.Max(1, rule.maxSlotsPerRound);
+            rule.requiredAliveEnemyCount = Mathf.Max(1, rule.requiredAliveEnemyCount);
             conditionalSkillRules[i] = rule;
         }
 

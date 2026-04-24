@@ -183,6 +183,8 @@ public class RunGameManager : MonoBehaviour
             actionPointSystem.ActionPointsExhausted -= HandleActionPointsExhausted;
         if (tileResolver != null)
             tileResolver.TileResolved -= HandleTileResolved;
+        if (tileResolver != null)
+            tileResolver.KeyCollected -= HandleKeyCollected;
         if (mapViewController != null)
             mapViewController.TileLongPressed -= HandleTileLongPressed;
         if (mapEventOverlay != null)
@@ -644,6 +646,21 @@ public class RunGameManager : MonoBehaviour
         RefreshHUD(message);
     }
 
+    private void HandleKeyCollected(BoardTileData tile)
+    {
+        if (tile == null || runState == null || actionPointSystem == null)
+            return;
+
+        RelicExecutionContext context = RelicExecutionContext.CreateKeyCollected(
+            runState,
+            this,
+            tile,
+            actionPointSystem);
+        RelicSystem.Process(runState, Relic_SO.RelicTrigger.OnKeyCollected, context);
+        if (context.feedbackMessages != null && context.feedbackMessages.Count > 0)
+            RefreshHUD(string.Join("\n", context.feedbackMessages));
+    }
+
     private void HandleTileLongPressed(BoardTileData tile)
     {
         if (tile == null)
@@ -899,6 +916,7 @@ public class RunGameManager : MonoBehaviour
             playerMapController.PlayerMovedToTile += HandlePlayerMovedToTile;
             actionPointSystem.ActionPointsExhausted += HandleActionPointsExhausted;
             tileResolver.TileResolved += HandleTileResolved;
+            tileResolver.KeyCollected += HandleKeyCollected;
             mapViewController.TileLongPressed += HandleTileLongPressed;
             subscriptionsBound = true;
         }
@@ -1346,6 +1364,7 @@ public class RunGameManager : MonoBehaviour
 
         tile.isVisited = true;
         boardManager.RefreshTile(tile.coord);
+        List<PendingBattleStatusGrant> pendingBattleStartGrants = runState.ConsumePendingNextBattleAllyStatusGrants();
         MapRunRuntime.SaveSnapshot(SceneManager.GetActiveScene().name, runState, boardManager, actionPointSystem, pendingCalamityTiers);
 
         BattleEncounterRuntime.SetEncounter(new BattleEncounterData
@@ -1363,6 +1382,7 @@ public class RunGameManager : MonoBehaviour
             partyMembers = new List<RunPartyMemberState>(runState.GetLivingPartyMembers()),
             relicInventory = runState.relicInventory != null ? new List<RunRelicState>(runState.relicInventory.Count) : new List<RunRelicState>(),
             activeCalamities = runState.activeCalamities != null ? new List<RunCalamityState>(runState.activeCalamities.Count) : new List<RunCalamityState>(),
+            pendingBattleStartAllyStatusGrants = pendingBattleStartGrants,
             seed = tile.encounterSeed,
             moneyGained = moneyRewardTable != null ? moneyRewardTable.RollReward(tile.tileType, tile.dangerBand, tile.encounterSeed) : 0,
             isTutorialEncounter = isTutorialRun,
@@ -2561,6 +2581,8 @@ public class RunGameManager : MonoBehaviour
 
         BattleEncounterData encounterData = pendingEventEncounterData;
         pendingEventEncounterData = null;
+        if (runState != null)
+            encounterData.pendingBattleStartAllyStatusGrants = runState.ConsumePendingNextBattleAllyStatusGrants();
 
         MapRunRuntime.SaveSnapshot(SceneManager.GetActiveScene().name, runState, boardManager, actionPointSystem, pendingCalamityTiers);
         BattleEncounterRuntime.SetEncounter(encounterData);
@@ -2671,7 +2693,14 @@ public class RunGameManager : MonoBehaviour
 
         runState.AddCalamity(calamity, calamityTier);
         calamity.customEffectHandler?.OnCalamityApplied(runState, this);
-        RefreshHUD($"\u5df2\u627f\u53d7\u707e\u5384\uff1a{calamity.DisplayName}");
+        RelicExecutionContext context = RelicExecutionContext.CreateCalamityApplied(runState, this, calamity, calamityTier);
+        RelicSystem.Process(runState, Relic_SO.RelicTrigger.OnCalamityApplied, context);
+
+        string calamityMessage = $"\u5df2\u627f\u53d7\u707e\u5384\uff1a{calamity.DisplayName}";
+        if (context.feedbackMessages != null && context.feedbackMessages.Count > 0)
+            calamityMessage = $"{calamityMessage}\n{string.Join("\n", context.feedbackMessages)}";
+
+        RefreshHUD(calamityMessage);
         TryPresentPendingCalamity();
     }
 

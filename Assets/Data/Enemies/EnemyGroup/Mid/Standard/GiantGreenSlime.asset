@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f714091cd55ec1458ddd822765cce08, type: 3}
+  m_Name: GiantGreenSlime
+  m_EditorClassIdentifier: 
+  groupID: 17
+  groupName: GiantGreenSlime
+  description: 
+  enemies:
+  - {fileID: 11400000, guid: 6317c4b61e174516a9dfceac6f801390, type: 2}
+  attributes: []
+  lootTables:
+  - {fileID: 11400000, guid: 0b492371534f471419f9d48ded4ebe5a, type: 2}

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e392a4d75ff41fd4b82ace7efd8b72e3, type: 3}
+  m_Name: Poison
+  m_EditorClassIdentifier: 
+  statusId: poison
+  displayName: "\u4E2D\u6BD2"
+  description: "\u6280\u80FD\u9AB0\u5B50\u7684\u6700\u5927\u5A01\u529B\u964D\u4F4E\u7B49\u540C\u4E8E\u5C42\u6570\u7684\u6570\u503C\uFF0C\u4F46\u4E0D\u4F1A\u4F4E\u4E8E\u6700\u5C0F\u5A01\u529B\u3002\u56DE\u5408\u7ED3\u675F\u65F6\u5931\u53BB\u6240\u6709\u5C42\u6570"
+  iconSprite: {fileID: 21300000, guid: 4fdefa55a491b3b48a568f5ff28ef775, type: 3}
+  accentColor: {r: 0.2857143, g: 0.7137255, b: 0.32156864, a: 1}
+  tickEffectPrefab: {fileID: 0}
+  tickEffectPositionOffset: {x: 0, y: 0, z: 0}
+  tickEffectRotationOffset: {x: 0, y: 0, z: 0}
+  tickEffectScale: {x: 1, y: 1, z: 1}
+  tickEffectSortingOrderOffset: 0
+  overrideTickEffectDuration: 0
+  tickEffectDuration: 0.5
+  behaviorType: 12
+  powerPerStack: 1
+  linkedStatusData: {fileID: 0}
+  onHitDecayMode: 0
+  roundStartDecayMode: 0
+  roundEndDecayMode: 2

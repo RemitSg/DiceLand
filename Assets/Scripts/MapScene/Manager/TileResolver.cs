@@ -7,6 +7,7 @@ public class TileResolver : MonoBehaviour
     [SerializeField] private MoneyRewardTable_SO moneyRewardTable;
 
     public event Action<BoardTileData, string> TileResolved;
+    public event Action<BoardTileData> KeyCollected;
 
     public void ConfigureMoneyRewardTable(MoneyRewardTable_SO rewardTable)
     {
@@ -45,7 +46,10 @@ public class TileResolver : MonoBehaviour
                 message = ResolveRestTile(tile);
                 break;
             case MapTileType.Key:
+                bool wasResolvedBeforeKey = tile.isResolved;
                 message = ResolveKeyTile(tile, runState);
+                if (!wasResolvedBeforeKey && tile.isResolved)
+                    KeyCollected?.Invoke(tile);
                 break;
             case MapTileType.Boss:
                 message = ResolveBossTile(runState);

@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicId: 19
   relicName: "\u5E7D\u5F71\u6597\u7BF7"
-  description: "\u53CB\u65B9\u89D2\u8272\u901F\u5EA6\u5927\u4E8E 5 \u65F6\uFF0C\u6240\u53D7\u4F24\u5BB3 -30%"
-  additionalDescription: "\u5F53\u6B65\u4F10\u5FEB\u5230\u8DB3\u4EE5\u878D\u5165\u9634\u5F71\uFF0C\u6563\u843D\u7684\u5200\u950B\u4E5F\u4F1A\u5931\u53BB\u51C6\u5934\u3002"
+  description: "\u53CB\u65B9\u89D2\u8272\u901F\u5EA6\u5927\u4E8E 5 \u65F6\uFF0C\u6240\u53D7\u4F24\u5BB3
+    -30%"
+  additionalDescription: "\u5F53\u6B65\u4F10\u5FEB\u5230\u8DB3\u4EE5\u878D\u5165\u9634\u5F71\uFF0C\u518D\u7CBE\u51C6\u7684\u5200\u950B\u4E5F\u4F1A\u5931\u53BB\u51C6\u5934\u3002"
   rarity: 2
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 58e296484cb384648bb820a1f0ef259b, type: 3}
   builtInEffects:
   - effectName: 
     trigger: 13
@@ -29,8 +30,8 @@ MonoBehaviour:
     conditionStatusData: {fileID: 0}
     requiredStatusStacks: 1
     requiredSpeed: 5
-    requiredSpeedMin: 1
-    requiredSpeedMax: 1
+    requiredSpeedMin: 5
+    requiredSpeedMax: 5
     statusApplyTiming: 0
     applyAfterRoundStarts: 1
     requiredRound: 1

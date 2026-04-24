@@ -200,6 +200,53 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
         Debug.Log($"[BattleSceneEncounterBootstrap] Spawned encounter '{encounterLabel}' with {battleManager.ManagedData.EnemyCount} enemies.");
     }
 
+    public BattleEnemyController SpawnEnemyDuringBattle(EnemyData_SO enemyData)
+    {
+        if (enemyData == null)
+            return null;
+
+        EnsureBattleSetup();
+        if (!battleManager.IsInitialized)
+            battleManager.Initialize();
+        if (battleManager.ManagedData == null)
+            battleManager.ManagedData = new BattleData();
+
+        int existingCount = 0;
+        BattleEnemyController[] existingEnemies = enemiesParent != null
+            ? enemiesParent.GetComponentsInChildren<BattleEnemyController>(false)
+            : Array.Empty<BattleEnemyController>();
+        for (int i = 0; i < existingEnemies.Length; i++)
+        {
+            if (existingEnemies[i] != null && !existingEnemies[i].IsDead)
+                existingCount++;
+        }
+
+        List<Transform> anchorPoints = CollectAnchorsByPrefix(enemyAnchorNamePrefix);
+        Transform anchor = existingCount < anchorPoints.Count ? anchorPoints[existingCount] : null;
+        Vector3 spawnPosition = anchor != null
+            ? anchor.position
+            : CalculateFallbackSpawnPosition(enemyFormationCenter, existingCount, existingCount + 1);
+
+        int previousEnemyCount = battleManager.ManagedData.EnemyCount;
+        SpawnEnemy(enemyData, spawnPosition, existingCount);
+
+        BattleEnemyController[] refreshedEnemies = enemiesParent != null
+            ? enemiesParent.GetComponentsInChildren<BattleEnemyController>(false)
+            : Array.Empty<BattleEnemyController>();
+        for (int i = 0; i < refreshedEnemies.Length; i++)
+        {
+            BattleEnemyController enemy = refreshedEnemies[i];
+            if (enemy != null && enemy.enemyData == enemyData && !enemy.IsDead)
+            {
+                if (battleManager.ManagedData.EnemyCount <= previousEnemyCount)
+                    battleManager.ManagedData.EnemyCount = previousEnemyCount + 1;
+                return enemy;
+            }
+        }
+
+        return null;
+    }
+
     private void SpawnAlly(RunPartyMemberState allyState, Vector3 worldPosition, int index)
     {
         EnsureWhiteSprite();
@@ -255,8 +302,14 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
             1,
             allySpeedButtonLocalOffset,
             Vector2.zero,
-            0f);
-        battleAlly.speedButton = allyButtons.Count > 0 ? allyButtons[0] : null;
+            0.82f);
+        battleAlly.RegisterSpeedButtons(allyButtons);
+        battleAlly.ConfigureSpeedButtonLayout(
+            battleAlly.speedButton,
+            topY,
+            allySpeedButtonLocalOffset,
+            Vector2.zero,
+            0.82f);
 
         if (!allyObject.activeSelf)
             allyObject.SetActive(true);

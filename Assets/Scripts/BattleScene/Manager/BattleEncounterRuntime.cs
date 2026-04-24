@@ -32,6 +32,7 @@ public sealed class BattleEncounterData
     public List<RunBlueprintState> pendingVictoryBlueprintRewards = new List<RunBlueprintState>();
     public List<RunRelicState> relicInventory = new List<RunRelicState>();
     public List<RunCalamityState> activeCalamities = new List<RunCalamityState>();
+    public List<PendingBattleStatusGrant> pendingBattleStartAllyStatusGrants = new List<PendingBattleStatusGrant>();
     public BattleEncounterResolutionOverride resolutionOverride;
     public int seed;
     public bool wasVictory;
@@ -40,6 +41,8 @@ public sealed class BattleEncounterData
     public bool isTutorialEncounter;
     public bool returnToMainMenuOnVictory;
     public bool restartBattleOnDefeat = true;
+    [NonSerialized] public bool battleStartAllyStatusGrantsApplied;
+    [NonSerialized] private HashSet<string> roundRelicProcKeys;
 
     public IReadOnlyList<EnemyData_SO> Enemies =>
         enemyGroup != null ? enemyGroup.GetEnemies() : Array.Empty<EnemyData_SO>();
@@ -48,6 +51,25 @@ public sealed class BattleEncounterData
 
     public bool HasEnemies => enemyGroup != null && enemyGroup.IsValid;
     public bool HasAllies => partyMembers != null && partyMembers.Count > 0;
+
+    public void ResetRoundRelicProcKeys()
+    {
+        if (roundRelicProcKeys == null)
+            roundRelicProcKeys = new HashSet<string>(StringComparer.Ordinal);
+        else
+            roundRelicProcKeys.Clear();
+    }
+
+    public bool TryRegisterRoundRelicProc(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+            return true;
+
+        if (roundRelicProcKeys == null)
+            roundRelicProcKeys = new HashSet<string>(StringComparer.Ordinal);
+
+        return roundRelicProcKeys.Add(key);
+    }
 }
 
 public static class BattleEncounterRuntime

@@ -146,6 +146,22 @@ public class RunCalamityState
 }
 
 [Serializable]
+public class PendingBattleStatusGrant
+{
+    public BattleStatus_SO statusData;
+    public int stacks;
+
+    public PendingBattleStatusGrant Clone()
+    {
+        return new PendingBattleStatusGrant
+        {
+            statusData = statusData,
+            stacks = stacks
+        };
+    }
+}
+
+[Serializable]
 public class RunState
 {
     public string difficultyName;
@@ -167,6 +183,7 @@ public class RunState
     public List<RunCalamityState> activeCalamities = new List<RunCalamityState>();
     public List<string> drawnCalamityIds = new List<string>();
     public List<string> drawnEventIds = new List<string>();
+    public List<PendingBattleStatusGrant> pendingNextBattleAllyStatusGrants = new List<PendingBattleStatusGrant>();
 
     public bool IsBossUnlocked => currentKeys >= requiredKeys;
 
@@ -609,6 +626,48 @@ public class RunState
         });
     }
 
+    public void QueueNextBattleAllyStatusGrant(BattleStatus_SO statusData, int stacks)
+    {
+        if (statusData == null || stacks <= 0)
+            return;
+
+        if (pendingNextBattleAllyStatusGrants == null)
+            pendingNextBattleAllyStatusGrants = new List<PendingBattleStatusGrant>();
+
+        for (int i = 0; i < pendingNextBattleAllyStatusGrants.Count; i++)
+        {
+            PendingBattleStatusGrant entry = pendingNextBattleAllyStatusGrants[i];
+            if (entry == null || entry.statusData != statusData)
+                continue;
+
+            entry.stacks += stacks;
+            return;
+        }
+
+        pendingNextBattleAllyStatusGrants.Add(new PendingBattleStatusGrant
+        {
+            statusData = statusData,
+            stacks = stacks
+        });
+    }
+
+    public List<PendingBattleStatusGrant> ConsumePendingNextBattleAllyStatusGrants()
+    {
+        List<PendingBattleStatusGrant> consumed = new List<PendingBattleStatusGrant>();
+        if (pendingNextBattleAllyStatusGrants != null)
+        {
+            for (int i = 0; i < pendingNextBattleAllyStatusGrants.Count; i++)
+            {
+                PendingBattleStatusGrant entry = pendingNextBattleAllyStatusGrants[i];
+                if (entry != null && entry.statusData != null && entry.stacks > 0)
+                    consumed.Add(entry.Clone());
+            }
+        }
+
+        pendingNextBattleAllyStatusGrants = new List<PendingBattleStatusGrant>();
+        return consumed;
+    }
+
     private static string GetCalamityIdentity(Calamity_SO calamityData)
     {
         if (calamityData == null)
@@ -758,6 +817,16 @@ public class RunState
             clone.drawnCalamityIds = new List<string>(drawnCalamityIds);
         if (drawnEventIds != null)
             clone.drawnEventIds = new List<string>(drawnEventIds);
+        if (pendingNextBattleAllyStatusGrants != null)
+        {
+            clone.pendingNextBattleAllyStatusGrants = new List<PendingBattleStatusGrant>(pendingNextBattleAllyStatusGrants.Count);
+            for (int i = 0; i < pendingNextBattleAllyStatusGrants.Count; i++)
+            {
+                PendingBattleStatusGrant entry = pendingNextBattleAllyStatusGrants[i];
+                if (entry != null)
+                    clone.pendingNextBattleAllyStatusGrants.Add(entry.Clone());
+            }
+        }
 
         return clone;
     }

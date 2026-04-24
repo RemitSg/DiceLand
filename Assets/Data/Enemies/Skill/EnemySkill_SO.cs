@@ -408,6 +408,23 @@ public class EnemySkill_SO : ScriptableObject
     }
 
     [System.Serializable]
+    public struct SummonEnemyEffectEntry
+    {
+        [Tooltip("Optional effect label for debugging and UI.")]
+        public string effectName;
+
+        [Tooltip("When this summon effect should trigger.")]
+        public DiceEffectTrigger trigger;
+
+        [Tooltip("Enemy data to spawn.")]
+        public EnemyData_SO enemyData;
+
+        [Min(1)]
+        [Tooltip("How many copies should be summoned.")]
+        public int summonCount;
+    }
+
+    [System.Serializable]
     public struct DiceEffectSettings
     {
         [Tooltip("Effects triggered by this die.")]
@@ -430,6 +447,9 @@ public class EnemySkill_SO : ScriptableObject
 
         [Tooltip("Enemy stage transitions triggered by this die.")]
         public EnemyStageTransitionEffectEntry[] enemyStageTransitionEffects;
+
+        [Tooltip("Enemy summons triggered by this die.")]
+        public SummonEnemyEffectEntry[] summonEffects;
     }
 
     [System.Serializable]
@@ -778,6 +798,17 @@ public class EnemySkill_SO : ScriptableObject
                 EnemyStageTransitionEffectEntry entry = settings.enemyStageTransitionEffects[i];
                 entry.targetStageIndex = Mathf.Max(0, entry.targetStageIndex);
                 settings.enemyStageTransitionEffects[i] = entry;
+            }
+        }
+
+        if (settings.summonEffects != null)
+        {
+            for (int i = 0; i < settings.summonEffects.Length; i++)
+            {
+                SummonEnemyEffectEntry entry = settings.summonEffects[i];
+                if (entry.summonCount < 1)
+                    entry.summonCount = 1;
+                settings.summonEffects[i] = entry;
             }
         }
     }
