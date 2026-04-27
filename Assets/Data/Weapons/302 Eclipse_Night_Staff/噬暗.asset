@@ -13,11 +13,7 @@ MonoBehaviour:
   m_Name: "\u566C\u6697"
   m_EditorClassIdentifier: 
   skillName: "\u566C\u6697"
-  description: "\u5C06\u79EF\u84C4\u7684\u591C\u8272\u538B\u6210\u5224\u51B3\u3002\u9700\u8981
-    2 \u5C42\u84C4\u80FD\uFF1B\u4F7F\u7528\u65F6\u82E5\u654C\u4EBA\u81F3\u5C11\u6709
-    3 \u5C42\u9ED1\u6697\uFF0C\u6D88\u8017 3 \u5C42\u5E76\u4F7F\u5176\u4E0B\u56DE\u5408\u83B7\u5F97
-    1 \u5C42\u5384\u8FD0\u3002\u7B2C\u4E8C\u9AB0\u672A\u547D\u4E2D\u65F6\uFF0C\u4F7F\u654C\u4EBA\u4E0B\u56DE\u5408\u83B7\u5F97
-    1 \u5C42\u4E34\u65F6\u865A\u5F31\u3002"
+  description: "\u5C06\u79EF\u84C4\u7684\u591C\u8272\u538B\u6210\u5224\u51B3"
   skillCategory: 0
   energyCost: 1
   requiredSelfStatusData: {fileID: 11400000, guid: 15e54805ff58a7a49951aa1a35672df6, type: 2}
@@ -37,7 +33,32 @@ MonoBehaviour:
     maxPower: 6
   - minPower: 2
     maxPower: 4
-  dicePresentationSettings: []
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 7336644444123945357, guid: e348f49022d16484a84197fb03152346, type: 3}
+    hitEffectPrefab: {fileID: 8017160719451949892, guid: 5b738ee18ca025e49ba4845cf3c13342, type: 3}
+    clashOffsetSpace: 0
+    clashPositionOffset: {x: 1, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 1
+    clashDuration: 1
+    hitOffsetSpace: 0
+    hitPositionOffset: {x: 1.7, y: -3, z: 0}
+    hitRotationOffset: {x: -90, y: 0, z: 0}
+    hitScale: {x: 0.2, y: 0.5, z: 0.2}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0.5
+    overrideHitReactionDelay: 1
+    hitReactionDelay: 0.5
+    skillSpriteOverride: {fileID: 0}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
   diceEffectSettings:
   - damageEffects: []
     statusEffects:

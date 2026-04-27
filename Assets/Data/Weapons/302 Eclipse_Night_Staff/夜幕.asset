@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: "\u591C\u5E55"
   m_EditorClassIdentifier: 
   skillName: "\u591C\u5E55"
-  description: "\u4EE5\u4E0D\u900F\u5149\u7684\u6697\u8F89\u538B\u4F4E\u6218\u573A\u5149\u7EBF\u3002\u547D\u4E2D\u65F6\u65BD\u52A0
-    1 \u5C42\u9ED1\u6697\uFF1B\u4F7F\u7528\u65F6\u81EA\u8EAB\u83B7\u5F97 1 \u5C42\u84C4\u80FD\u3002"
+  description: "\u4EE5\u4E0D\u900F\u5149\u7684\u6697\u8F89\u538B\u4F4E\u6218\u573A\u5149\u7EBF"
   skillCategory: 0
   energyCost: 0
   requiredSelfStatusData: {fileID: 0}
@@ -33,17 +32,17 @@ MonoBehaviour:
   - minPower: 2
     maxPower: 4
   dicePresentationSettings:
-  - clashEffectPrefab: {fileID: 0}
-    hitEffectPrefab: {fileID: 0}
+  - clashEffectPrefab: {fileID: 7336644444123945357, guid: e348f49022d16484a84197fb03152346, type: 3}
+    hitEffectPrefab: {fileID: 4936780700497668966, guid: c41ad69d7ce58824f8eb19f40955e7a0, type: 3}
     clashOffsetSpace: 0
-    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashPositionOffset: {x: 1, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 0, y: 0, z: 0}
     clashSortingOrderOffset: 0
     overrideClashDuration: 0
     clashDuration: 0
     hitOffsetSpace: 0
-    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitPositionOffset: {x: 2, y: 0, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
     hitScale: {x: 0, y: 0, z: 0}
     hitSortingOrderOffset: 0
