@@ -1844,9 +1844,9 @@ public class BattleButton : MonoBehaviour
                 };
 
                 if (allyWon)
-                    postClashLog = $"-> 友方胜！追击威力 {BattlePowerCalculationService.FormatPowerWithBonus(allyFollowUpBasePower, allyWinAttackBonus)} ，对 {enemy.GetDebugDisplayName()} 造成 {allyHitPower} 伤害，剩余HP {enemy.CurrentHP}/{enemy.MaxHP}";
+                    postClashLog = BattleClashLogService.FormatAllyAttackWinFollowUp(allyFollowUpBasePower, allyWinAttackBonus, enemy.GetDebugDisplayName(), allyHitPower, enemy.CurrentHP, enemy.MaxHP);
                 else if (enemyPower > allyPower)
-                    postClashLog = $"-> 敌方胜！追击威力 {BattlePowerCalculationService.FormatPowerWithBonus(enemyFollowUpBasePower, enemyWinAttackBonus)} ，{enemy.GetDebugDisplayName()} 对 {ally.GetDebugDisplayName()} 造成 {enemyHitPower} 伤害，剩余HP {ally.CurrentHP}/{ally.MaxHP}";
+                    postClashLog = BattleClashLogService.FormatEnemyAttackWinFollowUp(enemyFollowUpBasePower, enemyWinAttackBonus, enemy.GetDebugDisplayName(), ally.GetDebugDisplayName(), enemyHitPower, ally.CurrentHP, ally.MaxHP);
                 else
                     postClashLog = $"-> 平局（{allyPower} = {enemyPower}），双方无伤害";
             }
@@ -1957,7 +1957,7 @@ public class BattleButton : MonoBehaviour
                 moveIntoPosition,
                 returnToOrigin);
 
-            BattleLog($"\u7b2c {i + 1} \u6bb5\u62fc\u70b9\uff1a{ally.GetDebugDisplayName()}({BattlePowerCalculationService.FormatPowerWithBonus(allyBasePower, allyBonusPower)}) vs {enemy.GetDebugDisplayName()}({BattlePowerCalculationService.FormatPowerWithBonus(enemyBasePower, enemyBonusPower)})");
+            BattleLog(BattleClashLogService.FormatClashDice(i, ally.GetDebugDisplayName(), allyBasePower, allyBonusPower, enemy.GetDebugDisplayName(), enemyBasePower, enemyBonusPower));
             BattleLog(postClashLog);
         }
 

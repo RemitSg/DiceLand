@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Overload
   m_EditorClassIdentifier: 
   skillName: "\u8FC7\u8F7D"
-  description: "\u62FC\u70B9\u65F6\u82E5\u76EE\u6807\u5E26\u6709\u7535\u6D41\u5219\u5A01\u529B +1\uFF1B\u547D\u4E2D\u6216\u672A\u547D\u4E2D\u65F6\u90FD\u4F1A\u89E6\u53D1 1 \u6B21\u7535\u6D41\u7206\u53D1"
+  description: "\u62FC\u70B9\u65F6\u82E5\u76EE\u6807\u5E26\u6709\u7535\u6D41\u5219\u5A01\u529B
+    +1\uFF1B\u547D\u4E2D\u6216\u672A\u547D\u4E2D\u65F6\u90FD\u4F1A\u89E6\u53D1 1
+    \u6B21\u7535\u6D41\u7206\u53D1"
   skillCategory: 0
   energyCost: 0
   requiredSelfStatusData: {fileID: 0}
@@ -31,7 +33,32 @@ MonoBehaviour:
   dicePowerRanges:
   - minPower: 1
     maxPower: 5
-  dicePresentationSettings: []
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 0}
+    hitEffectPrefab: {fileID: 0}
+    clashOffsetSpace: 0
+    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitOffsetSpace: 0
+    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 21300000, guid: 41b54504b943361489dd28687ecb9548, type: 3}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
   diceEffectSettings:
   - damageEffects: []
     statusEffects: []
@@ -48,6 +75,7 @@ MonoBehaviour:
       requiredSpeedDifference: 0
       powerBonus: 1
       powerBonusPerStep: 0
+      maxPowerBonus: 0
     statusBurstEffects:
     - effectName: "\u5BF9\u76EE\u6807\u7206\u53D1"
       trigger: 0
@@ -66,6 +94,9 @@ MonoBehaviour:
       randomTargetCount: 1
       clearStacksAfterBurst: 1
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
     summonEffects: []
+  diceSkillCategories: 

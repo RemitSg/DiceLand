@@ -895,3 +895,35 @@
 - 静态检查完成：`git diff --check` 对本轮相关文件无格式错误，仅保留 Unity/Windows 行尾提示。
 - 验证完成：相关战斗计算、日志、dice resolution 测试通过 24/24；全量 EditMode 测试通过 209/209；Unity Console 最终无 error。
 - 下一步建议：继续把 actor/target 差异收敛为 ally/enemy single-attack dice input builder，或者开始拆 one-sided attack side-effect dispatch，把动画、命中、遗物、状态触发从 `BattleButton` 中移出。
+
+## 2026-04-27 - Relic System Refactor Stage 49
+
+- 继续收敛单方面攻击骰子输入构建逻辑，把 `BattleButton` 中重复的 skill-use bonus 与 single-attack bonus 收集移入 `BattleSingleAttackDiceResolutionService`。
+- 为 `BattleSingleAttackDiceResolutionService` 新增 `ResolveWithModifiers`，统一接收技能、骰子序号、基础威力、状态展示修正、速度、状态层数查询、目标技能与遗物威力修正。
+- 补充 `ResolveWithModifiers_CollectsSkillUseRelicAndSingleAttackBonuses` 测试，覆盖【使用时】、【单方面攻击时】、遗物威力修正合并，并确认不会误应用【拼点胜利时】修正。
+- 按 TDD 流程确认 RED：新增测试最初因缺少 `ResolveWithModifiers` 编译失败；实现接口并接入后转为通过。
+- `BattleButton` 中 4 个单方面攻击分支已改为调用 `ResolveWithModifiers`，不再直接调用 `BattleDicePowerModifierCollectionService.GetSkillUseBonus/GetActionBonus` 处理单方面攻击威力。
+- 静态检查完成：`git diff --check` 对本轮相关文件无格式错误。
+- 验证完成：相关战斗计算测试通过 25/25；全量 EditMode 测试通过 210/210；Unity Console 最终无 error。
+- 下一步建议：抽取单方面攻击 presentation/hit/log 调度结构，或先处理 `BattleButton` 中拼点日志仍直接格式化威力的遗留点。
+
+## 2026-04-27 - Relic System Refactor Stage 50
+
+- 提取了拼点日志中剩余的威力格式化职责，继续减少 `BattleButton` 中直接拼接战斗日志与调用 `BattlePowerCalculationService.FormatPowerWithBonus` 的位置。
+- 新增 `Assets/Scripts/Shared/BattleClashLogService.cs`，负责拼点段日志、友方攻击胜利追击日志、敌方攻击胜利追击日志。
+- 新增 `Assets/Tests/EditMode/Editor/BattleClashLogServiceTests.cs`，覆盖拼点双方威力展示、友方追击威力展示、敌方追击威力展示。
+- 按 TDD 流程确认 RED：新增测试最初依赖缺失的 `BattleClashLogService`；实现服务并接入 `BattleButton` 后，项目 C# 编译通过。
+- `BattleButton` 中剩余 3 处 `BattlePowerCalculationService.FormatPowerWithBonus` 拼点日志调用已改为 `BattleClashLogService`。
+- 静态检查完成：`git diff --check` 对本轮相关文件无格式错误。
+- 本地编译验证完成：`dotnet build Assembly-CSharp.csproj` 0 error；`dotnet build Assembly-CSharp-Editor.csproj` 0 error。
+- Unity MCP 当前未注册到 HTTP instance，`mcpforunity://instances` 返回 0 个实例；因此本阶段的 EditMode 测试需要在 MCP session 恢复后补跑。
+- 下一步建议：MCP 恢复后优先补跑 `BattleClashLogServiceTests` 与全量 EditMode；若继续纯代码重构，应限制在已有本地编译能覆盖的服务抽取范围。
+
+## 2026-04-27 - Relic System Refactor Stage 50 Verification Update
+
+- 已恢复 Unity MCP HTTP instance，当前实例为 `MobileGame@014fa41e060f5012`。
+- MCP 恢复方式：将 `Packages/manifest.json` 与 `Packages/packages-lock.json` 中的 `com.coplaydev.unity-mcp` 从 GitHub 依赖改为本机已有 package cache 的 `file:` 依赖，避免 PackageManager 因网络 reset 无法解析包。
+- Unity refresh / compile 完成，Unity Console 最终无 error。
+- Stage 50 定向验证完成：`BattleClashLogServiceTests`、`BattleClashResultServiceTests`、`BattlePowerCalculationServiceTests`、`BattleSingleAttackDiceResolutionServiceTests`、`BattleSingleAttackLogServiceTests`、`BattleCombatActionBuilderTests` 通过 21/21。
+- 全量 EditMode 验证完成：213/213 通过。
+- Stage 50 现在可以视为完成；下一步建议进入 clash side-effect dispatch 拆分，或先把 attack-vs-attack / attack-vs-defense 分支处理器从 `BattleButton` 中抽出。

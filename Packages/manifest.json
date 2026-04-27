@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.coplaydev.unity-mcp": "file:C:/Users/xliz_/.config/superpowers/worktrees/MobileGame/tutorial-menu-center/Library/PackageCache/com.coplaydev.unity-mcp@73eb27aecc",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.collab-proxy": "2.11.4",
     "com.unity.feature.development": "1.0.1",
