@@ -124,6 +124,40 @@ public class BattlePowerModifierServiceTests
     }
 
     [Test]
+    public void EvaluatePowerModifier_CapsTargetStatusBonusPerThresholdWhenConfigured()
+    {
+        BattleStatus_SO status = ScriptableObject.CreateInstance<BattleStatus_SO>();
+        createdObjects.Add(status);
+
+        EnemySkill_SO skill = CreateSkill(new[]
+        {
+            new EnemySkill_SO.ConditionalPowerModifierEntry
+            {
+                trigger = EnemySkill_SO.DiceEffectTrigger.OnSkillUse,
+                useCondition = true,
+                condition = EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold,
+                targetStatusData = status,
+                requiredStatusStacks = 1,
+                powerBonusPerStep = 1,
+                maxPowerBonus = 2
+            }
+        });
+
+        int bonus = BattlePowerModifierService.EvaluatePowerModifier(
+            skill,
+            0,
+            EnemySkill_SO.DiceEffectTrigger.OnSkillUse,
+            selfSpeed: 2,
+            targetSpeed: 4,
+            getSelfStatusStacksByAsset: _ => 0,
+            getSelfStatusStacksById: _ => 0,
+            getTargetStatusStacksByAsset: checkedStatus => checkedStatus == status ? 5 : 0,
+            getTargetStatusStacksById: _ => 0);
+
+        Assert.AreEqual(2, bonus);
+    }
+
+    [Test]
     public void EvaluatePowerModifier_TargetSkillConditionRequiresMatchingSkill()
     {
         EnemySkill_SO targetSkill = ScriptableObject.CreateInstance<EnemySkill_SO>();

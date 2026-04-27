@@ -14,11 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 302
   weaponName: "\u8680\u591C"
-  description: "\u7531\u4E0D\u900F\u5149\u7684\u9ED1\u679D\u4E0E\u788E\u661F\u6B8B\u7247\u7F20\u6210\u7684\u6CD5\u6756\u3002\u63E1\u4F4F\u5B83\u65F6\uFF0C\u4F1A\u542C\u89C1\u9065\u8FDC\u591C\u5E55\u91CC\u7684\u4F4E\u8BED\u3002"
+  description: "\u7531\u4E0D\u900F\u5149\u7684\u9ED1\u679D\u4E0E\u788E\u661F\u6B8B\u7247\u7F20\u6210\u7684\u6CD5\u6756\u3002\u63E1\u4F4F\u5B83\u65F6\uFF0C\u4F1A\u542C\u89C1\u9065\u8FDC\u591C\u5E55\u91CC\u7684\u4F4E\u8BED\u3002\u5B83\u4E0D\u76F4\u63A5\u6495\u88C2\u654C\u4EBA\uFF0C\u800C\u662F\u5148\u8BA9\u547D\u8FD0\u504F\u659C\uFF0C\u518D\u5728\u9ED1\u6697\u6700\u6D53\u5904\u843D\u4E0B\u5BA1\u5224\u3002"
   rarity: 2
   weaponType: 3
   icon: {fileID: 21300000, guid: 68aedb3e76e26e245926894cbcf70b10, type: 3}
   weaponPrefab: {fileID: 7691220201063272058, guid: 5e88b2b0849df194d8c0e9b799a50a3b, type: 3}
   minPower: 1
   maxPower: 3
-  skillPool: []
+  skillPool:
+  - {fileID: 11400000, guid: 09d5f472a63e7bb4d8476d7d03a177c7, type: 2}
+  - {fileID: 11400000, guid: a68112737d988654b8d29d8d077fe2f7, type: 2}
+  - {fileID: 11400000, guid: 0b7c0a5bc01c959429cb82ccc4ddcb32, type: 2}

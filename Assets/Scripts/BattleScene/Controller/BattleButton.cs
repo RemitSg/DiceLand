@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -1134,20 +1134,6 @@ public class BattleButton : MonoBehaviour
             : Array.Empty<SpeedButton>();
     }
 
-    private static string FormatPowerWithBonus(int basePower, int bonusPower)
-    {
-        if (bonusPower == 0)
-            return basePower.ToString();
-
-        int finalPower = Mathf.Max(1, basePower + bonusPower);
-        return $"{basePower}{(bonusPower > 0 ? "+" : string.Empty)}{bonusPower}={finalPower}";
-    }
-
-    private static int ClampFinalPower(int basePower, int bonusPower)
-    {
-        return Mathf.Max(1, basePower + bonusPower);
-    }
-
     private static bool IsDefenseSkill(EnemySkill_SO skill)
     {
         return IsDefenseSkill(skill, 0);
@@ -1773,16 +1759,15 @@ public class BattleButton : MonoBehaviour
             bool allyDefenseSkill = IsDefenseSkill(ally.SelectedSkill, i);
             bool enemyDefenseSkill = IsDefenseSkill(enemy.SelectedSkill, i);
             PlayerRelicDiceModifier allyRelicModifier = ResolvePlayerRelicDiceModifier(ally, enemy, i, true);
-            EnemySkill_SO.DicePowerRange allyRange = ApplyPlayerRelicDiceRangeModifier(ally.GetDicePowerRange(i), allyRelicModifier);
+            EnemySkill_SO.DicePowerRange allyRange = BattleDiceRollService.ApplyRangeBonus(ally.GetDicePowerRange(i), allyRelicModifier.minPowerBonus, allyRelicModifier.maxPowerBonus);
             EnemySkill_SO.DicePowerRange enemyRange = enemy.GetDicePowerRange(i);
             enemyRange = ApplyEnemyContextualDiceRangeModifiers(enemy, ally, i, enemyRange);
-            enemyRange.minPower = Mathf.Max(1, enemyRange.minPower + allyRelicModifier.targetMinPowerBonus);
-            enemyRange.maxPower = Mathf.Max(enemyRange.minPower, enemyRange.maxPower);
+            enemyRange = BattleDiceRollService.ApplyRangeBonus(enemyRange, allyRelicModifier.targetMinPowerBonus, 0);
             EnemySkill_SO.DicePowerRange allyDisplayRange = ally.SelectedSkill != null ? ally.SelectedSkill.GetDicePowerRange(i) : allyRange;
             EnemySkill_SO.DicePowerRange enemyDisplayRange = enemy.GetDisplayedDicePowerRange(enemy.SelectedSkill, i);
             enemyDisplayRange = ApplyEnemyContextualDiceRangeModifiers(enemy, ally, i, enemyDisplayRange);
-            int allyBasePower = RollDiceFromRange(allyRange);
-            int enemyBasePower = RollDiceFromRange(enemyRange);
+            int allyBasePower = BattleDiceRollService.RollPower(allyRange);
+            int enemyBasePower = BattleDiceRollService.RollPower(enemyRange);
             int allyStatusPowerModifier = ally.GetStatusFlatPowerModifier(allyDefenseSkill);
             int enemyStatusPowerModifier = enemy.GetStatusFlatPowerModifier(enemyDefenseSkill);
             int allySkillUseBonus =
@@ -1796,20 +1781,35 @@ public class BattleButton : MonoBehaviour
                 BattlePowerModifierService.EvaluatePowerModifier(enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClash, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks, ally.SelectedSkill);
             if (enemy.EnemyID == 24 && enemy.Speed > ally.Speed)
                 enemyClashOnlyBonus += 1;
-            int allyBonusPower = allySkillUseBonus + allyClashOnlyBonus;
-            int enemyBonusPower = enemySkillUseBonus + enemyClashOnlyBonus;
-            int allyPower = ClampFinalPower(allyBasePower, allyBonusPower);
-            int enemyPower = ClampFinalPower(enemyBasePower, enemyBonusPower);
-            int allyFollowUpBasePower = ClampFinalPower(allyBasePower, allySkillUseBonus);
-            int enemyFollowUpBasePower = ClampFinalPower(enemyBasePower, enemySkillUseBonus);
-            int allyDisplayPowerModifier = allyStatusPowerModifier + allyBonusPower;
-            int enemyDisplayPowerModifier = enemyStatusPowerModifier + enemyBonusPower;
-            bool hasWinner = false;
-            bool allyWon = false;
-            int allyWinAttackBonus = 0;
-            int enemyWinAttackBonus = 0;
-            int allyHitPower = allyPower;
-            int enemyHitPower = enemyPower;
+            BattleDicePowerPreparation allyPowerInput = BattleDicePowerPreparationService.Resolve(allyBasePower, allyStatusPowerModifier, 0, allySkillUseBonus, allyClashOnlyBonus);
+            BattleDicePowerPreparation enemyPowerInput = BattleDicePowerPreparationService.Resolve(enemyBasePower, enemyStatusPowerModifier, 0, enemySkillUseBonus, enemyClashOnlyBonus);
+            int allyBonusPower = allyPowerInput.BonusPower;
+            int enemyBonusPower = enemyPowerInput.BonusPower;
+            int allyPower = allyPowerInput.FinalPower;
+            int enemyPower = enemyPowerInput.FinalPower;
+            int allyFollowUpBasePower = allyPowerInput.FollowUpBasePower;
+            int enemyFollowUpBasePower = enemyPowerInput.FollowUpBasePower;
+            int allyDisplayPowerModifier = allyPowerInput.DisplayPowerModifier;
+            int enemyDisplayPowerModifier = enemyPowerInput.DisplayPowerModifier;
+            int allyWinAttackBonus = !allyDefenseSkill && !enemyDefenseSkill && allyPower > enemyPower
+                ? BattlePowerModifierService.EvaluatePowerModifier(ally.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks, enemy.SelectedSkill)
+                : 0;
+            int enemyWinAttackBonus = !allyDefenseSkill && !enemyDefenseSkill && enemyPower > allyPower
+                ? BattlePowerModifierService.EvaluatePowerModifier(enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks, ally.SelectedSkill)
+                : 0;
+            BattleClashResult clashResult = BattleClashResultService.Resolve(
+                allyPower,
+                enemyPower,
+                allyDefenseSkill,
+                enemyDefenseSkill,
+                allyFollowUpBasePower,
+                enemyFollowUpBasePower,
+                allyWinAttackBonus,
+                enemyWinAttackBonus);
+            bool hasWinner = clashResult.HasPresentationWinner;
+            bool allyWon = clashResult.AllyWonPresentation;
+            int allyHitPower = clashResult.AllyHitPower;
+            int enemyHitPower = clashResult.EnemyHitPower;
             EnemySkill_SO.DicePresentationSettings allyFx = ally.GetDicePresentationSettings(i);
             EnemySkill_SO.DicePresentationSettings enemyFx = enemy.GetDicePresentationSettings(i);
             EnemySkill_SO.DicePresentationSettings hitFx = allyFx;
@@ -1822,16 +1822,6 @@ public class BattleButton : MonoBehaviour
 
             if (!allyDefenseSkill && !enemyDefenseSkill)
             {
-                hasWinner = allyPower != enemyPower;
-                allyWon = allyPower > enemyPower;
-                allyWinAttackBonus = allyWon
-                    ? BattlePowerModifierService.EvaluatePowerModifier(ally.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks, enemy.SelectedSkill)
-                    : 0;
-                enemyWinAttackBonus = !allyWon && enemyPower > allyPower
-                    ? BattlePowerModifierService.EvaluatePowerModifier(enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClashWin, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks, ally.SelectedSkill)
-                    : 0;
-                allyHitPower = Mathf.Max(1, allyFollowUpBasePower + allyWinAttackBonus);
-                enemyHitPower = Mathf.Max(1, enemyFollowUpBasePower + enemyWinAttackBonus);
                 hitFx = allyWon ? allyFx : enemyFx;
 
                 resolveImpactAction = () =>
@@ -1857,18 +1847,15 @@ public class BattleButton : MonoBehaviour
                 };
 
                 if (allyWon)
-                    postClashLog = $"-> 友方胜！追击威力 {FormatPowerWithBonus(allyFollowUpBasePower, allyWinAttackBonus)} ，对 {enemy.GetDebugDisplayName()} 造成 {allyHitPower} 伤害，剩余HP {enemy.CurrentHP}/{enemy.MaxHP}";
+                    postClashLog = $"-> 友方胜！追击威力 {BattlePowerCalculationService.FormatPowerWithBonus(allyFollowUpBasePower, allyWinAttackBonus)} ，对 {enemy.GetDebugDisplayName()} 造成 {allyHitPower} 伤害，剩余HP {enemy.CurrentHP}/{enemy.MaxHP}";
                 else if (enemyPower > allyPower)
-                    postClashLog = $"-> 敌方胜！追击威力 {FormatPowerWithBonus(enemyFollowUpBasePower, enemyWinAttackBonus)} ，{enemy.GetDebugDisplayName()} 对 {ally.GetDebugDisplayName()} 造成 {enemyHitPower} 伤害，剩余HP {ally.CurrentHP}/{ally.MaxHP}";
+                    postClashLog = $"-> 敌方胜！追击威力 {BattlePowerCalculationService.FormatPowerWithBonus(enemyFollowUpBasePower, enemyWinAttackBonus)} ，{enemy.GetDebugDisplayName()} 对 {ally.GetDebugDisplayName()} 造成 {enemyHitPower} 伤害，剩余HP {ally.CurrentHP}/{ally.MaxHP}";
                 else
                     postClashLog = $"-> 平局（{allyPower} = {enemyPower}），双方无伤害";
             }
             else if (!allyDefenseSkill && enemyDefenseSkill)
             {
-                bool attackBreaksDefense = allyPower > enemyPower;
-                hasWinner = attackBreaksDefense;
-                allyWon = attackBreaksDefense;
-                allyHitPower = Mathf.Max(1, allyFollowUpBasePower - enemyFollowUpBasePower);
+                bool attackBreaksDefense = clashResult.Outcome == BattleClashOutcome.AllyBreaksEnemyDefense;
                 hitFx = allyFx;
 
                 resolveImpactAction = () =>
@@ -1896,10 +1883,7 @@ public class BattleButton : MonoBehaviour
             }
             else if (allyDefenseSkill && !enemyDefenseSkill)
             {
-                bool attackBreaksDefense = enemyPower > allyPower;
-                hasWinner = attackBreaksDefense;
-                allyWon = false;
-                enemyHitPower = Mathf.Max(1, enemyFollowUpBasePower - allyFollowUpBasePower);
+                bool attackBreaksDefense = clashResult.Outcome == BattleClashOutcome.EnemyBreaksAllyDefense;
                 hitFx = enemyFx;
                 int restoredDefenseEnergy = 0;
 
@@ -1923,7 +1907,7 @@ public class BattleButton : MonoBehaviour
 
                 if (!attackBreaksDefense && allyPower > enemyPower)
                 {
-                    restoredDefenseEnergy = RestoreSharedEnergy(allyPower - enemyPower);
+                    restoredDefenseEnergy = RestoreSharedEnergy(clashResult.DefenseEnergyRestoreAmount);
                     if (restoredDefenseEnergy > 0)
                     {
                         battleFeedbackSystem?.ShowCustomPopup(
@@ -1976,7 +1960,7 @@ public class BattleButton : MonoBehaviour
                 moveIntoPosition,
                 returnToOrigin);
 
-            BattleLog($"\u7b2c {i + 1} \u6bb5\u62fc\u70b9\uff1a{ally.GetDebugDisplayName()}({FormatPowerWithBonus(allyBasePower, allyBonusPower)}) vs {enemy.GetDebugDisplayName()}({FormatPowerWithBonus(enemyBasePower, enemyBonusPower)})");
+            BattleLog($"\u7b2c {i + 1} \u6bb5\u62fc\u70b9\uff1a{ally.GetDebugDisplayName()}({BattlePowerCalculationService.FormatPowerWithBonus(allyBasePower, allyBonusPower)}) vs {enemy.GetDebugDisplayName()}({BattlePowerCalculationService.FormatPowerWithBonus(enemyBasePower, enemyBonusPower)})");
             BattleLog(postClashLog);
         }
 
@@ -2007,22 +1991,22 @@ public class BattleButton : MonoBehaviour
                 yield break;
 
             PlayerRelicDiceModifier allyRelicModifier = ResolvePlayerRelicDiceModifier(ally, enemy, i, false);
-            EnemySkill_SO.DicePowerRange allyRange = ApplyPlayerRelicDiceRangeModifier(ally.GetDicePowerRange(i), allyRelicModifier);
+            EnemySkill_SO.DicePowerRange allyRange = BattleDiceRollService.ApplyRangeBonus(ally.GetDicePowerRange(i), allyRelicModifier.minPowerBonus, allyRelicModifier.maxPowerBonus);
             EnemySkill_SO.DicePowerRange allyDisplayRange = ally.SelectedSkill != null ? ally.SelectedSkill.GetDicePowerRange(i) : allyRange;
-            int allyBasePower = RollDiceFromRange(allyRange);
+            int allyBasePower = BattleDiceRollService.RollPower(allyRange);
             bool isDefenseSkill = IsDefenseSkill(ally.SelectedSkill, i);
             int allyStatusPowerModifier = ally.GetStatusFlatPowerModifier(isDefenseSkill);
             int allyBonusPower =
                 allyRelicModifier.powerBonus +
                 BattlePowerModifierService.EvaluatePowerModifier(ally.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks) +
                 BattlePowerModifierService.EvaluatePowerModifier(ally.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks);
-            int allyPower = ClampFinalPower(allyBasePower, allyBonusPower);
-            int allyDisplayPowerModifier = allyStatusPowerModifier + allyBonusPower;
+            BattleDicePowerPreparation powerInput = BattleDicePowerPreparationService.Resolve(allyBasePower, allyStatusPowerModifier, 0, allyBonusPower, 0);
+            BattleSingleAttackResult attackResult = BattleSingleAttackResultService.Resolve(allyBasePower, powerInput.BonusPower, allyStatusPowerModifier, isDefenseSkill);
             EnemySkill_SO.DicePresentationSettings diceFx = ally.GetDicePresentationSettings(i);
             ApplyAllyTriggeredEffects(ally, enemy, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
-            if (isDefenseSkill)
+            if (attackResult.IsDefenseOnly)
             {
-                BattleLog($"第 {i + 1} 段（友方余骰单方面）：{ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(allyBasePower, allyBonusPower)}) 为防御技能，未与攻击骰拼点，不会造成拼点/伤害结算，但【使用时】词条已生效");
+            BattleLog($"第 {i + 1} 段（友方余骰单方面）：{ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}]({BattlePowerCalculationService.FormatPowerWithBonus(allyBasePower, allyBonusPower)}) 为防御技能，未与攻击骰拼点，不会造成拼点/伤害结算，但【使用时】词条已生效");
                 continue;
             }
 
@@ -2033,15 +2017,15 @@ public class BattleButton : MonoBehaviour
                 enemy.transform,
                 true,
                 allyDisplayRange,
-                allyPower,
-                allyDisplayPowerModifier,
-                allyPower,
+                attackResult.FinalPower,
+                attackResult.DisplayPowerModifier,
+                attackResult.FinalPower,
                 diceFx,
-                isDefenseSkill ? null : () => ApplyAllyHit(ally, enemy, allyPower, i, true, allyBonusPower),
+                attackResult.ShouldDealDamage ? () => ApplyAllyHit(ally, enemy, attackResult.HitPower, i, true, attackResult.HitPowerModifier) : null,
                 moveIntoPosition,
                 returnToOrigin);
 
-            BattleLog($"\u7b2c {i + 1} \u6bb5\uff08\u53cb\u65b9\u4f59\u9ab0\u5355\u65b9\u9762\uff09\uff1a{ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(allyBasePower, allyBonusPower)}) -> {enemy.GetDebugDisplayName()}\uff0c\u5269\u4f59HP {enemy.CurrentHP}/{enemy.MaxHP}");
+            BattleLog($"\u7b2c {i + 1} \u6bb5\uff08\u53cb\u65b9\u4f59\u9ab0\u5355\u65b9\u9762\uff09\uff1a{ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}]({BattlePowerCalculationService.FormatPowerWithBonus(allyBasePower, allyBonusPower)}) -> {enemy.GetDebugDisplayName()}\uff0c\u5269\u4f59HP {enemy.CurrentHP}/{enemy.MaxHP}");
         }
     }
 
@@ -2074,19 +2058,18 @@ public class BattleButton : MonoBehaviour
             enemyRange = ApplyEnemyContextualDiceRangeModifiers(enemy, ally, i, enemyRange);
             EnemySkill_SO.DicePowerRange enemyDisplayRange = enemy.GetDisplayedDicePowerRange(enemy.SelectedSkill, i);
             enemyDisplayRange = ApplyEnemyContextualDiceRangeModifiers(enemy, ally, i, enemyDisplayRange);
-            int enemyBasePower = RollDiceFromRange(enemyRange);
+            int enemyBasePower = BattleDiceRollService.RollPower(enemyRange);
             bool isDefenseSkill = IsDefenseSkill(enemy.SelectedSkill, i);
             int enemyStatusPowerModifier = enemy.GetStatusFlatPowerModifier(isDefenseSkill);
             int enemyBonusPower =
                 BattlePowerModifierService.EvaluatePowerModifier(enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks) +
                 BattlePowerModifierService.EvaluatePowerModifier(enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks);
-            int enemyPower = ClampFinalPower(enemyBasePower, enemyBonusPower);
-            int enemyDisplayPowerModifier = enemyStatusPowerModifier + enemyBonusPower;
+            BattleSingleAttackResult attackResult = BattleSingleAttackResultService.Resolve(enemyBasePower, enemyBonusPower, enemyStatusPowerModifier, isDefenseSkill);
             EnemySkill_SO.DicePresentationSettings diceFx = enemy.GetDicePresentationSettings(i);
             ApplyEnemyTriggeredEffects(enemy, ally, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
-            if (isDefenseSkill)
+            if (attackResult.IsDefenseOnly)
             {
-                BattleLog($"第 {i + 1} 段（敌方余骰单方面）：{enemy.GetDebugDisplayName()}[{enemy.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(enemyBasePower, enemyBonusPower)}) 为防御技能，未与攻击骰拼点，不会造成拼点/伤害结算，但【使用时】词条已生效");
+            BattleLog($"第 {i + 1} 段（敌方余骰单方面）：{enemy.GetDebugDisplayName()}[{enemy.GetSelectedSkillDebugSummary()}]({BattlePowerCalculationService.FormatPowerWithBonus(enemyBasePower, enemyBonusPower)}) 为防御技能，未与攻击骰拼点，不会造成拼点/伤害结算，但【使用时】词条已生效");
                 continue;
             }
 
@@ -2099,15 +2082,15 @@ public class BattleButton : MonoBehaviour
                 ally.transform,
                 false,
                 enemyDisplayRange,
-                enemyPower,
-                enemyDisplayPowerModifier,
-                enemyPower,
+                attackResult.FinalPower,
+                attackResult.DisplayPowerModifier,
+                attackResult.FinalPower,
                 diceFx,
-                isDefenseSkill ? null : () => ApplyEnemyHit(enemy, ally, enemyPower, i, true, enemyBonusPower),
+                attackResult.ShouldDealDamage ? () => ApplyEnemyHit(enemy, ally, attackResult.HitPower, i, true, attackResult.HitPowerModifier) : null,
                 moveIntoPosition,
                 returnToOrigin);
 
-            BattleLog($"\u7b2c {i + 1} \u6bb5\uff08\u654c\u65b9\u4f59\u9ab0\u5355\u65b9\u9762\uff09\uff1a{enemy.GetDebugDisplayName()}[{enemy.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(enemyBasePower, enemyBonusPower)}) -> {ally.GetDebugDisplayName()}\uff0c\u5269\u4f59HP {ally.CurrentHP}/{ally.MaxHP}");
+            BattleLog($"\u7b2c {i + 1} \u6bb5\uff08\u654c\u65b9\u4f59\u9ab0\u5355\u65b9\u9762\uff09\uff1a{enemy.GetDebugDisplayName()}[{enemy.GetSelectedSkillDebugSummary()}]({BattlePowerCalculationService.FormatPowerWithBonus(enemyBasePower, enemyBonusPower)}) -> {ally.GetDebugDisplayName()}\uff0c\u5269\u4f59HP {ally.CurrentHP}/{ally.MaxHP}");
         }
 
         if (needsReturnToOrigin && battlePresentationSystem != null)
@@ -2168,17 +2151,16 @@ public class BattleButton : MonoBehaviour
             }
 
             PlayerRelicDiceModifier allyRelicModifier = ResolvePlayerRelicDiceModifier(ally, enemy, i, false);
-            EnemySkill_SO.DicePowerRange allyRange = ApplyPlayerRelicDiceRangeModifier(ally.GetDicePowerRange(i), allyRelicModifier);
+            EnemySkill_SO.DicePowerRange allyRange = BattleDiceRollService.ApplyRangeBonus(ally.GetDicePowerRange(i), allyRelicModifier.minPowerBonus, allyRelicModifier.maxPowerBonus);
             EnemySkill_SO.DicePowerRange allyDisplayRange = ally.SelectedSkill != null ? ally.SelectedSkill.GetDicePowerRange(i) : allyRange;
-            int allyBasePower = RollDiceFromRange(allyRange);
+            int allyBasePower = BattleDiceRollService.RollPower(allyRange);
             bool isDefenseSkill = IsDefenseSkill(ally.SelectedSkill, i);
             int allyStatusPowerModifier = ally.GetStatusFlatPowerModifier(isDefenseSkill);
             int allyBonusPower =
                 allyRelicModifier.powerBonus +
                 BattlePowerModifierService.EvaluatePowerModifier(ally.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks) +
                 BattlePowerModifierService.EvaluatePowerModifier(ally.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks);
-            int allyPower = ClampFinalPower(allyBasePower, allyBonusPower);
-            int allyDisplayPowerModifier = allyStatusPowerModifier + allyBonusPower;
+            BattleSingleAttackResult attackResult = BattleSingleAttackResultService.Resolve(allyBasePower, allyBonusPower, allyStatusPowerModifier, isDefenseSkill);
             EnemySkill_SO.DicePresentationSettings diceFx = ally.GetDicePresentationSettings(i);
             bool moveIntoPosition = i == 0;
             bool returnToOrigin = false;
@@ -2190,15 +2172,15 @@ public class BattleButton : MonoBehaviour
                 enemy.transform,
                 true,
                 allyDisplayRange,
-                allyPower,
-                allyDisplayPowerModifier,
-                allyPower,
+                attackResult.FinalPower,
+                attackResult.DisplayPowerModifier,
+                attackResult.FinalPower,
                 diceFx,
-                () => ApplyAllyHit(ally, enemy, allyPower, i, true, allyBonusPower),
+                () => ApplyAllyHit(ally, enemy, attackResult.HitPower, i, true, attackResult.HitPowerModifier),
                 moveIntoPosition,
                 returnToOrigin);
 
-            BattleLog($"\u7b2c {i + 1} \u6bb5\uff1a{ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(allyBasePower, allyBonusPower)}) -> {enemy.GetDebugDisplayName()}\uff0c\u5269\u4f59HP {enemy.CurrentHP}/{enemy.MaxHP}");
+            BattleLog($"\u7b2c {i + 1} \u6bb5\uff1a{ally.GetDebugDisplayName()}[{ally.GetSelectedSkillDebugSummary()}]({BattlePowerCalculationService.FormatPowerWithBonus(allyBasePower, allyBonusPower)}) -> {enemy.GetDebugDisplayName()}\uff0c\u5269\u4f59HP {enemy.CurrentHP}/{enemy.MaxHP}");
         }
 
         if (ally.DiceCount > 0 && battlePresentationSystem != null)
@@ -2263,14 +2245,13 @@ public class BattleButton : MonoBehaviour
             enemyRange = ApplyEnemyContextualDiceRangeModifiers(enemy, targetAlly, i, enemyRange);
             EnemySkill_SO.DicePowerRange enemyDisplayRange = enemy.GetDisplayedDicePowerRange(enemy.SelectedSkill, i);
             enemyDisplayRange = ApplyEnemyContextualDiceRangeModifiers(enemy, targetAlly, i, enemyDisplayRange);
-            int enemyBasePower = RollDiceFromRange(enemyRange);
+            int enemyBasePower = BattleDiceRollService.RollPower(enemyRange);
             bool isDefenseSkill = IsDefenseSkill(enemy.SelectedSkill, i);
             int enemyStatusPowerModifier = enemy.GetStatusFlatPowerModifier(isDefenseSkill);
             int enemyBonusPower =
                 BattlePowerModifierService.EvaluatePowerModifier(enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, enemy.Speed, targetAlly.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, targetAlly.GetStatusStacks, targetAlly.GetStatusStacks) +
                 BattlePowerModifierService.EvaluatePowerModifier(enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, enemy.Speed, targetAlly.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, targetAlly.GetStatusStacks, targetAlly.GetStatusStacks);
-            int enemyPower = ClampFinalPower(enemyBasePower, enemyBonusPower);
-            int enemyDisplayPowerModifier = enemyStatusPowerModifier + enemyBonusPower;
+            BattleSingleAttackResult attackResult = BattleSingleAttackResultService.Resolve(enemyBasePower, enemyBonusPower, enemyStatusPowerModifier, isDefenseSkill);
             EnemySkill_SO.DicePresentationSettings diceFx = enemy.GetDicePresentationSettings(i);
             bool moveIntoPosition = i == 0;
             bool returnToOrigin = false;
@@ -2282,15 +2263,15 @@ public class BattleButton : MonoBehaviour
                 targetAlly.transform,
                 false,
                 enemyDisplayRange,
-                enemyPower,
-                enemyDisplayPowerModifier,
-                enemyPower,
+                attackResult.FinalPower,
+                attackResult.DisplayPowerModifier,
+                attackResult.FinalPower,
                 diceFx,
-                () => ApplyEnemyHit(enemy, targetAlly, enemyPower, i, true, enemyBonusPower),
+                () => ApplyEnemyHit(enemy, targetAlly, attackResult.HitPower, i, true, attackResult.HitPowerModifier),
                 moveIntoPosition,
                 returnToOrigin);
 
-            BattleLog($"\u7b2c {i + 1} \u6bb5\uff1a{enemy.GetDebugDisplayName()}[{enemy.GetSelectedSkillDebugSummary()}]({FormatPowerWithBonus(enemyBasePower, enemyBonusPower)}) -> {targetAlly.GetDebugDisplayName()}\uff0c\u5269\u4f59HP {targetAlly.CurrentHP}/{targetAlly.MaxHP}");
+            BattleLog($"\u7b2c {i + 1} \u6bb5\uff1a{enemy.GetDebugDisplayName()}[{enemy.GetSelectedSkillDebugSummary()}]({BattlePowerCalculationService.FormatPowerWithBonus(enemyBasePower, enemyBonusPower)}) -> {targetAlly.GetDebugDisplayName()}\uff0c\u5269\u4f59HP {targetAlly.CurrentHP}/{targetAlly.MaxHP}");
         }
 
         if (needsReturnToOrigin && battlePresentationSystem != null)
@@ -2347,8 +2328,8 @@ public class BattleButton : MonoBehaviour
             ApplyAllyImmediateTriggeredEffects(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnHit, dealtDamage);
             ApplyReactiveOnHitStatusEffects(target);
             if (isSingleAttack)
-                ApplyAllyStatusEffectsOnly(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack);
-            ApplyAllyStatusEffectsOnly(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnHit);
+                ApplyAllyStatusEffectsOnly(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, false);
+            ApplyAllyStatusEffectsOnly(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnHit, false);
             return;
         }
 
@@ -2384,8 +2365,8 @@ public class BattleButton : MonoBehaviour
             ApplyEnemyImmediateTriggeredEffects(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnHit, dealtDamage);
             ApplyReactiveOnHitStatusEffects(target);
             if (isSingleAttack)
-                ApplyEnemyStatusEffectsOnly(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack);
-            ApplyEnemyStatusEffectsOnly(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnHit);
+                ApplyEnemyStatusEffectsOnly(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, false);
+            ApplyEnemyStatusEffectsOnly(attacker, target, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnHit, false);
             return;
         }
 
@@ -2805,13 +2786,13 @@ public class BattleButton : MonoBehaviour
     private void ApplyAllyTriggeredEffects(BattleAllyController attacker, BattleEnemyController currentTarget, int diceIndex, EnemySkill_SO.DiceEffectTrigger trigger, int dealtDamage)
     {
         ApplyAllyImmediateTriggeredEffects(attacker, currentTarget, diceIndex, trigger, dealtDamage);
-        ApplyAllyStatusEffectsOnly(attacker, currentTarget, diceIndex, trigger);
+        ApplyAllyStatusEffectsOnly(attacker, currentTarget, diceIndex, trigger, false);
     }
 
     private void ApplyEnemyTriggeredEffects(BattleEnemyController attacker, BattleAllyController currentTarget, int diceIndex, EnemySkill_SO.DiceEffectTrigger trigger, int dealtDamage)
     {
         ApplyEnemyImmediateTriggeredEffects(attacker, currentTarget, diceIndex, trigger, dealtDamage);
-        ApplyEnemyStatusEffectsOnly(attacker, currentTarget, diceIndex, trigger);
+        ApplyEnemyStatusEffectsOnly(attacker, currentTarget, diceIndex, trigger, false);
     }
 
     private void ApplyAllyImmediateTriggeredEffects(BattleAllyController attacker, BattleEnemyController currentTarget, int diceIndex, EnemySkill_SO.DiceEffectTrigger trigger, int dealtDamage)
@@ -2819,6 +2800,7 @@ public class BattleButton : MonoBehaviour
         ApplyAllyDamageEffects(attacker, currentTarget, diceIndex, trigger);
         ApplyAllyStatusBurstEffects(attacker, currentTarget, diceIndex, trigger);
         ApplyAllyHealingEffects(attacker, currentTarget, diceIndex, trigger, dealtDamage);
+        ApplyAllyStatusEffectsOnly(attacker, currentTarget, diceIndex, trigger, true);
         ApplyAllyStatusStackOperationEffects(attacker, currentTarget, diceIndex, trigger);
     }
 
@@ -2828,12 +2810,13 @@ public class BattleButton : MonoBehaviour
         ApplyEnemyStatusBurstEffects(attacker, currentTarget, diceIndex, trigger);
         ApplyEnemyHealingEffects(attacker, currentTarget, diceIndex, trigger, dealtDamage);
         ApplyEnemyBuiltInEffects(attacker, currentTarget, diceIndex, trigger);
+        ApplyEnemyStatusEffectsOnly(attacker, currentTarget, diceIndex, trigger, true);
         ApplyEnemyStatusStackOperationEffects(attacker, currentTarget, diceIndex, trigger);
         ApplyEnemySummonEffects(attacker, diceIndex, trigger);
         ApplyEnemyStageTransitionEffects(attacker, diceIndex, trigger);
     }
 
-    private void ApplyAllyStatusEffectsOnly(BattleAllyController attacker, BattleEnemyController currentTarget, int diceIndex, EnemySkill_SO.DiceEffectTrigger trigger)
+    private void ApplyAllyStatusEffectsOnly(BattleAllyController attacker, BattleEnemyController currentTarget, int diceIndex, EnemySkill_SO.DiceEffectTrigger trigger, bool conditionalOnly)
     {
         EnemySkill_SO skill = attacker != null ? attacker.SelectedSkill : null;
         if (skill == null)
@@ -2849,10 +2832,14 @@ public class BattleButton : MonoBehaviour
             EnemySkill_SO.StatusEffectEntry effect = settings.statusEffects[i];
             if (effect.trigger != trigger || effect.stackAmount <= 0)
                 continue;
+            if (effect.useCondition != conditionalOnly)
+                continue;
 
             if (effect.targetMode == EnemySkill_SO.DamageTargetMode.Self)
             {
                 if (!TryResolveStatus(effect, out BattleStatus_SO statusData, out string statusId, out string statusName))
+                    continue;
+                if (!IsAllyStatusEffectConditionMet(attacker, attacker, effect))
                     continue;
                 int adjustedStacks = ResolvePlayerRelicAdjustedStatusStacks(statusData, effect.stackAmount, attacker, attacker);
                 if (adjustedStacks <= 0)
@@ -2881,13 +2868,15 @@ public class BattleButton : MonoBehaviour
                 BattleEnemyController target = targets[j];
                 if (target == null || target.IsDead)
                     continue;
+                if (!IsAllyStatusEffectConditionMet(attacker, target, effect))
+                    continue;
 
                 ApplyResolvedStatusEffect(attacker, target, effect, i);
             }
         }
     }
 
-    private void ApplyEnemyStatusEffectsOnly(BattleEnemyController attacker, BattleAllyController currentTarget, int diceIndex, EnemySkill_SO.DiceEffectTrigger trigger)
+    private void ApplyEnemyStatusEffectsOnly(BattleEnemyController attacker, BattleAllyController currentTarget, int diceIndex, EnemySkill_SO.DiceEffectTrigger trigger, bool conditionalOnly)
     {
         EnemySkill_SO skill = attacker != null ? attacker.SelectedSkill : null;
         if (skill == null)
@@ -2903,10 +2892,14 @@ public class BattleButton : MonoBehaviour
             EnemySkill_SO.StatusEffectEntry effect = settings.statusEffects[i];
             if (effect.trigger != trigger || effect.stackAmount <= 0)
                 continue;
+            if (effect.useCondition != conditionalOnly)
+                continue;
 
             if (effect.targetMode == EnemySkill_SO.DamageTargetMode.Self)
             {
                 if (!TryResolveStatus(effect, out _, out string statusId, out string statusName))
+                    continue;
+                if (!IsEnemyStatusEffectConditionMet(attacker, attacker, effect))
                     continue;
                 if (effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart)
                 {
@@ -2932,10 +2925,78 @@ public class BattleButton : MonoBehaviour
                 BattleAllyController target = targets[j];
                 if (target == null || target.IsDead)
                     continue;
+                if (!IsEnemyStatusEffectConditionMet(attacker, target, effect))
+                    continue;
 
                 ApplyResolvedStatusEffect(attacker, target, effect, i);
             }
         }
+    }
+
+    private static bool IsAllyStatusEffectConditionMet(BattleAllyController attacker, BattleEnemyController target, EnemySkill_SO.StatusEffectEntry effect)
+    {
+        if (attacker == null)
+            return false;
+
+        return BattleStatusEffectConditionService.IsConditionMet(
+            effect,
+            attacker.Speed,
+            target != null ? target.Speed : attacker.Speed,
+            attacker.GetStatusStacks,
+            attacker.GetStatusStacks,
+            target != null ? target.GetStatusStacks : attacker.GetStatusStacks,
+            target != null ? target.GetStatusStacks : attacker.GetStatusStacks,
+            target != null ? target.SelectedSkill : null);
+    }
+
+    private static bool IsAllyStatusEffectConditionMet(BattleAllyController attacker, BattleAllyController target, EnemySkill_SO.StatusEffectEntry effect)
+    {
+        if (attacker == null)
+            return false;
+
+        BattleAllyController resolvedTarget = target != null ? target : attacker;
+        return BattleStatusEffectConditionService.IsConditionMet(
+            effect,
+            attacker.Speed,
+            resolvedTarget.Speed,
+            attacker.GetStatusStacks,
+            attacker.GetStatusStacks,
+            resolvedTarget.GetStatusStacks,
+            resolvedTarget.GetStatusStacks,
+            resolvedTarget.SelectedSkill);
+    }
+
+    private static bool IsEnemyStatusEffectConditionMet(BattleEnemyController attacker, BattleAllyController target, EnemySkill_SO.StatusEffectEntry effect)
+    {
+        if (attacker == null)
+            return false;
+
+        return BattleStatusEffectConditionService.IsConditionMet(
+            effect,
+            attacker.Speed,
+            target != null ? target.Speed : attacker.Speed,
+            attacker.GetStatusStacks,
+            attacker.GetStatusStacks,
+            target != null ? target.GetStatusStacks : attacker.GetStatusStacks,
+            target != null ? target.GetStatusStacks : attacker.GetStatusStacks,
+            target != null ? target.SelectedSkill : null);
+    }
+
+    private static bool IsEnemyStatusEffectConditionMet(BattleEnemyController attacker, BattleEnemyController target, EnemySkill_SO.StatusEffectEntry effect)
+    {
+        if (attacker == null)
+            return false;
+
+        BattleEnemyController resolvedTarget = target != null ? target : attacker;
+        return BattleStatusEffectConditionService.IsConditionMet(
+            effect,
+            attacker.Speed,
+            resolvedTarget.Speed,
+            attacker.GetStatusStacks,
+            attacker.GetStatusStacks,
+            resolvedTarget.GetStatusStacks,
+            resolvedTarget.GetStatusStacks,
+            resolvedTarget.SelectedSkill);
     }
 
     private void ApplyResolvedStatusEffect(BattleAllyController attacker, BattleEnemyController target, EnemySkill_SO.StatusEffectEntry effect, int effectIndex)
@@ -3281,24 +3342,6 @@ public class BattleButton : MonoBehaviour
         return modifier;
     }
 
-    private static EnemySkill_SO.DicePowerRange ApplyPlayerRelicDiceRangeModifier(EnemySkill_SO.DicePowerRange baseRange, PlayerRelicDiceModifier modifier)
-    {
-        int minPower = Mathf.Max(1, baseRange.minPower + modifier.minPowerBonus);
-        int maxPower = Mathf.Max(minPower, baseRange.maxPower + modifier.maxPowerBonus);
-        return new EnemySkill_SO.DicePowerRange
-        {
-            minPower = minPower,
-            maxPower = maxPower
-        };
-    }
-
-    private static int RollDiceFromRange(EnemySkill_SO.DicePowerRange range)
-    {
-        int minPower = Mathf.Max(1, range.minPower);
-        int maxPower = Mathf.Max(minPower, range.maxPower);
-        return UnityEngine.Random.Range(minPower, maxPower + 1);
-    }
-
     private void ApplyPlayerRoundStartRelics(BattleAllyController ally)
     {
         if (ally == null)
@@ -3620,6 +3663,8 @@ public class BattleButton : MonoBehaviour
 
             if (effect.targetMode == EnemySkill_SO.DamageTargetMode.Self)
             {
+                if (!IsAllyStatusStackOperationConditionMet(attacker, attacker, effect))
+                    continue;
                 ApplyStatusStackOperation(attacker, attacker, effect, i);
                 continue;
             }
@@ -3629,6 +3674,8 @@ public class BattleButton : MonoBehaviour
             {
                 BattleEnemyController target = targets[j];
                 if (target == null || target.IsDead)
+                    continue;
+                if (!IsAllyStatusStackOperationConditionMet(attacker, target, effect))
                     continue;
 
                 ApplyStatusStackOperation(attacker, target, effect, i);
@@ -3655,6 +3702,8 @@ public class BattleButton : MonoBehaviour
 
             if (effect.targetMode == EnemySkill_SO.DamageTargetMode.Self)
             {
+                if (!IsEnemyStatusStackOperationConditionMet(attacker, attacker, effect))
+                    continue;
                 ApplyStatusStackOperation(attacker, attacker, effect, i);
                 continue;
             }
@@ -3665,10 +3714,78 @@ public class BattleButton : MonoBehaviour
                 BattleAllyController target = targets[j];
                 if (target == null || target.IsDead)
                     continue;
+                if (!IsEnemyStatusStackOperationConditionMet(attacker, target, effect))
+                    continue;
 
                 ApplyStatusStackOperation(attacker, target, effect, i);
             }
         }
+    }
+
+    private static bool IsAllyStatusStackOperationConditionMet(BattleAllyController attacker, BattleEnemyController target, EnemySkill_SO.StatusStackOperationEffectEntry effect)
+    {
+        if (attacker == null)
+            return false;
+
+        return BattleStatusEffectConditionService.IsConditionMet(
+            effect,
+            attacker.Speed,
+            target != null ? target.Speed : attacker.Speed,
+            attacker.GetStatusStacks,
+            attacker.GetStatusStacks,
+            target != null ? target.GetStatusStacks : attacker.GetStatusStacks,
+            target != null ? target.GetStatusStacks : attacker.GetStatusStacks,
+            target != null ? target.SelectedSkill : null);
+    }
+
+    private static bool IsAllyStatusStackOperationConditionMet(BattleAllyController attacker, BattleAllyController target, EnemySkill_SO.StatusStackOperationEffectEntry effect)
+    {
+        if (attacker == null)
+            return false;
+
+        BattleAllyController resolvedTarget = target != null ? target : attacker;
+        return BattleStatusEffectConditionService.IsConditionMet(
+            effect,
+            attacker.Speed,
+            resolvedTarget.Speed,
+            attacker.GetStatusStacks,
+            attacker.GetStatusStacks,
+            resolvedTarget.GetStatusStacks,
+            resolvedTarget.GetStatusStacks,
+            resolvedTarget.SelectedSkill);
+    }
+
+    private static bool IsEnemyStatusStackOperationConditionMet(BattleEnemyController attacker, BattleAllyController target, EnemySkill_SO.StatusStackOperationEffectEntry effect)
+    {
+        if (attacker == null)
+            return false;
+
+        return BattleStatusEffectConditionService.IsConditionMet(
+            effect,
+            attacker.Speed,
+            target != null ? target.Speed : attacker.Speed,
+            attacker.GetStatusStacks,
+            attacker.GetStatusStacks,
+            target != null ? target.GetStatusStacks : attacker.GetStatusStacks,
+            target != null ? target.GetStatusStacks : attacker.GetStatusStacks,
+            target != null ? target.SelectedSkill : null);
+    }
+
+    private static bool IsEnemyStatusStackOperationConditionMet(BattleEnemyController attacker, BattleEnemyController target, EnemySkill_SO.StatusStackOperationEffectEntry effect)
+    {
+        if (attacker == null)
+            return false;
+
+        BattleEnemyController resolvedTarget = target != null ? target : attacker;
+        return BattleStatusEffectConditionService.IsConditionMet(
+            effect,
+            attacker.Speed,
+            resolvedTarget.Speed,
+            attacker.GetStatusStacks,
+            attacker.GetStatusStacks,
+            resolvedTarget.GetStatusStacks,
+            resolvedTarget.GetStatusStacks,
+            resolvedTarget.SelectedSkill);
     }
 
     private void ApplyEnemyStageTransitionEffects(BattleEnemyController attacker, int diceIndex, EnemySkill_SO.DiceEffectTrigger trigger)
