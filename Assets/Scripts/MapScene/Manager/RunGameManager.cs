@@ -140,11 +140,7 @@ public class RunGameManager : MonoBehaviour
     private RunState runState;
     private bool subscriptionsBound;
     private DifficultyConfig_SO activeDifficultyConfig;
-    private readonly Queue<int> pendingCalamityTiers = new Queue<int>();
-    private bool deferPendingCalamityUntilMapResume;
-    private bool deferPendingCalamityUntilOverlayClosed;
-    private bool suppressPendingCalamityOnNextRestActionPointRestore;
-    private BattleEncounterData pendingEventEncounterData;
+    private readonly RunSceneFlowState runFlowState = new RunSceneFlowState();
     private string pendingMoveRelicStatusMessage;
     private readonly Dictionary<string, MapEventLootDiscardPreview> eventRandomLootDiscardPreviewCache = new Dictionary<string, MapEventLootDiscardPreview>(StringComparer.Ordinal);
     private bool isTutorialRun;
@@ -206,11 +202,7 @@ public class RunGameManager : MonoBehaviour
         MainMenuRuntime.ClearTutorialRequest();
         MapRunRuntime.Clear(SceneManager.GetActiveScene().name);
         RestSceneRuntime.Clear();
-        pendingCalamityTiers.Clear();
-        deferPendingCalamityUntilMapResume = false;
-        deferPendingCalamityUntilOverlayClosed = false;
-        suppressPendingCalamityOnNextRestActionPointRestore = false;
-        pendingEventEncounterData = null;
+        runFlowState.Reset();
 
         DifficultyConfig_SO config = ResolvePreferredDifficultyForNewRun();
         activeDifficultyConfig = config;
@@ -254,11 +246,7 @@ public class RunGameManager : MonoBehaviour
         isTutorialRun = true;
         MapRunRuntime.Clear(SceneManager.GetActiveScene().name);
         RestSceneRuntime.Clear();
-        pendingCalamityTiers.Clear();
-        deferPendingCalamityUntilMapResume = false;
-        deferPendingCalamityUntilOverlayClosed = false;
-        suppressPendingCalamityOnNextRestActionPointRestore = false;
-        pendingEventEncounterData = null;
+        runFlowState.Reset();
 
         DifficultyConfig_SO config = ResolvePreferredDifficultyForNewRun();
         activeDifficultyConfig = config;
@@ -317,11 +305,7 @@ public class RunGameManager : MonoBehaviour
 
         EnsureSetup();
         RestSceneRuntime.Clear();
-        pendingCalamityTiers.Clear();
-        deferPendingCalamityUntilMapResume = false;
-        deferPendingCalamityUntilOverlayClosed = false;
-        suppressPendingCalamityOnNextRestActionPointRestore = false;
-        pendingEventEncounterData = null;
+        runFlowState.Reset();
 
         runState = snapshot.runState != null ? snapshot.runState.Clone() : null;
         if (runState == null)
@@ -343,11 +327,7 @@ public class RunGameManager : MonoBehaviour
             snapshot.actionPointBonus,
             snapshot.actionPointCurrent);
 
-        if (snapshot.pendingCalamityTiers != null)
-        {
-            for (int i = 0; i < snapshot.pendingCalamityTiers.Count; i++)
-                pendingCalamityTiers.Enqueue(Mathf.Max(1, snapshot.pendingCalamityTiers[i]));
-        }
+        runFlowState.RestorePendingCalamityTiers(snapshot.pendingCalamityTiers);
 
         mapBackgroundController.Initialize(backgroundRoot, mapCamera, boardManager);
         playerMapController.Initialize(unitsRoot, boardManager, actionPointSystem, tileResolver, runState);
@@ -454,7 +434,7 @@ public class RunGameManager : MonoBehaviour
             {
                 if (!OpenEventPanel(tile))
                 {
-                    deferPendingCalamityUntilOverlayClosed = false;
+                    runFlowState.DeferPendingCalamityUntilOverlayClosed = false;
                     TryPresentPendingCalamity();
                 }
                 return;
@@ -470,7 +450,7 @@ public class RunGameManager : MonoBehaviour
             {
                 if (!OpenMerchantPanel(tile))
                 {
-                    deferPendingCalamityUntilOverlayClosed = false;
+                    runFlowState.DeferPendingCalamityUntilOverlayClosed = false;
                     TryPresentPendingCalamity();
                 }
             }
@@ -531,7 +511,7 @@ public class RunGameManager : MonoBehaviour
             ShowPendingMoveRelicStatusIfAny();
             if (!OpenEventPanel(tile))
             {
-                deferPendingCalamityUntilOverlayClosed = false;
+                runFlowState.DeferPendingCalamityUntilOverlayClosed = false;
                 TryPresentPendingCalamity();
             }
             return;
@@ -548,7 +528,7 @@ public class RunGameManager : MonoBehaviour
         {
             if (!OpenMerchantPanel(tile))
             {
-                deferPendingCalamityUntilOverlayClosed = false;
+                runFlowState.DeferPendingCalamityUntilOverlayClosed = false;
                 TryPresentPendingCalamity();
             }
         }
@@ -721,9 +701,9 @@ public class RunGameManager : MonoBehaviour
         runState.currentCycle += 1;
         actionPointSystem.SetBasePoints(ResolveActionPointLimitForCurrentTier());
         actionPointSystem.AdvanceCycle(0);
-        pendingCalamityTiers.Enqueue(Mathf.Max(1, runState.calamityTier));
+        runFlowState.PendingCalamityTiers.Enqueue(Mathf.Max(1, runState.calamityTier));
         RefreshHUD($"\u707e\u5384\u6c14\u606f\u6fc0\u5316\uff0c\u5f53\u524d\u707e\u5384\u7b49\u7ea7 {runState.calamityTier}\u3002");
-        if (deferPendingCalamityUntilMapResume || deferPendingCalamityUntilOverlayClosed)
+        if (runFlowState.DeferPendingCalamityUntilMapResume || runFlowState.DeferPendingCalamityUntilOverlayClosed)
             return;
         TryPresentPendingCalamity();
     }
@@ -1059,22 +1039,12 @@ public class RunGameManager : MonoBehaviour
 
     private MapMovementCycleFlags CaptureMovementCycleFlags()
     {
-        return new MapMovementCycleFlags
-        {
-            deferPendingCalamityUntilMapResume = deferPendingCalamityUntilMapResume,
-            deferPendingCalamityUntilOverlayClosed = deferPendingCalamityUntilOverlayClosed,
-            suppressPendingCalamityOnNextRestActionPointRestore = suppressPendingCalamityOnNextRestActionPointRestore
-        };
+        return runFlowState.ToMovementCycleFlags();
     }
 
     private void ApplyMovementCycleFlags(MapMovementCycleFlags flags)
     {
-        if (flags == null)
-            return;
-
-        deferPendingCalamityUntilMapResume = flags.deferPendingCalamityUntilMapResume;
-        deferPendingCalamityUntilOverlayClosed = flags.deferPendingCalamityUntilOverlayClosed;
-        suppressPendingCalamityOnNextRestActionPointRestore = flags.suppressPendingCalamityOnNextRestActionPointRestore;
+        runFlowState.ApplyMovementCycleFlags(flags);
     }
 
     private bool TryEnterBattle(BoardTileData tile)
@@ -1083,13 +1053,13 @@ public class RunGameManager : MonoBehaviour
             return false;
         if (sceneTransitionController != null && sceneTransitionController.IsTransitioning)
         {
-            deferPendingCalamityUntilMapResume = false;
+            runFlowState.DeferPendingCalamityUntilMapResume = false;
             return false;
         }
 
         if (tile.tileType == MapTileType.Boss && !runState.IsBossUnlocked)
         {
-            deferPendingCalamityUntilMapResume = false;
+            runFlowState.DeferPendingCalamityUntilMapResume = false;
             string lockedMessage = $"Boss 未解锁。当前钥匙 {runState.currentKeys}/{runState.requiredKeys}。";
             RefreshHUD(lockedMessage);
             boardManager.RefreshTile(tile.coord);
@@ -1098,7 +1068,7 @@ public class RunGameManager : MonoBehaviour
 
         if (enemyRoster == null)
         {
-            deferPendingCalamityUntilMapResume = false;
+            runFlowState.DeferPendingCalamityUntilMapResume = false;
             RefreshHUD("RunGameManager 尚未配置敌人列表。");
             return false;
         }
@@ -1129,7 +1099,7 @@ public class RunGameManager : MonoBehaviour
 
         if (encounterGroup == null || !encounterGroup.IsValid)
         {
-            deferPendingCalamityUntilMapResume = false;
+            runFlowState.DeferPendingCalamityUntilMapResume = false;
             RefreshHUD($"{GetTileTypeLabel(tile.tileType)} / {GetDangerBandLabel(tile.dangerBand)} 没有可用敌人组。");
             return false;
         }
@@ -1137,7 +1107,7 @@ public class RunGameManager : MonoBehaviour
         tile.isVisited = true;
         boardManager.RefreshTile(tile.coord);
         List<PendingBattleStatusGrant> pendingBattleStartGrants = runState.ConsumePendingNextBattleAllyStatusGrants();
-        MapRunRuntime.SaveSnapshot(SceneManager.GetActiveScene().name, runState, boardManager, actionPointSystem, pendingCalamityTiers);
+        MapRunRuntime.SaveSnapshot(SceneManager.GetActiveScene().name, runState, boardManager, actionPointSystem, runFlowState.PendingCalamityTiers);
 
         BattleEncounterData encounterData = MapBattleEncounterService.BuildEncounter(
             new MapBattleEncounterBuildRequest
@@ -1246,35 +1216,41 @@ public class RunGameManager : MonoBehaviour
             return false;
         if (tile.isResolved)
         {
-            deferPendingCalamityUntilMapResume = false;
-            suppressPendingCalamityOnNextRestActionPointRestore = false;
+            runFlowState.DeferPendingCalamityUntilMapResume = false;
+            runFlowState.SuppressPendingCalamityOnNextRestActionPointRestore = false;
             RefreshHUD("这个休息格已经使用过了。");
             return false;
         }
         if (sceneTransitionController != null && sceneTransitionController.IsTransitioning)
         {
-            deferPendingCalamityUntilMapResume = false;
-            suppressPendingCalamityOnNextRestActionPointRestore = false;
+            runFlowState.DeferPendingCalamityUntilMapResume = false;
+            runFlowState.SuppressPendingCalamityOnNextRestActionPointRestore = false;
             return false;
         }
         if (string.IsNullOrWhiteSpace(restSceneName))
         {
-            deferPendingCalamityUntilMapResume = false;
-            suppressPendingCalamityOnNextRestActionPointRestore = false;
+            runFlowState.DeferPendingCalamityUntilMapResume = false;
+            runFlowState.SuppressPendingCalamityOnNextRestActionPointRestore = false;
             RefreshHUD("尚未配置休息场景。");
             return false;
         }
         if (runState == null)
         {
-            deferPendingCalamityUntilMapResume = false;
-            suppressPendingCalamityOnNextRestActionPointRestore = false;
+            runFlowState.DeferPendingCalamityUntilMapResume = false;
+            runFlowState.SuppressPendingCalamityOnNextRestActionPointRestore = false;
             return false;
         }
 
         tile.isVisited = true;
         boardManager.SetSelectedTile(tile.coord);
         boardManager.RefreshTile(tile.coord);
-        MapRunRuntime.SaveSnapshot(SceneManager.GetActiveScene().name, runState, boardManager, actionPointSystem, pendingCalamityTiers, suppressPendingCalamityOnNextRestActionPointRestore);
+        MapRunRuntime.SaveSnapshot(
+            SceneManager.GetActiveScene().name,
+            runState,
+            boardManager,
+            actionPointSystem,
+            runFlowState.PendingCalamityTiers,
+            runFlowState.SuppressPendingCalamityOnNextRestActionPointRestore);
         RestSceneRuntime.BeginVisit(SceneManager.GetActiveScene().name, tile.coord, recruitCharacterRoster, activeDifficultyConfig);
         RefreshHUD("进入休息场景。");
         sceneTransitionController.TransitionToScene(restSceneName);
@@ -1295,7 +1271,7 @@ public class RunGameManager : MonoBehaviour
 
         if (tile.assignedEvent == null)
         {
-            deferPendingCalamityUntilOverlayClosed = false;
+            runFlowState.DeferPendingCalamityUntilOverlayClosed = false;
             RefreshHUD("当前未配置可触发事件。");
             return false;
         }
@@ -1358,13 +1334,13 @@ public class RunGameManager : MonoBehaviour
         {
             if (spentSelectionMoney)
                 runState.AddMoney(requiredMoney);
-            pendingEventEncounterData = null;
+            runFlowState.PendingEventEncounterData = null;
             message = builtInResult != null ? builtInResult.message : "事件执行失败。";
             return false;
         }
 
         message = builtInResult.message;
-        pendingEventEncounterData = builtInResult.pendingEncounterData;
+        runFlowState.PendingEventEncounterData = builtInResult.pendingEncounterData;
 
         if (optionData.customHandler != null)
         {
@@ -1382,7 +1358,7 @@ public class RunGameManager : MonoBehaviour
             {
                 if (spentSelectionMoney)
                     runState.AddMoney(requiredMoney);
-                pendingEventEncounterData = null;
+                runFlowState.PendingEventEncounterData = null;
                 message = string.IsNullOrWhiteSpace(customMessage) ? "事件的自定义效果未能执行。" : customMessage;
                 return false;
             }
@@ -1410,8 +1386,8 @@ public class RunGameManager : MonoBehaviour
     private void HandleMapEventOverlayHidden()
     {
         eventRandomLootDiscardPreviewCache.Clear();
-        deferPendingCalamityUntilOverlayClosed = false;
-        if (pendingEventEncounterData != null)
+        runFlowState.DeferPendingCalamityUntilOverlayClosed = false;
+        if (runFlowState.PendingEventEncounterData != null)
         {
             StartPendingEventEncounter();
             return;
@@ -1421,21 +1397,21 @@ public class RunGameManager : MonoBehaviour
 
     private void StartPendingEventEncounter()
     {
-        if (pendingEventEncounterData == null)
+        if (runFlowState.PendingEventEncounterData == null)
             return;
 
         if (sceneTransitionController != null && sceneTransitionController.IsTransitioning)
             return;
 
-        BattleEncounterData encounterData = pendingEventEncounterData;
-        pendingEventEncounterData = null;
+        BattleEncounterData encounterData = runFlowState.PendingEventEncounterData;
+        runFlowState.PendingEventEncounterData = null;
         if (runState != null)
             encounterData.pendingBattleStartAllyStatusGrants = runState.ConsumePendingNextBattleAllyStatusGrants();
 
-        MapRunRuntime.SaveSnapshot(SceneManager.GetActiveScene().name, runState, boardManager, actionPointSystem, pendingCalamityTiers);
+        MapRunRuntime.SaveSnapshot(SceneManager.GetActiveScene().name, runState, boardManager, actionPointSystem, runFlowState.PendingCalamityTiers);
         BattleEncounterRuntime.SetEncounter(encounterData);
-        if (pendingCalamityTiers.Count > 0)
-            deferPendingCalamityUntilMapResume = true;
+        if (runFlowState.PendingCalamityTiers.Count > 0)
+            runFlowState.DeferPendingCalamityUntilMapResume = true;
 
         RefreshHUD($"进入战斗：{encounterData.encounterLabel}");
         if (sceneTransitionController != null)
@@ -1450,13 +1426,13 @@ public class RunGameManager : MonoBehaviour
             RelicMerchantService.ResetVisitState(currentTile);
 
         PersistCurrentRunSave();
-        deferPendingCalamityUntilOverlayClosed = false;
+        runFlowState.DeferPendingCalamityUntilOverlayClosed = false;
         TryPresentPendingCalamity();
     }
 
     private void HandleMapCraftingOverlayHidden()
     {
-        deferPendingCalamityUntilOverlayClosed = false;
+        runFlowState.DeferPendingCalamityUntilOverlayClosed = false;
         TryPresentPendingCalamity();
     }
 
@@ -1478,9 +1454,9 @@ public class RunGameManager : MonoBehaviour
     {
         if (runState == null || mapCalamityOverlay == null)
             return;
-        if (deferPendingCalamityUntilMapResume)
+        if (runFlowState.DeferPendingCalamityUntilMapResume)
             return;
-        if (deferPendingCalamityUntilOverlayClosed)
+        if (runFlowState.DeferPendingCalamityUntilOverlayClosed)
             return;
         if (mapCalamityOverlay.IsVisible)
             return;
@@ -1491,9 +1467,9 @@ public class RunGameManager : MonoBehaviour
         if (mapCraftingOverlay != null && mapCraftingOverlay.IsVisible)
             return;
 
-        while (pendingCalamityTiers.Count > 0)
+        while (runFlowState.PendingCalamityTiers.Count > 0)
         {
-            int calamityTier = Mathf.Max(1, pendingCalamityTiers.Dequeue());
+            int calamityTier = Mathf.Max(1, runFlowState.PendingCalamityTiers.Dequeue());
             List<Calamity_SO> choices = CalamitySelectionService.RollChoices(calamityPool, runState, calamityTier);
             if (choices.Count <= 0)
             {
@@ -1648,8 +1624,8 @@ public class RunGameManager : MonoBehaviour
             runState,
             boardManager,
             actionPointSystem,
-            pendingCalamityTiers,
-            suppressPendingCalamityOnNextRestActionPointRestore);
+            runFlowState.PendingCalamityTiers,
+            runFlowState.SuppressPendingCalamityOnNextRestActionPointRestore);
     }
 
     private MainMenuSaveAssetCatalog BuildSaveAssetCatalog()

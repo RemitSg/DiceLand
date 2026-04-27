@@ -741,3 +741,14 @@
 - Static checks completed: old local `RollPendingCalamityChoices` and event filtering / marking blocks no longer remain in `RunGameManager`, and `git diff --check` reports no formatting errors for touched code files.
 - Verification completed: `RunFlowAssignmentServiceTests` passed 4/4; `RunServiceRefactorTests`, `MapEventEncounterServiceTests`, `MapEventLootCostServiceTests`, and `MapEventRewardServiceTests` passed 16/16; full EditMode passed 159/159; Unity console reports no errors.
 - Next recommended step: continue reducing `RunGameManager` scene-facing load by extracting save / restore runtime-state reset helpers and pending calamity deferral flags, or move to the higher-risk `BattleButton` combat resolution pipeline after a checkpoint commit.
+
+## 2026-04-27 - Relic System Refactor Stage 34
+
+- Continued low-risk `RunGameManager` reduction after Stage 33.
+- Added `Assets/Scripts/Shared/RunSceneFlowState.cs` to centralize transient map-run flow state: pending calamity tiers, calamity presentation deferral flags, rest action-point restore suppression, and pending event encounter data.
+- Added `Assets/Tests/EditMode/Editor/RunSceneFlowStateTests.cs` using TDD; the test first failed on missing `RunSceneFlowState`, then passed after implementation.
+- Migrated `RunGameManager` to use `RunSceneFlowState` for new-run / tutorial / restore resets, pending calamity tier restoration, movement-cycle flag capture / restore, event encounter handoff, map / rest snapshot saves, and calamity presentation deferral checks.
+- This stage keeps UI presentation, scene transitions, HUD messaging, and gameplay side effects in `RunGameManager`; it only centralizes transient flow state ownership.
+- Static checks completed: old direct fields `pendingCalamityTiers`, `deferPendingCalamityUntilMapResume`, `deferPendingCalamityUntilOverlayClosed`, `suppressPendingCalamityOnNextRestActionPointRestore`, and `pendingEventEncounterData` no longer remain as manager-owned fields, and `git diff --check` reports no formatting errors for touched code files.
+- Verification completed: `RunSceneFlowStateTests` passed 3/3; run / map / event service regression group passed 23/23; full EditMode passed 162/162; Unity console reports no errors.
+- Next recommended step: checkpoint the current Run/Map refactor work before entering `BattleButton`, or do one final low-risk pass to extract map tile labels / HUD presentation text helpers if desired.

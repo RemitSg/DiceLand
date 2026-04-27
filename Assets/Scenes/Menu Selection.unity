@@ -11376,17 +11376,11 @@ MonoBehaviour:
     titleFontSize: 60
     bodyFontSize: 36
   demoTestEncounterLabel: Demo Battle Test
-<<<<<<< Updated upstream
-  demoTestEnemyGroup: {fileID: 11400000, guid: a8df06d99102ea7408c19bf4a2c6312e, type: 2}
-=======
   demoTestEnemyGroup: {fileID: 11400000, guid: 9e64812b6d7847649fca4e81997f61ba, type: 2}
->>>>>>> Stashed changes
   demoTestPartyMembers:
   - memberId: 
     characterData: {fileID: 11400000, guid: 27e817266af382946804dea6afd2e374, type: 2}
     equippedWeapon: {fileID: 11400000, guid: 4b3e2d650c5c8744181da8df8b3099f3, type: 2}
-    characterData: {fileID: 11400000, guid: fce426096f554744093a4718f5aa0f45, type: 2}
-    equippedWeapon: {fileID: 11400000, guid: 420447e608e441348810e5e73127e855, type: 2}
     startingLevel: 1
     startingExperience: 0
     startingMaxHP: 999
