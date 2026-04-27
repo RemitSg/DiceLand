@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: Rotblossom_Data
+  m_EditorClassIdentifier: 
+  enemyID: 22
+  enemyName: "\u8150\u82B1"
+  baseHP: 26
+  damageReductionPercent: 0
+  minSpeed: 1
+  maxSpeed: 1
+  baseSpeedButtonCount: 3
+  enemySprite: {fileID: 21300000, guid: c60cc52c21dc364478ee76f9d723e7fd, type: 3}
+  stageSprites: []
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.5
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules: []
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains: []
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  enemyDescription: "\u679D\u53F6\u4E0B\u5792\u7740\u751C\u8150\u9999\u6C14\u7684\u53D8\u79CD\u690D\u7269\u602A\u7269\u3002\u5B83\u64C5\u957F\u6563\u64AD\u4E2D\u6BD2\uFF0C\u4E5F\u4F1A\u5728\u4EBA\u6570\u7A00\u5C11\u65F6\u9AD8\u9891\u53EC\u5524\u65B0\u7684\u53CB\u65B9\u3002"
+  passiveDescriptions:
+  - passiveName: "\u67D4\u97E7"
+    displayColorType: 1
+    description: "\u6BCF\u56DE\u5408\u5F00\u59CB\u65F6\uFF0C\u83B7\u5F97\u7B49\u540C\u4E8E\u573A\u4E0A\u6240\u6709\u6D3B\u7740\u53CB\u65B9\u4E2D\u6700\u9AD8\u4E2D\u6BD2\u5C42\u6570\u7684\u4E34\u65F6\u91CD\u9632"
+  enemyVisualScale: 1.55
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: abf2f460fd354e72ac41e2aaff4b89ef, type: 2}
+  - {fileID: 11400000, guid: ebdecc93bf4141978e2807d35c2651db, type: 2}
+  conditionalSkillRules:
+  - ruleName: "\u5B62\u7FA4\u7EFD\u653E"
+    skill: {fileID: 11400000, guid: 2e31666e15984027af0764285a1a0360, type: 2}
+    conditionType: 2
+    healthThresholdNormalized: 0
+    firstTriggerRound: 1
+    repeatEveryNRounds: 1
+    priority: 10
+    maxSlotsPerRound: 1
+    useOncePerBattle: 0
+    requiredAliveEnemyCount: 2

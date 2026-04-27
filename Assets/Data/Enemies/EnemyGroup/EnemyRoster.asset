@@ -30,7 +30,13 @@ MonoBehaviour:
   - dangerBand: 1
     standardGroups:
     - {fileID: 11400000, guid: abec5439fa064a5b83642213a7e7b57b, type: 2}
-    eliteGroups: []
+    - {fileID: 11400000, guid: e3fe9f74fb3942ac8d3d7f318185aecf, type: 2}
+    - {fileID: 11400000, guid: 5bcc94f1757f43ef96e5f0aa7767f586, type: 2}
+    - {fileID: 11400000, guid: a925f23c50bb45579874dcddfa0cd877, type: 2}
+    - {fileID: 11400000, guid: 18b7d2ff60fc4fc489e50c644dbeb095, type: 2}
+    - {fileID: 11400000, guid: 9e64812b6d7847649fca4e81997f61ba, type: 2}
+    eliteGroups:
+    - {fileID: 11400000, guid: 00a3b481e5184991a12d0d5980b1625a, type: 2}
   - dangerBand: 2
     standardGroups: []
     eliteGroups: []

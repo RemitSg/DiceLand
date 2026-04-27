@@ -142,7 +142,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         ShowForActor(
             $"\u654c\u65b9\u6280\u80fd\uff1a{enemy.GetDebugDisplayName()}",
             skill != null ? skill.skillName : "\u5c1a\u672a\u51b3\u5b9a\u6280\u80fd",
-            BuildSkillDetail(skill, "\u5f53\u524d\u6280\u80fd", false),
+            BuildEnemySkillDetail(enemy, skill, "\u5f53\u524d\u6280\u80fd"),
             null);
 
         ClearSkillButtons();
@@ -654,7 +654,16 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         if (enemy == null)
             return "\u672a\u627e\u5230\u654c\u65b9\u6570\u636e\u3002";
 
-        return BuildSkillDetail(enemy.SelectedSkill, "\u5f53\u524d\u6280\u80fd", false);
+        return BuildEnemySkillDetail(enemy, enemy.SelectedSkill, "\u5f53\u524d\u6280\u80fd");
+    }
+
+    private string BuildEnemySkillDetail(BattleEnemyController enemy, EnemySkill_SO skill, string header)
+    {
+        return BuildSkillDetail(
+            skill,
+            header,
+            false,
+            enemy != null ? new Func<int, EnemySkill_SO.DicePowerRange>(diceIndex => enemy.GetDisplayedDicePowerRange(skill, diceIndex)) : null);
     }
 
     private void ResolveBattleButton()
@@ -709,15 +718,13 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
         List<string> rangeLines = new List<string>();
         List<string> effectLines = new List<string>();
-        Color dicePowerColor = GetDicePowerDisplayColor(skill);
         for (int i = 0; i < skill.diceCount; i++)
         {
             EnemySkill_SO.DicePowerRange range = rangeResolver != null ? rangeResolver(i) : skill.GetDicePowerRange(i);
+            EnemySkill_SO.DicePowerRange baseRange = skill.GetDicePowerRange(i);
             string diceLabel = BuildDiceDisplayLabel(skill, i);
             string diceEffectLabel = BuildDiceEffectLabel(skill, i);
-            string minLabel = BuildColoredToken(range.minPower.ToString(), dicePowerColor);
-            string maxLabel = BuildColoredToken(range.maxPower.ToString(), dicePowerColor);
-            rangeLines.Add($"{diceLabel}：{minLabel} ~ {maxLabel}");
+            rangeLines.Add($"{diceLabel}：{BuildDiceRangeLabel(skill, i, baseRange, range)}");
 
             EnemySkill_SO.DiceEffectSettings effectSettings = skill.GetDiceEffectSettings(i);
             if (effectSettings.damageEffects != null)
@@ -846,6 +853,9 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 }
             }
 
+            AppendBuiltInEffectLines(effectLines, diceEffectLabel, effectSettings, attackerIsAlly);
+            AppendRangeModifierLines(effectLines, diceEffectLabel, effectSettings);
+
             if (effectSettings.powerModifiers != null)
             {
                 for (int effectIndex = 0; effectIndex < effectSettings.powerModifiers.Length; effectIndex++)
@@ -905,16 +915,13 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
         List<string> rangeLines = new List<string>();
         List<string> effectLines = new List<string>();
-        Color dicePowerColor = GetDicePowerDisplayColor(skill);
 
         for (int i = 0; i < skill.diceCount; i++)
         {
             EnemySkill_SO.DicePowerRange range = skill.GetDicePowerRange(i);
             string diceLabel = BuildDiceDisplayLabel(skill, i);
             string diceEffectLabel = BuildDiceEffectLabel(skill, i);
-            string minLabel = BuildColoredToken(range.minPower.ToString(), dicePowerColor);
-            string maxLabel = BuildColoredToken(range.maxPower.ToString(), dicePowerColor);
-            rangeLines.Add($"{diceLabel}：{minLabel} ~ {maxLabel}");
+            rangeLines.Add($"{diceLabel}：{BuildDiceRangeLabel(skill, i, range, range)}");
 
             EnemySkill_SO.DiceEffectSettings effectSettings = skill.GetDiceEffectSettings(i);
             AppendEffectLines(effectLines, diceEffectLabel, effectSettings, attackerIsAlly);
@@ -935,16 +942,14 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
         List<string> rangeLines = new List<string>();
         List<string> effectLines = new List<string>();
-        Color dicePowerColor = GetDicePowerDisplayColor(skill);
 
         for (int i = 0; i < skill.diceCount; i++)
         {
-            EnemySkill_SO.DicePowerRange range = skill.GetDicePowerRange(i);
+            EnemySkill_SO.DicePowerRange range = enemy.GetDisplayedDicePowerRange(skill, i);
+            EnemySkill_SO.DicePowerRange baseRange = skill.GetDicePowerRange(i);
             string diceLabel = BuildDiceDisplayLabel(skill, i);
             string diceEffectLabel = BuildDiceEffectLabel(skill, i);
-            string minLabel = BuildColoredToken(range.minPower.ToString(), dicePowerColor);
-            string maxLabel = BuildColoredToken(range.maxPower.ToString(), dicePowerColor);
-            rangeLines.Add($"{diceLabel}：{minLabel} ~ {maxLabel}");
+            rangeLines.Add($"{diceLabel}：{BuildDiceRangeLabel(skill, i, baseRange, range)}");
 
             EnemySkill_SO.DiceEffectSettings effectSettings = skill.GetDiceEffectSettings(i);
             AppendEffectLines(effectLines, diceEffectLabel, effectSettings, false);
@@ -1070,6 +1075,9 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             }
         }
 
+        AppendBuiltInEffectLines(effectLines, diceEffectLabel, effectSettings, attackerIsAlly);
+        AppendRangeModifierLines(effectLines, diceEffectLabel, effectSettings);
+
         if (effectSettings.powerModifiers != null)
         {
             for (int effectIndex = 0; effectIndex < effectSettings.powerModifiers.Length; effectIndex++)
@@ -1093,6 +1101,68 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                     effectLines.Add($"{diceEffectLabel}：{triggerLabel} 威力 {BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor)}");
                 }
             }
+        }
+    }
+
+    private void AppendBuiltInEffectLines(List<string> effectLines, string diceEffectLabel, EnemySkill_SO.DiceEffectSettings effectSettings, bool attackerIsAlly)
+    {
+        if (effectSettings.builtInEffects == null)
+            return;
+
+        for (int effectIndex = 0; effectIndex < effectSettings.builtInEffects.Length; effectIndex++)
+        {
+            EnemySkill_SO.BuiltInEffectEntry effect = effectSettings.builtInEffects[effectIndex];
+            string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
+            string targetLabel = BuildColoredToken(GetBuiltInActionTargetLabel(effect, attackerIsAlly), targetHighlightColor);
+            string conditionPrefix = BuildBuiltInConditionPrefix(effect);
+
+            switch (effect.effectType)
+            {
+                case EnemySkill_SO.BuiltInEffectType.Heal:
+                    if (effect.amount <= 0)
+                        continue;
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 恢复 {BuildColoredToken(effect.amount.ToString(), valueHighlightColor)} 点生命");
+                    break;
+                case EnemySkill_SO.BuiltInEffectType.Damage:
+                    if (effect.amount <= 0)
+                        continue;
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}对 {targetLabel} 额外造成 {BuildColoredToken(effect.amount.ToString(), valueHighlightColor)} 点伤害");
+                    break;
+                case EnemySkill_SO.BuiltInEffectType.ApplyStatus:
+                    if (effect.statusStackAmount <= 0)
+                        continue;
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} {BuildBuiltInTimingPrefix(effect)}获得 {BuildColoredToken(effect.statusStackAmount.ToString(), valueHighlightColor)} 层 {BuildColoredToken(GetBuiltInPrimaryStatusLabel(effect), valueHighlightColor)}");
+                    break;
+                case EnemySkill_SO.BuiltInEffectType.TransferRandomNegativeStatus:
+                    if (effect.amount <= 0 && effect.fallbackAmount <= 0)
+                        continue;
+                    string transferLine = $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}将自身 {BuildColoredToken(Mathf.Max(1, effect.amount).ToString(), valueHighlightColor)} 层随机负面状态转移给 {targetLabel}";
+                    if (effect.fallbackAmount > 0)
+                    {
+                        transferLine += $"；若未找到可转移的负面状态，则使 {BuildColoredToken("自己", targetHighlightColor)} {BuildBuiltInTimingPrefix(effect)}获得 {BuildColoredToken(effect.fallbackAmount.ToString(), valueHighlightColor)} 层 {BuildColoredToken(GetBuiltInPrimaryStatusLabel(effect), valueHighlightColor)}";
+                    }
+
+                    effectLines.Add(transferLine);
+                    break;
+            }
+        }
+    }
+
+    private void AppendRangeModifierLines(List<string> effectLines, string diceEffectLabel, EnemySkill_SO.DiceEffectSettings effectSettings)
+    {
+        if (effectSettings.rangeModifiers == null)
+            return;
+
+        for (int effectIndex = 0; effectIndex < effectSettings.rangeModifiers.Length; effectIndex++)
+        {
+            EnemySkill_SO.ConditionalDiceRangeModifierEntry effect = effectSettings.rangeModifiers[effectIndex];
+            if (effect.minPowerBonus == 0 && effect.maxPowerBonus == 0)
+                continue;
+
+            string conditionPrefix = effect.useCondition
+                ? $"若 {BuildColoredToken(GetRangeModifierConditionLabel(effect), targetHighlightColor)} ，则 "
+                : string.Empty;
+            effectLines.Add($"{diceEffectLabel}：{conditionPrefix}{BuildRangeModifierDeltaLabel(effect)}");
         }
     }
 
@@ -1139,17 +1209,33 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
     private static string GetDicePrefixLabel(EnemySkill_SO skill, int diceIndex)
     {
-        bool isDefense = skill != null && skill.IsDefenseSkill;
+        bool isDefense = skill != null && skill.GetDiceSkillCategory(diceIndex) == EnemySkill_SO.SkillCategory.Defense;
         return isDefense
             ? $"第 {diceIndex + 1} 防御骰"
             : $"第 {diceIndex + 1} 攻击骰";
     }
 
-    private Color GetDicePowerDisplayColor(EnemySkill_SO skill)
+    private Color GetDicePowerDisplayColor(EnemySkill_SO skill, int diceIndex)
     {
-        return skill != null && skill.IsDefenseSkill
+        return skill != null && skill.GetDiceSkillCategory(diceIndex) == EnemySkill_SO.SkillCategory.Defense
             ? defenseDicePowerColor
             : attackDicePowerColor;
+    }
+
+    private string BuildDiceRangeLabel(
+        EnemySkill_SO skill,
+        int diceIndex,
+        EnemySkill_SO.DicePowerRange baseRange,
+        EnemySkill_SO.DicePowerRange displayedRange)
+    {
+        Color dicePowerColor = GetDicePowerDisplayColor(skill, diceIndex);
+        string displayedMinLabel = BuildColoredToken(displayedRange.minPower.ToString(), dicePowerColor);
+        string displayedMaxLabel = BuildColoredToken(displayedRange.maxPower.ToString(), dicePowerColor);
+        if (baseRange.minPower == displayedRange.minPower && baseRange.maxPower == displayedRange.maxPower)
+            return $"{displayedMinLabel} ~ {displayedMaxLabel}";
+
+        string baseRangeLabel = $"<s>{baseRange.minPower} ~ {baseRange.maxPower}</s>";
+        return $"{baseRangeLabel} {displayedMinLabel} ~ {displayedMaxLabel}";
     }
 
     private static string FormatSignedInt(int value)
@@ -1235,6 +1321,38 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         }
     }
 
+    private static string GetStatusLabel(EnemySkill_SO.BuiltInEffectEntry effect)
+    {
+        if (effect.conditionStatusData != null)
+            return effect.conditionStatusData.DisplayName;
+
+        switch (effect.conditionStatusType)
+        {
+            case EnemySkill_SO.DiceStatusType.Burn:
+                return "燃烧";
+            case EnemySkill_SO.DiceStatusType.Electro:
+                return "电流";
+            default:
+                return "未配置状态";
+        }
+    }
+
+    private static string GetBuiltInPrimaryStatusLabel(EnemySkill_SO.BuiltInEffectEntry effect)
+    {
+        if (effect.statusData != null)
+            return effect.statusData.DisplayName;
+
+        switch (effect.statusType)
+        {
+            case EnemySkill_SO.DiceStatusType.Burn:
+                return "燃烧";
+            case EnemySkill_SO.DiceStatusType.Electro:
+                return "电流";
+            default:
+                return "未配置状态";
+        }
+    }
+
     private static string GetStatusLabel(EnemySkill_SO.StatusStackOperationEffectEntry effect)
     {
         if (effect.statusData != null)
@@ -1262,6 +1380,9 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             int stacks = Mathf.Max(1, skill.targetPriorityRequiredStacks);
             return $"\n目标偏好：优先攻击具有 {stacks} 层 {statusLabel} 的目标";
         }
+
+        if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferLowestSpeed)
+            return "\n目标偏好：优先攻击速度最低的目标";
 
         return string.Empty;
     }
@@ -1317,6 +1438,127 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"目标每拥有 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetHealingConditionStatusLabel(effect)}";
             default:
                 return "\u672a\u914d\u7f6e\u6761\u4ef6";
+        }
+    }
+
+    private static string GetBuiltInConditionLabel(EnemySkill_SO.BuiltInEffectEntry effect)
+    {
+        string statusLabel = GetStatusLabel(effect);
+        int requiredStacks = Mathf.Max(1, effect.requiredStatusStacks);
+        switch (effect.conditionScope)
+        {
+            case EnemySkill_SO.BuiltInConditionScope.CurrentTarget:
+                return $"目标拥有至少 {requiredStacks} 层 {statusLabel}";
+            case EnemySkill_SO.BuiltInConditionScope.AnyOpponent:
+                return $"任意目标拥有至少 {requiredStacks} 层 {statusLabel}";
+            case EnemySkill_SO.BuiltInConditionScope.AnyFriendly:
+                return $"任意友方拥有至少 {requiredStacks} 层 {statusLabel}";
+            case EnemySkill_SO.BuiltInConditionScope.Self:
+                return $"自身拥有至少 {requiredStacks} 层 {statusLabel}";
+            default:
+                return $"目标拥有至少 {requiredStacks} 层 {statusLabel}";
+        }
+    }
+
+    private string BuildBuiltInConditionPrefix(EnemySkill_SO.BuiltInEffectEntry effect)
+    {
+        List<string> conditions = new List<string>();
+        if (effect.useStatusCondition)
+            conditions.Add(BuildColoredToken(GetBuiltInConditionLabel(effect), targetHighlightColor));
+        if (effect.useCondition)
+            conditions.Add(BuildColoredToken(GetBuiltInGeneralConditionLabel(effect), targetHighlightColor));
+
+        return conditions.Count > 0
+            ? $"若 {string.Join(" 且 ", conditions)} ，则 "
+            : string.Empty;
+    }
+
+    private static string BuildBuiltInTimingPrefix(EnemySkill_SO.BuiltInEffectEntry effect)
+    {
+        if (effect.applyTiming != EnemySkill_SO.StatusApplyTiming.NextRoundStart)
+            return string.Empty;
+
+        int repeatCount = Mathf.Max(1, effect.applyRepeatCount);
+        int delayRounds = Mathf.Max(1, effect.applyAfterRoundStarts);
+        return repeatCount > 1
+            ? $"于 接下来 {repeatCount} 个回合开始时 "
+            : $"于 下 {delayRounds} 个回合开始时 ";
+    }
+
+    private static string GetBuiltInGeneralConditionLabel(EnemySkill_SO.BuiltInEffectEntry effect)
+    {
+        switch (effect.condition)
+        {
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanTarget:
+                return $"自身速度 高出 目标单位速度 {Mathf.Max(1, effect.requiredConditionSpeedDifference)} 点（含）";
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanTarget:
+                return $"自身速度 低于 目标单位速度 {Mathf.Max(1, effect.requiredConditionSpeedDifference)} 点（含）";
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedEqualToTarget:
+                return "自身速度 等于 目标单位速度";
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanValue:
+                return $"自身速度 高于 {effect.requiredConditionSpeedValue}（含）";
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanValue:
+                return $"自身速度 低于 {effect.requiredConditionSpeedValue}（含）";
+            case EnemySkill_SO.PowerModifierCondition.SelfHasStatus:
+                return $"自身拥有 {GetBuiltInGeneralConditionStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterThan:
+                return $"自身 {GetBuiltInGeneralConditionStatusLabel(effect)} 层数 高于 {Mathf.Max(0, effect.requiredConditionStatusStacks)}";
+            case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterOrEqual:
+                return $"自身 {GetBuiltInGeneralConditionStatusLabel(effect)} 层数 至少为 {Mathf.Max(1, effect.requiredConditionStatusStacks)}";
+            case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksLessThan:
+                return $"自身 {GetBuiltInGeneralConditionStatusLabel(effect)} 层数 低于 {Mathf.Max(1, effect.requiredConditionStatusStacks)}";
+            case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksLessOrEqual:
+                return $"自身 {GetBuiltInGeneralConditionStatusLabel(effect)} 层数 至多为 {Mathf.Max(0, effect.requiredConditionStatusStacks)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetHasStatus:
+                return $"目标拥有 {GetBuiltInGeneralConditionStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
+                return $"目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetBuiltInGeneralConditionStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
+                return $"目标每拥有 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetBuiltInGeneralConditionStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetSkillIsSpecific:
+                return $"与技能 {GetBuiltInGeneralConditionSkillLabel(effect)} 拼点";
+            default:
+                return "未配置条件";
+        }
+    }
+
+    private static string GetBuiltInGeneralConditionStatusLabel(EnemySkill_SO.BuiltInEffectEntry effect)
+    {
+        if (effect.targetStatusData != null)
+            return effect.targetStatusData.DisplayName;
+
+        switch (effect.targetStatusType)
+        {
+            case EnemySkill_SO.DiceStatusType.Burn:
+                return "燃烧";
+            case EnemySkill_SO.DiceStatusType.Electro:
+                return "电流";
+            default:
+                return "未配置状态";
+        }
+    }
+
+    private static string GetBuiltInGeneralConditionSkillLabel(EnemySkill_SO.BuiltInEffectEntry effect)
+    {
+        return effect.targetSkillData != null && !string.IsNullOrWhiteSpace(effect.targetSkillData.skillName)
+            ? effect.targetSkillData.skillName
+            : "未配置技能";
+    }
+
+    private static string GetBuiltInActionTargetLabel(EnemySkill_SO.BuiltInEffectEntry effect, bool attackerIsAlly)
+    {
+        switch (effect.targetMode)
+        {
+            case EnemySkill_SO.DamageTargetMode.Self:
+                return "自己";
+            case EnemySkill_SO.DamageTargetMode.CurrentTarget:
+                return "目标";
+            case EnemySkill_SO.DamageTargetMode.RandomOpponents:
+                return $"随机 {Mathf.Max(1, effect.randomTargetCount)} 名目标";
+            case EnemySkill_SO.DamageTargetMode.AllOpponents:
+                return "所有目标";
+            default:
+                return attackerIsAlly ? "敌方目标" : "目标";
         }
     }
 
@@ -1393,6 +1635,76 @@ public class BattleSkillInfoOverlay : MonoBehaviour
     }
 
     private static string GetPowerModifierTargetSkillLabel(EnemySkill_SO.ConditionalPowerModifierEntry effect)
+    {
+        return effect.targetSkillData != null && !string.IsNullOrWhiteSpace(effect.targetSkillData.skillName)
+            ? effect.targetSkillData.skillName
+            : "未配置技能";
+    }
+
+    private static string GetRangeModifierConditionLabel(EnemySkill_SO.ConditionalDiceRangeModifierEntry effect)
+    {
+        switch (effect.condition)
+        {
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanTarget:
+                return $"自身速度 高出 目标单位速度 {Mathf.Max(1, effect.requiredSpeedDifference)} 点（含）";
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanTarget:
+                return $"自身速度 低于 目标单位速度 {Mathf.Max(1, effect.requiredSpeedDifference)} 点（含）";
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedEqualToTarget:
+                return "自身速度 等于 目标单位速度";
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanValue:
+                return $"自身速度 高于 {effect.requiredSpeedValue}（含）";
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanValue:
+                return $"自身速度 低于 {effect.requiredSpeedValue}（含）";
+            case EnemySkill_SO.PowerModifierCondition.SelfHasStatus:
+                return $"自身拥有 {GetRangeModifierStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterThan:
+                return $"自身 {GetRangeModifierStatusLabel(effect)} 层数 高于 {Mathf.Max(0, effect.requiredStatusStacks)}";
+            case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterOrEqual:
+                return $"自身 {GetRangeModifierStatusLabel(effect)} 层数 至少为 {Mathf.Max(1, effect.requiredStatusStacks)}";
+            case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksLessThan:
+                return $"自身 {GetRangeModifierStatusLabel(effect)} 层数 低于 {Mathf.Max(1, effect.requiredStatusStacks)}";
+            case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksLessOrEqual:
+                return $"自身 {GetRangeModifierStatusLabel(effect)} 层数 至多为 {Mathf.Max(0, effect.requiredStatusStacks)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetHasStatus:
+                return $"目标拥有 {GetRangeModifierStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
+                return $"目标拥有至少 {Mathf.Max(1, effect.requiredStatusStacks)} 层 {GetRangeModifierStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
+                return $"目标每拥有 {Mathf.Max(1, effect.requiredStatusStacks)} 层 {GetRangeModifierStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetSkillIsSpecific:
+                return $"与技能 {GetRangeModifierTargetSkillLabel(effect)} 拼点";
+            default:
+                return "未配置条件";
+        }
+    }
+
+    private string BuildRangeModifierDeltaLabel(EnemySkill_SO.ConditionalDiceRangeModifierEntry effect)
+    {
+        List<string> segments = new List<string>();
+        if (effect.minPowerBonus != 0)
+            segments.Add($"最小威力 {BuildColoredToken(FormatSignedInt(effect.minPowerBonus), valueHighlightColor)}");
+        if (effect.maxPowerBonus != 0)
+            segments.Add($"最大威力 {BuildColoredToken(FormatSignedInt(effect.maxPowerBonus), valueHighlightColor)}");
+        return string.Join("，", segments);
+    }
+
+    private static string GetRangeModifierStatusLabel(EnemySkill_SO.ConditionalDiceRangeModifierEntry effect)
+    {
+        if (effect.targetStatusData != null)
+            return effect.targetStatusData.DisplayName;
+
+        switch (effect.targetStatusType)
+        {
+            case EnemySkill_SO.DiceStatusType.Burn:
+                return "燃烧";
+            case EnemySkill_SO.DiceStatusType.Electro:
+                return "电流";
+            default:
+                return "未配置状态";
+        }
+    }
+
+    private static string GetRangeModifierTargetSkillLabel(EnemySkill_SO.ConditionalDiceRangeModifierEntry effect)
     {
         return effect.targetSkillData != null && !string.IsNullOrWhiteSpace(effect.targetSkillData.skillName)
             ? effect.targetSkillData.skillName

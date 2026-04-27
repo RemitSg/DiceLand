@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: HornedGatekeeper_Data
+  m_EditorClassIdentifier: 
+  enemyID: 26
+  enemyName: "\u65AD\u89D2\u5B88\u95E8\u4EBA"
+  baseHP: 44
+  damageReductionPercent: 0
+  minSpeed: 1
+  maxSpeed: 6
+  baseSpeedButtonCount: 2
+  enemySprite: {fileID: 21300000, guid: c60cc52c21dc364478ee76f9d723e7fd, type: 3}
+  stageSprites:
+  - stageName: "\u575A\u5B88"
+    stageSprite: {fileID: 21300000, guid: c60cc52c21dc364478ee76f9d723e7fd, type: 3}
+    minSpeedOverride: 1
+    maxSpeedOverride: 6
+    speedButtonCountOverride: 2
+  - stageName: "\u65AD\u89D2"
+    stageSprite: {fileID: 21300000, guid: c60cc52c21dc364478ee76f9d723e7fd, type: 3}
+    minSpeedOverride: 2
+    maxSpeedOverride: 7
+    speedButtonCountOverride: 3
+  enableHealthBasedStageTransition: 1
+  healthBasedTransitionThresholdNormalized: 0.5
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules: []
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains: []
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  enemyDescription: "\u624B\u6301\u65AD\u89D2\u5DE8\u76FE\u7684\u95E8\u69DB\u5B88\u62A4\u8005\u3002\u5728\u7B2C 1 \u9636\u6BB5\u5B83\u4F1A\u4EE5\u9632\u5B88\u53CD\u9707\u963B\u65AD\u524D\u8FDB\uFF0C\u53D7\u5230\u91CD\u521B\u540E\u5219\u8F6C\u5165\u66F4\u5177\u653B\u51FB\u6027\u7684\u65AD\u89D2\u59FF\u6001\u3002"
+  passiveDescriptions:
+  - passiveName: "\u5B88\u95E8"
+    displayColorType: 1
+    description: "\u7B2C 1 \u9636\u6BB5\u65F6\uFF0C\u9632\u5FA1\u9AA0\u62FC\u70B9\u80DC\u5229\u540E\u5BF9\u76EE\u6807\u9020\u6210\u7B49\u540C\u4E8E\u62FC\u70B9\u5DEE\u503C\u7684\u53CD\u9707\u4F24\u5BB3"
+  - passiveName: "\u65AD\u89D2"
+    displayColorType: 1
+    description: "\u7B2C 2 \u9636\u6BB5\u65F6\uFF0C\u53D6\u6D88\u300C\u5B88\u95E8\u300D\uFF0C\u6539\u4E3A\u5728\u62FC\u70B9\u80DC\u5229\u540E\u4F7F\u4E0B\u4E00\u4E2A\u653B\u51FB\u6280\u80FD\u5A01\u529B +1"
+  enemyVisualScale: 1.9
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: dae3d79b682943b6a360374bfe9e157d, type: 2}
+  - {fileID: 11400000, guid: 4cfce12d7c0644b3bd0925b854381a13, type: 2}
+  - {fileID: 11400000, guid: 24dd53e0f01544c48af5318659fcfdc9, type: 2}
+  - {fileID: 11400000, guid: 7fde332577fb42bcb10d72533f578abc, type: 2}
+  conditionalSkillRules: []

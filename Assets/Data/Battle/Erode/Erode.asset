@@ -15,7 +15,7 @@ MonoBehaviour:
   statusId: erode
   displayName: "\u6C34\u8680"
   description: "\u56DE\u5408\u5F00\u59CB\u65F6\u83B7\u5F97\u7B49\u540C\u4E8E\u5C42\u6570\u7684\u6613\u4F24"
-  iconSprite: {fileID: 21300000, guid: 4fdefa55a491b3b48a568f5ff28ef775, type: 3}
+  iconSprite: {fileID: 21300000, guid: 79f75d6cf9604f6c8a5a9f54823fe663, type: 3}
   accentColor: {r: 1, g: 1, b: 1, a: 1}
   tickEffectPrefab: {fileID: 0}
   tickEffectPositionOffset: {x: 0, y: 0, z: 0}
@@ -26,7 +26,7 @@ MonoBehaviour:
   tickEffectDuration: 0.5
   behaviorType: 5
   powerPerStack: 1
-  linkedStatusData: {fileID: 11400000, guid: 4ba94785430122841bb375303597863e, type: 2}
+  linkedStatusData: {fileID: 11400000, guid: 2c61804cb51b40ceb349418fab5290ba, type: 2}
   onHitDecayMode: 0
   roundStartDecayMode: 0
   roundEndDecayMode: 0

@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: SeveringShot
+  m_EditorClassIdentifier: 
+  skillName: "\u65AD\u7EBF\u5C04\u51FB"
+  description: "\u4F18\u5148\u9009\u53D6\u901F\u5EA6\u6700\u4F4E\u7684\u76EE\u6807\uFF0C\u547D\u4E2D\u540E\u4F7F\u76EE\u6807\u5728\u4E0B\u56DE\u5408\u5F00\u59CB\u65F6\u83B7\u5F97 1 \u5C42\u7F13\u6162"
+  skillCategory: 0
+  energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  targetPriorityMode: 2
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 1
+  maxPower: 4
+  diceCount: 1
+  dicePowerRanges:
+  - minPower: 1
+    maxPower: 4
+  dicePresentationSettings: []
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects:
+    - effectName: "\u65AD\u98CE"
+      trigger: 0
+      targetMode: 0
+      statusData: {fileID: 11400000, guid: a90cdb8e1a1943f99f9d973299e6d173, type: 2}
+      statusType: 0
+      applyTiming: 1
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
+      stackAmount: 1
+      randomTargetCount: 1
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []

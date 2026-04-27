@@ -16,8 +16,15 @@ MonoBehaviour:
   description: "\u7528\u5BD2\u51B7\u7684\u5251\u5203\u501F\u529B\u6A2A\u5288\u654C\u4EBA\uFF0C\u8BA9\u654C\u4EBA\u611F\u53D7\u53CC\u91CD\u75DB\u82E6"
   skillCategory: 0
   energyCost: 4
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
   minPower: 3
   maxPower: 5
   diceCount: 1
@@ -25,12 +32,14 @@ MonoBehaviour:
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 7336644444123945357, guid: aca0a21d01e496443933c923b06b60e1, type: 3}
     hitEffectPrefab: {fileID: 733806155637967991, guid: 860475eb2bad9214988416ebc8912211, type: 3}
+    clashOffsetSpace: 0
     clashPositionOffset: {x: 1, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 0, y: 0, z: 0}
     clashSortingOrderOffset: 0
     overrideClashDuration: 0
     clashDuration: 0
+    hitOffsetSpace: 0
     hitPositionOffset: {x: 0, y: 0, z: 0}
     hitRotationOffset: {x: 90, y: 180, z: 0}
     hitScale: {x: 3, y: 3, z: 3}
@@ -52,7 +61,7 @@ MonoBehaviour:
     - effectName: 
       trigger: 0
       targetMode: 0
-      statusData: {fileID: 11400000, guid: 2124a421b2a09a94ca0cd34a51141964, type: 2}
+      statusData: {fileID: 11400000, guid: 31bf17620ef7438984f2e0b6eea03a6f, type: 2}
       statusType: 0
       applyTiming: 1
       applyAfterRoundStarts: 1
@@ -62,5 +71,9 @@ MonoBehaviour:
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 

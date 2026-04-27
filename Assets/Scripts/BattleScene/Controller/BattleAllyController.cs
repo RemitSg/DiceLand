@@ -57,6 +57,7 @@ public class BattleAllyController : MonoBehaviour
     private float speedButtonHorizontalSpacing = 0.82f;
     private int temporaryExtraSpeedButtons;
     private int inheritedExtraSpeedButtons;
+    private int lastLivingActiveSpeedButtonCount = 1;
 
     private void Awake()
     {
@@ -183,7 +184,7 @@ public class BattleAllyController : MonoBehaviour
         if (recipient == null || recipient == this)
             return false;
 
-        int transferCount = Mathf.Max(0, 1 + inheritedExtraSpeedButtons);
+        int transferCount = Mathf.Max(0, Mathf.Max(lastLivingActiveSpeedButtonCount, 1 + inheritedExtraSpeedButtons));
         if (transferCount <= 0)
             return false;
 
@@ -510,7 +511,7 @@ public class BattleAllyController : MonoBehaviour
             Speed,
             null,
             this);
-        RelicSystem.Process(activeEncounter.relicInventory, context);
+        RelicTriggerDispatcher.ProcessBattleRelics(activeEncounter, context);
 
         int adjustedDamage = Mathf.Max(0, baseDamage + context.incomingDamageFlatModifier);
         int reductionPercent = Mathf.Max(0, context.incomingDamagePercentModifier);
@@ -538,7 +539,7 @@ public class BattleAllyController : MonoBehaviour
             incomingDamage,
             null,
             this);
-        RelicSystem.Process(activeEncounter.relicInventory, context);
+        RelicTriggerDispatcher.ProcessBattleRelics(activeEncounter, context);
         minimumSurvivingHp = Mathf.Max(1, context.minimumSurvivingHp);
         return context.preventLethalDamage;
     }
@@ -1023,6 +1024,8 @@ public class BattleAllyController : MonoBehaviour
         }
 
         speedButton = activeSpeedButtons.Count > 0 ? activeSpeedButtons[0] : null;
+        if (!IsDead)
+            lastLivingActiveSpeedButtonCount = Mathf.Max(0, activeSpeedButtons.Count);
     }
 
     private void EnsureSpeedButtonCount()

@@ -651,12 +651,11 @@ public class RunGameManager : MonoBehaviour
         if (tile == null || runState == null || actionPointSystem == null)
             return;
 
-        RelicExecutionContext context = RelicExecutionContext.CreateKeyCollected(
+        RelicExecutionContext context = RelicTriggerDispatcher.ProcessKeyCollected(
             runState,
             this,
             tile,
             actionPointSystem);
-        RelicSystem.Process(runState, Relic_SO.RelicTrigger.OnKeyCollected, context);
         if (context.feedbackMessages != null && context.feedbackMessages.Count > 0)
             RefreshHUD(string.Join("\n", context.feedbackMessages));
     }
@@ -752,7 +751,7 @@ public class RunGameManager : MonoBehaviour
         if (offer.itemType == MerchantItemType.Relic && offer.relicData == null)
             return "商品未配置遗物。";
 
-        int price = Mathf.Max(0, RelicSystem.CalculateMerchantOfferPrice(runState, tile, offer));
+        int price = Mathf.Max(0, RelicMerchantService.CalculateOfferPrice(runState, tile, offer));
         if (!runState.TrySpendMoney(price))
             return $"金钱不足，需要 {price} 金钱。";
 
@@ -775,7 +774,7 @@ public class RunGameManager : MonoBehaviour
         }
 
         offer.isSoldOut = true;
-        RelicSystem.NotifyMerchantPurchaseCompleted(runState, tile, offer);
+        RelicMerchantService.NotifyPurchaseCompleted(runState, tile, offer);
         RefreshHUD($"购买成功：{offer.DisplayName} - {price} 金钱");
         return $"购买成功：{offer.DisplayName}";
     }
@@ -1234,13 +1233,11 @@ public class RunGameManager : MonoBehaviour
         bool previousDeferredOverlayState = deferPendingCalamityUntilOverlayClosed;
         bool previousSuppressRestCalamityState = suppressPendingCalamityOnNextRestActionPointRestore;
 
-        RelicExecutionContext relicContext = RelicExecutionContext.CreateMove(
+        RelicExecutionContext relicContext = RelicTriggerDispatcher.ProcessMoveCost(
             runState,
             this,
             tile,
-            moveCost,
-            !tile.isVisited);
-        RelicSystem.Process(runState, Relic_SO.RelicTrigger.OnMoveCostAboutToSpend, relicContext);
+            moveCost);
 
         if (relicContext.ignoreMoveCost)
         {
@@ -1564,7 +1561,7 @@ public class RunGameManager : MonoBehaviour
         if (optionData == null || runState == null)
             return preview;
 
-        List<MapEventBuiltInEffectData> allEffects = BuildAllEventEffects(optionData);
+        List<MapEventBuiltInEffectData> allEffects = MapEventEffectSequenceBuilder.BuildAllEffects(optionData);
         List<string> detailLines = new List<string>();
 
         for (int i = 0; i < allEffects.Count; i++)
@@ -1601,7 +1598,7 @@ public class RunGameManager : MonoBehaviour
                                 continue;
 
                             hasValidRequirement = true;
-                            int requiredAmount = GetFixedLootDiscardAmount(reward);
+                            int requiredAmount = MapEventEffectSequenceBuilder.GetFixedLootDiscardAmount(reward);
                             detailLines.Add($"将失去：{reward.lootItem.lootName} x{requiredAmount}");
                             if (runState.GetLootAmount(reward.lootItem) < requiredAmount)
                                 requirementsSatisfied = false;
@@ -1705,7 +1702,7 @@ public class RunGameManager : MonoBehaviour
     private bool ExecuteEventOptionBuiltInEffects(MapEventOptionData optionData, out string message)
     {
         List<string> effectMessages = new List<string>();
-        List<MapEventBuiltInEffectData> allEffects = BuildAllEventEffects(optionData);
+        List<MapEventBuiltInEffectData> allEffects = MapEventEffectSequenceBuilder.BuildAllEffects(optionData);
 
         int encounterEffectIndex = -1;
         for (int i = 0; i < allEffects.Count; i++)
@@ -1737,7 +1734,7 @@ public class RunGameManager : MonoBehaviour
             if (i == encounterEffectIndex)
                 continue;
 
-            if (encounterEffectIndex >= 0 && IsDeferredEncounterVictoryRewardEffect(effectData.effectType))
+            if (encounterEffectIndex >= 0 && MapEventEffectSequenceBuilder.IsDeferredEncounterVictoryRewardEffect(effectData.effectType))
             {
                 if (!QueueEncounterVictoryRewardEffect(effectData, out string deferredMessage))
                 {
@@ -1774,43 +1771,9 @@ public class RunGameManager : MonoBehaviour
         return true;
     }
 
-    private List<MapEventBuiltInEffectData> BuildAllEventEffects(MapEventOptionData optionData)
-    {
-        List<MapEventBuiltInEffectData> allEffects = new List<MapEventBuiltInEffectData>();
-        MapEventBuiltInEffectData primaryEffect = BuildPrimaryEventEffectData(optionData);
-        if (primaryEffect != null)
-            allEffects.Add(primaryEffect);
-
-        if (optionData != null && optionData.additionalBuiltInEffects != null)
-        {
-            for (int i = 0; i < optionData.additionalBuiltInEffects.Count; i++)
-            {
-                MapEventBuiltInEffectData effectData = optionData.additionalBuiltInEffects[i];
-                if (effectData != null)
-                    allEffects.Add(effectData);
-            }
-        }
-
-        return allEffects;
-    }
-
-    private static int GetFixedLootDiscardAmount(MapEventLootRewardEntry reward)
-    {
-        if (reward == null)
-            return 0;
-
-        return Mathf.Max(1, reward.amountMin);
-    }
-
-    private static string BuildEventRandomLootDiscardPreviewKey(MapEventOptionData optionData, int effectIndex)
-    {
-        string optionId = optionData != null && !string.IsNullOrWhiteSpace(optionData.optionId) ? optionData.optionId : "Option";
-        return $"{optionId}::{effectIndex}";
-    }
-
     private EventRandomLootDiscardPreview GetOrCreateRandomLootDiscardPreview(MapEventOptionData optionData, int effectIndex, MapEventBuiltInEffectData effectData)
     {
-        string cacheKey = BuildEventRandomLootDiscardPreviewKey(optionData, effectIndex);
+        string cacheKey = MapEventEffectSequenceBuilder.BuildRandomLootDiscardPreviewKey(optionData, effectIndex);
         if (eventRandomLootDiscardPreviewCache.TryGetValue(cacheKey, out EventRandomLootDiscardPreview cachedPreview))
         {
             if (cachedPreview != null &&
@@ -1852,33 +1815,6 @@ public class RunGameManager : MonoBehaviour
         };
         eventRandomLootDiscardPreviewCache[cacheKey] = preview;
         return preview;
-    }
-
-    private MapEventBuiltInEffectData BuildPrimaryEventEffectData(MapEventOptionData optionData)
-    {
-        return new MapEventBuiltInEffectData
-        {
-            effectType = optionData.builtInEffectType,
-            effectAmount = optionData.effectAmount,
-            randomMoneyMin = optionData.randomMoneyMin,
-            randomMoneyMax = optionData.randomMoneyMax,
-            randomOwnedLootAmountMin = optionData.randomOwnedLootAmountMin,
-            randomOwnedLootAmountMax = optionData.randomOwnedLootAmountMax,
-            lootRewards = optionData.lootRewards != null ? new List<MapEventLootRewardEntry>(optionData.lootRewards) : new List<MapEventLootRewardEntry>(),
-            lootPickCountMin = optionData.lootPickCountMin,
-            lootPickCountMax = optionData.lootPickCountMax,
-            relicRewards = optionData.relicRewards != null ? new List<MapEventRelicRewardEntry>(optionData.relicRewards) : new List<MapEventRelicRewardEntry>(),
-            relicPickCountMin = optionData.relicPickCountMin,
-            relicPickCountMax = optionData.relicPickCountMax,
-            blueprintRewards = optionData.blueprintRewards != null ? new List<MapEventBlueprintRewardEntry>(optionData.blueprintRewards) : new List<MapEventBlueprintRewardEntry>(),
-            blueprintPickCountMin = optionData.blueprintPickCountMin,
-            blueprintPickCountMax = optionData.blueprintPickCountMax,
-            encounterSelectionMode = optionData.encounterSelectionMode,
-            encounterEnemyGroups = optionData.encounterEnemyGroups != null ? new List<EnemyGroup_SO>(optionData.encounterEnemyGroups) : new List<EnemyGroup_SO>(),
-            encounterEnemies = optionData.encounterEnemies != null ? new List<EnemyData_SO>(optionData.encounterEnemies) : new List<EnemyData_SO>(),
-            encounterEnemyCountMin = optionData.encounterEnemyCountMin,
-            encounterEnemyCountMax = optionData.encounterEnemyCountMax
-        };
     }
 
     private bool ExecuteEventBuiltInEffect(MapEventOptionData optionData, int effectIndex, MapEventBuiltInEffectData effectData, out string message)
@@ -2039,7 +1975,7 @@ public class RunGameManager : MonoBehaviour
         }
 
         message = $"失去战利品：{preview.lootItem.lootName} x{preview.amount}。";
-        eventRandomLootDiscardPreviewCache.Remove(BuildEventRandomLootDiscardPreviewKey(optionData, effectIndex));
+        eventRandomLootDiscardPreviewCache.Remove(MapEventEffectSequenceBuilder.BuildRandomLootDiscardPreviewKey(optionData, effectIndex));
         return true;
     }
 
@@ -2058,7 +1994,7 @@ public class RunGameManager : MonoBehaviour
             if (reward == null || reward.lootItem == null)
                 continue;
 
-            int requiredAmount = GetFixedLootDiscardAmount(reward);
+            int requiredAmount = MapEventEffectSequenceBuilder.GetFixedLootDiscardAmount(reward);
             if (runState.GetLootAmount(reward.lootItem) < requiredAmount)
             {
                 message = $"背包中缺少 {reward.lootItem.lootName} x{requiredAmount}。";
@@ -2073,7 +2009,7 @@ public class RunGameManager : MonoBehaviour
             if (reward == null || reward.lootItem == null)
                 continue;
 
-            int requiredAmount = GetFixedLootDiscardAmount(reward);
+            int requiredAmount = MapEventEffectSequenceBuilder.GetFixedLootDiscardAmount(reward);
             if (!runState.TryConsumeLoot(reward.lootItem, requiredAmount))
             {
                 message = $"无法丢弃 {reward.lootItem.lootName} x{requiredAmount}。";
@@ -2356,20 +2292,6 @@ public class RunGameManager : MonoBehaviour
         return true;
     }
 
-    private static bool IsDeferredEncounterVictoryRewardEffect(MapEventOptionBuiltInEffectType effectType)
-    {
-        switch (effectType)
-        {
-            case MapEventOptionBuiltInEffectType.GainLoot:
-            case MapEventOptionBuiltInEffectType.GainRandomLootFromList:
-            case MapEventOptionBuiltInEffectType.GainRelics:
-            case MapEventOptionBuiltInEffectType.GainBlueprints:
-                return true;
-            default:
-                return false;
-        }
-    }
-
     private bool QueueEncounterVictoryRewardEffect(MapEventBuiltInEffectData effectData, out string message)
     {
         if (pendingEventEncounterData == null)
@@ -2599,7 +2521,7 @@ public class RunGameManager : MonoBehaviour
     private void HandleMapMerchantOverlayHidden()
     {
         if (boardManager != null && runState != null && boardManager.TryGetTile(runState.playerGridPosition, out BoardTileData currentTile) && currentTile.tileType == MapTileType.Merchant)
-            RelicSystem.ResetMerchantVisitState(currentTile);
+            RelicMerchantService.ResetVisitState(currentTile);
 
         PersistCurrentRunSave();
         deferPendingCalamityUntilOverlayClosed = false;
@@ -2693,8 +2615,7 @@ public class RunGameManager : MonoBehaviour
 
         runState.AddCalamity(calamity, calamityTier);
         calamity.customEffectHandler?.OnCalamityApplied(runState, this);
-        RelicExecutionContext context = RelicExecutionContext.CreateCalamityApplied(runState, this, calamity, calamityTier);
-        RelicSystem.Process(runState, Relic_SO.RelicTrigger.OnCalamityApplied, context);
+        RelicExecutionContext context = RelicTriggerDispatcher.ProcessCalamityApplied(runState, this, calamity, calamityTier);
 
         string calamityMessage = $"\u5df2\u627f\u53d7\u707e\u5384\uff1a{calamity.DisplayName}";
         if (context.feedbackMessages != null && context.feedbackMessages.Count > 0)

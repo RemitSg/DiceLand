@@ -58,6 +58,8 @@ public class BattleEnemyController : MonoBehaviour
     private bool consumedHealthBasedStageTransition;
     private bool consumedRoundStartRetreat;
     private bool registeredAsBleedDecayPreventer;
+    private int pendingNextAttackSkillPowerBonus;
+    private int activeAttackSkillPowerBonus;
 
     private void Awake()
     {
@@ -81,6 +83,8 @@ public class BattleEnemyController : MonoBehaviour
         pendingStageTransitionIndex = -1;
         consumedHealthBasedStageTransition = false;
         consumedRoundStartRetreat = false;
+        pendingNextAttackSkillPowerBonus = 0;
+        activeAttackSkillPowerBonus = 0;
         IsDead = false;
         CurrentStageIndex = 0;
         if (enemyData == null)
@@ -209,6 +213,7 @@ public class BattleEnemyController : MonoBehaviour
 
         string roundPrefix = roundNumber > 0 ? $"[Round {roundNumber}] " : string.Empty;
         EnsureSelectedSkillSlots();
+        activeAttackSkillPowerBonus = 0;
         Dictionary<int, int> selectedRuleCounts = new Dictionary<int, int>();
         List<int> consumedRuleIndicesThisRound = new List<int>();
 
@@ -259,22 +264,31 @@ public class BattleEnemyController : MonoBehaviour
 
     public EnemySkill_SO.DicePowerRange GetDicePowerRange(int diceIndex)
     {
-        EnemySkill_SO.DicePowerRange range;
-        if (SelectedSkill == null)
-        {
-            range = new EnemySkill_SO.DicePowerRange
-            {
-                minPower = 1,
-                maxPower = 1
-            };
-        }
-        else
-        {
-            range = SelectedSkill.GetDicePowerRange(diceIndex);
-        }
-
-        bool isDefenseSkill = SelectedSkill != null && SelectedSkill.IsDefenseSkill;
+        EnemySkill_SO.DicePowerRange range = GetDisplayedDicePowerRange(SelectedSkill, diceIndex);
+        bool isDefenseSkill = SelectedSkill != null
+            && SelectedSkill.GetDiceSkillCategory(diceIndex) == EnemySkill_SO.SkillCategory.Defense;
         return ApplyStatusDiceRangeModifiers(range, isDefenseSkill);
+    }
+
+    public EnemySkill_SO.DicePowerRange GetPreviewDicePowerRange(EnemySkill_SO skill, int diceIndex)
+    {
+        return ApplyQueuedAttackSkillPowerBonus(ResolveSkillBaseDiceRange(skill, diceIndex), skill, pendingNextAttackSkillPowerBonus);
+    }
+
+    public EnemySkill_SO.DicePowerRange GetDisplayedDicePowerRange(EnemySkill_SO skill, int diceIndex)
+    {
+        int queuedBonus = skill != null && skill == SelectedSkill
+            ? activeAttackSkillPowerBonus
+            : pendingNextAttackSkillPowerBonus;
+        return ApplyQueuedAttackSkillPowerBonus(ResolveSkillBaseDiceRange(skill, diceIndex), skill, queuedBonus);
+    }
+
+    public void QueueNextAttackSkillPowerBonus(int bonusAmount)
+    {
+        if (bonusAmount <= 0)
+            return;
+
+        pendingNextAttackSkillPowerBonus += bonusAmount;
     }
 
     public string GetDebugDisplayName()
@@ -317,6 +331,15 @@ public class BattleEnemyController : MonoBehaviour
     public void ActivateSelectedSkillForButton(SpeedButton button)
     {
         SelectedSkill = GetSelectedSkillForButton(button);
+        if (SelectedSkill != null && !SelectedSkill.IsDefenseSkill)
+        {
+            activeAttackSkillPowerBonus = pendingNextAttackSkillPowerBonus;
+            pendingNextAttackSkillPowerBonus = 0;
+        }
+        else
+        {
+            activeAttackSkillPowerBonus = 0;
+        }
     }
 
     public int TakeDamage(int amount, int powerModifierAmount = 0, int originalReferenceDamage = -1)
@@ -343,6 +366,7 @@ public class BattleEnemyController : MonoBehaviour
         int previousHP = CurrentHP;
         int resultingHP = Mathf.Max(0, CurrentHP - amount);
         resultingHP = ApplyHealthBasedStageTransitionRule(previousHP, resultingHP);
+        resultingHP = ApplyLastStandRule(resultingHP);
         CurrentHP = resultingHP;
         int actualDamage = previousHP - CurrentHP;
         if (actualDamage <= 0)
@@ -357,6 +381,7 @@ public class BattleEnemyController : MonoBehaviour
 
         Damaged?.Invoke(this, actualDamage);
         HealthChanged?.Invoke(this);
+        TryCollapseLinkedLastStandEnemies();
 
         if (CurrentHP <= 0)
             Die();
@@ -1313,7 +1338,145 @@ public class BattleEnemyController : MonoBehaviour
                 return preferredTargets[UnityEngine.Random.Range(0, preferredTargets.Count)];
         }
 
+        if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferLowestSpeed)
+        {
+            int lowestSpeed = int.MaxValue;
+            List<SpeedButton> preferredTargets = new List<SpeedButton>();
+            for (int i = 0; i < allyButtons.Count; i++)
+            {
+                SpeedButton allyButton = allyButtons[i];
+                if (allyButton == null)
+                    continue;
+
+                BattleAllyController ally = allyButton.GetComponentInParent<BattleAllyController>();
+                if (ally == null || ally.IsDead)
+                    continue;
+
+                int allySpeed = Mathf.Max(0, ally.Speed);
+                if (allySpeed < lowestSpeed)
+                {
+                    lowestSpeed = allySpeed;
+                    preferredTargets.Clear();
+                    preferredTargets.Add(allyButton);
+                }
+                else if (allySpeed == lowestSpeed)
+                {
+                    preferredTargets.Add(allyButton);
+                }
+            }
+
+            if (preferredTargets.Count > 0)
+                return preferredTargets[UnityEngine.Random.Range(0, preferredTargets.Count)];
+        }
+
         return null;
+    }
+
+    private EnemySkill_SO.DicePowerRange ResolveSkillBaseDiceRange(EnemySkill_SO skill, int diceIndex)
+    {
+        if (skill == null)
+        {
+            return new EnemySkill_SO.DicePowerRange
+            {
+                minPower = 1,
+                maxPower = 1
+            };
+        }
+
+        return skill.GetDicePowerRange(diceIndex);
+    }
+
+    private static EnemySkill_SO.DicePowerRange ApplyQueuedAttackSkillPowerBonus(
+        EnemySkill_SO.DicePowerRange range,
+        EnemySkill_SO skill,
+        int bonusAmount)
+    {
+        if (skill == null || skill.IsDefenseSkill || bonusAmount == 0)
+            return range;
+
+        range.minPower = Mathf.Max(1, range.minPower + bonusAmount);
+        range.maxPower = Mathf.Max(range.minPower, range.maxPower + bonusAmount);
+        return range;
+    }
+
+    private int ApplyLastStandRule(int resultingHP)
+    {
+        if (resultingHP > 0
+            || enemyData == null
+            || !enemyData.surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp
+            || !HasOtherLivingAllyAboveOneHp())
+        {
+            return resultingHP;
+        }
+
+        return 1;
+    }
+
+    private bool HasOtherLivingAllyAboveOneHp()
+    {
+        BattleEnemyController[] allEnemies = FindObjectsOfType<BattleEnemyController>();
+        for (int i = 0; i < allEnemies.Length; i++)
+        {
+            BattleEnemyController enemy = allEnemies[i];
+            if (enemy == null || enemy == this || enemy.IsDead)
+                continue;
+
+            if (enemy.CurrentHP > 1)
+                return true;
+        }
+
+        return false;
+    }
+
+    private void TryCollapseLinkedLastStandEnemies()
+    {
+        if (enemyData == null
+            || !enemyData.surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp
+            || IsDead)
+        {
+            return;
+        }
+
+        BattleEnemyController[] allEnemies = FindObjectsOfType<BattleEnemyController>();
+        bool hasLivingEnemy = false;
+        for (int i = 0; i < allEnemies.Length; i++)
+        {
+            BattleEnemyController enemy = allEnemies[i];
+            if (enemy == null || enemy.IsDead)
+                continue;
+
+            hasLivingEnemy = true;
+            if (enemy.CurrentHP > 1)
+                return;
+        }
+
+        if (!hasLivingEnemy)
+            return;
+
+        for (int i = 0; i < allEnemies.Length; i++)
+        {
+            BattleEnemyController enemy = allEnemies[i];
+            if (enemy == null
+                || enemy.IsDead
+                || enemy.enemyData == null
+                || !enemy.enemyData.surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp
+                || enemy.CurrentHP > 1)
+            {
+                continue;
+            }
+
+            enemy.ForceResolveLastStandCollapse();
+        }
+    }
+
+    private void ForceResolveLastStandCollapse()
+    {
+        if (IsDead || CurrentHP <= 0)
+            return;
+
+        CurrentHP = 0;
+        HealthChanged?.Invoke(this);
+        Die();
     }
 
     private static int ResolveTargetPriorityStatusStacks(BattleAllyController ally, EnemySkill_SO skill)

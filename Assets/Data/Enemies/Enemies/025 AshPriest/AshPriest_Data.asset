@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: AshPriest_Data
+  m_EditorClassIdentifier: 
+  enemyID: 25
+  enemyName: "\u7070\u796D\u53F8"
+  baseHP: 20
+  damageReductionPercent: 0
+  minSpeed: 1
+  maxSpeed: 5
+  baseSpeedButtonCount: 2
+  enemySprite: {fileID: 21300000, guid: c60cc52c21dc364478ee76f9d723e7fd, type: 3}
+  stageSprites: []
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.5
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules: []
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains: []
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  enemyDescription: "\u5728\u7070\u70EC\u4E2D\u53CD\u590D\u5B8C\u6210\u8F6C\u79FB\u4E0E\u8D4E\u7F6A\u4EEA\u5F0F\u7684\u796D\u53F8\u3002\u5B83\u4F1A\u5C06\u707E\u5394\u6295\u5411\u76EE\u6807\uFF0C\u4E5F\u4F1A\u628A\u81EA\u8EAB\u7684\u8D1F\u9762\u72B6\u6001\u79FB\u4EA4\u7ED9\u5BF9\u624B\u3002"
+  passiveDescriptions: []
+  enemyVisualScale: 1.5
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: 47899b0e92af4e10a4b5ffb6b656ada7, type: 2}
+  - {fileID: 11400000, guid: 0991633fc4e144cabe83057b97b2b4a0, type: 2}
+  conditionalSkillRules: []

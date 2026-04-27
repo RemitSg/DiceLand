@@ -404,13 +404,12 @@ public static class MapRunRuntime
             return false;
         }
 
-        RelicExecutionContext lootReforgeContext = RelicExecutionContext.CreateLootReforge(
+        RelicExecutionContext lootReforgeContext = RelicTriggerDispatcher.ProcessLootReforge(
             currentSnapshot.runState,
             firstLoot,
             secondLoot,
             resultLoot,
             lootReforgePool);
-        RelicSystem.Process(currentSnapshot.runState, Relic_SO.RelicTrigger.OnLootReforge, lootReforgeContext);
 
         if (!currentSnapshot.runState.TryConsumeLoot(firstLoot, 1))
         {
@@ -495,12 +494,11 @@ public static class MapRunRuntime
             return false;
         }
 
-        RelicExecutionContext reforgeContext = RelicExecutionContext.CreateRelicReforge(
+        RelicExecutionContext reforgeContext = RelicTriggerDispatcher.ProcessRelicReforge(
             currentSnapshot.runState,
             firstRelic,
             secondRelic,
             resultRelic);
-        RelicSystem.Process(currentSnapshot.runState, Relic_SO.RelicTrigger.OnRelicReforge, reforgeContext);
 
         Relic_SO preservedMaterial = null;
         if (reforgeContext.preservedReforgeMaterialSlot == 0)

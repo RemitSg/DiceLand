@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: DrownedBoneCollector_Data
+  m_EditorClassIdentifier: 
+  enemyID: 21
+  enemyName: "\u6EBA\u6F6E\u62FE\u9AA8\u8005"
+  baseHP: 14
+  damageReductionPercent: 0
+  minSpeed: 2
+  maxSpeed: 7
+  baseSpeedButtonCount: 1
+  enemySprite: {fileID: 21300000, guid: c60cc52c21dc364478ee76f9d723e7fd, type: 3}
+  stageSprites: []
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.5
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules: []
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains: []
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 1
+  enemyDescription: "\u88AB\u6D77\u6C34\u6CE1\u5F97\u53D8\u5F62\u7684\u62FE\u9AA8\u8005\u3002\u5B83\u4F1A\u6D12\u4E0B\u6C34\u8680\uFF0C\u4E5F\u4F1A\u501F\u540C\u4F34\u8EAB\u4E0A\u7684\u6F6E\u75D5\u4FEE\u8865\u81EA\u5DF1\u3002"
+  passiveDescriptions:
+  - passiveName: "\u6DA8\u6F6E"
+    displayColorType: 1
+    description: "\u6BCF\u4E24\u4E2A\u56DE\u5408\u5F00\u59CB\u65F6\uFF0C\u6240\u6709\u5B58\u6D3B\u7684\u654C\u65B9\u83B7\u5F97
+      1 \u5C42\u6C34\u8680"
+  - passiveName: "\u62FE\u9AA8"
+    displayColorType: 1
+    description: "\u81F4\u547D\u4F24\u5BB3\u4F1A\u4F7F\u81EA\u8EAB\u6682\u65F6\u7559\u5728
+      1 \u70B9\u751F\u547D\uFF0C\u76F4\u5230\u5176\u4ED6\u6D3B\u7740\u7684\u53CB\u65B9\u90FD\u53EA\u5269
+      1 \u70B9\u6216\u66F4\u4F4E\u751F\u547D"
+  enemyVisualScale: 1.4
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: b47014d5f17f49d2a9e5b0f9ff8901d1, type: 2}
+  - {fileID: 11400000, guid: b145c67655b04c62ae9974ba7eb70f8d, type: 2}
+  - {fileID: 11400000, guid: 70cf0b1be03e471dad9c03b7d6a20bcc, type: 2}
+  conditionalSkillRules: []

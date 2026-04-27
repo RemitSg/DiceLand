@@ -25,7 +25,7 @@ MonoBehaviour:
     effectType: 24
     chance: 1
     requireUnvisitedTile: 0
-    statusData: {fileID: 11400000, guid: a935da6047588bc4e8040f2e21468051, type: 2}
+    statusData: {fileID: 11400000, guid: deb0751250254c408b6692953963fe33, type: 2}
     amount: 1
     conditionStatusData: {fileID: 0}
     requiredStatusStacks: 1

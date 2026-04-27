@@ -27,7 +27,7 @@ MonoBehaviour:
     requireUnvisitedTile: 0
     statusData: {fileID: 0}
     amount: 1
-    conditionStatusData: {fileID: 11400000, guid: 5760ed4132ab4c6682c9e1f5e88d6232, type: 2}
+    conditionStatusData: {fileID: 11400000, guid: 15e54805ff58a7a49951aa1a35672df6, type: 2}
     requiredStatusStacks: 1
     requiredSpeed: 1
     requiredSpeedMin: 1

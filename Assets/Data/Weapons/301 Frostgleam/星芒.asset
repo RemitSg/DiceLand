@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: "\u661F\u8292"
+  m_EditorClassIdentifier: 
+  skillName: "\u661F\u8292 \xB7 \u5BD2"
+  description: "Jenny \u5C06\u81EA\u8EAB\u7684\u62FF\u624B\u6280\u80FD\u4E0E\u6CD5\u6756\u80FD\u529B\u7ED3\u5408\u8D77\u6765\u7684\u5F3A\u529B\u6280\u80FD\uFF0C\u65BD\u5C55\u9700\u8981\u6781\u81F4\u7684\u6CE8\u610F\u529B\u3002"
+  skillCategory: 0
+  energyCost: 1
+  requiredSelfStatusData: {fileID: 11400000, guid: 15e54805ff58a7a49951aa1a35672df6, type: 2}
+  requiredSelfStatusStacks: 2
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 1
+  maxPower: 3
+  diceCount: 1
+  dicePowerRanges:
+  - minPower: 3
+    maxPower: 4
+  - minPower: 1
+    maxPower: 3
+  dicePresentationSettings: []
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers:
+    - effectName: 
+      trigger: 3
+      useCondition: 1
+      condition: 3
+      targetStatusData: {fileID: 11400000, guid: 31bf17620ef7438984f2e0b6eea03a6f, type: 2}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredStatusStacks: 1
+      requiredSpeedValue: 0
+      requiredSpeedDifference: 0
+      powerBonus: 2
+      powerBonusPerStep: 0
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 

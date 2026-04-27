@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: FrozenAshMoth_Data
+  m_EditorClassIdentifier: 
+  enemyID: 19
+  enemyName: "\u51BB\u70EC\u86FE"
+  baseHP: 24
+  damageReductionPercent: 0
+  minSpeed: 2
+  maxSpeed: 7
+  baseSpeedButtonCount: 2
+  enemySprite: {fileID: 21300000, guid: 47f77b37494514c4faf4aa6581b1b593, type: 3}
+  stageSprites: []
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.5
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules:
+  - statusData: {fileID: 11400000, guid: 31bf17620ef7438984f2e0b6eea03a6f, type: 2}
+    allowApplicationWhileImmune: 0
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains: []
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  enemyDescription: "\u4F1A\u5C06\u5BD2\u610F\u4E0E\u4F59\u70EC\u7F20\u7ED5\u5728\u4E00\u8D77\u7684\u86FE\u7FA4\u602A\u7269\u3002\u5B83\u64C5\u957F\u7ED9\u76EE\u6807\u7D2F\u79EF\u5BD2\u51B7\uFF0C\u518D\u5C06\u5B83\u4EEC\u4E00\u6B21\u6027\u5F15\u7206\u6210\u66F4\u5F3A\u7684\u6251\u6740\u3002"
+  passiveDescriptions:
+  - passiveName: "\u751F\u4E8E\u5BD2\u51AC"
+    displayColorType: 2
+    description: "\u514D\u75AB\u300C\u5BD2\u51B7\u300D"
+  enemyVisualScale: 1.45
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: 8cb67c4c43a54c3b8ad57413a32efd4b, type: 2}
+  - {fileID: 11400000, guid: d4f0f41b389c458c976ce9e6e517f5c6, type: 2}
+  - {fileID: 11400000, guid: b390d5a093c54a40a5d38e8df4891c4b, type: 2}
+  conditionalSkillRules: []

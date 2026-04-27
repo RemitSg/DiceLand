@@ -600,6 +600,7 @@ public class SpeedButton : MonoBehaviour
     /// </summary>
     private void DisconnectFromTarget()
     {
+        EnsureRuntimeReferences();
         bool hadConnection = connectedButton != null || isConnected;
 
         // 先暂存需要恢复的敌方按钮，再清除自身状态，
@@ -609,7 +610,8 @@ public class SpeedButton : MonoBehaviour
         absorbedEnemyButton = null;
         connectedButton = null;
         isConnected = false;
-        lineRenderer.enabled = false;
+        if (lineRenderer != null)
+            lineRenderer.enabled = false;
         HideArrow();
 
         // 若此友方按钮曾吸收敌方连线（黄色），取消后恢复敌方原始连线（红线）

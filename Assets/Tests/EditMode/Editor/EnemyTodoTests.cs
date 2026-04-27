@@ -56,6 +56,80 @@ public class EnemyTodoTests
         Assert.AreEqual(normalSkill, pairEnemyB.SelectedSkill);
     }
 
+    [Test]
+    public void NextAttackSkillPowerBonus_PreviewsAttackRangeAndConsumesWhenAttackSkillIsActivated()
+    {
+        EnemySkill_SO attackSkill = CreateSkill("Attack", 2, 3);
+        EnemySkill_SO defenseSkill = CreateSkill("Defense", 4, 5, EnemySkill_SO.SkillCategory.Defense);
+
+        EnemyData_SO enemyData = CreateEnemyData("Gatekeeper", 40, attackSkill, default);
+        enemyData.stageSprites = new List<EnemyData_SO.EnemyStageEntry>
+        {
+            new EnemyData_SO.EnemyStageEntry { stageName = "Stage 1" },
+            new EnemyData_SO.EnemyStageEntry { stageName = "Stage 2" }
+        };
+        createdObjects.Add(enemyData);
+
+        BattleEnemyController enemy = CreateEnemyController("Gatekeeper", enemyData);
+        SpeedButton speedButton = CreateSpeedButton(enemy.gameObject, "Speed Button");
+        enemy.RegisterSpeedButtons(new[] { speedButton });
+        enemy.ApplyEnemyData(enemyData);
+        enemy.TryTransitionToStage(1);
+
+        enemy.QueueNextAttackSkillPowerBonus(1);
+
+        EnemySkill_SO.DicePowerRange previewAttackRange = enemy.GetPreviewDicePowerRange(attackSkill, 0);
+        EnemySkill_SO.DicePowerRange previewDefenseRange = enemy.GetPreviewDicePowerRange(defenseSkill, 0);
+
+        Assert.AreEqual(3, previewAttackRange.minPower);
+        Assert.AreEqual(4, previewAttackRange.maxPower);
+        Assert.AreEqual(4, previewDefenseRange.minPower);
+        Assert.AreEqual(5, previewDefenseRange.maxPower);
+
+        enemy.SelectRandomSkill();
+        SetSelectedSkill(enemy, attackSkill);
+        enemy.ActivateSelectedSkillForButton(speedButton);
+
+        EnemySkill_SO.DicePowerRange activeAttackRange = enemy.GetDicePowerRange(0);
+        Assert.AreEqual(3, activeAttackRange.minPower);
+        Assert.AreEqual(4, activeAttackRange.maxPower);
+
+        EnemySkill_SO.DicePowerRange consumedPreviewRange = enemy.GetPreviewDicePowerRange(attackSkill, 0);
+        Assert.AreEqual(2, consumedPreviewRange.minPower);
+        Assert.AreEqual(3, consumedPreviewRange.maxPower);
+    }
+
+    [Test]
+    public void TakeDamage_CollapsesAllLinkedLastStandEnemiesWhenEveryLivingAllyReachesOneHp()
+    {
+        EnemySkill_SO skill = CreateSkill("Scratch");
+        EnemyData_SO enemyData = CreateEnemyData("Collector", 10, skill, default);
+        enemyData.surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp = true;
+
+        BattleEnemyController enemyA = CreateEnemyController("Collector A", enemyData);
+        BattleEnemyController enemyB = CreateEnemyController("Collector B", enemyData);
+        BattleEnemyController enemyC = CreateEnemyController("Collector C", enemyData);
+
+        int firstDamage = enemyA.TakeDamage(99);
+        Assert.AreEqual(9, firstDamage);
+        Assert.AreEqual(1, enemyA.CurrentHP);
+        Assert.IsFalse(enemyA.IsDead);
+
+        int secondDamage = enemyB.TakeDamage(99);
+        Assert.AreEqual(9, secondDamage);
+        Assert.AreEqual(1, enemyB.CurrentHP);
+        Assert.IsFalse(enemyB.IsDead);
+
+        int finalDamage = enemyC.TakeDamage(99);
+        Assert.Greater(finalDamage, 0);
+        Assert.AreEqual(0, enemyA.CurrentHP);
+        Assert.AreEqual(0, enemyB.CurrentHP);
+        Assert.AreEqual(0, enemyC.CurrentHP);
+        Assert.IsTrue(enemyA.IsDead);
+        Assert.IsTrue(enemyB.IsDead);
+        Assert.IsTrue(enemyC.IsDead);
+    }
+
     private BattleEnemyController CreateEnemyController(string name, EnemyData_SO enemyData)
     {
         GameObject go = new GameObject(name);
@@ -72,26 +146,46 @@ public class EnemyTodoTests
         enemyData.enemyName = name;
         enemyData.baseHP = hp;
         enemyData.skillPool = new List<EnemySkill_SO> { normalSkill };
-        enemyData.conditionalSkillRules = new List<EnemyData_SO.ConditionalSkillRule> { splitRule };
+        enemyData.conditionalSkillRules = splitRule.skill != null
+            ? new List<EnemyData_SO.ConditionalSkillRule> { splitRule }
+            : new List<EnemyData_SO.ConditionalSkillRule>();
         createdObjects.Add(enemyData);
         return enemyData;
     }
 
-    private EnemySkill_SO CreateSkill(string name)
+    private EnemySkill_SO CreateSkill(string name, int minPower = 1, int maxPower = 2, EnemySkill_SO.SkillCategory category = EnemySkill_SO.SkillCategory.Attack)
     {
         EnemySkill_SO skill = ScriptableObject.CreateInstance<EnemySkill_SO>();
         skill.skillName = name;
+        skill.skillCategory = category;
         skill.diceCount = 1;
         skill.dicePowerRanges = new[]
         {
             new EnemySkill_SO.DicePowerRange
             {
-                minPower = 1,
-                maxPower = 2
+                minPower = minPower,
+                maxPower = maxPower
             }
         };
         createdObjects.Add(skill);
         return skill;
+    }
+
+    private SpeedButton CreateSpeedButton(GameObject parent, string name)
+    {
+        GameObject speedButtonObject = new GameObject(name);
+        speedButtonObject.transform.SetParent(parent.transform, false);
+        speedButtonObject.AddComponent<LineRenderer>();
+        SpeedButton speedButton = speedButtonObject.AddComponent<SpeedButton>();
+        createdObjects.Add(speedButtonObject);
+        return speedButton;
+    }
+
+    private static void SetSelectedSkill(BattleEnemyController enemy, EnemySkill_SO skill)
+    {
+        PropertyInfo selectedSkillProperty = typeof(BattleEnemyController).GetProperty("SelectedSkill", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        Assert.IsNotNull(selectedSkillProperty);
+        selectedSkillProperty.SetValue(enemy, skill);
     }
 
     private static void SetStructField<TStruct, TValue>(ref TStruct target, string fieldName, TValue value) where TStruct : struct

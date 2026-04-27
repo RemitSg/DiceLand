@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: SkinRivenLiturgy
+  m_EditorClassIdentifier: 
+  skillName: "\u88C2\u80A4\u793C\u62DC"
+  description: "\u7B2C 1 \u9AA0\u4F7F\u7528\u65F6\u81EA\u4F24 1 \u5E76\u5728\u547D\u4E2D\u540E\u4F7F\u76EE\u6807\u83B7\u5F97 1 \u5C42\u6D41\u8840\uFF1B\u7B2C 2 \u9AA0\u5355\u65B9\u9762\u653B\u51FB\u65F6\u989D\u5916\u9020\u6210 2 \u70B9\u4F24\u5BB3\uFF0C\u547D\u4E2D\u540E\u4F7F\u76EE\u6807\u83B7\u5F97 1 \u5C42\u6D41\u8840\u5E76\u81EA\u4F24 1"
+  skillCategory: 0
+  energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 1
+  maxPower: 3
+  diceCount: 2
+  dicePowerRanges:
+  - minPower: 2
+    maxPower: 3
+  - minPower: 1
+    maxPower: 3
+  dicePresentationSettings: []
+  diceEffectSettings:
+  - damageEffects:
+    - effectName: "\u81EA\u526A"
+      trigger: 3
+      targetMode: 3
+      damageAmount: 1
+      randomTargetCount: 1
+    statusEffects:
+    - effectName: "\u8840\u75D5"
+      trigger: 0
+      targetMode: 0
+      statusData: {fileID: 11400000, guid: f3d7f5c8ab6d4a7db9c2e4f1860a5b31, type: 2}
+      statusType: 0
+      applyTiming: 0
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
+      stackAmount: 1
+      randomTargetCount: 1
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  - damageEffects:
+    - effectName: "\u8FFD\u5272"
+      trigger: 5
+      targetMode: 0
+      damageAmount: 2
+      randomTargetCount: 1
+    - effectName: "\u81EA\u88C2"
+      trigger: 0
+      targetMode: 3
+      damageAmount: 1
+      randomTargetCount: 1
+    statusEffects:
+    - effectName: "\u8840\u7EBF"
+      trigger: 0
+      targetMode: 0
+      statusData: {fileID: 11400000, guid: f3d7f5c8ab6d4a7db9c2e4f1860a5b31, type: 2}
+      statusType: 0
+      applyTiming: 0
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
+      stackAmount: 1
+      randomTargetCount: 1
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []

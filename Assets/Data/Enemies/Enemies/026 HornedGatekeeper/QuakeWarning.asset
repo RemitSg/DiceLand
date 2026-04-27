@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: QuakeWarning
+  m_EditorClassIdentifier: 
+  skillName: "\u9707\u5730\u8B66\u544A"
+  description: "\u7B2C 1 \u9AA0\u4F7F\u7528\u65F6\u4F7F\u76EE\u6807\u83B7\u5F97 1 \u5C42\u7F13\u6162\uFF1B\u7B2C 2 \u9AA0\u62FC\u70B9\u80DC\u5229\u540E\u4F7F\u76EE\u6807\u83B7\u5F97 10 \u5C42\u6613\u4F24"
+  skillCategory: 1
+  energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 0100000002000000
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 1
+  maxPower: 4
+  diceCount: 2
+  dicePowerRanges:
+  - minPower: 2
+    maxPower: 4
+  - minPower: 1
+    maxPower: 3
+  dicePresentationSettings: []
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects:
+    - effectName: "\u9547\u6B65"
+      trigger: 3
+      targetMode: 0
+      statusData: {fileID: 11400000, guid: a90cdb8e1a1943f99f9d973299e6d173, type: 2}
+      statusType: 0
+      applyTiming: 0
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
+      stackAmount: 1
+      randomTargetCount: 1
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  - damageEffects: []
+    statusEffects:
+    - effectName: "\u5371\u58C1"
+      trigger: 4
+      targetMode: 0
+      statusData: {fileID: 11400000, guid: 2c61804cb51b40ceb349418fab5290ba, type: 2}
+      statusType: 0
+      applyTiming: 0
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
+      stackAmount: 10
+      randomTargetCount: 1
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []

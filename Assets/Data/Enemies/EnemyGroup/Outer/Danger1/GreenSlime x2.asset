@@ -19,7 +19,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a79c03a19f046ad478a2a1e9f339c1a2, type: 2}
   - {fileID: 11400000, guid: a79c03a19f046ad478a2a1e9f339c1a2, type: 2}
   attributes:
-  - {fileID: 11400000, guid: 6bd51ecd18fda2643acd97854aa53283, type: 2}
+  - {fileID: 11400000, guid: d4ed7fcdaf0e4f7fa153118a4219a68f, type: 2}
   lootTables:
   - {fileID: 11400000, guid: 0b492371534f471419f9d48ded4ebe5a, type: 2}
   - {fileID: 11400000, guid: 0b492371534f471419f9d48ded4ebe5a, type: 2}

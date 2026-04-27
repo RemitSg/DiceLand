@@ -902,7 +902,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour
         if (!RestSceneRuntime.TryGetCurrentSnapshot(out MapRunSnapshot snapshot) || snapshot?.runState == null)
             return baseReforgeCount;
 
-        return Mathf.Max(baseReforgeCount, RelicSystem.CalculateRestReforgeLimit(snapshot.runState, baseReforgeCount));
+        return Mathf.Max(baseReforgeCount, RelicRestReforgeService.CalculateLimit(snapshot.runState, baseReforgeCount));
     }
 
     private void RefreshPromptText()

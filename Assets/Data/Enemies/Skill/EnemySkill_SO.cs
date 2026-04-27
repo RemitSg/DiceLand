@@ -41,6 +41,22 @@ public class EnemySkill_SO : ScriptableObject
         StatusStacks = 2
     }
 
+    public enum BuiltInEffectType
+    {
+        Heal = 0,
+        Damage = 1,
+        ApplyStatus = 2,
+        TransferRandomNegativeStatus = 3
+    }
+
+    public enum BuiltInConditionScope
+    {
+        CurrentTarget = 0,
+        AnyOpponent = 1,
+        AnyFriendly = 2,
+        Self = 3
+    }
+
     public enum StatusStackOperationType
     {
         ReduceStacks = 0,
@@ -85,7 +101,8 @@ public class EnemySkill_SO : ScriptableObject
     public enum TargetPriorityMode
     {
         None = 0,
-        PreferTargetsWithStatusAtLeast = 1
+        PreferTargetsWithStatusAtLeast = 1,
+        PreferLowestSpeed = 2
     }
 
     public enum TransformOffsetSpace
@@ -358,6 +375,136 @@ public class EnemySkill_SO : ScriptableObject
     }
 
     [System.Serializable]
+    public struct BuiltInEffectEntry
+    {
+        [Tooltip("Optional effect label for debugging and UI.")]
+        public string effectName;
+
+        [Tooltip("When this built-in effect should trigger.")]
+        public DiceEffectTrigger trigger;
+
+        [Tooltip("What kind of built-in effect should be executed.")]
+        public BuiltInEffectType effectType;
+
+        [Tooltip("Who should receive the heal or damage when this effect triggers.")]
+        public DamageTargetMode targetMode;
+
+        [Tooltip("Enable a status check before applying this built-in effect.")]
+        public bool useStatusCondition;
+
+        [Tooltip("Where the status condition should be checked.")]
+        public BuiltInConditionScope conditionScope;
+
+        [Tooltip("Preferred status asset used by the status condition.")]
+        public BattleStatus_SO conditionStatusData;
+
+        [Tooltip("Legacy fallback status type kept for backwards compatibility. Only Burn is still supported here.")]
+        public DiceStatusType conditionStatusType;
+
+        [Min(1)]
+        [Tooltip("Required stack count for the configured status condition.")]
+        public int requiredStatusStacks;
+
+        [Min(0)]
+        [Tooltip("How much healing or damage this built-in effect should apply.")]
+        public int amount;
+
+        [Min(1)]
+        [Tooltip("How many random opponents should be selected when using RandomOpponents.")]
+        public int randomTargetCount;
+
+        [Tooltip("Enable an additional general condition check before applying this built-in effect.")]
+        public bool useCondition;
+
+        [Tooltip("Additional condition required for this built-in effect to become active.")]
+        public PowerModifierCondition condition;
+
+        [Tooltip("Preferred status asset used by the additional condition.")]
+        public BattleStatus_SO targetStatusData;
+
+        [Tooltip("Specific opposing skill required when using the 'TargetSkillIsSpecific' condition.")]
+        public EnemySkill_SO targetSkillData;
+
+        [Tooltip("Legacy fallback status type kept for backwards compatibility. Only Burn is still supported here.")]
+        public DiceStatusType targetStatusType;
+
+        [Min(1)]
+        [Tooltip("Required stack count when using status-stack conditions.")]
+        public int requiredConditionStatusStacks;
+
+        [Tooltip("Required self speed value when using fixed-speed conditions.")]
+        public int requiredConditionSpeedValue;
+
+        [Min(0)]
+        [Tooltip("Required speed difference when comparing against the target. Values are inclusive, and 0 falls back to 1 for backwards compatibility.")]
+        public int requiredConditionSpeedDifference;
+
+        [Tooltip("Status applied by this built-in effect, or the fallback status used by transfer effects when no transferable status exists.")]
+        public BattleStatus_SO statusData;
+
+        [Tooltip("Legacy fallback status type kept for backwards compatibility. Only Burn is still supported here.")]
+        public DiceStatusType statusType;
+
+        [Tooltip("When the built-in status should actually be applied.")]
+        public StatusApplyTiming applyTiming;
+
+        [Min(1)]
+        [Tooltip("How many round starts later the built-in status should be applied when using delayed timing.")]
+        public int applyAfterRoundStarts;
+
+        [Min(1)]
+        [Tooltip("How many times the delayed built-in status application should repeat on round start.")]
+        public int applyRepeatCount;
+
+        [Min(0)]
+        [Tooltip("How many stacks should be applied when using built-in status effects.")]
+        public int statusStackAmount;
+
+        [Min(0)]
+        [Tooltip("How many fallback stacks should be applied when a transfer effect cannot move any negative status.")]
+        public int fallbackAmount;
+    }
+
+    [System.Serializable]
+    public struct ConditionalDiceRangeModifierEntry
+    {
+        [Tooltip("Optional effect label for debugging and UI.")]
+        public string effectName;
+
+        [Tooltip("Enable a condition check before applying this range modifier.")]
+        public bool useCondition;
+
+        [Tooltip("Condition required for this range modifier to become active.")]
+        public PowerModifierCondition condition;
+
+        [Tooltip("Preferred target status asset used by status-based conditions.")]
+        public BattleStatus_SO targetStatusData;
+
+        [Tooltip("Specific opposing skill required when using the 'TargetSkillIsSpecific' condition.")]
+        public EnemySkill_SO targetSkillData;
+
+        [Tooltip("Legacy fallback status type kept for backwards compatibility. Only Burn is still supported here.")]
+        public DiceStatusType targetStatusType;
+
+        [Min(1)]
+        [Tooltip("Required stack count when using TargetStatusStacksAtLeast, or the threshold size when using TargetStatusStacksPerThreshold.")]
+        public int requiredStatusStacks;
+
+        [Tooltip("Required self speed value when using fixed-speed conditions.")]
+        public int requiredSpeedValue;
+
+        [Min(0)]
+        [Tooltip("Required speed difference when comparing against the target. Values are inclusive, and 0 falls back to 1 for backwards compatibility.")]
+        public int requiredSpeedDifference;
+
+        [Tooltip("How much the minimum power should change when the condition is met.")]
+        public int minPowerBonus;
+
+        [Tooltip("How much the maximum power should change when the condition is met.")]
+        public int maxPowerBonus;
+    }
+
+    [System.Serializable]
     public struct StatusStackOperationEffectEntry
     {
         [Tooltip("Optional effect label for debugging and UI.")]
@@ -441,6 +588,12 @@ public class EnemySkill_SO : ScriptableObject
 
         [Tooltip("Healing effects triggered by this die.")]
         public HealingEffectEntry[] healingEffects;
+
+        [Tooltip("Reusable built-in effects triggered by this die.")]
+        public BuiltInEffectEntry[] builtInEffects;
+
+        [Tooltip("Conditional range modifiers applied by this die before rolling and previewing power.")]
+        public ConditionalDiceRangeModifierEntry[] rangeModifiers;
 
         [Tooltip("Status stack operations triggered by this die.")]
         public StatusStackOperationEffectEntry[] statusStackOperationEffects;
@@ -555,6 +708,9 @@ public class EnemySkill_SO : ScriptableObject
     [Tooltip("Per-die gameplay effects. Falls back to no extra effects when empty.")]
     public DiceEffectSettings[] diceEffectSettings;
 
+    [Tooltip("Optional per-die categories. Falls back to the unified skill category when empty.")]
+    public SkillCategory[] diceSkillCategories;
+
     public DicePowerRange GetDicePowerRange(int diceIndex)
     {
         if (dicePowerRanges != null && dicePowerRanges.Length > 0)
@@ -605,6 +761,17 @@ public class EnemySkill_SO : ScriptableObject
         }
 
         return default;
+    }
+
+    public SkillCategory GetDiceSkillCategory(int diceIndex)
+    {
+        if (diceSkillCategories != null && diceSkillCategories.Length > 0)
+        {
+            int safeIndex = Mathf.Clamp(diceIndex, 0, diceSkillCategories.Length - 1);
+            return diceSkillCategories[safeIndex];
+        }
+
+        return skillCategory;
     }
 
     public bool IsUsableInEnemyStage(int zeroBasedStageIndex)
@@ -775,6 +942,46 @@ public class EnemySkill_SO : ScriptableObject
                 if (entry.randomTargetCount < 1)
                     entry.randomTargetCount = 1;
                 settings.healingEffects[i] = entry;
+            }
+        }
+
+        if (settings.builtInEffects != null)
+        {
+            for (int i = 0; i < settings.builtInEffects.Length; i++)
+            {
+                BuiltInEffectEntry entry = settings.builtInEffects[i];
+                if (entry.requiredStatusStacks < 1)
+                    entry.requiredStatusStacks = 1;
+                if (entry.requiredConditionStatusStacks < 1)
+                    entry.requiredConditionStatusStacks = 1;
+                if (entry.requiredConditionSpeedDifference < 0)
+                    entry.requiredConditionSpeedDifference = 0;
+                if (entry.amount < 0)
+                    entry.amount = 0;
+                if (entry.statusStackAmount < 0)
+                    entry.statusStackAmount = 0;
+                if (entry.fallbackAmount < 0)
+                    entry.fallbackAmount = 0;
+                if (entry.applyAfterRoundStarts < 1)
+                    entry.applyAfterRoundStarts = 1;
+                if (entry.applyRepeatCount < 1)
+                    entry.applyRepeatCount = 1;
+                if (entry.randomTargetCount < 1)
+                    entry.randomTargetCount = 1;
+                settings.builtInEffects[i] = entry;
+            }
+        }
+
+        if (settings.rangeModifiers != null)
+        {
+            for (int i = 0; i < settings.rangeModifiers.Length; i++)
+            {
+                ConditionalDiceRangeModifierEntry entry = settings.rangeModifiers[i];
+                if (entry.requiredStatusStacks < 1)
+                    entry.requiredStatusStacks = 1;
+                if (entry.requiredSpeedDifference < 0)
+                    entry.requiredSpeedDifference = 0;
+                settings.rangeModifiers[i] = entry;
             }
         }
 

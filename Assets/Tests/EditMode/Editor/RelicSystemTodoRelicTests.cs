@@ -450,7 +450,7 @@ public class RelicSystemTodoRelicTests
 
         Relic_SO relic = CreateRelic(
             "pathfinder-manual",
-            (Relic_SO.RelicTrigger)19,
+            Relic_SO.RelicTrigger.OnKeyCollected,
             (Relic_SO.RelicBuiltInEffectType)32,
             effect => effect.amount = 50);
 
@@ -774,7 +774,9 @@ public class RelicSystemTodoRelicTests
         EnemySkill_SO skill = ScriptableObject.CreateInstance<EnemySkill_SO>();
         skill.skillName = name;
         skill.diceCount = 1;
-        SetPrivateField(skill, "isDefenseSkill", isDefenseSkill);
+        skill.skillCategory = isDefenseSkill
+            ? EnemySkill_SO.SkillCategory.Defense
+            : EnemySkill_SO.SkillCategory.Attack;
         skill.dicePowerRanges = new[]
         {
             new EnemySkill_SO.DicePowerRange { minPower = minPower, maxPower = maxPower }

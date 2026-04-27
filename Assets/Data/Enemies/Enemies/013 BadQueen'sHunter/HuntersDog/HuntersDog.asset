@@ -30,7 +30,7 @@ MonoBehaviour:
   battleStartGrantedAllySkills: []
   onSpecificEnemyDeathStatusGains:
   - watchedEnemyData: {fileID: 11400000, guid: 9a20040849f4382498a1ee2a263055bd, type: 2}
-    statusData: {fileID: 11400000, guid: a935da6047588bc4e8040f2e21468051, type: 2}
+    statusData: {fileID: 11400000, guid: a90cdb8e1a1943f99f9d973299e6d173, type: 2}
     stackAmount: 5
     additionalRoundStartApplications: 99
   roundStartRetreatRule:

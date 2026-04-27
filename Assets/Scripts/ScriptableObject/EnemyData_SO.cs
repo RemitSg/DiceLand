@@ -180,6 +180,10 @@ public class EnemyData_SO : ScriptableObject
     [Tooltip("When enabled, allied characters keep their bleed stacks after being hit while this enemy remains alive on the battlefield.")]
     public bool preventAllyBleedDecayOnHitWhileAlive;
 
+    [Header("Last Stand")]
+    [Tooltip("When enabled, lethal damage leaves this enemy at 1 HP until every other living ally is also at 1 HP or lower.")]
+    public bool surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp;
+
     [TextArea(2, 5)]
     public string enemyDescription;
     public List<PassiveDescriptionEntry> passiveDescriptions;
