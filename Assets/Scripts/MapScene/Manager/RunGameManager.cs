@@ -28,7 +28,7 @@ public class RunGameManager : MonoBehaviour
     };
 
     [System.Serializable]
-    private class StartingPartyMemberDefinition
+    public class StartingPartyMemberDefinition
     {
         public string memberId = "PartyMember";
         public CharacterData_SO characterData;
@@ -40,28 +40,28 @@ public class RunGameManager : MonoBehaviour
     }
 
     [System.Serializable]
-    private class StartingLootDefinition
+    public class StartingLootDefinition
     {
         public LootItem_SO lootItem;
         [Min(1)] public int amount = 1;
     }
 
     [System.Serializable]
-    private class StartingWeaponDefinition
+    public class StartingWeaponDefinition
     {
         public Weapon_SO weaponData;
         [Min(1)] public int amount = 1;
     }
 
     [System.Serializable]
-    private class StartingBlueprintDefinition
+    public class StartingBlueprintDefinition
     {
         public CraftingBlueprint_SO blueprintData;
         [Min(1)] public int amount = 1;
     }
 
     [System.Serializable]
-    private class StartingRelicDefinition
+    public class StartingRelicDefinition
     {
         public Relic_SO relicData;
         [Min(1)] public int amount = 1;
@@ -145,7 +145,6 @@ public class RunGameManager : MonoBehaviour
     private bool deferPendingCalamityUntilOverlayClosed;
     private bool suppressPendingCalamityOnNextRestActionPointRestore;
     private BattleEncounterData pendingEventEncounterData;
-    private BoardTileData currentEventExecutionTile;
     private string pendingMoveRelicStatusMessage;
     private readonly Dictionary<string, MapEventLootDiscardPreview> eventRandomLootDiscardPreviewCache = new Dictionary<string, MapEventLootDiscardPreview>(StringComparer.Ordinal);
     private bool isTutorialRun;
@@ -374,106 +373,32 @@ public class RunGameManager : MonoBehaviour
 
     private static List<BoardTileData> BuildTutorialBoardTiles(int boardSize)
     {
-        int row = Mathf.Max(1, boardSize / 2);
-        List<BoardTileData> tiles = new List<BoardTileData>(TutorialTileSequence.Length);
-        for (int i = 0; i < TutorialTileSequence.Length; i++)
-        {
-            MapTileType tileType = TutorialTileSequence[i];
-            TutorialBattleStageId stageId = ResolveTutorialStageId(i);
-            tiles.Add(new BoardTileData
-            {
-                coord = new Vector2Int(i, row),
-                tileType = tileType,
-                dangerBand = ResolveTutorialDangerBand(i),
-                isVisited = i == 0,
-                isResolved = tileType == MapTileType.Empty,
-                isSpawnTile = i == 0,
-                encounterSeed = TutorialEncounterSeedBase + i,
-                previewEnemyCount = ResolveTutorialPreviewEnemyCount(tileType, stageId),
-                previewDangerRating = ResolveTutorialPreviewDanger(tileType, stageId),
-                previewTag = ResolveTutorialPreviewTag(tileType, stageId)
-            });
-        }
-
-        return tiles;
+        return RunBootstrapService.BuildTutorialBoardTiles(boardSize);
     }
 
     private static TutorialBattleStageId ResolveTutorialStageId(int sequenceIndex)
     {
-        switch (sequenceIndex)
-        {
-            case 2:
-                return TutorialBattleStageId.Battle01;
-            case 3:
-                return TutorialBattleStageId.Battle02;
-            case 5:
-                return TutorialBattleStageId.Battle03;
-            case 7:
-                return TutorialBattleStageId.Battle04;
-            case 9:
-                return TutorialBattleStageId.Battle05;
-            case 11:
-                return TutorialBattleStageId.Battle07;
-            default:
-                return TutorialBattleStageId.None;
-        }
+        return RunBootstrapService.ResolveTutorialStageId(sequenceIndex);
     }
 
     private static MapDangerBand ResolveTutorialDangerBand(int sequenceIndex)
     {
-        if (sequenceIndex <= 2)
-            return MapDangerBand.Outer;
-        if (sequenceIndex <= 5)
-            return MapDangerBand.Mid;
-        if (sequenceIndex <= 7)
-            return MapDangerBand.Inner;
-        return MapDangerBand.Core;
+        return RunBootstrapService.ResolveTutorialDangerBand(sequenceIndex);
     }
 
     private static int ResolveTutorialPreviewEnemyCount(MapTileType tileType, TutorialBattleStageId stageId)
     {
-        return TutorialBattleStageUtility.IsBattleStage(stageId) || tileType == MapTileType.Boss ? 1 : 0;
+        return RunBootstrapService.ResolveTutorialPreviewEnemyCount(tileType, stageId);
     }
 
     private static int ResolveTutorialPreviewDanger(MapTileType tileType, TutorialBattleStageId stageId)
     {
-        switch (stageId)
-        {
-            case TutorialBattleStageId.Battle01:
-            case TutorialBattleStageId.Battle02:
-                return 1;
-            case TutorialBattleStageId.Battle03:
-            case TutorialBattleStageId.Battle04:
-                return 2;
-            case TutorialBattleStageId.Battle05:
-                return 4;
-            case TutorialBattleStageId.Battle07:
-                return 5;
-            default:
-                return 0;
-        }
+        return RunBootstrapService.ResolveTutorialPreviewDanger(stageId);
     }
 
     private static string ResolveTutorialPreviewTag(MapTileType tileType, TutorialBattleStageId stageId)
     {
-        if (TutorialBattleStageUtility.IsBattleStage(stageId))
-            return TutorialBattleStageUtility.IsFinalStage(stageId) ? "教程终战" : "教程战斗";
-
-        switch (tileType)
-        {
-            case MapTileType.Rest:
-                return "教程营地";
-            case MapTileType.Merchant:
-                return "教程商店";
-            case MapTileType.Forge:
-                return "教程锻造";
-            case MapTileType.Key:
-                return "教程钥匙";
-            case MapTileType.Boss:
-                return "教程首领";
-            default:
-                return "教程路线";
-        }
+        return RunBootstrapService.ResolveTutorialPreviewTag(tileType, stageId);
     }
 
     private void ShowTutorialGuideOverlay()
@@ -1089,163 +1014,67 @@ public class RunGameManager : MonoBehaviour
 
     private static int ResolveActionPointLimitForTier(DifficultyConfig_SO config, int calamityTier)
     {
-        if (config == null)
-            return 6;
-
-        return Mathf.Max(1, config.GetActionPointLimitForCalamityTier(calamityTier));
+        return RunBootstrapService.ResolveActionPointLimitForTier(config, calamityTier);
     }
 
     private int GetMoveCost(BoardTileData tile)
     {
-        if (tile == null || runState == null)
-            return 0;
-
-        if (tile.coord == runState.playerGridPosition)
-            return 0;
-
-        return tile.isVisited ? 1 : 2;
+        return MapMovementService.GetMoveCost(runState, tile);
     }
 
     private bool CanAttemptMove(BoardTileData tile, int moveCost)
     {
-        if (actionPointSystem == null)
-            return false;
-
-        if (actionPointSystem.CanSpend(moveCost))
-            return true;
-
-        if (moveCost == 2 && actionPointSystem.CurrentPoints == 1)
-            return true;
-
-        return CanPotentiallyIgnoreMoveCostViaRelic(tile);
+        return MapMovementService.CanAttemptMove(runState, actionPointSystem, tile, moveCost);
     }
 
     private bool CanPotentiallyIgnoreMoveCostViaRelic(BoardTileData tile)
     {
-        if (runState == null || tile == null || runState.relicInventory == null)
-            return false;
-
-        bool requireUnvisited = !tile.isVisited;
-        for (int i = 0; i < runState.relicInventory.Count; i++)
-        {
-            RunRelicState relicState = runState.relicInventory[i];
-            if (relicState == null || relicState.relicData == null || relicState.amount <= 0)
-                continue;
-
-            List<Relic_SO.RelicBuiltInEffectEntry> effects = relicState.relicData.builtInEffects;
-            if (effects == null)
-                continue;
-
-            for (int effectIndex = 0; effectIndex < effects.Count; effectIndex++)
-            {
-                Relic_SO.RelicBuiltInEffectEntry effect = effects[effectIndex];
-                if (effect == null)
-                    continue;
-                if (effect.trigger != Relic_SO.RelicTrigger.OnMoveCostAboutToSpend)
-                    continue;
-                bool canIgnoreMoveCost =
-                    effect.effectType == Relic_SO.RelicBuiltInEffectType.ChanceToIgnoreMoveCost &&
-                    (!effect.requireUnvisitedTile || requireUnvisited);
-
-                if (!canIgnoreMoveCost &&
-                    effect.effectType == Relic_SO.RelicBuiltInEffectType.IgnoreMoveCostWhenDestinationVisited &&
-                    !requireUnvisited)
-                {
-                    canIgnoreMoveCost = true;
-                }
-
-                if (!canIgnoreMoveCost)
-                    continue;
-                if (effect.chance <= 0f)
-                    continue;
-
-                return true;
-            }
-        }
-
-        return false;
+        return MapMovementService.CanPotentiallyIgnoreMoveCostViaRelic(runState, tile);
     }
 
     private bool TryExecuteMove(BoardTileData tile, int moveCost)
     {
-        if (tile == null || playerMapController == null || actionPointSystem == null)
-            return false;
-
-        bool exhaustsCurrentCycle = WillSpendExhaustCurrentCycle(moveCost);
-        bool shouldDeferCalamityForBattleOrRest = exhaustsCurrentCycle && (tile.IsHostileTile || tile.tileType == MapTileType.Rest);
-        bool shouldDeferCalamityForOverlay = exhaustsCurrentCycle && (tile.tileType == MapTileType.Event || tile.tileType == MapTileType.Merchant || tile.tileType == MapTileType.Forge);
-        bool shouldSuppressCalamityOnRestActionPointRestore = tile.tileType == MapTileType.Rest && exhaustsCurrentCycle && actionPointSystem.CanSpend(moveCost);
-        bool previousDeferredResumeState = deferPendingCalamityUntilMapResume;
-        bool previousDeferredOverlayState = deferPendingCalamityUntilOverlayClosed;
-        bool previousSuppressRestCalamityState = suppressPendingCalamityOnNextRestActionPointRestore;
-
-        RelicExecutionContext relicContext = RelicTriggerDispatcher.ProcessMoveCost(
-            runState,
-            this,
-            tile,
-            moveCost);
-
-        if (relicContext.ignoreMoveCost)
-        {
-            bool movedWithoutCost = playerMapController.TryMoveTo(tile, 0);
-            if (movedWithoutCost && relicContext.feedbackMessages != null && relicContext.feedbackMessages.Count > 0)
-                pendingMoveRelicStatusMessage = string.Join("\n", relicContext.feedbackMessages);
-            return movedWithoutCost;
-        }
-
-        if (shouldDeferCalamityForBattleOrRest)
-            deferPendingCalamityUntilMapResume = true;
-        if (shouldDeferCalamityForOverlay)
-            deferPendingCalamityUntilOverlayClosed = true;
-        if (tile.tileType == MapTileType.Rest)
-            suppressPendingCalamityOnNextRestActionPointRestore = shouldSuppressCalamityOnRestActionPointRestore;
-
-        if (actionPointSystem.CanSpend(moveCost))
-        {
-            bool moved = playerMapController.TryMoveTo(tile, moveCost);
-            if (!moved)
+        MapMovementCycleFlags previousFlags = CaptureMovementCycleFlags();
+        bool moved = MapMovementService.TryExecuteMove(
+            new MapMovementExecutionRequest
             {
-                deferPendingCalamityUntilMapResume = previousDeferredResumeState;
-                deferPendingCalamityUntilOverlayClosed = previousDeferredOverlayState;
-                suppressPendingCalamityOnNextRestActionPointRestore = previousSuppressRestCalamityState;
-            }
-            return moved;
-        }
+                runState = runState,
+                runGameManager = this,
+                tile = tile,
+                moveCost = moveCost,
+                actionPointSystem = actionPointSystem,
+                playerMapController = playerMapController,
+                previousCycleFlags = previousFlags,
+                applyCycleFlags = ApplyMovementCycleFlags
+            },
+            out MapMovementExecutionResult result);
 
-        if (moveCost != 2 || actionPointSystem.CurrentPoints != 1)
-        {
-            deferPendingCalamityUntilMapResume = previousDeferredResumeState;
-            deferPendingCalamityUntilOverlayClosed = previousDeferredOverlayState;
-            suppressPendingCalamityOnNextRestActionPointRestore = previousSuppressRestCalamityState;
-            return false;
-        }
-
-        if (!actionPointSystem.TrySpend(1))
-        {
-            deferPendingCalamityUntilMapResume = previousDeferredResumeState;
-            deferPendingCalamityUntilOverlayClosed = previousDeferredOverlayState;
-            suppressPendingCalamityOnNextRestActionPointRestore = previousSuppressRestCalamityState;
-            return false;
-        }
-
-        if (!playerMapController.TryMoveTo(tile, 0))
-        {
-            deferPendingCalamityUntilMapResume = previousDeferredResumeState;
-            deferPendingCalamityUntilOverlayClosed = previousDeferredOverlayState;
-            suppressPendingCalamityOnNextRestActionPointRestore = previousSuppressRestCalamityState;
-            return false;
-        }
-
-        bool spentOverflowPoint = actionPointSystem.TrySpend(1);
-        if (spentOverflowPoint)
+        if (moved && !string.IsNullOrWhiteSpace(result.pendingRelicStatusMessage))
+            pendingMoveRelicStatusMessage = result.pendingRelicStatusMessage;
+        if (moved && result.shouldRefreshHudWithEmptyStatus)
             RefreshHUD(string.Empty);
-        else
+
+        return moved;
+    }
+
+    private MapMovementCycleFlags CaptureMovementCycleFlags()
+    {
+        return new MapMovementCycleFlags
         {
-            deferPendingCalamityUntilMapResume = previousDeferredResumeState;
-            deferPendingCalamityUntilOverlayClosed = previousDeferredOverlayState;
-            suppressPendingCalamityOnNextRestActionPointRestore = previousSuppressRestCalamityState;
-        }
-        return spentOverflowPoint;
+            deferPendingCalamityUntilMapResume = deferPendingCalamityUntilMapResume,
+            deferPendingCalamityUntilOverlayClosed = deferPendingCalamityUntilOverlayClosed,
+            suppressPendingCalamityOnNextRestActionPointRestore = suppressPendingCalamityOnNextRestActionPointRestore
+        };
+    }
+
+    private void ApplyMovementCycleFlags(MapMovementCycleFlags flags)
+    {
+        if (flags == null)
+            return;
+
+        deferPendingCalamityUntilMapResume = flags.deferPendingCalamityUntilMapResume;
+        deferPendingCalamityUntilOverlayClosed = flags.deferPendingCalamityUntilOverlayClosed;
+        suppressPendingCalamityOnNextRestActionPointRestore = flags.suppressPendingCalamityOnNextRestActionPointRestore;
     }
 
     private bool TryEnterBattle(BoardTileData tile)
@@ -1310,48 +1139,24 @@ public class RunGameManager : MonoBehaviour
         List<PendingBattleStatusGrant> pendingBattleStartGrants = runState.ConsumePendingNextBattleAllyStatusGrants();
         MapRunRuntime.SaveSnapshot(SceneManager.GetActiveScene().name, runState, boardManager, actionPointSystem, pendingCalamityTiers);
 
-        BattleEncounterRuntime.SetEncounter(new BattleEncounterData
-        {
-            sourceSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name,
-            targetSceneName = battleSceneName,
-            tutorialCompletionSceneName = ResolveTutorialCompletionSceneName(),
-            encounterLabel = $"{tile.tileType} [{tile.coord.x},{tile.coord.y}]",
-            tutorialBattleStageId = tutorialBattleStageId,
-            tileType = tile.tileType,
-            dangerBand = tile.dangerBand,
-            sourceCoord = tile.coord,
-            enemyGroup = encounterGroup,
-            tutorialBattleDefinition = tutorialBattleDefinition,
-            partyMembers = new List<RunPartyMemberState>(runState.GetLivingPartyMembers()),
-            relicInventory = runState.relicInventory != null ? new List<RunRelicState>(runState.relicInventory.Count) : new List<RunRelicState>(),
-            activeCalamities = runState.activeCalamities != null ? new List<RunCalamityState>(runState.activeCalamities.Count) : new List<RunCalamityState>(),
-            pendingBattleStartAllyStatusGrants = pendingBattleStartGrants,
-            seed = tile.encounterSeed,
-            moneyGained = moneyRewardTable != null ? moneyRewardTable.RollReward(tile.tileType, tile.dangerBand, tile.encounterSeed) : 0,
-            isTutorialEncounter = isTutorialRun,
-            returnToMainMenuOnVictory = tutorialReturnsToMainMenu,
-            restartBattleOnDefeat = isTutorialRun
-        });
-
-        if (runState.relicInventory != null)
-        {
-            for (int i = 0; i < runState.relicInventory.Count; i++)
+        BattleEncounterData encounterData = MapBattleEncounterService.BuildEncounter(
+            new MapBattleEncounterBuildRequest
             {
-                RunRelicState relicState = runState.relicInventory[i];
-                if (relicState != null)
-                    BattleEncounterRuntime.CurrentEncounter.relicInventory.Add(relicState.Clone());
-            }
-        }
-
-        if (runState.activeCalamities != null)
-        {
-            for (int i = 0; i < runState.activeCalamities.Count; i++)
-            {
-                RunCalamityState calamityState = runState.activeCalamities[i];
-                if (calamityState != null)
-                    BattleEncounterRuntime.CurrentEncounter.activeCalamities.Add(calamityState.Clone());
-            }
-        }
+                runState = runState,
+                tile = tile,
+                encounterGroup = encounterGroup,
+                moneyRewardTable = moneyRewardTable,
+                sourceSceneName = SceneManager.GetActiveScene().name,
+                battleSceneName = battleSceneName,
+                tutorialCompletionSceneName = ResolveTutorialCompletionSceneName(),
+                tutorialBattleStageId = tutorialBattleStageId,
+                tutorialBattleDefinition = tutorialBattleDefinition,
+                pendingBattleStartAllyStatusGrants = pendingBattleStartGrants,
+                isTutorialEncounter = isTutorialRun,
+                returnToMainMenuOnVictory = tutorialReturnsToMainMenu,
+                restartBattleOnDefeat = isTutorialRun
+            });
+        BattleEncounterRuntime.SetEncounter(encounterData);
 
         RefreshHUD($"进入战斗：{encounterGroup.groupName}");
         sceneTransitionController.TransitionToScene(battleSceneName);
@@ -1536,15 +1341,30 @@ public class RunGameManager : MonoBehaviour
             spentSelectionMoney = true;
         }
 
-        currentEventExecutionTile = tile;
-        if (!ExecuteEventOptionBuiltInEffects(optionData, out message))
+        if (!MapEventBuiltInEffectExecutorService.TryExecute(
+                new MapEventBuiltInEffectExecutionRequest
+                {
+                    runState = runState,
+                    actionPointSystem = actionPointSystem,
+                    currentEventTile = tile,
+                    optionData = optionData,
+                    levelTable = levelTable,
+                    sourceSceneName = SceneManager.GetActiveScene().name,
+                    battleSceneName = battleSceneName,
+                    encounterSeedSalt = Environment.TickCount,
+                    randomLootDiscardPreviewCache = eventRandomLootDiscardPreviewCache
+                },
+                out MapEventBuiltInEffectExecutionResult builtInResult))
         {
             if (spentSelectionMoney)
                 runState.AddMoney(requiredMoney);
-            currentEventExecutionTile = null;
             pendingEventEncounterData = null;
+            message = builtInResult != null ? builtInResult.message : "事件执行失败。";
             return false;
         }
+
+        message = builtInResult.message;
+        pendingEventEncounterData = builtInResult.pendingEncounterData;
 
         if (optionData.customHandler != null)
         {
@@ -1562,7 +1382,6 @@ public class RunGameManager : MonoBehaviour
             {
                 if (spentSelectionMoney)
                     runState.AddMoney(requiredMoney);
-                currentEventExecutionTile = null;
                 pendingEventEncounterData = null;
                 message = string.IsNullOrWhiteSpace(customMessage) ? "事件的自定义效果未能执行。" : customMessage;
                 return false;
@@ -1574,7 +1393,6 @@ public class RunGameManager : MonoBehaviour
 
         tile.isResolved = true;
         tile.assignedEvent = null;
-        currentEventExecutionTile = null;
 
         if (spentSelectionMoney)
         {
@@ -1587,262 +1405,6 @@ public class RunGameManager : MonoBehaviour
         mapHUD.ShowTile(tile, GetMoveCost(tile), true);
         RefreshHUD(message);
         return true;
-    }
-
-    private bool ExecuteEventOptionBuiltInEffects(MapEventOptionData optionData, out string message)
-    {
-        List<string> effectMessages = new List<string>();
-        List<MapEventBuiltInEffectData> allEffects = MapEventEffectSequenceBuilder.BuildAllEffects(optionData);
-
-        int encounterEffectIndex = -1;
-        for (int i = 0; i < allEffects.Count; i++)
-        {
-            if (allEffects[i] != null && allEffects[i].effectType == MapEventOptionBuiltInEffectType.StartEncounter)
-            {
-                encounterEffectIndex = i;
-                break;
-            }
-        }
-
-        if (encounterEffectIndex >= 0)
-        {
-            if (!ExecuteEventBuiltInEffect(optionData, encounterEffectIndex, allEffects[encounterEffectIndex], out string encounterMessage))
-            {
-                message = encounterMessage;
-                return false;
-            }
-
-            if (!string.IsNullOrWhiteSpace(encounterMessage))
-                effectMessages.Add(encounterMessage);
-        }
-
-        for (int i = 0; i < allEffects.Count; i++)
-        {
-            MapEventBuiltInEffectData effectData = allEffects[i];
-            if (effectData == null)
-                continue;
-            if (i == encounterEffectIndex)
-                continue;
-
-            if (encounterEffectIndex >= 0 && MapEventEffectSequenceBuilder.IsDeferredEncounterVictoryRewardEffect(effectData.effectType))
-            {
-                if (!MapEventRewardService.TryQueueEncounterVictoryReward(pendingEventEncounterData, effectData, out string deferredMessage))
-                {
-                    message = deferredMessage;
-                    return false;
-                }
-
-                if (!string.IsNullOrWhiteSpace(deferredMessage))
-                    effectMessages.Add(deferredMessage);
-                continue;
-            }
-
-            if (!ExecuteEventBuiltInEffect(optionData, i, effectData, out string effectMessage))
-            {
-                message = effectMessage;
-                return false;
-            }
-
-            if (!string.IsNullOrWhiteSpace(effectMessage))
-                effectMessages.Add(effectMessage);
-        }
-
-        if (effectMessages.Count > 0)
-        {
-            message = string.Join("\n", effectMessages);
-        }
-        else
-        {
-            message = string.IsNullOrWhiteSpace(optionData.consequenceDescription)
-                ? $"已选择：{optionData.DisplayLabel}"
-                : optionData.consequenceDescription;
-        }
-
-        return true;
-    }
-
-    private bool ExecuteEventBuiltInEffect(MapEventOptionData optionData, int effectIndex, MapEventBuiltInEffectData effectData, out string message)
-    {
-        if (effectData == null)
-        {
-            message = string.Empty;
-            return true;
-        }
-
-        switch (effectData.effectType)
-        {
-            case MapEventOptionBuiltInEffectType.None:
-                message = string.Empty;
-                return true;
-            case MapEventOptionBuiltInEffectType.GainMoney:
-                if (effectData.effectAmount > 0)
-                    runState.AddMoney(effectData.effectAmount);
-                message = $"获得 {Mathf.Max(0, effectData.effectAmount)} 金钱。";
-                return true;
-            case MapEventOptionBuiltInEffectType.GainRandomMoney:
-            {
-                int minAmount = Mathf.Max(0, effectData.randomMoneyMin);
-                int maxAmount = Mathf.Max(minAmount, effectData.randomMoneyMax);
-                int gainedAmount = UnityEngine.Random.Range(minAmount, maxAmount + 1);
-                if (gainedAmount > 0)
-                    runState.AddMoney(gainedAmount);
-                message = $"获得 {gainedAmount} 金钱。";
-                return true;
-            }
-            case MapEventOptionBuiltInEffectType.GainExperience:
-            {
-                int gainedExperience = Mathf.Max(0, effectData.effectAmount);
-                ApplyExperienceToAllPartyMembers(gainedExperience);
-                message = $"所有角色获得 {gainedExperience} 经验。";
-                return true;
-            }
-            case MapEventOptionBuiltInEffectType.LoseMoney:
-            {
-                int cost = Mathf.Max(0, effectData.effectAmount);
-                if (!runState.TrySpendMoney(cost))
-                {
-                    message = $"金钱不足，需要 {cost} 金钱。";
-                    return false;
-                }
-
-                message = $"失去 {cost} 金钱。";
-                return true;
-            }
-            case MapEventOptionBuiltInEffectType.HealAllPartyMembers:
-            {
-                if (runState.partyMembers != null)
-                {
-                    for (int i = 0; i < runState.partyMembers.Count; i++)
-                    {
-                        RunPartyMemberState member = runState.partyMembers[i];
-                        if (member == null)
-                            continue;
-
-                        member.currentHP = Mathf.Max(0, member.maxHP);
-                    }
-                }
-
-                message = "所有角色已恢复至满血。";
-                return true;
-            }
-            case MapEventOptionBuiltInEffectType.AdjustAllPartyMembersHpByMaxHpPercent:
-            {
-                int percent = effectData.effectAmount;
-                if (runState.partyMembers != null)
-                {
-                    for (int i = 0; i < runState.partyMembers.Count; i++)
-                    {
-                        RunPartyMemberState member = runState.partyMembers[i];
-                        if (member == null || member.maxHP <= 0)
-                            continue;
-
-                        int hpDelta = Mathf.FloorToInt(member.maxHP * (Mathf.Abs(percent) / 100f));
-                        if (hpDelta <= 0)
-                            continue;
-
-                        if (percent >= 0)
-                            member.currentHP = Mathf.Clamp(member.currentHP + hpDelta, 0, member.maxHP);
-                        else
-                            member.currentHP = Mathf.Clamp(member.currentHP - hpDelta, 0, member.maxHP);
-                    }
-                }
-
-                message = percent >= 0
-                    ? $"所有角色恢复了最大生命值的 {percent}% 。"
-                    : $"所有角色失去了最大生命值的 {Mathf.Abs(percent)}% 。";
-                return true;
-            }
-            case MapEventOptionBuiltInEffectType.GainActionPoints:
-            {
-                int gainAmount = Mathf.Max(0, effectData.effectAmount);
-                if (actionPointSystem == null)
-                {
-                    message = "当前未找到行动点系统。";
-                    return false;
-                }
-
-                int restoredPoints = Mathf.Clamp(actionPointSystem.CurrentPoints + gainAmount, 0, actionPointSystem.CurrentMaxPoints);
-                actionPointSystem.RestoreState(actionPointSystem.BasePoints, actionPointSystem.BonusPoints, restoredPoints);
-                message = $"恢复 {gainAmount} 点行动点。";
-                return true;
-            }
-            case MapEventOptionBuiltInEffectType.LoseActionPoints:
-            {
-                int loseAmount = Mathf.Max(0, effectData.effectAmount);
-                if (actionPointSystem == null)
-                {
-                    message = "当前未找到行动点系统。";
-                    return false;
-                }
-
-                SpendActionPointsWithOverflow(loseAmount);
-                message = $"失去 {loseAmount} 点行动点。";
-                return true;
-            }
-            case MapEventOptionBuiltInEffectType.RestoreAllActionPoints:
-                if (actionPointSystem != null)
-                    actionPointSystem.RestoreState(actionPointSystem.BasePoints, actionPointSystem.BonusPoints, actionPointSystem.CurrentMaxPoints);
-                message = "行动点已恢复至当前上限。";
-                return true;
-            case MapEventOptionBuiltInEffectType.GainLoot:
-            case MapEventOptionBuiltInEffectType.GainRandomLootFromList:
-                return MapEventRewardService.TryExecuteLootReward(runState, effectData, out message);
-            case MapEventOptionBuiltInEffectType.GainRelics:
-                return MapEventRewardService.TryExecuteRelicReward(runState, effectData, out message);
-            case MapEventOptionBuiltInEffectType.GainBlueprints:
-                return MapEventRewardService.TryExecuteBlueprintReward(runState, effectData, out message);
-            case MapEventOptionBuiltInEffectType.LoseOwnedRandomLoot:
-                return MapEventLootCostService.TryExecuteRandomLootDiscard(
-                    runState,
-                    optionData,
-                    effectIndex,
-                    effectData,
-                    eventRandomLootDiscardPreviewCache,
-                    out message);
-            case MapEventOptionBuiltInEffectType.LoseSpecificLoot:
-                return MapEventLootCostService.TryExecuteSpecificLootDiscard(runState, effectData, out message);
-            case MapEventOptionBuiltInEffectType.StartEncounter:
-                return TryPrepareEventEncounter(effectData, out message);
-            default:
-                message = "未知事件效果。";
-                return false;
-        }
-    }
-
-    private bool TryPrepareEventEncounter(MapEventBuiltInEffectData effectData, out string message)
-    {
-        int seedSalt = Environment.TickCount;
-        return MapEventEncounterService.TryPrepareEncounter(
-            runState,
-            currentEventExecutionTile,
-            effectData,
-            SceneManager.GetActiveScene().name,
-            battleSceneName,
-            seedSalt,
-            out pendingEventEncounterData,
-            out message);
-    }
-
-    private void SpendActionPointsWithOverflow(int amount)
-    {
-        if (actionPointSystem == null)
-            return;
-
-        int remaining = Mathf.Max(0, amount);
-        int guard = 0;
-        while (remaining > 0 && guard < 10000)
-        {
-            guard++;
-            int currentPoints = actionPointSystem.CurrentPoints;
-            if (currentPoints <= 0)
-                break;
-
-            int spendAmount = Mathf.Min(currentPoints, remaining);
-            if (!actionPointSystem.TrySpend(spendAmount))
-                break;
-
-            remaining -= spendAmount;
-        }
     }
 
     private void HandleMapEventOverlayHidden()
@@ -1932,41 +1494,19 @@ public class RunGameManager : MonoBehaviour
         while (pendingCalamityTiers.Count > 0)
         {
             int calamityTier = Mathf.Max(1, pendingCalamityTiers.Dequeue());
-            List<Calamity_SO> choices = RollPendingCalamityChoices(calamityTier);
+            List<Calamity_SO> choices = CalamitySelectionService.RollChoices(calamityPool, runState, calamityTier);
             if (choices.Count <= 0)
             {
                 RefreshHUD($"\u707e\u5384\u7b49\u7ea7 {calamityTier} \u5df2\u65e0\u53ef\u7528\u707e\u5384\uff0c\u8df3\u8fc7\u672c\u6b21\u707e\u5384\u9009\u62e9\u3002");
                 continue;
             }
 
-            for (int i = 0; i < choices.Count; i++)
-                runState.MarkCalamityDrawn(choices[i]);
+            CalamitySelectionService.MarkChoicesDrawn(runState, choices);
 
             RefreshHUD($"\u707e\u5384\u964d\u4e34\uff0c\u8bf7\u4ece {choices.Count} \u4e2a\u9009\u9879\u4e2d\u9009\u62e9\u5176\u4e00\u3002");
             mapCalamityOverlay.Show(calamityTier, choices, calamity => HandleCalamityChosen(calamityTier, calamity));
             return;
         }
-    }
-
-    private List<Calamity_SO> RollPendingCalamityChoices(int calamityTier)
-    {
-        if (calamityPool == null)
-            return new List<Calamity_SO>();
-
-        HashSet<string> excludedIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        if (runState != null && runState.drawnCalamityIds != null)
-        {
-            for (int i = 0; i < runState.drawnCalamityIds.Count; i++)
-            {
-                string id = runState.drawnCalamityIds[i];
-                if (!string.IsNullOrWhiteSpace(id))
-                    excludedIds.Add(id);
-            }
-        }
-
-        int seed = unchecked(Environment.TickCount ^ (calamityTier * 397) ^ (runState != null ? runState.currentCycle * 811 : 0) ^ excludedIds.Count);
-        System.Random rng = new System.Random(seed);
-        return calamityPool.RollChoices(calamityTier, excludedIds, 2, rng);
     }
 
     private void HandleCalamityChosen(int calamityTier, Calamity_SO calamity)
@@ -1977,7 +1517,7 @@ public class RunGameManager : MonoBehaviour
             return;
         }
 
-        runState.AddCalamity(calamity, calamityTier);
+        CalamitySelectionService.ApplyChosenCalamity(runState, calamity, calamityTier);
         calamity.customEffectHandler?.OnCalamityApplied(runState, this);
         RelicExecutionContext context = RelicTriggerDispatcher.ProcessCalamityApplied(runState, this, calamity, calamityTier);
 
@@ -1991,77 +1531,22 @@ public class RunGameManager : MonoBehaviour
 
     private bool WillSpendExhaustCurrentCycle(int moveCost)
     {
-        if (actionPointSystem == null)
-            return false;
-
-        int safeMoveCost = Mathf.Max(0, moveCost);
-        if (safeMoveCost <= 0)
-            return false;
-
-        return actionPointSystem.CurrentPoints <= safeMoveCost;
+        return MapMovementService.WillSpendExhaustCurrentCycle(actionPointSystem, moveCost);
     }
 
     private EnemyGroup_SO SelectEnemyGroupForTile(BoardTileData tile)
     {
-        if (tile == null || enemyRoster == null)
-            return null;
-
-        System.Random rng = new System.Random(tile.encounterSeed);
-        switch (tile.tileType)
-        {
-            case MapTileType.Elite:
-                return enemyRoster.GetRandomGroup(tile.dangerBand, EnemyPoolKind.Elite, rng);
-            case MapTileType.Boss:
-                return enemyRoster.GetRandomBossGroup(rng);
-            case MapTileType.Battle:
-            default:
-                return enemyRoster.GetRandomGroup(tile.dangerBand, EnemyPoolKind.Standard, rng);
-        }
+        return MapBattleEncounterService.SelectEnemyGroupForTile(enemyRoster, tile);
     }
 
     private void EnsureTileAssignedEnemyGroup(BoardTileData tile)
     {
-        if (tile == null || !tile.IsHostileTile)
-            return;
-        if (tile.assignedEnemyGroup != null && tile.assignedEnemyGroup.IsValid)
-            return;
-        if (enemyRoster == null)
-            return;
-
-        tile.assignedEnemyGroup = SelectEnemyGroupForTile(tile);
+        MapBattleEncounterService.EnsureTileAssignedEnemyGroup(enemyRoster, tile);
     }
 
     private void EnsureTileAssignedEvent(BoardTileData tile)
     {
-        if (tile == null || tile.tileType != MapTileType.Event)
-            return;
-        if (tile.assignedEvent != null)
-            return;
-        if (eventPool == null)
-            return;
-
-        System.Random rng = new System.Random(tile.encounterSeed ^ 0x53A4E71);
-        IReadOnlyList<MapEvent_SO> validEvents = eventPool.GetValidEvents();
-        if (validEvents == null || validEvents.Count == 0)
-            return;
-
-        List<MapEvent_SO> availableEvents = new List<MapEvent_SO>(validEvents.Count);
-        for (int i = 0; i < validEvents.Count; i++)
-        {
-            MapEvent_SO eventData = validEvents[i];
-            if (eventData == null)
-                continue;
-            if (runState != null && runState.HasDrawnEvent(eventData))
-                continue;
-
-            availableEvents.Add(eventData);
-        }
-
-        if (availableEvents.Count == 0)
-            return;
-
-        tile.assignedEvent = availableEvents[rng.Next(0, availableEvents.Count)];
-        runState?.MarkEventDrawn(tile.assignedEvent);
+        MapEventAssignmentService.EnsureTileAssignedEvent(eventPool, runState, tile);
     }
 
     private void ShowPendingMoveRelicStatusIfAny()
@@ -2116,84 +1601,6 @@ public class RunGameManager : MonoBehaviour
         }
     }
 
-    private void ApplyExperienceToAllPartyMembers(int amount)
-    {
-        if (runState == null || runState.partyMembers == null || amount <= 0)
-            return;
-
-        for (int i = 0; i < runState.partyMembers.Count; i++)
-        {
-            RunPartyMemberState member = runState.partyMembers[i];
-            if (member == null)
-                continue;
-
-            ApplyExperienceToPartyMember(member, amount);
-        }
-
-        runState.SyncLegacyPlayerFieldsFromParty();
-    }
-
-    private void ApplyExperienceToPartyMember(RunPartyMemberState member, int amount)
-    {
-        if (member == null || amount <= 0)
-            return;
-
-        int currentLevel = Mathf.Max(1, member.level);
-        int currentExperience = Mathf.Max(0, member.experience);
-        int currentMaxHP = Mathf.Max(1, member.maxHP);
-        int currentHP = Mathf.Clamp(member.currentHP, 0, currentMaxHP);
-        int remaining = Mathf.Max(0, amount);
-
-        while (remaining > 0)
-        {
-            int required = ResolveEventExperienceToNextLevel(currentLevel);
-            if (required <= 0)
-                break;
-
-            currentExperience = Mathf.Clamp(currentExperience, 0, required);
-            int needed = Mathf.Max(0, required - currentExperience);
-            if (remaining < needed)
-            {
-                currentExperience += remaining;
-                remaining = 0;
-                break;
-            }
-
-            remaining -= needed;
-            currentLevel += 1;
-            currentExperience = 0;
-
-            int upgradedMaxHP = ResolveEventMaxHPForLevel(member.characterData, currentLevel, currentMaxHP);
-            currentMaxHP = upgradedMaxHP;
-            if (currentHP > 0)
-            {
-                int healAmount = Mathf.CeilToInt(upgradedMaxHP * 0.5f);
-                currentHP = Mathf.Clamp(currentHP + healAmount, 0, upgradedMaxHP);
-            }
-        }
-
-        member.level = currentLevel;
-        member.experience = currentExperience;
-        member.maxHP = currentMaxHP;
-        member.currentHP = Mathf.Clamp(currentHP, 0, currentMaxHP);
-    }
-
-    private int ResolveEventExperienceToNextLevel(int level)
-    {
-        if (levelTable == null)
-            return 100;
-
-        return Mathf.Max(0, levelTable.GetExperienceToNextLevel(level));
-    }
-
-    private int ResolveEventMaxHPForLevel(CharacterData_SO characterData, int level, int fallbackMaxHP)
-    {
-        if (levelTable == null)
-            return Mathf.Max(1, fallbackMaxHP);
-
-        return Mathf.Max(1, levelTable.GetMaxHP(characterData, level, fallbackMaxHP));
-    }
-
     private string ResolveTutorialCompletionSceneName()
     {
         if (!string.IsNullOrWhiteSpace(MainMenuRuntime.TutorialReturnSceneName))
@@ -2204,122 +1611,25 @@ public class RunGameManager : MonoBehaviour
 
     private List<RunPartyMemberState> BuildTutorialStartingPartyMembers()
     {
-        List<StartingPartyMemberDefinition> source = tutorialStartingPartyMembers;
-        if (source == null || source.Count == 0)
-            source = startingPartyMembers;
-
-        return BuildStartingPartyMembers(source);
+        return RunBootstrapService.BuildTutorialStartingPartyMembers(tutorialStartingPartyMembers, startingPartyMembers);
     }
 
     private List<RunPartyMemberState> BuildStartingPartyMembers(List<StartingPartyMemberDefinition> sourceDefinitions)
     {
-        List<RunPartyMemberState> result = new List<RunPartyMemberState>();
-        if (sourceDefinitions != null)
-        {
-            for (int i = 0; i < sourceDefinitions.Count; i++)
-            {
-                StartingPartyMemberDefinition definition = sourceDefinitions[i];
-                if (definition == null || definition.characterData == null)
-                    continue;
-
-                int baseHP = Mathf.Max(1, definition.characterData.baseHP);
-                Weapon_SO resolvedStartingWeapon = definition.equippedWeapon != null
-                    ? definition.equippedWeapon
-                    : definition.characterData.initialWeaponData;
-                result.Add(new RunPartyMemberState
-                {
-                    memberId = string.IsNullOrWhiteSpace(definition.memberId) ? definition.characterData.characterName : definition.memberId,
-                    characterData = definition.characterData,
-                    weaponData = resolvedStartingWeapon,
-                    level = Mathf.Max(1, definition.startingLevel),
-                    experience = Mathf.Max(0, definition.startingExperience),
-                    maxHP = definition.startingMaxHP > 0 ? Mathf.Max(1, definition.startingMaxHP) : baseHP,
-                    currentHP = definition.startingCurrentHP > 0
-                        ? Mathf.Clamp(definition.startingCurrentHP, 0, definition.startingMaxHP > 0 ? Mathf.Max(1, definition.startingMaxHP) : baseHP)
-                        : (definition.startingMaxHP > 0 ? Mathf.Max(1, definition.startingMaxHP) : baseHP)
-                });
-            }
-        }
-
-        if (result.Count == 0)
-        {
-            result.Add(new RunPartyMemberState
-            {
-                memberId = "DefaultPartyMember",
-                level = 1,
-                experience = 0,
-                maxHP = 20,
-                currentHP = 20
-            });
-        }
-
-        return result;
+        return RunBootstrapService.BuildStartingPartyMembers(sourceDefinitions);
     }
 
     private void ApplyStartingInventory(RunState targetRunState)
     {
-        if (targetRunState == null)
-            return;
-
-        if (startingLoot != null)
-        {
-            for (int i = 0; i < startingLoot.Count; i++)
+        RunBootstrapService.ApplyStartingInventory(
+            targetRunState,
+            new RunStartingInventoryDefinition
             {
-                StartingLootDefinition definition = startingLoot[i];
-                if (definition == null || definition.lootItem == null || definition.amount <= 0)
-                    continue;
-
-                targetRunState.AddLoot(definition.lootItem, definition.amount);
-            }
-        }
-
-        if (startingWeapons != null)
-        {
-            for (int i = 0; i < startingWeapons.Count; i++)
-            {
-                StartingWeaponDefinition definition = startingWeapons[i];
-                if (definition == null || definition.weaponData == null || definition.amount <= 0)
-                    continue;
-
-                targetRunState.AddWeapon(definition.weaponData, definition.amount);
-            }
-        }
-
-        if (startingBlueprints != null)
-        {
-            for (int i = 0; i < startingBlueprints.Count; i++)
-            {
-                StartingBlueprintDefinition definition = startingBlueprints[i];
-                if (definition == null || definition.blueprintData == null || definition.amount <= 0)
-                    continue;
-
-                targetRunState.AddBlueprint(definition.blueprintData, definition.amount);
-            }
-        }
-
-        if (startingRelics != null)
-        {
-            for (int i = 0; i < startingRelics.Count; i++)
-            {
-                StartingRelicDefinition definition = startingRelics[i];
-                if (definition == null || definition.relicData == null || definition.amount <= 0)
-                    continue;
-
-                targetRunState.AddRelic(definition.relicData, definition.amount);
-            }
-        }
-
-        if (targetRunState.partyMembers == null)
-            return;
-
-        for (int i = 0; i < targetRunState.partyMembers.Count; i++)
-        {
-            RunPartyMemberState member = targetRunState.partyMembers[i];
-            if (member == null || member.weaponData == null)
-                continue;
-
-            targetRunState.AddWeapon(member.weaponData, 1);
-        }
+                startingLoot = startingLoot,
+                startingWeapons = startingWeapons,
+                startingBlueprints = startingBlueprints,
+                startingRelics = startingRelics
+            });
     }
 
     private void PersistCurrentRunSave()
@@ -2344,460 +1654,25 @@ public class RunGameManager : MonoBehaviour
 
     private MainMenuSaveAssetCatalog BuildSaveAssetCatalog()
     {
-        MainMenuSaveAssetCatalog catalog = new MainMenuSaveAssetCatalog();
-
-        DifficultyConfig_SO selectedDifficulty = MainMenuRuntime.SelectedDifficultyConfig;
-        AddDifficultyAssets(catalog, difficultyConfig);
-        AddDifficultyAssets(catalog, activeDifficultyConfig);
-        AddDifficultyAssets(catalog, selectedDifficulty);
-
-        if (startingPartyMembers != null)
-        {
-            for (int i = 0; i < startingPartyMembers.Count; i++)
+        return RunSaveAssetCatalogBuilder.Build(
+            new RunSaveAssetCatalogBuildRequest
             {
-                StartingPartyMemberDefinition definition = startingPartyMembers[i];
-                if (definition == null)
-                    continue;
-
-                AddCharacterAssets(catalog, definition.characterData);
-                AddWeaponAssets(catalog, definition.equippedWeapon);
-            }
-        }
-
-        if (startingLoot != null)
-        {
-            for (int i = 0; i < startingLoot.Count; i++)
-            {
-                StartingLootDefinition definition = startingLoot[i];
-                if (definition != null)
-                    catalog.Add(definition.lootItem);
-            }
-        }
-
-        if (startingWeapons != null)
-        {
-            for (int i = 0; i < startingWeapons.Count; i++)
-            {
-                StartingWeaponDefinition definition = startingWeapons[i];
-                if (definition != null)
-                    AddWeaponAssets(catalog, definition.weaponData);
-            }
-        }
-
-        if (startingBlueprints != null)
-        {
-            for (int i = 0; i < startingBlueprints.Count; i++)
-            {
-                StartingBlueprintDefinition definition = startingBlueprints[i];
-                if (definition != null)
-                    AddBlueprintAssets(catalog, definition.blueprintData);
-            }
-        }
-
-        if (startingRelics != null)
-        {
-            for (int i = 0; i < startingRelics.Count; i++)
-            {
-                StartingRelicDefinition definition = startingRelics[i];
-                if (definition != null)
-                    catalog.Add(definition.relicData);
-            }
-        }
-
-        if (recruitCharacterRoster != null && recruitCharacterRoster.Characters != null)
-        {
-            for (int i = 0; i < recruitCharacterRoster.Characters.Count; i++)
-                AddCharacterAssets(catalog, recruitCharacterRoster.Characters[i]);
-        }
-
-        if (enemyRoster != null)
-        {
-            IReadOnlyList<EnemyRoster_SO.DangerPool> pools = enemyRoster.Pools;
-            if (pools != null)
-            {
-                for (int i = 0; i < pools.Count; i++)
-                {
-                    EnemyRoster_SO.DangerPool pool = pools[i];
-                    if (pool == null)
-                        continue;
-
-                    AddEnemyGroupList(catalog, pool.standardGroups);
-                    AddEnemyGroupList(catalog, pool.eliteGroups);
-                }
-            }
-
-            AddEnemyGroupList(catalog, enemyRoster.BossGroups);
-        }
-
-        if (eventPool != null)
-        {
-            IReadOnlyList<MapEvent_SO> events = eventPool.GetValidEvents();
-            for (int i = 0; i < events.Count; i++)
-                AddEventAssets(catalog, events[i]);
-        }
-
-        if (merchantCatalog != null)
-            AddMerchantCatalogAssets(catalog, merchantCatalog);
-
-        if (calamityPool != null && calamityPool.CalamityTiers != null)
-        {
-            for (int i = 0; i < calamityPool.CalamityTiers.Count; i++)
-            {
-                CalamityPool_SO.CalamityTierEntry tierEntry = calamityPool.CalamityTiers[i];
-                if (tierEntry == null || tierEntry.calamities == null)
-                    continue;
-
-                for (int calamityIndex = 0; calamityIndex < tierEntry.calamities.Count; calamityIndex++)
-                    catalog.Add(tierEntry.calamities[calamityIndex]);
-            }
-        }
-
-        if (runState != null)
-        {
-            if (runState.partyMembers != null)
-            {
-                for (int i = 0; i < runState.partyMembers.Count; i++)
-                {
-                    RunPartyMemberState member = runState.partyMembers[i];
-                    if (member == null)
-                        continue;
-
-                    AddCharacterAssets(catalog, member.characterData);
-                    AddWeaponAssets(catalog, member.weaponData);
-                }
-            }
-
-            if (runState.lootInventory != null)
-            {
-                for (int i = 0; i < runState.lootInventory.Count; i++)
-                {
-                    RunLootState loot = runState.lootInventory[i];
-                    if (loot != null)
-                        catalog.Add(loot.lootItem);
-                }
-            }
-
-            if (runState.weaponInventory != null)
-            {
-                for (int i = 0; i < runState.weaponInventory.Count; i++)
-                {
-                    RunWeaponState weapon = runState.weaponInventory[i];
-                    if (weapon != null)
-                        AddWeaponAssets(catalog, weapon.weaponData);
-                }
-            }
-
-            if (runState.blueprintInventory != null)
-            {
-                for (int i = 0; i < runState.blueprintInventory.Count; i++)
-                {
-                    RunBlueprintState blueprint = runState.blueprintInventory[i];
-                    if (blueprint != null)
-                        AddBlueprintAssets(catalog, blueprint.blueprintData);
-                }
-            }
-
-            if (runState.relicInventory != null)
-            {
-                for (int i = 0; i < runState.relicInventory.Count; i++)
-                {
-                    RunRelicState relic = runState.relicInventory[i];
-                    if (relic != null)
-                        catalog.Add(relic.relicData);
-                }
-            }
-
-            if (runState.activeCalamities != null)
-            {
-                for (int i = 0; i < runState.activeCalamities.Count; i++)
-                {
-                    RunCalamityState calamity = runState.activeCalamities[i];
-                    if (calamity != null)
-                        catalog.Add(calamity.calamityData);
-                }
-            }
-        }
-
-        if (boardManager != null)
-        {
-            foreach (BoardTileData tile in boardManager.GetAllTiles())
-            {
-                if (tile == null)
-                    continue;
-
-                catalog.Add(tile.assignedEnemyGroup);
-                catalog.Add(tile.assignedEvent);
-
-                if (tile.merchantOffers == null)
-                    continue;
-
-                for (int i = 0; i < tile.merchantOffers.Count; i++)
-                {
-                    MerchantOfferState offer = tile.merchantOffers[i];
-                    if (offer == null)
-                        continue;
-
-                    catalog.Add(offer.lootItem);
-                    AddWeaponAssets(catalog, offer.weaponData);
-                    AddBlueprintAssets(catalog, offer.blueprintData);
-                    catalog.Add(offer.relicData);
-                }
-            }
-        }
-
-        return catalog;
-    }
-
-    private void AddDifficultyAssets(MainMenuSaveAssetCatalog catalog, DifficultyConfig_SO config)
-    {
-        if (catalog == null || config == null)
-            return;
-
-        if (!string.IsNullOrWhiteSpace(config.difficultyName) && config.difficultyName.Equals("Easy", StringComparison.OrdinalIgnoreCase))
-        {
-            // no-op, kept to ensure config is considered in ordering by the menu runtime
-        }
-    }
-
-    private void AddCharacterAssets(MainMenuSaveAssetCatalog catalog, CharacterData_SO characterData)
-    {
-        if (catalog == null || characterData == null)
-            return;
-
-        catalog.Add(characterData);
-        AddWeaponAssets(catalog, characterData.initialWeaponData);
-    }
-
-    private void AddWeaponAssets(MainMenuSaveAssetCatalog catalog, Weapon_SO weaponData)
-    {
-        if (catalog == null || weaponData == null)
-            return;
-
-        catalog.Add(weaponData);
-    }
-
-    private void AddBlueprintAssets(MainMenuSaveAssetCatalog catalog, CraftingBlueprint_SO blueprintData)
-    {
-        if (catalog == null || blueprintData == null)
-            return;
-
-        catalog.Add(blueprintData);
-        AddWeaponAssets(catalog, blueprintData.targetWeapon);
-
-        if (blueprintData.materialRequirements == null)
-            return;
-
-        for (int i = 0; i < blueprintData.materialRequirements.Count; i++)
-        {
-            CraftingMaterialRequirement requirement = blueprintData.materialRequirements[i];
-            if (requirement != null)
-                catalog.Add(requirement.lootItem);
-        }
-    }
-
-    private void AddEnemyGroupList(MainMenuSaveAssetCatalog catalog, IReadOnlyList<EnemyGroup_SO> groups)
-    {
-        if (groups == null)
-            return;
-
-        for (int i = 0; i < groups.Count; i++)
-            AddEnemyGroupAssets(catalog, groups[i]);
-    }
-
-    private void AddEnemyGroupAssets(MainMenuSaveAssetCatalog catalog, EnemyGroup_SO enemyGroup)
-    {
-        if (catalog == null || enemyGroup == null)
-            return;
-
-        catalog.Add(enemyGroup);
-
-        IReadOnlyList<EnemyData_SO> enemies = enemyGroup.GetEnemies();
-        for (int i = 0; i < enemies.Count; i++)
-            AddEnemyDataAssets(catalog, enemies[i]);
-
-        IReadOnlyList<LootTable_SO> lootTables = enemyGroup.GetLootTables();
-        for (int i = 0; i < lootTables.Count; i++)
-            AddLootTableAssets(catalog, lootTables[i]);
-    }
-
-    private void AddEnemyDataAssets(MainMenuSaveAssetCatalog catalog, EnemyData_SO enemyData)
-    {
-        if (enemyData == null)
-            return;
-
-        if (enemyData.onSpecificEnemyDeathStatusGains != null)
-        {
-            for (int i = 0; i < enemyData.onSpecificEnemyDeathStatusGains.Count; i++)
-            {
-                EnemyData_SO.OnSpecificEnemyDeathStatusGainEntry entry = enemyData.onSpecificEnemyDeathStatusGains[i];
-                AddEnemyDataAssets(catalog, entry.watchedEnemyData);
-            }
-        }
-    }
-
-    private void AddLootTableAssets(MainMenuSaveAssetCatalog catalog, LootTable_SO lootTable)
-    {
-        if (catalog == null || lootTable == null)
-            return;
-
-        IReadOnlyList<LootTable_SO.LootDropEntry> drops = lootTable.Drops;
-        for (int i = 0; i < drops.Count; i++)
-        {
-            LootTable_SO.LootDropEntry entry = drops[i];
-            if (entry != null)
-                catalog.Add(entry.lootItem);
-        }
-
-        IReadOnlyList<LootTable_SO.RelicDropEntry> relicDrops = lootTable.RelicDrops;
-        for (int i = 0; i < relicDrops.Count; i++)
-        {
-            LootTable_SO.RelicDropEntry entry = relicDrops[i];
-            if (entry == null || entry.relicTable == null)
-                continue;
-
-            IReadOnlyList<Relic_SO> relics = entry.relicTable.Relics;
-            for (int relicIndex = 0; relicIndex < relics.Count; relicIndex++)
-                catalog.Add(relics[relicIndex]);
-        }
-    }
-
-    private void AddEventAssets(MainMenuSaveAssetCatalog catalog, MapEvent_SO eventData)
-    {
-        if (catalog == null || eventData == null)
-            return;
-
-        catalog.Add(eventData);
-        IReadOnlyList<MapEventOptionData> options = eventData.GetValidOptions();
-        for (int i = 0; i < options.Count; i++)
-            AddEventOptionAssets(catalog, options[i]);
-    }
-
-    private void AddEventOptionAssets(MainMenuSaveAssetCatalog catalog, MapEventOptionData optionData)
-    {
-        if (catalog == null || optionData == null)
-            return;
-
-        AddEventEffectAssets(catalog, BuildPrimaryEventEffect(optionData));
-
-        if (optionData.additionalBuiltInEffects == null)
-            return;
-
-        for (int i = 0; i < optionData.additionalBuiltInEffects.Count; i++)
-            AddEventEffectAssets(catalog, optionData.additionalBuiltInEffects[i]);
-    }
-
-    private MapEventBuiltInEffectData BuildPrimaryEventEffect(MapEventOptionData optionData)
-    {
-        if (optionData == null)
-            return null;
-
-        return new MapEventBuiltInEffectData
-        {
-            effectType = optionData.builtInEffectType,
-            effectAmount = optionData.effectAmount,
-            randomMoneyMin = optionData.randomMoneyMin,
-            randomMoneyMax = optionData.randomMoneyMax,
-            randomOwnedLootAmountMin = optionData.randomOwnedLootAmountMin,
-            randomOwnedLootAmountMax = optionData.randomOwnedLootAmountMax,
-            lootRewards = optionData.lootRewards,
-            lootPickCountMin = optionData.lootPickCountMin,
-            lootPickCountMax = optionData.lootPickCountMax,
-            relicRewards = optionData.relicRewards,
-            relicPickCountMin = optionData.relicPickCountMin,
-            relicPickCountMax = optionData.relicPickCountMax,
-            blueprintRewards = optionData.blueprintRewards,
-            blueprintPickCountMin = optionData.blueprintPickCountMin,
-            blueprintPickCountMax = optionData.blueprintPickCountMax,
-            encounterSelectionMode = optionData.encounterSelectionMode,
-            encounterEnemyGroups = optionData.encounterEnemyGroups,
-            encounterEnemies = optionData.encounterEnemies,
-            encounterEnemyCountMin = optionData.encounterEnemyCountMin,
-            encounterEnemyCountMax = optionData.encounterEnemyCountMax
-        };
-    }
-
-    private void AddEventEffectAssets(MainMenuSaveAssetCatalog catalog, MapEventBuiltInEffectData effectData)
-    {
-        if (catalog == null || effectData == null)
-            return;
-
-        if (effectData.lootRewards != null)
-        {
-            for (int i = 0; i < effectData.lootRewards.Count; i++)
-            {
-                MapEventLootRewardEntry entry = effectData.lootRewards[i];
-                if (entry != null)
-                    catalog.Add(entry.lootItem);
-            }
-        }
-
-        if (effectData.relicRewards != null)
-        {
-            for (int i = 0; i < effectData.relicRewards.Count; i++)
-            {
-                MapEventRelicRewardEntry entry = effectData.relicRewards[i];
-                if (entry != null)
-                    catalog.Add(entry.relicData);
-            }
-        }
-
-        if (effectData.blueprintRewards != null)
-        {
-            for (int i = 0; i < effectData.blueprintRewards.Count; i++)
-            {
-                MapEventBlueprintRewardEntry entry = effectData.blueprintRewards[i];
-                if (entry != null)
-                    AddBlueprintAssets(catalog, entry.blueprintData);
-            }
-        }
-
-        if (effectData.encounterEnemyGroups != null)
-        {
-            for (int i = 0; i < effectData.encounterEnemyGroups.Count; i++)
-                AddEnemyGroupAssets(catalog, effectData.encounterEnemyGroups[i]);
-        }
-
-        if (effectData.encounterEnemies != null)
-        {
-            for (int i = 0; i < effectData.encounterEnemies.Count; i++)
-                AddEnemyDataAssets(catalog, effectData.encounterEnemies[i]);
-        }
-    }
-
-    private void AddMerchantCatalogAssets(MainMenuSaveAssetCatalog catalog, MerchantCatalog_SO merchantCatalogData)
-    {
-        if (catalog == null || merchantCatalogData == null)
-            return;
-
-        IReadOnlyList<MerchantCatalog_SO.LootGoodsEntry> lootEntries = merchantCatalogData.GetValidLootEntries();
-        for (int i = 0; i < lootEntries.Count; i++)
-            catalog.Add(lootEntries[i].lootItem);
-
-        IReadOnlyList<MerchantCatalog_SO.WeaponGoodsEntry> weaponEntries = merchantCatalogData.GetValidWeaponEntries();
-        for (int i = 0; i < weaponEntries.Count; i++)
-            AddWeaponAssets(catalog, weaponEntries[i].weaponData);
-
-        IReadOnlyList<MerchantCatalog_SO.BlueprintGoodsEntry> blueprintEntries = merchantCatalogData.GetValidBlueprintEntries();
-        for (int i = 0; i < blueprintEntries.Count; i++)
-            AddBlueprintAssets(catalog, blueprintEntries[i].blueprintData);
-
-        IReadOnlyList<MerchantCatalog_SO.RelicGoodsEntry> relicEntries = merchantCatalogData.GetValidRelicEntries();
-        for (int i = 0; i < relicEntries.Count; i++)
-        {
-            MerchantCatalog_SO.RelicGoodsEntry entry = relicEntries[i];
-            if (entry == null)
-                continue;
-
-            if (entry.relicTable != null && entry.relicTable.Relics != null)
-            {
-                IReadOnlyList<Relic_SO> relics = entry.relicTable.Relics;
-                for (int relicIndex = 0; relicIndex < relics.Count; relicIndex++)
-                    catalog.Add(relics[relicIndex]);
-                continue;
-            }
-
-            catalog.Add(entry.LegacyRelicData);
-        }
+                difficultyConfig = difficultyConfig,
+                activeDifficultyConfig = activeDifficultyConfig,
+                selectedDifficultyConfig = MainMenuRuntime.SelectedDifficultyConfig,
+                startingPartyMembers = startingPartyMembers,
+                startingLoot = startingLoot,
+                startingWeapons = startingWeapons,
+                startingBlueprints = startingBlueprints,
+                startingRelics = startingRelics,
+                recruitCharacterRoster = recruitCharacterRoster,
+                enemyRoster = enemyRoster,
+                eventPool = eventPool,
+                merchantCatalog = merchantCatalog,
+                calamityPool = calamityPool,
+                runState = runState,
+                boardManager = boardManager
+            });
     }
 
     private static string GetTileTypeLabel(MapTileType tileType)

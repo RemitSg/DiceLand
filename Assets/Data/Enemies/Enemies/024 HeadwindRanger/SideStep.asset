@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: SideStep
   m_EditorClassIdentifier: 
   skillName: "\u4FA7\u6B65"
-  description: "\u62FC\u70B9\u80DC\u5229\u540E\uFF0C\u81EA\u8EAB\u5728\u4E0B\u56DE\u5408\u5F00\u59CB\u65F6\u83B7\u5F97 1 \u5C42\u6025\u901F\uFF1B\u82E5\u81EA\u8EAB\u901F\u5EA6\u4F4E\u4E8E\u76EE\u6807\uFF0C\u5219\u672C\u9AA0\u6700\u5927\u5A01\u529B +2\uFF0C\u4E14\u989D\u5916\u518D\u83B7\u5F97 1 \u5C42\u6025\u901F"
+  description: "\u62FC\u70B9\u80DC\u5229\u540E\uFF0C\u81EA\u8EAB\u5728\u4E0B\u56DE\u5408\u5F00\u59CB\u65F6\u83B7\u5F97
+    1 \u5C42\u6025\u901F\uFF1B\u82E5\u81EA\u8EAB\u901F\u5EA6\u4F4E\u4E8E\u76EE\u6807\uFF0C\u5219\u672C\u9AA0\u6700\u5927\u5A01\u529B
+    +2\uFF0C\u4E14\u989D\u5916\u518D\u83B7\u5F97 1 \u5C42\u6025\u901F"
   skillCategory: 0
   energyCost: 0
   requiredSelfStatusData: {fileID: 0}
@@ -78,7 +80,7 @@ MonoBehaviour:
     rangeModifiers:
     - effectName: "\u8D76\u98CE"
       useCondition: 1
-      condition: 1
+      condition: 0
       targetStatusData: {fileID: 0}
       targetSkillData: {fileID: 0}
       targetStatusType: 0
@@ -90,3 +92,4 @@ MonoBehaviour:
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
     summonEffects: []
+  diceSkillCategories: 

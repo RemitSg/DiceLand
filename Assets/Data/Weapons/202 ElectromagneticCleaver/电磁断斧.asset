@@ -12,13 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 057dbb9ab39f5f74bafd7272cac75c4d, type: 3}
   m_Name: "\u7535\u78C1\u65AD\u65A7"
   m_EditorClassIdentifier: 
-  id: 0
-  weaponName: 
-  description: 
+  id: 202
+  weaponName: "\u7535\u78C1\u65AD\u65A7"
+  description: "\u50CF\u662F\u628A\u77FF\u4E95\u91CC\u7684\u65AD\u8DEF\u5668\u548C\u4F10\u6728\u65A7\u786C\u710A\u5728\u4E86\u4E00\u8D77\u3002\u6325\u4E0B\u53BB\u65F6\u603B\u4F1A\u95FB\u5230\u4E00\u80A1\u7126\u7CCA\u5473\u3002\n\u201C\u6211\u600E\u4E48\u89C9\u5F97\u8FD9\u662F\u7537\u4EBA\u5473\uFF1F\u201D"
   rarity: 1
   weaponType: 1
   icon: {fileID: 0}
-  weaponPrefab: {fileID: 0}
+  weaponPrefab: {fileID: 314253177997029633, guid: 1523fbf7156d4e44587eaedfebca1d41, type: 3}
   minPower: 1
   maxPower: 3
-  skillPool: []
+  skillPool:
+  - {fileID: 11400000, guid: f89efb80615f3644591b73d9ad2f56f1, type: 2}
+  - {fileID: 11400000, guid: a3af2ab643e5dfa4aa33df8cd5872a89, type: 2}
+  - {fileID: 11400000, guid: 3b0d96557384e9a43a9d00f320663e87, type: 2}

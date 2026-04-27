@@ -61,6 +61,7 @@ public class EnemyTodoTests
     {
         EnemySkill_SO attackSkill = CreateSkill("Attack", 2, 3);
         EnemySkill_SO defenseSkill = CreateSkill("Defense", 4, 5, EnemySkill_SO.SkillCategory.Defense);
+        attackSkill.allowedEnemyStages = new List<int> { 1, 2 };
 
         EnemyData_SO enemyData = CreateEnemyData("Gatekeeper", 40, attackSkill, default);
         enemyData.stageSprites = new List<EnemyData_SO.EnemyStageEntry>
