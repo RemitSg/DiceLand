@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   statusId: misfortune
   displayName: "\u5384\u8FD0"
-  description: "\u6280\u80FD\u9AB0\u5B50\u5728\u968F\u673A\u6295\u63B7\u65F6\u5FC5\u5B9A\u53D6\u5F53\u524D\u533A\u95F4\u7684\u6700\u5C0F\u503C\u3002\u56DE\u5408\u7ED3\u675F\u65F6\u5931\u53BB\u6240\u6709\u5C42\u6570"
+  description: "\u6280\u80FD\u9AB0\u5B50\u5728\u968F\u673A\u6295\u63B7\u65F6\u5FC5\u5B9A\u53D6\u5F53\u524D\u533A\u95F4\u7684\u6700\u5C0F\u503C\u3002\u56DE\u5408\u7ED3\u675F\u65F6\u5931\u53BB 1 \u5C42"
   iconSprite: {fileID: 21300000, guid: f274178d747514da1a30a88d62739ea2, type: 3}
   accentColor: {r: 0.48235294, g: 0.18431373, b: 0.18431373, a: 1}
   tickEffectPrefab: {fileID: 0}
@@ -29,4 +29,4 @@ MonoBehaviour:
   linkedStatusData: {fileID: 0}
   onHitDecayMode: 0
   roundStartDecayMode: 0
-  roundEndDecayMode: 2
+  roundEndDecayMode: 3

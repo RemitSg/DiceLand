@@ -26,7 +26,8 @@ public class BattleStatus_SO : ScriptableObject
     {
         None = 0,
         HalveRoundedDown = 1,
-        LoseAll = 2
+        LoseAll = 2,
+        LoseOne = 3
     }
 
     [Header("Identity")]

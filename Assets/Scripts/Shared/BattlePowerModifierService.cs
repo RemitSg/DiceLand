@@ -99,7 +99,8 @@ public static class BattlePowerModifierService
                     int stacks = ResolveTargetStatusStacks(modifier, getTargetStatusStacksByAsset, getTargetStatusStacksById);
                     int threshold = Mathf.Max(1, modifier.requiredStatusStacks);
                     int steps = stacks / threshold;
-                    return Mathf.Max(0, steps) * modifier.powerBonusPerStep;
+                    int bonus = Mathf.Max(0, steps) * modifier.powerBonusPerStep;
+                    return modifier.maxPowerBonus > 0 ? Mathf.Min(bonus, modifier.maxPowerBonus) : bonus;
                 }
             default:
                 return BattleModifierConditionService.IsConditionMet(modifier.condition, selfSpeed, targetSpeed, modifier.requiredSpeedValue, modifier.requiredSpeedDifference)

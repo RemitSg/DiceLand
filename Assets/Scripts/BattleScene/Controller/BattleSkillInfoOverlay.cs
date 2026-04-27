@@ -727,6 +727,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             rangeLines.Add($"{diceLabel}：{BuildDiceRangeLabel(skill, i, baseRange, range)}");
 
             EnemySkill_SO.DiceEffectSettings effectSettings = skill.GetDiceEffectSettings(i);
+            HashSet<int> mergedPowerModifierIndices = new HashSet<int>();
             if (effectSettings.damageEffects != null)
             {
                 for (int effectIndex = 0; effectIndex < effectSettings.damageEffects.Length; effectIndex++)
@@ -790,6 +791,13 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 for (int effectIndex = 0; effectIndex < effectSettings.statusStackOperationEffects.Length; effectIndex++)
                 {
                     EnemySkill_SO.StatusStackOperationEffectEntry effect = effectSettings.statusStackOperationEffects[effectIndex];
+                    if (TryFindConsumedStatusPowerModifier(effectSettings, effect, out int mergedPowerModifierIndex))
+                    {
+                        AppendConsumedStatusPowerModifierLine(effectLines, diceEffectLabel, effect, effectSettings.powerModifiers[mergedPowerModifierIndex], attackerIsAlly);
+                        mergedPowerModifierIndices.Add(mergedPowerModifierIndex);
+                        continue;
+                    }
+
                     string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
                     string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
                     string statusLabel = BuildColoredToken(GetStatusLabel(effect), targetHighlightColor);
@@ -860,6 +868,9 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             {
                 for (int effectIndex = 0; effectIndex < effectSettings.powerModifiers.Length; effectIndex++)
                 {
+                    if (mergedPowerModifierIndices.Contains(effectIndex))
+                        continue;
+
                     EnemySkill_SO.ConditionalPowerModifierEntry effect = effectSettings.powerModifiers[effectIndex];
                     bool hasFlatBonus = effect.powerBonus != 0;
                     bool hasScalingBonus = effect.condition == EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold && effect.powerBonusPerStep != 0;
@@ -874,7 +885,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                         if (effect.condition == EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold)
                         {
                             string perStepValueLabel = BuildColoredToken(FormatSignedInt(effect.powerBonusPerStep), valueHighlightColor);
-                            effectLines.Add($"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 每达成一次条件，威力 {perStepValueLabel}");
+                            effectLines.Add($"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 每达成一次条件，威力 {perStepValueLabel}{BuildPowerModifierCapSuffix(effect)}");
                         }
                         else
                         {
@@ -962,6 +973,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
     private void AppendEffectLines(List<string> effectLines, string diceEffectLabel, EnemySkill_SO.DiceEffectSettings effectSettings, bool attackerIsAlly)
     {
+        HashSet<int> mergedPowerModifierIndices = new HashSet<int>();
+
         if (effectSettings.damageEffects != null)
         {
             for (int effectIndex = 0; effectIndex < effectSettings.damageEffects.Length; effectIndex++)
@@ -1025,6 +1038,13 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             for (int effectIndex = 0; effectIndex < effectSettings.statusStackOperationEffects.Length; effectIndex++)
             {
                 EnemySkill_SO.StatusStackOperationEffectEntry effect = effectSettings.statusStackOperationEffects[effectIndex];
+                if (TryFindConsumedStatusPowerModifier(effectSettings, effect, out int mergedPowerModifierIndex))
+                {
+                    AppendConsumedStatusPowerModifierLine(effectLines, diceEffectLabel, effect, effectSettings.powerModifiers[mergedPowerModifierIndex], attackerIsAlly);
+                    mergedPowerModifierIndices.Add(mergedPowerModifierIndex);
+                    continue;
+                }
+
                 string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
                 string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
                 string statusLabel = BuildColoredToken(GetStatusLabel(effect), targetHighlightColor);
@@ -1082,6 +1102,9 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         {
             for (int effectIndex = 0; effectIndex < effectSettings.powerModifiers.Length; effectIndex++)
             {
+                if (mergedPowerModifierIndices.Contains(effectIndex))
+                    continue;
+
                 EnemySkill_SO.ConditionalPowerModifierEntry effect = effectSettings.powerModifiers[effectIndex];
                 bool hasFlatBonus = effect.powerBonus != 0;
                 bool hasScalingBonus = effect.condition == EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold && effect.powerBonusPerStep != 0;
@@ -1093,7 +1116,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 {
                     string conditionLabel = BuildColoredToken(GetPowerModifierConditionLabel(effect), targetHighlightColor);
                     effectLines.Add(effect.condition == EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold
-                        ? $"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 每达成一次条件，威力 {BuildColoredToken(FormatSignedInt(effect.powerBonusPerStep), valueHighlightColor)}"
+                        ? $"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 每达成一次条件，威力 {BuildColoredToken(FormatSignedInt(effect.powerBonusPerStep), valueHighlightColor)}{BuildPowerModifierCapSuffix(effect)}"
                         : $"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 威力 {BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor)}");
                 }
                 else
@@ -1102,6 +1125,80 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 }
             }
         }
+    }
+
+    private bool TryFindConsumedStatusPowerModifier(
+        EnemySkill_SO.DiceEffectSettings effectSettings,
+        EnemySkill_SO.StatusStackOperationEffectEntry stackOperation,
+        out int powerModifierIndex)
+    {
+        powerModifierIndex = -1;
+        if (effectSettings.powerModifiers == null)
+            return false;
+
+        if (stackOperation.operationType != EnemySkill_SO.StatusStackOperationType.ReduceStacks
+            || stackOperation.targetMode != EnemySkill_SO.DamageTargetMode.CurrentTarget
+            || stackOperation.useCondition)
+            return false;
+
+        int stackAmount = Mathf.Max(1, stackOperation.stackAmount);
+        for (int i = 0; i < effectSettings.powerModifiers.Length; i++)
+        {
+            EnemySkill_SO.ConditionalPowerModifierEntry modifier = effectSettings.powerModifiers[i];
+            if (modifier.trigger != stackOperation.trigger
+                || !modifier.useCondition
+                || modifier.condition != EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold
+                || modifier.powerBonusPerStep == 0
+                || Mathf.Max(1, modifier.requiredStatusStacks) != stackAmount
+                || !IsSameStatus(stackOperation, modifier))
+                continue;
+
+            powerModifierIndex = i;
+            return true;
+        }
+
+        return false;
+    }
+
+    private void AppendConsumedStatusPowerModifierLine(
+        List<string> effectLines,
+        string diceEffectLabel,
+        EnemySkill_SO.StatusStackOperationEffectEntry stackOperation,
+        EnemySkill_SO.ConditionalPowerModifierEntry modifier,
+        bool attackerIsAlly)
+    {
+        string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(stackOperation.trigger), triggerHighlightColor);
+        string targetLabel = BuildColoredToken(GetConsumedStatusTargetLabel(stackOperation, attackerIsAlly), targetHighlightColor);
+        string stackLabel = BuildColoredToken(Mathf.Max(1, stackOperation.stackAmount).ToString(), valueHighlightColor);
+        string statusLabel = BuildColoredToken(GetStatusLabel(stackOperation), targetHighlightColor);
+        string powerLabel = BuildColoredToken(FormatSignedInt(modifier.powerBonusPerStep), valueHighlightColor);
+
+        effectLines.Add($"{diceEffectLabel}：{triggerLabel} 消耗敌人的{statusLabel}层数，每消耗{targetLabel} {stackLabel} 层{statusLabel}，使骰子威力 {powerLabel}{BuildPowerModifierCapSuffix(modifier)}");
+    }
+
+    private string BuildPowerModifierCapSuffix(EnemySkill_SO.ConditionalPowerModifierEntry modifier)
+    {
+        return modifier.maxPowerBonus > 0
+            ? $"，最多 {BuildColoredToken(FormatSignedInt(modifier.maxPowerBonus), valueHighlightColor)}"
+            : string.Empty;
+    }
+
+    private static bool IsSameStatus(
+        EnemySkill_SO.StatusStackOperationEffectEntry stackOperation,
+        EnemySkill_SO.ConditionalPowerModifierEntry modifier)
+    {
+        if (stackOperation.statusData != null || modifier.targetStatusData != null)
+            return stackOperation.statusData != null && stackOperation.statusData == modifier.targetStatusData;
+
+        return stackOperation.statusType == modifier.targetStatusType;
+    }
+
+    private static string GetConsumedStatusTargetLabel(EnemySkill_SO.StatusStackOperationEffectEntry effect, bool attackerIsAlly)
+    {
+        if (effect.targetMode == EnemySkill_SO.DamageTargetMode.CurrentTarget)
+            return attackerIsAlly ? "敌人" : "目标";
+
+        return GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly);
     }
 
     private void AppendBuiltInEffectLines(List<string> effectLines, string diceEffectLabel, EnemySkill_SO.DiceEffectSettings effectSettings, bool attackerIsAlly)
@@ -1121,17 +1218,17 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 case EnemySkill_SO.BuiltInEffectType.Heal:
                     if (effect.amount <= 0)
                         continue;
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 恢复 {BuildColoredToken(effect.amount.ToString(), valueHighlightColor)} 点生命");
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使{targetLabel}恢复 {BuildColoredToken(effect.amount.ToString(), valueHighlightColor)} 点生命");
                     break;
                 case EnemySkill_SO.BuiltInEffectType.Damage:
                     if (effect.amount <= 0)
                         continue;
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}对 {targetLabel} 额外造成 {BuildColoredToken(effect.amount.ToString(), valueHighlightColor)} 点伤害");
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}对{targetLabel}额外造成 {BuildColoredToken(effect.amount.ToString(), valueHighlightColor)} 点伤害");
                     break;
                 case EnemySkill_SO.BuiltInEffectType.ApplyStatus:
                     if (effect.statusStackAmount <= 0)
                         continue;
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} {BuildBuiltInTimingPrefix(effect)}获得 {BuildColoredToken(effect.statusStackAmount.ToString(), valueHighlightColor)} 层 {BuildColoredToken(GetBuiltInPrimaryStatusLabel(effect), valueHighlightColor)}");
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使{targetLabel}{BuildBuiltInTimingPrefix(effect)}获得 {BuildColoredToken(effect.statusStackAmount.ToString(), valueHighlightColor)} 层{BuildColoredToken(GetBuiltInPrimaryStatusLabel(effect), valueHighlightColor)}");
                     break;
                 case EnemySkill_SO.BuiltInEffectType.TransferRandomNegativeStatus:
                     if (effect.amount <= 0 && effect.fallbackAmount <= 0)
@@ -1139,7 +1236,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                     string transferLine = $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}将自身 {BuildColoredToken(Mathf.Max(1, effect.amount).ToString(), valueHighlightColor)} 层随机负面状态转移给 {targetLabel}";
                     if (effect.fallbackAmount > 0)
                     {
-                        transferLine += $"；若未找到可转移的负面状态，则使 {BuildColoredToken("自己", targetHighlightColor)} {BuildBuiltInTimingPrefix(effect)}获得 {BuildColoredToken(effect.fallbackAmount.ToString(), valueHighlightColor)} 层 {BuildColoredToken(GetBuiltInPrimaryStatusLabel(effect), valueHighlightColor)}";
+                        transferLine += $"；若未找到可转移的负面状态，则使{BuildColoredToken("自己", targetHighlightColor)} {BuildBuiltInTimingPrefix(effect)}获得 {BuildColoredToken(effect.fallbackAmount.ToString(), valueHighlightColor)} 层 {BuildColoredToken(GetBuiltInPrimaryStatusLabel(effect), valueHighlightColor)}";
                     }
 
                     effectLines.Add(transferLine);

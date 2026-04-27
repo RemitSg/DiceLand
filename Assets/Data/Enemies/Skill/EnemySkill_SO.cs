@@ -244,6 +244,7 @@ public class EnemySkill_SO : ScriptableObject
         [Min(1)]
         [Tooltip("How many random opponents should be selected when using RandomOpponents.")]
         public int randomTargetCount;
+
     }
 
     [System.Serializable]
@@ -286,6 +287,10 @@ public class EnemySkill_SO : ScriptableObject
 
         [Tooltip("Additional power gained for each threshold when using TargetStatusStacksPerThreshold.")]
         public int powerBonusPerStep;
+
+        [Min(0)]
+        [Tooltip("Optional cap for total power gained by this modifier. 0 means uncapped.")]
+        public int maxPowerBonus;
     }
 
     [System.Serializable]
@@ -372,6 +377,7 @@ public class EnemySkill_SO : ScriptableObject
         [Min(1)]
         [Tooltip("How many random opponents should be selected when using RandomOpponents.")]
         public int randomTargetCount;
+
     }
 
     [System.Serializable]
@@ -532,6 +538,32 @@ public class EnemySkill_SO : ScriptableObject
         [Min(1)]
         [Tooltip("How many random opponents should be selected when using RandomOpponents.")]
         public int randomTargetCount;
+
+        [Tooltip("Enable a condition check before applying this status stack operation.")]
+        public bool useCondition;
+
+        [Tooltip("Condition required for this status stack operation to apply.")]
+        public PowerModifierCondition condition;
+
+        [Tooltip("Preferred status asset used by the condition. This can differ from the status being operated on.")]
+        public BattleStatus_SO conditionStatusData;
+
+        [Tooltip("Specific opposing skill required when using the TargetSkillIsSpecific condition.")]
+        public EnemySkill_SO conditionTargetSkillData;
+
+        [Tooltip("Legacy fallback status type for the condition. Only Burn is still supported here.")]
+        public DiceStatusType conditionStatusType;
+
+        [Min(1)]
+        [Tooltip("Required stack count when using status-stack conditions.")]
+        public int requiredConditionStatusStacks;
+
+        [Tooltip("Required self speed value when using fixed-speed conditions.")]
+        public int requiredConditionSpeedValue;
+
+        [Min(0)]
+        [Tooltip("Required speed difference when comparing against the target. Values are inclusive, and 0 falls back to 1 for backwards compatibility.")]
+        public int requiredConditionSpeedDifference;
     }
 
     [System.Serializable]
@@ -641,6 +673,32 @@ public class EnemySkill_SO : ScriptableObject
         [Min(1)]
         [Tooltip("How many random opponents should be selected when using RandomOpponents.")]
         public int randomTargetCount;
+
+        [Tooltip("Enable a condition check before applying this status effect.")]
+        public bool useCondition;
+
+        [Tooltip("Condition required for this status effect to apply.")]
+        public PowerModifierCondition condition;
+
+        [Tooltip("Preferred status asset used by the condition. This can differ from the status being applied.")]
+        public BattleStatus_SO conditionStatusData;
+
+        [Tooltip("Specific opposing skill required when using the TargetSkillIsSpecific condition.")]
+        public EnemySkill_SO conditionTargetSkillData;
+
+        [Tooltip("Legacy fallback status type for the condition. Only Burn is still supported here.")]
+        public DiceStatusType conditionStatusType;
+
+        [Min(1)]
+        [Tooltip("Required stack count when using status-stack conditions.")]
+        public int requiredConditionStatusStacks;
+
+        [Tooltip("Required self speed value when using fixed-speed conditions.")]
+        public int requiredConditionSpeedValue;
+
+        [Min(0)]
+        [Tooltip("Required speed difference when comparing against the target. Values are inclusive, and 0 falls back to 1 for backwards compatibility.")]
+        public int requiredConditionSpeedDifference;
     }
 
     [Tooltip("Skill display name.")]
@@ -898,6 +956,10 @@ public class EnemySkill_SO : ScriptableObject
                     entry.stackAmount = 1;
                 if (entry.randomTargetCount < 1)
                     entry.randomTargetCount = 1;
+                if (entry.requiredConditionStatusStacks < 1)
+                    entry.requiredConditionStatusStacks = 1;
+                if (entry.requiredConditionSpeedDifference < 0)
+                    entry.requiredConditionSpeedDifference = 0;
                 settings.statusEffects[i] = entry;
             }
         }
@@ -911,6 +973,8 @@ public class EnemySkill_SO : ScriptableObject
                     entry.requiredStatusStacks = 1;
                 if (entry.requiredSpeedDifference < 0)
                     entry.requiredSpeedDifference = 0;
+                if (entry.maxPowerBonus < 0)
+                    entry.maxPowerBonus = 0;
                 settings.powerModifiers[i] = entry;
             }
         }
@@ -994,6 +1058,10 @@ public class EnemySkill_SO : ScriptableObject
                     entry.stackAmount = 1;
                 if (entry.randomTargetCount < 1)
                     entry.randomTargetCount = 1;
+                if (entry.requiredConditionStatusStacks < 1)
+                    entry.requiredConditionStatusStacks = 1;
+                if (entry.requiredConditionSpeedDifference < 0)
+                    entry.requiredConditionSpeedDifference = 0;
                 settings.statusStackOperationEffects[i] = entry;
             }
         }

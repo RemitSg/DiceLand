@@ -8,6 +8,7 @@ public class BattleStatusTodoTests
     private const BattleStatus_SO.StatusBehaviorType PoisonBehaviorType = (BattleStatus_SO.StatusBehaviorType)12;
     private const BattleStatus_SO.StatusBehaviorType LuckBehaviorType = (BattleStatus_SO.StatusBehaviorType)13;
     private const BattleStatus_SO.StatusBehaviorType MisfortuneBehaviorType = (BattleStatus_SO.StatusBehaviorType)14;
+    private const BattleStatus_SO.StackDecayMode LoseOneStackDecayMode = (BattleStatus_SO.StackDecayMode)3;
 
     private readonly List<Object> createdObjects = new List<Object>();
 
@@ -103,6 +104,46 @@ public class BattleStatusTodoTests
             Assert.AreEqual(2, ally.RollDice(0));
             Assert.AreEqual(2, enemy.RollDice(0));
         }
+    }
+
+    [Test]
+    public void LuckAndMisfortuneStatuses_LoseOneStackAtRoundEnd_ForAlliesAndEnemies()
+    {
+        EnemySkill_SO skill = CreateSkill("Fate Decay Test", 2, 5);
+        BattleStatus_SO luck = CreateStatus(
+            "luck",
+            "骞歌繍",
+            LuckBehaviorType,
+            powerPerStack: 1,
+            roundEndDecayMode: LoseOneStackDecayMode);
+        BattleStatus_SO misfortune = CreateStatus(
+            "misfortune",
+            "鍘勮繍",
+            MisfortuneBehaviorType,
+            powerPerStack: 1,
+            roundEndDecayMode: LoseOneStackDecayMode);
+
+        BattleAllyController ally = CreateAlly("Fated Ally", 12, skill);
+        BattleEnemyController enemy = CreateEnemy("Fated Enemy", 12, skill);
+
+        ally.AddStatus(luck, luck.StatusId, luck.DisplayName, 2);
+        ally.AddStatus(misfortune, misfortune.StatusId, misfortune.DisplayName, 2);
+        enemy.AddStatus(luck, luck.StatusId, luck.DisplayName, 2);
+        enemy.AddStatus(misfortune, misfortune.StatusId, misfortune.DisplayName, 2);
+
+        Assert.IsTrue(ally.ConsumeRoundEndStatusEffects());
+        Assert.IsTrue(enemy.ConsumeRoundEndStatusEffects());
+        Assert.AreEqual(1, ally.GetStatusStacks(luck));
+        Assert.AreEqual(1, ally.GetStatusStacks(misfortune));
+        Assert.AreEqual(1, enemy.GetStatusStacks(luck));
+        Assert.AreEqual(1, enemy.GetStatusStacks(misfortune));
+
+        Assert.IsTrue(ally.ConsumeRoundEndStatusEffects());
+        Assert.IsTrue(enemy.ConsumeRoundEndStatusEffects());
+        Assert.AreEqual(0, ally.GetStatusStacks(luck));
+        Assert.AreEqual(0, ally.GetStatusStacks(misfortune));
+        Assert.AreEqual(0, enemy.GetStatusStacks(luck));
+        Assert.AreEqual(0, enemy.GetStatusStacks(misfortune));
     }
 
     private BattleAllyController CreateAlly(string name, int maxHp, EnemySkill_SO skill)

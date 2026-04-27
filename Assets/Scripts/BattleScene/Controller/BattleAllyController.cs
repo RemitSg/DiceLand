@@ -1269,6 +1269,8 @@ public class BattleAllyController : MonoBehaviour
                 return Mathf.Max(0, stacksBeforeDecay / 2);
             case BattleStatus_SO.StackDecayMode.LoseAll:
                 return 0;
+            case BattleStatus_SO.StackDecayMode.LoseOne:
+                return Mathf.Max(0, stacksBeforeDecay - 1);
             default:
                 return stacksBeforeDecay;
         }

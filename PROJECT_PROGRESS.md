@@ -796,3 +796,102 @@
 - Static checks completed: `git diff --check` reports no formatting errors for touched code files.
 - Verification completed: `BattleModifierConditionServiceTests`, `BattleDiceRangeModifierServiceTests`, and `BattlePowerModifierServiceTests` passed 13/13; full EditMode passed 177/177; Unity console reports no errors.
 - Next recommended step: extract final power calculation / display formatting and start separating clash and single-attack resolution into testable calculation units before moving presentation coroutines.
+
+## 2026-04-27 - Relic System Refactor Stage 39
+
+- Extracted final power calculation and battle-log power formatting from `BattleButton`.
+- Added `Assets/Scripts/Shared/BattlePowerCalculationService.cs` to own final power clamping and signed power-bonus display text.
+- Added `Assets/Tests/EditMode/Editor/BattlePowerCalculationServiceTests.cs` using TDD; the test first failed on missing `BattlePowerCalculationService`, then passed after implementation.
+- Migrated `BattleButton` clash and single-attack power calculations / log formatting to `BattlePowerCalculationService` and removed the local helper methods.
+- Verification completed: targeted battle calculation / modifier / action tests passed 19/19; full EditMode passed 180/180; Unity console reports no errors.
+
+## 2026-04-27 - Relic System Refactor Stage 40
+
+- Extracted dice range normalization, relic range bonus application, and random power rolling from `BattleButton`.
+- Added `Assets/Scripts/Shared/BattleDiceRollService.cs` to own range bonus application, range normalization, and inclusive dice-power rolling through Unity's exclusive upper-bound random API.
+- Added `Assets/Tests/EditMode/Editor/BattleDiceRollServiceTests.cs` using TDD; the test first failed on missing `BattleDiceRollService`, then passed after implementation.
+- Migrated `BattleButton` player relic dice range preparation, target min-power relic modification, and dice rolling to `BattleDiceRollService`; removed the local range / roll helper methods.
+- Static checks completed: `git diff --check` reports no formatting errors for touched code files.
+- Verification completed: battle dice / power / modifier / action tests passed 22/22; full EditMode passed 183/183; Unity console reports no errors.
+- Next recommended step: begin extracting clash result calculation into a pure service that computes winner, follow-up base power, damage, and defense-break outcomes before presentation and side effects run.
+
+## 2026-04-27 - Relic System Refactor Stage 41
+
+- Stabilized the battle status-effect condition extraction that was present in the current working tree while continuing the `BattleButton` calculation cleanup.
+- Restored `StatusEffectEntry` condition fields in `Assets/Data/Enemies/Skill/EnemySkill_SO.cs` so `BattleStatusEffectConditionService` and status-effect sanitization compile consistently.
+- Updated direct hit status-effect calls in `BattleButton` to pass the new `conditionalOnly` split explicitly, preserving the immediate conditional / delayed non-conditional status-effect routing.
+- Verification completed: battle dice / power / modifier / action tests passed 23/23; full EditMode passed 186/186; Unity console reports no errors.
+- Next recommended step: extract clash result calculation into a pure service once the current calculation-service checkpoint is reviewed, because that next slice will touch more of the clash branch structure.
+
+## 2026-04-27 - Relic System Refactor Stage 42
+
+- Extracted the first pure clash-resolution calculation slice from `BattleButton`.
+- Added `Assets/Scripts/Shared/BattleClashResultService.cs` with `BattleClashOutcome` and `BattleClashResult` to compute presentation winner, clash-win trigger side, attack-vs-defense break outcomes, damage power, clash difference, and ally defense energy-restore amount.
+- Added `Assets/Tests/EditMode/Editor/BattleClashResultServiceTests.cs` using TDD; the test first failed on missing result types / service, then passed after implementation.
+- Migrated the clash branch in `BattleButton` to create a `BattleClashResult` before existing animation, log, and side-effect branches execute. Presentation, logging, hit application, relic triggers, and status/effect dispatch remain in `BattleButton` for now.
+- Static checks completed: `git diff --check` reports no formatting errors for touched code files.
+- Verification completed: battle clash / dice / power / modifier / action tests passed 29/29; full EditMode passed 193/193; Unity console reports no errors.
+- Next recommended step: extract clash side-effect dispatch into a small coordinator or split attack-vs-attack / attack-vs-defense branch handlers, now that the pure result object exists.
+
+## 2026-04-27 - Relic System Refactor Stage 43
+
+- Extracted single-attack per-die result calculation from `BattleButton`.
+- Added `Assets/Scripts/Shared/BattleSingleAttackResultService.cs` with `BattleSingleAttackResult` to compute final power, display power modifier, hit power, hit power modifier, defense-only handling, and formatted power text for one-sided attack dice.
+- Added `Assets/Tests/EditMode/Editor/BattleSingleAttackResultServiceTests.cs` using TDD; the test first failed on missing result types / service, then passed after implementation.
+- Migrated remaining ally clash dice, remaining enemy clash dice, full ally one-sided attack dice, and full enemy one-sided attack dice to use `BattleSingleAttackResultService` for final power / display / hit inputs while leaving animation, logging, hit application, relics, and status/effect dispatch in `BattleButton`.
+- Static checks completed: `git diff --check` reports no formatting errors for touched code files.
+- Verification completed: battle single-attack / clash / dice / power / modifier / action tests passed 32/32; full EditMode passed 196/196; Unity console reports no errors.
+- Next recommended step: extract one-sided attack side-effect dispatch or build a reusable dice input preparation service to remove the repeated ally/enemy power-modifier collection blocks.
+
+## 2026-04-27 - Relic System Refactor Stage 44
+
+- Extracted shared dice power preparation from repeated `BattleButton` clash / one-sided attack calculations.
+- Added `Assets/Scripts/Shared/BattleDicePowerPreparationService.cs` with `BattleDicePowerPreparation` to combine relic, skill-use, and action-specific power bonuses, then compute final power, follow-up base power, display modifier, and formatted power text.
+- Added `Assets/Tests/EditMode/Editor/BattleDicePowerPreparationServiceTests.cs` using TDD; the test first failed on missing result types / service, then passed after implementation.
+- Migrated the clash branch and the four one-sided attack dice branches to use `BattleDicePowerPreparationService` for final power / follow-up / display calculations while leaving modifier collection, animation, hit application, relics, and status/effect dispatch in `BattleButton`.
+- Verification note: the first targeted test run was blocked because Unity was in Play Mode; after stopping Play Mode, the same targeted group passed normally.
+- Static checks completed: `git diff --check` reports no formatting errors for touched code files.
+- Verification completed: battle dice power preparation / single-attack / clash / dice / power / modifier / action tests passed 35/35; full EditMode passed 199/199; Unity console reports no errors after the final run.
+- Next recommended step: split modifier collection into ally/enemy dice input builder methods or extract one-sided attack side-effect dispatch now that the power result and preparation layers are isolated.
+
+## 2026-04-27 - Relic System Refactor Stage 45
+
+- Extracted dice power modifier collection from repeated `BattleButton` direct calls to `BattlePowerModifierService.EvaluatePowerModifier`.
+- Added `Assets/Scripts/Shared/BattleDicePowerModifierCollectionService.cs` to wrap skill-use, action-specific, and clash-win power modifier collection while still delegating the actual modifier evaluation to `BattlePowerModifierService`.
+- Added `Assets/Tests/EditMode/Editor/BattleDicePowerModifierCollectionServiceTests.cs` using TDD; the test first failed on missing collection service, then passed after implementation.
+- Migrated `BattleButton` clash, clash-win, remaining one-sided dice, and full one-sided attack power modifier collection to `BattleDicePowerModifierCollectionService`. `BattleButton` no longer calls `BattlePowerModifierService.EvaluatePowerModifier` directly.
+- Debug note: one full-suite run briefly reported `BattleSkillInfoOverlayDescriptionTests.CompactSkillDetail_MergesConsumedStatusPowerModifierAndShowsCap`; rerunning the isolated test passed, and the subsequent full EditMode run passed, indicating stale Unity test/domain state rather than a current failure.
+- Static checks completed: `git diff --check` reports no formatting errors for touched code files.
+- Verification completed: battle modifier collection / dice power preparation / single-attack / clash / dice / power / action tests passed 39/39; isolated overlay description regression passed 1/1; full EditMode passed 204/204; Unity console reports no errors after the final run.
+- Next recommended step: extract ally/enemy dice input builder methods or begin moving one-sided attack side-effect dispatch out of `BattleButton` now that modifier collection and power preparation are isolated.
+
+## 2026-04-27 - Relic System Refactor Stage 46
+
+- 收窄了 `BattleButton` 中单方面攻击日志的重复威力格式化逻辑。
+- 将剩余友方余骰、敌方余骰、完整友方单方面攻击、完整敌方单方面攻击日志中的威力展示改为复用 `BattleSingleAttackResult.FormattedPower`。
+- 保留拼点日志中的 `BattlePowerCalculationService.FormatPowerWithBonus` 直接调用，后续应在拆分 clash 日志 / 结果展示时一起处理，避免一次切片跨太多战斗分支。
+- 静态检查完成：`git diff --check -- Assets/Scripts/BattleScene/Controller/BattleButton.cs` 无格式错误，仅保留 Unity/Windows 行尾提示。
+- 验证完成：相关战斗计算测试通过 19/19；全量 EditMode 测试通过 204/204；Unity Console 最终无 error。
+- 下一步建议：继续抽取 ally/enemy dice input builder，或者把单方面攻击的动画、命中、遗物、状态触发调度拆到单独协调器中，让 `BattleButton` 只负责流程编排。
+
+## 2026-04-27 - Relic System Refactor Stage 47
+
+- 提取了单方面攻击日志文案组装逻辑，继续收窄 `BattleButton` 的字符串拼接职责。
+- 新增 `Assets/Scripts/Shared/BattleSingleAttackLogService.cs`，负责生成单方面攻击命中日志与防御骰未结算日志。
+- 新增 `Assets/Tests/EditMode/Editor/BattleSingleAttackLogServiceTests.cs`，覆盖余骰上下文、完整单方面攻击、目标剩余生命值展示与防御骰提示。
+- 按 TDD 流程确认 RED：测试最初因缺少 `BattleSingleAttackLogService` 产生 3 个编译错误；实现服务并接入后转为通过。
+- `BattleButton` 中 6 处单方面攻击日志已改为调用 `BattleSingleAttackLogService`，保留动画、命中、遗物、状态触发在原流程中。
+- 静态检查完成：`git diff --check` 对本轮相关文件无格式错误，仅保留 Unity/Windows 行尾提示。
+- 验证完成：相关战斗计算与日志测试通过 22/22；全量 EditMode 测试通过 207/207；Unity Console 最终无 error。
+- 下一步建议：抽取单方面攻击 dice input builder，集中准备 actor/target、base power、status modifier、skill-use bonus、action bonus 与 result，进一步减少 ally/enemy 分支重复代码。
+
+## 2026-04-27 - Relic System Refactor Stage 48
+
+- 提取了单方面攻击每段骰子的结果准备逻辑，减少 `BattleButton` 中重复的 bonus 合并、power preparation 与 attack result 组装。
+- 新增 `Assets/Scripts/Shared/BattleSingleAttackDiceResolutionService.cs`，负责把 base power、状态展示修正、使用时威力、单方面攻击时威力与防御骰标记合并为 `BattleSingleAttackDiceResolution`。
+- 新增 `Assets/Tests/EditMode/Editor/BattleSingleAttackDiceResolutionServiceTests.cs`，覆盖 skill-use/action bonus 合并、防御骰不造成伤害但保留展示威力的规则。
+- 按 TDD 流程确认 RED：测试最初因缺少 `BattleSingleAttackDiceResolution` 与服务产生 4 个编译错误；实现服务并接入后转为通过。
+- `BattleButton` 中 4 个单方面攻击分支已改为调用 `BattleSingleAttackDiceResolutionService.Resolve`，保留技能/遗物 bonus 的来源收集在原流程中。
+- 静态检查完成：`git diff --check` 对本轮相关文件无格式错误，仅保留 Unity/Windows 行尾提示。
+- 验证完成：相关战斗计算、日志、dice resolution 测试通过 24/24；全量 EditMode 测试通过 209/209；Unity Console 最终无 error。
+- 下一步建议：继续把 actor/target 差异收敛为 ally/enemy single-attack dice input builder，或者开始拆 one-sided attack side-effect dispatch，把动画、命中、遗物、状态触发从 `BattleButton` 中移出。
