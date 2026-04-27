@@ -4,51 +4,6 @@ using Object = UnityEngine.Object;
 
 public sealed partial class RelicExecutionContext
 {
-    public static RelicExecutionContext CreateStatusApplied(
-        RunState runState,
-        RunGameManager runGameManager,
-        BattleStatus_SO statusData,
-        int statusStacks,
-        bool sourceIsPlayer,
-        Object source,
-        Object target)
-    {
-        return new RelicExecutionContext
-        {
-            trigger = Relic_SO.RelicTrigger.OnStatusApplied,
-            runState = runState,
-            runGameManager = runGameManager,
-            statusData = statusData,
-            statusStacks = Mathf.Max(0, statusStacks),
-            sourceIsPlayer = sourceIsPlayer,
-            source = source,
-            target = target,
-            feedbackMessages = new List<string>()
-        };
-    }
-
-    public static RelicExecutionContext CreatePlayerDicePrepared(
-        RunState runState,
-        EnemySkill_SO skillData,
-        int diceIndex,
-        bool isClashPreparation,
-        Object source,
-        Object target)
-    {
-        return new RelicExecutionContext
-        {
-            trigger = Relic_SO.RelicTrigger.OnPlayerDicePrepared,
-            runState = runState,
-            sourceIsPlayer = true,
-            source = source,
-            target = target,
-            skillData = skillData,
-            diceIndex = diceIndex,
-            isClashPreparation = isClashPreparation,
-            feedbackMessages = new List<string>()
-        };
-    }
-
     public static RelicExecutionContext CreatePlayerAboutToTakeSingleAttackDamage(
         RunState runState,
         EnemySkill_SO skillData,
@@ -161,28 +116,6 @@ public sealed partial class RelicExecutionContext
         };
     }
 
-    public static RelicExecutionContext CreatePlayerDefenseClashWin(
-        RunState runState,
-        EnemySkill_SO skillData,
-        int diceIndex,
-        int currentRound,
-        Object source,
-        Object target)
-    {
-        return new RelicExecutionContext
-        {
-            trigger = Relic_SO.RelicTrigger.OnPlayerDefenseClashWin,
-            runState = runState,
-            sourceIsPlayer = true,
-            source = source,
-            target = target,
-            skillData = skillData,
-            diceIndex = diceIndex,
-            currentRound = Mathf.Max(1, currentRound),
-            feedbackMessages = new List<string>()
-        };
-    }
-
     public static RelicExecutionContext CreateEnemyKilledByPlayer(
         RunState runState,
         EnemySkill_SO skillData,
@@ -201,24 +134,6 @@ public sealed partial class RelicExecutionContext
             skillData = skillData,
             diceIndex = diceIndex,
             resolvedDamage = Mathf.Max(0, resolvedDamage),
-            feedbackMessages = new List<string>()
-        };
-    }
-
-    public static RelicExecutionContext CreatePlayerRoundStart(
-        RunState runState,
-        Object source,
-        int currentSpeed,
-        int currentRound = 1)
-    {
-        return new RelicExecutionContext
-        {
-            trigger = Relic_SO.RelicTrigger.OnPlayerRoundStart,
-            runState = runState,
-            sourceIsPlayer = true,
-            source = source,
-            currentSpeed = Mathf.Max(0, currentSpeed),
-            currentRound = Mathf.Max(1, currentRound),
             feedbackMessages = new List<string>()
         };
     }
@@ -270,24 +185,6 @@ public sealed partial class RelicExecutionContext
         };
     }
 
-    public static RelicExecutionContext CreateEnemyDeath(
-        RunState runState,
-        BattleEnemyController defeatedEnemy,
-        BattleAllyController[] allies,
-        BattleEnemyController[] enemies)
-    {
-        return new RelicExecutionContext
-        {
-            trigger = Relic_SO.RelicTrigger.OnEnemyDeath,
-            runState = runState,
-            sourceIsPlayer = false,
-            target = defeatedEnemy,
-            allies = allies,
-            enemies = enemies,
-            feedbackMessages = new List<string>()
-        };
-    }
-
     public static RelicExecutionContext CreatePlayerAboutToTakeLethalDamage(
         RunState runState,
         int incomingDamage,
@@ -307,70 +204,4 @@ public sealed partial class RelicExecutionContext
         };
     }
 
-    public static RelicExecutionContext CreateBattleRoundStart(
-        RunState runState,
-        int currentRound,
-        BattleAllyController[] allies,
-        BattleEnemyController[] enemies)
-    {
-        return new RelicExecutionContext
-        {
-            trigger = Relic_SO.RelicTrigger.OnBattleRoundStart,
-            runState = runState,
-            currentRound = Mathf.Max(1, currentRound),
-            allies = allies,
-            enemies = enemies,
-            feedbackMessages = new List<string>()
-        };
-    }
-
-    public static RelicExecutionContext CreateBattleSetup(
-        RunState runState,
-        int currentRound,
-        BattleAllyController[] allies,
-        BattleEnemyController[] enemies)
-    {
-        return new RelicExecutionContext
-        {
-            trigger = Relic_SO.RelicTrigger.OnBattleSetup,
-            runState = runState,
-            currentRound = Mathf.Max(1, currentRound),
-            allies = allies,
-            enemies = enemies,
-            feedbackMessages = new List<string>()
-        };
-    }
-
-    public static RelicExecutionContext CreatePlayerDeath(
-        RunState runState,
-        BattleAllyController defeatedAlly,
-        BattleAllyController[] allies)
-    {
-        return new RelicExecutionContext
-        {
-            trigger = Relic_SO.RelicTrigger.OnPlayerDeath,
-            runState = runState,
-            sourceIsPlayer = true,
-            target = defeatedAlly,
-            allies = allies,
-            feedbackMessages = new List<string>()
-        };
-    }
-
-    public static RelicExecutionContext CreateBattleRoundEnd(
-        RunState runState,
-        int currentRound,
-        BattleAllyController[] allies,
-        BattleEnemyController[] enemies)
-    {
-        return new RelicExecutionContext
-        {
-            trigger = Relic_SO.RelicTrigger.OnBattleRoundEnd,
-            runState = runState,
-            currentRound = Mathf.Max(1, currentRound),
-            allies = allies,
-            enemies = enemies,
-            feedbackMessages = new List<string>()
-        };
-    }
 }

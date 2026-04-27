@@ -45,16 +45,9 @@ public static partial class RelicSystem
             return;
 
         int bonusLootCount = Mathf.Max(1, effect.amount * Mathf.Max(1, relicState.amount));
-        List<LootItem_SO> sameRarityCandidates = new List<LootItem_SO>();
-        for (int lootIndex = 0; lootIndex < context.lootReforgePool.Count; lootIndex++)
-        {
-            LootItem_SO candidate = context.lootReforgePool[lootIndex];
-            if (candidate == null || candidate.rarity != context.reforgeResultLoot.rarity)
-                continue;
-
-            sameRarityCandidates.Add(candidate);
-        }
-
+        List<LootItem_SO> sameRarityCandidates = RewardCandidateFilterService.BuildLootCandidatesWithRarity(
+            context.lootReforgePool,
+            context.reforgeResultLoot.rarity);
         if (sameRarityCandidates.Count <= 0)
             return;
 
@@ -101,14 +94,9 @@ public static partial class RelicSystem
         if (context.grantedBattleLoot == null || context.battleLootPool == null || context.battleLootPool.Count == 0)
             return;
 
-        List<LootItem_SO> sameRarityLootCandidates = new List<LootItem_SO>();
-        for (int candidateIndex = 0; candidateIndex < context.battleLootPool.Count; candidateIndex++)
-        {
-            LootItem_SO candidate = context.battleLootPool[candidateIndex];
-            if (candidate != null && candidate.rarity == context.grantedBattleLoot.rarity)
-                sameRarityLootCandidates.Add(candidate);
-        }
-
+        List<LootItem_SO> sameRarityLootCandidates = RewardCandidateFilterService.BuildLootCandidatesWithRarity(
+            context.battleLootPool,
+            context.grantedBattleLoot.rarity);
         if (sameRarityLootCandidates.Count <= 0)
             return;
 

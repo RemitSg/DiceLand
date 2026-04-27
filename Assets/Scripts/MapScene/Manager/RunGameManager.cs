@@ -2783,21 +2783,8 @@ public class RunGameManager : MonoBehaviour
 
     private List<MerchantCatalog_SO.RelicGoodsEntry> FilterOwnedRelicEntries(IReadOnlyList<MerchantCatalog_SO.RelicGoodsEntry> validRelicEntries)
     {
-        List<MerchantCatalog_SO.RelicGoodsEntry> filtered = new List<MerchantCatalog_SO.RelicGoodsEntry>();
-        if (validRelicEntries == null || validRelicEntries.Count == 0)
-            return filtered;
-
         HashSet<Relic_SO> excludedRelics = BuildOwnedRelicSet();
-        for (int i = 0; i < validRelicEntries.Count; i++)
-        {
-            MerchantCatalog_SO.RelicGoodsEntry entry = validRelicEntries[i];
-            if (!HasAvailableRelicCandidate(entry, excludedRelics))
-                continue;
-
-            filtered.Add(entry);
-        }
-
-        return filtered;
+        return RewardCandidateFilterService.BuildAvailableMerchantRelicGoodsEntries(validRelicEntries, excludedRelics);
     }
 
     private static void AddGuaranteedMerchantOffersFromLootPool(
@@ -2889,7 +2876,7 @@ public class RunGameManager : MonoBehaviour
         int targetCount = Mathf.Clamp(minimumEntry.ResolveMinimumCount(), 0, remainingEntries.Count);
         for (int i = 0; i < targetCount && remainingEntries.Count > 0; i++)
         {
-            List<MerchantCatalog_SO.RelicGoodsEntry> availableEntries = BuildAvailableRelicGoodsEntries(remainingEntries, excludedRelics);
+            List<MerchantCatalog_SO.RelicGoodsEntry> availableEntries = RewardCandidateFilterService.BuildAvailableMerchantRelicGoodsEntries(remainingEntries, excludedRelics);
             if (availableEntries.Count <= 0)
                 break;
 
@@ -2919,7 +2906,7 @@ public class RunGameManager : MonoBehaviour
 
         while (generated.Count < targetTotalCount)
         {
-            List<MerchantCatalog_SO.RelicGoodsEntry> availableRelicEntries = BuildAvailableRelicGoodsEntries(remainingRelicEntries, excludedRelics);
+            List<MerchantCatalog_SO.RelicGoodsEntry> availableRelicEntries = RewardCandidateFilterService.BuildAvailableMerchantRelicGoodsEntries(remainingRelicEntries, excludedRelics);
             int totalWeight = 0;
             int lootCategoryWeight = GetAvailableCategoryWeight(remainingLootEntries, catalog != null ? catalog.lootMinimumCount : null);
             int weaponCategoryWeight = GetAvailableCategoryWeight(remainingWeaponEntries, catalog != null ? catalog.weaponMinimumCount : null);
@@ -3143,7 +3130,7 @@ public class RunGameManager : MonoBehaviour
         if (validEntries == null || validEntries.Count == 0)
             return false;
 
-        List<MerchantCatalog_SO.RelicGoodsEntry> candidates = BuildAvailableRelicGoodsEntries(validEntries, excludedRelics);
+        List<MerchantCatalog_SO.RelicGoodsEntry> candidates = RewardCandidateFilterService.BuildAvailableMerchantRelicGoodsEntries(validEntries, excludedRelics);
         if (candidates.Count <= 0)
             return false;
 
@@ -3310,53 +3297,6 @@ public class RunGameManager : MonoBehaviour
 
             targetSet.Add(offer.relicData);
         }
-    }
-
-    private static List<MerchantCatalog_SO.RelicGoodsEntry> BuildAvailableRelicGoodsEntries(IReadOnlyList<MerchantCatalog_SO.RelicGoodsEntry> source, ICollection<Relic_SO> excludedRelics)
-    {
-        List<MerchantCatalog_SO.RelicGoodsEntry> available = new List<MerchantCatalog_SO.RelicGoodsEntry>();
-        if (source == null)
-            return available;
-
-        for (int i = 0; i < source.Count; i++)
-        {
-            MerchantCatalog_SO.RelicGoodsEntry entry = source[i];
-            if (!HasAvailableRelicCandidate(entry, excludedRelics))
-                continue;
-
-            available.Add(entry);
-        }
-
-        return available;
-    }
-
-    private static bool HasAvailableRelicCandidate(MerchantCatalog_SO.RelicGoodsEntry entry, ICollection<Relic_SO> excludedRelics)
-    {
-        if (entry == null)
-            return false;
-
-        if (entry.relicTable != null && entry.relicTable.IsValid)
-        {
-            IReadOnlyList<Relic_SO> relics = entry.relicTable.Relics;
-            if (relics == null || relics.Count == 0)
-                return false;
-
-            for (int i = 0; i < relics.Count; i++)
-            {
-                Relic_SO relic = relics[i];
-                if (relic == null)
-                    continue;
-
-                if (excludedRelics != null && excludedRelics.Contains(relic))
-                    continue;
-
-                return true;
-            }
-
-            return false;
-        }
-
-        return entry.LegacyRelicData != null && (excludedRelics == null || !excludedRelics.Contains(entry.LegacyRelicData));
     }
 
     private static bool TryCreateRelicMerchantOffer(

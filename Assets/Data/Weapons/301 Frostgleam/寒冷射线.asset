@@ -47,6 +47,16 @@ MonoBehaviour:
       applyRepeatCount: 0
       stackAmount: 1
       randomTargetCount: 1
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  - damageEffects: []
+    statusEffects:
     - effectName: 
       trigger: 0
       targetMode: 3

@@ -579,3 +579,32 @@
 - Removed the old validation-only `RequiresStatusData`, `RequiresConditionStatusData`, and `HasMeaningfulNumericValue` switch helpers from `RelicValidationUtility`.
 - Static checks completed: all 47 non-None built-in effect enum values are present in the metadata catalog, validation utility now references metadata, and `git diff --check` reports no formatting errors for touched files.
 - Pending verification: run `RelicBuiltInEffectRegistrationTests`, `RelicValidationUtilityTests`, `RelicSystemHighRiskTriggerTests`, and the existing relic regression group in Unity Test Runner.
+## 2026-04-27 - Relic System Refactor Stage 18
+
+- User confirmed Stage 16-17 verification passed.
+- Split the large `RelicExecutionContext.BattleFactories.cs` bucket into focused battle context factory files.
+- Renamed the existing file to `Assets/Scripts/Shared/RelicExecutionContext.BattleDamageFactories.cs` for damage / hit / kill-related contexts.
+- Added `RelicExecutionContext.BattleStatusFactories.cs`, `RelicExecutionContext.BattleDiceFactories.cs`, `RelicExecutionContext.BattleRoundFactories.cs`, and `RelicExecutionContext.BattleDeathFactories.cs`.
+- This remains behavior-preserving: all public factory method names, signatures, trigger assignments, clamped defaults, and feedback list initialization are unchanged.
+- Static checks completed: all 27 context factory methods are still present, 17 battle context factory methods remain under battle factory files, old `RelicExecutionContext.BattleFactories.cs` no longer exists, and `git diff --check` reports no formatting errors for touched files.
+- Pending verification: rerun `RelicTriggerDispatcherTests`, `RelicSystemHighRiskTriggerTests`, `RelicBuiltInEffectRegistrationTests`, `RelicValidationUtilityTests`, and `RelicSystemTodoRelicTests` in Unity Test Runner.
+## 2026-04-27 - Relic System Refactor Stage 19
+
+- User confirmed Stage 18 verification passed.
+- Added `Assets/Scripts/Shared/RewardCandidateFilterService.cs` as the first shared reward candidate filtering service.
+- Added `Assets/Tests/EditMode/Editor/RewardCandidateFilterServiceTests.cs` covering same-rarity loot candidate filtering, null-safe empty results, relic candidate exclusion, and relic-table availability checks.
+- Migrated `RelicSystem.BuiltInReforgeRewardEffects.cs` same-rarity loot filtering for loot reforge and battle loot bonus rewards to `RewardCandidateFilterService.BuildLootCandidatesWithRarity`.
+- This stage intentionally leaves merchant weapon / blueprint / relic refresh filtering in `RunGameManager` for the next migration step, because that path is more tightly coupled to merchant offer generation.
+- Static checks completed: old same-rarity loops were removed from `RelicSystem.BuiltInReforgeRewardEffects.cs`, the service is referenced by handlers and tests, and `git diff --check` reports no formatting errors for touched files.
+- CLI verification note: `dotnet msbuild Assembly-CSharp-Editor.csproj /t:Build` still fails because Unity-generated `Temp/obj/Assembly-CSharp-Editor/project.assets.json` is absent. Unity Test Runner is required for real verification.
+- Pending verification: run `RewardCandidateFilterServiceTests`, `RelicSystemHighRiskTriggerTests`, and the existing relic regression group in Unity Test Runner.
+## 2026-04-27 - Relic System Refactor Stage 20
+
+- User confirmed Stage 19 verification passed.
+- Extended `RewardCandidateFilterService` with merchant relic goods-entry filtering through `BuildAvailableMerchantRelicGoodsEntries` and `HasAvailableMerchantRelicCandidate`.
+- Added EditMode coverage for merchant relic goods filtering, including relic-table entries, legacy relic entries, null entries, and exclusion of already-owned relics.
+- Migrated `RunGameManager` merchant relic candidate filtering for initial stock generation, guaranteed relic offers, fill-remaining offers, and relic refresh offers to the shared reward candidate filter service.
+- Removed the duplicate local `BuildAvailableRelicGoodsEntries` and `HasAvailableRelicCandidate` implementations from `RunGameManager`.
+- This stage intentionally keeps relic draw and pricing behavior in `RunGameManager`; only candidate availability filtering moved to the shared service.
+- Static checks completed: `RunGameManager` no longer defines local merchant relic availability helpers, merchant relic candidate calls now use `RewardCandidateFilterService`, and `git diff --check` reports no formatting errors for touched files.
+- Pending verification: run `RewardCandidateFilterServiceTests`, merchant refresh smoke testing, and the existing relic regression group in Unity Test Runner.
