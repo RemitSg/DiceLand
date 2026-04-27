@@ -1993,9 +1993,7 @@ public class BattleButton : MonoBehaviour
             int allyBasePower = BattleDiceRollService.RollPower(allyRange);
             bool isDefenseSkill = IsDefenseSkill(ally.SelectedSkill, i);
             int allyStatusPowerModifier = ally.GetStatusFlatPowerModifier(isDefenseSkill);
-            int allySkillUseBonus = BattleDicePowerModifierCollectionService.GetSkillUseBonus(ally.SelectedSkill, i, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks, relicPowerBonus: allyRelicModifier.powerBonus);
-            int allyActionBonus = BattleDicePowerModifierCollectionService.GetActionBonus(ally.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks);
-            BattleSingleAttackDiceResolution diceResolution = BattleSingleAttackDiceResolutionService.Resolve(allyBasePower, allyStatusPowerModifier, allySkillUseBonus, allyActionBonus, isDefenseSkill);
+            BattleSingleAttackDiceResolution diceResolution = BattleSingleAttackDiceResolutionService.ResolveWithModifiers(ally.SelectedSkill, i, allyBasePower, allyStatusPowerModifier, isDefenseSkill, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks, relicPowerBonus: allyRelicModifier.powerBonus);
             BattleSingleAttackResult attackResult = diceResolution.AttackResult;
             EnemySkill_SO.DicePresentationSettings diceFx = ally.GetDicePresentationSettings(i);
             ApplyAllyTriggeredEffects(ally, enemy, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
@@ -2069,9 +2067,7 @@ public class BattleButton : MonoBehaviour
             int enemyBasePower = BattleDiceRollService.RollPower(enemyRange);
             bool isDefenseSkill = IsDefenseSkill(enemy.SelectedSkill, i);
             int enemyStatusPowerModifier = enemy.GetStatusFlatPowerModifier(isDefenseSkill);
-            int enemySkillUseBonus = BattleDicePowerModifierCollectionService.GetSkillUseBonus(enemy.SelectedSkill, i, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks);
-            int enemyActionBonus = BattleDicePowerModifierCollectionService.GetActionBonus(enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks);
-            BattleSingleAttackDiceResolution diceResolution = BattleSingleAttackDiceResolutionService.Resolve(enemyBasePower, enemyStatusPowerModifier, enemySkillUseBonus, enemyActionBonus, isDefenseSkill);
+            BattleSingleAttackDiceResolution diceResolution = BattleSingleAttackDiceResolutionService.ResolveWithModifiers(enemy.SelectedSkill, i, enemyBasePower, enemyStatusPowerModifier, isDefenseSkill, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks);
             BattleSingleAttackResult attackResult = diceResolution.AttackResult;
             EnemySkill_SO.DicePresentationSettings diceFx = enemy.GetDicePresentationSettings(i);
             ApplyEnemyTriggeredEffects(enemy, ally, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 0);
@@ -2177,9 +2173,7 @@ public class BattleButton : MonoBehaviour
             int allyBasePower = BattleDiceRollService.RollPower(allyRange);
             bool isDefenseSkill = IsDefenseSkill(ally.SelectedSkill, i);
             int allyStatusPowerModifier = ally.GetStatusFlatPowerModifier(isDefenseSkill);
-            int allySkillUseBonus = BattleDicePowerModifierCollectionService.GetSkillUseBonus(ally.SelectedSkill, i, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks, relicPowerBonus: allyRelicModifier.powerBonus);
-            int allyActionBonus = BattleDicePowerModifierCollectionService.GetActionBonus(ally.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks);
-            BattleSingleAttackDiceResolution diceResolution = BattleSingleAttackDiceResolutionService.Resolve(allyBasePower, allyStatusPowerModifier, allySkillUseBonus, allyActionBonus, isDefenseSkill);
+            BattleSingleAttackDiceResolution diceResolution = BattleSingleAttackDiceResolutionService.ResolveWithModifiers(ally.SelectedSkill, i, allyBasePower, allyStatusPowerModifier, isDefenseSkill, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks, relicPowerBonus: allyRelicModifier.powerBonus);
             BattleSingleAttackResult attackResult = diceResolution.AttackResult;
             EnemySkill_SO.DicePresentationSettings diceFx = ally.GetDicePresentationSettings(i);
             bool moveIntoPosition = i == 0;
@@ -2276,9 +2270,7 @@ public class BattleButton : MonoBehaviour
             int enemyBasePower = BattleDiceRollService.RollPower(enemyRange);
             bool isDefenseSkill = IsDefenseSkill(enemy.SelectedSkill, i);
             int enemyStatusPowerModifier = enemy.GetStatusFlatPowerModifier(isDefenseSkill);
-            int enemySkillUseBonus = BattleDicePowerModifierCollectionService.GetSkillUseBonus(enemy.SelectedSkill, i, enemy.Speed, targetAlly.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, targetAlly.GetStatusStacks, targetAlly.GetStatusStacks);
-            int enemyActionBonus = BattleDicePowerModifierCollectionService.GetActionBonus(enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, enemy.Speed, targetAlly.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, targetAlly.GetStatusStacks, targetAlly.GetStatusStacks);
-            BattleSingleAttackDiceResolution diceResolution = BattleSingleAttackDiceResolutionService.Resolve(enemyBasePower, enemyStatusPowerModifier, enemySkillUseBonus, enemyActionBonus, isDefenseSkill);
+            BattleSingleAttackDiceResolution diceResolution = BattleSingleAttackDiceResolutionService.ResolveWithModifiers(enemy.SelectedSkill, i, enemyBasePower, enemyStatusPowerModifier, isDefenseSkill, enemy.Speed, targetAlly.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, targetAlly.GetStatusStacks, targetAlly.GetStatusStacks);
             BattleSingleAttackResult attackResult = diceResolution.AttackResult;
             EnemySkill_SO.DicePresentationSettings diceFx = enemy.GetDicePresentationSettings(i);
             bool moveIntoPosition = i == 0;
