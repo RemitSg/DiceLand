@@ -1100,7 +1100,7 @@ public class RunGameManager : MonoBehaviour
         if (encounterGroup == null || !encounterGroup.IsValid)
         {
             runFlowState.DeferPendingCalamityUntilMapResume = false;
-            RefreshHUD($"{GetTileTypeLabel(tile.tileType)} / {GetDangerBandLabel(tile.dangerBand)} 没有可用敌人组。");
+            RefreshHUD(MapTilePresentationService.BuildUnavailableEnemyGroupMessage(tile.tileType, tile.dangerBand));
             return false;
         }
 
@@ -1651,49 +1651,6 @@ public class RunGameManager : MonoBehaviour
             });
     }
 
-    private static string GetTileTypeLabel(MapTileType tileType)
-    {
-        switch (tileType)
-        {
-            case MapTileType.Empty:
-                return "空白";
-            case MapTileType.Battle:
-                return "战斗";
-            case MapTileType.Elite:
-                return "精英";
-            case MapTileType.Event:
-                return "事件";
-            case MapTileType.Merchant:
-                return "商人";
-            case MapTileType.Forge:
-                return "锻造";
-            case MapTileType.Rest:
-                return "休息";
-            case MapTileType.Key:
-                return "钥匙";
-            case MapTileType.Boss:
-                return "Boss";
-            default:
-                return "未知";
-        }
-    }
-
-    private static string GetDangerBandLabel(MapDangerBand dangerBand)
-    {
-        switch (dangerBand)
-        {
-            case MapDangerBand.Outer:
-                return "外围";
-            case MapDangerBand.Mid:
-                return "中层";
-            case MapDangerBand.Inner:
-                return "内层";
-            case MapDangerBand.Core:
-                return "核心";
-            default:
-                return "未知";
-        }
-    }
 }
 
 

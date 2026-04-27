@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 057dbb9ab39f5f74bafd7272cac75c4d, type: 3}
   m_Name: Dagger_Data
   m_EditorClassIdentifier: 
-  id: 101
+  id: 100
   weaponName: "\u7834\u65E7\u5315\u9996"
   description: "\u5DF2\u7ECF\u6709\u7F3A\u53E3\u7684\u5315\u9996\uFF0C\u7ECF\u5E74\u7684\u4F7F\u7528\u8BA9\u5203\u5C11\u8BB8\u6253\u5377"
   rarity: 0

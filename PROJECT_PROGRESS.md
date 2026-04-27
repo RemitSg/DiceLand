@@ -752,3 +752,14 @@
 - Static checks completed: old direct fields `pendingCalamityTiers`, `deferPendingCalamityUntilMapResume`, `deferPendingCalamityUntilOverlayClosed`, `suppressPendingCalamityOnNextRestActionPointRestore`, and `pendingEventEncounterData` no longer remain as manager-owned fields, and `git diff --check` reports no formatting errors for touched code files.
 - Verification completed: `RunSceneFlowStateTests` passed 3/3; run / map / event service regression group passed 23/23; full EditMode passed 162/162; Unity console reports no errors.
 - Next recommended step: checkpoint the current Run/Map refactor work before entering `BattleButton`, or do one final low-risk pass to extract map tile labels / HUD presentation text helpers if desired.
+
+## 2026-04-27 - Relic System Refactor Stage 35
+
+- Completed one final low-risk `RunGameManager` presentation cleanup before entering higher-risk combat code.
+- Added `Assets/Scripts/Shared/MapTilePresentationService.cs` to own map tile type labels, danger-band labels, and the unavailable enemy-group HUD message builder.
+- Added `Assets/Tests/EditMode/Editor/MapTilePresentationServiceTests.cs` covering localized tile labels and combined unavailable enemy-group messaging.
+- Migrated `RunGameManager` to call `MapTilePresentationService.BuildUnavailableEnemyGroupMessage` and removed the local tile / danger label switch helpers from the manager.
+- Restored MCP package configuration in `Packages/manifest.json` and `Packages/packages-lock.json` after merge pollution removed `com.coplaydev.unity-mcp` and its lock entries.
+- Static checks completed: `RunGameManager` no longer contains the local tile / danger label helper methods, and `git diff --check` reports no formatting errors for touched code / package files.
+- Verification completed: `MapTilePresentationServiceTests`, `RunSceneFlowStateTests`, `RunServiceRefactorTests`, and `RunFlowAssignmentServiceTests` passed 13/13; full EditMode passed 164/164; Unity console reports no errors.
+- Next recommended step: checkpoint the Run/Map refactor work, then begin a separate `BattleButton` combat-resolution pipeline refactor with narrower test-backed slices.
