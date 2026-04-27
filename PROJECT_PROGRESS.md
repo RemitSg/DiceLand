@@ -607,4 +607,112 @@
 - Removed the duplicate local `BuildAvailableRelicGoodsEntries` and `HasAvailableRelicCandidate` implementations from `RunGameManager`.
 - This stage intentionally keeps relic draw and pricing behavior in `RunGameManager`; only candidate availability filtering moved to the shared service.
 - Static checks completed: `RunGameManager` no longer defines local merchant relic availability helpers, merchant relic candidate calls now use `RewardCandidateFilterService`, and `git diff --check` reports no formatting errors for touched files.
-- Pending verification: run `RewardCandidateFilterServiceTests`, merchant refresh smoke testing, and the existing relic regression group in Unity Test Runner.
+- Pending verification: run `RewardCandidateFilterServiceTests`, merchant refresh smoke testing, and the existing relic regression group in Unity Test Runner.## 2026-04-27 - Relic System Refactor Stage 21
+
+- User confirmed Stage 20 verification passed.
+- Extended `RewardCandidateFilterService` with merchant weapon and blueprint goods-entry filtering through `BuildAvailableMerchantWeaponGoodsEntries`, `HasAvailableMerchantWeaponCandidate`, `BuildAvailableMerchantBlueprintGoodsEntries`, and `HasAvailableMerchantBlueprintCandidate`.
+- Added EditMode coverage for merchant weapon / blueprint goods filtering, including null entries, missing asset data, and exclusion of already-owned or currently-reserved items.
+- Migrated `RunGameManager` merchant refresh candidate filtering for weapon and blueprint offers to the shared reward candidate filter service.
+- This stage keeps stock generation, weighted rolling, price rolling, and offer mutation behavior unchanged; only candidate availability filtering moved out of `RunGameManager`.
+- Static checks completed: shared service methods resolve at their intended call sites, old refresh-local weapon / blueprint filtering loops were removed from `RunGameManager`, and `git diff --check` reports no formatting errors for touched files.
+- Pending verification: rerun `RewardCandidateFilterServiceTests`, merchant refresh smoke testing, and the existing relic regression group in Unity Test Runner.## 2026-04-27 - Relic System Refactor Stage 22
+
+- User confirmed Stage 21 verification passed.
+- Extended `RewardCandidateFilterService` with merchant loot goods-entry filtering through `BuildAvailableMerchantLootGoodsEntries` and `HasAvailableMerchantLootCandidate`.
+- Added EditMode coverage for merchant loot goods filtering, including null entries, missing loot data, and exclusion of currently reserved loot items.
+- Migrated `RunGameManager` merchant refresh candidate filtering for loot offers to the shared reward candidate filter service.
+- Merchant refresh candidate filtering for loot, weapon, blueprint, and relic offers is now centralized in `RewardCandidateFilterService`; rolling weights, prices, and offer mutation behavior remain unchanged.
+- Static checks completed: refresh call sites now use the shared service for all four merchant item categories, and `git diff --check` reports no formatting errors for touched files.
+- Pending verification: rerun `RewardCandidateFilterServiceTests`, merchant refresh smoke testing, and the existing relic regression group in Unity Test Runner.## 2026-04-27 - Relic System Refactor Stage 23
+
+- User confirmed Stage 22 verification passed.
+- Added `Assets/Scripts/Shared/MerchantOfferFactoryService.cs` as a focused helper for creating and applying non-relic merchant offers.
+- Added EditMode coverage in `Assets/Tests/EditMode/Editor/MerchantOfferFactoryServiceTests.cs` for loot / weapon / blueprint offer creation, price clamping, invalid input handling, and refresh-time payload replacement.
+- Migrated `RunGameManager` guaranteed stock generation, random fill generation, and refresh mutation for loot / weapon / blueprint offers to `MerchantOfferFactoryService`.
+- Removed the now-unused `RollMerchantPrice` helper from `RunGameManager`; relic offer creation and difficulty-based relic pricing intentionally remain in `RunGameManager` for the next isolated step.
+- Static checks completed: non-relic merchant offer creation call sites now use the factory service, and `git diff --check` reports no formatting errors for touched files.
+- Pending verification: run `MerchantOfferFactoryServiceTests`, rerun `RewardCandidateFilterServiceTests`, and run the existing relic regression group in Unity Test Runner.## 2026-04-27 - Relic System Refactor Stage 24
+
+- User confirmed Stage 23 verification passed.
+- Extended `MerchantOfferFactoryService` with relic offer creation through `TryCreateRelicOffer`, including relic-table drawing, legacy relic fallback, excluded-relic checks, excluded-set updates, and difficulty-based relic pricing.
+- Added EditMode coverage for relic merchant offer creation from legacy relic entries and relic tables, fixed difficulty price resolution, excluded relic exhaustion, and invalid random input handling.
+- Migrated `RunGameManager` relic guaranteed stock generation, random fill generation, and refresh mutation to `MerchantOfferFactoryService`.
+- Removed duplicate merchant relic price helpers, relic offer creation helper, and generic offer payload mutation helper from `RunGameManager`; merchant offer payload creation for all four item categories is now centralized in the factory service.
+- Static checks completed: old `TryCreateRelicMerchantOffer`, `ResolveMerchantRelicPrice`, `ApplyMerchantOfferData`, and `RollMerchantPrice` symbols no longer remain in `RunGameManager`, and `git diff --check` reports no formatting errors for touched files.
+- Pending verification: run `MerchantOfferFactoryServiceTests`, `RewardCandidateFilterServiceTests`, merchant refresh smoke testing, and the existing relic regression group in Unity Test Runner.## 2026-04-27 - Relic System Refactor Stage 25
+
+- User confirmed Stage 24 verification passed.
+- Added `Assets/Scripts/Shared/MerchantOfferSelectionService.cs` to own merchant stock selection algorithms: target stock count resolution, available category weight resolution, weighted entry index rolling, and offer shuffling.
+- Added EditMode coverage in `Assets/Tests/EditMode/Editor/MerchantOfferSelectionServiceTests.cs` for target count clamping, collapsed ranges, missing category pools, single-entry weighted selection, and shuffle element preservation.
+- Migrated `RunGameManager` merchant stock generation and refresh selection call sites to `MerchantOfferSelectionService`.
+- Removed duplicate merchant selection helper methods from `RunGameManager`, keeping that class focused on run-state orchestration and map/merchant flow control.
+- Static checks completed: old local selection helper names no longer remain in `RunGameManager`, service call sites resolve, and `git diff --check` reports no formatting errors for touched files.
+- Pending verification: run `MerchantOfferSelectionServiceTests`, rerun `MerchantOfferFactoryServiceTests`, `RewardCandidateFilterServiceTests`, merchant refresh smoke testing, and the existing relic regression group in Unity Test Runner.## 2026-04-27 - Relic System Refactor Stage 26
+
+- User confirmed Stage 25 verification passed.
+- Added `Assets/Scripts/Shared/MerchantOfferExclusionService.cs` to own merchant refresh exclusion-set construction for owned relics, weapons, blueprints, and currently offered merchant loot / weapons / blueprints / relics.
+- Added EditMode coverage in `Assets/Tests/EditMode/Editor/MerchantOfferExclusionServiceTests.cs` for inventory exclusion sets, null / non-positive inventory entries, current merchant offer filtering, ignored offer handling, and sold-out inclusion behavior.
+- Migrated `RunGameManager` merchant initial relic filtering and refresh exclusion setup to `MerchantOfferExclusionService`.
+- Removed duplicate owned-inventory and current-merchant-offer exclusion helper methods from `RunGameManager`, further narrowing it toward merchant flow orchestration only.
+- Static checks completed: local exclusion helper definitions no longer remain in `RunGameManager`, service call sites resolve, and `git diff --check` reports no formatting errors for touched files.
+- Pending verification: run `MerchantOfferExclusionServiceTests`, rerun `MerchantOfferSelectionServiceTests`, `MerchantOfferFactoryServiceTests`, `RewardCandidateFilterServiceTests`, merchant refresh smoke testing, and the existing relic regression group in Unity Test Runner.## 2026-04-27 - Relic System Refactor Stage 27
+
+- User confirmed Stage 26 verification passed and approved a larger refactor step.
+- Added `Assets/Scripts/Shared/MerchantStockService.cs` as the merchant stock orchestration layer for initial stock generation, guaranteed category offers, random fill offers, refreshable-slot counting, and same-type merchant refresh mutation.
+- Added EditMode coverage in `Assets/Tests/EditMode/Editor/MerchantStockServiceTests.cs` for empty catalog generation, guaranteed initial stock creation, owned relic exclusion, same-type refresh replacement, owned weapon / blueprint / relic refresh exclusions, and refreshable slot counting.
+- Migrated `RunGameManager` merchant stock generation and refresh orchestration to `MerchantStockService`, while keeping scene-facing responsibilities in `RunGameManager`: merchant tile checks, deterministic RNG seed creation, money spending, HUD feedback, and UI callbacks.
+- `MerchantStockService` composes the smaller services introduced in earlier stages: `RewardCandidateFilterService`, `MerchantOfferFactoryService`, `MerchantOfferSelectionService`, and `MerchantOfferExclusionService`.
+- Removed the large merchant stock / refresh helper block from `RunGameManager`, cutting that file's merchant implementation surface down to thin delegation methods.
+- Static checks completed: old merchant stock helper names now resolve inside `MerchantStockService`, `RunGameManager` delegates through the new service, and `git diff --check` reports no formatting errors for touched files.
+- Pending verification: run `MerchantStockServiceTests`, then rerun `MerchantOfferExclusionServiceTests`, `MerchantOfferSelectionServiceTests`, `MerchantOfferFactoryServiceTests`, `RewardCandidateFilterServiceTests`, merchant refresh smoke testing, and the existing relic regression group in Unity Test Runner.## 2026-04-27 - Relic System Refactor Stage 28
+
+- User confirmed Stage 27 verification passed.
+- Added `Assets/Scripts/Shared/MerchantPurchaseService.cs` to own merchant purchase validation, relic-adjusted price calculation, money spending, inventory/relic/blueprint/weapon/loot delivery, sold-out mutation, and merchant purchase completion relic triggers.
+- Added structured purchase results through `MerchantPurchaseResult` and `MerchantPurchaseFailureReason`, so scene/UI callers no longer need to duplicate purchase validation branches.
+- Added EditMode coverage in `Assets/Tests/EditMode/Editor/MerchantPurchaseServiceTests.cs` for successful loot purchase, insufficient money, missing data, sold-out offers, and purchase-completion relic trigger behavior.
+- Migrated `RunGameManager.HandleBuyMerchantOffer` to call `MerchantPurchaseService.TryPurchaseOffer`; `RunGameManager` now only handles HUD display and UI callback return text for purchases.
+- Static checks completed: direct merchant purchase price calculation and purchase-completion trigger calls no longer remain in `RunGameManager`, and `git diff --check` reports no formatting errors for touched files.
+- Pending verification: run `MerchantPurchaseServiceTests`, rerun `MerchantStockServiceTests` and the merchant service test group, then run the existing relic regression group in Unity Test Runner.
+## 2026-04-27 - RunGameManager Encoding Repair
+
+- Repaired mojibake in `Assets/Scripts/MapScene/Manager/RunGameManager.cs` caused by UTF-8 text being decoded through the wrong system encoding during an earlier bulk edit.
+- Restored corrupted Chinese UI/status strings such as tutorial prompts, merchant refresh messages, event result text, tile labels, and tutorial overlay button labels.
+- Preserved the recent merchant-service refactor changes and restored the file to UTF-8 BOM + CRLF formatting to avoid Git/Unity text-format churn.
+- Static checks completed: targeted mojibake scan found no remaining suspicious text, and `git diff --check -- Assets/Scripts/MapScene/Manager/RunGameManager.cs` reports no formatting errors.
+
+## 2026-04-27 - Relic System Refactor Stage 29
+
+- User confirmed Stage 28 verification passed and approved continuing the refactor with a larger step.
+- Added `Assets/Scripts/Shared/MapEventRewardService.cs` to own map-event immediate rewards and encounter-victory reward queuing for loot, relics, and blueprints.
+- Added EditMode coverage in `Assets/Tests/EditMode/Editor/MapEventRewardServiceTests.cs` for immediate loot / relic / blueprint grants, queued encounter-victory loot rewards, and missing pending encounter handling.
+- Migrated `RunGameManager` event built-in reward execution and deferred encounter reward queuing to `MapEventRewardService`.
+- Removed duplicate event reward selection, reward delivery, and pending victory reward queueing helpers from `RunGameManager`, leaving it focused on event flow, UI updates, custom handlers, and encounter startup.
+- Static checks completed: old reward helper method names no longer remain in `RunGameManager`, and `git diff --check` reports no formatting errors for touched code files.
+- Pending verification: run `MapEventRewardServiceTests`, then rerun the map-event smoke path, merchant service tests, and the existing relic regression group in Unity Test Runner.
+## 2026-04-27 - Relic System Refactor Stage 30
+
+- User confirmed Stage 29 verification passed and approved continuing the map-event refactor.
+- Added `Assets/Scripts/Shared/MapEventLootCostService.cs` to own map-event loot cost previewing, cached random loot discard selection, random loot discard execution, and specific loot discard execution.
+- Added EditMode coverage in `Assets/Tests/EditMode/Editor/MapEventLootCostServiceTests.cs` for cached random discard preview, unavailable specific loot requirements, cached random discard consumption, and all-or-nothing specific loot validation.
+- Migrated `RunGameManager.BuildEventOptionPreview` and loot-discard built-in effect execution to `MapEventLootCostService` while preserving the preview cache semantics.
+- Removed duplicate random loot discard preview and loot discard execution helpers from `RunGameManager`.
+- Static checks completed: old loot-discard helper method names no longer remain in `RunGameManager`, and `git diff --check` reports no formatting errors for touched code files.
+- Pending verification: run `MapEventLootCostServiceTests`, rerun `MapEventRewardServiceTests`, map-event option smoke testing, and the existing relic regression group in Unity Test Runner.
+## 2026-04-27 - Relic System Refactor Stage 31
+
+- User confirmed Stage 30 verification passed and approved continuing the map-event refactor.
+- Added `Assets/Scripts/Shared/MapEventEncounterService.cs` to own event encounter group selection, runtime event enemy-group creation, and `BattleEncounterData` construction.
+- Added EditMode coverage in `Assets/Tests/EditMode/Editor/MapEventEncounterServiceTests.cs` for configured enemy-group encounters, random enemy-list runtime groups, living party member cloning, relic / calamity cloning, and invalid encounter configuration failure.
+- Migrated `RunGameManager.TryPrepareEventEncounter` to delegate through `MapEventEncounterService`, preserving source scene, target scene, event tile danger/coord, encounter seed salt, and pending encounter assignment.
+- Removed duplicate event encounter enemy-group construction and encounter data population helpers from `RunGameManager`.
+- Static checks completed: old event encounter helper method names no longer remain in `RunGameManager`, and `git diff --check` reports no formatting errors for touched code files.
+- Pending verification: run `MapEventEncounterServiceTests`, rerun `MapEventLootCostServiceTests`, `MapEventRewardServiceTests`, map-event encounter smoke testing, and the existing relic regression group in Unity Test Runner.
+## 2026-04-27 - Remaining Refactor Roadmap
+
+- Priority 1: Extract map-event built-in effect execution from `RunGameManager` into a focused service, tentatively `MapEventBuiltInEffectExecutorService`. This should own built-in effect ordering, money / experience / HP / action-point effects, reward delegation, loot-cost delegation, and encounter preparation delegation while `RunGameManager` keeps UI flow and pending encounter startup.
+- Priority 2: Extract map movement and action-point spending rules into a focused movement service. This should cover move-cost calculation, relic-based move-cost bypass checks such as visited-tile cost ignoring, overflow action-point spending, cycle exhaustion checks, and move result messaging.
+- Priority 3: Extract normal map battle encounter construction from `RunGameManager`. Event encounters now use `MapEventEncounterService`; regular battle, elite, boss, and tutorial battle entry should follow the same service-oriented pattern for `BattleEncounterData` creation and enemy-group resolution.
+- Priority 4: Extract run bootstrap logic. `StartRun`, `StartTutorialRun`, tutorial board generation, initial party construction, and starting inventory application should move toward `RunBootstrapService` / `TutorialRunBootstrapService` so NewGame, Tutorial, DemoTest, and future entry points can reuse the same setup path.
+- Priority 5: Extract save asset catalog collection into `RunSaveAssetCatalogBuilder`. The `BuildSaveAssetCatalog` and `Add*Assets` helper block is large, mostly pure traversal logic, and can be tested separately without scene dependencies.
+- Ongoing cleanup: keep reducing `RunGameManager` toward scene orchestration only: manager creation, UI callbacks, scene transitions, and high-level run flow. New business-rule services should receive `RunState`, tile data, effect data, config SOs, and deterministic RNG/seed inputs explicitly where possible.
+- Verification expectation for each stage: add or extend EditMode tests for the extracted service first, migrate only the matching `RunGameManager` slice, run `git diff --check`, and ask the user to run the new service test plus the relevant existing regression group in Unity Test Runner.

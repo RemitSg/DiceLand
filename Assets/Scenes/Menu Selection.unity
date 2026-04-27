@@ -11387,7 +11387,7 @@ MonoBehaviour:
     startingCurrentHP: 999
   - memberId: 
     characterData: {fileID: 11400000, guid: 658e22cc7dec223479091c6817751025, type: 2}
-    equippedWeapon: {fileID: 11400000, guid: 6c1aed0bff9b3a74ba193a8ff2895f74, type: 2}
+    equippedWeapon: {fileID: 11400000, guid: f60b6206ee3430d4e94f6a8395de2b62, type: 2}
     startingLevel: 1
     startingExperience: 0
     startingMaxHP: 999

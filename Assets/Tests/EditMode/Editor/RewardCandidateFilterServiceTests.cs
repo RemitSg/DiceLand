@@ -112,6 +112,90 @@ public class RewardCandidateFilterServiceTests
         Assert.IsFalse(RewardCandidateFilterService.HasAvailableMerchantRelicCandidate(null, null));
     }
 
+    [Test]
+    public void BuildAvailableMerchantLootGoodsEntries_FiltersMissingAndExcludedLoot()
+    {
+        LootItem_SO reserved = CreateLoot("Reserved", LootRarity.Common);
+        LootItem_SO availableA = CreateLoot("AvailableA", LootRarity.Uncommon);
+        LootItem_SO availableB = CreateLoot("AvailableB", LootRarity.Rare);
+        MerchantCatalog_SO.LootGoodsEntry reservedEntry = CreateLootGoodsEntry(reserved);
+        MerchantCatalog_SO.LootGoodsEntry availableEntryA = CreateLootGoodsEntry(availableA);
+        MerchantCatalog_SO.LootGoodsEntry missingEntry = CreateLootGoodsEntry(null);
+        MerchantCatalog_SO.LootGoodsEntry availableEntryB = CreateLootGoodsEntry(availableB);
+        List<MerchantCatalog_SO.LootGoodsEntry> source = new List<MerchantCatalog_SO.LootGoodsEntry>
+        {
+            null,
+            reservedEntry,
+            availableEntryA,
+            missingEntry,
+            availableEntryB
+        };
+
+        List<MerchantCatalog_SO.LootGoodsEntry> candidates =
+            RewardCandidateFilterService.BuildAvailableMerchantLootGoodsEntries(source, new HashSet<LootItem_SO> { reserved });
+
+        CollectionAssert.AreEqual(new[] { availableEntryA, availableEntryB }, candidates);
+        Assert.IsFalse(RewardCandidateFilterService.HasAvailableMerchantLootCandidate(reservedEntry, new HashSet<LootItem_SO> { reserved }));
+        Assert.IsFalse(RewardCandidateFilterService.HasAvailableMerchantLootCandidate(missingEntry, null));
+        Assert.IsFalse(RewardCandidateFilterService.HasAvailableMerchantLootCandidate(null, null));
+    }
+
+    [Test]
+    public void BuildAvailableMerchantWeaponGoodsEntries_FiltersMissingAndExcludedWeapons()
+    {
+        Weapon_SO owned = CreateWeapon("Owned");
+        Weapon_SO availableA = CreateWeapon("AvailableA");
+        Weapon_SO availableB = CreateWeapon("AvailableB");
+        MerchantCatalog_SO.WeaponGoodsEntry ownedEntry = CreateWeaponGoodsEntry(owned);
+        MerchantCatalog_SO.WeaponGoodsEntry availableEntryA = CreateWeaponGoodsEntry(availableA);
+        MerchantCatalog_SO.WeaponGoodsEntry missingEntry = CreateWeaponGoodsEntry(null);
+        MerchantCatalog_SO.WeaponGoodsEntry availableEntryB = CreateWeaponGoodsEntry(availableB);
+        List<MerchantCatalog_SO.WeaponGoodsEntry> source = new List<MerchantCatalog_SO.WeaponGoodsEntry>
+        {
+            null,
+            ownedEntry,
+            availableEntryA,
+            missingEntry,
+            availableEntryB
+        };
+
+        List<MerchantCatalog_SO.WeaponGoodsEntry> candidates =
+            RewardCandidateFilterService.BuildAvailableMerchantWeaponGoodsEntries(source, new HashSet<Weapon_SO> { owned });
+
+        CollectionAssert.AreEqual(new[] { availableEntryA, availableEntryB }, candidates);
+        Assert.IsFalse(RewardCandidateFilterService.HasAvailableMerchantWeaponCandidate(ownedEntry, new HashSet<Weapon_SO> { owned }));
+        Assert.IsFalse(RewardCandidateFilterService.HasAvailableMerchantWeaponCandidate(missingEntry, null));
+        Assert.IsFalse(RewardCandidateFilterService.HasAvailableMerchantWeaponCandidate(null, null));
+    }
+
+    [Test]
+    public void BuildAvailableMerchantBlueprintGoodsEntries_FiltersMissingAndExcludedBlueprints()
+    {
+        CraftingBlueprint_SO owned = CreateBlueprint("Owned");
+        CraftingBlueprint_SO availableA = CreateBlueprint("AvailableA");
+        CraftingBlueprint_SO availableB = CreateBlueprint("AvailableB");
+        MerchantCatalog_SO.BlueprintGoodsEntry ownedEntry = CreateBlueprintGoodsEntry(owned);
+        MerchantCatalog_SO.BlueprintGoodsEntry availableEntryA = CreateBlueprintGoodsEntry(availableA);
+        MerchantCatalog_SO.BlueprintGoodsEntry missingEntry = CreateBlueprintGoodsEntry(null);
+        MerchantCatalog_SO.BlueprintGoodsEntry availableEntryB = CreateBlueprintGoodsEntry(availableB);
+        List<MerchantCatalog_SO.BlueprintGoodsEntry> source = new List<MerchantCatalog_SO.BlueprintGoodsEntry>
+        {
+            null,
+            ownedEntry,
+            availableEntryA,
+            missingEntry,
+            availableEntryB
+        };
+
+        List<MerchantCatalog_SO.BlueprintGoodsEntry> candidates =
+            RewardCandidateFilterService.BuildAvailableMerchantBlueprintGoodsEntries(source, new HashSet<CraftingBlueprint_SO> { owned });
+
+        CollectionAssert.AreEqual(new[] { availableEntryA, availableEntryB }, candidates);
+        Assert.IsFalse(RewardCandidateFilterService.HasAvailableMerchantBlueprintCandidate(ownedEntry, new HashSet<CraftingBlueprint_SO> { owned }));
+        Assert.IsFalse(RewardCandidateFilterService.HasAvailableMerchantBlueprintCandidate(missingEntry, null));
+        Assert.IsFalse(RewardCandidateFilterService.HasAvailableMerchantBlueprintCandidate(null, null));
+    }
+
     private LootItem_SO CreateLoot(string name, LootRarity rarity)
     {
         LootItem_SO loot = ScriptableObject.CreateInstance<LootItem_SO>();
@@ -129,6 +213,22 @@ public class RewardCandidateFilterServiceTests
         relic.rarity = rarity;
         createdObjects.Add(relic);
         return relic;
+    }
+
+    private Weapon_SO CreateWeapon(string name)
+    {
+        Weapon_SO weapon = ScriptableObject.CreateInstance<Weapon_SO>();
+        weapon.weaponName = name;
+        createdObjects.Add(weapon);
+        return weapon;
+    }
+
+    private CraftingBlueprint_SO CreateBlueprint(string name)
+    {
+        CraftingBlueprint_SO blueprint = ScriptableObject.CreateInstance<CraftingBlueprint_SO>();
+        blueprint.blueprintName = name;
+        createdObjects.Add(blueprint);
+        return blueprint;
     }
 
     private RelicTable_SO CreateRelicTable(params Relic_SO[] relics)
@@ -149,6 +249,33 @@ public class RewardCandidateFilterServiceTests
         };
         SetPrivateField(entry, "legacyRelicData", legacyRelic);
         return entry;
+    }
+
+    private static MerchantCatalog_SO.LootGoodsEntry CreateLootGoodsEntry(LootItem_SO loot)
+    {
+        return new MerchantCatalog_SO.LootGoodsEntry
+        {
+            lootItem = loot,
+            weight = 1
+        };
+    }
+
+    private static MerchantCatalog_SO.WeaponGoodsEntry CreateWeaponGoodsEntry(Weapon_SO weapon)
+    {
+        return new MerchantCatalog_SO.WeaponGoodsEntry
+        {
+            weaponData = weapon,
+            weight = 1
+        };
+    }
+
+    private static MerchantCatalog_SO.BlueprintGoodsEntry CreateBlueprintGoodsEntry(CraftingBlueprint_SO blueprint)
+    {
+        return new MerchantCatalog_SO.BlueprintGoodsEntry
+        {
+            blueprintData = blueprint,
+            weight = 1
+        };
     }
 
     private static void SetPrivateField<T>(object target, string fieldName, T value)

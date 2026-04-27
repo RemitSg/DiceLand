@@ -622,6 +622,7 @@ MonoBehaviour:
     startingExperience: 0
     startingMaxHP: 20
     startingCurrentHP: 20
+  tutorialStartingPartyMembers: []
   startingLoot:
   - lootItem: {fileID: 11400000, guid: 1a247d2fcfd14c141bd79e8a82154b1f, type: 2}
     amount: 2
@@ -659,12 +660,14 @@ MonoBehaviour:
   tutorialOpeningBattleDefinition: {fileID: 0}
   tutorialEliteBattleDefinition: {fileID: 0}
   tutorialBossBattleDefinition: {fileID: 0}
+  tutorialBattleStageOverrides: []
   tutorialCompletionSceneName: Menu Selection
   tutorialEnemyVisualTemplates:
     openingPrimaryTemplate: {fileID: 11400000, guid: a79c03a19f046ad478a2a1e9f339c1a2, type: 2}
     openingSecondaryTemplate: {fileID: 11400000, guid: a79c03a19f046ad478a2a1e9f339c1a2, type: 2}
     eliteTemplate: {fileID: 11400000, guid: 644a91785052d164390c08fd48468a74, type: 2}
     bossTemplate: {fileID: 11400000, guid: f3b54da2b2fd4a5584c0fb85294411ef, type: 2}
+    burnStatusTemplate: {fileID: 0}
   cameraBackgroundColor: {r: 0.08, g: 0.11, b: 0.16, a: 1}
   cameraPadding: 2.8
 --- !u!114 &1019032849
@@ -1362,6 +1365,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &5449551863761637436
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7814146387886749599, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
+      propertyPath: m_Name
+      value: SwordHitBlueCritical
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1373,3 +1433,4 @@ SceneRoots:
   - {fileID: 1019032852}
   - {fileID: 1319682564}
   - {fileID: 1300845056}
+  - {fileID: 5449551863761637436}

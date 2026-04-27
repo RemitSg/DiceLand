@@ -54,6 +54,96 @@ public static class RewardCandidateFilterService
         return BuildRelicCandidates(relicTable.Relics, excludedRelics).Count > 0;
     }
 
+    public static List<MerchantCatalog_SO.LootGoodsEntry> BuildAvailableMerchantLootGoodsEntries(
+        IReadOnlyList<MerchantCatalog_SO.LootGoodsEntry> source,
+        ICollection<LootItem_SO> excludedLoot)
+    {
+        List<MerchantCatalog_SO.LootGoodsEntry> candidates = new List<MerchantCatalog_SO.LootGoodsEntry>();
+        if (source == null || source.Count == 0)
+            return candidates;
+
+        for (int i = 0; i < source.Count; i++)
+        {
+            MerchantCatalog_SO.LootGoodsEntry entry = source[i];
+            if (!HasAvailableMerchantLootCandidate(entry, excludedLoot))
+                continue;
+
+            candidates.Add(entry);
+        }
+
+        return candidates;
+    }
+
+    public static bool HasAvailableMerchantLootCandidate(
+        MerchantCatalog_SO.LootGoodsEntry entry,
+        ICollection<LootItem_SO> excludedLoot)
+    {
+        if (entry == null || entry.lootItem == null)
+            return false;
+
+        return excludedLoot == null || !excludedLoot.Contains(entry.lootItem);
+    }
+
+    public static List<MerchantCatalog_SO.WeaponGoodsEntry> BuildAvailableMerchantWeaponGoodsEntries(
+        IReadOnlyList<MerchantCatalog_SO.WeaponGoodsEntry> source,
+        ICollection<Weapon_SO> excludedWeapons)
+    {
+        List<MerchantCatalog_SO.WeaponGoodsEntry> candidates = new List<MerchantCatalog_SO.WeaponGoodsEntry>();
+        if (source == null || source.Count == 0)
+            return candidates;
+
+        for (int i = 0; i < source.Count; i++)
+        {
+            MerchantCatalog_SO.WeaponGoodsEntry entry = source[i];
+            if (!HasAvailableMerchantWeaponCandidate(entry, excludedWeapons))
+                continue;
+
+            candidates.Add(entry);
+        }
+
+        return candidates;
+    }
+
+    public static bool HasAvailableMerchantWeaponCandidate(
+        MerchantCatalog_SO.WeaponGoodsEntry entry,
+        ICollection<Weapon_SO> excludedWeapons)
+    {
+        if (entry == null || entry.weaponData == null)
+            return false;
+
+        return excludedWeapons == null || !excludedWeapons.Contains(entry.weaponData);
+    }
+
+    public static List<MerchantCatalog_SO.BlueprintGoodsEntry> BuildAvailableMerchantBlueprintGoodsEntries(
+        IReadOnlyList<MerchantCatalog_SO.BlueprintGoodsEntry> source,
+        ICollection<CraftingBlueprint_SO> excludedBlueprints)
+    {
+        List<MerchantCatalog_SO.BlueprintGoodsEntry> candidates = new List<MerchantCatalog_SO.BlueprintGoodsEntry>();
+        if (source == null || source.Count == 0)
+            return candidates;
+
+        for (int i = 0; i < source.Count; i++)
+        {
+            MerchantCatalog_SO.BlueprintGoodsEntry entry = source[i];
+            if (!HasAvailableMerchantBlueprintCandidate(entry, excludedBlueprints))
+                continue;
+
+            candidates.Add(entry);
+        }
+
+        return candidates;
+    }
+
+    public static bool HasAvailableMerchantBlueprintCandidate(
+        MerchantCatalog_SO.BlueprintGoodsEntry entry,
+        ICollection<CraftingBlueprint_SO> excludedBlueprints)
+    {
+        if (entry == null || entry.blueprintData == null)
+            return false;
+
+        return excludedBlueprints == null || !excludedBlueprints.Contains(entry.blueprintData);
+    }
+
     public static List<MerchantCatalog_SO.RelicGoodsEntry> BuildAvailableMerchantRelicGoodsEntries(
         IReadOnlyList<MerchantCatalog_SO.RelicGoodsEntry> source,
         ICollection<Relic_SO> excludedRelics)
