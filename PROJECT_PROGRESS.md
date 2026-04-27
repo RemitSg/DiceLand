@@ -716,3 +716,28 @@
 - Priority 5: Extract save asset catalog collection into `RunSaveAssetCatalogBuilder`. The `BuildSaveAssetCatalog` and `Add*Assets` helper block is large, mostly pure traversal logic, and can be tested separately without scene dependencies.
 - Ongoing cleanup: keep reducing `RunGameManager` toward scene orchestration only: manager creation, UI callbacks, scene transitions, and high-level run flow. New business-rule services should receive `RunState`, tile data, effect data, config SOs, and deterministic RNG/seed inputs explicitly where possible.
 - Verification expectation for each stage: add or extend EditMode tests for the extracted service first, migrate only the matching `RunGameManager` slice, run `git diff --check`, and ask the user to run the new service test plus the relevant existing regression group in Unity Test Runner.
+## 2026-04-27 - Relic System Refactor Stage 32
+
+- User approved collecting the next five roadmap items in one faster refactor pass.
+- Added `Assets/Scripts/Shared/MapEventBuiltInEffectExecutorService.cs` to own map-event built-in effect ordering, money / experience / HP / action-point effects, reward delegation, loot-cost delegation, and event encounter preparation delegation.
+- Added `Assets/Scripts/Shared/MapMovementService.cs` to own map move-cost rules, relic-based move-cost bypass prechecks, overflow action-point spending, cycle-exhaustion checks, and move execution flag handling.
+- Added `Assets/Scripts/Shared/MapBattleEncounterService.cs` to own normal map battle encounter construction and hostile tile enemy-group selection / assignment.
+- Added `Assets/Scripts/Shared/RunBootstrapService.cs` to own tutorial board generation, tutorial preview metadata, action-point limit resolution, starting party construction, and starting inventory application.
+- Added `Assets/Scripts/Shared/RunSaveAssetCatalogBuilder.cs` to own save asset catalog traversal for starting assets, rosters, events, merchant catalogs, calamities, run state, and board state.
+- Added `Assets/Tests/EditMode/Editor/RunServiceRefactorTests.cs` with coverage for tutorial board generation, movement cost rules, built-in event money/AP effects, and battle encounter inventory cloning.
+- Migrated `RunGameManager` to delegate to the new services and removed the large duplicated blocks for event built-in execution, event XP application, movement rule execution, map battle data construction, bootstrap helpers, and save catalog traversal.
+- Static / compile checks completed: Unity script refresh reports no console errors, and `git diff --check` reports no formatting errors for touched code files.
+- Verification completed: `RunServiceRefactorTests` passed 4/4; `MapEventEncounterServiceTests`, `MapEventLootCostServiceTests`, and `MapEventRewardServiceTests` passed 12/12; merchant / relic regression group passed 72/72.
+- Full EditMode note: full suite currently has one pre-existing or unrelated failure in `EnemyTodoTests.NextAttackSkillPowerBonus_PreviewsAttackRangeAndConsumesWhenAttackSkillIsActivated` with expected 3 but actual 1. The isolated failure is outside the touched Run / map-event / merchant / relic files and reproduces when run alone.
+- Next recommended step: either fix the isolated `EnemyTodoTests` failure, or continue reducing `RunGameManager` scene-facing responsibilities by extracting calamity presentation / selection flow and map event draw assignment.
+
+## 2026-04-27 - Relic System Refactor Stage 33
+
+- Full EditMode baseline after the isolated enemy skill test fix passed 155/155 before new refactor work started.
+- Added `Assets/Scripts/Shared/CalamitySelectionService.cs` to own calamity exclusion-set construction, pending calamity choice rolling, presented-choice marking, and chosen calamity application.
+- Added `Assets/Scripts/Shared/MapEventAssignmentService.cs` to own map event tile assignment, valid event filtering, drawn-event exclusion, deterministic tile-seeded selection, and drawn-event marking.
+- Added `Assets/Tests/EditMode/Editor/RunFlowAssignmentServiceTests.cs` with coverage for calamity exclusion / marking, chosen calamity application, event assignment / marking, and no-overwrite / non-event guard behavior.
+- Migrated `RunGameManager` calamity choice rolling / marking and event tile assignment to the new services, keeping overlay presentation, HUD messaging, custom calamity handlers, relic dispatch, and scene-facing flow in `RunGameManager`.
+- Static checks completed: old local `RollPendingCalamityChoices` and event filtering / marking blocks no longer remain in `RunGameManager`, and `git diff --check` reports no formatting errors for touched code files.
+- Verification completed: `RunFlowAssignmentServiceTests` passed 4/4; `RunServiceRefactorTests`, `MapEventEncounterServiceTests`, `MapEventLootCostServiceTests`, and `MapEventRewardServiceTests` passed 16/16; full EditMode passed 159/159; Unity console reports no errors.
+- Next recommended step: continue reducing `RunGameManager` scene-facing load by extracting save / restore runtime-state reset helpers and pending calamity deferral flags, or move to the higher-risk `BattleButton` combat resolution pipeline after a checkpoint commit.
