@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f714091cd55ec1458ddd822765cce08, type: 3}
   m_Name: LightKnight
   m_EditorClassIdentifier: 
-  groupID: 0
-  groupName: 
+  groupID: 12
+  groupName: LightKnight
   description: 
-  enemies: []
-  attributes: []
+  enemies:
+  - {fileID: 11400000, guid: a42adc3d1f844e04b84f35d476820d9e, type: 2}
+  attributes:
+  - {fileID: 11400000, guid: ddc1ec768733b22408abe60ae5a8211c, type: 2}
   lootTables: []

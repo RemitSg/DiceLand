@@ -19,7 +19,7 @@ MonoBehaviour:
   minSpeed: 3
   maxSpeed: 6
   baseSpeedButtonCount: 2
-  enemySprite: {fileID: 21300000, guid: 5aec7346102a6e747b324a823c2f8993, type: 3}
+  enemySprite: {fileID: 21300000, guid: 6a63ff7a6e2dd0a4ea82850ef843a2ff, type: 3}
   stageSprites: []
   enableHealthBasedStageTransition: 0
   healthBasedTransitionThresholdNormalized: 0.2
@@ -39,8 +39,12 @@ MonoBehaviour:
   surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
   enemyDescription: 
   passiveDescriptions: []
-  enemyVisualScale: 1
+  enemyVisualScale: 2
   enemyVisualOffset: {x: 0, y: 0, z: 0}
-  speedButtonOffset: {x: 0, y: 0}
-  skillPool: []
+  speedButtonOffset: {x: 0, y: -1}
+  skillPool:
+  - {fileID: 11400000, guid: db140ec1037a1934bb4f2bc47f9fb223, type: 2}
+  - {fileID: 11400000, guid: 7f39129c50d2edb4ca64c3beb44efb24, type: 2}
+  - {fileID: 11400000, guid: a09522cbe5435c747b3d600fa30fa0b2, type: 2}
+  - {fileID: 11400000, guid: 727a4b67800455e4da3fe0a9365a958e, type: 2}
   conditionalSkillRules: []
