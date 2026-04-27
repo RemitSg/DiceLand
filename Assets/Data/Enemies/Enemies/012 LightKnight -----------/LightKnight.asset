@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: LightKnight
+  m_EditorClassIdentifier: 
+  enemyID: 12
+  enemyName: "\u8000\u5149\u9A91\u58EB"
+  baseHP: 15
+  damageReductionPercent: 0
+  minSpeed: 3
+  maxSpeed: 6
+  baseSpeedButtonCount: 2
+  enemySprite: {fileID: 21300000, guid: 5aec7346102a6e747b324a823c2f8993, type: 3}
+  stageSprites: []
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.2
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules: []
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains: []
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  enemyDescription: 
+  passiveDescriptions: []
+  enemyVisualScale: 1
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool: []
+  conditionalSkillRules: []

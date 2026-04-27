@@ -16,6 +16,9 @@ MonoBehaviour:
   description: "\u5B83\u523A\u51FA\u4E86\u96F7\u67AA\uFF0C\u67AA\u5C16\u7684\u7535\u6D41\u567C\u556A\u4F5C\u54CD\u53C8\u567C\u556A\u4F5C\u54CD"
   skillCategory: 0
   energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 02000000
   targetPriorityMode: 0
@@ -32,13 +35,15 @@ MonoBehaviour:
     maxPower: 5
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 2109421402926446704, guid: ae6687a9014e0c141862584fe714f5ac, type: 3}
-    hitEffectPrefab: {fileID: 2109421402926446704, guid: ae6687a9014e0c141862584fe714f5ac, type: 3}
+    hitEffectPrefab: {fileID: 1098853591735858300, guid: 5dfd686bf9d316b4bb937f5e6e8ebe48, type: 3}
+    clashOffsetSpace: 0
     clashPositionOffset: {x: 2, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 2, y: 2, z: 2}
     clashSortingOrderOffset: 0
     overrideClashDuration: 0
     clashDuration: 0
+    hitOffsetSpace: 0
     hitPositionOffset: {x: 2, y: 0, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
     hitScale: {x: 2, y: 2, z: 2}
@@ -56,12 +61,14 @@ MonoBehaviour:
     skillSpriteDuration: 0.5
   - clashEffectPrefab: {fileID: 2109421402926446704, guid: ae6687a9014e0c141862584fe714f5ac, type: 3}
     hitEffectPrefab: {fileID: 2109421402926446704, guid: ae6687a9014e0c141862584fe714f5ac, type: 3}
+    clashOffsetSpace: 0
     clashPositionOffset: {x: 2, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 2, y: 2, z: 2}
     clashSortingOrderOffset: 0
     overrideClashDuration: 0
     clashDuration: 0
+    hitOffsetSpace: 0
     hitPositionOffset: {x: 2, y: 0, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
     hitScale: {x: 2, y: 2, z: 2}
@@ -93,5 +100,9 @@ MonoBehaviour:
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 

@@ -47,7 +47,9 @@ MonoBehaviour:
     enabled: 0
     triggerRound: 1
     settlementLootTables: []
-  enemyDescription: 
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  enemyDescription: "\u96F7\u4E91\u4E2D\u8BDE\u751F\u7684\u738B\u8005\uFF0C\u51FB\u8D25\u5B83\u5C31\u610F\u5473\u7740\u771F\u6B63\u7684\u80DC\u5229"
   passiveDescriptions:
   - passiveName: "\u7535\u8D28\u4F53"
     displayColorType: 2
@@ -67,8 +69,9 @@ MonoBehaviour:
     skill: {fileID: 11400000, guid: 215bc62163817044abd65b7d262ec35d, type: 2}
     conditionType: 1
     healthThresholdNormalized: 0
-    firstTriggerRound: 5
+    firstTriggerRound: 4
     repeatEveryNRounds: 1
     priority: 1
     maxSlotsPerRound: 1
     useOncePerBattle: 1
+    requiredAliveEnemyCount: 1

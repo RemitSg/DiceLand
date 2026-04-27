@@ -16,6 +16,9 @@ MonoBehaviour:
   description: "\u523A\u7834\u5929\u7A79\u7684\u4E00\u67AA\uFF0C\u4F60\u63A5\u5F97\u4F4F\u5417\uFF1F"
   skillCategory: 0
   energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 02000000
   targetPriorityMode: 0
@@ -32,16 +35,18 @@ MonoBehaviour:
     maxPower: 6
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 0}
-    hitEffectPrefab: {fileID: 2819706545742885375, guid: f1a37411e33d03144a541e2a196c9a0a, type: 3}
+    hitEffectPrefab: {fileID: 2106323598568381076, guid: bb64d0943aae0c046b25ee9a18e96906, type: 3}
+    clashOffsetSpace: 0
     clashPositionOffset: {x: 0, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 0, y: 0, z: 0}
     clashSortingOrderOffset: 0
     overrideClashDuration: 0
     clashDuration: 0
+    hitOffsetSpace: 0
     hitPositionOffset: {x: 2, y: -2, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
-    hitScale: {x: 2, y: 2, z: 2}
+    hitScale: {x: 1, y: 1, z: 1}
     hitSortingOrderOffset: 0
     overrideHitDamageDelay: 1
     hitDamageDelay: 2
@@ -55,16 +60,18 @@ MonoBehaviour:
     overrideSkillSpriteDuration: 1
     skillSpriteDuration: 0.5
   - clashEffectPrefab: {fileID: 0}
-    hitEffectPrefab: {fileID: 2819706545742885375, guid: f1a37411e33d03144a541e2a196c9a0a, type: 3}
+    hitEffectPrefab: {fileID: 2106323598568381076, guid: bb64d0943aae0c046b25ee9a18e96906, type: 3}
+    clashOffsetSpace: 0
     clashPositionOffset: {x: 0, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 0, y: 0, z: 0}
     clashSortingOrderOffset: 0
     overrideClashDuration: 0
     clashDuration: 0
+    hitOffsetSpace: 0
     hitPositionOffset: {x: 2, y: -2, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
-    hitScale: {x: 2, y: 2, z: 2}
+    hitScale: {x: 1, y: 1, z: 1}
     hitSortingOrderOffset: 0
     overrideHitDamageDelay: 1
     hitDamageDelay: 2
@@ -93,5 +100,9 @@ MonoBehaviour:
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 
