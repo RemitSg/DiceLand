@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 057dbb9ab39f5f74bafd7272cac75c4d, type: 3}
+  m_Name: 302 Eclipse_Night_Staff
+  m_EditorClassIdentifier: 
+  id: 302
+  weaponName: "\u8680\u591C"
+  description: "\u7531\u4E0D\u900F\u5149\u7684\u9ED1\u679D\u4E0E\u788E\u661F\u6B8B\u7247\u7F20\u6210\u7684\u6CD5\u6756\u3002\u63E1\u4F4F\u5B83\u65F6\uFF0C\u4F1A\u542C\u89C1\u9065\u8FDC\u591C\u5E55\u91CC\u7684\u4F4E\u8BED\u3002"
+  rarity: 2
+  weaponType: 3
+  icon: {fileID: 21300000, guid: 68aedb3e76e26e245926894cbcf70b10, type: 3}
+  weaponPrefab: {fileID: 7691220201063272058, guid: 5e88b2b0849df194d8c0e9b799a50a3b, type: 3}
+  minPower: 1
+  maxPower: 3
+  skillPool: []

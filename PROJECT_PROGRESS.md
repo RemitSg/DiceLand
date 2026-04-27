@@ -763,3 +763,36 @@
 - Static checks completed: `RunGameManager` no longer contains the local tile / danger label helper methods, and `git diff --check` reports no formatting errors for touched code / package files.
 - Verification completed: `MapTilePresentationServiceTests`, `RunSceneFlowStateTests`, `RunServiceRefactorTests`, and `RunFlowAssignmentServiceTests` passed 13/13; full EditMode passed 164/164; Unity console reports no errors.
 - Next recommended step: checkpoint the Run/Map refactor work, then begin a separate `BattleButton` combat-resolution pipeline refactor with narrower test-backed slices.
+
+## 2026-04-27 - Relic System Refactor Stage 36
+
+- Began the higher-risk `BattleButton` refactor with a narrow, behavior-preserving combat calculation slice.
+- Added `Assets/Scripts/Shared/BattlePowerModifierService.cs` to own per-die power modifier evaluation for skill-use, clash, clash-win, and single-attack triggers.
+- Added `Assets/Tests/EditMode/Editor/BattlePowerModifierServiceTests.cs` using TDD; the test first failed on missing `BattlePowerModifierService`, then passed after implementation.
+- Migrated `BattleButton` power modifier call sites to `BattlePowerModifierService.EvaluatePowerModifier` and removed the duplicated power-modifier evaluation helpers from `BattleButton`.
+- Deliberately left range modifier helpers and broader combat coroutine flow in `BattleButton` for a later, separate slice to keep this stage low-risk.
+- Static checks completed: `git diff --check` reports no formatting errors for touched code files.
+- Verification completed: `BattlePowerModifierServiceTests` and `BattleCombatActionBuilderTests` passed 8/8; full EditMode passed 169/169; Unity console reports no errors.
+- Next recommended step: extract the conditional dice range modifier evaluation into a sibling service, then continue toward a unified clash / single-attack damage calculation pipeline.
+
+## 2026-04-27 - Relic System Refactor Stage 37
+
+- Continued the `BattleButton` combat calculation cleanup with a second narrow extraction.
+- Added `Assets/Scripts/Shared/BattleDiceRangeModifierService.cs` to own conditional dice range modifier evaluation for enemy contextual dice previews and actual rolls.
+- Added `Assets/Tests/EditMode/Editor/BattleDiceRangeModifierServiceTests.cs` using TDD; the test first failed on missing `BattleDiceRangeModifierService`, then passed after implementation.
+- Migrated `BattleButton.ApplyEnemyContextualDiceRangeModifiers` to delegate to `BattleDiceRangeModifierService.ApplyRangeModifiers` and removed the duplicated range-modifier condition / status helper block from `BattleButton`.
+- Kept remaining delayed-status and built-in-effect condition checks inside `BattleButton`; those should move in a later effect-pipeline slice rather than being mixed into this range-only refactor.
+- Static checks completed: `git diff --check` reports no formatting errors for touched code files.
+- Verification completed: `BattleDiceRangeModifierServiceTests`, `BattlePowerModifierServiceTests`, and `BattleCombatActionBuilderTests` passed 13/13; full EditMode passed 174/174; Unity console reports no errors.
+- Next recommended step: extract skill power formatting / final-power clamping and roll input preparation into a small calculation service, then begin splitting clash and single-attack resolution into explicit damage pipeline objects.
+
+## 2026-04-27 - Relic System Refactor Stage 38
+
+- Consolidated shared speed / fixed-value condition evaluation used by battle modifier logic.
+- Added `Assets/Scripts/Shared/BattleModifierConditionService.cs` to own `PowerModifierCondition` speed predicates, including inclusive speed-difference handling and the legacy zero-as-one fallback.
+- Added `Assets/Tests/EditMode/Editor/BattleModifierConditionServiceTests.cs` using TDD; the test first failed on missing `BattleModifierConditionService`, then passed after implementation.
+- Migrated `BattlePowerModifierService`, `BattleDiceRangeModifierService`, and the remaining delayed-status / built-in-effect condition checks in `BattleButton` to call `BattleModifierConditionService.IsConditionMet`.
+- Removed duplicated local speed-condition implementations from the two modifier services and `BattleButton`.
+- Static checks completed: `git diff --check` reports no formatting errors for touched code files.
+- Verification completed: `BattleModifierConditionServiceTests`, `BattleDiceRangeModifierServiceTests`, and `BattlePowerModifierServiceTests` passed 13/13; full EditMode passed 177/177; Unity console reports no errors.
+- Next recommended step: extract final power calculation / display formatting and start separating clash and single-attack resolution into testable calculation units before moving presentation coroutines.
