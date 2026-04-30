@@ -66,4 +66,49 @@ public class BattleStatusBurstDamageServiceTests
         Assert.AreEqual(0, result);
         Assert.AreEqual(0, callbackCount);
     }
+
+    [Test]
+    public void DispatchEffects_AppliesSelfAndSelectedTargets()
+    {
+        EnemySkill_SO.StatusBurstDamageEffectEntry[] effects =
+        {
+            new EnemySkill_SO.StatusBurstDamageEffectEntry
+            {
+                trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                targetMode = EnemySkill_SO.DamageTargetMode.Self,
+                damagePerStack = 2
+            },
+            new EnemySkill_SO.StatusBurstDamageEffectEntry
+            {
+                trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                targetMode = EnemySkill_SO.DamageTargetMode.AllOpponents,
+                damagePerStack = 3
+            },
+            new EnemySkill_SO.StatusBurstDamageEffectEntry
+            {
+                trigger = EnemySkill_SO.DiceEffectTrigger.OnMiss,
+                targetMode = EnemySkill_SO.DamageTargetMode.AllOpponents,
+                damagePerStack = 5
+            }
+        };
+        System.Collections.Generic.List<string> calls = new System.Collections.Generic.List<string>();
+
+        BattleStatusBurstDispatcher.DispatchEffects(
+            effects,
+            EnemySkill_SO.DiceEffectTrigger.OnHit,
+            "current",
+            new System.Collections.Generic.List<string> { "A", "B" },
+            (mode, current, candidates, count) => new System.Collections.Generic.List<string>(candidates),
+            target => target != "B",
+            (effect, index) => calls.Add($"self:{index}:{effect.damagePerStack}"),
+            (target, effect, index) => calls.Add($"target:{target}:{index}:{effect.damagePerStack}"));
+
+        CollectionAssert.AreEqual(
+            new[]
+            {
+                "self:0:2",
+                "target:A:1:3"
+            },
+            calls);
+    }
 }

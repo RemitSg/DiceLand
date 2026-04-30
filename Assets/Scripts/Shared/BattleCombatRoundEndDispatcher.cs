@@ -23,4 +23,35 @@ public static class BattleCombatRoundEndDispatcher
         applyRoundEndStatuses?.Invoke(allies, enemies);
         applyRoundEndRelics?.Invoke(allies, enemies);
     }
+
+    public static void DispatchRoundEndStatusEffects(
+        BattleAllyController[] allies,
+        BattleEnemyController[] enemies,
+        Action<BattleAllyController> consumeAllyRoundEndStatuses,
+        Action<BattleEnemyController> consumeEnemyRoundEndStatuses)
+    {
+        if (allies != null)
+        {
+            for (int i = 0; i < allies.Length; i++)
+            {
+                BattleAllyController ally = allies[i];
+                if (ally == null || ally.IsDead)
+                    continue;
+
+                consumeAllyRoundEndStatuses?.Invoke(ally);
+            }
+        }
+
+        if (enemies != null)
+        {
+            for (int i = 0; i < enemies.Length; i++)
+            {
+                BattleEnemyController enemy = enemies[i];
+                if (enemy == null || enemy.IsDead)
+                    continue;
+
+                consumeEnemyRoundEndStatuses?.Invoke(enemy);
+            }
+        }
+    }
 }

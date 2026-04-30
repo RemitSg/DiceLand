@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System;
+using UnityEngine;
 
 public sealed class BattleSettlementPartyProgression
 {
@@ -124,6 +126,82 @@ public static class BattleSettlementPartyMemberFactory
                 progression.FinalExperience));
         }
 
+        return result;
+    }
+
+    public static List<BattleSettlementPartyProgression> BuildProgressions(
+        IEnumerable<BattleAllyController> allies,
+        int experienceReward,
+        Func<int, int> resolveExperienceToNextLevel,
+        Func<CharacterData_SO, int, int, int> resolveMaxHPForLevel)
+    {
+        List<BattleSettlementPartyProgression> progressions = new List<BattleSettlementPartyProgression>();
+        if (allies == null)
+            return progressions;
+
+        foreach (BattleAllyController ally in allies)
+        {
+            if (ally == null)
+                continue;
+
+            progressions.Add(EvaluateAllyProgression(
+                ally,
+                Math.Max(0, experienceReward),
+                resolveExperienceToNextLevel,
+                resolveMaxHPForLevel));
+        }
+
+        return progressions;
+    }
+
+    private static BattleSettlementPartyProgression EvaluateAllyProgression(
+        BattleAllyController ally,
+        int experienceReward,
+        Func<int, int> resolveExperienceToNextLevel,
+        Func<CharacterData_SO, int, int, int> resolveMaxHPForLevel)
+    {
+        AllyController allyController = ally != null ? ally.GetComponent<AllyController>() : null;
+        if (allyController == null && ally != null)
+            allyController = ally.GetComponentInParent<AllyController>();
+
+        CharacterData_SO characterData = allyController != null ? allyController.characterData : null;
+        Weapon_SO weaponData = allyController != null && allyController.weapon != null
+            ? allyController.weapon.weaponData
+            : null;
+
+        int initialLevel = ally != null ? Mathf.Max(1, ally.Level) : 1;
+        int initialExperience = ally != null ? Mathf.Max(0, ally.Experience) : 0;
+        int initialMaxHP = ally != null ? Mathf.Max(1, ally.MaxHP) : 1;
+        int initialCurrentHP = ally != null ? Mathf.Max(0, ally.CurrentHP) : 0;
+        BattleSettlementPartyProgression result = new BattleSettlementPartyProgression
+        {
+            CharacterData = characterData,
+            WeaponData = weaponData,
+            DisplayName = ally != null ? ally.GetDebugDisplayName() : string.Empty,
+            FallbackName = ally != null ? ally.gameObject.name : string.Empty,
+            InitialLevel = initialLevel,
+            InitialExperience = initialExperience,
+            InitialMaxHP = initialMaxHP,
+            InitialCurrentHP = initialCurrentHP,
+            MaxExperience = resolveExperienceToNextLevel != null ? resolveExperienceToNextLevel(initialLevel) : 100,
+            IsAlive = ally != null && !ally.IsDead
+        };
+
+        BattleAllyProgressionState progression = BattleAllyProgressionService.Evaluate(
+            result.InitialLevel,
+            result.InitialExperience,
+            result.InitialCurrentHP,
+            result.InitialMaxHP,
+            experienceReward,
+            resolveExperienceToNextLevel ?? (_ => 100),
+            (level, fallbackMaxHP) => resolveMaxHPForLevel != null
+                ? resolveMaxHPForLevel(characterData, level, fallbackMaxHP)
+                : Mathf.Max(1, fallbackMaxHP));
+
+        result.FinalLevel = progression.FinalLevel;
+        result.FinalExperience = progression.FinalExperience;
+        result.FinalMaxHP = progression.FinalMaxHP;
+        result.FinalCurrentHP = progression.FinalCurrentHP;
         return result;
     }
 }

@@ -1490,3 +1490,12 @@
 - Stage 681-710：清理已替代的旧 guard 服务；保留仍被 `BattleButton` 内部多处调用的 private wrapper，避免在同一轮扩大重构风险。
 - 新增/扩展测试：`BattleHitResolutionFacadeTests`、`BattleCombatPresentationCoroutinePlanServiceTests`、`BattleButtonUiOverlayStateServiceTests`，以及 `BattleFlowPlayModeTests` 三条战斗流程回归。
 - 验证：本段提交前执行 dotnet build、Unity EditMode、Unity PlayMode 与 Console 检查，结果记录在本轮对话结论中。
+
+## 2026-04-30 - BattleButton 轻量编排器策略调整 Stage 711-820/901/981 部分收口
+
+- 策略调整：停止“一个小规则一个新 service 文件”的拆法，改为把新 dispatcher/facade 合并进已有领域服务文件，优先降低 `BattleButton` 职责而不继续膨胀文件数量。
+- 敌方 built-in effect：在既有 `BattleEnemyBuiltInEffectResolutionService.cs` 内合并新增 `BattleEnemyBuiltInEffectDispatcher`，将 heal/damage/status/transfer 的类型分派与目标遍历从 `BattleButton` 迁出。
+- 技能效果执行：扩展既有 healing/status burst/status stack operation dispatcher，收口友方/敌方重复循环，`BattleButton` 只保留真实 Heal/TakeDamage/状态修改与日志闭包。
+- 回合结束与结算：扩展 `BattleCombatRoundEndDispatcher` 统一 round-end status 消耗过滤；扩展 `BattleSettlementPartyMemberFactory` 统一 party progression 构建，删除 `BattleButton` 中部分 legacy wrapper 和死代码。
+- 当前 `BattleButton.cs` 约 3773 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 仍约 123 个，未新增生产 cs 文件。
+- 验证：本阶段提交前执行 dotnet build、目标 EditMode、Unity 全量 EditMode/PlayMode 和 Console 检查，结果记录在本轮对话结论中。

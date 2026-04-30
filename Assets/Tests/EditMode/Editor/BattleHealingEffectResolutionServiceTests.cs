@@ -191,6 +191,65 @@ public class BattleHealingEffectResolutionServiceTests
         Assert.IsFalse(logged);
     }
 
+    [Test]
+    public void DispatchEffects_AppliesSelfAndSelectedTargetHealing()
+    {
+        EnemySkill_SO.HealingEffectEntry[] effects =
+        {
+            new EnemySkill_SO.HealingEffectEntry
+            {
+                trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                targetMode = EnemySkill_SO.DamageTargetMode.Self,
+                healAmount = 3
+            },
+            new EnemySkill_SO.HealingEffectEntry
+            {
+                trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                targetMode = EnemySkill_SO.DamageTargetMode.CurrentTarget,
+                healAmount = 5
+            },
+            new EnemySkill_SO.HealingEffectEntry
+            {
+                trigger = EnemySkill_SO.DiceEffectTrigger.OnMiss,
+                targetMode = EnemySkill_SO.DamageTargetMode.Self,
+                healAmount = 9
+            }
+        };
+        System.Collections.Generic.List<string> calls = new System.Collections.Generic.List<string>();
+
+        BattleHealingEffectDispatcher.DispatchEffects(
+            effects,
+            EnemySkill_SO.DiceEffectTrigger.OnHit,
+            "target-a",
+            new System.Collections.Generic.List<string> { "target-a", "target-b" },
+            _ => true,
+            effect => effect.healAmount,
+            (mode, current, candidates, count) => new System.Collections.Generic.List<string> { current },
+            target => target != null,
+            amount =>
+            {
+                calls.Add($"heal-self:{amount}");
+                return amount - 1;
+            },
+            (target, amount) =>
+            {
+                calls.Add($"heal-target:{target}:{amount}");
+                return amount - 2;
+            },
+            (effect, index, actual) => calls.Add($"log-self:{index}:{actual}"),
+            (target, effect, index, actual) => calls.Add($"log-target:{target}:{index}:{actual}"));
+
+        CollectionAssert.AreEqual(
+            new[]
+            {
+                "heal-self:3",
+                "log-self:0:2",
+                "heal-target:target-a:5",
+                "log-target:target-a:1:3"
+            },
+            calls);
+    }
+
     private static BattleStatus_SO CreateStatus(string id)
     {
         BattleStatus_SO status = UnityEngine.ScriptableObject.CreateInstance<BattleStatus_SO>();

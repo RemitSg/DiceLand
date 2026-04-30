@@ -58,6 +58,32 @@ public class BattleCombatRoundEndDispatcherTests
             null));
     }
 
+    [Test]
+    public void DispatchRoundEndStatusEffects_SkipsNullCombatants()
+    {
+        BattleAllyController livingAlly = CreateAlly("Living Ally");
+        BattleAllyController deadAlly = CreateAlly("Dead Ally");
+        BattleEnemyController livingEnemy = CreateEnemy("Living Enemy");
+        BattleEnemyController deadEnemy = CreateEnemy("Dead Enemy");
+        List<string> calls = new List<string>();
+
+        BattleCombatRoundEndDispatcher.DispatchRoundEndStatusEffects(
+            new[] { livingAlly, null, deadAlly },
+            new[] { livingEnemy, null, deadEnemy },
+            ally => calls.Add($"ally:{ally.gameObject.name}"),
+            enemy => calls.Add($"enemy:{enemy.gameObject.name}"));
+
+        CollectionAssert.AreEqual(
+            new[]
+            {
+                "ally:Living Ally",
+                "ally:Dead Ally",
+                "enemy:Living Enemy",
+                "enemy:Dead Enemy"
+            },
+            calls);
+    }
+
     private BattleAllyController CreateAlly(string name)
     {
         GameObject go = CreateGameObject(name);

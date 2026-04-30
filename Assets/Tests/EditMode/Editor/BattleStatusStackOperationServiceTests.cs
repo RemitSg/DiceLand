@@ -65,4 +65,48 @@ public class BattleStatusStackOperationServiceTests
         Assert.AreEqual(1, removedAmount);
         Assert.AreEqual(0, logCount);
     }
+
+    [Test]
+    public void DispatchEffects_AppliesSelfAndFilteredTargets()
+    {
+        EnemySkill_SO.StatusStackOperationEffectEntry[] effects =
+        {
+            new EnemySkill_SO.StatusStackOperationEffectEntry
+            {
+                trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                targetMode = EnemySkill_SO.DamageTargetMode.Self
+            },
+            new EnemySkill_SO.StatusStackOperationEffectEntry
+            {
+                trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                targetMode = EnemySkill_SO.DamageTargetMode.AllOpponents
+            },
+            new EnemySkill_SO.StatusStackOperationEffectEntry
+            {
+                trigger = EnemySkill_SO.DiceEffectTrigger.OnMiss,
+                targetMode = EnemySkill_SO.DamageTargetMode.AllOpponents
+            }
+        };
+        System.Collections.Generic.List<string> calls = new System.Collections.Generic.List<string>();
+
+        BattleStatusStackOperationDispatcher.DispatchEffects(
+            effects,
+            EnemySkill_SO.DiceEffectTrigger.OnHit,
+            "current",
+            new System.Collections.Generic.List<string> { "A", "B" },
+            _ => true,
+            (effect, target) => target != "B",
+            (mode, current, candidates, count) => new System.Collections.Generic.List<string>(candidates),
+            target => target != null,
+            (effect, index) => calls.Add($"self:{index}"),
+            (target, effect, index) => calls.Add($"target:{target}:{index}"));
+
+        CollectionAssert.AreEqual(
+            new[]
+            {
+                "self:0",
+                "target:A:1"
+            },
+            calls);
+    }
 }

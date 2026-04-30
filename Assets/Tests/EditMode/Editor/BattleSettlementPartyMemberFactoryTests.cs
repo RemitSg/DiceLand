@@ -1,8 +1,23 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using UnityEngine;
 
 public class BattleSettlementPartyMemberFactoryTests
 {
+    private readonly List<GameObject> createdObjects = new List<GameObject>();
+
+    [TearDown]
+    public void TearDown()
+    {
+        for (int i = 0; i < createdObjects.Count; i++)
+        {
+            if (createdObjects[i] != null)
+                Object.DestroyImmediate(createdObjects[i]);
+        }
+
+        createdObjects.Clear();
+    }
+
     [Test]
     public void BuildRunState_UsesDisplayNameFallback()
     {
@@ -77,5 +92,34 @@ public class BattleSettlementPartyMemberFactoryTests
         Assert.AreEqual(4, settlementEntries[0].currentExperience);
         Assert.AreEqual(6, settlementEntries[0].experienceGained);
         Assert.AreEqual(1, settlementEntries[0].resultingExperience);
+    }
+
+    [Test]
+    public void BuildProgressions_MapsBattleAllyRuntimeStateAndAppliesExperience()
+    {
+        GameObject go = new GameObject("Ally Host");
+        createdObjects.Add(go);
+        BattleAllyController ally = go.AddComponent<BattleAllyController>();
+        ally.ApplyRuntimeState(new RunPartyMemberState
+        {
+            memberId = "Ally One",
+            level = 1,
+            experience = 8,
+            maxHP = 10,
+            currentHP = 4
+        });
+
+        List<BattleSettlementPartyProgression> progressions = BattleSettlementPartyMemberFactory.BuildProgressions(
+            new[] { ally },
+            experienceReward: 5,
+            resolveExperienceToNextLevel: _ => 10,
+            resolveMaxHPForLevel: (_, level, fallbackMaxHP) => fallbackMaxHP + level);
+
+        Assert.AreEqual(1, progressions.Count);
+        Assert.AreEqual(1, progressions[0].InitialLevel);
+        Assert.AreEqual(8, progressions[0].InitialExperience);
+        Assert.AreEqual(2, progressions[0].FinalLevel);
+        Assert.AreEqual(3, progressions[0].FinalExperience);
+        Assert.AreEqual(12, progressions[0].FinalMaxHP);
     }
 }

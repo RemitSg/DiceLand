@@ -52,3 +52,98 @@ public static class BattleEnemyBuiltInEffectResolutionService
         return result;
     }
 }
+
+public static class BattleEnemyBuiltInEffectDispatcher
+{
+    public static void Dispatch<TOpponent>(
+        IReadOnlyList<BattleIndexedEffect<EnemySkill_SO.BuiltInEffectEntry>> effects,
+        TOpponent currentTarget,
+        IReadOnlyList<TOpponent> opponents,
+        Func<EnemySkill_SO.BuiltInEffectEntry, int, string> buildLabel,
+        Func<EnemySkill_SO.DamageTargetMode, TOpponent, IReadOnlyList<TOpponent>, int, List<TOpponent>> selectTargets,
+        Func<TOpponent, bool> canTarget,
+        Action<EnemySkill_SO.BuiltInEffectEntry, int, string> applySelfHeal,
+        Action<TOpponent, EnemySkill_SO.BuiltInEffectEntry, int, string> applyTargetHeal,
+        Action<EnemySkill_SO.BuiltInEffectEntry, int, string> applySelfDamage,
+        Action<TOpponent, EnemySkill_SO.BuiltInEffectEntry, int, string> applyTargetDamage,
+        Action<EnemySkill_SO.BuiltInEffectEntry, int, string> applySelfStatus,
+        Action<TOpponent, EnemySkill_SO.BuiltInEffectEntry, int, string> applyTargetStatus,
+        Action<IReadOnlyList<TOpponent>, EnemySkill_SO.BuiltInEffectEntry, int, string> applyTransfer)
+    {
+        if (effects == null)
+            return;
+
+        for (int i = 0; i < effects.Count; i++)
+        {
+            BattleIndexedEffect<EnemySkill_SO.BuiltInEffectEntry> indexedEffect = effects[i];
+            EnemySkill_SO.BuiltInEffectEntry effect = indexedEffect.Effect;
+            string effectLabel = buildLabel != null ? buildLabel(effect, indexedEffect.Index) : string.Empty;
+
+            switch (effect.effectType)
+            {
+                case EnemySkill_SO.BuiltInEffectType.Heal:
+                    DispatchSelfOrTargets(effect, indexedEffect.Index, effectLabel, currentTarget, opponents, selectTargets, canTarget, applySelfHeal, applyTargetHeal);
+                    break;
+                case EnemySkill_SO.BuiltInEffectType.Damage:
+                    DispatchSelfOrTargets(effect, indexedEffect.Index, effectLabel, currentTarget, opponents, selectTargets, canTarget, applySelfDamage, applyTargetDamage);
+                    break;
+                case EnemySkill_SO.BuiltInEffectType.ApplyStatus:
+                    DispatchSelfOrTargets(effect, indexedEffect.Index, effectLabel, currentTarget, opponents, selectTargets, canTarget, applySelfStatus, applyTargetStatus);
+                    break;
+                case EnemySkill_SO.BuiltInEffectType.TransferRandomNegativeStatus:
+                    applyTransfer?.Invoke(
+                        Select(effect, currentTarget, opponents, selectTargets, canTarget),
+                        effect,
+                        indexedEffect.Index,
+                        effectLabel);
+                    break;
+            }
+        }
+    }
+
+    private static void DispatchSelfOrTargets<TOpponent>(
+        EnemySkill_SO.BuiltInEffectEntry effect,
+        int effectIndex,
+        string effectLabel,
+        TOpponent currentTarget,
+        IReadOnlyList<TOpponent> opponents,
+        Func<EnemySkill_SO.DamageTargetMode, TOpponent, IReadOnlyList<TOpponent>, int, List<TOpponent>> selectTargets,
+        Func<TOpponent, bool> canTarget,
+        Action<EnemySkill_SO.BuiltInEffectEntry, int, string> applySelf,
+        Action<TOpponent, EnemySkill_SO.BuiltInEffectEntry, int, string> applyTarget)
+    {
+        if (effect.targetMode == EnemySkill_SO.DamageTargetMode.Self)
+        {
+            applySelf?.Invoke(effect, effectIndex, effectLabel);
+            return;
+        }
+
+        List<TOpponent> targets = Select(effect, currentTarget, opponents, selectTargets, canTarget);
+        for (int i = 0; i < targets.Count; i++)
+            applyTarget?.Invoke(targets[i], effect, effectIndex, effectLabel);
+    }
+
+    private static List<TOpponent> Select<TOpponent>(
+        EnemySkill_SO.BuiltInEffectEntry effect,
+        TOpponent currentTarget,
+        IReadOnlyList<TOpponent> opponents,
+        Func<EnemySkill_SO.DamageTargetMode, TOpponent, IReadOnlyList<TOpponent>, int, List<TOpponent>> selectTargets,
+        Func<TOpponent, bool> canTarget)
+    {
+        List<TOpponent> selected = selectTargets != null
+            ? selectTargets(effect.targetMode, currentTarget, opponents, effect.randomTargetCount)
+            : new List<TOpponent>();
+        if (selected == null || selected.Count == 0)
+            return new List<TOpponent>();
+
+        List<TOpponent> result = new List<TOpponent>();
+        for (int i = 0; i < selected.Count; i++)
+        {
+            TOpponent target = selected[i];
+            if (canTarget == null || canTarget(target))
+                result.Add(target);
+        }
+
+        return result;
+    }
+}
