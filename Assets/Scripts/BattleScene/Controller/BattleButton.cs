@@ -270,37 +270,21 @@ public class BattleButton : MonoBehaviour
 
         BattleTargetingSpeedButtonStateService.PrepareForTargeting(allies, enemies);
 
-        foreach (BattleAllyController ally in allies)
-        {
-            if (ally.IsDead)
-                continue;
-
-            ally.GenerateRandomSpeed(speedMin, speedMax);
-            ApplyPlayerRoundStartRelics(ally);
-            ally.SelectDefaultSkill(currentRound);
-            BattleLog(BattleTargetingPhaseLogService.BuildAllySpeedLog(
-                ally.GetDebugDisplayName(),
-                ally.Speed,
-                ally.CurrentHP,
-                ally.MaxHP));
-        }
+        List<string> allyRoundStartLogs = BattleTargetingRoundStartSetupService.PrepareAllies(
+            allies,
+            speedMin,
+            speedMax,
+            currentRound,
+            ApplyPlayerRoundStartRelics);
+        for (int i = 0; i < allyRoundStartLogs.Count; i++)
+            BattleLog(allyRoundStartLogs[i]);
 
         RegisterSharedEnergyListeners(allies);
         RefreshSharedEnergyReservations(allies);
 
-        foreach (BattleEnemyController enemy in enemies)
-        {
-            if (enemy.IsDead)
-                continue;
-
-            enemy.GenerateRandomSpeed();
-            enemy.SelectRandomSkills(currentRound);
-            BattleLog(BattleTargetingPhaseLogService.BuildEnemySpeedLog(
-                enemy.GetDebugDisplayName(),
-                enemy.Speed,
-                enemy.CurrentHP,
-                enemy.MaxHP));
-        }
+        List<string> enemyRoundStartLogs = BattleTargetingRoundStartSetupService.PrepareEnemies(enemies, currentRound);
+        for (int i = 0; i < enemyRoundStartLogs.Count; i++)
+            BattleLog(enemyRoundStartLogs[i]);
 
         List<SpeedButton> interactableAllyButtons = BattleTargetingSpeedButtonStateService.EnableLivingAllyButtons(allies);
 

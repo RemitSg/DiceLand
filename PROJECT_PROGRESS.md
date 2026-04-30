@@ -1455,3 +1455,10 @@
 - 新增 EditMode 覆盖：`BattleActiveRoundCombatantEventBindingServiceTests` 与 `BattleSharedEnergyListenerBindingServiceTests`，覆盖重复绑定不重复触发、解绑后不触发、多个速度按钮连接事件绑定。
 - 验证完成：先确认 RED 为缺失 service；随后 `dotnet build Assembly-CSharp-Editor.csproj --no-restore --no-incremental` 通过（仅既有 CS0649 与 MCP package CS0219 warning）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore --no-incremental` 通过；目标 EditMode 4/4 通过；关键 PlayMode 3/3 通过；全量 PlayMode 9/9 通过；全量 EditMode 485/485 通过；Unity Console 0 error；相关代码/测试文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
 - 当前 `BattleButton.cs` 约 4699 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 113 个。下一步建议进入 Stage 341+：拆 round-start setup 调度，把友方速度/技能选择、敌方速度/技能选择、battle-start effect 和 repeat round-start effect 从 `SetupTargetingPhase` 主流程中继续迁出。
+## 2026-04-30 - BattleButton 目标指定回合开始调度拆分 Stage 341-355
+
+- Stage 341-345：按 TDD 新增 `BattleTargetingRoundStartSetupServiceTests`，先通过 Unity 编译红灯确认缺少 `BattleTargetingRoundStartSetupService`；测试锁定友方回合开始准备必须跳过空/死亡单位、生成速度、触发玩家回合开始遗物回调、选择默认技能并返回速度日志。
+- Stage 346-350：新增 `BattleTargetingRoundStartSetupService.PrepareAllies`，将友方速度生成、回合开始遗物触发、默认技能选择和友方速度日志构建从 `BattleButton.SetupTargetingPhase` 主流程迁出；`BattleButton` 仅保留按返回顺序写入 `BattleLog`。
+- Stage 351-354：新增 `BattleTargetingRoundStartSetupService.PrepareEnemies`，将敌方速度生成、随机技能选择和敌方速度日志构建迁出；保持共享能量监听注册/预占刷新仍位于友方准备之后、敌方准备之前，避免改变能量 UI 与技能切换监听时序。
+- Stage 355：完成验证。`dotnet build Assembly-CSharp-Editor.csproj --no-restore --no-incremental` 通过（仅保留既有 CS0649 与 MCP package CS0219 warning）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore --no-incremental` 通过 0 warning / 0 error；目标 EditMode 19/19 通过；关键 PlayMode 3/3 通过；全量 PlayMode 9/9 通过；全量 EditMode 488/488 通过；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4683 行，`Assets/Scripts/Shared` 中 `Battle*.cs` 服务 114 个。下一步建议进入 Stage 356+：继续拆 `SetupTargetingPhase` 中 battle-start ally status grants、enemy battle-start effects、enemy repeat round-start status gains 与 battle setup/round-start relic 调度，但这些涉及真实状态/遗物副作用，应继续按小切片和 PlayMode 回归推进。
