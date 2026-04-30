@@ -22,6 +22,7 @@ public sealed class BattleEncounterData
     public MapDangerBand dangerBand;
     public Vector2Int sourceCoord;
     public EnemyGroup_SO enemyGroup;
+    public RelicTable_SO eliteRelicChoiceTable;
     public TutorialBattleDefinition_SO tutorialBattleDefinition;
     public List<RunPartyMemberState> partyMembers = new List<RunPartyMemberState>();
     public List<RunPartyMemberState> resolvedPartyMembers = new List<RunPartyMemberState>();
@@ -43,6 +44,7 @@ public sealed class BattleEncounterData
     public bool restartBattleOnDefeat = true;
     [NonSerialized] public bool battleStartAllyStatusGrantsApplied;
     [NonSerialized] private HashSet<string> roundRelicProcKeys;
+    [NonSerialized] private HashSet<string> battleRelicProcKeys;
 
     public IReadOnlyList<EnemyData_SO> Enemies =>
         enemyGroup != null ? enemyGroup.GetEnemies() : Array.Empty<EnemyData_SO>();
@@ -69,6 +71,17 @@ public sealed class BattleEncounterData
             roundRelicProcKeys = new HashSet<string>(StringComparer.Ordinal);
 
         return roundRelicProcKeys.Add(key);
+    }
+
+    public bool TryRegisterBattleRelicProc(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+            return true;
+
+        if (battleRelicProcKeys == null)
+            battleRelicProcKeys = new HashSet<string>(StringComparer.Ordinal);
+
+        return battleRelicProcKeys.Add(key);
     }
 }
 

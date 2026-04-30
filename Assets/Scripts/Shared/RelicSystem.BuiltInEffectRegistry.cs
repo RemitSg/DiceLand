@@ -88,6 +88,22 @@ public static partial class RelicSystem
             { Relic_SO.RelicBuiltInEffectType.GrantTemporaryExtraAllySpeedButtonsOnFirstRound, HandleGrantTemporaryExtraAllySpeedButtonsOnFirstRound },
             { Relic_SO.RelicBuiltInEffectType.TransferSpeedButtonsToLowestHpAllyOnPlayerDeath, HandleTransferSpeedButtonsToLowestHpAllyOnPlayerDeath },
             { Relic_SO.RelicBuiltInEffectType.ModifyDefenseSkillMaxPower, HandleModifyDefenseSkillMaxPower },
+            { Relic_SO.RelicBuiltInEffectType.SetEnemyBurnRoundStartDecayPercent, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToLowestHpEnemyOnBattleRoundStart, HandleApplyStatusToLowestHpEnemyOnBattleRoundStart },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToEnemyOnFirstPlayerHitEachRound, HandleApplyStatusToEnemyOnFirstPlayerHitEachRound },
+            { Relic_SO.RelicBuiltInEffectType.TriggerStatusDamageWhenEnemyStatusReachesStacksOncePerBattle, HandleTriggerStatusDamageWhenEnemyStatusReachesStacksOncePerBattle },
+            { Relic_SO.RelicBuiltInEffectType.ChanceApplyStatusToEnemiesWithStatusOnBattleRoundStart, HandleChanceApplyStatusToEnemiesWithStatusOnBattleRoundStart },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToAttackerAfterTakingSingleAttackDamageLimitedPerRound, HandleApplyStatusToAttackerAfterTakingSingleAttackDamageLimitedPerRound },
+            { Relic_SO.RelicBuiltInEffectType.ModifyPlayerClashDiceWhenTargetHasStatus, HandleModifyPlayerClashDiceWhenTargetHasStatus },
+            { Relic_SO.RelicBuiltInEffectType.HealSourceWhenPlayerAppliesStatusToEnemy, HandleHealSourceWhenPlayerAppliesStatusToEnemy },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToAllAlliesWhenStatusBearerCountAtLeast, HandleApplyStatusToAllAlliesWhenStatusBearerCountAtLeast },
+            { Relic_SO.RelicBuiltInEffectType.TransferStatusToLowestHpEnemyOnEnemyDeath, HandleTransferStatusToLowestHpEnemyOnEnemyDeath },
+            { Relic_SO.RelicBuiltInEffectType.HealSourceWhenDamagingEnemyWithStatus, HandleHealSourceWhenDamagingEnemyWithStatus },
+            { Relic_SO.RelicBuiltInEffectType.PreventLethalDamageByConsumingEnemyStatusTotal, HandlePreventLethalDamageByConsumingEnemyStatusTotal },
+            { Relic_SO.RelicBuiltInEffectType.SetEnemyStatusMinimumStacks, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.ChanceCopyAppliedStatusToOtherEnemy, HandleChanceCopyAppliedStatusToOtherEnemy },
+            { Relic_SO.RelicBuiltInEffectType.ChanceRepeatAppliedStatusToSameEnemy, HandleChanceRepeatAppliedStatusToSameEnemy },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToEnemiesBasedOnConditionStacksOnRoundStart, HandleApplyStatusToEnemiesBasedOnConditionStacksOnRoundStart },
         };
     }
 

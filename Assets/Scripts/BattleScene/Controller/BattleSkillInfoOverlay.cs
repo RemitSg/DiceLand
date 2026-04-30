@@ -728,6 +728,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
             EnemySkill_SO.DiceEffectSettings effectSettings = skill.GetDiceEffectSettings(i);
             HashSet<int> mergedPowerModifierIndices = new HashSet<int>();
+            HashSet<int> mergedStatusStackOperationIndices = new HashSet<int>();
             if (effectSettings.damageEffects != null)
             {
                 for (int effectIndex = 0; effectIndex < effectSettings.damageEffects.Length; effectIndex++)
@@ -750,6 +751,13 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                     EnemySkill_SO.StatusEffectEntry effect = effectSettings.statusEffects[effectIndex];
                     if (effect.stackAmount <= 0)
                         continue;
+
+                    if (TryFindConsumedStatusForStatusEffect(effectSettings, effect, out int mergedStackOperationIndex))
+                    {
+                        AppendConsumedStatusStatusEffectLine(effectLines, diceEffectLabel, effect, effectSettings.statusStackOperationEffects[mergedStackOperationIndex], attackerIsAlly);
+                        mergedStatusStackOperationIndices.Add(mergedStackOperationIndex);
+                        continue;
+                    }
 
                     string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
                     string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
@@ -790,6 +798,9 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             {
                 for (int effectIndex = 0; effectIndex < effectSettings.statusStackOperationEffects.Length; effectIndex++)
                 {
+                    if (mergedStatusStackOperationIndices.Contains(effectIndex))
+                        continue;
+
                     EnemySkill_SO.StatusStackOperationEffectEntry effect = effectSettings.statusStackOperationEffects[effectIndex];
                     if (TryFindConsumedStatusPowerModifier(effectSettings, effect, out int mergedPowerModifierIndex))
                     {
@@ -974,6 +985,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
     private void AppendEffectLines(List<string> effectLines, string diceEffectLabel, EnemySkill_SO.DiceEffectSettings effectSettings, bool attackerIsAlly)
     {
         HashSet<int> mergedPowerModifierIndices = new HashSet<int>();
+        HashSet<int> mergedStatusStackOperationIndices = new HashSet<int>();
 
         if (effectSettings.damageEffects != null)
         {
@@ -997,6 +1009,13 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 EnemySkill_SO.StatusEffectEntry effect = effectSettings.statusEffects[effectIndex];
                 if (effect.stackAmount <= 0)
                     continue;
+
+                if (TryFindConsumedStatusForStatusEffect(effectSettings, effect, out int mergedStackOperationIndex))
+                {
+                    AppendConsumedStatusStatusEffectLine(effectLines, diceEffectLabel, effect, effectSettings.statusStackOperationEffects[mergedStackOperationIndex], attackerIsAlly);
+                    mergedStatusStackOperationIndices.Add(mergedStackOperationIndex);
+                    continue;
+                }
 
                 string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
                 string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
@@ -1037,6 +1056,9 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         {
             for (int effectIndex = 0; effectIndex < effectSettings.statusStackOperationEffects.Length; effectIndex++)
             {
+                if (mergedStatusStackOperationIndices.Contains(effectIndex))
+                    continue;
+
                 EnemySkill_SO.StatusStackOperationEffectEntry effect = effectSettings.statusStackOperationEffects[effectIndex];
                 if (TryFindConsumedStatusPowerModifier(effectSettings, effect, out int mergedPowerModifierIndex))
                 {
@@ -1125,6 +1147,91 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 }
             }
         }
+    }
+
+    private bool TryFindConsumedStatusForStatusEffect(
+        EnemySkill_SO.DiceEffectSettings effectSettings,
+        EnemySkill_SO.StatusEffectEntry statusEffect,
+        out int stackOperationIndex)
+    {
+        stackOperationIndex = -1;
+        if (effectSettings.statusStackOperationEffects == null)
+            return false;
+
+        if (statusEffect.targetMode != EnemySkill_SO.DamageTargetMode.CurrentTarget
+            || !statusEffect.useCondition
+            || statusEffect.condition != EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast)
+            return false;
+
+        int requiredStacks = Mathf.Max(1, statusEffect.requiredConditionStatusStacks);
+        for (int i = 0; i < effectSettings.statusStackOperationEffects.Length; i++)
+        {
+            EnemySkill_SO.StatusStackOperationEffectEntry stackOperation = effectSettings.statusStackOperationEffects[i];
+            if (stackOperation.trigger != statusEffect.trigger
+                || stackOperation.targetMode != statusEffect.targetMode
+                || stackOperation.operationType != EnemySkill_SO.StatusStackOperationType.ReduceStacks
+                || Mathf.Max(1, stackOperation.stackAmount) != requiredStacks
+                || !stackOperation.useCondition
+                || stackOperation.condition != EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast
+                || Mathf.Max(1, stackOperation.requiredConditionStatusStacks) != requiredStacks
+                || !IsSameConditionStatus(statusEffect, stackOperation)
+                || !IsSameOperationAndConditionStatus(stackOperation))
+                continue;
+
+            stackOperationIndex = i;
+            return true;
+        }
+
+        return false;
+    }
+
+    private void AppendConsumedStatusStatusEffectLine(
+        List<string> effectLines,
+        string diceEffectLabel,
+        EnemySkill_SO.StatusEffectEntry statusEffect,
+        EnemySkill_SO.StatusStackOperationEffectEntry stackOperation,
+        bool attackerIsAlly)
+    {
+        string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(statusEffect.trigger), triggerHighlightColor);
+        string targetLabel = BuildColoredToken(GetConsumedStatusTargetLabel(stackOperation, attackerIsAlly), targetHighlightColor);
+        string consumedStackLabel = BuildColoredToken(Mathf.Max(1, stackOperation.stackAmount).ToString(), valueHighlightColor);
+        string consumedStatusLabel = BuildColoredToken(GetStatusLabel(stackOperation), targetHighlightColor);
+        string appliedStackLabel = BuildColoredToken(statusEffect.stackAmount.ToString(), valueHighlightColor);
+        string appliedStatusLabel = BuildColoredToken(GetStatusLabel(statusEffect), valueHighlightColor);
+        string timingLabel = BuildConsumedStatusStatusEffectTimingLabel(statusEffect);
+
+        effectLines.Add($"{diceEffectLabel}：{triggerLabel} 消耗{targetLabel} {consumedStackLabel} 层{consumedStatusLabel}，使{targetLabel}{timingLabel}获得 {appliedStackLabel} 层{appliedStatusLabel}");
+    }
+
+    private string BuildConsumedStatusStatusEffectTimingLabel(EnemySkill_SO.StatusEffectEntry statusEffect)
+    {
+        if (statusEffect.applyTiming != EnemySkill_SO.StatusApplyTiming.NextRoundStart)
+            return string.Empty;
+
+        int repeatCount = Mathf.Max(1, statusEffect.applyRepeatCount);
+        if (repeatCount > 1)
+            return BuildColoredToken($"接下来 {repeatCount} 个回合开始时", triggerHighlightColor);
+
+        int delayRounds = Mathf.Max(1, statusEffect.applyAfterRoundStarts);
+        return BuildColoredToken(delayRounds == 1 ? "下回合" : $"下 {delayRounds} 个回合开始时", triggerHighlightColor);
+    }
+
+    private static bool IsSameConditionStatus(
+        EnemySkill_SO.StatusEffectEntry statusEffect,
+        EnemySkill_SO.StatusStackOperationEffectEntry stackOperation)
+    {
+        if (statusEffect.conditionStatusData != null || stackOperation.conditionStatusData != null)
+            return statusEffect.conditionStatusData != null && statusEffect.conditionStatusData == stackOperation.conditionStatusData;
+
+        return statusEffect.conditionStatusType == stackOperation.conditionStatusType;
+    }
+
+    private static bool IsSameOperationAndConditionStatus(EnemySkill_SO.StatusStackOperationEffectEntry stackOperation)
+    {
+        if (stackOperation.statusData != null || stackOperation.conditionStatusData != null)
+            return stackOperation.statusData != null && stackOperation.statusData == stackOperation.conditionStatusData;
+
+        return stackOperation.statusType == stackOperation.conditionStatusType;
     }
 
     private bool TryFindConsumedStatusPowerModifier(
@@ -1259,7 +1366,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             string conditionPrefix = effect.useCondition
                 ? $"若 {BuildColoredToken(GetRangeModifierConditionLabel(effect), targetHighlightColor)} ，则 "
                 : string.Empty;
-            effectLines.Add($"{diceEffectLabel}：{conditionPrefix}{BuildRangeModifierDeltaLabel(effect)}");
+            string scalingPrefix = effect.useCondition && effect.condition == EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold
+                ? "每达成一次条件，"
+                : string.Empty;
+            effectLines.Add($"{diceEffectLabel}：{conditionPrefix}{scalingPrefix}{BuildRangeModifierDeltaLabel(effect)}");
         }
     }
 
@@ -1779,10 +1889,17 @@ public class BattleSkillInfoOverlay : MonoBehaviour
     {
         List<string> segments = new List<string>();
         if (effect.minPowerBonus != 0)
-            segments.Add($"最小威力 {BuildColoredToken(FormatSignedInt(effect.minPowerBonus), valueHighlightColor)}");
+            segments.Add($"最小威力 {BuildColoredToken(FormatSignedInt(effect.minPowerBonus), valueHighlightColor)}{BuildRangeModifierCapSuffix(effect.minPowerBonusCap)}");
         if (effect.maxPowerBonus != 0)
-            segments.Add($"最大威力 {BuildColoredToken(FormatSignedInt(effect.maxPowerBonus), valueHighlightColor)}");
+            segments.Add($"最大威力 {BuildColoredToken(FormatSignedInt(effect.maxPowerBonus), valueHighlightColor)}{BuildRangeModifierCapSuffix(effect.maxPowerBonusCap)}");
         return string.Join("，", segments);
+    }
+
+    private string BuildRangeModifierCapSuffix(int cap)
+    {
+        return cap > 0
+            ? $"，最多 {BuildColoredToken(FormatSignedInt(cap), valueHighlightColor)}"
+            : string.Empty;
     }
 
     private static string GetRangeModifierStatusLabel(EnemySkill_SO.ConditionalDiceRangeModifierEntry effect)
@@ -1821,7 +1938,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             case EnemySkill_SO.DiceEffectTrigger.OnSkillUse:
                 return "[ \u4f7f\u7528\u8be5\u6280\u80fd\u65f6 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnClashWin:
-                return "[ \u62fc\u70b9\u80dc\u5229\u65f6 ]";
+                return "[ 造成伤害时 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnSingleAttack:
                 return "[ 单方面攻击时 ]";
             default:
@@ -1842,7 +1959,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             case EnemySkill_SO.DiceEffectTrigger.OnClash:
                 return "[ \u62fc\u70b9\u65f6 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnClashWin:
-                return "[ \u62fc\u70b9\u80dc\u5229\u65f6 ]";
+                return "[ 造成伤害时 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnSingleAttack:
                 return "[ 单方面攻击时 ]";
             default:

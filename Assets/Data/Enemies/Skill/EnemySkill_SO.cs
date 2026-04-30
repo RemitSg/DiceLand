@@ -506,8 +506,16 @@ public class EnemySkill_SO : ScriptableObject
         [Tooltip("How much the minimum power should change when the condition is met.")]
         public int minPowerBonus;
 
+        [Min(0)]
+        [Tooltip("Optional cap for total minimum power gained by this range modifier. 0 means uncapped.")]
+        public int minPowerBonusCap;
+
         [Tooltip("How much the maximum power should change when the condition is met.")]
         public int maxPowerBonus;
+
+        [Min(0)]
+        [Tooltip("Optional cap for total maximum power gained by this range modifier. 0 means uncapped.")]
+        public int maxPowerBonusCap;
     }
 
     [System.Serializable]
@@ -1045,6 +1053,10 @@ public class EnemySkill_SO : ScriptableObject
                     entry.requiredStatusStacks = 1;
                 if (entry.requiredSpeedDifference < 0)
                     entry.requiredSpeedDifference = 0;
+                if (entry.minPowerBonusCap < 0)
+                    entry.minPowerBonusCap = 0;
+                if (entry.maxPowerBonusCap < 0)
+                    entry.maxPowerBonusCap = 0;
                 settings.rangeModifiers[i] = entry;
             }
         }

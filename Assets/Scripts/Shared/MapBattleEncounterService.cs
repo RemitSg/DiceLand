@@ -8,6 +8,7 @@ public sealed class MapBattleEncounterBuildRequest
     public BoardTileData tile;
     public EnemyGroup_SO encounterGroup;
     public MoneyRewardTable_SO moneyRewardTable;
+    public RelicTable_SO eliteRelicChoiceTable;
     public string sourceSceneName;
     public string battleSceneName;
     public string tutorialCompletionSceneName;
@@ -72,6 +73,7 @@ public static class MapBattleEncounterService
             dangerBand = tile.dangerBand,
             sourceCoord = tile.coord,
             enemyGroup = request.encounterGroup,
+            eliteRelicChoiceTable = request.eliteRelicChoiceTable,
             tutorialBattleDefinition = request.tutorialBattleDefinition,
             partyMembers = new List<RunPartyMemberState>(request.runState.GetLivingPartyMembers()),
             relicInventory = new List<RunRelicState>(),

@@ -605,6 +605,7 @@ MonoBehaviour:
   calamityPool: {fileID: 11400000, guid: c835f8b380017b54ab8c3f99190882f0, type: 2}
   moneyRewardTable: {fileID: 11400000, guid: 4b72f55d3933abd4594a3f21f07ef446, type: 2}
   merchantCatalog: {fileID: 11400000, guid: bf1d0124c102c504baf7a222df99def6, type: 2}
+  eliteRelicChoiceTable: {fileID: 0}
   levelTable: {fileID: 11400000, guid: 1c8dd34d2260a1b4a90e6e6e6e759828, type: 2}
   startingMoney: 10000
   startingPartyMembers:
@@ -617,7 +618,7 @@ MonoBehaviour:
     startingCurrentHP: 24
   - memberId: 2
     characterData: {fileID: 11400000, guid: 658e22cc7dec223479091c6817751025, type: 2}
-    equippedWeapon: {fileID: 11400000, guid: 6c1aed0bff9b3a74ba193a8ff2895f74, type: 2}
+    equippedWeapon: {fileID: 11400000, guid: 6f76bd3bd3d897c4fb60cb583c146ccd, type: 2}
     startingLevel: 1
     startingExperience: 0
     startingMaxHP: 20
@@ -1365,63 +1366,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &5449551863761637436
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6241657984007519554, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7814146387886749599, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
-      propertyPath: m_Name
-      value: SwordHitBlueCritical
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: d83743b5c4193d44bbaafc9dc276b318, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1433,4 +1377,3 @@ SceneRoots:
   - {fileID: 1019032852}
   - {fileID: 1319682564}
   - {fileID: 1300845056}
-  - {fileID: 5449551863761637436}

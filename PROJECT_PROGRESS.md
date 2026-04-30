@@ -927,3 +927,524 @@
 - Stage 50 定向验证完成：`BattleClashLogServiceTests`、`BattleClashResultServiceTests`、`BattlePowerCalculationServiceTests`、`BattleSingleAttackDiceResolutionServiceTests`、`BattleSingleAttackLogServiceTests`、`BattleCombatActionBuilderTests` 通过 21/21。
 - 全量 EditMode 验证完成：213/213 通过。
 - Stage 50 现在可以视为完成；下一步建议进入 clash side-effect dispatch 拆分，或先把 attack-vs-attack / attack-vs-defense 分支处理器从 `BattleButton` 中抽出。
+
+## 2026-04-28 - Relic System Refactor Stage 51
+
+- 继续收窄 `BattleButton` 的拼点日志职责，先处理纯文本输出，避免本阶段触碰战斗结算时机、SO 枚举顺序、Prefab 或资产配置。
+- 扩展 `Assets/Scripts/Shared/BattleClashLogService.cs`，新增攻击平局、攻防拼点、防攻拼点、双方防御拼点的结果日志格式化方法。
+- 扩展 `Assets/Tests/EditMode/Editor/BattleClashLogServiceTests.cs`，覆盖平局、破防、防御胜利、防御平手与双方防御日志，锁定现有中文战斗日志文案。
+- `Assets/Scripts/BattleScene/Controller/BattleButton.cs` 中对应的拼点后续日志已改为调用 `BattleClashLogService`；动画、命中、遗物、状态触发与能量恢复仍保留在原流程中。
+- 验证限制：当前 shell 环境没有 `dotnet`、`unity-editor`、`csc`/`mcs`，无法在本轮直接执行 C# 编译或 Unity EditMode 测试。
+- 静态检查完成：`git diff --check -- Assets/Scripts/Shared/BattleClashLogService.cs Assets/Tests/EditMode/Editor/BattleClashLogServiceTests.cs Assets/Scripts/BattleScene/Controller/BattleButton.cs` 无格式错误。
+- 待补验证：在 Unity 环境恢复后优先运行 `BattleClashLogServiceTests`，再跑 Stage 50 的定向战斗计算/日志测试组与全量 EditMode。
+
+## 2026-04-29 - Relic System Refactor Stage 52
+
+- 确认 Unity MCP 当前可用，`read_console`、脚本刷新与 EditMode 测试都能执行；Console 中仅保留 MCP WebSocket 初始化警告与 TMP 默认字体缺字警告，无脚本错误。
+- 提取拼点副作用计划计算，新增 `Assets/Scripts/Shared/BattleClashImpactPlanService.cs`，用纯数据描述拼点后应执行的友方命中、敌方命中、Miss、0 伤显示、守门/断角敌人效果、防御胜利遗物与防御能量恢复。
+- 新增 `Assets/Tests/EditMode/Editor/BattleClashImpactPlanServiceTests.cs`，覆盖攻击胜利、敌方攻击胜利、攻击平局、敌方防御胜利、友方防御胜利、双方防御敌方胜利等关键分支。
+- `BattleButton` 的拼点分支改为先生成 `BattleClashImpactPlan`，再通过 `ResolveClashImpactPlan` 集中执行副作用；动画、实际命中函数、遗物触发与状态触发仍保留在 `BattleButton`，避免一次性搬迁高风险流程。
+- 修复结算遗物三选一数据的 Unity 序列化环：`BattleSettlementLootEntry.relicChoiceData` 标记为 `[NonSerialized]`，清除了 `BattleSettlementRelicChoiceData.choices` 的 serialization depth error。
+- 静态检查完成：`git diff --check -- Assets/Scripts/Shared/BattleClashImpactPlanService.cs Assets/Tests/EditMode/Editor/BattleClashImpactPlanServiceTests.cs Assets/Scripts/BattleScene/Controller/BattleButton.cs` 无格式错误。
+- 验证完成：定向 EditMode 通过 26/26；全量 EditMode 通过 224/224；Unity Console 无 error。
+- 下一步建议：继续把 `BattleButton` 中拼点的日志构建与 hitFx 选择整理为小型 presentation/log plan，随后再考虑拆 one-sided attack side-effect dispatch。
+
+## 2026-04-29 - Relic System Refactor Stage 53
+
+- 继续收窄 `BattleButton` 拼点流程中的 presentation/log 分支，不移动动画、命中、遗物或状态副作用。
+- 新增 `Assets/Scripts/Shared/BattleClashPresentationPlanService.cs`，用纯数据把 `BattleClashOutcome` 映射为 hitFx 来源、拼点后日志类型、是否破防。
+- 新增 `Assets/Tests/EditMode/Editor/BattleClashPresentationPlanServiceTests.cs`，按 TDD 验证 RED：最初因缺少 `BattleClashPresentationPlanService`、`BattleClashPresentationPlan`、`BattleClashHitFxSource`、`BattleClashPostLogType` 编译失败；实现后转为通过。
+- `BattleButton` 拼点循环改为通过 `BattleClashPresentationPlanService.Resolve` 选择 hitFx 和日志类型，并用 `BuildClashPostLog` 集中生成后续日志，删除循环内 attack/defense 分支里的重复日志判断。
+- 静态检查完成：`git diff --check -- Assets/Scripts/Shared/BattleClashPresentationPlanService.cs Assets/Tests/EditMode/Editor/BattleClashPresentationPlanServiceTests.cs Assets/Scripts/BattleScene/Controller/BattleButton.cs` 无格式错误。
+- 验证完成：定向拼点 EditMode 通过 24/24；全量 EditMode 通过 229/229；Unity Console 无 error。
+- 下一步建议：开始抽取 one-sided attack side-effect dispatch，或继续把 `BattleButton` 中单方面攻击的 presentation/hit/log 调度整理成计划对象。
+
+## 2026-04-29 - Relic System Refactor Stage 54
+
+- 开始收窄 `BattleButton` 单方面攻击展示/命中/回位调度，保持实际动画、命中、遗物与状态副作用仍在原流程中。
+- 新增 `Assets/Scripts/Shared/BattleSingleAttackPresentationPlanService.cs`，用纯数据描述每段单方面攻击骰是否播放展示、是否执行命中回调、是否前进、是否回位，以及后续日志类型。
+- 新增 `Assets/Tests/EditMode/Editor/BattleSingleAttackPresentationPlanServiceTests.cs`，按 TDD 验证 RED：最初因缺少 `BattleSingleAttackPresentationPlanService`、`BattleSingleAttackPresentationPlan`、`BattleSingleAttackPostLogType` 编译失败；实现后转为通过。
+- `BattleButton` 的剩余友方骰、剩余敌方骰、完整友方单方面攻击、完整敌方单方面攻击都接入 `BattleSingleAttackPresentationPlanService.Resolve`，统一由计划对象决定 presentation 和 hit callback。
+- 注意：完整单方面攻击分支保留了原有 `forceHitCallback` 行为，避免本轮重构顺手改变 per-die 防御骰在该流程中的历史结算表现。
+- 静态检查完成：`git diff --check -- Assets/Scripts/Shared/BattleSingleAttackPresentationPlanService.cs Assets/Tests/EditMode/Editor/BattleSingleAttackPresentationPlanServiceTests.cs Assets/Scripts/BattleScene/Controller/BattleButton.cs` 无格式错误。
+- 验证完成：定向单方面攻击 EditMode 通过 13/13；全量 EditMode 通过 233/233；Unity Console 无 error。
+- 下一步建议：继续把单方面攻击日志生成切到 `BuildSingleAttackPostLog`，但需要优先处理当前历史文案编码混乱，避免 patch 误伤字符串。
+
+## 2026-04-29 - Relic System Refactor Stage 55
+
+- 继续收窄 `BattleButton` 的单方面攻击流程，先不触碰历史乱码战斗日志文案，避免在重构切片里引入字符串行为变化。
+- 新增 `SingleAttackDiceInput` 私有结构，并抽出 `PrepareAllySingleAttackDice` / `PrepareEnemySingleAttackDice`，统一准备单方面攻击每段骰子的展示范围、最终结算结果与骰子表现配置。
+- `ResolveRemainingAllyClashDice`、`ResolveRemainingEnemyClashDice`、`ResolveAllySingleAttackAction`、`ResolveEnemySingleAttackAction` 已改为复用上述 helper，删除四处重复的范围修正、状态威力修正、遗物修正与骰子表现准备代码。
+- 完整单方面攻击的命中日志已接入既有 `BuildSingleAttackPostLog`；剩余骰日志因为现有 context 文案存在历史编码问题，本轮保留直接调用，后续应先统一日志文案编码再收口。
+- 验证完成：Unity 脚本刷新/编译后 Console 无 error；单方面攻击相关 EditMode 测试通过 13/13；全量 EditMode 测试通过 235/235。
+- 下一步建议：优先清理 `BattleButton` 中剩余骰日志的编码问题并接入 `BuildSingleAttackPostLog`，随后再抽单方面攻击 side-effect dispatch，把动画、命中、遗物与状态触发进一步收口。
+
+## 2026-04-29 - Relic System Refactor Stage 56
+
+- 继续收窄 `BattleButton` 的单方面攻击展示与回位流程，仍然避开历史乱码日志文案，避免重构切片引入文本行为变化。
+- 新增 `PlayResolvedSingleAttackPresentation`，统一从 `SingleAttackDiceInput` 与 `BattleSingleAttackPresentationPlan` 组装 `PlaySingleAttackPresentation` 参数，四个单方面攻击分支不再重复传递最终威力、展示修正、骰子表现和回调开关。
+- 新增 `ReturnSingleAttackActorsToOriginIfNeeded`，统一处理单方面攻击提前结束与流程结束后的 actor 回位；各分支保留原有回位条件。
+- 静态检查完成：`git diff --check -- Assets/Scripts/BattleScene/Controller/BattleButton.cs` 无格式错误，仅保留 Unity/Windows 行尾提示。
+- 验证完成：Unity 脚本刷新/编译后 Console 无 error；单方面攻击相关 EditMode 测试通过 13/13；全量 EditMode 测试通过 235/235。
+- 下一步建议：开始拆 `BattleButton` 中单方面攻击的 hit/status/relic side-effect dispatch，或先统一修复剩余骰日志的编码和 `BuildSingleAttackPostLog` 接入。
+
+## 2026-04-29 - Relic System Refactor Stage 57
+
+- 继续收窄 `BattleButton` 的单方面攻击命中回调构造，保持实际命中函数、触发时机和命中参数不变。
+- 新增 `BuildAllySingleAttackHitAction` / `BuildEnemySingleAttackHitAction`，统一构造传给 `PlayResolvedSingleAttackPresentation` 的命中回调，四个单方面攻击分支不再直接内联 `ApplyAllyHit` / `ApplyEnemyHit` lambda。
+- 本轮仍未触碰剩余骰日志中的历史乱码 context 文案，避免在流程重构中混入文本修复。
+- 静态检查完成：`git diff --check -- Assets/Scripts/BattleScene/Controller/BattleButton.cs` 无格式错误，仅保留 Unity/Windows 行尾提示。
+- 验证完成：Unity 脚本刷新/编译后 Console 无 error；单方面攻击相关 EditMode 测试通过 13/13；全量 EditMode 测试通过 235/235。
+- 下一步建议：开始抽 `ApplyAllyTriggeredEffects` / `ApplyEnemyTriggeredEffects` 的单方面攻击使用时调度，或先集中处理剩余骰日志编码并统一接入 `BuildSingleAttackPostLog`。
+
+## 2026-04-29 - Relic System Refactor Stage 58
+
+- 继续收窄 `BattleButton` 的单方面攻击使用时词条触发调度，保持 `OnSkillUse` 触发类型、参数和调用时机不变。
+- 新增 `ApplyAllySingleAttackSkillUseEffects` / `ApplyEnemySingleAttackSkillUseEffects`，统一包装单方面攻击和剩余骰分支中的 `ApplyAllyTriggeredEffects` / `ApplyEnemyTriggeredEffects` 调用。
+- 主拼点流程中的双方 `OnSkillUse` 触发保持直接调用原函数，避免本轮切片扩大到 clash 分支。
+- 静态检查完成：`git diff --check -- Assets/Scripts/BattleScene/Controller/BattleButton.cs` 无格式错误，仅保留 Unity/Windows 行尾提示。
+- 验证完成：Unity 脚本刷新/编译后 Console 无 error；单方面攻击相关 EditMode 测试通过 13/13；全量 EditMode 测试通过 235/235。
+- 下一步建议：继续抽单方面攻击日志构造剩余两处，但需要先处理历史乱码 context 文案；或者进入更实质的 side-effect dispatch 拆分，把命中后的遗物、状态、反馈调度从 `BattleButton` 迁出。
+
+## 2026-04-29 - Relic System Refactor Stage 59
+
+- 继续收窄 `BattleButton` 的命中后副作用调度，先在类内抽 helper，不改变实际伤害计算、0 伤害反馈或 Miss 分支。
+- 新增 `ApplyAllySuccessfulHitEffects` / `ApplyEnemySuccessfulHitEffects`，分别承接友方命中后遗物、击杀遗物、`OnSingleAttack` / `OnClashWin` / `OnHit` 即时词条、响应式受击状态和状态施加调度。
+- `ApplyAllyHit` / `ApplyEnemyHit` 现在只负责前置校验、伤害修正、`TakeDamage`、0 伤害反馈、成功命中分派和 Miss 分支，职责边界更清楚。
+- 静态检查完成：`git diff --check -- Assets/Scripts/BattleScene/Controller/BattleButton.cs` 无格式错误，仅保留 Unity/Windows 行尾提示。
+- 验证完成：Unity 脚本刷新/编译后 Console 无 error；相关战斗 EditMode 测试通过 19/19；全量 EditMode 测试通过 235/235。
+- 下一步建议：继续把 `ApplyAllySuccessfulHitEffects` / `ApplyEnemySuccessfulHitEffects` 抽成独立 hit-effect dispatcher 服务，或先补命中后遗物/状态触发顺序的 EditMode 覆盖，降低后续迁出风险。
+
+## 2026-04-29 - Relic System Refactor Stage 60
+
+- 继续收窄 `BattleButton` 的命中反馈职责，抽出命中造成 0 伤害时的重复弹字逻辑。
+- 新增 `ShowZeroDamageHitFeedback`，统一包装 `battleFeedbackSystem.ShowDamageResultPopup` 的 0 伤害位置、阵营方向和伤害倍率显示参数。
+- `ApplyAllyHit` / `ApplyEnemyHit` 中的 0 伤害反馈改为调用 helper；实际伤害修正、`TakeDamage`、成功命中副作用和 Miss 分支不变。
+- 静态检查完成：`git diff --check -- Assets/Scripts/BattleScene/Controller/BattleButton.cs` 无格式错误，仅保留 Unity/Windows 行尾提示。
+- 验证完成：Unity 脚本刷新/编译后 Console 无 error；相关战斗 EditMode 测试通过 19/19；全量 EditMode 测试通过 235/235。
+- 下一步建议：继续拆 `ApplyAllyHit` / `ApplyEnemyHit` 的伤害修正输入与 Miss 分支调度，或者开始为命中后副作用顺序补测试后再迁出独立 dispatcher。
+
+## 2026-04-29 - Relic System Refactor Stage 61
+
+- 按低风险切片继续收窄 `BattleButton` 的命中流程，一次收口伤害修正输入和 Miss 分支调度。
+- 新增 `ResolveAllyHitDamage` / `ResolveEnemyHitDamage`，分别包装友方输出伤害修正、敌方灾厄伤害修正、玩家受击遗物修正和单方面攻击受击遗物修正，保持原调用顺序不变。
+- 新增 `ApplyAllyMissEffects` / `ApplyEnemyMissEffects`，统一包装命中造成 0 或以下伤害后的 `OnMiss` 触发调度。
+- `ApplyAllyHit` / `ApplyEnemyHit` 现在进一步只保留流程编排：校验、计算伤害、`TakeDamage`、0 伤害反馈、成功命中分派和 Miss 分派。
+- 静态检查完成：`git diff --check -- Assets/Scripts/BattleScene/Controller/BattleButton.cs` 无格式错误，仅保留 Unity/Windows 行尾提示。
+- 验证完成：Unity 脚本刷新/编译后 Console 无 error；相关战斗 EditMode 测试通过 19/19；全量 EditMode 测试通过 235/235。
+- 下一步建议：继续把命中流程抽成独立 hit resolution/dispatcher 服务前，先补一组 EditMode 测试锁定命中成功、Miss、0 伤害、单方面攻击受击遗物的触发顺序。
+
+## 2026-04-29 - Relic System Refactor Stage 62
+
+- 继续按低风险切片收窄 `BattleButton` 的成功命中副作用调度，把遗物处理与技能/状态触发处理再拆开一层。
+- 新增 `ApplyAllySuccessfulHitRelics` / `ApplyEnemySuccessfulHitRelics`，分别承接友方命中遗物、击杀遗物与敌方单方面攻击命中时玩家受击遗物。
+- 新增 `ApplyAllySuccessfulHitSkillEffects` / `ApplyEnemySuccessfulHitSkillEffects`，承接 `OnSingleAttack`、`OnClashWin`、`OnHit` 即时词条、响应式受击状态与状态施加调度。
+- `ApplyAllySuccessfulHitEffects` / `ApplyEnemySuccessfulHitEffects` 现在只负责按原顺序串联遗物处理与技能/状态触发处理，行为顺序保持不变。
+- 静态检查完成：`git diff --check -- Assets/Scripts/BattleScene/Controller/BattleButton.cs` 无格式错误，仅保留 Unity/Windows 行尾提示。
+- 本地 C# 编译完成：`dotnet build Assembly-CSharp.csproj --no-restore` 0 error（保留既有未赋值 warning）；`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 0 error。
+- 验证限制：当前会话未暴露可用 Unity MCP 工具入口，因此本轮未能补跑 Unity EditMode；MCP 恢复后应优先跑相关战斗测试与全量 EditMode。
+- 下一步建议：MCP 恢复后补跑测试；若继续低风险重构，可以把命中副作用拆层迁往独立 dispatcher 前，先增加覆盖触发顺序的 EditMode 测试。
+
+## 2026-04-29 - Relic System Refactor Stage 63
+
+- 继续按低风险切片收窄 `BattleButton` 的命中流程，把 `TakeDamage` 后的结果分派抽成 outcome helper。
+- 新增 `ApplyAllyHitOutcome` / `ApplyEnemyHitOutcome`，统一处理 0 伤害反馈、成功命中副作用分派与 Miss 分派，保持原有顺序：0 伤害先弹字，正伤害走成功命中并 return，否则触发 Miss。
+- `ApplyAllyHit` / `ApplyEnemyHit` 现在只负责前置校验、伤害修正、`TakeDamage` 与 outcome 分派，进一步接近纯流程编排。
+- 静态检查完成：`git diff --check -- Assets/Scripts/BattleScene/Controller/BattleButton.cs` 无格式错误，仅保留 Unity/Windows 行尾提示。
+- 本地 C# 编译完成：`dotnet build Assembly-CSharp.csproj --no-restore` 0 error（保留既有未赋值 warning）；`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 0 error。
+- 验证限制：当前会话未暴露可用 Unity MCP 工具入口，因此本轮未能补跑 Unity EditMode；MCP 恢复后应优先跑相关战斗测试与全量 EditMode。
+- 下一步建议：在 MCP 恢复后补跑测试；继续重构时可以开始把命中流程迁向独立 resolution/dispatcher 服务，但迁出前最好先补触发顺序测试。
+
+## 2026-04-29 - Relic System Refactor Stage 64
+
+- 继续收窄 `BattleButton` 的命中结果分派，新增纯数据计划 `BattleHitOutcomePlan` 与 `BattleHitOutcomePlanService`，把 `dealtDamage` 映射为 0 伤害反馈、成功命中副作用、Miss 副作用三个明确布尔决策。
+- `ApplyAllyHitOutcome` / `ApplyEnemyHitOutcome` 已接入 `BattleHitOutcomePlanService.Resolve`，原行为顺序保持不变：非正伤害先显示 0 伤害反馈，正伤害执行成功命中副作用并 return，非正伤害继续触发 Miss。
+- 新增 `Assets/Tests/EditMode/Editor/BattleHitOutcomePlanServiceTests.cs`，覆盖正伤害、0 伤害与负伤害三类结果计划。注意：当前 Unity 生成的 csproj 尚未收录新测试文件，需 MCP/Unity 导入后实际运行。
+- 暂时将 `BattleHitOutcomePlanService` 放在已被 csproj 收录的 Shared 源文件中，以便本地 C# 编译能覆盖生产代码；Unity MCP 恢复并重新生成项目后，可再拆成独立 `BattleHitOutcomePlanService.cs` 文件。
+- 静态检查完成：`git diff --check -- Assets/Scripts/BattleScene/Controller/BattleButton.cs Assets/Scripts/Shared/BattleSingleAttackPresentationPlanService.cs Assets/Tests/EditMode/Editor/BattleHitOutcomePlanServiceTests.cs` 无格式错误，仅保留 Unity/Windows 行尾提示。
+- 本地 C# 编译完成：`dotnet build Assembly-CSharp.csproj --no-restore` 0 error（保留既有未赋值 warning）；`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 0 error。
+- 验证限制：当前 Unity MCP 资源握手仍失败，返回 `Unexpected content type: missing-content-type`；因此本轮未能跑 Unity EditMode。
+- 下一步建议：先恢复 MCP 并导入新测试文件，跑 `BattleHitOutcomePlanServiceTests`、相关战斗测试和全量 EditMode；之后再考虑把 hit outcome / successful hit effects 迁出到独立 dispatcher 文件。
+
+## 2026-04-29 - 遗物系统重构 Stage 65
+
+- 恢复 Unity MCP 后补齐 Stage 64 的 Unity 导入与测试验证：脚本强制刷新/编译完成，Console 0 error，命中结果计划相关定向测试通过 22/22。
+- 将 `BattleHitOutcomePlan` 与 `BattleHitOutcomePlanService` 从临时放置的 `BattleSingleAttackPresentationPlanService.cs` 拆到独立文件 `Assets/Scripts/Shared/BattleHitOutcomePlanService.cs`，职责边界更清晰。
+- 新增 `BattleSuccessfulHitSkillEffectPlanService`，用纯数据计划锁定成功命中后的技能词条触发顺序：单方面攻击为 `OnSingleAttack -> OnClashWin -> OnHit`，拼点命中为 `OnClashWin -> OnHit`；友方与敌方成功命中技能触发现在共用同一份计划。
+- 新增 `BattleSuccessfulHitRelicPlanService`，用纯数据计划描述成功命中后的遗物副作用条件：玩家命中、击杀敌人、玩家受到单方面攻击三类条件分离，实际遗物调用仍保留在 `BattleButton`。
+- 新增对应 EditMode 测试：`BattleSuccessfulHitSkillEffectPlanServiceTests` 与 `BattleSuccessfulHitRelicPlanServiceTests`，覆盖触发顺序和遗物条件分支。
+- 静态检查完成：本轮相关文件 `git diff --check` 无格式错误，仅保留 Unity/Windows 行尾提示。
+- 验证完成：新增/相关定向测试通过 9/9；全量 EditMode 测试通过 244/244；Unity Console 0 error。
+- 下一步建议：在已有 plan 测试保护下，继续把 `ApplyAllySuccessfulHitEffects` / `ApplyEnemySuccessfulHitEffects` 迁向独立 dispatcher，或先补一组更细的触发顺序集成测试后再迁出真实副作用。
+
+## 2026-04-29 - 遗物系统重构 Stage 66
+
+- 继续收窄 `BattleButton` 的命中结果与成功命中副作用调度，保持真实伤害、遗物、状态和词条执行函数不改变，仅迁出调度顺序。
+- 按 TDD 新增 `BattleSuccessfulHitEffectDispatcherTests`，先确认 RED：测试因缺少 `BattleSuccessfulHitEffectDispatcher` 编译失败；随后新增 `Assets/Scripts/Shared/BattleSuccessfulHitEffectDispatcher.cs` 并接入 `BattleButton`。
+- `BattleSuccessfulHitEffectDispatcher` 现在集中串联成功命中后的遗物计划与技能/状态计划，锁定顺序为：遗物副作用先执行，再执行 immediate 词条、响应式受击状态、状态施加词条。
+- 按 TDD 新增 `BattleHitOutcomeDispatcherTests`，先确认 RED：测试因缺少 `BattleHitOutcomeDispatcher` 编译失败；随后新增 `Assets/Scripts/Shared/BattleHitOutcomeDispatcher.cs` 并接入 `ApplyAllyHitOutcome` / `ApplyEnemyHitOutcome`。
+- `BattleHitOutcomeDispatcher` 现在集中处理命中结果分派：0/负伤害先显示 0 伤害反馈并触发 Miss，正伤害执行成功命中副作用并 return，保持 Stage 64 锁定的历史行为。
+- `BattleButton` 中删除了成功命中遗物/技能 helper 的中间层，改为在成功命中入口直接生成 plan 并委托 dispatcher 执行，类内职责进一步收敛到流程编排与真实副作用函数。
+- 静态检查完成：本轮相关文件 `git diff --check` 无格式错误，仅保留 Unity/Windows 行尾提示。
+- 验证完成：新增/相关定向测试通过 13/13；全量 EditMode 测试通过 248/248；Unity Console 0 error。
+- 下一步建议：继续沿同一方向迁出 `ResolveAllyHitDamage` / `ResolveEnemyHitDamage` 的伤害修正管线，或先补命中伤害修正顺序测试，再把输入构建和 Relic context 创建从 `BattleButton` 中分离。
+
+## 2026-04-29 - 遗物系统重构 Stage 67
+
+- 抽出命中伤害修正中的 flat/percent 计算公式，新增 `BattleDamageModifierCalculationService`。
+- 覆盖 incoming reduction 与 outgoing bonus 的加法、百分比、四舍五入与下限钳制规则。
+- `BattleButton` 中玩家造成伤害、玩家受到普通攻击伤害、玩家受到单方面攻击伤害三处重复公式已改为调用该服务。
+- 定向验证：`BattleDamageModifierCalculationServiceTests` 通过 4/4，Unity Console 0 error。
+
+## 2026-04-29 - 遗物系统重构 Stage 68
+
+- 抽出伤害修正后的遗物反馈判断，新增 `BattleDamageModifierFeedbackPlanService`。
+- incoming 仅在最终伤害降低时 flush 反馈；outgoing 仅在最终伤害提高时 flush 反馈，保持原行为。
+- `BattleButton` 三处伤害修正 helper 已统一使用反馈 plan。
+- 定向验证：伤害计算与反馈计划相关测试通过 6/6，Unity Console 0 error。
+
+## 2026-04-29 - 遗物系统重构 Stage 69
+
+- 抽出战斗遗物库存可用性判断，新增 `BattleEncounterRelicAvailabilityService`。
+- 替换伤害修正、死亡遗物、命中遗物、受单方面攻击遗物、击杀遗物中的重复 encounter/relicInventory 空引用与 Count 检查。
+- 定向验证：库存可用性、伤害计算、反馈计划相关测试通过 8/8，Unity Console 0 error。
+
+## 2026-04-29 - 遗物系统重构 Stage 70
+
+- 抽出伤害修正用 `RelicExecutionContext` 构建逻辑，新增 `BattleDamageModifierContextFactory`。
+- 玩家即将受到普通攻击、玩家即将受到单方面攻击、玩家即将造成伤害三类 context 创建已从 `BattleButton` 迁出。
+- 定向验证：context factory 与伤害修正相关测试通过 11/11，Unity Console 0 error。
+
+## 2026-04-29 - 遗物系统重构 Stage 71
+
+- 抽出“context 修正后最终伤害 + 反馈计划”的组合结果，新增 `BattleDamageModifierResolutionService`。
+- `BattleButton` 不再直接读取 context 的 flat/percent 字段组合伤害，而是通过 resolution 获取最终伤害与反馈计划。
+- 定向验证：resolution、context factory、伤害计算与反馈计划相关测试通过 11/11，Unity Console 0 error。
+
+## 2026-04-29 - 遗物系统重构 Stage 72
+
+- 抽出“resolve 伤害 + 根据反馈计划 flush + 返回伤害”的分派，新增 `BattleDamageModifierResolutionDispatcher`。
+- 三条伤害修正路径中的 resolution/flush/return 重复块已迁出，`BattleButton` 只传入真实反馈函数。
+- 定向验证：resolution dispatcher 与伤害修正相关测试通过 13/13，Unity Console 0 error。
+
+## 2026-04-29 - 遗物系统重构 Stage 73
+
+- 抽出敌方命中玩家时的伤害管线计划，新增 `BattleEnemyHitDamagePipelinePlanService`。
+- 锁定顺序：灾厄修正 -> 玩家受到普通攻击遗物修正 -> 如果是单方面攻击则追加玩家受到单方面攻击遗物修正。
+- `ResolveEnemyHitDamage` 改为按 plan 执行原有步骤。
+- 定向验证：敌方命中伤害管线计划与伤害修正相关测试通过 6/6，Unity Console 0 error。
+
+## 2026-04-29 - 遗物系统重构 Stage 74
+
+- 抽出敌方命中伤害管线调度，新增 `BattleEnemyHitDamagePipelineDispatcher`。
+- `ResolveEnemyHitDamage` 中的循环/switch 已迁出，`BattleButton` 只传入 calamity、incoming attack relic、incoming single attack relic 三个实际步骤函数。
+- 定向验证：敌方命中伤害管线 dispatcher/plan 测试通过 3/3，Unity Console 0 error。
+
+## 2026-04-29 - 遗物系统重构 Stage 75
+
+- 为友方命中敌人建立对称的伤害管线计划，新增 `BattleAllyHitDamagePipelinePlanService`。
+- 当前计划只包含玩家造成伤害遗物修正一步，明确保留后续拓展点。
+- `ResolveAllyHitDamage` 改为先生成 plan 再执行步骤。
+- 定向验证：友方命中伤害管线计划测试通过 1/1，Unity Console 0 error。
+
+## 2026-04-29 - 遗物系统重构 Stage 76
+
+- 抽出友方命中伤害管线调度，新增 `BattleAllyHitDamagePipelineDispatcher`。
+- `ResolveAllyHitDamage` 中的循环/switch 已迁出，`BattleButton` 只传入玩家造成伤害遗物修正函数。
+- 定向验证：友方/敌方命中伤害管线 dispatcher/plan 测试通过 5/5，Unity Console 0 error。
+
+## 2026-04-29 - 遗物系统重构 Stage 77
+
+- 抽出 0 伤害弹字数据计划，新增 `BattleZeroDamageFeedbackPlanService`。
+- 0 伤害位置仍为角色中心上方 1.4，伤害值固定为 0，并保留攻击方向与伤害倍率修正显示参数。
+- `ShowZeroDamageHitFeedback` 改为先生成 plan 再交给反馈系统。
+- 定向验证：0 伤害反馈 plan 与命中结果相关测试通过 6/6，Unity Console 0 error。
+
+## 2026-04-29 - 遗物系统重构 Stage 78
+
+- 抽出 0 伤害弹字分派，新增 `BattleZeroDamageFeedbackDispatcher`。
+- `ShowZeroDamageHitFeedback` 现在只负责拿角色中心、生成 plan，并把真实弹字调用作为回调传给 dispatcher。
+- 定向验证：0 伤害反馈 dispatcher/plan 测试通过 2/2，Unity Console 0 error。
+
+## 2026-04-29 - 遗物系统重构 Stage 79
+
+- 抽出 Miss 副作用计划，新增 `BattleMissEffectPlanService`。
+- 明确锁定 Miss 分支只触发 `OnMiss`，友方与敌方 Miss helper 共用同一 plan。
+- 定向验证：Miss plan 与命中结果相关测试通过 3/3，Unity Console 0 error。
+
+## 2026-04-29 - 遗物系统重构 Stage 80
+
+- 抽出 Miss 副作用分派，新增 `BattleMissEffectDispatcher`。
+- `ApplyAllyMissEffects` / `ApplyEnemyMissEffects` 现在只生成 Miss plan，并把真实 ally/enemy triggered effects 调用作为回调传给 dispatcher。
+- 本轮最终静态检查完成：Stage 67-80 相关文件 `git diff --check` 无格式错误，仅保留 Unity/Windows 行尾提示。
+- 本轮最终验证完成：全量 EditMode 测试通过 273/273；Unity Console 0 error。
+- 下一步建议：继续从 `BattleButton` 迁出 `ApplyPlayerHitRelics`、`ApplyPlayerTookSingleAttackRelics`、`ApplyEnemyKilledByPlayerRelics` 的 context factory / dispatcher，或者转向更大的 `ApplyAllyImmediateTriggeredEffects` / `ApplyEnemyImmediateTriggeredEffects` 词条管线拆分。
+
+## 2026-04-29 - 遗物系统重构 Stage 81-83
+
+- 从 `BattleButton` 继续迁出战斗遗物事件键、命中上下文与通用遗物处理调度，新增 `BattleRelicEventKeyService`、`BattleHitRelicContextFactory`、`BattleRelicProcessDispatcher`。
+- 已迁移玩家受到单方面攻击、玩家命中、玩家击杀敌人、玩家防御拼点胜利四类遗物触发入口，保持原触发时机与反馈 flush 逻辑不变。
+- 新增对应 EditMode 测试覆盖事件键、命中上下文与 dispatcher 回调顺序。
+
+## 2026-04-29 - 遗物系统重构 Stage 84-87
+
+- 新增 `BattleDeathRelicContextFactory`，迁出玩家死亡遗物与敌方死亡遗物的 context 构建逻辑。
+- 新增 `BattleImmediateEffectPlanService` 与 `BattleImmediateEffectDispatcher`，把友方/敌方 immediate 词条触发条件与真实副作用调度拆开。
+- 对 death context、immediate plan 与 dispatcher 增加 EditMode 覆盖，降低后续迁出真实词条副作用的风险。
+
+## 2026-04-29 - 遗物系统重构 Stage 88-92
+
+- 新增 `BattleTriggeredEffectPlanService` 与 `BattleTriggeredEffectDispatcher`，迁出友方/敌方普通触发词条的计划与调度。
+- 新增 `BattleTargetSelectionService`，替换动态/静态目标选择中的重复随机逻辑。
+- 新增 `BattleExperienceRewardService` 与 `BattleRunStateCloneService`，迁出胜利经验基础值、格子倍率、战利品/遗物状态克隆。
+- 相关定向 EditMode 测试均已补齐并通过。
+
+## 2026-04-29 - 遗物系统重构 Stage 93-101
+
+- 新增 `BattleSettlementLootEntryBuilder`、`BattleLivingCountService`、`BattleEliteRelicChoiceUtility`、`BattleCollectionCloneService`，继续迁出结算条目、存活计数、精英遗物选择 fallback 与集合克隆。
+- 新增 `BattleRelicInventorySetBuilder` 与 `BattleSettlementRelicChoiceBuilder`，迁出已拥有遗物集合构建和结算三选一遗物数据构建。
+- 到 Stage 101 为止，`BattleButton` 中的战斗奖励结算路径已经明显收窄，精英三选一相关数据构建也有独立测试保护。
+
+## 2026-04-29 - 遗物系统重构 Stage 102-105
+
+- 按 TDD 追加 `BattleEncounterLootUtilityTests` 与 `BattleRewardSortServiceTests`，先确认 RED：缺少 `BattleEncounterLootUtility` 与 `BattleRewardSortService`。
+- 新增 `BattleEncounterLootUtility`，迁出遭遇掉落随机种子盐值与 override 掉落表判定，避免 `BattleButton.RollEncounterDrops` 继续保存散落常量。
+- 新增 `BattleRewardSortService`，统一战利品与遗物奖励排序逻辑；奖励对象本身为 `null` 时排最后，数据为空的无效奖励排在有效奖励之后但仍早于真正的 `null` 对象。
+- `BattleButton.RollEncounterDrops` 已改为调用上述两个服务，三处重复 sort lambda 已删除。
+- 验证完成：目标 EditMode 测试 `BattleEncounterLootUtilityTests`、`BattleRewardSortServiceTests` 通过 4/4；全量 EditMode 通过 307/307；Unity Console 0 error。
+- 下一步建议：进入 Stage 106+ 时优先拆 `TryBuildEliteRelicChoice`、`ResolveEliteRelicChoiceFallbackTable`、`TryBuildEditorEliteRelicChoiceFromAssets` 这组三选一遗物构建逻辑，进一步把奖励结算从 `BattleButton` 迁出。
+
+## 2026-04-29 - 遗物系统重构 Stage 106-110
+
+- 继续收窄 `BattleButton.RollEncounterDrops`：新增 `BattleEliteRelicChoiceBuilderService`、`BattleLootDropRollService`、`BattleRelicDropRollService`、`BattleBonusLootRewardService`。
+- 精英战三选一遗物构建、普通 loot 聚合、relic 掉落聚合、遗物追加战利品奖励循环已经从 `BattleButton` 迁出；`BattleButton` 仅保留 encounter 上下文、真实遗物处理回调和结果承接。
+- 新增并通过对应 EditMode 测试：三选一构建、loot 掉落、relic 掉落、bonus loot 合并与排序。
+
+## 2026-04-29 - 遗物系统重构 Stage 111-115
+
+- 新增 `BattleSettlementDataFactory` 与 `BattleEncounterResolutionWriter`，拆出战斗结算面板数据构建和 `BattleEncounterData` 结算写回。
+- 强制撤退结算与普通胜负结算现在通过服务写回 resolved party / loot / relics，并通过 factory 生成 overlay payload。
+- 处理过程中发现 `BattleButton.cs` 存在历史非 UTF-8 文本，曾在一次删除乱码块时触发编码损伤；已恢复编译并清理本轮影响到的可见乱码字符串。
+
+## 2026-04-29 - 遗物系统重构 Stage 116-120
+
+- 新增 `BattleSharedEnergyReservationService`，拆出共享能量预留、技能选择最低能耗、角色可用能量计算。
+- 新增 `BattleSharedEnergyHudService`，拆出共享能量 HUD 文本与能量条填充比例计算。
+- `BattleButton` 的共享能量逻辑进一步收窄，UI 真实创建和事件顺序暂时保留在原类中。
+
+## 2026-04-29 - 遗物系统重构 Stage 121-125
+
+- 新增 `BattleEnemySkillEffectLabelService`，统一敌人技能词条 fallback 标签生成，修复并迁出一处内建效果标签乱码。
+- 新增 `BattleStatusStackOperationService`，拆出状态层数减少/清空的数值归一化与日志动作描述。
+- 此阶段只迁出纯逻辑，真实状态读取、移除、清空和 BattleLog 调度仍保留在 `BattleButton`，避免一次性搬动副作用顺序。
+
+## 2026-04-29 - 遗物系统重构 Stage 126-130
+
+- 新增 `BattleStatusBurstDamageService`，拆出状态爆发伤害计算，四条状态爆发路径改为调用统一服务。
+- 本轮最终 `BattleButton.cs` 约 4555 行，较 Stage 105 的约 4687 行继续下降；`Assets/Scripts/Shared` 中 `Battle*.cs` 服务约 65 个。
+- 验证完成：全量 EditMode 通过 339/339；Unity Console 0 error；`git diff --check` 无格式错误，仅保留 Unity/Windows 行尾提示。
+- 下一步建议：Stage 131+ 继续拆 `ApplyAllyHealingEffects` / `ApplyEnemyHealingEffects` 的目标选择与治疗量解析，随后再拆状态施加/延迟状态调度；不要直接拆 coroutine 状态机。
+
+## 2026-04-29 - 遗物系统重构 Stage 131-135
+
+- 继续收窄 `BattleButton` 中治疗词条的规则计算，新增 `BattleHealingEffectResolutionService`，将治疗触发匹配、治疗条件判断、固定治疗、伤害转治疗、按状态层数治疗、状态层数 fallback 规则迁出为纯服务。
+- 新增 `BattleHealingStatusStackSourceService`，将“治疗量按谁的状态层数计算”的来源选择迁出，包括 `Self` 读取自身层数、非 `Self` 通过目标选择结果读取第一个目标层数、无目标返回 0。
+- `ApplyAllyHealingEffects` / `ApplyEnemyHealingEffects` 仍保留真实目标选择、`Heal` 调用与战斗日志，避免本阶段改变副作用顺序；`BattleButton` 现在只通过小 wrapper 把真实角色状态查询委托给新服务。
+- 新增 EditMode 测试：`BattleHealingEffectResolutionServiceTests` 与 `BattleHealingStatusStackSourceServiceTests`，覆盖固定治疗、负数钳制、伤害转治疗、按层数治疗、状态资产优先级、Burn fallback、速度条件、触发时机与层数来源选择。
+- 当前 `BattleButton.cs` 约 5250 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 67 个；行数仍偏高，但治疗规则计算已经从主流程中拆出一层。
+- 验证完成：治疗相关定向 EditMode 通过 12/12；全量 EditMode 通过 351/351；Unity Console 0 error。本切片触碰的代码/测试文件 `git diff --check` 无格式错误，仅保留 CRLF 提示；全局 `git diff --check` 仍受既有资源/场景文件 trailing whitespace 影响。
+- 下一步建议：Stage 136-140 继续拆状态解析与状态施加前置计划，优先迁出多组 `TryResolveStatus`、状态 ID/显示名 fallback、延迟状态日志与免疫阻挡日志，仍不要直接移动 coroutine 状态机和真实 `AddStatus` 副作用。
+
+## 2026-04-29 - 遗物系统重构 Stage 136-160
+
+- Stage 136-140：新增 `BattleStatusResolutionService`，将普通状态、状态爆发、状态层数操作的 `statusData` 优先级与 Burn fallback 解析迁出；新增 `BattleStatusApplicationLogService`，将延迟施加状态与免疫阻挡日志迁出；新增 `BattleStatusApplicationPlanService`，统一状态施加层数、延迟回合与重复次数的钳制规则。
+- Stage 141-145：新增 `BattleStatusEffectEligibilityService`，将状态词条的触发时机、层数大于 0、conditionalOnly 分桶判断从 `ApplyAllyStatusEffectsOnly` / `ApplyEnemyStatusEffectsOnly` 中迁出；真实 `AddStatus`、`QueueStatusForRoundStart`、遗物修正与 BattleLog 调度仍保留在 `BattleButton`，未改变副作用顺序。
+- Stage 146-150：新增 `BattleEnemyBuiltInEffectEligibilityService`，将敌人 built-in effect 的触发时机与基础有效性判断迁出，包括 Heal/Damage 需要正数 amount、ApplyStatus 需要正数 statusStackAmount、TransferRandomNegativeStatus 需要 amount 或 fallbackAmount 为正。
+- Stage 151-155：新增 `BattleStatusTickLogService`，将反应式受击状态、回合开始状态伤害、速度提升/降低、追加状态层数日志迁出；由于 `BattleButton.cs` 存在历史非 UTF-8 乱码，部分乱码日志行使用 Unity MCP 精确行列编辑替换，避免整文件重写造成编码污染。
+- Stage 156-160：新增 `BattleAllyProgressionService`，将结算经验推进、升级、升级后按新最大生命值 50% 治疗、最终 HP/EXP 钳制规则迁出；`EvaluateAllyProgression` 现在只负责从 Unity 组件采集角色/武器/初始数值并映射服务结果，未使用的 `ApplyExperienceProgression` helper 已删除。
+- 新增 EditMode 测试：`BattleStatusResolutionServiceTests`、`BattleStatusApplicationLogServiceTests`、`BattleStatusApplicationPlanServiceTests`、`BattleStatusEffectEligibilityServiceTests`、`BattleEnemyBuiltInEffectEligibilityServiceTests`、`BattleStatusTickLogServiceTests`、`BattleAllyProgressionServiceTests`。
+- 当前 `BattleButton.cs` 约 5145 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 74 个。相比 Stage 135 的约 5250 行继续下降，但 `BattleButton` 仍然偏大，后续应继续优先拆真实状态施加 dispatcher、built-in 真实分支和结算数据构建。
+- 验证完成：新增/相关定向测试均通过；全量 EditMode 通过 373/373；Unity Console 0 error；本轮触碰代码/测试文件 `git diff --check` 无格式错误，仅保留 CRLF 提示。全局 `git diff --check` 仍可能受既有资源/场景文件 trailing whitespace 影响。
+- 下一步建议：进入 Stage 161+ 时不要急着拆 coroutine 状态机，优先把 `ApplyResolvedStatusEffect` 的真实副作用包装成 dispatcher 回调接口，然后再处理 `ApplyEnemyBuiltInHealingEffect` / `DamageEffect` / `StatusEffect` / `TransferEffect` 四个真实分支。
+
+## 2026-04-29 - 遗物系统重构 Stage 161-170
+
+- Stage 161：新增 `BattleStatusApplicationDispatcher`，将状态施加的延迟/立即分派从 `ApplyResolvedStatusEffect` 中迁出；真实 `QueueStatusForRoundStart`、`AddStatus`、免疫阻挡日志仍通过回调执行，未改变副作用顺序。
+- Stage 162：新增 `BattleEnemyBuiltInEffectLogService`，迁出敌人 built-in heal、damage、transfer 的日志文本；由于 `BattleButton.cs` 仍有历史非 UTF-8 乱码，相关日志行使用 Unity MCP 精确行列编辑替换，避免整文件重写。
+- Stage 163：新增 `BattleEnemyBuiltInStatusLogService`，并让 `ApplyEnemyBuiltInStatusToEnemy` / `ApplyEnemyBuiltInStatusToAlly` 复用 `BattleStatusApplicationPlanService` 与 `BattleStatusApplicationDispatcher`，统一 built-in status 的立即/延迟施加分派和日志生成。
+- Stage 164：新增 `BattleEnemyBuiltInTransferService`，将可转移负面状态白名单与过滤逻辑从 `BattleButton` 迁出；真实随机选择、RemoveStatusStacks、AddStatus 与 fallback 自加状态时机仍保留在原流程。
+- Stage 165：新增 `BattleStatusTickPlanService`，迁出 round start tick 的可见效果过滤与 tick 特效播放判断。
+- Stage 166：新增 `BattleStatusFlowTargetService`，迁出 round end 状态消费前的非空/存活过滤判断。
+- Stage 167：新增 `BattleStatusGrantEligibilityService`，迁出 battle start ally grant 与 enemy status gain 的 `statusData != null && stacks > 0` 判断。
+- Stage 168：新增 `BattleSettlementPartyMemberFactory`，将 `RunPartyMemberState` 和 `BattleSettlementEntry` 的字段映射从 `BattleButton` 迁出。
+- Stage 169：新增 `BattleEncounterDropContextService`，迁出 elite 三选一遗物开关与 choice count 钳制规则，继续收窄 `RollEncounterDrops` 的 glue 逻辑。
+- 新增 EditMode 测试：`BattleStatusApplicationDispatcherTests`、`BattleEnemyBuiltInEffectLogServiceTests`、`BattleEnemyBuiltInStatusLogServiceTests`、`BattleEnemyBuiltInTransferServiceTests`、`BattleStatusTickPlanServiceTests`、`BattleStatusFlowTargetServiceTests`、`BattleStatusGrantEligibilityServiceTests`、`BattleSettlementPartyMemberFactoryTests`、`BattleEncounterDropContextServiceTests`。
+- 当前 `BattleButton.cs` 约 5130 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 83 个。相比 Stage 160 的约 5145 行小幅下降；本阶段重点是迁出副作用周边规则和日志，不追求大幅删行。
+- 验证完成：全量 EditMode 通过 392/392；Unity Console 0 error；本轮触碰代码/测试文件 `git diff --check` 无格式错误，仅保留 CRLF 提示。全局 `git diff --check` 仍可能受既有资源/场景文件 trailing whitespace 影响。
+- 下一步建议：Stage 171+ 可以继续压缩推进，优先拆 `ApplyEnemyBuiltInTransferEffect` 的随机选择计划、`ApplyRoundStartStatusEffectsGeneric` 的 ally/enemy 重复循环，以及 `BuildResolvedPartyStates` / `BuildSettlementEntries` 对 `EvaluateAllyProgression` 的重复调用。
+
+## 2026-04-29 - 遗物系统重构 Stage 171-175
+
+- Stage 171：为敌人 built-in 负面状态转移新增 `BattleEnemyBuiltInTransferPlan` 与 `ResolveTransferPlan`，把可转移状态、目标索引随机选择和转移层数 clamp 从 `BattleButton` 迁出；真实随机源通过回调注入，便于测试。
+- Stage 172：新增 `BattleEnemyBuiltInTransferDispatcher`，把 transfer 的 remove/add/log 成功路径改成 callback dispatcher；`BattleButton` 仍保留真实 `RemoveStatusStacks`、`AddStatus` 和战斗日志副作用。
+- Stage 173：新增 `BattleStatusTickDispatcher`，统一 round-start status tick 的 presentation、tick 特效、伤害/速度/追加状态日志回调顺序；`ApplyRoundStartStatusEffectsGeneric` 的 ally/enemy tick 内层重复循环已收敛到同一个 helper。
+- Stage 174：新增 `BattleStatusGrantDispatcher`，将 battle-start ally status grant 的 grant 过滤、目标过滤、AddStatus 成功后日志调度迁出；`activeEncounter.battleStartAllyStatusGrantsApplied` 写回仍留在 `BattleButton`。
+- Stage 175：新增 `BattleEnemyStatusGainDispatcher`，迁出 enemy status gains 的 entry 过滤、AddStatus、current stacks 查询和日志回调调度；`ApplyEnemyStatusGains` 现在只提供真实 enemy 副作用函数。
+- 验证完成：本轮新增/相关定向 EditMode 测试通过 12/12；全量 EditMode 通过 399/399；Unity Console 0 error；触碰代码文件 `git diff --check` 无格式错误，仅保留 Unity/Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 5090 行。下一步建议继续 Stage 176+：优先解决结算路径中 `BuildResolvedPartyStates` / `BuildSettlementEntries` 重复调用 `EvaluateAllyProgression`，随后再拆 `RollEncounterDrops` 剩余 glue；暂不建议碰 round-start 阶段切换乱码日志，除非先统一文本编码策略。
+
+## 2026-04-29 - 遗物系统重构 Stage 176-190
+
+- Stage 176-177：将 `BattleButton` 私有的结算经验推进结果迁出为共享 `BattleSettlementPartyProgression`，并让强制撤退/正常结算先一次性生成 party progressions，再分别映射 run state 与 settlement entry，避免 `EvaluateAllyProgression` 重复执行。
+- Stage 178-180：扩展 `BattleSettlementPartyMemberFactory`，新增批量 `BuildRunStates` / `BuildSettlementEntries`，让结算路径的字段映射集中在 factory 中；删除 `BattleButton` 内部的纯转发映射 helper。
+- Stage 181-183：新增 `BattleRewardAggregationService`，将掉落聚合 dictionary 转换为 `RunLootState` / `RunRelicState` 并排序的逻辑从 `RollEncounterDrops` 迁出。
+- Stage 184-186：扩展 `BattleEliteRelicChoiceBuilderService`，迁出 elite 三选一遗物 fallback 表选择与“构建成功后写回 choiceData”的通用逻辑；删除 `BattleButton.TryBuildEliteRelicChoice` 小 helper。
+- Stage 187-188：清理 `BattleButton` 中已无调用的 `CloneLootTables`、`BuildResolvedPartyStates`、`BuildSettlementEntries`、`BuildSettlementLootEntries` 等转发层，减少无意义中间层。
+- Stage 189-190：完成验证检查。本轮新增/相关定向 EditMode 测试通过 25/25；全量 EditMode 通过 404/404；Unity Console 0 error；触碰代码文件 `git diff --check` 无格式错误，仅保留 Unity/Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4986 行。下一阶段建议进入 Stage 191+：优先拆 `ResolveEliteRelicChoiceFallbackTable` 中的 Editor AssetDatabase fallback、round-start 状态驱动阶段切换日志/计划，以及 healing/status burst/stack operation 的真实副作用 dispatcher；这些切片风险高于本轮，需要继续保持小步测试保护。
+
+## 2026-04-29 - 遗物系统重构 Stage 191-200
+
+- Stage 191-193：扩展 `BattleEliteRelicChoiceBuilderService`，把 Editor fallback 遗物表候选筛选与从全量遗物资产构建 elite 三选一选择数据迁出 `BattleButton`；`BattleButton` 只保留 AssetDatabase 读取与结果写回委托。
+- Stage 194-196：扩展 `BattleStatusFlowTargetService`，把回合开始状态驱动阶段切换的目标可处理判断与阶段切换日志文本迁出，减少 `BattleButton` 中的条件重复。
+- Stage 197-199：新增 `BattleHealingEffectDispatcher`，把技能治疗的“实际治疗量 > 0 才记录日志”规则从友方/敌方四条治疗路径迁出；`BattleButton` 仍负责目标选择、Heal 回调和 BattleLog 闭包。
+- Stage 200：完成本轮验证。`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 通过（仅既有 CS0649 警告）；目标 EditMode 测试通过 22/22；全量 EditMode 测试通过 410/410；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4996 行。下一阶段建议继续处理 healing/status stack operation/status burst 附近的剩余副作用管线，优先把“计划生成”和“真实副作用执行”分开，避免继续在 `BattleButton` 内增加分支。
+
+## 2026-04-29 - 遗物系统重构 Stage 201-210
+
+- Stage 201-203：扩展 `BattleStatusStackOperationService`，新增 `BattleStatusStackOperationDispatcher`，把状态层数操作的 clear/reduce、减少数量钳制、affectedStacks > 0 才记录日志的规则从 `BattleButton` 四条路径迁出；真实 `GetStatusStacks` / `RemoveStatusStacks` / `ClearStatus` / `BattleLog` 仍通过回调执行。
+- Stage 204-206：扩展 `BattleStatusBurstDamageService`，新增 `BattleStatusBurstDispatcher`，统一状态爆发的基础伤害计算、伤害修正回调、TakeDamage、可选清层和日志调度；玩家对敌、敌人对玩家、友方自伤、敌方自伤四条路径共用同一分发规则。
+- Stage 207-208：新增 `BattleEnemyStageTransitionEffectService`，迁出敌人阶段切换词条的触发门禁与 NextRoundStart 判断；`BattleButton` 只保留 `TryTransitionToStage` 与日志副作用。
+- Stage 209-210：新增 `BattleSummonEffectService`，迁出召唤词条的触发门禁、召唤数量钳制和标签 fallback；`BattleButton` 仍负责实际 Spawn、计数、刷新敌人列表和绑定反馈系统。
+- 验证完成：`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 通过（仅既有 CS0649 警告）；本轮定向 EditMode 测试通过 14/14；全量 EditMode 测试通过 419/419；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4957 行。下一阶段建议继续压缩 `ApplyAllyStatusEffectsOnly` / `ApplyEnemyStatusEffectsOnly` 的 self-target 分支重复，以及将状态解析 + 计划生成 + 分发的组合封装成更窄的 status application facade。
+
+## 2026-04-29 - BattleButton 重构收束 Stage 211-230
+
+- Stage 211-214：新增 `BattleStatusEffectApplicationService`，把状态施加的状态解析、应用计划生成和立即施加日志文本从 `BattleButton` 迁出；友方/敌方 self-target 状态分支和 `ApplyResolvedStatusEffect` 两条路径已改为复用同一 facade。
+- Stage 215-217：新增 `BattleRelicBridge`，统一 `HasBattleRelics`、relic context process 和反馈 flush 的入口；玩家受击/命中/击杀/防御拼点胜利、玩家死亡、敌人死亡、伤害修正等遗物入口已切到桥接层。
+- Stage 218-220：新增 `BattleComponentResolver`，把 `FindObjectOfType + host.GetComponent + AddComponent` 的 overlay/feedback/presentation 解析样板从 `BattleButton` 迁出。
+- Stage 221-222：新增 `BattleEditorAssetFallbackService`，把 `AssetDatabase` fallback 遗物表搜索与全量遗物资产搜索从 `BattleButton` 的 editor 分支迁出。
+- Stage 223-226：新增 `BattleStatusTargetAdapter`，把 ally/enemy 目标的状态层数、伤害、清层、减层访问统一成 adapter；状态爆发与状态层数操作的四组敌我重载已压缩为共享执行入口。
+- Stage 227-229：新增 `BattleDamageEffectDispatcher`，统一额外伤害词条的基础伤害钳制、伤害修正、TakeDamage 与日志调度；友方/敌方额外伤害分支改为 dispatcher 回调。
+- Stage 230：完成验证。`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 通过（仅既有 CS0649 警告）；本轮新增/相关定向 EditMode 测试通过 22/22；全量 EditMode 测试通过 432/432；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4873 行。本轮已收掉剩余十项中的规则/副作用胶水、状态 adapter、遗物桥、overlay resolver、Editor fallback 和额外伤害 dispatcher；仍不建议继续把主 coroutine 流程强拆为独立 MonoBehaviour，除非下一步专门做战斗流程状态机重写与 PlayMode 覆盖。
+
+## 2026-04-29 - 战斗流程 PlayMode 回归测试框架 Stage 231
+
+- 新增 `Assets/Tests/PlayMode/MobileGame.PlayModeTests.asmdef`，建立独立 PlayMode 测试程序集；由于当前生产代码仍位于默认 `Assembly-CSharp`，本阶段先采用反射式 fixture 访问运行时代码，避免为全项目一次性引入 asmdef 迁移风险。
+- 新增 `Assets/Tests/PlayMode/BattleFlowPlayModeFixture.cs`，可在测试中运行时构造最小战斗场景：`BattleManager`、`BattleButton`、敌我父节点、1 名友方、1 名敌方、速度按钮、固定威力技能、武器与敌人数据。
+- 新增 `Assets/Tests/PlayMode/BattleFlowPlayModeTests.cs`，覆盖两条首批战斗流程烟测：点击战斗按钮进入目标指定阶段并触发敌方自动连线；强制拼点连线后执行一回合，友方胜利击杀敌人并弹出结算面板。
+- fixture 会在每次测试前后清理 `BattleEncounterRuntime`、`TutorialBattleRuntime` 与 `SpeedButton` 静态输入锁，避免教程/上一次战斗状态污染后续 PlayMode 测试。
+- 验证完成：`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 0 error；`dotnet build MobileGame.PlayModeTests.csproj` 0 error；全量 PlayMode 2/2 通过；全量 EditMode 432/432 通过；Unity Console 0 error。
+- 后续建议：继续扩充 PlayMode 回归覆盖，优先加入“单方面攻击回合不结算卡死”“敌方击杀友方失败结算”“精英三选一遗物结算链路”“教程战斗阻塞/放行策略”四类高风险端到端流程。
+## 2026-04-29 - 战斗流程 PlayMode 回归与按钮守卫拆分 Stage 232-236
+
+- Stage 232：扩展 PlayMode fixture，新增友方单方面攻击连线构造，覆盖“敌方未拼点时友方单方面攻击造成伤害并回到 Ready，不误弹结算”的端到端流程。
+- Stage 233：扩展失败结算 PlayMode 覆盖，新增敌方单方面攻击击杀友方后弹出失败结算的回归测试，并让最小战斗 fixture 支持单独配置友方生命值。
+- Stage 234：新增教程阻塞 PlayMode 覆盖，通过运行时构造 `TutorialBattleDefinition_SO` 和 `RequireBeforeCombat` 步骤，验证教程阻塞时不会进入 `ResolvingCombat`，避免“看清敌方行动后仍卡住/误推进”的回归。
+- Stage 235：新增精英战三选一遗物结算链路 PlayMode 覆盖，fixture 可构造 elite encounter、敌人组和 3 个临时遗物表项，验证胜利结算数据确实包含 relic choice。
+- Stage 236：新增 `BattleCombatPhaseGuardService`，将 `BattleButton.OnBattleButtonClicked` 中结算面板、技能详情面板、教程弹窗可见时的早退判断迁出为纯服务；`BattleButton` 保持原 overlay 解析顺序和后续阶段推进逻辑不变。
+- 新增/扩展测试：`BattleFlowPlayModeTests` 覆盖单方面攻击、失败结算、教程阻塞、精英遗物选择；`BattleCombatPhaseGuardServiceTests` 覆盖三个阻塞来源与无阻塞通过场景。
+- 验证完成：`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 通过（仅既有 CS0649 警告）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore` 通过；全量 PlayMode 6/6 通过；全量 EditMode 436/436 通过；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4872 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 92 个。下一步建议继续补 PlayMode 回归的实际 UI/结算交互断言，再考虑拆 `OnBattleButtonClicked` 中 BattleManager/parent/allies/enemies 获取与反馈系统绑定这类低风险入口 glue。
+## 2026-04-29 - 战斗结算 PlayMode 交互回归 Stage 237-240
+
+- Stage 237：扩展 `BattleFlowPlayModeFixture`，新增结算界面 loot view、遗物选择入口、三选一选项、确认按钮、返回/重试按钮的反射点击 helper，并支持读取当前选择、弹窗标题、入口展示名称、CurrentEncounter 与 SpeedButton 锁状态。
+- Stage 238：新增 PlayMode 回归 `EliteRelicChoice_WhenPlayerSelectsChoice_RecordsSelectionAndClosesModal`，覆盖从精英胜利结算点击问号入口、打开三选一弹窗、选择候选、确认关闭、选择写回以及战利品入口展示切换为所选遗物的链路。
+- Stage 239：新增 PlayMode 回归 `EliteRelicChoice_WhenReturningBeforeSelection_BlocksReturnAndShowsRequiredChoice`，覆盖未选择遗物时点击返回会阻止离开、保持结算面板可见、打开三选一弹窗并显示必选提示。修复 `BattleSettlementOverlay.ShowRelicChoiceRequiredMessage` 中必选提示被 `OpenRelicChoiceModal` 默认标题覆盖的问题。
+- Stage 240：新增 PlayMode 回归 `DefeatSettlement_WhenRetryClicked_RequeuesEncounterAndHidesSettlement`，覆盖失败结算点击 Retry 后重新排队 active encounter、隐藏结算面板并解除 `SpeedButton.CombatLocked` 的链路；fixture teardown 会清理测试触发的 `SceneCurtainTransitionController`，避免转场协程污染后续测试。
+- 验证完成：`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 通过（仅既有 CS0649 警告）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore` 通过；全量 PlayMode 9/9 通过；全量 EditMode 436/436 通过；Unity Console 0 error；相关文件 `git diff --check` 无格式错误。
+- 当前 `BattleButton.cs` 约 4872 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 92 个。下一步建议进入入口 glue 拆分：把 `OnBattleButtonClicked` 中 BattleManager 获取、parent 校验、combatants 收集与 feedback bind 收束成一个可测试的入口上下文构建服务，再继续拆 `BuildCombatActions`。
+## 2026-04-29 - BattleButton 入口上下文拆分 Stage 241-243
+
+- Stage 241：新增 `BattleCombatantContextService`，将 `OnBattleButtonClicked` 中 allies/enemies parent 非空校验和 `GetComponentsInChildren(..., false)` 敌我组件收集迁出；服务返回 warning message，保持原先缺少 parent 时的早退与日志语义。
+- Stage 242：新增 `BattleCombatantContextServiceTests`，覆盖 parent 缺失时返回 false 与提示文本、正常收集时排除 inactive 子节点并返回敌我组件数组，锁定 `BattleButton` 原有 includeInactive=false 行为。
+- Stage 243：`BattleButton.OnBattleButtonClicked` 改为通过入口上下文服务获取 allies/enemies，再继续执行 feedback bind、Ready->Targeting、教程阻塞与 combat coroutine；本阶段不改变 BattleManager 查找、overlay guard 和阶段推进顺序。
+- 验证完成：`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 通过（仅既有 CS0649 警告）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore` 通过；全量 PlayMode 9/9 通过；全量 EditMode 438/438 通过；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4875 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 93 个。下一步建议继续拆 `OnBattleButtonClicked` 中 BattleManager 解析与 feedback bind，或者直接进入 `BuildCombatActions`/`ExecuteCombatPhaseRoutine` 的计划层拆分；前者风险低，后者收益更高但需要继续 PlayMode 防护。
+## 2026-04-29 - BattleButton 入口解析与反馈绑定拆分 Stage 244-247
+
+- Stage 244：新增 `BattleManagerResolverService`，统一 `BattleButton.Awake` 与 `OnBattleButtonClicked` 的 BattleManager 解析路径；已有 manager 直接复用，缺失时通过 finder 查找，查找失败时返回原有 BattleManager 未找到 warning 文案。
+- Stage 245：新增 `BattleManagerResolverServiceTests`，覆盖已有 manager 不调用 finder、缺失时使用 finder、完全找不到时返回 false 与 warning message，锁定点击入口早退前置条件。
+- Stage 246：新增 `BattleFeedbackBindingService`，将 `battleFeedbackSystem?.BindCombatants(allies, enemies)` 收束为 null-safe 服务入口，并对 allies/enemies 空数组做防御性归一化；真实绑定副作用仍由 `BattleFeedbackSystem` 执行。
+- Stage 247：新增 `BattleFeedbackBindingServiceTests` 覆盖 feedback 缺失时的安全早退；真实绑定路径继续由 PlayMode 回归覆盖，避免 EditMode 下 `BattleFeedbackSystem` 创建/销毁 Canvas 与 EventSystem 的环境副作用污染测试。
+- 验证完成：`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 通过（仅既有 CS0649 警告）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore` 通过；全量 PlayMode 9/9 通过；全量 EditMode 442/442 通过；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4881 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 95 个。下一步建议停止继续拆入口细枝末节，转入收益更高的 `ExecuteCombatPhaseRoutine` 计划层拆分：先提取“回合执行前/后阶段切换和结算检查”的纯计划，再逐步缩短 coroutine 主体。
+## 2026-04-29 - ExecuteCombatPhaseRoutine 完成计划层拆分 Stage 248-250
+
+- Stage 248：新增 `BattleCombatPhaseCompletionPlanService` 与 `BattleCombatPhaseCompletionPlan`，把 action 中途战斗完成和正常回合结束两条 completion path 的后置动作计划化：是否清理 active combatants、是否结束 resolving、是否解锁输入、是否回到 Ready、是否推进 round。
+- Stage 249：新增 `BattleCombatPhaseCompletionPlanServiceTests`，覆盖中途结算时保持 combat lock/不推进 round，以及正常回合结束时解锁输入/回 Ready/round++ 的差异，作为后续继续缩短 coroutine 的计划层安全网。
+- Stage 250：`ExecuteCombatPhaseRoutine` 接入 completion plan。中途结算分支统一调用计划应用 helper；正常回合结束分支保留原顺序：先解锁 `SpeedButton.CombatLocked`，再写“再次按下战斗按钮”日志，最后设置 Ready、round++、清理 active combatants、结束 resolving。
+- 验证完成：`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 通过（仅既有 CS0649 警告）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore` 通过；关键 PlayMode completion path 3/3 通过；全量 PlayMode 9/9 通过；全量 EditMode 444/444 通过；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4892 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 96 个。下一步建议继续沿 coroutine 计划层推进：拆“进入 combat resolving 时的按钮隐藏/锁定/技能详情隐藏”成 begin plan 或 dispatcher，并用 PlayMode 覆盖 Ready->Targeting->Resolving 的可交互状态。
+## 2026-04-29 - ExecuteCombatPhaseRoutine 开始计划层拆分 Stage 251-253
+
+- Stage 251：新增 `BattleCombatPhaseBeginPlanService` 与 `BattleCombatPhaseBeginPlan`，将进入 combat resolving 阶段时的意图计划化：标记 resolving、提交预留能量、锁定输入、隐藏友方/敌方速度按钮、禁用友方速度按钮、隐藏技能详情面板。
+- Stage 252：新增 `BattleCombatPhaseBeginPlanServiceTests`，覆盖 begin plan 的全部标志位，作为后续继续拆 coroutine 开头副作用的纯规则安全网。
+- Stage 253：`ExecuteCombatPhaseRoutine` 接入 `ApplyCombatPhaseBeginPlan` helper，真实副作用顺序保持不变：先设置 active round combatants，再标记 resolving/提交能量/锁输入/隐藏按钮/隐藏技能详情，随后写战斗结算阶段日志并构建 actions。
+- 验证完成：`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 通过（仅既有 CS0649 警告）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore` 通过；begin plan 定向 EditMode 1/1 通过；关键 PlayMode 3/3 通过；全量 PlayMode 9/9 通过；全量 EditMode 445/445 通过；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4907 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 97 个。下一步建议继续拆 begin helper 内部的真实按钮副作用为 `BattleSpeedButtonCombatVisibilityService`，把 ally/enemy 按钮遍历规则从 `BattleButton` 迁出；之后再处理回合总结日志与 round-end status/relic 调用顺序。
+## 2026-04-29 - ExecuteCombatPhaseRoutine 副作用与回合总结拆分 Stage 254-259
+
+- Stage 254：按 TDD 新增 `BattleSpeedButtonCombatVisibilityServiceTests`，先通过 Unity 编译红灯确认缺少 `BattleSpeedButtonCombatVisibilityService`，覆盖友方按钮禁用/隐藏、敌方按钮隐藏、空 controller/空按钮安全跳过。
+- Stage 255：新增 `BattleSpeedButtonCombatVisibilityService`，将进入 combat resolving 时 ally/enemy 速度按钮遍历、禁用与 `HideForCombat` 副作用从 `BattleButton.ApplyCombatPhaseBeginPlan` 迁出；`BattleButton` 继续保留 resolving 标记、能量提交、输入锁与技能详情面板隐藏顺序。
+- Stage 256：接入后通过定向 EditMode 3/3 与关键 PlayMode 3/3，确认 Ready->Targeting->Resolving、单方面攻击、拼点击杀结算路径未回归。
+- Stage 257：按 TDD 新增 `BattleRoundSummaryLogServiceTests`，先通过 Unity 编译红灯确认缺少 `BattleRoundSummaryLogService`，锁定回合总结标题、存活友方、存活敌方、空对象/死亡对象跳过以及原顺序。
+- Stage 258：新增 `BattleRoundSummaryLogService`，将 `ExecuteCombatPhaseRoutine` 中的回合总结文本组装迁出为纯 service；协程仅负责按 service 返回顺序调用 `BattleLog`，随后继续执行 round-end status 与 relic。
+- Stage 259：完成回归验证：`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 通过（仅保留既有 CS0649 warning）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore` 通过；全量 PlayMode 9/9 通过；全量 EditMode 449/449 通过；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4220 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 99 个。下一步建议继续沿 `ExecuteCombatPhaseRoutine` 做低风险切片：优先把回合结束阶段的 `FinalizeRoundSkillHistory` 遍历与 round-end status/relic 调度顺序包装成计划/dispatcher，再考虑 action 构建与 action 执行循环的更大拆分。
+## 2026-04-29 - ExecuteCombatPhaseRoutine 回合结束调度拆分 Stage 260-265
+
+- Stage 260：按 TDD 新增 `BattleCombatRoundEndDispatcherTests`，先通过 Unity 编译红灯确认缺少 `BattleCombatRoundEndDispatcher`；测试锁定正常回合结束顺序为：友方技能历史收尾 -> 回合总结日志 -> round-end status -> round-end relic，并覆盖空回调与 null 数组安全性。
+- Stage 261：新增 `BattleCombatRoundEndDispatcher`，将 `ExecuteCombatPhaseRoutine` 里友方 `FinalizeRoundSkillHistory` 遍历、回合总结回调、回合末状态与遗物调度收束为一个顺序明确的 dispatcher；`BattleButton` 只保留真实 `BattleLog`、status 与 relic 副作用回调。
+- Stage 262：新增 `LogRoundSummary` helper，让 `BattleButton` 通过 `BattleRoundSummaryLogService` 输出总结日志，同时由 dispatcher 确保其仍位于技能历史收尾之后、round-end status/relic 之前；定向 EditMode 2/2 与正常回合 PlayMode 路径通过。
+- Stage 263：按 TDD 新增 `BattleCombatPhaseCompletionDispatcherTests`，先通过 Unity 编译红灯确认缺少 `BattleCombatPhaseCompletionDispatcher`；测试锁定正常回合完成顺序为：如需解锁则先解锁输入 -> 写下一回合提示 -> 应用 completion plan，并覆盖中途结算 plan 不解锁与空回调安全性。
+- Stage 264：新增 `BattleCombatPhaseCompletionDispatcher`，将正常回合结束尾部的 `SpeedButton.CombatLocked = false`、下一回合提示日志、`ApplyCombatPhaseCompletionPlan(..., false)` 顺序迁出为可测 dispatcher；中途战斗完成分支保持原有 `ApplyCombatPhaseCompletionPlan(Resolve(true))` 早退路径不变。
+- Stage 265：完成回归验证：`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 通过（仅保留既有 CS0649 warning）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore` 通过；全量 PlayMode 9/9 通过；全量 EditMode 454/454 通过；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4224 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 101 个。下一步建议继续推进 `ExecuteCombatPhaseRoutine` 中更大但仍可控的切片：将 action 执行循环拆成带回调的 dispatcher，或先把 `TryHandleBattleCompletion` 之后的中途完成 plan 应用也纳入 completion dispatcher，统一 completion 入口。
+## 2026-04-30 - ExecuteCombatPhaseRoutine completion 与 action loop 拆分 Stage 266-272
+
+- Stage 266：扩展 `BattleCombatPhaseCompletionDispatcherTests`，按 TDD 先确认缺少 `DispatchBattleCompletedDuringAction`；测试锁定中途战斗完成路径只应用 completion plan，不解锁输入、不写下一回合提示，保持原有早退语义。
+- Stage 267：新增 `BattleCombatPhaseCompletionDispatcher.DispatchBattleCompletedDuringAction`，并将 `ExecuteCombatPhaseRoutine` 中 `TryHandleBattleCompletion` 后的中途完成分支改为通过 dispatcher 应用 `BattleCombatPhaseCompletionPlanService.Resolve(true)`；正常回合结束路径仍走 `DispatchNormalRoundEnd`。
+- Stage 268：新增 `BattleCombatActionExecutionDispatcherTests`，按 TDD 先确认缺少 `BattleCombatActionExecutionDispatcher`；测试锁定 action 类型到 resolver 的映射、每个 action 执行完成后才检查 battle completion、completion 命中后停止后续 action，并覆盖 null action / 空回调安全性。
+- Stage 269：新增 `BattleCombatActionExecutionDispatcher`，将 action 遍历、Clash / AllySingleAttack / EnemySingleAttack 分派、每步后完成检查、完成回调和早退收束成协程 dispatcher。
+- Stage 270：`ExecuteCombatPhaseRoutine` 的 action switch 循环已替换为 `BattleCombatActionExecutionDispatcher.Dispatch`；`BattleButton` 只保留真实 action resolver、`TryHandleBattleCompletion` 和 completion plan 应用回调，主协程职责进一步收窄。
+- Stage 271：定向验证通过：`BattleCombatPhaseCompletionDispatcherTests` 5/5，`BattleCombatActionExecutionDispatcherTests` 3/3；关键 PlayMode 覆盖普通单方面攻击回合与拼点击杀中途结算 2/2 通过。
+- Stage 272：完成回归验证：`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 通过（仅保留既有 CS0649 warning）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore` 通过；全量 PlayMode 9/9 通过；全量 EditMode 459/459 通过；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4220 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 102 个。下一步建议继续收窄 `BuildCombatActions` 周边：优先将 action resolver 回调构建与 battle completion 回调构建包装成一个 execution context/factory，或补 PlayMode 多友方/多敌人 action 顺序回归后再拆 `BattleCombatActionBuilder` 的候选收集逻辑。
+## 2026-04-30 - ExecuteCombatPhaseRoutine action 执行循环收尾 Stage 273-276
+
+- Stage 273：扩展 `BattleCombatActionExecutionDispatcherTests`，按 TDD 先确认缺少 `BattleCombatActionExecutionResult`；测试锁定当 action 后 completion check 命中时，dispatcher 除了停止后续 action，还必须在 result 中标记 `BattleCompletedDuringAction`。
+- Stage 274：新增 `BattleCombatActionExecutionResult`，并让 `BattleCombatActionExecutionDispatcher.Dispatch` 在 completion 命中时写入执行结果；`BattleButton` 不再维护本地 `battleCompletedDuringAction` bool，而是读取 dispatcher 产出的 result。
+- Stage 275：新增 `BattleButton.ExecuteCombatActions` 私有协程 helper，将 action resolver、battle completion check 与 completion plan 应用回调从 `ExecuteCombatPhaseRoutine` 主体迁出；主协程现在只保留 action 构建、执行 helper 调用、result 早退判断、round-end 与 completion 调度。
+- Stage 276：本轮可执行验证：`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 通过（仅保留既有 CS0649 warning）；`dotnet build MobileGame.PlayModeTests.csproj` 通过；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。当前会话未暴露可用 Unity MCP Test Runner 工具，因此本轮新增小改动尚未重新跑 Unity EditMode/PlayMode；上一轮在 action dispatcher 初拆后曾通过全量 PlayMode 9/9 与 EditMode 459/459。
+- 当前 `BattleButton.cs` 约 4228 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 102 个。下一步建议补跑 Unity Test Runner 后，再进入 `BuildCombatActions` 拆分或新增多友方/多敌人 PlayMode action 顺序回归。
+
+## 2026-04-30 - ExecuteCombatPhaseRoutine action 执行上下文收尾 Stage 277-285
+
+- Stage 277-279：扩展 `BattleCombatActionExecutionDispatcherTests`，新增对 `BattleCombatActionExecutionContext` 的覆盖，锁定 resolver 分派、完成检查、完成回调和 result 写回都能通过统一上下文执行。
+- Stage 280-282：新增 `BattleCombatActionExecutionContext`，把 Clash、友方单方面攻击、敌方单方面攻击、战斗完成检查、完成后处理和执行结果集中封装，`BattleCombatActionExecutionDispatcher` 继续保留旧 callback overload，降低迁移风险。
+- Stage 283-285：`BattleButton.ExecuteCombatPhaseRoutine` 改为创建 action execution context 后调用 `ExecuteCombatActions(actions, context)`，主协程不再直接持有 action resolver lambdas，也不再维护本地 `battleCompletedDuringAction` 标记；中途结算判断统一读取 `context.Result.BattleCompletedDuringAction`。
+- 验证完成：`dotnet build Assembly-CSharp-Editor.csproj --no-restore` 通过 0 warning / 0 error；`dotnet build MobileGame.PlayModeTests.csproj --no-restore` 通过 0 warning / 0 error；Unity 全量 PlayMode 9/9 通过；Unity 全量 EditMode 460/460 通过；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4885 行，`Assets/Scripts/Shared` 中 `Battle*.cs` 服务约 102 个。下一步建议进入 `BuildCombatActions` 周边拆分：先给 action 收集/排序增加更细的 EditMode 覆盖，再把 ally action collection、enemy action collection、sort/merge 从 `BattleButton` 迁出，避免直接大改战斗协程。
+
+## 2026-04-30 - BuildCombatActions 周边拆分 Stage 286-295
+
+- Stage 286-288：新增 `BattleCombatActionOrderingService`，将 action 排序规则从 `BattleCombatActionBuilder` 迁出，排序顺序保持为速度降序、TiePriority 升序、SequenceIndex 升序；`BattleCombatActionBuilder.Compare` 暂保留为转发入口，避免破坏旧调用。
+- Stage 289-292：新增 `BattleCombatActionCollectorService`，将友方 action 收集、敌方 action 收集、拼点 enemy button 去重、跳过未指定目标友方日志从 builder 主体拆出；`BattleCombatActionBuilder.Build` 现在只负责组织 collector 输出并调用排序服务。
+- Stage 293-295：新增 `BattleSpeedButtonListService`，统一 ally/enemy 多速度按钮优先、legacy `speedButton` fallback 的读取规则，并替换 `BattleButton` 与 action collector 中的重复 helper；`BattleButton` 删除本地 `GetAllySpeedButtons` / `GetEnemySpeedButtons`。
+- 新增 EditMode 覆盖：`BattleCombatActionOrderingServiceTests`、`BattleCombatActionCollectorServiceTests`、`BattleSpeedButtonListServiceTests`，并继续保留 `BattleCombatActionBuilderTests` 作为外观级回归。
+- 验证完成：`dotnet build Assembly-CSharp-Editor.csproj --no-restore --no-incremental` 通过，仅保留既有 CS0649 与 MCP package 内 CS0219 warning；`dotnet build MobileGame.PlayModeTests.csproj --no-restore --no-incremental` 通过 0 warning / 0 error；Unity 全量 PlayMode 9/9 通过；Unity 全量 EditMode 466/466 通过；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4859 行，`Assets/Scripts/Shared` 中 `Battle*.cs` 服务约 105 个。下一步建议继续围绕战斗输入/目标指定做低风险收束：把 Ready->Targeting 初始化中速度按钮 reset、敌方自动连线和按钮可交互切换拆成小型 dispatcher/service，再用 PlayMode 覆盖点击入口。
+## 2026-04-30 - BattleButton 目标指定阶段收口 Stage 296-330
+
+- Stage 296-302：新增 `BattleTargetingSpeedButtonStateService`，把 Ready -> Targeting 时 ally/enemy 速度按钮 reset、显示、隐藏、可交互切换从 `BattleButton.SetupTargetingPhase` 拆出。
+- Stage 303-310：新增 `BattleSharedEnergyRoundStartService` 与 `BattleSharedEnergyReservationCollectorService`，统一回合开始共享能量恢复/清空预占，以及按已连线速度按钮和当前技能能耗计算预占能量。
+- Stage 311-316：新增 `BattleAllySkillEnergyAvailabilityService`，把技能切换时的能量可用性判断从 `BattleButton.GetAllySkillUnavailableReason` 拆出，文案仍留在原入口，避免触碰历史编码混乱字符串。
+- Stage 317-324：新增 `BattleTargetingEnemyAutoTargetService`，把敌方自动锁定后的按钮遍历和日志组装迁出；自动连线副作用仍按原顺序执行。
+- Stage 325-330：新增 `BattleTargetingPhaseLogService`，统一目标指定阶段标题、友方/敌方速度日志和敌方自动指定完成提示。
+- 新增/补齐 EditMode 覆盖：`BattleTargetingSpeedButtonStateServiceTests`、`BattleSharedEnergyRoundStartServiceTests`、`BattleSharedEnergyReservationCollectorServiceTests`、`BattleAllySkillEnergyAvailabilityServiceTests`、`BattleTargetingEnemyAutoTargetServiceTests`、`BattleTargetingPhaseLogServiceTests`。
+- 验证完成：`dotnet build Assembly-CSharp-Editor.csproj --no-restore --no-incremental` 通过（仅既有 CS0649 与 MCP package CS0219 warning）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore --no-incremental` 通过；目标 EditMode 21/21 通过；关键 PlayMode 2/2 通过；全量 PlayMode 9/9 通过；全量 EditMode 481/481 通过；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4757 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 111 个。下一步建议转入 Targeting/Setup 剩余副作用收口：`RegisterSharedEnergyListeners` 事件绑定、round-start 敌我速度/技能选择调度，以及 `TryHandleBattleCompletion` 周边结算入口继续拆分。

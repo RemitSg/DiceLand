@@ -17,6 +17,8 @@ public sealed partial class RelicExecutionContext
 
     // Status application context.
     public BattleStatus_SO statusData;
+    public string statusId;
+    public string statusName;
     public int statusStacks;
     public int additionalStatusStacks;
 

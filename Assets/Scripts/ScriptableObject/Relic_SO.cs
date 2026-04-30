@@ -90,7 +90,23 @@ public class Relic_SO : ScriptableObject
         RestoreSharedEnergyAtBattleStartInEliteOrBoss = 44,
         GrantTemporaryExtraAllySpeedButtonsOnFirstRound = 45,
         TransferSpeedButtonsToLowestHpAllyOnPlayerDeath = 46,
-        ModifyDefenseSkillMaxPower = 47
+        ModifyDefenseSkillMaxPower = 47,
+        SetEnemyBurnRoundStartDecayPercent = 48,
+        ApplyStatusToLowestHpEnemyOnBattleRoundStart = 49,
+        ApplyStatusToEnemyOnFirstPlayerHitEachRound = 50,
+        TriggerStatusDamageWhenEnemyStatusReachesStacksOncePerBattle = 51,
+        ChanceApplyStatusToEnemiesWithStatusOnBattleRoundStart = 52,
+        ApplyStatusToAttackerAfterTakingSingleAttackDamageLimitedPerRound = 53,
+        ModifyPlayerClashDiceWhenTargetHasStatus = 54,
+        HealSourceWhenPlayerAppliesStatusToEnemy = 55,
+        ApplyStatusToAllAlliesWhenStatusBearerCountAtLeast = 56,
+        TransferStatusToLowestHpEnemyOnEnemyDeath = 57,
+        HealSourceWhenDamagingEnemyWithStatus = 58,
+        PreventLethalDamageByConsumingEnemyStatusTotal = 59,
+        SetEnemyStatusMinimumStacks = 60,
+        ChanceCopyAppliedStatusToOtherEnemy = 61,
+        ChanceRepeatAppliedStatusToSameEnemy = 62,
+        ApplyStatusToEnemiesBasedOnConditionStacksOnRoundStart = 63
     }
 
     [Serializable]

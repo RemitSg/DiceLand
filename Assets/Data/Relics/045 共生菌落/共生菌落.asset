@@ -15,7 +15,7 @@ MonoBehaviour:
   relicId: 45
   relicName: "\u5171\u751F\u83CC\u843D"
   description: "\u53CB\u65B9\u89D2\u8272\u6B7B\u4EA1\u65F6\uFF0C\u5176\u8EAB\u4E0A\u7684\u6025\u901F\u3001\u5F3A\u58EE\u3001\u91CD\u9632\u8F6C\u79FB\u7ED9\u751F\u547D\u6700\u9AD8\u7684\u5B58\u6D3B\u53CB\u65B9"
-  additionalDescription: 
+  additionalDescription: "\u7EC6\u5C0F\u7684\u83CC\u4E1D\u5728\u4F24\u53E3\u95F4\u4F20\u9012\u4F59\u6E29\uFF0C\u50CF\u4E00\u5EA7\u65E0\u58F0\u5171\u4EAB\u7684\u5730\u4E0B\u57CE\u3002"
   rarity: 2
   icon: {fileID: 21300000, guid: f6f62231f0221324793774c8c81b465f, type: 3}
   builtInEffects:

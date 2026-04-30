@@ -60,6 +60,23 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0a1ce2bd7cd545068d7d2f8ae4ade2cb, type: 2}
   - {fileID: 11400000, guid: cdc6d5bdb6ca4df08d53cc3d6276d1c5, type: 2}
   - {fileID: 11400000, guid: bed64d99a87a4e079f25aa32ec79b30e, type: 2}
+  - {fileID: 11400000, guid: 9c6a6a8e08096bc4bb9e9404f30dc549, type: 2}
+  - {fileID: 11400000, guid: c57fb39cad4e2604e92d0b69100198b6, type: 2}
+  - {fileID: 11400000, guid: f195169dec7adae449f350944b120cd3, type: 2}
+  - {fileID: 11400000, guid: ae7900190c6ab0849b2d24837167b52e, type: 2}
+  - {fileID: 11400000, guid: 0f7ab2f47cbc41d4b96980e7933b4a7c, type: 2}
+  - {fileID: 11400000, guid: 94b0d60bb6f7d614d98854199b858004, type: 2}
+  - {fileID: 11400000, guid: a83d9d9d88f0e684489a5fda3879ac32, type: 2}
+  - {fileID: 11400000, guid: 2e46e97dc4345d9448e07fb1f3532a7d, type: 2}
+  - {fileID: 11400000, guid: 066fcf51ec4b0e94a838955885df066b, type: 2}
+  - {fileID: 11400000, guid: a29c3b337a1081a489c0f92dfbe84f51, type: 2}
+  - {fileID: 11400000, guid: 5f1affe5664daaf4db93bb3ddad648b3, type: 2}
+  - {fileID: 11400000, guid: d22aa8a4dddf813418870433db620a17, type: 2}
+  - {fileID: 11400000, guid: 1288fd6325bbb9c488664638fc168321, type: 2}
+  - {fileID: 11400000, guid: 94181ae7c3da67d4881980eab22e7235, type: 2}
+  - {fileID: 11400000, guid: e9e408c1a54360d42b22f4a338038f29, type: 2}
+  - {fileID: 11400000, guid: 91dc54dd1583db44183a40359739e434, type: 2}
+  - {fileID: 11400000, guid: 1bf03833212384747aa7ba60a1ad8e04, type: 2}
   rarityWeights:
   - rarity: 0
     weight: 20

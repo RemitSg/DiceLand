@@ -8,6 +8,7 @@ public class BattleStatusTodoTests
     private const BattleStatus_SO.StatusBehaviorType PoisonBehaviorType = (BattleStatus_SO.StatusBehaviorType)12;
     private const BattleStatus_SO.StatusBehaviorType LuckBehaviorType = (BattleStatus_SO.StatusBehaviorType)13;
     private const BattleStatus_SO.StatusBehaviorType MisfortuneBehaviorType = (BattleStatus_SO.StatusBehaviorType)14;
+    private const BattleStatus_SO.StatusBehaviorType SpeedButtonPenaltyBehaviorType = (BattleStatus_SO.StatusBehaviorType)15;
     private const BattleStatus_SO.StackDecayMode LoseOneStackDecayMode = (BattleStatus_SO.StackDecayMode)3;
 
     private readonly List<Object> createdObjects = new List<Object>();
@@ -146,6 +147,58 @@ public class BattleStatusTodoTests
         Assert.AreEqual(0, enemy.GetStatusStacks(misfortune));
     }
 
+    [Test]
+    public void StunStatus_ReducesSpeedButtonsByStacksAndExpiresAtRoundEnd_ForAlliesAndEnemies()
+    {
+        EnemySkill_SO skill = CreateSkill("Stun Test", 2, 5);
+        BattleStatus_SO stun = CreateStatus(
+            "stun",
+            "眩晕",
+            SpeedButtonPenaltyBehaviorType,
+            powerPerStack: 1,
+            roundEndDecayMode: BattleStatus_SO.StackDecayMode.LoseAll);
+
+        BattleAllyController ally = CreateAlly("Stunned Ally", 12, skill);
+        ally.RegisterSpeedButtons(new[]
+        {
+            CreateSpeedButton(ally.transform, "Ally SpeedButton 1"),
+            CreateSpeedButton(ally.transform, "Ally SpeedButton 2"),
+            CreateSpeedButton(ally.transform, "Ally SpeedButton 3")
+        });
+        ally.SetInheritedExtraSpeedButtons(2);
+
+        BattleEnemyController enemy = CreateEnemy("Stunned Enemy", 12, skill);
+        enemy.enemyData.baseSpeedButtonCount = 3;
+        enemy.RegisterSpeedButtons(new[]
+        {
+            CreateSpeedButton(enemy.transform, "Enemy SpeedButton 1"),
+            CreateSpeedButton(enemy.transform, "Enemy SpeedButton 2"),
+            CreateSpeedButton(enemy.transform, "Enemy SpeedButton 3")
+        });
+
+        Assert.AreEqual(3, ally.SpeedButtons.Count);
+        Assert.AreEqual(3, enemy.SpeedButtons.Count);
+
+        ally.AddStatus(stun, stun.StatusId, stun.DisplayName, 2);
+        enemy.AddStatus(stun, stun.StatusId, stun.DisplayName, 2);
+
+        Assert.AreEqual(1, ally.SpeedButtons.Count);
+        Assert.AreEqual(1, enemy.SpeedButtons.Count);
+
+        ally.AddStatus(stun, stun.StatusId, stun.DisplayName, 2);
+        enemy.AddStatus(stun, stun.StatusId, stun.DisplayName, 2);
+
+        Assert.AreEqual(0, ally.SpeedButtons.Count);
+        Assert.AreEqual(0, enemy.SpeedButtons.Count);
+
+        Assert.IsTrue(ally.ConsumeRoundEndStatusEffects());
+        Assert.IsTrue(enemy.ConsumeRoundEndStatusEffects());
+        Assert.AreEqual(0, ally.GetStatusStacks(stun));
+        Assert.AreEqual(0, enemy.GetStatusStacks(stun));
+        Assert.AreEqual(3, ally.SpeedButtons.Count);
+        Assert.AreEqual(3, enemy.SpeedButtons.Count);
+    }
+
     private BattleAllyController CreateAlly(string name, int maxHp, EnemySkill_SO skill)
     {
         GameObject go = new GameObject(name);
@@ -210,6 +263,14 @@ public class BattleStatusTodoTests
         };
         createdObjects.Add(skill);
         return skill;
+    }
+
+    private SpeedButton CreateSpeedButton(Transform parent, string name)
+    {
+        GameObject buttonObject = new GameObject(name);
+        buttonObject.transform.SetParent(parent, false);
+        createdObjects.Add(buttonObject);
+        return buttonObject.AddComponent<SpeedButton>();
     }
 
     private BattleStatus_SO CreateStatus(

@@ -11,6 +11,8 @@ public static partial class RelicTriggerDispatcher
         bool sourceIsPlayer,
         Object source,
         Object target,
+        string statusId = null,
+        string statusName = null,
         Action<string> logFeedback = null)
     {
         RelicExecutionContext context = RelicExecutionContext.CreateStatusApplied(
@@ -20,7 +22,9 @@ public static partial class RelicTriggerDispatcher
             statusStacks,
             sourceIsPlayer,
             source,
-            target);
+            target,
+            statusId,
+            statusName);
         ProcessBattleRelics(encounter, context, logFeedback);
         return context;
     }

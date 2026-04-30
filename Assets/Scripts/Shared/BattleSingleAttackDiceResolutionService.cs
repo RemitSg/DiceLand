@@ -39,17 +39,17 @@ public static class BattleSingleAttackDiceResolutionService
             getTargetStatusStacksById,
             targetSkill,
             relicPowerBonus);
-        int actionBonus = BattleDicePowerModifierCollectionService.GetActionBonus(
+        int actionBonus = BattleDicePowerModifierCollectionService.GetDamageDealtBonus(
             skill,
             diceIndex,
-            EnemySkill_SO.DiceEffectTrigger.OnSingleAttack,
             selfSpeed,
             targetSpeed,
             getSelfStatusStacksByAsset,
             getSelfStatusStacksById,
             getTargetStatusStacksByAsset,
             getTargetStatusStacksById,
-            targetSkill);
+            targetSkill,
+            EnemySkill_SO.DiceEffectTrigger.OnSingleAttack);
 
         return Resolve(basePower, statusPowerModifier, skillUseBonus, actionBonus, isDefenseSkill);
     }

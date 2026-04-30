@@ -123,6 +123,53 @@ public class BattleDiceRangeModifierServiceTests
     }
 
     [Test]
+    public void ApplyRangeModifiers_TargetStatusPerThresholdScalesMinimumPowerAndCapsBonus()
+    {
+        BattleStatus_SO status = ScriptableObject.CreateInstance<BattleStatus_SO>();
+        createdObjects.Add(status);
+
+        EnemySkill_SO skill = CreateSkill(new[]
+        {
+            new EnemySkill_SO.ConditionalDiceRangeModifierEntry
+            {
+                useCondition = true,
+                condition = EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold,
+                targetStatusData = status,
+                requiredStatusStacks = 1,
+                minPowerBonus = 1,
+                minPowerBonusCap = 5
+            }
+        });
+
+        EnemySkill_SO.DicePowerRange threeStacks = BattleDiceRangeModifierService.ApplyRangeModifiers(
+            skill,
+            0,
+            new EnemySkill_SO.DicePowerRange { minPower = 1, maxPower = 6 },
+            selfSpeed: 1,
+            targetSpeed: 1,
+            getSelfStatusStacksByAsset: _ => 0,
+            getSelfStatusStacksById: _ => 0,
+            getTargetStatusStacksByAsset: checkedStatus => checkedStatus == status ? 3 : 0,
+            getTargetStatusStacksById: _ => 0);
+
+        EnemySkill_SO.DicePowerRange eightStacks = BattleDiceRangeModifierService.ApplyRangeModifiers(
+            skill,
+            0,
+            new EnemySkill_SO.DicePowerRange { minPower = 1, maxPower = 6 },
+            selfSpeed: 1,
+            targetSpeed: 1,
+            getSelfStatusStacksByAsset: _ => 0,
+            getSelfStatusStacksById: _ => 0,
+            getTargetStatusStacksByAsset: checkedStatus => checkedStatus == status ? 8 : 0,
+            getTargetStatusStacksById: _ => 0);
+
+        Assert.AreEqual(4, threeStacks.minPower);
+        Assert.AreEqual(6, threeStacks.maxPower);
+        Assert.AreEqual(6, eightStacks.minPower);
+        Assert.AreEqual(6, eightStacks.maxPower);
+    }
+
+    [Test]
     public void ApplyRangeModifiers_TargetSkillConditionRequiresMatchingSkill()
     {
         EnemySkill_SO targetSkill = ScriptableObject.CreateInstance<EnemySkill_SO>();

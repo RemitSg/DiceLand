@@ -53,13 +53,14 @@ public class BattleSingleAttackDiceResolutionServiceTests
     }
 
     [Test]
-    public void ResolveWithModifiers_CollectsSkillUseRelicAndSingleAttackBonuses()
+    public void ResolveWithModifiers_CollectsSkillUseRelicDamageDealtAndSingleAttackBonuses()
     {
         EnemySkill_SO skill = CreateSkill(new[]
         {
             Modifier(EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 2),
             Modifier(EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, 3),
-            Modifier(EnemySkill_SO.DiceEffectTrigger.OnClashWin, 99)
+            Modifier(EnemySkill_SO.DiceEffectTrigger.OnClashWin, 5),
+            Modifier(EnemySkill_SO.DiceEffectTrigger.OnClash, 99)
         });
 
         BattleSingleAttackDiceResolution resolution = BattleSingleAttackDiceResolutionService.ResolveWithModifiers(
@@ -77,11 +78,11 @@ public class BattleSingleAttackDiceResolutionServiceTests
             relicPowerBonus: 4);
 
         Assert.AreEqual(6, resolution.SkillUseBonus);
-        Assert.AreEqual(3, resolution.ActionBonus);
-        Assert.AreEqual(9, resolution.BonusPower);
-        Assert.AreEqual(14, resolution.AttackResult.FinalPower);
-        Assert.AreEqual(10, resolution.AttackResult.DisplayPowerModifier);
-        Assert.AreEqual("5+9=14", resolution.AttackResult.FormattedPower);
+        Assert.AreEqual(8, resolution.ActionBonus);
+        Assert.AreEqual(14, resolution.BonusPower);
+        Assert.AreEqual(19, resolution.AttackResult.FinalPower);
+        Assert.AreEqual(15, resolution.AttackResult.DisplayPowerModifier);
+        Assert.AreEqual("5+14=19", resolution.AttackResult.FormattedPower);
     }
 
     private EnemySkill_SO CreateSkill(EnemySkill_SO.ConditionalPowerModifierEntry[] modifiers)

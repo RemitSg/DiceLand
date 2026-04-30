@@ -28,6 +28,13 @@ public static class EventSystemUtility
         if (!preferred.enabled)
             preferred.enabled = true;
 
+        BaseInputModule inputModule = preferred.GetComponent<BaseInputModule>();
+        if (inputModule == null)
+            inputModule = preferred.gameObject.AddComponent<StandaloneInputModule>();
+        if (!inputModule.enabled)
+            inputModule.enabled = true;
+
+        EventSystem.current = preferred;
         return preferred;
     }
 

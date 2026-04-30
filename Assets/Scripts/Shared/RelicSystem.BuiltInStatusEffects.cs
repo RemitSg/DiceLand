@@ -10,7 +10,7 @@ public static partial class RelicSystem
     {
         if (context.trigger != Relic_SO.RelicTrigger.OnStatusApplied || !context.sourceIsPlayer)
             return;
-        if (effect.statusData != null && effect.statusData != context.statusData)
+        if (effect.statusData != null && !StatusMatches(effect.statusData, context.statusData, context.statusId))
             return;
 
         context.additionalStatusStacks += Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));

@@ -17,7 +17,7 @@ public class BattleEnemyController : MonoBehaviour
     public int MinSpeed => enemyData != null ? enemyData.GetStageMinSpeed(CurrentStageIndex) : 0;
     public int MaxSpeed => enemyData != null ? enemyData.GetStageMaxSpeed(CurrentStageIndex) : 0;
     public int BaseSpeedButtonCount => enemyData != null ? enemyData.GetStageSpeedButtonCount(CurrentStageIndex) : 0;
-    public int EffectiveSpeedButtonCount => Mathf.Max(1, BaseSpeedButtonCount);
+    public int EffectiveSpeedButtonCount => ResolveDesiredActiveSpeedButtonCount();
 
     public int Speed { get; private set; }
     public int CurrentHP { get; private set; }
@@ -650,7 +650,12 @@ public class BattleEnemyController : MonoBehaviour
 
         BattleStatusRuntimeEntry entry = GetOrCreateStatusEntry(statusData, fallbackStatusId, fallbackDisplayName);
         entry.stacks = Mathf.Max(0, entry.stacks + stackAmount);
+        int minimumStacks = RelicSystem.ResolveEnemyMinimumStatusStacks(entry.Key);
+        if (minimumStacks > 0)
+            entry.stacks = Mathf.Max(entry.stacks, minimumStacks);
         NotifyStatusChanged(entry);
+        if (IsSpeedButtonPenaltyStatus(entry))
+            RefreshActiveSpeedButtons();
         return true;
     }
 
@@ -724,6 +729,8 @@ public class BattleEnemyController : MonoBehaviour
 
         entry.stacks = 0;
         NotifyStatusChanged(entry);
+        if (IsSpeedButtonPenaltyStatus(entry))
+            RefreshActiveSpeedButtons();
     }
 
     public int RemoveStatusStacks(BattleStatus_SO statusData, string fallbackStatusId, int stackAmount, string fallbackDisplayName = null)
@@ -739,6 +746,8 @@ public class BattleEnemyController : MonoBehaviour
         int removedStacks = Mathf.Min(entry.stacks, stackAmount);
         entry.stacks = Mathf.Max(0, entry.stacks - removedStacks);
         NotifyStatusChanged(entry);
+        if (IsSpeedButtonPenaltyStatus(entry))
+            RefreshActiveSpeedButtons();
         return removedStacks;
     }
 
@@ -847,6 +856,7 @@ public class BattleEnemyController : MonoBehaviour
             return false;
 
         bool changed = false;
+        bool speedButtonCountChanged = false;
         for (int i = 0; i < statusEntries.Count; i++)
         {
             BattleStatusRuntimeEntry entry = statusEntries[i];
@@ -859,10 +869,14 @@ public class BattleEnemyController : MonoBehaviour
 
             entry.stacks = stacksAfterDecay;
             changed = true;
+            if (IsSpeedButtonPenaltyStatus(entry))
+                speedButtonCountChanged = true;
             if (string.Equals(entry.Key, BurnStatusId, StringComparison.OrdinalIgnoreCase))
                 BurnChanged?.Invoke(this, Mathf.Max(0, entry.stacks));
         }
 
+        if (speedButtonCountChanged)
+            RefreshActiveSpeedButtons();
         if (changed)
             StatusChanged?.Invoke(this);
 
@@ -1533,7 +1547,7 @@ public class BattleEnemyController : MonoBehaviour
     {
         EnsureSpeedButtonCountForCurrentStage();
         activeSpeedButtons.Clear();
-        int desiredCount = Mathf.Max(1, enemyData != null ? enemyData.GetStageSpeedButtonCount(CurrentStageIndex) : speedButtons.Count);
+        int desiredCount = ResolveDesiredActiveSpeedButtonCount();
         float topLocalY = CalculateCurrentStageTopLocalY();
         Vector2 resolvedSpeedButtonOffset = ResolveSpeedButtonOffset();
         float effectiveSpacing = Mathf.Abs(speedButtonHorizontalSpacing);
@@ -1568,6 +1582,15 @@ public class BattleEnemyController : MonoBehaviour
 
         speedButton = activeSpeedButtons.Count > 0 ? activeSpeedButtons[0] : null;
         EnsureSelectedSkillSlots();
+    }
+
+    private int ResolveDesiredActiveSpeedButtonCount()
+    {
+        if (IsDead)
+            return 0;
+
+        int baseCount = Mathf.Max(1, enemyData != null ? enemyData.GetStageSpeedButtonCount(CurrentStageIndex) : speedButtons.Count);
+        return Mathf.Max(0, baseCount - ResolveStatusSpeedButtonPenalty());
     }
 
     private void EnsureSpeedButtonCountForCurrentStage()
@@ -1785,7 +1808,7 @@ public class BattleEnemyController : MonoBehaviour
             return stacksBeforeTick;
 
         if (string.Equals(entry.Key, BurnStatusId, StringComparison.OrdinalIgnoreCase))
-            return Mathf.Max(0, stacksBeforeTick / 2);
+            return RelicSystem.ResolveEnemyBurnRoundStartStacksAfterTick(stacksBeforeTick, Mathf.Max(0, stacksBeforeTick / 2));
 
         if (entry.statusData != null)
         {
@@ -1821,6 +1844,35 @@ public class BattleEnemyController : MonoBehaviour
             default:
                 return stacksBeforeDecay;
         }
+    }
+
+    private int ResolveStatusSpeedButtonPenalty()
+    {
+        if (statusEntries.Count == 0)
+            return 0;
+
+        int totalPenalty = 0;
+        for (int i = 0; i < statusEntries.Count; i++)
+        {
+            BattleStatusRuntimeEntry entry = statusEntries[i];
+            if (entry == null || entry.stacks <= 0)
+                continue;
+            if (IsStatusEffectSuppressed(entry))
+                continue;
+            if (!IsSpeedButtonPenaltyStatus(entry))
+                continue;
+
+            totalPenalty += entry.stacks * Mathf.Max(0, entry.statusData.PowerPerStack);
+        }
+
+        return Mathf.Max(0, totalPenalty);
+    }
+
+    private static bool IsSpeedButtonPenaltyStatus(BattleStatusRuntimeEntry entry)
+    {
+        return entry != null
+            && entry.statusData != null
+            && entry.statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.SpeedButtonPenalty;
     }
 
     private static bool ShouldPreservePersistentStatusStacks(BattleStatusRuntimeEntry entry)

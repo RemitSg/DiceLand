@@ -721,6 +721,8 @@ public class BattleAllyController : MonoBehaviour
         BattleStatusRuntimeEntry entry = GetOrCreateStatusEntry(statusData, fallbackStatusId, fallbackDisplayName);
         entry.stacks = Mathf.Max(0, entry.stacks + stackAmount);
         NotifyStatusChanged(entry);
+        if (IsSpeedButtonPenaltyStatus(entry))
+            RefreshActiveSpeedButtons();
         return true;
     }
 
@@ -792,6 +794,8 @@ public class BattleAllyController : MonoBehaviour
 
         entry.stacks = 0;
         NotifyStatusChanged(entry);
+        if (IsSpeedButtonPenaltyStatus(entry))
+            RefreshActiveSpeedButtons();
     }
 
     public int RemoveStatusStacks(BattleStatus_SO statusData, string fallbackStatusId, int stackAmount, string fallbackDisplayName = null)
@@ -807,6 +811,8 @@ public class BattleAllyController : MonoBehaviour
         int removedStacks = Mathf.Min(entry.stacks, stackAmount);
         entry.stacks = Mathf.Max(0, entry.stacks - removedStacks);
         NotifyStatusChanged(entry);
+        if (IsSpeedButtonPenaltyStatus(entry))
+            RefreshActiveSpeedButtons();
         return removedStacks;
     }
 
@@ -912,6 +918,7 @@ public class BattleAllyController : MonoBehaviour
             return false;
 
         bool changed = false;
+        bool speedButtonCountChanged = false;
         for (int i = 0; i < statusEntries.Count; i++)
         {
             BattleStatusRuntimeEntry entry = statusEntries[i];
@@ -924,10 +931,14 @@ public class BattleAllyController : MonoBehaviour
 
             entry.stacks = stacksAfterDecay;
             changed = true;
+            if (IsSpeedButtonPenaltyStatus(entry))
+                speedButtonCountChanged = true;
             if (string.Equals(entry.Key, BurnStatusId, StringComparison.OrdinalIgnoreCase))
                 BurnChanged?.Invoke(this, Mathf.Max(0, entry.stacks));
         }
 
+        if (speedButtonCountChanged)
+            RefreshActiveSpeedButtons();
         if (changed)
             StatusChanged?.Invoke(this);
 
@@ -953,7 +964,8 @@ public class BattleAllyController : MonoBehaviour
         if (IsDead)
             return 0;
 
-        return Mathf.Max(1, 1 + inheritedExtraSpeedButtons + temporaryExtraSpeedButtons);
+        int baseCount = Mathf.Max(0, 1 + inheritedExtraSpeedButtons + temporaryExtraSpeedButtons);
+        return Mathf.Max(0, baseCount - ResolveStatusSpeedButtonPenalty());
     }
 
     private void RefreshSpeedButtonsFromHierarchy()
@@ -1030,7 +1042,7 @@ public class BattleAllyController : MonoBehaviour
 
     private void EnsureSpeedButtonCount()
     {
-        int desiredCount = GetDesiredActiveSpeedButtonCount();
+        int desiredCount = Mathf.Max(1, 1 + inheritedExtraSpeedButtons + temporaryExtraSpeedButtons);
         if (speedButtons.Count >= desiredCount)
             return;
 
@@ -1274,6 +1286,33 @@ public class BattleAllyController : MonoBehaviour
             default:
                 return stacksBeforeDecay;
         }
+    }
+
+    private int ResolveStatusSpeedButtonPenalty()
+    {
+        if (statusEntries.Count == 0)
+            return 0;
+
+        int totalPenalty = 0;
+        for (int i = 0; i < statusEntries.Count; i++)
+        {
+            BattleStatusRuntimeEntry entry = statusEntries[i];
+            if (entry == null || entry.stacks <= 0)
+                continue;
+            if (!IsSpeedButtonPenaltyStatus(entry))
+                continue;
+
+            totalPenalty += entry.stacks * Mathf.Max(0, entry.statusData.PowerPerStack);
+        }
+
+        return Mathf.Max(0, totalPenalty);
+    }
+
+    private static bool IsSpeedButtonPenaltyStatus(BattleStatusRuntimeEntry entry)
+    {
+        return entry != null
+            && entry.statusData != null
+            && entry.statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.SpeedButtonPenalty;
     }
 
     private static bool ShouldPreventBleedDecayOnHit(BattleStatusRuntimeEntry entry)

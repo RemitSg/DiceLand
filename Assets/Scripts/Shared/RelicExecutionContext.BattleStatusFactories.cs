@@ -11,7 +11,9 @@ public sealed partial class RelicExecutionContext
         int statusStacks,
         bool sourceIsPlayer,
         Object source,
-        Object target)
+        Object target,
+        string statusId = null,
+        string statusName = null)
     {
         return new RelicExecutionContext
         {
@@ -19,6 +21,12 @@ public sealed partial class RelicExecutionContext
             runState = runState,
             runGameManager = runGameManager,
             statusData = statusData,
+            statusId = !string.IsNullOrWhiteSpace(statusId)
+                ? statusId
+                : (statusData != null ? statusData.StatusId : string.Empty),
+            statusName = !string.IsNullOrWhiteSpace(statusName)
+                ? statusName
+                : (statusData != null ? statusData.DisplayName : string.Empty),
             statusStacks = Mathf.Max(0, statusStacks),
             sourceIsPlayer = sourceIsPlayer,
             source = source,

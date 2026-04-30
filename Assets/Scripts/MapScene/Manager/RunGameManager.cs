@@ -83,6 +83,7 @@ public class RunGameManager : MonoBehaviour
     [SerializeField] private CalamityPool_SO calamityPool;
     [SerializeField] private MoneyRewardTable_SO moneyRewardTable;
     [SerializeField] private MerchantCatalog_SO merchantCatalog;
+    [SerializeField] private RelicTable_SO eliteRelicChoiceTable;
     [SerializeField] private LevelTable_SO levelTable;
     [SerializeField] [Min(0)] private int startingMoney;
     [SerializeField] private List<StartingPartyMemberDefinition> startingPartyMembers = new List<StartingPartyMemberDefinition>();
@@ -1116,6 +1117,7 @@ public class RunGameManager : MonoBehaviour
                 tile = tile,
                 encounterGroup = encounterGroup,
                 moneyRewardTable = moneyRewardTable,
+                eliteRelicChoiceTable = eliteRelicChoiceTable,
                 sourceSceneName = SceneManager.GetActiveScene().name,
                 battleSceneName = battleSceneName,
                 tutorialCompletionSceneName = ResolveTutorialCompletionSceneName(),

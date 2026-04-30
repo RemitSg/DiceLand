@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Assets/ResourcePack/Gallery Level Selection/Demo/Main Menu Selection/Menu
       Selection.unity
     guid: 17618ff7f5586bb4099959056e6b6183

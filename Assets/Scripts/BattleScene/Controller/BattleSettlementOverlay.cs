@@ -35,6 +35,38 @@ public sealed class BattleSettlementLootEntry
     public LootRarity rarity;
     public LootAttribute_SO attribute;
     public Sprite icon;
+    public bool isRelicChoiceOption;
+    public bool isRelicChoiceEntrance;
+    [NonSerialized]
+    public BattleSettlementRelicChoiceData relicChoiceData;
+}
+
+[Serializable]
+public sealed class BattleSettlementRelicChoiceData
+{
+    public string title;
+    public string requiredMessage;
+    public List<BattleSettlementLootEntry> choices = new List<BattleSettlementLootEntry>();
+    [NonSerialized] public BattleSettlementLootEntry selectedChoice;
+    [NonSerialized] public bool rewardApplied;
+
+    public bool HasChoices => choices != null && choices.Count > 0;
+    public LootRarity Rarity => ResolveRarity();
+
+    private LootRarity ResolveRarity()
+    {
+        if (choices == null)
+            return LootRarity.Common;
+
+        for (int i = 0; i < choices.Count; i++)
+        {
+            BattleSettlementLootEntry choice = choices[i];
+            if (choice != null)
+                return choice.rarity;
+        }
+
+        return LootRarity.Common;
+    }
 }
 
 [Serializable]
@@ -48,11 +80,19 @@ public sealed class BattleSettlementData
     public string retrySceneName;
     public List<BattleSettlementEntry> partyEntries = new List<BattleSettlementEntry>();
     public List<BattleSettlementLootEntry> lootEntries = new List<BattleSettlementLootEntry>();
+    public BattleSettlementRelicChoiceData relicChoice;
 }
 
 [DisallowMultipleComponent]
 public class BattleSettlementOverlay : MonoBehaviour
 {
+    private enum SettlementImageScaleMode
+    {
+        Sliced,
+        SimpleStretch,
+        PreserveAspect
+    }
+
     [Serializable]
     private sealed class SummaryRowView
     {
@@ -71,6 +111,8 @@ public class BattleSettlementOverlay : MonoBehaviour
         public BattleSettlementLootEntry entry;
         public Button button;
         public Image slotImage;
+        public Image iconImage;
+        public TextMeshProUGUI countText;
     }
 
     [Header("Victory Intro")]
@@ -167,6 +209,45 @@ public class BattleSettlementOverlay : MonoBehaviour
     [SerializeField] private Sprite lootDetailBackgroundSprite;
     [SerializeField] private Sprite lootFallbackSprite;
 
+    [Header("Relic Choice")]
+    [SerializeField] private string relicChoiceHeaderText = "Choose 1 Relic";
+    [SerializeField] private string relicChoiceRequiredMessage = "Choose one relic before returning.";
+    [SerializeField] private string relicChoiceEntranceName = "Elite Relic Reward";
+    [SerializeField] private string relicChoiceEntranceDescription = "Click to choose one relic reward.";
+    [SerializeField] private string relicChoiceEntranceLabel = "?";
+    [SerializeField] private string relicChoiceSelectedPrefix = "Selected";
+    [SerializeField] private string relicChoiceConfirmLabel = "Confirm";
+    [SerializeField] private string relicChoiceDetailEmptyText = "Hover a relic to view its effect. Tap a relic on mobile to view and select it.";
+    [SerializeField] private Color relicChoiceSlotColor = new Color(0.16f, 0.22f, 0.32f, 0.95f);
+    [SerializeField] private Color relicChoiceSelectedSlotColor = new Color(0.36f, 0.52f, 0.86f, 1f);
+    [SerializeField] private Color relicChoiceRequiredColor = new Color(1f, 0.45f, 0.38f, 1f);
+    [SerializeField] private Sprite relicChoiceSlotBackgroundSprite;
+    [SerializeField] private Sprite relicChoiceCommonQuestionSprite;
+    [SerializeField] private Sprite relicChoiceUncommonQuestionSprite;
+    [SerializeField] private Sprite relicChoiceRareQuestionSprite;
+    [SerializeField] private Sprite relicChoiceEpicQuestionSprite;
+    [SerializeField] private Sprite relicChoiceLegendaryQuestionSprite;
+
+    [Header("Relic Choice Modal")]
+    [SerializeField] private Vector2 relicChoiceModalSize = new Vector2(1020f, 620f);
+    [SerializeField] private Vector2 relicChoiceCardSize = new Vector2(260f, 340f);
+    [SerializeField] private Vector2 relicChoiceModalIconSize = new Vector2(94f, 94f);
+    [SerializeField] private float relicChoiceModalSpacing = 24f;
+    [SerializeField] private Vector2 relicChoiceTooltipSize = new Vector2(600f, 320f);
+    [SerializeField] private Vector2 relicChoiceTooltipOffset = new Vector2(24f, 28f);
+    [SerializeField] private SettlementImageScaleMode relicChoiceModalBackgroundScaleMode = SettlementImageScaleMode.PreserveAspect;
+    [SerializeField] private SettlementImageScaleMode relicChoiceCardBackgroundScaleMode = SettlementImageScaleMode.PreserveAspect;
+    [SerializeField] private SettlementImageScaleMode relicChoiceTooltipBackgroundScaleMode = SettlementImageScaleMode.Sliced;
+    [SerializeField] private SettlementImageScaleMode relicChoiceEntranceSlotBackgroundScaleMode = SettlementImageScaleMode.Sliced;
+    [SerializeField] private Color relicChoiceModalBackdropColor = new Color(0f, 0f, 0f, 0.42f);
+    [SerializeField] private Color relicChoiceModalPanelColor = new Color(0.08f, 0.1f, 0.14f, 0.98f);
+    [SerializeField] private Color relicChoiceCardColor = new Color(0.14f, 0.16f, 0.2f, 0.96f);
+    [SerializeField] private Color relicChoiceHoveredCardColor = new Color(0.24f, 0.27f, 0.33f, 0.98f);
+    [SerializeField] private Color relicChoiceDetailPanelColor = new Color(0.1f, 0.08f, 0.06f, 0.98f);
+    [SerializeField] private Sprite relicChoiceModalBackgroundSprite;
+    [SerializeField] private Sprite relicChoiceCardBackgroundSprite;
+    [SerializeField] private Sprite relicChoiceDetailBackgroundSprite;
+
     private Canvas overlayCanvas;
     private RectTransform overlayRoot;
     private Image backdropImage;
@@ -186,6 +267,19 @@ public class BattleSettlementOverlay : MonoBehaviour
     private TextMeshProUGUI lootDetailNameText;
     private TextMeshProUGUI lootDetailMetaText;
     private TextMeshProUGUI lootDetailDescriptionText;
+    private RectTransform relicChoiceModalRoot;
+    private Image relicChoiceModalBackdropImage;
+    private Image relicChoiceModalPanelImage;
+    private TextMeshProUGUI relicChoiceModalTitleText;
+    private RectTransform relicChoiceCardsRoot;
+    private RectTransform relicChoiceTooltipRoot;
+    private Image relicChoiceDetailPanelImage;
+    private Image relicChoiceDetailIcon;
+    private TextMeshProUGUI relicChoiceDetailNameText;
+    private TextMeshProUGUI relicChoiceDetailMetaText;
+    private TextMeshProUGUI relicChoiceDetailDescriptionText;
+    private TextMeshProUGUI relicChoiceDetailHintText;
+    private RectTransform relicChoiceModalButtonRoot;
     private RectTransform buttonRoot;
     private RectTransform victoryIntroRoot;
     private Image victoryIntroImage;
@@ -194,7 +288,12 @@ public class BattleSettlementOverlay : MonoBehaviour
     private readonly List<SummaryRowView> rowViews = new List<SummaryRowView>();
     private readonly List<GameObject> spawnedLootObjects = new List<GameObject>();
     private readonly List<LootItemView> lootViews = new List<LootItemView>();
+    private readonly List<GameObject> spawnedRelicChoiceObjects = new List<GameObject>();
+    private readonly List<LootItemView> relicChoiceViews = new List<LootItemView>();
     private LootItemView currentSelectedLootView;
+    private LootItemView hoveredRelicChoiceView;
+    private LootItemView selectedRelicChoiceView;
+    private BattleSettlementRelicChoiceData activeRelicChoiceData;
     private Coroutine showRoutine;
     private BattleManager battleManager;
     private Sprite runtimeFallbackLootSprite;
@@ -212,6 +311,18 @@ public class BattleSettlementOverlay : MonoBehaviour
         SetVisible(false);
     }
 
+    private void OnDestroy()
+    {
+        if (overlayCanvas != null)
+            Destroy(overlayCanvas.gameObject);
+    }
+
+    private void Update()
+    {
+        if (relicChoiceTooltipRoot != null && relicChoiceTooltipRoot.gameObject.activeSelf)
+            PositionRelicChoiceTooltip(GetCurrentPointerScreenPosition());
+    }
+
     public void ShowResult(BattleSettlementData data)
     {
         if (data == null)
@@ -221,10 +332,16 @@ public class BattleSettlementOverlay : MonoBehaviour
         EnsureCanvas();
         ClearRows();
         ClearLootViews();
+        ClearRelicChoiceModalViews();
         ClearButtons();
         rowViews.Clear();
         lootViews.Clear();
+        relicChoiceViews.Clear();
         currentSelectedLootView = null;
+        hoveredRelicChoiceView = null;
+        selectedRelicChoiceView = null;
+        activeRelicChoiceData = data.relicChoice;
+        SetRelicChoiceModalVisible(false);
 
         titleText.text = string.IsNullOrWhiteSpace(data.title)
             ? (data.isVictory ? "Victory" : "Defeat")
@@ -233,7 +350,7 @@ public class BattleSettlementOverlay : MonoBehaviour
         expText.text = $"EXP +{Mathf.Max(0, data.experienceGained)}";
 
         BuildSummaryRows(data.partyEntries);
-        BuildLootSection(data.lootEntries);
+        BuildLootSection(data);
         BuildButtons(data);
         LayoutRebuilder.ForceRebuildLayoutImmediate(panelRoot);
         ApplyRuntimeLayoutAdjustments();
@@ -254,6 +371,11 @@ public class BattleSettlementOverlay : MonoBehaviour
         SetVictoryIntroVisible(false);
         SetPanelVisible(true);
         SetVisible(false);
+        activeRelicChoiceData = null;
+        hoveredRelicChoiceView = null;
+        selectedRelicChoiceView = null;
+        currentSelectedLootView = null;
+        SetRelicChoiceModalVisible(false);
     }
 
     private IEnumerator ShowResultRoutine(BattleSettlementData data)
@@ -377,7 +499,7 @@ public class BattleSettlementOverlay : MonoBehaviour
         }
     }
 
-    private void BuildLootSection(IReadOnlyList<BattleSettlementLootEntry> entries)
+    private void BuildLootSection(BattleSettlementData data)
     {
         if (lootHeaderText == null || lootGridRoot == null || lootDetailRoot == null)
             return;
@@ -385,15 +507,28 @@ public class BattleSettlementOverlay : MonoBehaviour
         ClearLootViews();
         lootViews.Clear();
         currentSelectedLootView = null;
+        selectedRelicChoiceView = null;
 
+        IReadOnlyList<BattleSettlementLootEntry> entries = data != null ? data.lootEntries : null;
+        BattleSettlementRelicChoiceData choiceData = data != null ? data.relicChoice : null;
+        bool hasRelicChoice = choiceData != null && choiceData.HasChoices;
         int count = entries != null ? entries.Count : 0;
-        lootHeaderText.text = count > 0 ? $"Loot x{count}" : "Loot";
-        UpdateLootGridLayout(count);
+        int displayCount = count + (hasRelicChoice ? 1 : 0);
+        lootHeaderText.color = lootTitleColor;
+        lootHeaderText.text = BuildLootHeaderText(displayCount);
+        UpdateLootGridLayout(displayCount);
 
-        if (count <= 0)
+        if (displayCount <= 0)
         {
             ShowLootDetail(null, null);
             return;
+        }
+
+        if (hasRelicChoice)
+        {
+            LootItemView choiceEntranceView = CreateLootItemView(CreateRelicChoiceEntranceEntry(choiceData));
+            if (choiceEntranceView != null)
+                lootViews.Add(choiceEntranceView);
         }
 
         for (int i = 0; i < count; i++)
@@ -408,6 +543,26 @@ public class BattleSettlementOverlay : MonoBehaviour
         }
 
         ShowLootDetail(null, null);
+    }
+
+    private string BuildLootHeaderText(int displayCount)
+    {
+        return displayCount > 0 ? $"Loot x{displayCount}" : "Loot";
+    }
+
+    private BattleSettlementLootEntry CreateRelicChoiceEntranceEntry(BattleSettlementRelicChoiceData choiceData)
+    {
+        LootRarity rarity = choiceData != null ? choiceData.Rarity : LootRarity.Common;
+        return new BattleSettlementLootEntry
+        {
+            amount = 1,
+            displayName = relicChoiceEntranceName,
+            description = relicChoiceEntranceDescription,
+            rarity = rarity,
+            icon = GetRelicChoiceQuestionSprite(rarity),
+            isRelicChoiceEntrance = true,
+            relicChoiceData = choiceData
+        };
     }
 
     private void UpdateLootGridLayout(int itemCount)
@@ -429,88 +584,188 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private LootItemView CreateLootItemView(BattleSettlementLootEntry entry)
     {
-        GameObject slotGo = new GameObject($"Loot_{entry.displayName}", typeof(RectTransform), typeof(Image), typeof(Button));
+        GameObject slotGo = new GameObject($"Loot_{entry.displayName}", typeof(RectTransform), typeof(Image), typeof(Button), typeof(EventTrigger));
         slotGo.transform.SetParent(lootGridRoot, false);
         spawnedLootObjects.Add(slotGo);
 
         Image slotImage = slotGo.GetComponent<Image>();
-        slotImage.color = lootSlotColor;
-        slotImage.sprite = lootSlotBackgroundSprite;
-        slotImage.type = lootSlotBackgroundSprite != null ? Image.Type.Sliced : Image.Type.Simple;
+        slotImage.color = entry.isRelicChoiceEntrance ? relicChoiceSlotColor : lootSlotColor;
+        Sprite slotSprite = entry.isRelicChoiceEntrance && relicChoiceSlotBackgroundSprite != null
+            ? relicChoiceSlotBackgroundSprite
+            : lootSlotBackgroundSprite;
+        slotImage.sprite = slotSprite;
+        slotImage.type = slotSprite != null ? Image.Type.Sliced : Image.Type.Simple;
+        if (entry.isRelicChoiceEntrance)
+            ApplyImageScaleMode(slotImage, relicChoiceEntranceSlotBackgroundScaleMode);
 
         RectTransform slotRect = slotGo.GetComponent<RectTransform>();
         slotRect.sizeDelta = lootSlotSize;
 
-        Image iconImage = CreateImage(slotGo.transform, "Icon", Color.white, entry.icon != null ? entry.icon : GetFallbackLootSprite());
+        Image iconImage = CreateIconImage(slotGo.transform, "Icon", entry.icon != null ? entry.icon : GetFallbackLootSprite());
         RectTransform iconRect = iconImage.rectTransform;
         iconRect.anchorMin = new Vector2(0.5f, 0.5f);
         iconRect.anchorMax = new Vector2(0.5f, 0.5f);
         iconRect.pivot = new Vector2(0.5f, 0.5f);
         iconRect.sizeDelta = lootIconSize;
         iconRect.anchoredPosition = Vector2.zero;
-        iconImage.preserveAspect = true;
 
-        TextMeshProUGUI countText = CreateLabel(slotGo.transform, "Count", lootBodyFontSize, lootCountColor, $"x{Mathf.Max(1, entry.amount)}");
+        TextMeshProUGUI countText = CreateLabel(
+            slotGo.transform,
+            "Count",
+            lootBodyFontSize,
+            lootCountColor,
+            entry.isRelicChoiceEntrance ? relicChoiceEntranceLabel : $"x{Mathf.Max(1, entry.amount)}");
         RectTransform countRect = countText.rectTransform;
         countRect.anchorMin = new Vector2(1f, 0f);
         countRect.anchorMax = new Vector2(1f, 0f);
         countRect.pivot = new Vector2(1f, 0f);
         countRect.anchoredPosition = new Vector2(-6f, 6f);
         countText.alignment = TextAlignmentOptions.BottomRight;
+        countText.raycastTarget = false;
 
         Button button = slotGo.GetComponent<Button>();
         LootItemView view = new LootItemView
         {
             entry = entry,
             button = button,
-            slotImage = slotImage
+            slotImage = slotImage,
+            iconImage = iconImage,
+            countText = countText
         };
 
         button.onClick.AddListener(() =>
         {
+            if (entry.isRelicChoiceEntrance)
+            {
+                OpenRelicChoiceModal(entry.relicChoiceData);
+                return;
+            }
+
             if (currentSelectedLootView == view)
                 ShowLootDetail(null, null);
             else
                 ShowLootDetail(entry, view);
         });
+
+        EventTrigger trigger = slotGo.GetComponent<EventTrigger>();
+        AddEventTrigger(trigger, EventTriggerType.PointerEnter, _ => ShowLootDetail(entry, view));
+        RefreshLootItemViewPresentation(view);
         return view;
     }
 
     private void ShowLootDetail(BattleSettlementLootEntry entry, LootItemView selectedView)
     {
         currentSelectedLootView = selectedView;
-
-        for (int i = 0; i < lootViews.Count; i++)
-        {
-            LootItemView view = lootViews[i];
-            if (view == null || view.slotImage == null)
-                continue;
-
-            view.slotImage.color = view == selectedView ? lootSelectedSlotColor : lootSlotColor;
-        }
+        UpdateLootSlotColors();
 
         if (lootDetailPanelImage == null || lootDetailIcon == null || lootDetailNameText == null ||
             lootDetailMetaText == null || lootDetailDescriptionText == null)
             return;
 
         bool hasEntry = entry != null;
-        lootDetailPanelImage.gameObject.SetActive(hasEntry);
+        SetLootDetailVisible(hasEntry);
         if (!hasEntry)
             return;
 
-        lootDetailIcon.sprite = entry.icon != null ? entry.icon : GetFallbackLootSprite();
-        lootDetailIcon.preserveAspect = true;
-        lootDetailNameText.text = entry.displayName;
+        BattleSettlementLootEntry detailEntry = ResolvePresentedLootEntry(entry);
+        if (detailEntry == null)
+            detailEntry = entry;
 
-        string typeName = entry.relicData != null
-            ? "Relic"
-            : (entry.attribute != null && !string.IsNullOrWhiteSpace(entry.attribute.attributeName)
-                ? entry.attribute.attributeName
-                : "None");
-        lootDetailMetaText.text = $"{entry.rarity} | {typeName} | x{Mathf.Max(1, entry.amount)}";
-        lootDetailDescriptionText.text = string.IsNullOrWhiteSpace(entry.description)
+        SetIconSprite(lootDetailIcon, detailEntry.icon != null ? detailEntry.icon : GetFallbackLootSprite());
+        lootDetailIcon.preserveAspect = true;
+        lootDetailNameText.text = detailEntry.displayName;
+
+        string typeName = entry.isRelicChoiceEntrance
+            ? (entry.relicChoiceData != null && entry.relicChoiceData.selectedChoice != null ? "Relic" : "Relic Reward")
+            : (detailEntry.relicData != null
+                ? "Relic"
+                : (detailEntry.attribute != null && !string.IsNullOrWhiteSpace(detailEntry.attribute.attributeName)
+                    ? detailEntry.attribute.attributeName
+                    : "None"));
+        lootDetailMetaText.text = $"{detailEntry.rarity} | {typeName} | x{Mathf.Max(1, detailEntry.amount)}";
+        lootDetailDescriptionText.text = string.IsNullOrWhiteSpace(detailEntry.description)
             ? "No description."
-            : entry.description;
+            : detailEntry.description;
+    }
+
+    private void SetLootDetailVisible(bool visible)
+    {
+        if (lootDetailPanelImage != null)
+        {
+            lootDetailPanelImage.enabled = visible;
+            lootDetailPanelImage.raycastTarget = false;
+        }
+
+        if (lootDetailIcon != null)
+        {
+            lootDetailIcon.enabled = visible;
+            lootDetailIcon.raycastTarget = false;
+        }
+
+        if (lootDetailNameText != null)
+        {
+            lootDetailNameText.enabled = visible;
+            lootDetailNameText.raycastTarget = false;
+        }
+
+        if (lootDetailMetaText != null)
+        {
+            lootDetailMetaText.enabled = visible;
+            lootDetailMetaText.raycastTarget = false;
+        }
+
+        if (lootDetailDescriptionText != null)
+        {
+            lootDetailDescriptionText.enabled = visible;
+            lootDetailDescriptionText.raycastTarget = false;
+        }
+    }
+
+    private void UpdateLootSlotColors()
+    {
+        for (int i = 0; i < lootViews.Count; i++)
+        {
+            LootItemView view = lootViews[i];
+            if (view == null || view.slotImage == null)
+                continue;
+
+            RefreshLootItemViewPresentation(view);
+
+            if (view.entry != null && view.entry.isRelicChoiceEntrance && view.entry.relicChoiceData != null && view.entry.relicChoiceData.selectedChoice != null)
+                view.slotImage.color = relicChoiceSelectedSlotColor;
+            else if (view == currentSelectedLootView)
+                view.slotImage.color = lootSelectedSlotColor;
+            else if (view.entry != null && view.entry.isRelicChoiceEntrance)
+                view.slotImage.color = relicChoiceSlotColor;
+            else
+                view.slotImage.color = lootSlotColor;
+        }
+    }
+
+    private void RefreshLootItemViewPresentation(LootItemView view)
+    {
+        if (view == null || view.entry == null)
+            return;
+
+        BattleSettlementLootEntry presentationEntry = ResolvePresentedLootEntry(view.entry);
+        if (view.iconImage != null)
+            SetIconSprite(view.iconImage, presentationEntry != null && presentationEntry.icon != null ? presentationEntry.icon : GetFallbackLootSprite());
+
+        if (view.countText != null)
+        {
+            if (view.entry.isRelicChoiceEntrance && view.entry.relicChoiceData != null && view.entry.relicChoiceData.selectedChoice == null)
+                view.countText.text = relicChoiceEntranceLabel;
+            else
+                view.countText.text = $"x{Mathf.Max(1, presentationEntry != null ? presentationEntry.amount : view.entry.amount)}";
+        }
+    }
+
+    private BattleSettlementLootEntry ResolvePresentedLootEntry(BattleSettlementLootEntry entry)
+    {
+        if (entry != null && entry.isRelicChoiceEntrance && entry.relicChoiceData != null && entry.relicChoiceData.selectedChoice != null)
+            return entry.relicChoiceData.selectedChoice;
+
+        return entry;
     }
 
     private void BuildButtons(BattleSettlementData data)
@@ -519,7 +774,7 @@ public class BattleSettlementOverlay : MonoBehaviour
             buttonRoot,
             "ReturnButton",
             data.isVictory ? returnButtonLabel : defeatReturnButtonLabel,
-            () => HandleReturnToMap(data.returnSceneName));
+            () => HandleReturnToMap(data));
 
         if (!showRetryButton)
             return;
@@ -531,9 +786,13 @@ public class BattleSettlementOverlay : MonoBehaviour
             () => HandleRetryBattle(data.retrySceneName));
     }
 
-    private void HandleReturnToMap(string sceneName)
+    private void HandleReturnToMap(BattleSettlementData data)
     {
+        if (!TryApplyRequiredRelicChoice(data))
+            return;
+
         BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        string sceneName = data != null ? data.returnSceneName : null;
         string targetScene = !string.IsNullOrWhiteSpace(sceneName)
             ? sceneName
             : "MapScene";
@@ -556,6 +815,75 @@ public class BattleSettlementOverlay : MonoBehaviour
         SceneCurtainTransitionController.Instance.TransitionToScene(targetScene);
     }
 
+    private bool TryApplyRequiredRelicChoice(BattleSettlementData data)
+    {
+        BattleSettlementRelicChoiceData choiceData = data != null ? data.relicChoice : null;
+        if (choiceData == null || !choiceData.HasChoices || !data.isVictory)
+            return true;
+
+        if (choiceData.selectedChoice == null || choiceData.selectedChoice.relicData == null)
+        {
+            ShowRelicChoiceRequiredMessage(choiceData);
+            return false;
+        }
+
+        if (choiceData.rewardApplied)
+            return true;
+
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (activeEncounter != null)
+        {
+            if (activeEncounter.resolvedRelics == null)
+                activeEncounter.resolvedRelics = new List<RunRelicState>();
+
+            AddOrMergeResolvedRelic(activeEncounter.resolvedRelics, choiceData.selectedChoice.relicData, 1);
+        }
+
+        choiceData.rewardApplied = true;
+        return true;
+    }
+
+    private void ShowRelicChoiceRequiredMessage(BattleSettlementRelicChoiceData choiceData)
+    {
+        if (lootHeaderText == null)
+            return;
+
+        lootHeaderText.color = relicChoiceRequiredColor;
+        lootHeaderText.text = choiceData != null && !string.IsNullOrWhiteSpace(choiceData.requiredMessage)
+            ? choiceData.requiredMessage
+            : relicChoiceRequiredMessage;
+        OpenRelicChoiceModal(choiceData);
+        if (relicChoiceModalTitleText != null)
+        {
+            relicChoiceModalTitleText.color = relicChoiceRequiredColor;
+            relicChoiceModalTitleText.text = choiceData != null && !string.IsNullOrWhiteSpace(choiceData.requiredMessage)
+                ? choiceData.requiredMessage
+                : relicChoiceRequiredMessage;
+        }
+    }
+
+    private static void AddOrMergeResolvedRelic(List<RunRelicState> relics, Relic_SO relicData, int amount)
+    {
+        if (relics == null || relicData == null || amount <= 0)
+            return;
+
+        for (int i = 0; i < relics.Count; i++)
+        {
+            RunRelicState existing = relics[i];
+            if (existing == null || existing.relicData != relicData)
+                continue;
+
+            existing.amount += amount;
+            return;
+        }
+
+        relics.Add(new RunRelicState
+        {
+            relicData = relicData,
+            amount = amount
+        });
+    }
+
     private void HandleRetryBattle(string sceneName)
     {
         string targetScene = !string.IsNullOrWhiteSpace(sceneName)
@@ -575,11 +903,22 @@ public class BattleSettlementOverlay : MonoBehaviour
             return;
 
         GameObject canvasGo = new GameObject("BattleSettlementCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
-        canvasGo.transform.SetParent(transform, false);
+        canvasGo.transform.SetParent(null, false);
+        canvasGo.transform.localPosition = Vector3.zero;
+        canvasGo.transform.localRotation = Quaternion.identity;
+        canvasGo.transform.localScale = Vector3.one;
 
         overlayCanvas = canvasGo.GetComponent<Canvas>();
         overlayCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
         overlayCanvas.sortingOrder = canvasSortOrder;
+        overlayCanvas.pixelPerfect = true;
+
+        GraphicRaycaster raycaster = canvasGo.GetComponent<GraphicRaycaster>();
+        if (raycaster != null)
+        {
+            raycaster.ignoreReversedGraphics = true;
+            raycaster.blockingObjects = GraphicRaycaster.BlockingObjects.None;
+        }
 
         CanvasScaler scaler = canvasGo.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -640,6 +979,8 @@ public class BattleSettlementOverlay : MonoBehaviour
         buttonRoot = CreateHorizontalRoot(panelRoot, "ButtonRoot", buttonSpacing);
         LayoutElement buttonLayout = buttonRoot.gameObject.AddComponent<LayoutElement>();
         buttonLayout.ignoreLayout = true;
+
+        BuildRelicChoiceModalRoot();
 
         victoryIntroImage = CreateImage(overlayRoot, "VictoryIntro", victoryIntroColor, victoryIntroSprite);
         victoryIntroImage.preserveAspect = true;
@@ -756,7 +1097,397 @@ public class BattleSettlementOverlay : MonoBehaviour
             1f,
             lootDetailPanelSize.y > 0f ? lootDetailPanelSize.y - 28f : 96f,
             40f);
-        lootDetailPanelImage.gameObject.SetActive(false);
+        SetLootDetailVisible(false);
+    }
+
+    private void BuildRelicChoiceModalRoot()
+    {
+        if (overlayRoot == null)
+            return;
+
+        relicChoiceModalBackdropImage = CreateImage(overlayRoot, "RelicChoiceModalBackdrop", relicChoiceModalBackdropColor, null);
+        relicChoiceModalRoot = relicChoiceModalBackdropImage.rectTransform;
+        relicChoiceModalRoot.anchorMin = Vector2.zero;
+        relicChoiceModalRoot.anchorMax = Vector2.one;
+        relicChoiceModalRoot.offsetMin = Vector2.zero;
+        relicChoiceModalRoot.offsetMax = Vector2.zero;
+
+        relicChoiceModalPanelImage = CreateImage(relicChoiceModalRoot, "RelicChoiceModalPanel", relicChoiceModalPanelColor, relicChoiceModalBackgroundSprite);
+        RectTransform panelRect = relicChoiceModalPanelImage.rectTransform;
+        panelRect.anchorMin = new Vector2(0.5f, 0.5f);
+        panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRect.pivot = new Vector2(0.5f, 0.5f);
+        panelRect.sizeDelta = ResolveRelicChoiceModalPanelSize();
+        panelRect.anchoredPosition = Vector2.zero;
+        ApplyImageScaleMode(relicChoiceModalPanelImage, relicChoiceModalBackgroundScaleMode);
+
+        relicChoiceModalTitleText = CreateLabel(panelRect, "RelicChoiceTitle", lootTitleFontSize + 6f, lootTitleColor, relicChoiceHeaderText);
+        relicChoiceModalTitleText.font = titleFont != null ? titleFont : relicChoiceModalTitleText.font;
+        relicChoiceModalTitleText.alignment = TextAlignmentOptions.Center;
+        RectTransform titleRect = relicChoiceModalTitleText.rectTransform;
+        titleRect.anchorMin = new Vector2(0f, 1f);
+        titleRect.anchorMax = new Vector2(1f, 1f);
+        titleRect.pivot = new Vector2(0.5f, 1f);
+        titleRect.anchoredPosition = new Vector2(0f, -24f);
+        titleRect.sizeDelta = new Vector2(-56f, lootTitleFontSize + 26f);
+
+        relicChoiceCardsRoot = CreateHorizontalRoot(panelRect, "RelicChoiceCards", relicChoiceModalSpacing);
+        relicChoiceCardsRoot.anchorMin = new Vector2(0.5f, 0.5f);
+        relicChoiceCardsRoot.anchorMax = new Vector2(0.5f, 0.5f);
+        relicChoiceCardsRoot.pivot = new Vector2(0.5f, 0.5f);
+        relicChoiceCardsRoot.anchoredPosition = new Vector2(0f, 4f);
+        relicChoiceCardsRoot.sizeDelta = new Vector2(
+            relicChoiceCardSize.x * 3f + relicChoiceModalSpacing * 2f,
+            relicChoiceCardSize.y);
+        HorizontalLayoutGroup cardsLayout = relicChoiceCardsRoot.GetComponent<HorizontalLayoutGroup>();
+        cardsLayout.childAlignment = TextAnchor.MiddleCenter;
+        cardsLayout.childControlWidth = false;
+        cardsLayout.childControlHeight = false;
+        cardsLayout.childForceExpandWidth = false;
+        cardsLayout.childForceExpandHeight = false;
+
+        relicChoiceModalButtonRoot = CreateHorizontalRoot(panelRect, "RelicChoiceButtons", buttonSpacing);
+        relicChoiceModalButtonRoot.anchorMin = new Vector2(0.5f, 0f);
+        relicChoiceModalButtonRoot.anchorMax = new Vector2(0.5f, 0f);
+        relicChoiceModalButtonRoot.pivot = new Vector2(0.5f, 0f);
+        relicChoiceModalButtonRoot.anchoredPosition = new Vector2(0f, 30f);
+        relicChoiceModalButtonRoot.sizeDelta = new Vector2(buttonSize.x, buttonSize.y);
+        CreateActionButton(relicChoiceModalButtonRoot, "RelicChoiceConfirmButton", relicChoiceConfirmLabel, CloseRelicChoiceModal, false);
+        BuildRelicChoiceTooltipRoot();
+        SetRelicChoiceModalVisible(false);
+    }
+
+    private void BuildRelicChoiceTooltipRoot()
+    {
+        relicChoiceDetailPanelImage = CreateImage(overlayRoot, "RelicChoiceTooltip", relicChoiceDetailPanelColor, relicChoiceDetailBackgroundSprite);
+        ApplyImageScaleMode(relicChoiceDetailPanelImage, relicChoiceTooltipBackgroundScaleMode);
+        relicChoiceDetailPanelImage.raycastTarget = false;
+        relicChoiceTooltipRoot = relicChoiceDetailPanelImage.rectTransform;
+        relicChoiceTooltipRoot.anchorMin = new Vector2(0.5f, 0.5f);
+        relicChoiceTooltipRoot.anchorMax = new Vector2(0.5f, 0.5f);
+        relicChoiceTooltipRoot.pivot = new Vector2(0f, 1f);
+        relicChoiceTooltipRoot.sizeDelta = relicChoiceTooltipSize;
+        relicChoiceTooltipRoot.SetAsLastSibling();
+
+        VerticalLayoutGroup detailLayout = relicChoiceTooltipRoot.gameObject.AddComponent<VerticalLayoutGroup>();
+        detailLayout.padding = new RectOffset(22, 22, 18, 18);
+        detailLayout.spacing = 10f;
+        detailLayout.childControlWidth = true;
+        detailLayout.childControlHeight = false;
+        detailLayout.childForceExpandWidth = true;
+        detailLayout.childForceExpandHeight = false;
+
+        RectTransform headerRoot = CreateHorizontalRoot(relicChoiceTooltipRoot, "TooltipHeader", 14f);
+        AddLayoutElement(headerRoot, 0f, 0f, 1f, relicChoiceModalIconSize.y, relicChoiceModalIconSize.y);
+        HorizontalLayoutGroup headerLayout = headerRoot.GetComponent<HorizontalLayoutGroup>();
+        headerLayout.childControlWidth = true;
+        headerLayout.childForceExpandWidth = false;
+        headerLayout.childAlignment = TextAnchor.MiddleLeft;
+
+        relicChoiceDetailIcon = CreateIconImage(headerRoot, "RelicChoiceDetailIcon", GetFallbackLootSprite());
+        relicChoiceDetailIcon.preserveAspect = true;
+        AddLayoutElement(relicChoiceDetailIcon.rectTransform, relicChoiceModalIconSize.x, relicChoiceModalIconSize.x, 0f, relicChoiceModalIconSize.y, relicChoiceModalIconSize.y);
+
+        RectTransform titleRoot = CreateVerticalRoot(headerRoot, "TooltipTitleRoot", 4f);
+        AddLayoutElement(titleRoot, relicChoiceTooltipSize.x - relicChoiceModalIconSize.x - 72f, 0f, 1f, relicChoiceModalIconSize.y, relicChoiceModalIconSize.y);
+
+        relicChoiceDetailNameText = CreateLabel(titleRoot, "RelicChoiceDetailName", lootTitleFontSize + 2f, lootTitleColor, string.Empty);
+        relicChoiceDetailNameText.alignment = TextAlignmentOptions.MidlineLeft;
+        relicChoiceDetailNameText.enableWordWrapping = true;
+        relicChoiceDetailNameText.overflowMode = TextOverflowModes.Ellipsis;
+        relicChoiceDetailNameText.raycastTarget = false;
+        AddLayoutElement(relicChoiceDetailNameText.rectTransform, 0f, 0f, 1f, lootTitleFontSize + 18f, lootTitleFontSize + 18f);
+
+        relicChoiceDetailMetaText = CreateLabel(titleRoot, "RelicChoiceDetailMeta", lootBodyFontSize, lootTextColor, string.Empty);
+        relicChoiceDetailMetaText.alignment = TextAlignmentOptions.MidlineLeft;
+        relicChoiceDetailMetaText.raycastTarget = false;
+        AddLayoutElement(relicChoiceDetailMetaText.rectTransform, 0f, 0f, 1f, lootBodyFontSize + 10f, lootBodyFontSize + 10f);
+
+        relicChoiceDetailDescriptionText = CreateLabel(relicChoiceTooltipRoot, "RelicChoiceDetailDescription", lootBodyFontSize, lootTextColor, string.Empty);
+        relicChoiceDetailDescriptionText.alignment = TextAlignmentOptions.TopLeft;
+        relicChoiceDetailDescriptionText.enableWordWrapping = true;
+        relicChoiceDetailDescriptionText.overflowMode = TextOverflowModes.Overflow;
+        relicChoiceDetailDescriptionText.raycastTarget = false;
+        AddLayoutElement(relicChoiceDetailDescriptionText.rectTransform, 0f, 0f, 1f, relicChoiceTooltipSize.y - relicChoiceModalIconSize.y - 96f, relicChoiceTooltipSize.y - relicChoiceModalIconSize.y - 120f);
+
+        relicChoiceDetailHintText = CreateLabel(relicChoiceTooltipRoot, "RelicChoiceDetailHint", lootBodyFontSize - 2f, subtitleColor, relicChoiceDetailEmptyText);
+        relicChoiceDetailHintText.alignment = TextAlignmentOptions.BottomLeft;
+        relicChoiceDetailHintText.enableWordWrapping = true;
+        relicChoiceDetailHintText.overflowMode = TextOverflowModes.Overflow;
+        relicChoiceDetailHintText.raycastTarget = false;
+        AddLayoutElement(relicChoiceDetailHintText.rectTransform, 0f, 0f, 1f, 42f, 32f);
+
+        SetRelicChoiceTooltipVisible(false);
+    }
+
+    private void OpenRelicChoiceModal(BattleSettlementRelicChoiceData choiceData)
+    {
+        if (choiceData == null || !choiceData.HasChoices)
+            return;
+
+        activeRelicChoiceData = choiceData;
+        EnsureCanvas();
+        ClearRelicChoiceModalViews();
+        relicChoiceViews.Clear();
+        hoveredRelicChoiceView = null;
+        selectedRelicChoiceView = null;
+
+        if (relicChoiceModalTitleText != null)
+        {
+            relicChoiceModalTitleText.color = lootTitleColor;
+            relicChoiceModalTitleText.text = !string.IsNullOrWhiteSpace(choiceData.title)
+                ? choiceData.title
+                : relicChoiceHeaderText;
+        }
+
+        for (int i = 0; i < choiceData.choices.Count; i++)
+        {
+            BattleSettlementLootEntry choice = choiceData.choices[i];
+            if (choice == null)
+                continue;
+
+            LootItemView view = CreateRelicChoiceCard(choice);
+            if (view != null)
+            {
+                relicChoiceViews.Add(view);
+                if (choiceData.selectedChoice == choice)
+                    selectedRelicChoiceView = view;
+            }
+        }
+
+        if (choiceData.selectedChoice != null)
+            ShowRelicChoiceDetail(choiceData.selectedChoice, selectedRelicChoiceView);
+        else
+            ShowEmptyRelicChoiceDetail();
+
+        UpdateRelicChoiceCardColors();
+        if (relicChoiceCardsRoot != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(relicChoiceCardsRoot);
+        SetRelicChoiceModalVisible(true);
+    }
+
+    private LootItemView CreateRelicChoiceCard(BattleSettlementLootEntry entry)
+    {
+        GameObject cardGo = new GameObject($"RelicChoice_{entry.displayName}", typeof(RectTransform), typeof(Image), typeof(Button), typeof(EventTrigger));
+        cardGo.transform.SetParent(relicChoiceCardsRoot, false);
+        spawnedRelicChoiceObjects.Add(cardGo);
+
+        Image cardImage = cardGo.GetComponent<Image>();
+        cardImage.color = relicChoiceCardColor;
+        cardImage.sprite = relicChoiceCardBackgroundSprite;
+        cardImage.type = relicChoiceCardBackgroundSprite != null ? Image.Type.Sliced : Image.Type.Simple;
+        ApplyImageScaleMode(cardImage, relicChoiceCardBackgroundScaleMode);
+        RectTransform cardRect = cardGo.GetComponent<RectTransform>();
+        cardRect.sizeDelta = relicChoiceCardSize;
+        AddLayoutElement(cardRect, relicChoiceCardSize.x, relicChoiceCardSize.x, 0f, relicChoiceCardSize.y, relicChoiceCardSize.y);
+
+        VerticalLayoutGroup cardLayout = cardGo.AddComponent<VerticalLayoutGroup>();
+        cardLayout.padding = new RectOffset(16, 16, 18, 18);
+        cardLayout.spacing = 12f;
+        cardLayout.childAlignment = TextAnchor.UpperCenter;
+        cardLayout.childControlWidth = true;
+        cardLayout.childControlHeight = false;
+        cardLayout.childForceExpandWidth = true;
+        cardLayout.childForceExpandHeight = false;
+
+        Image icon = CreateIconImage(cardGo.transform, "Icon", entry.icon != null ? entry.icon : GetFallbackLootSprite());
+        AddLayoutElement(icon.rectTransform, relicChoiceModalIconSize.x, relicChoiceModalIconSize.x, 0f, relicChoiceModalIconSize.y, relicChoiceModalIconSize.y);
+
+        TextMeshProUGUI nameText = CreateLabel(cardGo.transform, "Name", lootTitleFontSize, lootTitleColor, entry.displayName);
+        nameText.alignment = TextAlignmentOptions.Center;
+        nameText.enableWordWrapping = true;
+        nameText.overflowMode = TextOverflowModes.Ellipsis;
+        nameText.raycastTarget = false;
+        AddLayoutElement(nameText.rectTransform, 0f, 0f, 1f, 88f, 54f);
+
+        TextMeshProUGUI rarityText = CreateLabel(cardGo.transform, "Rarity", lootBodyFontSize, lootTextColor, entry.rarity.ToString());
+        rarityText.alignment = TextAlignmentOptions.Center;
+        rarityText.raycastTarget = false;
+        AddLayoutElement(rarityText.rectTransform, 0f, 0f, 1f, lootBodyFontSize + 10f, lootBodyFontSize + 10f);
+
+        TextMeshProUGUI hintText = CreateLabel(cardGo.transform, "Hint", lootBodyFontSize - 2f, subtitleColor, "Hover / Tap");
+        hintText.alignment = TextAlignmentOptions.Center;
+        hintText.raycastTarget = false;
+        AddLayoutElement(hintText.rectTransform, 0f, 0f, 1f, lootBodyFontSize + 10f, lootBodyFontSize + 10f);
+
+        Button button = cardGo.GetComponent<Button>();
+        LootItemView view = new LootItemView
+        {
+            entry = entry,
+            button = button,
+            slotImage = cardImage
+        };
+
+        button.onClick.AddListener(() => SelectRelicChoice(entry, view));
+
+        EventTrigger trigger = cardGo.GetComponent<EventTrigger>();
+        AddEventTrigger(trigger, EventTriggerType.PointerEnter, eventData => ShowRelicChoiceDetail(entry, view, ExtractPointerScreenPosition(eventData)));
+        AddEventTrigger(trigger, EventTriggerType.PointerExit, _ => HideRelicChoiceDetailIfNotSelected(entry));
+        return view;
+    }
+
+    private void SelectRelicChoice(BattleSettlementLootEntry entry, LootItemView selectedView)
+    {
+        if (entry == null || !entry.isRelicChoiceOption)
+            return;
+
+        if (activeRelicChoiceData != null)
+            activeRelicChoiceData.selectedChoice = entry;
+
+        selectedRelicChoiceView = selectedView;
+        ShowRelicChoiceDetail(entry, selectedView);
+        UpdateRelicChoiceCardColors();
+        UpdateLootSlotColors();
+    }
+
+    private void ShowRelicChoiceDetail(BattleSettlementLootEntry entry, LootItemView hoveredView)
+    {
+        ShowRelicChoiceDetail(entry, hoveredView, GetCurrentPointerScreenPosition());
+    }
+
+    private void ShowRelicChoiceDetail(BattleSettlementLootEntry entry, LootItemView hoveredView, Vector2 screenPosition)
+    {
+        hoveredRelicChoiceView = hoveredView;
+        if (entry == null)
+        {
+            ShowEmptyRelicChoiceDetail();
+            return;
+        }
+
+        SetRelicChoiceTooltipVisible(true);
+        PositionRelicChoiceTooltip(screenPosition);
+        if (relicChoiceDetailIcon != null)
+        {
+            relicChoiceDetailIcon.gameObject.SetActive(true);
+            SetIconSprite(relicChoiceDetailIcon, entry.icon != null ? entry.icon : GetFallbackLootSprite());
+        }
+        if (relicChoiceDetailNameText != null)
+            relicChoiceDetailNameText.text = entry.displayName;
+        if (relicChoiceDetailMetaText != null)
+        {
+            string selectedText = activeRelicChoiceData != null && activeRelicChoiceData.selectedChoice == entry
+                ? $" | {relicChoiceSelectedPrefix}"
+                : string.Empty;
+            relicChoiceDetailMetaText.text = $"{entry.rarity} | Relic{selectedText}";
+        }
+        if (relicChoiceDetailDescriptionText != null)
+            relicChoiceDetailDescriptionText.text = string.IsNullOrWhiteSpace(entry.description) ? "No description." : entry.description;
+        if (relicChoiceDetailHintText != null)
+            relicChoiceDetailHintText.text = relicChoiceDetailEmptyText;
+
+        UpdateRelicChoiceCardColors();
+    }
+
+    private void ShowEmptyRelicChoiceDetail()
+    {
+        SetRelicChoiceTooltipVisible(false);
+        if (relicChoiceDetailIcon != null)
+            relicChoiceDetailIcon.gameObject.SetActive(false);
+        if (relicChoiceDetailNameText != null)
+            relicChoiceDetailNameText.text = relicChoiceHeaderText;
+        if (relicChoiceDetailMetaText != null)
+            relicChoiceDetailMetaText.text = string.Empty;
+        if (relicChoiceDetailDescriptionText != null)
+            relicChoiceDetailDescriptionText.text = relicChoiceDetailEmptyText;
+        if (relicChoiceDetailHintText != null)
+            relicChoiceDetailHintText.text = string.Empty;
+    }
+
+    private void UpdateRelicChoiceCardColors()
+    {
+        for (int i = 0; i < relicChoiceViews.Count; i++)
+        {
+            LootItemView view = relicChoiceViews[i];
+            if (view == null || view.slotImage == null)
+                continue;
+
+            if (view == selectedRelicChoiceView)
+                view.slotImage.color = relicChoiceSelectedSlotColor;
+            else if (view == hoveredRelicChoiceView)
+                view.slotImage.color = relicChoiceHoveredCardColor;
+            else
+                view.slotImage.color = relicChoiceCardColor;
+        }
+    }
+
+    private void CloseRelicChoiceModal()
+    {
+        if (activeRelicChoiceData != null && activeRelicChoiceData.HasChoices && activeRelicChoiceData.selectedChoice == null)
+        {
+            if (relicChoiceModalTitleText != null)
+            {
+                relicChoiceModalTitleText.color = relicChoiceRequiredColor;
+                relicChoiceModalTitleText.text = !string.IsNullOrWhiteSpace(activeRelicChoiceData.requiredMessage)
+                    ? activeRelicChoiceData.requiredMessage
+                    : relicChoiceRequiredMessage;
+            }
+            return;
+        }
+
+        SetRelicChoiceModalVisible(false);
+    }
+
+    private void SetRelicChoiceModalVisible(bool visible)
+    {
+        if (relicChoiceModalRoot != null)
+            relicChoiceModalRoot.gameObject.SetActive(visible);
+        if (!visible)
+        {
+            SetRelicChoiceTooltipVisible(false);
+        }
+    }
+
+    private void SetRelicChoiceTooltipVisible(bool visible)
+    {
+        if (relicChoiceTooltipRoot != null)
+            relicChoiceTooltipRoot.gameObject.SetActive(visible);
+    }
+
+    private void HideRelicChoiceDetailIfNotSelected(BattleSettlementLootEntry entry)
+    {
+        if (activeRelicChoiceData != null && activeRelicChoiceData.selectedChoice != null)
+        {
+            ShowRelicChoiceDetail(activeRelicChoiceData.selectedChoice, selectedRelicChoiceView);
+            return;
+        }
+
+        if (hoveredRelicChoiceView != null && hoveredRelicChoiceView.entry == entry)
+            hoveredRelicChoiceView = null;
+
+        ShowEmptyRelicChoiceDetail();
+        UpdateRelicChoiceCardColors();
+    }
+
+    private void PositionRelicChoiceTooltip(Vector2 screenPosition)
+    {
+        if (overlayRoot == null || relicChoiceTooltipRoot == null)
+            return;
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            overlayRoot,
+            screenPosition,
+            null,
+            out Vector2 localPoint);
+
+        Vector2 target = new Vector2(
+            localPoint.x + relicChoiceTooltipOffset.x,
+            localPoint.y - relicChoiceTooltipOffset.y);
+
+        Rect rootRect = overlayRoot.rect;
+        Vector2 size = relicChoiceTooltipRoot.rect.size;
+        if (size.x <= 0f || size.y <= 0f)
+            size = relicChoiceTooltipSize;
+
+        float minX = rootRect.xMin + 12f;
+        float maxX = rootRect.xMax - size.x - 12f;
+        float minY = rootRect.yMin + size.y + 12f;
+        float maxY = rootRect.yMax - 12f;
+
+        if (target.x > maxX)
+            target.x = localPoint.x - size.x - relicChoiceTooltipOffset.x;
+        target.x = Mathf.Clamp(target.x, minX, Mathf.Max(minX, maxX));
+        target.y = Mathf.Clamp(target.y, minY, Mathf.Max(minY, maxY));
+        relicChoiceTooltipRoot.anchoredPosition = target;
     }
 
     private RectTransform CreateExpBar(Transform parent, out RectTransform fillRect, out float fillWidth)
@@ -787,11 +1518,10 @@ public class BattleSettlementOverlay : MonoBehaviour
         return borderRect;
     }
 
-    private Button CreateActionButton(Transform parent, string name, string label, Action onClick)
+    private Button CreateActionButton(Transform parent, string name, string label, Action onClick, bool trackButton = true)
     {
         GameObject buttonGo = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
         buttonGo.transform.SetParent(parent, false);
-        spawnedButtons.Add(buttonGo.GetComponent<Button>());
 
         Image image = buttonGo.GetComponent<Image>();
         image.color = buttonColor;
@@ -802,6 +1532,8 @@ public class BattleSettlementOverlay : MonoBehaviour
         rect.sizeDelta = buttonSize;
 
         Button button = buttonGo.GetComponent<Button>();
+        if (trackButton)
+            spawnedButtons.Add(button);
         button.onClick.AddListener(() => onClick?.Invoke());
 
         TextMeshProUGUI text = CreateLabel(buttonGo.transform, "Label", buttonFontSize, buttonTextColor, label);
@@ -813,6 +1545,19 @@ public class BattleSettlementOverlay : MonoBehaviour
         textRect.offsetMin = Vector2.zero;
         textRect.offsetMax = Vector2.zero;
         return button;
+    }
+
+    private static void AddEventTrigger(EventTrigger trigger, EventTriggerType eventType, Action<BaseEventData> callback)
+    {
+        if (trigger == null || callback == null)
+            return;
+
+        EventTrigger.Entry entry = new EventTrigger.Entry
+        {
+            eventID = eventType
+        };
+        entry.callback.AddListener(eventData => callback.Invoke(eventData));
+        trigger.triggers.Add(entry);
     }
 
     private TextMeshProUGUI CreateLabel(Transform parent, string name, float fontSize, Color color, string value)
@@ -837,6 +1582,90 @@ public class BattleSettlementOverlay : MonoBehaviour
         image.sprite = sprite;
         image.type = sprite != null ? Image.Type.Sliced : Image.Type.Simple;
         return image;
+    }
+
+    private Image CreateIconImage(Transform parent, string name, Sprite sprite)
+    {
+        Image image = CreateImage(parent, name, Color.white, sprite);
+        image.type = Image.Type.Simple;
+        image.preserveAspect = true;
+        image.raycastTarget = false;
+        return image;
+    }
+
+    private static void SetIconSprite(Image image, Sprite sprite)
+    {
+        if (image == null)
+            return;
+
+        image.sprite = sprite;
+        image.type = Image.Type.Simple;
+        image.preserveAspect = true;
+    }
+
+    private static void ApplyImageScaleMode(Image image, SettlementImageScaleMode scaleMode)
+    {
+        if (image == null)
+            return;
+
+        image.preserveAspect = false;
+        switch (scaleMode)
+        {
+            case SettlementImageScaleMode.PreserveAspect:
+                image.type = Image.Type.Simple;
+                image.preserveAspect = image.sprite != null;
+                break;
+            case SettlementImageScaleMode.SimpleStretch:
+                image.type = Image.Type.Simple;
+                break;
+            case SettlementImageScaleMode.Sliced:
+            default:
+                image.type = image.sprite != null ? Image.Type.Sliced : Image.Type.Simple;
+                break;
+        }
+    }
+
+    private Vector2 ResolveRelicChoiceModalPanelSize()
+    {
+        Vector2 maxSize = new Vector2(Mathf.Max(1f, relicChoiceModalSize.x), Mathf.Max(1f, relicChoiceModalSize.y));
+        if (relicChoiceModalBackgroundScaleMode != SettlementImageScaleMode.PreserveAspect || relicChoiceModalBackgroundSprite == null)
+            return maxSize;
+
+        Vector2 fittedSize = ResolveAspectFittedSize(relicChoiceModalBackgroundSprite, maxSize);
+        Vector2 minContentSize = new Vector2(
+            relicChoiceCardSize.x * 3f + relicChoiceModalSpacing * 2f + 96f,
+            relicChoiceCardSize.y + buttonSize.y + lootTitleFontSize + 128f);
+        if (fittedSize.x >= minContentSize.x && fittedSize.y >= minContentSize.y)
+            return fittedSize;
+
+        float scale = Mathf.Max(minContentSize.x / Mathf.Max(1f, fittedSize.x), minContentSize.y / Mathf.Max(1f, fittedSize.y));
+        return fittedSize * scale;
+    }
+
+    private static Vector2 ResolveAspectFittedSize(Sprite sprite, Vector2 maxSize)
+    {
+        if (sprite == null)
+            return maxSize;
+
+        Rect spriteRect = sprite.rect;
+        float spriteWidth = Mathf.Max(1f, spriteRect.width);
+        float spriteHeight = Mathf.Max(1f, spriteRect.height);
+        float scale = Mathf.Min(
+            Mathf.Max(1f, maxSize.x) / spriteWidth,
+            Mathf.Max(1f, maxSize.y) / spriteHeight);
+
+        return new Vector2(spriteWidth * scale, spriteHeight * scale);
+    }
+
+    private Vector2 ExtractPointerScreenPosition(BaseEventData eventData)
+    {
+        PointerEventData pointerData = eventData as PointerEventData;
+        return pointerData != null ? pointerData.position : GetCurrentPointerScreenPosition();
+    }
+
+    private Vector2 GetCurrentPointerScreenPosition()
+    {
+        return Input.mousePosition;
     }
 
     private void ClearRows()
@@ -870,6 +1699,21 @@ public class BattleSettlementOverlay : MonoBehaviour
         }
 
         spawnedLootObjects.Clear();
+    }
+
+    private void ClearRelicChoiceModalViews()
+    {
+        for (int i = 0; i < spawnedRelicChoiceObjects.Count; i++)
+        {
+            if (spawnedRelicChoiceObjects[i] != null)
+                Destroy(spawnedRelicChoiceObjects[i]);
+        }
+
+        spawnedRelicChoiceObjects.Clear();
+        relicChoiceViews.Clear();
+        hoveredRelicChoiceView = null;
+        selectedRelicChoiceView = null;
+        ShowEmptyRelicChoiceDetail();
     }
 
     private void SetVisible(bool visible)
@@ -1162,6 +2006,25 @@ public class BattleSettlementOverlay : MonoBehaviour
             new Vector2(0.5f, 0.5f),
             100f);
         return runtimeFallbackLootSprite;
+    }
+
+    private Sprite GetRelicChoiceQuestionSprite(LootRarity rarity)
+    {
+        switch (rarity)
+        {
+            case LootRarity.Common:
+                return relicChoiceCommonQuestionSprite != null ? relicChoiceCommonQuestionSprite : GetFallbackLootSprite();
+            case LootRarity.Uncommon:
+                return relicChoiceUncommonQuestionSprite != null ? relicChoiceUncommonQuestionSprite : GetFallbackLootSprite();
+            case LootRarity.Rare:
+                return relicChoiceRareQuestionSprite != null ? relicChoiceRareQuestionSprite : GetFallbackLootSprite();
+            case LootRarity.Epic:
+                return relicChoiceEpicQuestionSprite != null ? relicChoiceEpicQuestionSprite : GetFallbackLootSprite();
+            case LootRarity.Legendary:
+                return relicChoiceLegendaryQuestionSprite != null ? relicChoiceLegendaryQuestionSprite : GetFallbackLootSprite();
+            default:
+                return GetFallbackLootSprite();
+        }
     }
 
     private Vector2 GetVictoryIntroSize()

@@ -80,8 +80,10 @@ public static class BattleDiceRangeModifierService
                     conditionMet = ResolveTargetStatusStacks(modifier, getTargetStatusStacksByAsset, getTargetStatusStacksById) >= Mathf.Max(1, modifier.requiredStatusStacks);
                     break;
                 case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
-                    conditionMet = ResolveTargetStatusStacks(modifier, getTargetStatusStacksByAsset, getTargetStatusStacksById) >= Mathf.Max(1, modifier.requiredStatusStacks);
-                    break;
+                    return ApplyPerThresholdRangeModifier(
+                        range,
+                        modifier,
+                        ResolveTargetStatusStacks(modifier, getTargetStatusStacksByAsset, getTargetStatusStacksById));
                 default:
                     conditionMet = BattleModifierConditionService.IsConditionMet(modifier.condition, selfSpeed, targetSpeed, modifier.requiredSpeedValue, modifier.requiredSpeedDifference);
                     break;
@@ -93,6 +95,28 @@ public static class BattleDiceRangeModifierService
 
         range.minPower = Mathf.Max(0, range.minPower + modifier.minPowerBonus);
         range.maxPower = Mathf.Max(range.minPower, range.maxPower + modifier.maxPowerBonus);
+        return range;
+    }
+
+    private static EnemySkill_SO.DicePowerRange ApplyPerThresholdRangeModifier(
+        EnemySkill_SO.DicePowerRange range,
+        EnemySkill_SO.ConditionalDiceRangeModifierEntry modifier,
+        int statusStacks)
+    {
+        int threshold = Mathf.Max(1, modifier.requiredStatusStacks);
+        int steps = Mathf.Max(0, statusStacks) / threshold;
+        if (steps <= 0)
+            return range;
+
+        int minBonus = steps * modifier.minPowerBonus;
+        int maxBonus = steps * modifier.maxPowerBonus;
+        if (modifier.minPowerBonusCap > 0 && minBonus > 0)
+            minBonus = Mathf.Min(minBonus, modifier.minPowerBonusCap);
+        if (modifier.maxPowerBonusCap > 0 && maxBonus > 0)
+            maxBonus = Mathf.Min(maxBonus, modifier.maxPowerBonusCap);
+
+        range.minPower = Mathf.Max(0, range.minPower + minBonus);
+        range.maxPower = Mathf.Max(range.minPower, range.maxPower + maxBonus);
         return range;
     }
 

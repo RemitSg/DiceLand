@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: Superconduct
+  m_EditorClassIdentifier: 
+  skillName: "\u8D85\u5BFC"
+  description: "\u5468\u56F4\u6B8B\u7559\u7684\u7535\u8377\u88AB\u4E00\u5E76\u7275\u5F15\uFF0C\u987A\u7740\u6746\u8EAB\u6C47\u6210\u4E00\u675F\u523A\u773C\u7684\u8D2F\u901A\u7535\u6D41\u3002"
+  skillCategory: 0
+  energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  targetPriorityMode: 1
+  targetPriorityStatusData: {fileID: 11400000, guid: b137dabbfd68440d8ab3ca76492a4240, type: 2}
+  targetPriorityStatusType: 1
+  targetPriorityRequiredStacks: 1
+  minPower: 1
+  maxPower: 6
+  diceCount: 1
+  dicePowerRanges:
+  - minPower: 1
+    maxPower: 6
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 0}
+    hitEffectPrefab: {fileID: 0}
+    clashOffsetSpace: 0
+    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitOffsetSpace: 0
+    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 0}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects: []
+    rangeModifiers:
+    - effectName: "\u8D85\u5BFC"
+      useCondition: 1
+      condition: 5
+      targetStatusData: {fileID: 11400000, guid: b137dabbfd68440d8ab3ca76492a4240, type: 2}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 1
+      requiredStatusStacks: 1
+      requiredSpeedValue: 0
+      requiredSpeedDifference: 0
+      minPowerBonus: 1
+      minPowerBonusCap: 5
+      maxPowerBonus: 0
+      maxPowerBonusCap: 0
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 

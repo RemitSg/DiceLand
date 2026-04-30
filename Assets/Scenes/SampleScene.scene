@@ -1128,6 +1128,41 @@ MonoBehaviour:
   lootSlotBackgroundSprite: {fileID: 0}
   lootDetailBackgroundSprite: {fileID: 0}
   lootFallbackSprite: {fileID: 0}
+  relicChoiceHeaderText: "\u9009\u62E9 1 \u4E2A\u9057\u7269"
+  relicChoiceRequiredMessage: "\u8BF7\u81F3\u5C11\u9009\u62E9\u4E00\u4E2A\u9057\u7269"
+  relicChoiceEntranceName: "\u7CBE\u82F1\u654C\u4EBA\u9057\u7269\u6218\u5229\u54C1"
+  relicChoiceEntranceDescription: "\u70B9\u51FB\u4EE5\u9009\u62E9\u4EE5\u4E00\u4E2A\u9057\u7269"
+  relicChoiceEntranceLabel: '?'
+  relicChoiceSelectedPrefix: "\u5DF2\u9009\u62E9"
+  relicChoiceConfirmLabel: "\u786E\u8BA4"
+  relicChoiceDetailEmptyText: 
+  relicChoiceSlotColor: {r: 0.16, g: 0.22, b: 0.32, a: 0.95}
+  relicChoiceSelectedSlotColor: {r: 0.36, g: 0.52, b: 0.86, a: 1}
+  relicChoiceRequiredColor: {r: 1, g: 0.45, b: 0.38, a: 1}
+  relicChoiceSlotBackgroundSprite: {fileID: 21300000, guid: ae254ab282d0ef844a2c0edd1ceb10da, type: 3}
+  relicChoiceCommonQuestionSprite: {fileID: 21300000, guid: bfd6e78c09b2002418a67e6e9ecb4c09, type: 3}
+  relicChoiceUncommonQuestionSprite: {fileID: 21300000, guid: 69c4766c82754e34a8a8c1445a17f890, type: 3}
+  relicChoiceRareQuestionSprite: {fileID: 21300000, guid: f7e0e3a166d034e428f210e33a5beebf, type: 3}
+  relicChoiceEpicQuestionSprite: {fileID: 21300000, guid: 82c75e63d4f1358408eb655ebbad9c6f, type: 3}
+  relicChoiceLegendaryQuestionSprite: {fileID: 21300000, guid: 2a8fa1f9d6907354fbd4ba413e2a1484, type: 3}
+  relicChoiceModalSize: {x: 1440, y: 1050}
+  relicChoiceCardSize: {x: 340, y: 340}
+  relicChoiceModalIconSize: {x: 94, y: 94}
+  relicChoiceModalSpacing: 40
+  relicChoiceTooltipSize: {x: 600, y: 320}
+  relicChoiceTooltipOffset: {x: 24, y: 28}
+  relicChoiceModalBackgroundScaleMode: 1
+  relicChoiceCardBackgroundScaleMode: 2
+  relicChoiceTooltipBackgroundScaleMode: 0
+  relicChoiceEntranceSlotBackgroundScaleMode: 0
+  relicChoiceModalBackdropColor: {r: 0, g: 0, b: 0, a: 0.69803923}
+  relicChoiceModalPanelColor: {r: 1, g: 1, b: 1, a: 1}
+  relicChoiceCardColor: {r: 0.14, g: 0.16, b: 0.2, a: 0.96}
+  relicChoiceHoveredCardColor: {r: 0.24, g: 0.27, b: 0.33, a: 0.98}
+  relicChoiceDetailPanelColor: {r: 0.1, g: 0.08, b: 0.06, a: 0.98}
+  relicChoiceModalBackgroundSprite: {fileID: 21300000, guid: 10b430e4da80d6f4ebb431aa0457e63b, type: 3}
+  relicChoiceCardBackgroundSprite: {fileID: 21300000, guid: 8102f808785b88d4eba575fc6a7d32d1, type: 3}
+  relicChoiceDetailBackgroundSprite: {fileID: 21300000, guid: 8102f808785b88d4eba575fc6a7d32d1, type: 3}
 --- !u!114 &885702440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1820,6 +1855,9 @@ MonoBehaviour:
   battleSettlementOverlay: {fileID: 0}
   battleSkillInfoOverlay: {fileID: 0}
   tutorialBattleGuideOverlay: {fileID: 0}
+  eliteRelicChoiceFallbackTable: {fileID: 0}
+  eliteRelicChoiceCount: 3
+  editorEliteRelicChoiceFallbackTableName: OuterEliteRelicLoot
   initialSharedEnergyMax: 10
   sharedEnergyFont: {fileID: 11400000, guid: 1927579a4b7620b428469b73f8d5046f, type: 2}
   sharedEnergyFontSize: 34

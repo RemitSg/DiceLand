@@ -14,8 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: "\u788E\u6D6A\u91CD\u7EC4"
   description: "\u5B83\u5728\u5C1D\u8BD5\u91CD\u7EC4\u81EA\u5DF1\uFF0C\u963B\u6B62\u5B83"
+  skillCategory: 0
+  energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
   minPower: 1
   maxPower: 1
   diceCount: 1
@@ -23,12 +32,14 @@ MonoBehaviour:
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 8420317354028717843, guid: 95f6797d44b01d044a4e3f8be14c6b48, type: 3}
     hitEffectPrefab: {fileID: 8420317354028717843, guid: 95f6797d44b01d044a4e3f8be14c6b48, type: 3}
+    clashOffsetSpace: 0
     clashPositionOffset: {x: 1, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 0, y: 0, z: 0}
     clashSortingOrderOffset: 0
     overrideClashDuration: 1
     clashDuration: 0.3
+    hitOffsetSpace: 0
     hitPositionOffset: {x: 0, y: 0, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
     hitScale: {x: 0, y: 0, z: 0}
@@ -52,11 +63,15 @@ MonoBehaviour:
       trigger: 3
       useCondition: 1
       condition: 5
-      targetStatusData: {fileID: 11400000, guid: a443253da3d4b284db275f9f5bfb6e92, type: 2}
+      targetStatusData: {fileID: 11400000, guid: 2b1de364dbf64720becc8b60618c3be3, type: 2}
+      targetSkillData: {fileID: 0}
       targetStatusType: 0
       requiredStatusStacks: 3
+      requiredSpeedValue: 0
+      requiredSpeedDifference: 0
       powerBonus: 1
       powerBonusPerStep: 1
+      maxPowerBonus: 0
     statusBurstEffects: []
     healingEffects:
     - effectName: 
@@ -66,20 +81,34 @@ MonoBehaviour:
       condition: 3
       amountMode: 2
       healAmount: 0
-      statusData: {fileID: 11400000, guid: a443253da3d4b284db275f9f5bfb6e92, type: 2}
+      statusData: {fileID: 11400000, guid: 2b1de364dbf64720becc8b60618c3be3, type: 2}
       statusType: 0
-      conditionStatusData: {fileID: 11400000, guid: a443253da3d4b284db275f9f5bfb6e92, type: 2}
+      conditionStatusData: {fileID: 11400000, guid: 2b1de364dbf64720becc8b60618c3be3, type: 2}
       conditionStatusType: 0
       requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
       statusStackSourceMode: 0
       randomTargetCount: 1
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects:
     - effectName: 
       trigger: 0
       targetMode: 0
-      statusData: {fileID: 11400000, guid: a443253da3d4b284db275f9f5bfb6e92, type: 2}
+      statusData: {fileID: 11400000, guid: 2b1de364dbf64720becc8b60618c3be3, type: 2}
       statusType: 0
       operationType: 1
       stackAmount: 1
       randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
     enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 
