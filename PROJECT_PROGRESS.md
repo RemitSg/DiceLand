@@ -1448,3 +1448,10 @@
 - 新增/补齐 EditMode 覆盖：`BattleTargetingSpeedButtonStateServiceTests`、`BattleSharedEnergyRoundStartServiceTests`、`BattleSharedEnergyReservationCollectorServiceTests`、`BattleAllySkillEnergyAvailabilityServiceTests`、`BattleTargetingEnemyAutoTargetServiceTests`、`BattleTargetingPhaseLogServiceTests`。
 - 验证完成：`dotnet build Assembly-CSharp-Editor.csproj --no-restore --no-incremental` 通过（仅既有 CS0649 与 MCP package CS0219 warning）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore --no-incremental` 通过；目标 EditMode 21/21 通过；关键 PlayMode 2/2 通过；全量 PlayMode 9/9 通过；全量 EditMode 481/481 通过；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
 - 当前 `BattleButton.cs` 约 4757 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 111 个。下一步建议转入 Targeting/Setup 剩余副作用收口：`RegisterSharedEnergyListeners` 事件绑定、round-start 敌我速度/技能选择调度，以及 `TryHandleBattleCompletion` 周边结算入口继续拆分。
+## 2026-04-30 - BattleButton 事件绑定收口 Stage 331-340
+
+- Stage 331-335：新增 `BattleActiveRoundCombatantEventBindingService`，将 active round 友方/敌方 `Died` 事件的去重绑定与解绑从 `BattleButton` 本地循环迁出；`BattleButton` 保留死亡 handler 与薄调用入口。
+- Stage 336-340：新增 `BattleSharedEnergyListenerBindingService`，统一绑定/解绑友方 `SelectedSkillChanged`、友方/敌方 `StatusChanged` 与友方速度按钮 `ConnectionChanged`，并在清理 active round combatants 时主动解绑共享能量相关监听，降低跨回合残留事件风险。
+- 新增 EditMode 覆盖：`BattleActiveRoundCombatantEventBindingServiceTests` 与 `BattleSharedEnergyListenerBindingServiceTests`，覆盖重复绑定不重复触发、解绑后不触发、多个速度按钮连接事件绑定。
+- 验证完成：先确认 RED 为缺失 service；随后 `dotnet build Assembly-CSharp-Editor.csproj --no-restore --no-incremental` 通过（仅既有 CS0649 与 MCP package CS0219 warning）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore --no-incremental` 通过；目标 EditMode 4/4 通过；关键 PlayMode 3/3 通过；全量 PlayMode 9/9 通过；全量 EditMode 485/485 通过；Unity Console 0 error；相关代码/测试文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
+- 当前 `BattleButton.cs` 约 4699 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 服务约 113 个。下一步建议进入 Stage 341+：拆 round-start setup 调度，把友方速度/技能选择、敌方速度/技能选择、battle-start effect 和 repeat round-start effect 从 `SetupTargetingPhase` 主流程中继续迁出。

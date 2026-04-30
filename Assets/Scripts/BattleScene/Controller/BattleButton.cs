@@ -209,54 +209,27 @@ public class BattleButton : MonoBehaviour
 
     private void BindActiveRoundCombatantEvents()
     {
-        if (activeRoundAllies != null)
-        {
-            for (int i = 0; i < activeRoundAllies.Length; i++)
-            {
-                BattleAllyController ally = activeRoundAllies[i];
-                if (ally == null)
-                    continue;
-
-                ally.Died -= HandleActiveRoundAllyDied;
-                ally.Died += HandleActiveRoundAllyDied;
-            }
-        }
-
-        if (activeRoundEnemies != null)
-        {
-            for (int i = 0; i < activeRoundEnemies.Length; i++)
-            {
-                BattleEnemyController enemy = activeRoundEnemies[i];
-                if (enemy == null)
-                    continue;
-
-                enemy.Died -= HandleActiveRoundEnemyDied;
-                enemy.Died += HandleActiveRoundEnemyDied;
-            }
-        }
+        BattleActiveRoundCombatantEventBindingService.BindDeathHandlers(
+            activeRoundAllies,
+            activeRoundEnemies,
+            HandleActiveRoundAllyDied,
+            HandleActiveRoundEnemyDied);
     }
 
     private void UnbindActiveRoundCombatantEvents()
     {
-        if (activeRoundAllies != null)
-        {
-            for (int i = 0; i < activeRoundAllies.Length; i++)
-            {
-                BattleAllyController ally = activeRoundAllies[i];
-                if (ally != null)
-                    ally.Died -= HandleActiveRoundAllyDied;
-            }
-        }
-
-        if (activeRoundEnemies != null)
-        {
-            for (int i = 0; i < activeRoundEnemies.Length; i++)
-            {
-                BattleEnemyController enemy = activeRoundEnemies[i];
-                if (enemy != null)
-                    enemy.Died -= HandleActiveRoundEnemyDied;
-            }
-        }
+        BattleActiveRoundCombatantEventBindingService.UnbindDeathHandlers(
+            activeRoundAllies,
+            activeRoundEnemies,
+            HandleActiveRoundAllyDied,
+            HandleActiveRoundEnemyDied);
+        BattleSharedEnergyListenerBindingService.Unbind(
+            activeRoundAllies,
+            activeRoundEnemies,
+            HandleAllySelectedSkillChanged,
+            HandleAllyStatusChanged,
+            HandleAllyConnectionChanged,
+            HandleEnemyStatusChanged);
     }
 
     private void HandleActiveRoundAllyDied(BattleAllyController defeatedAlly)
@@ -449,44 +422,13 @@ public class BattleButton : MonoBehaviour
 
     private void RegisterSharedEnergyListeners(BattleAllyController[] allies)
     {
-        if (allies == null)
-            return;
-
-        for (int i = 0; i < allies.Length; i++)
-        {
-            BattleAllyController ally = allies[i];
-            if (ally == null)
-                continue;
-
-            ally.SelectedSkillChanged -= HandleAllySelectedSkillChanged;
-            ally.SelectedSkillChanged += HandleAllySelectedSkillChanged;
-            ally.StatusChanged -= HandleAllyStatusChanged;
-            ally.StatusChanged += HandleAllyStatusChanged;
-
-            IReadOnlyList<SpeedButton> allyButtons = BattleSpeedButtonListService.GetAllyButtons(ally);
-            for (int buttonIndex = 0; buttonIndex < allyButtons.Count; buttonIndex++)
-            {
-                SpeedButton allyButton = allyButtons[buttonIndex];
-                if (allyButton == null)
-                    continue;
-
-                allyButton.ConnectionChanged -= HandleAllyConnectionChanged;
-                allyButton.ConnectionChanged += HandleAllyConnectionChanged;
-            }
-        }
-
-        if (activeRoundEnemies != null)
-        {
-            for (int i = 0; i < activeRoundEnemies.Length; i++)
-            {
-                BattleEnemyController enemy = activeRoundEnemies[i];
-                if (enemy == null)
-                    continue;
-
-                enemy.StatusChanged -= HandleEnemyStatusChanged;
-                enemy.StatusChanged += HandleEnemyStatusChanged;
-            }
-        }
+        BattleSharedEnergyListenerBindingService.Bind(
+            allies,
+            activeRoundEnemies,
+            HandleAllySelectedSkillChanged,
+            HandleAllyStatusChanged,
+            HandleAllyConnectionChanged,
+            HandleEnemyStatusChanged);
     }
 
     private void HandleAllySelectedSkillChanged(BattleAllyController ally)
