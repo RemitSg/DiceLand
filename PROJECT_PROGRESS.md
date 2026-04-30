@@ -1480,3 +1480,13 @@
 - Stage 531-560：新增 `BattleEnemyBuiltInEffectResolutionService`，将敌方 built-in effect 的 trigger / eligibility / condition 筛选迁出，`BattleButton` 继续负责真实治疗、伤害、状态、转移等副作用执行。
 - 新增/扩展 EditMode 覆盖：`BattleRoundStartStatusEffectServiceTests`、`BattleRoundStartCompletionGuardServiceTests`、`BattleTargetSelectionServiceTests`、`BattleSkillStatusEffectResolutionServiceTests`、`BattleEnemyBuiltInEffectResolutionServiceTests`。
 - 验证：`dotnet build Assembly-CSharp-Editor.csproj --no-restore --no-incremental` 通过（仅既有 warning）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore --no-incremental` 通过；Unity EditMode 505/505 通过；Unity PlayMode 9/9 通过；Unity Console 0 error。
+
+## 2026-04-30 - BattleButton 主体重构 Stage 561-710
+
+- Stage 561-590：新增 `BattleHitResolutionFacade`，统一命中后零伤反馈、成功命中效果和未命中效果的分派入口，`BattleButton` 不再直接组合 hit outcome plan 与 dispatcher。
+- Stage 591-620：新增 `BattleCombatPresentationCoroutinePlanService` 与 `BattlePresentationStep`，将拼点/单方面攻击表现协程的移动、掷骰、影响结算、归位步骤显式化；真实动画仍由现有 `BattlePresentationSystem` 执行，避免改变表现时序。
+- Stage 621-650：新增 `BattleButtonUiOverlayStateService`，替代旧 `BattleCombatPhaseGuardService`，将结算面板、教程阻塞、技能详情面板的按钮阻塞原因显式化，并删除旧 guard 服务与测试。
+- Stage 651-680：补充 PlayMode 回归，覆盖回合开始状态 tick、回合开始撤退结算、复杂技能 OnUse + OnHit 状态效果各触发一次。
+- Stage 681-710：清理已替代的旧 guard 服务；保留仍被 `BattleButton` 内部多处调用的 private wrapper，避免在同一轮扩大重构风险。
+- 新增/扩展测试：`BattleHitResolutionFacadeTests`、`BattleCombatPresentationCoroutinePlanServiceTests`、`BattleButtonUiOverlayStateServiceTests`，以及 `BattleFlowPlayModeTests` 三条战斗流程回归。
+- 验证：本段提交前执行 dotnet build、Unity EditMode、Unity PlayMode 与 Console 检查，结果记录在本轮对话结论中。

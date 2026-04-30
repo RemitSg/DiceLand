@@ -79,6 +79,36 @@ internal sealed class BattleFlowPlayModeFixture
         InvokeStatic("BattleEncounterRuntime", "ConsumeEncounter");
     }
 
+    public void BuildBattleWithEnemyRoundStartBurn(int allyPower, int enemyPower, int enemyHp, int burnStacks)
+    {
+        BuildOneOnOneBattle(allyPower, enemyPower, enemyHp);
+        object burnStatus = CreateDamageStatus("playmode_burn", "PlayMode Burn", damagePerStack: 1);
+        Invoke(Enemy, "AddStatus", burnStatus, "burn", "PlayMode Burn", burnStacks);
+    }
+
+    public void BuildBattleWithEnemyRoundStartRetreat(int allyPower, int enemyPower, int enemyHp)
+    {
+        BuildOneOnOneBattle(allyPower, enemyPower, enemyHp);
+
+        object enemyData = GetField(Enemy, "enemyData");
+        Type retreatRuleType = RuntimeType("EnemyData_SO+RoundStartRetreatRule");
+        object retreatRule = Activator.CreateInstance(retreatRuleType);
+        SetField(retreatRule, "enabled", true);
+        SetField(retreatRule, "triggerRound", 1);
+        SetField(retreatRule, "settlementLootTables", CreateRuntimeList("LootTable_SO"));
+        SetField(enemyData, "roundStartRetreatRule", retreatRule);
+    }
+
+    public void BuildBattleWithAllyStatusEffectSkill(int allyPower, int enemyPower, int enemyHp)
+    {
+        BuildOneOnOneBattle(allyPower, enemyPower, enemyHp);
+        object burnStatus = CreateDamageStatus("burn", "PlayMode Burn", damagePerStack: 1);
+        object statusSkill = CreateSkill("PlayMode Status Strike", allyPower, allyPower);
+        ConfigureSkillStatusEffects(statusSkill, burnStatus);
+        ReplaceAllyWeaponSkill(statusSkill);
+        Invoke(Ally, "SelectDefaultSkill");
+    }
+
 
     public void TearDown()
     {
@@ -213,6 +243,35 @@ internal sealed class BattleFlowPlayModeFixture
     public bool AllyIsDead => (bool)GetProperty(Ally, "IsDead");
 
     public int EnemyCurrentHp => (int)GetProperty(Enemy, "CurrentHP");
+
+    public int EnemyBurnStacks => (int)GetProperty(Enemy, "BurnStacks");
+
+    public string AllySelectedSkillName
+    {
+        get
+        {
+            object skill = GetProperty(Ally, "SelectedSkill");
+            return skill != null ? (string)GetField(skill, "skillName") : null;
+        }
+    }
+
+    public int AllySelectedSkillStatusEffectCount
+    {
+        get
+        {
+            object skill = GetProperty(Ally, "SelectedSkill");
+            if (skill == null)
+                return 0;
+
+            Array diceEffectSettings = GetField(skill, "diceEffectSettings") as Array;
+            if (diceEffectSettings == null || diceEffectSettings.Length == 0)
+                return 0;
+
+            object firstSettings = diceEffectSettings.GetValue(0);
+            Array statusEffects = GetField(firstSettings, "statusEffects") as Array;
+            return statusEffects != null ? statusEffects.Length : 0;
+        }
+    }
 
     public string CurrentBattlePhase => GetField(BattleButton, "currentPhase").ToString();
 
@@ -412,6 +471,58 @@ internal sealed class BattleFlowPlayModeFixture
         ranges.SetValue(range, 0);
         SetField(skill, "dicePowerRanges", ranges);
         return skill;
+    }
+
+    private object CreateDamageStatus(string statusId, string displayName, int damagePerStack)
+    {
+        object status = CreateScriptableObject("BattleStatus_SO");
+        SetField(status, "statusId", statusId);
+        SetField(status, "displayName", displayName);
+        SetField(status, "behaviorType", Enum.Parse(RuntimeType("BattleStatus_SO+StatusBehaviorType"), "DamageAtRoundStart"));
+        SetField(status, "powerPerStack", damagePerStack);
+        SetField(status, "roundStartDecayMode", Enum.Parse(RuntimeType("BattleStatus_SO+StackDecayMode"), "None"));
+        return status;
+    }
+
+    private void ConfigureSkillStatusEffects(object skill, object status)
+    {
+        Type diceSettingsType = RuntimeType("EnemySkill_SO+DiceEffectSettings");
+        Type statusEffectType = RuntimeType("EnemySkill_SO+StatusEffectEntry");
+
+        object onUse = CreateStatusEffectEntry(statusEffectType, status, "OnSkillUse");
+        object onHit = CreateStatusEffectEntry(statusEffectType, status, "OnHit");
+
+        Array statusEffects = Array.CreateInstance(statusEffectType, 2);
+        statusEffects.SetValue(onUse, 0);
+        statusEffects.SetValue(onHit, 1);
+
+        object diceSettings = Activator.CreateInstance(diceSettingsType);
+        SetField(diceSettings, "statusEffects", statusEffects);
+
+        Array diceEffectSettings = Array.CreateInstance(diceSettingsType, 1);
+        diceEffectSettings.SetValue(diceSettings, 0);
+        SetField(skill, "diceEffectSettings", diceEffectSettings);
+    }
+
+    private void ReplaceAllyWeaponSkill(object skill)
+    {
+        object allyController = GetField(Ally, "allyController");
+        object weapon = GetField(allyController, "weapon");
+        object weaponData = GetField(weapon, "weaponData");
+        SetField(weaponData, "skillPool", CreateRuntimeArray("EnemySkill_SO", skill));
+    }
+
+    private object CreateStatusEffectEntry(Type statusEffectType, object status, string triggerName)
+    {
+        object entry = Activator.CreateInstance(statusEffectType);
+        SetField(entry, "trigger", Enum.Parse(RuntimeType("EnemySkill_SO+DiceEffectTrigger"), triggerName));
+        SetField(entry, "targetMode", Enum.Parse(RuntimeType("EnemySkill_SO+DamageTargetMode"), "CurrentTarget"));
+        SetField(entry, "statusData", status);
+        SetField(entry, "stackAmount", 1);
+        SetField(entry, "randomTargetCount", 1);
+        SetField(entry, "applyAfterRoundStarts", 1);
+        SetField(entry, "applyRepeatCount", 1);
+        return entry;
     }
 
     private object GetSettlementOverlay()

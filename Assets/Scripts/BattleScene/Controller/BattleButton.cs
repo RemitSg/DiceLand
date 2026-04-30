@@ -154,10 +154,11 @@ public class BattleButton : MonoBehaviour
         ResolveSkillInfoOverlay();
         ResolveTutorialGuideOverlay();
 
-        if (BattleCombatPhaseGuardService.ShouldBlockInteraction(
+        BattleButtonClickBlockResult clickBlock = BattleButtonUiOverlayStateService.ResolveClickBlock(
             battleSettlementOverlay != null && battleSettlementOverlay.IsVisible,
-            battleSkillInfoOverlay != null && battleSkillInfoOverlay.IsVisible,
-            tutorialBattleGuideOverlay != null && tutorialBattleGuideOverlay.IsVisible))
+            tutorialBattleGuideOverlay != null && tutorialBattleGuideOverlay.IsVisible,
+            battleSkillInfoOverlay != null && battleSkillInfoOverlay.IsVisible);
+        if (clickBlock.ShouldBlock)
             return;
 
         if (!BattleCombatantContextService.TryCollectCombatants(
@@ -844,6 +845,10 @@ public class BattleButton : MonoBehaviour
         if (battlePresentationSystem == null)
             yield break;
 
+        BattlePresentationStep[] presentationSteps = BattleCombatPresentationCoroutinePlanService.BuildClashPresentation(
+            moveIntoPosition,
+            returnToOrigin);
+
         yield return battlePresentationSystem.PlayClashSequence(
             ally.transform,
             enemy.transform,
@@ -860,9 +865,9 @@ public class BattleButton : MonoBehaviour
             allyClashPresentationSettings,
             enemyClashPresentationSettings,
             hitPresentationSettings,
-            onImpactResolved,
-            moveIntoPosition,
-            returnToOrigin);
+            BattleCombatPresentationCoroutinePlanService.ContainsStep(presentationSteps, BattlePresentationStep.ApplyImpact) ? onImpactResolved : null,
+            BattleCombatPresentationCoroutinePlanService.ContainsStep(presentationSteps, BattlePresentationStep.MoveToTarget),
+            BattleCombatPresentationCoroutinePlanService.ContainsStep(presentationSteps, BattlePresentationStep.ReturnToOrigin));
     }
 
     private IEnumerator PlaySingleAttackPresentation(
@@ -881,6 +886,11 @@ public class BattleButton : MonoBehaviour
         if (battlePresentationSystem == null)
             yield break;
 
+        BattlePresentationStep[] presentationSteps = BattleCombatPresentationCoroutinePlanService.BuildSingleAttackPresentation(
+            moveIntoPosition,
+            onImpactResolved != null,
+            returnToOrigin);
+
         yield return battlePresentationSystem.PlaySingleAttackSequence(
             attacker,
             defender,
@@ -890,9 +900,9 @@ public class BattleButton : MonoBehaviour
             attackPowerModifier,
             hitCameraPower,
             dicePresentationSettings,
-            onImpactResolved,
-            moveIntoPosition,
-            returnToOrigin);
+            BattleCombatPresentationCoroutinePlanService.ContainsStep(presentationSteps, BattlePresentationStep.ApplyImpact) ? onImpactResolved : null,
+            BattleCombatPresentationCoroutinePlanService.ContainsStep(presentationSteps, BattlePresentationStep.MoveToTarget),
+            BattleCombatPresentationCoroutinePlanService.ContainsStep(presentationSteps, BattlePresentationStep.ReturnToOrigin));
     }
 
     private List<BattleCombatAction> BuildCombatActions(BattleAllyController[] allies, BattleEnemyController[] enemies)
@@ -2255,9 +2265,8 @@ public class BattleButton : MonoBehaviour
         int dealtDamage,
         bool isSingleAttack)
     {
-        BattleHitOutcomePlan outcomePlan = BattleHitOutcomePlanService.Resolve(dealtDamage);
-        BattleHitOutcomeDispatcher.Dispatch(
-            outcomePlan,
+        BattleHitResolutionFacade.Resolve(
+            dealtDamage,
             () => ShowZeroDamageHitFeedback(target.transform, true, target.LastDamageModifierRatioPercent),
             () => ApplyAllySuccessfulHitEffects(attacker, target, diceIndex, dealtDamage, isSingleAttack),
             () => ApplyAllyMissEffects(attacker, target, diceIndex, dealtDamage));
@@ -2270,9 +2279,8 @@ public class BattleButton : MonoBehaviour
         int dealtDamage,
         bool isSingleAttack)
     {
-        BattleHitOutcomePlan outcomePlan = BattleHitOutcomePlanService.Resolve(dealtDamage);
-        BattleHitOutcomeDispatcher.Dispatch(
-            outcomePlan,
+        BattleHitResolutionFacade.Resolve(
+            dealtDamage,
             () => ShowZeroDamageHitFeedback(target.transform, false, target.LastDamageModifierRatioPercent),
             () => ApplyEnemySuccessfulHitEffects(attacker, target, diceIndex, dealtDamage, isSingleAttack),
             () => ApplyEnemyMissEffects(attacker, target, diceIndex, dealtDamage));

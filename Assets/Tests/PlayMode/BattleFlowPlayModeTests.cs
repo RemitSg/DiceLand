@@ -187,4 +187,46 @@ public sealed class BattleFlowPlayModeTests
         Assert.IsTrue(fixture.CurrentEncounterQueued);
         Assert.IsFalse(fixture.SpeedButtonCombatLocked);
     }
+
+    [UnityTest]
+    public IEnumerator RoundStart_WhenBurningStatusExists_AppliesTickBeforeTargetingInput()
+    {
+        fixture.BuildBattleWithEnemyRoundStartBurn(allyPower: 1, enemyPower: 1, enemyHp: 10, burnStacks: 3);
+
+        fixture.ClickBattleButton();
+        yield return null;
+
+        Assert.AreEqual(7, fixture.EnemyCurrentHp);
+        Assert.AreEqual("Targeting", fixture.CurrentBattlePhase);
+    }
+
+    [UnityTest]
+    public IEnumerator RoundStart_WhenEnemyRetreats_ShowsSettlementWithoutCombatInput()
+    {
+        fixture.BuildBattleWithEnemyRoundStartRetreat(allyPower: 1, enemyPower: 1, enemyHp: 10);
+
+        fixture.ClickBattleButton();
+        yield return null;
+
+        Assert.IsTrue(fixture.SettlementOverlayVisible);
+        Assert.IsFalse(fixture.IsResolvingCombat);
+    }
+
+    [UnityTest]
+    public IEnumerator ClashVictory_WhenSkillHasOnUseAndOnHitStatusEffects_AppliesEachEffectOnce()
+    {
+        fixture.BuildBattleWithAllyStatusEffectSkill(allyPower: 8, enemyPower: 1, enemyHp: 50);
+
+        fixture.ClickBattleButton();
+        yield return null;
+
+        Assert.AreEqual("PlayMode Status Strike", fixture.AllySelectedSkillName);
+        Assert.AreEqual(2, fixture.AllySelectedSkillStatusEffectCount);
+
+        fixture.ForceContestedConnection();
+        fixture.ClickBattleButton();
+        yield return fixture.WaitUntilCombatSettles();
+
+        Assert.AreEqual(2, fixture.EnemyBurnStacks);
+    }
 }
