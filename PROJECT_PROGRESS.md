@@ -1471,3 +1471,12 @@
 - 新增 EditMode 覆盖：`BattleTargetingPhaseStartEffectServiceTests` 覆盖 pending ally status grants、enemy battle-start skill grants、enemy battle-start/repeat round-start status 调度、battle setup relic extra buttons 与 round-start relic energy recovery 顺序。
 - 验证完成：`dotnet build Assembly-CSharp-Editor.csproj --no-restore --no-incremental` 通过（仅既有 CS0649 与 MCP package CS0219 warning）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore --no-incremental` 通过 0 warning / 0 error；新增定向 EditMode 6/6 通过；目标组合 EditMode 16/16 通过；关键 PlayMode 4/4 通过；全量 PlayMode 9/9 通过；全量 EditMode 494/494 通过；Unity Console 0 error；相关文件 `git diff --check` 无格式错误，仅保留 Windows 行尾提示。
 - 当前 `BattleButton.cs` 约 4616 行，`Assets/Scripts/Shared` 中 `Battle*.cs` 服务 116 个。下一步 Stage 436+ 建议继续处理 `SetupTargetingPhase` 中 `ApplyRoundStartStatusEffectsGeneric` 与 `TryHandleRoundStartRetreatSettlement` / `TryHandleBattleCompletion` 周边入口，把 round-start status tick 与回合开始提前结算 guard 继续向 dispatcher/facade 收口。
+## 2026-04-30 - BattleButton 主体重构 Stage 436-560
+
+- Stage 436-455：新增 `BattleRoundStartStatusEffectService`，将回合开始友方/敌方状态 tick 与敌方状态驱动阶段转换顺序从 `BattleButton.ApplyRoundStartStatusEffectsGeneric` 迁出，`BattleButton` 只保留真实状态消费、表现和日志闭包。
+- Stage 456-475：新增 `BattleRoundStartCompletionGuardService`，统一回合开始撤退结算与普通战斗完成判定入口，保持撤退结算优先于普通完成判定。
+- Stage 476-500：扩展 `BattleTargetSelectionService.Select`，统一实例与静态目标选择 wrapper，并补齐 CurrentTarget、AllOpponents、RandomOpponents、无效目标过滤和随机数量溢出测试。
+- Stage 501-530：新增 `BattleSkillStatusEffectResolutionService` 与通用 `BattleIndexedEffect<T>`，将 status-only 技能词条的触发筛选和原始索引保留迁出，避免日志 fallback index 在过滤后错位。
+- Stage 531-560：新增 `BattleEnemyBuiltInEffectResolutionService`，将敌方 built-in effect 的 trigger / eligibility / condition 筛选迁出，`BattleButton` 继续负责真实治疗、伤害、状态、转移等副作用执行。
+- 新增/扩展 EditMode 覆盖：`BattleRoundStartStatusEffectServiceTests`、`BattleRoundStartCompletionGuardServiceTests`、`BattleTargetSelectionServiceTests`、`BattleSkillStatusEffectResolutionServiceTests`、`BattleEnemyBuiltInEffectResolutionServiceTests`。
+- 验证：`dotnet build Assembly-CSharp-Editor.csproj --no-restore --no-incremental` 通过（仅既有 warning）；`dotnet build MobileGame.PlayModeTests.csproj --no-restore --no-incremental` 通过；Unity EditMode 505/505 通过；Unity PlayMode 9/9 通过；Unity Console 0 error。

@@ -49,4 +49,32 @@ public class BattleTargetSelectionServiceTests
 
         CollectionAssert.AreEqual(new[] { "B", "A" }, result);
     }
+
+    [Test]
+    public void Select_AllOpponents_FiltersInvalidTargets()
+    {
+        List<string> result = BattleTargetSelectionService.Select(
+            EnemySkill_SO.DamageTargetMode.AllOpponents,
+            currentTarget: null,
+            candidates: new[] { "A", "Dead", "B" },
+            randomTargetCount: 1,
+            isValidTarget: target => target != "Dead",
+            randomOrder: targets => targets);
+
+        CollectionAssert.AreEqual(new[] { "A", "B" }, result);
+    }
+
+    [Test]
+    public void Select_RandomOpponents_WhenCountExceedsCandidates_ReturnsAllValidCandidates()
+    {
+        List<string> result = BattleTargetSelectionService.Select(
+            EnemySkill_SO.DamageTargetMode.RandomOpponents,
+            currentTarget: "A",
+            candidates: new[] { "A", "Dead", "B" },
+            randomTargetCount: 99,
+            isValidTarget: target => target != "Dead",
+            randomOrder: targets => targets);
+
+        CollectionAssert.AreEqual(new[] { "A", "B" }, result);
+    }
 }

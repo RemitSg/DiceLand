@@ -4,13 +4,13 @@ using UnityEngine;
 
 public static class BattleTargetSelectionService
 {
-    public static List<T> SelectTargets<T>(
+    public static List<T> Select<T>(
         EnemySkill_SO.DamageTargetMode targetMode,
         T currentTarget,
-        List<T> candidates,
+        IEnumerable<T> candidates,
         int randomTargetCount,
         Func<T, bool> isValidTarget,
-        Func<int, int, int> randomRange)
+        Func<List<T>, List<T>> randomOrder)
     {
         switch (targetMode)
         {
@@ -19,12 +19,37 @@ public static class BattleTargetSelectionService
                     ? new List<T> { currentTarget }
                     : new List<T>();
             case EnemySkill_SO.DamageTargetMode.AllOpponents:
-                return candidates != null ? new List<T>(candidates) : new List<T>();
+                return BuildValidTargetList(candidates, isValidTarget);
             case EnemySkill_SO.DamageTargetMode.RandomOpponents:
-                return SelectRandomTargets(candidates, randomTargetCount, randomRange);
+                List<T> orderedPool = BuildValidTargetList(candidates, isValidTarget);
+                if (orderedPool.Count == 0)
+                    return orderedPool;
+
+                if (randomOrder != null)
+                    orderedPool = randomOrder(orderedPool) ?? new List<T>();
+
+                int targetCount = Mathf.Clamp(randomTargetCount, 1, orderedPool.Count);
+                return orderedPool.GetRange(0, targetCount);
             default:
                 return new List<T>();
         }
+    }
+
+    public static List<T> SelectTargets<T>(
+        EnemySkill_SO.DamageTargetMode targetMode,
+        T currentTarget,
+        List<T> candidates,
+        int randomTargetCount,
+        Func<T, bool> isValidTarget,
+        Func<int, int, int> randomRange)
+    {
+        return Select(
+            targetMode,
+            currentTarget,
+            candidates,
+            randomTargetCount,
+            isValidTarget,
+            pool => SelectRandomTargets(pool, randomTargetCount, randomRange));
     }
 
     public static List<T> SelectRandomTargets<T>(
@@ -46,6 +71,21 @@ public static class BattleTargetSelectionService
             int randomIndex = randomRange != null ? randomRange(0, pool.Count) : UnityEngine.Random.Range(0, pool.Count);
             result.Add(pool[randomIndex]);
             pool.RemoveAt(randomIndex);
+        }
+
+        return result;
+    }
+
+    private static List<T> BuildValidTargetList<T>(IEnumerable<T> candidates, Func<T, bool> isValidTarget)
+    {
+        List<T> result = new List<T>();
+        if (candidates == null)
+            return result;
+
+        foreach (T candidate in candidates)
+        {
+            if (isValidTarget == null || isValidTarget(candidate))
+                result.Add(candidate);
         }
 
         return result;
