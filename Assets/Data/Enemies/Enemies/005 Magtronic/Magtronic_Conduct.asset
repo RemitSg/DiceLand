@@ -14,8 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: "\u5BFC\u7535"
   description: "\u9165\u9165\u9EBB\u9EBB\u7684\u611F\u89C9\uFF0C\u4F3C\u4E4E\u4E5F\u6CA1\u6709\u5F88\u96BE\u53D7"
+  skillCategory: 0
+  energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
   minPower: 1
   maxPower: 2
   diceCount: 1
@@ -23,12 +32,14 @@ MonoBehaviour:
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 5725713336120918675, guid: b5aed9d1724c67d4cb6e9a86308003a2, type: 3}
     hitEffectPrefab: {fileID: 5725713336120918675, guid: b5aed9d1724c67d4cb6e9a86308003a2, type: 3}
+    clashOffsetSpace: 0
     clashPositionOffset: {x: 1, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 0, y: 0, z: 0}
     clashSortingOrderOffset: 0
     overrideClashDuration: 1
     clashDuration: 0.4
+    hitOffsetSpace: 0
     hitPositionOffset: {x: 2, y: 0, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
     hitScale: {x: 0, y: 0, z: 0}
@@ -50,15 +61,27 @@ MonoBehaviour:
     - effectName: 
       trigger: 0
       targetMode: 0
-      statusData: {fileID: 11400000, guid: 504abc372b3b3644bae0ccb7da7e9ce1, type: 2}
+      statusData: {fileID: 11400000, guid: b137dabbfd68440d8ab3ca76492a4240, type: 2}
       statusType: 0
       applyTiming: 0
       applyAfterRoundStarts: 0
       applyRepeatCount: 0
       stackAmount: 2
       randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 
