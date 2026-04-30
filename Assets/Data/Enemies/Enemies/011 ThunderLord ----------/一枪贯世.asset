@@ -16,6 +16,9 @@ MonoBehaviour:
   description: "\u4F60\u53EF\u77E5\u9053\u88AB\u96F7\u5288\u7684\u611F\u89C9\uFF1F"
   skillCategory: 0
   energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 01000000
   targetPriorityMode: 0
@@ -32,13 +35,15 @@ MonoBehaviour:
     maxPower: 5
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 0}
-    hitEffectPrefab: {fileID: 2819706545742885375, guid: f1a37411e33d03144a541e2a196c9a0a, type: 3}
+    hitEffectPrefab: {fileID: 2823724269095388637, guid: 415bbaa9a303efb42af175a39bfeb06b, type: 3}
+    clashOffsetSpace: 0
     clashPositionOffset: {x: 0, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 0, y: 0, z: 0}
     clashSortingOrderOffset: 0
     overrideClashDuration: 0
     clashDuration: 0.01
+    hitOffsetSpace: 0
     hitPositionOffset: {x: 2, y: -2, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
     hitScale: {x: 2, y: 2, z: 2}
@@ -55,13 +60,15 @@ MonoBehaviour:
     overrideSkillSpriteDuration: 1
     skillSpriteDuration: 0.5
   - clashEffectPrefab: {fileID: 0}
-    hitEffectPrefab: {fileID: 2819706545742885375, guid: f1a37411e33d03144a541e2a196c9a0a, type: 3}
+    hitEffectPrefab: {fileID: 2823724269095388637, guid: 415bbaa9a303efb42af175a39bfeb06b, type: 3}
+    clashOffsetSpace: 0
     clashPositionOffset: {x: 0, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 0, y: 0, z: 0}
     clashSortingOrderOffset: 0
     overrideClashDuration: 0
     clashDuration: 0.01
+    hitOffsetSpace: 0
     hitPositionOffset: {x: 2, y: -2, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
     hitScale: {x: 2, y: 2, z: 2}
@@ -95,8 +102,20 @@ MonoBehaviour:
       applyRepeatCount: 0
       stackAmount: 2
       randomTargetCount: 3
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 
