@@ -1722,17 +1722,18 @@ public class BattleEnemyController : MonoBehaviour
         if (IsStatusEffectSuppressed(entry))
             return 0;
 
+        int damage = 0;
         if (entry.statusData != null)
         {
             if (entry.statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.DamageAtRoundStart)
-                return Mathf.Max(0, entry.statusData.PowerPerStack) * entry.stacks;
-            return 0;
+                damage = Mathf.Max(0, entry.statusData.PowerPerStack) * entry.stacks;
+            return RelicSystem.ResolveEnemyRoundStartStatusDamage(this, entry.statusData, entry.Key, entry.stacks, damage);
         }
 
         if (string.Equals(entry.Key, BurnStatusId, StringComparison.OrdinalIgnoreCase))
-            return entry.stacks;
+            damage = entry.stacks;
 
-        return 0;
+        return RelicSystem.ResolveEnemyRoundStartStatusDamage(this, entry.statusData, entry.Key, entry.stacks, damage);
     }
 
     private int ResolveRoundStartStatusSpeedBonus(BattleStatusRuntimeEntry entry)
@@ -1762,7 +1763,8 @@ public class BattleEnemyController : MonoBehaviour
         if (entry.statusData.LinkedStatusData == null)
             return 0;
 
-        return Mathf.Max(0, entry.statusData.PowerPerStack) * entry.stacks;
+        int defaultStacks = Mathf.Max(0, entry.statusData.PowerPerStack) * entry.stacks;
+        return RelicSystem.ResolveEnemyRoundStartLinkedStatusAmount(entry.statusData, entry.Key, defaultStacks);
     }
 
     private int ResolveOnHitStatusDamage(BattleStatusRuntimeEntry entry)

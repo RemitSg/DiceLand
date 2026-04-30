@@ -79,6 +79,101 @@ public static partial class RelicSystem
         return minimumStacks;
     }
 
+    public static int ResolveEnemyRoundStartStatusDamage(
+        BattleEnemyController target,
+        BattleStatus_SO statusData,
+        string statusId,
+        int stacks,
+        int defaultDamage)
+    {
+        int resolvedDamage = Mathf.Max(0, defaultDamage);
+        if (target == null || stacks <= 0)
+            return resolvedDamage;
+
+        BattleEncounterData encounter = BattleEncounterRuntime.ActiveEncounter;
+        if (encounter == null || encounter.relicInventory == null)
+            return resolvedDamage;
+
+        for (int i = 0; i < encounter.relicInventory.Count; i++)
+        {
+            RunRelicState relicState = encounter.relicInventory[i];
+            if (relicState == null || relicState.relicData == null || relicState.amount <= 0 || relicState.relicData.builtInEffects == null)
+                continue;
+
+            for (int effectIndex = 0; effectIndex < relicState.relicData.builtInEffects.Count; effectIndex++)
+            {
+                Relic_SO.RelicBuiltInEffectEntry effect = relicState.relicData.builtInEffects[effectIndex];
+                if (effect == null || effect.effectType != Relic_SO.RelicBuiltInEffectType.TriggerAdditionalDamageWhenEnemyStatusTicksWithConditionStatus)
+                    continue;
+                if (!StatusMatches(effect.statusData, statusData, statusId))
+                    continue;
+                if (effect.conditionStatusData == null || target.GetStatusStacks(effect.conditionStatusData) < Mathf.Max(1, effect.requiredStatusStacks))
+                    continue;
+
+                int multiplier = Mathf.Max(1, effect.amount) * Mathf.Max(1, relicState.amount);
+                resolvedDamage += Mathf.Max(0, defaultDamage) * multiplier;
+            }
+        }
+
+        return resolvedDamage;
+    }
+
+    public static int ResolveEnemyRoundStartLinkedStatusAmount(
+        BattleStatus_SO statusData,
+        string statusId,
+        int defaultStacks)
+    {
+        int resolvedStacks = Mathf.Max(0, defaultStacks);
+        BattleEncounterData encounter = BattleEncounterRuntime.ActiveEncounter;
+        if (encounter == null || encounter.relicInventory == null)
+            return resolvedStacks;
+
+        for (int i = 0; i < encounter.relicInventory.Count; i++)
+        {
+            RunRelicState relicState = encounter.relicInventory[i];
+            if (relicState == null || relicState.relicData == null || relicState.amount <= 0 || relicState.relicData.builtInEffects == null)
+                continue;
+
+            for (int effectIndex = 0; effectIndex < relicState.relicData.builtInEffects.Count; effectIndex++)
+            {
+                Relic_SO.RelicBuiltInEffectEntry effect = relicState.relicData.builtInEffects[effectIndex];
+                if (effect == null || effect.effectType != Relic_SO.RelicBuiltInEffectType.SetEnemyLinkedStatusRoundStartStacks)
+                    continue;
+                if (!StatusMatches(effect.conditionStatusData, statusData, statusId))
+                    continue;
+
+                resolvedStacks = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+            }
+        }
+
+        return resolvedStacks;
+    }
+
+    public static bool ShouldPreventAllyStatusApplication(BattleStatus_SO statusData, string statusId)
+    {
+        BattleEncounterData encounter = BattleEncounterRuntime.ActiveEncounter;
+        if (encounter == null || encounter.relicInventory == null)
+            return false;
+
+        for (int i = 0; i < encounter.relicInventory.Count; i++)
+        {
+            RunRelicState relicState = encounter.relicInventory[i];
+            if (relicState == null || relicState.relicData == null || relicState.amount <= 0 || relicState.relicData.builtInEffects == null)
+                continue;
+
+            for (int effectIndex = 0; effectIndex < relicState.relicData.builtInEffects.Count; effectIndex++)
+            {
+                Relic_SO.RelicBuiltInEffectEntry effect = relicState.relicData.builtInEffects[effectIndex];
+                if (effect == null || effect.effectType != Relic_SO.RelicBuiltInEffectType.PreventAllyStatusApplication)
+                    continue;
+                if (StatusMatches(effect.conditionStatusData, statusData, statusId))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
     private static void HandleApplyStatusToLowestHpEnemyOnBattleRoundStart(
         Relic_SO relicData,
         RunRelicState relicState,
@@ -208,7 +303,10 @@ public static partial class RelicSystem
         if (target.GetStatusStacks(effect.conditionStatusData) < Mathf.Max(1, effect.requiredStatusStacks))
             return;
 
-        context.additionalPowerBonus += effect.powerAmount * Mathf.Max(1, relicState.amount);
+        int relicAmount = Mathf.Max(1, relicState.amount);
+        context.additionalPowerBonus += effect.powerAmount * relicAmount;
+        context.additionalMinPowerBonus += effect.minPowerAmount * relicAmount;
+        context.additionalMaxPowerBonus += effect.maxPowerAmount * relicAmount;
     }
 
     private static void HandleHealSourceWhenPlayerAppliesStatusToEnemy(
@@ -400,6 +498,127 @@ public static partial class RelicSystem
         }
     }
 
+    private static void HandleApplyStatusToEnemiesWhenConditionStacksAtLeastOnBattleRoundStart(
+        Relic_SO relicData,
+        RunRelicState relicState,
+        RelicExecutionContext context,
+        Relic_SO.RelicBuiltInEffectEntry effect)
+    {
+        if (context.trigger != Relic_SO.RelicTrigger.OnBattleRoundStart || effect.statusData == null || effect.conditionStatusData == null || context.enemies == null)
+            return;
+
+        int stacks = CalculateScaledStatusStacks(relicState, effect);
+        if (stacks <= 0)
+            return;
+
+        int requiredStacks = Mathf.Max(1, effect.requiredStatusStacks);
+        for (int i = 0; i < context.enemies.Length; i++)
+        {
+            BattleEnemyController enemy = context.enemies[i];
+            if (enemy == null || enemy.IsDead || enemy.GetStatusStacks(effect.conditionStatusData) < requiredStacks)
+                continue;
+
+            TryApplyStatus(enemy, effect, stacks);
+        }
+    }
+
+    private static void HandleDealDamageToEnemiesEqualToStatusStacksOnBattleRoundEnd(
+        Relic_SO relicData,
+        RunRelicState relicState,
+        RelicExecutionContext context,
+        Relic_SO.RelicBuiltInEffectEntry effect)
+    {
+        if (context.trigger != Relic_SO.RelicTrigger.OnBattleRoundEnd || effect.conditionStatusData == null || context.enemies == null)
+            return;
+
+        int multiplier = Mathf.Max(1, effect.amount) * Mathf.Max(1, relicState.amount);
+        for (int i = 0; i < context.enemies.Length; i++)
+        {
+            BattleEnemyController enemy = context.enemies[i];
+            if (enemy == null || enemy.IsDead)
+                continue;
+
+            int stacks = enemy.GetStatusStacks(effect.conditionStatusData);
+            int damage = Mathf.Max(0, stacks * multiplier);
+            if (damage > 0)
+                enemy.TakeDamage(damage, 0, damage);
+        }
+    }
+
+    private static void HandleRestoreSharedEnergyByEnemyStatusStacksOnBattleRoundEnd(
+        Relic_SO relicData,
+        RunRelicState relicState,
+        RelicExecutionContext context,
+        Relic_SO.RelicBuiltInEffectEntry effect)
+    {
+        if (context.trigger != Relic_SO.RelicTrigger.OnBattleRoundEnd || effect.conditionStatusData == null)
+            return;
+
+        int totalStacks = CountEnemyStatusStacks(context.enemies, effect.conditionStatusData);
+        int divisor = Mathf.Max(1, effect.requiredStatusStacks);
+        int recovery = Mathf.FloorToInt(totalStacks / (float)divisor) * Mathf.Max(1, effect.amount) * Mathf.Max(1, relicState.amount);
+        if (recovery > 0)
+            context.additionalSharedEnergyRecovery += recovery;
+    }
+
+    private static void HandleApplyStatusesToHighestAndLowestHpRatioEnemiesOnBattleRoundStart(
+        Relic_SO relicData,
+        RunRelicState relicState,
+        RelicExecutionContext context,
+        Relic_SO.RelicBuiltInEffectEntry effect)
+    {
+        if (context.trigger != Relic_SO.RelicTrigger.OnBattleRoundStart || effect.statusData == null || effect.conditionStatusData == null || context.enemies == null)
+            return;
+
+        int stacks = CalculateScaledStatusStacks(relicState, effect);
+        if (stacks <= 0)
+            return;
+
+        BattleEnemyController highest = ResolveHighestHpRatioLivingEnemy(context.enemies);
+        BattleEnemyController lowest = ResolveLowestHpRatioLivingEnemy(context.enemies);
+        if (highest != null)
+            highest.AddStatus(effect.statusData, effect.statusData.StatusId, effect.statusData.DisplayName, stacks);
+        if (lowest != null)
+            lowest.AddStatus(effect.conditionStatusData, effect.conditionStatusData.StatusId, effect.conditionStatusData.DisplayName, stacks);
+    }
+
+    private static void HandleApplyStatusToEnemyWithConditionOnFirstPlayerHitEachRound(
+        Relic_SO relicData,
+        RunRelicState relicState,
+        RelicExecutionContext context,
+        Relic_SO.RelicBuiltInEffectEntry effect)
+    {
+        if (context.trigger != Relic_SO.RelicTrigger.OnPlayerHitEnemy || effect.statusData == null || effect.conditionStatusData == null || context.resolvedDamage <= 0)
+            return;
+
+        BattleEnemyController target = context.target as BattleEnemyController;
+        if (target == null || target.GetStatusStacks(effect.conditionStatusData) < Mathf.Max(1, effect.requiredStatusStacks))
+            return;
+        if (!TryRegisterRoundScopedProc(relicData, $"conditional-first-hit-status:{context.currentRound}"))
+            return;
+
+        int stacks = CalculateScaledStatusStacks(relicState, effect);
+        if (stacks > 0)
+            TryApplyStatus(target, effect, stacks);
+    }
+
+    private static void HandleApplyStatusToLowestSpeedAllyWhenAnyEnemyHasStatusOnBattleRoundStart(
+        Relic_SO relicData,
+        RunRelicState relicState,
+        RelicExecutionContext context,
+        Relic_SO.RelicBuiltInEffectEntry effect)
+    {
+        if (context.trigger != Relic_SO.RelicTrigger.OnBattleRoundStart || effect.statusData == null || effect.conditionStatusData == null)
+            return;
+        if (!AnyEnemyHasStatusStacksAtLeast(context.enemies, effect.conditionStatusData, Mathf.Max(1, effect.requiredStatusStacks)))
+            return;
+
+        BattleAllyController ally = ResolveLowestSpeedLivingAlly(context.allies);
+        int stacks = CalculateScaledStatusStacks(relicState, effect);
+        if (ally != null && stacks > 0)
+            TryApplyStatus(ally, effect, stacks);
+    }
+
     private static bool StatusMatches(BattleStatus_SO expectedStatus, BattleStatus_SO actualStatus, string actualStatusId)
     {
         if (expectedStatus == null)
@@ -519,6 +738,92 @@ public static partial class RelicSystem
         }
 
         return total;
+    }
+
+    private static bool AnyEnemyHasStatusStacksAtLeast(BattleEnemyController[] enemies, BattleStatus_SO statusData, int requiredStacks)
+    {
+        if (enemies == null || statusData == null)
+            return false;
+
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            BattleEnemyController enemy = enemies[i];
+            if (enemy != null && !enemy.IsDead && enemy.GetStatusStacks(statusData) >= requiredStacks)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static BattleEnemyController ResolveHighestHpRatioLivingEnemy(BattleEnemyController[] enemies)
+    {
+        if (enemies == null)
+            return null;
+
+        BattleEnemyController best = null;
+        float bestRatio = -1f;
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            BattleEnemyController enemy = enemies[i];
+            if (enemy == null || enemy.IsDead || enemy.MaxHP <= 0)
+                continue;
+
+            float ratio = enemy.CurrentHP / (float)enemy.MaxHP;
+            if (best == null || ratio > bestRatio || (Mathf.Approximately(ratio, bestRatio) && enemy.CurrentHP > best.CurrentHP))
+            {
+                best = enemy;
+                bestRatio = ratio;
+            }
+        }
+
+        return best;
+    }
+
+    private static BattleEnemyController ResolveLowestHpRatioLivingEnemy(BattleEnemyController[] enemies)
+    {
+        if (enemies == null)
+            return null;
+
+        BattleEnemyController best = null;
+        float bestRatio = float.MaxValue;
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            BattleEnemyController enemy = enemies[i];
+            if (enemy == null || enemy.IsDead || enemy.MaxHP <= 0)
+                continue;
+
+            float ratio = enemy.CurrentHP / (float)enemy.MaxHP;
+            if (best == null || ratio < bestRatio || (Mathf.Approximately(ratio, bestRatio) && enemy.CurrentHP < best.CurrentHP))
+            {
+                best = enemy;
+                bestRatio = ratio;
+            }
+        }
+
+        return best;
+    }
+
+    private static BattleAllyController ResolveLowestSpeedLivingAlly(BattleAllyController[] allies)
+    {
+        if (allies == null)
+            return null;
+
+        BattleAllyController best = null;
+        for (int i = 0; i < allies.Length; i++)
+        {
+            BattleAllyController ally = allies[i];
+            if (ally == null || ally.IsDead)
+                continue;
+
+            if (best == null
+                || ally.Speed < best.Speed
+                || (ally.Speed == best.Speed && ally.CurrentHP < best.CurrentHP))
+            {
+                best = ally;
+            }
+        }
+
+        return best;
     }
 
     private static void ConsumeEnemyStatusStacks(BattleEnemyController[] enemies, BattleStatus_SO statusData, int amount)

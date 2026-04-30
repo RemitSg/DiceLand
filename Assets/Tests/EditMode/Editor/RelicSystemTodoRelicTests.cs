@@ -715,6 +715,130 @@ public class RelicSystemTodoRelicTests
         Assert.AreEqual(5, GetPrivateField<int>(battleButton, "currentSharedEnergy"));
     }
 
+    [Test]
+    public void ColdAndErodeRelics_ProcessTodo065To078BuiltIns()
+    {
+        BattleAllyController ally = CreateAlly("WarmAlly", 20, 20);
+        BattleEnemyController enemy = CreateEnemy("ErodedEnemy", 20);
+        BattleStatus_SO chill = CreateStatus("chill", "寒冷", BattleStatus_SO.StatusBehaviorType.MinPowerPenalty);
+        BattleStatus_SO erode = CreateStatus("erode", "水蚀", BattleStatus_SO.StatusBehaviorType.ApplyLinkedStatusAtRoundStart);
+        BattleStatus_SO vulnerable = CreateStatus("vulnerable", "易伤", BattleStatus_SO.StatusBehaviorType.DamageTakenBonusPercent);
+        SetPrivateField(erode, "linkedStatusData", vulnerable);
+        SetPrivateField(erode, "powerPerStack", 1);
+
+        enemy.AddStatus(erode, erode.StatusId, erode.DisplayName, 5);
+
+        Relic_SO condensedLiquid = CreateRelic(
+            "condensed-liquid",
+            Relic_SO.RelicTrigger.OnBattleRoundStart,
+            Relic_SO.RelicBuiltInEffectType.ApplyStatusToEnemiesWhenConditionStacksAtLeastOnBattleRoundStart,
+            effect =>
+            {
+                effect.statusData = chill;
+                effect.conditionStatusData = erode;
+                effect.requiredStatusStacks = 5;
+                effect.amount = 1;
+            });
+        Relic_SO frostbite = CreateRelic(
+            "frostbite",
+            Relic_SO.RelicTrigger.OnBattleRoundEnd,
+            Relic_SO.RelicBuiltInEffectType.DealDamageToEnemiesEqualToStatusStacksOnBattleRoundEnd,
+            effect =>
+            {
+                effect.conditionStatusData = chill;
+                effect.amount = 1;
+            });
+        Relic_SO glacialContract = CreateRelic(
+            "glacial-contract",
+            Relic_SO.RelicTrigger.OnBattleRoundEnd,
+            Relic_SO.RelicBuiltInEffectType.RestoreSharedEnergyByEnemyStatusStacksOnBattleRoundEnd,
+            effect =>
+            {
+                effect.conditionStatusData = chill;
+                effect.requiredStatusStacks = 2;
+                effect.amount = 1;
+            });
+        Relic_SO tideAccelerator = CreateRelic(
+            "tide-accelerator",
+            Relic_SO.RelicTrigger.OnBattleRoundStart,
+            Relic_SO.RelicBuiltInEffectType.SetEnemyLinkedStatusRoundStartStacks,
+            effect =>
+            {
+                effect.statusData = vulnerable;
+                effect.conditionStatusData = erode;
+                effect.amount = 2;
+            });
+        Relic_SO thermoSuit = CreateRelic(
+            "thermo-suit",
+            Relic_SO.RelicTrigger.OnBattleSetup,
+            Relic_SO.RelicBuiltInEffectType.PreventAllyStatusApplication,
+            effect =>
+            {
+                effect.conditionStatusData = chill;
+                effect.amount = 0;
+            });
+        Relic_SO ebbCharm = CreateRelic(
+            "ebb-charm",
+            Relic_SO.RelicTrigger.OnPlayerAboutToTakeAttackDamage,
+            Relic_SO.RelicBuiltInEffectType.ReduceIncomingAttackDamageFlatWhenAttackerHasStatus,
+            effect =>
+            {
+                effect.conditionStatusData = erode;
+                effect.requiredStatusStacks = 1;
+                effect.amount = 1;
+            });
+
+        List<RunRelicState> relicInventory = new List<RunRelicState>
+        {
+            new RunRelicState { relicData = condensedLiquid, amount = 1 },
+            new RunRelicState { relicData = frostbite, amount = 1 },
+            new RunRelicState { relicData = glacialContract, amount = 1 },
+            new RunRelicState { relicData = tideAccelerator, amount = 1 },
+            new RunRelicState { relicData = thermoSuit, amount = 1 },
+            new RunRelicState { relicData = ebbCharm, amount = 1 }
+        };
+        BattleEncounterData encounter = new BattleEncounterData { relicInventory = relicInventory };
+        BattleEncounterRuntime.SetEncounter(encounter);
+        BattleEncounterRuntime.ConsumeEncounter();
+
+        RelicExecutionContext roundStartContext = RelicExecutionContext.CreateBattleRoundStart(
+            null,
+            1,
+            new[] { ally },
+            new[] { enemy });
+        RelicSystem.Process(relicInventory, roundStartContext);
+        Assert.AreEqual(1, enemy.GetStatusStacks(chill));
+
+        enemy.ConsumeRoundStartStatusEffects();
+        Assert.AreEqual(2, enemy.GetStatusStacks(vulnerable));
+
+        enemy.AddStatus(chill, chill.StatusId, chill.DisplayName, 3);
+        int hpBeforeFrostbite = enemy.CurrentHP;
+        RelicExecutionContext roundEndContext = RelicExecutionContext.CreateBattleRoundEnd(
+            null,
+            1,
+            new[] { ally },
+            new[] { enemy });
+        RelicSystem.Process(relicInventory, roundEndContext);
+        Assert.AreEqual(hpBeforeFrostbite - 4, enemy.CurrentHP);
+        Assert.AreEqual(2, roundEndContext.additionalSharedEnergyRecovery);
+
+        Assert.IsFalse(ally.AddStatus(chill, chill.StatusId, chill.DisplayName, 1));
+        Assert.AreEqual(0, ally.GetStatusStacks(chill));
+
+        RelicExecutionContext damageContext = RelicExecutionContext.CreatePlayerAboutToTakeAttackDamage(
+            null,
+            null,
+            0,
+            5,
+            enemy.Speed,
+            ally.Speed,
+            enemy,
+            ally);
+        RelicSystem.Process(relicInventory, damageContext);
+        Assert.AreEqual(-1, damageContext.incomingDamageFlatModifier);
+    }
+
     private BattleAllyController CreateAlly(string name, int maxHp, int currentHp)
     {
         GameObject go = new GameObject(name);

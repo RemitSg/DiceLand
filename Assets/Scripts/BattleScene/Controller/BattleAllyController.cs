@@ -717,6 +717,8 @@ public class BattleAllyController : MonoBehaviour
     {
         if (IsDead || stackAmount <= 0)
             return false;
+        if (RelicSystem.ShouldPreventAllyStatusApplication(statusData, fallbackStatusId))
+            return false;
 
         BattleStatusRuntimeEntry entry = GetOrCreateStatusEntry(statusData, fallbackStatusId, fallbackDisplayName);
         entry.stacks = Mathf.Max(0, entry.stacks + stackAmount);
@@ -729,6 +731,8 @@ public class BattleAllyController : MonoBehaviour
     public bool QueueStatusForRoundStart(BattleStatus_SO statusData, string fallbackStatusId, string fallbackDisplayName, int stackAmount, int roundStartDelay, int repeatCount)
     {
         if (IsDead || stackAmount <= 0)
+            return false;
+        if (RelicSystem.ShouldPreventAllyStatusApplication(statusData, fallbackStatusId))
             return false;
 
         int safeDelay = Mathf.Max(1, roundStartDelay);

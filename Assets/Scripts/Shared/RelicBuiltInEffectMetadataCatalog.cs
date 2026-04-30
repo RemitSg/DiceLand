@@ -141,7 +141,7 @@ public static class RelicBuiltInEffectMetadataCatalog
         Add(metadata, Relic_SO.RelicBuiltInEffectType.TriggerStatusDamageWhenEnemyStatusReachesStacksOncePerBattle, requiresConditionStatusData: true);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ChanceApplyStatusToEnemiesWithStatusOnBattleRoundStart, requiresStatusData: true, requiresConditionStatusData: true);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToAttackerAfterTakingSingleAttackDamageLimitedPerRound, requiresStatusData: true);
-        Add(metadata, Relic_SO.RelicBuiltInEffectType.ModifyPlayerClashDiceWhenTargetHasStatus, requiresConditionStatusData: true, numericRequirement: RelicBuiltInNumericRequirement.PowerAmountNonZero, numericFieldPath: "powerAmount");
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ModifyPlayerClashDiceWhenTargetHasStatus, requiresConditionStatusData: true, numericRequirement: RelicBuiltInNumericRequirement.AnyPowerDeltaNonZero, numericFieldPath: "powerAmount/minPowerAmount/maxPowerAmount");
         Add(metadata, Relic_SO.RelicBuiltInEffectType.HealSourceWhenPlayerAppliesStatusToEnemy, requiresConditionStatusData: true);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToAllAlliesWhenStatusBearerCountAtLeast, requiresStatusData: true, requiresConditionStatusData: true);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.TransferStatusToLowestHpEnemyOnEnemyDeath, requiresStatusData: true, numericRequirement: RelicBuiltInNumericRequirement.None);
@@ -151,6 +151,16 @@ public static class RelicBuiltInEffectMetadataCatalog
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ChanceCopyAppliedStatusToOtherEnemy, requiresStatusData: true);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ChanceRepeatAppliedStatusToSameEnemy, requiresStatusData: true);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToEnemiesBasedOnConditionStacksOnRoundStart, requiresStatusData: true, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToEnemiesWhenConditionStacksAtLeastOnBattleRoundStart, requiresStatusData: true, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.DealDamageToEnemiesEqualToStatusStacksOnBattleRoundEnd, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.RestoreSharedEnergyByEnemyStatusStacksOnBattleRoundEnd, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusesToHighestAndLowestHpRatioEnemiesOnBattleRoundStart, requiresStatusData: true, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToEnemyWithConditionOnFirstPlayerHitEachRound, requiresStatusData: true, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.SetEnemyLinkedStatusRoundStartStacks, requiresStatusData: true, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.TriggerAdditionalDamageWhenEnemyStatusTicksWithConditionStatus, requiresStatusData: true, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.PreventAllyStatusApplication, requiresConditionStatusData: true, numericRequirement: RelicBuiltInNumericRequirement.None);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToLowestSpeedAllyWhenAnyEnemyHasStatusOnBattleRoundStart, requiresStatusData: true, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ReduceIncomingAttackDamageFlatWhenAttackerHasStatus, requiresConditionStatusData: true);
 
         return metadata;
     }

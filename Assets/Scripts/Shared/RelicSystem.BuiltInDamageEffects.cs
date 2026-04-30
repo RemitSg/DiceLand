@@ -215,6 +215,30 @@ public static partial class RelicSystem
         return;
     }
 
+    private static void HandleReduceIncomingAttackDamageFlatWhenAttackerHasStatus(
+        Relic_SO relicData,
+        RunRelicState relicState,
+        RelicExecutionContext context,
+        Relic_SO.RelicBuiltInEffectEntry effect)
+    {
+        if (context.trigger != Relic_SO.RelicTrigger.OnPlayerAboutToTakeAttackDamage)
+            return;
+
+        BattleEnemyController statusAttacker = context.source as BattleEnemyController;
+        if (statusAttacker == null || effect.conditionStatusData == null)
+            return;
+
+        if (statusAttacker.GetStatusStacks(effect.conditionStatusData) < Mathf.Max(1, effect.requiredStatusStacks))
+            return;
+
+        int attackStatusReductionFlat = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+        if (attackStatusReductionFlat <= 0)
+            return;
+
+        context.incomingDamageFlatModifier -= attackStatusReductionFlat;
+        return;
+    }
+
     private static void HandleReduceIncomingDamageFlatPerStatusStacks(
         Relic_SO relicData,
         RunRelicState relicState,
