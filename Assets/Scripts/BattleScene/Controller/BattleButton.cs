@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -307,73 +307,35 @@ public class BattleButton : MonoBehaviour
         if (allies == null || enemies == null)
             return;
 
-        for (int i = 0; i < allies.Length; i++)
-        {
-            if (allies[i] != null)
-                allies[i].ClearTemporarySkills();
-        }
+        BattleEnemyBattleStartSkillGrantService.Dispatch(
+            enemies,
+            allies,
+            (enemy, skill) => BattleLog($"\u654c\u65b9 {enemy.GetDebugDisplayName()} \u5728\u6218\u6597\u5f00\u59cb\u65f6\u8d4b\u4e88\u53cb\u65b9\u4e34\u65f6\u6280\u80fd\uff1a{skill.skillName}"));
 
-        for (int enemyIndex = 0; enemyIndex < enemies.Length; enemyIndex++)
-        {
-            BattleEnemyController enemy = enemies[enemyIndex];
-            if (enemy == null || enemy.IsDead || enemy.enemyData == null)
-                continue;
-
-            List<EnemyData_SO.BattleStartAllySkillGrantEntry> grants = enemy.enemyData.battleStartGrantedAllySkills;
-            if (grants != null)
-            {
-                for (int grantIndex = 0; grantIndex < grants.Count; grantIndex++)
-                {
-                    EnemyData_SO.BattleStartAllySkillGrantEntry grant = grants[grantIndex];
-                    if (grant.skill == null)
-                        continue;
-
-                    for (int allyIndex = 0; allyIndex < allies.Length; allyIndex++)
-                    {
-                        BattleAllyController ally = allies[allyIndex];
-                        if (ally == null || ally.IsDead)
-                            continue;
-
-                        ally.GrantTemporarySkill(grant.skill, grant.replaceWeaponSkills);
-                    }
-
-                    BattleLog($"\u654c\u65b9 {enemy.GetDebugDisplayName()} \u5728\u6218\u6597\u5f00\u59cb\u65f6\u8d4b\u4e88\u53cb\u65b9\u4e34\u65f6\u6280\u80fd\uff1a{grant.skill.skillName}");
-                }
-            }
-
-            bool gainedBattleStartStatuses = ApplyEnemyStatusGains(
+        BattleEnemyTargetingStatusGainPhaseService.DispatchBattleStartStatusGains(
+            enemies,
+            enemy => ApplyEnemyStatusGains(
                 enemy,
                 enemy.enemyData.battleStartStatusGains,
                 (statusName, appliedStacks, currentStacks) =>
-                    $"敌方战斗开始效果：{enemy.GetDebugDisplayName()} 获得 {appliedStacks} 层 {statusName}，当前 {statusName} {currentStacks} 层");
+                    $"敌方战斗开始效果：{enemy.GetDebugDisplayName()} 获得 {appliedStacks} 层 {statusName}，当前 {statusName} {currentStacks} 层"),
+            enemy => TryLogEnemyStatusDrivenStageTransition(enemy, allies, enemies));
 
-            if (gainedBattleStartStatuses)
-                TryLogEnemyStatusDrivenStageTransition(enemy, allies, enemies);
-        }
     }
 
     private void ApplyEnemyRepeatRoundStartStatusGains(BattleAllyController[] allies, BattleEnemyController[] enemies)
     {
-        if (currentRound <= 1 || enemies == null)
-            return;
-
-        for (int i = 0; i < enemies.Length; i++)
-        {
-            BattleEnemyController enemy = enemies[i];
-            if (enemy == null || enemy.IsDead || enemy.enemyData == null)
-                continue;
-
-            bool gainedStatuses = ApplyEnemyStatusGains(
+        BattleEnemyTargetingStatusGainPhaseService.DispatchRepeatRoundStartEffects(
+            currentRound,
+            enemies,
+            enemy => ApplyEnemyStatusGains(
                 enemy,
                 enemy.enemyData.repeatRoundStartStatusGains,
                 (statusName, appliedStacks, currentStacks) =>
-                    $"敌方回合效果：第 {currentRound} 回合开始时，{enemy.GetDebugDisplayName()} 获得 {appliedStacks} 层 {statusName}，当前 {statusName} {currentStacks} 层");
+                    $"敌方回合效果：第 {currentRound} 回合开始时，{enemy.GetDebugDisplayName()} 获得 {appliedStacks} 层 {statusName}，当前 {statusName} {currentStacks} 层"),
+            enemy => ApplyEnemyCustomRepeatRoundStartEffects(enemy, allies),
+            enemy => TryLogEnemyStatusDrivenStageTransition(enemy, allies, enemies));
 
-            ApplyEnemyCustomRepeatRoundStartEffects(enemy, allies);
-
-            if (gainedStatuses)
-                TryLogEnemyStatusDrivenStageTransition(enemy, allies, enemies);
-        }
     }
 
     public bool CanSelectSkillForAlly(BattleAllyController ally, EnemySkill_SO skill)
@@ -3351,48 +3313,37 @@ public class BattleButton : MonoBehaviour
 
     private void ApplyBattleRoundStartRelics(BattleAllyController[] allies, BattleEnemyController[] enemies)
     {
-        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
-        if (activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
-            return;
-
-        RelicExecutionContext context = RelicTriggerDispatcher.ProcessBattleRoundStart(
-            activeEncounter,
-            null,
+        BattleTargetingPhaseRelicService.DispatchRoundStart(
+            BattleEncounterRuntime.ActiveEncounter,
             currentRound,
             allies,
-            enemies);
-
-        if (context.additionalSharedEnergyRecovery > 0)
-            RestoreSharedEnergy(context.additionalSharedEnergyRecovery);
-
-        BattleRelicEffectRunner.FlushFeedback(context, BattleLog);
+            enemies,
+            (activeEncounter, round, roundAllies, roundEnemies) => RelicTriggerDispatcher.ProcessBattleRoundStart(
+                activeEncounter,
+                null,
+                round,
+                roundAllies,
+                roundEnemies),
+            amount => RestoreSharedEnergy(amount),
+            context => BattleRelicEffectRunner.FlushFeedback(context, BattleLog));
     }
 
     private void ApplyBattleSetupRelics(BattleAllyController[] allies, BattleEnemyController[] enemies)
     {
-        int extraButtonsPerAlly = 0;
-        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
-        if (activeEncounter != null && activeEncounter.relicInventory != null && activeEncounter.relicInventory.Count > 0)
-        {
-            RelicExecutionContext context = RelicTriggerDispatcher.ProcessBattleSetup(
+        int extraButtonsPerAlly = BattleTargetingPhaseRelicService.DispatchBattleSetup(
+            BattleEncounterRuntime.ActiveEncounter,
+            currentRound,
+            allies,
+            enemies,
+            (activeEncounter, round, setupAllies, setupEnemies) => RelicTriggerDispatcher.ProcessBattleSetup(
                 activeEncounter,
                 null,
-                currentRound,
-                allies,
-                enemies);
-            extraButtonsPerAlly = currentRound == 1 ? Mathf.Max(0, context.additionalTemporaryAllySpeedButtons) : 0;
+                round,
+                setupAllies,
+                setupEnemies),
+            context => BattleRelicEffectRunner.FlushFeedback(context, BattleLog));
 
-            BattleRelicEffectRunner.FlushFeedback(context, BattleLog);
-        }
-
-        if (allies == null)
-            return;
-
-        for (int i = 0; i < allies.Length; i++)
-        {
-            if (allies[i] != null)
-                allies[i].SetTemporaryExtraSpeedButtons(extraButtonsPerAlly);
-        }
+        BattleTargetingPhaseRelicService.ApplyTemporarySpeedButtons(allies, extraButtonsPerAlly);
     }
 
     private void ApplyEnemyDeathRelics(BattleEnemyController defeatedEnemy, BattleAllyController[] allies, BattleEnemyController[] enemies)
@@ -3426,29 +3377,11 @@ public class BattleButton : MonoBehaviour
 
     private void ApplyPendingBattleStartAllyStatusGrants(BattleAllyController[] allies)
     {
-        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
-        if (activeEncounter == null || activeEncounter.battleStartAllyStatusGrantsApplied)
-            return;
-        if (activeEncounter.pendingBattleStartAllyStatusGrants == null || activeEncounter.pendingBattleStartAllyStatusGrants.Count == 0)
-        {
-            activeEncounter.battleStartAllyStatusGrantsApplied = true;
-            return;
-        }
-        if (allies == null || allies.Length == 0)
-        {
-            activeEncounter.battleStartAllyStatusGrantsApplied = true;
-            return;
-        }
-
-        BattleStatusGrantDispatcher.DispatchGrants(
-            activeEncounter.pendingBattleStartAllyStatusGrants,
+        BattlePendingBattleStartAllyStatusGrantService.Apply(
+            BattleEncounterRuntime.ActiveEncounter,
             allies,
-            ally => ally == null || ally.IsDead,
-            (ally, grant) => ally.AddStatus(grant.statusData, grant.statusData.StatusId, grant.statusData.DisplayName, grant.stacks),
-            (ally, grant) => BattleLog($"鎴樻枟寮€濮嬫晥鏋滐細{ally.GetDebugDisplayName()} 鑾峰緱 {grant.stacks} 灞?{grant.statusData.DisplayName}"));
+            (ally, grant) => BattleLog($"战斗开始效果：{ally.GetDebugDisplayName()} 获得 {grant.stacks} 层 {grant.statusData.DisplayName}"));
 
-
-        activeEncounter.battleStartAllyStatusGrantsApplied = true;
     }
 
     private void ApplyRoundStartStatusEffectsGeneric(BattleAllyController[] allies, BattleEnemyController[] enemies)
