@@ -909,7 +909,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
                     EnemySkill_SO.ConditionalPowerModifierEntry effect = effectSettings.powerModifiers[effectIndex];
                     bool hasFlatBonus = effect.powerBonus != 0;
-                    bool hasScalingBonus = effect.condition == EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold && effect.powerBonusPerStep != 0;
+                    bool hasScalingBonus = IsScalingPowerModifier(effect);
                     if (!hasFlatBonus && !hasScalingBonus)
                         continue;
 
@@ -918,10 +918,11 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                     if (effect.useCondition)
                     {
                         string conditionLabel = BuildColoredToken(GetPowerModifierConditionLabel(effect), targetHighlightColor);
-                        if (effect.condition == EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold)
+                        if (IsScalingPowerModifier(effect))
                         {
                             string perStepValueLabel = BuildColoredToken(FormatSignedInt(effect.powerBonusPerStep), valueHighlightColor);
-                            effectLines.Add($"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 每达成一次条件，威力 {perStepValueLabel}{BuildPowerModifierCapSuffix(effect)}");
+                            string scalingPrefix = IsSpeedDifferenceScalingPowerModifier(effect) ? "每高出 1 点速度，" : "每达成一次条件，";
+                            effectLines.Add($"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 {scalingPrefix}威力 {perStepValueLabel}{BuildPowerModifierCapSuffix(effect)}");
                         }
                         else
                         {
@@ -1178,7 +1179,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
                 EnemySkill_SO.ConditionalPowerModifierEntry effect = effectSettings.powerModifiers[effectIndex];
                 bool hasFlatBonus = effect.powerBonus != 0;
-                bool hasScalingBonus = effect.condition == EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold && effect.powerBonusPerStep != 0;
+                bool hasScalingBonus = IsScalingPowerModifier(effect);
                 if (!hasFlatBonus && !hasScalingBonus)
                     continue;
 
@@ -1186,8 +1187,9 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 if (effect.useCondition)
                 {
                     string conditionLabel = BuildColoredToken(GetPowerModifierConditionLabel(effect), targetHighlightColor);
-                    effectLines.Add(effect.condition == EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold
-                        ? $"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 每达成一次条件，威力 {BuildColoredToken(FormatSignedInt(effect.powerBonusPerStep), valueHighlightColor)}{BuildPowerModifierCapSuffix(effect)}"
+                    string scalingPrefix = IsSpeedDifferenceScalingPowerModifier(effect) ? "每高出 1 点速度，" : "每达成一次条件，";
+                    effectLines.Add(IsScalingPowerModifier(effect)
+                        ? $"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 {scalingPrefix}威力 {BuildColoredToken(FormatSignedInt(effect.powerBonusPerStep), valueHighlightColor)}{BuildPowerModifierCapSuffix(effect)}"
                         : $"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 威力 {BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor)}");
                 }
                 else
@@ -1595,6 +1597,19 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         return modifier.maxPowerBonus > 0
             ? $"，最多 {BuildColoredToken(FormatSignedInt(modifier.maxPowerBonus), valueHighlightColor)}"
             : string.Empty;
+    }
+
+    private static bool IsScalingPowerModifier(EnemySkill_SO.ConditionalPowerModifierEntry modifier)
+    {
+        return modifier.powerBonusPerStep != 0
+            && (modifier.condition == EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold
+                || IsSpeedDifferenceScalingPowerModifier(modifier));
+    }
+
+    private static bool IsSpeedDifferenceScalingPowerModifier(EnemySkill_SO.ConditionalPowerModifierEntry modifier)
+    {
+        return modifier.condition == EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanTarget
+            || modifier.condition == EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanTarget;
     }
 
     private static bool IsSameStatus(

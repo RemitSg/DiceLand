@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: "\u9519\u62CD\u8FDE\u5207"
+  m_EditorClassIdentifier: 
+  skillName: "\u9519\u62CD\u8FDE\u5207"
+  description: "\u7B2C\u4E00\u5200\u5207\u5F00\u8282\u594F\uFF0C\u7B2C\u4E8C\u5200\u843D\u5728\u5BF9\u624B\u5C1A\u672A\u56DE\u795E\u7684\u7A7A\u9699\u91CC\u3002"
+  skillCategory: 0
+  energyCost: 4
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 1
+  maxPower: 3
+  diceCount: 2
+  dicePowerRanges:
+  - minPower: 1
+    maxPower: 3
+  - minPower: 1
+    maxPower: 3
+  dicePresentationSettings: []
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers:
+    - effectName: "\u9519\u62CD"
+      trigger: 3
+      useCondition: 1
+      condition: 0
+      targetStatusData: {fileID: 0}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredStatusStacks: 0
+      requiredSpeedValue: 0
+      requiredSpeedDifference: 2
+      powerBonus: 2
+      powerBonusPerStep: 0
+      maxPowerBonus: 0
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers:
+    - effectName: "\u9519\u62CD"
+      trigger: 3
+      useCondition: 1
+      condition: 0
+      targetStatusData: {fileID: 0}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredStatusStacks: 0
+      requiredSpeedValue: 0
+      requiredSpeedDifference: 2
+      powerBonus: 2
+      powerBonusPerStep: 0
+      maxPowerBonus: 0
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 

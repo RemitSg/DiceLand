@@ -44,19 +44,19 @@ MonoBehaviour:
       applyAfterRoundStarts: 1
       applyRepeatCount: 1
       stackAmount: 1
-      randomTargetCount: 0
+      randomTargetCount: 1
       useCondition: 0
       condition: 0
       conditionStatusData: {fileID: 0}
       conditionTargetSkillData: {fileID: 0}
       conditionStatusType: 0
-      requiredConditionStatusStacks: 0
+      requiredConditionStatusStacks: 1
       requiredConditionSpeedValue: 0
       requiredConditionSpeedDifference: 0
     powerModifiers:
     - effectName: "\u62E8\u706B"
       trigger: 2
-      useCondition: 0
+      useCondition: 1
       condition: 3
       targetStatusData: {fileID: 11400000, guid: f9527c3eb2f8085418c8ae9a04a00b9a, type: 2}
       targetSkillData: {fileID: 0}

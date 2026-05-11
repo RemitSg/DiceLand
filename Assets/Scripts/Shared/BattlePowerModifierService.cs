@@ -109,10 +109,43 @@ public static class BattlePowerModifierService
                     ? modifier.powerBonus
                     : 0;
             default:
+                if (modifier.powerBonusPerStep != 0 && TryEvaluateSpeedDifferenceBonus(modifier, selfSpeed, targetSpeed, out int speedDifferenceBonus))
+                    return speedDifferenceBonus;
+
                 return BattleModifierConditionService.IsConditionMet(modifier.condition, selfSpeed, targetSpeed, modifier.requiredSpeedValue, modifier.requiredSpeedDifference)
                     ? modifier.powerBonus
                     : 0;
         }
+    }
+
+    private static bool TryEvaluateSpeedDifferenceBonus(
+        EnemySkill_SO.ConditionalPowerModifierEntry modifier,
+        int selfSpeed,
+        int targetSpeed,
+        out int bonus)
+    {
+        bonus = 0;
+
+        int steps;
+        switch (modifier.condition)
+        {
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanTarget:
+                steps = selfSpeed - targetSpeed;
+                break;
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanTarget:
+                steps = targetSpeed - selfSpeed;
+                break;
+            default:
+                return false;
+        }
+
+        if (steps < Mathf.Max(1, modifier.requiredSpeedDifference))
+            return true;
+
+        bonus = Mathf.Max(0, steps) * modifier.powerBonusPerStep;
+        if (modifier.maxPowerBonus > 0 && bonus > 0)
+            bonus = Mathf.Min(bonus, modifier.maxPowerBonus);
+        return true;
     }
 
     private static int ResolveSelfStatusStacks(

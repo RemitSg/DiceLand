@@ -34,7 +34,25 @@ MonoBehaviour:
   dicePresentationSettings: []
   diceEffectSettings:
   - damageEffects: []
-    statusEffects: []
+    statusEffects:
+    - effectName: 
+      trigger: 0
+      targetMode: 0
+      statusData: {fileID: 11400000, guid: f9527c3eb2f8085418c8ae9a04a00b9a, type: 2}
+      statusType: 0
+      applyTiming: 0
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 0
+      stackAmount: 2
+      randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
     powerModifiers:
     - effectName: "\u5589\u95F4\u4F59\u706B"
       trigger: 5
