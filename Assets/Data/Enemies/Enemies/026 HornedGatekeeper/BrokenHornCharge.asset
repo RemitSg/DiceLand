@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BrokenHornCharge
   m_EditorClassIdentifier: 
   skillName: "\u65AD\u89D2\u51B2\u950B"
-  description: "\u4EC5\u7B2C 2 \u9636\u6BB5\u53EF\u7528\u3002\u4E24\u679A\u653B\u51FB\u9AA0\u90FD\u4F1A\u5728\u5355\u65B9\u9762\u653B\u51FB\u65F6\u989D\u5916\u9020\u6210 3 \u70B9\u4F24\u5BB3"
+  description: "\u8FD9\u662F\u5B83\u552F\u4E00\u7684\u8FDB\u653B\u62DB\u5F0F\uFF0C\u5C1D\u8BD5\u5316\u89E3\u5B83\u7684\u653B\u51FB"
   skillCategory: 0
   energyCost: 0
   requiredSelfStatusData: {fileID: 0}
@@ -45,6 +45,8 @@ MonoBehaviour:
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
     summonEffects: []
@@ -58,6 +60,9 @@ MonoBehaviour:
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
     summonEffects: []
+  diceSkillCategories: 

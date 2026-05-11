@@ -150,6 +150,19 @@ public class MapHUD : MonoBehaviour
     [SerializeField] private Color inventoryCountColor = Color.white;
     [SerializeField] private Sprite inventoryFallbackSprite;
 
+    [Header("Inventory Scroll")]
+    [SerializeField] private Vector2 inventoryViewportSize = Vector2.zero;
+    [SerializeField] private Vector2 inventoryContentSizePadding = Vector2.zero;
+    [SerializeField] private float inventoryScrollSensitivity = 30f;
+    [SerializeField] private bool inventoryScrollbarAlwaysVisible = true;
+    [SerializeField] private float inventoryScrollbarWidth = 18f;
+    [SerializeField] private Vector2 inventoryScrollbarOffset = Vector2.zero;
+    [SerializeField] private float inventoryScrollbarHandleMinHeight = 48f;
+    [SerializeField] private Sprite inventoryScrollbarTrackSprite;
+    [SerializeField] private Sprite inventoryScrollbarHandleSprite;
+    [SerializeField] private Color inventoryScrollbarTrackColor = new Color(0.08f, 0.08f, 0.1f, 0.78f);
+    [SerializeField] private Color inventoryScrollbarHandleColor = new Color(1f, 0.84f, 0.36f, 0.96f);
+
     [Header("Inventory Detail")]
     [SerializeField] private Sprite inventoryDetailBackgroundSprite;
     [SerializeField] private Vector2 inventoryDetailSize = new Vector2(640f, 240f);
@@ -200,7 +213,14 @@ public class MapHUD : MonoBehaviour
     private Button blueprintTabButton;
     private Button relicTabButton;
     private RectTransform inventoryTabRoot;
+    private RectTransform inventoryScrollRoot;
+    private ScrollRect inventoryScrollRect;
+    private RectTransform inventoryViewportRoot;
     private RectTransform inventoryGridRoot;
+    private RectTransform inventoryScrollbarRoot;
+    private Image inventoryScrollbarTrackImage;
+    private RectTransform inventoryScrollbarHandleRoot;
+    private Image inventoryScrollbarHandleImage;
     private readonly List<GameObject> inventorySlotObjects = new List<GameObject>();
     private MapInventoryDetailView runtimeInventoryDetailView;
     private InventoryTab currentInventoryTab = InventoryTab.Loot;
@@ -479,8 +499,75 @@ public class MapHUD : MonoBehaviour
         blueprintTabButton = BuildTabButton(inventoryTabRoot, "BlueprintTab", Vector2.zero, "图纸", () => SetInventoryTab(InventoryTab.Blueprints));
         relicTabButton = BuildTabButton(inventoryTabRoot, "RelicTab", Vector2.zero, "遗物", () => SetInventoryTab(InventoryTab.Relics));
 
-        inventoryGridRoot = CreateRect("InventoryGrid", inventoryPanelRect, new Vector2(0f, 1f), inventoryGridOffset, new Vector2(inventoryPanelSize.x - 36f, inventoryPanelSize.y - inventoryTabSize.y - 54f));
+        BuildInventoryScrollArea();
         inventoryPanelRect.gameObject.SetActive(false);
+    }
+
+    private void BuildInventoryScrollArea()
+    {
+        Vector2 viewportSize = ResolveInventoryViewportSize();
+        inventoryScrollRoot = CreateRect("InventoryScrollRect", inventoryPanelRect, new Vector2(0f, 1f), inventoryGridOffset, viewportSize);
+        Image scrollImage = inventoryScrollRoot.gameObject.AddComponent<Image>();
+        scrollImage.color = Color.clear;
+
+        inventoryScrollRect = inventoryScrollRoot.gameObject.AddComponent<ScrollRect>();
+        inventoryScrollRect.horizontal = false;
+        inventoryScrollRect.vertical = true;
+        inventoryScrollRect.scrollSensitivity = inventoryScrollSensitivity;
+        inventoryScrollRect.movementType = ScrollRect.MovementType.Clamped;
+
+        inventoryViewportRoot = CreateRect("InventoryViewport", inventoryScrollRoot, new Vector2(0f, 1f), Vector2.zero, ResolveInventoryViewportContentSize(viewportSize));
+        inventoryViewportRoot.gameObject.AddComponent<RectMask2D>();
+
+        inventoryGridRoot = CreateRect("InventoryGrid", inventoryViewportRoot, new Vector2(0f, 1f), Vector2.zero, ResolveInventoryContentSize(0));
+        inventoryScrollRect.viewport = inventoryViewportRoot;
+        inventoryScrollRect.content = inventoryGridRoot;
+
+        BuildInventoryScrollbar();
+    }
+
+    private void BuildInventoryScrollbar()
+    {
+        inventoryScrollbarRoot = CreateRect("VerticalScrollbar", inventoryScrollRoot, new Vector2(1f, 1f), inventoryScrollbarOffset, new Vector2(inventoryScrollbarWidth, ResolveInventoryViewportSize().y));
+        inventoryScrollbarRoot.anchorMin = new Vector2(1f, 0f);
+        inventoryScrollbarRoot.anchorMax = new Vector2(1f, 1f);
+        inventoryScrollbarRoot.pivot = new Vector2(1f, 1f);
+        inventoryScrollbarRoot.sizeDelta = new Vector2(inventoryScrollbarWidth, 0f);
+
+        inventoryScrollbarTrackImage = inventoryScrollbarRoot.gameObject.AddComponent<Image>();
+        inventoryScrollbarTrackImage.sprite = inventoryScrollbarTrackSprite;
+        inventoryScrollbarTrackImage.type = inventoryScrollbarTrackSprite != null ? Image.Type.Sliced : Image.Type.Simple;
+        inventoryScrollbarTrackImage.color = inventoryScrollbarTrackColor;
+
+        Scrollbar scrollbar = inventoryScrollbarRoot.gameObject.AddComponent<Scrollbar>();
+        scrollbar.direction = Scrollbar.Direction.BottomToTop;
+
+        RectTransform slidingArea = CreateRect("SlidingArea", inventoryScrollbarRoot, new Vector2(0f, 0f), Vector2.zero, Vector2.zero);
+        slidingArea.anchorMin = Vector2.zero;
+        slidingArea.anchorMax = Vector2.one;
+        slidingArea.offsetMin = new Vector2(2f, 2f);
+        slidingArea.offsetMax = new Vector2(-2f, -2f);
+
+        inventoryScrollbarHandleRoot = CreateRect("Handle", slidingArea, new Vector2(0f, 1f), Vector2.zero, new Vector2(0f, inventoryScrollbarHandleMinHeight));
+        inventoryScrollbarHandleRoot.anchorMin = new Vector2(0f, 1f);
+        inventoryScrollbarHandleRoot.anchorMax = new Vector2(1f, 1f);
+        inventoryScrollbarHandleRoot.pivot = new Vector2(0.5f, 1f);
+
+        inventoryScrollbarHandleImage = inventoryScrollbarHandleRoot.gameObject.AddComponent<Image>();
+        inventoryScrollbarHandleImage.sprite = inventoryScrollbarHandleSprite;
+        inventoryScrollbarHandleImage.type = inventoryScrollbarHandleSprite != null ? Image.Type.Sliced : Image.Type.Simple;
+        inventoryScrollbarHandleImage.color = inventoryScrollbarHandleColor;
+
+        scrollbar.targetGraphic = inventoryScrollbarHandleImage;
+        scrollbar.handleRect = inventoryScrollbarHandleRoot;
+
+        if (inventoryScrollRect != null)
+        {
+            inventoryScrollRect.verticalScrollbar = scrollbar;
+            inventoryScrollRect.verticalScrollbarVisibility = inventoryScrollbarAlwaysVisible
+                ? ScrollRect.ScrollbarVisibility.Permanent
+                : ScrollRect.ScrollbarVisibility.AutoHideAndExpandViewport;
+        }
     }
 
     private void BuildInventoryDetail()
@@ -855,8 +942,7 @@ public class MapHUD : MonoBehaviour
         PositionTabButton(blueprintTabButton, inventoryTabRoot, 2, blueprintTabOffset);
         PositionTabButton(relicTabButton, inventoryTabRoot, 3, relicTabOffset);
 
-        if (inventoryGridRoot != null)
-            ApplyRect(inventoryGridRoot, new Vector2(0f, 1f), inventoryGridOffset, new Vector2(inventoryPanelSize.x - 36f, inventoryPanelSize.y - inventoryTabSize.y - 54f));
+        UpdateInventoryScrollLayout(false);
 
         if (runtimeInventoryDetailView != null)
         {
@@ -972,7 +1058,10 @@ public class MapHUD : MonoBehaviour
         inventorySlotObjects.Clear();
 
         if (!inventoryPanelRect.gameObject.activeSelf || currentRunState == null)
+        {
+            UpdateInventoryScrollLayout(true);
             return;
+        }
 
         switch (currentInventoryTab)
         {
@@ -990,6 +1079,7 @@ public class MapHUD : MonoBehaviour
                 break;
         }
 
+        UpdateInventoryScrollLayout(true);
         RefreshSelectedInventoryDetail();
     }
 
@@ -1129,6 +1219,107 @@ public class MapHUD : MonoBehaviour
         count.raycastTarget = false;
 
         inventorySlotObjects.Add(slotRect.gameObject);
+    }
+
+    private Vector2 ResolveInventoryViewportSize()
+    {
+        Vector2 defaultSize = new Vector2(
+            Mathf.Max(1f, inventoryPanelSize.x - 36f),
+            Mathf.Max(1f, inventoryPanelSize.y - inventoryTabSize.y - 54f));
+
+        return new Vector2(
+            inventoryViewportSize.x > 0f ? inventoryViewportSize.x : defaultSize.x,
+            inventoryViewportSize.y > 0f ? inventoryViewportSize.y : defaultSize.y);
+    }
+
+    private Vector2 ResolveInventoryViewportContentSize(Vector2 viewportSize)
+    {
+        float reservedScrollbarWidth = Mathf.Max(0f, inventoryScrollbarWidth);
+        float width = Mathf.Max(1f, viewportSize.x - reservedScrollbarWidth - Mathf.Max(0f, inventoryScrollbarOffset.x));
+        return new Vector2(width, Mathf.Max(1f, viewportSize.y));
+    }
+
+    private Vector2 ResolveInventoryContentSize(int slotCount)
+    {
+        Vector2 viewportSize = ResolveInventoryViewportSize();
+        Vector2 contentViewportSize = ResolveInventoryViewportContentSize(viewportSize);
+        int columns = Mathf.Max(1, inventoryGridColumns);
+        int rows = slotCount > 0 ? Mathf.CeilToInt(slotCount / (float)columns) : 0;
+        float occupiedWidth = columns * inventorySlotSize.x + Mathf.Max(0, columns - 1) * inventoryGridSpacing.x + Mathf.Max(0f, inventoryContentSizePadding.x);
+        float occupiedHeight = rows > 0
+            ? rows * inventorySlotSize.y + Mathf.Max(0, rows - 1) * inventoryGridSpacing.y + Mathf.Abs(inventorySlotOffset.y) + Mathf.Max(0f, inventoryContentSizePadding.y)
+            : contentViewportSize.y;
+
+        return new Vector2(
+            Mathf.Max(contentViewportSize.x, occupiedWidth),
+            Mathf.Max(contentViewportSize.y, occupiedHeight));
+    }
+
+    private void UpdateInventoryScrollLayout(bool resetToTop)
+    {
+        if (inventoryScrollRoot == null || inventoryGridRoot == null)
+            return;
+
+        Vector2 viewportSize = ResolveInventoryViewportSize();
+        Vector2 viewportContentSize = ResolveInventoryViewportContentSize(viewportSize);
+        Vector2 contentSize = ResolveInventoryContentSize(inventorySlotObjects.Count);
+        bool hasOverflow = contentSize.y > viewportContentSize.y + 0.01f;
+
+        ApplyRect(inventoryScrollRoot, new Vector2(0f, 1f), inventoryGridOffset, viewportSize);
+
+        if (inventoryViewportRoot != null)
+            ApplyRect(inventoryViewportRoot, new Vector2(0f, 1f), Vector2.zero, viewportContentSize);
+
+        ApplyRect(inventoryGridRoot, new Vector2(0f, 1f), Vector2.zero, contentSize);
+
+        if (inventoryScrollRect != null)
+        {
+            inventoryScrollRect.horizontal = false;
+            inventoryScrollRect.vertical = hasOverflow;
+            inventoryScrollRect.scrollSensitivity = inventoryScrollSensitivity;
+            inventoryScrollRect.movementType = ScrollRect.MovementType.Clamped;
+            inventoryScrollRect.viewport = inventoryViewportRoot;
+            inventoryScrollRect.content = inventoryGridRoot;
+            inventoryScrollRect.verticalScrollbarVisibility = inventoryScrollbarAlwaysVisible
+                ? ScrollRect.ScrollbarVisibility.Permanent
+                : ScrollRect.ScrollbarVisibility.AutoHide;
+
+            if (resetToTop)
+                inventoryScrollRect.verticalNormalizedPosition = 1f;
+        }
+
+        ApplyInventoryScrollbarLayout(viewportSize, hasOverflow);
+    }
+
+    private void ApplyInventoryScrollbarLayout(Vector2 viewportSize, bool hasOverflow)
+    {
+        if (inventoryScrollbarRoot == null)
+            return;
+
+        bool showScrollbar = inventoryScrollbarAlwaysVisible || hasOverflow;
+        inventoryScrollbarRoot.gameObject.SetActive(showScrollbar);
+        ApplyRect(inventoryScrollbarRoot, new Vector2(1f, 1f), inventoryScrollbarOffset, new Vector2(inventoryScrollbarWidth, viewportSize.y));
+        inventoryScrollbarRoot.anchorMin = new Vector2(1f, 0f);
+        inventoryScrollbarRoot.anchorMax = new Vector2(1f, 1f);
+        inventoryScrollbarRoot.pivot = new Vector2(1f, 1f);
+        inventoryScrollbarRoot.sizeDelta = new Vector2(inventoryScrollbarWidth, 0f);
+
+        if (inventoryScrollbarTrackImage != null)
+        {
+            inventoryScrollbarTrackImage.sprite = inventoryScrollbarTrackSprite;
+            inventoryScrollbarTrackImage.type = inventoryScrollbarTrackSprite != null ? Image.Type.Sliced : Image.Type.Simple;
+            inventoryScrollbarTrackImage.color = inventoryScrollbarTrackColor;
+        }
+
+        if (inventoryScrollbarHandleRoot != null)
+            inventoryScrollbarHandleRoot.sizeDelta = new Vector2(0f, Mathf.Max(1f, inventoryScrollbarHandleMinHeight));
+
+        if (inventoryScrollbarHandleImage != null)
+        {
+            inventoryScrollbarHandleImage.sprite = inventoryScrollbarHandleSprite;
+            inventoryScrollbarHandleImage.type = inventoryScrollbarHandleSprite != null ? Image.Type.Sliced : Image.Type.Simple;
+            inventoryScrollbarHandleImage.color = inventoryScrollbarHandleColor;
+        }
     }
 
     private Button BuildTabButton(RectTransform parent, string name, Vector2 anchoredPosition, string label, UnityEngine.Events.UnityAction onClick)

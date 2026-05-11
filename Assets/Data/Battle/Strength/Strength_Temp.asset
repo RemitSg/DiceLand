@@ -15,7 +15,7 @@ MonoBehaviour:
   statusId: strength
   displayName: "\u4E34\u65F6\u5F3A\u58EE"
   description: "\u653B\u51FB\u63B7\u9AB0\u7684\u5A01\u529B\u589E\u52A0\u76F8\u5F53\u4E8E\u5C42\u6570\u7684\u6570\u503C\uFF0C\u56DE\u5408\u7ED3\u675F\u540E\u5931\u53BB\u6240\u6709\u5C42\u6570"
-  iconSprite: {fileID: 0}
+  iconSprite: {fileID: 21300000, guid: 5fa5c9aa0f362424fbc6b059f10a4896, type: 3}
   accentColor: {r: 1, g: 1, b: 1, a: 1}
   tickEffectPrefab: {fileID: 0}
   tickEffectPositionOffset: {x: 0, y: 0, z: 0}

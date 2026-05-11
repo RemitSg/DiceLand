@@ -243,7 +243,10 @@ public class MapMerchantOverlay : MonoBehaviour
             if (iconImage != null)
                 iconImage.sprite = fallbackIconSprite;
             if (goodsNameText != null)
+            {
                 goodsNameText.text = "未选择商品";
+                goodsNameText.color = titleColor;
+            }
             if (metaText != null)
                 metaText.text = string.Empty;
             if (descriptionText != null)
@@ -260,13 +263,17 @@ public class MapMerchantOverlay : MonoBehaviour
         }
 
         if (goodsNameText != null)
+        {
             goodsNameText.text = selectedOffer.DisplayName;
+            goodsNameText.color = ResolveOfferNameColor(selectedOffer);
+        }
 
         if (metaText != null)
         {
             string kindLabel = GetGoodsTypeLabel(selectedOffer.itemType);
+            string rarityLabel = ResolveOfferRarityLabel(selectedOffer);
             string soldOutLabel = selectedOffer.isSoldOut ? " | 已售罄" : string.Empty;
-            metaText.text = BuildDetailMetaLabel(selectedOffer, kindLabel, ResolveDisplayPrice(selectedOffer), soldOutLabel);
+            metaText.text = BuildDetailMetaLabel(selectedOffer, kindLabel, rarityLabel, ResolveDisplayPrice(selectedOffer), soldOutLabel);
             metaText.color = selectedOffer.isSoldOut ? soldOutColor : accentColor;
         }
 
@@ -715,16 +722,148 @@ public class MapMerchantOverlay : MonoBehaviour
         return $"{offer.DisplayName}\n{resolvedPrice} 金钱{soldOutLabel}";
     }
 
-    private static string BuildDetailMetaLabel(MerchantOfferState offer, string kindLabel, int resolvedPrice, string soldOutLabel)
+    private static string BuildDetailMetaLabel(MerchantOfferState offer, string kindLabel, string rarityLabel, int resolvedPrice, string soldOutLabel)
     {
         int originalPrice = Mathf.Max(0, offer != null ? offer.price : 0);
+        string raritySection = string.IsNullOrWhiteSpace(rarityLabel) ? string.Empty : $" | {rarityLabel}";
         if (resolvedPrice != originalPrice)
         {
-            return $"{kindLabel} | <color=#FF6B6B><s>{originalPrice} 金钱</s></color> {resolvedPrice} 金钱{soldOutLabel}";
+            return $"{kindLabel}{raritySection} | <color=#FF6B6B><s>{originalPrice} 金钱</s></color> {resolvedPrice} 金钱{soldOutLabel}";
         }
 
-        return $"{kindLabel} | {resolvedPrice} 金钱{soldOutLabel}";
+        return $"{kindLabel}{raritySection} | {resolvedPrice} 金钱{soldOutLabel}";
     }
+
+    private static string ResolveOfferRarityLabel(MerchantOfferState offer)
+    {
+        if (offer == null)
+            return string.Empty;
+
+        switch (offer.itemType)
+        {
+            case MerchantItemType.Weapon:
+                return GetWeaponRarityLabel(offer.weaponData != null ? offer.weaponData.rarity : Rarity.Common);
+            case MerchantItemType.Loot:
+            case MerchantItemType.Blueprint:
+            case MerchantItemType.Relic:
+                return GetLootRarityLabel(ResolveOfferLootRarity(offer));
+            default:
+                return string.Empty;
+        }
+    }
+
+    private static Color ResolveOfferNameColor(MerchantOfferState offer)
+    {
+        if (offer == null)
+            return Color.white;
+
+        switch (offer.itemType)
+        {
+            case MerchantItemType.Weapon:
+                return GetWeaponRarityColor(offer.weaponData != null ? offer.weaponData.rarity : Rarity.Common);
+            case MerchantItemType.Loot:
+            case MerchantItemType.Blueprint:
+            case MerchantItemType.Relic:
+                return GetLootRarityColor(ResolveOfferLootRarity(offer));
+            default:
+                return Color.white;
+        }
+    }
+
+    private static LootRarity ResolveOfferLootRarity(MerchantOfferState offer)
+    {
+        if (offer == null)
+            return LootRarity.Common;
+
+        switch (offer.itemType)
+        {
+            case MerchantItemType.Loot:
+                return offer.lootItem != null ? offer.lootItem.rarity : LootRarity.Common;
+            case MerchantItemType.Blueprint:
+                return offer.blueprintData != null ? offer.blueprintData.rarity : LootRarity.Common;
+            case MerchantItemType.Relic:
+                return offer.relicData != null ? offer.relicData.rarity : LootRarity.Common;
+            default:
+                return LootRarity.Common;
+        }
+    }
+
+    private static string GetLootRarityLabel(LootRarity rarity)
+    {
+        switch (rarity)
+        {
+            case LootRarity.Common:
+                return "普通";
+            case LootRarity.Uncommon:
+                return "优秀";
+            case LootRarity.Rare:
+                return "稀有";
+            case LootRarity.Epic:
+                return "史诗";
+            case LootRarity.Legendary:
+                return "传说";
+            default:
+                return rarity.ToString();
+        }
+    }
+
+    private static string GetWeaponRarityLabel(Rarity rarity)
+    {
+        switch (rarity)
+        {
+            case Rarity.Common:
+                return "普通";
+            case Rarity.Uncommon:
+                return "优秀";
+            case Rarity.Rare:
+                return "稀有";
+            case Rarity.Epic:
+                return "史诗";
+            case Rarity.Legendary:
+                return "传说";
+            default:
+                return rarity.ToString();
+        }
+    }
+
+    private static Color GetLootRarityColor(LootRarity rarity)
+    {
+        switch (rarity)
+        {
+            case LootRarity.Common:
+                return new Color32(128, 128, 128, 255);
+            case LootRarity.Uncommon:
+                return new Color32(56, 178, 86, 255);
+            case LootRarity.Rare:
+                return new Color32(64, 126, 255, 255);
+            case LootRarity.Epic:
+                return new Color32(163, 92, 255, 255);
+            case LootRarity.Legendary:
+                return new Color32(230, 180, 44, 255);
+            default:
+                return Color.white;
+        }
+    }
+
+    private static Color GetWeaponRarityColor(Rarity rarity)
+    {
+        switch (rarity)
+        {
+            case Rarity.Common:
+                return new Color32(128, 128, 128, 255);
+            case Rarity.Uncommon:
+                return new Color32(56, 178, 86, 255);
+            case Rarity.Rare:
+                return new Color32(64, 126, 255, 255);
+            case Rarity.Epic:
+                return new Color32(163, 92, 255, 255);
+            case Rarity.Legendary:
+                return new Color32(230, 180, 44, 255);
+            default:
+                return Color.white;
+        }
+    }
+
     private float GetOfferListContentWidth()
     {
         return Mathf.Max(120f, offerListViewportSize.x - offerListScrollbarWidth - 8f);

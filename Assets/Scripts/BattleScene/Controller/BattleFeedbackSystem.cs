@@ -124,6 +124,7 @@ public class BattleFeedbackSystem : MonoBehaviour
     [SerializeField] private Color enemyClashDiceValueColor = new Color(1f, 0.88f, 0.32f, 1f);
     [SerializeField] private Color allyClashDiceRangeColor = new Color(0.82f, 0.94f, 1f, 0.95f);
     [SerializeField] private Color enemyClashDiceRangeColor = new Color(1f, 0.92f, 0.7f, 0.95f);
+    [SerializeField] private Color obsoleteClashDiceRangeColor = new Color(0.55f, 0.55f, 0.55f, 0.95f);
     [SerializeField] private TMP_FontAsset clashDiceModifierFont;
     [SerializeField] private float clashDiceModifierFontSize = 20f;
     [SerializeField] private FontStyles clashDiceModifierFontStyle = FontStyles.Bold;
@@ -313,7 +314,11 @@ public class BattleFeedbackSystem : MonoBehaviour
         presentationDamageScaleOverride = Mathf.Max(0.1f, damageScaleOverride);
     }
 
-    public ClashDiceDisplayHandle ShowClashDiceRange(Transform actor, bool isEnemy, EnemySkill_SO.DicePowerRange range)
+    public ClashDiceDisplayHandle ShowClashDiceRange(
+        Transform actor,
+        bool isEnemy,
+        EnemySkill_SO.DicePowerRange range,
+        EnemySkill_SO.DicePowerRange? baseRange = null)
     {
         if (actor == null)
             return null;
@@ -339,7 +344,7 @@ public class BattleFeedbackSystem : MonoBehaviour
             modifierColor = clashDiceModifierColor
         };
 
-        string rangeText = $"{range.minPower}~{range.maxPower}";
+        string rangeText = BuildClashDiceRangeText(baseRange, range, handle.rangeColor);
         handle.rangeOutlines = CreateOutlinedTextGroup(
             root,
             rangeText,
@@ -383,6 +388,25 @@ public class BattleFeedbackSystem : MonoBehaviour
         SetTextGroupVisual(handle.modifierText, handle.modifierOutlines, handle.modifierColor, 0f, 1f);
         handle.animationRoutine = StartCoroutine(AnimateClashDiceDisplay(handle));
         return handle;
+    }
+
+    private string BuildClashDiceRangeText(
+        EnemySkill_SO.DicePowerRange? baseRange,
+        EnemySkill_SO.DicePowerRange displayedRange,
+        Color displayedColor)
+    {
+        if (!baseRange.HasValue
+            || (baseRange.Value.minPower == displayedRange.minPower && baseRange.Value.maxPower == displayedRange.maxPower))
+            return $"{displayedRange.minPower}~{displayedRange.maxPower}";
+
+        string obsoleteRange = BuildColoredToken($"<s>{baseRange.Value.minPower}~{baseRange.Value.maxPower}</s>", obsoleteClashDiceRangeColor);
+        string currentRange = BuildColoredToken($"{displayedRange.minPower}~{displayedRange.maxPower}", displayedColor);
+        return $"{obsoleteRange} {currentRange}";
+    }
+
+    private static string BuildColoredToken(string content, Color color)
+    {
+        return $"<color=#{ColorUtility.ToHtmlStringRGB(color)}>{content}</color>";
     }
 
     public void RevealClashDiceValue(ClashDiceDisplayHandle handle, int value, int modifierAmount = 0)
@@ -1516,6 +1540,7 @@ public class BattleFeedbackSystem : MonoBehaviour
             Color color = mainColor;
             color.a *= Mathf.Clamp01(alpha);
             mainText.color = color;
+            mainText.canvasRenderer.SetAlpha(Mathf.Clamp01(alpha));
             mainText.rectTransform.localScale = Vector3.one * scale;
         }
 
@@ -1530,6 +1555,7 @@ public class BattleFeedbackSystem : MonoBehaviour
             Color outlineColor = clashDiceOutlineColor;
             outlineColor.a *= Mathf.Clamp01(alpha);
             outline.color = outlineColor;
+            outline.canvasRenderer.SetAlpha(Mathf.Clamp01(alpha));
             outline.rectTransform.localScale = Vector3.one * scale;
         }
     }

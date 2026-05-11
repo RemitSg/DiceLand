@@ -57,7 +57,7 @@ public class EnemyTodoTests
     }
 
     [Test]
-    public void NextAttackSkillPowerBonus_PreviewsAttackRangeAndConsumesWhenAttackSkillIsActivated()
+    public void NextAttackSkillPowerBonus_StacksAndConsumesAfterAttackSkillIsUsed()
     {
         EnemySkill_SO attackSkill = CreateSkill("Attack", 2, 3);
         EnemySkill_SO defenseSkill = CreateSkill("Defense", 4, 5, EnemySkill_SO.SkillCategory.Defense);
@@ -78,12 +78,13 @@ public class EnemyTodoTests
         enemy.TryTransitionToStage(1);
 
         enemy.QueueNextAttackSkillPowerBonus(1);
+        enemy.QueueNextAttackSkillPowerBonus(1);
 
         EnemySkill_SO.DicePowerRange previewAttackRange = enemy.GetPreviewDicePowerRange(attackSkill, 0);
         EnemySkill_SO.DicePowerRange previewDefenseRange = enemy.GetPreviewDicePowerRange(defenseSkill, 0);
 
-        Assert.AreEqual(3, previewAttackRange.minPower);
-        Assert.AreEqual(4, previewAttackRange.maxPower);
+        Assert.AreEqual(4, previewAttackRange.minPower);
+        Assert.AreEqual(5, previewAttackRange.maxPower);
         Assert.AreEqual(4, previewDefenseRange.minPower);
         Assert.AreEqual(5, previewDefenseRange.maxPower);
 
@@ -92,8 +93,14 @@ public class EnemyTodoTests
         enemy.ActivateSelectedSkillForButton(speedButton);
 
         EnemySkill_SO.DicePowerRange activeAttackRange = enemy.GetDicePowerRange(0);
-        Assert.AreEqual(3, activeAttackRange.minPower);
-        Assert.AreEqual(4, activeAttackRange.maxPower);
+        Assert.AreEqual(4, activeAttackRange.minPower);
+        Assert.AreEqual(5, activeAttackRange.maxPower);
+
+        EnemySkill_SO.DicePowerRange stillQueuedPreviewRange = enemy.GetPreviewDicePowerRange(attackSkill, 0);
+        Assert.AreEqual(4, stillQueuedPreviewRange.minPower);
+        Assert.AreEqual(5, stillQueuedPreviewRange.maxPower);
+
+        enemy.ConsumeQueuedAttackSkillPowerBonusAfterAttackSkillUse();
 
         EnemySkill_SO.DicePowerRange consumedPreviewRange = enemy.GetPreviewDicePowerRange(attackSkill, 0);
         Assert.AreEqual(2, consumedPreviewRange.minPower);

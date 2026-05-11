@@ -26,6 +26,8 @@ public class BattleAllyController : MonoBehaviour
     public int PendingRoundStartSpeedBonus { get; private set; }
     public IReadOnlyList<BattleStatusRuntimeEntry> StatusEntries => statusEntries;
     public IReadOnlyList<SpeedButton> SpeedButtons => activeSpeedButtons;
+    public int BaseSpeedButtonCount => ResolveBaseSpeedButtonCount();
+    public int EffectiveSpeedButtonCount => GetDesiredActiveSpeedButtonCount();
     public bool HasTemporarySkills => temporarySkills.Count > 0;
     public bool TemporarySkillsOverrideWeaponPool => temporarySkillsOverrideWeaponPool;
     public Vector3 LastHitDirection { get; private set; } = Vector3.up;
@@ -366,10 +368,23 @@ public class BattleAllyController : MonoBehaviour
 
     public EnemySkill_SO.DicePowerRange GetDicePowerRange(int diceIndex)
     {
+        return GetDisplayedDicePowerRange(SelectedSkill, diceIndex);
+    }
+
+    public EnemySkill_SO.DicePowerRange GetDisplayedDicePowerRange(EnemySkill_SO skill, int diceIndex)
+    {
+        EnemySkill_SO.DicePowerRange range = ResolveSkillBaseDiceRange(skill, diceIndex);
+        bool isDefenseSkill = skill != null
+            && skill.GetDiceSkillCategory(diceIndex) == EnemySkill_SO.SkillCategory.Defense;
+        return ApplyStatusDiceRangeModifiers(range, isDefenseSkill);
+    }
+
+    private EnemySkill_SO.DicePowerRange ResolveSkillBaseDiceRange(EnemySkill_SO skill, int diceIndex)
+    {
         EnemySkill_SO.DicePowerRange range;
-        if (SelectedSkill != null)
+        if (skill != null)
         {
-            range = SelectedSkill.GetDicePowerRange(diceIndex);
+            range = skill.GetDicePowerRange(diceIndex);
         }
         else
         {
@@ -394,8 +409,7 @@ public class BattleAllyController : MonoBehaviour
             }
         }
 
-        bool isDefenseSkill = SelectedSkill != null && SelectedSkill.IsDefenseSkill;
-        return ApplyStatusDiceRangeModifiers(range, isDefenseSkill);
+        return range;
     }
 
     public string GetDebugDisplayName()
@@ -431,6 +445,7 @@ public class BattleAllyController : MonoBehaviour
         int originalDamage = originalReferenceDamage > 0 ? originalReferenceDamage : amount;
         amount = ApplyIncomingDamageStatusModifiers(amount);
         amount = ApplyIncomingDamageRelicModifiers(amount);
+        amount = ApplyShieldAbsorption(amount);
         if (amount <= 0)
         {
             LastDamageModifierRatioPercent = 0;
@@ -522,6 +537,29 @@ public class BattleAllyController : MonoBehaviour
         }
 
         return adjustedDamage;
+    }
+
+    private int ApplyShieldAbsorption(int incomingDamage)
+    {
+        if (incomingDamage <= 0 || statusEntries.Count == 0)
+            return Mathf.Max(0, incomingDamage);
+
+        for (int i = 0; i < statusEntries.Count; i++)
+        {
+            BattleStatusRuntimeEntry entry = statusEntries[i];
+            if (!IsShieldStatus(entry))
+                continue;
+
+            int absorbed = Mathf.Min(incomingDamage, Mathf.Max(0, entry.stacks));
+            if (absorbed <= 0)
+                return incomingDamage;
+
+            entry.stacks = Mathf.Max(0, entry.stacks - absorbed);
+            NotifyStatusChanged(entry);
+            return Mathf.Max(0, incomingDamage - absorbed);
+        }
+
+        return Mathf.Max(0, incomingDamage);
     }
 
     private bool TryPreventLethalDamage(int incomingDamage, out int minimumSurvivingHp)
@@ -968,8 +1006,14 @@ public class BattleAllyController : MonoBehaviour
         if (IsDead)
             return 0;
 
-        int baseCount = Mathf.Max(0, 1 + inheritedExtraSpeedButtons + temporaryExtraSpeedButtons);
+        int baseCount = Mathf.Max(0, ResolveBaseSpeedButtonCount() + inheritedExtraSpeedButtons + temporaryExtraSpeedButtons);
         return Mathf.Max(0, baseCount - ResolveStatusSpeedButtonPenalty());
+    }
+
+    private int ResolveBaseSpeedButtonCount()
+    {
+        Weapon_SO weaponData = GetWeaponData();
+        return Mathf.Max(1, weaponData != null ? weaponData.speedButtonCount : 1);
     }
 
     private void RefreshSpeedButtonsFromHierarchy()
@@ -1046,7 +1090,7 @@ public class BattleAllyController : MonoBehaviour
 
     private void EnsureSpeedButtonCount()
     {
-        int desiredCount = Mathf.Max(1, 1 + inheritedExtraSpeedButtons + temporaryExtraSpeedButtons);
+        int desiredCount = Mathf.Max(1, ResolveBaseSpeedButtonCount() + inheritedExtraSpeedButtons + temporaryExtraSpeedButtons);
         if (speedButtons.Count >= desiredCount)
             return;
 
@@ -1317,6 +1361,14 @@ public class BattleAllyController : MonoBehaviour
         return entry != null
             && entry.statusData != null
             && entry.statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.SpeedButtonPenalty;
+    }
+
+    private static bool IsShieldStatus(BattleStatusRuntimeEntry entry)
+    {
+        return entry != null
+            && entry.stacks > 0
+            && entry.statusData != null
+            && entry.statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.Shield;
     }
 
     private static bool ShouldPreventBleedDecayOnHit(BattleStatusRuntimeEntry entry)

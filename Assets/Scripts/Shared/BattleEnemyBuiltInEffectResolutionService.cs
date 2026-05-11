@@ -64,10 +64,13 @@ public static class BattleEnemyBuiltInEffectDispatcher
         Func<TOpponent, bool> canTarget,
         Action<EnemySkill_SO.BuiltInEffectEntry, int, string> applySelfHeal,
         Action<TOpponent, EnemySkill_SO.BuiltInEffectEntry, int, string> applyTargetHeal,
+        Action<EnemySkill_SO.BuiltInEffectEntry, int, string> applyFriendlyHeal,
         Action<EnemySkill_SO.BuiltInEffectEntry, int, string> applySelfDamage,
         Action<TOpponent, EnemySkill_SO.BuiltInEffectEntry, int, string> applyTargetDamage,
+        Action<EnemySkill_SO.BuiltInEffectEntry, int, string> applyFriendlyDamage,
         Action<EnemySkill_SO.BuiltInEffectEntry, int, string> applySelfStatus,
         Action<TOpponent, EnemySkill_SO.BuiltInEffectEntry, int, string> applyTargetStatus,
+        Action<EnemySkill_SO.BuiltInEffectEntry, int, string> applyFriendlyStatus,
         Action<IReadOnlyList<TOpponent>, EnemySkill_SO.BuiltInEffectEntry, int, string> applyTransfer)
     {
         if (effects == null)
@@ -82,12 +85,27 @@ public static class BattleEnemyBuiltInEffectDispatcher
             switch (effect.effectType)
             {
                 case EnemySkill_SO.BuiltInEffectType.Heal:
+                    if (IsFriendlyTargetMode(effect.targetMode))
+                    {
+                        applyFriendlyHeal?.Invoke(effect, indexedEffect.Index, effectLabel);
+                        break;
+                    }
                     DispatchSelfOrTargets(effect, indexedEffect.Index, effectLabel, currentTarget, opponents, selectTargets, canTarget, applySelfHeal, applyTargetHeal);
                     break;
                 case EnemySkill_SO.BuiltInEffectType.Damage:
+                    if (IsFriendlyTargetMode(effect.targetMode))
+                    {
+                        applyFriendlyDamage?.Invoke(effect, indexedEffect.Index, effectLabel);
+                        break;
+                    }
                     DispatchSelfOrTargets(effect, indexedEffect.Index, effectLabel, currentTarget, opponents, selectTargets, canTarget, applySelfDamage, applyTargetDamage);
                     break;
                 case EnemySkill_SO.BuiltInEffectType.ApplyStatus:
+                    if (IsFriendlyTargetMode(effect.targetMode))
+                    {
+                        applyFriendlyStatus?.Invoke(effect, indexedEffect.Index, effectLabel);
+                        break;
+                    }
                     DispatchSelfOrTargets(effect, indexedEffect.Index, effectLabel, currentTarget, opponents, selectTargets, canTarget, applySelfStatus, applyTargetStatus);
                     break;
                 case EnemySkill_SO.BuiltInEffectType.TransferRandomNegativeStatus:
@@ -99,6 +117,12 @@ public static class BattleEnemyBuiltInEffectDispatcher
                     break;
             }
         }
+    }
+
+    private static bool IsFriendlyTargetMode(EnemySkill_SO.DamageTargetMode targetMode)
+    {
+        return targetMode == EnemySkill_SO.DamageTargetMode.AllFriendlies
+            || targetMode == EnemySkill_SO.DamageTargetMode.LowestHpFriendly;
     }
 
     private static void DispatchSelfOrTargets<TOpponent>(

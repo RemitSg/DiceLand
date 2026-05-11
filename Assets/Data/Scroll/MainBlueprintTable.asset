@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f1d8d1d1ec230342a8270a593e92939, type: 3}
+  m_Name: MainBlueprintTable
+  m_EditorClassIdentifier: 
+  tableID: 0
+  tableName: 
+  description: 
+  blueprints:
+  - {fileID: 11400000, guid: f3b07049a74cf51409a7e4127e06d57f, type: 2}
+  - {fileID: 11400000, guid: 873b6a8002402544886f57db8d4b089e, type: 2}
+  - {fileID: 11400000, guid: bdeb33f1340563042ada84d8f5030c62, type: 2}
+  - {fileID: 11400000, guid: 5c9ed683542b8e54caf8c4dfb50a5867, type: 2}
+  - {fileID: 11400000, guid: ed9fa5d7fef47e6469b8d7d90ee09e85, type: 2}
+  - {fileID: 11400000, guid: 92acecee0fb6482439cf2377650ec517, type: 2}
+  - {fileID: 11400000, guid: f44c1002b74987e4c8b179a9433ab67a, type: 2}
+  - {fileID: 11400000, guid: 16f9b7247ca356d4f9d1be67dd28d93d, type: 2}
+  - {fileID: 11400000, guid: d8d55cd0cbf1b2647ac55bf326a0c9c5, type: 2}

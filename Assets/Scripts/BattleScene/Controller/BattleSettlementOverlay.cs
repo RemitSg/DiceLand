@@ -127,6 +127,7 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     [Header("Canvas")]
     [SerializeField] private int canvasSortOrder = 9500;
+    [SerializeField] private string mainMenuSceneName = BattleExitFlowService.DefaultMainMenuSceneName;
 
     [Header("Panel")]
     [SerializeField] private Vector2 panelSize = new Vector2(900f, 620f);
@@ -167,7 +168,7 @@ public class BattleSettlementOverlay : MonoBehaviour
     [SerializeField] private Sprite buttonBackgroundSprite;
     [SerializeField] private bool showRetryButton = true;
     [SerializeField] private string returnButtonLabel = "Return To Map";
-    [SerializeField] private string defeatReturnButtonLabel = "接受命运";
+    [SerializeField] private string defeatReturnButtonLabel = "Abandon Battle";
     [SerializeField] private string retryButtonLabel = "Retry Battle";
 
     [Header("Experience Rows")]
@@ -774,7 +775,13 @@ public class BattleSettlementOverlay : MonoBehaviour
             buttonRoot,
             "ReturnButton",
             data.isVictory ? returnButtonLabel : defeatReturnButtonLabel,
-            () => HandleReturnToMap(data));
+            () =>
+            {
+                if (data != null && !data.isVictory)
+                    HandleAbandonToMainMenu();
+                else
+                    HandleReturnToMap(data);
+            });
 
         if (!showRetryButton)
             return;
@@ -895,6 +902,14 @@ public class BattleSettlementOverlay : MonoBehaviour
         SpeedButton.CombatLocked = false;
         HideResult();
         SceneCurtainTransitionController.Instance.TransitionToScene(targetScene);
+    }
+
+    private void HandleAbandonToMainMenu()
+    {
+        BattleExitFlowService.ExecuteAbandonToMainMenu(
+            mainMenuSceneName,
+            sceneName => SceneCurtainTransitionController.Instance.TransitionToScene(sceneName),
+            HideResult);
     }
 
     private void EnsureCanvas()

@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f0a1d2b3c4e5f67890123456789abcd, type: 3}
+  m_Name: BattleStatusPolarityList
+  m_EditorClassIdentifier: 
+  negativeStatuses:
+  - statusId: burn
+    statusData: {fileID: 11400000, guid: f9527c3eb2f8085418c8ae9a04a00b9a, type: 2}
+  - statusId: bleed
+    statusData: {fileID: 11400000, guid: f3d7f5c8ab6d4a7db9c2e4f1860a5b31, type: 2}
+  - statusId: poison
+    statusData: {fileID: 11400000, guid: 5c2d83ddce914792abd7211bb94635f6, type: 2}
+  - statusId: erode
+    statusData: {fileID: 11400000, guid: 2b1de364dbf64720becc8b60618c3be3, type: 2}
+  - statusId: misfortune
+    statusData: {fileID: 11400000, guid: 6da3ce7e588c4a76b3396208a813b54d, type: 2}
+  - statusId: vulnerable
+    statusData: {fileID: 11400000, guid: 2c61804cb51b40ceb349418fab5290ba, type: 2}
+  - statusId: slowness
+    statusData: {fileID: 11400000, guid: a90cdb8e1a1943f99f9d973299e6d173, type: 2}
+  - statusId: weakness
+    statusData: {fileID: 11400000, guid: ee9ef48e819c49747b799796ea9b589c, type: 2}
+  - statusId: chill
+    statusData: {fileID: 11400000, guid: 31bf17620ef7438984f2e0b6eea03a6f, type: 2}
+  - statusId: stun
+    statusData: {fileID: 0}
+  positiveStatuses:
+  - statusId: shield
+    statusData: {fileID: 11400000, guid: d9960fbafac14cf6b9c6bd093fd9293f, type: 2}
+  - statusId: guard
+    statusData: {fileID: 11400000, guid: d24636f27461444cb38f48046ab1dcd9, type: 2}
+  - statusId: strength
+    statusData: {fileID: 11400000, guid: 876070f0ec664a02a8c175b8de80baf1, type: 2}
+  - statusId: swiftness
+    statusData: {fileID: 11400000, guid: 5ecc963d5be148b7956424cb4cd1d165, type: 2}
+  - statusId: luck
+    statusData: {fileID: 11400000, guid: 82fda4e478cf45a794ebe7c90557b7ad, type: 2}

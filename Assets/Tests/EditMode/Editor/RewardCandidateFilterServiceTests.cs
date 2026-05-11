@@ -49,6 +49,32 @@ public class RewardCandidateFilterServiceTests
     }
 
     [Test]
+    public void BuildLootReforgeCandidates_IncludesSameRarityAttributeMaterials()
+    {
+        LootAttribute_SO blood = CreateAttribute("Blood");
+        LootAttribute_SO fire = CreateAttribute("Fire");
+        LootItem_SO clotspore = CreateLoot("凝血孢", LootRarity.Common, blood);
+        LootItem_SO fang = CreateLoot("秽蚀尖牙", LootRarity.Common, blood);
+        LootItem_SO uncommonBlood = CreateLoot("UncommonBlood", LootRarity.Uncommon, blood);
+        LootItem_SO commonFire = CreateLoot("CommonFire", LootRarity.Common, fire);
+        List<LootItem_SO> pool = new List<LootItem_SO>
+        {
+            clotspore,
+            null,
+            fang,
+            uncommonBlood,
+            commonFire
+        };
+
+        List<LootItem_SO> candidates = RewardCandidateFilterService.BuildLootReforgeCandidates(
+            pool,
+            LootRarity.Common,
+            blood);
+
+        CollectionAssert.AreEqual(new[] { clotspore, fang }, candidates);
+    }
+
+    [Test]
     public void BuildRelicCandidates_ExcludesNullAndOwnedRelics()
     {
         Relic_SO owned = CreateRelic("Owned", LootRarity.Common);
@@ -203,6 +229,21 @@ public class RewardCandidateFilterServiceTests
         loot.rarity = rarity;
         createdObjects.Add(loot);
         return loot;
+    }
+
+    private LootItem_SO CreateLoot(string name, LootRarity rarity, LootAttribute_SO attribute)
+    {
+        LootItem_SO loot = CreateLoot(name, rarity);
+        loot.attribute = attribute;
+        return loot;
+    }
+
+    private LootAttribute_SO CreateAttribute(string name)
+    {
+        LootAttribute_SO attribute = ScriptableObject.CreateInstance<LootAttribute_SO>();
+        attribute.attributeName = name;
+        createdObjects.Add(attribute);
+        return attribute;
     }
 
     private Relic_SO CreateRelic(string name, LootRarity rarity)

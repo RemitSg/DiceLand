@@ -206,6 +206,46 @@ public class BattlePowerModifierServiceTests
     }
 
     [Test]
+    public void EvaluatePowerModifier_TargetNegativeStatusTypesAtLeastRequiresDistinctNegativeStatuses()
+    {
+        EnemySkill_SO skill = CreateSkill(new[]
+        {
+            new EnemySkill_SO.ConditionalPowerModifierEntry
+            {
+                trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                useCondition = true,
+                condition = EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast,
+                requiredStatusStacks = 2,
+                powerBonus = 3
+            }
+        });
+
+        int enoughBonus = BattlePowerModifierService.EvaluatePowerModifier(
+            skill,
+            0,
+            EnemySkill_SO.DiceEffectTrigger.OnHit,
+            selfSpeed: 2,
+            targetSpeed: 4,
+            getSelfStatusStacksByAsset: _ => 0,
+            getSelfStatusStacksById: _ => 0,
+            getTargetStatusStacksByAsset: _ => 0,
+            getTargetStatusStacksById: statusId => statusId == "bleed" || statusId == "weakness" ? 1 : 0);
+        int notEnoughBonus = BattlePowerModifierService.EvaluatePowerModifier(
+            skill,
+            0,
+            EnemySkill_SO.DiceEffectTrigger.OnHit,
+            selfSpeed: 2,
+            targetSpeed: 4,
+            getSelfStatusStacksByAsset: _ => 0,
+            getSelfStatusStacksById: _ => 0,
+            getTargetStatusStacksByAsset: _ => 0,
+            getTargetStatusStacksById: statusId => statusId == "bleed" ? 3 : 0);
+
+        Assert.AreEqual(3, enoughBonus);
+        Assert.AreEqual(0, notEnoughBonus);
+    }
+
+    [Test]
     public void EvaluatePowerModifier_NullSkillReturnsZero()
     {
         int bonus = BattlePowerModifierService.EvaluatePowerModifier(

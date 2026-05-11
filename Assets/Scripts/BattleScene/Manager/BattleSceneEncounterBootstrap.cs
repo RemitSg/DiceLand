@@ -64,6 +64,8 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
     [SerializeField] private int weaponSortingOrderOffset = -5;
     [SerializeField] private float weaponDepthOffset = 0.05f;
     [SerializeField] private Vector2 allySpeedButtonLocalOffset = new Vector2(0f, 1f);
+    [SerializeField] private Vector2 allyMultiSpeedButtonGroupOffset = Vector2.zero;
+    [SerializeField] private float allyMultiSpeedButtonHorizontalSpacing = 0.82f;
     [SerializeField] private Vector2 enemySpeedButtonLocalOffset = new Vector2(0f, 0.8f);
     [SerializeField] private Vector2 enemyMultiSpeedButtonGroupOffset = Vector2.zero;
     [SerializeField] private float enemyMultiSpeedButtonHorizontalSpacing = 0.82f;
@@ -299,17 +301,17 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
             allyObject.transform,
             topY,
             SpeedButton.ButtonType.Ally,
-            1,
+            allyState.weaponData != null ? allyState.weaponData.speedButtonCount : 1,
             allySpeedButtonLocalOffset,
-            Vector2.zero,
-            0.82f);
+            allyMultiSpeedButtonGroupOffset,
+            allyMultiSpeedButtonHorizontalSpacing);
         battleAlly.RegisterSpeedButtons(allyButtons);
         battleAlly.ConfigureSpeedButtonLayout(
             battleAlly.speedButton,
             topY,
             allySpeedButtonLocalOffset,
-            Vector2.zero,
-            0.82f);
+            allyMultiSpeedButtonGroupOffset,
+            allyMultiSpeedButtonHorizontalSpacing);
 
         if (!allyObject.activeSelf)
             allyObject.SetActive(true);

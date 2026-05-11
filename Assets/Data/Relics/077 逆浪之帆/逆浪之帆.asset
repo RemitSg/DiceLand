@@ -19,7 +19,7 @@ MonoBehaviour:
     1 \u5C42\u6025\u901F\u3002"
   additionalDescription: "\u5E06\u9762\u4E0D\u987A\u98CE\u800C\u52A8\uFF0C\u5B83\u53EA\u501F\u654C\u4EBA\u811A\u4E0B\u9000\u53BB\u7684\u6F6E\u3002"
   rarity: 1
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: e597bfd715a6dab47bcae3d2dc0dc1ba, type: 3}
   builtInEffects:
   - effectName: 
     trigger: 6

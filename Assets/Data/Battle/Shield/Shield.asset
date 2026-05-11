@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e392a4d75ff41fd4b82ace7efd8b72e3, type: 3}
+  m_Name: Shield
+  m_EditorClassIdentifier: 
+  statusId: shield
+  displayName: "\u62A4\u76FE"
+  description: "\u62E5\u6709\u62A4\u76FE\u7684\u89D2\u8272\u5373\u5C06\u53D7\u5230\u4F24\u5BB3\u65F6\uFF0C\u5728\u5176\u4ED6\u4F24\u5BB3\u51CF\u514D\u7ED3\u7B97\u540E\uFF0C\u51CF\u5C11\u76F8\u5F53\u4E8E\u62A4\u76FE\u5C42\u6570\u7684\u4F24\u5BB3\uFF0C\u5E76\u5931\u53BB\u7B49\u540C\u4E8E\u5B9E\u9645\u62B5\u6D88\u503C\u7684\u62A4\u76FE\u5C42\u6570\u3002"
+  iconSprite: {fileID: 21300000, guid: 763323c383f8ae043bf2b9b0546eafd6, type: 3}
+  accentColor: {r: 1, g: 0.93, b: 0.62, a: 1}
+  tickEffectPrefab: {fileID: 0}
+  tickEffectPositionOffset: {x: 0, y: 0, z: 0}
+  tickEffectRotationOffset: {x: 0, y: 0, z: 0}
+  tickEffectScale: {x: 1, y: 1, z: 1}
+  tickEffectSortingOrderOffset: 0
+  overrideTickEffectDuration: 0
+  tickEffectDuration: 0.5
+  behaviorType: 16
+  powerPerStack: 1
+  linkedStatusData: {fileID: 0}
+  onHitDecayMode: 0
+  roundStartDecayMode: 0
+  roundEndDecayMode: 1

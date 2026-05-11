@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: "\u6DA4\u51C0"
+  m_EditorClassIdentifier: 
+  skillName: "\u6DA4\u51C0"
+  description: "\u628A\u6D6E\u5728\u5251\u810A\u4E0A\u7684\u767D\u5149\u63A8\u5411\u6700\u5371\u9669\u7684\u4EBA\u3002\u4F7F\u7528\u65F6\u4F7F\u8840\u91CF\u6700\u4F4E\u7684\u53CB\u65B9\u83B7\u5F972\u5C42\u62A4\u76FE\u3002"
+  skillCategory: 0
+  energyCost: 1
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 2
+  maxPower: 3
+  diceCount: 1
+  dicePowerRanges:
+  - minPower: 2
+    maxPower: 3
+  dicePresentationSettings: []
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects:
+    - effectName: "\u6DA4\u51C0\u62A4\u4F51"
+      trigger: 3
+      effectType: 2
+      targetMode: 5
+      useStatusCondition: 0
+      conditionScope: 0
+      conditionStatusData: {fileID: 0}
+      conditionStatusType: 0
+      requiredStatusStacks: 1
+      amount: 0
+      randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      targetStatusData: {fileID: 0}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
+      statusData: {fileID: 11400000, guid: d9960fbafac14cf6b9c6bd093fd9293f, type: 2}
+      statusType: 0
+      applyTiming: 0
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
+      statusStackAmount: 2
+      fallbackAmount: 0
+    rangeModifiers: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 

@@ -157,6 +157,93 @@ public class BattleSkillInfoOverlayDescriptionTests
     }
 
     [Test]
+    public void CompactSkillDetail_MergesConsumedStatusMultipleGains()
+    {
+        BattleStatus_SO bleed = CreateStatus("bleed", "\u6d41\u8840");
+        BattleStatus_SO temporaryStrength = CreateStatus("strength_temp", "\u4e34\u65f6\u5f3a\u58ee");
+        EnemySkill_SO skill = ScriptableObject.CreateInstance<EnemySkill_SO>();
+        createdObjects.Add(skill);
+        skill.skillName = "\u56de\u8a93";
+        skill.diceCount = 1;
+        skill.dicePowerRanges = new[]
+        {
+            new EnemySkill_SO.DicePowerRange { minPower = 1, maxPower = 3 }
+        };
+        skill.diceEffectSettings = new[]
+        {
+            new EnemySkill_SO.DiceEffectSettings
+            {
+                healingEffects = new[]
+                {
+                    new EnemySkill_SO.HealingEffectEntry
+                    {
+                        trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                        targetMode = EnemySkill_SO.DamageTargetMode.Self,
+                        useCondition = true,
+                        condition = EnemySkill_SO.PowerModifierCondition.TargetHasStatus,
+                        conditionStatusData = bleed,
+                        requiredConditionStatusStacks = 1,
+                        amountMode = EnemySkill_SO.HealAmountMode.FixedAmount,
+                        healAmount = 2,
+                        randomTargetCount = 1
+                    }
+                },
+                builtInEffects = new[]
+                {
+                    new EnemySkill_SO.BuiltInEffectEntry
+                    {
+                        trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                        effectType = EnemySkill_SO.BuiltInEffectType.ApplyStatus,
+                        targetMode = EnemySkill_SO.DamageTargetMode.Self,
+                        useStatusCondition = true,
+                        conditionScope = EnemySkill_SO.BuiltInConditionScope.CurrentTarget,
+                        conditionStatusData = bleed,
+                        requiredStatusStacks = 1,
+                        statusData = temporaryStrength,
+                        applyTiming = EnemySkill_SO.StatusApplyTiming.NextRoundStart,
+                        applyAfterRoundStarts = 1,
+                        applyRepeatCount = 1,
+                        statusStackAmount = 1,
+                        randomTargetCount = 1
+                    }
+                },
+                statusStackOperationEffects = new[]
+                {
+                    new EnemySkill_SO.StatusStackOperationEffectEntry
+                    {
+                        trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                        targetMode = EnemySkill_SO.DamageTargetMode.CurrentTarget,
+                        statusData = bleed,
+                        operationType = EnemySkill_SO.StatusStackOperationType.ReduceStacks,
+                        stackAmount = 1,
+                        randomTargetCount = 1,
+                        useCondition = true,
+                        condition = EnemySkill_SO.PowerModifierCondition.TargetHasStatus,
+                        conditionStatusData = bleed,
+                        requiredConditionStatusStacks = 1
+                    }
+                }
+            }
+        };
+
+        string detail = InvokeCompactSkillHoverDetail(skill);
+
+        Assert.That(detail, Does.Contain("\u6d88\u8017"));
+        Assert.That(detail, Does.Contain("\u5f53\u524d\u76ee\u6807"));
+        Assert.That(detail, Does.Contain("1"));
+        Assert.That(detail, Does.Contain("\u6d41\u8840"));
+        Assert.That(detail, Does.Contain("\u6765\u4f7f"));
+        Assert.That(detail, Does.Contain("\u81ea\u5df1"));
+        Assert.That(detail, Does.Contain("\u6062\u590d"));
+        Assert.That(detail, Does.Contain("2"));
+        Assert.That(detail, Does.Contain("\u5e76"));
+        Assert.That(detail, Does.Contain("\u4e0b\u56de\u5408"));
+        Assert.That(detail, Does.Contain("\u4e34\u65f6\u5f3a\u58ee"));
+        Assert.That(detail, Does.Not.Contain("\u51cf\u5c11"));
+        Assert.That(detail, Does.Not.Contain("\u82e5 \u003ccolor"));
+    }
+
+    [Test]
     public void CompactSkillDetail_ShowsScalingRangeModifierCap()
     {
         BattleStatus_SO current = CreateStatus("current", "\u7535\u6d41");
@@ -193,20 +280,61 @@ public class BattleSkillInfoOverlayDescriptionTests
         Assert.That(detail, Does.Contain("1"));
         Assert.That(detail, Does.Contain("\u7535\u6d41"));
         Assert.That(detail, Does.Contain("\u6bcf\u8fbe\u6210\u4e00\u6b21\u6761\u4ef6"));
-        Assert.That(detail, Does.Contain("\u6700\u5c0f\u5a01\u529b"));
+        Assert.That(detail, Does.Contain("\u5a01\u529b\u8303\u56f4\u6700\u5c0f\u503c"));
         Assert.That(detail, Does.Contain("+1"));
         Assert.That(detail, Does.Contain("\u6700\u591a"));
         Assert.That(detail, Does.Contain("+5"));
+    }
+
+    [Test]
+    public void DiceRangeLabel_StrikesOnlyChangedPowerNumbersAndAppendsDisplayedValues()
+    {
+        EnemySkill_SO skill = ScriptableObject.CreateInstance<EnemySkill_SO>();
+        createdObjects.Add(skill);
+        skill.skillCategory = EnemySkill_SO.SkillCategory.Attack;
+        skill.diceCount = 1;
+
+        string minReduced = InvokeDiceRangeLabel(
+            skill,
+            new EnemySkill_SO.DicePowerRange { minPower = 2, maxPower = 5 },
+            new EnemySkill_SO.DicePowerRange { minPower = 1, maxPower = 5 });
+        string maxReduced = InvokeDiceRangeLabel(
+            skill,
+            new EnemySkill_SO.DicePowerRange { minPower = 2, maxPower = 5 },
+            new EnemySkill_SO.DicePowerRange { minPower = 2, maxPower = 3 });
+
+        Assert.That(minReduced, Does.Contain("<color=#8C8C8C><s>2</s></color><color="));
+        Assert.That(minReduced, Does.Contain(" ~ <color="));
+        Assert.That(minReduced, Does.Not.Contain("<s>2 ~ 5</s>"));
+        Assert.That(maxReduced, Does.Contain("<color="));
+        Assert.That(maxReduced, Does.Contain(" ~ <color=#8C8C8C><s>5</s></color><color="));
+        Assert.That(maxReduced, Does.Not.Contain("<s>2 ~ 5</s>"));
     }
 
     private string InvokeCompactSkillHoverDetail(EnemySkill_SO skill)
     {
         MethodInfo method = typeof(BattleSkillInfoOverlay).GetMethod(
             "BuildCompactSkillHoverDetail",
-            BindingFlags.Instance | BindingFlags.NonPublic);
+            BindingFlags.Instance | BindingFlags.NonPublic,
+            null,
+            new[] { typeof(EnemySkill_SO), typeof(bool) },
+            null);
 
         Assert.IsNotNull(method);
         return (string)method.Invoke(overlay, new object[] { skill, true });
+    }
+
+    private string InvokeDiceRangeLabel(
+        EnemySkill_SO skill,
+        EnemySkill_SO.DicePowerRange baseRange,
+        EnemySkill_SO.DicePowerRange displayedRange)
+    {
+        MethodInfo method = typeof(BattleSkillInfoOverlay).GetMethod(
+            "BuildDiceRangeLabel",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+
+        Assert.IsNotNull(method);
+        return (string)method.Invoke(overlay, new object[] { skill, 0, baseRange, displayedRange });
     }
 
     private BattleStatus_SO CreateStatus(string id, string displayName)

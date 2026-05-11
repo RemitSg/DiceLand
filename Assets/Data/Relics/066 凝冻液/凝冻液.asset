@@ -18,7 +18,7 @@ MonoBehaviour:
     5 \u7684\u654C\u65B9\u76EE\u6807\u83B7\u5F97 1 \u5C42\u5BD2\u51B7\u3002"
   additionalDescription: "\u74F6\u4E2D\u6DB2\u4F53\u4E0D\u6D41\u52A8\uFF0C\u53EA\u5728\u9760\u8FD1\u4F24\u53E3\u65F6\u6162\u6162\u7ED3\u6210\u900F\u660E\u7684\u971C\u3002"
   rarity: 2
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 21eac9ab02f0c4942a3e20021396684c, type: 3}
   builtInEffects:
   - effectName: 
     trigger: 6

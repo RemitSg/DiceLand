@@ -22,7 +22,7 @@ MonoBehaviour:
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 02000000
   targetPriorityMode: 1
-  targetPriorityStatusData: {fileID: 11400000, guid: c8249c4cafb55cd4f8587aa0410e54d3, type: 2}
+  targetPriorityStatusData: {fileID: 11400000, guid: f3d7f5c8ab6d4a7db9c2e4f1860a5b31, type: 2}
   targetPriorityStatusType: 0
   targetPriorityRequiredStacks: 1
   minPower: 2
@@ -70,22 +70,34 @@ MonoBehaviour:
       condition: 5
       amountMode: 2
       healAmount: 1
-      statusData: {fileID: 11400000, guid: c8249c4cafb55cd4f8587aa0410e54d3, type: 2}
+      statusData: {fileID: 11400000, guid: f3d7f5c8ab6d4a7db9c2e4f1860a5b31, type: 2}
       statusType: 0
-      conditionStatusData: {fileID: 11400000, guid: c8249c4cafb55cd4f8587aa0410e54d3, type: 2}
+      conditionStatusData: {fileID: 11400000, guid: f3d7f5c8ab6d4a7db9c2e4f1860a5b31, type: 2}
       conditionStatusType: 0
       requiredConditionStatusStacks: 1
       requiredConditionSpeedValue: 0
       requiredConditionSpeedDifference: 0
       statusStackSourceMode: 0
       randomTargetCount: 1
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects:
     - effectName: 
       trigger: 0
       targetMode: 0
-      statusData: {fileID: 11400000, guid: c8249c4cafb55cd4f8587aa0410e54d3, type: 2}
+      statusData: {fileID: 11400000, guid: f3d7f5c8ab6d4a7db9c2e4f1860a5b31, type: 2}
       statusType: 0
       operationType: 1
       stackAmount: 1
       randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
     enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 

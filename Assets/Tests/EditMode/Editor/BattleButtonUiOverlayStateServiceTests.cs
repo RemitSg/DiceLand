@@ -27,6 +27,19 @@ public class BattleButtonUiOverlayStateServiceTests
     }
 
     [Test]
+    public void ResolveClickBlock_WhenPauseMenuVisible_BlocksBattleButton()
+    {
+        BattleButtonClickBlockResult result = BattleButtonUiOverlayStateService.ResolveClickBlock(
+            settlementVisible: false,
+            tutorialBlocking: false,
+            skillInfoVisible: false,
+            pauseMenuVisible: true);
+
+        Assert.IsTrue(result.ShouldBlock);
+        Assert.AreEqual(BattleButtonClickBlockReason.PauseMenuVisible, result.Reason);
+    }
+
+    [Test]
     public void ResolveClickBlock_WhenNothingVisible_AllowsBattleButton()
     {
         BattleButtonClickBlockResult result = BattleButtonUiOverlayStateService.ResolveClickBlock(

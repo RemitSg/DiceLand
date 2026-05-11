@@ -98,10 +98,13 @@ public class BattleEnemyBuiltInEffectResolutionServiceTests
             target => !string.IsNullOrEmpty(target),
             (effect, index, label) => calls.Add($"self-heal:{label}:{effect.amount}"),
             (target, effect, index, label) => calls.Add($"target-heal:{target}:{label}"),
+            (effect, index, label) => calls.Add($"friendly-heal:{label}"),
             (effect, index, label) => calls.Add($"self-damage:{label}"),
             (target, effect, index, label) => calls.Add($"target-damage:{target}:{label}:{effect.amount}"),
+            (effect, index, label) => calls.Add($"friendly-damage:{label}"),
             (effect, index, label) => calls.Add($"self-status:{label}"),
             (target, effect, index, label) => calls.Add($"target-status:{target}:{label}:{effect.statusStackAmount}"),
+            (effect, index, label) => calls.Add($"friendly-status:{label}"),
             (targets, effect, index, label) => calls.Add($"transfer:{string.Join(",", targets)}:{label}"));
 
         CollectionAssert.AreEqual(

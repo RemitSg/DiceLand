@@ -67,23 +67,23 @@ public static class TutorialBattleContentFactory
             "battle01_read_enemy",
             0,
             "先看两颗敌方速度按钮",
-            "这一战先学最核心的开局习惯：每回合开始时先读敌人的速度与技能，再决定你的线要接到哪里。\n\n速度不只是“谁先动”，它还会改变你应该优先处理哪一个目标。场上同时出现多颗敌方速度按钮时，通常先看更快、也会更早结算的那一颗。",
+            "最核心的开局习惯：每回合开始时先读敌人的技能与说明。\n\n速度不只是“谁先动”，它还会影响你应该优先处理哪一个目标。场上同时出现多颗敌方速度按钮时，通常先看更快、也会更早结算的那一颗。",
             TutorialBattleEventType.EnemySkillViewed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
-            "先点开敌方速度按钮，确认两条行动分别是什么。"));
+            "点击敌方速度按钮，确认两个技能分别是什么。"));
         definition.Steps.Add(Step(
             "battle01_draw_line",
             10,
-            "把线接到你想优先处理的那颗按钮上",
-            "请主动从我方速度按钮连到敌方的一颗速度按钮。教程想让你意识到：拼点对象不是自动决定的，而是由你接线时自己选出来的。",
+            "把线接到你想处理的那颗按钮上",
+            "请主动从我方速度按钮长按拖动，连到敌方的一颗速度按钮。",
             TutorialBattleEventType.LineCreated,
             TutorialBattleInputPolicy.RequireBeforeCombat,
-            "先把我方速度按钮连到你想处理的敌方按钮。"));
+            "先将我方速度按钮连到你想处理的敌方按钮。"));
         definition.Steps.Add(Step(
             "battle01_start_round",
             20,
             "开始这一回合",
-            "开战后注意两件事：被你接住的那条线会进入正面对撞，没接住的那条线会照常结算。速度越快的动作，越经常值得你优先去接。",
+            "被你连接的那条线会变成黄色，也就是拼点。没接住的那条线会照常结算，维持红色。如果对方的速度值比你大，你就无法成功将它变为拼点状态，而只能放掉它，接受它的单方面攻击结算，或是直接让它指向的友方角色应对攻击。",
             TutorialBattleEventType.CombatExecutePressed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "先完成读招和连线，再开始回合。"));
@@ -92,19 +92,19 @@ public static class TutorialBattleContentFactory
             0,
             TutorialBattleEventType.ClashResolved,
             "这就是拼点",
-            "只有双方行动真的对上时，才会进入拼点。以后看到多颗敌方速度按钮时，先判断哪一条更快、更危险，再决定让谁去接。"));
+            "只有双方行动真的对上，变成黄线时，才会进入拼点。以后看到多颗敌方速度按钮时，先判断哪一条更危险，再决定让谁去接。"));
         definition.Reactions.Add(Reaction(
             "battle01_enemy_single_explained",
             10,
             TutorialBattleEventType.EnemyOneSidedAttackResolved,
             "没接住的线会变成敌方单方面攻击",
-            "你没有接住的敌方行动，不会自动消失，而是会直接结算。速度会影响你最该先接哪一条线，这就是它在实战里的价值。"));
+            "你没有接住的敌方行动，不会自动消失，而是会直接结算。"));
         definition.Reactions.Add(Reaction(
             "battle01_victory",
             20,
             TutorialBattleEventType.BattleWon,
-            "第一战结束",
-            "你已经完成了读招、看速度、自己选择拼点对象这三个基础动作。后面会继续教你什么时候该接，什么时候可以放。"));
+            "恭喜你！",
+            "你已经学会了读招、看速度、自己选择拼点对象，继续你的旅程吧！"));
         return definition;
     }
 
@@ -114,37 +114,37 @@ public static class TutorialBattleContentFactory
         definition.Steps.Add(Step(
             "battle02_read_enemy",
             0,
-            "先看清两条敌方行动",
+            "看清两条敌方行动",
             "这一战开始练“取舍”。敌人会给出一条更危险的线和一条相对温和的线，你不需要每条都硬接，而是要先看清谁更值得处理。",
             TutorialBattleEventType.EnemySkillViewed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
-            "先查看敌人的技能说明，再决定这回合怎么分配线。"));
+            "还记得上一个教程吗？先查看敌人的基础信息与技能说明，再决定这一回合的连线策略。"));
         definition.Steps.Add(Step(
             "battle02_start_round",
             10,
             "保住关键线，再开始回合",
-            "这一回合不要求你把所有线都接满。重点是练习判断：危险的线优先处理，收益较低的线有时可以放掉。",
+            "这一回合不要求你把所有线都接住。当你比较判断一下就会发现，如果你放掉了更危险的线，你拼点的那个温和技能就会有更高概率拼点胜利，从而打出完整的伤害，当然你也会因此受到危险技能的更多伤害。如果你选择与更危险的线拼点，就要接受可能会拼点失败的结果，打不出来任何伤害，而你会同时受到两个技能的伤害。当然，如果你拼点成功，你就会完美化解更危险的线，反过来打出伤害，更高风险，更高回报。",
             TutorialBattleEventType.CombatExecutePressed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
-            "先看清敌方两条行动，再开始回合。"));
+            "先点击两个敌方的速度按钮，再开始回合。"));
         definition.Reactions.Add(Reaction(
             "battle02_ally_single",
             0,
             TutorialBattleEventType.AllyOneSidedAttackResolved,
             "我方也能打出单方面攻击",
-            "当你的行动没有被敌人拦住时，就会形成我方单方面攻击。以后看到适合打空线的技能，可以把这种机会留给它。"));
+            "当你的行动没有被敌人拦住时，就会形成我方单方面攻击，也就是那些蓝色的线。以后看到适合打单方面攻击的技能，可以把这种机会留给它。"));
         definition.Reactions.Add(Reaction(
             "battle02_enemy_single",
             10,
             TutorialBattleEventType.EnemyOneSidedAttackResolved,
             "敌方单方面攻击意味着你放掉了一条线",
-            "单方面攻击并不一定要完全避免，但你要知道自己为什么放掉它。教程后面会教你看技能词条，判断哪些线绝对不能放。"));
+            "敌方的单方面攻击并不一定要完全避免，但你要知道自己为什么放掉它。有些技能的词条更倾向于促使你放掉，而有些技能的词条更倾向于促使你去接它。每次选择策略之前，先确认一下它的威胁程度和词条倾向。"));
         definition.Reactions.Add(Reaction(
             "battle02_victory",
             20,
             TutorialBattleEventType.BattleWon,
-            "第二战结束",
-            "现在你已经知道：不是所有线都必须接，关键是先看速度和威胁，再决定资源给谁。"));
+            "恭喜你！",
+            "现在你已经知道：不是所有线都必须接，关键是先看速度和威胁。"));
         return definition;
     }
 
@@ -154,16 +154,16 @@ public static class TutorialBattleContentFactory
         definition.Steps.Add(Step(
             "battle03_view_ally_skill",
             0,
-            "先查看我方技能",
-            "从这一战开始，技能选择本身就是决策的一部分。先看清楚当前有哪些技能、它们分别消耗多少能量、适合用来做什么。",
+            "查看我方技能",
+            "从现在开始，友方角色的技能选择应该成为决策的一部分。点击我方角色的速度按钮，看清当前有哪些技能、它们分别消耗多少能量、适合用来做什么。",
             TutorialBattleEventType.AllySkillViewed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
-            "先点开我方技能说明。"));
+            "先点开我方技能列表。"));
         definition.Steps.Add(Step(
             "battle03_switch_skill",
             10,
             "先切换一次技能",
-            "请主动切一次技能。教程想强调的是：连线之前就要先决定你打算用哪一招，因为强力技能通常会占用更多能量。",
+            "请主动切换一次技能。连线之前就要先决定你打算用哪一招，强力技能通常会占用更多能量。",
             TutorialBattleEventType.SkillSwitched,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "先切换一次技能，再继续操作。"));
@@ -171,7 +171,7 @@ public static class TutorialBattleContentFactory
             "battle03_reserve_energy",
             20,
             "用消耗能量的技能完成连线",
-            "当你用有能耗的技能去接线时，能量会在连线阶段先被预留，而不是等结算时才突然扣掉。能量不够时，就不能随便把高费技能到处接出去。",
+            "当你用有能耗的技能去接线时，能量会被消耗。能量不够时，就不能使用更高费用的技能。队伍的能量是共享的，因此需要仔细考虑应该让谁打出强力的技能，谁来负责能量的续航，保存更多能量。能量默认会在每回合开始时回复一点",
             TutorialBattleEventType.EnergyLineCreated,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "请用一招会消耗能量的技能完成连线。"));
@@ -179,8 +179,8 @@ public static class TutorialBattleContentFactory
             "battle03_victory",
             0,
             TutorialBattleEventType.BattleWon,
-            "第三战结束",
-            "从现在开始，你做的每一次接线，都要同时考虑速度、威胁、技能类型和能量。"));
+            "恭喜你！",
+            "你学会了查看友方的技能和能量，选择更合适的技能策略。"));
         return definition;
     }
 
@@ -190,16 +190,16 @@ public static class TutorialBattleContentFactory
         definition.Steps.Add(Step(
             "battle04_view_ally_keywords",
             0,
-            "先看技能说明里的三种触发时机",
-            "这一战开始正式讲三个最重要的关键词：\n\n[使用时]：只要这招开始结算就会生效。\n[拼点时]：只有真正进入拼点时才会生效。\n[单方面攻击时]：只有没有被拦住、直接打出去时才会生效。\n\n先点开我方技能说明，把三种写法都看一遍。",
+            "注意技能说明里的三种前缀词条",
+            "现在你需要了解三个词条中最重要的关键词：\n\n[使用时]：只要这招开始结算就会生效。\n[拼点时]：只有真正进入拼点时才会生效。\n[单方面攻击时]：只有没有拼点、直接打出去时才会生效。\n\n点开我方技能说明，把三种前缀词条都看一遍。",
             TutorialBattleEventType.AllySkillViewed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
-            "先查看我方技能说明，分清三种威力修正。"));
+            "先查看我方技能说明，分清三种技能词条。"));
         definition.Steps.Add(Step(
             "battle04_switch_for_plan",
             10,
             "按你的计划切技能",
-            "如果你准备拿去拼点，就优先想 [拼点时]；如果你准备打空线，就优先想 [单方面攻击时]；如果局势不稳定，[使用时] 往往最稳。",
+            "如果你准备拿去拼点，就优先想 [拼点时]；如果你准备单方面攻击，就优先想 [单方面攻击时]；如果局势不稳定，[使用时] 往往最稳定，最普适。",
             TutorialBattleEventType.SkillSwitched,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "先切一次技能，再决定这回合准备怎么打。"));
@@ -207,7 +207,7 @@ public static class TutorialBattleContentFactory
             "battle04_start_round",
             20,
             "开始回合并对照结果",
-            "开战后请对照实际发生的结算去理解词条：哪条线进了拼点，哪条线变成了单方面攻击。只有把“词条写的时机”和“这一条线真正发生的结算”对上，才算读懂。",
+            "开战后请对照实际发生的结算去理解词条：哪条线进了拼点，哪条线变成了单方面攻击。",
             TutorialBattleEventType.CombatExecutePressed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "先看清技能词条并切好技能，再开始回合。"));
@@ -216,19 +216,19 @@ public static class TutorialBattleContentFactory
             0,
             TutorialBattleEventType.ClashResolved,
             "拼点时的威力修正只作用于拼点",
-            "这是最容易混淆的一点：[拼点时] 只会在真正进入拼点时生效。如果同一招最后打成了单方面攻击，这一条威力修正不会自动跟过去。"));
+            "[拼点时] 只会在真正进入拼点时生效。如果同一招最后拼点胜利打出伤害，这条威力修正不会生效。但是你可以一直在拼点或追击时获得[使用时]的加成。"));
         definition.Reactions.Add(Reaction(
             "battle04_ally_single",
             10,
             TutorialBattleEventType.AllyOneSidedAttackResolved,
-            "打空线时吃到的是另一套加成",
-            "当你的行动没有被拦住时，会稳定吃到 [使用时]，并且只有写着 [单方面攻击时] 的那部分才会额外生效。拿错技能去打空线，收益会明显变差。"));
+            "单方面攻击时吃到的是另一套加成",
+            "当你的行动没有被拦住时，写着 [单方面攻击时] 的那部分会生效。同样的，单方面攻击时也可以稳定获得[使用时]的加成。使用带有错误词条的技能，收益会明显变差。"));
         definition.Reactions.Add(Reaction(
             "battle04_victory",
             20,
             TutorialBattleEventType.BattleWon,
-            "第四战结束",
-            "现在你已经知道三种威力修正分别在哪个结算里生效。接下来会用更明确的敌方脚本让你反复练这个判断。"));
+            "恭喜你！",
+            "现在你已经掌握三种技能词条分别在哪个结算里生效了。"));
         return definition;
     }
 
@@ -238,51 +238,17 @@ public static class TutorialBattleContentFactory
         mergedDefinition.Steps.Add(Step(
             "battle05_read_enemy",
             0,
-            "先把敌方两条行动完整看完",
-            "这一战把原来的第五战和第六战合成一场。你要一次性同时判断三件事：哪条线更快、哪条线更危险、你手里的技能更适合拿去拼点还是拿去打空线。\n\n先观察敌方两条行动，再开始规划。",
+            "将敌方两条行动完整看完",
+            "你要一次性同时判断三件事：哪条线更快、哪条线更危险、你手里的技能更适合拿去拼点还是单方面攻击。\n\n先观察敌方两条行动，再开始规划。\n\n这场战斗不再详细指引你应该怎么做，而是由你自己做出判断。",
             TutorialBattleEventType.EnemySkillViewed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
-            "先查看敌方技能说明，再决定这一回合怎么接线。"));
-        mergedDefinition.Steps.Add(Step(
-            "battle05_switch_skill",
-            10,
-            "先切到你准备执行计划的技能",
-            "请先切换一次技能，再开始回合。\n\n如果你准备去正面拦截高优先级目标，就优先考虑写着 [拼点时] 的技能；如果你准备留下空线打单方面攻击，就优先考虑写着 [单方面攻击时] 的技能；如果你还不确定局势，写着 [使用时] 的技能通常更稳。",
-            TutorialBattleEventType.SkillSwitched,
-            TutorialBattleInputPolicy.RequireBeforeCombat,
-            "先切到适合当前目标的技能。"));
-        mergedDefinition.Steps.Add(Step(
-            "battle05_start_round",
-            20,
-            "开始回合并核对你的判断是否正确",
-            "开战后请对照实际结算去复盘：你优先处理的那条线是不是因为更快或更危险？你切过去的技能是不是吃到了自己真正需要的那一段威力修正？\n\n这一战的目标不是单纯打赢，而是把“速度、能量、词条时机”放进同一套判断里。",
-            TutorialBattleEventType.CombatExecutePressed,
-            TutorialBattleInputPolicy.RequireBeforeCombat,
-            "先完成读招和切技能，再开始回合。"));
-        mergedDefinition.Reactions.Add(Reaction(
-            "battle05_clash",
-            0,
-            TutorialBattleEventType.ClashResolved,
-            "这条线证明你是在正面处理威胁",
-            "当你把角色派去拼点时，通常是在用行动额度换取更稳定的拦截效果。写着 [拼点时] 的技能只有在这里才会完整发挥。\n\n如果一条更快的敌方行动会改变你的拼点对象，那它往往就该被优先考虑。"));
-        mergedDefinition.Reactions.Add(Reaction(
-            "battle05_ally_single",
-            10,
-            TutorialBattleEventType.AllyOneSidedAttackResolved,
-            "打空线时要确认你是不是故意这样做的",
-            "如果你把一招留给空线，就要确保它真的更适合 [单方面攻击时] 的结算。否则你虽然成功出手了，但最关键的加成可能根本没有吃到。"));
-        mergedDefinition.Reactions.Add(Reaction(
-            "battle05_enemy_single",
-            20,
-            TutorialBattleEventType.EnemyOneSidedAttackResolved,
-            "被放掉的线，要知道自己为什么放",
-            "如果你放掉的是更快、更危险，或者写着 [单方面攻击时] 的敌方行动，那代价通常会很高。以后每次决定放线，都先确认它到底依赖哪种结算时机。"));
+            "先查看敌方技能说明，再决定这一回合怎么连线。"));
         mergedDefinition.Reactions.Add(Reaction(
             "battle05_victory",
             30,
             TutorialBattleEventType.BattleWon,
-            "第五战结束",
-            "现在你已经能把速度、拼点对象、技能能量和威力修正放在一起判断。原本分成两场讲的内容，已经在这一战里合并练完了。"));
+            "恭喜你！",
+            "你已经熟练掌握了前面的所有内容。"));
         return mergedDefinition;
 #if false
 
@@ -404,14 +370,14 @@ public static class TutorialBattleContentFactory
             "battle07_status",
             0,
             TutorialBattleEventType.StatusApplied,
-            "状态显示与正式战斗一致",
-            "这里出现的状态会直接使用正式资源，所以图标、名称和描述都应与正式战斗一致。教程不再单独拆状态课，但你仍然可以按正式规则去读取它。"));
+            "状态",
+            "这一战中你会遇到带有状态的技能词条，但别担心，这些状态的效果都很直观，只要养成读技能说明的习惯，状态就不会成为理解战斗的障碍。"));
         definition.Reactions.Add(Reaction(
             "battle07_victory",
             10,
             TutorialBattleEventType.BattleWon,
-            "战斗教程完成",
-            "你已经完成了战斗系统教程。后续如果要继续改文案、调整敌人脚本或增删阶段，可以直接在这七战定义上迭代。"));
+            "恭喜你！",
+            "你完成了战斗教程！"));
         return definition;
     }
 

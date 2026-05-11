@@ -22,6 +22,27 @@ public static class RewardCandidateFilterService
         return candidates;
     }
 
+    public static List<LootItem_SO> BuildLootReforgeCandidates(
+        IReadOnlyList<LootItem_SO> source,
+        LootRarity rarity,
+        LootAttribute_SO attribute)
+    {
+        List<LootItem_SO> candidates = new List<LootItem_SO>();
+        if (source == null || source.Count == 0 || attribute == null)
+            return candidates;
+
+        for (int i = 0; i < source.Count; i++)
+        {
+            LootItem_SO candidate = source[i];
+            if (candidate == null || candidate.rarity != rarity || candidate.attribute != attribute)
+                continue;
+
+            candidates.Add(candidate);
+        }
+
+        return candidates;
+    }
+
     public static List<Relic_SO> BuildRelicCandidates(
         IReadOnlyList<Relic_SO> source,
         ICollection<Relic_SO> excludedRelics)

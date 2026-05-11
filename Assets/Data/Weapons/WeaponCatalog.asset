@@ -29,3 +29,7 @@ MonoBehaviour:
     unlockWeight: 1
     starterAvailable: 0
     note: 
+  - weapon: {fileID: 11400000, guid: 60f938b00f1b42e19b517f1e12b86d06, type: 2}
+    unlockWeight: 1
+    starterAvailable: 0
+    note: 

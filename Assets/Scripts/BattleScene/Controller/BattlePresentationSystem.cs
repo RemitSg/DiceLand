@@ -204,7 +204,9 @@ public class BattlePresentationSystem : MonoBehaviour
         Transform enemy,
         bool hasWinner,
         bool allyWon,
+        EnemySkill_SO.DicePowerRange allyBaseRange,
         EnemySkill_SO.DicePowerRange allyRange,
+        EnemySkill_SO.DicePowerRange enemyBaseRange,
         EnemySkill_SO.DicePowerRange enemyRange,
         int allyPower,
         int enemyPower,
@@ -232,8 +234,8 @@ public class BattlePresentationSystem : MonoBehaviour
         allyTarget.z = plane.z;
         enemyTarget.z = plane.z;
 
-        BattleFeedbackSystem.ClashDiceDisplayHandle allyDiceDisplay = feedbackSystem?.ShowClashDiceRange(ally, false, allyRange);
-        BattleFeedbackSystem.ClashDiceDisplayHandle enemyDiceDisplay = feedbackSystem?.ShowClashDiceRange(enemy, true, enemyRange);
+        BattleFeedbackSystem.ClashDiceDisplayHandle allyDiceDisplay = feedbackSystem?.ShowClashDiceRange(ally, false, allyRange, allyBaseRange);
+        BattleFeedbackSystem.ClashDiceDisplayHandle enemyDiceDisplay = feedbackSystem?.ShowClashDiceRange(enemy, true, enemyRange, enemyBaseRange);
 
         if (moveIntoPosition)
             yield return MovePair(ally, plane.firstStart, allyTarget, enemy, plane.secondStart, enemyTarget, advanceDuration);
@@ -292,6 +294,7 @@ public class BattlePresentationSystem : MonoBehaviour
         Transform attacker,
         Transform defender,
         bool attackerIsAlly,
+        EnemySkill_SO.DicePowerRange baseAttackRange,
         EnemySkill_SO.DicePowerRange attackRange,
         int attackPower,
         int attackPowerModifier,
@@ -323,7 +326,7 @@ public class BattlePresentationSystem : MonoBehaviour
         Vector3 defenderCenter = BattleActorVisualUtility.GetActorCenterWorld(defender);
 
         int hitShotId = StartCloseupShot(attacker, defender, Project(attackerCenter, plane.z) + Vector3.up * impactHeightOffset, hitCameraPower);
-        diceDisplay = feedbackSystem?.ShowClashDiceRange(attacker, !attackerIsAlly, attackRange);
+        diceDisplay = feedbackSystem?.ShowClashDiceRange(attacker, !attackerIsAlly, attackRange, baseAttackRange);
         BeginCloseupRangePulse(singleAttackRangeDisplayDuration);
 
         if (singleAttackRangeDisplayDuration > 0f)

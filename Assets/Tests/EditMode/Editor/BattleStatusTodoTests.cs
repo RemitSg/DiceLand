@@ -9,6 +9,7 @@ public class BattleStatusTodoTests
     private const BattleStatus_SO.StatusBehaviorType LuckBehaviorType = (BattleStatus_SO.StatusBehaviorType)13;
     private const BattleStatus_SO.StatusBehaviorType MisfortuneBehaviorType = (BattleStatus_SO.StatusBehaviorType)14;
     private const BattleStatus_SO.StatusBehaviorType SpeedButtonPenaltyBehaviorType = (BattleStatus_SO.StatusBehaviorType)15;
+    private const BattleStatus_SO.StatusBehaviorType ShieldBehaviorType = (BattleStatus_SO.StatusBehaviorType)16;
     private const BattleStatus_SO.StackDecayMode LoseOneStackDecayMode = (BattleStatus_SO.StackDecayMode)3;
 
     private readonly List<Object> createdObjects = new List<Object>();
@@ -57,6 +58,40 @@ public class BattleStatusTodoTests
         Assert.IsTrue(enemy.ConsumeRoundEndStatusEffects());
         Assert.AreEqual(0, ally.GetStatusStacks(poison));
         Assert.AreEqual(0, enemy.GetStatusStacks(poison));
+    }
+
+    [Test]
+    public void DisplayedDicePowerRange_IncludesColdAndPoisonPenalties_ForAlliesAndEnemies()
+    {
+        EnemySkill_SO skill = CreateSkill("Displayed Status Test", 2, 5);
+        BattleStatus_SO cold = CreateStatus(
+            "cold",
+            "寒冷",
+            BattleStatus_SO.StatusBehaviorType.MinPowerPenalty,
+            powerPerStack: 1,
+            roundEndDecayMode: BattleStatus_SO.StackDecayMode.LoseAll);
+        BattleStatus_SO poison = CreateStatus(
+            "poison",
+            "中毒",
+            BattleStatus_SO.StatusBehaviorType.MaxPowerPenalty,
+            powerPerStack: 1,
+            roundEndDecayMode: BattleStatus_SO.StackDecayMode.LoseAll);
+
+        BattleAllyController ally = CreateAlly("Displayed Ally", 12, skill);
+        BattleEnemyController enemy = CreateEnemy("Displayed Enemy", 12, skill);
+
+        ally.AddStatus(cold, cold.StatusId, cold.DisplayName, 1);
+        ally.AddStatus(poison, poison.StatusId, poison.DisplayName, 2);
+        enemy.AddStatus(cold, cold.StatusId, cold.DisplayName, 1);
+        enemy.AddStatus(poison, poison.StatusId, poison.DisplayName, 2);
+
+        EnemySkill_SO.DicePowerRange allyRange = ally.GetDisplayedDicePowerRange(skill, 0);
+        EnemySkill_SO.DicePowerRange enemyRange = enemy.GetEffectiveDisplayedDicePowerRange(skill, 0);
+
+        Assert.AreEqual(1, allyRange.minPower);
+        Assert.AreEqual(3, allyRange.maxPower);
+        Assert.AreEqual(1, enemyRange.minPower);
+        Assert.AreEqual(3, enemyRange.maxPower);
     }
 
     [Test]
@@ -197,6 +232,55 @@ public class BattleStatusTodoTests
         Assert.AreEqual(0, enemy.GetStatusStacks(stun));
         Assert.AreEqual(3, ally.SpeedButtons.Count);
         Assert.AreEqual(3, enemy.SpeedButtons.Count);
+    }
+
+    [Test]
+    public void ShieldStatus_ConsumesStacksToAbsorbDamage_ForAlliesAndEnemies()
+    {
+        EnemySkill_SO skill = CreateSkill("Shield Test", 2, 5);
+        BattleStatus_SO shield = CreateStatus(
+            "shield",
+            "护盾",
+            ShieldBehaviorType,
+            powerPerStack: 1,
+            roundEndDecayMode: BattleStatus_SO.StackDecayMode.HalveRoundedDown);
+
+        BattleAllyController ally = CreateAlly("Shielded Ally", 12, skill);
+        BattleEnemyController enemy = CreateEnemy("Shielded Enemy", 12, skill);
+
+        ally.AddStatus(shield, shield.StatusId, shield.DisplayName, 3);
+        enemy.AddStatus(shield, shield.StatusId, shield.DisplayName, 3);
+
+        Assert.AreEqual(2, ally.TakeDamage(5));
+        Assert.AreEqual(10, ally.CurrentHP);
+        Assert.AreEqual(0, ally.GetStatusStacks(shield));
+
+        Assert.AreEqual(2, enemy.TakeDamage(5));
+        Assert.AreEqual(10, enemy.CurrentHP);
+        Assert.AreEqual(0, enemy.GetStatusStacks(shield));
+    }
+
+    [Test]
+    public void ShieldStatus_LosesHalfStacksAtRoundEndRoundedDown()
+    {
+        EnemySkill_SO skill = CreateSkill("Shield Decay Test", 2, 5);
+        BattleStatus_SO shield = CreateStatus(
+            "shield",
+            "护盾",
+            ShieldBehaviorType,
+            powerPerStack: 1,
+            roundEndDecayMode: BattleStatus_SO.StackDecayMode.HalveRoundedDown);
+
+        BattleAllyController ally = CreateAlly("Shielded Ally", 12, skill);
+        BattleEnemyController enemy = CreateEnemy("Shielded Enemy", 12, skill);
+
+        ally.AddStatus(shield, shield.StatusId, shield.DisplayName, 5);
+        enemy.AddStatus(shield, shield.StatusId, shield.DisplayName, 5);
+
+        Assert.IsTrue(ally.ConsumeRoundEndStatusEffects());
+        Assert.IsTrue(enemy.ConsumeRoundEndStatusEffects());
+        Assert.AreEqual(2, ally.GetStatusStacks(shield));
+        Assert.AreEqual(2, enemy.GetStatusStacks(shield));
     }
 
     private BattleAllyController CreateAlly(string name, int maxHp, EnemySkill_SO skill)

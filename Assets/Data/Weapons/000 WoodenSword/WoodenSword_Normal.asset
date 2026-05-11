@@ -25,8 +25,8 @@ MonoBehaviour:
   targetPriorityStatusData: {fileID: 0}
   targetPriorityStatusType: 0
   targetPriorityRequiredStacks: 1
-  minPower: 999
-  maxPower: 999
+  minPower: 2
+  maxPower: 3
   diceCount: 1
   dicePowerRanges: []
   dicePresentationSettings:

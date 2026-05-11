@@ -10,7 +10,8 @@ public static class BattleTargetSelectionService
         IEnumerable<T> candidates,
         int randomTargetCount,
         Func<T, bool> isValidTarget,
-        Func<List<T>, List<T>> randomOrder)
+        Func<List<T>, List<T>> randomOrder,
+        Comparison<T> comparePriority = null)
     {
         switch (targetMode)
         {
@@ -19,7 +20,16 @@ public static class BattleTargetSelectionService
                     ? new List<T> { currentTarget }
                     : new List<T>();
             case EnemySkill_SO.DamageTargetMode.AllOpponents:
+            case EnemySkill_SO.DamageTargetMode.AllFriendlies:
                 return BuildValidTargetList(candidates, isValidTarget);
+            case EnemySkill_SO.DamageTargetMode.LowestHpFriendly:
+                List<T> priorityPool = BuildValidTargetList(candidates, isValidTarget);
+                if (priorityPool.Count <= 1)
+                    return priorityPool;
+                if (comparePriority == null)
+                    return new List<T> { priorityPool[0] };
+                priorityPool.Sort(comparePriority);
+                return new List<T> { priorityPool[0] };
             case EnemySkill_SO.DamageTargetMode.RandomOpponents:
                 List<T> orderedPool = BuildValidTargetList(candidates, isValidTarget);
                 if (orderedPool.Count == 0)
