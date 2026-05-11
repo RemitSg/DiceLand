@@ -8382,6 +8382,87 @@ RectTransform:
   m_AnchoredPosition: {x: -7.7784424, y: 144}
   m_SizeDelta: {x: 300, y: 100}
   m_Pivot: {x: 0, y: 0.5}
+--- !u!1001 &1211816828
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1180268408184453300, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_Name
+      value: Effect_02_BlackHole
+      objectReference: {fileID: 0}
+    - target: {fileID: 1784417626578361360, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1784417627517445548, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1784417627644638727, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1784417627695309592, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1784417627980791651, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1784417628505477263, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802470701688589236, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -335.80734
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802470701688589236, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 6.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802470701688589236, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1062.4958
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802470701688589236, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802470701688589236, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802470701688589236, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802470701688589236, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802470701688589236, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802470701688589236, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802470701688589236, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 80cf365a0d4411a4099f07a0bec382d7, type: 3}
 --- !u!1 &1214850770
 GameObject:
   m_ObjectHideFlags: 0
@@ -11376,7 +11457,7 @@ MonoBehaviour:
     titleFontSize: 60
     bodyFontSize: 36
   demoTestEncounterLabel: Demo Battle Test
-  demoTestEnemyGroup: {fileID: 11400000, guid: 06335affbd274e2593f111500794fe5e, type: 2}
+  demoTestEnemyGroup: {fileID: 11400000, guid: 5bcc94f1757f43ef96e5f0aa7767f586, type: 2}
   demoTestPartyMembers:
   - memberId: 
     characterData: {fileID: 11400000, guid: 27e817266af382946804dea6afd2e374, type: 2}
@@ -14003,3 +14084,4 @@ SceneRoots:
   - {fileID: 6095504}
   - {fileID: 1475592268}
   - {fileID: 910471928}
+  - {fileID: 1211816828}
