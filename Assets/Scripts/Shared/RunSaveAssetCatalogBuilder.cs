@@ -425,8 +425,8 @@ public static class RunSaveAssetCatalogBuilder
             return;
 
         AddEventLootRewardAssets(catalog, effectData.lootRewards);
-        AddEventRelicRewardAssets(catalog, effectData.relicRewards);
-        AddEventBlueprintRewardAssets(catalog, effectData.blueprintRewards);
+        AddEventRelicRewardAssets(catalog, effectData.relicTable);
+        AddEventBlueprintRewardAssets(catalog, effectData.blueprintTable);
         AddEnemyGroupList(catalog, effectData.encounterEnemyGroups);
 
         if (effectData.encounterEnemies == null)
@@ -449,30 +449,24 @@ public static class RunSaveAssetCatalogBuilder
         }
     }
 
-    private static void AddEventRelicRewardAssets(MainMenuSaveAssetCatalog catalog, IReadOnlyList<MapEventRelicRewardEntry> rewards)
+    private static void AddEventRelicRewardAssets(MainMenuSaveAssetCatalog catalog, RelicTable_SO relicTable)
     {
-        if (rewards == null)
+        if (relicTable == null || relicTable.Relics == null)
             return;
 
-        for (int i = 0; i < rewards.Count; i++)
-        {
-            MapEventRelicRewardEntry entry = rewards[i];
-            if (entry != null)
-                catalog.Add(entry.relicData);
-        }
+        IReadOnlyList<Relic_SO> relics = relicTable.Relics;
+        for (int i = 0; i < relics.Count; i++)
+            catalog.Add(relics[i]);
     }
 
-    private static void AddEventBlueprintRewardAssets(MainMenuSaveAssetCatalog catalog, IReadOnlyList<MapEventBlueprintRewardEntry> rewards)
+    private static void AddEventBlueprintRewardAssets(MainMenuSaveAssetCatalog catalog, BlueprintTable_SO blueprintTable)
     {
-        if (rewards == null)
+        if (blueprintTable == null)
             return;
 
-        for (int i = 0; i < rewards.Count; i++)
-        {
-            MapEventBlueprintRewardEntry entry = rewards[i];
-            if (entry != null)
-                AddBlueprintAssets(catalog, entry.blueprintData);
-        }
+        IReadOnlyList<CraftingBlueprint_SO> blueprints = blueprintTable.GetValidBlueprints();
+        for (int i = 0; i < blueprints.Count; i++)
+            AddBlueprintAssets(catalog, blueprints[i]);
     }
 
     private static void AddMerchantCatalogAssets(MainMenuSaveAssetCatalog catalog, MerchantCatalog_SO merchantCatalogData)

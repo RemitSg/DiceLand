@@ -11,7 +11,8 @@ public class EnemySkill_SO : ScriptableObject
         OnClash = 2,
         OnSkillUse = 3,
         OnClashWin = 4,
-        OnSingleAttack = 5
+        OnSingleAttack = 5,
+        OnAllDiceHit = 6
     }
 
     public enum DiceStatusType
@@ -31,7 +32,9 @@ public class EnemySkill_SO : ScriptableObject
         CurrentTarget = 0,
         RandomOpponents = 1,
         AllOpponents = 2,
-        Self = 3
+        Self = 3,
+        AllFriendlies = 4,
+        LowestHpFriendly = 5
     }
 
     public enum HealAmountMode
@@ -46,7 +49,9 @@ public class EnemySkill_SO : ScriptableObject
         Heal = 0,
         Damage = 1,
         ApplyStatus = 2,
-        TransferRandomNegativeStatus = 3
+        TransferRandomNegativeStatus = 3,
+        QueueNextDicePowerBonus = 4,
+        DamageByTargetStatusStacksDivided = 5
     }
 
     public enum BuiltInConditionScope
@@ -89,7 +94,9 @@ public class EnemySkill_SO : ScriptableObject
         SelfStatusStacksLessOrEqual = 10,
         TargetSkillIsSpecific = 11,
         SelfSpeedHigherThanValue = 12,
-        SelfSpeedLowerThanValue = 13
+        SelfSpeedLowerThanValue = 13,
+        TargetNegativeStatusTypesAtLeast = 14,
+        SelfHpRatioBelowOrEqual = 15
     }
 
     public enum SkillCategory

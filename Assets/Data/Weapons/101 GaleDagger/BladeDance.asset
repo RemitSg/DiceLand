@@ -16,6 +16,9 @@ MonoBehaviour:
   description: "\u5C55\u793A\u5200\u821E\u53EF\u4EE5\u6709\u6548\u8212\u51CF\u538B\u529B\uFF0C\u524D\u63D0\u662F\u4E0D\u5931\u8D25"
   skillCategory: 1
   energyCost: 1
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 
   targetPriorityMode: 0
@@ -31,12 +34,14 @@ MonoBehaviour:
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 4264934743671495442, guid: e9ae2ab979f99544aaa632837fe35a6c, type: 3}
     hitEffectPrefab: {fileID: 4264934743671495442, guid: e9ae2ab979f99544aaa632837fe35a6c, type: 3}
+    clashOffsetSpace: 0
     clashPositionOffset: {x: 0, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 0, y: 0, z: 0}
     clashSortingOrderOffset: 0
     overrideClashDuration: 0
     clashDuration: 0
+    hitOffsetSpace: 0
     hitPositionOffset: {x: 0, y: 0, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
     hitScale: {x: 0, y: 0, z: 0}
@@ -58,15 +63,27 @@ MonoBehaviour:
     - effectName: 
       trigger: 3
       targetMode: 3
-      statusData: {fileID: 11400000, guid: 7f108d87b0c1dac4880a4175cdcf1741, type: 2}
+      statusData: {fileID: 11400000, guid: 5ecc963d5be148b7956424cb4cd1d165, type: 2}
       statusType: 0
       applyTiming: 1
       applyAfterRoundStarts: 1
       applyRepeatCount: 1
       stackAmount: 2
       randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 

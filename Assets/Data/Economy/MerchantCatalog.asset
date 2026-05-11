@@ -134,6 +134,16 @@ MonoBehaviour:
     minPrice: 15
     maxPrice: 20
     weight: 5
+  - goodsId: 208
+    blueprintData: {fileID: 11400000, guid: f3b07049a74cf51409a7e4127e06d57f, type: 2}
+    minPrice: 15
+    maxPrice: 20
+    weight: 5
+  - goodsId: 209
+    blueprintData: {fileID: 11400000, guid: 873b6a8002402544886f57db8d4b089e, type: 2}
+    minPrice: 30
+    maxPrice: 40
+    weight: 5
   relicEntries:
   - goodsId: 1
     relicTable: {fileID: 11400000, guid: 6650ae7fed330b7408b1cad987b54259, type: 2}

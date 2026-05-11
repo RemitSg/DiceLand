@@ -11376,11 +11376,11 @@ MonoBehaviour:
     titleFontSize: 60
     bodyFontSize: 36
   demoTestEncounterLabel: Demo Battle Test
-  demoTestEnemyGroup: {fileID: 11400000, guid: e3fe9f74fb3942ac8d3d7f318185aecf, type: 2}
+  demoTestEnemyGroup: {fileID: 11400000, guid: 06335affbd274e2593f111500794fe5e, type: 2}
   demoTestPartyMembers:
   - memberId: 
     characterData: {fileID: 11400000, guid: 27e817266af382946804dea6afd2e374, type: 2}
-    equippedWeapon: {fileID: 11400000, guid: 4b3e2d650c5c8744181da8df8b3099f3, type: 2}
+    equippedWeapon: {fileID: 11400000, guid: a3f4c8d12b9e4fa3a41b7c6d2e8f9012, type: 2}
     startingLevel: 1
     startingExperience: 0
     startingMaxHP: 999

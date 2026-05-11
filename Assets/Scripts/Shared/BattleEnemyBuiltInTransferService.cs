@@ -77,21 +77,7 @@ public static class BattleEnemyBuiltInTransferService
         if (string.IsNullOrWhiteSpace(statusId))
             return false;
 
-        switch (statusId.ToLowerInvariant())
-        {
-            case "burn":
-            case "bleed":
-            case "poison":
-            case "erode":
-            case "misfortune":
-            case "vulnerable":
-            case "slowness":
-            case "weakness":
-            case "chill":
-                return true;
-            default:
-                return false;
-        }
+        return BattleNegativeStatusService.IsNegativeStatusId(statusId);
     }
 
     public static BattleEnemyBuiltInTransferPlan ResolveTransferPlan(

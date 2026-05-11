@@ -19,7 +19,7 @@ MonoBehaviour:
   minSpeed: 1
   maxSpeed: 5
   baseSpeedButtonCount: 2
-  enemySprite: {fileID: 21300000, guid: c60cc52c21dc364478ee76f9d723e7fd, type: 3}
+  enemySprite: {fileID: 21300000, guid: 10c1ee1ff5f841e4c97f9cb294928623, type: 3}
   stageSprites: []
   enableHealthBasedStageTransition: 0
   healthBasedTransitionThresholdNormalized: 0.5

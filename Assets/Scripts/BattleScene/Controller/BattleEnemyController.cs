@@ -264,10 +264,7 @@ public class BattleEnemyController : MonoBehaviour
 
     public EnemySkill_SO.DicePowerRange GetDicePowerRange(int diceIndex)
     {
-        EnemySkill_SO.DicePowerRange range = GetDisplayedDicePowerRange(SelectedSkill, diceIndex);
-        bool isDefenseSkill = SelectedSkill != null
-            && SelectedSkill.GetDiceSkillCategory(diceIndex) == EnemySkill_SO.SkillCategory.Defense;
-        return ApplyStatusDiceRangeModifiers(range, isDefenseSkill);
+        return GetEffectiveDisplayedDicePowerRange(SelectedSkill, diceIndex);
     }
 
     public EnemySkill_SO.DicePowerRange GetPreviewDicePowerRange(EnemySkill_SO skill, int diceIndex)
@@ -278,9 +275,27 @@ public class BattleEnemyController : MonoBehaviour
     public EnemySkill_SO.DicePowerRange GetDisplayedDicePowerRange(EnemySkill_SO skill, int diceIndex)
     {
         int queuedBonus = skill != null && skill == SelectedSkill
-            ? activeAttackSkillPowerBonus
+            ? ResolveActiveAttackSkillPowerBonus(skill)
             : pendingNextAttackSkillPowerBonus;
         return ApplyQueuedAttackSkillPowerBonus(ResolveSkillBaseDiceRange(skill, diceIndex), skill, queuedBonus);
+    }
+
+    public EnemySkill_SO.DicePowerRange GetEffectiveDisplayedDicePowerRange(EnemySkill_SO skill, int diceIndex)
+    {
+        EnemySkill_SO.DicePowerRange range = GetDisplayedDicePowerRange(skill, diceIndex);
+        bool isDefenseSkill = skill != null
+            && skill.GetDiceSkillCategory(diceIndex) == EnemySkill_SO.SkillCategory.Defense;
+        return ApplyStatusDiceRangeModifiers(range, isDefenseSkill);
+    }
+
+    private int ResolveActiveAttackSkillPowerBonus(EnemySkill_SO skill)
+    {
+        if (skill == null || skill.IsDefenseSkill)
+            return 0;
+
+        return activeAttackSkillPowerBonus > 0
+            ? activeAttackSkillPowerBonus
+            : pendingNextAttackSkillPowerBonus;
     }
 
     public void QueueNextAttackSkillPowerBonus(int bonusAmount)
@@ -289,6 +304,15 @@ public class BattleEnemyController : MonoBehaviour
             return;
 
         pendingNextAttackSkillPowerBonus += bonusAmount;
+    }
+
+    public void ConsumeQueuedAttackSkillPowerBonusAfterAttackSkillUse()
+    {
+        if (SelectedSkill == null || SelectedSkill.IsDefenseSkill)
+            return;
+
+        pendingNextAttackSkillPowerBonus = 0;
+        activeAttackSkillPowerBonus = 0;
     }
 
     public string GetDebugDisplayName()
@@ -331,15 +355,9 @@ public class BattleEnemyController : MonoBehaviour
     public void ActivateSelectedSkillForButton(SpeedButton button)
     {
         SelectedSkill = GetSelectedSkillForButton(button);
-        if (SelectedSkill != null && !SelectedSkill.IsDefenseSkill)
-        {
-            activeAttackSkillPowerBonus = pendingNextAttackSkillPowerBonus;
-            pendingNextAttackSkillPowerBonus = 0;
-        }
-        else
-        {
-            activeAttackSkillPowerBonus = 0;
-        }
+        activeAttackSkillPowerBonus = SelectedSkill != null && !SelectedSkill.IsDefenseSkill
+            ? pendingNextAttackSkillPowerBonus
+            : 0;
     }
 
     public int TakeDamage(int amount, int powerModifierAmount = 0, int originalReferenceDamage = -1)
@@ -357,6 +375,7 @@ public class BattleEnemyController : MonoBehaviour
         int originalDamage = originalReferenceDamage > 0 ? originalReferenceDamage : amount;
         amount = ApplyIncomingDamageStatusModifiers(amount);
         amount = ApplyBaseDamageReduction(amount);
+        amount = ApplyShieldAbsorption(amount);
         if (amount <= 0)
         {
             LastDamageModifierRatioPercent = 0;
@@ -465,6 +484,29 @@ public class BattleEnemyController : MonoBehaviour
         float reductionMultiplier = 1f - (DamageReductionPercent * 0.01f);
         reductionMultiplier = Mathf.Clamp01(reductionMultiplier);
         return Mathf.Max(0, Mathf.FloorToInt(damage * reductionMultiplier));
+    }
+
+    private int ApplyShieldAbsorption(int incomingDamage)
+    {
+        if (incomingDamage <= 0 || statusEntries.Count == 0)
+            return Mathf.Max(0, incomingDamage);
+
+        for (int i = 0; i < statusEntries.Count; i++)
+        {
+            BattleStatusRuntimeEntry entry = statusEntries[i];
+            if (!IsShieldStatus(entry))
+                continue;
+
+            int absorbed = Mathf.Min(incomingDamage, Mathf.Max(0, entry.stacks));
+            if (absorbed <= 0)
+                return incomingDamage;
+
+            entry.stacks = Mathf.Max(0, entry.stacks - absorbed);
+            NotifyStatusChanged(entry);
+            return Mathf.Max(0, incomingDamage - absorbed);
+        }
+
+        return Mathf.Max(0, incomingDamage);
     }
 
     private EnemySkill_SO.DicePowerRange ApplyStatusDiceRangeModifiers(EnemySkill_SO.DicePowerRange baseRange, bool isDefenseSkill)
@@ -1722,17 +1764,18 @@ public class BattleEnemyController : MonoBehaviour
         if (IsStatusEffectSuppressed(entry))
             return 0;
 
+        int damage = 0;
         if (entry.statusData != null)
         {
             if (entry.statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.DamageAtRoundStart)
-                return Mathf.Max(0, entry.statusData.PowerPerStack) * entry.stacks;
-            return 0;
+                damage = Mathf.Max(0, entry.statusData.PowerPerStack) * entry.stacks;
+            return RelicSystem.ResolveEnemyRoundStartStatusDamage(this, entry.statusData, entry.Key, entry.stacks, damage);
         }
 
         if (string.Equals(entry.Key, BurnStatusId, StringComparison.OrdinalIgnoreCase))
-            return entry.stacks;
+            damage = entry.stacks;
 
-        return 0;
+        return RelicSystem.ResolveEnemyRoundStartStatusDamage(this, entry.statusData, entry.Key, entry.stacks, damage);
     }
 
     private int ResolveRoundStartStatusSpeedBonus(BattleStatusRuntimeEntry entry)
@@ -1762,7 +1805,8 @@ public class BattleEnemyController : MonoBehaviour
         if (entry.statusData.LinkedStatusData == null)
             return 0;
 
-        return Mathf.Max(0, entry.statusData.PowerPerStack) * entry.stacks;
+        int defaultStacks = Mathf.Max(0, entry.statusData.PowerPerStack) * entry.stacks;
+        return RelicSystem.ResolveEnemyRoundStartLinkedStatusAmount(entry.statusData, entry.Key, defaultStacks);
     }
 
     private int ResolveOnHitStatusDamage(BattleStatusRuntimeEntry entry)
@@ -1873,6 +1917,14 @@ public class BattleEnemyController : MonoBehaviour
         return entry != null
             && entry.statusData != null
             && entry.statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.SpeedButtonPenalty;
+    }
+
+    private static bool IsShieldStatus(BattleStatusRuntimeEntry entry)
+    {
+        return entry != null
+            && entry.stacks > 0
+            && entry.statusData != null
+            && entry.statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.Shield;
     }
 
     private static bool ShouldPreservePersistentStatusStacks(BattleStatusRuntimeEntry entry)

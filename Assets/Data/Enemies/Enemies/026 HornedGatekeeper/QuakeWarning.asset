@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: QuakeWarning
   m_EditorClassIdentifier: 
   skillName: "\u9707\u5730\u8B66\u544A"
-  description: "\u7B2C 1 \u9AA0\u4F7F\u7528\u65F6\u4F7F\u76EE\u6807\u83B7\u5F97 1 \u5C42\u7F13\u6162\uFF1B\u7B2C 2 \u9AA0\u62FC\u70B9\u80DC\u5229\u540E\u4F7F\u76EE\u6807\u83B7\u5F97 10 \u5C42\u6613\u4F24"
+  description: "\u7B2C 1 \u9AA0\u4F7F\u7528\u65F6\u4F7F\u76EE\u6807\u83B7\u5F97 1
+    \u5C42\u7F13\u6162\uFF1B\u7B2C 2 \u9AA0\u62FC\u70B9\u80DC\u5229\u540E\u4F7F\u76EE\u6807\u83B7\u5F97
+    10 \u5C42\u6613\u4F24"
   skillCategory: 1
   energyCost: 0
   requiredSelfStatusData: {fileID: 0}
@@ -42,14 +44,24 @@ MonoBehaviour:
       targetMode: 0
       statusData: {fileID: 11400000, guid: a90cdb8e1a1943f99f9d973299e6d173, type: 2}
       statusType: 0
-      applyTiming: 0
+      applyTiming: 1
       applyAfterRoundStarts: 1
       applyRepeatCount: 1
       stackAmount: 1
       randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
     summonEffects: []
@@ -65,9 +77,20 @@ MonoBehaviour:
       applyRepeatCount: 1
       stackAmount: 10
       randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
     summonEffects: []
+  diceSkillCategories: 

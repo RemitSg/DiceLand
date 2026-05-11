@@ -26,6 +26,7 @@ public static class BattleImmediateEffectPlanService
                 BattleImmediateEffectStep.Damage,
                 BattleImmediateEffectStep.StatusBurst,
                 BattleImmediateEffectStep.Healing,
+                BattleImmediateEffectStep.BuiltIn,
                 BattleImmediateEffectStep.ConditionalStatus,
                 BattleImmediateEffectStep.StatusStackOperation
             }

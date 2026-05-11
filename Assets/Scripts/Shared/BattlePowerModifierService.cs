@@ -102,6 +102,12 @@ public static class BattlePowerModifierService
                     int bonus = Mathf.Max(0, steps) * modifier.powerBonusPerStep;
                     return modifier.maxPowerBonus > 0 ? Mathf.Min(bonus, modifier.maxPowerBonus) : bonus;
                 }
+            case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
+                return BattleNegativeStatusService.HasAtLeastNegativeStatusTypes(
+                    id => ResolveTargetStatusStacksByIdForNegativeCheck(id, getTargetStatusStacksByAsset, getTargetStatusStacksById),
+                    modifier.requiredStatusStacks)
+                    ? modifier.powerBonus
+                    : 0;
             default:
                 return BattleModifierConditionService.IsConditionMet(modifier.condition, selfSpeed, targetSpeed, modifier.requiredSpeedValue, modifier.requiredSpeedDifference)
                     ? modifier.powerBonus
@@ -133,6 +139,17 @@ public static class BattlePowerModifierService
 
         if (modifier.targetStatusType == EnemySkill_SO.DiceStatusType.Burn && getTargetStatusStacksById != null)
             return Mathf.Max(0, getTargetStatusStacksById("burn"));
+
+        return 0;
+    }
+
+    private static int ResolveTargetStatusStacksByIdForNegativeCheck(
+        string statusId,
+        Func<BattleStatus_SO, int> getTargetStatusStacksByAsset,
+        Func<string, int> getTargetStatusStacksById)
+    {
+        if (getTargetStatusStacksById != null && !string.IsNullOrWhiteSpace(statusId))
+            return Mathf.Max(0, getTargetStatusStacksById(statusId));
 
         return 0;
     }

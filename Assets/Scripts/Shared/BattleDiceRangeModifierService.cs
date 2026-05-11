@@ -84,6 +84,9 @@ public static class BattleDiceRangeModifierService
                         range,
                         modifier,
                         ResolveTargetStatusStacks(modifier, getTargetStatusStacksByAsset, getTargetStatusStacksById));
+                case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
+                    conditionMet = BattleNegativeStatusService.HasAtLeastNegativeStatusTypes(getTargetStatusStacksById, modifier.requiredStatusStacks);
+                    break;
                 default:
                     conditionMet = BattleModifierConditionService.IsConditionMet(modifier.condition, selfSpeed, targetSpeed, modifier.requiredSpeedValue, modifier.requiredSpeedDifference);
                     break;

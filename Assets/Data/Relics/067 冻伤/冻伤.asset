@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92a6c8410a56dcb4db5bca4c318c5c64, type: 3}
+  m_Name: "\u51BB\u4F24"
+  m_EditorClassIdentifier: 
+  relicId: 67
+  relicName: "\u51BB\u4F24"
+  description: "\u56DE\u5408\u7ED3\u675F\u65F6\uFF0C\u654C\u65B9\u76EE\u6807\u53D7\u5230\u76F8\u5F53\u4E8E\u81EA\u8EAB\u5BD2\u51B7\u5C42\u6570\u7684\u4F24\u5BB3\u3002"
+  additionalDescription: "\u5BD2\u610F\u4E0D\u7ACB\u523B\u6740\u4EBA\uFF0C\u5B83\u5148\u5728\u9AA8\u7F1D\u91CC\u7559\u4E0B\u7EC6\u5C0F\u7684\u88C2\u53E3\u3002"
+  rarity: 1
+  icon: {fileID: 21300000, guid: be10280588912a44ba6ec9c48d1c9ce3, type: 3}
+  builtInEffects:
+  - effectName: 
+    trigger: 8
+    effectType: 65
+    chance: 1
+    requireUnvisitedTile: 0
+    statusData: {fileID: 0}
+    amount: 1
+    conditionStatusData: {fileID: 11400000, guid: 31bf17620ef7438984f2e0b6eea03a6f, type: 2}
+    requiredStatusStacks: 1
+    requiredSpeed: 1
+    requiredSpeedMin: 1
+    requiredSpeedMax: 1
+    statusApplyTiming: 0
+    applyAfterRoundStarts: 1
+    requiredRound: 1
+    requiredRoundMin: 1
+    requiredRoundMax: 99
+    powerAmount: 0
+    minPowerAmount: 0
+    maxPowerAmount: 0
+    maxStacks: 1
+    requiredDistinctStatusCount: 1
+    requiredConsecutiveSkillUses: 1
+  customEffectHandler: {fileID: 0}

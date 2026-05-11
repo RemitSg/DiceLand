@@ -27,3 +27,5 @@ MonoBehaviour:
     statusData: {fileID: 11400000, guid: 6da3ce7e588c4a76b3396208a813b54d, type: 2}
   - statusId: vulnerable
     statusData: {fileID: 11400000, guid: 2c61804cb51b40ceb349418fab5290ba, type: 2}
+  - statusId: shield
+    statusData: {fileID: 11400000, guid: d9960fbafac14cf6b9c6bd093fd9293f, type: 2}

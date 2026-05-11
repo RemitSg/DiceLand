@@ -106,7 +106,17 @@ public class Relic_SO : ScriptableObject
         SetEnemyStatusMinimumStacks = 60,
         ChanceCopyAppliedStatusToOtherEnemy = 61,
         ChanceRepeatAppliedStatusToSameEnemy = 62,
-        ApplyStatusToEnemiesBasedOnConditionStacksOnRoundStart = 63
+        ApplyStatusToEnemiesBasedOnConditionStacksOnRoundStart = 63,
+        ApplyStatusToEnemiesWhenConditionStacksAtLeastOnBattleRoundStart = 64,
+        DealDamageToEnemiesEqualToStatusStacksOnBattleRoundEnd = 65,
+        RestoreSharedEnergyByEnemyStatusStacksOnBattleRoundEnd = 66,
+        ApplyStatusesToHighestAndLowestHpRatioEnemiesOnBattleRoundStart = 67,
+        ApplyStatusToEnemyWithConditionOnFirstPlayerHitEachRound = 68,
+        SetEnemyLinkedStatusRoundStartStacks = 69,
+        TriggerAdditionalDamageWhenEnemyStatusTicksWithConditionStatus = 70,
+        PreventAllyStatusApplication = 71,
+        ApplyStatusToLowestSpeedAllyWhenAnyEnemyHasStatusOnBattleRoundStart = 72,
+        ReduceIncomingAttackDamageFlatWhenAttackerHasStatus = 73
     }
 
     [Serializable]

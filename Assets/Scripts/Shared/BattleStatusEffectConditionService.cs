@@ -36,6 +36,8 @@ public static class BattleStatusEffectConditionService
                 return ResolveTargetStatusStacks(effect, getTargetStatusStacksByAsset, getTargetStatusStacksById) >= Mathf.Max(1, effect.requiredConditionStatusStacks);
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
                 return ResolveTargetStatusStacks(effect, getTargetStatusStacksByAsset, getTargetStatusStacksById) >= Mathf.Max(1, effect.requiredConditionStatusStacks);
+            case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
+                return BattleNegativeStatusService.HasAtLeastNegativeStatusTypes(getTargetStatusStacksById, effect.requiredConditionStatusStacks);
             default:
                 return BattleModifierConditionService.IsConditionMet(
                     effect.condition,
@@ -107,6 +109,8 @@ public static class BattleStatusEffectConditionService
                 return ResolveTargetStatusStacks(effect, getTargetStatusStacksByAsset, getTargetStatusStacksById) >= Mathf.Max(1, effect.requiredConditionStatusStacks);
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
                 return ResolveTargetStatusStacks(effect, getTargetStatusStacksByAsset, getTargetStatusStacksById) >= Mathf.Max(1, effect.requiredConditionStatusStacks);
+            case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
+                return BattleNegativeStatusService.HasAtLeastNegativeStatusTypes(getTargetStatusStacksById, effect.requiredConditionStatusStacks);
             default:
                 return BattleModifierConditionService.IsConditionMet(
                     effect.condition,

@@ -22,7 +22,7 @@ MonoBehaviour:
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 02000000
   targetPriorityMode: 1
-  targetPriorityStatusData: {fileID: 11400000, guid: c8249c4cafb55cd4f8587aa0410e54d3, type: 2}
+  targetPriorityStatusData: {fileID: 11400000, guid: f3d7f5c8ab6d4a7db9c2e4f1860a5b31, type: 2}
   targetPriorityStatusType: 0
   targetPriorityRequiredStacks: 3
   minPower: 3
@@ -65,11 +65,15 @@ MonoBehaviour:
     - effectName: 
       trigger: 0
       targetMode: 0
-      statusData: {fileID: 11400000, guid: c8249c4cafb55cd4f8587aa0410e54d3, type: 2}
+      statusData: {fileID: 11400000, guid: f3d7f5c8ab6d4a7db9c2e4f1860a5b31, type: 2}
       statusType: 0
       damagePerStack: 2
       randomTargetCount: 1
       clearStacksAfterBurst: 1
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 

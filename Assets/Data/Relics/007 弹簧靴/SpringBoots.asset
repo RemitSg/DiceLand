@@ -25,8 +25,8 @@ MonoBehaviour:
     effectType: 7
     chance: 1
     requireUnvisitedTile: 0
-    statusData: {fileID: 11400000, guid: 7f108d87b0c1dac4880a4175cdcf1741, type: 2}
-    amount: 1
+    statusData: {fileID: 11400000, guid: 5ecc963d5be148b7956424cb4cd1d165, type: 2}
+    amount: 2
     conditionStatusData: {fileID: 0}
     requiredStatusStacks: 0
     requiredSpeed: 1
@@ -35,7 +35,12 @@ MonoBehaviour:
     statusApplyTiming: 1
     applyAfterRoundStarts: 1
     requiredRound: 1
+    requiredRoundMin: 1
+    requiredRoundMax: 1
     powerAmount: 0
     minPowerAmount: 0
     maxPowerAmount: 0
+    maxStacks: 1
+    requiredDistinctStatusCount: 1
+    requiredConsecutiveSkillUses: 1
   customEffectHandler: {fileID: 0}

@@ -607,7 +607,7 @@ MonoBehaviour:
   merchantCatalog: {fileID: 11400000, guid: bf1d0124c102c504baf7a222df99def6, type: 2}
   eliteRelicChoiceTable: {fileID: 0}
   levelTable: {fileID: 11400000, guid: 1c8dd34d2260a1b4a90e6e6e6e759828, type: 2}
-  startingMoney: 10000
+  startingMoney: 100
   startingPartyMembers:
   - memberId: 0
     characterData: {fileID: 11400000, guid: 27e817266af382946804dea6afd2e374, type: 2}
@@ -616,19 +616,8 @@ MonoBehaviour:
     startingExperience: 0
     startingMaxHP: 24
     startingCurrentHP: 24
-  - memberId: 2
-    characterData: {fileID: 11400000, guid: 658e22cc7dec223479091c6817751025, type: 2}
-    equippedWeapon: {fileID: 11400000, guid: 6f76bd3bd3d897c4fb60cb583c146ccd, type: 2}
-    startingLevel: 1
-    startingExperience: 0
-    startingMaxHP: 20
-    startingCurrentHP: 20
   tutorialStartingPartyMembers: []
-  startingLoot:
-  - lootItem: {fileID: 11400000, guid: 1a247d2fcfd14c141bd79e8a82154b1f, type: 2}
-    amount: 2
-  - lootItem: {fileID: 11400000, guid: 2a5a440bab2e42f499a7fabcd4b29ead, type: 2}
-    amount: 2
+  startingLoot: []
   startingWeapons: []
   startingBlueprints: []
   startingRelics: []
@@ -1057,6 +1046,17 @@ MonoBehaviour:
   inventorySlotSpriteColor: {r: 1, g: 1, b: 1, a: 1}
   inventoryCountColor: {r: 1, g: 1, b: 1, a: 1}
   inventoryFallbackSprite: {fileID: 0}
+  inventoryViewportSize: {x: 486, y: 415}
+  inventoryContentSizePadding: {x: 0, y: 0}
+  inventoryScrollSensitivity: 30
+  inventoryScrollbarAlwaysVisible: 1
+  inventoryScrollbarWidth: 18
+  inventoryScrollbarOffset: {x: 0, y: 0}
+  inventoryScrollbarHandleMinHeight: 48
+  inventoryScrollbarTrackSprite: {fileID: 0}
+  inventoryScrollbarHandleSprite: {fileID: 0}
+  inventoryScrollbarTrackColor: {r: 0.08, g: 0.08, b: 0.1, a: 0.78}
+  inventoryScrollbarHandleColor: {r: 1, g: 0.84, b: 0.36, a: 0.96}
   inventoryDetailBackgroundSprite: {fileID: 21300000, guid: eacc67c39564c3c4abad8dcbb48de01f, type: 3}
   inventoryDetailSize: {x: 760, y: 520}
   inventoryDetailOffset: {x: 0, y: 0}

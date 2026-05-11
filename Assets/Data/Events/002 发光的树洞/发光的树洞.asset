@@ -19,45 +19,123 @@ MonoBehaviour:
   options:
   - optionId: 1
     optionLabel: "\u4F38\u624B\u89E6\u6478"
+    requiredMoney: 0
     consequenceDescription: "\u961F\u4F0D\u5168\u4F53\u56DE\u590D20%\u751F\u547D\u503C"
     resultContent: "\u4F60\u4F38\u624B\u5411\u6811\u6D1E\u5185\u6293\u53BB\uFF0C\u5374\u53D1\u73B0\u90A3\u4E9B\u8815\u866B\u5728\u4F60\u6293\u5230\u5B83\u4EEC\u7684\u4E00\u77AC\u95F4\u53D8\u6210\u4E86\u7EC6\u788E\u7684\u8367\u5149\u7C89\u672B\u3002\u4F60\u60CA\u5947\u5730\u53D1\u73B0\u624B\u4E0A\u7684\u4F24\u53E3\u5168\u90FD\u6D88\u5931\u4E86\u3002"
     builtInEffectType: 6
     effectAmount: 20
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
     lootRewards: []
     lootPickCountMin: 1
     lootPickCountMax: 1
+    relicRewards: []
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    blueprintRewards: []
+    blueprintPickCountMin: 1
+    blueprintPickCountMax: 1
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
     additionalBuiltInEffects: []
     resolveEvent: 0
     customHandler: {fileID: 0}
   - optionId: 2
     optionLabel: "\u7528\u6B66\u5668\u6233\u63A2"
+    requiredMoney: 0
     consequenceDescription: "\u961F\u4F0D\u5931\u53BB15%\u8840\u91CF\uFF0C\u83B7\u5F972~3\u4E2A\u666E\u901A\u6389\u843D\u7269"
     resultContent: "\u4F60\u7528\u6B66\u5668\u5411\u91CC\u9762\u6233\u63A2\uFF0C\u8815\u866B\u4EEC\u4F3C\u4E4E\u611F\u53D7\u5230\u5371\u9669\uFF0C\u5411\u4F60\u55B7\u51FA\u4E86\u5C11\u8BB8\u6BD2\u6DB2\uFF0C\u968F\u540E\u56DB\u6563\u9003\u5F00\u3002\u4F60\u72FC\u72C8\u5730\u6E05\u7406\u5B8C\u8EAB\u4E0A\u7684\u6BD2\u6DB2\u540E\uFF0C\u53D1\u73B0\u539F\u672C\u8815\u866B\u8737\u7F29\u7684\u5730\u65B9\u7ADF\u6709\u51E0\u4E2A\u6218\u5229\u54C1\u3002"
     builtInEffectType: 5
     effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
     lootRewards:
     - lootItem: {fileID: 11400000, guid: ea9793b0c90ae0c4f9dbaf13a832f375, type: 2}
       amountMin: 2
       amountMax: 3
+    - lootItem: {fileID: 11400000, guid: 1a247d2fcfd14c141bd79e8a82154b1f, type: 2}
+      amountMin: 2
+      amountMax: 3
+    - lootItem: {fileID: 11400000, guid: 3e23e2fc8a9e85945adee34acbb745f4, type: 2}
+      amountMin: 2
+      amountMax: 3
+    - lootItem: {fileID: 11400000, guid: 2a5a440bab2e42f499a7fabcd4b29ead, type: 2}
+      amountMin: 2
+      amountMax: 3
+    - lootItem: {fileID: 11400000, guid: 868997ae4239f844f9ea876d8ad4057e, type: 2}
+      amountMin: 2
+      amountMax: 3
+    - lootItem: {fileID: 11400000, guid: f7d97cfbea961c84ebb552d194bd09f1, type: 2}
+      amountMin: 2
+      amountMax: 3
     lootPickCountMin: 1
     lootPickCountMax: 1
+    relicRewards: []
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    blueprintRewards: []
+    blueprintPickCountMin: 1
+    blueprintPickCountMax: 1
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
     additionalBuiltInEffects:
     - effectType: 6
       effectAmount: -15
+      randomMoneyMin: 0
+      randomMoneyMax: 0
+      randomOwnedLootAmountMin: 1
+      randomOwnedLootAmountMax: 1
       lootRewards: []
       lootPickCountMin: 0
       lootPickCountMax: 0
+      relicRewards: []
+      relicPickCountMin: 1
+      relicPickCountMax: 1
+      blueprintRewards: []
+      blueprintPickCountMin: 1
+      blueprintPickCountMax: 1
+      encounterSelectionMode: 0
+      encounterEnemyGroups: []
+      encounterEnemies: []
+      encounterEnemyCountMin: 1
+      encounterEnemyCountMax: 1
     resolveEvent: 0
     customHandler: {fileID: 0}
   - optionId: 3
     optionLabel: "\u8F6C\u8EAB\u79BB\u5F00"
+    requiredMoney: 0
     consequenceDescription: "\u8FD4\u8FD8 2 \u884C\u52A8\u70B9\uFF0C\u65E0\u4E8B\u53D1\u751F"
     resultContent: "\u4F60\u51B3\u5B9A\u4E0D\u8981\u60CA\u6270\u8FD9\u4E9B\u5C0F\u5BB6\u4F19\u3002"
     builtInEffectType: 7
     effectAmount: 2
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
     lootRewards: []
     lootPickCountMin: 1
     lootPickCountMax: 1
+    relicRewards: []
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    blueprintRewards: []
+    blueprintPickCountMin: 1
+    blueprintPickCountMax: 1
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
     additionalBuiltInEffects: []
     resolveEvent: 0
     customHandler: {fileID: 0}

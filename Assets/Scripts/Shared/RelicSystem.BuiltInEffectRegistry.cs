@@ -104,6 +104,16 @@ public static partial class RelicSystem
             { Relic_SO.RelicBuiltInEffectType.ChanceCopyAppliedStatusToOtherEnemy, HandleChanceCopyAppliedStatusToOtherEnemy },
             { Relic_SO.RelicBuiltInEffectType.ChanceRepeatAppliedStatusToSameEnemy, HandleChanceRepeatAppliedStatusToSameEnemy },
             { Relic_SO.RelicBuiltInEffectType.ApplyStatusToEnemiesBasedOnConditionStacksOnRoundStart, HandleApplyStatusToEnemiesBasedOnConditionStacksOnRoundStart },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToEnemiesWhenConditionStacksAtLeastOnBattleRoundStart, HandleApplyStatusToEnemiesWhenConditionStacksAtLeastOnBattleRoundStart },
+            { Relic_SO.RelicBuiltInEffectType.DealDamageToEnemiesEqualToStatusStacksOnBattleRoundEnd, HandleDealDamageToEnemiesEqualToStatusStacksOnBattleRoundEnd },
+            { Relic_SO.RelicBuiltInEffectType.RestoreSharedEnergyByEnemyStatusStacksOnBattleRoundEnd, HandleRestoreSharedEnergyByEnemyStatusStacksOnBattleRoundEnd },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusesToHighestAndLowestHpRatioEnemiesOnBattleRoundStart, HandleApplyStatusesToHighestAndLowestHpRatioEnemiesOnBattleRoundStart },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToEnemyWithConditionOnFirstPlayerHitEachRound, HandleApplyStatusToEnemyWithConditionOnFirstPlayerHitEachRound },
+            { Relic_SO.RelicBuiltInEffectType.SetEnemyLinkedStatusRoundStartStacks, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.TriggerAdditionalDamageWhenEnemyStatusTicksWithConditionStatus, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.PreventAllyStatusApplication, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToLowestSpeedAllyWhenAnyEnemyHasStatusOnBattleRoundStart, HandleApplyStatusToLowestSpeedAllyWhenAnyEnemyHasStatusOnBattleRoundStart },
+            { Relic_SO.RelicBuiltInEffectType.ReduceIncomingAttackDamageFlatWhenAttackerHasStatus, HandleReduceIncomingAttackDamageFlatWhenAttackerHasStatus },
         };
     }
 

@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 009ab5ebf2ca24c4485d6304a45b5e8f, type: 3}
+  m_Name: EasyDifficultyConfig 1
+  m_EditorClassIdentifier: 
+  difficultyName: Easy
+  boardSize: 7
+  startingActionPoints: 10
+  actionPointTiers:
+  - calamityTier: 0
+    actionPointLimit: 10
+  - calamityTier: 1
+    actionPointLimit: 12
+  - calamityTier: 2
+    actionPointLimit: 14
+  - calamityTier: 3
+    actionPointLimit: 16
+  requiredKeys: 2
+  generatedKeyTileCount: 3
+  spawnMinRingDistance: 2
+  tileWeights:
+  - tileType: 0
+    weight: 0
+  - tileType: 1
+    weight: 6
+  - tileType: 2
+    weight: 1
+  - tileType: 3
+    weight: 6
+  - tileType: 4
+    weight: 1
+  - tileType: 5
+    weight: 1
+  - tileType: 6
+    weight: 1
+  tileMinimums:
+  - tileType: 1
+    minimumCount: 5
+  - tileType: 2
+    minimumCount: 2
+  - tileType: 3
+    minimumCount: 5
+  - tileType: 4
+    minimumCount: 2
+  - tileType: 5
+    minimumCount: 2
+  - tileType: 6
+    minimumCount: 2
+  maxRecruitCount: 4
+  recruitCostTiers: 320000005000000078000000b4000000
+  legacyMerchantRefreshCost: 20
+  merchantRefreshCostTiers: 14000000190000001e0000002300000028000000
+  merchantRelicPrices:
+  - rarity: 0
+    minPrice: 14
+    maxPrice: 22
+  - rarity: 1
+    minPrice: 24
+    maxPrice: 32
+  - rarity: 2
+    minPrice: 32
+    maxPrice: 48
+  - rarity: 3
+    minPrice: 48
+    maxPrice: 70
+  - rarity: 4
+    minPrice: 80
+    maxPrice: 110

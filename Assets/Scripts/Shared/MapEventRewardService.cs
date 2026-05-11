@@ -13,7 +13,7 @@ public static class MapEventRewardService
 
         for (int i = 0; i < pickCount; i++)
         {
-            int selectedIndex = UnityEngine.Random.Range(0, availableRewards.Count);
+            int selectedIndex = Random.Range(0, availableRewards.Count);
             MapEventLootRewardEntry selectedReward = availableRewards[selectedIndex];
             availableRewards.RemoveAt(selectedIndex);
 
@@ -23,14 +23,14 @@ public static class MapEventRewardService
         }
 
         message = gainedLootDescriptions.Count > 0
-            ? $"获得战利品：{string.Join("，", gainedLootDescriptions)}。"
-            : "未获得任何战利品。";
+            ? $"\u83b7\u5f97\u6218\u5229\u54c1\uff1a{string.Join("\uff0c", gainedLootDescriptions)}\u3002"
+            : "\u672a\u83b7\u5f97\u4efb\u4f55\u6218\u5229\u54c1\u3002";
         return true;
     }
 
     public static bool TryExecuteRelicReward(RunState runState, MapEventBuiltInEffectData effectData, out string message)
     {
-        if (!TryBuildAvailableRelicRewards(effectData, out List<MapEventRelicRewardEntry> availableRewards, out message))
+        if (!TryBuildAvailableRelicRewards(effectData, out List<Relic_SO> availableRewards, out message))
             return false;
 
         int pickCount = RollPickCount(effectData.relicPickCountMin, effectData.relicPickCountMax, availableRewards.Count);
@@ -38,23 +38,23 @@ public static class MapEventRewardService
 
         for (int i = 0; i < pickCount; i++)
         {
-            int selectedIndex = UnityEngine.Random.Range(0, availableRewards.Count);
-            MapEventRelicRewardEntry selectedReward = availableRewards[selectedIndex];
-            availableRewards.RemoveAt(selectedIndex);
+            Relic_SO selectedRelic = DrawRelicReward(availableRewards, effectData.relicRarityWeightTable, effectData.relicTable);
+            if (selectedRelic == null)
+                continue;
 
-            runState?.AddRelic(selectedReward.relicData, 1);
-            gainedRelicDescriptions.Add(selectedReward.relicData.DisplayName);
+            runState?.AddRelic(selectedRelic, 1);
+            gainedRelicDescriptions.Add(selectedRelic.DisplayName);
         }
 
         message = gainedRelicDescriptions.Count > 0
-            ? $"获得遗物：{string.Join("，", gainedRelicDescriptions)}。"
-            : "未获得任何遗物。";
+            ? $"\u83b7\u5f97\u9057\u7269\uff1a{string.Join("\uff0c", gainedRelicDescriptions)}\u3002"
+            : "\u672a\u83b7\u5f97\u4efb\u4f55\u9057\u7269\u3002";
         return true;
     }
 
     public static bool TryExecuteBlueprintReward(RunState runState, MapEventBuiltInEffectData effectData, out string message)
     {
-        if (!TryBuildAvailableBlueprintRewards(effectData, out List<MapEventBlueprintRewardEntry> availableRewards, out message))
+        if (!TryBuildAvailableBlueprintRewards(effectData, out List<CraftingBlueprint_SO> availableRewards, out message))
             return false;
 
         int pickCount = RollPickCount(effectData.blueprintPickCountMin, effectData.blueprintPickCountMax, availableRewards.Count);
@@ -62,17 +62,17 @@ public static class MapEventRewardService
 
         for (int i = 0; i < pickCount; i++)
         {
-            int selectedIndex = UnityEngine.Random.Range(0, availableRewards.Count);
-            MapEventBlueprintRewardEntry selectedReward = availableRewards[selectedIndex];
-            availableRewards.RemoveAt(selectedIndex);
+            CraftingBlueprint_SO selectedBlueprint = DrawBlueprintReward(availableRewards, effectData.blueprintRarityWeightTable);
+            if (selectedBlueprint == null)
+                continue;
 
-            runState?.AddBlueprint(selectedReward.blueprintData, 1);
-            gainedBlueprintDescriptions.Add(selectedReward.blueprintData.DisplayName);
+            runState?.AddBlueprint(selectedBlueprint, 1);
+            gainedBlueprintDescriptions.Add(selectedBlueprint.DisplayName);
         }
 
         message = gainedBlueprintDescriptions.Count > 0
-            ? $"获得图纸：{string.Join("，", gainedBlueprintDescriptions)}。"
-            : "未获得任何图纸。";
+            ? $"\u83b7\u5f97\u56fe\u7eb8\uff1a{string.Join("\uff0c", gainedBlueprintDescriptions)}\u3002"
+            : "\u672a\u83b7\u5f97\u4efb\u4f55\u56fe\u7eb8\u3002";
         return true;
     }
 
@@ -80,7 +80,7 @@ public static class MapEventRewardService
     {
         if (encounterData == null)
         {
-            message = "未找到待触发的事件遭遇。";
+            message = "\u672a\u627e\u5230\u5f85\u89e6\u53d1\u7684\u4e8b\u4ef6\u906d\u9047\u3002";
             return false;
         }
 
@@ -109,7 +109,7 @@ public static class MapEventRewardService
 
         for (int i = 0; i < pickCount; i++)
         {
-            int selectedIndex = UnityEngine.Random.Range(0, availableRewards.Count);
+            int selectedIndex = Random.Range(0, availableRewards.Count);
             MapEventLootRewardEntry selectedReward = availableRewards[selectedIndex];
             availableRewards.RemoveAt(selectedIndex);
 
@@ -123,14 +123,14 @@ public static class MapEventRewardService
         }
 
         message = descriptions.Count > 0
-            ? $"战斗胜利后将获得战利品：{string.Join("，", descriptions)}。"
-            : "战斗胜利后未配置任何战利品奖励。";
+            ? $"\u6218\u6597\u80dc\u5229\u540e\u5c06\u83b7\u5f97\u6218\u5229\u54c1\uff1a{string.Join("\uff0c", descriptions)}\u3002"
+            : "\u6218\u6597\u80dc\u5229\u540e\u672a\u914d\u7f6e\u4efb\u4f55\u6218\u5229\u54c1\u5956\u52b1\u3002";
         return true;
     }
 
     private static bool TryQueueEncounterVictoryRelicRewards(BattleEncounterData encounterData, MapEventBuiltInEffectData effectData, out string message)
     {
-        if (!TryBuildAvailableRelicRewards(effectData, out List<MapEventRelicRewardEntry> availableRewards, out message))
+        if (!TryBuildAvailableRelicRewards(effectData, out List<Relic_SO> availableRewards, out message))
             return false;
 
         int pickCount = RollPickCount(effectData.relicPickCountMin, effectData.relicPickCountMax, availableRewards.Count);
@@ -138,27 +138,27 @@ public static class MapEventRewardService
 
         for (int i = 0; i < pickCount; i++)
         {
-            int selectedIndex = UnityEngine.Random.Range(0, availableRewards.Count);
-            MapEventRelicRewardEntry selectedReward = availableRewards[selectedIndex];
-            availableRewards.RemoveAt(selectedIndex);
+            Relic_SO selectedRelic = DrawRelicReward(availableRewards, effectData.relicRarityWeightTable, effectData.relicTable);
+            if (selectedRelic == null)
+                continue;
 
             encounterData.pendingVictoryRelicRewards.Add(new RunRelicState
             {
-                relicData = selectedReward.relicData,
+                relicData = selectedRelic,
                 amount = 1
             });
-            descriptions.Add(selectedReward.relicData.DisplayName);
+            descriptions.Add(selectedRelic.DisplayName);
         }
 
         message = descriptions.Count > 0
-            ? $"战斗胜利后将获得遗物：{string.Join("，", descriptions)}。"
-            : "战斗胜利后未配置任何遗物奖励。";
+            ? $"\u6218\u6597\u80dc\u5229\u540e\u5c06\u83b7\u5f97\u9057\u7269\uff1a{string.Join("\uff0c", descriptions)}\u3002"
+            : "\u6218\u6597\u80dc\u5229\u540e\u672a\u914d\u7f6e\u4efb\u4f55\u9057\u7269\u5956\u52b1\u3002";
         return true;
     }
 
     private static bool TryQueueEncounterVictoryBlueprintRewards(BattleEncounterData encounterData, MapEventBuiltInEffectData effectData, out string message)
     {
-        if (!TryBuildAvailableBlueprintRewards(effectData, out List<MapEventBlueprintRewardEntry> availableRewards, out message))
+        if (!TryBuildAvailableBlueprintRewards(effectData, out List<CraftingBlueprint_SO> availableRewards, out message))
             return false;
 
         int pickCount = RollPickCount(effectData.blueprintPickCountMin, effectData.blueprintPickCountMax, availableRewards.Count);
@@ -166,21 +166,21 @@ public static class MapEventRewardService
 
         for (int i = 0; i < pickCount; i++)
         {
-            int selectedIndex = UnityEngine.Random.Range(0, availableRewards.Count);
-            MapEventBlueprintRewardEntry selectedReward = availableRewards[selectedIndex];
-            availableRewards.RemoveAt(selectedIndex);
+            CraftingBlueprint_SO selectedBlueprint = DrawBlueprintReward(availableRewards, effectData.blueprintRarityWeightTable);
+            if (selectedBlueprint == null)
+                continue;
 
             encounterData.pendingVictoryBlueprintRewards.Add(new RunBlueprintState
             {
-                blueprintData = selectedReward.blueprintData,
+                blueprintData = selectedBlueprint,
                 amount = 1
             });
-            descriptions.Add(selectedReward.blueprintData.DisplayName);
+            descriptions.Add(selectedBlueprint.DisplayName);
         }
 
         message = descriptions.Count > 0
-            ? $"战斗胜利后将获得图纸：{string.Join("，", descriptions)}。"
-            : "战斗胜利后未配置任何图纸奖励。";
+            ? $"\u6218\u6597\u80dc\u5229\u540e\u5c06\u83b7\u5f97\u56fe\u7eb8\uff1a{string.Join("\uff0c", descriptions)}\u3002"
+            : "\u6218\u6597\u80dc\u5229\u540e\u672a\u914d\u7f6e\u4efb\u4f55\u56fe\u7eb8\u5956\u52b1\u3002";
         return true;
     }
 
@@ -192,7 +192,7 @@ public static class MapEventRewardService
         availableRewards = new List<MapEventLootRewardEntry>();
         if (effectData == null || effectData.lootRewards == null || effectData.lootRewards.Count == 0)
         {
-            message = "该事件效果未配置战利品列表。";
+            message = "\u8be5\u4e8b\u4ef6\u6548\u679c\u672a\u914d\u7f6e\u6218\u5229\u54c1\u5217\u8868\u3002";
             return false;
         }
 
@@ -205,7 +205,7 @@ public static class MapEventRewardService
 
         if (availableRewards.Count == 0)
         {
-            message = "该事件效果未配置有效的战利品。";
+            message = "\u8be5\u4e8b\u4ef6\u6548\u679c\u672a\u914d\u7f6e\u6709\u6548\u7684\u6218\u5229\u54c1\u3002";
             return false;
         }
 
@@ -215,26 +215,33 @@ public static class MapEventRewardService
 
     private static bool TryBuildAvailableRelicRewards(
         MapEventBuiltInEffectData effectData,
-        out List<MapEventRelicRewardEntry> availableRewards,
+        out List<Relic_SO> availableRewards,
         out string message)
     {
-        availableRewards = new List<MapEventRelicRewardEntry>();
-        if (effectData == null || effectData.relicRewards == null || effectData.relicRewards.Count == 0)
+        availableRewards = new List<Relic_SO>();
+        if (effectData == null || effectData.relicTable == null)
         {
-            message = "该事件效果未配置遗物列表。";
+            message = "\u8be5\u4e8b\u4ef6\u6548\u679c\u672a\u914d\u7f6e\u9057\u7269\u8868\u3002";
             return false;
         }
 
-        for (int i = 0; i < effectData.relicRewards.Count; i++)
+        IReadOnlyList<Relic_SO> relics = effectData.relicTable.Relics;
+        if (relics == null)
         {
-            MapEventRelicRewardEntry reward = effectData.relicRewards[i];
-            if (reward != null && reward.relicData != null)
-                availableRewards.Add(reward);
+            message = "\u8be5\u4e8b\u4ef6\u6548\u679c\u672a\u914d\u7f6e\u6709\u6548\u7684\u9057\u7269\u3002";
+            return false;
+        }
+
+        for (int i = 0; i < relics.Count; i++)
+        {
+            Relic_SO relic = relics[i];
+            if (relic != null && !availableRewards.Contains(relic))
+                availableRewards.Add(relic);
         }
 
         if (availableRewards.Count == 0)
         {
-            message = "该事件效果未配置有效的遗物。";
+            message = "\u8be5\u4e8b\u4ef6\u6548\u679c\u672a\u914d\u7f6e\u6709\u6548\u7684\u9057\u7269\u3002";
             return false;
         }
 
@@ -242,32 +249,260 @@ public static class MapEventRewardService
         return true;
     }
 
+    private static Relic_SO DrawRelicReward(
+        List<Relic_SO> availableRewards,
+        LootRarityWeightTable_SO rarityWeightTable,
+        RelicTable_SO relicTable)
+    {
+        if (availableRewards == null || availableRewards.Count == 0)
+            return null;
+
+        Dictionary<LootRarity, List<Relic_SO>> rarityBuckets = BuildRelicRarityBuckets(availableRewards);
+        if (rarityWeightTable != null && rarityWeightTable.HasPositiveWeights)
+        {
+            LootRarity selectedRarity = SelectWeightedRewardRarity(rarityWeightTable);
+            List<Relic_SO> selectedBucket = ResolveRelicBucketWithRarityFallback(rarityBuckets, selectedRarity);
+            if (selectedBucket != null && selectedBucket.Count > 0)
+            {
+                int bucketIndex = Random.Range(0, selectedBucket.Count);
+                Relic_SO selectedRelic = selectedBucket[bucketIndex];
+                availableRewards.Remove(selectedRelic);
+                return selectedRelic;
+            }
+        }
+
+        Relic_SO tableWeightedRelic = relicTable != null
+            ? relicTable.DrawRandomRelic(null, BuildExcludedRelics(relicTable, availableRewards))
+            : null;
+        if (tableWeightedRelic != null && availableRewards.Remove(tableWeightedRelic))
+            return tableWeightedRelic;
+
+        int selectedIndex = Random.Range(0, availableRewards.Count);
+        Relic_SO fallbackRelic = availableRewards[selectedIndex];
+        availableRewards.RemoveAt(selectedIndex);
+        return fallbackRelic;
+    }
+
+    private static HashSet<Relic_SO> BuildExcludedRelics(RelicTable_SO relicTable, List<Relic_SO> availableRewards)
+    {
+        HashSet<Relic_SO> excludedRelics = new HashSet<Relic_SO>();
+        if (relicTable == null || relicTable.Relics == null)
+            return excludedRelics;
+
+        HashSet<Relic_SO> availableSet = new HashSet<Relic_SO>(availableRewards);
+        IReadOnlyList<Relic_SO> relics = relicTable.Relics;
+        for (int i = 0; i < relics.Count; i++)
+        {
+            Relic_SO relic = relics[i];
+            if (relic != null && !availableSet.Contains(relic))
+                excludedRelics.Add(relic);
+        }
+
+        return excludedRelics;
+    }
+
+    private static Dictionary<LootRarity, List<Relic_SO>> BuildRelicRarityBuckets(List<Relic_SO> availableRewards)
+    {
+        Dictionary<LootRarity, List<Relic_SO>> rarityBuckets = new Dictionary<LootRarity, List<Relic_SO>>();
+        for (int i = 0; i < availableRewards.Count; i++)
+        {
+            Relic_SO relic = availableRewards[i];
+            if (relic == null)
+                continue;
+
+            if (!rarityBuckets.TryGetValue(relic.rarity, out List<Relic_SO> bucket))
+            {
+                bucket = new List<Relic_SO>();
+                rarityBuckets.Add(relic.rarity, bucket);
+            }
+
+            bucket.Add(relic);
+        }
+
+        return rarityBuckets;
+    }
+
+    private static List<Relic_SO> ResolveRelicBucketWithRarityFallback(
+        Dictionary<LootRarity, List<Relic_SO>> rarityBuckets,
+        LootRarity selectedRarity)
+    {
+        if (TryGetNonEmptyRelicBucket(rarityBuckets, selectedRarity, out List<Relic_SO> directBucket))
+            return directBucket;
+
+        for (int rarityIndex = (int)selectedRarity - 1; rarityIndex >= (int)LootRarity.Common; rarityIndex--)
+        {
+            if (TryGetNonEmptyRelicBucket(rarityBuckets, (LootRarity)rarityIndex, out List<Relic_SO> lowerBucket))
+                return lowerBucket;
+        }
+
+        for (int rarityIndex = (int)selectedRarity + 1; rarityIndex <= (int)LootRarity.Legendary; rarityIndex++)
+        {
+            if (TryGetNonEmptyRelicBucket(rarityBuckets, (LootRarity)rarityIndex, out List<Relic_SO> higherBucket))
+                return higherBucket;
+        }
+
+        return null;
+    }
+
+    private static bool TryGetNonEmptyRelicBucket(
+        Dictionary<LootRarity, List<Relic_SO>> rarityBuckets,
+        LootRarity rarity,
+        out List<Relic_SO> bucket)
+    {
+        bucket = null;
+        if (rarityBuckets == null)
+            return false;
+
+        if (!rarityBuckets.TryGetValue(rarity, out List<Relic_SO> foundBucket) || foundBucket == null || foundBucket.Count == 0)
+            return false;
+
+        bucket = foundBucket;
+        return true;
+    }
+
     private static bool TryBuildAvailableBlueprintRewards(
         MapEventBuiltInEffectData effectData,
-        out List<MapEventBlueprintRewardEntry> availableRewards,
+        out List<CraftingBlueprint_SO> availableRewards,
         out string message)
     {
-        availableRewards = new List<MapEventBlueprintRewardEntry>();
-        if (effectData == null || effectData.blueprintRewards == null || effectData.blueprintRewards.Count == 0)
+        availableRewards = new List<CraftingBlueprint_SO>();
+        if (effectData == null || effectData.blueprintTable == null)
         {
-            message = "该事件效果未配置图纸列表。";
+            message = "\u8be5\u4e8b\u4ef6\u6548\u679c\u672a\u914d\u7f6e\u56fe\u7eb8\u8868\u3002";
             return false;
         }
 
-        for (int i = 0; i < effectData.blueprintRewards.Count; i++)
+        IReadOnlyList<CraftingBlueprint_SO> blueprints = effectData.blueprintTable.GetValidBlueprints();
+        for (int i = 0; i < blueprints.Count; i++)
         {
-            MapEventBlueprintRewardEntry reward = effectData.blueprintRewards[i];
-            if (reward != null && reward.blueprintData != null)
-                availableRewards.Add(reward);
+            CraftingBlueprint_SO blueprint = blueprints[i];
+            if (blueprint != null && !availableRewards.Contains(blueprint))
+                availableRewards.Add(blueprint);
         }
 
         if (availableRewards.Count == 0)
         {
-            message = "该事件效果未配置有效的图纸。";
+            message = "\u8be5\u4e8b\u4ef6\u6548\u679c\u672a\u914d\u7f6e\u6709\u6548\u7684\u56fe\u7eb8\u3002";
             return false;
         }
 
         message = string.Empty;
+        return true;
+    }
+
+    private static CraftingBlueprint_SO DrawBlueprintReward(
+        List<CraftingBlueprint_SO> availableRewards,
+        LootRarityWeightTable_SO rarityWeightTable)
+    {
+        if (availableRewards == null || availableRewards.Count == 0)
+            return null;
+
+        Dictionary<LootRarity, List<CraftingBlueprint_SO>> rarityBuckets = BuildBlueprintRarityBuckets(availableRewards);
+        if (rarityWeightTable != null && rarityWeightTable.HasPositiveWeights)
+        {
+            LootRarity selectedRarity = SelectWeightedRewardRarity(rarityWeightTable);
+            List<CraftingBlueprint_SO> selectedBucket = ResolveBlueprintBucketWithRarityFallback(rarityBuckets, selectedRarity);
+            if (selectedBucket != null && selectedBucket.Count > 0)
+            {
+                int bucketIndex = Random.Range(0, selectedBucket.Count);
+                CraftingBlueprint_SO selectedBlueprint = selectedBucket[bucketIndex];
+                availableRewards.Remove(selectedBlueprint);
+                return selectedBlueprint;
+            }
+        }
+
+        int selectedIndex = Random.Range(0, availableRewards.Count);
+        CraftingBlueprint_SO fallbackBlueprint = availableRewards[selectedIndex];
+        availableRewards.RemoveAt(selectedIndex);
+        return fallbackBlueprint;
+    }
+
+    private static Dictionary<LootRarity, List<CraftingBlueprint_SO>> BuildBlueprintRarityBuckets(List<CraftingBlueprint_SO> availableRewards)
+    {
+        Dictionary<LootRarity, List<CraftingBlueprint_SO>> rarityBuckets = new Dictionary<LootRarity, List<CraftingBlueprint_SO>>();
+        for (int i = 0; i < availableRewards.Count; i++)
+        {
+            CraftingBlueprint_SO blueprint = availableRewards[i];
+            if (blueprint == null)
+                continue;
+
+            if (!rarityBuckets.TryGetValue(blueprint.rarity, out List<CraftingBlueprint_SO> bucket))
+            {
+                bucket = new List<CraftingBlueprint_SO>();
+                rarityBuckets.Add(blueprint.rarity, bucket);
+            }
+
+            bucket.Add(blueprint);
+        }
+
+        return rarityBuckets;
+    }
+
+    private static LootRarity SelectWeightedRewardRarity(LootRarityWeightTable_SO rarityWeightTable)
+    {
+        float totalWeight = 0f;
+        List<LootRarity> weightedRarities = new List<LootRarity>();
+        List<float> cumulativeWeights = new List<float>();
+        for (int rarityIndex = (int)LootRarity.Common; rarityIndex <= (int)LootRarity.Legendary; rarityIndex++)
+        {
+            LootRarity rarity = (LootRarity)rarityIndex;
+            float weight = rarityWeightTable != null ? Mathf.Max(0f, rarityWeightTable.GetWeight(rarity)) : 0f;
+            if (weight <= 0f)
+                continue;
+
+            totalWeight += weight;
+            weightedRarities.Add(rarity);
+            cumulativeWeights.Add(totalWeight);
+        }
+
+        if (totalWeight <= 0f)
+            return LootRarity.Common;
+
+        float roll = Random.Range(0f, totalWeight);
+        for (int i = 0; i < cumulativeWeights.Count; i++)
+        {
+            if (roll <= cumulativeWeights[i])
+                return weightedRarities[i];
+        }
+
+        return weightedRarities[weightedRarities.Count - 1];
+    }
+
+    private static List<CraftingBlueprint_SO> ResolveBlueprintBucketWithRarityFallback(
+        Dictionary<LootRarity, List<CraftingBlueprint_SO>> rarityBuckets,
+        LootRarity selectedRarity)
+    {
+        if (TryGetNonEmptyBlueprintBucket(rarityBuckets, selectedRarity, out List<CraftingBlueprint_SO> directBucket))
+            return directBucket;
+
+        for (int rarityIndex = (int)selectedRarity - 1; rarityIndex >= (int)LootRarity.Common; rarityIndex--)
+        {
+            if (TryGetNonEmptyBlueprintBucket(rarityBuckets, (LootRarity)rarityIndex, out List<CraftingBlueprint_SO> lowerBucket))
+                return lowerBucket;
+        }
+
+        for (int rarityIndex = (int)selectedRarity + 1; rarityIndex <= (int)LootRarity.Legendary; rarityIndex++)
+        {
+            if (TryGetNonEmptyBlueprintBucket(rarityBuckets, (LootRarity)rarityIndex, out List<CraftingBlueprint_SO> higherBucket))
+                return higherBucket;
+        }
+
+        return null;
+    }
+
+    private static bool TryGetNonEmptyBlueprintBucket(
+        Dictionary<LootRarity, List<CraftingBlueprint_SO>> rarityBuckets,
+        LootRarity rarity,
+        out List<CraftingBlueprint_SO> bucket)
+    {
+        bucket = null;
+        if (rarityBuckets == null)
+            return false;
+
+        if (!rarityBuckets.TryGetValue(rarity, out List<CraftingBlueprint_SO> foundBucket) || foundBucket == null || foundBucket.Count == 0)
+            return false;
+
+        bucket = foundBucket;
         return true;
     }
 
@@ -275,13 +510,13 @@ public static class MapEventRewardService
     {
         int min = Mathf.Max(1, minPickCount);
         int max = Mathf.Max(min, maxPickCount);
-        return Mathf.Min(UnityEngine.Random.Range(min, max + 1), Mathf.Max(0, availableCount));
+        return Mathf.Min(Random.Range(min, max + 1), Mathf.Max(0, availableCount));
     }
 
     private static int RollLootAmount(MapEventLootRewardEntry reward)
     {
         int amountMin = Mathf.Max(1, reward.amountMin);
         int amountMax = Mathf.Max(amountMin, reward.amountMax);
-        return UnityEngine.Random.Range(amountMin, amountMax + 1);
+        return Random.Range(amountMin, amountMax + 1);
     }
 }

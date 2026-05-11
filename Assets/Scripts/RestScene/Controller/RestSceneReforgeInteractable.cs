@@ -455,30 +455,23 @@ public class RestSceneReforgeInteractable : MonoBehaviour
 
     private LootItem_SO RollLootReforgeResult()
     {
-        if (selectedLootA == null || selectedLootB == null || selectedLootAttribute == null)
-            return null;
-
-        LootRarity rarity = selectedLootA.rarity;
-        List<LootItem_SO> primaryCandidates = new List<LootItem_SO>();
-        List<LootItem_SO> fallbackCandidates = new List<LootItem_SO>();
-        IReadOnlyList<LootItem_SO> lootPool = GetResolvedLootReforgePool();
-        for (int i = 0; i < lootPool.Count; i++)
-        {
-            LootItem_SO candidate = lootPool[i];
-            if (candidate == null || candidate.attribute != selectedLootAttribute || candidate.rarity != rarity)
-                continue;
-
-            fallbackCandidates.Add(candidate);
-            if (candidate != selectedLootA && candidate != selectedLootB)
-                primaryCandidates.Add(candidate);
-        }
-
-        List<LootItem_SO> resolvedCandidates = primaryCandidates.Count > 0 ? primaryCandidates : fallbackCandidates;
+        List<LootItem_SO> resolvedCandidates = BuildCurrentLootReforgeCandidates();
         if (resolvedCandidates.Count <= 0)
             return null;
 
         System.Random rng = CreateDeterministicRandom("LootReforge");
         return resolvedCandidates[rng.Next(resolvedCandidates.Count)];
+    }
+
+    private List<LootItem_SO> BuildCurrentLootReforgeCandidates()
+    {
+        if (selectedLootA == null || selectedLootB == null || selectedLootAttribute == null)
+            return new List<LootItem_SO>();
+
+        return RewardCandidateFilterService.BuildLootReforgeCandidates(
+            GetResolvedLootReforgePool(),
+            selectedLootA.rarity,
+            selectedLootAttribute);
     }
 
     private Relic_SO RollRelicReforgeResult()
@@ -764,9 +757,9 @@ public class RestSceneReforgeInteractable : MonoBehaviour
             if (selectedLootA == null || selectedLootB == null || selectedLootAttribute == null)
                 return "结果预览：选择完成后将显示为同阶、指定属性的随机战利品。";
 
-            LootItem_SO preview = RollLootReforgeResult();
-            return preview != null
-                ? $"结果预览：可能获得 {GetLootDisplayName(preview)}"
+            List<LootItem_SO> candidates = BuildCurrentLootReforgeCandidates();
+            return candidates.Count > 0
+                ? $"结果预览：可能获得 {BuildLootCandidateNameList(candidates)}"
                 : "结果预览：当前条件下没有可用结果。";
         }
 
@@ -777,6 +770,24 @@ public class RestSceneReforgeInteractable : MonoBehaviour
         return relicPreview != null
             ? $"结果预览：可能获得 {GetRelicDisplayName(relicPreview)}"
             : "结果预览：当前没有更高阶遗物可供重铸。";
+    }
+
+    private string BuildLootCandidateNameList(IReadOnlyList<LootItem_SO> candidates)
+    {
+        if (candidates == null || candidates.Count == 0)
+            return string.Empty;
+
+        List<string> names = new List<string>(candidates.Count);
+        for (int i = 0; i < candidates.Count; i++)
+        {
+            LootItem_SO candidate = candidates[i];
+            if (candidate == null)
+                continue;
+
+            names.Add(GetLootDisplayName(candidate));
+        }
+
+        return names.Count > 0 ? string.Join("、", names) : string.Empty;
     }
 
     private void HandleLootSelection(LootItem_SO lootItem)
@@ -850,6 +861,13 @@ public class RestSceneReforgeInteractable : MonoBehaviour
         if (selectedRelicA == null)
         {
             selectedRelicA = relicData;
+            RefreshMainPanel();
+            return;
+        }
+
+        if (selectedRelicA == relicData && selectedRelicB == null)
+        {
+            selectedRelicA = null;
             RefreshMainPanel();
             return;
         }

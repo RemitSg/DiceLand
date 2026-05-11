@@ -52,6 +52,55 @@ public class BattleButtonSkillSelectionTests
         Assert.IsTrue(battleButton.CanSelectSkillForAlly(ally, skill));
     }
 
+    [Test]
+    public void ResolveAllyContextualDiceRange_AppliesTargetStatusScalingRangeModifier()
+    {
+        BattleButton battleButton = CreateBattleButton();
+        BattleStatus_SO current = CreateStatus("current", "电流");
+        EnemySkill_SO skill = CreateSkill("Range Modifier Skill", 0);
+        skill.dicePowerRanges = new[]
+        {
+            new EnemySkill_SO.DicePowerRange
+            {
+                minPower = 1,
+                maxPower = 1
+            }
+        };
+        skill.diceEffectSettings = new[]
+        {
+            new EnemySkill_SO.DiceEffectSettings
+            {
+                rangeModifiers = new[]
+                {
+                    new EnemySkill_SO.ConditionalDiceRangeModifierEntry
+                    {
+                        useCondition = true,
+                        condition = EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold,
+                        targetStatusData = current,
+                        requiredStatusStacks = 1,
+                        minPowerBonus = 1,
+                        minPowerBonusCap = 3
+                    }
+                }
+            }
+        };
+        BattleAllyController ally = CreateAlly("Tester");
+        BattleEnemyController enemy = CreateEnemy("Target", skill);
+        ally.GrantTemporarySkill(skill, true);
+        Assert.IsTrue(ally.SetSelectedSkillIndex(0));
+        enemy.AddStatus(current, current.StatusId, current.DisplayName, 3);
+
+        EnemySkill_SO.DicePowerRange range = InvokeResolveAllyContextualDiceRange(
+            battleButton,
+            ally,
+            enemy,
+            0,
+            new EnemySkill_SO.DicePowerRange { minPower = 1, maxPower = 1 });
+
+        Assert.AreEqual(4, range.minPower);
+        Assert.AreEqual(4, range.maxPower);
+    }
+
     private BattleButton CreateBattleButton()
     {
         GameObject go = new GameObject("BattleButton");
@@ -99,6 +148,46 @@ public class BattleButtonSkillSelectionTests
         };
         createdObjects.Add(skill);
         return skill;
+    }
+
+    private BattleEnemyController CreateEnemy(string name, EnemySkill_SO skill)
+    {
+        GameObject go = new GameObject(name);
+        createdObjects.Add(go);
+
+        BattleEnemyController enemy = go.AddComponent<BattleEnemyController>();
+        EnemyData_SO enemyData = ScriptableObject.CreateInstance<EnemyData_SO>();
+        enemyData.enemyName = name;
+        enemyData.baseHP = 10;
+        enemyData.skillPool = new List<EnemySkill_SO> { skill };
+        createdObjects.Add(enemyData);
+
+        enemy.ApplyEnemyData(enemyData);
+        enemy.SelectRandomSkill(1);
+        return enemy;
+    }
+
+    private BattleStatus_SO CreateStatus(string statusId, string displayName)
+    {
+        BattleStatus_SO status = ScriptableObject.CreateInstance<BattleStatus_SO>();
+        SetPrivateField(status, "statusId", statusId);
+        SetPrivateField(status, "displayName", displayName);
+        createdObjects.Add(status);
+        return status;
+    }
+
+    private static EnemySkill_SO.DicePowerRange InvokeResolveAllyContextualDiceRange(
+        BattleButton battleButton,
+        BattleAllyController ally,
+        BattleEnemyController target,
+        int diceIndex,
+        EnemySkill_SO.DicePowerRange range)
+    {
+        MethodInfo method = typeof(BattleButton).GetMethod(
+            "ApplyAllyContextualDiceRangeModifiers",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(method);
+        return (EnemySkill_SO.DicePowerRange)method.Invoke(battleButton, new object[] { ally, target, diceIndex, range });
     }
 
     private static void SetPrivateField<TValue>(object target, string fieldName, TValue value)

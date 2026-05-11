@@ -34,6 +34,11 @@ public class Weapon_SO : ScriptableObject
     public Sprite icon;
     public GameObject weaponPrefab;
 
+    [Header("Battle Speed")]
+    [Min(1)]
+    [Tooltip("Base speed button count granted to an ally while this weapon is equipped.")]
+    public int speedButtonCount = 1;
+
     [Header("Legacy Fallback Power")]
     [Tooltip("当武器未配置技能时，友方会回退到这个单骰威力范围")]
     public int minPower = 1;
@@ -68,5 +73,7 @@ public class Weapon_SO : ScriptableObject
             minPower = 0;
         if (maxPower < minPower)
             maxPower = minPower;
+        if (speedButtonCount < 1)
+            speedButtonCount = 1;
     }
 }

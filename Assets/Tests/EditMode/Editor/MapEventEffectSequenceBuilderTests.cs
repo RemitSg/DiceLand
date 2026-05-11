@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using UnityEngine;
 
 public class MapEventEffectSequenceBuilderTests
 {
@@ -45,14 +46,18 @@ public class MapEventEffectSequenceBuilderTests
     public void BuildAllEffects_CopiesPrimaryRewardListsWithoutAliasingOptionLists()
     {
         MapEventLootRewardEntry lootReward = new MapEventLootRewardEntry { amountMin = 1, amountMax = 3 };
-        MapEventRelicRewardEntry relicReward = new MapEventRelicRewardEntry();
-        MapEventBlueprintRewardEntry blueprintReward = new MapEventBlueprintRewardEntry();
+        RelicTable_SO relicTable = ScriptableObject.CreateInstance<RelicTable_SO>();
+        LootRarityWeightTable_SO relicRarityWeightTable = ScriptableObject.CreateInstance<LootRarityWeightTable_SO>();
+        BlueprintTable_SO blueprintTable = ScriptableObject.CreateInstance<BlueprintTable_SO>();
+        LootRarityWeightTable_SO blueprintRarityWeightTable = ScriptableObject.CreateInstance<LootRarityWeightTable_SO>();
         MapEventOptionData option = new MapEventOptionData
         {
             builtInEffectType = MapEventOptionBuiltInEffectType.GainLoot,
             lootRewards = new List<MapEventLootRewardEntry> { lootReward },
-            relicRewards = new List<MapEventRelicRewardEntry> { relicReward },
-            blueprintRewards = new List<MapEventBlueprintRewardEntry> { blueprintReward }
+            relicTable = relicTable,
+            relicRarityWeightTable = relicRarityWeightTable,
+            blueprintTable = blueprintTable,
+            blueprintRarityWeightTable = blueprintRarityWeightTable
         };
 
         MapEventBuiltInEffectData primary = MapEventEffectSequenceBuilder.BuildPrimaryEffect(option);
@@ -60,8 +65,15 @@ public class MapEventEffectSequenceBuilderTests
         Assert.AreEqual(1, primary.lootRewards.Count);
         Assert.AreSame(lootReward, primary.lootRewards[0]);
         Assert.AreNotSame(option.lootRewards, primary.lootRewards);
-        Assert.AreNotSame(option.relicRewards, primary.relicRewards);
-        Assert.AreNotSame(option.blueprintRewards, primary.blueprintRewards);
+        Assert.AreSame(relicTable, primary.relicTable);
+        Assert.AreSame(relicRarityWeightTable, primary.relicRarityWeightTable);
+        Assert.AreSame(blueprintTable, primary.blueprintTable);
+        Assert.AreSame(blueprintRarityWeightTable, primary.blueprintRarityWeightTable);
+
+        Object.DestroyImmediate(relicTable);
+        Object.DestroyImmediate(relicRarityWeightTable);
+        Object.DestroyImmediate(blueprintTable);
+        Object.DestroyImmediate(blueprintRarityWeightTable);
     }
 
     [Test]
