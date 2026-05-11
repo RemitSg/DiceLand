@@ -16,6 +16,10 @@ public static class BattleEnemyBuiltInEffectEligibilityService
                 return effect.statusStackAmount > 0;
             case EnemySkill_SO.BuiltInEffectType.TransferRandomNegativeStatus:
                 return effect.amount > 0 || effect.fallbackAmount > 0;
+            case EnemySkill_SO.BuiltInEffectType.QueueNextDicePowerBonus:
+                return effect.amount != 0;
+            case EnemySkill_SO.BuiltInEffectType.DamageByTargetStatusStacksDivided:
+                return effect.amount > 0;
             default:
                 return false;
         }

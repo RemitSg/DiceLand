@@ -49,7 +49,9 @@ public class EnemySkill_SO : ScriptableObject
         Heal = 0,
         Damage = 1,
         ApplyStatus = 2,
-        TransferRandomNegativeStatus = 3
+        TransferRandomNegativeStatus = 3,
+        QueueNextDicePowerBonus = 4,
+        DamageByTargetStatusStacksDivided = 5
     }
 
     public enum BuiltInConditionScope
@@ -93,7 +95,8 @@ public class EnemySkill_SO : ScriptableObject
         TargetSkillIsSpecific = 11,
         SelfSpeedHigherThanValue = 12,
         SelfSpeedLowerThanValue = 13,
-        TargetNegativeStatusTypesAtLeast = 14
+        TargetNegativeStatusTypesAtLeast = 14,
+        SelfHpRatioBelowOrEqual = 15
     }
 
     public enum SkillCategory

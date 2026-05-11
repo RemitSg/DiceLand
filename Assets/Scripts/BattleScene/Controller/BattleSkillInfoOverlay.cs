@@ -1229,7 +1229,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 continue;
 
             string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(operation.trigger), triggerHighlightColor);
-            string consumeTargetLabel = BuildColoredToken(GetDamageTargetLabel(operation.targetMode, operation.randomTargetCount, attackerIsAlly), targetHighlightColor);
+            string consumeTargetLabel = BuildColoredToken(GetConsumedStatusTargetLabel(operation, attackerIsAlly), targetHighlightColor);
             string consumedStackLabel = BuildColoredToken(Mathf.Max(1, operation.stackAmount).ToString(), valueHighlightColor);
             string consumedStatusLabel = BuildColoredToken(GetStatusLabel(operation), targetHighlightColor);
             string gainText = JoinGainClauses(gains);
@@ -1610,7 +1610,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
     private static string GetConsumedStatusTargetLabel(EnemySkill_SO.StatusStackOperationEffectEntry effect, bool attackerIsAlly)
     {
         if (effect.targetMode == EnemySkill_SO.DamageTargetMode.CurrentTarget)
-            return attackerIsAlly ? "敌人" : "目标";
+            return attackerIsAlly ? "当前目标（敌人）" : "当前目标";
 
         return GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly);
     }
@@ -1662,6 +1662,21 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                     }
 
                     effectLines.Add(transferLine);
+                    break;
+                case EnemySkill_SO.BuiltInEffectType.QueueNextDicePowerBonus:
+                    if (effect.amount == 0)
+                        continue;
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使该技能的下一个骰子威力 {BuildColoredToken(FormatSignedInt(effect.amount), valueHighlightColor)}");
+                    break;
+                case EnemySkill_SO.BuiltInEffectType.DamageByTargetStatusStacksDivided:
+                    if (effect.amount <= 0)
+                        continue;
+                    int threshold = Mathf.Max(1, effect.requiredConditionStatusStacks);
+                    string statusLabel = BuildColoredToken(GetBuiltInGeneralConditionStatusLabel(effect), valueHighlightColor);
+                    string damageLabel = effect.amount == 1
+                        ? $"相当于 {targetLabel} {statusLabel} 层数 / {BuildColoredToken(threshold.ToString(), valueHighlightColor)}"
+                        : $"相当于 {targetLabel} 每 {BuildColoredToken(threshold.ToString(), valueHighlightColor)} 层 {statusLabel} {BuildColoredToken(effect.amount.ToString(), valueHighlightColor)} 点";
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}对{targetLabel}额外造成 {damageLabel} 的伤害");
                     break;
             }
         }
@@ -1796,6 +1811,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"\u968f\u673a {Mathf.Max(1, randomTargetCount)} \u540d\u76ee\u6807";
             case EnemySkill_SO.DamageTargetMode.AllOpponents:
                 return "\u6240\u6709\u76ee\u6807";
+            case EnemySkill_SO.DamageTargetMode.AllFriendlies:
+                return "全体友方";
+            case EnemySkill_SO.DamageTargetMode.LowestHpFriendly:
+                return "血量最低的友方";
             default:
                 return "\u76ee\u6807";
         }
@@ -1964,6 +1983,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetHealingConditionStatusLabel(effect)}";
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
                 return $"目标每拥有 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetHealingConditionStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
+                return $"目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 种负面状态";
+            case EnemySkill_SO.PowerModifierCondition.SelfHpRatioBelowOrEqual:
+                return $"自身生命值不高于 {Mathf.Clamp(effect.requiredConditionStatusStacks, 0, 100)}%";
             default:
                 return "\u672a\u914d\u7f6e\u6761\u4ef6";
         }
@@ -2045,6 +2068,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"目标每拥有 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetBuiltInGeneralConditionStatusLabel(effect)}";
             case EnemySkill_SO.PowerModifierCondition.TargetSkillIsSpecific:
                 return $"与技能 {GetBuiltInGeneralConditionSkillLabel(effect)} 拼点";
+            case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
+                return $"目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 种负面状态";
+            case EnemySkill_SO.PowerModifierCondition.SelfHpRatioBelowOrEqual:
+                return $"自身生命值不高于 {Mathf.Clamp(effect.requiredConditionStatusStacks, 0, 100)}%";
             default:
                 return "未配置条件";
         }
@@ -2085,6 +2112,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"随机 {Mathf.Max(1, effect.randomTargetCount)} 名目标";
             case EnemySkill_SO.DamageTargetMode.AllOpponents:
                 return "所有目标";
+            case EnemySkill_SO.DamageTargetMode.AllFriendlies:
+                return "全体友方";
+            case EnemySkill_SO.DamageTargetMode.LowestHpFriendly:
+                return "血量最低的友方";
             default:
                 return attackerIsAlly ? "敌方目标" : "目标";
         }
@@ -2141,6 +2172,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"目标每拥有 {Mathf.Max(1, effect.requiredStatusStacks)} 层 {GetPowerModifierStatusLabel(effect)}";
             case EnemySkill_SO.PowerModifierCondition.TargetSkillIsSpecific:
                 return $"与技能 {GetPowerModifierTargetSkillLabel(effect)} 拼点";
+            case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
+                return $"目标拥有至少 {Mathf.Max(1, effect.requiredStatusStacks)} 种负面状态";
+            case EnemySkill_SO.PowerModifierCondition.SelfHpRatioBelowOrEqual:
+                return $"自身生命值不高于 {Mathf.Clamp(effect.requiredStatusStacks, 0, 100)}%";
             default:
                 return "\u672a\u914d\u7f6e\u6761\u4ef6";
         }
@@ -2201,6 +2236,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"目标每拥有 {Mathf.Max(1, effect.requiredStatusStacks)} 层 {GetRangeModifierStatusLabel(effect)}";
             case EnemySkill_SO.PowerModifierCondition.TargetSkillIsSpecific:
                 return $"与技能 {GetRangeModifierTargetSkillLabel(effect)} 拼点";
+            case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
+                return $"目标拥有至少 {Mathf.Max(1, effect.requiredStatusStacks)} 种负面状态";
+            case EnemySkill_SO.PowerModifierCondition.SelfHpRatioBelowOrEqual:
+                return $"自身生命值不高于 {Mathf.Clamp(effect.requiredStatusStacks, 0, 100)}%";
             default:
                 return "未配置条件";
         }
@@ -2262,6 +2301,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "[ 造成伤害时 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnSingleAttack:
                 return "[ 单方面攻击时 ]";
+            case EnemySkill_SO.DiceEffectTrigger.OnAllDiceHit:
+                return "[ 全部攻击段命中时 ]";
             default:
                 return $"[ {trigger} ]";
         }
@@ -2283,6 +2324,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "[ 造成伤害时 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnSingleAttack:
                 return "[ 单方面攻击时 ]";
+            case EnemySkill_SO.DiceEffectTrigger.OnAllDiceHit:
+                return "[ 全部攻击段命中时 ]";
             default:
                 return $"[ {trigger} ]";
         }

@@ -33,6 +33,12 @@ MonoBehaviour:
     statusData: {fileID: 11400000, guid: 31bf17620ef7438984f2e0b6eea03a6f, type: 2}
   - statusId: stun
     statusData: {fileID: 0}
+  - statusId: weaknessTemp
+    statusData: {fileID: 11400000, guid: 118df0d370613694cbe82414757783e7, type: 2}
+  - statusId: guardbreak
+    statusData: {fileID: 11400000, guid: 2084499a59216d94590f4055799aa0b4, type: 2}
+  - statusId: guardbreak
+    statusData: {fileID: 11400000, guid: 4a6b7a9d55f6f3b40b4842d09688e53f, type: 2}
   positiveStatuses:
   - statusId: shield
     statusData: {fileID: 11400000, guid: d9960fbafac14cf6b9c6bd093fd9293f, type: 2}
@@ -44,3 +50,7 @@ MonoBehaviour:
     statusData: {fileID: 11400000, guid: 5ecc963d5be148b7956424cb4cd1d165, type: 2}
   - statusId: luck
     statusData: {fileID: 11400000, guid: 82fda4e478cf45a794ebe7c90557b7ad, type: 2}
+  - statusId: strength
+    statusData: {fileID: 11400000, guid: d7f98e43df6b46d7a67f2b97cb5d7ed2, type: 2}
+  - statusId: guard
+    statusData: {fileID: 11400000, guid: 7ba5af759a594fcbbc0a7f0dfe0660d2, type: 2}
