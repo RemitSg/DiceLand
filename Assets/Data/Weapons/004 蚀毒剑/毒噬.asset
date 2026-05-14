@@ -31,7 +31,7 @@ MonoBehaviour:
   dicePowerRanges: []
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 7336644444123945357, guid: d7f2a1e18e6ab324cac6215556298a96, type: 3}
-    hitEffectPrefab: {fileID: 0}
+    hitEffectPrefab: {fileID: 835193720789024790, guid: e039a8d029e993c458e1f48a7de683d5, type: 3}
     clashOffsetSpace: 0
     clashPositionOffset: {x: 1, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
@@ -40,12 +40,12 @@ MonoBehaviour:
     overrideClashDuration: 0
     clashDuration: 0
     hitOffsetSpace: 0
-    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitPositionOffset: {x: 1, y: 0, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
     hitScale: {x: 0, y: 0, z: 0}
     hitSortingOrderOffset: 0
-    overrideHitDamageDelay: 0
-    hitDamageDelay: 0
+    overrideHitDamageDelay: 1
+    hitDamageDelay: 0.1
     overrideHitReactionDelay: 0
     hitReactionDelay: 0
     skillSpriteOverride: {fileID: 0}
@@ -53,8 +53,8 @@ MonoBehaviour:
     skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
     skillSpriteScale: {x: 0, y: 0, z: 0}
     skillSpriteSortingOrderOffset: 0
-    overrideSkillSpriteDuration: 0
-    skillSpriteDuration: 0
+    overrideSkillSpriteDuration: 1
+    skillSpriteDuration: 0.5
   diceEffectSettings:
   - damageEffects: []
     statusEffects:
