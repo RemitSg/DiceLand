@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
-  m_Name: 扼念
+  m_Name: "\u627C\u5FF5"
   m_EditorClassIdentifier: 
-  skillName: 扼念
-  description: 两剑，足以斩断对生的渴望。
+  skillName: "\u627C\u5FF5"
+  description: "\u4E24\u5251\uFF0C\u8DB3\u4EE5\u65A9\u65AD\u5BF9\u751F\u7684\u6E34\u671B\u3002"
   skillCategory: 0
   energyCost: 4
   requiredSelfStatusData: {fileID: 0}
@@ -33,11 +33,36 @@ MonoBehaviour:
     maxPower: 5
   - minPower: 2
     maxPower: 5
-  dicePresentationSettings: []
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 1612762830253837401, guid: 0c1d4944e84403d478cce7a73dd5b503, type: 3}
+    hitEffectPrefab: {fileID: 7645811987047471001, guid: fa61cc6949a4efc45a945bad38b0b566, type: 3}
+    clashOffsetSpace: 0
+    clashPositionOffset: {x: 1, y: 0, z: 0}
+    clashRotationOffset: {x: -90, y: -90, z: 180}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 1
+    clashDuration: 0.5
+    hitOffsetSpace: 0
+    hitPositionOffset: {x: 1, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 1
+    hitDamageDelay: 0.5
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 0}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
   diceEffectSettings:
   - damageEffects: []
     statusEffects:
-    - effectName: 扼念开创
+    - effectName: "\u627C\u5FF5\u5F00\u521B"
       trigger: 0
       targetMode: 0
       statusData: {fileID: 11400000, guid: f3d7f5c8ab6d4a7db9c2e4f1860a5b31, type: 2}
@@ -70,7 +95,7 @@ MonoBehaviour:
     healingEffects: []
     builtInEffects: []
     rangeModifiers:
-    - effectName: 扼念迫杀
+    - effectName: "\u627C\u5FF5\u8FEB\u6740"
       useCondition: 1
       condition: 4
       targetStatusData: {fileID: 11400000, guid: f3d7f5c8ab6d4a7db9c2e4f1860a5b31, type: 2}

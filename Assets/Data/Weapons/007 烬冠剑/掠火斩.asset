@@ -31,7 +31,32 @@ MonoBehaviour:
   dicePowerRanges:
   - minPower: 3
     maxPower: 4
-  dicePresentationSettings: []
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 3930479448134652122, guid: 5616637d0ac349d408050d8e124722e7, type: 3}
+    hitEffectPrefab: {fileID: 3930479448134652122, guid: 5616637d0ac349d408050d8e124722e7, type: 3}
+    clashOffsetSpace: 0
+    clashPositionOffset: {x: 1, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: -90}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 1
+    clashDuration: 0.01
+    hitOffsetSpace: 0
+    hitPositionOffset: {x: 1, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: -90}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 1
+    hitDamageDelay: 0.01
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 0}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 1
+    skillSpriteDuration: 0.01
   diceEffectSettings:
   - damageEffects: []
     statusEffects:
@@ -50,7 +75,7 @@ MonoBehaviour:
       conditionStatusData: {fileID: 0}
       conditionTargetSkillData: {fileID: 0}
       conditionStatusType: 0
-      requiredConditionStatusStacks: 0
+      requiredConditionStatusStacks: 1
       requiredConditionSpeedValue: 0
       requiredConditionSpeedDifference: 0
     powerModifiers: []
@@ -65,7 +90,7 @@ MonoBehaviour:
       conditionScope: 0
       conditionStatusData: {fileID: 0}
       conditionStatusType: 0
-      requiredStatusStacks: 0
+      requiredStatusStacks: 1
       amount: 1
       randomTargetCount: 1
       useCondition: 1
