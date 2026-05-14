@@ -23,6 +23,7 @@ public static class BattleTargetSelectionService
             case EnemySkill_SO.DamageTargetMode.AllFriendlies:
                 return BuildValidTargetList(candidates, isValidTarget);
             case EnemySkill_SO.DamageTargetMode.LowestHpFriendly:
+            case EnemySkill_SO.DamageTargetMode.LowestHpOpponent:
                 List<T> priorityPool = BuildValidTargetList(candidates, isValidTarget);
                 if (priorityPool.Count <= 1)
                     return priorityPool;

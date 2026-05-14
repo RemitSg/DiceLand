@@ -2,8 +2,11 @@ public struct BattleClashImpactPlan
 {
     public bool ApplyAllyHit;
     public bool ApplyEnemyHit;
+    public bool ApplyAllyClashWinEffects;
+    public bool ApplyEnemyClashWinEffects;
     public bool ApplyAllyMiss;
     public bool ApplyEnemyMiss;
+    public bool ApplyEnemyClashLoseEffects;
     public bool ApplyHornedGatekeeperClashWin;
     public bool ApplyPlayerDefenseClashWinRelics;
     public bool ShowZeroDamageOnAlly;
@@ -37,7 +40,9 @@ public static class BattleClashImpactPlanService
             case BattleClashOutcome.AllyAttackWins:
                 return new BattleClashImpactPlan
                 {
+                    ApplyAllyClashWinEffects = true,
                     ApplyAllyHit = true,
+                    ApplyEnemyClashLoseEffects = true,
                     ApplyEnemyMiss = true,
                     AllyHitPower = clashResult.AllyHitPower,
                     AllyHitPowerModifier = allySkillUseBonus + allyWinAttackBonus
@@ -46,6 +51,7 @@ public static class BattleClashImpactPlanService
             case BattleClashOutcome.EnemyAttackWins:
                 return new BattleClashImpactPlan
                 {
+                    ApplyEnemyClashWinEffects = true,
                     ApplyEnemyHit = true,
                     ApplyAllyMiss = true,
                     ApplyHornedGatekeeperClashWin = true,
@@ -64,7 +70,9 @@ public static class BattleClashImpactPlanService
             case BattleClashOutcome.AllyBreaksEnemyDefense:
                 return new BattleClashImpactPlan
                 {
+                    ApplyAllyClashWinEffects = true,
                     ApplyAllyHit = clashResult.AllyHitPower > 0,
+                    ApplyEnemyClashLoseEffects = true,
                     AllyHitPower = clashResult.AllyHitPower,
                     AllyHitPowerModifier = allySkillUseBonus
                 };
@@ -72,6 +80,7 @@ public static class BattleClashImpactPlanService
             case BattleClashOutcome.EnemyDefenseWins:
                 return new BattleClashImpactPlan
                 {
+                    ApplyEnemyClashWinEffects = true,
                     ApplyHornedGatekeeperClashWin = true,
                     ShowZeroDamageOnEnemy = true,
                     HornedGatekeeperClashDifference = enemyPower - allyPower,
@@ -88,6 +97,7 @@ public static class BattleClashImpactPlanService
             case BattleClashOutcome.EnemyBreaksAllyDefense:
                 return new BattleClashImpactPlan
                 {
+                    ApplyEnemyClashWinEffects = true,
                     ApplyEnemyHit = clashResult.EnemyHitPower > 0,
                     ApplyHornedGatekeeperClashWin = clashResult.EnemyHitPower > 0,
                     EnemyHitPower = clashResult.EnemyHitPower,
@@ -98,7 +108,9 @@ public static class BattleClashImpactPlanService
             case BattleClashOutcome.AllyDefenseWins:
                 return new BattleClashImpactPlan
                 {
+                    ApplyAllyClashWinEffects = true,
                     ApplyPlayerDefenseClashWinRelics = true,
+                    ApplyEnemyClashLoseEffects = true,
                     ShowZeroDamageOnAlly = true,
                     RestoreAllyDefenseEnergy = true,
                     AllyZeroDamagePowerModifier = enemyBonusPower,
@@ -115,10 +127,19 @@ public static class BattleClashImpactPlanService
             case BattleClashOutcome.BothDefenseAllyWins:
                 return new BattleClashImpactPlan
                 {
+                    ApplyAllyClashWinEffects = true,
+                    ApplyEnemyClashLoseEffects = true,
                     ApplyPlayerDefenseClashWinRelics = true
                 };
 
             case BattleClashOutcome.BothDefenseEnemyWins:
+                return new BattleClashImpactPlan
+                {
+                    ApplyEnemyClashWinEffects = true,
+                    ApplyHornedGatekeeperClashWin = true,
+                    HornedGatekeeperClashDifference = enemyPower - allyPower
+                };
+
             case BattleClashOutcome.BothDefenseTie:
             default:
                 return new BattleClashImpactPlan();

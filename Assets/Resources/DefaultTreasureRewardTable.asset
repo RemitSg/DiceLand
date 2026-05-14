@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a36d6b6dcae4e75a7f3a4ba0a2a8b13, type: 3}
+  m_Name: DefaultTreasureRewardTable
+  m_EditorClassIdentifier: 
+  minMoney: 30
+  maxMoney: 50
+  blueprintTable: {fileID: 11400000, guid: 41a2d5cfd3514765a5aa16654d7f0f44, type: 2}
+  blueprintRarityWeightTable: {fileID: 11400000, guid: 7b32e62646820d245a8fc87c54a37c36, type: 2}
+  relicTable: {fileID: 11400000, guid: 6650ae7fed330b7408b1cad987b54259, type: 2}
+  relicBagRarityWeightTable: {fileID: 11400000, guid: 7da05b5e6bfa4573996fa75fcb8c6e90, type: 2}

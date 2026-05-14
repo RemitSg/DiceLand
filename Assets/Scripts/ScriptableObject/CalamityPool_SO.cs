@@ -55,9 +55,12 @@ public class CalamityPool_SO : ScriptableObject
             }
         }
 
-        for (int tier = effectiveTier; tier >= 1 && choices.Count < choiceCount; tier--)
+        for (int tier = effectiveTier; tier >= 1; tier--)
         {
             List<Calamity_SO> candidates = CollectTierCandidates(tier, localExcluded);
+            if (candidates.Count == 0)
+                continue;
+
             while (candidates.Count > 0 && choices.Count < choiceCount)
             {
                 int index = rng != null ? rng.Next(0, candidates.Count) : UnityEngine.Random.Range(0, candidates.Count);
@@ -71,6 +74,8 @@ public class CalamityPool_SO : ScriptableObject
                     localExcluded.Add(calamityId);
                 choices.Add(calamity);
             }
+
+            return choices;
         }
 
         return choices;
@@ -92,6 +97,8 @@ public class CalamityPool_SO : ScriptableObject
             {
                 Calamity_SO calamity = entry.calamities[j];
                 if (calamity == null)
+                    continue;
+                if (Mathf.Max(1, calamity.calamityTier) != tier)
                     continue;
 
                 string calamityId = calamity.UniqueId;

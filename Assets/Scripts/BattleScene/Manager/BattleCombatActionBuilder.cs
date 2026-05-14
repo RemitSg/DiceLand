@@ -13,6 +13,7 @@ public sealed class BattleCombatAction
 {
     public BattleCombatActionType Type;
     public BattleAllyController Ally;
+    public SpeedButton AllyButton;
     public BattleEnemyController Enemy;
     public SpeedButton EnemyButton;
     public BattleAllyController TargetAlly;

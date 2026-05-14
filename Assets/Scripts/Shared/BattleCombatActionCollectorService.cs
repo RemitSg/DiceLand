@@ -42,6 +42,7 @@ public static class BattleCombatActionCollectorService
                 BattleCombatAction action = new BattleCombatAction
                 {
                     Ally = ally,
+                    AllyButton = allyButton,
                     Enemy = enemy,
                     EnemyButton = enemyButton,
                     SequenceIndex = sequenceIndex++

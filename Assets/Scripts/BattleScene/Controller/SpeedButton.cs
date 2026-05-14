@@ -1381,7 +1381,7 @@ public class SpeedButton : MonoBehaviour
         if (overlay == null)
             return;
 
-        overlay.ShowAllySkillSelection(ally);
+        overlay.ShowAllySkillSelection(ally, this);
     }
 
     private void TryShowEnemySkillInfo()

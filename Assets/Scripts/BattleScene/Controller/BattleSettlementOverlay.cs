@@ -46,6 +46,9 @@ public sealed class BattleSettlementRelicChoiceData
 {
     public string title;
     public string requiredMessage;
+    public RelicTable_SO sourceTable;
+    public int choiceCount = 3;
+    public int refreshesRemaining;
     public List<BattleSettlementLootEntry> choices = new List<BattleSettlementLootEntry>();
     [NonSerialized] public BattleSettlementLootEntry selectedChoice;
     [NonSerialized] public bool rewardApplied;
@@ -101,6 +104,8 @@ public class BattleSettlementOverlay : MonoBehaviour
         public TextMeshProUGUI nameText;
         public TextMeshProUGUI expText;
         public TextMeshProUGUI levelText;
+        public RectTransform hpFillRect;
+        public float hpFillWidth;
         public RectTransform expFillRect;
         public float expFillWidth;
     }
@@ -176,29 +181,33 @@ public class BattleSettlementOverlay : MonoBehaviour
     [SerializeField] private Color expBarBackgroundColor = new Color(1f, 1f, 1f, 0.12f);
     [SerializeField] private Color expBarFillColor = new Color(1f, 0.84f, 0.26f, 1f);
     [SerializeField] private Color expBarBorderColor = new Color(1f, 1f, 1f, 0.4f);
-    [SerializeField] private float expFontSize = 18f;
+    [SerializeField] private float expFontSize = 20f;
     [SerializeField] private Color expTextColor = new Color(1f, 0.92f, 0.7f, 1f);
     [SerializeField] private float expAnimationDurationPerFill = 0.45f;
+    [SerializeField] private float hpAnimationDuration = 0.42f;
     [SerializeField] private float expLevelUpPauseDuration = 0.14f;
 
     [Header("Summary Row Layout")]
-    [SerializeField] private float summaryRowLeftIndent = 120f;
-    [SerializeField] private float summaryHpWidth = 130f;
-    [SerializeField] private float summaryNameWidth = 230f;
-    [SerializeField] private float summaryExpTextWidth = 110f;
-    [SerializeField] private float summaryExpBarWidth = 170f;
-    [SerializeField] private float summaryLevelWidth = 70f;
+    [SerializeField] private float summaryRowLeftIndent = 0f;
+    [SerializeField] private float summaryRowHeight = 40f;
+    [SerializeField] private float summaryNameWidth = 170f;
+    [SerializeField] private float summaryHpWidth = 112f;
+    [SerializeField] private float summaryHpBarWidth = 130f;
+    [SerializeField] private float summaryExpTextWidth = 112f;
+    [SerializeField] private float summaryExpBarWidth = 140f;
+    [SerializeField] private float summaryLevelWidth = 60f;
+    [SerializeField] private Color hpBarBackgroundColor = new Color(0.34f, 0.08f, 0.08f, 0.5f);
+    [SerializeField] private Color hpBarFillColor = new Color(1f, 0.28f, 0.28f, 1f);
+    [SerializeField] private Color hpBarBorderColor = new Color(1f, 0.38f, 0.38f, 0.55f);
 
     [Header("Loot Display")]
-    [SerializeField] private Vector2 lootSlotSize = new Vector2(84f, 84f);
-    [SerializeField] private Vector2 lootIconSize = new Vector2(56f, 56f);
-    [SerializeField] private Vector2 lootDetailIconSize = new Vector2(84f, 84f);
-    [SerializeField] private Vector2 lootDetailPanelSize = new Vector2(0f, 130f);
-    [SerializeField] private float lootDetailInfoWidth = 240f;
-    [SerializeField] private float lootDetailDescriptionLeftInset = 36f;
+    [SerializeField] private Vector2 lootSlotSize = new Vector2(72f, 72f);
+    [SerializeField] private Vector2 lootIconSize = new Vector2(48f, 48f);
+    [SerializeField] private Vector2 lootDetailIconSize = new Vector2(112f, 112f);
+    [SerializeField] private Vector2 lootDetailPanelSize = new Vector2(640f, 360f);
     [SerializeField] private float lootGridSpacing = 12f;
     [SerializeField] private int lootGridColumnCount = 6;
-    [SerializeField] private float lootTitleFontSize = 24f;
+    [SerializeField] private float lootTitleFontSize = 22f;
     [SerializeField] private float lootBodyFontSize = 20f;
     [SerializeField] private Color lootTitleColor = new Color(1f, 0.9f, 0.52f, 1f);
     [SerializeField] private Color lootTextColor = new Color(0.95f, 0.95f, 0.95f, 1f);
@@ -211,14 +220,15 @@ public class BattleSettlementOverlay : MonoBehaviour
     [SerializeField] private Sprite lootFallbackSprite;
 
     [Header("Relic Choice")]
-    [SerializeField] private string relicChoiceHeaderText = "Choose 1 Relic";
-    [SerializeField] private string relicChoiceRequiredMessage = "Choose one relic before returning.";
-    [SerializeField] private string relicChoiceEntranceName = "Elite Relic Reward";
-    [SerializeField] private string relicChoiceEntranceDescription = "Click to choose one relic reward.";
+    [SerializeField] private string relicChoiceHeaderText = "选择 1 个遗物";
+    [SerializeField] private string relicChoiceRequiredMessage = "返回前请选择一个遗物。";
+    [SerializeField] private string relicChoiceEntranceName = "精英遗物奖励";
+    [SerializeField] private string relicChoiceEntranceDescription = "点击以选择一个遗物奖励。";
     [SerializeField] private string relicChoiceEntranceLabel = "?";
-    [SerializeField] private string relicChoiceSelectedPrefix = "Selected";
-    [SerializeField] private string relicChoiceConfirmLabel = "Confirm";
-    [SerializeField] private string relicChoiceDetailEmptyText = "Hover a relic to view its effect. Tap a relic on mobile to view and select it.";
+    [SerializeField] private string relicChoiceSelectedPrefix = "已选择";
+    [SerializeField] private string relicChoiceConfirmLabel = "确认";
+    [SerializeField] private string relicChoiceRefreshLabel = "刷新";
+    [SerializeField] private string relicChoiceDetailEmptyText = "悬停遗物查看效果；点击遗物进行选择，再次点击可取消选择。";
     [SerializeField] private Color relicChoiceSlotColor = new Color(0.16f, 0.22f, 0.32f, 0.95f);
     [SerializeField] private Color relicChoiceSelectedSlotColor = new Color(0.36f, 0.52f, 0.86f, 1f);
     [SerializeField] private Color relicChoiceRequiredColor = new Color(1f, 0.45f, 0.38f, 1f);
@@ -259,15 +269,13 @@ public class BattleSettlementOverlay : MonoBehaviour
     private TextMeshProUGUI expText;
     private RectTransform summaryRoot;
     private RectTransform lootRoot;
+    private RectTransform contentFlexSpacerRoot;
     private RectTransform buttonReserveRoot;
     private TextMeshProUGUI lootHeaderText;
     private RectTransform lootGridRoot;
-    private Image lootDetailPanelImage;
-    private RectTransform lootDetailRoot;
-    private Image lootDetailIcon;
-    private TextMeshProUGUI lootDetailNameText;
-    private TextMeshProUGUI lootDetailMetaText;
-    private TextMeshProUGUI lootDetailDescriptionText;
+    private RectTransform lootDetailModalRoot;
+    private Image lootDetailModalBackdropImage;
+    private MapInventoryDetailView lootDetailView;
     private RectTransform relicChoiceModalRoot;
     private Image relicChoiceModalBackdropImage;
     private Image relicChoiceModalPanelImage;
@@ -281,6 +289,8 @@ public class BattleSettlementOverlay : MonoBehaviour
     private TextMeshProUGUI relicChoiceDetailDescriptionText;
     private TextMeshProUGUI relicChoiceDetailHintText;
     private RectTransform relicChoiceModalButtonRoot;
+    private Button relicChoiceRefreshButton;
+    private TextMeshProUGUI relicChoiceRefreshButtonText;
     private RectTransform buttonRoot;
     private RectTransform victoryIntroRoot;
     private Image victoryIntroImage;
@@ -343,6 +353,7 @@ public class BattleSettlementOverlay : MonoBehaviour
         selectedRelicChoiceView = null;
         activeRelicChoiceData = data.relicChoice;
         SetRelicChoiceModalVisible(false);
+        HideLootDetailModal();
 
         titleText.text = string.IsNullOrWhiteSpace(data.title)
             ? (data.isVictory ? "Victory" : "Defeat")
@@ -413,79 +424,82 @@ public class BattleSettlementOverlay : MonoBehaviour
 
             HorizontalLayoutGroup layout = rowGo.GetComponent<HorizontalLayoutGroup>();
             layout.childControlWidth = true;
-            layout.childForceExpandWidth = true;
-            layout.childControlHeight = false;
+            layout.childForceExpandWidth = false;
+            layout.childControlHeight = true;
             layout.childForceExpandHeight = false;
-            layout.spacing = 0f;
-            layout.childAlignment = TextAnchor.UpperLeft;
+            layout.spacing = 12f;
+            layout.childAlignment = TextAnchor.MiddleCenter;
+            AddLayoutElement(
+                rowGo.GetComponent<RectTransform>(),
+                panelSize.x - panelPadding.x * 2f,
+                panelSize.x - panelPadding.x * 2f,
+                0f,
+                summaryRowHeight,
+                summaryRowHeight);
 
-            GameObject contentGo = new GameObject("Content", typeof(RectTransform), typeof(VerticalLayoutGroup));
-            contentGo.transform.SetParent(rowGo.transform, false);
-            spawnedRows.Add(contentGo);
-
-            VerticalLayoutGroup contentLayout = contentGo.GetComponent<VerticalLayoutGroup>();
-            contentLayout.childControlWidth = true;
-            contentLayout.childForceExpandWidth = true;
-            contentLayout.childControlHeight = false;
-            contentLayout.childForceExpandHeight = false;
-            contentLayout.spacing = 6f;
-
-            GameObject topRowGo = new GameObject("TopRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
-            topRowGo.transform.SetParent(contentGo.transform, false);
-            spawnedRows.Add(topRowGo);
-
-            HorizontalLayoutGroup topLayout = topRowGo.GetComponent<HorizontalLayoutGroup>();
-            topLayout.childControlWidth = true;
-            topLayout.childForceExpandWidth = false;
-            topLayout.childControlHeight = true;
-            topLayout.childForceExpandHeight = false;
-            topLayout.spacing = 12f;
-            topLayout.childAlignment = TextAnchor.MiddleLeft;
-
-            CreateSpacer(topRowGo.transform, summaryRowLeftIndent);
+            CreateSpacer(rowGo.transform, summaryRowLeftIndent);
 
             TextMeshProUGUI nameText = CreateLabel(
-                topRowGo.transform,
+                rowGo.transform,
                 "NameText",
                 rowFontSize,
                 entry.isAlive ? rowColor : deadRowColor,
-                entry.displayName);
-            nameText.alignment = TextAlignmentOptions.MidlineLeft;
+                BuildSettlementName(entry));
+            nameText.alignment = TextAlignmentOptions.MidlineRight;
+            nameText.enableWordWrapping = false;
             nameText.overflowMode = TextOverflowModes.Ellipsis;
-            AddLayoutElement(nameText.rectTransform, summaryNameWidth, summaryNameWidth, 0f, rowFontSize + 10f, rowFontSize + 10f);
+            AddLayoutElement(nameText.rectTransform, summaryNameWidth, summaryNameWidth, 0f, summaryRowHeight, summaryRowHeight);
 
             TextMeshProUGUI hpText = CreateLabel(
-                topRowGo.transform,
+                rowGo.transform,
                 "HpText",
-                rowFontSize,
+                rowFontSize - 2f,
                 entry.isAlive ? hpTextColor : deadRowColor,
                 entry.isAlive
-                    ? $"HP {entry.currentHP} / {entry.maxHP}"
-                    : $"KO   {entry.currentHP} / {entry.maxHP}");
+                    ? $"生命 {entry.currentHP} / {entry.maxHP}"
+                    : $"倒下 {entry.currentHP} / {entry.maxHP}");
             hpText.alignment = TextAlignmentOptions.MidlineLeft;
-            AddLayoutElement(hpText.rectTransform, summaryHpWidth, summaryHpWidth, 0f, rowFontSize + 10f, rowFontSize + 10f);
+            hpText.text = entry.isAlive
+                ? $"HP {entry.currentHP} / {entry.maxHP}"
+                : $"倒下 {entry.currentHP} / {entry.maxHP}";
+            hpText.enableWordWrapping = false;
+            hpText.overflowMode = TextOverflowModes.Ellipsis;
+            AddLayoutElement(hpText.rectTransform, summaryHpWidth, summaryHpWidth, 0f, summaryRowHeight, summaryRowHeight);
+
+            RectTransform hpBarRoot = CreateStatusBar(
+                rowGo.transform,
+                "HpBar",
+                hpBarBorderColor,
+                hpBarBackgroundColor,
+                hpBarFillColor,
+                summaryHpBarWidth,
+                expBarSize.y,
+                out RectTransform hpFillRect,
+                out float hpFillWidth);
+            SetBarFill(hpFillRect, hpFillWidth, ResolveHpRatio(entry.currentHP, entry.maxHP));
 
             TextMeshProUGUI expText = CreateLabel(
-                topRowGo.transform,
+                rowGo.transform,
                 "ExpText",
                 expFontSize,
                 expTextColor,
                 BuildExpLabel(entry.currentExperience, ResolveExpMax(entry.level, entry.maxExperience)));
-            expText.alignment = TextAlignmentOptions.MidlineRight;
-            AddLayoutElement(expText.rectTransform, summaryExpTextWidth, summaryExpTextWidth, 0f, expFontSize + 10f, expFontSize + 10f);
+            expText.alignment = TextAlignmentOptions.MidlineLeft;
+            expText.enableWordWrapping = false;
+            expText.overflowMode = TextOverflowModes.Ellipsis;
+            AddLayoutElement(expText.rectTransform, summaryExpTextWidth, summaryExpTextWidth, 0f, summaryRowHeight, summaryRowHeight);
 
-            RectTransform expBarRoot = CreateExpBar(topRowGo.transform, out RectTransform expFillRect, out float expFillWidth);
-            spawnedRows.Add(expBarRoot.gameObject);
-            SetExpFill(expFillRect, expFillWidth, ResolveExpRatio(entry.currentExperience, ResolveExpMax(entry.level, entry.maxExperience)));
+            RectTransform expBarRoot = CreateExpBar(rowGo.transform, out RectTransform expFillRect, out float expFillWidth);
+            SetBarFill(expFillRect, expFillWidth, ResolveExpRatio(entry.currentExperience, ResolveExpMax(entry.level, entry.maxExperience)));
 
             TextMeshProUGUI levelText = CreateLabel(
-                topRowGo.transform,
+                rowGo.transform,
                 "LevelText",
                 rowFontSize,
                 entry.isAlive ? rowColor : deadRowColor,
                 $"Lv.{Mathf.Max(1, entry.level)}");
             levelText.alignment = TextAlignmentOptions.MidlineRight;
-            AddLayoutElement(levelText.rectTransform, summaryLevelWidth, summaryLevelWidth, 0f, rowFontSize + 10f, rowFontSize + 10f);
+            AddLayoutElement(levelText.rectTransform, summaryLevelWidth, summaryLevelWidth, 0f, summaryRowHeight, summaryRowHeight);
 
             rowViews.Add(new SummaryRowView
             {
@@ -494,6 +508,8 @@ public class BattleSettlementOverlay : MonoBehaviour
                 nameText = nameText,
                 expText = expText,
                 levelText = levelText,
+                hpFillRect = hpFillRect,
+                hpFillWidth = hpFillWidth,
                 expFillRect = expFillRect,
                 expFillWidth = expFillWidth
             });
@@ -502,7 +518,7 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private void BuildLootSection(BattleSettlementData data)
     {
-        if (lootHeaderText == null || lootGridRoot == null || lootDetailRoot == null)
+        if (lootHeaderText == null || lootGridRoot == null)
             return;
 
         ClearLootViews();
@@ -521,7 +537,7 @@ public class BattleSettlementOverlay : MonoBehaviour
 
         if (displayCount <= 0)
         {
-            ShowLootDetail(null, null);
+            HideLootDetailModal();
             return;
         }
 
@@ -543,12 +559,12 @@ public class BattleSettlementOverlay : MonoBehaviour
                 lootViews.Add(view);
         }
 
-        ShowLootDetail(null, null);
+        HideLootDetailModal();
     }
 
     private string BuildLootHeaderText(int displayCount)
     {
-        return displayCount > 0 ? $"Loot x{displayCount}" : "Loot";
+        return displayCount > 0 ? $"战利品 x{displayCount}" : "战利品";
     }
 
     private BattleSettlementLootEntry CreateRelicChoiceEntranceEntry(BattleSettlementRelicChoiceData choiceData)
@@ -571,13 +587,21 @@ public class BattleSettlementOverlay : MonoBehaviour
         if (lootGridRoot == null)
             return;
 
-        int columns = Mathf.Max(1, lootGridColumnCount);
-        int rows = Mathf.Max(1, Mathf.CeilToInt(itemCount / (float)columns));
+        int safeItemCount = Mathf.Max(0, itemCount);
+        int maxColumns = Mathf.Max(1, lootGridColumnCount);
+        int columns = safeItemCount > 0 ? Mathf.Clamp(safeItemCount, 1, maxColumns) : 1;
+        int rows = safeItemCount > 0 ? Mathf.CeilToInt(safeItemCount / (float)columns) : 1;
+        float width = columns * lootSlotSize.x + Mathf.Max(0, columns - 1) * lootGridSpacing;
         float height = rows * lootSlotSize.y + Mathf.Max(0, rows - 1) * lootGridSpacing;
+
+        GridLayoutGroup gridLayout = lootGridRoot.GetComponent<GridLayoutGroup>();
+        if (gridLayout != null)
+            gridLayout.constraintCount = columns;
+
         AddLayoutElement(
             lootGridRoot,
-            panelSize.x - panelPadding.x * 2f,
-            panelSize.x - panelPadding.x * 2f,
+            width,
+            width,
             0f,
             height,
             height);
@@ -643,83 +667,67 @@ public class BattleSettlementOverlay : MonoBehaviour
             }
 
             if (currentSelectedLootView == view)
-                ShowLootDetail(null, null);
+                HideLootDetailModal();
             else
-                ShowLootDetail(entry, view);
+                ShowLootDetailModal(entry, view);
         });
 
-        EventTrigger trigger = slotGo.GetComponent<EventTrigger>();
-        AddEventTrigger(trigger, EventTriggerType.PointerEnter, _ => ShowLootDetail(entry, view));
         RefreshLootItemViewPresentation(view);
         return view;
     }
 
-    private void ShowLootDetail(BattleSettlementLootEntry entry, LootItemView selectedView)
+    private void ShowLootDetailModal(BattleSettlementLootEntry entry, LootItemView selectedView)
     {
         currentSelectedLootView = selectedView;
         UpdateLootSlotColors();
 
-        if (lootDetailPanelImage == null || lootDetailIcon == null || lootDetailNameText == null ||
-            lootDetailMetaText == null || lootDetailDescriptionText == null)
+        if (entry == null || lootDetailView == null)
+        {
+            HideLootDetailModal();
             return;
-
-        bool hasEntry = entry != null;
-        SetLootDetailVisible(hasEntry);
-        if (!hasEntry)
-            return;
+        }
 
         BattleSettlementLootEntry detailEntry = ResolvePresentedLootEntry(entry);
         if (detailEntry == null)
-            detailEntry = entry;
+        {
+            HideLootDetailModal();
+            return;
+        }
 
-        SetIconSprite(lootDetailIcon, detailEntry.icon != null ? detailEntry.icon : GetFallbackLootSprite());
-        lootDetailIcon.preserveAspect = true;
-        lootDetailNameText.text = detailEntry.displayName;
+        if (detailEntry.relicData != null)
+        {
+            lootDetailView.Show(new RunRelicState
+            {
+                relicData = detailEntry.relicData,
+                amount = Mathf.Max(1, detailEntry.amount)
+            }, GetFallbackLootSprite());
+        }
+        else if (detailEntry.lootItem != null)
+        {
+            lootDetailView.Show(new RunLootState
+            {
+                lootItem = detailEntry.lootItem,
+                amount = Mathf.Max(1, detailEntry.amount)
+            }, GetFallbackLootSprite());
+        }
+        else
+        {
+            HideLootDetailModal();
+            return;
+        }
 
-        string typeName = entry.isRelicChoiceEntrance
-            ? (entry.relicChoiceData != null && entry.relicChoiceData.selectedChoice != null ? "Relic" : "Relic Reward")
-            : (detailEntry.relicData != null
-                ? "Relic"
-                : (detailEntry.attribute != null && !string.IsNullOrWhiteSpace(detailEntry.attribute.attributeName)
-                    ? detailEntry.attribute.attributeName
-                    : "None"));
-        lootDetailMetaText.text = $"{detailEntry.rarity} | {typeName} | x{Mathf.Max(1, detailEntry.amount)}";
-        lootDetailDescriptionText.text = string.IsNullOrWhiteSpace(detailEntry.description)
-            ? "No description."
-            : detailEntry.description;
+        if (lootDetailModalRoot != null)
+            lootDetailModalRoot.gameObject.SetActive(true);
     }
 
-    private void SetLootDetailVisible(bool visible)
+    private void HideLootDetailModal()
     {
-        if (lootDetailPanelImage != null)
-        {
-            lootDetailPanelImage.enabled = visible;
-            lootDetailPanelImage.raycastTarget = false;
-        }
-
-        if (lootDetailIcon != null)
-        {
-            lootDetailIcon.enabled = visible;
-            lootDetailIcon.raycastTarget = false;
-        }
-
-        if (lootDetailNameText != null)
-        {
-            lootDetailNameText.enabled = visible;
-            lootDetailNameText.raycastTarget = false;
-        }
-
-        if (lootDetailMetaText != null)
-        {
-            lootDetailMetaText.enabled = visible;
-            lootDetailMetaText.raycastTarget = false;
-        }
-
-        if (lootDetailDescriptionText != null)
-        {
-            lootDetailDescriptionText.enabled = visible;
-            lootDetailDescriptionText.raycastTarget = false;
-        }
+        currentSelectedLootView = null;
+        if (lootDetailView != null)
+            lootDetailView.Hide();
+        if (lootDetailModalRoot != null)
+            lootDetailModalRoot.gameObject.SetActive(false);
+        UpdateLootSlotColors();
     }
 
     private void UpdateLootSlotColors()
@@ -987,6 +995,16 @@ public class BattleSettlementOverlay : MonoBehaviour
         expText.alignment = TextAlignmentOptions.Center;
 
         summaryRoot = CreateVerticalRoot(panelRoot, "SummaryRoot", rowSpacing * 0.6f);
+        VerticalLayoutGroup summaryLayout = summaryRoot.GetComponent<VerticalLayoutGroup>();
+        if (summaryLayout != null)
+        {
+            summaryLayout.childControlHeight = true;
+            summaryLayout.childForceExpandHeight = false;
+        }
+        contentFlexSpacerRoot = CreateVerticalRoot(panelRoot, "ContentFlexSpacer", 0f);
+        LayoutElement contentFlexLayout = contentFlexSpacerRoot.gameObject.AddComponent<LayoutElement>();
+        contentFlexLayout.flexibleHeight = 1f;
+        contentFlexLayout.minHeight = 8f;
         lootRoot = CreateVerticalRoot(panelRoot, "LootRoot", rowSpacing * 0.45f);
         BuildLootRoot();
         buttonReserveRoot = CreateVerticalRoot(panelRoot, "ButtonReserveRoot", 0f);
@@ -996,6 +1014,7 @@ public class BattleSettlementOverlay : MonoBehaviour
         buttonLayout.ignoreLayout = true;
 
         BuildRelicChoiceModalRoot();
+        BuildLootDetailModalRoot();
 
         victoryIntroImage = CreateImage(overlayRoot, "VictoryIntro", victoryIntroColor, victoryIntroSprite);
         victoryIntroImage.preserveAspect = true;
@@ -1040,9 +1059,20 @@ public class BattleSettlementOverlay : MonoBehaviour
         if (lootRoot == null)
             return;
 
-        lootHeaderText = CreateLabel(lootRoot, "LootHeader", lootTitleFontSize, lootTitleColor, "Loot");
-        lootHeaderText.alignment = TextAlignmentOptions.MidlineLeft;
+        VerticalLayoutGroup lootLayout = lootRoot.GetComponent<VerticalLayoutGroup>();
+        if (lootLayout != null)
+        {
+            lootLayout.childAlignment = TextAnchor.MiddleCenter;
+            lootLayout.childControlWidth = false;
+            lootLayout.childForceExpandWidth = false;
+            lootLayout.childControlHeight = true;
+            lootLayout.childForceExpandHeight = false;
+        }
+
+        lootHeaderText = CreateLabel(lootRoot, "LootHeader", lootTitleFontSize, lootTitleColor, "战利品");
+        lootHeaderText.alignment = TextAlignmentOptions.Center;
         lootHeaderText.font = bodyFont != null ? bodyFont : lootHeaderText.font;
+        AddLayoutElement(lootHeaderText.rectTransform, panelSize.x - panelPadding.x * 2f, 0f, 0f, lootTitleFontSize + 10f, lootTitleFontSize + 10f);
 
         GameObject gridGo = new GameObject("LootGrid", typeof(RectTransform), typeof(GridLayoutGroup));
         gridGo.transform.SetParent(lootRoot, false);
@@ -1054,65 +1084,65 @@ public class BattleSettlementOverlay : MonoBehaviour
         gridLayout.constraintCount = Mathf.Max(1, lootGridColumnCount);
         gridLayout.startAxis = GridLayoutGroup.Axis.Horizontal;
         gridLayout.startCorner = GridLayoutGroup.Corner.UpperLeft;
-        AddLayoutElement(lootGridRoot, panelSize.x - panelPadding.x * 2f, panelSize.x - panelPadding.x * 2f, 0f);
+        gridLayout.childAlignment = TextAnchor.MiddleCenter;
+        AddLayoutElement(lootGridRoot, lootSlotSize.x, lootSlotSize.x, 0f, lootSlotSize.y, lootSlotSize.y);
+    }
 
-        lootDetailPanelImage = CreateImage(lootRoot, "LootDetailPanel", lootDetailPanelColor, lootDetailBackgroundSprite);
-        lootDetailRoot = lootDetailPanelImage.rectTransform;
-        if (lootDetailPanelSize.y > 0f)
-            AddLayoutElement(lootDetailRoot, panelSize.x - panelPadding.x * 2f, panelSize.x - panelPadding.x * 2f, 0f, lootDetailPanelSize.y, lootDetailPanelSize.y);
+    private void BuildLootDetailModalRoot()
+    {
+        if (overlayRoot == null)
+            return;
 
-        HorizontalLayoutGroup detailLayout = lootDetailRoot.gameObject.AddComponent<HorizontalLayoutGroup>();
-        detailLayout.padding = new RectOffset(16, 16, 14, 14);
-        detailLayout.spacing = 16f;
-        detailLayout.childAlignment = TextAnchor.MiddleLeft;
-        detailLayout.childControlWidth = false;
-        detailLayout.childControlHeight = false;
-        detailLayout.childForceExpandWidth = false;
-        detailLayout.childForceExpandHeight = false;
+        lootDetailModalBackdropImage = CreateImage(overlayRoot, "LootDetailBackdrop", new Color(0f, 0f, 0f, 0.42f), null);
+        lootDetailModalRoot = lootDetailModalBackdropImage.rectTransform;
+        lootDetailModalRoot.anchorMin = Vector2.zero;
+        lootDetailModalRoot.anchorMax = Vector2.one;
+        lootDetailModalRoot.offsetMin = Vector2.zero;
+        lootDetailModalRoot.offsetMax = Vector2.zero;
 
-        lootDetailIcon = CreateImage(lootDetailRoot, "LootDetailIcon", Color.white, GetFallbackLootSprite());
-        RectTransform detailIconRect = lootDetailIcon.rectTransform;
-        detailIconRect.sizeDelta = lootDetailIconSize;
+        Button backdropButton = lootDetailModalBackdropImage.gameObject.AddComponent<Button>();
+        backdropButton.transition = Selectable.Transition.None;
+        backdropButton.onClick.AddListener(HideLootDetailModal);
 
-        RectTransform detailInfoRoot = CreateVerticalRoot(lootDetailRoot, "LootDetailInfoRoot", 6f);
-        AddLayoutElement(detailInfoRoot, lootDetailInfoWidth, lootDetailInfoWidth, 0f);
-        VerticalLayoutGroup detailInfoLayout = detailInfoRoot.GetComponent<VerticalLayoutGroup>();
-        detailInfoLayout.childControlHeight = true;
-        detailInfoLayout.childForceExpandHeight = false;
+        Image panelImage = CreateImage(lootDetailModalRoot, "LootDetailPanel", lootDetailPanelColor, lootDetailBackgroundSprite);
+        Button panelClickBlocker = panelImage.gameObject.AddComponent<Button>();
+        panelClickBlocker.transition = Selectable.Transition.None;
+        RectTransform detailRoot = panelImage.rectTransform;
+        detailRoot.anchorMin = new Vector2(0.5f, 0.5f);
+        detailRoot.anchorMax = new Vector2(0.5f, 0.5f);
+        detailRoot.pivot = new Vector2(0.5f, 0.5f);
+        detailRoot.sizeDelta = lootDetailPanelSize;
+        detailRoot.anchoredPosition = Vector2.zero;
 
-        lootDetailNameText = CreateLabel(detailInfoRoot, "LootDetailName", lootTitleFontSize, lootTitleColor, "No Loot");
-        lootDetailNameText.alignment = TextAlignmentOptions.MidlineLeft;
-        AddLayoutElement(lootDetailNameText.rectTransform, 0f, 0f, 1f, lootTitleFontSize + 8f, lootTitleFontSize + 8f);
+        Image icon = CreateImage(detailRoot, "Icon", Color.white, GetFallbackLootSprite());
+        RectTransform iconRect = icon.rectTransform;
+        iconRect.anchorMin = new Vector2(0f, 1f);
+        iconRect.anchorMax = new Vector2(0f, 1f);
+        iconRect.pivot = new Vector2(0f, 1f);
+        iconRect.anchoredPosition = new Vector2(34f, -34f);
+        iconRect.sizeDelta = lootDetailIconSize;
+        icon.preserveAspect = true;
 
-        lootDetailMetaText = CreateLabel(detailInfoRoot, "LootDetailMeta", lootBodyFontSize, lootTextColor, string.Empty);
-        lootDetailMetaText.alignment = TextAlignmentOptions.MidlineLeft;
-        AddLayoutElement(lootDetailMetaText.rectTransform, 0f, 0f, 1f, lootBodyFontSize + 8f, lootBodyFontSize + 8f);
+        TextMeshProUGUI title = CreateModalText(detailRoot, "Title", new Vector2(168f, -28f), new Vector2(lootDetailPanelSize.x - 244f, 46f), lootTitleFontSize + 4f, lootTitleColor, string.Empty, true);
+        TextMeshProUGUI meta = CreateModalText(detailRoot, "Meta", new Vector2(168f, -82f), new Vector2(lootDetailPanelSize.x - 244f, 34f), lootBodyFontSize, expTextColor, string.Empty, true);
+        TextMeshProUGUI description = CreateModalText(detailRoot, "Description", new Vector2(168f, -126f), new Vector2(lootDetailPanelSize.x - 210f, lootDetailPanelSize.y - 162f), lootBodyFontSize, lootTextColor, string.Empty, false);
+        description.enableWordWrapping = true;
+        description.overflowMode = TextOverflowModes.Overflow;
 
-        GameObject detailDescriptionSpacer = new GameObject("LootDetailDescriptionSpacer", typeof(RectTransform), typeof(LayoutElement));
-        detailDescriptionSpacer.transform.SetParent(lootDetailRoot, false);
-        LayoutElement descriptionSpacerLayout = detailDescriptionSpacer.GetComponent<LayoutElement>();
-        descriptionSpacerLayout.preferredWidth = lootDetailDescriptionLeftInset;
-        descriptionSpacerLayout.minWidth = lootDetailDescriptionLeftInset;
-        descriptionSpacerLayout.flexibleWidth = 0f;
+        TextMeshProUGUI relicAdditionalDescription = CreateModalText(detailRoot, "RelicAdditionalDescription", new Vector2(34f, -lootDetailPanelSize.y + 92f), new Vector2(lootDetailPanelSize.x - 68f, 54f), lootBodyFontSize - 2f, expTextColor, string.Empty, false);
+        relicAdditionalDescription.enableWordWrapping = true;
+        relicAdditionalDescription.overflowMode = TextOverflowModes.Overflow;
+        relicAdditionalDescription.gameObject.SetActive(false);
 
-        RectTransform detailDescriptionRoot = CreateVerticalRoot(lootDetailRoot, "LootDetailDescriptionRoot", 0f);
-        AddLayoutElement(detailDescriptionRoot, panelSize.x - panelPadding.x * 2f - lootDetailIconSize.x - lootDetailInfoWidth - lootDetailDescriptionLeftInset - 72f, 0f, 1f);
-        VerticalLayoutGroup detailDescriptionLayout = detailDescriptionRoot.GetComponent<VerticalLayoutGroup>();
-        detailDescriptionLayout.childControlHeight = true;
-        detailDescriptionLayout.childForceExpandHeight = true;
+        TextMeshProUGUI actionStatus = CreateModalText(detailRoot, "ActionStatus", new Vector2(34f, -lootDetailPanelSize.y + 34f), new Vector2(lootDetailPanelSize.x - 132f, 34f), lootBodyFontSize - 2f, expTextColor, string.Empty, false);
+        Button action = CreateModalButton(detailRoot, "ActionButton", new Vector2(0f, 0f), new Vector2(0f, 0f), string.Empty, null);
+        action.gameObject.SetActive(false);
+        Button close = CreateModalButton(detailRoot, "CloseButton", new Vector2(lootDetailPanelSize.x - 58f, -18f), new Vector2(44f, 44f), "X", HideLootDetailModal);
 
-        lootDetailDescriptionText = CreateLabel(detailDescriptionRoot, "LootDetailDescription", lootBodyFontSize, lootTextColor, string.Empty);
-        lootDetailDescriptionText.alignment = TextAlignmentOptions.TopLeft;
-        lootDetailDescriptionText.enableWordWrapping = true;
-        lootDetailDescriptionText.overflowMode = TextOverflowModes.Ellipsis;
-        AddLayoutElement(
-            lootDetailDescriptionText.rectTransform,
-            0f,
-            0f,
-            1f,
-            lootDetailPanelSize.y > 0f ? lootDetailPanelSize.y - 28f : 96f,
-            40f);
-        SetLootDetailVisible(false);
+        lootDetailView = detailRoot.gameObject.AddComponent<MapInventoryDetailView>();
+        lootDetailView.ConfigureRuntime(icon, title, meta, description, relicAdditionalDescription, actionStatus, action, close);
+        lootDetailView.ConfigureFonts(titleFont != null ? titleFont : bodyFont, bodyFont);
+        lootDetailModalRoot.gameObject.SetActive(false);
     }
 
     private void BuildRelicChoiceModalRoot()
@@ -1166,7 +1196,9 @@ public class BattleSettlementOverlay : MonoBehaviour
         relicChoiceModalButtonRoot.anchorMax = new Vector2(0.5f, 0f);
         relicChoiceModalButtonRoot.pivot = new Vector2(0.5f, 0f);
         relicChoiceModalButtonRoot.anchoredPosition = new Vector2(0f, 30f);
-        relicChoiceModalButtonRoot.sizeDelta = new Vector2(buttonSize.x, buttonSize.y);
+        relicChoiceModalButtonRoot.sizeDelta = new Vector2(buttonSize.x * 2f + buttonSpacing, buttonSize.y);
+        relicChoiceRefreshButton = CreateActionButton(relicChoiceModalButtonRoot, "RelicChoiceRefreshButton", relicChoiceRefreshLabel, RefreshRelicChoiceModal, false);
+        relicChoiceRefreshButtonText = relicChoiceRefreshButton != null ? relicChoiceRefreshButton.GetComponentInChildren<TextMeshProUGUI>(true) : null;
         CreateActionButton(relicChoiceModalButtonRoot, "RelicChoiceConfirmButton", relicChoiceConfirmLabel, CloseRelicChoiceModal, false);
         BuildRelicChoiceTooltipRoot();
         SetRelicChoiceModalVisible(false);
@@ -1240,6 +1272,7 @@ public class BattleSettlementOverlay : MonoBehaviour
         if (choiceData == null || !choiceData.HasChoices)
             return;
 
+        HideLootDetailModal();
         activeRelicChoiceData = choiceData;
         EnsureCanvas();
         ClearRelicChoiceModalViews();
@@ -1276,6 +1309,7 @@ public class BattleSettlementOverlay : MonoBehaviour
             ShowEmptyRelicChoiceDetail();
 
         UpdateRelicChoiceCardColors();
+        UpdateRelicChoiceRefreshButton();
         if (relicChoiceCardsRoot != null)
             LayoutRebuilder.ForceRebuildLayoutImmediate(relicChoiceCardsRoot);
         SetRelicChoiceModalVisible(true);
@@ -1315,12 +1349,12 @@ public class BattleSettlementOverlay : MonoBehaviour
         nameText.raycastTarget = false;
         AddLayoutElement(nameText.rectTransform, 0f, 0f, 1f, 88f, 54f);
 
-        TextMeshProUGUI rarityText = CreateLabel(cardGo.transform, "Rarity", lootBodyFontSize, lootTextColor, entry.rarity.ToString());
+        TextMeshProUGUI rarityText = CreateLabel(cardGo.transform, "Rarity", lootBodyFontSize, lootTextColor, GetLootRarityLabel(entry.rarity));
         rarityText.alignment = TextAlignmentOptions.Center;
         rarityText.raycastTarget = false;
         AddLayoutElement(rarityText.rectTransform, 0f, 0f, 1f, lootBodyFontSize + 10f, lootBodyFontSize + 10f);
 
-        TextMeshProUGUI hintText = CreateLabel(cardGo.transform, "Hint", lootBodyFontSize - 2f, subtitleColor, "Hover / Tap");
+        TextMeshProUGUI hintText = CreateLabel(cardGo.transform, "Hint", lootBodyFontSize - 2f, subtitleColor, "悬停 / 点击");
         hintText.alignment = TextAlignmentOptions.Center;
         hintText.raycastTarget = false;
         AddLayoutElement(hintText.rectTransform, 0f, 0f, 1f, lootBodyFontSize + 10f, lootBodyFontSize + 10f);
@@ -1346,13 +1380,46 @@ public class BattleSettlementOverlay : MonoBehaviour
         if (entry == null || !entry.isRelicChoiceOption)
             return;
 
+        bool wasSelected = activeRelicChoiceData != null && activeRelicChoiceData.selectedChoice == entry;
+        if (wasSelected)
+        {
+            activeRelicChoiceData.selectedChoice = null;
+            selectedRelicChoiceView = null;
+            ShowEmptyRelicChoiceDetail();
+            UpdateRelicChoiceCardColors();
+            UpdateRelicChoiceRefreshButton();
+            UpdateLootSlotColors();
+            return;
+        }
+
         if (activeRelicChoiceData != null)
             activeRelicChoiceData.selectedChoice = entry;
 
         selectedRelicChoiceView = selectedView;
         ShowRelicChoiceDetail(entry, selectedView);
         UpdateRelicChoiceCardColors();
+        UpdateRelicChoiceRefreshButton();
         UpdateLootSlotColors();
+    }
+
+    private void RefreshRelicChoiceModal()
+    {
+        if (activeRelicChoiceData == null || activeRelicChoiceData.refreshesRemaining <= 0 || activeRelicChoiceData.sourceTable == null)
+            return;
+
+        HashSet<Relic_SO> excluded = BuildRelicChoiceRefreshExclusions(activeRelicChoiceData);
+        List<Relic_SO> refreshedRelics = activeRelicChoiceData.sourceTable.DrawRandomRelicChoices(
+            new System.Random(),
+            Mathf.Max(1, activeRelicChoiceData.choiceCount),
+            excluded);
+        BattleSettlementRelicChoiceData refreshedData = BattleSettlementRelicChoiceBuilder.Build(refreshedRelics);
+        if (refreshedData == null || !refreshedData.HasChoices)
+            return;
+
+        activeRelicChoiceData.refreshesRemaining -= 1;
+        activeRelicChoiceData.choices = refreshedData.choices;
+        activeRelicChoiceData.selectedChoice = null;
+        OpenRelicChoiceModal(activeRelicChoiceData);
     }
 
     private void ShowRelicChoiceDetail(BattleSettlementLootEntry entry, LootItemView hoveredView)
@@ -1383,10 +1450,10 @@ public class BattleSettlementOverlay : MonoBehaviour
             string selectedText = activeRelicChoiceData != null && activeRelicChoiceData.selectedChoice == entry
                 ? $" | {relicChoiceSelectedPrefix}"
                 : string.Empty;
-            relicChoiceDetailMetaText.text = $"{entry.rarity} | Relic{selectedText}";
+            relicChoiceDetailMetaText.text = $"{GetLootRarityLabel(entry.rarity)} | 遗物{selectedText}";
         }
         if (relicChoiceDetailDescriptionText != null)
-            relicChoiceDetailDescriptionText.text = string.IsNullOrWhiteSpace(entry.description) ? "No description." : entry.description;
+            relicChoiceDetailDescriptionText.text = string.IsNullOrWhiteSpace(entry.description) ? "暂无描述。" : entry.description;
         if (relicChoiceDetailHintText != null)
             relicChoiceDetailHintText.text = relicChoiceDetailEmptyText;
 
@@ -1425,6 +1492,37 @@ public class BattleSettlementOverlay : MonoBehaviour
         }
     }
 
+    private void UpdateRelicChoiceRefreshButton()
+    {
+        if (relicChoiceRefreshButton == null)
+            return;
+
+        bool canRefresh = activeRelicChoiceData != null
+            && activeRelicChoiceData.refreshesRemaining > 0
+            && activeRelicChoiceData.sourceTable != null
+            && activeRelicChoiceData.selectedChoice == null;
+        relicChoiceRefreshButton.gameObject.SetActive(activeRelicChoiceData != null && activeRelicChoiceData.refreshesRemaining > 0);
+        relicChoiceRefreshButton.interactable = canRefresh;
+        if (relicChoiceRefreshButtonText != null && activeRelicChoiceData != null)
+            relicChoiceRefreshButtonText.text = $"{relicChoiceRefreshLabel} ({Mathf.Max(0, activeRelicChoiceData.refreshesRemaining)})";
+    }
+
+    private static HashSet<Relic_SO> BuildRelicChoiceRefreshExclusions(BattleSettlementRelicChoiceData choiceData)
+    {
+        HashSet<Relic_SO> excluded = new HashSet<Relic_SO>();
+        if (choiceData == null || choiceData.choices == null)
+            return excluded;
+
+        for (int i = 0; i < choiceData.choices.Count; i++)
+        {
+            BattleSettlementLootEntry choice = choiceData.choices[i];
+            if (choice != null && choice.relicData != null)
+                excluded.Add(choice.relicData);
+        }
+
+        return excluded;
+    }
+
     private void CloseRelicChoiceModal()
     {
         if (activeRelicChoiceData != null && activeRelicChoiceData.HasChoices && activeRelicChoiceData.selectedChoice == null)
@@ -1460,17 +1558,29 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private void HideRelicChoiceDetailIfNotSelected(BattleSettlementLootEntry entry)
     {
-        if (activeRelicChoiceData != null && activeRelicChoiceData.selectedChoice != null)
-        {
-            ShowRelicChoiceDetail(activeRelicChoiceData.selectedChoice, selectedRelicChoiceView);
-            return;
-        }
-
         if (hoveredRelicChoiceView != null && hoveredRelicChoiceView.entry == entry)
             hoveredRelicChoiceView = null;
 
         ShowEmptyRelicChoiceDetail();
         UpdateRelicChoiceCardColors();
+    }
+
+    private static string GetLootRarityLabel(LootRarity rarity)
+    {
+        switch (rarity)
+        {
+            case LootRarity.Uncommon:
+                return "精良";
+            case LootRarity.Rare:
+                return "稀有";
+            case LootRarity.Epic:
+                return "史诗";
+            case LootRarity.Legendary:
+                return "传说";
+            case LootRarity.Common:
+            default:
+                return "普通";
+        }
     }
 
     private void PositionRelicChoiceTooltip(Vector2 screenPosition)
@@ -1507,20 +1617,44 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private RectTransform CreateExpBar(Transform parent, out RectTransform fillRect, out float fillWidth)
     {
-        Image border = CreateImage(parent, "ExpBarBorder", expBarBorderColor, null);
+        return CreateStatusBar(
+            parent,
+            "ExpBar",
+            expBarBorderColor,
+            expBarBackgroundColor,
+            expBarFillColor,
+            summaryExpBarWidth,
+            expBarSize.y,
+            out fillRect,
+            out fillWidth);
+    }
+
+    private RectTransform CreateStatusBar(
+        Transform parent,
+        string name,
+        Color borderColor,
+        Color backgroundColor,
+        Color fillColor,
+        float width,
+        float height,
+        out RectTransform fillRect,
+        out float fillWidth)
+    {
+        Image border = CreateImage(parent, $"{name}Border", borderColor, null);
         RectTransform borderRect = border.rectTransform;
-        Vector2 effectiveBarSize = new Vector2(summaryExpBarWidth, expBarSize.y);
+        Vector2 effectiveBarSize = new Vector2(Mathf.Max(1f, width), Mathf.Max(1f, height));
         borderRect.sizeDelta = effectiveBarSize;
         AddLayoutElement(borderRect, effectiveBarSize.x, effectiveBarSize.x, 0f, effectiveBarSize.y, effectiveBarSize.y);
 
-        Image background = CreateImage(borderRect, "ExpBarBackground", expBarBackgroundColor, null);
+        Image background = CreateImage(borderRect, $"{name}Background", backgroundColor, null);
         RectTransform backgroundRect = background.rectTransform;
         backgroundRect.anchorMin = Vector2.zero;
         backgroundRect.anchorMax = Vector2.one;
         backgroundRect.offsetMin = new Vector2(2f, 2f);
         backgroundRect.offsetMax = new Vector2(-2f, -2f);
 
-        Image fill = CreateImage(backgroundRect, "ExpBarFill", expBarFillColor, null);
+        Image fill = CreateImage(backgroundRect, $"{name}Fill", fillColor, null);
+        fill.raycastTarget = false;
         fillRect = fill.rectTransform;
         fillRect.anchorMin = new Vector2(0f, 0f);
         fillRect.anchorMax = new Vector2(0f, 1f);
@@ -1531,6 +1665,48 @@ public class BattleSettlementOverlay : MonoBehaviour
         fillWidth = effectiveBarSize.x - 4f;
         fillRect.sizeDelta = new Vector2(0f, 0f);
         return borderRect;
+    }
+
+    private TextMeshProUGUI CreateModalText(RectTransform parent, string name, Vector2 anchoredPosition, Vector2 size, float fontSize, Color color, string value, bool richText)
+    {
+        TextMeshProUGUI text = CreateLabel(parent, name, fontSize, color, value);
+        text.richText = richText;
+        text.font = bodyFont != null ? bodyFont : text.font;
+        RectTransform rect = text.rectTransform;
+        rect.anchorMin = new Vector2(0f, 1f);
+        rect.anchorMax = new Vector2(0f, 1f);
+        rect.pivot = new Vector2(0f, 1f);
+        rect.anchoredPosition = anchoredPosition;
+        rect.sizeDelta = size;
+        return text;
+    }
+
+    private Button CreateModalButton(RectTransform parent, string name, Vector2 anchoredPosition, Vector2 size, string label, Action onClick)
+    {
+        GameObject buttonGo = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
+        buttonGo.transform.SetParent(parent, false);
+        Image image = buttonGo.GetComponent<Image>();
+        image.color = buttonColor;
+        image.sprite = buttonBackgroundSprite;
+        image.type = buttonBackgroundSprite != null ? Image.Type.Sliced : Image.Type.Simple;
+
+        RectTransform rect = buttonGo.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0f, 1f);
+        rect.anchorMax = new Vector2(0f, 1f);
+        rect.pivot = new Vector2(0f, 1f);
+        rect.anchoredPosition = anchoredPosition;
+        rect.sizeDelta = size;
+
+        Button button = buttonGo.GetComponent<Button>();
+        button.onClick.AddListener(() => onClick?.Invoke());
+        TextMeshProUGUI text = CreateLabel(buttonGo.transform, "Label", buttonFontSize, buttonTextColor, label);
+        text.alignment = TextAlignmentOptions.Center;
+        RectTransform textRect = text.rectTransform;
+        textRect.anchorMin = Vector2.zero;
+        textRect.anchorMax = Vector2.one;
+        textRect.offsetMin = Vector2.zero;
+        textRect.offsetMax = Vector2.zero;
+        return button;
     }
 
     private Button CreateActionButton(Transform parent, string name, string label, Action onClick, bool trackButton = true)
@@ -1759,12 +1935,8 @@ public class BattleSettlementOverlay : MonoBehaviour
             {
                 gridLayout.cellSize = lootSlotSize;
                 gridLayout.spacing = new Vector2(lootGridSpacing, lootGridSpacing);
-                gridLayout.constraintCount = Mathf.Max(1, lootGridColumnCount);
             }
         }
-
-        if (lootDetailRoot != null && lootDetailPanelSize.y > 0f)
-            AddLayoutElement(lootDetailRoot, panelSize.x - panelPadding.x * 2f, panelSize.x - panelPadding.x * 2f, 0f, lootDetailPanelSize.y, lootDetailPanelSize.y);
     }
 
     private void SetPanelVisible(bool visible)
@@ -1871,7 +2043,7 @@ public class BattleSettlementOverlay : MonoBehaviour
             for (float time = 0f; time < duration; time += Time.unscaledDeltaTime)
             {
                 float normalized = Mathf.Clamp01(time / duration);
-                float eased = 1f - Mathf.Pow(1f - normalized, 3f);
+                float eased = EvaluateCubicBezierEase(normalized, 0.2f, 0.88f);
                 int displayExp = Mathf.RoundToInt(Mathf.Lerp(startExp, endExp, eased));
                 UpdateSummaryRow(row, currentLevel, displayExp, maxExp, entry.currentHP, entry.maxHP);
                 yield return null;
@@ -1892,7 +2064,34 @@ public class BattleSettlementOverlay : MonoBehaviour
             }
         }
 
+        yield return AnimateHpToResolvedState(row, currentLevel, currentExp, maxExp);
         ApplyResolvedSummaryState(row);
+    }
+
+    private IEnumerator AnimateHpToResolvedState(SummaryRowView row, int level, int currentExp, int maxExp)
+    {
+        if (row == null || row.entry == null)
+            yield break;
+
+        BattleSettlementEntry entry = row.entry;
+        int startHP = entry.currentHP;
+        int startMaxHP = entry.maxHP;
+        int targetHP = entry.resultingHP > 0 || !entry.isAlive ? entry.resultingHP : entry.currentHP;
+        int targetMaxHP = entry.resultingMaxHP > 0 ? entry.resultingMaxHP : entry.maxHP;
+        if (startHP == targetHP && startMaxHP == targetMaxHP)
+            yield break;
+
+        float duration = Mathf.Max(0.01f, hpAnimationDuration);
+        for (float time = 0f; time < duration; time += Time.unscaledDeltaTime)
+        {
+            float eased = EvaluateCubicBezierEase(Mathf.Clamp01(time / duration), 0.22f, 0.86f);
+            int displayHP = Mathf.RoundToInt(Mathf.Lerp(startHP, targetHP, eased));
+            int displayMaxHP = Mathf.RoundToInt(Mathf.Lerp(startMaxHP, targetMaxHP, eased));
+            UpdateSummaryRow(row, level, currentExp, maxExp, displayHP, displayMaxHP);
+            yield return null;
+        }
+
+        UpdateSummaryRow(row, level, currentExp, maxExp, targetHP, targetMaxHP);
     }
 
     private void ApplyResolvedSummaryState(SummaryRowView row)
@@ -1912,24 +2111,65 @@ public class BattleSettlementOverlay : MonoBehaviour
         {
             row.hpText.color = row.entry.isAlive ? hpTextColor : deadRowColor;
             row.hpText.text = row.entry.isAlive
+                ? $"生命 {displayedCurrentHP} / {displayedMaxHP}"
+                : $"倒下 {displayedCurrentHP} / {displayedMaxHP}";
+        }
+        if (row.hpText != null)
+        {
+            row.hpText.color = row.entry.isAlive ? hpTextColor : deadRowColor;
+            row.hpText.text = row.entry.isAlive
                 ? $"HP {displayedCurrentHP} / {displayedMaxHP}"
-                : $"KO   {displayedCurrentHP} / {displayedMaxHP}";
+                : $"倒下 {displayedCurrentHP} / {displayedMaxHP}";
         }
         if (row.nameText != null)
-            row.nameText.text = row.entry.displayName;
+            row.nameText.text = BuildSettlementName(row.entry);
         if (row.expText != null)
             row.expText.text = BuildExpLabel(currentExp, maxExp);
         if (row.levelText != null)
             row.levelText.text = $"Lv.{Mathf.Max(1, level)}";
-        SetExpFill(row.expFillRect, row.expFillWidth, ResolveExpRatio(currentExp, maxExp));
+        SetBarFill(row.hpFillRect, row.hpFillWidth, ResolveHpRatio(displayedCurrentHP, displayedMaxHP));
+        SetBarFill(row.expFillRect, row.expFillWidth, ResolveExpRatio(currentExp, maxExp));
     }
 
-    private void SetExpFill(RectTransform fillRect, float fillWidth, float ratio)
+    private void SetBarFill(RectTransform fillRect, float fillWidth, float ratio)
     {
         if (fillRect == null)
             return;
 
         fillRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, fillWidth * Mathf.Clamp01(ratio));
+    }
+
+    private static float EvaluateCubicBezierEase(float t, float controlY1, float controlY2)
+    {
+        float normalized = Mathf.Clamp01(t);
+        float inverse = 1f - normalized;
+        return (3f * inverse * inverse * normalized * Mathf.Clamp01(controlY1))
+            + (3f * inverse * normalized * normalized * Mathf.Clamp01(controlY2))
+            + (normalized * normalized * normalized);
+    }
+
+    private static string BuildSettlementName(BattleSettlementEntry entry)
+    {
+        return entry != null && !string.IsNullOrWhiteSpace(entry.displayName)
+            ? entry.displayName
+            : "角色";
+    }
+
+    private string BuildHpLabel(BattleSettlementEntry entry, int currentHP, int maxHP)
+    {
+        string displayName = entry != null && !string.IsNullOrWhiteSpace(entry.displayName)
+            ? entry.displayName
+            : "角色";
+        string stateLabel = entry == null || entry.isAlive ? "生命" : "倒下";
+        return $"{displayName}  {stateLabel} {currentHP} / {maxHP}";
+    }
+
+    private float ResolveHpRatio(int currentHP, int maxHP)
+    {
+        if (maxHP <= 0)
+            return 0f;
+
+        return Mathf.Clamp01(currentHP / (float)Mathf.Max(1, maxHP));
     }
 
     private float ResolveExpRatio(int currentExp, int maxExp)

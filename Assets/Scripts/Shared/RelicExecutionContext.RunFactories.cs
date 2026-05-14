@@ -116,6 +116,70 @@ public sealed partial class RelicExecutionContext
         };
     }
 
+    public static RelicExecutionContext CreateMerchantStockCountCalculation(
+        RunState runState,
+        BoardTileData tile,
+        int baseTargetCount)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnMerchantStockCountCalculated,
+            runState = runState,
+            tile = tile,
+            merchantStockTargetCount = Mathf.Max(0, baseTargetCount),
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateMerchantPurchaseAffordabilityCheck(
+        RunState runState,
+        BoardTileData tile,
+        MerchantOfferState merchantOffer,
+        int merchantBasePrice)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnMerchantPurchaseAffordabilityChecked,
+            runState = runState,
+            tile = tile,
+            merchantOffer = merchantOffer,
+            merchantBasePrice = Mathf.Max(0, merchantBasePrice),
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateRelicAcquired(
+        RunState runState,
+        Relic_SO acquiredRelicData,
+        int acquiredRelicAmount)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnRelicAcquired,
+            runState = runState,
+            acquiredRelicData = acquiredRelicData,
+            acquiredRelicAmount = Mathf.Max(0, acquiredRelicAmount),
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateActionPointsSpent(
+        RunState runState,
+        RunGameManager runGameManager,
+        BoardTileData tile,
+        int actionPointsSpent)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnActionPointsSpent,
+            runState = runState,
+            runGameManager = runGameManager,
+            tile = tile,
+            actionPointsSpent = Mathf.Max(0, actionPointsSpent),
+            feedbackMessages = new List<string>()
+        };
+    }
+
     public static RelicExecutionContext CreateLootReforge(
         RunState runState,
         LootItem_SO firstLootMaterial,

@@ -16,6 +16,7 @@ public sealed class RunSaveAssetCatalogBuildRequest
     public MapEventPool_SO eventPool;
     public MerchantCatalog_SO merchantCatalog;
     public CalamityPool_SO calamityPool;
+    public TreasureRewardTable_SO treasureRewardTable;
     public RunState runState;
     public BoardManager boardManager;
 }
@@ -37,6 +38,7 @@ public static class RunSaveAssetCatalogBuilder
         AddEventPoolAssets(catalog, request.eventPool);
         AddMerchantCatalogAssets(catalog, request.merchantCatalog);
         AddCalamityPoolAssets(catalog, request.calamityPool);
+        AddTreasureRewardTableAssets(catalog, request.treasureRewardTable);
         AddRunStateAssets(catalog, request.runState);
         AddBoardAssets(catalog, request.boardManager);
         return catalog;
@@ -153,6 +155,15 @@ public static class RunSaveAssetCatalogBuilder
             for (int calamityIndex = 0; calamityIndex < tierEntry.calamities.Count; calamityIndex++)
                 catalog.Add(tierEntry.calamities[calamityIndex]);
         }
+    }
+
+    private static void AddTreasureRewardTableAssets(MainMenuSaveAssetCatalog catalog, TreasureRewardTable_SO treasureRewardTable)
+    {
+        if (catalog == null || treasureRewardTable == null)
+            return;
+
+        AddEventBlueprintRewardAssets(catalog, treasureRewardTable.BlueprintTable);
+        AddEventRelicRewardAssets(catalog, treasureRewardTable.RelicTable);
     }
 
     private static void AddRunStateAssets(MainMenuSaveAssetCatalog catalog, RunState runState)

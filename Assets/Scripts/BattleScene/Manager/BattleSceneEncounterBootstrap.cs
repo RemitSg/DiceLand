@@ -235,15 +235,12 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
         BattleEnemyController[] refreshedEnemies = enemiesParent != null
             ? enemiesParent.GetComponentsInChildren<BattleEnemyController>(false)
             : Array.Empty<BattleEnemyController>();
-        for (int i = 0; i < refreshedEnemies.Length; i++)
+        BattleEnemyController spawnedEnemy = BattleSummonEffectService.FindNewlySpawnedEnemy(existingEnemies, refreshedEnemies, enemyData);
+        if (spawnedEnemy != null)
         {
-            BattleEnemyController enemy = refreshedEnemies[i];
-            if (enemy != null && enemy.enemyData == enemyData && !enemy.IsDead)
-            {
-                if (battleManager.ManagedData.EnemyCount <= previousEnemyCount)
-                    battleManager.ManagedData.EnemyCount = previousEnemyCount + 1;
-                return enemy;
-            }
+            if (battleManager.ManagedData.EnemyCount <= previousEnemyCount)
+                battleManager.ManagedData.EnemyCount = previousEnemyCount + 1;
+            return spawnedEnemy;
         }
 
         return null;

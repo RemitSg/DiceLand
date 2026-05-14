@@ -9,8 +9,8 @@ public static class BattleSettlementRelicChoiceBuilder
 
         BattleSettlementRelicChoiceData choiceData = new BattleSettlementRelicChoiceData
         {
-            title = "Elite Reward: Choose 1 Relic",
-            requiredMessage = "Choose one elite relic reward before returning."
+            title = "精英奖励：选择 1 个遗物",
+            requiredMessage = "返回前请选择一个精英遗物奖励。"
         };
 
         for (int i = 0; i < relics.Count; i++)
@@ -33,5 +33,19 @@ public static class BattleSettlementRelicChoiceBuilder
         }
 
         return choiceData.HasChoices ? choiceData : null;
+    }
+
+    public static BattleSettlementRelicChoiceData Build(
+        IReadOnlyList<Relic_SO> relics,
+        RelicTable_SO sourceTable,
+        int choiceCount)
+    {
+        BattleSettlementRelicChoiceData choiceData = Build(relics);
+        if (choiceData == null)
+            return null;
+
+        choiceData.sourceTable = sourceTable;
+        choiceData.choiceCount = choiceCount;
+        return choiceData;
     }
 }

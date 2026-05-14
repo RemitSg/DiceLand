@@ -46,6 +46,9 @@ public static class MerchantStockService
             catalog,
             remainingLootEntries.Count + remainingWeaponEntries.Count + remainingBlueprintEntries.Count + remainingRelicEntries.Count,
             rng);
+        targetTotalCount = Mathf.Min(
+            remainingLootEntries.Count + remainingWeaponEntries.Count + remainingBlueprintEntries.Count + remainingRelicEntries.Count,
+            RelicMerchantService.CalculateMerchantStockTargetCount(runState, tile, targetTotalCount));
 
         AddGuaranteedMerchantOffersFromLootPool(generated, remainingLootEntries, catalog.lootMinimumCount, rng);
         AddGuaranteedMerchantOffersFromWeaponPool(generated, remainingWeaponEntries, catalog.weaponMinimumCount, rng);

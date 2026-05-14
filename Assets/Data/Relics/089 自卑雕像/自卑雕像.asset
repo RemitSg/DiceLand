@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92a6c8410a56dcb4db5bca4c318c5c64, type: 3}
+  m_Name: "\u81EA\u5351\u96D5\u50CF"
+  m_EditorClassIdentifier: 
+  relicId: 89
+  relicName: "\u81EA\u5351\u96D5\u50CF"
+  description: "\u56DE\u5408\u5F00\u59CB\u65F6\uFF0C\u751F\u547D\u503C\u4F4E\u4E8E
+    20% \u7684\u53CB\u65B9\u89D2\u8272\u83B7\u5F97 1 \u5C42\u4E34\u65F6\u5F3A\u58EE\u4E0E
+    1 \u5C42\u4E34\u65F6\u91CD\u9632\u3002"
+  additionalDescription: "\u96D5\u50CF\u4F4E\u7740\u5934\uFF0C\u53EA\u5728\u6FD2\u4E34\u7834\u788E\u65F6\u9012\u51FA\u4E00\u70B9\u5014\u5F3A\u3002"
+  rarity: 0
+  icon: {fileID: 21300000, guid: b9deb25c0ed26294494707d03c46d9a9, type: 3}
+  builtInEffects:
+  - effectName: 
+    trigger: 6
+    effectType: 79
+    chance: 1
+    requireUnvisitedTile: 0
+    statusData: {fileID: 11400000, guid: d7f98e43df6b46d7a67f2b97cb5d7ed2, type: 2}
+    amount: 1
+    conditionStatusData: {fileID: 0}
+    requiredStatusStacks: 20
+    requiredSpeed: 1
+    requiredSpeedMin: 1
+    requiredSpeedMax: 1
+    statusApplyTiming: 0
+    applyAfterRoundStarts: 1
+    requiredRound: 1
+    requiredRoundMin: 1
+    requiredRoundMax: 1
+    powerAmount: 0
+    minPowerAmount: 0
+    maxPowerAmount: 0
+    maxStacks: 1
+    requiredDistinctStatusCount: 1
+    requiredConsecutiveSkillUses: 1
+    relicTable: {fileID: 0}
+  - effectName: 
+    trigger: 6
+    effectType: 79
+    chance: 1
+    requireUnvisitedTile: 0
+    statusData: {fileID: 11400000, guid: 7ba5af759a594fcbbc0a7f0dfe0660d2, type: 2}
+    amount: 1
+    conditionStatusData: {fileID: 0}
+    requiredStatusStacks: 20
+    requiredSpeed: 1
+    requiredSpeedMin: 1
+    requiredSpeedMax: 1
+    statusApplyTiming: 0
+    applyAfterRoundStarts: 1
+    requiredRound: 1
+    requiredRoundMin: 1
+    requiredRoundMax: 1
+    powerAmount: 0
+    minPowerAmount: 0
+    maxPowerAmount: 0
+    maxStacks: 1
+    requiredDistinctStatusCount: 1
+    requiredConsecutiveSkillUses: 1
+    relicTable: {fileID: 0}
+  customEffectHandler: {fileID: 0}

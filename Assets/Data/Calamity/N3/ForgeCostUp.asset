@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd7a3b759b596b4a89ca723c509b050, type: 3}
+  m_Name: ForgeCostUp
+  m_EditorClassIdentifier: 
+  calamityId: 20
+  calamityName: "\u63A2\u7D22 \xB7 \u94C1\u5320\u6DA8\u4EF7"
+  calamityTier: 3
+  description: "\u953B\u9020\u9700\u8981\u989D\u5916\u7684 40 \u91D1\u5E01"
+  rarity: 0
+  icon: {fileID: 0}
+  builtInEffects:
+  - effectName: "\u953B\u9020\u8D39\u7528 +40"
+    effectType: 13
+    effectAmount: 40
+    statusData: {fileID: 0}
+  customEffectHandler: {fileID: 0}

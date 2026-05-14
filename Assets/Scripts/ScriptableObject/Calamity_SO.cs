@@ -8,7 +8,17 @@ public enum CalamityBuiltInEffectType
     EnemyMaxHpPercentModifier = 1,
     EnemyDamagePercentModifier = 2,
     BattleExperiencePercentModifier = 3,
-    BattleMoneyPercentModifier = 4
+    BattleMoneyPercentModifier = 4,
+    MerchantPricePercentModifier = 5,
+    BattleStartSharedEnergyFlatModifier = 6,
+    RestHealPercentOverride = 7,
+    RestActionPointRestorePercentOverride = 8,
+    EnemySpeedFlatModifier = 9,
+    EnemyBattleStartStatus = 10,
+    AllyDamagePercentModifier = 11,
+    AllyMaxHpPercentModifier = 12,
+    ForgeCostFlatModifier = 13,
+    EnemyIncomingDamagePercentModifier = 14
 }
 
 [Serializable]
@@ -17,6 +27,7 @@ public class CalamityBuiltInEffectEntry
     public string effectName = "CalamityEffect";
     public CalamityBuiltInEffectType effectType = CalamityBuiltInEffectType.None;
     public int effectAmount;
+    public BattleStatus_SO statusData;
 }
 
 [CreateAssetMenu(fileName = "Calamity", menuName = "Calamities/Calamity")]

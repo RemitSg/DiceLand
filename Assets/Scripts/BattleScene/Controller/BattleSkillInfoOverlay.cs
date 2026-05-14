@@ -56,6 +56,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
     [SerializeField] private Vector2 enemyHoverPanelOffset = new Vector2(-36f, -36f);
     [SerializeField] private int enemyHoverTitleFontSize = 32;
     [SerializeField] private int enemyHoverBodyFontSize = 24;
+    [SerializeField] private Vector2 enemyHoverClauseViewportSize = new Vector2(512f, 160f);
+    [SerializeField] private float enemyHoverClauseScrollSpeed = 24f;
+    [SerializeField] private float enemyHoverClauseStartDelay = 3f;
+    [SerializeField] private float enemyHoverClauseBottomPause = 3f;
 
     public bool IsVisible => panelRoot != null && panelRoot.gameObject.activeSelf;
 
@@ -79,11 +83,16 @@ public class BattleSkillInfoOverlay : MonoBehaviour
     private RectTransform hoverPanelRoot;
     private TextMeshProUGUI hoverTitleText;
     private TextMeshProUGUI hoverDetailText;
+    private RectTransform hoverClauseViewport;
+    private RectTransform hoverClauseContent;
+    private TextMeshProUGUI hoverClauseText;
+    private BattleSkillClauseAutoScroller hoverClauseAutoScroller;
     private readonly List<Button> skillButtons = new List<Button>();
     private readonly List<TextMeshProUGUI> skillButtonTexts = new List<TextMeshProUGUI>();
     private Action hideCallback;
     private BattleAllyController currentAlly;
     private BattleEnemyController currentEnemy;
+    private SpeedButton currentAllySourceButton;
     private SpeedButton currentHoverSourceButton;
     private BattleButton cachedBattleButton;
 
@@ -110,19 +119,25 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
     public void ShowAllySkillSelection(BattleAllyController ally)
     {
+        ShowAllySkillSelection(ally, null);
+    }
+
+    public void ShowAllySkillSelection(BattleAllyController ally, SpeedButton sourceButton)
+    {
         if (ally == null)
             return;
 
         EnsureUi();
         currentAlly = ally;
         currentEnemy = null;
+        currentAllySourceButton = sourceButton;
         ShowForActor(
             $"\u6b66\u5668\u6280\u80fd\uff1a{ally.GetDebugDisplayName()}",
-            BuildWeaponSubtitle(ally),
-            BuildAllyDetail(ally),
+            BuildWeaponSubtitle(ally, sourceButton),
+            BuildAllyDetail(ally, sourceButton),
             null);
 
-        RebuildSkillButtons(ally);
+        RebuildSkillButtons(ally, sourceButton);
         AllySkillSelectionShown?.Invoke(ally);
     }
 
@@ -139,6 +154,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         EnsureUi();
         currentAlly = null;
         currentEnemy = enemy;
+        currentAllySourceButton = null;
         EnemySkill_SO skill = sourceButton != null ? enemy.GetSelectedSkillForButton(sourceButton) : enemy.SelectedSkill;
         ShowForActor(
             $"\u654c\u65b9\u6280\u80fd\uff1a{enemy.GetDebugDisplayName()}",
@@ -164,8 +180,19 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             return;
 
         currentHoverSourceButton = sourceButton;
+        string[] sections = BuildCompactEnemyHoverSections(enemy, skill);
         hoverTitleText.text = skill.skillName;
-        hoverDetailText.text = BuildCompactEnemyHoverDetail(enemy, skill);
+        hoverDetailText.text = sections[0];
+        if (hoverClauseText != null)
+            hoverClauseText.text = sections[1];
+        hoverClauseAutoScroller?.Configure(
+            hoverClauseViewport,
+            hoverClauseContent,
+            hoverClauseText,
+            enemyHoverClauseScrollSpeed,
+            enemyHoverClauseStartDelay,
+            enemyHoverClauseBottomPause);
+        hoverClauseAutoScroller?.StartLoopFromTop();
         hoverPanelRoot.gameObject.SetActive(true);
     }
 
@@ -178,6 +205,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             return;
 
         hoverPanelRoot.gameObject.SetActive(false);
+        hoverClauseAutoScroller?.ResetToTop();
         if (sourceButton == null || sourceButton == currentHoverSourceButton)
             currentHoverSourceButton = null;
     }
@@ -190,6 +218,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         EnsureUi();
         currentAlly = null;
         currentEnemy = enemy;
+        currentAllySourceButton = null;
         ShowForActor(
             $"敌人详情：{enemy.GetDebugDisplayName()}",
             $"最大生命：{enemy.MaxHP}",
@@ -207,9 +236,9 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
         if (currentAlly != null)
         {
-            subtitleText.text = BuildWeaponSubtitle(currentAlly);
-            detailText.text = BuildAllyDetail(currentAlly);
-            RebuildSkillButtons(currentAlly);
+            subtitleText.text = BuildWeaponSubtitle(currentAlly, currentAllySourceButton);
+            detailText.text = BuildAllyDetail(currentAlly, currentAllySourceButton);
+            RebuildSkillButtons(currentAlly, currentAllySourceButton);
             ResetDetailScrollToTop();
             return;
         }
@@ -393,10 +422,11 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         GameObject handleGo = new GameObject("Handle", typeof(RectTransform), typeof(Image));
         handleGo.transform.SetParent(handleSlideAreaRect, false);
         RectTransform handleRect = handleGo.GetComponent<RectTransform>();
-        handleRect.anchorMin = new Vector2(0f, 1f);
-        handleRect.anchorMax = new Vector2(1f, 1f);
+        handleRect.anchorMin = Vector2.zero;
+        handleRect.anchorMax = Vector2.one;
         handleRect.pivot = new Vector2(0.5f, 1f);
-        handleRect.sizeDelta = new Vector2(0f, 80f);
+        handleRect.offsetMin = Vector2.zero;
+        handleRect.offsetMax = Vector2.zero;
 
         Image handleImage = handleGo.GetComponent<Image>();
         handleImage.color = accentColor;
@@ -477,15 +507,57 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         }
 
         hoverTitleText = CreateText(hoverPanelRoot, "HoverTitle", new Vector2(24f, -20f), new Vector2(enemyHoverPanelSize.x - 48f, 42f), enemyHoverTitleFontSize, titleColor, true, TextAlignmentOptions.TopLeft);
-        hoverDetailText = CreateText(hoverPanelRoot, "HoverDetail", new Vector2(24f, -68f), new Vector2(enemyHoverPanelSize.x - 48f, enemyHoverPanelSize.y - 92f), enemyHoverBodyFontSize, bodyColor, false, TextAlignmentOptions.TopLeft);
+        hoverDetailText = CreateText(hoverPanelRoot, "HoverDiceSummary", new Vector2(24f, -68f), new Vector2(enemyHoverPanelSize.x - 48f, 82f), enemyHoverBodyFontSize, bodyColor, false, TextAlignmentOptions.TopLeft);
         hoverDetailText.enableWordWrapping = true;
-        hoverDetailText.overflowMode = TextOverflowModes.Overflow;
+        hoverDetailText.overflowMode = TextOverflowModes.Ellipsis;
+
+        GameObject clauseViewportGo = new GameObject("HoverClauseViewport", typeof(RectTransform), typeof(Image), typeof(RectMask2D), typeof(BattleSkillClauseAutoScroller));
+        clauseViewportGo.transform.SetParent(hoverPanelRoot, false);
+        hoverClauseViewport = clauseViewportGo.GetComponent<RectTransform>();
+        hoverClauseViewport.anchorMin = new Vector2(0f, 1f);
+        hoverClauseViewport.anchorMax = new Vector2(0f, 1f);
+        hoverClauseViewport.pivot = new Vector2(0f, 1f);
+        hoverClauseViewport.anchoredPosition = new Vector2(24f, -154f);
+        hoverClauseViewport.sizeDelta = ResolveEnemyHoverClauseViewportSize();
+
+        Image clauseViewportImage = clauseViewportGo.GetComponent<Image>();
+        clauseViewportImage.color = new Color(0f, 0f, 0f, 0.001f);
+        clauseViewportImage.raycastTarget = true;
+
+        GameObject clauseContentGo = new GameObject("HoverClauseContent", typeof(RectTransform), typeof(TextMeshProUGUI), typeof(ContentSizeFitter));
+        clauseContentGo.transform.SetParent(hoverClauseViewport, false);
+        hoverClauseContent = clauseContentGo.GetComponent<RectTransform>();
+        hoverClauseContent.anchorMin = new Vector2(0f, 1f);
+        hoverClauseContent.anchorMax = new Vector2(1f, 1f);
+        hoverClauseContent.pivot = new Vector2(0f, 1f);
+        hoverClauseContent.anchoredPosition = Vector2.zero;
+        hoverClauseContent.offsetMin = new Vector2(0f, hoverClauseContent.offsetMin.y);
+        hoverClauseContent.offsetMax = new Vector2(0f, hoverClauseContent.offsetMax.y);
+
+        ContentSizeFitter clauseContentFitter = clauseContentGo.GetComponent<ContentSizeFitter>();
+        clauseContentFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+        clauseContentFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        hoverClauseText = clauseContentGo.GetComponent<TextMeshProUGUI>();
+        ConfigureText(hoverClauseText, enemyHoverBodyFontSize, bodyColor, false, TextAlignmentOptions.TopLeft);
+        hoverClauseText.enableWordWrapping = true;
+        hoverClauseText.overflowMode = TextOverflowModes.Overflow;
+        hoverClauseText.raycastTarget = false;
+
+        hoverClauseAutoScroller = clauseViewportGo.GetComponent<BattleSkillClauseAutoScroller>();
+        hoverClauseAutoScroller.Configure(
+            hoverClauseViewport,
+            hoverClauseContent,
+            hoverClauseText,
+            enemyHoverClauseScrollSpeed,
+            enemyHoverClauseStartDelay,
+            enemyHoverClauseBottomPause);
         hoverPanelRoot.gameObject.SetActive(false);
 
         ApplyFonts();
     }
 
-    private void RebuildSkillButtons(BattleAllyController ally)
+    private void RebuildSkillButtons(BattleAllyController ally, SpeedButton sourceButton)
     {
         ClearSkillButtons();
         if (ally == null)
@@ -514,8 +586,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             rect.sizeDelta = skillButtonSize;
 
             Image image = buttonGo.GetComponent<Image>();
-            bool isSelected = capturedIndex == ally.CurrentSkillIndex;
-            string unavailableReason = cachedBattleButton != null ? cachedBattleButton.GetAllySkillUnavailableReason(ally, skill) : string.Empty;
+            bool isSelected = capturedIndex == ally.GetSelectedSkillIndexForButton(sourceButton);
+            string unavailableReason = cachedBattleButton != null ? cachedBattleButton.GetAllySkillUnavailableReason(ally, sourceButton, skill) : string.Empty;
             bool canSelect = string.IsNullOrEmpty(unavailableReason);
             Color baseColor = isSelected ? selectedSkillButtonColor : skillButtonColor;
             image.color = canSelect ? baseColor : new Color(baseColor.r * 0.45f, baseColor.g * 0.45f, baseColor.b * 0.45f, baseColor.a * 0.75f);
@@ -526,14 +598,14 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             button.interactable = canSelect;
             button.onClick.AddListener(() =>
             {
-                if (cachedBattleButton != null && !cachedBattleButton.CanSelectSkillForAlly(ally, skill))
+                if (cachedBattleButton != null && !cachedBattleButton.CanSelectSkillForAllyButton(ally, sourceButton, skill))
                     return;
 
-                if (ally.SetSelectedSkillIndex(capturedIndex))
+                if (ally.SetSelectedSkillIndexForButton(sourceButton, capturedIndex))
                 {
-                    subtitleText.text = BuildWeaponSubtitle(ally);
-                    detailText.text = BuildAllyDetail(ally);
-                    RebuildSkillButtons(ally);
+                    subtitleText.text = BuildWeaponSubtitle(ally, sourceButton);
+                    detailText.text = BuildAllyDetail(ally, sourceButton);
+                    RebuildSkillButtons(ally, sourceButton);
                 }
             });
 
@@ -569,6 +641,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         ApplyFont(detailText, GetBodyFont());
         ApplyFont(hoverTitleText, GetKeywordFont());
         ApplyFont(hoverDetailText, GetBodyFont());
+        ApplyFont(hoverClauseText, GetBodyFont());
 
         for (int i = 0; i < skillButtonTexts.Count; i++)
             ApplyFont(skillButtonTexts[i], GetKeywordFont());
@@ -589,6 +662,15 @@ public class BattleSkillInfoOverlay : MonoBehaviour
     private TMP_FontAsset GetBodyFont()
     {
         return bodyFont != null ? bodyFont : keywordFont;
+    }
+
+    private Vector2 ResolveEnemyHoverClauseViewportSize()
+    {
+        float maxWidth = Mathf.Max(1f, enemyHoverPanelSize.x - 48f);
+        float maxHeight = Mathf.Max(1f, enemyHoverPanelSize.y - 178f);
+        float width = enemyHoverClauseViewportSize.x > 0f ? enemyHoverClauseViewportSize.x : maxWidth;
+        float height = enemyHoverClauseViewportSize.y > 0f ? enemyHoverClauseViewportSize.y : maxHeight;
+        return new Vector2(Mathf.Clamp(width, 1f, maxWidth), Mathf.Clamp(height, 1f, maxHeight));
     }
 
     private static void ApplyFont(TMP_Text text, TMP_FontAsset font)
@@ -630,7 +712,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         ApplyFont(text, useKeywordFont ? GetKeywordFont() : GetBodyFont());
     }
 
-    private static string BuildWeaponSubtitle(BattleAllyController ally)
+    private static string BuildWeaponSubtitle(BattleAllyController ally, SpeedButton sourceButton)
     {
         Weapon_SO weaponData = ally != null ? ally.GetComponent<AllyController>()?.weapon?.weaponData : null;
         if (weaponData == null)
@@ -639,19 +721,21 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         string sourceLabel = ally != null && ally.TemporarySkillsOverrideWeaponPool
             ? "\u4e34\u65f6\u6280\u80fd"
             : weaponData.weaponName;
-        return $"{sourceLabel}  \u5f53\u524d\u6280\u80fd\uff1a{ally.SelectedSkill?.skillName ?? "\u672a\u914d\u7f6e"}";
+        EnemySkill_SO selectedSkill = ally != null ? ally.GetSelectedSkillForButton(sourceButton) : null;
+        return $"{sourceLabel}  \u5f53\u524d\u6280\u80fd\uff1a{selectedSkill?.skillName ?? "\u672a\u914d\u7f6e"}";
     }
 
-    private string BuildAllyDetail(BattleAllyController ally)
+    private string BuildAllyDetail(BattleAllyController ally, SpeedButton sourceButton)
     {
         if (ally == null)
             return "\u672a\u627e\u5230\u89d2\u8272\u6570\u636e\u3002";
 
+        EnemySkill_SO selectedSkill = ally.GetSelectedSkillForButton(sourceButton);
         return BuildSkillDetail(
-            ally.SelectedSkill,
+            selectedSkill,
             "\u5f53\u524d\u6280\u80fd",
             true,
-            ally.SelectedSkill != null ? new Func<int, EnemySkill_SO.DicePowerRange>(diceIndex => ally.GetDisplayedDicePowerRange(ally.SelectedSkill, diceIndex)) : null,
+            selectedSkill != null ? new Func<int, EnemySkill_SO.DicePowerRange>(diceIndex => ally.GetDisplayedDicePowerRange(selectedSkill, diceIndex)) : null,
             ally);
     }
 
@@ -785,6 +869,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                     string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
                     string stackLabel = BuildColoredToken(effect.stackAmount.ToString(), valueHighlightColor);
                     string statusLabel = BuildColoredToken(GetStatusLabel(effect), valueHighlightColor);
+                    string conditionPrefix = BuildStatusEffectConditionPrefix(effect);
                     string timingLabel = effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
                         ? BuildColoredToken(
                             Mathf.Max(1, effect.applyRepeatCount) > 1
@@ -793,8 +878,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                             triggerHighlightColor)
                         : string.Empty;
                     effectLines.Add(effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
-                        ? $"{diceEffectLabel}：{triggerLabel} 使 {targetLabel} 于 {timingLabel} 获得 {stackLabel} 层 {statusLabel}"
-                        : $"{diceEffectLabel}：{triggerLabel} 使 {targetLabel} 获得 {stackLabel} 层 {statusLabel}");
+                        ? $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 于 {timingLabel} 获得 {stackLabel} 层 {statusLabel}"
+                        : $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 获得 {stackLabel} 层 {statusLabel}");
                 }
             }
 
@@ -963,8 +1048,14 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
     private string BuildCompactSkillHoverDetail(EnemySkill_SO skill, bool attackerIsAlly, Func<int, EnemySkill_SO.DicePowerRange> rangeResolver)
     {
+        string[] sections = BuildCompactSkillHoverSections(skill, attackerIsAlly, rangeResolver);
+        return $"{sections[0]}\n\n{sections[1]}";
+    }
+
+    private string[] BuildCompactSkillHoverSections(EnemySkill_SO skill, bool attackerIsAlly, Func<int, EnemySkill_SO.DicePowerRange> rangeResolver)
+    {
         if (skill == null)
-            return "未配置技能。";
+            return new[] { "未配置技能。", "词条：\n无" };
 
         List<string> rangeLines = new List<string>();
         List<string> effectLines = new List<string>();
@@ -981,18 +1072,26 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             AppendEffectLines(effectLines, diceEffectLabel, effectSettings, attackerIsAlly);
         }
 
-        return effectLines.Count > 0
-            ? $"{string.Join("\n", rangeLines)}\n\n词条：\n{string.Join("\n", effectLines)}"
-            : $"{string.Join("\n", rangeLines)}\n\n词条：\n无";
+        string rangeSection = string.Join("\n", rangeLines);
+        string clauseSection = effectLines.Count > 0
+            ? $"词条：\n{string.Join("\n", effectLines)}"
+            : "词条：\n无";
+        return new[] { rangeSection, clauseSection };
     }
 
     private string BuildCompactEnemyHoverDetail(BattleEnemyController enemy, EnemySkill_SO skill)
     {
+        string[] sections = BuildCompactEnemyHoverSections(enemy, skill);
+        return $"{sections[0]}\n\n{sections[1]}";
+    }
+
+    private string[] BuildCompactEnemyHoverSections(BattleEnemyController enemy, EnemySkill_SO skill)
+    {
         if (enemy == null)
-            return BuildCompactSkillHoverDetail(skill, false);
+            return BuildCompactSkillHoverSections(skill, false, null);
 
         if (skill == null)
-            return "未配置技能。";
+            return new[] { "未配置技能。", "词条：\n无" };
 
         List<string> rangeLines = new List<string>();
         List<string> effectLines = new List<string>();
@@ -1009,9 +1108,11 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             AppendEffectLines(effectLines, diceEffectLabel, effectSettings, false);
         }
 
-        return effectLines.Count > 0
-            ? $"{string.Join("\n", rangeLines)}\n\n词条：\n{string.Join("\n", effectLines)}"
-            : $"{string.Join("\n", rangeLines)}\n\n词条：\n无";
+        string rangeSection = string.Join("\n", rangeLines);
+        string clauseSection = effectLines.Count > 0
+            ? $"词条：\n{string.Join("\n", effectLines)}"
+            : "词条：\n无";
+        return new[] { rangeSection, clauseSection };
     }
 
     private void AppendEffectLines(List<string> effectLines, string diceEffectLabel, EnemySkill_SO.DiceEffectSettings effectSettings, bool attackerIsAlly)
@@ -1068,6 +1169,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
                 string stackLabel = BuildColoredToken(effect.stackAmount.ToString(), valueHighlightColor);
                 string statusLabel = BuildColoredToken(GetStatusLabel(effect), valueHighlightColor);
+                string conditionPrefix = BuildStatusEffectConditionPrefix(effect);
                 string timingLabel = effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
                     ? BuildColoredToken(
                         Mathf.Max(1, effect.applyRepeatCount) > 1
@@ -1076,8 +1178,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                         triggerHighlightColor)
                     : string.Empty;
                 effectLines.Add(effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
-                    ? $"{diceEffectLabel}：{triggerLabel} 使 {targetLabel} 于 {timingLabel} 获得 {stackLabel} 层 {statusLabel}"
-                    : $"{diceEffectLabel}：{triggerLabel} 使 {targetLabel} 获得 {stackLabel} 层 {statusLabel}");
+                    ? $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 于 {timingLabel} 获得 {stackLabel} 层 {statusLabel}"
+                    : $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 获得 {stackLabel} 层 {statusLabel}");
             }
         }
 
@@ -1830,6 +1932,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "全体友方";
             case EnemySkill_SO.DamageTargetMode.LowestHpFriendly:
                 return "血量最低的友方";
+            case EnemySkill_SO.DamageTargetMode.LowestHpOpponent:
+                return "血量最低的目标";
             default:
                 return "\u76ee\u6807";
         }
@@ -1946,6 +2050,15 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferLowestSpeed)
             return "\n目标偏好：优先攻击速度最低的目标";
 
+        if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferTargetsWithNegativeStatusTypesAtLeast)
+            return $"\n目标偏好：优先攻击拥有至少 {Mathf.Max(1, skill.targetPriorityRequiredStacks)} 种负面状态的目标";
+
+        if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferTargetsWithLowestStatusStacks)
+            return $"\n目标偏好：优先攻击{GetTargetPriorityStatusLabel(skill)}层数最低的目标";
+
+        if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferTargetsWithHighestStatusStacks)
+            return $"\n目标偏好：优先攻击{GetTargetPriorityStatusLabel(skill)}层数最高的目标";
+
         return string.Empty;
     }
 
@@ -2000,11 +2113,87 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"目标每拥有 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetHealingConditionStatusLabel(effect)}";
             case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
                 return $"目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 种负面状态";
+            case EnemySkill_SO.PowerModifierCondition.AnyOpponentNegativeStatusTypesAtLeast:
+                return $"任意敌方目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 种负面状态";
             case EnemySkill_SO.PowerModifierCondition.SelfHpRatioBelowOrEqual:
                 return $"自身生命值不高于 {Mathf.Clamp(effect.requiredConditionStatusStacks, 0, 100)}%";
             default:
                 return "\u672a\u914d\u7f6e\u6761\u4ef6";
         }
+    }
+
+    private string BuildStatusEffectConditionPrefix(EnemySkill_SO.StatusEffectEntry effect)
+    {
+        if (!effect.useCondition)
+            return string.Empty;
+
+        return $"若 {BuildColoredToken(GetStatusEffectConditionLabel(effect), targetHighlightColor)} ，则 ";
+    }
+
+    private static string GetStatusEffectConditionLabel(EnemySkill_SO.StatusEffectEntry effect)
+    {
+        switch (effect.condition)
+        {
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanTarget:
+                return $"自身速度 高出 目标单位速度 {Mathf.Max(1, effect.requiredConditionSpeedDifference)} 点（含）";
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanTarget:
+                return $"自身速度 低于 目标单位速度 {Mathf.Max(1, effect.requiredConditionSpeedDifference)} 点（含）";
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedEqualToTarget:
+                return "自身速度 等于 目标单位速度";
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanValue:
+                return $"自身速度 高于 {effect.requiredConditionSpeedValue}（含）";
+            case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanValue:
+                return $"自身速度 低于 {effect.requiredConditionSpeedValue}（含）";
+            case EnemySkill_SO.PowerModifierCondition.SelfHasStatus:
+                return $"自身拥有 {GetStatusEffectConditionStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterThan:
+                return $"自身 {GetStatusEffectConditionStatusLabel(effect)} 层数 高于 {Mathf.Max(0, effect.requiredConditionStatusStacks)}";
+            case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterOrEqual:
+                return $"自身 {GetStatusEffectConditionStatusLabel(effect)} 层数 至少为 {Mathf.Max(1, effect.requiredConditionStatusStacks)}";
+            case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksLessThan:
+                return $"自身 {GetStatusEffectConditionStatusLabel(effect)} 层数 低于 {Mathf.Max(1, effect.requiredConditionStatusStacks)}";
+            case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksLessOrEqual:
+                return $"自身 {GetStatusEffectConditionStatusLabel(effect)} 层数 至多为 {Mathf.Max(0, effect.requiredConditionStatusStacks)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetHasStatus:
+                return $"目标拥有 {GetStatusEffectConditionStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
+                return $"目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetStatusEffectConditionStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
+                return $"目标每拥有 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetStatusEffectConditionStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetSkillIsSpecific:
+                return $"与技能 {GetStatusEffectConditionSkillLabel(effect)} 拼点";
+            case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
+                return $"目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 种负面状态";
+            case EnemySkill_SO.PowerModifierCondition.AnyOpponentNegativeStatusTypesAtLeast:
+                return $"任意敌方目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 种负面状态";
+            case EnemySkill_SO.PowerModifierCondition.SelfHpRatioBelowOrEqual:
+                return $"自身生命值不高于 {Mathf.Clamp(effect.requiredConditionStatusStacks, 0, 100)}%";
+            default:
+                return "未配置条件";
+        }
+    }
+
+    private static string GetStatusEffectConditionStatusLabel(EnemySkill_SO.StatusEffectEntry effect)
+    {
+        if (effect.conditionStatusData != null)
+            return effect.conditionStatusData.DisplayName;
+
+        switch (effect.conditionStatusType)
+        {
+            case EnemySkill_SO.DiceStatusType.Burn:
+                return "燃烧";
+            case EnemySkill_SO.DiceStatusType.Electro:
+                return "电流";
+            default:
+                return "未配置状态";
+        }
+    }
+
+    private static string GetStatusEffectConditionSkillLabel(EnemySkill_SO.StatusEffectEntry effect)
+    {
+        return effect.conditionTargetSkillData != null && !string.IsNullOrWhiteSpace(effect.conditionTargetSkillData.skillName)
+            ? effect.conditionTargetSkillData.skillName
+            : "未配置技能";
     }
 
     private static string GetBuiltInConditionLabel(EnemySkill_SO.BuiltInEffectEntry effect)
@@ -2085,6 +2274,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"与技能 {GetBuiltInGeneralConditionSkillLabel(effect)} 拼点";
             case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
                 return $"目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 种负面状态";
+            case EnemySkill_SO.PowerModifierCondition.AnyOpponentNegativeStatusTypesAtLeast:
+                return $"任意敌方目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 种负面状态";
             case EnemySkill_SO.PowerModifierCondition.SelfHpRatioBelowOrEqual:
                 return $"自身生命值不高于 {Mathf.Clamp(effect.requiredConditionStatusStacks, 0, 100)}%";
             default:
@@ -2131,6 +2322,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "全体友方";
             case EnemySkill_SO.DamageTargetMode.LowestHpFriendly:
                 return "血量最低的友方";
+            case EnemySkill_SO.DamageTargetMode.LowestHpOpponent:
+                return "血量最低的目标";
             default:
                 return attackerIsAlly ? "敌方目标" : "目标";
         }
@@ -2189,6 +2382,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"与技能 {GetPowerModifierTargetSkillLabel(effect)} 拼点";
             case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
                 return $"目标拥有至少 {Mathf.Max(1, effect.requiredStatusStacks)} 种负面状态";
+            case EnemySkill_SO.PowerModifierCondition.AnyOpponentNegativeStatusTypesAtLeast:
+                return $"任意敌方目标拥有至少 {Mathf.Max(1, effect.requiredStatusStacks)} 种负面状态";
             case EnemySkill_SO.PowerModifierCondition.SelfHpRatioBelowOrEqual:
                 return $"自身生命值不高于 {Mathf.Clamp(effect.requiredStatusStacks, 0, 100)}%";
             default:
@@ -2253,6 +2448,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"与技能 {GetRangeModifierTargetSkillLabel(effect)} 拼点";
             case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
                 return $"目标拥有至少 {Mathf.Max(1, effect.requiredStatusStacks)} 种负面状态";
+            case EnemySkill_SO.PowerModifierCondition.AnyOpponentNegativeStatusTypesAtLeast:
+                return $"任意敌方目标拥有至少 {Mathf.Max(1, effect.requiredStatusStacks)} 种负面状态";
             case EnemySkill_SO.PowerModifierCondition.SelfHpRatioBelowOrEqual:
                 return $"自身生命值不高于 {Mathf.Clamp(effect.requiredStatusStacks, 0, 100)}%";
             default:
@@ -2313,7 +2510,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             case EnemySkill_SO.DiceEffectTrigger.OnSkillUse:
                 return "[ \u4f7f\u7528\u8be5\u6280\u80fd\u65f6 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnClashWin:
-                return "[ 造成伤害时 ]";
+                return "[ 拼点胜利时 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnSingleAttack:
                 return "[ 单方面攻击时 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnAllDiceHit:
@@ -2336,7 +2533,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             case EnemySkill_SO.DiceEffectTrigger.OnClash:
                 return "[ \u62fc\u70b9\u65f6 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnClashWin:
-                return "[ 造成伤害时 ]";
+                return "[ 拼点胜利时 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnSingleAttack:
                 return "[ 单方面攻击时 ]";
             case EnemySkill_SO.DiceEffectTrigger.OnAllDiceHit:

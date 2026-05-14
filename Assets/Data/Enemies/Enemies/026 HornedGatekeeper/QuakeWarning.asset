@@ -13,9 +13,7 @@ MonoBehaviour:
   m_Name: QuakeWarning
   m_EditorClassIdentifier: 
   skillName: "\u9707\u5730\u8B66\u544A"
-  description: "\u7B2C 1 \u9AA0\u4F7F\u7528\u65F6\u4F7F\u76EE\u6807\u83B7\u5F97 1
-    \u5C42\u7F13\u6162\uFF1B\u7B2C 2 \u9AA0\u62FC\u70B9\u80DC\u5229\u540E\u4F7F\u76EE\u6807\u83B7\u5F97
-    10 \u5C42\u6613\u4F24"
+  description: "\u5B83\u5927\u8E0F\u6B65\u5730\u9707\u5730\uFF0C\u4F3C\u4E4E\u662F\u5728\u8B66\u544A\u4F60\u4EEC"
   skillCategory: 1
   energyCost: 0
   requiredSelfStatusData: {fileID: 0}
@@ -35,7 +33,57 @@ MonoBehaviour:
     maxPower: 4
   - minPower: 1
     maxPower: 3
-  dicePresentationSettings: []
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 0}
+    hitEffectPrefab: {fileID: 0}
+    clashOffsetSpace: 0
+    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitOffsetSpace: 0
+    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 21300000, guid: 4de0130c670a6bd40b9686d257722c92, type: 3}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
+  - clashEffectPrefab: {fileID: 0}
+    hitEffectPrefab: {fileID: 0}
+    clashOffsetSpace: 0
+    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitOffsetSpace: 0
+    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 21300000, guid: 4de0130c670a6bd40b9686d257722c92, type: 3}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
   diceEffectSettings:
   - damageEffects: []
     statusEffects:

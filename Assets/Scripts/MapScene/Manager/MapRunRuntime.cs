@@ -227,7 +227,10 @@ public static class MapRunRuntime
                 if (member == null)
                     continue;
 
-                member.currentHP = Mathf.Clamp(member.maxHP, 0, Mathf.Max(0, member.maxHP));
+                int maxHP = Mathf.Max(0, member.maxHP);
+                int healPercent = CalamitySystem.ResolveRestHealPercent(100, currentSnapshot.runState.activeCalamities);
+                int healAmount = Mathf.CeilToInt(maxHP * (healPercent / 100f));
+                member.currentHP = Mathf.Clamp(member.currentHP + healAmount, 0, maxHP);
             }
 
             currentSnapshot.runState.SyncLegacyPlayerFieldsFromParty();
@@ -253,7 +256,10 @@ public static class MapRunRuntime
         if (!string.Equals(currentSnapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
             return;
 
-        currentSnapshot.actionPointCurrent = Mathf.Max(0, currentSnapshot.actionPointBase + currentSnapshot.actionPointBonus);
+        int maxActionPoints = Mathf.Max(0, currentSnapshot.actionPointBase + currentSnapshot.actionPointBonus);
+        int restorePercent = CalamitySystem.ResolveRestActionPointRestorePercent(100, currentSnapshot.runState != null ? currentSnapshot.runState.activeCalamities : null);
+        int restoreAmount = Mathf.CeilToInt(maxActionPoints * (restorePercent / 100f));
+        currentSnapshot.actionPointCurrent = Mathf.Clamp(currentSnapshot.actionPointCurrent + restoreAmount, 0, maxActionPoints);
         if (currentSnapshot.suppressOnePendingCalamityOnActionPointRestore && currentSnapshot.pendingCalamityTiers.Count > 0)
             currentSnapshot.pendingCalamityTiers.RemoveAt(0);
         currentSnapshot.suppressOnePendingCalamityOnActionPointRestore = false;

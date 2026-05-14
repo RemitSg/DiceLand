@@ -32,7 +32,12 @@ public static class MerchantPurchaseService
 
         int price = Mathf.Max(0, RelicMerchantService.CalculateOfferPrice(runState, tile, offer));
         string displayName = offer.DisplayName;
-        if (!runState.TrySpendMoney(price))
+        bool canUsePositiveMoneyOverride = price > 0 && runState.money < price &&
+            RelicMerchantService.CanPurchaseWithPositiveMoneyOverride(runState, tile, offer, price);
+        int spendAmount = canUsePositiveMoneyOverride
+            ? Mathf.Clamp(runState.money, 0, price)
+            : price;
+        if (!runState.TrySpendMoney(spendAmount))
         {
             return Failure(
                 MerchantPurchaseFailureReason.InsufficientMoney,

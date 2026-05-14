@@ -184,6 +184,12 @@ public class EnemyData_SO : ScriptableObject
     [Tooltip("When enabled, lethal damage leaves this enemy at 1 HP until every other living ally is also at 1 HP or lower.")]
     public bool surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp;
 
+    [Header("Round Start Transform")]
+    [Tooltip("Optional enemy data this enemy turns into at round start when the required status is missing.")]
+    public EnemyData_SO transformToEnemyDataWhenStatusMissing;
+    [Tooltip("Status that must be present to prevent the round start transform.")]
+    public BattleStatus_SO transformMissingStatusData;
+
     [TextArea(2, 5)]
     public string enemyDescription;
     public List<PassiveDescriptionEntry> passiveDescriptions;

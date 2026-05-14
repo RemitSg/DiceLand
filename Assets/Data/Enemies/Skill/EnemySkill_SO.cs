@@ -34,7 +34,8 @@ public class EnemySkill_SO : ScriptableObject
         AllOpponents = 2,
         Self = 3,
         AllFriendlies = 4,
-        LowestHpFriendly = 5
+        LowestHpFriendly = 5,
+        LowestHpOpponent = 6
     }
 
     public enum HealAmountMode
@@ -96,7 +97,8 @@ public class EnemySkill_SO : ScriptableObject
         SelfSpeedHigherThanValue = 12,
         SelfSpeedLowerThanValue = 13,
         TargetNegativeStatusTypesAtLeast = 14,
-        SelfHpRatioBelowOrEqual = 15
+        SelfHpRatioBelowOrEqual = 15,
+        AnyOpponentNegativeStatusTypesAtLeast = 16
     }
 
     public enum SkillCategory
@@ -109,7 +111,10 @@ public class EnemySkill_SO : ScriptableObject
     {
         None = 0,
         PreferTargetsWithStatusAtLeast = 1,
-        PreferLowestSpeed = 2
+        PreferLowestSpeed = 2,
+        PreferTargetsWithNegativeStatusTypesAtLeast = 3,
+        PreferTargetsWithLowestStatusStacks = 4,
+        PreferTargetsWithHighestStatusStacks = 5
     }
 
     public enum TransformOffsetSpace

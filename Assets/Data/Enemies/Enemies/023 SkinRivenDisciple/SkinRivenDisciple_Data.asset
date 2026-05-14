@@ -19,7 +19,7 @@ MonoBehaviour:
   minSpeed: 2
   maxSpeed: 6
   baseSpeedButtonCount: 2
-  enemySprite: {fileID: 21300000, guid: c60cc52c21dc364478ee76f9d723e7fd, type: 3}
+  enemySprite: {fileID: 21300000, guid: 251780a80943563438f8c4cb4f0fd9c9, type: 3}
   stageSprites: []
   enableHealthBasedStageTransition: 0
   healthBasedTransitionThresholdNormalized: 0.5
@@ -37,11 +37,14 @@ MonoBehaviour:
     settlementLootTables: []
   preventAllyBleedDecayOnHitWhileAlive: 0
   surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  transformToEnemyDataWhenStatusMissing: {fileID: 0}
+  transformMissingStatusData: {fileID: 0}
   enemyDescription: "\u4EE5\u81EA\u6B8B\u8840\u793C\u4E3A\u4FE1\u6761\u7684\u75AF\u4FE1\u8005\u3002\u5B83\u4EEC\u4F1A\u5148\u5265\u5F00\u81EA\u5DF1\u7684\u76AE\u80A4\uFF0C\u518D\u7528\u8840\u503A\u5411\u76EE\u6807\u8FFD\u7D22\u751F\u547D\u3002"
   passiveDescriptions:
   - passiveName: "\u732E\u796D"
     displayColorType: 1
-    description: "\u56E0\u81EA\u8EAB\u6280\u80FD\u53D7\u5230\u4F24\u5BB3\u65F6\uFF0C\u4E0B\u56DE\u5408\u5F00\u59CB\u65F6\u83B7\u5F97 1 \u5C42\u4E34\u65F6\u5F3A\u58EE"
+    description: "\u56E0\u81EA\u8EAB\u6280\u80FD\u53D7\u5230\u4F24\u5BB3\u65F6\uFF0C\u4E0B\u56DE\u5408\u5F00\u59CB\u65F6\u83B7\u5F97
+      1 \u5C42\u4E34\u65F6\u5F3A\u58EE"
   enemyVisualScale: 1.55
   enemyVisualOffset: {x: 0, y: 0, z: 0}
   speedButtonOffset: {x: 0, y: 0}

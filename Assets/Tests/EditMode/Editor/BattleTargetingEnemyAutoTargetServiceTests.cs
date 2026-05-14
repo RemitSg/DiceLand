@@ -46,6 +46,24 @@ public class BattleTargetingEnemyAutoTargetServiceTests
         Assert.AreEqual(0, logs.Count);
     }
 
+    [Test]
+    public void ResolvePreferredTargetButton_PrefersAllyWithEnoughNegativeStatusTypes()
+    {
+        BattleEnemyController enemy = CreateEnemy("LightKnight", buttonCount: 1);
+        BattleAllyController cleanAlly = CreateAlly("Clean", buttonCount: 1);
+        BattleAllyController markedAlly = CreateAlly("Marked", buttonCount: 1);
+        markedAlly.AddStatus(CreateStatus("bleed", "流血"), "bleed", "流血", 1);
+        markedAlly.AddStatus(CreateStatus("slowness", "缓慢"), "slowness", "缓慢", 1);
+        SetSelectedSkillForButton(enemy, CreateSkillWithNegativeStatusPriority());
+
+        SpeedButton preferred = InvokeResolvePreferredTargetButton(
+            enemy,
+            enemy.SpeedButtons[0],
+            new List<SpeedButton> { cleanAlly.SpeedButtons[0], markedAlly.SpeedButtons[0] });
+
+        Assert.AreSame(markedAlly.SpeedButtons[0], preferred);
+    }
+
     private BattleAllyController CreateAlly(string name, int buttonCount)
     {
         GameObject go = CreateGameObject(name);
@@ -84,6 +102,24 @@ public class BattleTargetingEnemyAutoTargetServiceTests
         return character;
     }
 
+    private BattleStatus_SO CreateStatus(string statusId, string displayName)
+    {
+        BattleStatus_SO status = ScriptableObject.CreateInstance<BattleStatus_SO>();
+        SetPrivateField(status, "statusId", statusId);
+        SetPrivateField(status, "displayName", displayName);
+        createdObjects.Add(status);
+        return status;
+    }
+
+    private EnemySkill_SO CreateSkillWithNegativeStatusPriority()
+    {
+        EnemySkill_SO skill = ScriptableObject.CreateInstance<EnemySkill_SO>();
+        skill.targetPriorityMode = EnemySkill_SO.TargetPriorityMode.PreferTargetsWithNegativeStatusTypesAtLeast;
+        skill.targetPriorityRequiredStacks = 2;
+        createdObjects.Add(skill);
+        return skill;
+    }
+
     private List<SpeedButton> CreateSpeedButtons(Transform parent, int count, SpeedButton.ButtonType buttonType)
     {
         List<SpeedButton> buttons = new List<SpeedButton>();
@@ -112,10 +148,36 @@ public class BattleTargetingEnemyAutoTargetServiceTests
         SetPrivateField(source, "connectedButton", target);
     }
 
+    private static SpeedButton InvokeResolvePreferredTargetButton(BattleEnemyController enemy, SpeedButton source, List<SpeedButton> allyButtons)
+    {
+        MethodInfo method = typeof(BattleEnemyController).GetMethod("ResolvePreferredTargetButton", BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(method);
+        return method.Invoke(enemy, new object[] { source, allyButtons }) as SpeedButton;
+    }
+
     private static void SetPrivateField<TValue>(object target, string fieldName, TValue value)
     {
         FieldInfo field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.IsNotNull(field, $"Field {fieldName} was not found on {target.GetType().Name}.");
         field.SetValue(target, value);
+    }
+
+    private static void SetPrivateProperty<TValue>(object target, string propertyName, TValue value)
+    {
+        PropertyInfo property = target.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        Assert.IsNotNull(property, $"Property {propertyName} was not found on {target.GetType().Name}.");
+        property.SetValue(target, value);
+    }
+
+    private static void SetSelectedSkillForButton(BattleEnemyController enemy, EnemySkill_SO skill)
+    {
+        SetPrivateProperty(enemy, "SelectedSkill", skill);
+
+        FieldInfo field = typeof(BattleEnemyController).GetField("selectedSkillsPerButton", BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(field, "Field selectedSkillsPerButton was not found on BattleEnemyController.");
+        List<EnemySkill_SO> selectedSkills = field.GetValue(enemy) as List<EnemySkill_SO>;
+        Assert.IsNotNull(selectedSkills);
+        selectedSkills.Clear();
+        selectedSkills.Add(skill);
     }
 }

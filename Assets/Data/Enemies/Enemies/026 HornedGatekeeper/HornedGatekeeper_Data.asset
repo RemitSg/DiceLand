@@ -19,15 +19,15 @@ MonoBehaviour:
   minSpeed: 1
   maxSpeed: 6
   baseSpeedButtonCount: 2
-  enemySprite: {fileID: 21300000, guid: c60cc52c21dc364478ee76f9d723e7fd, type: 3}
+  enemySprite: {fileID: 21300000, guid: 5ba562aa961386247bfbf8afb184ab9e, type: 3}
   stageSprites:
   - stageName: "\u575A\u5B88"
-    stageSprite: {fileID: 21300000, guid: c60cc52c21dc364478ee76f9d723e7fd, type: 3}
+    stageSprite: {fileID: 21300000, guid: 5ba562aa961386247bfbf8afb184ab9e, type: 3}
     minSpeedOverride: 1
     maxSpeedOverride: 6
     speedButtonCountOverride: 2
   - stageName: "\u65AD\u89D2"
-    stageSprite: {fileID: 21300000, guid: c60cc52c21dc364478ee76f9d723e7fd, type: 3}
+    stageSprite: {fileID: 21300000, guid: 5ba562aa961386247bfbf8afb184ab9e, type: 3}
     minSpeedOverride: 2
     maxSpeedOverride: 7
     speedButtonCountOverride: 3

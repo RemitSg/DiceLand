@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "\u5149\u5203\u76F4\u5288"
   m_EditorClassIdentifier: 
   skillName: "\u5149\u5203\u76F4\u5288"
-  description: "\u9A91\u58EB\u51F6\u731B\u7684\u76F4\u5288\uFF0C\u662F\u4E0D\u662F\u5F88\u75BC\uFF1F"
+  description: "\u5723\u5149\u538B\u8FDB\u5251\u950B\uFF0C\u5728\u4F24\u53E3\u91CC\u7559\u4E0B\u4E00\u9053\u8FDF\u6765\u7684\u88C1\u7F5A\u3002"
   skillCategory: 0
   energyCost: 0
   requiredSelfStatusData: {fileID: 0}
@@ -63,13 +63,21 @@ MonoBehaviour:
     - effectName: 
       trigger: 0
       targetMode: 0
-      statusData: {fileID: 0}
+      statusData: {fileID: 11400000, guid: f3d7f5c8ab6d4a7db9c2e4f1860a5b31, type: 2}
       statusType: 0
       applyTiming: 0
-      applyAfterRoundStarts: 0
-      applyRepeatCount: 0
-      stackAmount: 1
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
+      stackAmount: 2
       randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []

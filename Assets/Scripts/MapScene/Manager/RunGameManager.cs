@@ -11,6 +11,10 @@ public class RunGameManager : MonoBehaviour
     private const int TutorialBoardSize = 12;
     private const int TutorialEncounterSeedBase = 26000;
     private const string TutorialCatalogResourcePath = "TutorialMenuCatalog";
+    private const string DefaultTreasureRewardTableResourcePath = "DefaultTreasureRewardTable";
+    private const string TreasureBlueprintTableResourcePath = "TreasureBlueprintTable";
+    private const string TreasureRelicTableResourcePath = "TreasureRelicTable";
+    private const string TreasureRelicBagRarityWeightTableResourcePath = "TreasureRelicBagRarityWeightTable";
     private static readonly MapTileType[] TutorialTileSequence =
     {
         MapTileType.Empty,
@@ -83,6 +87,7 @@ public class RunGameManager : MonoBehaviour
     [SerializeField] private CalamityPool_SO calamityPool;
     [SerializeField] private MoneyRewardTable_SO moneyRewardTable;
     [SerializeField] private MerchantCatalog_SO merchantCatalog;
+    [SerializeField] private TreasureRewardTable_SO treasureRewardTable;
     [SerializeField] private RelicTable_SO eliteRelicChoiceTable;
     [SerializeField] private LevelTable_SO levelTable;
     [SerializeField] [Min(0)] private int startingMoney;
@@ -109,6 +114,18 @@ public class RunGameManager : MonoBehaviour
     [SerializeField] private TMP_FontAsset mapBodyFont;
     [SerializeField] private TMP_FontAsset mapAttributeFont;
 
+    [Header("Treasure UI")]
+    [SerializeField] private Sprite treasurePanelBackground;
+    [SerializeField] private Sprite treasureOptionBackground;
+    [SerializeField] private Sprite treasureDisabledOptionBackground;
+    [SerializeField] private Sprite treasureMoneyIcon;
+    [SerializeField] private Sprite treasureRelicBagIcon;
+    [SerializeField] private Sprite treasureRelicBagCommonIcon;
+    [SerializeField] private Sprite treasureRelicBagUncommonIcon;
+    [SerializeField] private Sprite treasureRelicBagRareIcon;
+    [SerializeField] private Sprite treasureRelicBagEpicIcon;
+    [SerializeField] private Sprite treasureRelicBagLegendaryIcon;
+
     [Header("Managers")]
     [SerializeField] private BoardManager boardManager;
     [SerializeField] private PlayerMapController playerMapController;
@@ -117,6 +134,7 @@ public class RunGameManager : MonoBehaviour
     [SerializeField] private MapHUD mapHUD;
     [SerializeField] private MapCraftingOverlay mapCraftingOverlay;
     [SerializeField] private MapMerchantOverlay mapMerchantOverlay;
+    [SerializeField] private MapTreasureOverlay mapTreasureOverlay;
     [SerializeField] private MapEventOverlay mapEventOverlay;
     [SerializeField] private MapCalamityOverlay mapCalamityOverlay;
     [SerializeField] private MapViewController mapViewController;
@@ -183,6 +201,8 @@ public class RunGameManager : MonoBehaviour
             mapMerchantOverlay.Hidden -= HandleMapMerchantOverlayHidden;
         if (mapCraftingOverlay != null)
             mapCraftingOverlay.Hidden -= HandleMapCraftingOverlayHidden;
+        if (mapTreasureOverlay != null)
+            mapTreasureOverlay.Hidden -= HandleMapTreasureOverlayHidden;
     }
 
     private void OnApplicationPause(bool pauseStatus)
@@ -441,6 +461,16 @@ public class RunGameManager : MonoBehaviour
                 return;
             }
 
+            if (tile.tileType == MapTileType.Treasure && !tile.isResolved)
+            {
+                if (!OpenTreasurePanel(tile))
+                {
+                    runFlowState.DeferPendingCalamityUntilOverlayClosed = false;
+                    TryPresentPendingCalamity();
+                }
+                return;
+            }
+
             string currentTileMessage = tileResolver.ResolveTile(tile, runState);
             mapHUD.ShowTile(tile, GetMoveCost(tile), true);
             RefreshHUD(currentTileMessage);
@@ -511,6 +541,20 @@ public class RunGameManager : MonoBehaviour
             mapHUD.ShowTile(tile, GetMoveCost(tile));
             ShowPendingMoveRelicStatusIfAny();
             if (!OpenEventPanel(tile))
+            {
+                runFlowState.DeferPendingCalamityUntilOverlayClosed = false;
+                TryPresentPendingCalamity();
+            }
+            return;
+        }
+
+        if (tile.tileType == MapTileType.Treasure && !tile.isResolved)
+        {
+            boardManager.SetSelectedTile(tile.coord);
+            boardManager.RefreshAllViews();
+            mapHUD.ShowTile(tile, GetMoveCost(tile));
+            ShowPendingMoveRelicStatusIfAny();
+            if (!OpenTreasurePanel(tile))
             {
                 runFlowState.DeferPendingCalamityUntilOverlayClosed = false;
                 TryPresentPendingCalamity();
@@ -609,6 +653,10 @@ public class RunGameManager : MonoBehaviour
         if (blueprint.materialRequirements == null || blueprint.materialRequirements.Count == 0)
             return "\u8be5\u56fe\u7eb8\u672a\u914d\u7f6e\u6750\u6599\u9700\u6c42\u3002";
 
+        int forgeCost = CalamitySystem.ApplyForgeCostModifiers(0, runState.activeCalamities);
+        if (forgeCost > 0 && runState.money < forgeCost)
+            return $"金币不足：需要 {forgeCost} 金币";
+
         for (int i = 0; i < blueprint.materialRequirements.Count; i++)
         {
             CraftingMaterialRequirement requirement = blueprint.materialRequirements[i];
@@ -627,6 +675,9 @@ public class RunGameManager : MonoBehaviour
 
             runState.TryConsumeLoot(requirement.lootItem, requirement.amount);
         }
+
+        if (forgeCost > 0)
+            runState.TrySpendMoney(forgeCost);
 
         runState.AddWeapon(blueprint.targetWeapon, 1);
         string successMessage = $"\u6210\u529f\u953b\u9020\uff1a{blueprint.targetWeapon.weaponName}";
@@ -747,6 +798,19 @@ public class RunGameManager : MonoBehaviour
             mapEventOverlay.ConfigureFonts(mapKeywordFont, mapBodyFont);
         mapEventOverlay.Hidden -= HandleMapEventOverlayHidden;
         mapEventOverlay.Hidden += HandleMapEventOverlayHidden;
+        mapTreasureOverlay = GetOrCreateTreasureOverlay();
+        if (mapKeywordFont != null || mapBodyFont != null)
+            mapTreasureOverlay.ConfigureFonts(mapKeywordFont, mapBodyFont);
+        mapTreasureOverlay.ConfigureBackgroundSprites(treasurePanelBackground, treasureOptionBackground, treasureDisabledOptionBackground);
+        mapTreasureOverlay.ConfigureRewardIcons(treasureMoneyIcon, treasureRelicBagIcon);
+        mapTreasureOverlay.ConfigureRelicBagIcons(
+            treasureRelicBagCommonIcon,
+            treasureRelicBagUncommonIcon,
+            treasureRelicBagRareIcon,
+            treasureRelicBagEpicIcon,
+            treasureRelicBagLegendaryIcon);
+        mapTreasureOverlay.Hidden -= HandleMapTreasureOverlayHidden;
+        mapTreasureOverlay.Hidden += HandleMapTreasureOverlayHidden;
         mapCalamityOverlay = GetOrCreateCalamityOverlay();
         if (mapKeywordFont != null || mapBodyFont != null)
             mapCalamityOverlay.ConfigureFonts(mapKeywordFont, mapBodyFont);
@@ -759,6 +823,9 @@ public class RunGameManager : MonoBehaviour
 
         boardManager.Initialize(boardRoot);
         tileResolver.ConfigureMoneyRewardTable(moneyRewardTable);
+        if (treasureRewardTable == null)
+            treasureRewardTable = Resources.Load<TreasureRewardTable_SO>(DefaultTreasureRewardTableResourcePath);
+        ConfigureTreasureRewardFallbacks();
         mapHUD.Initialize();
 
         if (!subscriptionsBound)
@@ -909,6 +976,28 @@ public class RunGameManager : MonoBehaviour
         return mapEventOverlay;
     }
 
+    private MapTreasureOverlay GetOrCreateTreasureOverlay()
+    {
+        if (mapTreasureOverlay != null)
+            return mapTreasureOverlay;
+
+        MapTreasureOverlay found = uiRoot != null ? uiRoot.GetComponent<MapTreasureOverlay>() : null;
+        if (found == null && uiRoot != null)
+            found = uiRoot.GetComponentInChildren<MapTreasureOverlay>(true);
+        if (found == null)
+            found = FindObjectOfType<MapTreasureOverlay>(true);
+        if (found != null)
+        {
+            mapTreasureOverlay = found;
+            return found;
+        }
+
+        GameObject go = new GameObject("MapTreasureOverlay");
+        go.transform.SetParent(uiRoot, false);
+        mapTreasureOverlay = go.AddComponent<MapTreasureOverlay>();
+        return mapTreasureOverlay;
+    }
+
     private MapCalamityOverlay GetOrCreateCalamityOverlay()
     {
         if (mapCalamityOverlay != null)
@@ -958,6 +1047,7 @@ public class RunGameManager : MonoBehaviour
             new DifficultyConfig_SO.TileWeightEntry { tileType = MapTileType.Elite, weight = 1 },
             new DifficultyConfig_SO.TileWeightEntry { tileType = MapTileType.Event, weight = 4 },
             new DifficultyConfig_SO.TileWeightEntry { tileType = MapTileType.Merchant, weight = 1 },
+            new DifficultyConfig_SO.TileWeightEntry { tileType = MapTileType.Treasure, weight = 1 },
             new DifficultyConfig_SO.TileWeightEntry { tileType = MapTileType.Forge, weight = 1 },
             new DifficultyConfig_SO.TileWeightEntry { tileType = MapTileType.Rest, weight = 1 }
         };
@@ -1284,6 +1374,74 @@ public class RunGameManager : MonoBehaviour
         return true;
     }
 
+    private bool OpenTreasurePanel(BoardTileData tile)
+    {
+        if (tile == null || tile.tileType != MapTileType.Treasure || runState == null || mapTreasureOverlay == null)
+            return false;
+        if (tile.isResolved)
+            return false;
+
+        tile.isVisited = true;
+        boardManager?.RefreshTile(tile.coord);
+        mapHUD?.ShowTile(tile, GetMoveCost(tile), tile.coord == runState.playerGridPosition);
+
+        IReadOnlyList<TreasureRewardChoice> choices = TreasureRewardService.BuildChoices(treasureRewardTable, tile.encounterSeed);
+        mapTreasureOverlay.Show(tile, choices, HandleTreasureOptionSelected, HandleTreasureRelicChoiceConfirmed);
+        RefreshHUD("\u53d1\u73b0\u5b9d\u85cf\uff0c\u8bf7\u9009\u62e9\u4e00\u4efd\u5956\u52b1\u3002");
+        return true;
+    }
+
+    private bool HandleTreasureOptionSelected(BoardTileData tile, TreasureRewardChoice choice, out TreasureRewardResult result)
+    {
+        result = null;
+        if (tile == null || choice == null || runState == null)
+        {
+            result = new TreasureRewardResult
+            {
+                success = false,
+                message = "\u5b9d\u85cf\u5956\u52b1\u9886\u53d6\u5931\u8d25\u3002"
+            };
+            return false;
+        }
+
+        result = TreasureRewardService.ApplyChoice(runState, treasureRewardTable, choice, tile.encounterSeed);
+        if (result == null || !result.success)
+            return false;
+        if (result.relicChoiceData != null && result.relicChoiceData.HasChoices)
+        {
+            RefreshHUD(result.message);
+            return true;
+        }
+
+        tile.isVisited = true;
+        tile.isResolved = true;
+        boardManager?.RefreshTile(tile.coord);
+        mapHUD?.ShowTile(tile, GetMoveCost(tile), true);
+        RefreshHUD(result.message);
+        return true;
+    }
+
+    private bool HandleTreasureRelicChoiceConfirmed(BoardTileData tile, BattleSettlementRelicChoiceData relicChoiceData, out string message)
+    {
+        if (tile == null || relicChoiceData == null || runState == null)
+        {
+            message = "\u9057\u7269\u9886\u53d6\u5931\u8d25\u3002";
+            return false;
+        }
+
+        TreasureRewardResult result = TreasureRewardService.ApplyRelicChoice(runState, relicChoiceData);
+        message = result != null ? result.message : "\u9057\u7269\u9886\u53d6\u5931\u8d25\u3002";
+        if (result == null || !result.success)
+            return false;
+
+        tile.isVisited = true;
+        tile.isResolved = true;
+        boardManager?.RefreshTile(tile.coord);
+        mapHUD?.ShowTile(tile, GetMoveCost(tile), true);
+        RefreshHUD(message);
+        return true;
+    }
+
     private MapEventOverlay.EventOptionPreviewData BuildEventOptionPreview(BoardTileData tile, MapEvent_SO eventData, MapEventOptionData optionData)
     {
         MapEventOverlay.EventOptionPreviewData preview = new MapEventOverlay.EventOptionPreviewData();
@@ -1397,6 +1555,12 @@ public class RunGameManager : MonoBehaviour
         TryPresentPendingCalamity();
     }
 
+    private void HandleMapTreasureOverlayHidden()
+    {
+        runFlowState.DeferPendingCalamityUntilOverlayClosed = false;
+        TryPresentPendingCalamity();
+    }
+
     private void StartPendingEventEncounter()
     {
         if (runFlowState.PendingEventEncounterData == null)
@@ -1444,6 +1608,8 @@ public class RunGameManager : MonoBehaviour
             return true;
         if (mapMerchantOverlay != null && mapMerchantOverlay.IsVisible)
             return true;
+        if (mapTreasureOverlay != null && mapTreasureOverlay.IsVisible)
+            return true;
         if (mapCraftingOverlay != null && mapCraftingOverlay.IsVisible)
             return true;
         if (mapCalamityOverlay != null && mapCalamityOverlay.IsVisible)
@@ -1465,6 +1631,8 @@ public class RunGameManager : MonoBehaviour
         if (mapEventOverlay != null && mapEventOverlay.IsVisible)
             return;
         if (mapMerchantOverlay != null && mapMerchantOverlay.IsVisible)
+            return;
+        if (mapTreasureOverlay != null && mapTreasureOverlay.IsVisible)
             return;
         if (mapCraftingOverlay != null && mapCraftingOverlay.IsVisible)
             return;
@@ -1525,6 +1693,37 @@ public class RunGameManager : MonoBehaviour
     private void EnsureTileAssignedEvent(BoardTileData tile)
     {
         MapEventAssignmentService.EnsureTileAssignedEvent(eventPool, runState, tile);
+    }
+
+    private void ConfigureTreasureRewardFallbacks()
+    {
+        if (treasureRewardTable == null)
+            return;
+
+        treasureRewardTable.ConfigureRuntimeDefaults(
+            Resources.Load<BlueprintTable_SO>(TreasureBlueprintTableResourcePath) ?? FindRuntimeAssetByName<BlueprintTable_SO>("MainBlueprintTable"),
+            Resources.Load<LootRarityWeightTable_SO>(TreasureRelicBagRarityWeightTableResourcePath),
+            Resources.Load<RelicTable_SO>(TreasureRelicTableResourcePath) ?? eliteRelicChoiceTable ?? FindRuntimeAssetByName<RelicTable_SO>("OuterEliteRelicLoot"),
+            Resources.Load<LootRarityWeightTable_SO>(TreasureRelicBagRarityWeightTableResourcePath));
+    }
+
+    private static T FindRuntimeAssetByName<T>(string assetName) where T : UnityEngine.Object
+    {
+        if (string.IsNullOrWhiteSpace(assetName))
+            return null;
+
+        T[] assets = Resources.FindObjectsOfTypeAll<T>();
+        if (assets == null)
+            return null;
+
+        for (int i = 0; i < assets.Length; i++)
+        {
+            T asset = assets[i];
+            if (asset != null && string.Equals(asset.name, assetName, StringComparison.Ordinal))
+                return asset;
+        }
+
+        return null;
     }
 
     private void ShowPendingMoveRelicStatusIfAny()
@@ -1648,6 +1847,7 @@ public class RunGameManager : MonoBehaviour
                 eventPool = eventPool,
                 merchantCatalog = merchantCatalog,
                 calamityPool = calamityPool,
+                treasureRewardTable = treasureRewardTable,
                 runState = runState,
                 boardManager = boardManager
             });

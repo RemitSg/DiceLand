@@ -171,13 +171,14 @@ public static class BattleSettlementPartyMemberFactory
 
         int initialLevel = ally != null ? Mathf.Max(1, ally.Level) : 1;
         int initialExperience = ally != null ? Mathf.Max(0, ally.Experience) : 0;
+        int persistentMaxHP = ally != null ? Mathf.Max(1, ally.PersistentMaxHP) : 1;
         int initialMaxHP = ally != null ? Mathf.Max(1, ally.MaxHP) : 1;
         int initialCurrentHP = ally != null ? Mathf.Max(0, ally.CurrentHP) : 0;
         BattleSettlementPartyProgression result = new BattleSettlementPartyProgression
         {
             CharacterData = characterData,
             WeaponData = weaponData,
-            DisplayName = ally != null ? ally.GetDebugDisplayName() : string.Empty,
+            DisplayName = ally != null ? ally.GetSettlementDisplayName() : string.Empty,
             FallbackName = ally != null ? ally.gameObject.name : string.Empty,
             InitialLevel = initialLevel,
             InitialExperience = initialExperience,
@@ -191,7 +192,7 @@ public static class BattleSettlementPartyMemberFactory
             result.InitialLevel,
             result.InitialExperience,
             result.InitialCurrentHP,
-            result.InitialMaxHP,
+            persistentMaxHP,
             experienceReward,
             resolveExperienceToNextLevel ?? (_ => 100),
             (level, fallbackMaxHP) => resolveMaxHPForLevel != null

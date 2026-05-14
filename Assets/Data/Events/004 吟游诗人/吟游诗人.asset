@@ -24,17 +24,25 @@ MonoBehaviour:
     resultContent: "\u5728\u4F60\u4ED8\u5B8C\u94B1\u4E4B\u540E\uFF0C\u4ED6\u4ECE\u8863\u670D\u4E2D\u638F\u51FA\u4E86\u4E00\u5F20\u7834\u7834\u70C2\u70C2\u7684\u7F8A\u76AE\u7EB8\u9012\u7ED9\u4E86\u4F60\uFF1A\u201C\u54C8\u54C8\u54C8\u54C8\uFF01\u4E0D\u9519\uFF01\u4E0D\u9519\uFF01\u201D\u968F\u540E\u5927\u7B11\u7740\u98D8\u7136\u800C\u53BB\u4E86\u3002"
     builtInEffectType: 12
     effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
     lootRewards: []
     lootPickCountMin: 0
     lootPickCountMax: 0
-    relicRewards: []
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
     relicPickCountMin: 0
     relicPickCountMax: 0
+    relicRewards: []
+    blueprintTable: {fileID: 11400000, guid: 0b95334a03d081d48975d7b1ec2265ad, type: 2}
+    blueprintRarityWeightTable: {fileID: 11400000, guid: 7b32e62646820d245a8fc87c54a37c36, type: 2}
+    blueprintPickCountMin: 1
+    blueprintPickCountMax: 1
     blueprintRewards:
     - blueprintData: {fileID: 11400000, guid: f44c1002b74987e4c8b179a9433ab67a, type: 2}
     - blueprintData: {fileID: 11400000, guid: 16f9b7247ca356d4f9d1be67dd28d93d, type: 2}
-    blueprintPickCountMin: 1
-    blueprintPickCountMax: 1
     encounterSelectionMode: 0
     encounterEnemyGroups: []
     encounterEnemies: []
@@ -50,6 +58,10 @@ MonoBehaviour:
     resultContent: "\u4ED6\u8C22\u8FC7\u4E86\u4F60\uFF0C\u7136\u540E\u4ECE\u4ED6\u7684\u8863\u670D\u4E2D\u638F\u51FA\u4E86\u4E00\u4E2A\u5305\u88F9\u9012\u7ED9\u4F60\u3002"
     builtInEffectType: 5
     effectAmount: 1
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
     lootRewards:
     - lootItem: {fileID: 11400000, guid: 2a5a440bab2e42f499a7fabcd4b29ead, type: 2}
       amountMin: 1
@@ -71,12 +83,16 @@ MonoBehaviour:
       amountMax: 1
     lootPickCountMin: 1
     lootPickCountMax: 1
-    relicRewards: []
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
     relicPickCountMin: 0
     relicPickCountMax: 0
-    blueprintRewards: []
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
     blueprintPickCountMin: 1
     blueprintPickCountMax: 1
+    blueprintRewards: []
     encounterSelectionMode: 0
     encounterEnemyGroups: []
     encounterEnemies: []

@@ -163,7 +163,7 @@ public sealed class BattleFlowPlayModeTests
         Assert.IsTrue(fixture.SettlementOverlayVisible);
         Assert.IsTrue(fixture.RelicChoiceModalVisible);
         Assert.IsNull(fixture.SelectedRelicChoiceName);
-        Assert.AreEqual("Choose one elite relic reward before returning.", fixture.RelicChoiceModalTitle);
+        Assert.AreEqual("返回前请选择一个精英遗物奖励。", fixture.RelicChoiceModalTitle);
     }
 
     [UnityTest]

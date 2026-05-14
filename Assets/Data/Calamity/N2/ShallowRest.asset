@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd7a3b759b596b4a89ca723c509b050, type: 3}
+  m_Name: ShallowRest
+  m_EditorClassIdentifier: 
+  calamityId: 9
+  calamityName: "\u5F31\u5316 \xB7 \u6D45\u5EA6\u4F11\u606F"
+  calamityTier: 2
+  description: "\u5728\u4F11\u606F\u683C\u6062\u590D\u884C\u52A8\u70B9\u65F6\uFF0C\u6548\u679C\u53D8\u4E3A\u6062\u590D\u884C\u52A8\u70B9\u4E0A\u9650\u7684 70%"
+  rarity: 0
+  icon: {fileID: 0}
+  builtInEffects:
+  - effectName: "\u4F11\u606F\u6062\u590D\u884C\u52A8\u70B9 70%"
+    effectType: 8
+    effectAmount: 70
+    statusData: {fileID: 0}
+  customEffectHandler: {fileID: 0}

@@ -21,6 +21,8 @@ public class BattleClashImpactPlanServiceTests
             enemyWinAttackBonus: 6);
 
         Assert.IsTrue(plan.ApplyAllyHit);
+        Assert.IsTrue(plan.ApplyAllyClashWinEffects);
+        Assert.IsTrue(plan.ApplyEnemyClashLoseEffects);
         Assert.IsTrue(plan.ApplyEnemyMiss);
         Assert.IsFalse(plan.ApplyEnemyHit);
         Assert.AreEqual(7, plan.AllyHitPower);
@@ -46,6 +48,7 @@ public class BattleClashImpactPlanServiceTests
             enemyWinAttackBonus: 6);
 
         Assert.IsTrue(plan.ApplyEnemyHit);
+        Assert.IsTrue(plan.ApplyEnemyClashWinEffects);
         Assert.IsTrue(plan.ApplyAllyMiss);
         Assert.IsTrue(plan.ApplyHornedGatekeeperClashWin);
         Assert.AreEqual(6, plan.EnemyHitPower);
@@ -88,6 +91,7 @@ public class BattleClashImpactPlanServiceTests
             enemyWinAttackBonus: 0);
 
         Assert.IsTrue(plan.ShowZeroDamageOnEnemy);
+        Assert.IsTrue(plan.ApplyEnemyClashWinEffects);
         Assert.IsTrue(plan.ApplyHornedGatekeeperClashWin);
         Assert.AreEqual(5, plan.HornedGatekeeperClashDifference);
         Assert.AreEqual(4, plan.EnemyZeroDamagePowerModifier);
@@ -112,6 +116,8 @@ public class BattleClashImpactPlanServiceTests
             enemyWinAttackBonus: 0);
 
         Assert.IsTrue(plan.ApplyPlayerDefenseClashWinRelics);
+        Assert.IsTrue(plan.ApplyAllyClashWinEffects);
+        Assert.IsTrue(plan.ApplyEnemyClashLoseEffects);
         Assert.IsTrue(plan.ShowZeroDamageOnAlly);
         Assert.IsTrue(plan.RestoreAllyDefenseEnergy);
         Assert.AreEqual(3, plan.DefenseEnergyRestoreAmount);
@@ -119,7 +125,7 @@ public class BattleClashImpactPlanServiceTests
     }
 
     [Test]
-    public void Resolve_BothDefenseEnemyWin_HasNoLegacyImpact()
+    public void Resolve_BothDefenseEnemyWin_AppliesEnemyClashWinAndGatekeeper()
     {
         BattleClashImpactPlan plan = BattleClashImpactPlanService.Resolve(
             new BattleClashResult { Outcome = BattleClashOutcome.BothDefenseEnemyWins },
@@ -134,6 +140,9 @@ public class BattleClashImpactPlanServiceTests
 
         Assert.IsFalse(plan.ApplyAllyHit);
         Assert.IsFalse(plan.ApplyEnemyHit);
+        Assert.IsTrue(plan.ApplyEnemyClashWinEffects);
+        Assert.IsTrue(plan.ApplyHornedGatekeeperClashWin);
+        Assert.AreEqual(4, plan.HornedGatekeeperClashDifference);
         Assert.IsFalse(plan.ApplyPlayerDefenseClashWinRelics);
         Assert.IsFalse(plan.ShowZeroDamageOnAlly);
         Assert.IsFalse(plan.ShowZeroDamageOnEnemy);

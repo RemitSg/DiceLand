@@ -898,12 +898,16 @@ MonoBehaviour:
   expTextColor: {r: 1, g: 0.6189689, b: 0.2295596, a: 1}
   expAnimationDurationPerFill: 0.83
   expLevelUpPauseDuration: 0.38
-  summaryRowLeftIndent: 120
-  summaryHpWidth: 140
-  summaryNameWidth: 260
-  summaryExpTextWidth: 110
-  summaryExpBarWidth: 170
-  summaryLevelWidth: 59.9
+  summaryRowLeftIndent: 0
+  summaryRowHeight: 40
+  summaryHpWidth: 380
+  summaryHpBarWidth: 210
+  summaryExpTextWidth: 160
+  summaryExpBarWidth: 220
+  summaryLevelWidth: 96
+  hpBarBackgroundColor: {r: 0.34, g: 0.08, b: 0.08, a: 0.5}
+  hpBarFillColor: {r: 1, g: 0.28, b: 0.28, a: 1}
+  hpBarBorderColor: {r: 1, g: 0.38, b: 0.38, a: 0.55}
   lootSlotSize: {x: 84, y: 84}
   lootIconSize: {x: 56, y: 56}
   lootDetailIconSize: {x: 84, y: 84}

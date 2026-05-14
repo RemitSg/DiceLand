@@ -1205,10 +1205,10 @@ public class MapHUD : MonoBehaviour
         Button button = slotRect.gameObject.AddComponent<Button>();
         button.onClick.AddListener(onClick);
 
-        Image icon = CreateImage(
+        Image icon = CreateCenteredImage(
             slotRect,
             "Icon",
-            new Vector2((inventorySlotSize.x - inventoryIconSize.x) * 0.5f + inventoryIconOffset.x, inventoryIconOffset.y),
+            Vector2.zero,
             inventoryIconSize,
             iconSprite != null ? iconSprite : GetFallbackSprite(),
             Color.white);
@@ -1448,6 +1448,15 @@ public class MapHUD : MonoBehaviour
         return image;
     }
 
+    private Image CreateCenteredImage(RectTransform parent, string name, Vector2 anchoredPosition, Vector2 size, Sprite sprite, Color color)
+    {
+        RectTransform rect = CreateRect(name, parent, new Vector2(0.5f, 0.5f), anchoredPosition, size);
+        Image image = rect.gameObject.AddComponent<Image>();
+        image.sprite = sprite;
+        image.color = color;
+        return image;
+    }
+
     private static void ApplyRect(RectTransform rect, Vector2 anchorPivot, Vector2 anchoredPosition, Vector2 size)
     {
         if (rect == null)
@@ -1604,6 +1613,8 @@ public class MapHUD : MonoBehaviour
                 return "事件";
             case MapTileType.Merchant:
                 return "商人";
+            case MapTileType.Treasure:
+                return "宝藏";
             case MapTileType.Forge:
                 return "锻造";
             case MapTileType.Rest:
@@ -1644,6 +1655,8 @@ public class MapHUD : MonoBehaviour
                 return "事件格，可触发随机事件";
             case MapTileType.Merchant:
                 return "商人格，可消耗金钱购买商品";
+            case MapTileType.Treasure:
+                return "宝藏格，进入后可选择一份奖励";
             case MapTileType.Forge:
                 return "锻造格，可消耗材料与图纸锻造武器";
             case MapTileType.Rest:

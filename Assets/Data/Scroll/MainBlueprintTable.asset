@@ -16,12 +16,18 @@ MonoBehaviour:
   tableName: 
   description: 
   blueprints:
-  - {fileID: 11400000, guid: f3b07049a74cf51409a7e4127e06d57f, type: 2}
-  - {fileID: 11400000, guid: 873b6a8002402544886f57db8d4b089e, type: 2}
-  - {fileID: 11400000, guid: bdeb33f1340563042ada84d8f5030c62, type: 2}
-  - {fileID: 11400000, guid: 5c9ed683542b8e54caf8c4dfb50a5867, type: 2}
-  - {fileID: 11400000, guid: ed9fa5d7fef47e6469b8d7d90ee09e85, type: 2}
-  - {fileID: 11400000, guid: 92acecee0fb6482439cf2377650ec517, type: 2}
   - {fileID: 11400000, guid: f44c1002b74987e4c8b179a9433ab67a, type: 2}
   - {fileID: 11400000, guid: 16f9b7247ca356d4f9d1be67dd28d93d, type: 2}
   - {fileID: 11400000, guid: d8d55cd0cbf1b2647ac55bf326a0c9c5, type: 2}
+  - {fileID: 11400000, guid: f3b07049a74cf51409a7e4127e06d57f, type: 2}
+  - {fileID: 11400000, guid: 17799684082ecc54fa14f94058c3412d, type: 2}
+  - {fileID: 11400000, guid: cdb2bfefecf4f254591220820465be9d, type: 2}
+  - {fileID: 11400000, guid: 31e4ee4b4db4d4049875c4121f1b0148, type: 2}
+  - {fileID: 11400000, guid: 92acecee0fb6482439cf2377650ec517, type: 2}
+  - {fileID: 11400000, guid: 05af046e43893f14787463bb390225a7, type: 2}
+  - {fileID: 11400000, guid: 62f95319daf752743b234cb2af657059, type: 2}
+  - {fileID: 11400000, guid: 80be934beb18b5342b014f6991367373, type: 2}
+  - {fileID: 11400000, guid: bdeb33f1340563042ada84d8f5030c62, type: 2}
+  - {fileID: 11400000, guid: 5c9ed683542b8e54caf8c4dfb50a5867, type: 2}
+  - {fileID: 11400000, guid: ed9fa5d7fef47e6469b8d7d90ee09e85, type: 2}
+  - {fileID: 11400000, guid: 873b6a8002402544886f57db8d4b089e, type: 2}

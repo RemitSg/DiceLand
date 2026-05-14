@@ -39,6 +39,9 @@ public class TileResolver : MonoBehaviour
             case MapTileType.Merchant:
                 message = ResolveMerchantTile(tile);
                 break;
+            case MapTileType.Treasure:
+                message = ResolveTreasureTile(tile);
+                break;
             case MapTileType.Forge:
                 message = ResolveForgeTile(tile);
                 break;
@@ -109,6 +112,14 @@ public class TileResolver : MonoBehaviour
             tile.isResolved = true;
 
         return "\u8fdb\u5165\u5546\u4eba\u683c\u3002\u53ef\u5728\u6b64\u6d88\u8017\u91d1\u94b1\u8d2d\u4e70\u5546\u54c1\u3002";
+    }
+
+    private static string ResolveTreasureTile(BoardTileData tile)
+    {
+        if (!tile.isResolved)
+            return "\u8fdb\u5165\u5b9d\u85cf\u683c\u3002";
+
+        return "\u8fd9\u4e2a\u5b9d\u85cf\u683c\u5df2\u7ecf\u9886\u53d6\u8fc7\u4e86\u3002";
     }
 
     private static string ResolveForgeTile(BoardTileData tile)

@@ -55,6 +55,54 @@ public class RunFlowAssignmentServiceTests
     }
 
     [Test]
+    public void RollChoices_WhenRequestedTierUnavailable_FallsBackToOneLowerAvailableTierOnly()
+    {
+        Calamity_SO tier2A = CreateCalamity("tier2-a", 2);
+        Calamity_SO tier2B = CreateCalamity("tier2-b", 2);
+        Calamity_SO tier1A = CreateCalamity("tier1-a", 1);
+        CalamityPool_SO pool = CreateCalamityPool(
+            CreateTier(3),
+            CreateTier(2, tier2A, tier2B),
+            CreateTier(1, tier1A));
+
+        List<Calamity_SO> choices = CalamitySelectionService.RollChoices(
+            pool,
+            new RunState(),
+            calamityTier: 3,
+            choiceCount: 3,
+            rng: new System.Random(1));
+
+        Assert.AreEqual(2, choices.Count);
+        Assert.IsTrue(choices.Contains(tier2A));
+        Assert.IsTrue(choices.Contains(tier2B));
+        Assert.IsFalse(choices.Contains(tier1A));
+        Assert.IsTrue(AllChoicesAreTier(choices, 2));
+    }
+
+    [Test]
+    public void RollChoices_WhenFallbackTierHasFewerThanRequested_DoesNotMixLowerTierToFill()
+    {
+        Calamity_SO tier2Only = CreateCalamity("tier2-only", 2);
+        Calamity_SO tier1A = CreateCalamity("tier1-a", 1);
+        Calamity_SO tier1B = CreateCalamity("tier1-b", 1);
+        CalamityPool_SO pool = CreateCalamityPool(
+            CreateTier(3),
+            CreateTier(2, tier2Only),
+            CreateTier(1, tier1A, tier1B));
+
+        List<Calamity_SO> choices = CalamitySelectionService.RollChoices(
+            pool,
+            new RunState(),
+            calamityTier: 3,
+            choiceCount: 3,
+            rng: new System.Random(1));
+
+        Assert.AreEqual(1, choices.Count);
+        Assert.AreSame(tier2Only, choices[0]);
+        Assert.IsTrue(AllChoicesAreTier(choices, 2));
+    }
+
+    [Test]
     public void EnsureTileAssignedEvent_AssignsUndrawnEventAndMarksItDrawn()
     {
         MapEvent_SO skipped = CreateMapEvent("skipped");
@@ -101,11 +149,12 @@ public class RunFlowAssignmentServiceTests
         Assert.IsFalse(runState.HasDrawnEvent(replacement));
     }
 
-    private Calamity_SO CreateCalamity(string id)
+    private Calamity_SO CreateCalamity(string id, int tier = 1)
     {
         Calamity_SO calamity = ScriptableObject.CreateInstance<Calamity_SO>();
         calamity.calamityId = id;
         calamity.calamityName = id;
+        calamity.calamityTier = Mathf.Max(1, tier);
         createdObjects.Add(calamity);
         return calamity;
     }
@@ -122,6 +171,37 @@ public class RunFlowAssignmentServiceTests
         };
         SetPrivateField(pool, "calamityTiers", new List<CalamityPool_SO.CalamityTierEntry> { tierEntry });
         return pool;
+    }
+
+    private CalamityPool_SO CreateCalamityPool(params CalamityPool_SO.CalamityTierEntry[] tiers)
+    {
+        CalamityPool_SO pool = ScriptableObject.CreateInstance<CalamityPool_SO>();
+        createdObjects.Add(pool);
+        SetPrivateField(pool, "calamityTiers", new List<CalamityPool_SO.CalamityTierEntry>(tiers));
+        return pool;
+    }
+
+    private CalamityPool_SO.CalamityTierEntry CreateTier(int tier, params Calamity_SO[] calamities)
+    {
+        return new CalamityPool_SO.CalamityTierEntry
+        {
+            calamityTier = Mathf.Max(1, tier),
+            calamities = new List<Calamity_SO>(calamities)
+        };
+    }
+
+    private static bool AllChoicesAreTier(IReadOnlyList<Calamity_SO> choices, int tier)
+    {
+        if (choices == null)
+            return false;
+
+        for (int i = 0; i < choices.Count; i++)
+        {
+            if (choices[i] == null || choices[i].calamityTier != tier)
+                return false;
+        }
+
+        return true;
     }
 
     private MapEvent_SO CreateMapEvent(string id)

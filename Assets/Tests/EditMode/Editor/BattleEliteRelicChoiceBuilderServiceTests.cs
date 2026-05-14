@@ -80,6 +80,28 @@ public class BattleEliteRelicChoiceBuilderServiceTests
     }
 
     [Test]
+    public void TryBuildFromRelicsWithRarity_BuildsOnlySelectedRarityChoices()
+    {
+        Relic_SO common = CreateRelic("Common", LootRarity.Common);
+        Relic_SO firstRare = CreateRelic("Rare A", LootRarity.Rare);
+        Relic_SO secondRare = CreateRelic("Rare B", LootRarity.Rare);
+        Relic_SO thirdRare = CreateRelic("Rare C", LootRarity.Rare);
+
+        bool built = BattleEliteRelicChoiceBuilderService.TryBuildFromRelicsWithRarity(
+            out BattleSettlementRelicChoiceData choiceData,
+            new List<Relic_SO> { common, firstRare, secondRare, thirdRare },
+            LootRarity.Rare,
+            new System.Random(1),
+            null,
+            3);
+
+        Assert.IsTrue(built);
+        Assert.NotNull(choiceData);
+        Assert.AreEqual(3, choiceData.choices.Count);
+        Assert.IsTrue(choiceData.choices.TrueForAll(choice => choice.rarity == LootRarity.Rare));
+    }
+
+    [Test]
     public void ResolveFallbackTable_PrefersEncounterTableThenConfiguredFallback()
     {
         RelicTable_SO encounterTable = CreateTable(CreateRelic("Encounter", LootRarity.Common));

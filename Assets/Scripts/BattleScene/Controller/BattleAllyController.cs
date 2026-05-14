@@ -11,6 +11,7 @@ public class BattleAllyController : MonoBehaviour
     public int Speed { get; private set; }
     public int CurrentHP { get; private set; }
     public int MaxHP { get; private set; }
+    public int PersistentMaxHP { get; private set; }
     public int LastDamageModifierRatioPercent { get; private set; } = 100;
     public int LastPowerModifierAmount { get; private set; }
     public int Level { get; private set; } = 1;
@@ -45,6 +46,8 @@ public class BattleAllyController : MonoBehaviour
     private readonly List<BattleStatusRuntimeEntry> statusEntries = new List<BattleStatusRuntimeEntry>();
     private readonly List<PendingBattleStatusApplication> pendingStatusApplications = new List<PendingBattleStatusApplication>();
     private readonly List<EnemySkill_SO> temporarySkills = new List<EnemySkill_SO>();
+    private readonly List<int> selectedSkillIndicesPerButton = new List<int>();
+    private readonly List<EnemySkill_SO> selectedSkillsPerButton = new List<EnemySkill_SO>();
     private readonly List<SpeedButton> activeSpeedButtons = new List<SpeedButton>();
     private readonly HashSet<string> consumedLethalProtectionRelicIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     private const string BurnStatusId = "burn";
@@ -79,6 +82,7 @@ public class BattleAllyController : MonoBehaviour
             : 100;
 
         MaxHP = CurrentHP = Mathf.Max(1, baseHP);
+        PersistentMaxHP = MaxHP;
     }
 
     public void ApplyRuntimeState(RunPartyMemberState partyMemberState)
@@ -99,7 +103,11 @@ public class BattleAllyController : MonoBehaviour
         hasRuntimeStateOverride = true;
         Level = Mathf.Max(1, partyMemberState.level);
         Experience = Mathf.Max(0, partyMemberState.experience);
-        MaxHP = Mathf.Max(1, partyMemberState.maxHP);
+        IReadOnlyList<RunCalamityState> activeCalamities = BattleEncounterRuntime.ActiveEncounter != null
+            ? BattleEncounterRuntime.ActiveEncounter.activeCalamities
+            : null;
+        PersistentMaxHP = Mathf.Max(1, partyMemberState.maxHP);
+        MaxHP = Mathf.Max(1, CalamitySystem.ApplyAllyMaxHpModifiers(PersistentMaxHP, activeCalamities));
         CurrentHP = Mathf.Clamp(partyMemberState.currentHP, 0, MaxHP);
         IsDead = CurrentHP <= 0;
         RefreshActiveSpeedButtons();
@@ -202,6 +210,8 @@ public class BattleAllyController : MonoBehaviour
         if (IsDead)
         {
             SelectedSkill = null;
+            selectedSkillIndicesPerButton.Clear();
+            selectedSkillsPerButton.Clear();
             return;
         }
 
@@ -235,6 +245,13 @@ public class BattleAllyController : MonoBehaviour
             return;
         }
 
+        EnsureSelectedSkillSlots(activeSkillPool);
+        for (int i = 0; i < selectedSkillIndicesPerButton.Count; i++)
+        {
+            selectedSkillIndicesPerButton[i] = CurrentSkillIndex;
+            selectedSkillsPerButton[i] = SelectedSkill;
+        }
+
         Debug.Log($"[BattleAllyController] {roundPrefix}{GetDebugDisplayName()} selected weapon skill: {GetSelectedSkillDebugSummary()}");
         SelectedSkillChanged?.Invoke(this);
     }
@@ -256,10 +273,81 @@ public class BattleAllyController : MonoBehaviour
         if (SelectedSkill == null)
             return false;
 
+        EnsureSelectedSkillSlots(activeSkillPool);
+        for (int i = 0; i < selectedSkillIndicesPerButton.Count; i++)
+        {
+            selectedSkillIndicesPerButton[i] = CurrentSkillIndex;
+            selectedSkillsPerButton[i] = SelectedSkill;
+        }
+
         string roundPrefix = roundNumber > 0 ? $"[Round {roundNumber}] " : string.Empty;
         Debug.Log($"[BattleAllyController] {roundPrefix}{GetDebugDisplayName()} switched weapon skill to: {GetSelectedSkillDebugSummary()}");
         SelectedSkillChanged?.Invoke(this);
         return true;
+    }
+
+    public bool SetSelectedSkillIndexForButton(SpeedButton button, int skillIndex, int roundNumber = -1)
+    {
+        EnemySkill_SO[] activeSkillPool = BuildActiveSkillPool();
+        if (activeSkillPool == null || activeSkillPool.Length == 0)
+            return false;
+
+        EnsureSelectedSkillSlots(activeSkillPool);
+        int buttonIndex = GetSpeedButtonIndex(button);
+        if (buttonIndex < 0 || buttonIndex >= selectedSkillIndicesPerButton.Count)
+            buttonIndex = 0;
+
+        int resolvedIndex = Mathf.Clamp(skillIndex, 0, activeSkillPool.Length - 1);
+        EnemySkill_SO selectedSkill = activeSkillPool[resolvedIndex];
+        if (selectedSkill == null)
+            return false;
+
+        selectedSkillIndicesPerButton[buttonIndex] = resolvedIndex;
+        selectedSkillsPerButton[buttonIndex] = selectedSkill;
+        CurrentSkillIndex = resolvedIndex;
+        SelectedSkill = selectedSkill;
+
+        string roundPrefix = roundNumber > 0 ? $"[Round {roundNumber}] " : string.Empty;
+        string slotLabel = selectedSkillsPerButton.Count > 1 ? $" [Slot {buttonIndex + 1}]" : string.Empty;
+        Debug.Log($"[BattleAllyController] {roundPrefix}{GetDebugDisplayName()}{slotLabel} switched weapon skill to: {GetSelectedSkillDebugSummary(button)}");
+        SelectedSkillChanged?.Invoke(this);
+        return true;
+    }
+
+    public EnemySkill_SO GetSelectedSkillForButton(SpeedButton button)
+    {
+        int buttonIndex = GetSpeedButtonIndex(button);
+        return GetSelectedSkillForButtonIndex(buttonIndex);
+    }
+
+    public EnemySkill_SO GetSelectedSkillForButtonIndex(int buttonIndex)
+    {
+        EnsureSelectedSkillSlots();
+        if (buttonIndex < 0 || buttonIndex >= selectedSkillsPerButton.Count)
+            return SelectedSkill;
+
+        return selectedSkillsPerButton[buttonIndex] ?? SelectedSkill;
+    }
+
+    public int GetSelectedSkillIndexForButton(SpeedButton button)
+    {
+        int buttonIndex = GetSpeedButtonIndex(button);
+        EnsureSelectedSkillSlots();
+        if (buttonIndex < 0 || buttonIndex >= selectedSkillIndicesPerButton.Count)
+            return CurrentSkillIndex;
+
+        return selectedSkillIndicesPerButton[buttonIndex];
+    }
+
+    public void ActivateSelectedSkillForButton(SpeedButton button)
+    {
+        int buttonIndex = GetSpeedButtonIndex(button);
+        EnsureSelectedSkillSlots();
+        if (buttonIndex < 0 || buttonIndex >= selectedSkillsPerButton.Count)
+            return;
+
+        CurrentSkillIndex = selectedSkillIndicesPerButton[buttonIndex];
+        SelectedSkill = selectedSkillsPerButton[buttonIndex] ?? SelectedSkill;
     }
 
     public void MarkCurrentRoundSkillUsed()
@@ -311,6 +399,8 @@ public class BattleAllyController : MonoBehaviour
         temporarySkills.Clear();
         temporarySkillsOverrideWeaponPool = false;
         CurrentSkillIndex = 0;
+        selectedSkillIndicesPerButton.Clear();
+        selectedSkillsPerButton.Clear();
 
         if (SelectedSkill != null)
         {
@@ -418,10 +508,32 @@ public class BattleAllyController : MonoBehaviour
         return weaponData != null ? $"{gameObject.name}[{weaponData.weaponName}]" : gameObject.name;
     }
 
+    public string GetSettlementDisplayName()
+    {
+        CharacterData_SO characterData = CharacterData;
+        if (characterData != null && !string.IsNullOrWhiteSpace(characterData.characterName))
+            return characterData.characterName;
+
+        return gameObject.name;
+    }
+
     public string GetSelectedSkillDebugSummary()
     {
         if (SelectedSkill != null)
             return $"{SelectedSkill.skillName}({SelectedSkill.diceCount} dice, ranges: {BuildDiceRangeSummary(SelectedSkill)})";
+
+        Weapon_SO weaponData = GetWeaponData();
+        if (weaponData != null)
+            return $"Legacy weapon die(1 die, range: {Mathf.Max(0, weaponData.minPower)}~{Mathf.Max(Mathf.Max(0, weaponData.minPower), weaponData.maxPower)})";
+
+        return "Default skill(1 die, range: 1~1)";
+    }
+
+    public string GetSelectedSkillDebugSummary(SpeedButton button)
+    {
+        EnemySkill_SO skill = GetSelectedSkillForButton(button);
+        if (skill != null)
+            return $"{skill.skillName}({skill.diceCount} dice, ranges: {BuildDiceRangeSummary(skill)})";
 
         Weapon_SO weaponData = GetWeaponData();
         if (weaponData != null)
@@ -757,6 +869,8 @@ public class BattleAllyController : MonoBehaviour
             return false;
         if (RelicSystem.ShouldPreventAllyStatusApplication(statusData, fallbackStatusId))
             return false;
+        if (TryConsumeResistanceAgainstIncomingStatus(statusData, fallbackStatusId))
+            return false;
 
         BattleStatusRuntimeEntry entry = GetOrCreateStatusEntry(statusData, fallbackStatusId, fallbackDisplayName);
         entry.stacks = Mathf.Max(0, entry.stacks + stackAmount);
@@ -996,6 +1110,8 @@ public class BattleAllyController : MonoBehaviour
         Speed = 0;
         SelectedSkill = null;
         CurrentRoundUsedSkill = null;
+        selectedSkillIndicesPerButton.Clear();
+        selectedSkillsPerButton.Clear();
         RefreshActiveSpeedButtons();
 
         Died?.Invoke(this);
@@ -1084,6 +1200,7 @@ public class BattleAllyController : MonoBehaviour
         }
 
         speedButton = activeSpeedButtons.Count > 0 ? activeSpeedButtons[0] : null;
+        EnsureSelectedSkillSlots();
         if (!IsDead)
             lastLivingActiveSpeedButtonCount = Mathf.Max(0, activeSpeedButtons.Count);
     }
@@ -1146,6 +1263,50 @@ public class BattleAllyController : MonoBehaviour
         pendingConsecutiveSkillResetSkill = null;
     }
 
+    private void EnsureSelectedSkillSlots(EnemySkill_SO[] activeSkillPool = null)
+    {
+        int desiredCount = Mathf.Max(1, activeSpeedButtons.Count);
+        while (selectedSkillIndicesPerButton.Count < desiredCount)
+            selectedSkillIndicesPerButton.Add(CurrentSkillIndex);
+        while (selectedSkillsPerButton.Count < desiredCount)
+            selectedSkillsPerButton.Add(SelectedSkill);
+        while (selectedSkillIndicesPerButton.Count > desiredCount)
+            selectedSkillIndicesPerButton.RemoveAt(selectedSkillIndicesPerButton.Count - 1);
+        while (selectedSkillsPerButton.Count > desiredCount)
+            selectedSkillsPerButton.RemoveAt(selectedSkillsPerButton.Count - 1);
+
+        activeSkillPool ??= BuildActiveSkillPool();
+        if (activeSkillPool == null || activeSkillPool.Length == 0)
+            return;
+
+        for (int i = 0; i < selectedSkillIndicesPerButton.Count; i++)
+        {
+            int clampedIndex = Mathf.Clamp(selectedSkillIndicesPerButton[i], 0, activeSkillPool.Length - 1);
+            selectedSkillIndicesPerButton[i] = clampedIndex;
+            selectedSkillsPerButton[i] = activeSkillPool[clampedIndex] ?? SelectedSkill;
+        }
+    }
+
+    private int GetSpeedButtonIndex(SpeedButton button)
+    {
+        if (button == null)
+            return 0;
+
+        for (int i = 0; i < activeSpeedButtons.Count; i++)
+        {
+            if (activeSpeedButtons[i] == button)
+                return i;
+        }
+
+        for (int i = 0; i < speedButtons.Count; i++)
+        {
+            if (speedButtons[i] == button)
+                return i;
+        }
+
+        return 0;
+    }
+
     private BattleStatusRuntimeEntry GetOrCreateStatusEntry(BattleStatus_SO statusData, string fallbackStatusId, string fallbackDisplayName)
     {
         string key = ResolveStatusKey(statusData, fallbackStatusId, fallbackDisplayName);
@@ -1185,6 +1346,15 @@ public class BattleAllyController : MonoBehaviour
         }
 
         return null;
+    }
+
+    private bool TryConsumeResistanceAgainstIncomingStatus(BattleStatus_SO statusData, string fallbackStatusId)
+    {
+        if (!BattleStatusResistanceService.ShouldConsumeResistanceForIncomingStatus(statusData, fallbackStatusId, GetStatusStacks))
+            return false;
+
+        RemoveStatusStacks(null, BattleStatusResistanceService.ResistanceStatusId, 1, "抵抗");
+        return true;
     }
 
     private void ResolvePendingStatusesAtRoundStart()

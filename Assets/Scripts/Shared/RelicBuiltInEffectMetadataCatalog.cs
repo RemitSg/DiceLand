@@ -161,6 +161,19 @@ public static class RelicBuiltInEffectMetadataCatalog
         Add(metadata, Relic_SO.RelicBuiltInEffectType.PreventAllyStatusApplication, requiresConditionStatusData: true, numericRequirement: RelicBuiltInNumericRequirement.None);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToLowestSpeedAllyWhenAnyEnemyHasStatusOnBattleRoundStart, requiresStatusData: true, requiresConditionStatusData: true);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ReduceIncomingAttackDamageFlatWhenAttackerHasStatus, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ModifyOutgoingDamagePercentByTargetStatusStacks, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.GrantMoneyOnAcquire);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.IncreasePartyMaxHpOnAcquire);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.RestoreSharedEnergyOnSpecificRound);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToFullHpAlliesOnBattleRoundStart, requiresStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToLowHpAlliesOnBattleRoundStart, requiresStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.QueueStatusToAllEnemiesOnPlayerDeathNextRound, requiresStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.GrantMoneyOnActionPointsSpent);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.SetMerchantInitialStockCount);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.AllowMerchantPurchaseWithPositiveMoney, numericRequirement: RelicBuiltInNumericRequirement.None);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.GuaranteeBattleLootDrop, numericRequirement: RelicBuiltInNumericRequirement.None);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.IncreaseRelicChoiceRefreshCount);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.GrantRandomRelicsOnAcquire);
 
         return metadata;
     }

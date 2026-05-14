@@ -14,6 +14,8 @@ public static class MapTilePresentationService
                 return "事件";
             case MapTileType.Merchant:
                 return "商人";
+            case MapTileType.Treasure:
+                return "\u5b9d\u85cf";
             case MapTileType.Forge:
                 return "锻造";
             case MapTileType.Rest:

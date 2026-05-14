@@ -12,7 +12,8 @@ public enum MapTileType
     Forge = 5,
     Rest = 6,
     Key = 7,
-    Boss = 8
+    Boss = 8,
+    Treasure = 9
 }
 
 public enum MapDangerBand

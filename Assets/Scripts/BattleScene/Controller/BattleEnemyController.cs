@@ -135,7 +135,11 @@ public class BattleEnemyController : MonoBehaviour
         int effectiveMin = enemyData != null ? Mathf.Max(0, enemyData.GetStageMinSpeed(CurrentStageIndex)) : min;
         int effectiveMax = enemyData != null ? Mathf.Max(effectiveMin, enemyData.GetStageMaxSpeed(CurrentStageIndex)) : Mathf.Max(min, max);
 
-        Speed = Mathf.Max(1, UnityEngine.Random.Range(effectiveMin, effectiveMax + 1) + PendingRoundStartSpeedBonus);
+        int rolledSpeed = Mathf.Max(1, UnityEngine.Random.Range(effectiveMin, effectiveMax + 1) + PendingRoundStartSpeedBonus);
+        IReadOnlyList<RunCalamityState> activeCalamities = BattleEncounterRuntime.ActiveEncounter != null
+            ? BattleEncounterRuntime.ActiveEncounter.activeCalamities
+            : null;
+        Speed = CalamitySystem.ApplyEnemySpeedModifiers(rolledSpeed, activeCalamities);
         for (int i = 0; i < activeSpeedButtons.Count; i++)
         {
             if (activeSpeedButtons[i] != null)
@@ -317,7 +321,10 @@ public class BattleEnemyController : MonoBehaviour
 
     public string GetDebugDisplayName()
     {
-        return EnemyID >= 0 ? $"{gameObject.name}(ID:{EnemyID})" : gameObject.name;
+        string displayName = enemyData != null && !string.IsNullOrWhiteSpace(enemyData.enemyName)
+            ? enemyData.enemyName
+            : gameObject.name;
+        return EnemyID >= 0 ? $"{displayName}(ID:{EnemyID})" : displayName;
     }
 
     public string GetSelectedSkillDebugSummary()
@@ -688,6 +695,8 @@ public class BattleEnemyController : MonoBehaviour
         if (IsDead || stackAmount <= 0)
             return false;
         if (!CanReceiveStatusApplication(statusData, fallbackStatusId))
+            return false;
+        if (TryConsumeResistanceAgainstIncomingStatus(statusData, fallbackStatusId))
             return false;
 
         BattleStatusRuntimeEntry entry = GetOrCreateStatusEntry(statusData, fallbackStatusId, fallbackDisplayName);
@@ -1394,6 +1403,28 @@ public class BattleEnemyController : MonoBehaviour
                 return preferredTargets[UnityEngine.Random.Range(0, preferredTargets.Count)];
         }
 
+        if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferTargetsWithNegativeStatusTypesAtLeast)
+        {
+            List<SpeedButton> preferredTargets = new List<SpeedButton>();
+            int requiredTypes = Mathf.Max(1, skill.targetPriorityRequiredStacks);
+            for (int i = 0; i < allyButtons.Count; i++)
+            {
+                SpeedButton allyButton = allyButtons[i];
+                if (allyButton == null)
+                    continue;
+
+                BattleAllyController ally = allyButton.GetComponentInParent<BattleAllyController>();
+                if (ally == null || ally.IsDead)
+                    continue;
+
+                if (BattleNegativeStatusService.HasAtLeastNegativeStatusTypes(ally.GetStatusStacks, requiredTypes))
+                    preferredTargets.Add(allyButton);
+            }
+
+            if (preferredTargets.Count > 0)
+                return preferredTargets[UnityEngine.Random.Range(0, preferredTargets.Count)];
+        }
+
         if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferLowestSpeed)
         {
             int lowestSpeed = int.MaxValue;
@@ -1416,6 +1447,40 @@ public class BattleEnemyController : MonoBehaviour
                     preferredTargets.Add(allyButton);
                 }
                 else if (allySpeed == lowestSpeed)
+                {
+                    preferredTargets.Add(allyButton);
+                }
+            }
+
+            if (preferredTargets.Count > 0)
+                return preferredTargets[UnityEngine.Random.Range(0, preferredTargets.Count)];
+        }
+
+        if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferTargetsWithLowestStatusStacks
+            || skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferTargetsWithHighestStatusStacks)
+        {
+            bool preferHighest = skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferTargetsWithHighestStatusStacks;
+            int bestStacks = preferHighest ? int.MinValue : int.MaxValue;
+            List<SpeedButton> preferredTargets = new List<SpeedButton>();
+            for (int i = 0; i < allyButtons.Count; i++)
+            {
+                SpeedButton allyButton = allyButtons[i];
+                if (allyButton == null)
+                    continue;
+
+                BattleAllyController ally = allyButton.GetComponentInParent<BattleAllyController>();
+                if (ally == null || ally.IsDead)
+                    continue;
+
+                int stacks = ResolveTargetPriorityStatusStacks(ally, skill);
+                bool isBetter = preferHighest ? stacks > bestStacks : stacks < bestStacks;
+                if (isBetter)
+                {
+                    bestStacks = stacks;
+                    preferredTargets.Clear();
+                    preferredTargets.Add(allyButton);
+                }
+                else if (stacks == bestStacks)
                 {
                     preferredTargets.Add(allyButton);
                 }
@@ -1725,6 +1790,15 @@ public class BattleEnemyController : MonoBehaviour
         }
 
         return null;
+    }
+
+    private bool TryConsumeResistanceAgainstIncomingStatus(BattleStatus_SO statusData, string fallbackStatusId)
+    {
+        if (!BattleStatusResistanceService.ShouldConsumeResistanceForIncomingStatus(statusData, fallbackStatusId, GetStatusStacks))
+            return false;
+
+        RemoveStatusStacks(null, BattleStatusResistanceService.ResistanceStatusId, 1, "抵抗");
+        return true;
     }
 
     private void ResolvePendingStatusesAtRoundStart()

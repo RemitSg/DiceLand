@@ -67,6 +67,36 @@ public static partial class RelicTriggerDispatcher
         return context;
     }
 
+    public static RelicExecutionContext ProcessRelicAcquired(
+        RunState runState,
+        Relic_SO acquiredRelicData,
+        int acquiredRelicAmount,
+        Action<string> logFeedback = null)
+    {
+        RelicExecutionContext context = RelicExecutionContext.CreateRelicAcquired(
+            runState,
+            acquiredRelicData,
+            acquiredRelicAmount);
+        ProcessRunRelics(runState, context, logFeedback);
+        return context;
+    }
+
+    public static RelicExecutionContext ProcessActionPointsSpent(
+        RunState runState,
+        RunGameManager runGameManager,
+        BoardTileData tile,
+        int actionPointsSpent,
+        Action<string> logFeedback = null)
+    {
+        RelicExecutionContext context = RelicExecutionContext.CreateActionPointsSpent(
+            runState,
+            runGameManager,
+            tile,
+            actionPointsSpent);
+        ProcessRunRelics(runState, context, logFeedback);
+        return context;
+    }
+
     public static RelicExecutionContext ProcessLootReforge(
         RunState runState,
         LootItem_SO firstLootMaterial,

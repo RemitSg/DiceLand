@@ -138,6 +138,20 @@ public class EnemyTodoTests
         Assert.IsTrue(enemyC.IsDead);
     }
 
+    [Test]
+    public void GetDebugDisplayName_UsesCurrentEnemyDataNameAfterTransform()
+    {
+        EnemySkill_SO skill = CreateSkill("Bite");
+        EnemyData_SO eggData = CreateEnemyData("血蛛卵", 10, skill, default);
+        EnemyData_SO spiderData = CreateEnemyData("小血蛛", 12, skill, default);
+        spiderData.enemyID = 3002;
+
+        BattleEnemyController enemy = CreateEnemyController("血蛛卵", eggData);
+        enemy.ApplyEnemyData(spiderData);
+
+        Assert.AreEqual("小血蛛(ID:3002)", enemy.GetDebugDisplayName());
+    }
+
     private BattleEnemyController CreateEnemyController(string name, EnemyData_SO enemyData)
     {
         GameObject go = new GameObject(name);

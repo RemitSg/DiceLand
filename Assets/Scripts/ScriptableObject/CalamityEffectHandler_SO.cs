@@ -25,4 +25,24 @@ public abstract class CalamityEffectHandler_SO : ScriptableObject
     {
         return currentValue;
     }
+
+    public virtual int ModifyMerchantPrice(int currentValue, RunCalamityState calamityState)
+    {
+        return currentValue;
+    }
+
+    public virtual int ModifyAllyDamage(int currentValue, RunCalamityState calamityState)
+    {
+        return currentValue;
+    }
+
+    public virtual int ModifyAllyMaxHP(int currentValue, RunCalamityState calamityState)
+    {
+        return currentValue;
+    }
+
+    public virtual int ModifyEnemyIncomingDamage(int currentValue, RunCalamityState calamityState)
+    {
+        return currentValue;
+    }
 }

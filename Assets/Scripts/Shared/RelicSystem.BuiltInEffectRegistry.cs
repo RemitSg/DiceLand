@@ -114,6 +114,19 @@ public static partial class RelicSystem
             { Relic_SO.RelicBuiltInEffectType.PreventAllyStatusApplication, HandlePassiveMarker },
             { Relic_SO.RelicBuiltInEffectType.ApplyStatusToLowestSpeedAllyWhenAnyEnemyHasStatusOnBattleRoundStart, HandleApplyStatusToLowestSpeedAllyWhenAnyEnemyHasStatusOnBattleRoundStart },
             { Relic_SO.RelicBuiltInEffectType.ReduceIncomingAttackDamageFlatWhenAttackerHasStatus, HandleReduceIncomingAttackDamageFlatWhenAttackerHasStatus },
+            { Relic_SO.RelicBuiltInEffectType.ModifyOutgoingDamagePercentByTargetStatusStacks, HandleModifyOutgoingDamagePercentByTargetStatusStacks },
+            { Relic_SO.RelicBuiltInEffectType.GrantMoneyOnAcquire, HandleGrantMoneyOnAcquire },
+            { Relic_SO.RelicBuiltInEffectType.IncreasePartyMaxHpOnAcquire, HandleIncreasePartyMaxHpOnAcquire },
+            { Relic_SO.RelicBuiltInEffectType.RestoreSharedEnergyOnSpecificRound, HandleRestoreSharedEnergyOnSpecificRound },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToFullHpAlliesOnBattleRoundStart, HandleApplyStatusToFullHpAlliesOnBattleRoundStart },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToLowHpAlliesOnBattleRoundStart, HandleApplyStatusToLowHpAlliesOnBattleRoundStart },
+            { Relic_SO.RelicBuiltInEffectType.QueueStatusToAllEnemiesOnPlayerDeathNextRound, HandleQueueStatusToAllEnemiesOnPlayerDeathNextRound },
+            { Relic_SO.RelicBuiltInEffectType.GrantMoneyOnActionPointsSpent, HandleGrantMoneyOnActionPointsSpent },
+            { Relic_SO.RelicBuiltInEffectType.SetMerchantInitialStockCount, HandleSetMerchantInitialStockCount },
+            { Relic_SO.RelicBuiltInEffectType.AllowMerchantPurchaseWithPositiveMoney, HandleAllowMerchantPurchaseWithPositiveMoney },
+            { Relic_SO.RelicBuiltInEffectType.GuaranteeBattleLootDrop, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.IncreaseRelicChoiceRefreshCount, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.GrantRandomRelicsOnAcquire, HandleGrantRandomRelicsOnAcquire },
         };
     }
 
