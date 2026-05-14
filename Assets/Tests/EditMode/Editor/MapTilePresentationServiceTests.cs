@@ -14,6 +14,7 @@ public class MapTilePresentationServiceTests
         Assert.AreEqual("休息", MapTilePresentationService.GetTileTypeLabel(MapTileType.Rest));
         Assert.AreEqual("钥匙", MapTilePresentationService.GetTileTypeLabel(MapTileType.Key));
         Assert.AreEqual("Boss", MapTilePresentationService.GetTileTypeLabel(MapTileType.Boss));
+        Assert.AreEqual("副本出口", MapTilePresentationService.GetTileTypeLabel(MapTileType.SpecialDungeonExit));
     }
 
     [Test]

@@ -1623,6 +1623,8 @@ public class MapHUD : MonoBehaviour
                 return "钥匙";
             case MapTileType.Boss:
                 return "Boss";
+            case MapTileType.SpecialDungeonExit:
+                return "副本出口";
             default:
                 return "未知";
         }
@@ -1665,6 +1667,8 @@ public class MapHUD : MonoBehaviour
                 return "钥匙格，进入后可获得钥匙";
             case MapTileType.Boss:
                 return "Boss 格，满足钥匙条件后可挑战首领";
+            case MapTileType.SpecialDungeonExit:
+                return "离开副本并返回主地图事件格。";
             default:
                 return string.Empty;
         }

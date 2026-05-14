@@ -24,6 +24,8 @@ public static class MapTilePresentationService
                 return "钥匙";
             case MapTileType.Boss:
                 return "Boss";
+            case MapTileType.SpecialDungeonExit:
+                return "副本出口";
             default:
                 return "未知";
         }

@@ -34,6 +34,77 @@ public class MapHUDTilePresentationTests
         }
     }
 
+    [Test]
+    public void ShowTile_SpecialDungeonExitDisplaysExitLabel()
+    {
+        GameObject go = new GameObject("MapHUD");
+        try
+        {
+            MapHUD hud = go.AddComponent<MapHUD>();
+            BoardTileData tile = new BoardTileData
+            {
+                coord = new Vector2Int(0, 1),
+                tileType = MapTileType.SpecialDungeonExit
+            };
+
+            hud.ShowTile(tile, 0);
+
+            TextMeshProUGUI title = FindText(go.transform, "TileTitle");
+            TextMeshProUGUI body = FindText(go.transform, "TileBody");
+            Assert.AreEqual("[0,1] 副本出口", title.text);
+            Assert.That(body.text, Does.Contain("离开副本"));
+        }
+        finally
+        {
+            Object.DestroyImmediate(go);
+        }
+    }
+
+    [Test]
+    public void GetTileIcon_SpecialDungeonExitFallsBackToDefaultSprite()
+    {
+        GameObject go = new GameObject("BoardManager");
+        try
+        {
+            BoardManager boardManager = go.AddComponent<BoardManager>();
+            boardManager.Initialize();
+
+            Sprite icon = boardManager.GetTileIcon(new BoardTileData
+            {
+                tileType = MapTileType.SpecialDungeonExit
+            });
+
+            Assert.IsNotNull(icon);
+        }
+        finally
+        {
+            Object.DestroyImmediate(go);
+        }
+    }
+
+    [Test]
+    public void ResolveTile_SpecialDungeonExitReturnsExitMessage()
+    {
+        GameObject go = new GameObject("TileResolver");
+        try
+        {
+            TileResolver resolver = go.AddComponent<TileResolver>();
+            BoardTileData tile = new BoardTileData
+            {
+                tileType = MapTileType.SpecialDungeonExit
+            };
+
+            string message = resolver.ResolveTile(tile, new RunState());
+
+            Assert.IsTrue(tile.isVisited);
+            Assert.That(message, Does.Contain("离开特殊副本"));
+        }
+        finally
+        {
+            Object.DestroyImmediate(go);
+        }
+    }
+
     private static TextMeshProUGUI FindText(Transform root, string name)
     {
         TextMeshProUGUI[] texts = root.GetComponentsInChildren<TextMeshProUGUI>(true);

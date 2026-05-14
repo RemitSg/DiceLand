@@ -17,6 +17,7 @@ public sealed class MapRunSnapshot
     public int actionPointBase;
     public int actionPointBonus;
     public int actionPointCurrent;
+    public SpecialDungeonRuntimeContext specialDungeonContext;
 
     public MapRunSnapshot Clone()
     {
@@ -31,7 +32,8 @@ public sealed class MapRunSnapshot
             actionPointBase = actionPointBase,
             actionPointBonus = actionPointBonus,
             actionPointCurrent = actionPointCurrent,
-            suppressOnePendingCalamityOnActionPointRestore = suppressOnePendingCalamityOnActionPointRestore
+            suppressOnePendingCalamityOnActionPointRestore = suppressOnePendingCalamityOnActionPointRestore,
+            specialDungeonContext = specialDungeonContext != null ? specialDungeonContext.Clone() : null
         };
 
         if (tiles != null)
@@ -69,7 +71,14 @@ public static class MapRunRuntime
         return false;
     }
 
-    public static void SaveSnapshot(string sceneName, RunState runState, BoardManager boardManager, ActionPointSystem actionPointSystem, IEnumerable<int> pendingCalamityTiers = null, bool suppressOnePendingCalamityOnActionPointRestore = false)
+    public static void SaveSnapshot(
+        string sceneName,
+        RunState runState,
+        BoardManager boardManager,
+        ActionPointSystem actionPointSystem,
+        IEnumerable<int> pendingCalamityTiers = null,
+        bool suppressOnePendingCalamityOnActionPointRestore = false,
+        SpecialDungeonRuntimeContext specialDungeonContext = null)
     {
         if (runState == null || boardManager == null || actionPointSystem == null || string.IsNullOrWhiteSpace(sceneName))
             return;
@@ -85,7 +94,8 @@ public static class MapRunRuntime
             actionPointBase = actionPointSystem.BasePoints,
             actionPointBonus = actionPointSystem.BonusPoints,
             actionPointCurrent = actionPointSystem.CurrentPoints,
-            suppressOnePendingCalamityOnActionPointRestore = suppressOnePendingCalamityOnActionPointRestore
+            suppressOnePendingCalamityOnActionPointRestore = suppressOnePendingCalamityOnActionPointRestore,
+            specialDungeonContext = specialDungeonContext != null ? specialDungeonContext.Clone() : null
         };
 
         foreach (BoardTileData tile in boardManager.GetAllTiles())

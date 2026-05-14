@@ -20,6 +20,7 @@ public sealed class MapEventBuiltInEffectExecutionResult
     public bool success;
     public string message;
     public BattleEncounterData pendingEncounterData;
+    public SpecialDungeon_SO pendingSpecialDungeon;
 }
 
 public static class MapEventBuiltInEffectExecutorService
@@ -130,6 +131,8 @@ public static class MapEventBuiltInEffectExecutorService
                 return MapEventLootCostService.TryExecuteSpecificLootDiscard(request.runState, effectData, out message);
             case MapEventOptionBuiltInEffectType.StartEncounter:
                 return ExecuteStartEncounter(request, effectData, result, out message);
+            case MapEventOptionBuiltInEffectType.StartSpecialDungeon:
+                return ExecuteStartSpecialDungeon(effectData, result, out message);
             default:
                 message = "未知事件效果。";
                 return false;
@@ -294,6 +297,22 @@ public static class MapEventBuiltInEffectExecutorService
             result.pendingEncounterData = encounterData;
 
         return prepared;
+    }
+
+    private static bool ExecuteStartSpecialDungeon(
+        MapEventBuiltInEffectData effectData,
+        MapEventBuiltInEffectExecutionResult result,
+        out string message)
+    {
+        if (effectData == null || effectData.specialDungeon == null)
+        {
+            message = "特殊副本未配置。";
+            return false;
+        }
+
+        result.pendingSpecialDungeon = effectData.specialDungeon;
+        message = $"进入特殊副本：{effectData.specialDungeon.DisplayName}";
+        return true;
     }
 
     private static int FindFirstEncounterEffectIndex(List<MapEventBuiltInEffectData> allEffects)

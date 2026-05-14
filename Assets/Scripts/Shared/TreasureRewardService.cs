@@ -20,6 +20,8 @@ public sealed class TreasureRewardChoice
     public CraftingBlueprint_SO blueprint;
     public LootRarity relicBagRarity;
     public Relic_SO relic;
+    public Sprite iconOverride;
+    public int specialDungeonOptionIndex = -1;
 }
 
 public sealed class TreasureRewardResult

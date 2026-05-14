@@ -32,6 +32,7 @@ public class BoardManager : MonoBehaviour
     [SerializeField] private Sprite restTileIcon;
     [SerializeField] private Sprite keyTileIcon;
     [SerializeField] private Sprite bossTileIcon;
+    [SerializeField] private Sprite specialDungeonExitIcon;
     [SerializeField] private TMP_FontAsset worldTextFont;
     [SerializeField] private Sprite tileFrameSprite;
     [SerializeField] private Sprite tileIconGlowMaskSprite;
@@ -264,6 +265,9 @@ public class BoardManager : MonoBehaviour
             case MapTileType.Event:
                 baseColor *= new Color(0.82f, 0.92f, 1.18f, 1f);
                 break;
+            case MapTileType.SpecialDungeonExit:
+                baseColor *= new Color(0.8f, 1.1f, 1.2f, 1f);
+                break;
             case MapTileType.Elite:
                 baseColor = Color.Lerp(baseColor, eliteTileAccentColor, 0.48f);
                 break;
@@ -303,6 +307,9 @@ public class BoardManager : MonoBehaviour
                 break;
             case MapTileType.Rest:
                 baseColor *= new Color(0.88f, 1.12f, 0.9f, 1f);
+                break;
+            case MapTileType.SpecialDungeonExit:
+                baseColor *= new Color(0.78f, 1.08f, 1.22f, 1f);
                 break;
             case MapTileType.Elite:
                 baseColor = Color.Lerp(baseColor, eliteTileAccentColor, 0.58f);
@@ -356,6 +363,9 @@ public class BoardManager : MonoBehaviour
             case MapTileType.Boss:
                 baseColor = new Color(1f, 0.68f, 0.72f, 0.4f);
                 break;
+            case MapTileType.SpecialDungeonExit:
+                baseColor = new Color(0.52f, 0.95f, 1f, 0.4f);
+                break;
             default:
                 baseColor = new Color(1f, 1f, 1f, 0.28f);
                 break;
@@ -392,6 +402,9 @@ public class BoardManager : MonoBehaviour
                 break;
             case MapTileType.Rest:
                 baseColor = Color.Lerp(baseColor, new Color(0.84f, 1f, 0.86f, 1f), 0.42f);
+                break;
+            case MapTileType.SpecialDungeonExit:
+                baseColor = Color.Lerp(baseColor, new Color(0.62f, 0.96f, 1f, 1f), 0.52f);
                 break;
             case MapTileType.Key:
                 baseColor = Color.Lerp(baseColor, new Color(1f, 0.98f, 0.48f, 1f), 0.58f);
@@ -446,6 +459,8 @@ public class BoardManager : MonoBehaviour
                 return keyTileIcon;
             case MapTileType.Boss:
                 return bossTileIcon;
+            case MapTileType.SpecialDungeonExit:
+                return specialDungeonExitIcon != null ? specialDungeonExitIcon : DefaultTileSprite;
             default:
                 return null;
         }
@@ -478,6 +493,8 @@ public class BoardManager : MonoBehaviour
                 return new Color(1f, 0.98f, 0.42f, 1f);
             case MapTileType.Boss:
                 return new Color(1f, 0.68f, 0.68f, 1f);
+            case MapTileType.SpecialDungeonExit:
+                return new Color(0.58f, 0.94f, 1f, 1f);
             default:
                 return fallbackIconColor;
         }
@@ -964,7 +981,8 @@ public class BoardManager : MonoBehaviour
 
         return tile.tileType != MapTileType.Boss
             && tile.tileType != MapTileType.Merchant
-            && tile.tileType != MapTileType.Forge;
+            && tile.tileType != MapTileType.Forge
+            && tile.tileType != MapTileType.SpecialDungeonExit;
     }
 
     public bool ShouldKeepPersistentPresentation(BoardTileData tile)
@@ -972,7 +990,8 @@ public class BoardManager : MonoBehaviour
         return tile != null
             && (tile.tileType == MapTileType.Boss
                 || tile.tileType == MapTileType.Merchant
-                || tile.tileType == MapTileType.Forge);
+                || tile.tileType == MapTileType.Forge
+                || tile.tileType == MapTileType.SpecialDungeonExit);
     }
 
     private Sprite CreateRadialGlowSprite(string textureName, int size)
