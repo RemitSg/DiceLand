@@ -17,8 +17,8 @@ MonoBehaviour:
   description: "\u5251\u8EAB\u5E76\u4E0D\u70BD\u70C8\uFF0C\u53EA\u5728\u6325\u843D\u65F6\u7559\u4E0B\u77ED\u6682\u7684\u767D\u5149\u3002\u5B83\u66F4\u50CF\u5BA1\u5224\uFF0C\u4E0D\u50CF\u5C60\u622E\u3002"
   rarity: 2
   weaponType: 0
-  icon: {fileID: 21300000, guid: 0f89efd50bf051643a5c8e52ce913aa8, type: 3}
-  weaponPrefab: {fileID: 4161721724043940196, guid: caf1d976a5d739847a7b1968976b150c, type: 3}
+  icon: {fileID: 21300000, guid: feee66fed239e174599c594022f320ba, type: 3}
+  weaponPrefab: {fileID: 5274404717915833623, guid: a601f276bc7fb0c4399386cd97c6cc9a, type: 3}
   speedButtonCount: 1
   minPower: 2
   maxPower: 4

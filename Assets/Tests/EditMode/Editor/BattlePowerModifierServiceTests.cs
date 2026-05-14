@@ -158,6 +158,47 @@ public class BattlePowerModifierServiceTests
     }
 
     [Test]
+    public void EvaluatePowerModifier_AddsSpeedDifferenceBonusPerStepWhenConfigured()
+    {
+        EnemySkill_SO skill = CreateSkill(new[]
+        {
+            new EnemySkill_SO.ConditionalPowerModifierEntry
+            {
+                trigger = EnemySkill_SO.DiceEffectTrigger.OnSkillUse,
+                useCondition = true,
+                condition = EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanTarget,
+                requiredSpeedDifference = 1,
+                powerBonusPerStep = 1,
+                maxPowerBonus = 5
+            }
+        });
+
+        int cappedBonus = BattlePowerModifierService.EvaluatePowerModifier(
+            skill,
+            0,
+            EnemySkill_SO.DiceEffectTrigger.OnSkillUse,
+            selfSpeed: 9,
+            targetSpeed: 2,
+            getSelfStatusStacksByAsset: _ => 0,
+            getSelfStatusStacksById: _ => 0,
+            getTargetStatusStacksByAsset: _ => 0,
+            getTargetStatusStacksById: _ => 0);
+        int unmetBonus = BattlePowerModifierService.EvaluatePowerModifier(
+            skill,
+            0,
+            EnemySkill_SO.DiceEffectTrigger.OnSkillUse,
+            selfSpeed: 4,
+            targetSpeed: 4,
+            getSelfStatusStacksByAsset: _ => 0,
+            getSelfStatusStacksById: _ => 0,
+            getTargetStatusStacksByAsset: _ => 0,
+            getTargetStatusStacksById: _ => 0);
+
+        Assert.AreEqual(5, cappedBonus);
+        Assert.AreEqual(0, unmetBonus);
+    }
+
+    [Test]
     public void EvaluatePowerModifier_TargetSkillConditionRequiresMatchingSkill()
     {
         EnemySkill_SO targetSkill = ScriptableObject.CreateInstance<EnemySkill_SO>();
