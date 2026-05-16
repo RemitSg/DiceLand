@@ -30,6 +30,24 @@ public sealed class RunSceneFlowState
             PendingCalamityTiers.Enqueue(Mathf.Max(1, tier));
     }
 
+    public List<int> DrainPendingCalamityTiers()
+    {
+        List<int> drained = new List<int>();
+        while (PendingCalamityTiers.Count > 0)
+            drained.Add(Mathf.Max(1, PendingCalamityTiers.Dequeue()));
+
+        return drained;
+    }
+
+    public void EnqueuePendingCalamityTiers(IEnumerable<int> pendingTiers)
+    {
+        if (pendingTiers == null)
+            return;
+
+        foreach (int tier in pendingTiers)
+            PendingCalamityTiers.Enqueue(Mathf.Max(1, tier));
+    }
+
     public void ClearPendingCalamityTiers()
     {
         PendingCalamityTiers.Clear();

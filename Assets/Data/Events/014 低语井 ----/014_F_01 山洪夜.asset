@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "014_F_01 山洪夜"
+  m_EditorClassIdentifier: 
+  eventId: 014_F_01
+  eventName: "山洪夜"
+  eventContent: "战斗后，井边的铁铃还在晃。\n\n沈霜说，十八年前山洪来得很快。许茵最先听见山体裂开的声音，她跑到井边敲响铁铃，叫醒了村里的人。\n\n村人逃出来了。许茵却被塌方困在井下。"
+  eventIllustration: {fileID: 0}
+  options:
+  - optionId: 1
+    optionLabel: "听沈霜说完"
+    requiredMoney: 0
+    consequenceDescription: "继续剧情"
+    resultContent: "林槐赶到时，井壁已经塌了。雨水和泥浆往井里灌，他只能趴在井沿上喊许茵的名字。\n\n许茵最后说：\n\n“别让栀栀记得我死得这么疼。”"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
+    lootRewards: []
+    lootPickCountMin: 1
+    lootPickCountMax: 1
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 1
+    blueprintPickCountMax: 1
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 11400000, guid: 7b9a4b129826454cb6bea23e22bd6297, type: 2}
+    resolveEvent: 1
+    customHandler: {fileID: 0}

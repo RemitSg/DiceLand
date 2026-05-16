@@ -292,7 +292,7 @@ public class RunState
         if (amount <= 0)
             return;
 
-        money = Mathf.Max(0, money + amount);
+        money += amount;
     }
 
     public bool TrySpendMoney(int amount)

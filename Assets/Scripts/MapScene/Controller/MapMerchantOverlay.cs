@@ -198,7 +198,7 @@ public class MapMerchantOverlay : MonoBehaviour
         offerLookup.Clear();
 
         if (moneyText != null)
-            moneyText.text = $"金钱 {Mathf.Max(0, currentRunState != null ? currentRunState.money : 0)}";
+            moneyText.text = $"金钱 {(currentRunState != null ? currentRunState.money : 0)}";
 
         if (currentTile?.merchantOffers == null)
         {
@@ -280,8 +280,7 @@ public class MapMerchantOverlay : MonoBehaviour
         if (descriptionText != null)
             descriptionText.text = string.IsNullOrWhiteSpace(selectedOffer.Description) ? "暂无商品描述。" : selectedOffer.Description;
 
-        int resolvedPrice = ResolveDisplayPrice(selectedOffer);
-        SetBuyButtonInteractable(!selectedOffer.isSoldOut && currentRunState != null && currentRunState.money >= Mathf.Max(0, resolvedPrice));
+        SetBuyButtonInteractable(CanPurchaseSelectedOffer());
         RefreshRefreshButtonState();
     }
 
@@ -708,6 +707,25 @@ public class MapMerchantOverlay : MonoBehaviour
         return currentRunState != null && offer != null
             ? RelicMerchantService.CalculateOfferPrice(currentRunState, currentTile, offer)
             : Mathf.Max(0, offer != null ? offer.price : 0);
+    }
+
+    private bool CanPurchaseSelectedOffer()
+    {
+        if (selectedOffer == null || selectedOffer.isSoldOut || currentRunState == null)
+            return false;
+
+        if (currentRunState.money < 0)
+            return false;
+
+        int resolvedPrice = Mathf.Max(0, ResolveDisplayPrice(selectedOffer));
+        if (currentRunState.money >= resolvedPrice)
+            return true;
+
+        return RelicMerchantService.CanPurchaseWithPositiveMoneyOverride(
+            currentRunState,
+            currentTile,
+            selectedOffer,
+            resolvedPrice);
     }
 
     private static string BuildOfferButtonLabel(MerchantOfferState offer, int resolvedPrice)

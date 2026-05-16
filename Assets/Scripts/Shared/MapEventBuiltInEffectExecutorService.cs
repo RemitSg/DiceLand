@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -245,9 +245,11 @@ public static class MapEventBuiltInEffectExecutorService
             return false;
         }
 
-        int restoredPoints = Mathf.Clamp(actionPointSystem.CurrentPoints + gainAmount, 0, actionPointSystem.CurrentMaxPoints);
+        int pointsBeforeRestore = actionPointSystem.CurrentPoints;
+        int restoredPoints = Mathf.Clamp(pointsBeforeRestore + gainAmount, 0, actionPointSystem.CurrentMaxPoints);
+        int actualRestoredAmount = Mathf.Max(0, restoredPoints - pointsBeforeRestore);
         actionPointSystem.RestoreState(actionPointSystem.BasePoints, actionPointSystem.BonusPoints, restoredPoints);
-        message = $"恢复 {gainAmount} 点行动点。";
+        message = $"\u6062\u590d {actualRestoredAmount} \u70b9\u884c\u52a8\u70b9\u3002";
         return true;
     }
 

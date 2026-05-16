@@ -25,6 +25,30 @@ public class SpecialDungeonRuntimeContextTests
     }
 
     [Test]
+    public void Clone_StripsNestedSpecialDungeonContextFromMainMapSnapshot()
+    {
+        SpecialDungeonRuntimeContext context = new SpecialDungeonRuntimeContext
+        {
+            isActive = true,
+            activeDungeonId = "d1",
+            mainMapSnapshot = new MapRunSnapshot
+            {
+                sceneName = "Map",
+                specialDungeonContext = new SpecialDungeonRuntimeContext
+                {
+                    isActive = true,
+                    activeDungeonId = "nested"
+                }
+            }
+        };
+
+        SpecialDungeonRuntimeContext clone = context.Clone();
+
+        Assert.IsNotNull(clone.mainMapSnapshot);
+        Assert.IsNull(clone.mainMapSnapshot.specialDungeonContext);
+    }
+
+    [Test]
     public void ExitDungeon_RestoresMainMapEventTileAsResolved()
     {
         MapRunSnapshot main = new MapRunSnapshot

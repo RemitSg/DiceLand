@@ -46,8 +46,9 @@ MonoBehaviour:
     encounterEnemies: []
     encounterEnemyCountMin: 0
     encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}
   - optionId: 2
     optionLabel: "\u6CBF\u7740\u8E29\u8E0F\u7684\u75D5\u8FF9\u524D\u8FDB"
@@ -79,15 +80,16 @@ MonoBehaviour:
     encounterEnemies: []
     encounterEnemyCountMin: 0
     encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}
   - optionId: 3
     optionLabel: "\u62C6\u4E0B\u6728\u724C"
     requiredMoney: 0
     consequenceDescription: "\uFF1F\uFF1F\uFF1F"
     resultContent: "\u4F60\u4EEC\u62C6\u4E0B\u4E86\u6728\u724C\uFF0C\u4EC0\u4E48\u88C5\u795E\u5F04\u9B3C\u7684\u4E1C\u897F\u4E5F\u6765\u6321\u4F60\u4EEC\u7684\u8DEF\u3002\n\u5728\u4F60\u62C6\u4E0B\u6728\u724C\u7684\u4E00\u77AC\u95F4\uFF0C\u4F60\u4EFF\u4F5B\u542C\u89C1\u4E86\u6D77\u6D6A\u7684\u5636\u9E23\u3002"
-    builtInEffectType: 10
+    builtInEffectType: 11
     effectAmount: 0
     randomMoneyMin: 0
     randomMoneyMax: 0
@@ -112,6 +114,7 @@ MonoBehaviour:
     encounterEnemies: []
     encounterEnemyCountMin: 0
     encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}

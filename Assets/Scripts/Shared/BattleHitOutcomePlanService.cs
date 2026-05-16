@@ -7,15 +7,13 @@ public struct BattleHitOutcomePlan
 
 public static class BattleHitOutcomePlanService
 {
-    public static BattleHitOutcomePlan Resolve(int dealtDamage)
+    public static BattleHitOutcomePlan Resolve(int dealtDamage, bool hitConfirmed)
     {
-        bool successfulHit = dealtDamage > 0;
-
         return new BattleHitOutcomePlan
         {
-            ShowZeroDamageFeedback = !successfulHit,
-            ApplySuccessfulHitEffects = successfulHit,
-            ApplyMissEffects = !successfulHit
+            ShowZeroDamageFeedback = dealtDamage <= 0,
+            ApplySuccessfulHitEffects = hitConfirmed,
+            ApplyMissEffects = !hitConfirmed
         };
     }
 }

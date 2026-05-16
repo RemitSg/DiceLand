@@ -7,6 +7,8 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public class MapEventOverlay : MonoBehaviour
 {
+    private const int MaxNestedEventDepth = 16;
+
     public sealed class EventOptionPreviewData
     {
         public bool isSelectable = true;
@@ -89,6 +91,8 @@ public class MapEventOverlay : MonoBehaviour
     private EventOptionSelectionHandler selectionHandler;
     private EventOptionPreviewHandler previewHandler;
     private bool isShowingResultStep;
+    private MapEvent_SO pendingNextEvent;
+    private int nestedEventDepth;
 
     public bool IsVisible => canvas != null && canvas.gameObject.activeInHierarchy && panelRect != null && panelRect.gameObject.activeInHierarchy;
 
@@ -103,7 +107,7 @@ public class MapEventOverlay : MonoBehaviour
     {
         EnsureUi();
         currentTile = tile; currentEvent = eventData; selectionHandler = onSelect; previewHandler = onPreview;
-        selectedOption = null; isShowingResultStep = false; optionPreviewLookup.Clear();
+        selectedOption = null; isShowingResultStep = false; pendingNextEvent = null; nestedEventDepth = 0; optionPreviewLookup.Clear();
         gameObject.SetActive(true); canvas.gameObject.SetActive(true); panelRect.gameObject.SetActive(true);
         RefreshHeader(); RefreshOptionList(); SelectOption(GetFirstSelectableOption());
     }
@@ -111,7 +115,7 @@ public class MapEventOverlay : MonoBehaviour
     public void Hide()
     {
         bool wasVisible = IsVisible;
-        isShowingResultStep = false; selectedOption = null; previewHandler = null; optionPreviewLookup.Clear();
+        isShowingResultStep = false; selectedOption = null; pendingNextEvent = null; nestedEventDepth = 0; previewHandler = null; optionPreviewLookup.Clear();
         if (panelRect != null) panelRect.gameObject.SetActive(false);
         if (canvas != null) canvas.gameObject.SetActive(false);
         if (wasVisible) Hidden?.Invoke();
@@ -197,7 +201,23 @@ public class MapEventOverlay : MonoBehaviour
 
     private void OnConfirmClicked()
     {
-        if (isShowingResultStep) { Hide(); return; }
+        if (isShowingResultStep)
+        {
+            if (pendingNextEvent != null)
+            {
+                if (nestedEventDepth >= MaxNestedEventDepth)
+                {
+                    if (statusText != null) statusText.text = "事件嵌套层数过深，请检查事件配置。";
+                    return;
+                }
+
+                ShowFollowUpEvent(pendingNextEvent);
+                return;
+            }
+
+            Hide();
+            return;
+        }
         if (selectedOption == null || selectionHandler == null || currentTile == null || currentEvent == null) return;
         if (selectionHandler.Invoke(currentTile, currentEvent, selectedOption, out string message)) { ShowResultStep(selectedOption, message); return; }
         if (statusText != null) statusText.text = string.IsNullOrWhiteSpace(message) ? "当前选项未能执行。" : message;
@@ -206,6 +226,7 @@ public class MapEventOverlay : MonoBehaviour
     private void ShowResultStep(MapEventOptionData option, string message)
     {
         isShowingResultStep = true;
+        pendingNextEvent = option != null ? option.nextEvent : null;
         if (optionListRoot != null) optionListRoot.gameObject.SetActive(false);
         string resultText = option != null && !string.IsNullOrWhiteSpace(option.resultContent) ? option.resultContent : (!string.IsNullOrWhiteSpace(message) ? message : option?.consequenceDescription);
         contentText.text = string.IsNullOrWhiteSpace(resultText) ? "事件已触发。" : resultText;
@@ -214,9 +235,22 @@ public class MapEventOverlay : MonoBehaviour
         if (contentScrollRect != null) contentScrollRect.verticalNormalizedPosition = 1f;
         if (consequenceScrollRect != null) consequenceScrollRect.verticalNormalizedPosition = 1f;
         statusText.text = string.Empty;
-        SetButtonLabel(confirmButton, continueButtonLabel);
+        SetButtonLabel(confirmButton, pendingNextEvent != null ? continueButtonLabel : continueButtonLabel);
         SetConfirmButtonInteractable(true);
         if (closeButton != null) closeButton.gameObject.SetActive(false);
+    }
+
+    private void ShowFollowUpEvent(MapEvent_SO eventData)
+    {
+        currentEvent = eventData;
+        nestedEventDepth += 1;
+        selectedOption = null;
+        isShowingResultStep = false;
+        pendingNextEvent = null;
+        optionPreviewLookup.Clear();
+        RefreshHeader();
+        RefreshOptionList();
+        SelectOption(GetFirstSelectableOption());
     }
 
     private MapEventOptionData GetFirstSelectableOption()
@@ -427,6 +461,7 @@ public class MapEventOverlay : MonoBehaviour
         string detail = !string.IsNullOrWhiteSpace(option.consequenceDescription) ? option.consequenceDescription : "暂无后果说明。";
         int requiredMoney = Mathf.Max(0, option.requiredMoney);
         if (requiredMoney > 0) detail = $"需要支付 {requiredMoney} 金钱\n{detail}";
+        if (option.nextEvent != null) detail = $"{detail}\n继续事件：{option.nextEvent.DisplayName}";
         if (previewData != null)
         {
             if (!string.IsNullOrWhiteSpace(previewData.additionalDetail)) detail = $"{detail}\n{previewData.additionalDetail}";

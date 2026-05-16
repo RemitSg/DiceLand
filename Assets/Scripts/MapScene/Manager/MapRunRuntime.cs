@@ -17,9 +17,19 @@ public sealed class MapRunSnapshot
     public int actionPointBase;
     public int actionPointBonus;
     public int actionPointCurrent;
-    public SpecialDungeonRuntimeContext specialDungeonContext;
+    [NonSerialized] public SpecialDungeonRuntimeContext specialDungeonContext;
 
     public MapRunSnapshot Clone()
+    {
+        return Clone(includeSpecialDungeonContext: true);
+    }
+
+    public MapRunSnapshot CloneWithoutSpecialDungeonContext()
+    {
+        return Clone(includeSpecialDungeonContext: false);
+    }
+
+    private MapRunSnapshot Clone(bool includeSpecialDungeonContext)
     {
         MapRunSnapshot clone = new MapRunSnapshot
         {
@@ -33,7 +43,9 @@ public sealed class MapRunSnapshot
             actionPointBonus = actionPointBonus,
             actionPointCurrent = actionPointCurrent,
             suppressOnePendingCalamityOnActionPointRestore = suppressOnePendingCalamityOnActionPointRestore,
-            specialDungeonContext = specialDungeonContext != null ? specialDungeonContext.Clone() : null
+            specialDungeonContext = includeSpecialDungeonContext && specialDungeonContext != null
+                ? specialDungeonContext.Clone()
+                : null
         };
 
         if (tiles != null)

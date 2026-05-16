@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "012 \u7834\u7BB1\u5B50"
   m_EditorClassIdentifier: 
   eventId: 012
-  eventName: "\u7834\u7BB1\u5B50"
+  eventName: "\u5B9D\u7BB1"
   eventContent: "\u6709\u4E00\u53E5\u8BDD\u5982\u6B64\u8BB2\uFF1A\u201C\u6CA1\u6709\u5F00\u8FC7\u7684\u5B9D\u7BB1\u624D\u662F\u6700\u597D\u7684\u3002\u201D\n\u5F53\u4F60\u5728\u8DEF\u8FB9\u770B\u5230\u4E00\u4E2A\u5B9D\u7BB1\u7684\u65F6\u5019\uFF0C\u4F60\u6000\u7740\u2026\u2026"
   eventIllustration: {fileID: 0}
   options:
@@ -21,8 +21,8 @@ MonoBehaviour:
     optionLabel: "\u60CA\u559C\u7684\u5FC3\u60C5"
     requiredMoney: 0
     consequenceDescription: "\uFF1F\uFF1F\uFF1F"
-    resultContent: 
-    builtInEffectType: 0
+    resultContent: "\u201C\u5BF9\u4E00\u5207\u5145\u6EE1\u5E0C\u671B\uFF0C\u4E50\u89C2\u7684\u4EBA\u554A\uFF0C\u4F60\u7684\u4EBA\u751F\u6CE8\u5B9A\u4F1A\u6210\u529F\u4E14\u5145\u6EE1\u5E0C\u671B\u3002\u201D\n\u7BB1\u5B50\u91CC\u9762\u7684\u4E00\u5F20\u5C0F\u7EB8\u6761\u5982\u662F\u5199\u7740\u3002\n\u7136\u540E\u8FD8\u9644\u8D60\u7740\u4E00\u679A\u4EAE\u95EA\u95EA\u7684\u94F6\u5E01\u3002"
+    builtInEffectType: 11
     effectAmount: 0
     randomMoneyMin: 0
     randomMoneyMax: 0
@@ -46,8 +46,9 @@ MonoBehaviour:
     encounterEnemies: []
     encounterEnemyCountMin: 0
     encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}
   - optionId: 2
     optionLabel: "\u597D\u5947\u7684\u5FC3\u60C5"
@@ -78,8 +79,9 @@ MonoBehaviour:
     encounterEnemies: []
     encounterEnemyCountMin: 0
     encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}
   - optionId: 3
     optionLabel: "\u5FD0\u5FD1\u7684\u5FC3\u60C5"
@@ -110,6 +112,7 @@ MonoBehaviour:
     encounterEnemies: []
     encounterEnemyCountMin: 0
     encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}

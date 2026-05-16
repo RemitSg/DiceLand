@@ -293,7 +293,7 @@ public class MapHUD : MonoBehaviour
         }
 
         if (moneyText != null)
-            moneyText.text = $"金钱 {Mathf.Max(0, runState != null ? runState.money : 0)}";
+            moneyText.text = $"金钱 {(runState != null ? runState.money : 0)}";
 
         if (keysText != null)
         {
@@ -350,7 +350,11 @@ public class MapHUD : MonoBehaviour
             if (!string.IsNullOrEmpty(attributeLine))
                 lines.Add(attributeLine);
 
-            lines.Add($"危险度 {WrapColor(ToRoman(Mathf.Max(1, tile.previewDangerRating)), tileDangerHighlightColor)} | 区域 {WrapColor(GetDangerBandLabel(tile.dangerBand), tileRegionHighlightColor)}");
+            bool isSpecialDungeonTile = tile.sourceSpecialDungeon != null;
+            string dangerLine = $"危险度 {WrapColor(ToRoman(Mathf.Max(1, tile.previewDangerRating)), tileDangerHighlightColor)}";
+            if (!isSpecialDungeonTile)
+                dangerLine = $"{dangerLine} | 区域 {WrapColor(GetDangerBandLabel(tile.dangerBand), tileRegionHighlightColor)}";
+            lines.Add(dangerLine);
 
             if (!string.IsNullOrWhiteSpace(tile.previewTag))
                 lines.Add($"预览标签 {tile.previewTag}");

@@ -52,6 +52,7 @@ public class BattleEnemyController : MonoBehaviour
     private Vector2 speedButtonBaseOffset = new Vector2(0f, 1f);
     private Vector2 speedButtonMultiGroupOffset = Vector2.zero;
     private float speedButtonHorizontalSpacing = 0.82f;
+    private int temporarySpeedButtonCountOverride = -1;
     private const string BurnStatusId = "burn";
     private static int aliveBleedDecayPreventerCount;
     private int pendingStageTransitionIndex = -1;
@@ -359,6 +360,24 @@ public class BattleEnemyController : MonoBehaviour
         return selectedSkillsPerButton[buttonIndex];
     }
 
+    public void SetTemporarySpeedButtonCountOverride(int buttonCount)
+    {
+        temporarySpeedButtonCountOverride = buttonCount > 0 ? buttonCount : -1;
+        RefreshActiveSpeedButtons();
+    }
+
+    public void SetRuntimeCopiedSkills(IReadOnlyList<EnemySkill_SO> runtimeSkills)
+    {
+        EnsureSelectedSkillSlots();
+        if (runtimeSkills == null || runtimeSkills.Count == 0)
+            return;
+
+        for (int i = 0; i < selectedSkillsPerButton.Count; i++)
+            selectedSkillsPerButton[i] = runtimeSkills[i % runtimeSkills.Count];
+
+        SelectedSkill = selectedSkillsPerButton.Count > 0 ? selectedSkillsPerButton[0] : null;
+    }
+
     public void ActivateSelectedSkillForButton(SpeedButton button)
     {
         SelectedSkill = GetSelectedSkillForButton(button);
@@ -382,6 +401,11 @@ public class BattleEnemyController : MonoBehaviour
         int originalDamage = originalReferenceDamage > 0 ? originalReferenceDamage : amount;
         amount = ApplyIncomingDamageStatusModifiers(amount);
         amount = ApplyBaseDamageReduction(amount);
+        if (HasImmuneStatus())
+        {
+            LastDamageModifierRatioPercent = 0;
+            return 0;
+        }
         amount = ApplyShieldAbsorption(amount);
         if (amount <= 0)
         {
@@ -514,6 +538,20 @@ public class BattleEnemyController : MonoBehaviour
         }
 
         return Mathf.Max(0, incomingDamage);
+    }
+
+    private bool HasImmuneStatus()
+    {
+        for (int i = 0; i < statusEntries.Count; i++)
+        {
+            BattleStatusRuntimeEntry entry = statusEntries[i];
+            if (entry == null || entry.stacks <= 0 || entry.statusData == null)
+                continue;
+            if (entry.statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.Immune)
+                return true;
+        }
+
+        return false;
     }
 
     private EnemySkill_SO.DicePowerRange ApplyStatusDiceRangeModifiers(EnemySkill_SO.DicePowerRange baseRange, bool isDefenseSkill)
@@ -1696,13 +1734,19 @@ public class BattleEnemyController : MonoBehaviour
         if (IsDead)
             return 0;
 
-        int baseCount = Mathf.Max(1, enemyData != null ? enemyData.GetStageSpeedButtonCount(CurrentStageIndex) : speedButtons.Count);
+        int configuredBaseCount = temporarySpeedButtonCountOverride > 0
+            ? temporarySpeedButtonCountOverride
+            : enemyData != null ? enemyData.GetStageSpeedButtonCount(CurrentStageIndex) : speedButtons.Count;
+        int baseCount = Mathf.Max(1, configuredBaseCount);
         return Mathf.Max(0, baseCount - ResolveStatusSpeedButtonPenalty());
     }
 
     private void EnsureSpeedButtonCountForCurrentStage()
     {
-        int desiredCount = Mathf.Max(1, enemyData != null ? enemyData.GetStageSpeedButtonCount(CurrentStageIndex) : speedButtons.Count);
+        int configuredBaseCount = temporarySpeedButtonCountOverride > 0
+            ? temporarySpeedButtonCountOverride
+            : enemyData != null ? enemyData.GetStageSpeedButtonCount(CurrentStageIndex) : speedButtons.Count;
+        int desiredCount = Mathf.Max(1, configuredBaseCount);
         if (speedButtons.Count >= desiredCount)
             return;
 

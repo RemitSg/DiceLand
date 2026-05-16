@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "014_C_01 守井人沈霜"
+  m_EditorClassIdentifier: 
+  eventId: 014_C_01
+  eventName: "守井人沈霜"
+  eventContent: "井边坐着一位白发老人。林栀叫她沈婆婆。\n\n沈霜看见你们护着封声木匣过来，先向你们点了点头，又看向林栀。\n\n“我拦不住你。但你要知道，低语井不把声音留给螺，也不留给贝片。它只让活人听见。”"
+  eventIllustration: {fileID: 0}
+  options:
+  - optionId: 1
+    optionLabel: "帮林栀布置收声阵"
+    requiredMoney: 0
+    consequenceDescription: "继续剧情"
+    resultContent: "你们把三根调音针插在井沿外侧。林栀把回声螺放在阵心，又用封声蜡压住螺口。\n\n回声螺表面泛起一圈很淡的光。\n\n沈霜说：“如果你听见了谁，就会忘掉一些和谁有关的事。不是立刻全忘，但会少一块。”"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
+    lootRewards: []
+    lootPickCountMin: 1
+    lootPickCountMax: 1
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 1
+    blueprintPickCountMax: 1
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 11400000, guid: 4273ab1a1b7445e6b12872c61a17d43f, type: 2}
+    resolveEvent: 1
+    customHandler: {fileID: 0}

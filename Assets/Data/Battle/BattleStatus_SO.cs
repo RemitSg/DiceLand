@@ -21,7 +21,8 @@ public class BattleStatus_SO : ScriptableObject
         ForceRollToMax = 13,
         ForceRollToMin = 14,
         SpeedButtonPenalty = 15,
-        Shield = 16
+        Shield = 16,
+        Immune = 17
     }
 
     public enum StackDecayMode

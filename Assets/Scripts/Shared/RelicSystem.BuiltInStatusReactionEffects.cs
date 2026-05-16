@@ -37,7 +37,7 @@ public static partial class RelicSystem
 
         BattleAllyController slowerHitSource = context.source as BattleAllyController;
         BattleEnemyController slowerHitTarget = context.target as BattleEnemyController;
-        if (slowerHitSource == null || slowerHitTarget == null || effect.statusData == null || context.resolvedDamage <= 0)
+        if (slowerHitSource == null || slowerHitTarget == null || effect.statusData == null)
             return;
         if (context.incomingSourceSpeed >= context.incomingTargetSpeed)
             return;

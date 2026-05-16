@@ -293,7 +293,7 @@ public class BattleButton : MonoBehaviour
         RegisterSharedEnergyListeners(allies);
         RefreshSharedEnergyReservations(allies);
 
-        List<string> enemyRoundStartLogs = BattleTargetingRoundStartSetupService.PrepareEnemies(enemies, currentRound);
+        List<string> enemyRoundStartLogs = BattleTargetingRoundStartSetupService.PrepareEnemies(enemies, currentRound, allies);
         for (int i = 0; i < enemyRoundStartLogs.Count; i++)
             BattleLog(enemyRoundStartLogs[i]);
 
@@ -1178,6 +1178,28 @@ public class BattleButton : MonoBehaviour
         RefreshActiveRoundEnemiesFromScene();
     }
 
+    private void ApplyWanderingPhantomBlendIntoShadowEffects(BattleEnemyController attacker)
+    {
+        if (attacker == null || attacker.EnemyID != 33 || attacker.SelectedSkill == null || attacker.SelectedSkill.skillName != "融入暗影")
+            return;
+
+        int remnantCount = 0;
+        List<BattleEnemyController> enemies = GetLivingEnemies();
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            BattleEnemyController enemy = enemies[i];
+            if (enemy != null && enemy != attacker && enemy.EnemyID == 32 && !enemy.IsDead)
+                remnantCount++;
+        }
+
+        if (remnantCount <= 0)
+            return;
+
+        ResolveBuiltinStatus("strength", "强壮", out BattleStatus_SO strengthStatus, out string strengthStatusId, out string strengthStatusName);
+        attacker.AddStatus(strengthStatus, strengthStatusId, strengthStatusName, remnantCount);
+        BattleLog($"词条触发：{attacker.GetDebugDisplayName()}[融入暗影] 场上有 {remnantCount} 个陌路残影，获得 {remnantCount} 层 {strengthStatusName}");
+    }
+
     private void ApplyEnemyBuiltInEffects(BattleEnemyController attacker, BattleAllyController currentTarget, int diceIndex, EnemySkill_SO.DiceEffectTrigger trigger)
     {
         EnemySkill_SO skill = attacker != null ? attacker.SelectedSkill : null;
@@ -1588,13 +1610,30 @@ public class BattleButton : MonoBehaviour
         if (attacker == null || apply == null)
             return;
 
-        List<BattleAllyController> friendlies = SelectAllyTargets(effect.targetMode, attacker, GetLivingAllies(), effect.randomTargetCount);
+        List<BattleAllyController> friendlies = GetAllyFriendlyBuiltInTargets(attacker, effect);
         for (int i = 0; i < friendlies.Count; i++)
         {
             BattleAllyController friendly = friendlies[i];
             if (friendly != null && !friendly.IsDead)
                 apply(friendly, effect, effectLabel);
         }
+    }
+
+    private List<BattleAllyController> GetAllyFriendlyBuiltInTargets(
+        BattleAllyController attacker,
+        EnemySkill_SO.BuiltInEffectEntry effect)
+    {
+        List<BattleAllyController> candidates = GetLivingAllies();
+        if (effect.targetMode == EnemySkill_SO.DamageTargetMode.AllFriendliesExceptSelf)
+        {
+            for (int i = candidates.Count - 1; i >= 0; i--)
+            {
+                if (candidates[i] == attacker)
+                    candidates.RemoveAt(i);
+            }
+        }
+
+        return SelectAllyTargets(effect.targetMode, attacker, candidates, effect.randomTargetCount);
     }
 
     private void ApplyEnemyBuiltInEffectToEnemyFriendlies(
@@ -1606,13 +1645,30 @@ public class BattleButton : MonoBehaviour
         if (attacker == null || apply == null)
             return;
 
-        List<BattleEnemyController> friendlies = SelectEnemyTargets(effect.targetMode, attacker, GetLivingEnemies(), effect.randomTargetCount);
+        List<BattleEnemyController> friendlies = GetEnemyFriendlyBuiltInTargets(attacker, effect);
         for (int i = 0; i < friendlies.Count; i++)
         {
             BattleEnemyController friendly = friendlies[i];
             if (friendly != null && !friendly.IsDead)
                 apply(friendly, effect, effectLabel);
         }
+    }
+
+    private List<BattleEnemyController> GetEnemyFriendlyBuiltInTargets(
+        BattleEnemyController attacker,
+        EnemySkill_SO.BuiltInEffectEntry effect)
+    {
+        List<BattleEnemyController> candidates = GetLivingEnemies();
+        if (effect.targetMode == EnemySkill_SO.DamageTargetMode.AllFriendliesExceptSelf)
+        {
+            for (int i = candidates.Count - 1; i >= 0; i--)
+            {
+                if (candidates[i] == attacker)
+                    candidates.RemoveAt(i);
+            }
+        }
+
+        return SelectEnemyTargets(effect.targetMode, attacker, candidates, effect.randomTargetCount);
     }
 
     private static bool IsEnemyBuiltInEffectConditionMet(
@@ -2174,17 +2230,15 @@ public class BattleButton : MonoBehaviour
         if (impactPlan.ApplyAllyHit)
         {
             int dealtDamage = ApplyAllyHit(ally, enemy, impactPlan.AllyHitPower, diceIndex, false, impactPlan.AllyHitPowerModifier);
-            if (dealtDamage > 0)
-                if (allyHitTracker != null)
-                    allyHitTracker.HitCount++;
+            if (allyHitTracker != null)
+                allyHitTracker.HitCount++;
         }
 
         if (impactPlan.ApplyEnemyHit)
         {
             int dealtDamage = ApplyEnemyHit(enemy, ally, impactPlan.EnemyHitPower, diceIndex, false, impactPlan.EnemyHitPowerModifier);
-            if (dealtDamage > 0)
-                if (enemyHitTracker != null)
-                    enemyHitTracker.HitCount++;
+            if (enemyHitTracker != null)
+                enemyHitTracker.HitCount++;
         }
 
         if (impactPlan.ApplyPlayerDefenseClashWinRelics)
@@ -2720,7 +2774,7 @@ public class BattleButton : MonoBehaviour
                 presentationPlan,
                 BuildAllySingleAttackHitAction(ally, enemy, attackResult, i, dealtDamage =>
                 {
-                    if (hitTracker != null && dealtDamage > 0)
+                    if (hitTracker != null)
                         hitTracker.HitCount++;
                 }));
 
@@ -2791,7 +2845,7 @@ public class BattleButton : MonoBehaviour
                 presentationPlan,
                 BuildEnemySingleAttackHitAction(enemy, ally, attackResult, i, dealtDamage =>
                 {
-                    if (hitTracker != null && dealtDamage > 0)
+                    if (hitTracker != null)
                         hitTracker.HitCount++;
                 }));
 
@@ -2896,8 +2950,7 @@ public class BattleButton : MonoBehaviour
                 presentationPlan,
                 BuildAllySingleAttackHitAction(ally, enemy, attackResult, i, dealtDamage =>
                 {
-                    if (dealtDamage > 0)
-                        hitTracker.HitCount++;
+                    hitTracker.HitCount++;
                 }));
 
             BattleLog(BuildSingleAttackPostLog(
@@ -3006,8 +3059,7 @@ public class BattleButton : MonoBehaviour
                 presentationPlan,
                 BuildEnemySingleAttackHitAction(enemy, targetAlly, attackResult, i, dealtDamage =>
                 {
-                    if (dealtDamage > 0)
-                        hitTracker.HitCount++;
+                    hitTracker.HitCount++;
                 }));
 
             BattleLog(BuildSingleAttackPostLog(
@@ -3082,6 +3134,7 @@ public class BattleButton : MonoBehaviour
     {
         BattleHitResolutionFacade.Resolve(
             dealtDamage,
+            true,
             () => ShowZeroDamageHitFeedback(target.transform, true, target.LastDamageModifierRatioPercent),
             () => ApplyAllySuccessfulHitEffects(attacker, target, diceIndex, dealtDamage, isSingleAttack),
             () => ApplyAllyMissEffects(attacker, target, diceIndex, dealtDamage));
@@ -3096,6 +3149,7 @@ public class BattleButton : MonoBehaviour
     {
         BattleHitResolutionFacade.Resolve(
             dealtDamage,
+            true,
             () => ShowZeroDamageHitFeedback(target.transform, false, target.LastDamageModifierRatioPercent),
             () => ApplyEnemySuccessfulHitEffects(attacker, target, diceIndex, dealtDamage, isSingleAttack),
             () => ApplyEnemyMissEffects(attacker, target, diceIndex, dealtDamage));
@@ -3289,7 +3343,7 @@ public class BattleButton : MonoBehaviour
         int dealtDamage)
     {
         BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
-        if (attacker == null || target == null || dealtDamage <= 0)
+        if (attacker == null || target == null)
             return;
 
         RelicExecutionContext context = BattleHitRelicContextFactory.CreatePlayerTookSingleAttack(
@@ -3312,7 +3366,7 @@ public class BattleButton : MonoBehaviour
         int dealtDamage)
     {
         BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
-        if (attacker == null || target == null || dealtDamage <= 0)
+        if (attacker == null || target == null)
             return;
 
         RelicExecutionContext context = BattleHitRelicContextFactory.CreatePlayerHitEnemy(
@@ -3663,7 +3717,10 @@ public class BattleButton : MonoBehaviour
             });
 
         if (trigger == EnemySkill_SO.DiceEffectTrigger.OnSkillUse)
+        {
             ApplyBloodSpiderKinFeastEffects(attacker);
+            ApplyWanderingPhantomBlendIntoShadowEffects(attacker);
+        }
     }
 
     private void ApplyAllyStatusEffectsOnly(BattleAllyController attacker, BattleEnemyController currentTarget, int diceIndex, EnemySkill_SO.DiceEffectTrigger trigger, bool conditionalOnly)

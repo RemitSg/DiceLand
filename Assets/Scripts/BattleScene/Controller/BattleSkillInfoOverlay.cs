@@ -1930,6 +1930,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "\u6240\u6709\u76ee\u6807";
             case EnemySkill_SO.DamageTargetMode.AllFriendlies:
                 return "全体友方";
+            case EnemySkill_SO.DamageTargetMode.AllFriendliesExceptSelf:
+                return "除自身以外的友方";
             case EnemySkill_SO.DamageTargetMode.LowestHpFriendly:
                 return "血量最低的友方";
             case EnemySkill_SO.DamageTargetMode.LowestHpOpponent:
@@ -2320,6 +2322,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "所有目标";
             case EnemySkill_SO.DamageTargetMode.AllFriendlies:
                 return "全体友方";
+            case EnemySkill_SO.DamageTargetMode.AllFriendliesExceptSelf:
+                return "除自身以外的友方";
             case EnemySkill_SO.DamageTargetMode.LowestHpFriendly:
                 return "血量最低的友方";
             case EnemySkill_SO.DamageTargetMode.LowestHpOpponent:

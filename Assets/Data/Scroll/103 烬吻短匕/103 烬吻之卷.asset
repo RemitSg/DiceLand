@@ -24,5 +24,3 @@ MonoBehaviour:
     amount: 1
   - lootItem: {fileID: 11400000, guid: 1a247d2fcfd14c141bd79e8a82154b1f, type: 2}
     amount: 3
-  - lootItem: {fileID: 11400000, guid: 414655eb47424bc4a9b4d191c2fe0553, type: 2}
-    amount: 1

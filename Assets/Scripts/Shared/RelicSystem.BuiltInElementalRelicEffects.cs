@@ -197,7 +197,7 @@ public static partial class RelicSystem
         RelicExecutionContext context,
         Relic_SO.RelicBuiltInEffectEntry effect)
     {
-        if (context.trigger != Relic_SO.RelicTrigger.OnPlayerHitEnemy || effect.statusData == null || context.resolvedDamage <= 0)
+        if (context.trigger != Relic_SO.RelicTrigger.OnPlayerHitEnemy || effect.statusData == null)
             return;
         if (!TryRegisterRoundScopedProc(relicData, $"first-hit-status:{context.currentRound}"))
             return;
@@ -610,7 +610,7 @@ public static partial class RelicSystem
         RelicExecutionContext context,
         Relic_SO.RelicBuiltInEffectEntry effect)
     {
-        if (context.trigger != Relic_SO.RelicTrigger.OnPlayerHitEnemy || effect.statusData == null || effect.conditionStatusData == null || context.resolvedDamage <= 0)
+        if (context.trigger != Relic_SO.RelicTrigger.OnPlayerHitEnemy || effect.statusData == null || effect.conditionStatusData == null)
             return;
 
         BattleEnemyController target = context.target as BattleEnemyController;

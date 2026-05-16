@@ -122,6 +122,7 @@ public static class BattleEnemyBuiltInEffectDispatcher
     private static bool IsFriendlyTargetMode(EnemySkill_SO.DamageTargetMode targetMode)
     {
         return targetMode == EnemySkill_SO.DamageTargetMode.AllFriendlies
+            || targetMode == EnemySkill_SO.DamageTargetMode.AllFriendliesExceptSelf
             || targetMode == EnemySkill_SO.DamageTargetMode.LowestHpFriendly;
     }
 

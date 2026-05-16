@@ -20,6 +20,8 @@ public class BattleAllyController : MonoBehaviour
     public EnemySkill_SO SelectedSkill { get; private set; }
     public EnemySkill_SO CurrentRoundUsedSkill { get; private set; }
     public EnemySkill_SO LastRoundUsedSkill { get; private set; }
+    public IReadOnlyList<EnemySkill_SO> LastRoundUsedSkills => lastRoundUsedSkills;
+    public int LastRoundSpeedDiceCount { get; private set; }
     public int CurrentSkillIndex { get; private set; }
     public int DiceCount => SelectedSkill != null ? SelectedSkill.diceCount : 1;
     public bool IsDead { get; private set; }
@@ -48,6 +50,8 @@ public class BattleAllyController : MonoBehaviour
     private readonly List<EnemySkill_SO> temporarySkills = new List<EnemySkill_SO>();
     private readonly List<int> selectedSkillIndicesPerButton = new List<int>();
     private readonly List<EnemySkill_SO> selectedSkillsPerButton = new List<EnemySkill_SO>();
+    private readonly List<EnemySkill_SO> currentRoundUsedSkills = new List<EnemySkill_SO>();
+    private readonly List<EnemySkill_SO> lastRoundUsedSkills = new List<EnemySkill_SO>();
     private readonly List<SpeedButton> activeSpeedButtons = new List<SpeedButton>();
     private readonly HashSet<string> consumedLethalProtectionRelicIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     private const string BurnStatusId = "burn";
@@ -354,12 +358,18 @@ public class BattleAllyController : MonoBehaviour
     {
         RegisterCurrentSkillUsage(SelectedSkill);
         CurrentRoundUsedSkill = SelectedSkill;
+        if (SelectedSkill != null)
+            currentRoundUsedSkills.Add(SelectedSkill);
     }
 
     public void FinalizeRoundSkillHistory()
     {
         LastRoundUsedSkill = CurrentRoundUsedSkill;
+        lastRoundUsedSkills.Clear();
+        lastRoundUsedSkills.AddRange(currentRoundUsedSkills);
+        LastRoundSpeedDiceCount = Mathf.Max(0, activeSpeedButtons.Count);
         CurrentRoundUsedSkill = null;
+        currentRoundUsedSkills.Clear();
     }
 
     public int GetCompletedConsecutiveSkillUses(EnemySkill_SO skill)
@@ -557,6 +567,11 @@ public class BattleAllyController : MonoBehaviour
         int originalDamage = originalReferenceDamage > 0 ? originalReferenceDamage : amount;
         amount = ApplyIncomingDamageStatusModifiers(amount);
         amount = ApplyIncomingDamageRelicModifiers(amount);
+        if (HasImmuneStatus())
+        {
+            LastDamageModifierRatioPercent = 0;
+            return 0;
+        }
         amount = ApplyShieldAbsorption(amount);
         if (amount <= 0)
         {
@@ -672,6 +687,20 @@ public class BattleAllyController : MonoBehaviour
         }
 
         return Mathf.Max(0, incomingDamage);
+    }
+
+    private bool HasImmuneStatus()
+    {
+        for (int i = 0; i < statusEntries.Count; i++)
+        {
+            BattleStatusRuntimeEntry entry = statusEntries[i];
+            if (entry == null || entry.stacks <= 0 || entry.statusData == null)
+                continue;
+            if (entry.statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.Immune)
+                return true;
+        }
+
+        return false;
     }
 
     private bool TryPreventLethalDamage(int incomingDamage, out int minimumSurvivingHp)
@@ -1110,6 +1139,7 @@ public class BattleAllyController : MonoBehaviour
         Speed = 0;
         SelectedSkill = null;
         CurrentRoundUsedSkill = null;
+        currentRoundUsedSkills.Clear();
         selectedSkillIndicesPerButton.Clear();
         selectedSkillsPerButton.Clear();
         RefreshActiveSpeedButtons();

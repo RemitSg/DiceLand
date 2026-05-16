@@ -152,6 +152,106 @@ public class EnemyTodoTests
         Assert.AreEqual("小血蛛(ID:3002)", enemy.GetDebugDisplayName());
     }
 
+    [Test]
+    public void ReflectionTemplateSkill_CopyUsesDiceAndClausesButNotPresentationFx()
+    {
+        EnemySkill_SO template = CreateSkill("Reflection Template", 10, 10, EnemySkill_SO.SkillCategory.Defense);
+        EnemySkill_SO source = CreateSkill("Copied Skill", 2, 5, EnemySkill_SO.SkillCategory.Attack);
+        source.energyCost = 3;
+        source.diceCount = 2;
+        source.dicePowerRanges = new[]
+        {
+            new EnemySkill_SO.DicePowerRange { minPower = 1, maxPower = 2 },
+            new EnemySkill_SO.DicePowerRange { minPower = 3, maxPower = 4 }
+        };
+        source.diceSkillCategories = new[]
+        {
+            EnemySkill_SO.SkillCategory.Attack,
+            EnemySkill_SO.SkillCategory.Defense
+        };
+        source.dicePresentationSettings = new[]
+        {
+            new EnemySkill_SO.DicePresentationSettings { skillSpriteScale = Vector3.one },
+            new EnemySkill_SO.DicePresentationSettings { skillSpriteScale = Vector3.one * 2f }
+        };
+        source.diceEffectSettings = new[]
+        {
+            new EnemySkill_SO.DiceEffectSettings
+            {
+                builtInEffects = new[]
+                {
+                    new EnemySkill_SO.BuiltInEffectEntry
+                    {
+                        effectName = "CopyMe",
+                        trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                        effectType = EnemySkill_SO.BuiltInEffectType.Damage,
+                        amount = 2
+                    }
+                }
+            },
+            new EnemySkill_SO.DiceEffectSettings()
+        };
+
+        EnemySkill_SO copied = BattleReflectionSkillCopyService.CreateRuntimeCopy(template, source);
+        createdObjects.Add(copied);
+
+        Assert.AreNotSame(template, copied);
+        Assert.AreEqual(template.skillName, copied.skillName);
+        Assert.AreEqual(2, copied.diceCount);
+        Assert.AreEqual(1, copied.dicePowerRanges[0].minPower);
+        Assert.AreEqual(4, copied.dicePowerRanges[1].maxPower);
+        Assert.AreEqual(EnemySkill_SO.SkillCategory.Defense, copied.diceSkillCategories[1]);
+        Assert.AreEqual("CopyMe", copied.diceEffectSettings[0].builtInEffects[0].effectName);
+        Assert.AreEqual(Vector3.zero, copied.dicePresentationSettings[0].skillSpriteScale);
+    }
+
+    [Test]
+    public void ReflectionEnemy_CanOverrideSpeedButtonCountFromOpponentDiceTotal()
+    {
+        EnemySkill_SO skill = CreateSkill("Mirror", 1, 1);
+        EnemyData_SO enemyData = CreateEnemyData("Reflection", 15, skill, default);
+        enemyData.copyOpponentLastRoundSpeedDiceCount = true;
+        BattleEnemyController enemy = CreateEnemyController("Reflection", enemyData);
+        enemy.RegisterSpeedButtons(new[]
+        {
+            CreateSpeedButton(enemy.gameObject, "Speed Button 1"),
+            CreateSpeedButton(enemy.gameObject, "Speed Button 2"),
+            CreateSpeedButton(enemy.gameObject, "Speed Button 3")
+        });
+
+        enemy.SetTemporarySpeedButtonCountOverride(3);
+
+        Assert.AreEqual(3, enemy.SpeedButtons.Count);
+    }
+
+    [Test]
+    public void ReflectionEnemy_DoesNotCopyCurrentAllyDiceCountOnFirstRound()
+    {
+        EnemySkill_SO skill = CreateSkill("Mirror", 1, 1);
+        EnemyData_SO enemyData = CreateEnemyData("Reflection", 15, skill, default);
+        enemyData.baseSpeedButtonCount = 1;
+        enemyData.copyOpponentLastRoundSpeedDiceCount = true;
+        BattleEnemyController enemy = CreateEnemyController("Reflection", enemyData);
+        enemy.RegisterSpeedButtons(new[]
+        {
+            CreateSpeedButton(enemy.gameObject, "Enemy Speed Button 1"),
+            CreateSpeedButton(enemy.gameObject, "Enemy Speed Button 2"),
+            CreateSpeedButton(enemy.gameObject, "Enemy Speed Button 3")
+        });
+
+        BattleAllyController ally = CreateAllyController("Ally");
+        ally.RegisterSpeedButtons(new[]
+        {
+            CreateSpeedButton(ally.gameObject, "Ally Speed Button 1"),
+            CreateSpeedButton(ally.gameObject, "Ally Speed Button 2"),
+            CreateSpeedButton(ally.gameObject, "Ally Speed Button 3")
+        });
+
+        BattleTargetingRoundStartSetupService.PrepareEnemies(new[] { enemy }, 1, new[] { ally });
+
+        Assert.AreEqual(1, enemy.SpeedButtons.Count);
+    }
+
     private BattleEnemyController CreateEnemyController(string name, EnemyData_SO enemyData)
     {
         GameObject go = new GameObject(name);
@@ -159,6 +259,15 @@ public class EnemyTodoTests
 
         BattleEnemyController controller = go.AddComponent<BattleEnemyController>();
         controller.ApplyEnemyData(enemyData);
+        return controller;
+    }
+
+    private BattleAllyController CreateAllyController(string name)
+    {
+        GameObject go = new GameObject(name);
+        createdObjects.Add(go);
+
+        BattleAllyController controller = go.AddComponent<BattleAllyController>();
         return controller;
     }
 

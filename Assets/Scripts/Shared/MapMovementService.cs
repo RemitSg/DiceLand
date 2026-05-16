@@ -184,6 +184,13 @@ public static class MapMovementService
 
         ApplyFlags(request, nextFlags);
 
+        if (moveCost <= 0)
+        {
+            bool moved = request.playerMapController.TryMoveTo(tile, 0);
+            result.moved = moved;
+            return moved;
+        }
+
         if (request.actionPointSystem.CanSpend(moveCost))
         {
             bool moved = request.playerMapController.TryMoveTo(tile, moveCost);

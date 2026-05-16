@@ -208,7 +208,7 @@ public class RestSceneRecruitInteractable : MonoBehaviour
 
         if (RestSceneRuntime.TryGetCurrentSnapshot(out MapRunSnapshot snapshot) && snapshot?.runState != null)
         {
-            currentGold = Mathf.Max(0, snapshot.runState.money);
+            currentGold = snapshot.runState.money;
             currentRecruitCount = Mathf.Max(0, snapshot.runState.recruitedMemberCount);
         }
 

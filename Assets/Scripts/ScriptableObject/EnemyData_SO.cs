@@ -190,6 +190,14 @@ public class EnemyData_SO : ScriptableObject
     [Tooltip("Status that must be present to prevent the round start transform.")]
     public BattleStatus_SO transformMissingStatusData;
 
+    [Header("Reflection Passive")]
+    [Tooltip("When enabled, this enemy's speed button count is set to the previous round total speed dice count of the opposing side.")]
+    public bool copyOpponentLastRoundSpeedDiceCount;
+    [Tooltip("When enabled, this enemy copies previous-round opposing skills into runtime clones of the configured template skill.")]
+    public bool copyOpponentLastRoundSkills;
+    [Tooltip("Template used as the runtime skill container before copying opposing skill dice and clauses.")]
+    public EnemySkill_SO reflectionSkillTemplate;
+
     [TextArea(2, 5)]
     public string enemyDescription;
     public List<PassiveDescriptionEntry> passiveDescriptions;

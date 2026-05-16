@@ -10,6 +10,7 @@ public class BattleStatusTodoTests
     private const BattleStatus_SO.StatusBehaviorType MisfortuneBehaviorType = (BattleStatus_SO.StatusBehaviorType)14;
     private const BattleStatus_SO.StatusBehaviorType SpeedButtonPenaltyBehaviorType = (BattleStatus_SO.StatusBehaviorType)15;
     private const BattleStatus_SO.StatusBehaviorType ShieldBehaviorType = (BattleStatus_SO.StatusBehaviorType)16;
+    private const BattleStatus_SO.StatusBehaviorType ImmuneBehaviorType = (BattleStatus_SO.StatusBehaviorType)17;
     private const BattleStatus_SO.StackDecayMode LoseOneStackDecayMode = (BattleStatus_SO.StackDecayMode)3;
 
     private readonly List<Object> createdObjects = new List<Object>();
@@ -281,6 +282,34 @@ public class BattleStatusTodoTests
         Assert.IsTrue(enemy.ConsumeRoundEndStatusEffects());
         Assert.AreEqual(2, ally.GetStatusStacks(shield));
         Assert.AreEqual(2, enemy.GetStatusStacks(shield));
+    }
+
+    [Test]
+    public void ImmuneStatus_BlocksAllDamageAndLosesOneStackAtRoundEnd()
+    {
+        EnemySkill_SO skill = CreateSkill("Immune Test", 2, 5);
+        BattleStatus_SO immune = CreateStatus(
+            "immune",
+            "免疫",
+            ImmuneBehaviorType,
+            powerPerStack: 0,
+            roundEndDecayMode: LoseOneStackDecayMode);
+
+        BattleAllyController ally = CreateAlly("Immune Ally", 12, skill);
+        BattleEnemyController enemy = CreateEnemy("Immune Enemy", 12, skill);
+
+        ally.AddStatus(immune, immune.StatusId, immune.DisplayName, 1);
+        enemy.AddStatus(immune, immune.StatusId, immune.DisplayName, 1);
+
+        Assert.AreEqual(0, ally.TakeDamage(999));
+        Assert.AreEqual(12, ally.CurrentHP);
+        Assert.AreEqual(0, enemy.TakeDamage(999));
+        Assert.AreEqual(12, enemy.CurrentHP);
+
+        Assert.IsTrue(ally.ConsumeRoundEndStatusEffects());
+        Assert.IsTrue(enemy.ConsumeRoundEndStatusEffects());
+        Assert.AreEqual(0, ally.GetStatusStacks(immune));
+        Assert.AreEqual(0, enemy.GetStatusStacks(immune));
     }
 
     [Test]

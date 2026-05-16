@@ -47,7 +47,7 @@ MonoBehaviour:
     encounterEnemyCountMin: 0
     encounterEnemyCountMax: 0
     additionalBuiltInEffects: []
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}
   - optionId: 2
     optionLabel: "\u5C0F\u5FC3\u638F\u51FA"
@@ -103,7 +103,7 @@ MonoBehaviour:
       encounterEnemies: []
       encounterEnemyCountMin: 0
       encounterEnemyCountMax: 0
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}
   - optionId: 3
     optionLabel: "\u518D\u6316\u6DF1\u4E00\u70B9"
@@ -159,5 +159,5 @@ MonoBehaviour:
       encounterEnemies: []
       encounterEnemyCountMin: 0
       encounterEnemyCountMax: 0
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}

@@ -60,4 +60,33 @@ public class SpecialDungeonBoardBuilderTests
 
         Object.DestroyImmediate(dungeon);
     }
+
+    [Test]
+    public void BuildBoard_AppliesConfiguredBattleDangerRating()
+    {
+        SpecialDungeon_SO dungeon = ScriptableObject.CreateInstance<SpecialDungeon_SO>();
+        dungeon.entries.Add(new SpecialDungeonTileEntry
+        {
+            tileType = MapTileType.Battle,
+            previewDangerRating = 7
+        });
+        dungeon.entries.Add(new SpecialDungeonTileEntry
+        {
+            tileType = MapTileType.Elite,
+            previewDangerRating = 9
+        });
+        dungeon.entries.Add(new SpecialDungeonTileEntry
+        {
+            tileType = MapTileType.Event,
+            previewDangerRating = 5
+        });
+
+        SpecialDungeonBoardBuildResult result = SpecialDungeonBoardBuilder.Build(dungeon, 123);
+
+        Assert.AreEqual(7, result.tiles[2].previewDangerRating);
+        Assert.AreEqual(9, result.tiles[3].previewDangerRating);
+        Assert.AreEqual(0, result.tiles[4].previewDangerRating);
+
+        Object.DestroyImmediate(dungeon);
+    }
 }

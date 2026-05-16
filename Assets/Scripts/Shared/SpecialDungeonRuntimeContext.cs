@@ -20,7 +20,7 @@ public sealed class SpecialDungeonRuntimeContext
             activeDungeonId = activeDungeonId,
             activeDungeon = activeDungeon,
             returnEventCoord = returnEventCoord,
-            mainMapSnapshot = mainMapSnapshot != null ? mainMapSnapshot.Clone() : null,
+            mainMapSnapshot = mainMapSnapshot != null ? mainMapSnapshot.CloneWithoutSpecialDungeonContext() : null,
             deferredCalamityTiers = deferredCalamityTiers != null ? new List<int>(deferredCalamityTiers) : new List<int>()
         };
     }

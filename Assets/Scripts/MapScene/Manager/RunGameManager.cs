@@ -164,6 +164,7 @@ public class RunGameManager : MonoBehaviour
     private readonly Dictionary<string, MapEventLootDiscardPreview> eventRandomLootDiscardPreviewCache = new Dictionary<string, MapEventLootDiscardPreview>(StringComparer.Ordinal);
     private bool isTutorialRun;
     private MainMenuTutorialOverlay tutorialOverlay;
+    [NonSerialized] private SpecialDungeonRuntimeContext activeSpecialDungeonContext;
 
     private void Awake()
     {
@@ -224,6 +225,7 @@ public class RunGameManager : MonoBehaviour
         MapRunRuntime.Clear(SceneManager.GetActiveScene().name);
         RestSceneRuntime.Clear();
         runFlowState.Reset();
+        activeSpecialDungeonContext = null;
 
         DifficultyConfig_SO config = ResolvePreferredDifficultyForNewRun();
         activeDifficultyConfig = config;
@@ -268,6 +270,7 @@ public class RunGameManager : MonoBehaviour
         MapRunRuntime.Clear(SceneManager.GetActiveScene().name);
         RestSceneRuntime.Clear();
         runFlowState.Reset();
+        activeSpecialDungeonContext = null;
 
         DifficultyConfig_SO config = ResolvePreferredDifficultyForNewRun();
         activeDifficultyConfig = config;
@@ -327,6 +330,9 @@ public class RunGameManager : MonoBehaviour
         EnsureSetup();
         RestSceneRuntime.Clear();
         runFlowState.Reset();
+        activeSpecialDungeonContext = snapshot.specialDungeonContext != null && snapshot.specialDungeonContext.isActive
+            ? snapshot.specialDungeonContext.Clone()
+            : null;
 
         runState = snapshot.runState != null ? snapshot.runState.Clone() : null;
         if (runState == null)
@@ -471,6 +477,12 @@ public class RunGameManager : MonoBehaviour
                 return;
             }
 
+            if (tile.tileType == MapTileType.SpecialDungeonExit)
+            {
+                ExitSpecialDungeon();
+                return;
+            }
+
             string currentTileMessage = tileResolver.ResolveTile(tile, runState);
             mapHUD.ShowTile(tile, GetMoveCost(tile), true);
             RefreshHUD(currentTileMessage);
@@ -559,6 +571,16 @@ public class RunGameManager : MonoBehaviour
                 runFlowState.DeferPendingCalamityUntilOverlayClosed = false;
                 TryPresentPendingCalamity();
             }
+            return;
+        }
+
+        if (tile.tileType == MapTileType.SpecialDungeonExit)
+        {
+            boardManager.SetSelectedTile(tile.coord);
+            boardManager.RefreshAllViews();
+            mapHUD.ShowTile(tile, GetMoveCost(tile));
+            ShowPendingMoveRelicStatusIfAny();
+            ExitSpecialDungeon();
             return;
         }
 
@@ -716,6 +738,9 @@ public class RunGameManager : MonoBehaviour
     {
         if (runState == null || tile == null || tile.tileType != MapTileType.Merchant || merchantCatalog == null)
             return "当前无法刷新商店。";
+
+        if (tile.sourceSpecialDungeon != null)
+            return "特殊副本商店商品固定，无法刷新。";
 
         if (tile.merchantOffers == null || tile.merchantOffers.Count == 0)
             return "当前没有可刷新的商品。";
@@ -1090,6 +1115,9 @@ public class RunGameManager : MonoBehaviour
 
     private int GetMoveCost(BoardTileData tile)
     {
+        if (IsInSpecialDungeon())
+            return 0;
+
         return MapMovementService.GetMoveCost(runState, tile);
     }
 
@@ -1198,7 +1226,14 @@ public class RunGameManager : MonoBehaviour
         tile.isVisited = true;
         boardManager.RefreshTile(tile.coord);
         List<PendingBattleStatusGrant> pendingBattleStartGrants = runState.ConsumePendingNextBattleAllyStatusGrants();
-        MapRunRuntime.SaveSnapshot(SceneManager.GetActiveScene().name, runState, boardManager, actionPointSystem, runFlowState.PendingCalamityTiers);
+        MapRunRuntime.SaveSnapshot(
+            SceneManager.GetActiveScene().name,
+            runState,
+            boardManager,
+            actionPointSystem,
+            runFlowState.PendingCalamityTiers,
+            false,
+            activeSpecialDungeonContext);
 
         BattleEncounterData encounterData = MapBattleEncounterService.BuildEncounter(
             new MapBattleEncounterBuildRequest
@@ -1342,7 +1377,8 @@ public class RunGameManager : MonoBehaviour
             boardManager,
             actionPointSystem,
             runFlowState.PendingCalamityTiers,
-            runFlowState.SuppressPendingCalamityOnNextRestActionPointRestore);
+            runFlowState.SuppressPendingCalamityOnNextRestActionPointRestore,
+            activeSpecialDungeonContext);
         RestSceneRuntime.BeginVisit(SceneManager.GetActiveScene().name, tile.coord, recruitCharacterRoster, activeDifficultyConfig);
         RefreshHUD("进入休息场景。");
         sceneTransitionController.TransitionToScene(restSceneName);
@@ -1385,7 +1421,9 @@ public class RunGameManager : MonoBehaviour
         boardManager?.RefreshTile(tile.coord);
         mapHUD?.ShowTile(tile, GetMoveCost(tile), tile.coord == runState.playerGridPosition);
 
-        IReadOnlyList<TreasureRewardChoice> choices = TreasureRewardService.BuildChoices(treasureRewardTable, tile.encounterSeed);
+        IReadOnlyList<TreasureRewardChoice> choices = IsSpecialDungeonTreasure(tile)
+            ? SpecialDungeonTreasureService.BuildChoices(tile)
+            : TreasureRewardService.BuildChoices(treasureRewardTable, tile.encounterSeed);
         mapTreasureOverlay.Show(tile, choices, HandleTreasureOptionSelected, HandleTreasureRelicChoiceConfirmed);
         RefreshHUD("\u53d1\u73b0\u5b9d\u85cf\uff0c\u8bf7\u9009\u62e9\u4e00\u4efd\u5956\u52b1\u3002");
         return true;
@@ -1404,7 +1442,12 @@ public class RunGameManager : MonoBehaviour
             return false;
         }
 
-        result = TreasureRewardService.ApplyChoice(runState, treasureRewardTable, choice, tile.encounterSeed);
+        result = IsSpecialDungeonTreasure(tile)
+            ? SpecialDungeonTreasureService.ApplyChoice(
+                runState,
+                SpecialDungeonTreasureService.ResolveOption(tile, choice),
+                tile.encounterSeed)
+            : TreasureRewardService.ApplyChoice(runState, treasureRewardTable, choice, tile.encounterSeed);
         if (result == null || !result.success)
             return false;
         if (result.relicChoiceData != null && result.relicChoiceData.HasChoices)
@@ -1501,6 +1544,7 @@ public class RunGameManager : MonoBehaviour
 
         message = builtInResult.message;
         runFlowState.PendingEventEncounterData = builtInResult.pendingEncounterData;
+        runFlowState.PendingSpecialDungeon = builtInResult.pendingSpecialDungeon;
 
         if (optionData.customHandler != null)
         {
@@ -1519,6 +1563,7 @@ public class RunGameManager : MonoBehaviour
                 if (spentSelectionMoney)
                     runState.AddMoney(requiredMoney);
                 runFlowState.PendingEventEncounterData = null;
+                runFlowState.PendingSpecialDungeon = null;
                 message = string.IsNullOrWhiteSpace(customMessage) ? "事件的自定义效果未能执行。" : customMessage;
                 return false;
             }
@@ -1527,8 +1572,13 @@ public class RunGameManager : MonoBehaviour
                 message = customMessage;
         }
 
-        tile.isResolved = true;
-        tile.assignedEvent = null;
+        bool hasFollowUpEvent = optionData.nextEvent != null;
+        if (!hasFollowUpEvent)
+        {
+            tile.isResolved = optionData.resolveEvent;
+            if (optionData.resolveEvent)
+                tile.assignedEvent = null;
+        }
 
         if (spentSelectionMoney)
         {
@@ -1550,6 +1600,11 @@ public class RunGameManager : MonoBehaviour
         if (runFlowState.PendingEventEncounterData != null)
         {
             StartPendingEventEncounter();
+            return;
+        }
+        if (runFlowState.PendingSpecialDungeon != null)
+        {
+            EnterPendingSpecialDungeon();
             return;
         }
         TryPresentPendingCalamity();
@@ -1574,7 +1629,14 @@ public class RunGameManager : MonoBehaviour
         if (runState != null)
             encounterData.pendingBattleStartAllyStatusGrants = runState.ConsumePendingNextBattleAllyStatusGrants();
 
-        MapRunRuntime.SaveSnapshot(SceneManager.GetActiveScene().name, runState, boardManager, actionPointSystem, runFlowState.PendingCalamityTiers);
+        MapRunRuntime.SaveSnapshot(
+            SceneManager.GetActiveScene().name,
+            runState,
+            boardManager,
+            actionPointSystem,
+            runFlowState.PendingCalamityTiers,
+            false,
+            activeSpecialDungeonContext);
         BattleEncounterRuntime.SetEncounter(encounterData);
         if (runFlowState.PendingCalamityTiers.Count > 0)
             runFlowState.DeferPendingCalamityUntilMapResume = true;
@@ -1584,6 +1646,121 @@ public class RunGameManager : MonoBehaviour
             sceneTransitionController.TransitionToScene(battleSceneName);
         else
             SceneManager.LoadScene(battleSceneName);
+    }
+
+    private void EnterPendingSpecialDungeon()
+    {
+        SpecialDungeon_SO dungeon = runFlowState.PendingSpecialDungeon;
+        runFlowState.PendingSpecialDungeon = null;
+        if (dungeon == null || runState == null || boardManager == null || actionPointSystem == null)
+            return;
+
+        if (IsInSpecialDungeon())
+        {
+            RefreshHUD("当前已经在特殊副本中，无法重复进入。");
+            return;
+        }
+
+        Vector2Int returnCoord = runState.playerGridPosition;
+        MapRunSnapshot mainMapSnapshot = CaptureCurrentMapSnapshot(null);
+        if (mainMapSnapshot == null)
+        {
+            RefreshHUD("进入特殊副本失败：无法保存当前地图。");
+            return;
+        }
+
+        List<int> deferredCalamities = runFlowState.DrainPendingCalamityTiers();
+        activeSpecialDungeonContext = new SpecialDungeonRuntimeContext
+        {
+            isActive = true,
+            activeDungeon = dungeon,
+            activeDungeonId = !string.IsNullOrWhiteSpace(dungeon.dungeonId) ? dungeon.dungeonId : dungeon.name,
+            returnEventCoord = returnCoord,
+            mainMapSnapshot = mainMapSnapshot,
+            deferredCalamityTiers = deferredCalamities
+        };
+        mainMapSnapshot.specialDungeonContext = null;
+
+        SpecialDungeonBoardBuildResult buildResult = SpecialDungeonBoardBuilder.Build(dungeon, Environment.TickCount);
+        runState.boardSize = buildResult.boardSize;
+        runState.playerGridPosition = buildResult.spawnCoord;
+        boardManager.LoadBoard(
+            buildResult.boardSize,
+            buildResult.spawnCoord,
+            buildResult.rightExitCoord,
+            buildResult.spawnCoord,
+            buildResult.tiles);
+        mapBackgroundController.Initialize(backgroundRoot, mapCamera, boardManager);
+        playerMapController.Initialize(unitsRoot, boardManager, actionPointSystem, tileResolver, runState);
+        if (boardManager.TryGetTile(buildResult.spawnCoord, out BoardTileData spawnTile))
+        {
+            playerMapController.SetPosition(spawnTile, true);
+            boardManager.SetSelectedTile(spawnTile.coord);
+            mapHUD.ShowTile(spawnTile, 0);
+        }
+
+        mapViewController.Initialize(mapCamera, boardManager, cameraPadding);
+        mapViewController.SetInputBlockedEvaluator(IsMapViewInputBlocked);
+        mapViewController.PlaySpawnIntro(boardManager.GridToWorld(buildResult.spawnCoord));
+        PersistCurrentRunSave();
+        RefreshHUD($"进入特殊副本：{dungeon.DisplayName}。副本内移动不消耗行动点。");
+    }
+
+    private void ExitSpecialDungeon()
+    {
+        if (!IsInSpecialDungeon())
+        {
+            RefreshHUD("当前不在特殊副本中。");
+            return;
+        }
+
+        MapRunSnapshot restored = SpecialDungeonExitService.BuildReturnedMainMapSnapshot(activeSpecialDungeonContext, runState);
+        if (restored == null || restored.runState == null)
+        {
+            RefreshHUD("离开特殊副本失败：无法恢复主地图。");
+            return;
+        }
+
+        List<int> deferredCalamities = activeSpecialDungeonContext.deferredCalamityTiers != null
+            ? new List<int>(activeSpecialDungeonContext.deferredCalamityTiers)
+            : new List<int>();
+        activeSpecialDungeonContext = null;
+        runState = restored.runState.Clone();
+        boardManager.LoadBoard(
+            restored.boardSize,
+            restored.spawnCoord,
+            restored.bossCoord,
+            restored.selectedCoord,
+            restored.tiles);
+        AssignEnemyGroupsToHostileTiles();
+        actionPointSystem.RestoreState(
+            restored.actionPointBase,
+            restored.actionPointBonus,
+            restored.actionPointCurrent);
+        runFlowState.RestorePendingCalamityTiers(restored.pendingCalamityTiers);
+        runFlowState.EnqueuePendingCalamityTiers(deferredCalamities);
+
+        mapBackgroundController.Initialize(backgroundRoot, mapCamera, boardManager);
+        playerMapController.Initialize(unitsRoot, boardManager, actionPointSystem, tileResolver, runState);
+        if (boardManager.TryGetTile(runState.playerGridPosition, out BoardTileData returnTile))
+        {
+            playerMapController.SetPosition(returnTile, true);
+            boardManager.SetSelectedTile(returnTile.coord);
+            mapHUD.ShowTile(returnTile, GetMoveCost(returnTile), true);
+        }
+
+        mapViewController.Initialize(mapCamera, boardManager, cameraPadding);
+        mapViewController.SetInputBlockedEvaluator(IsMapViewInputBlocked);
+        MapRunRuntime.SaveSnapshot(
+            SceneManager.GetActiveScene().name,
+            runState,
+            boardManager,
+            actionPointSystem,
+            runFlowState.PendingCalamityTiers,
+            runFlowState.SuppressPendingCalamityOnNextRestActionPointRestore,
+            null);
+        RefreshHUD("已离开特殊副本，回到主地图。");
+        TryPresentPendingCalamity();
     }
 
     private void HandleMapMerchantOverlayHidden()
@@ -1680,6 +1857,35 @@ public class RunGameManager : MonoBehaviour
         return MapMovementService.WillSpendExhaustCurrentCycle(actionPointSystem, moveCost);
     }
 
+    private bool IsInSpecialDungeon()
+    {
+        return activeSpecialDungeonContext != null && activeSpecialDungeonContext.isActive;
+    }
+
+    private static bool IsSpecialDungeonTreasure(BoardTileData tile)
+    {
+        return tile != null &&
+            tile.sourceSpecialDungeon != null &&
+            tile.specialDungeonTreasureOptions != null &&
+            tile.specialDungeonTreasureOptions.Count > 0;
+    }
+
+    private MapRunSnapshot CaptureCurrentMapSnapshot(SpecialDungeonRuntimeContext specialDungeonContext)
+    {
+        MapRunRuntime.SaveSnapshot(
+            SceneManager.GetActiveScene().name,
+            runState,
+            boardManager,
+            actionPointSystem,
+            runFlowState.PendingCalamityTiers,
+            runFlowState.SuppressPendingCalamityOnNextRestActionPointRestore,
+            specialDungeonContext);
+
+        return MapRunRuntime.TryGetSnapshot(SceneManager.GetActiveScene().name, out MapRunSnapshot snapshot)
+            ? snapshot
+            : null;
+    }
+
     private EnemyGroup_SO SelectEnemyGroupForTile(BoardTileData tile)
     {
         return MapBattleEncounterService.SelectEnemyGroupForTile(enemyRoster, tile);
@@ -1748,6 +1954,12 @@ public class RunGameManager : MonoBehaviour
     {
         if (tile == null || tile.tileType != MapTileType.Merchant || tile.merchantStockGenerated || merchantCatalog == null)
             return;
+
+        if (tile.sourceSpecialDungeon != null)
+        {
+            tile.merchantStockGenerated = true;
+            return;
+        }
 
         System.Random rng = CreateMerchantRandom(tile, tile.merchantRefreshCount);
         MerchantStockService.TryGenerateInitialStock(
@@ -1826,7 +2038,8 @@ public class RunGameManager : MonoBehaviour
             boardManager,
             actionPointSystem,
             runFlowState.PendingCalamityTiers,
-            runFlowState.SuppressPendingCalamityOnNextRestActionPointRestore);
+            runFlowState.SuppressPendingCalamityOnNextRestActionPointRestore,
+            activeSpecialDungeonContext);
     }
 
     private MainMenuSaveAssetCatalog BuildSaveAssetCatalog()
@@ -1849,7 +2062,8 @@ public class RunGameManager : MonoBehaviour
                 calamityPool = calamityPool,
                 treasureRewardTable = treasureRewardTable,
                 runState = runState,
-                boardManager = boardManager
+                boardManager = boardManager,
+                specialDungeonContext = activeSpecialDungeonContext
             });
     }
 

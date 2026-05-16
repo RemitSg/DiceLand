@@ -81,6 +81,7 @@ public sealed class SpecialDungeonTileEntry
 {
     public MapTileType tileType = MapTileType.Battle;
     public string previewTag;
+    [Min(0)] public int previewDangerRating;
     public EnemyGroup_SO enemyGroup;
     public List<SpecialDungeonMerchantOfferEntry> merchantOffers = new List<SpecialDungeonMerchantOfferEntry>();
     public List<SpecialDungeonTreasureOptionEntry> treasureOptions = new List<SpecialDungeonTreasureOptionEntry>();
@@ -140,6 +141,7 @@ public class SpecialDungeon_SO : ScriptableObject
                 entry.merchantOffers = new List<SpecialDungeonMerchantOfferEntry>();
             if (entry.treasureOptions == null)
                 entry.treasureOptions = new List<SpecialDungeonTreasureOptionEntry>();
+            entry.previewDangerRating = Mathf.Max(0, entry.previewDangerRating);
 
             ClampMerchantOffers(entry.merchantOffers);
             ClampTreasureOptions(entry.treasureOptions);

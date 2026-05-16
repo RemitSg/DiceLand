@@ -11,9 +11,11 @@ public sealed class MainMenuSaveAssetCatalog
     private readonly Dictionary<string, LootItem_SO> lootItems = new Dictionary<string, LootItem_SO>(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, CraftingBlueprint_SO> blueprints = new Dictionary<string, CraftingBlueprint_SO>(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, Relic_SO> relics = new Dictionary<string, Relic_SO>(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, RelicTable_SO> relicTables = new Dictionary<string, RelicTable_SO>(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, Calamity_SO> calamities = new Dictionary<string, Calamity_SO>(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, EnemyGroup_SO> enemyGroups = new Dictionary<string, EnemyGroup_SO>(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, MapEvent_SO> events = new Dictionary<string, MapEvent_SO>(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, SpecialDungeon_SO> specialDungeons = new Dictionary<string, SpecialDungeon_SO>(StringComparer.OrdinalIgnoreCase);
 
     public void Add(CharacterData_SO character)
     {
@@ -40,6 +42,11 @@ public sealed class MainMenuSaveAssetCatalog
         Add(relics, MainMenuRunSaveSystem.GetRelicId(relic), relic);
     }
 
+    public void Add(RelicTable_SO relicTable)
+    {
+        Add(relicTables, MainMenuRunSaveSystem.GetRelicTableId(relicTable), relicTable);
+    }
+
     public void Add(Calamity_SO calamity)
     {
         Add(calamities, MainMenuRunSaveSystem.GetCalamityId(calamity), calamity);
@@ -55,14 +62,21 @@ public sealed class MainMenuSaveAssetCatalog
         Add(events, MainMenuRunSaveSystem.GetEventId(eventData), eventData);
     }
 
+    public void Add(SpecialDungeon_SO dungeon)
+    {
+        Add(specialDungeons, MainMenuRunSaveSystem.GetSpecialDungeonId(dungeon), dungeon);
+    }
+
     public CharacterData_SO ResolveCharacter(string id) => Resolve(characters, id);
     public Weapon_SO ResolveWeapon(string id) => Resolve(weapons, id);
     public LootItem_SO ResolveLoot(string id) => Resolve(lootItems, id);
     public CraftingBlueprint_SO ResolveBlueprint(string id) => Resolve(blueprints, id);
     public Relic_SO ResolveRelic(string id) => Resolve(relics, id);
+    public RelicTable_SO ResolveRelicTable(string id) => Resolve(relicTables, id);
     public Calamity_SO ResolveCalamity(string id) => Resolve(calamities, id);
     public EnemyGroup_SO ResolveEnemyGroup(string id) => Resolve(enemyGroups, id);
     public MapEvent_SO ResolveEvent(string id) => Resolve(events, id);
+    public SpecialDungeon_SO ResolveSpecialDungeon(string id) => Resolve(specialDungeons, id);
 
     private static void Add<T>(Dictionary<string, T> dictionary, string id, T value) where T : UnityEngine.Object
     {
@@ -100,6 +114,24 @@ internal sealed class SavedRunData
 
 [Serializable]
 internal sealed class SavedRunSnapshot
+{
+    public string sceneName;
+    public SavedRunState runState = new SavedRunState();
+    public List<SavedBoardTileData> tiles = new List<SavedBoardTileData>();
+    public List<int> pendingCalamityTiers = new List<int>();
+    public bool suppressOnePendingCalamityOnActionPointRestore;
+    public int boardSize;
+    public SavedVector2Int spawnCoord;
+    public SavedVector2Int bossCoord;
+    public SavedVector2Int selectedCoord;
+    public int actionPointBase;
+    public int actionPointBonus;
+    public int actionPointCurrent;
+    public SavedSpecialDungeonRuntimeContext specialDungeonContext;
+}
+
+[Serializable]
+internal sealed class SavedMainMapSnapshot
 {
     public string sceneName;
     public SavedRunState runState = new SavedRunState();
@@ -205,6 +237,9 @@ internal sealed class SavedBoardTileData
     public int merchantRefreshCount;
     public int merchantPurchaseDiscountStacks;
     public List<SavedMerchantOfferState> merchantOffers = new List<SavedMerchantOfferState>();
+    public string sourceSpecialDungeonId;
+    public int specialDungeonEntryIndex = -1;
+    public List<SavedSpecialDungeonTreasureOptionEntry> specialDungeonTreasureOptions = new List<SavedSpecialDungeonTreasureOptionEntry>();
 }
 
 [Serializable]
@@ -217,6 +252,30 @@ internal sealed class SavedMerchantOfferState
     public string relicId;
     public int price;
     public bool isSoldOut;
+}
+
+[Serializable]
+internal sealed class SavedSpecialDungeonRuntimeContext
+{
+    public bool isActive;
+    public string activeDungeonId;
+    public SavedVector2Int returnEventCoord;
+    public SavedMainMapSnapshot mainMapSnapshot;
+    public List<int> deferredCalamityTiers = new List<int>();
+}
+
+[Serializable]
+internal sealed class SavedSpecialDungeonTreasureOptionEntry
+{
+    public string title;
+    public string description;
+    public int rewardType;
+    public int moneyAmount;
+    public string blueprintId;
+    public string relicId;
+    public string relicTableId;
+    public int relicBagRarity;
+    public int relicBagChoiceCount;
 }
 
 [Serializable]
@@ -277,7 +336,8 @@ public static class MainMenuRunSaveSystem
         BoardManager boardManager,
         ActionPointSystem actionPointSystem,
         IEnumerable<int> pendingCalamityTiers = null,
-        bool suppressOnePendingCalamityOnActionPointRestore = false)
+        bool suppressOnePendingCalamityOnActionPointRestore = false,
+        SpecialDungeonRuntimeContext specialDungeonContext = null)
     {
         if (runState == null || boardManager == null || actionPointSystem == null || string.IsNullOrWhiteSpace(sceneName))
             return;
@@ -301,7 +361,8 @@ public static class MainMenuRunSaveSystem
                 actionPointBase = actionPointSystem.BasePoints,
                 actionPointBonus = actionPointSystem.BonusPoints,
                 actionPointCurrent = actionPointSystem.CurrentPoints,
-                suppressOnePendingCalamityOnActionPointRestore = suppressOnePendingCalamityOnActionPointRestore
+                suppressOnePendingCalamityOnActionPointRestore = suppressOnePendingCalamityOnActionPointRestore,
+                specialDungeonContext = SerializeSpecialDungeonContext(specialDungeonContext != null ? specialDungeonContext.Clone() : null)
             }
         };
 
@@ -509,7 +570,9 @@ public static class MainMenuRunSaveSystem
             assignedEventId = GetEventId(tile.assignedEvent),
             merchantStockGenerated = tile.merchantStockGenerated,
             merchantRefreshCount = tile.merchantRefreshCount,
-            merchantPurchaseDiscountStacks = tile.merchantPurchaseDiscountStacks
+            merchantPurchaseDiscountStacks = tile.merchantPurchaseDiscountStacks,
+            sourceSpecialDungeonId = GetSpecialDungeonId(tile.sourceSpecialDungeon),
+            specialDungeonEntryIndex = tile.specialDungeonEntryIndex
         };
 
         if (tile.merchantOffers != null)
@@ -533,7 +596,128 @@ public static class MainMenuRunSaveSystem
             }
         }
 
+        if (tile.specialDungeonTreasureOptions != null)
+        {
+            for (int i = 0; i < tile.specialDungeonTreasureOptions.Count; i++)
+            {
+                SpecialDungeonTreasureOptionEntry option = tile.specialDungeonTreasureOptions[i];
+                if (option != null)
+                    savedTile.specialDungeonTreasureOptions.Add(SerializeSpecialDungeonTreasureOption(option));
+            }
+        }
+
         return savedTile;
+    }
+
+    private static SavedSpecialDungeonRuntimeContext SerializeSpecialDungeonContext(SpecialDungeonRuntimeContext context)
+    {
+        if (context == null || !context.isActive)
+            return null;
+
+        SavedSpecialDungeonRuntimeContext saved = new SavedSpecialDungeonRuntimeContext
+        {
+            isActive = context.isActive,
+            activeDungeonId = !string.IsNullOrWhiteSpace(context.activeDungeonId)
+                ? context.activeDungeonId
+                : GetSpecialDungeonId(context.activeDungeon),
+            returnEventCoord = new SavedVector2Int(context.returnEventCoord),
+            mainMapSnapshot = SerializeMainMapSnapshot(context.mainMapSnapshot)
+        };
+
+        if (context.deferredCalamityTiers != null)
+            saved.deferredCalamityTiers.AddRange(context.deferredCalamityTiers);
+
+        return saved;
+    }
+
+    private static SavedRunSnapshot SerializeSnapshot(MapRunSnapshot snapshot, bool includeSpecialDungeonContext = true)
+    {
+        if (snapshot == null)
+            return null;
+
+        SavedRunSnapshot saved = new SavedRunSnapshot
+        {
+            sceneName = snapshot.sceneName,
+            runState = SerializeRunState(snapshot.runState),
+            boardSize = snapshot.boardSize,
+            spawnCoord = new SavedVector2Int(snapshot.spawnCoord),
+            bossCoord = new SavedVector2Int(snapshot.bossCoord),
+            selectedCoord = new SavedVector2Int(snapshot.selectedCoord),
+            actionPointBase = snapshot.actionPointBase,
+            actionPointBonus = snapshot.actionPointBonus,
+            actionPointCurrent = snapshot.actionPointCurrent,
+            suppressOnePendingCalamityOnActionPointRestore = snapshot.suppressOnePendingCalamityOnActionPointRestore,
+            specialDungeonContext = includeSpecialDungeonContext
+                ? SerializeSpecialDungeonContext(snapshot.specialDungeonContext)
+                : null
+        };
+
+        if (snapshot.pendingCalamityTiers != null)
+            saved.pendingCalamityTiers.AddRange(snapshot.pendingCalamityTiers);
+        if (snapshot.tiles != null)
+        {
+            for (int i = 0; i < snapshot.tiles.Count; i++)
+            {
+                BoardTileData tile = snapshot.tiles[i];
+                if (tile != null)
+                    saved.tiles.Add(SerializeTile(tile));
+            }
+        }
+
+        return saved;
+    }
+
+    private static SavedMainMapSnapshot SerializeMainMapSnapshot(MapRunSnapshot snapshot)
+    {
+        if (snapshot == null)
+            return null;
+
+        SavedMainMapSnapshot saved = new SavedMainMapSnapshot
+        {
+            sceneName = snapshot.sceneName,
+            runState = SerializeRunState(snapshot.runState),
+            boardSize = snapshot.boardSize,
+            spawnCoord = new SavedVector2Int(snapshot.spawnCoord),
+            bossCoord = new SavedVector2Int(snapshot.bossCoord),
+            selectedCoord = new SavedVector2Int(snapshot.selectedCoord),
+            actionPointBase = snapshot.actionPointBase,
+            actionPointBonus = snapshot.actionPointBonus,
+            actionPointCurrent = snapshot.actionPointCurrent,
+            suppressOnePendingCalamityOnActionPointRestore = snapshot.suppressOnePendingCalamityOnActionPointRestore
+        };
+
+        if (snapshot.pendingCalamityTiers != null)
+            saved.pendingCalamityTiers.AddRange(snapshot.pendingCalamityTiers);
+        if (snapshot.tiles != null)
+        {
+            for (int i = 0; i < snapshot.tiles.Count; i++)
+            {
+                BoardTileData tile = snapshot.tiles[i];
+                if (tile != null)
+                    saved.tiles.Add(SerializeTile(tile));
+            }
+        }
+
+        return saved;
+    }
+
+    private static SavedSpecialDungeonTreasureOptionEntry SerializeSpecialDungeonTreasureOption(SpecialDungeonTreasureOptionEntry option)
+    {
+        if (option == null)
+            return null;
+
+        return new SavedSpecialDungeonTreasureOptionEntry
+        {
+            title = option.title,
+            description = option.description,
+            rewardType = (int)option.rewardType,
+            moneyAmount = option.moneyAmount,
+            blueprintId = GetBlueprintId(option.blueprintData),
+            relicId = GetRelicId(option.relicData),
+            relicTableId = GetRelicTableId(option.relicTable),
+            relicBagRarity = (int)option.relicBagRarity,
+            relicBagChoiceCount = option.relicBagChoiceCount
+        };
     }
 
     private static MapRunSnapshot DeserializeSnapshot(SavedRunSnapshot savedSnapshot, MainMenuSaveAssetCatalog catalog)
@@ -552,7 +736,46 @@ public static class MainMenuRunSaveSystem
             actionPointBase = savedSnapshot.actionPointBase,
             actionPointBonus = savedSnapshot.actionPointBonus,
             actionPointCurrent = savedSnapshot.actionPointCurrent,
-            suppressOnePendingCalamityOnActionPointRestore = savedSnapshot.suppressOnePendingCalamityOnActionPointRestore
+            suppressOnePendingCalamityOnActionPointRestore = savedSnapshot.suppressOnePendingCalamityOnActionPointRestore,
+            specialDungeonContext = DeserializeSpecialDungeonContext(savedSnapshot.specialDungeonContext, catalog)
+        };
+
+        if (savedSnapshot.pendingCalamityTiers != null)
+            snapshot.pendingCalamityTiers = new List<int>(savedSnapshot.pendingCalamityTiers);
+
+        if (savedSnapshot.tiles != null)
+        {
+            for (int i = 0; i < savedSnapshot.tiles.Count; i++)
+            {
+                SavedBoardTileData savedTile = savedSnapshot.tiles[i];
+                if (savedTile == null)
+                    continue;
+
+                snapshot.tiles.Add(DeserializeTile(savedTile, catalog));
+            }
+        }
+
+        return snapshot;
+    }
+
+    private static MapRunSnapshot DeserializeMainMapSnapshot(SavedMainMapSnapshot savedSnapshot, MainMenuSaveAssetCatalog catalog)
+    {
+        if (savedSnapshot == null || catalog == null)
+            return null;
+
+        MapRunSnapshot snapshot = new MapRunSnapshot
+        {
+            sceneName = savedSnapshot.sceneName,
+            runState = DeserializeRunState(savedSnapshot.runState, catalog),
+            boardSize = savedSnapshot.boardSize,
+            spawnCoord = savedSnapshot.spawnCoord.ToVector2Int(),
+            bossCoord = savedSnapshot.bossCoord.ToVector2Int(),
+            selectedCoord = savedSnapshot.selectedCoord.ToVector2Int(),
+            actionPointBase = savedSnapshot.actionPointBase,
+            actionPointBonus = savedSnapshot.actionPointBonus,
+            actionPointCurrent = savedSnapshot.actionPointCurrent,
+            suppressOnePendingCalamityOnActionPointRestore = savedSnapshot.suppressOnePendingCalamityOnActionPointRestore,
+            specialDungeonContext = null
         };
 
         if (savedSnapshot.pendingCalamityTiers != null)
@@ -726,7 +949,9 @@ public static class MainMenuRunSaveSystem
             assignedEvent = catalog.ResolveEvent(savedTile.assignedEventId),
             merchantStockGenerated = savedTile.merchantStockGenerated,
             merchantRefreshCount = savedTile.merchantRefreshCount,
-            merchantPurchaseDiscountStacks = savedTile.merchantPurchaseDiscountStacks
+            merchantPurchaseDiscountStacks = savedTile.merchantPurchaseDiscountStacks,
+            sourceSpecialDungeon = catalog.ResolveSpecialDungeon(savedTile.sourceSpecialDungeonId),
+            specialDungeonEntryIndex = savedTile.specialDungeonEntryIndex
         };
 
         if (savedTile.merchantOffers != null)
@@ -750,7 +975,83 @@ public static class MainMenuRunSaveSystem
             }
         }
 
+        if (savedTile.specialDungeonTreasureOptions != null)
+        {
+            for (int i = 0; i < savedTile.specialDungeonTreasureOptions.Count; i++)
+            {
+                SpecialDungeonTreasureOptionEntry option = DeserializeSpecialDungeonTreasureOption(savedTile.specialDungeonTreasureOptions[i], catalog);
+                if (option != null)
+                    tile.specialDungeonTreasureOptions.Add(option);
+            }
+        }
+
+        RestoreSpecialDungeonTreasureOptionsFromSource(tile);
         return tile;
+    }
+
+    private static void RestoreSpecialDungeonTreasureOptionsFromSource(BoardTileData tile)
+    {
+        if (tile == null || tile.sourceSpecialDungeon == null || tile.specialDungeonEntryIndex < 0)
+            return;
+
+        IReadOnlyList<SpecialDungeonTileEntry> entries = tile.sourceSpecialDungeon.GetValidEntries();
+        if (entries == null || tile.specialDungeonEntryIndex >= entries.Count)
+            return;
+
+        SpecialDungeonTileEntry entry = entries[tile.specialDungeonEntryIndex];
+        if (entry == null || entry.treasureOptions == null || entry.treasureOptions.Count == 0)
+            return;
+
+        tile.specialDungeonTreasureOptions.Clear();
+        for (int i = 0; i < entry.treasureOptions.Count; i++)
+        {
+            SpecialDungeonTreasureOptionEntry option = entry.treasureOptions[i];
+            if (option != null)
+                tile.specialDungeonTreasureOptions.Add(option);
+        }
+    }
+
+    private static SpecialDungeonRuntimeContext DeserializeSpecialDungeonContext(
+        SavedSpecialDungeonRuntimeContext saved,
+        MainMenuSaveAssetCatalog catalog)
+    {
+        if (saved == null || !saved.isActive || catalog == null)
+            return null;
+
+        SpecialDungeonRuntimeContext context = new SpecialDungeonRuntimeContext
+        {
+            isActive = saved.isActive,
+            activeDungeonId = saved.activeDungeonId,
+            activeDungeon = catalog.ResolveSpecialDungeon(saved.activeDungeonId),
+            returnEventCoord = saved.returnEventCoord.ToVector2Int(),
+            mainMapSnapshot = DeserializeMainMapSnapshot(saved.mainMapSnapshot, catalog)
+        };
+
+        if (saved.deferredCalamityTiers != null)
+            context.deferredCalamityTiers = new List<int>(saved.deferredCalamityTiers);
+
+        return context;
+    }
+
+    private static SpecialDungeonTreasureOptionEntry DeserializeSpecialDungeonTreasureOption(
+        SavedSpecialDungeonTreasureOptionEntry saved,
+        MainMenuSaveAssetCatalog catalog)
+    {
+        if (saved == null || catalog == null)
+            return null;
+
+        return new SpecialDungeonTreasureOptionEntry
+        {
+            title = saved.title,
+            description = saved.description,
+            rewardType = (SpecialDungeonTreasureRewardType)saved.rewardType,
+            moneyAmount = saved.moneyAmount,
+            blueprintData = catalog.ResolveBlueprint(saved.blueprintId),
+            relicData = catalog.ResolveRelic(saved.relicId),
+            relicTable = catalog.ResolveRelicTable(saved.relicTableId),
+            relicBagRarity = (LootRarity)saved.relicBagRarity,
+            relicBagChoiceCount = Mathf.Max(1, saved.relicBagChoiceCount)
+        };
     }
 
     public static string GetCharacterId(CharacterData_SO character)
@@ -792,6 +1093,13 @@ public static class MainMenuRunSaveSystem
         return !string.IsNullOrWhiteSpace(relic.relicId) ? relic.relicId : relic.name;
     }
 
+    public static string GetRelicTableId(RelicTable_SO relicTable)
+    {
+        if (relicTable == null)
+            return string.Empty;
+        return relicTable.name;
+    }
+
     public static string GetCalamityId(Calamity_SO calamity)
     {
         if (calamity == null)
@@ -811,5 +1119,12 @@ public static class MainMenuRunSaveSystem
         if (eventData == null)
             return string.Empty;
         return !string.IsNullOrWhiteSpace(eventData.eventId) ? eventData.eventId : eventData.name;
+    }
+
+    public static string GetSpecialDungeonId(SpecialDungeon_SO dungeon)
+    {
+        if (dungeon == null)
+            return string.Empty;
+        return !string.IsNullOrWhiteSpace(dungeon.dungeonId) ? dungeon.dungeonId : dungeon.name;
     }
 }

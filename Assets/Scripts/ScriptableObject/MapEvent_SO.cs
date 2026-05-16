@@ -114,6 +114,8 @@ public class MapEventOptionData
     [Min(1)] public int encounterEnemyCountMax = 1;
     public SpecialDungeon_SO specialDungeon;
     public List<MapEventBuiltInEffectData> additionalBuiltInEffects = new List<MapEventBuiltInEffectData>();
+    [Header("Follow-up Event")]
+    public MapEvent_SO nextEvent;
     public bool resolveEvent = true;
     public MapEventOptionHandler_SO customHandler;
 

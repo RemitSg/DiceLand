@@ -61,6 +61,37 @@ public class MapHUDTilePresentationTests
     }
 
     [Test]
+    public void ShowTile_SpecialDungeonBattleHidesRegionLabelButKeepsDanger()
+    {
+        GameObject go = new GameObject("MapHUD");
+        SpecialDungeon_SO dungeon = ScriptableObject.CreateInstance<SpecialDungeon_SO>();
+        try
+        {
+            MapHUD hud = go.AddComponent<MapHUD>();
+            BoardTileData tile = new BoardTileData
+            {
+                coord = new Vector2Int(2, 1),
+                tileType = MapTileType.Battle,
+                dangerBand = MapDangerBand.Core,
+                previewDangerRating = 6,
+                sourceSpecialDungeon = dungeon
+            };
+
+            hud.ShowTile(tile, 0);
+
+            TextMeshProUGUI body = FindText(go.transform, "TileBody");
+            Assert.That(body.text, Does.Contain("危险度"));
+            Assert.That(body.text, Does.Not.Contain("区域"));
+            Assert.That(body.text, Does.Not.Contain("核心"));
+        }
+        finally
+        {
+            Object.DestroyImmediate(dungeon);
+            Object.DestroyImmediate(go);
+        }
+    }
+
+    [Test]
     public void GetTileIcon_SpecialDungeonExitFallsBackToDefaultSprite()
     {
         GameObject go = new GameObject("BoardManager");
