@@ -25,6 +25,15 @@ public sealed partial class RelicExecutionContext
         BattleAllyController defeatedAlly,
         BattleAllyController[] allies)
     {
+        return CreatePlayerDeath(runState, defeatedAlly, allies, null);
+    }
+
+    public static RelicExecutionContext CreatePlayerDeath(
+        RunState runState,
+        BattleAllyController defeatedAlly,
+        BattleAllyController[] allies,
+        BattleEnemyController[] enemies)
+    {
         return new RelicExecutionContext
         {
             trigger = Relic_SO.RelicTrigger.OnPlayerDeath,
@@ -32,6 +41,7 @@ public sealed partial class RelicExecutionContext
             sourceIsPlayer = true,
             target = defeatedAlly,
             allies = allies,
+            enemies = enemies,
             feedbackMessages = new List<string>()
         };
     }

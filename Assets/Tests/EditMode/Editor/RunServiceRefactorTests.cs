@@ -84,6 +84,39 @@ public class RunServiceRefactorTests
     }
 
     [Test]
+    public void ExecuteGainActionPoints_MessageUsesActualRestoredAmount()
+    {
+        GameObject actionPointObject = new GameObject("ActionPointSystem");
+        createdObjects.Add(actionPointObject);
+        ActionPointSystem actionPointSystem = actionPointObject.AddComponent<ActionPointSystem>();
+        actionPointSystem.Initialize(3);
+        actionPointSystem.TrySpend(1);
+
+        RunState runState = new RunState();
+        MapEventOptionData optionData = new MapEventOptionData
+        {
+            optionId = "restore",
+            optionLabel = "Restore",
+            builtInEffectType = MapEventOptionBuiltInEffectType.GainActionPoints,
+            effectAmount = 999
+        };
+
+        bool executed = MapEventBuiltInEffectExecutorService.TryExecute(
+            new MapEventBuiltInEffectExecutionRequest
+            {
+                runState = runState,
+                actionPointSystem = actionPointSystem,
+                optionData = optionData
+            },
+            out MapEventBuiltInEffectExecutionResult result);
+
+        Assert.IsTrue(executed);
+        Assert.AreEqual(3, actionPointSystem.CurrentPoints);
+        Assert.That(result.message, Does.Contain("1"));
+        Assert.That(result.message, Does.Not.Contain("999"));
+    }
+
+    [Test]
     public void BuildMapBattleEncounter_ClonesRelicsCalamitiesAndLivingParty()
     {
         EnemyData_SO enemy = ScriptableObject.CreateInstance<EnemyData_SO>();

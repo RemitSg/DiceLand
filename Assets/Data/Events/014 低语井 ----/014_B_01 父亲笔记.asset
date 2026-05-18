@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "014_B_01 父亲笔记"
+  m_EditorClassIdentifier: 
+  eventId: 014_B_01
+  eventName: "父亲笔记"
+  eventContent: "林栀把笔记摊在供桌上。前几页记录着水位、雨量、井边裂缝的位置，后面的内容越来越短。\n\n许多页只有同一句话：\n\n“别让她听井。”"
+  eventIllustration: {fileID: 0}
+  options:
+  - optionId: 1
+    optionLabel: "继续翻看"
+    requiredMoney: 0
+    consequenceDescription: "继续剧情"
+    resultContent: "你们翻到最后几页，发现林槐不止一次写下许茵的名字。每个名字旁边都画了线，有的地方还写着“今天想起来了”“不要忘”。\n\n林栀看着那些字，说：“许茵是我母亲。村里说她十八年前跟着井里的声音走了。可我父亲从来不许我问。”"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
+    lootRewards: []
+    lootPickCountMin: 1
+    lootPickCountMax: 1
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 1
+    blueprintPickCountMax: 1
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 11400000, guid: 4f19f84071b8496da65c291474f744f5, type: 2}
+    resolveEvent: 1
+    customHandler: {fileID: 0}

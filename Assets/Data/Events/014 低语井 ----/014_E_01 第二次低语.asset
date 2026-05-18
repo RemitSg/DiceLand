@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "014_E_01 第二次低语"
+  m_EditorClassIdentifier: 
+  eventId: 014_E_01
+  eventName: "第二次低语"
+  eventContent: "林栀没有立刻离开。她请你们再陪她听一次。\n\n“如果我母亲真的留下过话，我至少要知道她为什么失踪。”\n\n她靠近井沿。你们扶住收声阵，防止调音针被风吹倒。"
+  eventIllustration: {fileID: 0}
+  options:
+  - optionId: 1
+    optionLabel: "守在井边"
+    requiredMoney: 0
+    consequenceDescription: "继续剧情"
+    resultContent: "井底传来第二句话。\n\n“那晚不是我走的。”\n\n林栀写下这句话。写完后，她忽然问你们：“我刚才是不是说过，我母亲笑起来很好看？”\n\n她说自己记得这件事，但想不起母亲笑的时候是什么样子。"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
+    lootRewards: []
+    lootPickCountMin: 1
+    lootPickCountMax: 1
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 1
+    blueprintPickCountMax: 1
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 11400000, guid: bad58da79e214989846916ff90a54a1b, type: 2}
+    resolveEvent: 1
+    customHandler: {fileID: 0}

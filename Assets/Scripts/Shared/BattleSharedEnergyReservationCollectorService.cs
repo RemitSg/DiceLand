@@ -8,9 +8,28 @@ public static class BattleSharedEnergyReservationCollectorService
         if (ally == null || ally.IsDead)
             return 0;
 
-        return BattleSharedEnergyReservationService.CalculateSkillReservation(
-            CalculateConnectedAllyButtonCount(ally),
-            ally.SelectedSkill != null ? ally.SelectedSkill.energyCost : 0);
+        int reservedEnergy = 0;
+        IReadOnlyList<SpeedButton> allyButtons = BattleSpeedButtonListService.GetAllyButtons(ally);
+        for (int i = 0; i < allyButtons.Count; i++)
+        {
+            SpeedButton allyButton = allyButtons[i];
+            if (allyButton == null || allyButton.ConnectedTarget == null)
+                continue;
+
+            EnemySkill_SO selectedSkill = ally.GetSelectedSkillForButton(allyButton);
+            reservedEnergy += Mathf.Max(0, selectedSkill != null ? selectedSkill.energyCost : 0);
+        }
+
+        return reservedEnergy;
+    }
+
+    public static int CalculateReservedEnergyForAllyButton(BattleAllyController ally, SpeedButton button)
+    {
+        if (ally == null || ally.IsDead || button == null || button.ConnectedTarget == null)
+            return 0;
+
+        EnemySkill_SO selectedSkill = ally.GetSelectedSkillForButton(button);
+        return Mathf.Max(0, selectedSkill != null ? selectedSkill.energyCost : 0);
     }
 
     public static int CalculateConnectedAllyButtonCount(BattleAllyController ally)

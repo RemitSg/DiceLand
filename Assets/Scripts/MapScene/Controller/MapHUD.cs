@@ -293,7 +293,7 @@ public class MapHUD : MonoBehaviour
         }
 
         if (moneyText != null)
-            moneyText.text = $"金钱 {Mathf.Max(0, runState != null ? runState.money : 0)}";
+            moneyText.text = $"金钱 {(runState != null ? runState.money : 0)}";
 
         if (keysText != null)
         {
@@ -350,7 +350,11 @@ public class MapHUD : MonoBehaviour
             if (!string.IsNullOrEmpty(attributeLine))
                 lines.Add(attributeLine);
 
-            lines.Add($"危险度 {WrapColor(ToRoman(Mathf.Max(1, tile.previewDangerRating)), tileDangerHighlightColor)} | 区域 {WrapColor(GetDangerBandLabel(tile.dangerBand), tileRegionHighlightColor)}");
+            bool isSpecialDungeonTile = tile.sourceSpecialDungeon != null;
+            string dangerLine = $"危险度 {WrapColor(ToRoman(Mathf.Max(1, tile.previewDangerRating)), tileDangerHighlightColor)}";
+            if (!isSpecialDungeonTile)
+                dangerLine = $"{dangerLine} | 区域 {WrapColor(GetDangerBandLabel(tile.dangerBand), tileRegionHighlightColor)}";
+            lines.Add(dangerLine);
 
             if (!string.IsNullOrWhiteSpace(tile.previewTag))
                 lines.Add($"预览标签 {tile.previewTag}");
@@ -1205,10 +1209,10 @@ public class MapHUD : MonoBehaviour
         Button button = slotRect.gameObject.AddComponent<Button>();
         button.onClick.AddListener(onClick);
 
-        Image icon = CreateImage(
+        Image icon = CreateCenteredImage(
             slotRect,
             "Icon",
-            new Vector2((inventorySlotSize.x - inventoryIconSize.x) * 0.5f + inventoryIconOffset.x, inventoryIconOffset.y),
+            Vector2.zero,
             inventoryIconSize,
             iconSprite != null ? iconSprite : GetFallbackSprite(),
             Color.white);
@@ -1448,6 +1452,15 @@ public class MapHUD : MonoBehaviour
         return image;
     }
 
+    private Image CreateCenteredImage(RectTransform parent, string name, Vector2 anchoredPosition, Vector2 size, Sprite sprite, Color color)
+    {
+        RectTransform rect = CreateRect(name, parent, new Vector2(0.5f, 0.5f), anchoredPosition, size);
+        Image image = rect.gameObject.AddComponent<Image>();
+        image.sprite = sprite;
+        image.color = color;
+        return image;
+    }
+
     private static void ApplyRect(RectTransform rect, Vector2 anchorPivot, Vector2 anchoredPosition, Vector2 size)
     {
         if (rect == null)
@@ -1604,6 +1617,8 @@ public class MapHUD : MonoBehaviour
                 return "事件";
             case MapTileType.Merchant:
                 return "商人";
+            case MapTileType.Treasure:
+                return "宝藏";
             case MapTileType.Forge:
                 return "锻造";
             case MapTileType.Rest:
@@ -1612,6 +1627,8 @@ public class MapHUD : MonoBehaviour
                 return "钥匙";
             case MapTileType.Boss:
                 return "Boss";
+            case MapTileType.SpecialDungeonExit:
+                return "副本出口";
             default:
                 return "未知";
         }
@@ -1644,6 +1661,8 @@ public class MapHUD : MonoBehaviour
                 return "事件格，可触发随机事件";
             case MapTileType.Merchant:
                 return "商人格，可消耗金钱购买商品";
+            case MapTileType.Treasure:
+                return "宝藏格，进入后可选择一份奖励";
             case MapTileType.Forge:
                 return "锻造格，可消耗材料与图纸锻造武器";
             case MapTileType.Rest:
@@ -1652,6 +1671,8 @@ public class MapHUD : MonoBehaviour
                 return "钥匙格，进入后可获得钥匙";
             case MapTileType.Boss:
                 return "Boss 格，满足钥匙条件后可挑战首领";
+            case MapTileType.SpecialDungeonExit:
+                return "离开副本并返回主地图事件格。";
             default:
                 return string.Empty;
         }

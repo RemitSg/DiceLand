@@ -23,6 +23,80 @@ public static class CalamitySystem
         return ApplyPercentageModifier(baseValue, activeCalamities, CalamityBuiltInEffectType.BattleMoneyPercentModifier, 0, false, ModifyBattleMoneyWithHandler);
     }
 
+    public static int ApplyMerchantPriceModifiers(int baseValue, IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return ApplyPercentageModifier(baseValue, activeCalamities, CalamityBuiltInEffectType.MerchantPricePercentModifier, 0, false, ModifyMerchantPriceWithHandler);
+    }
+
+    public static int ApplyAllyDamageModifiers(int baseValue, IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return ApplyPercentageModifier(baseValue, activeCalamities, CalamityBuiltInEffectType.AllyDamagePercentModifier, 0, false, ModifyAllyDamageWithHandler);
+    }
+
+    public static int ApplyAllyMaxHpModifiers(int baseValue, IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return ApplyPercentageModifier(baseValue, activeCalamities, CalamityBuiltInEffectType.AllyMaxHpPercentModifier, 1, true, ModifyAllyMaxHpWithHandler);
+    }
+
+    public static int ApplyEnemyIncomingDamageModifiers(int baseValue, IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return ApplyPercentageModifier(baseValue, activeCalamities, CalamityBuiltInEffectType.EnemyIncomingDamagePercentModifier, 0, false, ModifyEnemyIncomingDamageWithHandler);
+    }
+
+    public static int ApplyEnemySpeedModifiers(int baseValue, IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return Mathf.Max(1, baseValue + SumFlatEffectAmounts(activeCalamities, CalamityBuiltInEffectType.EnemySpeedFlatModifier));
+    }
+
+    public static int ApplyForgeCostModifiers(int baseValue, IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return Mathf.Max(0, baseValue + SumFlatEffectAmounts(activeCalamities, CalamityBuiltInEffectType.ForgeCostFlatModifier));
+    }
+
+    public static int ResolveBattleStartSharedEnergyDelta(IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return SumFlatEffectAmounts(activeCalamities, CalamityBuiltInEffectType.BattleStartSharedEnergyFlatModifier);
+    }
+
+    public static int ResolveRestHealPercent(int defaultPercent, IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return ResolveMinimumPercentOverride(defaultPercent, activeCalamities, CalamityBuiltInEffectType.RestHealPercentOverride);
+    }
+
+    public static int ResolveRestActionPointRestorePercent(int defaultPercent, IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return ResolveMinimumPercentOverride(defaultPercent, activeCalamities, CalamityBuiltInEffectType.RestActionPointRestorePercentOverride);
+    }
+
+    public static List<CalamityBuiltInEffectEntry> GetEnemyBattleStartStatusEffects(IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        List<CalamityBuiltInEffectEntry> results = new List<CalamityBuiltInEffectEntry>();
+        if (activeCalamities == null || activeCalamities.Count == 0)
+            return results;
+
+        for (int i = 0; i < activeCalamities.Count; i++)
+        {
+            RunCalamityState state = activeCalamities[i];
+            if (state == null || state.calamityData == null)
+                continue;
+
+            IReadOnlyList<CalamityBuiltInEffectEntry> effects = state.calamityData.GetValidEffects();
+            for (int j = 0; j < effects.Count; j++)
+            {
+                CalamityBuiltInEffectEntry effect = effects[j];
+                if (effect == null
+                    || effect.effectType != CalamityBuiltInEffectType.EnemyBattleStartStatus
+                    || effect.statusData == null
+                    || effect.effectAmount <= 0)
+                    continue;
+
+                results.Add(effect);
+            }
+        }
+
+        return results;
+    }
+
     private static int ApplyPercentageModifier(
         int baseValue,
         IReadOnlyList<RunCalamityState> activeCalamities,
@@ -93,5 +167,78 @@ public static class CalamitySystem
     private static int ModifyBattleMoneyWithHandler(int currentValue, RunCalamityState calamityState)
     {
         return calamityState.calamityData.customEffectHandler.ModifyBattleMoneyReward(currentValue, calamityState);
+    }
+
+    private static int ModifyMerchantPriceWithHandler(int currentValue, RunCalamityState calamityState)
+    {
+        return calamityState.calamityData.customEffectHandler.ModifyMerchantPrice(currentValue, calamityState);
+    }
+
+    private static int ModifyAllyDamageWithHandler(int currentValue, RunCalamityState calamityState)
+    {
+        return calamityState.calamityData.customEffectHandler.ModifyAllyDamage(currentValue, calamityState);
+    }
+
+    private static int ModifyAllyMaxHpWithHandler(int currentValue, RunCalamityState calamityState)
+    {
+        return calamityState.calamityData.customEffectHandler.ModifyAllyMaxHP(currentValue, calamityState);
+    }
+
+    private static int ModifyEnemyIncomingDamageWithHandler(int currentValue, RunCalamityState calamityState)
+    {
+        return calamityState.calamityData.customEffectHandler.ModifyEnemyIncomingDamage(currentValue, calamityState);
+    }
+
+    private static int SumFlatEffectAmounts(IReadOnlyList<RunCalamityState> activeCalamities, CalamityBuiltInEffectType builtInType)
+    {
+        if (activeCalamities == null || activeCalamities.Count == 0)
+            return 0;
+
+        int total = 0;
+        for (int i = 0; i < activeCalamities.Count; i++)
+        {
+            RunCalamityState state = activeCalamities[i];
+            if (state == null || state.calamityData == null)
+                continue;
+
+            IReadOnlyList<CalamityBuiltInEffectEntry> effects = state.calamityData.GetValidEffects();
+            for (int j = 0; j < effects.Count; j++)
+            {
+                CalamityBuiltInEffectEntry effect = effects[j];
+                if (effect != null && effect.effectType == builtInType)
+                    total += effect.effectAmount;
+            }
+        }
+
+        return total;
+    }
+
+    private static int ResolveMinimumPercentOverride(
+        int defaultPercent,
+        IReadOnlyList<RunCalamityState> activeCalamities,
+        CalamityBuiltInEffectType builtInType)
+    {
+        int resolvedPercent = Mathf.Clamp(defaultPercent, 0, 100);
+        if (activeCalamities == null || activeCalamities.Count == 0)
+            return resolvedPercent;
+
+        for (int i = 0; i < activeCalamities.Count; i++)
+        {
+            RunCalamityState state = activeCalamities[i];
+            if (state == null || state.calamityData == null)
+                continue;
+
+            IReadOnlyList<CalamityBuiltInEffectEntry> effects = state.calamityData.GetValidEffects();
+            for (int j = 0; j < effects.Count; j++)
+            {
+                CalamityBuiltInEffectEntry effect = effects[j];
+                if (effect == null || effect.effectType != builtInType)
+                    continue;
+
+                resolvedPercent = Mathf.Min(resolvedPercent, Mathf.Clamp(effect.effectAmount, 0, 100));
+            }
+        }
+
+        return resolvedPercent;
     }
 }

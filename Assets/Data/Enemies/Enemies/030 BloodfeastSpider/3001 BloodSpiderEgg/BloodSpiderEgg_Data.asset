@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: BloodSpiderEgg_Data
+  m_EditorClassIdentifier: 
+  enemyID: 3001
+  enemyName: "\u8840\u86DB\u5375"
+  baseHP: 6
+  damageReductionPercent: 0
+  minSpeed: 1
+  maxSpeed: 1
+  baseSpeedButtonCount: 1
+  enemySprite: {fileID: 21300000, guid: d98032f9b375d454a9d4a8236fa73c79, type: 3}
+  stageSprites: []
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.2
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules: []
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains:
+  - statusData: {fileID: 11400000, guid: 5b1d6927c38b40ffbe037e4de90b93ab, type: 2}
+    stackAmount: 1
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  transformToEnemyDataWhenStatusMissing: {fileID: 11400000, guid: 93d7d9e95cae46a79b151067242e3400, type: 2}
+  transformMissingStatusData: {fileID: 11400000, guid: 5b1d6927c38b40ffbe037e4de90b93ab, type: 2}
+  enemyDescription: "\u8840\u86DB\u7684\u80CE\u5375\u3002\u62E5\u6709\u5B75\u5316\u65F6\u53EA\u4F1A\u4FDD\u62A4\u81EA\u8EAB\uFF0C\u5931\u53BB\u5B75\u5316\u540E\u4F1A\u5728\u56DE\u5408\u5F00\u59CB\u8F6C\u5316\u4E3A\u5C0F\u8840\u86DB\u3002"
+  passiveDescriptions:
+  - passiveName: "\u7834\u5375"
+    displayColorType: 2
+    description: "\u56DE\u5408\u5F00\u59CB\u65F6\uFF0C\u82E5\u81EA\u8EAB\u6CA1\u6709\u5B75\u5316\uFF0C\u8F6C\u5316\u4E3A\u5C0F\u8840\u86DB"
+  enemyVisualScale: 0.85
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0.3}
+  skillPool:
+  - {fileID: 11400000, guid: 46fd7d1700284d7eb040d86d1c735a28, type: 2}
+  conditionalSkillRules: []

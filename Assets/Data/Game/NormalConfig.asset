@@ -27,3 +27,5 @@ MonoBehaviour:
     weight: 3
   - tileType: 3
     weight: 1
+  - tileType: 9
+    weight: 1

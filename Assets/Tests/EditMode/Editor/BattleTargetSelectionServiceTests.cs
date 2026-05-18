@@ -107,6 +107,21 @@ public class BattleTargetSelectionServiceTests
         CollectionAssert.AreEqual(new[] { "Low" }, result);
     }
 
+    [Test]
+    public void Select_LowestHpOpponent_UsesResolverAndReturnsOneValidCandidate()
+    {
+        List<string> result = BattleTargetSelectionService.Select(
+            EnemySkill_SO.DamageTargetMode.LowestHpOpponent,
+            currentTarget: null,
+            candidates: new[] { "High", "Dead", "Low" },
+            randomTargetCount: 1,
+            isValidTarget: target => target != "Dead",
+            randomOrder: targets => targets,
+            comparePriority: (left, right) => GetHp(left).CompareTo(GetHp(right)));
+
+        CollectionAssert.AreEqual(new[] { "Low" }, result);
+    }
+
     private static int GetHp(string target)
     {
         return target == "Low" ? 2 : 9;

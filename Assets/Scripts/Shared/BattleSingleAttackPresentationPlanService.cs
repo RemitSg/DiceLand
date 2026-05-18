@@ -37,3 +37,22 @@ public static class BattleSingleAttackPresentationPlanService
         };
     }
 }
+
+public static class BattleSingleAttackPresentationStartService
+{
+    public const int NoAttackDice = -1;
+
+    public static int FindFirstAttackDiceIndex(EnemySkill_SO skill, int totalDiceCount)
+    {
+        if (skill == null || totalDiceCount <= 0)
+            return NoAttackDice;
+
+        for (int i = 0; i < totalDiceCount; i++)
+        {
+            if (skill.GetDiceSkillCategory(i) != EnemySkill_SO.SkillCategory.Defense)
+                return i;
+        }
+
+        return NoAttackDice;
+    }
+}

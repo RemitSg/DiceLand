@@ -292,7 +292,7 @@ public class RunState
         if (amount <= 0)
             return;
 
-        money = Mathf.Max(0, money + amount);
+        money += amount;
     }
 
     public bool TrySpendMoney(int amount)
@@ -469,7 +469,7 @@ public class RunState
         return 0;
     }
 
-    public void AddRelic(Relic_SO relicData, int amount = 1)
+    public void AddRelic(Relic_SO relicData, int amount = 1, bool processAcquireEffects = true)
     {
         if (relicData == null || amount <= 0)
             return;
@@ -477,6 +477,7 @@ public class RunState
         if (relicInventory == null)
             relicInventory = new List<RunRelicState>();
 
+        bool added = false;
         for (int i = 0; i < relicInventory.Count; i++)
         {
             RunRelicState stack = relicInventory[i];
@@ -484,6 +485,9 @@ public class RunState
                 continue;
 
             stack.amount += amount;
+            added = true;
+            if (processAcquireEffects)
+                RelicTriggerDispatcher.ProcessRelicAcquired(this, relicData, amount);
             return;
         }
 
@@ -492,6 +496,10 @@ public class RunState
             relicData = relicData,
             amount = amount
         });
+        added = true;
+
+        if (added && processAcquireEffects)
+            RelicTriggerDispatcher.ProcessRelicAcquired(this, relicData, amount);
     }
 
     public int GetRelicAmount(Relic_SO relicData)

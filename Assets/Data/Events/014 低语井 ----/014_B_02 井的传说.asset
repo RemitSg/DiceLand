@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "014_B_02 井的传说"
+  m_EditorClassIdentifier: 
+  eventId: 014_B_02
+  eventName: "井的传说"
+  eventContent: "林栀收起笔记，向你们说明传说。\n\n午夜贴近井沿，就能听见死去之人留下的最后一句话。但每听一次，听者都会失去一段关于那个人的记忆。\n\n她扣上封声木匣。\n\n“所以我才要用回声螺收声。只要声音能进螺里，就不用拿人的记忆去换。”"
+  eventIllustration: {fileID: 0}
+  options:
+  - optionId: 1
+    optionLabel: "前往井边"
+    requiredMoney: 0
+    consequenceDescription: "结束事件"
+    resultContent: "你们离开祠堂时，村口的灯已经灭了一半。通往古井的小路穿过旧菜地，地面很湿，草丛里有拖行过的痕迹。"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
+    lootRewards: []
+    lootPickCountMin: 1
+    lootPickCountMax: 1
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 1
+    blueprintPickCountMax: 1
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 0}
+    resolveEvent: 1
+    customHandler: {fileID: 0}

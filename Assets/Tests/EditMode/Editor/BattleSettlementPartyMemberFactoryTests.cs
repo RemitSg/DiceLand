@@ -122,4 +122,39 @@ public class BattleSettlementPartyMemberFactoryTests
         Assert.AreEqual(3, progressions[0].FinalExperience);
         Assert.AreEqual(12, progressions[0].FinalMaxHP);
     }
+
+    [Test]
+    public void BuildProgressions_UsesCharacterNameWithoutWeaponForSettlementDisplay()
+    {
+        GameObject go = new GameObject("Ally Host");
+        createdObjects.Add(go);
+
+        BattleAllyController ally = go.AddComponent<BattleAllyController>();
+        CharacterData_SO character = ScriptableObject.CreateInstance<CharacterData_SO>();
+        character.characterName = "新手木剑";
+        Weapon_SO weapon = ScriptableObject.CreateInstance<Weapon_SO>();
+        weapon.weaponName = "曦誓剑";
+
+        ally.ApplyRuntimeState(new RunPartyMemberState
+        {
+            memberId = "Ally One",
+            characterData = character,
+            weaponData = weapon,
+            level = 1,
+            experience = 0,
+            maxHP = 10,
+            currentHP = 10
+        });
+
+        List<BattleSettlementPartyProgression> progressions = BattleSettlementPartyMemberFactory.BuildProgressions(
+            new[] { ally },
+            experienceReward: 0,
+            resolveExperienceToNextLevel: _ => 10,
+            resolveMaxHPForLevel: (_, _, fallbackMaxHP) => fallbackMaxHP);
+
+        Assert.AreEqual("新手木剑", progressions[0].DisplayName);
+        StringAssert.DoesNotContain("[", progressions[0].DisplayName);
+        Object.DestroyImmediate(character);
+        Object.DestroyImmediate(weapon);
+    }
 }

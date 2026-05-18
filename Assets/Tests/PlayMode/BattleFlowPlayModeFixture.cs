@@ -164,9 +164,42 @@ internal sealed class BattleFlowPlayModeFixture
         RectTransform root = (RectTransform)GetField(overlay, "relicChoiceModalButtonRoot");
         Assert.IsNotNull(root, "Relic choice modal button root was not created.");
 
-        Button button = root.GetComponentInChildren<Button>(true);
+        Button button = null;
+        Button[] buttons = root.GetComponentsInChildren<Button>(true);
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            string label = GetButtonLabelText(buttons[i]);
+            if (!string.IsNullOrEmpty(label) && label.Contains("确认"))
+            {
+                button = buttons[i];
+                break;
+            }
+        }
+
+        if (button == null && buttons.Length > 0)
+            button = buttons[buttons.Length - 1];
+
         Assert.IsNotNull(button, "Relic choice confirm button was not created.");
         button.onClick.Invoke();
+    }
+
+    private static string GetButtonLabelText(Button button)
+    {
+        if (button == null)
+            return null;
+
+        Component[] components = button.GetComponentsInChildren<Component>(true);
+        for (int i = 0; i < components.Length; i++)
+        {
+            Component component = components[i];
+            if (component == null || component.GetType().Name != "TextMeshProUGUI")
+                continue;
+
+            PropertyInfo textProperty = component.GetType().GetProperty("text", BindingFlags.Instance | BindingFlags.Public);
+            return textProperty != null ? textProperty.GetValue(component) as string : null;
+        }
+
+        return null;
     }
 
     public void ClickSettlementReturnButton()

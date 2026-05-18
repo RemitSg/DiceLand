@@ -7,7 +7,7 @@ public class BattleHitOutcomeDispatcherTests
     public void Dispatch_PositiveDamage_RunsSuccessfulHitOnly()
     {
         List<string> calls = new List<string>();
-        BattleHitOutcomePlan plan = BattleHitOutcomePlanService.Resolve(dealtDamage: 4);
+        BattleHitOutcomePlan plan = BattleHitOutcomePlanService.Resolve(dealtDamage: 4, hitConfirmed: true);
 
         BattleHitOutcomeDispatcher.Dispatch(
             plan,
@@ -19,10 +19,10 @@ public class BattleHitOutcomeDispatcherTests
     }
 
     [Test]
-    public void Dispatch_ZeroDamage_RunsFeedbackThenMiss()
+    public void Dispatch_ConfirmedZeroDamage_RunsFeedbackThenSuccessfulHit()
     {
         List<string> calls = new List<string>();
-        BattleHitOutcomePlan plan = BattleHitOutcomePlanService.Resolve(dealtDamage: 0);
+        BattleHitOutcomePlan plan = BattleHitOutcomePlanService.Resolve(dealtDamage: 0, hitConfirmed: true);
 
         BattleHitOutcomeDispatcher.Dispatch(
             plan,
@@ -30,6 +30,6 @@ public class BattleHitOutcomeDispatcherTests
             () => calls.Add("successful-hit"),
             () => calls.Add("miss"));
 
-        CollectionAssert.AreEqual(new[] { "zero-feedback", "miss" }, calls);
+        CollectionAssert.AreEqual(new[] { "zero-feedback", "successful-hit" }, calls);
     }
 }

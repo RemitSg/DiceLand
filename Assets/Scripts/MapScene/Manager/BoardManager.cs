@@ -27,10 +27,12 @@ public class BoardManager : MonoBehaviour
     [SerializeField] private Sprite eliteTileIcon;
     [SerializeField] private Sprite eventTileIcon;
     [SerializeField] private Sprite merchantTileIcon;
+    [SerializeField] private Sprite treasureTileIcon;
     [SerializeField] private Sprite forgeTileIcon;
     [SerializeField] private Sprite restTileIcon;
     [SerializeField] private Sprite keyTileIcon;
     [SerializeField] private Sprite bossTileIcon;
+    [SerializeField] private Sprite specialDungeonExitIcon;
     [SerializeField] private TMP_FontAsset worldTextFont;
     [SerializeField] private Sprite tileFrameSprite;
     [SerializeField] private Sprite tileIconGlowMaskSprite;
@@ -254,11 +256,17 @@ public class BoardManager : MonoBehaviour
             case MapTileType.Merchant:
                 baseColor *= new Color(1.08f, 1.02f, 0.84f, 1f);
                 break;
+            case MapTileType.Treasure:
+                baseColor *= new Color(1.18f, 1.04f, 0.66f, 1f);
+                break;
             case MapTileType.Forge:
                 baseColor *= new Color(1.14f, 0.94f, 0.72f, 1f);
                 break;
             case MapTileType.Event:
                 baseColor *= new Color(0.82f, 0.92f, 1.18f, 1f);
+                break;
+            case MapTileType.SpecialDungeonExit:
+                baseColor *= new Color(0.8f, 1.1f, 1.2f, 1f);
                 break;
             case MapTileType.Elite:
                 baseColor = Color.Lerp(baseColor, eliteTileAccentColor, 0.48f);
@@ -291,11 +299,17 @@ public class BoardManager : MonoBehaviour
             case MapTileType.Merchant:
                 baseColor *= new Color(1.08f, 1.04f, 0.88f, 1f);
                 break;
+            case MapTileType.Treasure:
+                baseColor *= new Color(1.18f, 1.08f, 0.72f, 1f);
+                break;
             case MapTileType.Forge:
                 baseColor *= new Color(1.12f, 0.96f, 0.82f, 1f);
                 break;
             case MapTileType.Rest:
                 baseColor *= new Color(0.88f, 1.12f, 0.9f, 1f);
+                break;
+            case MapTileType.SpecialDungeonExit:
+                baseColor *= new Color(0.78f, 1.08f, 1.22f, 1f);
                 break;
             case MapTileType.Elite:
                 baseColor = Color.Lerp(baseColor, eliteTileAccentColor, 0.58f);
@@ -334,6 +348,9 @@ public class BoardManager : MonoBehaviour
             case MapTileType.Merchant:
                 baseColor = new Color(1f, 0.9f, 0.54f, 0.34f);
                 break;
+            case MapTileType.Treasure:
+                baseColor = new Color(1f, 0.78f, 0.28f, 0.42f);
+                break;
             case MapTileType.Forge:
                 baseColor = new Color(1f, 0.86f, 0.54f, 0.34f);
                 break;
@@ -345,6 +362,9 @@ public class BoardManager : MonoBehaviour
                 break;
             case MapTileType.Boss:
                 baseColor = new Color(1f, 0.68f, 0.72f, 0.4f);
+                break;
+            case MapTileType.SpecialDungeonExit:
+                baseColor = new Color(0.52f, 0.95f, 1f, 0.4f);
                 break;
             default:
                 baseColor = new Color(1f, 1f, 1f, 0.28f);
@@ -374,11 +394,17 @@ public class BoardManager : MonoBehaviour
             case MapTileType.Merchant:
                 baseColor = Color.Lerp(baseColor, new Color(1f, 0.92f, 0.62f, 1f), 0.46f);
                 break;
+            case MapTileType.Treasure:
+                baseColor = Color.Lerp(baseColor, new Color(1f, 0.82f, 0.36f, 1f), 0.55f);
+                break;
             case MapTileType.Forge:
                 baseColor = Color.Lerp(baseColor, new Color(1f, 0.86f, 0.58f, 1f), 0.45f);
                 break;
             case MapTileType.Rest:
                 baseColor = Color.Lerp(baseColor, new Color(0.84f, 1f, 0.86f, 1f), 0.42f);
+                break;
+            case MapTileType.SpecialDungeonExit:
+                baseColor = Color.Lerp(baseColor, new Color(0.62f, 0.96f, 1f, 1f), 0.52f);
                 break;
             case MapTileType.Key:
                 baseColor = Color.Lerp(baseColor, new Color(1f, 0.98f, 0.48f, 1f), 0.58f);
@@ -423,6 +449,8 @@ public class BoardManager : MonoBehaviour
                 return eventTileIcon;
             case MapTileType.Merchant:
                 return merchantTileIcon;
+            case MapTileType.Treasure:
+                return treasureTileIcon;
             case MapTileType.Forge:
                 return forgeTileIcon;
             case MapTileType.Rest:
@@ -431,6 +459,8 @@ public class BoardManager : MonoBehaviour
                 return keyTileIcon;
             case MapTileType.Boss:
                 return bossTileIcon;
+            case MapTileType.SpecialDungeonExit:
+                return specialDungeonExitIcon != null ? specialDungeonExitIcon : DefaultTileSprite;
             default:
                 return null;
         }
@@ -453,6 +483,8 @@ public class BoardManager : MonoBehaviour
                 return new Color(0.8f, 0.92f, 1f, 1f);
             case MapTileType.Merchant:
                 return new Color(1f, 0.9f, 0.58f, 1f);
+            case MapTileType.Treasure:
+                return new Color(1f, 0.82f, 0.32f, 1f);
             case MapTileType.Forge:
                 return new Color(1f, 0.88f, 0.56f, 1f);
             case MapTileType.Rest:
@@ -461,6 +493,8 @@ public class BoardManager : MonoBehaviour
                 return new Color(1f, 0.98f, 0.42f, 1f);
             case MapTileType.Boss:
                 return new Color(1f, 0.68f, 0.68f, 1f);
+            case MapTileType.SpecialDungeonExit:
+                return new Color(0.58f, 0.94f, 1f, 1f);
             default:
                 return fallbackIconColor;
         }
@@ -722,9 +756,10 @@ public class BoardManager : MonoBehaviour
         int eliteWeight = Mathf.Max(0, config.GetWeight(MapTileType.Elite));
         int eventWeight = Mathf.Max(0, config.GetWeight(MapTileType.Event));
         int merchantWeight = Mathf.Max(0, config.GetWeight(MapTileType.Merchant));
+        int treasureWeight = Mathf.Max(0, config.GetWeight(MapTileType.Treasure));
         int forgeWeight = Mathf.Max(0, config.GetWeight(MapTileType.Forge));
         int restWeight = Mathf.Max(0, config.GetWeight(MapTileType.Rest));
-        int total = battleWeight + eliteWeight + eventWeight + merchantWeight + forgeWeight + restWeight;
+        int total = battleWeight + eliteWeight + eventWeight + merchantWeight + treasureWeight + forgeWeight + restWeight;
 
         if (total <= 0)
             return MapTileType.Battle;
@@ -746,6 +781,10 @@ public class BoardManager : MonoBehaviour
             return MapTileType.Merchant;
 
         roll -= merchantWeight;
+        if (roll < treasureWeight)
+            return MapTileType.Treasure;
+
+        roll -= treasureWeight;
         if (roll < forgeWeight)
             return MapTileType.Forge;
 
@@ -887,6 +926,7 @@ public class BoardManager : MonoBehaviour
             new DifficultyConfig_SO.TileWeightEntry { tileType = MapTileType.Elite, weight = 1 },
             new DifficultyConfig_SO.TileWeightEntry { tileType = MapTileType.Event, weight = 4 },
             new DifficultyConfig_SO.TileWeightEntry { tileType = MapTileType.Merchant, weight = 1 },
+            new DifficultyConfig_SO.TileWeightEntry { tileType = MapTileType.Treasure, weight = 1 },
             new DifficultyConfig_SO.TileWeightEntry { tileType = MapTileType.Forge, weight = 1 },
             new DifficultyConfig_SO.TileWeightEntry { tileType = MapTileType.Rest, weight = 1 }
         };
@@ -906,6 +946,7 @@ public class BoardManager : MonoBehaviour
             case MapTileType.Elite:
             case MapTileType.Event:
             case MapTileType.Merchant:
+            case MapTileType.Treasure:
             case MapTileType.Forge:
             case MapTileType.Rest:
                 return true;
@@ -922,6 +963,7 @@ public class BoardManager : MonoBehaviour
             MapTileType.Elite,
             MapTileType.Event,
             MapTileType.Merchant,
+            MapTileType.Treasure,
             MapTileType.Forge,
             MapTileType.Rest
         };
@@ -939,7 +981,8 @@ public class BoardManager : MonoBehaviour
 
         return tile.tileType != MapTileType.Boss
             && tile.tileType != MapTileType.Merchant
-            && tile.tileType != MapTileType.Forge;
+            && tile.tileType != MapTileType.Forge
+            && tile.tileType != MapTileType.SpecialDungeonExit;
     }
 
     public bool ShouldKeepPersistentPresentation(BoardTileData tile)
@@ -947,7 +990,8 @@ public class BoardManager : MonoBehaviour
         return tile != null
             && (tile.tileType == MapTileType.Boss
                 || tile.tileType == MapTileType.Merchant
-                || tile.tileType == MapTileType.Forge);
+                || tile.tileType == MapTileType.Forge
+                || tile.tileType == MapTileType.SpecialDungeonExit);
     }
 
     private Sprite CreateRadialGlowSprite(string textureName, int size)

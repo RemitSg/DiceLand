@@ -38,7 +38,12 @@ public class Relic_SO : ScriptableObject
         OnPlayerDefenseClashWin = 22,
         OnEnemyKilledByPlayer = 23,
         OnBattleLootRewardGranted = 24,
-        OnBattleSetup = 25
+        OnBattleSetup = 25,
+        OnRelicAcquired = 26,
+        OnActionPointsSpent = 27,
+        OnMerchantStockCountCalculated = 28,
+        OnMerchantPurchaseAffordabilityChecked = 29,
+        OnRelicChoiceRewardGenerated = 30
     }
 
     public enum RelicBuiltInEffectType
@@ -116,7 +121,20 @@ public class Relic_SO : ScriptableObject
         TriggerAdditionalDamageWhenEnemyStatusTicksWithConditionStatus = 70,
         PreventAllyStatusApplication = 71,
         ApplyStatusToLowestSpeedAllyWhenAnyEnemyHasStatusOnBattleRoundStart = 72,
-        ReduceIncomingAttackDamageFlatWhenAttackerHasStatus = 73
+        ReduceIncomingAttackDamageFlatWhenAttackerHasStatus = 73,
+        ModifyOutgoingDamagePercentByTargetStatusStacks = 74,
+        GrantMoneyOnAcquire = 75,
+        IncreasePartyMaxHpOnAcquire = 76,
+        RestoreSharedEnergyOnSpecificRound = 77,
+        ApplyStatusToFullHpAlliesOnBattleRoundStart = 78,
+        ApplyStatusToLowHpAlliesOnBattleRoundStart = 79,
+        QueueStatusToAllEnemiesOnPlayerDeathNextRound = 80,
+        GrantMoneyOnActionPointsSpent = 81,
+        SetMerchantInitialStockCount = 82,
+        AllowMerchantPurchaseWithPositiveMoney = 83,
+        GuaranteeBattleLootDrop = 84,
+        IncreaseRelicChoiceRefreshCount = 85,
+        GrantRandomRelicsOnAcquire = 86
     }
 
     [Serializable]
@@ -145,6 +163,7 @@ public class Relic_SO : ScriptableObject
         [Min(1)] public int maxStacks = 1;
         [Min(1)] public int requiredDistinctStatusCount = 1;
         [Min(1)] public int requiredConsecutiveSkillUses = 1;
+        public RelicTable_SO relicTable;
     }
 
     [Header("Identity")]

@@ -17,8 +17,19 @@ public sealed class MapRunSnapshot
     public int actionPointBase;
     public int actionPointBonus;
     public int actionPointCurrent;
+    [NonSerialized] public SpecialDungeonRuntimeContext specialDungeonContext;
 
     public MapRunSnapshot Clone()
+    {
+        return Clone(includeSpecialDungeonContext: true);
+    }
+
+    public MapRunSnapshot CloneWithoutSpecialDungeonContext()
+    {
+        return Clone(includeSpecialDungeonContext: false);
+    }
+
+    private MapRunSnapshot Clone(bool includeSpecialDungeonContext)
     {
         MapRunSnapshot clone = new MapRunSnapshot
         {
@@ -31,7 +42,10 @@ public sealed class MapRunSnapshot
             actionPointBase = actionPointBase,
             actionPointBonus = actionPointBonus,
             actionPointCurrent = actionPointCurrent,
-            suppressOnePendingCalamityOnActionPointRestore = suppressOnePendingCalamityOnActionPointRestore
+            suppressOnePendingCalamityOnActionPointRestore = suppressOnePendingCalamityOnActionPointRestore,
+            specialDungeonContext = includeSpecialDungeonContext && specialDungeonContext != null
+                ? specialDungeonContext.Clone()
+                : null
         };
 
         if (tiles != null)
@@ -69,7 +83,14 @@ public static class MapRunRuntime
         return false;
     }
 
-    public static void SaveSnapshot(string sceneName, RunState runState, BoardManager boardManager, ActionPointSystem actionPointSystem, IEnumerable<int> pendingCalamityTiers = null, bool suppressOnePendingCalamityOnActionPointRestore = false)
+    public static void SaveSnapshot(
+        string sceneName,
+        RunState runState,
+        BoardManager boardManager,
+        ActionPointSystem actionPointSystem,
+        IEnumerable<int> pendingCalamityTiers = null,
+        bool suppressOnePendingCalamityOnActionPointRestore = false,
+        SpecialDungeonRuntimeContext specialDungeonContext = null)
     {
         if (runState == null || boardManager == null || actionPointSystem == null || string.IsNullOrWhiteSpace(sceneName))
             return;
@@ -85,7 +106,8 @@ public static class MapRunRuntime
             actionPointBase = actionPointSystem.BasePoints,
             actionPointBonus = actionPointSystem.BonusPoints,
             actionPointCurrent = actionPointSystem.CurrentPoints,
-            suppressOnePendingCalamityOnActionPointRestore = suppressOnePendingCalamityOnActionPointRestore
+            suppressOnePendingCalamityOnActionPointRestore = suppressOnePendingCalamityOnActionPointRestore,
+            specialDungeonContext = specialDungeonContext != null ? specialDungeonContext.Clone() : null
         };
 
         foreach (BoardTileData tile in boardManager.GetAllTiles())
@@ -227,7 +249,10 @@ public static class MapRunRuntime
                 if (member == null)
                     continue;
 
-                member.currentHP = Mathf.Clamp(member.maxHP, 0, Mathf.Max(0, member.maxHP));
+                int maxHP = Mathf.Max(0, member.maxHP);
+                int healPercent = CalamitySystem.ResolveRestHealPercent(100, currentSnapshot.runState.activeCalamities);
+                int healAmount = Mathf.CeilToInt(maxHP * (healPercent / 100f));
+                member.currentHP = Mathf.Clamp(member.currentHP + healAmount, 0, maxHP);
             }
 
             currentSnapshot.runState.SyncLegacyPlayerFieldsFromParty();
@@ -253,7 +278,10 @@ public static class MapRunRuntime
         if (!string.Equals(currentSnapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
             return;
 
-        currentSnapshot.actionPointCurrent = Mathf.Max(0, currentSnapshot.actionPointBase + currentSnapshot.actionPointBonus);
+        int maxActionPoints = Mathf.Max(0, currentSnapshot.actionPointBase + currentSnapshot.actionPointBonus);
+        int restorePercent = CalamitySystem.ResolveRestActionPointRestorePercent(100, currentSnapshot.runState != null ? currentSnapshot.runState.activeCalamities : null);
+        int restoreAmount = Mathf.CeilToInt(maxActionPoints * (restorePercent / 100f));
+        currentSnapshot.actionPointCurrent = Mathf.Clamp(currentSnapshot.actionPointCurrent + restoreAmount, 0, maxActionPoints);
         if (currentSnapshot.suppressOnePendingCalamityOnActionPointRestore && currentSnapshot.pendingCalamityTiers.Count > 0)
             currentSnapshot.pendingCalamityTiers.RemoveAt(0);
         currentSnapshot.suppressOnePendingCalamityOnActionPointRestore = false;

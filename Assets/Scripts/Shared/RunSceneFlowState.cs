@@ -8,6 +8,7 @@ public sealed class RunSceneFlowState
     public bool DeferPendingCalamityUntilOverlayClosed { get; set; }
     public bool SuppressPendingCalamityOnNextRestActionPointRestore { get; set; }
     public BattleEncounterData PendingEventEncounterData { get; set; }
+    public SpecialDungeon_SO PendingSpecialDungeon { get; set; }
 
     public void Reset()
     {
@@ -16,6 +17,7 @@ public sealed class RunSceneFlowState
         DeferPendingCalamityUntilOverlayClosed = false;
         SuppressPendingCalamityOnNextRestActionPointRestore = false;
         PendingEventEncounterData = null;
+        PendingSpecialDungeon = null;
     }
 
     public void RestorePendingCalamityTiers(IEnumerable<int> pendingTiers)
@@ -26,6 +28,29 @@ public sealed class RunSceneFlowState
 
         foreach (int tier in pendingTiers)
             PendingCalamityTiers.Enqueue(Mathf.Max(1, tier));
+    }
+
+    public List<int> DrainPendingCalamityTiers()
+    {
+        List<int> drained = new List<int>();
+        while (PendingCalamityTiers.Count > 0)
+            drained.Add(Mathf.Max(1, PendingCalamityTiers.Dequeue()));
+
+        return drained;
+    }
+
+    public void EnqueuePendingCalamityTiers(IEnumerable<int> pendingTiers)
+    {
+        if (pendingTiers == null)
+            return;
+
+        foreach (int tier in pendingTiers)
+            PendingCalamityTiers.Enqueue(Mathf.Max(1, tier));
+    }
+
+    public void ClearPendingCalamityTiers()
+    {
+        PendingCalamityTiers.Clear();
     }
 
     public MapMovementCycleFlags ToMovementCycleFlags()

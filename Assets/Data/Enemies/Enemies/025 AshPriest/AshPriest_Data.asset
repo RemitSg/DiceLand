@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
   m_Name: AshPriest_Data
   m_EditorClassIdentifier: 
-  enemyID: 25
+  enemyID: 30
   enemyName: "\u7070\u796D\u53F8"
   baseHP: 20
   damageReductionPercent: 0
   minSpeed: 1
   maxSpeed: 5
   baseSpeedButtonCount: 2
-  enemySprite: {fileID: 21300000, guid: c60cc52c21dc364478ee76f9d723e7fd, type: 3}
+  enemySprite: {fileID: 21300000, guid: 68fe9b98222e55e42a930b85d9a0ce56, type: 3}
   stageSprites: []
   enableHealthBasedStageTransition: 0
   healthBasedTransitionThresholdNormalized: 0.5
@@ -37,6 +37,11 @@ MonoBehaviour:
     settlementLootTables: []
   preventAllyBleedDecayOnHitWhileAlive: 0
   surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  transformToEnemyDataWhenStatusMissing: {fileID: 0}
+  transformMissingStatusData: {fileID: 0}
+  copyOpponentLastRoundSpeedDiceCount: 0
+  copyOpponentLastRoundSkills: 0
+  reflectionSkillTemplate: {fileID: 0}
   enemyDescription: "\u5728\u7070\u70EC\u4E2D\u53CD\u590D\u5B8C\u6210\u8F6C\u79FB\u4E0E\u8D4E\u7F6A\u4EEA\u5F0F\u7684\u796D\u53F8\u3002\u5B83\u4F1A\u5C06\u707E\u5394\u6295\u5411\u76EE\u6807\uFF0C\u4E5F\u4F1A\u628A\u81EA\u8EAB\u7684\u8D1F\u9762\u72B6\u6001\u79FB\u4EA4\u7ED9\u5BF9\u624B\u3002"
   passiveDescriptions: []
   enemyVisualScale: 1.5

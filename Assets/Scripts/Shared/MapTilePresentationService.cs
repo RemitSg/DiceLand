@@ -14,6 +14,8 @@ public static class MapTilePresentationService
                 return "事件";
             case MapTileType.Merchant:
                 return "商人";
+            case MapTileType.Treasure:
+                return "\u5b9d\u85cf";
             case MapTileType.Forge:
                 return "锻造";
             case MapTileType.Rest:
@@ -22,6 +24,8 @@ public static class MapTilePresentationService
                 return "钥匙";
             case MapTileType.Boss:
                 return "Boss";
+            case MapTileType.SpecialDungeonExit:
+                return "副本出口";
             default:
                 return "未知";
         }

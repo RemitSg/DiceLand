@@ -27,22 +27,28 @@ MonoBehaviour:
     effectAmount: 10
     randomMoneyMin: 0
     randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
     lootRewards: []
     lootPickCountMin: 0
     lootPickCountMax: 0
-    relicRewards: []
+    relicTable: {fileID: 11400000, guid: 2c3b9a960af13814c9c0ad0c1ca9b766, type: 2}
+    relicRarityWeightTable: {fileID: 0}
     relicPickCountMin: 0
     relicPickCountMax: 0
-    blueprintRewards: []
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
     blueprintPickCountMin: 0
     blueprintPickCountMax: 0
+    blueprintRewards: []
     encounterSelectionMode: 0
     encounterEnemyGroups: []
     encounterEnemies: []
     encounterEnemyCountMin: 0
     encounterEnemyCountMax: 0
     additionalBuiltInEffects: []
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}
   - optionId: 2
     optionLabel: "\u5438\u6536\u7075\u9B42"
@@ -53,23 +59,29 @@ MonoBehaviour:
     effectAmount: 1
     randomMoneyMin: 0
     randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
     lootRewards: []
     lootPickCountMin: 0
     lootPickCountMax: 0
-    relicRewards:
-    - relicData: {fileID: 11400000, guid: e39d6e275a468134b9b6222e525bb8a3, type: 2}
+    relicTable: {fileID: 11400000, guid: 2c3b9a960af13814c9c0ad0c1ca9b766, type: 2}
+    relicRarityWeightTable: {fileID: 0}
     relicPickCountMin: 1
     relicPickCountMax: 1
-    blueprintRewards: []
+    relicRewards:
+    - relicData: {fileID: 11400000, guid: e39d6e275a468134b9b6222e525bb8a3, type: 2}
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
     blueprintPickCountMin: 0
     blueprintPickCountMax: 0
+    blueprintRewards: []
     encounterSelectionMode: 0
     encounterEnemyGroups: []
     encounterEnemies: []
     encounterEnemyCountMin: 0
     encounterEnemyCountMax: 0
     additionalBuiltInEffects: []
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}
   - optionId: 3
     optionLabel: "\u8F6C\u8EAB\u79BB\u5F00"
@@ -80,21 +92,27 @@ MonoBehaviour:
     effectAmount: 2
     randomMoneyMin: 0
     randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
     lootRewards: []
     lootPickCountMin: 0
     lootPickCountMax: 0
-    relicRewards:
-    - relicData: {fileID: 0}
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
     relicPickCountMin: 1
     relicPickCountMax: 1
-    blueprintRewards: []
+    relicRewards:
+    - relicData: {fileID: 0}
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
     blueprintPickCountMin: 0
     blueprintPickCountMax: 0
+    blueprintRewards: []
     encounterSelectionMode: 0
     encounterEnemyGroups: []
     encounterEnemies: []
     encounterEnemyCountMin: 0
     encounterEnemyCountMax: 0
     additionalBuiltInEffects: []
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}

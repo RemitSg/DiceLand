@@ -197,7 +197,7 @@ public static partial class RelicSystem
         RelicExecutionContext context,
         Relic_SO.RelicBuiltInEffectEntry effect)
     {
-        if (context.trigger != Relic_SO.RelicTrigger.OnPlayerHitEnemy || effect.statusData == null || context.resolvedDamage <= 0)
+        if (context.trigger != Relic_SO.RelicTrigger.OnPlayerHitEnemy || effect.statusData == null)
             return;
         if (!TryRegisterRoundScopedProc(relicData, $"first-hit-status:{context.currentRound}"))
             return;
@@ -400,6 +400,28 @@ public static partial class RelicSystem
         source.Heal(heal);
     }
 
+    private static void HandleModifyOutgoingDamagePercentByTargetStatusStacks(
+        Relic_SO relicData,
+        RunRelicState relicState,
+        RelicExecutionContext context,
+        Relic_SO.RelicBuiltInEffectEntry effect)
+    {
+        if (context.trigger != Relic_SO.RelicTrigger.OnPlayerAboutToDealDamage || context.outgoingDamage <= 0)
+            return;
+
+        BattleEnemyController target = context.target as BattleEnemyController;
+        if (target == null || effect.conditionStatusData == null)
+            return;
+
+        int conditionStacks = target.GetStatusStacks(effect.conditionStatusData);
+        if (conditionStacks < Mathf.Max(1, effect.requiredStatusStacks))
+            return;
+
+        int percentBonus = conditionStacks * Mathf.Max(0, effect.amount) * Mathf.Max(1, relicState.amount);
+        if (percentBonus > 0)
+            context.outgoingDamagePercentModifier += percentBonus;
+    }
+
     private static void HandlePreventLethalDamageByConsumingEnemyStatusTotal(
         Relic_SO relicData,
         RunRelicState relicState,
@@ -588,7 +610,7 @@ public static partial class RelicSystem
         RelicExecutionContext context,
         Relic_SO.RelicBuiltInEffectEntry effect)
     {
-        if (context.trigger != Relic_SO.RelicTrigger.OnPlayerHitEnemy || effect.statusData == null || effect.conditionStatusData == null || context.resolvedDamage <= 0)
+        if (context.trigger != Relic_SO.RelicTrigger.OnPlayerHitEnemy || effect.statusData == null || effect.conditionStatusData == null)
             return;
 
         BattleEnemyController target = context.target as BattleEnemyController;

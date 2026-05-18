@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "014_A_01 村口委托"
+  m_EditorClassIdentifier: 
+  eventId: 014_A_01
+  eventName: "村口委托"
+  eventContent: "你们抵达山村时，村口正在搬最后一批箱子。水库明天放水，村子今晚之后就会封闭。\n\n村长拦住你们，指向祠堂前的年轻女人。\n\n“那位叫林栀，是林槐的女儿。她今晚要去低语井。最近井边常有残响游荡，能不能陪她走一趟？”"
+  eventIllustration: {fileID: 0}
+  options:
+  - optionId: 1
+    optionLabel: "答应同行"
+    requiredMoney: 0
+    consequenceDescription: "继续剧情"
+    resultContent: "林栀听见村长的话，提着一只封声木匣走过来。\n\n“麻烦你们了。我是回声修复师，只想收一段井声，确认传说是真是假。路上如果有东西靠近，请帮我争取一点时间。”\n\n她打开木匣，里面放着一枚灰白色的回声螺、三根调音针、一块封声蜡和几张刻着细小音纹的空白贝片。"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
+    lootRewards: []
+    lootPickCountMin: 1
+    lootPickCountMax: 1
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 1
+    blueprintPickCountMax: 1
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 11400000, guid: 9b87ce93094044b7a7a8c43ea385a724, type: 2}
+    resolveEvent: 1
+    customHandler: {fileID: 0}

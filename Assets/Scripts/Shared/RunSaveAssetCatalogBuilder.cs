@@ -16,12 +16,17 @@ public sealed class RunSaveAssetCatalogBuildRequest
     public MapEventPool_SO eventPool;
     public MerchantCatalog_SO merchantCatalog;
     public CalamityPool_SO calamityPool;
+    public TreasureRewardTable_SO treasureRewardTable;
     public RunState runState;
     public BoardManager boardManager;
+    public IReadOnlyList<BoardTileData> boardTiles;
+    public SpecialDungeonRuntimeContext specialDungeonContext;
 }
 
 public static class RunSaveAssetCatalogBuilder
 {
+    private const int MaxNestedEventAssetDepth = 16;
+
     public static MainMenuSaveAssetCatalog Build(RunSaveAssetCatalogBuildRequest request)
     {
         MainMenuSaveAssetCatalog catalog = new MainMenuSaveAssetCatalog();
@@ -37,8 +42,11 @@ public static class RunSaveAssetCatalogBuilder
         AddEventPoolAssets(catalog, request.eventPool);
         AddMerchantCatalogAssets(catalog, request.merchantCatalog);
         AddCalamityPoolAssets(catalog, request.calamityPool);
+        AddTreasureRewardTableAssets(catalog, request.treasureRewardTable);
         AddRunStateAssets(catalog, request.runState);
         AddBoardAssets(catalog, request.boardManager);
+        AddBoardAssets(catalog, request.boardTiles);
+        AddSpecialDungeonContextAssets(catalog, request.specialDungeonContext);
         return catalog;
     }
 
@@ -155,6 +163,15 @@ public static class RunSaveAssetCatalogBuilder
         }
     }
 
+    private static void AddTreasureRewardTableAssets(MainMenuSaveAssetCatalog catalog, TreasureRewardTable_SO treasureRewardTable)
+    {
+        if (catalog == null || treasureRewardTable == null)
+            return;
+
+        AddEventBlueprintRewardAssets(catalog, treasureRewardTable.BlueprintTable);
+        AddEventRelicRewardAssets(catalog, treasureRewardTable.RelicTable);
+    }
+
     private static void AddRunStateAssets(MainMenuSaveAssetCatalog catalog, RunState runState)
     {
         if (runState == null)
@@ -174,19 +191,63 @@ public static class RunSaveAssetCatalogBuilder
             return;
 
         foreach (BoardTileData tile in boardManager.GetAllTiles())
+            AddBoardTileAssets(catalog, tile);
+    }
+
+    private static void AddBoardAssets(MainMenuSaveAssetCatalog catalog, IReadOnlyList<BoardTileData> boardTiles)
+    {
+        if (boardTiles == null)
+            return;
+
+        for (int i = 0; i < boardTiles.Count; i++)
+            AddBoardTileAssets(catalog, boardTiles[i]);
+    }
+
+    private static void AddSnapshotAssets(MainMenuSaveAssetCatalog catalog, MapRunSnapshot snapshot, bool includeSpecialDungeonContext = true)
+    {
+        if (catalog == null || snapshot == null)
+            return;
+
+        AddRunStateAssets(catalog, snapshot.runState);
+        if (snapshot.tiles != null)
         {
-            if (tile == null)
-                continue;
+            for (int i = 0; i < snapshot.tiles.Count; i++)
+                AddBoardTileAssets(catalog, snapshot.tiles[i]);
+        }
 
-            catalog.Add(tile.assignedEnemyGroup);
-            catalog.Add(tile.assignedEvent);
+        if (includeSpecialDungeonContext)
+            AddSpecialDungeonContextAssets(catalog, snapshot.specialDungeonContext);
+    }
 
-            if (tile.merchantOffers == null)
-                continue;
+    private static void AddBoardTileAssets(MainMenuSaveAssetCatalog catalog, BoardTileData tile)
+    {
+        if (catalog == null || tile == null)
+            return;
 
+        catalog.Add(tile.assignedEnemyGroup);
+        catalog.Add(tile.assignedEvent);
+        AddSpecialDungeonAssets(catalog, tile.sourceSpecialDungeon);
+
+        if (tile.specialDungeonTreasureOptions != null)
+        {
+            for (int i = 0; i < tile.specialDungeonTreasureOptions.Count; i++)
+                AddSpecialDungeonTreasureOptionAssets(catalog, tile.specialDungeonTreasureOptions[i]);
+        }
+
+        if (tile.merchantOffers != null)
+        {
             for (int i = 0; i < tile.merchantOffers.Count; i++)
                 AddMerchantOfferAssets(catalog, tile.merchantOffers[i]);
         }
+    }
+
+    private static void AddSpecialDungeonContextAssets(MainMenuSaveAssetCatalog catalog, SpecialDungeonRuntimeContext context)
+    {
+        if (catalog == null || context == null)
+            return;
+
+        AddSpecialDungeonAssets(catalog, context.activeDungeon);
+        AddSnapshotAssets(catalog, context.mainMapSnapshot, includeSpecialDungeonContext: false);
     }
 
     private static void AddRunPartyAssets(MainMenuSaveAssetCatalog catalog, IReadOnlyList<RunPartyMemberState> partyMembers)
@@ -396,21 +457,46 @@ public static class RunSaveAssetCatalogBuilder
 
     private static void AddEventAssets(MainMenuSaveAssetCatalog catalog, MapEvent_SO eventData)
     {
+        AddEventAssets(catalog, eventData, 0, new HashSet<MapEvent_SO>());
+    }
+
+    private static void AddEventAssets(
+        MainMenuSaveAssetCatalog catalog,
+        MapEvent_SO eventData,
+        int depth,
+        HashSet<MapEvent_SO> visitedEvents)
+    {
         if (catalog == null || eventData == null)
+            return;
+        if (depth > MaxNestedEventAssetDepth)
+            return;
+        if (visitedEvents == null)
+            visitedEvents = new HashSet<MapEvent_SO>();
+        if (!visitedEvents.Add(eventData))
             return;
 
         catalog.Add(eventData);
         IReadOnlyList<MapEventOptionData> options = eventData.GetValidOptions();
         for (int i = 0; i < options.Count; i++)
-            AddEventOptionAssets(catalog, options[i]);
+            AddEventOptionAssets(catalog, options[i], depth, visitedEvents);
     }
 
     private static void AddEventOptionAssets(MainMenuSaveAssetCatalog catalog, MapEventOptionData optionData)
+    {
+        AddEventOptionAssets(catalog, optionData, 0, new HashSet<MapEvent_SO>());
+    }
+
+    private static void AddEventOptionAssets(
+        MainMenuSaveAssetCatalog catalog,
+        MapEventOptionData optionData,
+        int depth,
+        HashSet<MapEvent_SO> visitedEvents)
     {
         if (catalog == null || optionData == null)
             return;
 
         AddEventEffectAssets(catalog, MapEventEffectSequenceBuilder.BuildPrimaryEffect(optionData));
+        AddEventAssets(catalog, optionData.nextEvent, depth + 1, visitedEvents);
 
         if (optionData.additionalBuiltInEffects == null)
             return;
@@ -428,6 +514,7 @@ public static class RunSaveAssetCatalogBuilder
         AddEventRelicRewardAssets(catalog, effectData.relicTable);
         AddEventBlueprintRewardAssets(catalog, effectData.blueprintTable);
         AddEnemyGroupList(catalog, effectData.encounterEnemyGroups);
+        AddSpecialDungeonAssets(catalog, effectData.specialDungeon);
 
         if (effectData.encounterEnemies == null)
             return;
@@ -467,6 +554,60 @@ public static class RunSaveAssetCatalogBuilder
         IReadOnlyList<CraftingBlueprint_SO> blueprints = blueprintTable.GetValidBlueprints();
         for (int i = 0; i < blueprints.Count; i++)
             AddBlueprintAssets(catalog, blueprints[i]);
+    }
+
+    private static void AddSpecialDungeonAssets(MainMenuSaveAssetCatalog catalog, SpecialDungeon_SO dungeon)
+    {
+        if (catalog == null || dungeon == null)
+            return;
+
+        catalog.Add(dungeon);
+        IReadOnlyList<SpecialDungeonTileEntry> entries = dungeon.GetValidEntries();
+        for (int i = 0; i < entries.Count; i++)
+            AddSpecialDungeonEntryAssets(catalog, entries[i]);
+    }
+
+    private static void AddSpecialDungeonEntryAssets(MainMenuSaveAssetCatalog catalog, SpecialDungeonTileEntry entry)
+    {
+        if (catalog == null || entry == null)
+            return;
+
+        AddEnemyGroupAssets(catalog, entry.enemyGroup);
+        AddEventAssets(catalog, entry.eventData);
+
+        if (entry.merchantOffers != null)
+        {
+            for (int i = 0; i < entry.merchantOffers.Count; i++)
+                AddSpecialDungeonMerchantOfferAssets(catalog, entry.merchantOffers[i]);
+        }
+
+        if (entry.treasureOptions != null)
+        {
+            for (int i = 0; i < entry.treasureOptions.Count; i++)
+                AddSpecialDungeonTreasureOptionAssets(catalog, entry.treasureOptions[i]);
+        }
+    }
+
+    private static void AddSpecialDungeonMerchantOfferAssets(MainMenuSaveAssetCatalog catalog, SpecialDungeonMerchantOfferEntry offer)
+    {
+        if (offer == null)
+            return;
+
+        catalog.Add(offer.lootItem);
+        AddWeaponAssets(catalog, offer.weaponData);
+        AddBlueprintAssets(catalog, offer.blueprintData);
+        catalog.Add(offer.relicData);
+    }
+
+    private static void AddSpecialDungeonTreasureOptionAssets(MainMenuSaveAssetCatalog catalog, SpecialDungeonTreasureOptionEntry option)
+    {
+        if (option == null)
+            return;
+
+        AddBlueprintAssets(catalog, option.blueprintData);
+        catalog.Add(option.relicData);
+        catalog.Add(option.relicTable);
+        AddEventRelicRewardAssets(catalog, option.relicTable);
     }
 
     private static void AddMerchantCatalogAssets(MainMenuSaveAssetCatalog catalog, MerchantCatalog_SO merchantCatalogData)

@@ -1,0 +1,97 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: Blur
+  m_EditorClassIdentifier: 
+  skillName: "\u6A21\u7CCA"
+  description: "\u5B83\u4E0D\u518D\u4FDD\u6301\u8FB9\u754C\uFF0C\u4E8E\u662F\u8EAB\u4FA7\u7684\u6697\u5F71\u90FD\u88AB\u62AC\u9AD8\u4E86\u4E00\u5BF8\u3002"
+  skillCategory: 1
+  energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 1
+  maxPower: 1
+  diceCount: 1
+  dicePowerRanges:
+  - minPower: 1
+    maxPower: 1
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 0}
+    hitEffectPrefab: {fileID: 0}
+    clashOffsetSpace: 0
+    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitOffsetSpace: 0
+    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 0}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects:
+    - effectName: "\u6A21\u7CCA"
+      trigger: 3
+      effectType: 2
+      targetMode: 7
+      useStatusCondition: 0
+      conditionScope: 0
+      conditionStatusData: {fileID: 0}
+      conditionStatusType: 0
+      requiredStatusStacks: 1
+      amount: 0
+      randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      targetStatusData: {fileID: 0}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
+      statusData: {fileID: 11400000, guid: 876070f0ec664a02a8c175b8de80baf1, type: 2}
+      statusType: 0
+      applyTiming: 0
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
+      statusStackAmount: 1
+      fallbackAmount: 0
+    rangeModifiers: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 01000000

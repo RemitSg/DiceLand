@@ -20,7 +20,8 @@ public enum MapEventOptionBuiltInEffectType
     GainRandomMoney = 13,
     GainExperience = 14,
     LoseOwnedRandomLoot = 15,
-    LoseSpecificLoot = 16
+    LoseSpecificLoot = 16,
+    StartSpecialDungeon = 17
 }
 
 public enum MapEventEncounterSelectionMode
@@ -76,6 +77,7 @@ public class MapEventBuiltInEffectData
     public List<EnemyData_SO> encounterEnemies = new List<EnemyData_SO>();
     [Min(1)] public int encounterEnemyCountMin = 1;
     [Min(1)] public int encounterEnemyCountMax = 1;
+    public SpecialDungeon_SO specialDungeon;
 }
 
 [Serializable]
@@ -110,7 +112,10 @@ public class MapEventOptionData
     public List<EnemyData_SO> encounterEnemies = new List<EnemyData_SO>();
     [Min(1)] public int encounterEnemyCountMin = 1;
     [Min(1)] public int encounterEnemyCountMax = 1;
+    public SpecialDungeon_SO specialDungeon;
     public List<MapEventBuiltInEffectData> additionalBuiltInEffects = new List<MapEventBuiltInEffectData>();
+    [Header("Follow-up Event")]
+    public MapEvent_SO nextEvent;
     public bool resolveEvent = true;
     public MapEventOptionHandler_SO customHandler;
 

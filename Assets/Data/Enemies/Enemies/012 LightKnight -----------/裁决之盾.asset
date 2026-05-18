@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "\u88C1\u51B3\u4E4B\u76FE"
   m_EditorClassIdentifier: 
   skillName: "\u88C1\u51B3\u4E4B\u76FE"
-  description: 
+  description: "\u9A91\u58EB\u4E3E\u8D77\u76FE\u9762\uFF0C\u5149\u8F89\u4ECE\u88AB\u5BA1\u5224\u8005\u8EAB\u4E0A\u6298\u8FD4\u56DE\u6765\u3002"
   skillCategory: 1
   energyCost: 0
   requiredSelfStatusData: {fileID: 0}
@@ -25,12 +25,12 @@ MonoBehaviour:
   targetPriorityStatusData: {fileID: 0}
   targetPriorityStatusType: 0
   targetPriorityRequiredStacks: 1
-  minPower: 1
-  maxPower: 3
+  minPower: 3
+  maxPower: 4
   diceCount: 1
   dicePowerRanges:
-  - minPower: 0
-    maxPower: 0
+  - minPower: 3
+    maxPower: 4
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 205455973927637548, guid: 13937510d6f86ee448bf1b12abf0ee62, type: 3}
     hitEffectPrefab: {fileID: 205455973927637548, guid: 13937510d6f86ee448bf1b12abf0ee62, type: 3}
@@ -63,7 +63,33 @@ MonoBehaviour:
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []
-    builtInEffects: []
+    builtInEffects:
+    - effectName: "\u88C1\u51B3\u56DE\u5149"
+      trigger: 3
+      effectType: 2
+      targetMode: 3
+      useStatusCondition: 0
+      conditionScope: 0
+      conditionStatusData: {fileID: 0}
+      conditionStatusType: 0
+      requiredStatusStacks: 1
+      amount: 0
+      randomTargetCount: 1
+      useCondition: 1
+      condition: 16
+      targetStatusData: {fileID: 0}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
+      statusData: {fileID: 11400000, guid: d9960fbafac14cf6b9c6bd093fd9293f, type: 2}
+      statusType: 0
+      applyTiming: 0
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
+      statusStackAmount: 3
+      fallbackAmount: 0
     rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []

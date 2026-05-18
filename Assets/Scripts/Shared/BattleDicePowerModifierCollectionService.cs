@@ -64,10 +64,10 @@ public static class BattleDicePowerModifierCollectionService
         EnemySkill_SO targetSkill = null,
         EnemySkill_SO.DiceEffectTrigger additionalTrigger = EnemySkill_SO.DiceEffectTrigger.OnHit)
     {
-        int bonus = GetActionBonus(
+        return GetActionBonus(
             skill,
             diceIndex,
-            EnemySkill_SO.DiceEffectTrigger.OnClashWin,
+            additionalTrigger,
             selfSpeed,
             targetSpeed,
             getSelfStatusStacksByAsset,
@@ -75,23 +75,6 @@ public static class BattleDicePowerModifierCollectionService
             getTargetStatusStacksByAsset,
             getTargetStatusStacksById,
             targetSkill);
-
-        if (additionalTrigger != EnemySkill_SO.DiceEffectTrigger.OnClashWin)
-        {
-            bonus += GetActionBonus(
-                skill,
-                diceIndex,
-                additionalTrigger,
-                selfSpeed,
-                targetSpeed,
-                getSelfStatusStacksByAsset,
-                getSelfStatusStacksById,
-                getTargetStatusStacksByAsset,
-                getTargetStatusStacksById,
-                targetSkill);
-        }
-
-        return bonus;
     }
 
     public static int GetClashWinBonus(

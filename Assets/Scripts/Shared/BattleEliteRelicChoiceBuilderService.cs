@@ -73,7 +73,7 @@ public static class BattleEliteRelicChoiceBuilderService
         if (choiceRelics == null || choiceRelics.Count == 0)
             return false;
 
-        choiceData = BattleSettlementRelicChoiceBuilder.Build(choiceRelics);
+        choiceData = BattleSettlementRelicChoiceBuilder.Build(choiceRelics, relicTable, Mathf.Max(1, choiceCount));
         return choiceData != null && choiceData.HasChoices;
     }
 
@@ -87,6 +87,41 @@ public static class BattleEliteRelicChoiceBuilderService
         int normalizedChoiceCount = Mathf.Max(1, choiceCount);
         List<Relic_SO> selectedBucket = SelectFallbackRelicBucket(rarityBuckets, rng, normalizedChoiceCount);
         if (selectedBucket == null || selectedBucket.Count == 0)
+            return false;
+
+        List<Relic_SO> remaining = new List<Relic_SO>(selectedBucket);
+        List<Relic_SO> choices = new List<Relic_SO>();
+        int count = Mathf.Min(normalizedChoiceCount, remaining.Count);
+        System.Random resolvedRng = rng ?? new System.Random();
+        for (int i = 0; i < count; i++)
+        {
+            int index = resolvedRng.Next(remaining.Count);
+            choices.Add(remaining[index]);
+            remaining.RemoveAt(index);
+        }
+
+        choiceData = BattleSettlementRelicChoiceBuilder.Build(choices);
+        return choiceData != null && choiceData.HasChoices;
+    }
+
+    public static bool TryBuildFromRelicsWithRarity(
+        out BattleSettlementRelicChoiceData choiceData,
+        IReadOnlyList<Relic_SO> relics,
+        LootRarity selectedRarity,
+        System.Random rng,
+        ICollection<Relic_SO> ownedRelics,
+        int choiceCount)
+    {
+        choiceData = null;
+        Dictionary<LootRarity, List<Relic_SO>> rarityBuckets = BuildRarityBuckets(relics, ownedRelics);
+        int normalizedChoiceCount = Mathf.Max(1, choiceCount);
+        if (!BattleEliteRelicChoiceUtility.TryGetBucketForChoice(
+                rarityBuckets,
+                selectedRarity,
+                normalizedChoiceCount,
+                out List<Relic_SO> selectedBucket) ||
+            selectedBucket == null ||
+            selectedBucket.Count == 0)
             return false;
 
         List<Relic_SO> remaining = new List<Relic_SO>(selectedBucket);

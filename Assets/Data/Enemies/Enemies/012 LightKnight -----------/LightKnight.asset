@@ -37,8 +37,14 @@ MonoBehaviour:
     settlementLootTables: []
   preventAllyBleedDecayOnHitWhileAlive: 0
   surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
-  enemyDescription: 
-  passiveDescriptions: []
+  enemyDescription: "\u62AB\u8986\u767D\u91D1\u7532\u80C4\u7684\u9A91\u58EB\u3002\u4ED6\u4F1A\u5148\u7528\u6D41\u8840\u4E0E\u5149\u9501\u538B\u4F4E\u76EE\u6807\u8282\u594F\uFF0C\u518D\u5BF9\u5DF2\u88AB\u8D1F\u9762\u72B6\u6001\u7F20\u8EAB\u7684\u654C\u4EBA\u53D1\u8D77\u8000\u5149\u7A81\u8FDB\u3002"
+  passiveDescriptions:
+  - passiveName: "\u5BA1\u5224\u9501\u5B9A"
+    displayColorType: 2
+    description: "\u8000\u5149\u7A81\u8FDB\u4F1A\u4F18\u5148\u6307\u5B9A\u62E5\u6709\u4E24\u79CD\u53CA\u4EE5\u4E0A\u8D1F\u9762\u72B6\u6001\u7684\u76EE\u6807\u3002"
+  - passiveName: "\u88C1\u51B3\u56DE\u5149"
+    displayColorType: 1
+    description: "\u82E5\u4EFB\u610F\u76EE\u6807\u62E5\u6709\u4E24\u79CD\u53CA\u4EE5\u4E0A\u8D1F\u9762\u72B6\u6001\uFF0C\u88C1\u51B3\u4E4B\u76FE\u4F1A\u4E3A\u81EA\u8EAB\u83B7\u5F97\u62A4\u76FE\u3002"
   enemyVisualScale: 2
   enemyVisualOffset: {x: 0, y: 0, z: 0}
   speedButtonOffset: {x: 0, y: -1}

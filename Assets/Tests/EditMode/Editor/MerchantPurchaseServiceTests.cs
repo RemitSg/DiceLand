@@ -116,4 +116,70 @@ public class MerchantPurchaseServiceTests
         Assert.IsTrue(result.success);
         Assert.AreEqual(1, tile.merchantPurchaseDiscountStacks);
     }
+
+    [Test]
+    public void TryPurchaseOffer_WithCreditSlipAllowsPurchaseDebtWhenMoneyIsPositiveButInsufficient()
+    {
+        weapon = ScriptableObject.CreateInstance<Weapon_SO>();
+        relic = ScriptableObject.CreateInstance<Relic_SO>();
+        relic.relicName = "Credit Slip";
+        relic.builtInEffects.Add(new Relic_SO.RelicBuiltInEffectEntry
+        {
+            trigger = Relic_SO.RelicTrigger.OnMerchantPurchaseAffordabilityChecked,
+            effectType = Relic_SO.RelicBuiltInEffectType.AllowMerchantPurchaseWithPositiveMoney
+        });
+
+        RunState runState = new RunState { money = 2 };
+        runState.AddRelic(relic, 1);
+        BoardTileData tile = new BoardTileData { tileType = MapTileType.Merchant };
+        MerchantOfferState offer = new MerchantOfferState
+        {
+            itemType = MerchantItemType.Weapon,
+            weaponData = weapon,
+            price = 5
+        };
+
+        MerchantPurchaseResult result = MerchantPurchaseService.TryPurchaseOffer(runState, tile, offer);
+
+        Assert.IsTrue(result.success);
+        Assert.AreEqual(-3, runState.money);
+        Assert.AreEqual(1, runState.GetWeaponAmount(weapon));
+        Assert.IsTrue(offer.isSoldOut);
+
+        runState.AddMoney(2);
+        Assert.AreEqual(-1, runState.money);
+        runState.AddMoney(5);
+        Assert.AreEqual(4, runState.money);
+    }
+
+    [Test]
+    public void TryPurchaseOffer_WithCreditSlipDoesNotAllowPurchaseWhenMoneyIsNegativeEvenIfPriceIsZero()
+    {
+        weapon = ScriptableObject.CreateInstance<Weapon_SO>();
+        relic = ScriptableObject.CreateInstance<Relic_SO>();
+        relic.relicName = "Credit Slip";
+        relic.builtInEffects.Add(new Relic_SO.RelicBuiltInEffectEntry
+        {
+            trigger = Relic_SO.RelicTrigger.OnMerchantPurchaseAffordabilityChecked,
+            effectType = Relic_SO.RelicBuiltInEffectType.AllowMerchantPurchaseWithPositiveMoney
+        });
+
+        RunState runState = new RunState { money = -1 };
+        runState.AddRelic(relic, 1);
+        BoardTileData tile = new BoardTileData { tileType = MapTileType.Merchant };
+        MerchantOfferState offer = new MerchantOfferState
+        {
+            itemType = MerchantItemType.Weapon,
+            weaponData = weapon,
+            price = 0
+        };
+
+        MerchantPurchaseResult result = MerchantPurchaseService.TryPurchaseOffer(runState, tile, offer);
+
+        Assert.IsFalse(result.success);
+        Assert.AreEqual(MerchantPurchaseFailureReason.InsufficientMoney, result.failureReason);
+        Assert.AreEqual(-1, runState.money);
+        Assert.AreEqual(0, runState.GetWeaponAmount(weapon));
+        Assert.IsFalse(offer.isSoldOut);
+    }
 }

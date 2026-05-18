@@ -250,6 +250,17 @@ public class MapCraftingOverlay : MonoBehaviour
             return "未配置材料需求。";
 
         StringBuilder builder = new StringBuilder();
+        int forgeCost = CalamitySystem.ApplyForgeCostModifiers(0, currentRunState != null ? currentRunState.activeCalamities : null);
+        if (forgeCost > 0)
+        {
+            Color moneyColor = currentRunState != null && currentRunState.money >= forgeCost ? enoughMaterialColor : lackingMaterialColor;
+            builder.Append("锻造费用：<color=#");
+            builder.Append(ColorUtility.ToHtmlStringRGB(moneyColor));
+            builder.Append(">");
+            builder.Append(forgeCost);
+            builder.AppendLine(" 金币</color>");
+        }
+
         builder.AppendLine("所需材料：");
 
         for (int i = 0; i < blueprint.materialRequirements.Count; i++)
@@ -277,6 +288,10 @@ public class MapCraftingOverlay : MonoBehaviour
     private bool CanCraft(CraftingBlueprint_SO blueprint)
     {
         if (blueprint == null || currentRunState == null || blueprint.targetWeapon == null || blueprint.materialRequirements == null)
+            return false;
+
+        int forgeCost = CalamitySystem.ApplyForgeCostModifiers(0, currentRunState.activeCalamities);
+        if (currentRunState.money < forgeCost)
             return false;
 
         for (int i = 0; i < blueprint.materialRequirements.Count; i++)

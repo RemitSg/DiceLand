@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,6 +20,7 @@ public sealed class MapEventBuiltInEffectExecutionResult
     public bool success;
     public string message;
     public BattleEncounterData pendingEncounterData;
+    public SpecialDungeon_SO pendingSpecialDungeon;
 }
 
 public static class MapEventBuiltInEffectExecutorService
@@ -130,6 +131,8 @@ public static class MapEventBuiltInEffectExecutorService
                 return MapEventLootCostService.TryExecuteSpecificLootDiscard(request.runState, effectData, out message);
             case MapEventOptionBuiltInEffectType.StartEncounter:
                 return ExecuteStartEncounter(request, effectData, result, out message);
+            case MapEventOptionBuiltInEffectType.StartSpecialDungeon:
+                return ExecuteStartSpecialDungeon(effectData, result, out message);
             default:
                 message = "未知事件效果。";
                 return false;
@@ -242,9 +245,11 @@ public static class MapEventBuiltInEffectExecutorService
             return false;
         }
 
-        int restoredPoints = Mathf.Clamp(actionPointSystem.CurrentPoints + gainAmount, 0, actionPointSystem.CurrentMaxPoints);
+        int pointsBeforeRestore = actionPointSystem.CurrentPoints;
+        int restoredPoints = Mathf.Clamp(pointsBeforeRestore + gainAmount, 0, actionPointSystem.CurrentMaxPoints);
+        int actualRestoredAmount = Mathf.Max(0, restoredPoints - pointsBeforeRestore);
         actionPointSystem.RestoreState(actionPointSystem.BasePoints, actionPointSystem.BonusPoints, restoredPoints);
-        message = $"恢复 {gainAmount} 点行动点。";
+        message = $"\u6062\u590d {actualRestoredAmount} \u70b9\u884c\u52a8\u70b9\u3002";
         return true;
     }
 
@@ -294,6 +299,22 @@ public static class MapEventBuiltInEffectExecutorService
             result.pendingEncounterData = encounterData;
 
         return prepared;
+    }
+
+    private static bool ExecuteStartSpecialDungeon(
+        MapEventBuiltInEffectData effectData,
+        MapEventBuiltInEffectExecutionResult result,
+        out string message)
+    {
+        if (effectData == null || effectData.specialDungeon == null)
+        {
+            message = "特殊副本未配置。";
+            return false;
+        }
+
+        result.pendingSpecialDungeon = effectData.specialDungeon;
+        message = $"进入特殊副本：{effectData.specialDungeon.DisplayName}";
+        return true;
     }
 
     private static int FindFirstEncounterEffectIndex(List<MapEventBuiltInEffectData> allEffects)

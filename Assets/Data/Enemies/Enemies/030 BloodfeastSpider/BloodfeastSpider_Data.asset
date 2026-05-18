@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: BloodfeastSpider_Data
+  m_EditorClassIdentifier: 
+  enemyID: 30
+  enemyName: "\u8840\u566C\u86DB"
+  baseHP: 19
+  damageReductionPercent: 0
+  minSpeed: 4
+  maxSpeed: 7
+  baseSpeedButtonCount: 2
+  enemySprite: {fileID: 21300000, guid: 2ecb4eadb122b6042bf77193f7164e8d, type: 3}
+  stageSprites: []
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.2
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules: []
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains: []
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  transformToEnemyDataWhenStatusMissing: {fileID: 0}
+  transformMissingStatusData: {fileID: 0}
+  enemyDescription: "\u5B83\u4EE5\u9C9C\u8840\u4E3A\u98DF\uFF0C\u4E0D\u5206\u654C\u53CB\u3002"
+  passiveDescriptions:
+  - passiveName: "\u9965\u997F"
+    displayColorType: 0
+    description: "\u6BCF 5 \u56DE\u5408\u4F18\u5148\u4F7F\u7528\u300C\u566C\u4EB2\u300D\uFF1B\u82E5\u541E\u566C\u5C0F\u8840\u86DB\uFF0C\u6309\u5176\u5269\u4F59\u751F\u547D\u6062\u590D\u81EA\u8EAB\u5E76\u83B7\u5F97\u4E34\u65F6\u5F3A\u58EE\uFF0C\u5E76\u4F7F\u6240\u6709\u76EE\u6807\u83B7\u5F97
+      1 \u5C42\u6D41\u8840"
+  - passiveName: "\u8840\u5B55"
+    displayColorType: 1
+    description: "\u82E5\u6218\u573A\u4E0A\u6CA1\u6709\u5176\u4ED6\u53CB\u65B9\u5355\u4F4D\uFF0C\u4F18\u5148\u4F7F\u7528\u300C\u86DB\u5B55\u300D\uFF0C\u4E0B\u4E2A\u56DE\u5408\u5F00\u59CB\u65F6\u53EC\u5524
+      2 \u4E2A\u300C\u8840\u86DB\u5375\u300D\uFF0C\u82E5\u300C\u86DB\u5B55\u300D\u62FC\u70B9\u5931\u8D25\uFF0C\u5219\u53EC\u5524\u7684\u300C\u8840\u86DB\u5375\u300D\u5931\u53BB
+      50% \u7684\u8840\u91CF"
+  enemyVisualScale: 1.8
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: 7dcf1f91b68749a885dbfa7ad94cec66, type: 2}
+  conditionalSkillRules:
+  - ruleName: "\u8840\u5B55"
+    skill: {fileID: 11400000, guid: c44f939603b74e33960d17fee4f78ab2, type: 2}
+    conditionType: 2
+    healthThresholdNormalized: 0
+    firstTriggerRound: 1
+    repeatEveryNRounds: 1
+    priority: 200
+    maxSlotsPerRound: 1
+    useOncePerBattle: 0
+    requiredAliveEnemyCount: 1
+  - ruleName: "\u9965\u997F"
+    skill: {fileID: 11400000, guid: f541d6246b244c7cb59e2121f782d1e5, type: 2}
+    conditionType: 1
+    healthThresholdNormalized: 0
+    firstTriggerRound: 5
+    repeatEveryNRounds: 5
+    priority: 120
+    maxSlotsPerRound: 1
+    useOncePerBattle: 0
+    requiredAliveEnemyCount: 1

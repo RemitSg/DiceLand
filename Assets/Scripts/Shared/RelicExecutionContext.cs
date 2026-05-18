@@ -33,6 +33,8 @@ public sealed partial class RelicExecutionContext
     public int merchantBasePrice;
     public int merchantDiscountPercent;
     public float merchantPriceMultiplier = 1f;
+    public int merchantStockTargetCount;
+    public bool allowMerchantPurchaseWithPositiveMoney;
 
     // Dice and power context.
     public int diceIndex;
@@ -74,6 +76,14 @@ public sealed partial class RelicExecutionContext
     public LootItem_SO grantedBattleLoot;
     public IReadOnlyList<LootItem_SO> battleLootPool;
     public List<LootItem_SO> bonusBattleLootRewards;
+    public bool guaranteeBattleLootDrop;
+
+    // Relic acquisition and reward-choice context.
+    public Relic_SO acquiredRelicData;
+    public int acquiredRelicAmount;
+    public RelicTable_SO relicRewardTable;
+    public int additionalRelicChoiceRefreshCount;
+    public int actionPointsSpent;
 
     // Rest and battle setup output context.
     public int baseRestReforgeCount;

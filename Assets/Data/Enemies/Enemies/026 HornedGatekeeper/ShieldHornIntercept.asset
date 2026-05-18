@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: ShieldHornIntercept
   m_EditorClassIdentifier: 
   skillName: "\u76FE\u89D2\u6A2A\u62E6"
-  description: "\u9632\u5FA1\u9AA0\u62FC\u70B9\u80DC\u5229\u540E\u4F7F\u76EE\u6807\u83B7\u5F97
-    1 \u5C42\u7F13\u6162"
+  description: "\u91CD\u76FE\u6321\u4F4F\u4E86\u4F60\u7684\u9000\u8DEF"
   skillCategory: 1
   energyCost: 0
   requiredSelfStatusData: {fileID: 0}

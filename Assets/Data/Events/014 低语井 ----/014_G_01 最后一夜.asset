@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "014_G_01 最后一夜"
+  m_EditorClassIdentifier: 
+  eventId: 014_G_01
+  eventName: "最后一夜"
+  eventContent: "林栀站在井边，没有再布置收声阵。\n\n她问你们：“如果我再听一次，可能会忘记更多关于我母亲的事。可如果父亲也留下了话，我是不是应该听？”\n\n沈霜没有替她决定。"
+  eventIllustration: {fileID: 0}
+  options:
+  - optionId: 1
+    optionLabel: "陪她留在井边"
+    requiredMoney: 0
+    consequenceDescription: "继续剧情"
+    resultContent: "井底传来的不是许茵的声音。\n\n是林槐。\n\n“栀栀，爸爸没有把你养得很好，但我真的很努力地，替你疼过了。”"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
+    lootRewards: []
+    lootPickCountMin: 1
+    lootPickCountMax: 1
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 1
+    blueprintPickCountMax: 1
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 11400000, guid: aa88c26510aa4ea8ac4dbf790929d768, type: 2}
+    resolveEvent: 1
+    customHandler: {fileID: 0}

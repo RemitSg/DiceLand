@@ -13,12 +13,10 @@ public static class BattleSuccessfulHitSkillEffectPlanService
             ? new[]
             {
                 EnemySkill_SO.DiceEffectTrigger.OnSingleAttack,
-                EnemySkill_SO.DiceEffectTrigger.OnClashWin,
                 EnemySkill_SO.DiceEffectTrigger.OnHit
             }
             : new[]
             {
-                EnemySkill_SO.DiceEffectTrigger.OnClashWin,
                 EnemySkill_SO.DiceEffectTrigger.OnHit
             };
 

@@ -4,10 +4,19 @@ public static class BattleDeathRelicContextFactory
         BattleAllyController defeatedAlly,
         BattleAllyController[] allies)
     {
+        return CreatePlayerDeath(defeatedAlly, allies, null);
+    }
+
+    public static RelicExecutionContext CreatePlayerDeath(
+        BattleAllyController defeatedAlly,
+        BattleAllyController[] allies,
+        BattleEnemyController[] enemies)
+    {
         return RelicExecutionContext.CreatePlayerDeath(
             null,
             defeatedAlly,
-            allies);
+            allies,
+            enemies);
     }
 
     public static RelicExecutionContext CreateEnemyDeath(

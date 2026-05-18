@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SkinRivenLiturgy
   m_EditorClassIdentifier: 
   skillName: "\u88C2\u80A4\u793C\u62DC"
-  description: "\u7B2C 1 \u9AA0\u4F7F\u7528\u65F6\u81EA\u4F24 1 \u5E76\u5728\u547D\u4E2D\u540E\u4F7F\u76EE\u6807\u83B7\u5F97 1 \u5C42\u6D41\u8840\uFF1B\u7B2C 2 \u9AA0\u5355\u65B9\u9762\u653B\u51FB\u65F6\u989D\u5916\u9020\u6210 2 \u70B9\u4F24\u5BB3\uFF0C\u547D\u4E2D\u540E\u4F7F\u76EE\u6807\u83B7\u5F97 1 \u5C42\u6D41\u8840\u5E76\u81EA\u4F24 1"
+  description: "\u65E0\u6240\u8C13\u9F9F\u88C2\u7684\u76AE\u80A4\uFF0C\u65E0\u6240\u8C13\u6D8C\u51FA\u7684\u9C9C\u8840\uFF0C\u5728\u8FD9\u4E00\u523B\uFF0C\u5B83\u53EA\u6709\u4FE1\u4EF0\u3002"
   skillCategory: 0
   energyCost: 0
   requiredSelfStatusData: {fileID: 0}
@@ -33,7 +33,32 @@ MonoBehaviour:
     maxPower: 3
   - minPower: 1
     maxPower: 3
-  dicePresentationSettings: []
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 0}
+    hitEffectPrefab: {fileID: 0}
+    clashOffsetSpace: 0
+    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitOffsetSpace: 0
+    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 21300000, guid: 9b4d302ba73fb1646acfbb8e911fb612, type: 3}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
   diceEffectSettings:
   - damageEffects:
     - effectName: "\u81EA\u526A"
@@ -52,9 +77,19 @@ MonoBehaviour:
       applyRepeatCount: 1
       stackAmount: 1
       randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
     summonEffects: []
@@ -80,9 +115,20 @@ MonoBehaviour:
       applyRepeatCount: 1
       stackAmount: 1
       randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
     summonEffects: []
+  diceSkillCategories: 

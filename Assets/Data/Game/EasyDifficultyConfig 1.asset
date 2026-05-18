@@ -38,6 +38,8 @@ MonoBehaviour:
     weight: 6
   - tileType: 4
     weight: 1
+  - tileType: 9
+    weight: 1
   - tileType: 5
     weight: 1
   - tileType: 6
@@ -51,6 +53,8 @@ MonoBehaviour:
     minimumCount: 5
   - tileType: 4
     minimumCount: 2
+  - tileType: 9
+    minimumCount: 1
   - tileType: 5
     minimumCount: 2
   - tileType: 6

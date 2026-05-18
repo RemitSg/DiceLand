@@ -91,6 +91,34 @@ public static partial class RelicSystem
         return;
     }
 
+    private static void HandleSetMerchantInitialStockCount(
+        Relic_SO relicData,
+        RunRelicState relicState,
+        RelicExecutionContext context,
+        Relic_SO.RelicBuiltInEffectEntry effect)
+    {
+        if (context.trigger != Relic_SO.RelicTrigger.OnMerchantStockCountCalculated)
+            return;
+
+        int targetCount = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+        if (targetCount > context.merchantStockTargetCount)
+            context.merchantStockTargetCount = targetCount;
+    }
+
+    private static void HandleAllowMerchantPurchaseWithPositiveMoney(
+        Relic_SO relicData,
+        RunRelicState relicState,
+        RelicExecutionContext context,
+        Relic_SO.RelicBuiltInEffectEntry effect)
+    {
+        if (context.trigger != Relic_SO.RelicTrigger.OnMerchantPurchaseAffordabilityChecked)
+            return;
+        if (context.runState == null || context.runState.money <= 0)
+            return;
+
+        context.allowMerchantPurchaseWithPositiveMoney = true;
+    }
+
     private static void HandleHealPartyPercentOnEnteringUnvisitedMerchantTile(
         Relic_SO relicData,
         RunRelicState relicState,
@@ -155,5 +183,19 @@ public static partial class RelicSystem
 
         AddRelicFeedback(context, relicData, $"收集钥匙时恢复 {actualRestore} 点行动点。");
         return;
+    }
+
+    private static void HandleGrantMoneyOnActionPointsSpent(
+        Relic_SO relicData,
+        RunRelicState relicState,
+        RelicExecutionContext context,
+        Relic_SO.RelicBuiltInEffectEntry effect)
+    {
+        if (context.trigger != Relic_SO.RelicTrigger.OnActionPointsSpent || context.runState == null)
+            return;
+
+        int money = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
+        if (money > 0 && context.actionPointsSpent > 0)
+            context.runState.AddMoney(money);
     }
 }

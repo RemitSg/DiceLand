@@ -605,17 +605,18 @@ MonoBehaviour:
   calamityPool: {fileID: 11400000, guid: c835f8b380017b54ab8c3f99190882f0, type: 2}
   moneyRewardTable: {fileID: 11400000, guid: 4b72f55d3933abd4594a3f21f07ef446, type: 2}
   merchantCatalog: {fileID: 11400000, guid: bf1d0124c102c504baf7a222df99def6, type: 2}
+  treasureRewardTable: {fileID: 11400000, guid: 2c6a88a1f5a447e58833c755f5e4073b, type: 2}
   eliteRelicChoiceTable: {fileID: 0}
   levelTable: {fileID: 11400000, guid: 1c8dd34d2260a1b4a90e6e6e6e759828, type: 2}
   startingMoney: 100
   startingPartyMembers:
   - memberId: 0
-    characterData: {fileID: 11400000, guid: 27e817266af382946804dea6afd2e374, type: 2}
-    equippedWeapon: {fileID: 11400000, guid: 9b8c5d177c240334a9734636830a139f, type: 2}
+    characterData: {fileID: 11400000, guid: 658e22cc7dec223479091c6817751025, type: 2}
+    equippedWeapon: {fileID: 11400000, guid: 6c1aed0bff9b3a74ba193a8ff2895f74, type: 2}
     startingLevel: 1
     startingExperience: 0
-    startingMaxHP: 24
-    startingCurrentHP: 24
+    startingMaxHP: 20
+    startingCurrentHP: 20
   tutorialStartingPartyMembers: []
   startingLoot: []
   startingWeapons: []
@@ -632,6 +633,16 @@ MonoBehaviour:
   mapKeywordFont: {fileID: 11400000, guid: c6e7143cd2df45b45a784ef8c61a210f, type: 2}
   mapBodyFont: {fileID: 11400000, guid: c6e7143cd2df45b45a784ef8c61a210f, type: 2}
   mapAttributeFont: {fileID: 11400000, guid: 1927579a4b7620b428469b73f8d5046f, type: 2}
+  treasurePanelBackground: {fileID: 21300000, guid: a48c950c5e816bd4098938baef405829, type: 3}
+  treasureOptionBackground: {fileID: 21300000, guid: 10b430e4da80d6f4ebb431aa0457e63b, type: 3}
+  treasureDisabledOptionBackground: {fileID: 0}
+  treasureMoneyIcon: {fileID: 21300000, guid: 5e1df74f0fcc9424c861d8801e30c748, type: 3}
+  treasureRelicBagIcon: {fileID: 0}
+  treasureRelicBagCommonIcon: {fileID: 21300000, guid: bfd6e78c09b2002418a67e6e9ecb4c09, type: 3}
+  treasureRelicBagUncommonIcon: {fileID: 21300000, guid: 69c4766c82754e34a8a8c1445a17f890, type: 3}
+  treasureRelicBagRareIcon: {fileID: 21300000, guid: f7e0e3a166d034e428f210e33a5beebf, type: 3}
+  treasureRelicBagEpicIcon: {fileID: 21300000, guid: 82c75e63d4f1358408eb655ebbad9c6f, type: 3}
+  treasureRelicBagLegendaryIcon: {fileID: 21300000, guid: 2a8fa1f9d6907354fbd4ba413e2a1484, type: 3}
   boardManager: {fileID: 0}
   playerMapController: {fileID: 0}
   actionPointSystem: {fileID: 0}
@@ -639,6 +650,7 @@ MonoBehaviour:
   mapHUD: {fileID: 0}
   mapCraftingOverlay: {fileID: 0}
   mapMerchantOverlay: {fileID: 0}
+  mapTreasureOverlay: {fileID: 0}
   mapEventOverlay: {fileID: 0}
   mapCalamityOverlay: {fileID: 0}
   mapViewController: {fileID: 0}
@@ -718,6 +730,7 @@ MonoBehaviour:
   eliteTileIcon: {fileID: 21300000, guid: 8419e665c5fab354584395cd9a757386, type: 3}
   eventTileIcon: {fileID: 21300000, guid: 1594a003624a359409679f6adacc6bc5, type: 3}
   merchantTileIcon: {fileID: 21300000, guid: af5c5352d672cf94698671c9d844e446, type: 3}
+  treasureTileIcon: {fileID: 21300000, guid: a8b8322c43ddf4d79847fad599a6267e, type: 3}
   forgeTileIcon: {fileID: 21300000, guid: cd11d698943376446a61c9944a5a76d4, type: 3}
   restTileIcon: {fileID: 21300000, guid: 40edd7b01ab48c649af958b72b076c6e, type: 3}
   keyTileIcon: {fileID: 21300000, guid: 76e4ff88e69040444a8400a2da659fa9, type: 3}

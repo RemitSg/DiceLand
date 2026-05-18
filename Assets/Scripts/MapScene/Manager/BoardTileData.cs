@@ -12,7 +12,9 @@ public enum MapTileType
     Forge = 5,
     Rest = 6,
     Key = 7,
-    Boss = 8
+    Boss = 8,
+    Treasure = 9,
+    SpecialDungeonExit = 10
 }
 
 public enum MapDangerBand
@@ -42,6 +44,9 @@ public class BoardTileData
     public int merchantRefreshCount;
     public int merchantPurchaseDiscountStacks;
     public List<MerchantOfferState> merchantOffers = new List<MerchantOfferState>();
+    public SpecialDungeon_SO sourceSpecialDungeon;
+    public int specialDungeonEntryIndex = -1;
+    public List<SpecialDungeonTreasureOptionEntry> specialDungeonTreasureOptions = new List<SpecialDungeonTreasureOptionEntry>();
 
     public bool IsHostileTile =>
         tileType == MapTileType.Battle ||
@@ -67,7 +72,10 @@ public class BoardTileData
             merchantStockGenerated = merchantStockGenerated,
             merchantRefreshCount = merchantRefreshCount,
             merchantPurchaseDiscountStacks = merchantPurchaseDiscountStacks,
-            merchantOffers = CloneMerchantOffers()
+            merchantOffers = CloneMerchantOffers(),
+            sourceSpecialDungeon = sourceSpecialDungeon,
+            specialDungeonEntryIndex = specialDungeonEntryIndex,
+            specialDungeonTreasureOptions = CloneSpecialDungeonTreasureOptions()
         };
     }
 
@@ -82,6 +90,22 @@ public class BoardTileData
             MerchantOfferState offer = merchantOffers[i];
             if (offer != null)
                 clone.Add(offer.Clone());
+        }
+
+        return clone;
+    }
+
+    private List<SpecialDungeonTreasureOptionEntry> CloneSpecialDungeonTreasureOptions()
+    {
+        List<SpecialDungeonTreasureOptionEntry> clone = new List<SpecialDungeonTreasureOptionEntry>();
+        if (specialDungeonTreasureOptions == null)
+            return clone;
+
+        for (int i = 0; i < specialDungeonTreasureOptions.Count; i++)
+        {
+            SpecialDungeonTreasureOptionEntry option = specialDungeonTreasureOptions[i];
+            if (option != null)
+                clone.Add(option);
         }
 
         return clone;

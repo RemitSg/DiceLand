@@ -17,3 +17,26 @@ MonoBehaviour:
     calamities:
     - {fileID: 11400000, guid: 21cff1a61a218f54d9a9873846a7f5ce, type: 2}
     - {fileID: 11400000, guid: be9448bcaa0b90646b97b081c9df75e2, type: 2}
+    - {fileID: 11400000, guid: 8d5603aacfb9440891068fcab5132e53, type: 2}
+    - {fileID: 11400000, guid: c165029edd6d46c3b3b3a6a559153d2b, type: 2}
+  - calamityTier: 2
+    calamities:
+    - {fileID: 11400000, guid: e1d5495efd81476d9ada3ed11928f989, type: 2}
+    - {fileID: 11400000, guid: 7f6f6f7f406b4959a7f15445a1f5a469, type: 2}
+    - {fileID: 11400000, guid: 842d4ae135b740afbf11cdbc7fa7123f, type: 2}
+    - {fileID: 11400000, guid: 770a06e1efab4bb08a848a55d0ef3232, type: 2}
+    - {fileID: 11400000, guid: ddd6a61968ee40e3a5598411502a9997, type: 2}
+    - {fileID: 11400000, guid: a12aac273b9c4173a612dfb52c84f305, type: 2}
+    - {fileID: 11400000, guid: 27eb0571eb4b461ba46a52577434dc4e, type: 2}
+    - {fileID: 11400000, guid: 957364af7fc84dcea40e3554d29648ef, type: 2}
+  - calamityTier: 3
+    calamities:
+    - {fileID: 11400000, guid: 059dbdbaba0d407291fd625128b42994, type: 2}
+    - {fileID: 11400000, guid: b8b2bbc987084e5ab718c7419477f5c5, type: 2}
+    - {fileID: 11400000, guid: a85321dc0f4f48e1bfdd3b41e4951fb2, type: 2}
+    - {fileID: 11400000, guid: 840bd4d90dd34135a6aacecee16488aa, type: 2}
+    - {fileID: 11400000, guid: 8e6753c8f7474ed2a1a217580906768b, type: 2}
+    - {fileID: 11400000, guid: 01fa53bb7e3c45169a072709cb0cd100, type: 2}
+    - {fileID: 11400000, guid: 5e9a024cb1b44f3b918b0b0c7145d04e, type: 2}
+    - {fileID: 11400000, guid: bd06e62a8d884ee1a5d92db1448c4e34, type: 2}
+    - {fileID: 11400000, guid: 81c214e9ac98488c8c25517a8a3e0692, type: 2}

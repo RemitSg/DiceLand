@@ -54,3 +54,7 @@ MonoBehaviour:
     statusData: {fileID: 11400000, guid: d7f98e43df6b46d7a67f2b97cb5d7ed2, type: 2}
   - statusId: guard
     statusData: {fileID: 11400000, guid: 7ba5af759a594fcbbc0a7f0dfe0660d2, type: 2}
+  - statusId: resistance
+    statusData: {fileID: 11400000, guid: e4d6aeeaf4674702a228203fa2e24dbb, type: 2}
+  - statusId: immune
+    statusData: {fileID: 11400000, guid: b504df097a7c4c3b9094b498f4c3a808, type: 2}

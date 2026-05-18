@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SeveringShot
   m_EditorClassIdentifier: 
   skillName: "\u65AD\u7EBF\u5C04\u51FB"
-  description: "\u4F18\u5148\u9009\u53D6\u901F\u5EA6\u6700\u4F4E\u7684\u76EE\u6807\uFF0C\u547D\u4E2D\u540E\u4F7F\u76EE\u6807\u5728\u4E0B\u56DE\u5408\u5F00\u59CB\u65F6\u83B7\u5F97 1 \u5C42\u7F13\u6162"
+  description: "\u88AB\u51FB\u4E2D\u7684\u730E\u7269\u5982\u540C\u65AD\u4E86\u7EBF\u7684\u98CE\u7B5D\u3002"
   skillCategory: 0
   energyCost: 0
   requiredSelfStatusData: {fileID: 0}
@@ -31,7 +31,32 @@ MonoBehaviour:
   dicePowerRanges:
   - minPower: 1
     maxPower: 4
-  dicePresentationSettings: []
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 0}
+    hitEffectPrefab: {fileID: 0}
+    clashOffsetSpace: 0
+    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitOffsetSpace: 0
+    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 21300000, guid: 43104ab77f28d774291b43e6ad20fe00, type: 3}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
   diceEffectSettings:
   - damageEffects: []
     statusEffects:
@@ -45,9 +70,20 @@ MonoBehaviour:
       applyRepeatCount: 1
       stackAmount: 1
       randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
     summonEffects: []
+  diceSkillCategories: 

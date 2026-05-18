@@ -50,7 +50,8 @@ public static class MapEventEffectSequenceBuilder
             encounterEnemyGroups = optionData.encounterEnemyGroups != null ? new List<EnemyGroup_SO>(optionData.encounterEnemyGroups) : new List<EnemyGroup_SO>(),
             encounterEnemies = optionData.encounterEnemies != null ? new List<EnemyData_SO>(optionData.encounterEnemies) : new List<EnemyData_SO>(),
             encounterEnemyCountMin = optionData.encounterEnemyCountMin,
-            encounterEnemyCountMax = optionData.encounterEnemyCountMax
+            encounterEnemyCountMax = optionData.encounterEnemyCountMax,
+            specialDungeon = optionData.specialDungeon
         };
     }
 

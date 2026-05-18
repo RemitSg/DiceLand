@@ -14,48 +14,48 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tutorialId: main_menu_tutorial_center
   displayName: Tutorial
-  summaryTitle: 新手教程
-  summaryBody: 通过章节总览快速了解地图推进、战斗操作与成长系统。当前版本先提供主菜单教程中心入口与内容骨架，后续可以继续扩展章节状态、分步指引、完成度记录和跳转逻辑。
-  startButtonLabel: 开始教程
-  backButtonLabel: 返回主菜单
+  summaryTitle: "\u65B0\u624B\u6559\u7A0B"
+  summaryBody: "\u901A\u8FC7\u7AE0\u8282\u603B\u89C8\u5FEB\u901F\u4E86\u89E3\u5730\u56FE\u63A8\u8FDB\u3001\u6218\u6597\u64CD\u4F5C\u4E0E\u6210\u957F\u7CFB\u7EDF\u3002\u5F53\u524D\u7248\u672C\u5148\u63D0\u4F9B\u4E3B\u83DC\u5355\u6559\u7A0B\u4E2D\u5FC3\u5165\u53E3\u4E0E\u5185\u5BB9\u9AA8\u67B6\uFF0C\u540E\u7EED\u53EF\u4EE5\u7EE7\u7EED\u6269\u5C55\u7AE0\u8282\u72B6\u6001\u3001\u5206\u6B65\u6307\u5F15\u3001\u5B8C\u6210\u5EA6\u8BB0\u5F55\u548C\u8DF3\u8F6C\u903B\u8F91\u3002"
+  startButtonLabel: "\u5F00\u59CB\u6559\u7A0B"
+  backButtonLabel: "\u8FD4\u56DE\u4E3B\u83DC\u5355"
   sections:
   - sectionId: overview
-    title: 教程总览
-    summary: 先理解整体流程，知道后续会覆盖地图、战斗、成长与资源管理。
-    details: 本章节用于承接主菜单入口，未来可扩展为章节索引、完成度摘要和推荐游玩顺序。
-    statusLabel: 已就绪
+    title: "\u6559\u7A0B\u603B\u89C8"
+    summary: "\u5148\u7406\u89E3\u6574\u4F53\u6D41\u7A0B\uFF0C\u77E5\u9053\u540E\u7EED\u4F1A\u8986\u76D6\u5730\u56FE\u3001\u6218\u6597\u3001\u6210\u957F\u4E0E\u8D44\u6E90\u7BA1\u7406\u3002"
+    details: "\u672C\u7AE0\u8282\u7528\u4E8E\u627F\u63A5\u4E3B\u83DC\u5355\u5165\u53E3\uFF0C\u672A\u6765\u53EF\u6269\u5C55\u4E3A\u7AE0\u8282\u7D22\u5F15\u3001\u5B8C\u6210\u5EA6\u6458\u8981\u548C\u63A8\u8350\u6E38\u73A9\u987A\u5E8F\u3002"
+    statusLabel: "\u5DF2\u5C31\u7EEA"
     sortOrder: 0
-    isAvailable: 1
-    isFeatured: 1
+    isAvailable: 0
+    isFeatured: 0
   - sectionId: map
-    title: 地图推进
-    summary: 认识节点路线、关键房间与推进节奏，帮助第一次进入地图时快速建立方向感。
-    details: 后续可接入固定路线、地图提示和教学节点高亮。
-    statusLabel: 已规划
+    title: "\u5730\u56FE\u63A8\u8FDB"
+    summary: "\u8BA4\u8BC6\u8282\u70B9\u8DEF\u7EBF\u3001\u5173\u952E\u623F\u95F4\u4E0E\u63A8\u8FDB\u8282\u594F\uFF0C\u5E2E\u52A9\u7B2C\u4E00\u6B21\u8FDB\u5165\u5730\u56FE\u65F6\u5FEB\u901F\u5EFA\u7ACB\u65B9\u5411\u611F\u3002"
+    details: "\u540E\u7EED\u53EF\u63A5\u5165\u56FA\u5B9A\u8DEF\u7EBF\u3001\u5730\u56FE\u63D0\u793A\u548C\u6559\u5B66\u8282\u70B9\u9AD8\u4EAE\u3002"
+    statusLabel: "\u5DF2\u89C4\u5212"
     sortOrder: 10
-    isAvailable: 1
+    isAvailable: 0
     isFeatured: 0
   - sectionId: battle
-    title: 战斗基础
-    summary: 学会选中技能、连接目标、处理碰撞与单方面攻击等核心操作。
-    details: 后续可接入战斗内分步限制、提示浮层和失败重试检查点。
-    statusLabel: 已规划
+    title: "\u6218\u6597\u57FA\u7840"
+    summary: "\u5B66\u4F1A\u9009\u4E2D\u6280\u80FD\u3001\u8FDE\u63A5\u76EE\u6807\u3001\u5904\u7406\u78B0\u649E\u4E0E\u5355\u65B9\u9762\u653B\u51FB\u7B49\u6838\u5FC3\u64CD\u4F5C\u3002"
+    details: "\u540E\u7EED\u53EF\u63A5\u5165\u6218\u6597\u5185\u5206\u6B65\u9650\u5236\u3001\u63D0\u793A\u6D6E\u5C42\u548C\u5931\u8D25\u91CD\u8BD5\u68C0\u67E5\u70B9\u3002"
+    statusLabel: "\u5DF2\u89C4\u5212"
     sortOrder: 20
-    isAvailable: 1
-    isFeatured: 1
+    isAvailable: 0
+    isFeatured: 0
   - sectionId: growth
-    title: 成长与养成
-    summary: 了解武器、角色成长、恢复与强化之间的关系，建立长期推进认知。
-    details: 后续可扩展为装备更换、资源消耗与收益对比教学。
-    statusLabel: 扩展预留
+    title: "\u6210\u957F\u4E0E\u517B\u6210"
+    summary: "\u4E86\u89E3\u6B66\u5668\u3001\u89D2\u8272\u6210\u957F\u3001\u6062\u590D\u4E0E\u5F3A\u5316\u4E4B\u95F4\u7684\u5173\u7CFB\uFF0C\u5EFA\u7ACB\u957F\u671F\u63A8\u8FDB\u8BA4\u77E5\u3002"
+    details: "\u540E\u7EED\u53EF\u6269\u5C55\u4E3A\u88C5\u5907\u66F4\u6362\u3001\u8D44\u6E90\u6D88\u8017\u4E0E\u6536\u76CA\u5BF9\u6BD4\u6559\u5B66\u3002"
+    statusLabel: "\u6269\u5C55\u9884\u7559"
     sortOrder: 30
-    isAvailable: 1
+    isAvailable: 0
     isFeatured: 0
   - sectionId: systems
-    title: 系统进阶
-    summary: 为状态词、商店、锻造、事件和高难机制预留独立章节空间。
-    details: 当前先作为占位信息区，后续可以按模块拆分成多个独立专题。
-    statusLabel: 预留扩展
+    title: "\u7CFB\u7EDF\u8FDB\u9636"
+    summary: "\u4E3A\u72B6\u6001\u8BCD\u3001\u5546\u5E97\u3001\u953B\u9020\u3001\u4E8B\u4EF6\u548C\u9AD8\u96BE\u673A\u5236\u9884\u7559\u72EC\u7ACB\u7AE0\u8282\u7A7A\u95F4\u3002"
+    details: "\u5F53\u524D\u5148\u4F5C\u4E3A\u5360\u4F4D\u4FE1\u606F\u533A\uFF0C\u540E\u7EED\u53EF\u4EE5\u6309\u6A21\u5757\u62C6\u5206\u6210\u591A\u4E2A\u72EC\u7ACB\u4E13\u9898\u3002"
+    statusLabel: "\u9884\u7559\u6269\u5C55"
     sortOrder: 40
     isAvailable: 0
     isFeatured: 0

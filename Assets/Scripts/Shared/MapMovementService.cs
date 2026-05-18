@@ -184,11 +184,21 @@ public static class MapMovementService
 
         ApplyFlags(request, nextFlags);
 
+        if (moveCost <= 0)
+        {
+            bool moved = request.playerMapController.TryMoveTo(tile, 0);
+            result.moved = moved;
+            return moved;
+        }
+
         if (request.actionPointSystem.CanSpend(moveCost))
         {
             bool moved = request.playerMapController.TryMoveTo(tile, moveCost);
             if (!moved)
                 RestoreFlags(request);
+
+            if (moved && moveCost > 0)
+                RelicTriggerDispatcher.ProcessActionPointsSpent(request.runState, request.runGameManager, tile, moveCost);
 
             result.moved = moved;
             return moved;
@@ -215,6 +225,7 @@ public static class MapMovementService
         bool spentOverflowPoint = request.actionPointSystem.TrySpend(1);
         if (spentOverflowPoint)
         {
+            RelicTriggerDispatcher.ProcessActionPointsSpent(request.runState, request.runGameManager, tile, 2);
             result.moved = true;
             result.shouldRefreshHudWithEmptyStatus = true;
         }

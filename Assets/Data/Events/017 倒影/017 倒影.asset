@@ -1,0 +1,147 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "017 \u5012\u5F71"
+  m_EditorClassIdentifier: 
+  eventId: 017
+  eventName: "\u5012\u5F71"
+  eventContent: "\u8DEF\u9762\u4E0A\u6709\u4E00\u7247\u6D45\u6D45\u7684\u6C34\u6D3C\uFF0C\u4F46\u5929\u6C14\u5982\u6B64\u9177\u70ED\u4E0D\u5E94\u6709\u79EF\u6C34\uFF0C\u597D\u5947\u5FC3\u9A71\u4F7F\u4F60\u8D70\u8FD1\u770B\u770B\u3002\n\u8FD9\u5B8C\u5168\u5C31\u662F\u4E00\u6EE9\u666E\u901A\u7684\u79EF\u6C34\uFF0C\u6B63\u5F53\u4F60\u8981\u8D70\u65F6\uFF0C\u4F60\u7A81\u7136\u610F\u8BC6\u5230\u4E00\u4E2A\u5F88\u8BE1\u5F02\u7684\u4E8B\u60C5\u2014\u2014\u5012\u5F71\u4E2D\u7684\u4F60\u6CA1\u6709\u4EFB\u4F55\u52A8\u4F5C\u3002\n\u53EA\u662F\u2026\u2026\u6B7B\u6B7B\u76EF\u7740\u6C34\u6D3C\u5916\u7684\u4F60\u3002"
+  eventIllustration: {fileID: 0}
+  options:
+  - optionId: 1
+    optionLabel: "\u8E29\u788E\u5012\u5F71"
+    requiredMoney: 0
+    consequenceDescription: "\u906D\u9047\u4E00\u573A\u7279\u6B8A\u7684\u6218\u6597"
+    resultContent: "\u4F60\u4E00\u811A\u8E29\u788E\u4E86\u5012\u5F71\uFF0C\u5927\u7247\u7684\u6D9F\u6F2A\u8BA9\u4F60\u4E00\u65F6\u770B\u4E0D\u6E05\u6C34\u9762\u91CC\u9762\uFF0C\u6E85\u8D77\u7684\u6C34\u82B1\u6563\u843D\u7684\u5230\u5904\u90FD\u662F\u3002\n\u76F4\u5230\u6D9F\u6F2A\u9759\u9759\u5E73\u606F\uFF0C\u4F60\u624D\u770B\u6E05\u91CC\u9762\u3002\n\u65E9\u5DF2\u7A7A\u65E0\u4E00\u4EBA\u3002\n\u4F60\u62AC\u5934\uFF0C\u53D1\u73B0\u91CC\u9762\u7684\u5012\u5F71\u4E0D\u77E5\u4EC0\u4E48\u65F6\u5019\u5DF2\u7ECF\u7AD9\u5728\u4E86\u4F60\u8EAB\u524D\u3002"
+    builtInEffectType: 10
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 0
+    randomOwnedLootAmountMax: 0
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups:
+    - {fileID: 11400000, guid: af87fcd3104b47cd898f2e83bb7b278d, type: 2}
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 0}
+    resolveEvent: 1
+    customHandler: {fileID: 0}
+  - optionId: 2
+    optionLabel: "\u559D\u4E00\u53E3\u6C34"
+    requiredMoney: 0
+    consequenceDescription: "\u4F60\u771F\u7684\u8981\u8FD9\u4E48\u505A\uFF1F"
+    resultContent: "\u4F60\u559D\u4E86\u4E00\u53E3\u8FD9\u644A\u5C0F\u6C34\u6D3C\u4E2D\u7684\u6C34\uFF0C\u5374\u53D1\u73B0\u5F02\u5E38\u7684\u7518\u751C\u53EF\u53E3\u3002\n\u518D\u5411\u6C34\u4E2D\u770B\u53BB\uFF0C\u53D1\u73B0\u91CC\u9762\u7684\u4EBA\u5F71\u5DF2\u7ECF\u6D88\u5931\u4E0D\u89C1\u4E86\u3002\n\u7BA1\u4ED6\u5462\uFF0C\u4F60\u73B0\u5728\u53EA\u60F3\u591A\u559D\u51E0\u53E3\u3002\n\u4F60\u73B0\u5728\u611F\u89C9\u6D3B\u529B\u6EE1\u6EE1\u4E86\u3002"
+    builtInEffectType: 7
+    effectAmount: 2
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 0
+    randomOwnedLootAmountMax: 0
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects:
+    - effectType: 6
+      effectAmount: 20
+      randomMoneyMin: 0
+      randomMoneyMax: 0
+      randomOwnedLootAmountMin: 0
+      randomOwnedLootAmountMax: 0
+      lootRewards: []
+      lootPickCountMin: 0
+      lootPickCountMax: 0
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      relicPickCountMin: 0
+      relicPickCountMax: 0
+      relicRewards: []
+      blueprintTable: {fileID: 0}
+      blueprintRarityWeightTable: {fileID: 0}
+      blueprintPickCountMin: 0
+      blueprintPickCountMax: 0
+      blueprintRewards: []
+      encounterSelectionMode: 0
+      encounterEnemyGroups: []
+      encounterEnemies: []
+      encounterEnemyCountMin: 0
+      encounterEnemyCountMax: 0
+      specialDungeon: {fileID: 0}
+    nextEvent: {fileID: 0}
+    resolveEvent: 1
+    customHandler: {fileID: 0}
+  - optionId: 3
+    optionLabel: "\u7ED5\u5F00\u6C34\u6D3C"
+    requiredMoney: 0
+    consequenceDescription: "\u65E0\u4E8B\u53D1\u751F"
+    resultContent: "\u7BA1\u5B83\u91CC\u9762\u662F\u4EC0\u4E48\u725B\u9B3C\u86C7\u795E\uFF0C\u53EA\u8981\u4F60\u4E0D\u60F9\u5B83\uFF0C\u5B83\u603B\u4E0D\u53EF\u80FD\u8FFD\u51FA\u6765\u6253\u4F60\u5427\uFF1F"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 0
+    randomOwnedLootAmountMax: 0
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 0}
+    resolveEvent: 1
+    customHandler: {fileID: 0}

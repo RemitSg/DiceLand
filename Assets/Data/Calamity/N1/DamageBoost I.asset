@@ -15,7 +15,8 @@ MonoBehaviour:
   calamityId: 2
   calamityName: "\u52B2\u654C \xB7 \u4F24\u5BB3\u5F3A\u5316 I"
   calamityTier: 1
-  description: "\u6240\u6709\u654C\u4EBA\u9020\u6210\u4F24\u5BB3\u589E\u52A0 10%"
+  description: "\u6240\u6709\u654C\u4EBA\u9020\u6210\u4F24\u5BB3\u989D\u5916\u589E\u52A0
+    10%"
   rarity: 0
   icon: {fileID: 0}
   builtInEffects:

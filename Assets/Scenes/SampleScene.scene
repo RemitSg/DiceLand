@@ -1061,6 +1061,7 @@ MonoBehaviour:
   victoryIntroFadeDuration: 0.4
   victoryIntroHoldDuration: 2
   canvasSortOrder: 9500
+  mainMenuSceneName: Menu Selection
   panelSize: {x: 1350, y: 930}
   backdropColor: {r: 0, g: 0, b: 0, a: 0.72}
   panelColor: {r: 1, g: 1, b: 1, a: 0.96}
@@ -1102,22 +1103,26 @@ MonoBehaviour:
   expFontSize: 18
   expTextColor: {r: 1, g: 0.6189689, b: 0.2295596, a: 1}
   expAnimationDurationPerFill: 0.83
+  hpAnimationDuration: 0.42
   expLevelUpPauseDuration: 0.38
-  summaryRowLeftIndent: 120
-  summaryHpWidth: 140
-  summaryNameWidth: 260
-  summaryExpTextWidth: 110
-  summaryExpBarWidth: 170
-  summaryLevelWidth: 59.9
-  lootSlotSize: {x: 84, y: 84}
-  lootIconSize: {x: 56, y: 56}
-  lootDetailIconSize: {x: 84, y: 84}
-  lootDetailPanelSize: {x: 0, y: 130}
-  lootDetailInfoWidth: 240
-  lootDetailDescriptionLeftInset: 36
+  summaryRowLeftIndent: 0
+  summaryRowHeight: 40
+  summaryNameWidth: 170
+  summaryHpWidth: 380
+  summaryHpBarWidth: 210
+  summaryExpTextWidth: 160
+  summaryExpBarWidth: 220
+  summaryLevelWidth: 96
+  hpBarBackgroundColor: {r: 0.34, g: 0.08, b: 0.08, a: 0.5}
+  hpBarFillColor: {r: 1, g: 0.22, b: 0.28, a: 1}
+  hpBarBorderColor: {r: 1, g: 0.28, b: 0.28, a: 0.55}
+  lootSlotSize: {x: 72, y: 72}
+  lootIconSize: {x: 48, y: 48}
+  lootDetailIconSize: {x: 112, y: 112}
+  lootDetailPanelSize: {x: 640, y: 360}
   lootGridSpacing: 12
   lootGridColumnCount: 6
-  lootTitleFontSize: 24
+  lootTitleFontSize: 22
   lootBodyFontSize: 20
   lootTitleColor: {r: 1, g: 0.9, b: 0.52, a: 1}
   lootTextColor: {r: 0.95, g: 0.95, b: 0.95, a: 1}
@@ -1129,13 +1134,14 @@ MonoBehaviour:
   lootDetailBackgroundSprite: {fileID: 0}
   lootFallbackSprite: {fileID: 0}
   relicChoiceHeaderText: "\u9009\u62E9 1 \u4E2A\u9057\u7269"
-  relicChoiceRequiredMessage: "\u8BF7\u81F3\u5C11\u9009\u62E9\u4E00\u4E2A\u9057\u7269"
-  relicChoiceEntranceName: "\u7CBE\u82F1\u654C\u4EBA\u9057\u7269\u6218\u5229\u54C1"
-  relicChoiceEntranceDescription: "\u70B9\u51FB\u4EE5\u9009\u62E9\u4EE5\u4E00\u4E2A\u9057\u7269"
+  relicChoiceRequiredMessage: "\u8FD4\u56DE\u524D\u8BF7\u9009\u62E9\u4E00\u4E2A\u9057\u7269\u3002"
+  relicChoiceEntranceName: "\u7CBE\u82F1\u9057\u7269\u5956\u52B1"
+  relicChoiceEntranceDescription: "\u70B9\u51FB\u4EE5\u9009\u62E9\u4E00\u4E2A\u9057\u7269\u5956\u52B1\u3002"
   relicChoiceEntranceLabel: '?'
   relicChoiceSelectedPrefix: "\u5DF2\u9009\u62E9"
   relicChoiceConfirmLabel: "\u786E\u8BA4"
-  relicChoiceDetailEmptyText: 
+  relicChoiceRefreshLabel: "\u5237\u65B0"
+  relicChoiceDetailEmptyText: "\u60AC\u505C\u9057\u7269\u67E5\u770B\u6548\u679C\uFF1B\u70B9\u51FB\u9057\u7269\u8FDB\u884C\u9009\u62E9\uFF0C\u518D\u6B21\u70B9\u51FB\u53EF\u53D6\u6D88\u9009\u62E9\u3002"
   relicChoiceSlotColor: {r: 0.16, g: 0.22, b: 0.32, a: 0.95}
   relicChoiceSelectedSlotColor: {r: 0.36, g: 0.52, b: 0.86, a: 1}
   relicChoiceRequiredColor: {r: 1, g: 0.45, b: 0.38, a: 1}
@@ -1190,6 +1196,7 @@ MonoBehaviour:
   valueHighlightColor: {r: 1, g: 0.45, b: 0.45, a: 1}
   attackDicePowerColor: {r: 1, g: 0.32, b: 0.32, a: 1}
   defenseDicePowerColor: {r: 0.38, g: 0.72, b: 1, a: 1}
+  obsoleteDicePowerColor: {r: 0.55, g: 0.55, b: 0.55, a: 1}
   skillButtonColor: {r: 0.25, g: 0.2, b: 0.12, a: 0.98}
   selectedSkillButtonColor: {r: 0.84, g: 0.66, b: 0.24, a: 1}
   skillButtonTextColor: {r: 1, g: 1, b: 1, a: 1}
@@ -1198,7 +1205,7 @@ MonoBehaviour:
   skillButtonSprite: {fileID: 0}
   selectedSkillButtonSprite: {fileID: 0}
   closeButtonSprite: {fileID: 0}
-  panelSize: {x: 980, y: 620}
+  panelSize: {x: 1280, y: 820}
   panelOffset: {x: 0, y: 0}
   skillButtonSize: {x: 280, y: 82}
   skillButtonSpacing: 16
@@ -1214,6 +1221,10 @@ MonoBehaviour:
   enemyHoverPanelOffset: {x: -36, y: -36}
   enemyHoverTitleFontSize: 32
   enemyHoverBodyFontSize: 24
+  enemyHoverClauseViewportSize: {x: 512, y: 160}
+  enemyHoverClauseScrollSpeed: 24
+  enemyHoverClauseStartDelay: 3
+  enemyHoverClauseBottomPause: 3
 --- !u!114 &885702441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1248,9 +1259,11 @@ MonoBehaviour:
   weaponSortingOrderOffset: -5
   weaponDepthOffset: 0.05
   allySpeedButtonLocalOffset: {x: 0, y: 1}
+  allyMultiSpeedButtonGroupOffset: {x: 0, y: 0}
+  allyMultiSpeedButtonHorizontalSpacing: 1.33
   enemySpeedButtonLocalOffset: {x: 0, y: -1}
   enemyMultiSpeedButtonGroupOffset: {x: 0, y: 0}
-  enemyMultiSpeedButtonHorizontalSpacing: 1.44
+  enemyMultiSpeedButtonHorizontalSpacing: 1.33
 --- !u!1 &915975690
 GameObject:
   m_ObjectHideFlags: 0
@@ -1855,6 +1868,7 @@ MonoBehaviour:
   battleSettlementOverlay: {fileID: 0}
   battleSkillInfoOverlay: {fileID: 0}
   tutorialBattleGuideOverlay: {fileID: 0}
+  battlePauseMenuOverlay: {fileID: 0}
   eliteRelicChoiceFallbackTable: {fileID: 0}
   eliteRelicChoiceCount: 3
   editorEliteRelicChoiceFallbackTableName: OuterEliteRelicLoot
@@ -2018,6 +2032,7 @@ MonoBehaviour:
   enemyClashDiceValueColor: {r: 1, g: 0.88, b: 0.32, a: 1}
   allyClashDiceRangeColor: {r: 0.82, g: 0.94, b: 1, a: 0.95}
   enemyClashDiceRangeColor: {r: 1, g: 0.92, b: 0.7, a: 0.95}
+  obsoleteClashDiceRangeColor: {r: 0.55, g: 0.55, b: 0.55, a: 0.95}
   clashDiceModifierFont: {fileID: 0}
   clashDiceModifierFontSize: 20
   clashDiceModifierFontStyle: 1

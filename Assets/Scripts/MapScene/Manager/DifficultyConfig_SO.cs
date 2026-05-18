@@ -253,6 +253,7 @@ public class DifficultyConfig_SO : ScriptableObject
                 new TileWeightEntry { tileType = MapTileType.Elite, weight = 1 },
                 new TileWeightEntry { tileType = MapTileType.Event, weight = 4 },
                 new TileWeightEntry { tileType = MapTileType.Merchant, weight = 1 },
+                new TileWeightEntry { tileType = MapTileType.Treasure, weight = 1 },
                 new TileWeightEntry { tileType = MapTileType.Rest, weight = 1 }
             };
         }
@@ -261,6 +262,7 @@ public class DifficultyConfig_SO : ScriptableObject
         EnsureWeightEntry(MapTileType.Elite, 1);
         EnsureWeightEntry(MapTileType.Event, 4);
         EnsureWeightEntry(MapTileType.Merchant, 1);
+        EnsureWeightEntry(MapTileType.Treasure, 1);
         EnsureWeightEntry(MapTileType.Forge, 1);
         EnsureWeightEntry(MapTileType.Rest, 1);
 
@@ -271,6 +273,7 @@ public class DifficultyConfig_SO : ScriptableObject
         EnsureMinimumEntry(MapTileType.Elite, 0);
         EnsureMinimumEntry(MapTileType.Event, 0);
         EnsureMinimumEntry(MapTileType.Merchant, 0);
+        EnsureMinimumEntry(MapTileType.Treasure, 0);
         EnsureMinimumEntry(MapTileType.Forge, 0);
         EnsureMinimumEntry(MapTileType.Rest, 0);
 

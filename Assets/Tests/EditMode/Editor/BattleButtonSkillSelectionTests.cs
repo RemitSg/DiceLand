@@ -101,6 +101,34 @@ public class BattleButtonSkillSelectionTests
         Assert.AreEqual(4, range.maxPower);
     }
 
+    [Test]
+    public void AllySpeedButtons_CanKeepIndependentSelectedSkills()
+    {
+        BattleAllyController ally = CreateAlly("Multi Button Ally");
+        SpeedButton firstButton = CreateSpeedButton("First Button", ally.transform);
+        SpeedButton secondButton = CreateSpeedButton("Second Button", ally.transform);
+        EnemySkill_SO firstSkill = CreateSkill("First Skill", 0);
+        EnemySkill_SO secondSkill = CreateSkill("Second Skill", 0);
+
+        ally.RegisterSpeedButtons(new[] { firstButton, secondButton });
+        ally.GrantTemporarySkill(firstSkill, true);
+        ally.GrantTemporarySkill(secondSkill, true);
+        ally.SelectDefaultSkill();
+
+        Assert.IsTrue(ally.SetSelectedSkillIndexForButton(firstButton, 0));
+        Assert.IsTrue(ally.SetSelectedSkillIndexForButton(secondButton, 1));
+
+        Assert.AreSame(firstSkill, ally.GetSelectedSkillForButton(firstButton));
+        Assert.AreSame(secondSkill, ally.GetSelectedSkillForButton(secondButton));
+        Assert.AreEqual(0, ally.GetSelectedSkillIndexForButton(firstButton));
+        Assert.AreEqual(1, ally.GetSelectedSkillIndexForButton(secondButton));
+
+        ally.ActivateSelectedSkillForButton(secondButton);
+        Assert.AreSame(secondSkill, ally.SelectedSkill);
+        ally.ActivateSelectedSkillForButton(firstButton);
+        Assert.AreSame(firstSkill, ally.SelectedSkill);
+    }
+
     private BattleButton CreateBattleButton()
     {
         GameObject go = new GameObject("BattleButton");
@@ -148,6 +176,14 @@ public class BattleButtonSkillSelectionTests
         };
         createdObjects.Add(skill);
         return skill;
+    }
+
+    private SpeedButton CreateSpeedButton(string name, Transform parent)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        createdObjects.Add(go);
+        return go.AddComponent<SpeedButton>();
     }
 
     private BattleEnemyController CreateEnemy(string name, EnemySkill_SO skill)

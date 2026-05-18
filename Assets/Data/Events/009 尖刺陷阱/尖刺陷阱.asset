@@ -31,19 +31,23 @@ MonoBehaviour:
     lootRewards: []
     lootPickCountMin: 0
     lootPickCountMax: 0
-    relicRewards: []
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
     relicPickCountMin: 0
     relicPickCountMax: 0
-    blueprintRewards: []
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
     blueprintPickCountMin: 0
     blueprintPickCountMax: 0
+    blueprintRewards: []
     encounterSelectionMode: 0
     encounterEnemyGroups: []
     encounterEnemies: []
     encounterEnemyCountMin: 0
     encounterEnemyCountMax: 0
     additionalBuiltInEffects: []
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}
   - optionId: 2
     optionLabel: "\u6252\u4F4F\u5CA9\u58C1\u7F13\u51B2\u6389\u843D"
@@ -60,12 +64,16 @@ MonoBehaviour:
     lootRewards: []
     lootPickCountMin: 0
     lootPickCountMax: 0
-    relicRewards: []
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
     relicPickCountMin: 0
     relicPickCountMax: 0
-    blueprintRewards: []
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
     blueprintPickCountMin: 0
     blueprintPickCountMax: 0
+    blueprintRewards: []
     encounterSelectionMode: 0
     encounterEnemyGroups: []
     encounterEnemies: []
@@ -81,12 +89,16 @@ MonoBehaviour:
       lootRewards: []
       lootPickCountMin: 0
       lootPickCountMax: 0
-      relicRewards: []
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
       relicPickCountMin: 0
       relicPickCountMax: 0
-      blueprintRewards: []
+      relicRewards: []
+      blueprintTable: {fileID: 0}
+      blueprintRarityWeightTable: {fileID: 0}
       blueprintPickCountMin: 0
       blueprintPickCountMax: 0
+      blueprintRewards: []
       encounterSelectionMode: 0
       encounterEnemyGroups: []
       encounterEnemies: []
@@ -101,6 +113,10 @@ MonoBehaviour:
       lootRewards: []
       lootPickCountMin: 0
       lootPickCountMax: 0
+      relicTable: {fileID: 11400000, guid: 6650ae7fed330b7408b1cad987b54259, type: 2}
+      relicRarityWeightTable: {fileID: 0}
+      relicPickCountMin: 1
+      relicPickCountMax: 1
       relicRewards:
       - relicData: {fileID: 11400000, guid: 69044cffd7ccfe34c8287e1a5045253d, type: 2}
       - relicData: {fileID: 11400000, guid: 8251f8c81966de64bac464798dfca421, type: 2}
@@ -109,15 +125,15 @@ MonoBehaviour:
       - relicData: {fileID: 11400000, guid: 1ef333859ab5e5849aa088cf48b6d705, type: 2}
       - relicData: {fileID: 11400000, guid: f97a61a3848b6b7438dd41cc3d57fbe6, type: 2}
       - relicData: {fileID: 11400000, guid: 02cdabd30b49977478fe5147bc6a3d63, type: 2}
-      relicPickCountMin: 1
-      relicPickCountMax: 1
-      blueprintRewards: []
+      blueprintTable: {fileID: 0}
+      blueprintRarityWeightTable: {fileID: 0}
       blueprintPickCountMin: 0
       blueprintPickCountMax: 0
+      blueprintRewards: []
       encounterSelectionMode: 0
       encounterEnemyGroups: []
       encounterEnemies: []
       encounterEnemyCountMin: 0
       encounterEnemyCountMax: 0
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}

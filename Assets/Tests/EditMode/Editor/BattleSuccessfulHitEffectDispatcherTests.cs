@@ -29,11 +29,9 @@ public class BattleSuccessfulHitEffectDispatcherTests
                 "player-hit-relics",
                 "kill-relics",
                 "immediate:OnSingleAttack",
-                "immediate:OnClashWin",
                 "immediate:OnHit",
                 "reactive-status",
                 "status:OnSingleAttack",
-                "status:OnClashWin",
                 "status:OnHit"
             },
             calls);
@@ -61,10 +59,8 @@ public class BattleSuccessfulHitEffectDispatcherTests
             new[]
             {
                 "took-single-attack-relics",
-                "immediate:OnClashWin",
                 "immediate:OnHit",
                 "reactive-status",
-                "status:OnClashWin",
                 "status:OnHit"
             },
             calls);

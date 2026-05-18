@@ -10,6 +10,7 @@ public class BattleStatusTodoTests
     private const BattleStatus_SO.StatusBehaviorType MisfortuneBehaviorType = (BattleStatus_SO.StatusBehaviorType)14;
     private const BattleStatus_SO.StatusBehaviorType SpeedButtonPenaltyBehaviorType = (BattleStatus_SO.StatusBehaviorType)15;
     private const BattleStatus_SO.StatusBehaviorType ShieldBehaviorType = (BattleStatus_SO.StatusBehaviorType)16;
+    private const BattleStatus_SO.StatusBehaviorType ImmuneBehaviorType = (BattleStatus_SO.StatusBehaviorType)17;
     private const BattleStatus_SO.StackDecayMode LoseOneStackDecayMode = (BattleStatus_SO.StackDecayMode)3;
 
     private readonly List<Object> createdObjects = new List<Object>();
@@ -279,6 +280,106 @@ public class BattleStatusTodoTests
 
         Assert.IsTrue(ally.ConsumeRoundEndStatusEffects());
         Assert.IsTrue(enemy.ConsumeRoundEndStatusEffects());
+        Assert.AreEqual(2, ally.GetStatusStacks(shield));
+        Assert.AreEqual(2, enemy.GetStatusStacks(shield));
+    }
+
+    [Test]
+    public void ImmuneStatus_BlocksAllDamageAndLosesOneStackAtRoundEnd()
+    {
+        EnemySkill_SO skill = CreateSkill("Immune Test", 2, 5);
+        BattleStatus_SO immune = CreateStatus(
+            "immune",
+            "免疫",
+            ImmuneBehaviorType,
+            powerPerStack: 0,
+            roundEndDecayMode: LoseOneStackDecayMode);
+
+        BattleAllyController ally = CreateAlly("Immune Ally", 12, skill);
+        BattleEnemyController enemy = CreateEnemy("Immune Enemy", 12, skill);
+
+        ally.AddStatus(immune, immune.StatusId, immune.DisplayName, 1);
+        enemy.AddStatus(immune, immune.StatusId, immune.DisplayName, 1);
+
+        Assert.AreEqual(0, ally.TakeDamage(999));
+        Assert.AreEqual(12, ally.CurrentHP);
+        Assert.AreEqual(0, enemy.TakeDamage(999));
+        Assert.AreEqual(12, enemy.CurrentHP);
+
+        Assert.IsTrue(ally.ConsumeRoundEndStatusEffects());
+        Assert.IsTrue(enemy.ConsumeRoundEndStatusEffects());
+        Assert.AreEqual(0, ally.GetStatusStacks(immune));
+        Assert.AreEqual(0, enemy.GetStatusStacks(immune));
+    }
+
+    [Test]
+    public void ResistanceStatus_BlocksNextNegativeStatusAndLosesOneStack_ForAlliesAndEnemies()
+    {
+        EnemySkill_SO skill = CreateSkill("Resistance Test", 2, 5);
+        BattleStatus_SO resistance = CreateStatus(
+            BattleStatusResistanceService.ResistanceStatusId,
+            "抵抗",
+            BattleStatus_SO.StatusBehaviorType.None,
+            powerPerStack: 0,
+            roundEndDecayMode: BattleStatus_SO.StackDecayMode.None);
+        BattleStatus_SO burn = CreateStatus(
+            "burn",
+            "燃烧",
+            BattleStatus_SO.StatusBehaviorType.DamageAtRoundStart,
+            powerPerStack: 1,
+            roundEndDecayMode: BattleStatus_SO.StackDecayMode.None);
+
+        BattleAllyController ally = CreateAlly("Resistant Ally", 12, skill);
+        BattleEnemyController enemy = CreateEnemy("Resistant Enemy", 12, skill);
+
+        ally.AddStatus(resistance, resistance.StatusId, resistance.DisplayName, 2);
+        enemy.AddStatus(resistance, resistance.StatusId, resistance.DisplayName, 2);
+
+        Assert.IsFalse(ally.AddStatus(burn, burn.StatusId, burn.DisplayName, 3));
+        Assert.IsFalse(enemy.AddStatus(burn, burn.StatusId, burn.DisplayName, 3));
+        Assert.AreEqual(1, ally.GetStatusStacks(resistance));
+        Assert.AreEqual(1, enemy.GetStatusStacks(resistance));
+        Assert.AreEqual(0, ally.GetStatusStacks(burn));
+        Assert.AreEqual(0, enemy.GetStatusStacks(burn));
+
+        Assert.IsFalse(ally.AddStatus(burn, burn.StatusId, burn.DisplayName, 1));
+        Assert.IsFalse(enemy.AddStatus(burn, burn.StatusId, burn.DisplayName, 1));
+        Assert.AreEqual(0, ally.GetStatusStacks(resistance));
+        Assert.AreEqual(0, enemy.GetStatusStacks(resistance));
+
+        Assert.IsTrue(ally.AddStatus(burn, burn.StatusId, burn.DisplayName, 1));
+        Assert.IsTrue(enemy.AddStatus(burn, burn.StatusId, burn.DisplayName, 1));
+        Assert.AreEqual(1, ally.GetStatusStacks(burn));
+        Assert.AreEqual(1, enemy.GetStatusStacks(burn));
+    }
+
+    [Test]
+    public void ResistanceStatus_DoesNotBlockPositiveStatus_ForAlliesAndEnemies()
+    {
+        EnemySkill_SO skill = CreateSkill("Resistance Positive Test", 2, 5);
+        BattleStatus_SO resistance = CreateStatus(
+            BattleStatusResistanceService.ResistanceStatusId,
+            "抵抗",
+            BattleStatus_SO.StatusBehaviorType.None,
+            powerPerStack: 0,
+            roundEndDecayMode: BattleStatus_SO.StackDecayMode.None);
+        BattleStatus_SO shield = CreateStatus(
+            "shield",
+            "护盾",
+            ShieldBehaviorType,
+            powerPerStack: 1,
+            roundEndDecayMode: BattleStatus_SO.StackDecayMode.None);
+
+        BattleAllyController ally = CreateAlly("Positive Ally", 12, skill);
+        BattleEnemyController enemy = CreateEnemy("Positive Enemy", 12, skill);
+
+        ally.AddStatus(resistance, resistance.StatusId, resistance.DisplayName, 1);
+        enemy.AddStatus(resistance, resistance.StatusId, resistance.DisplayName, 1);
+
+        Assert.IsTrue(ally.AddStatus(shield, shield.StatusId, shield.DisplayName, 2));
+        Assert.IsTrue(enemy.AddStatus(shield, shield.StatusId, shield.DisplayName, 2));
+        Assert.AreEqual(1, ally.GetStatusStacks(resistance));
+        Assert.AreEqual(1, enemy.GetStatusStacks(resistance));
         Assert.AreEqual(2, ally.GetStatusStacks(shield));
         Assert.AreEqual(2, enemy.GetStatusStacks(shield));
     }

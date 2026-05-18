@@ -39,6 +39,9 @@ public class TileResolver : MonoBehaviour
             case MapTileType.Merchant:
                 message = ResolveMerchantTile(tile);
                 break;
+            case MapTileType.Treasure:
+                message = ResolveTreasureTile(tile);
+                break;
             case MapTileType.Forge:
                 message = ResolveForgeTile(tile);
                 break;
@@ -53,6 +56,9 @@ public class TileResolver : MonoBehaviour
                 break;
             case MapTileType.Boss:
                 message = ResolveBossTile(runState);
+                break;
+            case MapTileType.SpecialDungeonExit:
+                message = ResolveSpecialDungeonExitTile(tile);
                 break;
             default:
                 message = "\u672a\u77e5\u683c\u5b50\u3002";
@@ -111,6 +117,14 @@ public class TileResolver : MonoBehaviour
         return "\u8fdb\u5165\u5546\u4eba\u683c\u3002\u53ef\u5728\u6b64\u6d88\u8017\u91d1\u94b1\u8d2d\u4e70\u5546\u54c1\u3002";
     }
 
+    private static string ResolveTreasureTile(BoardTileData tile)
+    {
+        if (!tile.isResolved)
+            return "\u8fdb\u5165\u5b9d\u85cf\u683c\u3002";
+
+        return "\u8fd9\u4e2a\u5b9d\u85cf\u683c\u5df2\u7ecf\u9886\u53d6\u8fc7\u4e86\u3002";
+    }
+
     private static string ResolveForgeTile(BoardTileData tile)
     {
         if (!tile.isResolved)
@@ -149,5 +163,11 @@ public class TileResolver : MonoBehaviour
         return runState.IsBossUnlocked
             ? "Boss \u683c\u5360\u4f4d\u7ed3\u7b97\uff1a\u8fd9\u91cc\u5c06\u63a5\u5165\u6700\u7ec8\u6218\u3002"
             : $"\u9700\u8981\u66f4\u591a\u94a5\u5319\u624d\u80fd\u6311\u6218 Boss\u3002\u5f53\u524d\u94a5\u5319 {runState.currentKeys}/{runState.requiredKeys}\u3002";
+    }
+
+    private static string ResolveSpecialDungeonExitTile(BoardTileData tile)
+    {
+        tile.isVisited = true;
+        return "离开特殊副本。";
     }
 }

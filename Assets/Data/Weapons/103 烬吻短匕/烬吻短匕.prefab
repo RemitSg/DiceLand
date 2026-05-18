@@ -100,7 +100,7 @@ GameObject:
   - component: {fileID: 4225752148383217926}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: GameObject
+  m_Name: HoldPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -27,7 +27,7 @@ MonoBehaviour:
     lootPickCountMin: 1
     lootPickCountMax: 1
     additionalBuiltInEffects: []
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}
   - optionId: 2
     optionLabel: "\u6C89\u6EBA"
@@ -45,5 +45,5 @@ MonoBehaviour:
       lootRewards: []
       lootPickCountMin: 1
       lootPickCountMax: 1
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}
