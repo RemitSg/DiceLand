@@ -1,0 +1,154 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: OfferingOrder
+  m_EditorClassIdentifier: 
+  skillName: "\u5949\u732E\u6307\u793A"
+  description: "\u5080\u5121\u5E08\u628A\u7EBF\u6536\u7D27\uFF0C\u547D\u4EE4\u50CF\u9489\u5B50\u4E00\u6837\u9489\u56DE\u81EA\u5DF1\u7684\u638C\u5FC3\u3002"
+  skillCategory: 0
+  energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 3
+  maxPower: 5
+  diceCount: 2
+  dicePowerRanges:
+  - minPower: 3
+    maxPower: 5
+  - minPower: 3
+    maxPower: 5
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 0}
+    hitEffectPrefab: {fileID: 0}
+    clashOffsetSpace: 0
+    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitOffsetSpace: 0
+    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 0}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
+  - clashEffectPrefab: {fileID: 0}
+    hitEffectPrefab: {fileID: 0}
+    clashOffsetSpace: 0
+    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitOffsetSpace: 0
+    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 0}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
+  diceEffectSettings:
+  - damageEffects:
+    - effectName: "\u7275\u4E1D\u81EA\u4F24"
+      trigger: 4
+      targetMode: 3
+      damageAmount: 3
+      randomTargetCount: 1
+    statusEffects:
+    - effectName: "\u5949\u732E\u4F59\u52B2"
+      trigger: 4
+      targetMode: 3
+      statusData: {fileID: 11400000, guid: d7f98e43df6b46d7a67f2b97cb5d7ed2, type: 2}
+      statusType: 0
+      applyTiming: 1
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
+      stackAmount: 1
+      randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  - damageEffects:
+    - effectName: "\u7275\u4E1D\u81EA\u4F24"
+      trigger: 4
+      targetMode: 3
+      damageAmount: 3
+      randomTargetCount: 1
+    statusEffects:
+    - effectName: "\u5949\u732E\u4F59\u52B2"
+      trigger: 4
+      targetMode: 3
+      statusData: {fileID: 11400000, guid: d7f98e43df6b46d7a67f2b97cb5d7ed2, type: 2}
+      statusType: 0
+      applyTiming: 1
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
+      stackAmount: 1
+      randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 0000000000000000

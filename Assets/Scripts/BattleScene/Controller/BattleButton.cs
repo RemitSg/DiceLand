@@ -3109,6 +3109,18 @@ public class BattleButton : MonoBehaviour
             return 0;
 
         int modifiedDamage = ResolveAllyHitDamage(attacker, target, diceIndex, baseDamage);
+        if (BattlePuppetPassiveService.TryApplyPuppetMasterDamageRedirect(
+            target,
+            modifiedDamage,
+            GetLivingEnemies(),
+            count => UnityEngine.Random.Range(0, count),
+            out int redirectedDamage,
+            BattleLog))
+        {
+            ApplyAllyHitOutcome(attacker, target, diceIndex, redirectedDamage, isSingleAttack);
+            return redirectedDamage;
+        }
+
         int dealtDamage = target.TakeDamage(modifiedDamage, powerModifierAmount, baseDamage);
         ApplyAllyHitOutcome(attacker, target, diceIndex, dealtDamage, isSingleAttack);
         return dealtDamage;
@@ -3167,12 +3179,14 @@ public class BattleButton : MonoBehaviour
     private int ResolveEnemyHitDamage(BattleEnemyController attacker, BattleAllyController target, int diceIndex, int baseDamage, bool isSingleAttack)
     {
         BattleEnemyHitDamagePipelinePlan plan = BattleEnemyHitDamagePipelinePlanService.Resolve(isSingleAttack);
-        return BattleEnemyHitDamagePipelineDispatcher.Dispatch(
+        int resolvedDamage = BattleEnemyHitDamagePipelineDispatcher.Dispatch(
             baseDamage,
             plan,
             ApplyEnemyCalamityDamageModifiers,
             damage => ApplyPlayerRelicIncomingAttackDamageModifiers(attacker, target, diceIndex, damage),
             damage => ApplyPlayerRelicIncomingSingleAttackDamageModifiers(attacker, target, diceIndex, damage));
+        ResolveBuiltinStatus("target", "标记", out BattleStatus_SO markStatus, out _, out _);
+        return Mathf.Max(0, resolvedDamage + BattlePuppetPassiveService.ResolveSoullessPuppetUnmarkedTargetPowerPenalty(attacker, target, markStatus));
     }
 
     private void ApplyAllyMissEffects(BattleAllyController attacker, BattleEnemyController target, int diceIndex, int dealtDamage)

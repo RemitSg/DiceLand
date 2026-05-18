@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: Obey
+  m_EditorClassIdentifier: 
+  skillName: "\u9075\u4ECE"
+  description: "\u6728\u8D28\u5173\u8282\u54AF\u54AF\u4F5C\u54CD\uFF0C\u5B83\u6CA1\u6709\u60F3\u6CD5\uFF0C\u53EA\u6709\u88AB\u62C9\u76F4\u7684\u65B9\u5411\u3002"
+  skillCategory: 0
+  energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  targetPriorityMode: 1
+  targetPriorityStatusData: {fileID: 11400000, guid: 6b25ae09b0051bc45bb594fe153c832b, type: 2}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 3
+  maxPower: 5
+  diceCount: 1
+  dicePowerRanges:
+  - minPower: 3
+    maxPower: 5
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 0}
+    hitEffectPrefab: {fileID: 0}
+    clashOffsetSpace: 0
+    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitOffsetSpace: 0
+    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 0}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers:
+    - effectName: "\u65E0\u58F0\u6267\u884C"
+      trigger: 5
+      useCondition: 0
+      condition: 0
+      targetStatusData: {fileID: 0}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredStatusStacks: 1
+      requiredSpeedValue: 0
+      requiredSpeedDifference: 0
+      powerBonus: 2
+      powerBonusPerStep: 0
+      maxPowerBonus: 0
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 00000000
