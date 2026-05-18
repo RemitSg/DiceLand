@@ -612,16 +612,25 @@ MonoBehaviour:
   startingPartyMembers:
   - memberId: 0
     characterData: {fileID: 11400000, guid: 658e22cc7dec223479091c6817751025, type: 2}
-    equippedWeapon: {fileID: 11400000, guid: 6c1aed0bff9b3a74ba193a8ff2895f74, type: 2}
+    equippedWeapon: {fileID: 11400000, guid: 6f76bd3bd3d897c4fb60cb583c146ccd, type: 2}
     startingLevel: 1
     startingExperience: 0
-    startingMaxHP: 20
-    startingCurrentHP: 20
+    startingMaxHP: 32
+    startingCurrentHP: 32
+  - memberId: 0
+    characterData: {fileID: 11400000, guid: 5121d91a4381d6748a08ee2236cc03fd, type: 2}
+    equippedWeapon: {fileID: 11400000, guid: cb69c8cb0b5a1ce4383dea0432a53f40, type: 2}
+    startingLevel: 1
+    startingExperience: 0
+    startingMaxHP: 28
+    startingCurrentHP: 28
   tutorialStartingPartyMembers: []
   startingLoot: []
   startingWeapons: []
   startingBlueprints: []
-  startingRelics: []
+  startingRelics:
+  - relicData: {fileID: 11400000, guid: 6d3be33efd174c099da957b0799d4e12, type: 2}
+    amount: 1
   autoStartOnAwake: 1
   battleSceneName: SampleScene
   restSceneName: RestScene
@@ -735,6 +744,7 @@ MonoBehaviour:
   restTileIcon: {fileID: 21300000, guid: 40edd7b01ab48c649af958b72b076c6e, type: 3}
   keyTileIcon: {fileID: 21300000, guid: 76e4ff88e69040444a8400a2da659fa9, type: 3}
   bossTileIcon: {fileID: 21300000, guid: 0df9b3740a6e9a84480fcb5604f86cba, type: 3}
+  specialDungeonExitIcon: {fileID: 0}
   worldTextFont: {fileID: 11400000, guid: c6e7143cd2df45b45a784ef8c61a210f, type: 2}
   tileFrameSprite: {fileID: 21300000, guid: 352abb5f5937d804f9b24c1ede284778, type: 3}
   tileIconGlowMaskSprite: {fileID: 0}

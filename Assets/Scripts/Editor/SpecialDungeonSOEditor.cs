@@ -1,16 +1,24 @@
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
 [CustomEditor(typeof(SpecialDungeon_SO))]
 public sealed class SpecialDungeonSOEditor : Editor
 {
+    private const float LineHeight = 18f;
+    private const float VerticalSpacing = 4f;
+    private const float BoxPadding = 6f;
+    private const float HelpBoxHeight = 40f;
+
     private readonly List<bool> entryFoldouts = new List<bool>();
 
     private SerializedProperty dungeonIdProperty;
     private SerializedProperty dungeonNameProperty;
     private SerializedProperty descriptionProperty;
     private SerializedProperty entriesProperty;
+    private ReorderableList entriesList;
+    private int pendingRemoveIndex = -1;
 
     private void OnEnable()
     {
@@ -18,6 +26,7 @@ public sealed class SpecialDungeonSOEditor : Editor
         dungeonNameProperty = serializedObject.FindProperty("dungeonName");
         descriptionProperty = serializedObject.FindProperty("description");
         entriesProperty = serializedObject.FindProperty("entries");
+        BuildEntriesList();
     }
 
     public override void OnInspectorGUI()
@@ -43,6 +52,8 @@ public sealed class SpecialDungeonSOEditor : Editor
     private void DrawEntryToolbar()
     {
         EditorGUILayout.LabelField("格子列表", EditorStyles.boldLabel);
+        EditorGUILayout.HelpBox("可拖动每个格子左侧的手柄调整生成顺序。左右出口和出生点会自动生成；这里从出生点右侧开始依次生成。", MessageType.Info);
+
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("添加战斗格"))
             AddEntry(MapTileType.Battle);
@@ -68,109 +79,191 @@ public sealed class SpecialDungeonSOEditor : Editor
     private void DrawEntries()
     {
         EnsureFoldoutCount();
+        if (entriesProperty == null || entriesList == null)
+            return;
+
+        pendingRemoveIndex = -1;
+        entriesList.DoLayoutList();
+
+        if (pendingRemoveIndex >= 0)
+            RemoveEntry(pendingRemoveIndex);
+    }
+
+    private void BuildEntriesList()
+    {
         if (entriesProperty == null)
             return;
 
-        if (entriesProperty.arraySize == 0)
+        entriesList = new ReorderableList(serializedObject, entriesProperty, true, false, false, false)
         {
-            EditorGUILayout.HelpBox("当前副本没有配置格子。左右出口和出生点会自动生成；这里从出生点右侧开始依次生成。", MessageType.Info);
-            return;
-        }
-
-        for (int i = 0; i < entriesProperty.arraySize; i++)
-        {
-            SerializedProperty entry = entriesProperty.GetArrayElementAtIndex(i);
-            if (entry == null)
-                continue;
-
-            DrawEntry(i, entry);
-        }
+            drawElementCallback = DrawEntryElement,
+            elementHeightCallback = GetEntryHeight,
+            onReorderCallback = _ => EnsureFoldoutCount()
+        };
     }
 
-    private void DrawEntry(int index, SerializedProperty entry)
+    private void DrawEntryElement(Rect rect, int index, bool isActive, bool isFocused)
     {
+        EnsureFoldoutCount();
+        if (index < 0 || index >= entriesProperty.arraySize)
+            return;
+
+        SerializedProperty entry = entriesProperty.GetArrayElementAtIndex(index);
+        if (entry == null)
+            return;
+
         SerializedProperty tileType = entry.FindPropertyRelative("tileType");
         MapTileType type = (MapTileType)tileType.intValue;
 
-        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        EditorGUILayout.BeginHorizontal();
-        entryFoldouts[index] = EditorGUILayout.Foldout(
-            entryFoldouts[index],
-            $"#{index + 1} {GetTileTypeLabel(type)}",
-            true);
-        GUILayout.FlexibleSpace();
-        if (GUILayout.Button("上移", GUILayout.Width(44f)))
-            MoveEntry(index, -1);
-        if (GUILayout.Button("下移", GUILayout.Width(44f)))
-            MoveEntry(index, 1);
-        if (GUILayout.Button("删除", GUILayout.Width(44f)))
+        Rect contentRect = new Rect(rect.x + BoxPadding, rect.y + 2f, rect.width - BoxPadding, rect.height - 4f);
+        Rect lineRect = new Rect(contentRect.x, contentRect.y, contentRect.width, LineHeight);
+        Rect foldoutRect = new Rect(lineRect.x, lineRect.y, lineRect.width - 54f, LineHeight);
+        Rect deleteRect = new Rect(lineRect.xMax - 48f, lineRect.y, 48f, LineHeight);
+
+        entryFoldouts[index] = EditorGUI.Foldout(foldoutRect, entryFoldouts[index], $"#{index + 1} {GetTileTypeLabel(type)}", true);
+        if (GUI.Button(deleteRect, "删除"))
         {
-            RemoveEntry(index);
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.EndVertical();
+            pendingRemoveIndex = index;
             return;
         }
-        EditorGUILayout.EndHorizontal();
 
-        if (entryFoldouts[index])
-        {
-            EditorGUI.indentLevel++;
-            EditorGUILayout.PropertyField(tileType, new GUIContent("格子类型"));
-            type = (MapTileType)tileType.intValue;
-            EditorGUILayout.PropertyField(entry.FindPropertyRelative("previewTag"), new GUIContent("预览标签"));
-            DrawTypeSpecificFields(entry, type);
-            DrawValidation(entry, type);
-            EditorGUI.indentLevel--;
-        }
+        if (!entryFoldouts[index])
+            return;
 
-        EditorGUILayout.EndVertical();
+        EditorGUI.indentLevel++;
+        lineRect.y += LineHeight + VerticalSpacing;
+        DrawProperty(ref lineRect, tileType, "格子类型");
+        type = (MapTileType)tileType.intValue;
+        DrawProperty(ref lineRect, entry.FindPropertyRelative("previewTag"), "预览标签");
+        DrawTypeSpecificFields(ref lineRect, entry, type);
+        DrawValidation(ref lineRect, entry, type);
+        EditorGUI.indentLevel--;
     }
 
-    private void DrawTypeSpecificFields(SerializedProperty entry, MapTileType type)
+    private float GetEntryHeight(int index)
+    {
+        EnsureFoldoutCount();
+        if (index < 0 || index >= entriesProperty.arraySize)
+            return LineHeight + VerticalSpacing;
+
+        SerializedProperty entry = entriesProperty.GetArrayElementAtIndex(index);
+        if (entry == null)
+            return LineHeight + VerticalSpacing;
+
+        float height = LineHeight + VerticalSpacing + 4f;
+        if (index >= entryFoldouts.Count || !entryFoldouts[index])
+            return height;
+
+        MapTileType type = (MapTileType)entry.FindPropertyRelative("tileType").intValue;
+        height += GetPropertyHeight(entry.FindPropertyRelative("tileType"));
+        height += GetPropertyHeight(entry.FindPropertyRelative("previewTag"));
+        height += GetTypeSpecificHeight(entry, type);
+        height += GetValidationHeight(entry, type);
+        return height + BoxPadding;
+    }
+
+    private void DrawTypeSpecificFields(ref Rect lineRect, SerializedProperty entry, MapTileType type)
     {
         switch (type)
         {
             case MapTileType.Battle:
             case MapTileType.Elite:
-                EditorGUILayout.PropertyField(entry.FindPropertyRelative("enemyGroup"), new GUIContent("遭遇敌人组"));
-                EditorGUILayout.PropertyField(entry.FindPropertyRelative("previewDangerRating"), new GUIContent("危险度"));
+                DrawProperty(ref lineRect, entry.FindPropertyRelative("enemyGroup"), "遭遇敌人组");
+                DrawProperty(ref lineRect, entry.FindPropertyRelative("previewDangerRating"), "危险度");
                 break;
             case MapTileType.Merchant:
-                EditorGUILayout.PropertyField(entry.FindPropertyRelative("merchantOffers"), new GUIContent("商店商品"), true);
+                DrawProperty(ref lineRect, entry.FindPropertyRelative("merchantOffers"), "商店商品", true);
                 break;
             case MapTileType.Treasure:
-                EditorGUILayout.PropertyField(entry.FindPropertyRelative("treasureOptions"), new GUIContent("宝藏选项"), true);
+                DrawProperty(ref lineRect, entry.FindPropertyRelative("treasureOptions"), "宝藏选项", true);
                 break;
             case MapTileType.Event:
-                EditorGUILayout.PropertyField(entry.FindPropertyRelative("eventData"), new GUIContent("指定事件"));
+                DrawProperty(ref lineRect, entry.FindPropertyRelative("eventData"), "指定事件");
                 break;
             default:
-                EditorGUILayout.HelpBox("特殊副本目前只支持战斗、精英、商店、宝藏和事件格。", MessageType.Warning);
+                DrawHelpBox(ref lineRect, "特殊副本目前只支持战斗、精英、商店、宝藏和事件格。", MessageType.Warning);
                 break;
         }
     }
 
-    private void DrawValidation(SerializedProperty entry, MapTileType type)
+    private void DrawValidation(ref Rect lineRect, SerializedProperty entry, MapTileType type)
     {
         switch (type)
         {
             case MapTileType.Battle:
             case MapTileType.Elite:
                 if (entry.FindPropertyRelative("enemyGroup").objectReferenceValue == null)
-                    EditorGUILayout.HelpBox("战斗/精英格建议配置敌人组，否则进入时会缺少遭遇内容。", MessageType.Warning);
+                    DrawHelpBox(ref lineRect, "战斗/精英格建议配置敌人组，否则进入时会缺少遭遇内容。", MessageType.Warning);
                 break;
             case MapTileType.Merchant:
                 if (entry.FindPropertyRelative("merchantOffers").arraySize == 0)
-                    EditorGUILayout.HelpBox("商店格当前没有商品。", MessageType.Info);
+                    DrawHelpBox(ref lineRect, "商店格当前没有商品。", MessageType.Info);
                 break;
             case MapTileType.Treasure:
                 if (entry.FindPropertyRelative("treasureOptions").arraySize == 0)
-                    EditorGUILayout.HelpBox("宝藏格当前没有奖励选项。", MessageType.Warning);
+                    DrawHelpBox(ref lineRect, "宝藏格当前没有奖励选项。", MessageType.Warning);
                 break;
             case MapTileType.Event:
                 if (entry.FindPropertyRelative("eventData").objectReferenceValue == null)
-                    EditorGUILayout.HelpBox("事件格需要指定一个事件。", MessageType.Warning);
+                    DrawHelpBox(ref lineRect, "事件格需要指定一个事件。", MessageType.Warning);
                 break;
+        }
+    }
+
+    private static void DrawProperty(ref Rect lineRect, SerializedProperty property, string label, bool includeChildren = false)
+    {
+        float height = EditorGUI.GetPropertyHeight(property, includeChildren);
+        lineRect.height = height;
+        EditorGUI.PropertyField(lineRect, property, new GUIContent(label), includeChildren);
+        lineRect.y += height + VerticalSpacing;
+    }
+
+    private static void DrawHelpBox(ref Rect lineRect, string message, MessageType messageType)
+    {
+        lineRect.height = HelpBoxHeight;
+        EditorGUI.HelpBox(lineRect, message, messageType);
+        lineRect.y += HelpBoxHeight + VerticalSpacing;
+    }
+
+    private static float GetPropertyHeight(SerializedProperty property, bool includeChildren = false)
+    {
+        return EditorGUI.GetPropertyHeight(property, includeChildren) + VerticalSpacing;
+    }
+
+    private static float GetTypeSpecificHeight(SerializedProperty entry, MapTileType type)
+    {
+        switch (type)
+        {
+            case MapTileType.Battle:
+            case MapTileType.Elite:
+                return GetPropertyHeight(entry.FindPropertyRelative("enemyGroup"))
+                    + GetPropertyHeight(entry.FindPropertyRelative("previewDangerRating"));
+            case MapTileType.Merchant:
+                return GetPropertyHeight(entry.FindPropertyRelative("merchantOffers"), true);
+            case MapTileType.Treasure:
+                return GetPropertyHeight(entry.FindPropertyRelative("treasureOptions"), true);
+            case MapTileType.Event:
+                return GetPropertyHeight(entry.FindPropertyRelative("eventData"));
+            default:
+                return HelpBoxHeight + VerticalSpacing;
+        }
+    }
+
+    private static float GetValidationHeight(SerializedProperty entry, MapTileType type)
+    {
+        switch (type)
+        {
+            case MapTileType.Battle:
+            case MapTileType.Elite:
+                return entry.FindPropertyRelative("enemyGroup").objectReferenceValue == null ? HelpBoxHeight + VerticalSpacing : 0f;
+            case MapTileType.Merchant:
+                return entry.FindPropertyRelative("merchantOffers").arraySize == 0 ? HelpBoxHeight + VerticalSpacing : 0f;
+            case MapTileType.Treasure:
+                return entry.FindPropertyRelative("treasureOptions").arraySize == 0 ? HelpBoxHeight + VerticalSpacing : 0f;
+            case MapTileType.Event:
+                return entry.FindPropertyRelative("eventData").objectReferenceValue == null ? HelpBoxHeight + VerticalSpacing : 0f;
+            default:
+                return 0f;
         }
     }
 
@@ -199,18 +292,6 @@ public sealed class SpecialDungeonSOEditor : Editor
         entriesProperty.DeleteArrayElementAtIndex(index);
         if (index >= 0 && index < entryFoldouts.Count)
             entryFoldouts.RemoveAt(index);
-    }
-
-    private void MoveEntry(int index, int direction)
-    {
-        int target = index + direction;
-        if (target < 0 || target >= entriesProperty.arraySize)
-            return;
-
-        entriesProperty.MoveArrayElement(index, target);
-        bool foldout = entryFoldouts[index];
-        entryFoldouts[index] = entryFoldouts[target];
-        entryFoldouts[target] = foldout;
     }
 
     private void SetAllFoldouts(bool value)
