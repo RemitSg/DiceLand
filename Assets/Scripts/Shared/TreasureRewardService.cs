@@ -396,6 +396,8 @@ public static class TreasureRewardService
     {
         switch (rarity)
         {
+            case LootRarity.Trash:
+                return "Trash";
             case LootRarity.Uncommon:
                 return "\u7f55\u89c1";
             case LootRarity.Rare:
@@ -419,6 +421,8 @@ public static class TreasureRewardService
     {
         switch (rarity)
         {
+            case LootRarity.Trash:
+                return new Color32(126, 83, 48, 255);
             case LootRarity.Uncommon:
                 return new Color32(56, 178, 86, 255);
             case LootRarity.Rare:

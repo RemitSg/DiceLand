@@ -66,6 +66,40 @@ public class BattleAllySkillEnergyAvailabilityServiceTests
         Assert.IsFalse(canUse);
     }
 
+    [Test]
+    public void HasEnoughEnergyForSkill_IncludesTemporaryEnergy()
+    {
+        BattleAllyController ally = CreateAlly("Ally", buttonCount: 1, selectedSkillCost: 0);
+        EnemySkill_SO skill = CreateSkill("TemporaryPowered", energyCost: 4);
+
+        bool canUse = BattleAllySkillEnergyAvailabilityService.HasEnoughEnergyForSkill(
+            ally,
+            skill,
+            currentSharedEnergy: 2,
+            temporarySharedEnergy: 2,
+            reservedSharedEnergy: 0);
+
+        Assert.IsTrue(canUse);
+    }
+
+    [Test]
+    public void HasEnoughEnergyForSkillOnButton_IncludesTemporaryEnergy()
+    {
+        BattleAllyController ally = CreateAlly("Ally", buttonCount: 1, selectedSkillCost: 0);
+        BattleEnemyController enemy = CreateEnemy("Enemy", buttonCount: 1);
+        Connect(ally.SpeedButtons[0], enemy.SpeedButtons[0]);
+
+        bool canUse = BattleAllySkillEnergyAvailabilityService.HasEnoughEnergyForSkillOnButton(
+            ally,
+            ally.SpeedButtons[0],
+            CreateSkill("TemporaryPowered", energyCost: 4),
+            currentSharedEnergy: 2,
+            temporarySharedEnergy: 2,
+            reservedSharedEnergy: 0);
+
+        Assert.IsTrue(canUse);
+    }
+
     private BattleAllyController CreateAlly(string name, int buttonCount, int selectedSkillCost)
     {
         GameObject go = CreateGameObject(name);

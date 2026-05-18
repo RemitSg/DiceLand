@@ -785,7 +785,7 @@ public class BattleSettlementOverlay : MonoBehaviour
             data.isVictory ? returnButtonLabel : defeatReturnButtonLabel,
             () =>
             {
-                if (data != null && !data.isVictory)
+                if (data != null && !data.isVictory && !ShouldReturnToMapAfterDefeat())
                     HandleAbandonToMainMenu();
                 else
                     HandleReturnToMap(data);
@@ -910,6 +910,12 @@ public class BattleSettlementOverlay : MonoBehaviour
         SpeedButton.CombatLocked = false;
         HideResult();
         SceneCurtainTransitionController.Instance.TransitionToScene(targetScene);
+    }
+
+    private static bool ShouldReturnToMapAfterDefeat()
+    {
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        return activeEncounter != null && !activeEncounter.wasVictory && !activeEncounter.restartBattleOnDefeat;
     }
 
     private void HandleAbandonToMainMenu()
@@ -1567,6 +1573,9 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private static string GetLootRarityLabel(LootRarity rarity)
     {
+        if (rarity == LootRarity.Trash)
+            return "Trash";
+
         switch (rarity)
         {
             case LootRarity.Uncommon:

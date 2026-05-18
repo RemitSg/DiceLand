@@ -67,6 +67,9 @@ public class BattleAllyController : MonoBehaviour
     private int temporaryExtraSpeedButtons;
     private int inheritedExtraSpeedButtons;
     private int lastLivingActiveSpeedButtonCount = 1;
+    private int currentRoundRelicMinPowerBonus;
+    private int nextRoundRelicMinPowerBonus;
+    private bool queuedMinPowerBonusThisRound;
 
     private void Awake()
     {
@@ -370,6 +373,7 @@ public class BattleAllyController : MonoBehaviour
         LastRoundSpeedDiceCount = Mathf.Max(0, activeSpeedButtons.Count);
         CurrentRoundUsedSkill = null;
         currentRoundUsedSkills.Clear();
+        queuedMinPowerBonusThisRound = false;
     }
 
     public int GetCompletedConsecutiveSkillUses(EnemySkill_SO skill)
@@ -431,6 +435,36 @@ public class BattleAllyController : MonoBehaviour
             temporarySkills.Add(skill);
 
         temporarySkillsOverrideWeaponPool |= replaceWeaponSkills;
+    }
+
+    public bool IsTemporarySkill(EnemySkill_SO skill)
+    {
+        return skill != null && temporarySkills.Contains(skill);
+    }
+
+    public void BeginRelicDiceBonusRound()
+    {
+        currentRoundRelicMinPowerBonus = Mathf.Max(0, nextRoundRelicMinPowerBonus);
+        nextRoundRelicMinPowerBonus = 0;
+        queuedMinPowerBonusThisRound = false;
+    }
+
+    public bool QueueNextRoundMinPowerBonusIfUnused(int amount)
+    {
+        int safeAmount = Mathf.Max(0, amount);
+        if (safeAmount <= 0 || queuedMinPowerBonusThisRound)
+            return false;
+
+        nextRoundRelicMinPowerBonus += safeAmount;
+        queuedMinPowerBonusThisRound = true;
+        return true;
+    }
+
+    public int ConsumeCurrentRoundMinPowerBonus()
+    {
+        int bonus = Mathf.Max(0, currentRoundRelicMinPowerBonus);
+        currentRoundRelicMinPowerBonus = 0;
+        return bonus;
     }
 
     public int RollDice(int diceIndex = 0)
@@ -869,6 +903,18 @@ public class BattleAllyController : MonoBehaviour
 
         HealthChanged?.Invoke(this);
         return actualHeal;
+    }
+
+    public void RestoreToFullHealth(bool reviveDead = false)
+    {
+        if (MaxHP <= 0)
+            return;
+        if (IsDead && !reviveDead)
+            return;
+
+        CurrentHP = Mathf.Max(1, MaxHP);
+        IsDead = false;
+        HealthChanged?.Invoke(this);
     }
 
     public void RegisterLastHitDirection(Vector3 direction)

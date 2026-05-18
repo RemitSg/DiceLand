@@ -100,4 +100,99 @@ public static partial class RelicTriggerDispatcher
         ProcessBattleRelics(encounter, context, logFeedback);
         return context;
     }
+
+    public static RelicExecutionContext ProcessPlayerClashLost(
+        BattleEncounterData encounter,
+        RunState runState,
+        EnemySkill_SO skillData,
+        int diceIndex,
+        Object source,
+        Object target,
+        Action<string> logFeedback = null)
+    {
+        RelicExecutionContext context = RelicExecutionContext.CreatePlayerClashLost(
+            runState,
+            skillData,
+            diceIndex,
+            source,
+            target);
+        ProcessBattleRelics(encounter, context, logFeedback);
+        return context;
+    }
+
+    public static RelicExecutionContext ProcessPlayerSkillUsed(
+        BattleEncounterData encounter,
+        RunState runState,
+        EnemySkill_SO skillData,
+        Object source,
+        Object target,
+        Action<string> logFeedback = null)
+    {
+        RelicExecutionContext context = RelicExecutionContext.CreatePlayerSkillUsed(
+            runState,
+            skillData,
+            source,
+            target);
+        ProcessBattleRelics(encounter, context, logFeedback);
+        return context;
+    }
+
+    public static RelicExecutionContext ProcessPlayerDiceRolled(
+        BattleEncounterData encounter,
+        RunState runState,
+        EnemySkill_SO skillData,
+        int diceIndex,
+        int rolledDiceBasePower,
+        int rolledDiceMinPower,
+        Object source,
+        Object target,
+        Action<string> logFeedback = null)
+    {
+        RelicExecutionContext context = RelicExecutionContext.CreatePlayerDiceRolled(
+            runState,
+            skillData,
+            diceIndex,
+            rolledDiceBasePower,
+            rolledDiceMinPower,
+            source,
+            target);
+        ProcessBattleRelics(encounter, context, logFeedback);
+        return context;
+    }
+
+    public static RelicExecutionContext ProcessBattleCompletion(
+        BattleEncounterData encounter,
+        RunState runState,
+        bool victory,
+        int baseBattleExperience,
+        BattleAllyController[] allies,
+        BattleEnemyController[] enemies,
+        bool inSpecialDungeon,
+        Action<string> logFeedback = null)
+    {
+        RelicExecutionContext context = RelicExecutionContext.CreateBattleCompletion(
+            runState,
+            victory,
+            baseBattleExperience,
+            allies,
+            enemies,
+            inSpecialDungeon);
+        ProcessBattleRelics(encounter, context, logFeedback);
+        return context;
+    }
+
+    public static RelicExecutionContext ProcessBattleDefeat(
+        BattleEncounterData encounter,
+        RunState runState,
+        BattleAllyController[] allies,
+        BattleEnemyController[] enemies,
+        Action<string> logFeedback = null)
+    {
+        RelicExecutionContext context = RelicExecutionContext.CreateBattleDefeat(
+            runState,
+            allies,
+            enemies);
+        ProcessBattleRelics(encounter, context, logFeedback);
+        return context;
+    }
 }

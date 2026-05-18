@@ -810,6 +810,8 @@ public class MapMerchantOverlay : MonoBehaviour
     {
         switch (rarity)
         {
+            case LootRarity.Trash:
+                return "Trash";
             case LootRarity.Common:
                 return "普通";
             case LootRarity.Uncommon:
@@ -848,6 +850,8 @@ public class MapMerchantOverlay : MonoBehaviour
     {
         switch (rarity)
         {
+            case LootRarity.Trash:
+                return new Color32(126, 83, 48, 255);
             case LootRarity.Common:
                 return new Color32(128, 128, 128, 255);
             case LootRarity.Uncommon:

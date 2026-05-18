@@ -1637,6 +1637,9 @@ public class RestSceneReforgeInteractable : MonoBehaviour
 
     private static string GetRarityLabel(LootRarity rarity)
     {
+        if (rarity == LootRarity.Trash)
+            return "Trash";
+
         switch (rarity)
         {
             case LootRarity.Uncommon:

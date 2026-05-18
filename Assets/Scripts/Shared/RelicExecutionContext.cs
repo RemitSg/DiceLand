@@ -90,11 +90,16 @@ public sealed partial class RelicExecutionContext
     public int additionalRestReforgeCount;
     public int additionalSharedEnergyRecovery;
     public int additionalTemporaryAllySpeedButtons;
+    public int additionalSharedEnergyMax;
+    public int additionalTemporarySharedEnergy;
 
     // Round, speed, and once-per-event context.
     public int currentSpeed;
     public int currentRound;
     public string eventInstanceKey;
+    public int rolledDiceBasePower;
+    public int rolledDiceMinPower;
+    public bool rolledDiceWasMinimum;
 
     // Calamity context.
     public Calamity_SO calamityData;
@@ -103,6 +108,14 @@ public sealed partial class RelicExecutionContext
     // Battle participants.
     public BattleAllyController[] allies;
     public BattleEnemyController[] enemies;
+    public bool battleVictory;
+    public bool inSpecialDungeon;
+    public int baseBattleExperience;
+    public int modifiedBattleExperience;
+    public bool preventBattleDefeat;
+    public bool fullHealPartyOnDefeat;
+    public bool forceReturnToMapOnDefeat;
+    public EnemyData_SO summonAllyEnemyData;
 
     // User-facing feedback collected by relic effects.
     public List<string> feedbackMessages;

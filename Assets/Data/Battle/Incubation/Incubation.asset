@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   statusId: incubation
   displayName: "\u5B75\u5316"
-  description: "\u8840\u86DB\u5375\u7684\u5B75\u5316\u8BA1\u6570\uFF0C\u672C\u8EAB\u6CA1\u6709\u989D\u5916\u6548\u679C\uFF0C\u4E0D\u4F1A\u81EA\u7136\u8870\u51CF"
-  iconSprite: {fileID: 0}
+  description: "\u8840\u86DB\u5375\u7684\u5B75\u5316\u8BA1\u6570\uFF0C\u4E0D\u4F1A\u81EA\u7136\u8870\u51CF"
+  iconSprite: {fileID: 21300000, guid: 2055fd42ce4d8486295b232b0f3db096, type: 3}
   accentColor: {r: 0.9, g: 0.18, b: 0.22, a: 1}
   tickEffectPrefab: {fileID: 0}
   tickEffectPositionOffset: {x: 0, y: 0, z: 0}

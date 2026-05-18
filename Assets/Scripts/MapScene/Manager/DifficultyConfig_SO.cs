@@ -362,6 +362,8 @@ public class DifficultyConfig_SO : ScriptableObject
     {
         switch (rarity)
         {
+            case LootRarity.Trash:
+                return 1;
             case LootRarity.Uncommon:
                 return 18;
             case LootRarity.Rare:
@@ -380,6 +382,8 @@ public class DifficultyConfig_SO : ScriptableObject
     {
         switch (rarity)
         {
+            case LootRarity.Trash:
+                return 1;
             case LootRarity.Uncommon:
                 return 26;
             case LootRarity.Rare:

@@ -83,7 +83,7 @@ public class LootRarityWeightTable_SO : ScriptableObject
             rarityWeights.Add(new RarityWeightEntry
             {
                 rarity = rarity,
-                weight = 1f
+                weight = rarity == LootRarity.Trash ? 0f : 1f
             });
         }
 

@@ -174,6 +174,18 @@ public static class RelicBuiltInEffectMetadataCatalog
         Add(metadata, Relic_SO.RelicBuiltInEffectType.GuaranteeBattleLootDrop, numericRequirement: RelicBuiltInNumericRequirement.None);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.IncreaseRelicChoiceRefreshCount);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.GrantRandomRelicsOnAcquire);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.QueueStatusToPlayerOnClashLostAgainstStatusTarget, requiresStatusData: true, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.IncreaseSharedEnergyMaxAtBattleStart);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.GrantMoney);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.IgnoreMoveCostWhenDestinationUnvisitedRestTile, numericRequirement: RelicBuiltInNumericRequirement.None);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.GrantTemporarySharedEnergyOnSpecificRound);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.GrantTemporarySharedEnergyEachRound);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToTemporarySkillUser, requiresStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.PreventBattleDefeatAndFullHealPartyOncePerRun, numericRequirement: RelicBuiltInNumericRequirement.None);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ModifyBattleExperiencePercentAndHealMissingHp, numericRequirement: RelicBuiltInNumericRequirement.MaxPowerAmountOrAmountNonZero, numericFieldPath: "powerAmount/amount");
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.SummonTemporaryAllyFromEnemyDataAtBattleStart, numericRequirement: RelicBuiltInNumericRequirement.None);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.QueueNextRoundMinPowerBonusOnMinRollOncePerRound);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.HealPartyPercentAfterBattleInSpecialDungeon);
 
         return metadata;
     }

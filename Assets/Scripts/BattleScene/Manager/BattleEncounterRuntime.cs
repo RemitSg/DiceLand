@@ -40,6 +40,7 @@ public sealed class BattleEncounterData
     public int experienceGained;
     public int moneyGained;
     public bool isTutorialEncounter;
+    public bool isSpecialDungeonEncounter;
     public bool returnToMainMenuOnVictory;
     public bool restartBattleOnDefeat = true;
     [NonSerialized] public bool battleStartAllyStatusGrantsApplied;

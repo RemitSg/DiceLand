@@ -103,6 +103,14 @@ public static class MapMovementService
                     canIgnoreMoveCost = true;
                 }
 
+                if (!canIgnoreMoveCost &&
+                    effect.effectType == Relic_SO.RelicBuiltInEffectType.IgnoreMoveCostWhenDestinationUnvisitedRestTile &&
+                    requireUnvisited &&
+                    tile.tileType == MapTileType.Rest)
+                {
+                    canIgnoreMoveCost = true;
+                }
+
                 if (!canIgnoreMoveCost)
                     continue;
                 if (effect.chance <= 0f)

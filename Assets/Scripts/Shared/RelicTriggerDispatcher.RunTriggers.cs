@@ -130,4 +130,31 @@ public static partial class RelicTriggerDispatcher
         ProcessRunRelics(runState, context, logFeedback);
         return context;
     }
+
+    public static RelicExecutionContext ProcessRestActionPointRestored(
+        RunState runState,
+        Action<string> logFeedback = null)
+    {
+        RelicExecutionContext context = RelicExecutionContext.CreateRestActionPointRestored(runState);
+        ProcessRunRelics(runState, context, logFeedback);
+        return context;
+    }
+
+    public static RelicExecutionContext ProcessRestReforgeCompleted(
+        RunState runState,
+        Action<string> logFeedback = null)
+    {
+        RelicExecutionContext context = RelicExecutionContext.CreateRestReforgeCompleted(runState);
+        ProcessRunRelics(runState, context, logFeedback);
+        return context;
+    }
+
+    public static RelicExecutionContext ProcessRestHealCompleted(
+        RunState runState,
+        Action<string> logFeedback = null)
+    {
+        RelicExecutionContext context = RelicExecutionContext.CreateRestHealCompleted(runState);
+        ProcessRunRelics(runState, context, logFeedback);
+        return context;
+    }
 }

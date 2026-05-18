@@ -85,3 +85,37 @@ MonoBehaviour:
     nextEvent: {fileID: 11400000, guid: b34ae1c86899b244f9765e1eff5d39a0, type: 2}
     resolveEvent: 1
     customHandler: {fileID: 0}
+  - optionId: 3
+    optionLabel: "\u4E0D\u4E0A\u684C"
+    requiredMoney: 0
+    consequenceDescription: "\u65E0\u4E8B\u53D1\u751F"
+    resultContent: "\u4F60\u7ECF\u53D7\u4F4F\u4E86\u8BF1\u60D1\u3002\n\u8D4C\u4EC0\u4E48\u8D4C\uFF0C\u5341\u8D4C\u4E5D\u8F93\uFF0C\u4E0D\u8D4C\u4E3A\u8D62\u3002\n"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 0
+    randomOwnedLootAmountMax: 0
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 11400000, guid: b34ae1c86899b244f9765e1eff5d39a0, type: 2}
+    resolveEvent: 1
+    customHandler: {fileID: 0}

@@ -230,4 +230,34 @@ public sealed partial class RelicExecutionContext
             feedbackMessages = new List<string>()
         };
     }
+
+    public static RelicExecutionContext CreateRestActionPointRestored(RunState runState)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnRestActionPointRestored,
+            runState = runState,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateRestReforgeCompleted(RunState runState)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnRestReforgeCompleted,
+            runState = runState,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateRestHealCompleted(RunState runState)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnRestHealCompleted,
+            runState = runState,
+            feedbackMessages = new List<string>()
+        };
+    }
 }

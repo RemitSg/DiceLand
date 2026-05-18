@@ -72,4 +72,106 @@ public sealed partial class RelicExecutionContext
             feedbackMessages = new List<string>()
         };
     }
+
+    public static RelicExecutionContext CreatePlayerClashLost(
+        RunState runState,
+        EnemySkill_SO skillData,
+        int diceIndex,
+        Object source,
+        Object target)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnPlayerClashLost,
+            runState = runState,
+            sourceIsPlayer = true,
+            skillData = skillData,
+            diceIndex = Mathf.Max(0, diceIndex),
+            source = source,
+            target = target,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreatePlayerSkillUsed(
+        RunState runState,
+        EnemySkill_SO skillData,
+        Object source,
+        Object target)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnPlayerSkillUsed,
+            runState = runState,
+            sourceIsPlayer = true,
+            skillData = skillData,
+            source = source,
+            target = target,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreatePlayerDiceRolled(
+        RunState runState,
+        EnemySkill_SO skillData,
+        int diceIndex,
+        int rolledDiceBasePower,
+        int rolledDiceMinPower,
+        Object source,
+        Object target)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnPlayerDiceRolled,
+            runState = runState,
+            sourceIsPlayer = true,
+            skillData = skillData,
+            diceIndex = Mathf.Max(0, diceIndex),
+            rolledDiceBasePower = rolledDiceBasePower,
+            rolledDiceMinPower = rolledDiceMinPower,
+            rolledDiceWasMinimum = rolledDiceBasePower <= rolledDiceMinPower,
+            source = source,
+            target = target,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateBattleCompletion(
+        RunState runState,
+        bool victory,
+        int baseBattleExperience,
+        BattleAllyController[] allies,
+        BattleEnemyController[] enemies,
+        bool inSpecialDungeon)
+    {
+        int safeExperience = Mathf.Max(0, baseBattleExperience);
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnBattleCompletion,
+            runState = runState,
+            battleVictory = victory,
+            baseBattleExperience = safeExperience,
+            modifiedBattleExperience = safeExperience,
+            allies = allies,
+            enemies = enemies,
+            inSpecialDungeon = inSpecialDungeon,
+            feedbackMessages = new List<string>()
+        };
+    }
+
+    public static RelicExecutionContext CreateBattleDefeat(
+        RunState runState,
+        BattleAllyController[] allies,
+        BattleEnemyController[] enemies)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnBattleDefeat,
+            runState = runState,
+            battleVictory = false,
+            allies = allies,
+            enemies = enemies,
+            feedbackMessages = new List<string>()
+        };
+    }
 }

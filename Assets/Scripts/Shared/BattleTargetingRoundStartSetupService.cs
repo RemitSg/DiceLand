@@ -20,6 +20,7 @@ public static class BattleTargetingRoundStartSetupService
             if (ally == null || ally.IsDead)
                 continue;
 
+            ally.BeginRelicDiceBonusRound();
             ally.GenerateRandomSpeed(speedMin, speedMax);
             applyRoundStartRelics?.Invoke(ally);
             ally.SelectDefaultSkill(currentRound);

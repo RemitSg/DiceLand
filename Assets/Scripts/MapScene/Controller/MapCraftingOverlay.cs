@@ -531,6 +531,8 @@ public class MapCraftingOverlay : MonoBehaviour
     {
         switch (rarity)
         {
+            case LootRarity.Trash:
+                return "Trash";
             case LootRarity.Common:
                 return "普通";
             case LootRarity.Uncommon:

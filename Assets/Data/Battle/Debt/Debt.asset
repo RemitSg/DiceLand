@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   statusId: debt
   displayName: "\u8D1F\u503A"
-  description: "\u7B79\u7801\u6B20\u4E0B\u7684\u5F71\u5B50\u3002\u8FBE\u5230 3 \u5C42\u65F6\uFF0C\u507F\u8FD8\u4F1A\u7ACB\u523B\u5230\u6765\u3002"
-  iconSprite: {fileID: 0}
+  description: "\u6B20\u4E0B\u7684\u503A\u52A1\u3002\u8FBE\u5230 3 \u5C42\u65F6\uFF0C\u507F\u8FD8\u4F1A\u7ACB\u523B\u5230\u6765\u3002"
+  iconSprite: {fileID: 21300000, guid: 0bfd912f642b64892abbeecbf73847ae, type: 3}
   accentColor: {r: 0.95, g: 0.76, b: 0.28, a: 1}
   tickEffectPrefab: {fileID: 0}
   tickEffectPositionOffset: {x: 0, y: 0, z: 0}

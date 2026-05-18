@@ -246,6 +246,34 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
         return null;
     }
 
+    public BattleAllyController SpawnAllyFromEnemyDataDuringBattle(EnemyData_SO enemyData)
+    {
+        if (enemyData == null)
+            return null;
+
+        EnsureBattleSetup();
+        if (!battleManager.IsInitialized)
+            battleManager.Initialize();
+
+        int existingCount = 0;
+        BattleAllyController[] existingAllies = alliesParent != null
+            ? alliesParent.GetComponentsInChildren<BattleAllyController>(false)
+            : Array.Empty<BattleAllyController>();
+        for (int i = 0; i < existingAllies.Length; i++)
+        {
+            if (existingAllies[i] != null && !existingAllies[i].IsDead)
+                existingCount++;
+        }
+
+        List<Transform> anchorPoints = CollectAnchorsByPrefix(allyAnchorNamePrefix);
+        Transform anchor = existingCount < anchorPoints.Count ? anchorPoints[existingCount] : null;
+        Vector3 spawnPosition = anchor != null
+            ? anchor.position
+            : CalculateFallbackSpawnPosition(allyFormationCenter, existingCount, existingCount + 1);
+
+        return SpawnEnemyDataAsAlly(enemyData, spawnPosition, existingCount);
+    }
+
     private void SpawnAlly(RunPartyMemberState allyState, Vector3 worldPosition, int index)
     {
         EnsureWhiteSprite();
@@ -377,6 +405,53 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
             enemyObject.SetActive(true);
 
         battleManager.AddEnemy();
+    }
+
+    private BattleAllyController SpawnEnemyDataAsAlly(EnemyData_SO enemyData, Vector3 worldPosition, int index)
+    {
+        EnsureWhiteSprite();
+
+        CharacterData_SO runtimeCharacter = ScriptableObject.CreateInstance<CharacterData_SO>();
+        runtimeCharacter.name = $"{enemyData.name}_TemporaryAllyCharacter";
+        runtimeCharacter.characterName = string.IsNullOrWhiteSpace(enemyData.enemyName) ? enemyData.name : enemyData.enemyName;
+        runtimeCharacter.baseHP = Mathf.Max(1, enemyData.baseHP);
+        runtimeCharacter.minSpeed = Mathf.Max(0, enemyData.minSpeed);
+        runtimeCharacter.maxSpeed = Mathf.Max(runtimeCharacter.minSpeed, enemyData.maxSpeed);
+        runtimeCharacter.battleSprite = enemyData.GetStageSprite(0);
+
+        Weapon_SO runtimeWeapon = ScriptableObject.CreateInstance<Weapon_SO>();
+        runtimeWeapon.name = $"{enemyData.name}_TemporaryAllyWeapon";
+        runtimeWeapon.weaponName = runtimeCharacter.characterName;
+        runtimeWeapon.speedButtonCount = Mathf.Max(1, enemyData.GetStageSpeedButtonCount(0));
+        runtimeWeapon.skillPool = enemyData.skillPool != null ? enemyData.skillPool.ToArray() : Array.Empty<EnemySkill_SO>();
+
+        RunPartyMemberState allyState = new RunPartyMemberState
+        {
+            memberId = runtimeCharacter.characterName,
+            characterData = runtimeCharacter,
+            weaponData = runtimeWeapon,
+            level = 1,
+            experience = 0,
+            maxHP = runtimeCharacter.baseHP,
+            currentHP = runtimeCharacter.baseHP
+        };
+
+        SpawnAlly(allyState, worldPosition, index);
+        BattleAllyController[] refreshedAllies = alliesParent != null
+            ? alliesParent.GetComponentsInChildren<BattleAllyController>(false)
+            : Array.Empty<BattleAllyController>();
+        BattleAllyController spawned = refreshedAllies.Length > 0 ? refreshedAllies[refreshedAllies.Length - 1] : null;
+        if (spawned != null && enemyData.battleStartStatusGains != null)
+        {
+            for (int i = 0; i < enemyData.battleStartStatusGains.Count; i++)
+            {
+                EnemyData_SO.StatusGainEntry gain = enemyData.battleStartStatusGains[i];
+                if (gain.statusData != null && gain.stackAmount > 0)
+                    spawned.AddStatus(gain.statusData, gain.statusData.StatusId, gain.statusData.DisplayName, gain.stackAmount);
+            }
+        }
+
+        return spawned;
     }
 
     private GameObject BuildAllyObject(RunPartyMemberState allyState, Vector3 worldPosition, int index)

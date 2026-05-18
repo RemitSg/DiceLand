@@ -284,6 +284,9 @@ public class MapCalamityOverlay : MonoBehaviour
         Color rarityColor;
         switch (rarity)
         {
+            case LootRarity.Trash:
+                rarityColor = new Color(0.49f, 0.33f, 0.19f, 1f);
+                break;
             case LootRarity.Uncommon:
                 rarityColor = new Color(0.38f, 0.9f, 0.42f, 1f);
                 break;

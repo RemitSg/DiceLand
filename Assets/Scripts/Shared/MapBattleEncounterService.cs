@@ -84,6 +84,7 @@ public static class MapBattleEncounterService
                 ? request.moneyRewardTable.RollReward(tile.tileType, tile.dangerBand, tile.encounterSeed)
                 : 0,
             isTutorialEncounter = request.isTutorialEncounter,
+            isSpecialDungeonEncounter = tile.sourceSpecialDungeon != null,
             returnToMainMenuOnVictory = request.returnToMainMenuOnVictory,
             restartBattleOnDefeat = request.restartBattleOnDefeat
         };

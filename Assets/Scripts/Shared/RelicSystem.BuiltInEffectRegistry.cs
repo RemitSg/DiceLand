@@ -127,6 +127,18 @@ public static partial class RelicSystem
             { Relic_SO.RelicBuiltInEffectType.GuaranteeBattleLootDrop, HandlePassiveMarker },
             { Relic_SO.RelicBuiltInEffectType.IncreaseRelicChoiceRefreshCount, HandlePassiveMarker },
             { Relic_SO.RelicBuiltInEffectType.GrantRandomRelicsOnAcquire, HandleGrantRandomRelicsOnAcquire },
+            { Relic_SO.RelicBuiltInEffectType.QueueStatusToPlayerOnClashLostAgainstStatusTarget, HandleQueueStatusToPlayerOnClashLostAgainstStatusTarget },
+            { Relic_SO.RelicBuiltInEffectType.IncreaseSharedEnergyMaxAtBattleStart, HandleIncreaseSharedEnergyMaxAtBattleStart },
+            { Relic_SO.RelicBuiltInEffectType.GrantMoney, HandleGrantMoney },
+            { Relic_SO.RelicBuiltInEffectType.IgnoreMoveCostWhenDestinationUnvisitedRestTile, HandleIgnoreMoveCostWhenDestinationUnvisitedRestTile },
+            { Relic_SO.RelicBuiltInEffectType.GrantTemporarySharedEnergyOnSpecificRound, HandleGrantTemporarySharedEnergyOnSpecificRound },
+            { Relic_SO.RelicBuiltInEffectType.GrantTemporarySharedEnergyEachRound, HandleGrantTemporarySharedEnergyEachRound },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToTemporarySkillUser, HandleApplyStatusToTemporarySkillUser },
+            { Relic_SO.RelicBuiltInEffectType.PreventBattleDefeatAndFullHealPartyOncePerRun, HandlePreventBattleDefeatAndFullHealPartyOncePerRun },
+            { Relic_SO.RelicBuiltInEffectType.ModifyBattleExperiencePercentAndHealMissingHp, HandleModifyBattleExperiencePercentAndHealMissingHp },
+            { Relic_SO.RelicBuiltInEffectType.SummonTemporaryAllyFromEnemyDataAtBattleStart, HandleSummonTemporaryAllyFromEnemyDataAtBattleStart },
+            { Relic_SO.RelicBuiltInEffectType.QueueNextRoundMinPowerBonusOnMinRollOncePerRound, HandleQueueNextRoundMinPowerBonusOnMinRollOncePerRound },
+            { Relic_SO.RelicBuiltInEffectType.HealPartyPercentAfterBattleInSpecialDungeon, HandleHealPartyPercentAfterBattleInSpecialDungeon },
         };
     }
 

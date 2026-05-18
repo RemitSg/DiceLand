@@ -59,6 +59,7 @@ public class BattleButton : MonoBehaviour
     [SerializeField] private Color sharedEnergyPanelBgColor = new Color(0f, 0f, 0f, 0.55f);
     [SerializeField] private Color sharedEnergyBarBgColor = new Color(0.18f, 0.18f, 0.18f, 0.9f);
     [SerializeField] private Color sharedEnergyBarFillColor = new Color(0.28f, 0.78f, 1f, 1f);
+    [SerializeField] private Color temporarySharedEnergyBarFillColor = new Color(0.64f, 0.29f, 1f, 1f);
 
     [Header("Tutorial Guide")]
     [SerializeField] private TMP_FontAsset tutorialGuideKeywordFont;
@@ -83,8 +84,11 @@ public class BattleButton : MonoBehaviour
     private bool enemyBattleStartEffectsApplied;
     private bool battleStartEnergyCalamityApplied;
     private int currentSharedEnergy;
+    private int temporarySharedEnergy;
     private int currentSharedEnergyMax;
     private int reservedSharedEnergy;
+    private int lastSpentSharedEnergy;
+    private int lastSpentTemporarySharedEnergy;
     private bool isRefreshingSharedEnergyReservations;
     private BattleAllyController[] activeRoundAllies;
     private BattleEnemyController[] activeRoundEnemies;
@@ -94,10 +98,12 @@ public class BattleButton : MonoBehaviour
     private RectTransform sharedEnergyPanelRect;
     private TextMeshProUGUI sharedEnergyText;
     private Image sharedEnergyBarFill;
+    private Image temporarySharedEnergyBarFill;
     private RectTransform roundCounterPanelRect;
     private TextMeshProUGUI roundCounterText;
     private int pendingAllyNextDicePowerBonus;
     private int pendingEnemyNextDicePowerBonus;
+    private bool forceReturnToMapAfterDefeat;
 
     private void Awake()
     {
@@ -109,7 +115,10 @@ public class BattleButton : MonoBehaviour
         battleStartEnergyCalamityApplied = false;
         currentSharedEnergyMax = Mathf.Max(0, initialSharedEnergyMax);
         currentSharedEnergy = currentSharedEnergyMax;
+        temporarySharedEnergy = 0;
         reservedSharedEnergy = 0;
+        lastSpentSharedEnergy = 0;
+        lastSpentTemporarySharedEnergy = 0;
 
         if (BattleManagerResolverService.TryResolve(
                 battleManager,
@@ -258,8 +267,10 @@ public class BattleButton : MonoBehaviour
         BattleEncounterRuntime.ActiveEncounter?.ResetRoundRelicProcKeys();
         BattleSharedEnergyRoundStartState energyRoundStartState = BattleSharedEnergyRoundStartService.Resolve(
             currentSharedEnergy,
+            temporarySharedEnergy,
             currentSharedEnergyMax);
         currentSharedEnergy = energyRoundStartState.CurrentSharedEnergy;
+        temporarySharedEnergy = energyRoundStartState.TemporarySharedEnergy;
         reservedSharedEnergy = energyRoundStartState.ReservedSharedEnergy;
         ApplyBattleStartSharedEnergyCalamityIfNeeded();
         RefreshSharedEnergyUi();
@@ -420,11 +431,13 @@ public class BattleButton : MonoBehaviour
                 button,
                 skill,
                 currentSharedEnergy,
+                temporarySharedEnergy,
                 reservedSharedEnergy)
             : BattleAllySkillEnergyAvailabilityService.HasEnoughEnergyForSkill(
                 ally,
                 skill,
                 currentSharedEnergy,
+                temporarySharedEnergy,
                 reservedSharedEnergy);
         if (!hasEnoughEnergy)
             return "能量不足";
@@ -553,7 +566,7 @@ public class BattleButton : MonoBehaviour
     {
         reservedSharedEnergy = BattleSharedEnergyReservationCollectorService.CalculateTotalReservedEnergy(
             allies,
-            currentSharedEnergy);
+            BattleSharedEnergyReservationService.CalculateTotalAvailableEnergy(currentSharedEnergy, temporarySharedEnergy));
         RefreshSharedEnergyUi();
     }
 
@@ -572,8 +585,16 @@ public class BattleButton : MonoBehaviour
 
     private void CommitReservedSharedEnergy()
     {
-        currentSharedEnergy = Mathf.Clamp(currentSharedEnergy - reservedSharedEnergy, 0, currentSharedEnergyMax);
-        reservedSharedEnergy = 0;
+        BattleSharedEnergySpendResult spendResult = BattleSharedEnergyReservationService.SpendReservedEnergy(
+            currentSharedEnergy,
+            temporarySharedEnergy,
+            reservedSharedEnergy,
+            currentSharedEnergyMax);
+        currentSharedEnergy = spendResult.CurrentSharedEnergy;
+        temporarySharedEnergy = spendResult.TemporarySharedEnergy;
+        reservedSharedEnergy = spendResult.ReservedSharedEnergy;
+        lastSpentSharedEnergy = spendResult.SpentSharedEnergy;
+        lastSpentTemporarySharedEnergy = spendResult.SpentTemporarySharedEnergy;
         RefreshSharedEnergyUi();
     }
 
@@ -588,6 +609,79 @@ public class BattleButton : MonoBehaviour
         if (restored > 0)
             RefreshSharedEnergyUi();
         return restored;
+    }
+
+    private int RefundLastSpentSharedEnergy(int maxRefundAmount)
+    {
+        int remainingRefund = Mathf.Max(0, maxRefundAmount);
+        if (remainingRefund <= 0)
+            return 0;
+
+        int temporaryRefund = Mathf.Min(lastSpentTemporarySharedEnergy, remainingRefund);
+        if (temporaryRefund > 0)
+        {
+            temporarySharedEnergy += temporaryRefund;
+            lastSpentTemporarySharedEnergy -= temporaryRefund;
+            remainingRefund -= temporaryRefund;
+        }
+
+        int normalRefund = 0;
+        if (remainingRefund > 0)
+        {
+            int refundableNormal = Mathf.Min(lastSpentSharedEnergy, remainingRefund);
+            int previous = currentSharedEnergy;
+            currentSharedEnergy = Mathf.Clamp(currentSharedEnergy + refundableNormal, 0, currentSharedEnergyMax);
+            normalRefund = currentSharedEnergy - previous;
+            lastSpentSharedEnergy = Mathf.Max(0, lastSpentSharedEnergy - normalRefund);
+        }
+
+        int refunded = temporaryRefund + normalRefund;
+        if (refunded > 0)
+            RefreshSharedEnergyUi();
+        return refunded;
+    }
+
+    public int AddTemporarySharedEnergy(int amount)
+    {
+        int added = Mathf.Max(0, amount);
+        if (added <= 0)
+            return 0;
+
+        temporarySharedEnergy += added;
+        RefreshSharedEnergyReservations(activeRoundAllies);
+        RefreshSharedEnergyUi();
+        return added;
+    }
+
+    private int IncreaseSharedEnergyMaxAtBattleStart(int amount)
+    {
+        int added = Mathf.Max(0, amount);
+        if (added <= 0)
+            return 0;
+
+        currentSharedEnergyMax += added;
+        currentSharedEnergy += added;
+        RefreshSharedEnergyReservations(activeRoundAllies);
+        RefreshSharedEnergyUi();
+        return added;
+    }
+
+    private void ClearTemporarySharedEnergyAtRoundEnd()
+    {
+        if (temporarySharedEnergy <= 0)
+            return;
+
+        temporarySharedEnergy = 0;
+        reservedSharedEnergy = Mathf.Clamp(
+            reservedSharedEnergy,
+            0,
+            BattleSharedEnergyReservationService.CalculateTotalAvailableEnergy(currentSharedEnergy, temporarySharedEnergy));
+        RefreshSharedEnergyUi();
+    }
+
+    private string GetTemporarySharedEnergyColorHtml()
+    {
+        return "#" + ColorUtility.ToHtmlStringRGBA(temporarySharedEnergyBarFillColor);
     }
 
     private void ShowSharedEnergyRefundPopupIfNeeded(BattleAllyController ally, int refundedEnergy)
@@ -613,7 +707,7 @@ public class BattleButton : MonoBehaviour
         {
             if (refundEnergyOnFailure)
             {
-                int refundedEnergy = RestoreSharedEnergy(Mathf.Max(0, skill.energyCost));
+                int refundedEnergy = RefundLastSpentSharedEnergy(Mathf.Max(0, skill.energyCost));
                 ShowSharedEnergyRefundPopupIfNeeded(ally, refundedEnergy);
             }
 
@@ -684,6 +778,7 @@ public class BattleButton : MonoBehaviour
         sharedEnergyText.color    = sharedEnergyTextColor;
         sharedEnergyText.alignment = TextAlignmentOptions.MidlineLeft;
         sharedEnergyText.enableWordWrapping = false;
+        sharedEnergyText.richText = true;
         if (sharedEnergyFont != null)
             sharedEnergyText.font = sharedEnergyFont;
 
@@ -720,6 +815,18 @@ public class BattleButton : MonoBehaviour
         barFillRect.offsetMin = Vector2.zero;
         barFillRect.offsetMax = Vector2.zero;
         // anchorMax.x 会在 RefreshSharedEnergyUi 中按能量比例动态设置
+        GameObject temporaryBarFillGo = new GameObject("TemporaryEnergyBarFill", typeof(RectTransform), typeof(Image));
+        temporaryBarFillGo.transform.SetParent(barBgGo.transform, false);
+        temporarySharedEnergyBarFill = temporaryBarFillGo.GetComponent<Image>();
+        temporarySharedEnergyBarFill.color = temporarySharedEnergyBarFillColor;
+
+        RectTransform temporaryBarFillRect = temporaryBarFillGo.GetComponent<RectTransform>();
+        temporaryBarFillRect.anchorMin = new Vector2(0f, 0f);
+        temporaryBarFillRect.anchorMax = new Vector2(0f, 1f);
+        temporaryBarFillRect.pivot = new Vector2(0f, 0.5f);
+        temporaryBarFillRect.offsetMin = Vector2.zero;
+        temporaryBarFillRect.offsetMax = Vector2.zero;
+
         GameObject roundPanelGo = new GameObject("RoundPanel", typeof(RectTransform), typeof(Image));
         roundPanelGo.transform.SetParent(sharedEnergyRoot, false);
         Image roundPanelImage = roundPanelGo.GetComponent<Image>();
@@ -759,21 +866,35 @@ public class BattleButton : MonoBehaviour
 
         sharedEnergyText.text = BattleSharedEnergyHudService.BuildEnergyText(
             currentSharedEnergy,
+            temporarySharedEnergy,
             reservedSharedEnergy,
-            currentSharedEnergyMax);
+            currentSharedEnergyMax,
+            GetTemporarySharedEnergyColorHtml());
         if (roundCounterText != null)
             roundCounterText.text = BattleSharedEnergyHudService.BuildRoundText(currentRound);
 
         if (sharedEnergyBarFill != null)
         {
-            float fillRatio = BattleSharedEnergyHudService.CalculateFillRatio(
+            BattleSharedEnergyHudSegments segments = BattleSharedEnergyHudService.CalculateSegmentRatios(
                 currentSharedEnergy,
+                temporarySharedEnergy,
                 reservedSharedEnergy,
                 currentSharedEnergyMax);
             RectTransform fillRect = sharedEnergyBarFill.rectTransform;
-            fillRect.anchorMax = new Vector2(fillRatio, 1f);
+            fillRect.anchorMin = Vector2.zero;
+            fillRect.anchorMax = new Vector2(segments.NormalFillRatio, 1f);
             fillRect.offsetMin = Vector2.zero;
             fillRect.offsetMax = Vector2.zero;
+
+            if (temporarySharedEnergyBarFill != null)
+            {
+                RectTransform temporaryFillRect = temporarySharedEnergyBarFill.rectTransform;
+                temporaryFillRect.anchorMin = new Vector2(segments.NormalFillRatio, 0f);
+                temporaryFillRect.anchorMax = new Vector2(segments.NormalFillRatio + segments.TemporaryFillRatio, 1f);
+                temporaryFillRect.offsetMin = Vector2.zero;
+                temporaryFillRect.offsetMax = Vector2.zero;
+                temporarySharedEnergyBarFill.enabled = segments.TemporaryFillRatio > 0f;
+            }
         }
     }
 
@@ -818,6 +939,7 @@ public class BattleButton : MonoBehaviour
             () => LogRoundSummary(allies, enemies),
             ApplyRoundEndStatusEffectsGeneric,
             ApplyBattleRoundEndRelics);
+        ClearTemporarySharedEnergyAtRoundEnd();
 
         BattleCombatPhaseCompletionPlan roundEndPlan = BattleCombatPhaseCompletionPlanService.Resolve(false);
         BattleCombatPhaseCompletionDispatcher.DispatchNormalRoundEnd(
@@ -2222,7 +2344,10 @@ public class BattleButton : MonoBehaviour
         }
 
         if (impactPlan.ApplyEnemyClashWinEffects)
+        {
             ApplyEnemyTriggeredEffects(enemy, ally, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnClashWin, 0);
+            ProcessPlayerClashLostRelics(ally, enemy, diceIndex);
+        }
 
         if (impactPlan.ApplyHornedGatekeeperClashWin)
             ApplyHornedGatekeeperClashWinEffects(enemy, ally, diceIndex, impactPlan.HornedGatekeeperClashDifference);
@@ -2382,6 +2507,7 @@ public class BattleButton : MonoBehaviour
     {
         PlayerRelicDiceModifier allyRelicModifier = ResolvePlayerRelicDiceModifier(ally, enemy, diceIndex, false);
         EnemySkill_SO.DicePowerRange allyRange = ApplyAllyContextualDiceRangeModifiers(ally, enemy, diceIndex, ally.GetDicePowerRange(diceIndex));
+        allyRange = BattleDiceRollService.ApplyRangeBonus(allyRange, ally.ConsumeCurrentRoundMinPowerBonus(), 0);
         allyRange = BattleDiceRollService.ApplyRangeBonus(allyRange, allyRelicModifier.minPowerBonus, allyRelicModifier.maxPowerBonus);
         EnemySkill_SO.DicePowerRange allyBaseDisplayRange = ally.SelectedSkill != null
             ? ally.GetDisplayedDicePowerRange(ally.SelectedSkill, diceIndex)
@@ -2389,6 +2515,7 @@ public class BattleButton : MonoBehaviour
         EnemySkill_SO.DicePowerRange allyDisplayRange = ApplyAllyContextualDiceRangeModifiers(ally, enemy, diceIndex, allyBaseDisplayRange);
         allyDisplayRange = BattleDiceRollService.ApplyRangeBonus(allyDisplayRange, allyRelicModifier.minPowerBonus, allyRelicModifier.maxPowerBonus);
         int allyBasePower = BattleDiceRollService.RollPower(allyRange);
+        ProcessPlayerDiceRolledRelics(ally, enemy, diceIndex, allyBasePower, Mathf.Max(1, allyRange.minPower));
         bool isDefenseSkill = IsDefenseSkill(ally.SelectedSkill, diceIndex);
         int allyStatusPowerModifier = ally.GetStatusFlatPowerModifier(isDefenseSkill);
         int queuedNextDicePowerBonus = ConsumePendingAllyNextDicePowerBonus();
@@ -2552,6 +2679,7 @@ public class BattleButton : MonoBehaviour
         pendingAllyNextDicePowerBonus = 0;
         pendingEnemyNextDicePowerBonus = 0;
         ally.ActivateSelectedSkillForButton(allyButton);
+        ProcessPlayerSkillUsedRelics(ally, enemy);
 
         if (!TryConsumeAllySkillRequirement(ally, ally.SelectedSkill, "[鎷肩偣]", true))
         {
@@ -2589,6 +2717,7 @@ public class BattleButton : MonoBehaviour
             bool enemyDefenseSkill = IsDefenseSkill(enemy.SelectedSkill, i);
             PlayerRelicDiceModifier allyRelicModifier = ResolvePlayerRelicDiceModifier(ally, enemy, i, true);
             EnemySkill_SO.DicePowerRange allyRange = ApplyAllyContextualDiceRangeModifiers(ally, enemy, i, ally.GetDicePowerRange(i));
+            allyRange = BattleDiceRollService.ApplyRangeBonus(allyRange, ally.ConsumeCurrentRoundMinPowerBonus(), 0);
             allyRange = BattleDiceRollService.ApplyRangeBonus(allyRange, allyRelicModifier.minPowerBonus, allyRelicModifier.maxPowerBonus);
             EnemySkill_SO.DicePowerRange enemyRange = enemy.GetDicePowerRange(i);
             enemyRange = ApplyEnemyContextualDiceRangeModifiers(enemy, ally, i, enemyRange);
@@ -2601,6 +2730,7 @@ public class BattleButton : MonoBehaviour
             enemyDisplayRange = ApplyEnemyContextualDiceRangeModifiers(enemy, ally, i, enemyDisplayRange);
             int allyBasePower = BattleDiceRollService.RollPower(allyRange);
             int enemyBasePower = BattleDiceRollService.RollPower(enemyRange);
+            ProcessPlayerDiceRolledRelics(ally, enemy, i, allyBasePower, Mathf.Max(1, allyRange.minPower));
             int allyStatusPowerModifier = ally.GetStatusFlatPowerModifier(allyDefenseSkill);
             int enemyStatusPowerModifier = enemy.GetStatusFlatPowerModifier(enemyDefenseSkill);
             int allySkillUseBonus = BattleDicePowerModifierCollectionService.GetSkillUseBonus(
@@ -2878,6 +3008,7 @@ public class BattleButton : MonoBehaviour
 
         pendingAllyNextDicePowerBonus = 0;
         ally.ActivateSelectedSkillForButton(allyButton);
+        ProcessPlayerSkillUsedRelics(ally, enemy);
 
         Vector3 allyStartPosition = ally.transform.position;
         Vector3 enemyStartPosition = enemy.transform.position;
@@ -4238,6 +4369,64 @@ public class BattleButton : MonoBehaviour
         return modifier;
     }
 
+    private void ProcessPlayerDiceRolledRelics(BattleAllyController attacker, BattleEnemyController target, int diceIndex, int rolledPower, int minPower)
+    {
+        if (attacker == null)
+            return;
+
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return;
+
+        RelicTriggerDispatcher.ProcessPlayerDiceRolled(
+            activeEncounter,
+            null,
+            attacker.SelectedSkill,
+            diceIndex,
+            rolledPower,
+            minPower,
+            attacker,
+            target,
+            BattleLog);
+    }
+
+    private void ProcessPlayerSkillUsedRelics(BattleAllyController attacker, BattleEnemyController target)
+    {
+        if (attacker == null)
+            return;
+
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return;
+
+        RelicTriggerDispatcher.ProcessPlayerSkillUsed(
+            activeEncounter,
+            null,
+            attacker.SelectedSkill,
+            attacker,
+            target,
+            BattleLog);
+    }
+
+    private void ProcessPlayerClashLostRelics(BattleAllyController attacker, BattleEnemyController target, int diceIndex)
+    {
+        if (attacker == null || target == null)
+            return;
+
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return;
+
+        RelicTriggerDispatcher.ProcessPlayerClashLost(
+            activeEncounter,
+            null,
+            attacker.SelectedSkill,
+            diceIndex,
+            attacker,
+            target,
+            BattleLog);
+    }
+
     private void ApplyPlayerRoundStartRelics(BattleAllyController ally)
     {
         if (ally == null)
@@ -4269,6 +4458,7 @@ public class BattleButton : MonoBehaviour
                 roundAllies,
                 roundEnemies),
             amount => RestoreSharedEnergy(amount),
+            amount => AddTemporarySharedEnergy(amount),
             context => BattleRelicEffectRunner.FlushFeedback(context, BattleLog));
     }
 
@@ -4285,9 +4475,40 @@ public class BattleButton : MonoBehaviour
                 round,
                 setupAllies,
                 setupEnemies),
+            amount => IncreaseSharedEnergyMaxAtBattleStart(amount),
+            context => ApplyBattleSetupSummonedAllyRelics(context),
             context => BattleRelicEffectRunner.FlushFeedback(context, BattleLog));
 
         BattleTargetingPhaseRelicService.ApplyTemporarySpeedButtons(allies, extraButtonsPerAlly);
+    }
+
+    private void ApplyBattleSetupSummonedAllyRelics(RelicExecutionContext context)
+    {
+        if (context == null || context.summonAllyEnemyData == null)
+            return;
+
+        BattleSceneEncounterBootstrap bootstrap = FindObjectOfType<BattleSceneEncounterBootstrap>();
+        if (bootstrap == null)
+            return;
+
+        BattleAllyController summonedAlly = bootstrap.SpawnAllyFromEnemyDataDuringBattle(context.summonAllyEnemyData);
+        if (summonedAlly == null)
+            return;
+
+        RefreshActiveRoundAlliesFromScene();
+        BattleLog($"遗物召唤：{summonedAlly.GetSettlementDisplayName()} 加入战斗。");
+    }
+
+    private void RefreshActiveRoundAlliesFromScene()
+    {
+        if (battleManager == null || battleManager.alliesParent == null)
+            return;
+
+        BattleAllyController[] allies = battleManager.alliesParent.GetComponentsInChildren<BattleAllyController>(false);
+        SetActiveRoundCombatants(allies, activeRoundEnemies);
+
+        if (battleFeedbackSystem != null && activeRoundEnemies != null)
+            battleFeedbackSystem.BindCombatants(activeRoundAllies, activeRoundEnemies);
     }
 
     private void ApplyEnemyDeathRelics(BattleEnemyController defeatedEnemy, BattleAllyController[] allies, BattleEnemyController[] enemies)
@@ -5184,8 +5405,34 @@ public class BattleButton : MonoBehaviour
             return false;
 
         bool victory = livingAllies > 0 && livingEnemies == 0;
+        forceReturnToMapAfterDefeat = false;
+        if (!victory)
+        {
+            RelicExecutionContext defeatContext = RelicTriggerDispatcher.ProcessBattleDefeat(
+                activeEncounter,
+                null,
+                allies,
+                enemies,
+                BattleLog);
+            if (defeatContext != null && defeatContext.preventBattleDefeat)
+            {
+                livingAllies = Mathf.Max(1, CountLiving(allies));
+                forceReturnToMapAfterDefeat = defeatContext.forceReturnToMapOnDefeat;
+            }
+        }
         TutorialBattleRuntime.NotifyEvent(victory ? TutorialBattleEventType.BattleWon : TutorialBattleEventType.BattleLost);
         int expReward = victory ? CalculateVictoryExperienceReward(enemies) : 0;
+        RelicExecutionContext completionContext = RelicTriggerDispatcher.ProcessBattleCompletion(
+            activeEncounter,
+            null,
+            victory,
+            expReward,
+            allies,
+            enemies,
+            IsSpecialDungeonEncounter(activeEncounter),
+            BattleLog);
+        if (completionContext != null)
+            expReward = Mathf.Max(0, completionContext.modifiedBattleExperience);
         int moneyReward = victory && activeEncounter != null
             ? CalamitySystem.ApplyBattleMoneyModifiers(Mathf.Max(0, activeEncounter.moneyGained), activeEncounter.activeCalamities)
             : 0;
@@ -5204,6 +5451,8 @@ public class BattleButton : MonoBehaviour
             BattleSettlementPartyMemberFactory.BuildRunStates(partyProgressions),
             lootRewards,
             dropResults.relicRewards);
+        if (!victory && forceReturnToMapAfterDefeat && activeEncounter != null)
+            activeEncounter.restartBattleOnDefeat = false;
         if (battleManager != null)
             battleManager.EndBattle();
 
@@ -5254,6 +5503,11 @@ public class BattleButton : MonoBehaviour
             return 100;
 
         return Mathf.Max(0, levelTable.GetExperienceToNextLevel(level));
+    }
+
+    private static bool IsSpecialDungeonEncounter(BattleEncounterData encounter)
+    {
+        return encounter != null && encounter.isSpecialDungeonEncounter;
     }
 
     private int CalculateVictoryExperienceReward(BattleEnemyController[] enemies)

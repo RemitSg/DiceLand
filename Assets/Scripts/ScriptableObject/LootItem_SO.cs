@@ -6,7 +6,8 @@ public enum LootRarity
     Uncommon = 1,
     Rare = 2,
     Epic = 3,
-    Legendary = 4
+    Legendary = 4,
+    Trash = 5
 }
 
 [CreateAssetMenu(fileName = "New LootItem", menuName = "Loot/Loot Item")]

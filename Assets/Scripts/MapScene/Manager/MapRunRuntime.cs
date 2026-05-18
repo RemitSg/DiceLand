@@ -215,6 +215,8 @@ public static class MapRunRuntime
         if (encounter.wasVictory && encounter.moneyGained > 0)
             currentSnapshot.runState.AddMoney(encounter.moneyGained);
 
+        SyncConsumedBattleRelics(encounter);
+
         for (int i = 0; i < currentSnapshot.tiles.Count; i++)
         {
             BoardTileData tile = currentSnapshot.tiles[i];
@@ -230,6 +232,23 @@ public static class MapRunRuntime
             }
 
             break;
+        }
+    }
+
+    private static void SyncConsumedBattleRelics(BattleEncounterData encounter)
+    {
+        if (currentSnapshot?.runState == null || encounter == null || encounter.relicInventory == null)
+            return;
+
+        for (int i = 0; i < encounter.relicInventory.Count; i++)
+        {
+            RunRelicState battleRelic = encounter.relicInventory[i];
+            if (battleRelic == null || battleRelic.relicData == null || battleRelic.amount > 0)
+                continue;
+
+            int ownedAmount = currentSnapshot.runState.GetRelicAmount(battleRelic.relicData);
+            if (ownedAmount > 0)
+                currentSnapshot.runState.TryConsumeRelic(battleRelic.relicData, ownedAmount);
         }
     }
 
@@ -258,6 +277,8 @@ public static class MapRunRuntime
             currentSnapshot.runState.SyncLegacyPlayerFieldsFromParty();
         }
 
+        RelicTriggerDispatcher.ProcessRestHealCompleted(currentSnapshot.runState);
+
         for (int i = 0; i < currentSnapshot.tiles.Count; i++)
         {
             BoardTileData tile = currentSnapshot.tiles[i];
@@ -285,6 +306,7 @@ public static class MapRunRuntime
         if (currentSnapshot.suppressOnePendingCalamityOnActionPointRestore && currentSnapshot.pendingCalamityTiers.Count > 0)
             currentSnapshot.pendingCalamityTiers.RemoveAt(0);
         currentSnapshot.suppressOnePendingCalamityOnActionPointRestore = false;
+        RelicTriggerDispatcher.ProcessRestActionPointRestored(currentSnapshot.runState);
 
         for (int i = 0; i < currentSnapshot.tiles.Count; i++)
         {
@@ -463,6 +485,7 @@ public static class MapRunRuntime
             }
         }
         errorMessage = string.Empty;
+        RelicTriggerDispatcher.ProcessRestReforgeCompleted(currentSnapshot.runState);
         return true;
     }
 
@@ -551,6 +574,7 @@ public static class MapRunRuntime
         if (preservedMaterial != null)
             currentSnapshot.runState.AddRelic(preservedMaterial, 1);
         errorMessage = string.Empty;
+        RelicTriggerDispatcher.ProcessRestReforgeCompleted(currentSnapshot.runState);
         return true;
     }
 

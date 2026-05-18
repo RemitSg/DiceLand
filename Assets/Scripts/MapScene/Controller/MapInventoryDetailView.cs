@@ -244,6 +244,8 @@ public class MapInventoryDetailView : MonoBehaviour
     {
         switch (rarity)
         {
+            case LootRarity.Trash:
+                return "Trash";
             case LootRarity.Common:
                 return "\u666e\u901a";
             case LootRarity.Uncommon:
@@ -301,6 +303,8 @@ public class MapInventoryDetailView : MonoBehaviour
     {
         switch (rarity)
         {
+            case LootRarity.Trash:
+                return new Color32(126, 83, 48, 255);
             case LootRarity.Common:
                 return new Color32(128, 128, 128, 255);
             case LootRarity.Uncommon:

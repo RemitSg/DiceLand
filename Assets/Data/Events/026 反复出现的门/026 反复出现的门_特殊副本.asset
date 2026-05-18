@@ -12,7 +12,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a4f1339d8304fc7a0d10525e9e3c1f8, type: 3}
   m_Name: "026 \u53CD\u590D\u51FA\u73B0\u7684\u95E8_\u7279\u6B8A\u526F\u672C"
   m_EditorClassIdentifier: 
-  dungeonId: SpecialDungeon
-  dungeonName: Special Dungeon
+  dungeonId: 026
+  dungeonName: "\u53CD\u590D\u51FA\u73B0\u7684\u95E8"
   description: 
-  entries: []
+  entries:
+  - tileType: 1
+    previewTag: "\u5C0F\u578B\u602A\u7269\u7EC4"
+    previewDangerRating: 2
+    enemyGroup: {fileID: 11400000, guid: ba314588c6b24634495aa65967b4abca, type: 2}
+    merchantOffers: []
+    treasureOptions: []
+    eventData: {fileID: 0}
+  - tileType: 1
+    previewTag: "\u5C0F\u578B\u602A\u7269\u7EC4"
+    previewDangerRating: 2
+    enemyGroup: {fileID: 11400000, guid: b96e606cd59655440bb88de27e34dbe0, type: 2}
+    merchantOffers: []
+    treasureOptions: []
+    eventData: {fileID: 0}
+  - tileType: 9
+    previewTag: 
+    previewDangerRating: 0
+    enemyGroup: {fileID: 0}
+    merchantOffers: []
+    treasureOptions:
+    - title: "\u7F55\u89C1\u9057\u7269\u888B"
+      description: 
+      rewardType: 3
+      iconOverride: {fileID: 0}
+      moneyAmount: 0
+      blueprintData: {fileID: 0}
+      relicData: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicBagRarity: 1
+      relicBagChoiceCount: 1
+    eventData: {fileID: 0}

@@ -48,6 +48,21 @@ public class BattleSharedEnergyReservationCollectorServiceTests
         Assert.AreEqual(5, total);
     }
 
+    [Test]
+    public void CalculateTotalReservedEnergy_AllowsReservationAgainstTemporaryEnergy()
+    {
+        BattleAllyController ally = CreateAlly("Ally", buttonCount: 2, energyCost: 4);
+        BattleEnemyController enemy = CreateEnemy("Enemy", buttonCount: 2);
+        Connect(ally.SpeedButtons[0], enemy.SpeedButtons[0]);
+        Connect(ally.SpeedButtons[1], enemy.SpeedButtons[1]);
+
+        int total = BattleSharedEnergyReservationCollectorService.CalculateTotalReservedEnergy(
+            new[] { ally },
+            currentSharedEnergy: 8);
+
+        Assert.AreEqual(8, total);
+    }
+
     private BattleAllyController CreateAlly(string name, int buttonCount, int energyCost)
     {
         GameObject go = CreateGameObject(name);

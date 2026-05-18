@@ -43,7 +43,15 @@ public class Relic_SO : ScriptableObject
         OnActionPointsSpent = 27,
         OnMerchantStockCountCalculated = 28,
         OnMerchantPurchaseAffordabilityChecked = 29,
-        OnRelicChoiceRewardGenerated = 30
+        OnRelicChoiceRewardGenerated = 30,
+        OnPlayerClashLost = 31,
+        OnRestActionPointRestored = 32,
+        OnRestReforgeCompleted = 33,
+        OnRestHealCompleted = 34,
+        OnPlayerSkillUsed = 35,
+        OnBattleCompletion = 36,
+        OnBattleDefeat = 37,
+        OnPlayerDiceRolled = 38
     }
 
     public enum RelicBuiltInEffectType
@@ -134,7 +142,19 @@ public class Relic_SO : ScriptableObject
         AllowMerchantPurchaseWithPositiveMoney = 83,
         GuaranteeBattleLootDrop = 84,
         IncreaseRelicChoiceRefreshCount = 85,
-        GrantRandomRelicsOnAcquire = 86
+        GrantRandomRelicsOnAcquire = 86,
+        QueueStatusToPlayerOnClashLostAgainstStatusTarget = 87,
+        IncreaseSharedEnergyMaxAtBattleStart = 88,
+        GrantMoney = 89,
+        IgnoreMoveCostWhenDestinationUnvisitedRestTile = 90,
+        GrantTemporarySharedEnergyOnSpecificRound = 91,
+        GrantTemporarySharedEnergyEachRound = 92,
+        ApplyStatusToTemporarySkillUser = 93,
+        PreventBattleDefeatAndFullHealPartyOncePerRun = 94,
+        ModifyBattleExperiencePercentAndHealMissingHp = 95,
+        SummonTemporaryAllyFromEnemyDataAtBattleStart = 96,
+        QueueNextRoundMinPowerBonusOnMinRollOncePerRound = 97,
+        HealPartyPercentAfterBattleInSpecialDungeon = 98
     }
 
     [Serializable]
@@ -164,6 +184,7 @@ public class Relic_SO : ScriptableObject
         [Min(1)] public int requiredDistinctStatusCount = 1;
         [Min(1)] public int requiredConsecutiveSkillUses = 1;
         public RelicTable_SO relicTable;
+        public EnemyData_SO enemyData;
     }
 
     [Header("Identity")]
