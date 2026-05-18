@@ -386,13 +386,19 @@ public class BattleEnemyController : MonoBehaviour
             : 0;
     }
 
-    public int TakeDamage(int amount, int powerModifierAmount = 0, int originalReferenceDamage = -1)
+    public int TakeDamage(int amount, int powerModifierAmount = 0, int originalReferenceDamage = -1, BattleGamblerDamageSource damageSource = BattleGamblerDamageSource.Normal)
     {
         LastPowerModifierAmount = powerModifierAmount;
         if (IsDead)
             return 0;
 
         if (amount <= 0)
+        {
+            LastDamageModifierRatioPercent = 0;
+            return 0;
+        }
+
+        if (BattleGamblerPassiveService.ShouldBlockIncomingDamage(this, damageSource))
         {
             LastDamageModifierRatioPercent = 0;
             return 0;
@@ -437,6 +443,16 @@ public class BattleEnemyController : MonoBehaviour
             Die();
 
         return actualDamage;
+    }
+
+    public void KillInstantly()
+    {
+        if (IsDead)
+            return;
+
+        CurrentHP = 0;
+        HealthChanged?.Invoke(this);
+        Die();
     }
 
     public bool TryTransitionToStage(int targetStageIndex, bool nextRound = false)
@@ -743,6 +759,7 @@ public class BattleEnemyController : MonoBehaviour
         if (minimumStacks > 0)
             entry.stacks = Mathf.Max(entry.stacks, minimumStacks);
         NotifyStatusChanged(entry);
+        BattleGamblerPassiveService.TryApplyDebtInstantDeath(this, statusData, fallbackStatusId, null);
         if (IsSpeedButtonPenaltyStatus(entry))
             RefreshActiveSpeedButtons();
         return true;

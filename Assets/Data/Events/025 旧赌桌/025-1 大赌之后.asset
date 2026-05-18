@@ -12,8 +12,76 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
   m_Name: "025-1 \u5927\u8D4C\u4E4B\u540E"
   m_EditorClassIdentifier: 
-  eventId: Event
-  eventName: "\u4E8B\u4EF6"
-  eventContent: 
+  eventId: 025-1
+  eventName: "\u65E7\u8D4C\u684C"
+  eventContent: "\u4F60\u6253\u5F00\u676F\u5B50\u4E00\u770B\uFF0C\u6570\u4E86\u6570\u94B1\uFF0C\u51B3\u5B9A\u2026\u2026"
   eventIllustration: {fileID: 0}
-  options: []
+  options:
+  - optionId: 1
+    optionLabel: "\u79BB\u5F00"
+    requiredMoney: 0
+    consequenceDescription: "\u65E0\u4E8B\u53D1\u751F"
+    resultContent: "\u4F60\u89C9\u5F97\u8FD9\u6837\u5C31\u633A\u597D\u7684\uFF0C\u8FD8\u662F\u7EE7\u7EED\u4E0A\u8DEF\u5427\u3002"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 0
+    randomOwnedLootAmountMax: 0
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 0}
+    resolveEvent: 0
+    customHandler: {fileID: 0}
+  - optionId: 2
+    optionLabel: "\u6380\u7FFB\u8D4C\u684C"
+    requiredMoney: 0
+    consequenceDescription: "\u83B7\u5F97 66 \u91D1\u5E01\uFF0C\u906D\u9047\u4E00\u573A\u7279\u6B8A\u7684\u6218\u6597"
+    resultContent: "\u53BB\u4F60\u7684\uFF01\u5B83\u4EEC\u8FD9\u51FA\u5343\u4E86\u5427\uFF01\n\u4F60\u5341\u5206\u4E0D\u6EE1\u4F60\u83B7\u5F97\u7684\u91D1\u5E01\u6570\u91CF\uFF0C\u6012\u6C14\u8BA9\u4F60\u6380\u7FFB\u4E86\u5B83\u4EEC\u7684\u573A\u5B50\u3002\n\u53EF\u684C\u5B50\u5E95\u4E0B\u5E76\u4E0D\u662F\u7A7A\u65E0\u4E00\u7269\uFF0C\u800C\u662F\u4E00\u53CC\u76EF\u7740\u4F60\u7684\u773C\u775B\u3002"
+    builtInEffectType: 10
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 0
+    randomOwnedLootAmountMax: 0
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 0}
+    resolveEvent: 0
+    customHandler: {fileID: 0}
