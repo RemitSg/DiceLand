@@ -2216,7 +2216,10 @@ public class BattleButton : MonoBehaviour
         SkillHitTracker enemyHitTracker)
     {
         if (impactPlan.ApplyAllyClashWinEffects)
+        {
             ApplyAllyTriggeredEffects(ally, enemy, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnClashWin, 0);
+            BattleGamblerPassiveService.TryApplyPlayerGambleClashWinDamage(ally, enemy, out _, BattleLog);
+        }
 
         if (impactPlan.ApplyEnemyClashWinEffects)
             ApplyEnemyTriggeredEffects(enemy, ally, diceIndex, EnemySkill_SO.DiceEffectTrigger.OnClashWin, 0);

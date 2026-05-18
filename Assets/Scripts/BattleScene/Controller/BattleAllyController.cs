@@ -612,6 +612,16 @@ public class BattleAllyController : MonoBehaviour
         return actualDamage;
     }
 
+    public void KillInstantly()
+    {
+        if (IsDead)
+            return;
+
+        CurrentHP = 0;
+        HealthChanged?.Invoke(this);
+        Die();
+    }
+
     private int ApplyIncomingDamageStatusModifiers(int baseDamage)
     {
         if (baseDamage <= 0 || statusEntries.Count == 0)
@@ -904,6 +914,7 @@ public class BattleAllyController : MonoBehaviour
         BattleStatusRuntimeEntry entry = GetOrCreateStatusEntry(statusData, fallbackStatusId, fallbackDisplayName);
         entry.stacks = Mathf.Max(0, entry.stacks + stackAmount);
         NotifyStatusChanged(entry);
+        BattleGamblerPassiveService.TryApplyDebtInstantDeath(this, statusData, fallbackStatusId, null);
         if (IsSpeedButtonPenaltyStatus(entry))
             RefreshActiveSpeedButtons();
         return true;
