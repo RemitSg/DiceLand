@@ -765,6 +765,21 @@ public class BattleEnemyController : MonoBehaviour
         return true;
     }
 
+    public int AddPendingRoundStartSpeedBonusFromStatus(BattleStatus_SO statusData, int stackAmount)
+    {
+        if (IsDead || statusData == null || stackAmount <= 0)
+            return 0;
+        if (IsStatusEffectSuppressed(statusData, statusData.StatusId))
+            return 0;
+
+        int speedBonus = ResolveRoundStartStatusSpeedBonus(statusData, stackAmount);
+        if (speedBonus == 0)
+            return 0;
+
+        PendingRoundStartSpeedBonus += speedBonus;
+        return speedBonus;
+    }
+
     public bool QueueStatusForRoundStart(BattleStatus_SO statusData, string fallbackStatusId, string fallbackDisplayName, int stackAmount, int roundStartDelay, int repeatCount)
     {
         if (IsDead || stackAmount <= 0)
@@ -1920,10 +1935,18 @@ public class BattleEnemyController : MonoBehaviour
         if (IsStatusEffectSuppressed(entry))
             return 0;
 
-        if (entry.statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.SpeedBonusAtRoundStart)
-            return Mathf.Max(0, entry.statusData.PowerPerStack) * entry.stacks;
-        if (entry.statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.SpeedPenaltyAtRoundStart)
-            return -Mathf.Max(0, entry.statusData.PowerPerStack) * entry.stacks;
+        return ResolveRoundStartStatusSpeedBonus(entry.statusData, entry.stacks);
+    }
+
+    private static int ResolveRoundStartStatusSpeedBonus(BattleStatus_SO statusData, int stackAmount)
+    {
+        if (statusData == null || stackAmount <= 0)
+            return 0;
+
+        if (statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.SpeedBonusAtRoundStart)
+            return Mathf.Max(0, statusData.PowerPerStack) * stackAmount;
+        if (statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.SpeedPenaltyAtRoundStart)
+            return -Mathf.Max(0, statusData.PowerPerStack) * stackAmount;
 
         return 0;
     }
@@ -2114,7 +2137,12 @@ public class BattleEnemyController : MonoBehaviour
         if (entry == null)
             return false;
 
-        return TryGetStatusImmunityRule(entry.statusData, entry.fallbackStatusId, out _);
+        return IsStatusEffectSuppressed(entry.statusData, entry.fallbackStatusId);
+    }
+
+    private bool IsStatusEffectSuppressed(BattleStatus_SO statusData, string fallbackStatusId)
+    {
+        return TryGetStatusImmunityRule(statusData, fallbackStatusId, out _);
     }
 
     private bool TryGetStatusImmunityRule(BattleStatus_SO statusData, string fallbackStatusId, out EnemyData_SO.StatusImmunityRule matchedRule)

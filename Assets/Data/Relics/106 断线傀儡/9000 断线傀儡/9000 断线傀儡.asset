@@ -19,7 +19,7 @@ MonoBehaviour:
   minSpeed: 2
   maxSpeed: 6
   baseSpeedButtonCount: 1
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: 21300000, guid: 4a5b63ef3d36f824b85b6493b18f642c, type: 3}
   stageSprites: []
   enableHealthBasedStageTransition: 0
   healthBasedTransitionThresholdNormalized: 0.2
@@ -42,10 +42,11 @@ MonoBehaviour:
   copyOpponentLastRoundSpeedDiceCount: 0
   copyOpponentLastRoundSkills: 0
   reflectionSkillTemplate: {fileID: 0}
-  enemyDescription: 
+  enemyDescription: "\u4E00\u53EA\u65AD\u4E86\u7EBF\u7684\u5080\u5121\uFF0C\u4F60\u66FE\u5728\u5080\u5121\u5E08\u624B\u4E0A\u6551\u4E0B\u4E86\u5B83\u3002"
   passiveDescriptions: []
   enemyVisualScale: 1
   enemyVisualOffset: {x: 0, y: 0, z: 0}
   speedButtonOffset: {x: 0, y: 0}
-  skillPool: []
+  skillPool:
+  - {fileID: 11400000, guid: 7fc3e50edc14b1944a5df128c419639b, type: 2}
   conditionalSkillRules: []

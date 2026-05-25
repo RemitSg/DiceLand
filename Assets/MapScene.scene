@@ -611,26 +611,17 @@ MonoBehaviour:
   startingMoney: 100
   startingPartyMembers:
   - memberId: 0
-    characterData: {fileID: 11400000, guid: 658e22cc7dec223479091c6817751025, type: 2}
-    equippedWeapon: {fileID: 11400000, guid: 6f76bd3bd3d897c4fb60cb583c146ccd, type: 2}
+    characterData: {fileID: 11400000, guid: 27e817266af382946804dea6afd2e374, type: 2}
+    equippedWeapon: {fileID: 11400000, guid: 9b8c5d177c240334a9734636830a139f, type: 2}
     startingLevel: 1
     startingExperience: 0
-    startingMaxHP: 32
-    startingCurrentHP: 32
-  - memberId: 0
-    characterData: {fileID: 11400000, guid: 5121d91a4381d6748a08ee2236cc03fd, type: 2}
-    equippedWeapon: {fileID: 11400000, guid: cb69c8cb0b5a1ce4383dea0432a53f40, type: 2}
-    startingLevel: 1
-    startingExperience: 0
-    startingMaxHP: 28
-    startingCurrentHP: 28
+    startingMaxHP: 24
+    startingCurrentHP: 24
   tutorialStartingPartyMembers: []
   startingLoot: []
   startingWeapons: []
   startingBlueprints: []
-  startingRelics:
-  - relicData: {fileID: 11400000, guid: 6d3be33efd174c099da957b0799d4e12, type: 2}
-    amount: 1
+  startingRelics: []
   autoStartOnAwake: 1
   battleSceneName: SampleScene
   restSceneName: RestScene

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cheat
   m_EditorClassIdentifier: 
   skillName: "\u5343\u672F"
-  description: "\u5B83\u4ECE\u8896\u53E3\u91CC\u6362\u51FA\u7B54\u6848\uFF0C\u53C8\u628A\u8D26\u672C\u7684\u4E00\u9875\u6084\u6084\u6495\u6389\u3002"
+  description: "\u4ECE\u8896\u53E3\u91CC\u6362\u51FA\u4EC0\u4E48\uFF0C\u7136\u540E\u628A\u8D26\u672C\u7684\u4E00\u9875\u6084\u6084\u6495\u6389\u3002"
   skillCategory: 0
   energyCost: 5
   requiredSelfStatusData: {fileID: 0}

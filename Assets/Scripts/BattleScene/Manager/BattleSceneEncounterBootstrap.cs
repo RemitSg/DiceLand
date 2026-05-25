@@ -274,7 +274,7 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
         return SpawnEnemyDataAsAlly(enemyData, spawnPosition, existingCount);
     }
 
-    private void SpawnAlly(RunPartyMemberState allyState, Vector3 worldPosition, int index)
+    private BattleAllyController SpawnAlly(RunPartyMemberState allyState, Vector3 worldPosition, int index)
     {
         EnsureWhiteSprite();
 
@@ -340,6 +340,8 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
 
         if (!allyObject.activeSelf)
             allyObject.SetActive(true);
+
+        return battleAlly;
     }
 
     private void SpawnEnemy(EnemyData_SO enemyData, Vector3 worldPosition, int index)
@@ -436,11 +438,10 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
             currentHP = runtimeCharacter.baseHP
         };
 
-        SpawnAlly(allyState, worldPosition, index);
-        BattleAllyController[] refreshedAllies = alliesParent != null
-            ? alliesParent.GetComponentsInChildren<BattleAllyController>(false)
-            : Array.Empty<BattleAllyController>();
-        BattleAllyController spawned = refreshedAllies.Length > 0 ? refreshedAllies[refreshedAllies.Length - 1] : null;
+        BattleAllyController spawned = SpawnAlly(allyState, worldPosition, index);
+        if (spawned != null)
+            spawned.ApplyEnemyDataVisualSource(enemyData, true);
+
         if (spawned != null && enemyData.battleStartStatusGains != null)
         {
             for (int i = 0; i < enemyData.battleStartStatusGains.Count; i++)

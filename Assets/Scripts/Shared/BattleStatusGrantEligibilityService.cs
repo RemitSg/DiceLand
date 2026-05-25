@@ -44,7 +44,8 @@ public static class BattleEnemyStatusGainDispatcher
         IEnumerable<EnemyData_SO.StatusGainEntry> entries,
         Func<EnemyData_SO.StatusGainEntry, bool> addStatus,
         Func<EnemyData_SO.StatusGainEntry, int> getCurrentStacks,
-        Action<EnemyData_SO.StatusGainEntry, int> logApplied)
+        Action<EnemyData_SO.StatusGainEntry, int> logApplied,
+        Action<EnemyData_SO.StatusGainEntry> onApplied = null)
     {
         if (entries == null || addStatus == null)
             return false;
@@ -59,6 +60,7 @@ public static class BattleEnemyStatusGainDispatcher
                 continue;
 
             appliedAny = true;
+            onApplied?.Invoke(entry);
             int currentStacks = getCurrentStacks != null ? getCurrentStacks(entry) : 0;
             logApplied?.Invoke(entry, currentStacks);
         }

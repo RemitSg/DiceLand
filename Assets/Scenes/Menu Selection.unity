@@ -11376,7 +11376,7 @@ MonoBehaviour:
     titleFontSize: 60
     bodyFontSize: 36
   demoTestEncounterLabel: Demo Battle Test
-  demoTestEnemyGroup: {fileID: 11400000, guid: 36a110e509b14fd1a112000000000440, type: 2}
+  demoTestEnemyGroup: {fileID: 11400000, guid: 882939af49b94f4b92da7b8fb18417b8, type: 2}
   demoTestPartyMembers:
   - memberId: 
     characterData: {fileID: 11400000, guid: 5121d91a4381d6748a08ee2236cc03fd, type: 2}

@@ -19,7 +19,7 @@ MonoBehaviour:
   minSpeed: 1
   maxSpeed: 5
   baseSpeedButtonCount: 2
-  enemySprite: {fileID: 21300000, guid: 96b260028825d26479a724891e2b23c5, type: 3}
+  enemySprite: {fileID: 21300000, guid: 2d6ebe8028dfb864b9608a6a7fe4c7c5, type: 3}
   stageSprites: []
   enableHealthBasedStageTransition: 0
   healthBasedTransitionThresholdNormalized: 0.2
@@ -47,7 +47,7 @@ MonoBehaviour:
   - passiveName: "\u7275\u4E1D"
     displayColorType: 0
     description: "\u65E0\u795E\u5080\u5121\u5728\u573A\u65F6\uFF0C\u81EA\u8EAB\u53D7\u5230\u7684\u6240\u6709\u4F24\u5BB3\u8F6C\u79FB\u7ED9\u968F\u673A\u7684\u65E0\u795E\u5080\u5121"
-  enemyVisualScale: 1
+  enemyVisualScale: 1.8
   enemyVisualOffset: {x: 0, y: 0, z: 0}
   speedButtonOffset: {x: 0, y: 0}
   skillPool:

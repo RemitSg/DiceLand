@@ -56,6 +56,29 @@ public class BattleTargetingPhaseStartEffectServiceTests
     }
 
     [Test]
+    public void ApplyPendingAllyStatusGrants_AppliesImmediateSpeedBonusForOpeningRoll()
+    {
+        BattleStatus_SO swiftness = CreateStatus(BattleStatus_SO.StatusBehaviorType.SpeedBonusAtRoundStart, 1);
+        BattleEncounterData encounter = new BattleEncounterData
+        {
+            pendingBattleStartAllyStatusGrants = new List<PendingBattleStatusGrant>
+            {
+                new PendingBattleStatusGrant { statusData = swiftness, stacks = 4 }
+            }
+        };
+        BattleAllyController ally = CreateAlly("Ally", 10);
+
+        bool applied = BattlePendingBattleStartAllyStatusGrantService.Apply(
+            encounter,
+            new[] { ally },
+            null);
+        ally.GenerateRandomSpeed(2, 2);
+
+        Assert.IsTrue(applied);
+        Assert.AreEqual(6, ally.Speed);
+    }
+
+    [Test]
     public void DispatchBattleStartSkillGrants_ClearsAllAlliesAndGrantsOnlyFromLivingEnemiesToLivingAllies()
     {
         EnemySkill_SO oldSkill = CreateSkill("Old");
@@ -97,6 +120,40 @@ public class BattleTargetingPhaseStartEffectServiceTests
             enemy => events.Add($"transition:{enemy.gameObject.name}"));
 
         CollectionAssert.AreEqual(new[] { "gain:ValidEnemy", "transition:ValidEnemy" }, events);
+    }
+
+    [Test]
+    public void DispatchEnemyBattleStartStatusGains_AppliesImmediateSpeedBonusForOpeningRoll()
+    {
+        BattleStatus_SO swiftness = CreateStatus(BattleStatus_SO.StatusBehaviorType.SpeedBonusAtRoundStart, 1);
+        BattleEnemyController enemy = CreateEnemy("Enemy", 10, CreateSkill("Skill"));
+        enemy.enemyData.battleStartStatusGains = new List<EnemyData_SO.StatusGainEntry>
+        {
+            new EnemyData_SO.StatusGainEntry
+            {
+                statusData = swiftness,
+                stackAmount = 10
+            }
+        };
+
+        bool applied = false;
+        BattleEnemyTargetingStatusGainPhaseService.DispatchBattleStartStatusGains(
+            new[] { enemy },
+            target =>
+            {
+                applied = BattleEnemyStatusGainDispatcher.Dispatch(
+                    target.enemyData.battleStartStatusGains,
+                    entry => target.AddStatus(entry.statusData, entry.statusData.StatusId, entry.statusData.DisplayName, entry.stackAmount),
+                    entry => target.GetStatusStacks(entry.statusData),
+                    null,
+                    entry => target.AddPendingRoundStartSpeedBonusFromStatus(entry.statusData, entry.stackAmount));
+                return applied;
+            },
+            null);
+        enemy.GenerateRandomSpeed();
+
+        Assert.IsTrue(applied);
+        Assert.AreEqual(11, enemy.Speed);
     }
 
     [Test]
@@ -235,6 +292,14 @@ public class BattleTargetingPhaseStartEffectServiceTests
         return status;
     }
 
+    private BattleStatus_SO CreateStatus(BattleStatus_SO.StatusBehaviorType behaviorType, int powerPerStack)
+    {
+        BattleStatus_SO status = CreateStatus();
+        SetPrivateField(status, "behaviorType", behaviorType);
+        SetPrivateField(status, "powerPerStack", powerPerStack);
+        return status;
+    }
+
     private static BattleEncounterData CreateEncounterWithRelic()
     {
         return new BattleEncounterData
@@ -281,5 +346,14 @@ public class BattleTargetingPhaseStartEffectServiceTests
         GameObject go = new GameObject(name);
         createdObjects.Add(go);
         return go;
+    }
+
+    private static void SetPrivateField<T>(object target, string fieldName, T value)
+    {
+        System.Reflection.FieldInfo field = target.GetType().GetField(
+            fieldName,
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        Assert.IsNotNull(field, fieldName);
+        field.SetValue(target, value);
     }
 }

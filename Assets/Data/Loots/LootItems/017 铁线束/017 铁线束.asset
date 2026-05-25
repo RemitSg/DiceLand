@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3abebfccfa94bb4f844818d7206d4dc, type: 3}
   m_Name: "017 \u94C1\u7EBF\u675F"
   m_EditorClassIdentifier: 
-  lootID: 0
-  lootName: 
-  description: 
-  attribute: {fileID: 0}
-  rarity: 0
-  icon: {fileID: 0}
+  lootID: 17
+  lootName: "\u94C1\u7EBF\u675F"
+  description: "\u6346\u8D77\u6765\u7684\u94C1\u7EBF\uFF0C\u5176\u5B9E\u62FF\u94C1\u952D\u6572\u51FA\u6765\u4E5F\u662F\u4E00\u6837\u7684\u6548\u679C"
+  attribute: {fileID: 11400000, guid: a742c086ed6eff94596369d54c93b633, type: 2}
+  rarity: 1
+  icon: {fileID: 21300000, guid: 689ec38b43553c542ac040f0e2630039, type: 3}

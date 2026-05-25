@@ -59,6 +59,7 @@ public class BattlePresentationSystem : MonoBehaviour
         public Quaternion localRotation;
         public Vector3 localScale;
         public int sortingOrder;
+        public bool flipX;
     }
 
     private sealed class ActiveSpriteSwap
@@ -821,7 +822,8 @@ public class BattlePresentationSystem : MonoBehaviour
             localPosition = spriteTransform.localPosition,
             localRotation = spriteTransform.localRotation,
             localScale = spriteTransform.localScale,
-            sortingOrder = primaryRenderer.sortingOrder
+            sortingOrder = primaryRenderer.sortingOrder,
+            flipX = primaryRenderer.flipX
         };
 
         ActiveSpriteSwap swap = new ActiveSpriteSwap
@@ -841,6 +843,7 @@ public class BattlePresentationSystem : MonoBehaviour
         SpriteSwapState state = swap != null ? swap.originalState : default;
 
         primaryRenderer.sprite = fx.skillSpriteOverride;
+        primaryRenderer.flipX = state.flipX;
         spriteTransform.localPosition = state.localPosition + fx.skillSpritePositionOffset;
         spriteTransform.localRotation = state.localRotation * Quaternion.Euler(fx.skillSpriteRotationOffset);
         spriteTransform.localScale = Vector3.Scale(state.localScale, fx.SafeSkillSpriteScale);
@@ -864,6 +867,7 @@ public class BattlePresentationSystem : MonoBehaviour
 
         Transform restoreTransform = state.renderer.transform;
         state.renderer.sprite = state.sprite;
+        state.renderer.flipX = state.flipX;
         restoreTransform.localPosition = state.localPosition;
         restoreTransform.localRotation = state.localRotation;
         restoreTransform.localScale = state.localScale;

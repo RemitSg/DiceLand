@@ -34,6 +34,8 @@ public class BattleAllyController : MonoBehaviour
     public bool HasTemporarySkills => temporarySkills.Count > 0;
     public bool TemporarySkillsOverrideWeaponPool => temporarySkillsOverrideWeaponPool;
     public Vector3 LastHitDirection { get; private set; } = Vector3.up;
+    public EnemyData_SO EnemyDataVisualSource { get; private set; }
+    public bool MirrorsEnemyDataSprites { get; private set; }
 
     public event Action<BattleAllyController, int> Damaged;
     public event Action<BattleAllyController> HealthChanged;
@@ -70,6 +72,7 @@ public class BattleAllyController : MonoBehaviour
     private int currentRoundRelicMinPowerBonus;
     private int nextRoundRelicMinPowerBonus;
     private bool queuedMinPowerBonusThisRound;
+    private bool enemyDataVisualMirrorApplied;
 
     private void Awake()
     {
@@ -118,6 +121,20 @@ public class BattleAllyController : MonoBehaviour
         CurrentHP = Mathf.Clamp(partyMemberState.currentHP, 0, MaxHP);
         IsDead = CurrentHP <= 0;
         RefreshActiveSpeedButtons();
+    }
+
+    public void ApplyEnemyDataVisualSource(EnemyData_SO enemyData, bool mirrorSprites)
+    {
+        EnemyDataVisualSource = enemyData;
+        bool shouldMirror = enemyData != null && mirrorSprites;
+
+        if (shouldMirror && !enemyDataVisualMirrorApplied)
+        {
+            BattleEnemyDataAllyVisualService.ApplyMirroredEnemyDataSprites(transform);
+            enemyDataVisualMirrorApplied = true;
+        }
+
+        MirrorsEnemyDataSprites = shouldMirror;
     }
 
     public void GenerateRandomSpeed(int min = 2, int max = 6)
@@ -966,6 +983,19 @@ public class BattleAllyController : MonoBehaviour
         return true;
     }
 
+    public int AddPendingRoundStartSpeedBonusFromStatus(BattleStatus_SO statusData, int stackAmount)
+    {
+        if (IsDead || statusData == null || stackAmount <= 0)
+            return 0;
+
+        int speedBonus = ResolveRoundStartStatusSpeedBonus(statusData, stackAmount);
+        if (speedBonus == 0)
+            return 0;
+
+        PendingRoundStartSpeedBonus += speedBonus;
+        return speedBonus;
+    }
+
     public bool QueueStatusForRoundStart(BattleStatus_SO statusData, string fallbackStatusId, string fallbackDisplayName, int stackAmount, int roundStartDelay, int repeatCount)
     {
         if (IsDead || stackAmount <= 0)
@@ -1497,10 +1527,18 @@ public class BattleAllyController : MonoBehaviour
         if (entry == null || entry.stacks <= 0 || entry.statusData == null)
             return 0;
 
-        if (entry.statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.SpeedBonusAtRoundStart)
-            return Mathf.Max(0, entry.statusData.PowerPerStack) * entry.stacks;
-        if (entry.statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.SpeedPenaltyAtRoundStart)
-            return -Mathf.Max(0, entry.statusData.PowerPerStack) * entry.stacks;
+        return ResolveRoundStartStatusSpeedBonus(entry.statusData, entry.stacks);
+    }
+
+    private static int ResolveRoundStartStatusSpeedBonus(BattleStatus_SO statusData, int stackAmount)
+    {
+        if (statusData == null || stackAmount <= 0)
+            return 0;
+
+        if (statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.SpeedBonusAtRoundStart)
+            return Mathf.Max(0, statusData.PowerPerStack) * stackAmount;
+        if (statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.SpeedPenaltyAtRoundStart)
+            return -Mathf.Max(0, statusData.PowerPerStack) * stackAmount;
 
         return 0;
     }

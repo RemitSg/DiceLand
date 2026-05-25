@@ -25,11 +25,17 @@ public static class BattlePendingBattleStartAllyStatusGrantService
             encounter.pendingBattleStartAllyStatusGrants,
             allies,
             ally => ally == null || ally.IsDead,
-            (ally, grant) => ally.AddStatus(
-                grant.statusData,
-                grant.statusData.StatusId,
-                grant.statusData.DisplayName,
-                grant.stacks),
+            (ally, grant) =>
+            {
+                bool applied = ally.AddStatus(
+                    grant.statusData,
+                    grant.statusData.StatusId,
+                    grant.statusData.DisplayName,
+                    grant.stacks);
+                if (applied)
+                    ally.AddPendingRoundStartSpeedBonusFromStatus(grant.statusData, grant.stacks);
+                return applied;
+            },
             (ally, grant) =>
             {
                 appliedAny = true;

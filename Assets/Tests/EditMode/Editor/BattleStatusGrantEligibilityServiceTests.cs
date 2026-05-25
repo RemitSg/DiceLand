@@ -59,9 +59,10 @@ public class BattleStatusGrantEligibilityServiceTests
                 return true;
             },
             entry => entry.stackAmount + 3,
-            (entry, currentStacks) => events.Add($"log:{entry.stackAmount}:{currentStacks}"));
+            (entry, currentStacks) => events.Add($"log:{entry.stackAmount}:{currentStacks}"),
+            entry => events.Add($"applied:{entry.stackAmount}"));
 
         Assert.IsTrue(appliedAny);
-        CollectionAssert.AreEqual(new[] { "add:2", "log:2:5" }, events);
+        CollectionAssert.AreEqual(new[] { "add:2", "applied:2", "log:2:5" }, events);
     }
 }

@@ -287,10 +287,8 @@ public class BattleButton : MonoBehaviour
         ApplyPendingBattleStartAllyStatusGrants(allies);
         ApplyEnemyBattleStartEffectsIfNeeded(allies, enemies);
         ApplyEnemyRepeatRoundStartStatusGains(allies, enemies);
-        ApplyBattleSetupRelics(allies, enemies);
+        allies = ApplyBattleSetupRelics(allies, enemies);
         ApplyBattleRoundStartRelics(allies, enemies);
-
-        BattleTargetingSpeedButtonStateService.PrepareForTargeting(allies, enemies);
 
         List<string> allyRoundStartLogs = BattleTargetingRoundStartSetupService.PrepareAllies(
             allies,
@@ -307,6 +305,8 @@ public class BattleButton : MonoBehaviour
         List<string> enemyRoundStartLogs = BattleTargetingRoundStartSetupService.PrepareEnemies(enemies, currentRound, allies);
         for (int i = 0; i < enemyRoundStartLogs.Count; i++)
             BattleLog(enemyRoundStartLogs[i]);
+
+        BattleTargetingSpeedButtonStateService.PrepareForTargeting(allies, enemies);
 
         List<SpeedButton> interactableAllyButtons = BattleTargetingSpeedButtonStateService.EnableLivingAllyButtons(allies);
 
@@ -384,6 +384,8 @@ public class BattleButton : MonoBehaviour
                     continue;
 
                 bool applied = enemy.AddStatus(effect.statusData, effect.statusData.StatusId, effect.statusData.DisplayName, effect.effectAmount);
+                if (applied)
+                    enemy.AddPendingRoundStartSpeedBonusFromStatus(effect.statusData, effect.effectAmount);
                 if (applied)
                     BattleLog($"灾厄效果：{enemy.GetDebugDisplayName()} 获得 {effect.effectAmount} 层 {effect.statusData.DisplayName}");
             }
@@ -3636,7 +3638,8 @@ public class BattleButton : MonoBehaviour
             {
                 if (buildLogMessage != null)
                     BattleLog(buildLogMessage(entry.statusData.DisplayName, entry.stackAmount, currentStacks));
-            });
+            },
+            entry => enemy.AddPendingRoundStartSpeedBonusFromStatus(entry.statusData, entry.stackAmount));
     }
 
     private void TryLogEnemyStatusDrivenStageTransition(BattleEnemyController enemy, BattleAllyController[] allies, BattleEnemyController[] enemies)
@@ -4462,7 +4465,7 @@ public class BattleButton : MonoBehaviour
             context => BattleRelicEffectRunner.FlushFeedback(context, BattleLog));
     }
 
-    private void ApplyBattleSetupRelics(BattleAllyController[] allies, BattleEnemyController[] enemies)
+    private BattleAllyController[] ApplyBattleSetupRelics(BattleAllyController[] allies, BattleEnemyController[] enemies)
     {
         int extraButtonsPerAlly = BattleTargetingPhaseRelicService.DispatchBattleSetup(
             BattleEncounterRuntime.ActiveEncounter,
@@ -4479,7 +4482,9 @@ public class BattleButton : MonoBehaviour
             context => ApplyBattleSetupSummonedAllyRelics(context),
             context => BattleRelicEffectRunner.FlushFeedback(context, BattleLog));
 
-        BattleTargetingPhaseRelicService.ApplyTemporarySpeedButtons(allies, extraButtonsPerAlly);
+        BattleAllyController[] latestAllies = activeRoundAllies ?? allies;
+        BattleTargetingPhaseRelicService.ApplyTemporarySpeedButtons(latestAllies, extraButtonsPerAlly);
+        return latestAllies;
     }
 
     private void ApplyBattleSetupSummonedAllyRelics(RelicExecutionContext context)
