@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
   m_Name: "\u8D4C\u5F92"
   m_EditorClassIdentifier: 
-  eventId: Event
-  eventName: "\u4E8B\u4EF6"
   eventContent: 
   eventIllustration: {fileID: 0}
   options: []
