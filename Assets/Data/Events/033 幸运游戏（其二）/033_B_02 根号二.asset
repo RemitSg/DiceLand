@@ -12,8 +12,135 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
   m_Name: "033_B_02 \u6839\u53F7\u4E8C"
   m_EditorClassIdentifier: 
-  eventId: Event
-  eventName: "\u4E8B\u4EF6"
-  eventContent: 
+  eventId: 033_B_02
+  eventName: "\u6839\u53F7\u4E8C"
+  eventContent: "\u4F60\u8FDB\u5165\u201C\u6839\u53F7\u4E8C\u201D\uFF0C\u4E0D\u7BA1\u4F60\u600E\u4E48\u8FDB\u6765\u7684\uFF0C\u53CD\u6B63\u5C31\u662F\u8FDB\u6765\u4E86\u3002\u4F60\u53D1\u73B0\u623F\u95F4\u6B63\u4E2D\u592E\u6446\u7740\u4E00\u672C\u4E66\uFF0C\u4E66\u7684\u5C01\u76AE\u4E0A\u9664\u4E86\u4E00\u4E2A\u5927\u5927\u7684\u6839\u53F7\u4E8C\u4EC0\u4E48\u4E5F\u6CA1\u5199\u3002\u4E00\u4E2A\u7EFF\u8138\u8001\u5934\u5750\u5728\u4E66\u524D\u5927\u54ED\u5927\u95F9\uFF1A\u201C\u5929\u54EA\uFF01\u8FD9\u7A76\u7ADF\u662F\u4EC0\u4E48\uFF01\u201D\r\n\r\n\u4ED6\u770B\u89C1\u4E86\u4F60\uFF0C\u4E00\u6B65\u51B2\u4E0A\u6765\u6293\u4F4F\u4F60\u7684\u624B\uFF1A\u201C\u5E74\u8F7B\u4EBA\uFF0C\u5E2E\u8001\u5934\u5B50\u770B\u770B\u8FD9\u662F\u4EC0\u4E48\uFF1F\u201D\r\n\r\n\u4F60\u51B3\u5B9A\uFF1A"
   eventIllustration: {fileID: 0}
-  options: []
+  options:
+  - optionId: 1
+    optionLabel: "\u201C\u6211\u770B\u5C01\u76AE\u4E0A\u5199\u7740\u6839\u53F7\u4E8C\u3002\u201D"
+    requiredMoney: 0
+    consequenceDescription: "\uFF1F\uFF1F\uFF1F"
+    resultContent: "\u8001\u5934\u6123\u4E86\u51E0\u79D2\uFF0C\u5174\u594B\u5730\u6EE1\u8138\u901A\u7EA2\uFF0C\u4F60\u90FD\u6709\u70B9\u6000\u7591\u5370\u8C61\u91CC\u7684\u7EFF\u8138\u662F\u4E0D\u662F\u770B\u9519\u4E86\uFF1A\u201C\u5BF9\u5BF9\u5BF9\uFF01\u6211\u770B\u7740\u4E5F\u662F\u6839\u53F7\u4E8C\uFF0C\u5E74\u8F7B\u4EBA\uFF0C\u4F60\u7B80\u76F4\u662F\u6211\u7684\u77E5\u97F3\uFF01\u4EB2\u7231\u7684\u6839\u53F7\u4E8C\u4EE5\u6781\u7B80\u7684\u51FA\u8EAB\u3001\u98A0\u8986\u6027\u7684\u610F\u4E49\u3001\u65E0\u5904\u4E0D\u5728\u7684\u8EAB\u5F71\u6210\u4E3A\u65E0\u7406\u6570\u5BB6\u65CF\u4E2D\u6700\u5177\u4EE3\u8868\u6027\u7684\u6807\u6746\uFF0C\u5904\u5904\u5C3D\u663E\u6570\u5B66\u4E4B\u5999\uFF01\u4F60\u4E5F\u50CF\u6211\u4E00\u6837\u559C\u6B22\u9AD8\u8D35\u7684\u6839\u53F7\u4E8C\uFF0C\u5BF9\u5427\uFF01\u201D\r\n\r\n\u4ED6\u98A0\u5F97\u4E0D\u884C\uFF0C\u4F60\u5B9E\u5728\u53D7\u4E0D\u4E86\uFF0C\u81EA\u884C\u8D70\u5411\u4E86\u524D\u65B9\u7684\u5927\u95E8\uFF0C\u95E8\u724C\u4E0A\u5199\u7740\uFF1A\u201C\u6839\u53F7\u4E09\u201D\u3002\r\n\r\n\u201C\u8C22\u8C22\u4F60\uFF0C\u5E74\u8F7B\u4EBA\uFF0C\u6211\u9001\u9001\u4F60\uFF01\u201D\u80CC\u540E\u4E00\u9635\u52A9\u8DD1\u58F0\uFF0C\u6CA1\u7B49\u4F60\u56DE\u5934\uFF0C\u5C41\u80A1\u4E0A\u5C31\u6328\u4E86\u91CD\u91CD\u4E00\u811A\uFF0C\u4F60\u60E8\u53EB\u7740\u98DE\u4E86\u51FA\u53BB\uFF0C\u8DCC\u8FDB\u4E86\u201C\u6839\u53F7\u4E09\u201D\u3002"
+    builtInEffectType: 1
+    effectAmount: 20
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 0
+    randomOwnedLootAmountMax: 0
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 11400000, guid: ec502bb5bb5d9994abf2abeb0b09a90c, type: 2}
+    resolveEvent: 0
+    customHandler: {fileID: 0}
+  - optionId: 2
+    optionLabel: "\u201C\u6211\u770B\u4E0D\u61C2\u554A\uFF01\u201D"
+    requiredMoney: 0
+    consequenceDescription: "\uFF1F\uFF1F\uFF1F"
+    resultContent: "\u8001\u5934\u6123\u4E86\u51E0\u79D2\uFF0C\u9F3B\u5934\u6EF4\u6E9C\u6E9C\u5730\u53D8\u6210\u4E86\u7EA2\u8272\uFF0C\u4F60\u8111\u5B50\u91CC\u7A81\u7136\u60F3\u8D77\u4E86\u54E5\u8C2D\u7684\u90A3\u4E2A\u5BB6\u4F19\u3002\u201C\u53BB\u4F60\u7684\u5427\uFF01\u201D\u8001\u5934\u98DE\u8D77\u4E00\u811A\u628A\u4F60\u8E39\u56DE\u4E86\u76E5\u6D17\u5BA4\uFF0C\u4F60\u60CA\u8BB6\u4E8E\u4ED6\u5C45\u7136\u8FD8\u80FD\u628A\u4F60\u8E39\u56DE\u76E5\u6D17\u5BA4\u3002\u201C\u667A\u5546\u8FD9\u4E48\u4F4E\u7684\u4E0B\u6B21\u8FD8\u662F\u53BB\u8003\u9A7E\u7167\u5427\uFF01\u201D\u8001\u5934\u9A82\u9A82\u54A7\u54A7\u7684\u3002\r"
+    builtInEffectType: 6
+    effectAmount: -20
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 0
+    randomOwnedLootAmountMax: 0
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects:
+    - effectType: 2
+      effectAmount: 20
+      randomMoneyMin: 0
+      randomMoneyMax: 0
+      randomOwnedLootAmountMin: 0
+      randomOwnedLootAmountMax: 0
+      lootRewards: []
+      lootPickCountMin: 0
+      lootPickCountMax: 0
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      relicPickCountMin: 0
+      relicPickCountMax: 0
+      relicRewards: []
+      blueprintTable: {fileID: 0}
+      blueprintRarityWeightTable: {fileID: 0}
+      blueprintPickCountMin: 0
+      blueprintPickCountMax: 0
+      blueprintRewards: []
+      encounterSelectionMode: 0
+      encounterEnemyGroups: []
+      encounterEnemies: []
+      encounterEnemyCountMin: 0
+      encounterEnemyCountMax: 0
+      specialDungeon: {fileID: 0}
+    nextEvent: {fileID: 11400000, guid: 24065cf65e374984da865ab1c21058e6, type: 2}
+    resolveEvent: 0
+    customHandler: {fileID: 0}
+  - optionId: 3
+    optionLabel: "\u201C\u56DE\u54E5\u8C2D\u5427\uFF0C\u8759\u8760\u4FA0\u8BF4\u4ED6\u4E0D\u6253\u4F60\u4E86\u3002\u201D"
+    requiredMoney: 0
+    consequenceDescription: "\uFF1F\uFF1F\uFF1F"
+    resultContent: "\u201C\u4EC0\u4E48\u4E71\u4E03\u516B\u7CDF\u7684\uFF01\u770B\u4E0D\u61C2\u5C31\u8BF4\u770B\u4E0D\u61C2\uFF01\u53FD\u91CC\u5495\u565C\u7684\u8BF4\u4EC0\u4E48\u5462\uFF01\u201D\u8001\u5934\u9A82\u9A82\u54A7\u54A7\u5730\u6293\u7740\u4F60\u7684\u8863\u9886\u628A\u4F60\u6254\u8FDB\u4E86\u201C\u79D1\u76EE\u4E09\u201D\uFF0C\u4F60\u4E00\u5C41\u80A1\u5750\u5728\u4E86\u8003\u573A\u4E0A\uFF0C\u5468\u56F4\u4E00\u7FA4\u8003\u751F\u9707\u60CA\u5730\u770B\u7740\u4F60\u3002\u626D\u5934\u770B\u770B\u5C41\u80A1\u4E0A\u7684\u978B\u5370\uFF0C\u4F60\u6B32\u54ED\u65E0\u6CEA\uFF1A\u201C\u6211\u771F\u6C42\u6C42\u4E86\uFF0C\u522B\u8BA9\u6211\u518D\u78B0\u89C1\u8001\u5934\u4E86\uFF01\u201D"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 0
+    randomOwnedLootAmountMax: 0
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 11400000, guid: ac38cc8f25127d149a4da023dfe0fe17, type: 2}
+    resolveEvent: 0
+    customHandler: {fileID: 0}

@@ -12,8 +12,110 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
   m_Name: "033_A_00 \u76E5\u6D17\u5BA4"
   m_EditorClassIdentifier: 
-  eventId: Event
-  eventName: "\u4E8B\u4EF6"
-  eventContent: 
+  eventId: 033_A_00
+  eventName: "\u76E5\u6D17\u5BA4"
+  eventContent: "\u4F60\u7684\u51FA\u751F\u70B9\u662F\u4E2A\u5395\u6240\uFF0C\u4F60\u5DEE\u70B9\u6389\u8FDB\u5751\u91CC\u3002\u628A\u6454\u6210\u516B\u74E3\u7684\u5C41\u80A1\u62FC\u8D77\u6765\uFF0C\u770B\u7740\u4E24\u5EA7\u5927\u95E8\uFF0C\u4F60\u51B3\u5B9A\uFF1A"
   eventIllustration: {fileID: 0}
-  options: []
+  options:
+  - optionId: 1
+    optionLabel: "\u201C\u53BB\u5DE6\u8FB9\u7684\u623F\u95F4\u770B\u770B\u3002\u201D"
+    requiredMoney: 0
+    consequenceDescription: "\u8FDB\u5165\u79D1\u76EE\u4E00"
+    resultContent: "\u4F60\u8D70\u8FDB\u4E86\u5DE6\u8FB9\u7684\u623F\u95F4\uFF0C\u95E8\u724C\u5199\u7740\u201C\u79D1\u76EE\u4E00\u201D\u3002"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 0
+    randomOwnedLootAmountMax: 0
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 11400000, guid: 50f09205fcf659f4a95b12f75772c5a8, type: 2}
+    resolveEvent: 0
+    customHandler: {fileID: 0}
+  - optionId: 2
+    optionLabel: "\u201C\u53BB\u53F3\u8FB9\u7684\u623F\u95F4\u770B\u770B\u3002\u201D"
+    requiredMoney: 0
+    consequenceDescription: "\u8FDB\u5165\u6839\u53F7\u4E00"
+    resultContent: "\u4F60\u8D70\u8FDB\u4E86\u53F3\u8FB9\u7684\u623F\u95F4\uFF0C\u95E8\u724C\u5199\u7740\u201C\u6839\u53F7\u4E00\u201D\u3002"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 0
+    randomOwnedLootAmountMax: 0
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 11400000, guid: a8d66d43887463943a3e790e6bfcf869, type: 2}
+    resolveEvent: 0
+    customHandler: {fileID: 0}
+  - optionId: 3
+    optionLabel: "\u201C\u5728\u5395\u6240\u91CC\u591A\u5446\u4E00\u5929\u3002\u201D"
+    requiredMoney: 0
+    consequenceDescription: "\u6062\u590D\u5168\u90E8\u89D2\u8272\u8840\u91CF"
+    resultContent: "\u4F60\u5728\u5395\u6240\u91CC\u8E72\u4E86\u4E00\u6574\u5929\uFF0C\u8E72\u5F97\u817F\u90FD\u9EBB\u4E86\uFF0C\u597D\u5728\u7ED3\u679C\u662F\u597D\u7684\uFF0C\u4F60\u8212\u7545\u4E86\u8BB8\u591A\u3002"
+    builtInEffectType: 3
+    effectAmount: 20
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 0
+    randomOwnedLootAmountMax: 0
+    lootRewards: []
+    lootPickCountMin: 0
+    lootPickCountMax: 0
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 0
+    relicPickCountMax: 0
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 0
+    blueprintPickCountMax: 0
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 0
+    encounterEnemyCountMax: 0
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 11400000}
+    resolveEvent: 0
+    customHandler: {fileID: 0}

@@ -12,7 +12,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a4f1339d8304fc7a0d10525e9e3c1f8, type: 3}
   m_Name: "033 \u5E78\u8FD0\u8FF7\u5BAB"
   m_EditorClassIdentifier: 
-  dungeonId: SpecialDungeon
-  dungeonName: Special Dungeon
-  description: 
-  entries: []
+  dungeonId: 033
+  dungeonName: "\u5E78\u8FD0\u8FF7\u5BAB"
+  description: "\u4EE3\u8868\u5E78\u8FD0\u7684\u8FF7\u5BAB\uFF0C\u4F20\u8A00\u8D70\u51FA\u6765\u5C31\u53EF\u4EE5\u83B7\u5F97\u5927\u91CF\u5956\u52B1\u3002"
+  entries:
+  - tileType: 3
+    previewTag: "\u76E5\u6D17\u5BA4"
+    previewDangerRating: 0
+    enemyGroup: {fileID: 0}
+    merchantOffers: []
+    treasureOptions: []
+    eventData: {fileID: 11400000, guid: 24065cf65e374984da865ab1c21058e6, type: 2}
+  - tileType: 3
+    previewTag: "\u79D1\u76EE\u4E00"
+    previewDangerRating: 0
+    enemyGroup: {fileID: 0}
+    merchantOffers: []
+    treasureOptions: []
+    eventData: {fileID: 11400000, guid: 50f09205fcf659f4a95b12f75772c5a8, type: 2}
+  - tileType: 3
+    previewTag: "\u6839\u53F7\u4E00"
+    previewDangerRating: 0
+    enemyGroup: {fileID: 0}
+    merchantOffers: []
+    treasureOptions: []
+    eventData: {fileID: 11400000, guid: a8d66d43887463943a3e790e6bfcf869, type: 2}
+  - tileType: 3
+    previewTag: 
+    previewDangerRating: 0
+    enemyGroup: {fileID: 0}
+    merchantOffers: []
+    treasureOptions: []
+    eventData: {fileID: 0}
