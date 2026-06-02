@@ -31,6 +31,7 @@ public sealed class BattleEncounterData
     public List<RunLootState> pendingVictoryLootRewards = new List<RunLootState>();
     public List<RunRelicState> pendingVictoryRelicRewards = new List<RunRelicState>();
     public List<RunBlueprintState> pendingVictoryBlueprintRewards = new List<RunBlueprintState>();
+    public List<RunWeaponState> pendingVictoryWeaponRewards = new List<RunWeaponState>();
     public List<RunRelicState> relicInventory = new List<RunRelicState>();
     public List<RunCalamityState> activeCalamities = new List<RunCalamityState>();
     public List<PendingBattleStatusGrant> pendingBattleStartAllyStatusGrants = new List<PendingBattleStatusGrant>();

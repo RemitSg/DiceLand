@@ -23,6 +23,18 @@ public static class BattleTargetSelectionService
             case EnemySkill_SO.DamageTargetMode.AllFriendlies:
             case EnemySkill_SO.DamageTargetMode.AllFriendliesExceptSelf:
                 return BuildValidTargetList(candidates, isValidTarget);
+            case EnemySkill_SO.DamageTargetMode.AllOpponentsExceptCurrent:
+                List<T> otherOpponents = BuildValidTargetList(candidates, isValidTarget);
+                if (currentTarget == null)
+                    return otherOpponents;
+
+                for (int i = otherOpponents.Count - 1; i >= 0; i--)
+                {
+                    if (EqualityComparer<T>.Default.Equals(otherOpponents[i], currentTarget))
+                        otherOpponents.RemoveAt(i);
+                }
+
+                return otherOpponents;
             case EnemySkill_SO.DamageTargetMode.LowestHpFriendly:
             case EnemySkill_SO.DamageTargetMode.LowestHpOpponent:
                 List<T> priorityPool = BuildValidTargetList(candidates, isValidTarget);

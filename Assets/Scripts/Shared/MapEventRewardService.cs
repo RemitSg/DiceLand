@@ -30,6 +30,9 @@ public static class MapEventRewardService
 
     public static bool TryExecuteRelicReward(RunState runState, MapEventBuiltInEffectData effectData, out string message)
     {
+        if (effectData != null && effectData.relicTable == null && TryExecuteExplicitRelicRewards(runState, effectData, out message))
+            return true;
+
         if (!TryBuildAvailableRelicRewards(effectData, out List<Relic_SO> availableRewards, out message))
             return false;
 
@@ -93,6 +96,8 @@ public static class MapEventRewardService
                 return TryQueueEncounterVictoryRelicRewards(encounterData, effectData, out message);
             case MapEventOptionBuiltInEffectType.GainBlueprints:
                 return TryQueueEncounterVictoryBlueprintRewards(encounterData, effectData, out message);
+            case MapEventOptionBuiltInEffectType.GainWeapons:
+                return TryQueueEncounterVictoryWeaponRewards(encounterData, effectData, out message);
             default:
                 message = string.Empty;
                 return true;
@@ -130,6 +135,9 @@ public static class MapEventRewardService
 
     private static bool TryQueueEncounterVictoryRelicRewards(BattleEncounterData encounterData, MapEventBuiltInEffectData effectData, out string message)
     {
+        if (effectData != null && effectData.relicTable == null && TryQueueExplicitRelicRewards(encounterData, effectData, out message))
+            return true;
+
         if (!TryBuildAvailableRelicRewards(effectData, out List<Relic_SO> availableRewards, out message))
             return false;
 
@@ -154,6 +162,73 @@ public static class MapEventRewardService
             ? $"\u6218\u6597\u80dc\u5229\u540e\u5c06\u83b7\u5f97\u9057\u7269\uff1a{string.Join("\uff0c", descriptions)}\u3002"
             : "\u6218\u6597\u80dc\u5229\u540e\u672a\u914d\u7f6e\u4efb\u4f55\u9057\u7269\u5956\u52b1\u3002";
         return true;
+    }
+
+    private static bool TryExecuteExplicitRelicRewards(RunState runState, MapEventBuiltInEffectData effectData, out string message)
+    {
+        message = string.Empty;
+        if (!HasExplicitRelicRewards(effectData))
+            return false;
+
+        List<string> descriptions = new List<string>();
+        for (int i = 0; i < effectData.relicRewards.Count; i++)
+        {
+            MapEventRelicRewardEntry reward = effectData.relicRewards[i];
+            if (reward == null || reward.relicData == null)
+                continue;
+
+            int amount = Mathf.Max(1, reward.amount);
+            runState?.AddRelic(reward.relicData, amount);
+            descriptions.Add(amount > 1 ? $"{reward.relicData.DisplayName} x{amount}" : reward.relicData.DisplayName);
+        }
+
+        message = descriptions.Count > 0
+            ? $"获得遗物：{string.Join("，", descriptions)}。"
+            : "未获得任何遗物。";
+        return true;
+    }
+
+    private static bool TryQueueExplicitRelicRewards(BattleEncounterData encounterData, MapEventBuiltInEffectData effectData, out string message)
+    {
+        message = string.Empty;
+        if (!HasExplicitRelicRewards(effectData))
+            return false;
+
+        List<string> descriptions = new List<string>();
+        for (int i = 0; i < effectData.relicRewards.Count; i++)
+        {
+            MapEventRelicRewardEntry reward = effectData.relicRewards[i];
+            if (reward == null || reward.relicData == null)
+                continue;
+
+            int amount = Mathf.Max(1, reward.amount);
+            encounterData.pendingVictoryRelicRewards.Add(new RunRelicState
+            {
+                relicData = reward.relicData,
+                amount = amount
+            });
+            descriptions.Add(amount > 1 ? $"{reward.relicData.DisplayName} x{amount}" : reward.relicData.DisplayName);
+        }
+
+        message = descriptions.Count > 0
+            ? $"战斗胜利后将获得遗物：{string.Join("，", descriptions)}。"
+            : "战斗胜利后未配置任何遗物奖励。";
+        return true;
+    }
+
+    private static bool HasExplicitRelicRewards(MapEventBuiltInEffectData effectData)
+    {
+        if (effectData == null || effectData.relicRewards == null)
+            return false;
+
+        for (int i = 0; i < effectData.relicRewards.Count; i++)
+        {
+            MapEventRelicRewardEntry reward = effectData.relicRewards[i];
+            if (reward != null && reward.relicData != null)
+                return true;
+        }
+
+        return false;
     }
 
     private static bool TryQueueEncounterVictoryBlueprintRewards(BattleEncounterData encounterData, MapEventBuiltInEffectData effectData, out string message)
@@ -181,6 +256,95 @@ public static class MapEventRewardService
         message = descriptions.Count > 0
             ? $"\u6218\u6597\u80dc\u5229\u540e\u5c06\u83b7\u5f97\u56fe\u7eb8\uff1a{string.Join("\uff0c", descriptions)}\u3002"
             : "\u6218\u6597\u80dc\u5229\u540e\u672a\u914d\u7f6e\u4efb\u4f55\u56fe\u7eb8\u5956\u52b1\u3002";
+        return true;
+    }
+
+    private static bool TryQueueEncounterVictoryWeaponRewards(BattleEncounterData encounterData, MapEventBuiltInEffectData effectData, out string message)
+    {
+        if (!TryDrawWeaponRewards(effectData, out List<Weapon_SO> selectedWeapons, out message))
+            return false;
+
+        List<string> descriptions = new List<string>(selectedWeapons.Count);
+        for (int i = 0; i < selectedWeapons.Count; i++)
+        {
+            Weapon_SO weapon = selectedWeapons[i];
+            if (weapon == null)
+                continue;
+
+            encounterData.pendingVictoryWeaponRewards.Add(new RunWeaponState
+            {
+                weaponData = weapon,
+                amount = 1
+            });
+            descriptions.Add(weapon.weaponName);
+        }
+
+        message = descriptions.Count > 0
+            ? $"战斗胜利后将获得武器：{string.Join("，", descriptions)}。"
+            : "战斗胜利后未配置任何武器奖励。";
+        return true;
+    }
+
+    public static bool TryExecuteWeaponReward(RunState runState, MapEventBuiltInEffectData effectData, out string message)
+    {
+        if (!TryDrawWeaponRewards(effectData, out List<Weapon_SO> selectedWeapons, out message))
+            return false;
+
+        List<string> descriptions = new List<string>(selectedWeapons.Count);
+        for (int i = 0; i < selectedWeapons.Count; i++)
+        {
+            Weapon_SO weapon = selectedWeapons[i];
+            if (weapon == null)
+                continue;
+
+            runState?.AddWeapon(weapon, 1);
+            descriptions.Add(weapon.weaponName);
+        }
+
+        message = descriptions.Count > 0
+            ? $"获得武器：{string.Join("，", descriptions)}。"
+            : "未获得任何武器。";
+        return true;
+    }
+
+    private static bool TryDrawWeaponRewards(MapEventBuiltInEffectData effectData, out List<Weapon_SO> selectedWeapons, out string message)
+    {
+        selectedWeapons = new List<Weapon_SO>();
+        if (effectData == null || effectData.weaponCatalog == null)
+        {
+            message = "该事件效果未配置武器目录。";
+            return false;
+        }
+
+        IReadOnlyList<Weapon_SO> catalogWeapons = effectData.weaponCatalog.GetWeaponsByRarity(effectData.weaponRarity);
+        List<Weapon_SO> candidates = new List<Weapon_SO>();
+        if (catalogWeapons != null)
+        {
+            for (int i = 0; i < catalogWeapons.Count; i++)
+            {
+                Weapon_SO weapon = catalogWeapons[i];
+                if (weapon != null && !candidates.Contains(weapon))
+                    candidates.Add(weapon);
+            }
+        }
+
+        if (candidates.Count == 0)
+        {
+            message = $"武器目录中没有 {effectData.weaponRarity} 品质武器。";
+            return false;
+        }
+
+        int minPick = Mathf.Max(1, effectData.weaponPickCountMin);
+        int maxPick = Mathf.Max(minPick, effectData.weaponPickCountMax);
+        int pickCount = Mathf.Min(Random.Range(minPick, maxPick + 1), candidates.Count);
+        for (int i = 0; i < pickCount; i++)
+        {
+            int selectedIndex = Random.Range(0, candidates.Count);
+            selectedWeapons.Add(candidates[selectedIndex]);
+            candidates.RemoveAt(selectedIndex);
+        }
+
+        message = string.Empty;
         return true;
     }
 

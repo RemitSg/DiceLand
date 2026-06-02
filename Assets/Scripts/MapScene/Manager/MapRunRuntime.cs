@@ -212,6 +212,18 @@ public static class MapRunRuntime
             }
         }
 
+        if (encounter.wasVictory && encounter.pendingVictoryWeaponRewards != null && encounter.pendingVictoryWeaponRewards.Count > 0)
+        {
+            for (int i = 0; i < encounter.pendingVictoryWeaponRewards.Count; i++)
+            {
+                RunWeaponState weapon = encounter.pendingVictoryWeaponRewards[i];
+                if (weapon == null || weapon.weaponData == null || weapon.amount <= 0)
+                    continue;
+
+                currentSnapshot.runState.AddWeapon(weapon.weaponData, weapon.amount);
+            }
+        }
+
         if (encounter.wasVictory && encounter.moneyGained > 0)
             currentSnapshot.runState.AddMoney(encounter.moneyGained);
 

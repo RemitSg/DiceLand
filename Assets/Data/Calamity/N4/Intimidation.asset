@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd7a3b759b596b4a89ca723c509b050, type: 3}
+  m_Name: Intimidation
+  m_EditorClassIdentifier: 
+  calamityId: 30
+  calamityName: "\u5F31\u5316 \xB7 \u9707\u6151"
+  calamityTier: 4
+  description: "\u6218\u6597\u5F00\u59CB\u65F6\uFF0C\u6240\u6709\u53CB\u65B9\u89D2\u8272\u635F\u5931
+    2 \u751F\u547D\u503C\u3002"
+  rarity: 0
+  icon: {fileID: 0}
+  builtInEffects:
+  - effectName: "\u5F31\u5316 \xB7 \u9707\u6151"
+    effectType: 16
+    effectAmount: 2
+    statusData: {fileID: 0}
+  customEffectHandler: {fileID: 0}

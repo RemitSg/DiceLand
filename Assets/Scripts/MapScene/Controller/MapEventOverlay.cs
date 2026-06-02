@@ -16,7 +16,7 @@ public class MapEventOverlay : MonoBehaviour
         public string unavailableReason;
     }
 
-    public delegate bool EventOptionSelectionHandler(BoardTileData tile, MapEvent_SO eventData, MapEventOptionData optionData, out string message);
+    public delegate bool EventOptionSelectionHandler(BoardTileData tile, MapEvent_SO eventData, MapEventOptionData optionData, out string message, out string resultContent, out MapEvent_SO nextEventOverride);
     public delegate EventOptionPreviewData EventOptionPreviewHandler(BoardTileData tile, MapEvent_SO eventData, MapEventOptionData optionData);
     public event Action Hidden;
 
@@ -219,16 +219,20 @@ public class MapEventOverlay : MonoBehaviour
             return;
         }
         if (selectedOption == null || selectionHandler == null || currentTile == null || currentEvent == null) return;
-        if (selectionHandler.Invoke(currentTile, currentEvent, selectedOption, out string message)) { ShowResultStep(selectedOption, message); return; }
+        if (selectionHandler.Invoke(currentTile, currentEvent, selectedOption, out string message, out string resultContent, out MapEvent_SO nextEventOverride)) { ShowResultStep(selectedOption, message, resultContent, nextEventOverride); return; }
         if (statusText != null) statusText.text = string.IsNullOrWhiteSpace(message) ? "当前选项未能执行。" : message;
     }
 
-    private void ShowResultStep(MapEventOptionData option, string message)
+    private void ShowResultStep(MapEventOptionData option, string message, string resultContent, MapEvent_SO nextEventOverride)
     {
         isShowingResultStep = true;
-        pendingNextEvent = option != null ? option.nextEvent : null;
+        pendingNextEvent = nextEventOverride != null ? nextEventOverride : (option != null ? option.nextEvent : null);
         if (optionListRoot != null) optionListRoot.gameObject.SetActive(false);
-        string resultText = option != null && !string.IsNullOrWhiteSpace(option.resultContent) ? option.resultContent : (!string.IsNullOrWhiteSpace(message) ? message : option?.consequenceDescription);
+        string resultText = !string.IsNullOrWhiteSpace(resultContent)
+            ? resultContent
+            : option != null && !string.IsNullOrWhiteSpace(option.resultContent)
+                ? option.resultContent
+                : (!string.IsNullOrWhiteSpace(message) ? message : option?.consequenceDescription);
         contentText.text = string.IsNullOrWhiteSpace(resultText) ? "事件已触发。" : resultText;
         consequenceTitleText.text = "选择结果";
         consequenceText.text = !string.IsNullOrWhiteSpace(message) ? message : "请选择继续以收起事件界面。";
@@ -450,7 +454,9 @@ public class MapEventOverlay : MonoBehaviour
         if (option == null) return "未命名选项";
         string label = option.DisplayLabel;
         int requiredMoney = Mathf.Max(0, option.requiredMoney);
+        int requiredMoneyPercent = Mathf.Max(0, option.requiredMoneyPercent);
         if (requiredMoney > 0) label = $"{label}  [需 {requiredMoney} 金]";
+        if (requiredMoneyPercent > 0) label = $"{label}  [需 {requiredMoneyPercent}% 金]";
         if (previewData != null && !previewData.isSelectable) label = $"{label}  [不可选]";
         return label;
     }
@@ -460,7 +466,9 @@ public class MapEventOverlay : MonoBehaviour
         if (option == null) return "暂无后果说明。";
         string detail = !string.IsNullOrWhiteSpace(option.consequenceDescription) ? option.consequenceDescription : "暂无后果说明。";
         int requiredMoney = Mathf.Max(0, option.requiredMoney);
+        int requiredMoneyPercent = Mathf.Max(0, option.requiredMoneyPercent);
         if (requiredMoney > 0) detail = $"需要支付 {requiredMoney} 金钱\n{detail}";
+        if (requiredMoneyPercent > 0) detail = $"需要支付当前金钱的 {requiredMoneyPercent}%\n{detail}";
         if (option.nextEvent != null) detail = $"{detail}\n继续事件：{option.nextEvent.DisplayName}";
         if (previewData != null)
         {

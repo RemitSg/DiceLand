@@ -18,6 +18,11 @@ public class EnemyGroup_SO : ScriptableObject
     [Header("Attributes")]
     public List<LootAttribute_SO> attributes = new List<LootAttribute_SO>();
 
+    [Header("Danger")]
+    [Min(0)]
+    [Tooltip("0 uses the map area's default danger rating. Values above 0 override that rating.")]
+    public int dangerRatingOverride;
+
     [Header("Loot Tables")]
     public List<LootTable_SO> lootTables = new List<LootTable_SO>();
 
@@ -50,5 +55,7 @@ public class EnemyGroup_SO : ScriptableObject
 
         if (lootTables == null)
             lootTables = new List<LootTable_SO>();
+
+        dangerRatingOverride = Mathf.Max(0, dangerRatingOverride);
     }
 }

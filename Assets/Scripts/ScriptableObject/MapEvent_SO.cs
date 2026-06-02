@@ -21,7 +21,12 @@ public enum MapEventOptionBuiltInEffectType
     GainExperience = 14,
     LoseOwnedRandomLoot = 15,
     LoseSpecificLoot = 16,
-    StartSpecialDungeon = 17
+    StartSpecialDungeon = 17,
+    LoseMoneyPercent = 18,
+    GainMoneyPercentOfPreSelectionMoney = 19,
+    RerollAllMoneyByPercentRange = 20,
+    GainWeapons = 21,
+    ReforgeOwnedRandomRelicsSameRarity = 22
 }
 
 public enum MapEventEncounterSelectionMode
@@ -42,6 +47,7 @@ public class MapEventLootRewardEntry
 public class MapEventRelicRewardEntry
 {
     public Relic_SO relicData;
+    [Min(1)] public int amount = 1;
 }
 
 [Serializable]
@@ -78,6 +84,27 @@ public class MapEventBuiltInEffectData
     [Min(1)] public int encounterEnemyCountMin = 1;
     [Min(1)] public int encounterEnemyCountMax = 1;
     public SpecialDungeon_SO specialDungeon;
+    [Min(0)] public int moneyPercent;
+    [Min(0)] public int randomMoneyPercentMin;
+    [Min(0)] public int randomMoneyPercentMax;
+    public WeaponCatalog_SO weaponCatalog;
+    public Rarity weaponRarity = Rarity.Legendary;
+    [Min(1)] public int weaponPickCountMin = 1;
+    [Min(1)] public int weaponPickCountMax = 1;
+}
+
+[Serializable]
+public class MapEventPossibleResultData
+{
+    public string resultId = "Result";
+    [Min(0f)] public float weight = 1f;
+    [TextArea(2, 5)] public string consequenceDescription;
+    [TextArea(3, 8)] public string resultContent;
+    public MapEventBuiltInEffectData primaryEffect = new MapEventBuiltInEffectData();
+    public List<MapEventBuiltInEffectData> additionalBuiltInEffects = new List<MapEventBuiltInEffectData>();
+    [Header("Follow-up Event")]
+    public MapEvent_SO nextEvent;
+    public bool resolveEvent = true;
 }
 
 [Serializable]
@@ -86,6 +113,7 @@ public class MapEventOptionData
     public string optionId = "Option";
     public string optionLabel = "选项";
     [Min(0)] public int requiredMoney;
+    [Min(0)] public int requiredMoneyPercent;
     [TextArea(2, 5)] public string consequenceDescription;
     [TextArea(3, 8)] public string resultContent;
     public MapEventOptionBuiltInEffectType builtInEffectType = MapEventOptionBuiltInEffectType.None;
@@ -114,6 +142,7 @@ public class MapEventOptionData
     [Min(1)] public int encounterEnemyCountMax = 1;
     public SpecialDungeon_SO specialDungeon;
     public List<MapEventBuiltInEffectData> additionalBuiltInEffects = new List<MapEventBuiltInEffectData>();
+    public List<MapEventPossibleResultData> possibleResults = new List<MapEventPossibleResultData>();
     [Header("Follow-up Event")]
     public MapEvent_SO nextEvent;
     public bool resolveEvent = true;

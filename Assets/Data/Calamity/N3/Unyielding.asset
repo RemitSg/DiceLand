@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd7a3b759b596b4a89ca723c509b050, type: 3}
+  m_Name: Unyielding
+  m_EditorClassIdentifier: 
+  calamityId: 28
+  calamityName: "\u52B2\u654C \xB7 \u4E0D\u5C48"
+  calamityTier: 3
+  description: "\u6240\u6709\u654C\u4EBA\u627F\u53D7\u81F4\u6B7B\u4F24\u5BB3\u65F6\u4E0D\u6B7B\u4EA1\uFF0C\u6539\u4E3A\u4E0B\u56DE\u5408\u5F00\u59CB\u65F6\u6B7B\u4EA1\u3002"
+  rarity: 0
+  icon: {fileID: 0}
+  builtInEffects:
+  - effectName: "\u52B2\u654C \xB7 \u4E0D\u5C48"
+    effectType: 19
+    effectAmount: 1
+    statusData: {fileID: 0}
+  customEffectHandler: {fileID: 0}

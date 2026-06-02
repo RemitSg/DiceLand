@@ -571,45 +571,43 @@ public class BoardManager : MonoBehaviour
 
     private void PopulatePreview(BoardTileData tile, System.Random rng)
     {
-        if (tile.tileType != MapTileType.Battle && tile.tileType != MapTileType.Elite)
+        if (!tile.IsHostileTile)
             return;
+
+        if (tile.tileType == MapTileType.Boss)
+        {
+            tile.previewEnemyCount = 1;
+            tile.previewDangerRating = MapDangerRatingService.ResolveDefaultRating(tile.tileType, tile.dangerBand);
+            tile.previewTag = "Boss";
+            return;
+        }
 
         bool isElite = tile.tileType == MapTileType.Elite;
         int minEnemies;
         int maxEnemiesExclusive;
-        int minDanger;
-        int maxDangerExclusive;
 
         switch (tile.dangerBand)
         {
             case MapDangerBand.Outer:
                 minEnemies = isElite ? 1 : 1;
                 maxEnemiesExclusive = isElite ? 3 : 4;
-                minDanger = isElite ? 2 : 1;
-                maxDangerExclusive = isElite ? 4 : 3;
                 break;
             case MapDangerBand.Mid:
                 minEnemies = isElite ? 2 : 1;
                 maxEnemiesExclusive = isElite ? 4 : 5;
-                minDanger = isElite ? 2 : 1;
-                maxDangerExclusive = isElite ? 5 : 4;
                 break;
             case MapDangerBand.Inner:
                 minEnemies = isElite ? 2 : 2;
                 maxEnemiesExclusive = isElite ? 5 : 5;
-                minDanger = isElite ? 3 : 2;
-                maxDangerExclusive = isElite ? 6 : 5;
                 break;
             default:
                 minEnemies = isElite ? 3 : 2;
                 maxEnemiesExclusive = isElite ? 5 : 6;
-                minDanger = isElite ? 3 : 2;
-                maxDangerExclusive = isElite ? 6 : 5;
                 break;
         }
 
         tile.previewEnemyCount = rng.Next(minEnemies, maxEnemiesExclusive);
-        tile.previewDangerRating = rng.Next(minDanger, maxDangerExclusive);
+        tile.previewDangerRating = MapDangerRatingService.ResolveDefaultRating(tile.tileType, tile.dangerBand);
         tile.previewTag = isElite ? $"Elite {tile.GetDangerLabel()}" : tile.GetDangerLabel();
     }
 

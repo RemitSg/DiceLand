@@ -43,4 +43,9 @@ public static class BattleSkillStatusEffectResolutionService
 
         return result;
     }
+
+    public static bool ShouldEvaluateConditionAgainstCurrentTarget(EnemySkill_SO.DamageTargetMode targetMode)
+    {
+        return targetMode == EnemySkill_SO.DamageTargetMode.AllOpponentsExceptCurrent;
+    }
 }

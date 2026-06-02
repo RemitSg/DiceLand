@@ -61,6 +61,7 @@ public class BattleEnemyController : MonoBehaviour
     private bool registeredAsBleedDecayPreventer;
     private int pendingNextAttackSkillPowerBonus;
     private int activeAttackSkillPowerBonus;
+    private bool pendingCalamityDelayedDeath;
 
     private void Awake()
     {
@@ -86,6 +87,7 @@ public class BattleEnemyController : MonoBehaviour
         consumedRoundStartRetreat = false;
         pendingNextAttackSkillPowerBonus = 0;
         activeAttackSkillPowerBonus = 0;
+        pendingCalamityDelayedDeath = false;
         IsDead = false;
         CurrentStageIndex = 0;
         if (enemyData == null)
@@ -423,6 +425,7 @@ public class BattleEnemyController : MonoBehaviour
         int resultingHP = Mathf.Max(0, CurrentHP - amount);
         resultingHP = ApplyHealthBasedStageTransitionRule(previousHP, resultingHP);
         resultingHP = ApplyLastStandRule(resultingHP);
+        resultingHP = ApplyCalamityDelayedDeathRule(resultingHP);
         CurrentHP = resultingHP;
         int actualDamage = previousHP - CurrentHP;
         if (actualDamage <= 0)
@@ -453,6 +456,18 @@ public class BattleEnemyController : MonoBehaviour
         CurrentHP = 0;
         HealthChanged?.Invoke(this);
         Die();
+    }
+
+    public bool TryApplyPendingCalamityDelayedDeath()
+    {
+        if (!pendingCalamityDelayedDeath || IsDead)
+            return false;
+
+        pendingCalamityDelayedDeath = false;
+        CurrentHP = 0;
+        HealthChanged?.Invoke(this);
+        Die();
+        return true;
     }
 
     public bool TryTransitionToStage(int targetStageIndex, bool nextRound = false)
@@ -1306,6 +1321,8 @@ public class BattleEnemyController : MonoBehaviour
                 return (roundNumber - firstRound) % repeatInterval == 0;
             case EnemyData_SO.ConditionalSkillConditionType.AliveEnemyCountAtMost:
                 return CountAliveEnemiesOnBattlefield() <= Mathf.Max(1, rule.requiredAliveEnemyCount);
+            case EnemyData_SO.ConditionalSkillConditionType.SelfHasStatus:
+                return rule.conditionStatusData != null && GetStatusStacks(rule.conditionStatusData) > 0;
             default:
                 return false;
         }
@@ -1600,6 +1617,21 @@ public class BattleEnemyController : MonoBehaviour
             return resultingHP;
         }
 
+        return 1;
+    }
+
+    private int ApplyCalamityDelayedDeathRule(int resultingHP)
+    {
+        if (resultingHP > 0 || pendingCalamityDelayedDeath)
+            return resultingHP;
+
+        IReadOnlyList<RunCalamityState> activeCalamities = BattleEncounterRuntime.ActiveEncounter != null
+            ? BattleEncounterRuntime.ActiveEncounter.activeCalamities
+            : null;
+        if (!CalamitySystem.HasEnemyDelayedDeath(activeCalamities))
+            return resultingHP;
+
+        pendingCalamityDelayedDeath = true;
         return 1;
     }
 

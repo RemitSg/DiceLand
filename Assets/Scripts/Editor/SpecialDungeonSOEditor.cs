@@ -169,7 +169,7 @@ public sealed class SpecialDungeonSOEditor : Editor
             case MapTileType.Battle:
             case MapTileType.Elite:
                 DrawProperty(ref lineRect, entry.FindPropertyRelative("enemyGroup"), "遭遇敌人组");
-                DrawProperty(ref lineRect, entry.FindPropertyRelative("previewDangerRating"), "危险度");
+                DrawProperty(ref lineRect, entry.FindPropertyRelative("previewDangerRating"), "危险度覆盖(0=默认)");
                 break;
             case MapTileType.Merchant:
                 DrawProperty(ref lineRect, entry.FindPropertyRelative("merchantOffers"), "商店商品", true);

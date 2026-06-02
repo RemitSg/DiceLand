@@ -65,6 +65,20 @@ public class BattleTargetSelectionServiceTests
     }
 
     [Test]
+    public void Select_AllOpponentsExceptCurrent_FiltersCurrentTarget()
+    {
+        List<string> result = BattleTargetSelectionService.Select(
+            (EnemySkill_SO.DamageTargetMode)8,
+            currentTarget: "A",
+            candidates: new[] { "A", "Dead", "B", "C" },
+            randomTargetCount: 1,
+            isValidTarget: target => target != "Dead",
+            randomOrder: targets => targets);
+
+        CollectionAssert.AreEqual(new[] { "B", "C" }, result);
+    }
+
+    [Test]
     public void Select_RandomOpponents_WhenCountExceedsCandidates_ReturnsAllValidCandidates()
     {
         List<string> result = BattleTargetSelectionService.Select(

@@ -1,0 +1,105 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: "\u5931\u660E"
+  m_EditorClassIdentifier: 
+  skillName: "\u5931\u660E"
+  description: "\u5265\u79BB\u76EE\u6807\u8EAB\u4E0A\u7684\u9ED1\u6697\uFF0C\u8BA9\u5B83\u5728\u4E0B\u4E00\u56DE\u5408\u77ED\u6682\u5931\u53BB\u65B9\u5411\u3002"
+  skillCategory: 0
+  energyCost: 4
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 2
+  maxPower: 5
+  diceCount: 2
+  dicePowerRanges:
+  - minPower: 3
+    maxPower: 5
+  - minPower: 2
+    maxPower: 5
+  dicePresentationSettings: []
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects:
+    - effectName: "\u5931\u660E\u7729\u6655"
+      trigger: 3
+      targetMode: 0
+      statusData: {fileID: 11400000, guid: 85f53a5f3bbf4f3f8896c6ccb51e0fb7, type: 2}
+      statusType: 0
+      applyTiming: 1
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
+      stackAmount: 1
+      randomTargetCount: 1
+      useCondition: 1
+      condition: 4
+      conditionStatusData: {fileID: 11400000, guid: 3732a63112346b545a395695e35c0110, type: 2}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 2
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
+    statusStackOperationEffects:
+    - effectName: "\u5931\u660E\u6D88\u8017\u9ED1\u6697"
+      trigger: 3
+      targetMode: 0
+      statusData: {fileID: 11400000, guid: 3732a63112346b545a395695e35c0110, type: 2}
+      statusType: 0
+      operationType: 0
+      stackAmount: 2
+      randomTargetCount: 1
+      useCondition: 1
+      condition: 4
+      conditionStatusData: {fileID: 11400000, guid: 3732a63112346b545a395695e35c0110, type: 2}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 2
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects: []
+    rangeModifiers:
+    - effectName: "\u5931\u660E\u7EDD\u6697"
+      useCondition: 1
+      condition: 3
+      targetStatusData: {fileID: 11400000, guid: 3732a63112346b545a395695e35c0110, type: 2}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredStatusStacks: 1
+      requiredSpeedValue: 0
+      requiredSpeedDifference: 0
+      minPowerBonus: 3
+      minPowerBonusCap: 0
+      maxPowerBonus: 0
+      maxPowerBonusCap: 0
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 

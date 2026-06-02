@@ -39,6 +39,13 @@ public class BattleSkillStatusEffectResolutionServiceTests
         CollectionAssert.AreEqual(new[] { 1, 2 }, result.Select(effect => effect.Index));
     }
 
+    [Test]
+    public void ShouldEvaluateConditionAgainstCurrentTarget_WhenTargetingOtherOpponents_ReturnsTrue()
+    {
+        Assert.IsTrue(BattleSkillStatusEffectResolutionService.ShouldEvaluateConditionAgainstCurrentTarget(
+            EnemySkill_SO.DamageTargetMode.AllOpponentsExceptCurrent));
+    }
+
     private readonly struct TestEffect
     {
         public TestEffect(string id, bool conditional)

@@ -1,0 +1,136 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: BacklightGuard
+  m_EditorClassIdentifier: 
+  skillName: "\u80CC\u8F89\u683C\u6321"
+  description: "\u6697\u4E0B\u6765\u7684\u68F1\u9762\u6A2A\u5728\u524D\u65B9\uFF0C\u628A\u88AD\u6765\u7684\u529B\u91CF\u538B\u8FDB\u4E00\u5708\u51B7\u4EAE\u7684\u8FB9\u6846\u3002"
+  skillCategory: 1
+  energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 01000000
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 3
+  maxPower: 7
+  diceCount: 1
+  dicePowerRanges:
+  - minPower: 3
+    maxPower: 7
+  dicePresentationSettings:
+  - clashEffectPrefab: {fileID: 0}
+    hitEffectPrefab: {fileID: 0}
+    clashOffsetSpace: 0
+    clashPositionOffset: {x: 0, y: 0, z: 0}
+    clashRotationOffset: {x: 0, y: 0, z: 0}
+    clashScale: {x: 0, y: 0, z: 0}
+    clashSortingOrderOffset: 0
+    overrideClashDuration: 0
+    clashDuration: 0
+    hitOffsetSpace: 0
+    hitPositionOffset: {x: 0, y: 0, z: 0}
+    hitRotationOffset: {x: 0, y: 0, z: 0}
+    hitScale: {x: 0, y: 0, z: 0}
+    hitSortingOrderOffset: 0
+    overrideHitDamageDelay: 0
+    hitDamageDelay: 0
+    overrideHitReactionDelay: 0
+    hitReactionDelay: 0
+    skillSpriteOverride: {fileID: 0}
+    skillSpritePositionOffset: {x: 0, y: 0, z: 0}
+    skillSpriteRotationOffset: {x: 0, y: 0, z: 0}
+    skillSpriteScale: {x: 0, y: 0, z: 0}
+    skillSpriteSortingOrderOffset: 0
+    overrideSkillSpriteDuration: 0
+    skillSpriteDuration: 0
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects:
+    - effectName: "\u80CC\u8F89\u62A4\u4F53"
+      trigger: 4
+      effectType: 2
+      targetMode: 3
+      useStatusCondition: 0
+      conditionScope: 0
+      conditionStatusData: {fileID: 0}
+      conditionStatusType: 0
+      requiredStatusStacks: 1
+      amount: 0
+      randomTargetCount: 1
+      useCondition: 0
+      condition: 3
+      targetStatusData: {fileID: 0}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
+      statusData: {fileID: 11400000, guid: d9960fbafac14cf6b9c6bd093fd9293f, type: 2}
+      statusType: 0
+      applyTiming: 0
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
+      statusStackAmount: 2
+      fallbackAmount: 0
+    - effectName: "\u80CC\u9762\u627F\u8F89"
+      trigger: 4
+      effectType: 2
+      targetMode: 7
+      useStatusCondition: 0
+      conditionScope: 0
+      conditionStatusData: {fileID: 0}
+      conditionStatusType: 0
+      requiredStatusStacks: 1
+      amount: 0
+      randomTargetCount: 1
+      useCondition: 1
+      condition: 6
+      targetStatusData: {fileID: 11400000, guid: 6066b89b10d82244fa0763020675fb44, type: 2}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
+      statusData: {fileID: 11400000, guid: d9960fbafac14cf6b9c6bd093fd9293f, type: 2}
+      statusType: 0
+      applyTiming: 0
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
+      statusStackAmount: 2
+      fallbackAmount: 0
+    rangeModifiers:
+    - effectName: "\u80CC\u9762\u627F\u8F89"
+      useCondition: 1
+      condition: 6
+      targetStatusData: {fileID: 11400000, guid: 6066b89b10d82244fa0763020675fb44, type: 2}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredStatusStacks: 1
+      requiredSpeedValue: 0
+      requiredSpeedDifference: 0
+      minPowerBonus: 0
+      minPowerBonusCap: 0
+      maxPowerBonus: 1
+      maxPowerBonusCap: 0
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 01000000

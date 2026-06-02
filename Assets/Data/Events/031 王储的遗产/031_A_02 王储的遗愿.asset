@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "031_A_02 王储的遗愿"
+  m_EditorClassIdentifier: 
+  eventId: 031_A_02
+  eventName: "王储的遗愿"
+  eventContent: "你跟着黑衣老者走向城堡深处。走廊里一片昏暗，阴风吹过破窗，回音像哭号一样在石壁间盘旋。\n\n一路上，你听见许多混杂的声音：低沉的呵斥、刺耳的尖叫、诡异的笑声、愤怒的咆哮。它们像在诉说什么，可你一个字也听不清。\n\n老者停下脚步，转头问：“你听到了什么？”"
+  eventIllustration: {fileID: 0}
+  options:
+  - optionId: 1
+    optionLabel: "我听到很多声音，但什么都没听清。"
+    requiredMoney: 0
+    consequenceDescription: "结束事件"
+    resultContent: "你如实说明。老者沉默着点头，带你来到一扇石门前。\n\n石门上有一道深深的剑痕，旁边残留着大块褐色污迹，像干涸的血。\n\n“这是我家老爷的密室，里面藏有他的一切。桌上有他的日记本。读完它，完成他的遗愿，我会给你报酬。别耍小聪明，我会一直看着你。”\n\n你推开石门，在书桌上拾起落满灰尘的日记本。刚翻开第一页，一股巨大的吸力从纸页间涌出，你毫无防备，被卷入日记本。"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
+    lootRewards: []
+    lootPickCountMin: 1
+    lootPickCountMax: 1
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 1
+    blueprintPickCountMax: 1
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 0}
+    resolveEvent: 1
+    customHandler: {fileID: 0}

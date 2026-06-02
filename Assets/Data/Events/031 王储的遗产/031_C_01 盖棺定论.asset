@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "031_C_01 盖棺定论"
+  m_EditorClassIdentifier: 
+  eventId: 031_C_01
+  eventName: "盖棺定论"
+  eventContent: "你和王储的亲信杀出峡谷，护送受伤的王储回到宫前。\n\n二王子早已率军等在那里。\n\n“你回来了，弑父的畜生。”二王子冷冷看着王储，“父亲真是看走了眼，竟立你这种叛徒为王储。今天，我会替他清理门户。”\n\n王储被逼到石门前，手中断剑不住发抖：“我不是叛徒。不要听信小人的谗言。”\n\n“所有人都看见了，你还想抵赖？”二王子挺剑上前，将王储钉在石门上。鲜血飞溅，王储死死盯着他：“你会后悔……”\n\n话音未落，二王子拔剑，砍下了王储的头颅。\n\n老者又站到你身边：“这就是我家老爷的遗憾。回答我，他是否背叛了国家？”"
+  eventIllustration: {fileID: 0}
+  options:
+  - optionId: 1
+    optionLabel: "他背叛了国家，他该死！"
+    requiredMoney: 0
+    consequenceDescription: "进入一场绝望的战斗，结束事件"
+    resultContent: "你的回答毫不犹豫。老者沉默半晌，忽然仰天大笑。\n\n“我以为你能看出真相，没想到你也有眼无珠。天意啊，天意！”\n\n他摇身一变，竟成了全身染血的王储，身披闪烁血光的战甲，举起染血长剑向你斩来。"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
+    lootRewards: []
+    lootPickCountMin: 1
+    lootPickCountMax: 1
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 1
+    blueprintPickCountMax: 1
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 0}
+    resolveEvent: 1
+    customHandler: {fileID: 0}
+  - optionId: 2
+    optionLabel: "不对，我总觉得有哪里不太对劲。"
+    requiredMoney: 0
+    consequenceDescription: "继续剧情"
+    resultContent: "老者沉默片刻：“说说看。”\n\n你回想峡谷和宫前的两场围杀：“围攻王储的军队都佩戴绿色领巾，可与先王一同战死的军队没有佩戴领巾。佩戴绿色领巾的人，应该都是二王子的手下。”\n\n老者大笑起来：“没错！他们才是叛军。在我家老爷赶去救援之前，他们就杀害了先王，再把罪名栽赃给他。”"
+    builtInEffectType: 0
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
+    lootRewards: []
+    lootPickCountMin: 1
+    lootPickCountMax: 1
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 1
+    blueprintPickCountMax: 1
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 11400000, guid: 9a24d727054f462a84d7e26bf5b7933f, type: 2}
+    resolveEvent: 1
+    customHandler: {fileID: 0}

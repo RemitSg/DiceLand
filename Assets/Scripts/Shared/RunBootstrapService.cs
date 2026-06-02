@@ -55,7 +55,7 @@ public static class RunBootstrapService
                 isSpawnTile = i == 0,
                 encounterSeed = TutorialEncounterSeedBase + i,
                 previewEnemyCount = ResolveTutorialPreviewEnemyCount(tileType, stageId),
-                previewDangerRating = ResolveTutorialPreviewDanger(stageId),
+                previewDangerRating = ResolveTutorialPreviewDanger(tileType, stageId, ResolveTutorialDangerBand(i)),
                 previewTag = ResolveTutorialPreviewTag(tileType, stageId)
             });
         }
@@ -102,6 +102,11 @@ public static class RunBootstrapService
 
     public static int ResolveTutorialPreviewDanger(TutorialBattleStageId stageId)
     {
+        return ResolveTutorialPreviewDanger(MapTileType.Battle, stageId, MapDangerBand.Outer);
+    }
+
+    public static int ResolveTutorialPreviewDanger(MapTileType tileType, TutorialBattleStageId stageId, MapDangerBand dangerBand)
+    {
         switch (stageId)
         {
             case TutorialBattleStageId.Battle01:
@@ -115,7 +120,9 @@ public static class RunBootstrapService
             case TutorialBattleStageId.Battle07:
                 return 5;
             default:
-                return 0;
+                return tileType == MapTileType.Boss
+                    ? MapDangerRatingService.ResolveDefaultRating(tileType, dangerBand)
+                    : 0;
         }
     }
 

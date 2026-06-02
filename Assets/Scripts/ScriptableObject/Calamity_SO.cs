@@ -18,7 +18,16 @@ public enum CalamityBuiltInEffectType
     AllyDamagePercentModifier = 11,
     AllyMaxHpPercentModifier = 12,
     ForgeCostFlatModifier = 13,
-    EnemyIncomingDamagePercentModifier = 14
+    EnemyIncomingDamagePercentModifier = 14,
+    EnemyRoundEndHealFlat = 15,
+    AllyBattleStartHpLossFlat = 16,
+    AllyBattleStartStatus = 17,
+    EnemyDeathStatusToRemainingEnemies = 18,
+    EnemyDelayDeathUntilNextRoundStart = 19,
+    TeleportToRandomOuterUnvisitedTile = 20,
+    LoseRandomRelics = 21,
+    ConvertUnvisitedRestTilesToBattles = 22,
+    VisitedEmptyTileAmbushChance = 23
 }
 
 [Serializable]

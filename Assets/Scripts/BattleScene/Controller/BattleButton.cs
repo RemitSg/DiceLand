@@ -8,6 +8,10 @@ using UnityEngine.UI;
 public class BattleButton : MonoBehaviour
 {
     private const string BattleStatusLibraryResourcePath = "BattleStatusLibrary";
+    private const int PrismDawnServantEnemyId = 4001;
+    private const int PrismDuskServantEnemyId = 4002;
+    private const string PrismFrontStatusId = "prism_front";
+    private const string PrismBackStatusId = "prism_back";
 
     private sealed class EncounterDropResults
     {
@@ -83,6 +87,7 @@ public class BattleButton : MonoBehaviour
     private bool isResolvingCombat;
     private bool enemyBattleStartEffectsApplied;
     private bool battleStartEnergyCalamityApplied;
+    private bool allyBattleStartCalamityApplied;
     private int currentSharedEnergy;
     private int temporarySharedEnergy;
     private int currentSharedEnergyMax;
@@ -113,6 +118,7 @@ public class BattleButton : MonoBehaviour
         SpeedButton.InputSuppressed = false;
         enemyBattleStartEffectsApplied = false;
         battleStartEnergyCalamityApplied = false;
+        allyBattleStartCalamityApplied = false;
         currentSharedEnergyMax = Mathf.Max(0, initialSharedEnergyMax);
         currentSharedEnergy = currentSharedEnergyMax;
         temporarySharedEnergy = 0;
@@ -258,6 +264,7 @@ public class BattleButton : MonoBehaviour
     private void HandleActiveRoundEnemyDied(BattleEnemyController defeatedEnemy)
     {
         ApplyEnemyDeathTriggeredStatusGains(defeatedEnemy);
+        ApplyEnemyDeathCalamityStatusGains(defeatedEnemy);
         ApplyEnemyDeathRelics(defeatedEnemy, activeRoundAllies, activeRoundEnemies);
     }
 
@@ -273,6 +280,7 @@ public class BattleButton : MonoBehaviour
         temporarySharedEnergy = energyRoundStartState.TemporarySharedEnergy;
         reservedSharedEnergy = energyRoundStartState.ReservedSharedEnergy;
         ApplyBattleStartSharedEnergyCalamityIfNeeded();
+        ApplyAllyBattleStartCalamityEffectsIfNeeded(allies);
         RefreshSharedEnergyUi();
 
         BattleLog(BattleTargetingPhaseLogService.BuildPhaseHeader(CountLiving(allies), CountLiving(enemies)));
@@ -344,6 +352,7 @@ public class BattleButton : MonoBehaviour
             enemy => TryLogEnemyStatusDrivenStageTransition(enemy, allies, enemies));
 
         ApplyEnemyBattleStartCalamityStatuses(enemies);
+        ApplyInterlockingPrismBattleStartFaces(enemies);
     }
 
     private void ApplyBattleStartSharedEnergyCalamityIfNeeded()
@@ -388,6 +397,168 @@ public class BattleButton : MonoBehaviour
                     enemy.AddPendingRoundStartSpeedBonusFromStatus(effect.statusData, effect.effectAmount);
                 if (applied)
                     BattleLog($"灾厄效果：{enemy.GetDebugDisplayName()} 获得 {effect.effectAmount} 层 {effect.statusData.DisplayName}");
+            }
+        }
+    }
+
+    private void ApplyInterlockingPrismBattleStartFaces(BattleEnemyController[] enemies)
+    {
+        if (!TryResolveInterlockingPrismStatuses(
+                out BattleStatus_SO frontStatus,
+                out string frontStatusId,
+                out string frontStatusName,
+                out BattleStatus_SO backStatus,
+                out string backStatusId,
+                out string backStatusName))
+        {
+            return;
+        }
+
+        BattleEnemyController dawn = FindLivingEnemyById(enemies, PrismDawnServantEnemyId);
+        BattleEnemyController dusk = FindLivingEnemyById(enemies, PrismDuskServantEnemyId);
+        if (dawn == null && dusk == null)
+            return;
+
+        if (dawn != null)
+            SetInterlockingPrismFace(dawn, frontStatus, frontStatusId, frontStatusName, backStatus, backStatusId, backStatusName, true);
+        if (dusk != null)
+            SetInterlockingPrismFace(dusk, frontStatus, frontStatusId, frontStatusName, backStatus, backStatusId, backStatusName, false);
+
+        BattleLog("敌方被动触发：交辉双棱在战斗开始时定下照面与背面。");
+    }
+
+    private void ApplyInterlockingPrismRoundEndFaces(BattleEnemyController[] enemies)
+    {
+        if (!TryResolveInterlockingPrismStatuses(
+                out BattleStatus_SO frontStatus,
+                out string frontStatusId,
+                out string frontStatusName,
+                out BattleStatus_SO backStatus,
+                out string backStatusId,
+                out string backStatusName))
+        {
+            return;
+        }
+
+        BattleEnemyController dawn = FindLivingEnemyById(enemies, PrismDawnServantEnemyId);
+        BattleEnemyController dusk = FindLivingEnemyById(enemies, PrismDuskServantEnemyId);
+        if (dawn == null && dusk == null)
+            return;
+
+        if (dawn != null && dusk != null)
+        {
+            bool dawnHasFront = dawn.GetStatusStacks(frontStatus) > 0 || dawn.GetStatusStacks(frontStatusId) > 0;
+            bool duskHasFront = dusk.GetStatusStacks(frontStatus) > 0 || dusk.GetStatusStacks(frontStatusId) > 0;
+            if (dawnHasFront == duskHasFront)
+                dawnHasFront = true;
+
+            SetInterlockingPrismFace(dawn, frontStatus, frontStatusId, frontStatusName, backStatus, backStatusId, backStatusName, !dawnHasFront);
+            SetInterlockingPrismFace(dusk, frontStatus, frontStatusId, frontStatusName, backStatus, backStatusId, backStatusName, dawnHasFront);
+            BattleLog("敌方被动触发：交辉轮转，曜面棱侍与晦面棱侍交换照面/背面。");
+            return;
+        }
+
+        if (dawn != null)
+        {
+            SetInterlockingPrismFace(dawn, frontStatus, frontStatusId, frontStatusName, backStatus, backStatusId, backStatusName, true);
+            BattleLog("敌方被动触发：独照，曜面棱侍始终保持照面。");
+        }
+        else if (dusk != null)
+        {
+            SetInterlockingPrismFace(dusk, frontStatus, frontStatusId, frontStatusName, backStatus, backStatusId, backStatusName, false);
+            BattleLog("敌方被动触发：独照，晦面棱侍始终保持背面。");
+        }
+    }
+
+    private static bool TryResolveInterlockingPrismStatuses(
+        out BattleStatus_SO frontStatus,
+        out string frontStatusId,
+        out string frontStatusName,
+        out BattleStatus_SO backStatus,
+        out string backStatusId,
+        out string backStatusName)
+    {
+        ResolveBuiltinStatus(PrismFrontStatusId, "照面", out frontStatus, out frontStatusId, out frontStatusName);
+        ResolveBuiltinStatus(PrismBackStatusId, "背面", out backStatus, out backStatusId, out backStatusName);
+        return !string.IsNullOrWhiteSpace(frontStatusId) && !string.IsNullOrWhiteSpace(backStatusId);
+    }
+
+    private static BattleEnemyController FindLivingEnemyById(BattleEnemyController[] enemies, int enemyId)
+    {
+        if (enemies == null)
+            return null;
+
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            BattleEnemyController enemy = enemies[i];
+            if (enemy != null && !enemy.IsDead && enemy.EnemyID == enemyId)
+                return enemy;
+        }
+
+        return null;
+    }
+
+    private static void SetInterlockingPrismFace(
+        BattleEnemyController enemy,
+        BattleStatus_SO frontStatus,
+        string frontStatusId,
+        string frontStatusName,
+        BattleStatus_SO backStatus,
+        string backStatusId,
+        string backStatusName,
+        bool useFrontFace)
+    {
+        if (enemy == null)
+            return;
+
+        enemy.ClearStatus(frontStatus, frontStatusId, frontStatusName);
+        enemy.ClearStatus(backStatus, backStatusId, backStatusName);
+        if (useFrontFace)
+            enemy.AddStatus(frontStatus, frontStatusId, frontStatusName, 1);
+        else
+            enemy.AddStatus(backStatus, backStatusId, backStatusName, 1);
+    }
+
+    private void ApplyAllyBattleStartCalamityEffectsIfNeeded(BattleAllyController[] allies)
+    {
+        if (allyBattleStartCalamityApplied)
+            return;
+
+        allyBattleStartCalamityApplied = true;
+        if (allies == null)
+            return;
+
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        IReadOnlyList<RunCalamityState> activeCalamities = activeEncounter != null ? activeEncounter.activeCalamities : null;
+        int hpLoss = CalamitySystem.ResolveAllyBattleStartHpLoss(activeCalamities);
+        List<CalamityBuiltInEffectEntry> statusEffects = CalamitySystem.GetAllyBattleStartStatusEffects(activeCalamities);
+        if (hpLoss <= 0 && statusEffects.Count == 0)
+            return;
+
+        for (int i = 0; i < allies.Length; i++)
+        {
+            BattleAllyController ally = allies[i];
+            if (ally == null || ally.IsDead)
+                continue;
+
+            if (hpLoss > 0)
+            {
+                int dealt = ally.TakeDamage(hpLoss, 0, hpLoss);
+                if (dealt > 0)
+                    BattleLog($"灾厄效果：战斗开始时 {ally.GetDebugDisplayName()} 损失 {dealt} 点生命");
+            }
+
+            for (int effectIndex = 0; effectIndex < statusEffects.Count; effectIndex++)
+            {
+                CalamityBuiltInEffectEntry effect = statusEffects[effectIndex];
+                if (effect == null || effect.statusData == null || effect.effectAmount <= 0)
+                    continue;
+
+                bool applied = ally.AddStatus(effect.statusData, effect.statusData.StatusId, effect.statusData.DisplayName, effect.effectAmount);
+                if (applied)
+                    ally.AddPendingRoundStartSpeedBonusFromStatus(effect.statusData, effect.effectAmount);
+                if (applied)
+                    BattleLog($"灾厄效果：{ally.GetDebugDisplayName()} 获得 {effect.effectAmount} 层 {effect.statusData.DisplayName}");
             }
         }
     }
@@ -941,6 +1112,7 @@ public class BattleButton : MonoBehaviour
             () => LogRoundSummary(allies, enemies),
             ApplyRoundEndStatusEffectsGeneric,
             ApplyBattleRoundEndRelics);
+        ApplyInterlockingPrismRoundEndFaces(enemies);
         ClearTemporarySharedEnergyAtRoundEnd();
 
         BattleCombatPhaseCompletionPlan roundEndPlan = BattleCombatPhaseCompletionPlanService.Resolve(false);
@@ -3622,6 +3794,59 @@ public class BattleButton : MonoBehaviour
         }
     }
 
+    private void ApplyEnemyDeathCalamityStatusGains(BattleEnemyController defeatedEnemy)
+    {
+        if (defeatedEnemy == null || activeRoundEnemies == null)
+            return;
+
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        List<CalamityBuiltInEffectEntry> effects = CalamitySystem.GetEnemyDeathStatusEffects(activeEncounter != null ? activeEncounter.activeCalamities : null);
+        if (effects.Count == 0)
+            return;
+
+        for (int i = 0; i < activeRoundEnemies.Length; i++)
+        {
+            BattleEnemyController enemy = activeRoundEnemies[i];
+            if (enemy == null || enemy.IsDead || enemy == defeatedEnemy)
+                continue;
+
+            for (int effectIndex = 0; effectIndex < effects.Count; effectIndex++)
+            {
+                CalamityBuiltInEffectEntry effect = effects[effectIndex];
+                if (effect == null || effect.statusData == null || effect.effectAmount <= 0)
+                    continue;
+
+                if (!enemy.AddStatus(effect.statusData, effect.statusData.StatusId, effect.statusData.DisplayName, effect.effectAmount))
+                    continue;
+
+                int stacks = enemy.GetStatusStacks(effect.statusData);
+                BattleLog($"灾厄效果：{defeatedEnemy.GetDebugDisplayName()} 死亡后，{enemy.GetDebugDisplayName()} 获得 {effect.effectAmount} 层 {effect.statusData.DisplayName}，当前 {effect.statusData.DisplayName} {stacks} 层");
+            }
+        }
+    }
+
+    private void ApplyEnemyRoundEndCalamityHealing(BattleEnemyController[] enemies)
+    {
+        if (enemies == null)
+            return;
+
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        int healAmount = CalamitySystem.ResolveEnemyRoundEndHealAmount(activeEncounter != null ? activeEncounter.activeCalamities : null);
+        if (healAmount <= 0)
+            return;
+
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            BattleEnemyController enemy = enemies[i];
+            if (enemy == null || enemy.IsDead)
+                continue;
+
+            int healed = enemy.Heal(healAmount);
+            if (healed > 0)
+                BattleLog($"灾厄效果：回合结束时 {enemy.GetDebugDisplayName()} 恢复 {healed} 点生命");
+        }
+    }
+
     private bool ApplyEnemyStatusGains(
         BattleEnemyController enemy,
         List<EnemyData_SO.StatusGainEntry> entries,
@@ -3922,13 +4147,17 @@ public class BattleButton : MonoBehaviour
                 continue;
             }
 
+            bool useCurrentTargetCondition = BattleSkillStatusEffectResolutionService.ShouldEvaluateConditionAgainstCurrentTarget(effect.targetMode);
+            if (useCurrentTargetCondition && !IsAllyStatusEffectConditionMet(attacker, currentTarget, effect))
+                continue;
+
             List<BattleEnemyController> targets = SelectEnemyTargets(effect.targetMode, currentTarget, opponents, effect.randomTargetCount);
             for (int j = 0; j < targets.Count; j++)
             {
                 BattleEnemyController target = targets[j];
                 if (target == null || target.IsDead)
                     continue;
-                if (!IsAllyStatusEffectConditionMet(attacker, target, effect))
+                if (!useCurrentTargetCondition && !IsAllyStatusEffectConditionMet(attacker, target, effect))
                     continue;
 
                 ApplyResolvedStatusEffect(attacker, target, effect, effectIndex);
@@ -3981,13 +4210,17 @@ public class BattleButton : MonoBehaviour
                 continue;
             }
 
+            bool useCurrentTargetCondition = BattleSkillStatusEffectResolutionService.ShouldEvaluateConditionAgainstCurrentTarget(effect.targetMode);
+            if (useCurrentTargetCondition && !IsEnemyStatusEffectConditionMet(attacker, currentTarget, effect))
+                continue;
+
             List<BattleAllyController> targets = SelectAllyTargets(effect.targetMode, currentTarget, opponents, effect.randomTargetCount);
             for (int j = 0; j < targets.Count; j++)
             {
                 BattleAllyController target = targets[j];
                 if (target == null || target.IsDead)
                     continue;
-                if (!IsEnemyStatusEffectConditionMet(attacker, target, effect))
+                if (!useCurrentTargetCondition && !IsEnemyStatusEffectConditionMet(attacker, target, effect))
                     continue;
 
                 ApplyResolvedStatusEffect(attacker, target, effect, effectIndex);
@@ -4529,20 +4762,25 @@ public class BattleButton : MonoBehaviour
     private void ApplyBattleRoundEndRelics(BattleAllyController[] allies, BattleEnemyController[] enemies)
     {
         BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
-        if (activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+        if (activeEncounter == null)
             return;
 
-        RelicExecutionContext context = RelicTriggerDispatcher.ProcessBattleRoundEnd(
-            activeEncounter,
-            null,
-            currentRound,
-            allies,
-            enemies);
+        if (activeEncounter.relicInventory != null && activeEncounter.relicInventory.Count > 0)
+        {
+            RelicExecutionContext context = RelicTriggerDispatcher.ProcessBattleRoundEnd(
+                activeEncounter,
+                null,
+                currentRound,
+                allies,
+                enemies);
 
-        if (context.additionalSharedEnergyRecovery > 0)
-            RestoreSharedEnergy(context.additionalSharedEnergyRecovery);
+            if (context.additionalSharedEnergyRecovery > 0)
+                RestoreSharedEnergy(context.additionalSharedEnergyRecovery);
 
-        BattleRelicEffectRunner.FlushFeedback(context, BattleLog);
+            BattleRelicEffectRunner.FlushFeedback(context, BattleLog);
+        }
+
+        ApplyEnemyRoundEndCalamityHealing(enemies);
     }
 
     private void ApplyPendingBattleStartAllyStatusGrants(BattleAllyController[] allies)
@@ -4569,6 +4807,12 @@ public class BattleButton : MonoBehaviour
             enemy => BattleStatusFlowTargetService.ShouldConsumeStatusEffects(enemy, target => target.IsDead),
             enemy =>
             {
+                if (enemy.TryApplyPendingCalamityDelayedDeath())
+                {
+                    BattleLog($"灾厄效果：{enemy.GetDebugDisplayName()} 的不屈到期，倒下。");
+                    return;
+                }
+
                 List<BattleStatusTickResult> ticks = enemy.ConsumeRoundStartStatusEffects();
                 DispatchRoundStartStatusTicks(enemy.transform, enemy.GetDebugDisplayName(), enemy.CurrentHP, enemy.MaxHP, ticks);
                 ApplyFlameLizardBurnHealing(ticks);

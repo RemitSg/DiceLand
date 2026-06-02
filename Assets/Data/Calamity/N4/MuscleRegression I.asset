@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd7a3b759b596b4a89ca723c509b050, type: 3}
+  m_Name: MuscleRegression I
+  m_EditorClassIdentifier: 
+  calamityId: 34
+  calamityName: "\u5F31\u5316 \xB7 \u808C\u8089\u9000\u884C I"
+  calamityTier: 4
+  description: "\u6218\u6597\u5F00\u59CB\u65F6\uFF0C\u6240\u6709\u53CB\u65B9\u89D2\u8272\u83B7\u5F97
+    1 \u5C42\u865A\u5F31\u3002"
+  rarity: 0
+  icon: {fileID: 0}
+  builtInEffects:
+  - effectName: "\u5F31\u5316 \xB7 \u808C\u8089\u9000\u884C I"
+    effectType: 17
+    effectAmount: 1
+    statusData: {fileID: 11400000, guid: ee9ef48e819c49747b799796ea9b589c, type: 2}
+  customEffectHandler: {fileID: 0}

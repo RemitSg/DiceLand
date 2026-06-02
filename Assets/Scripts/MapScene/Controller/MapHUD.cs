@@ -351,7 +351,7 @@ public class MapHUD : MonoBehaviour
                 lines.Add(attributeLine);
 
             bool isSpecialDungeonTile = tile.sourceSpecialDungeon != null;
-            string dangerLine = $"危险度 {WrapColor(ToRoman(Mathf.Max(1, tile.previewDangerRating)), tileDangerHighlightColor)}";
+            string dangerLine = $"危险度 {MapDangerRatingService.GetRatingRichText(tile.previewDangerRating)}";
             if (!isSpecialDungeonTile)
                 dangerLine = $"{dangerLine} | 区域 {WrapColor(GetDangerBandLabel(tile.dangerBand), tileRegionHighlightColor)}";
             lines.Add(dangerLine);
@@ -1675,24 +1675,6 @@ public class MapHUD : MonoBehaviour
                 return "离开副本并返回主地图事件格。";
             default:
                 return string.Empty;
-        }
-    }
-
-    private static string ToRoman(int value)
-    {
-        switch (Mathf.Clamp(value, 1, 10))
-        {
-            case 1: return "I";
-            case 2: return "II";
-            case 3: return "III";
-            case 4: return "IV";
-            case 5: return "V";
-            case 6: return "VI";
-            case 7: return "VII";
-            case 8: return "VIII";
-            case 9: return "IX";
-            case 10: return "X";
-            default: return value.ToString();
         }
     }
 

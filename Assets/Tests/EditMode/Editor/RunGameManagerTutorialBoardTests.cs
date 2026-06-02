@@ -52,7 +52,7 @@ public class RunGameManagerTutorialBoardTests
         Assert.AreEqual("教程战斗", tiles[9].previewTag);
 
         Assert.AreEqual(1, tiles[11].previewEnemyCount);
-        Assert.AreEqual(5, tiles[11].previewDangerRating);
+        Assert.AreEqual(7, tiles[11].previewDangerRating);
         Assert.AreEqual("教程终战", tiles[11].previewTag);
     }
 

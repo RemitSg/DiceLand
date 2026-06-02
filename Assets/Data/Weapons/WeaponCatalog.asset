@@ -45,3 +45,11 @@ MonoBehaviour:
     unlockWeight: 1
     starterAvailable: 0
     note: "104 \u5239\u5F71\u77ED\u5315"
+  - weapon: {fileID: 11400000, guid: 6260b16c0b1f408f94edbd1e3285a078, type: 2}
+    unlockWeight: 1
+    starterAvailable: 0
+    note: "008 \u6666\u8A93\u5251"
+  - weapon: {fileID: 11400000, guid: 9b6531b8c9e74ad0b6ed32f5e448ede3, type: 2}
+    unlockWeight: 1
+    starterAvailable: 0
+    note: "203 \u70ED\u7827\u677F"

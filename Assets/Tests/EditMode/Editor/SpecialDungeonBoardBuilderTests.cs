@@ -62,9 +62,11 @@ public class SpecialDungeonBoardBuilderTests
     }
 
     [Test]
-    public void BuildBoard_AppliesConfiguredBattleDangerRating()
+    public void BuildBoard_AppliesConfiguredBattleDangerRatingBeforeEnemyGroupAndDefaults()
     {
         SpecialDungeon_SO dungeon = ScriptableObject.CreateInstance<SpecialDungeon_SO>();
+        EnemyGroup_SO enemyGroup = ScriptableObject.CreateInstance<EnemyGroup_SO>();
+        enemyGroup.dangerRatingOverride = 6;
         dungeon.entries.Add(new SpecialDungeonTileEntry
         {
             tileType = MapTileType.Battle,
@@ -73,20 +75,22 @@ public class SpecialDungeonBoardBuilderTests
         dungeon.entries.Add(new SpecialDungeonTileEntry
         {
             tileType = MapTileType.Elite,
-            previewDangerRating = 9
+            previewDangerRating = 0,
+            enemyGroup = enemyGroup
         });
         dungeon.entries.Add(new SpecialDungeonTileEntry
         {
-            tileType = MapTileType.Event,
-            previewDangerRating = 5
+            tileType = MapTileType.Battle,
+            previewDangerRating = 0
         });
 
         SpecialDungeonBoardBuildResult result = SpecialDungeonBoardBuilder.Build(dungeon, 123);
 
         Assert.AreEqual(7, result.tiles[2].previewDangerRating);
-        Assert.AreEqual(9, result.tiles[3].previewDangerRating);
-        Assert.AreEqual(0, result.tiles[4].previewDangerRating);
+        Assert.AreEqual(6, result.tiles[3].previewDangerRating);
+        Assert.AreEqual(2, result.tiles[4].previewDangerRating);
 
+        Object.DestroyImmediate(enemyGroup);
         Object.DestroyImmediate(dungeon);
     }
 }

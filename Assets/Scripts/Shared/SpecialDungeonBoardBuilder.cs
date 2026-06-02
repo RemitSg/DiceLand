@@ -85,7 +85,7 @@ public static class SpecialDungeonBoardBuilder
             tileType = entry.tileType,
             dangerBand = ResolveDangerBand(entryIndex),
             encounterSeed = seed ^ ((entryIndex + 1) * 397),
-            previewDangerRating = ResolvePreviewDangerRating(entry),
+            previewDangerRating = ResolvePreviewDangerRating(entry, ResolveDangerBand(entryIndex)),
             previewTag = entry.previewTag,
             assignedEnemyGroup = entry.enemyGroup,
             assignedEvent = entry.eventData,
@@ -98,7 +98,7 @@ public static class SpecialDungeonBoardBuilder
         return tile;
     }
 
-    private static int ResolvePreviewDangerRating(SpecialDungeonTileEntry entry)
+    private static int ResolvePreviewDangerRating(SpecialDungeonTileEntry entry, MapDangerBand dangerBand)
     {
         if (entry == null)
             return 0;
@@ -106,7 +106,11 @@ public static class SpecialDungeonBoardBuilder
         if (entry.tileType != MapTileType.Battle && entry.tileType != MapTileType.Elite)
             return 0;
 
-        return Mathf.Max(0, entry.previewDangerRating);
+        return MapDangerRatingService.ResolveRating(
+            entry.tileType,
+            dangerBand,
+            entry.enemyGroup,
+            entry.previewDangerRating);
     }
 
     private static void CopyMerchantOffers(SpecialDungeonTileEntry entry, BoardTileData tile)

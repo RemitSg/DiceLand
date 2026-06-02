@@ -70,6 +70,43 @@ public static class CalamitySystem
 
     public static List<CalamityBuiltInEffectEntry> GetEnemyBattleStartStatusEffects(IReadOnlyList<RunCalamityState> activeCalamities)
     {
+        return GetPositiveStatusEffects(activeCalamities, CalamityBuiltInEffectType.EnemyBattleStartStatus);
+    }
+
+    public static int ResolveEnemyRoundEndHealAmount(IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return Mathf.Max(0, SumFlatEffectAmounts(activeCalamities, CalamityBuiltInEffectType.EnemyRoundEndHealFlat));
+    }
+
+    public static int ResolveAllyBattleStartHpLoss(IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return Mathf.Max(0, SumFlatEffectAmounts(activeCalamities, CalamityBuiltInEffectType.AllyBattleStartHpLossFlat));
+    }
+
+    public static List<CalamityBuiltInEffectEntry> GetAllyBattleStartStatusEffects(IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return GetPositiveStatusEffects(activeCalamities, CalamityBuiltInEffectType.AllyBattleStartStatus);
+    }
+
+    public static List<CalamityBuiltInEffectEntry> GetEnemyDeathStatusEffects(IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return GetPositiveStatusEffects(activeCalamities, CalamityBuiltInEffectType.EnemyDeathStatusToRemainingEnemies);
+    }
+
+    public static bool HasEnemyDelayedDeath(IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return SumFlatEffectAmounts(activeCalamities, CalamityBuiltInEffectType.EnemyDelayDeathUntilNextRoundStart) > 0;
+    }
+
+    public static int ResolveVisitedEmptyTileAmbushChance(IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return Mathf.Clamp(SumFlatEffectAmounts(activeCalamities, CalamityBuiltInEffectType.VisitedEmptyTileAmbushChance), 0, 100);
+    }
+
+    private static List<CalamityBuiltInEffectEntry> GetPositiveStatusEffects(
+        IReadOnlyList<RunCalamityState> activeCalamities,
+        CalamityBuiltInEffectType builtInType)
+    {
         List<CalamityBuiltInEffectEntry> results = new List<CalamityBuiltInEffectEntry>();
         if (activeCalamities == null || activeCalamities.Count == 0)
             return results;
@@ -85,7 +122,7 @@ public static class CalamitySystem
             {
                 CalamityBuiltInEffectEntry effect = effects[j];
                 if (effect == null
-                    || effect.effectType != CalamityBuiltInEffectType.EnemyBattleStartStatus
+                    || effect.effectType != builtInType
                     || effect.statusData == null
                     || effect.effectAmount <= 0)
                     continue;

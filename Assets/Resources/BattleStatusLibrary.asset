@@ -31,3 +31,9 @@ MonoBehaviour:
     statusData: {fileID: 11400000, guid: d9960fbafac14cf6b9c6bd093fd9293f, type: 2}
   - statusId: immune
     statusData: {fileID: 11400000, guid: b504df097a7c4c3b9094b498f4c3a808, type: 2}
+  - statusId: prism_front
+    statusData: {fileID: 11400000, guid: d58b08cc7227ba2439a15881721fdd04, type: 2}
+  - statusId: prism_back
+    statusData: {fileID: 11400000, guid: 6066b89b10d82244fa0763020675fb44, type: 2}
+  - statusId: refracted_mark
+    statusData: {fileID: 11400000, guid: 0a6541a266887ec4e8d71475ee0106e2, type: 2}

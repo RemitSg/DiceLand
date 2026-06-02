@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd7a3b759b596b4a89ca723c509b050, type: 3}
+  m_Name: RestMissing
+  m_EditorClassIdentifier: 
+  calamityId: 25
+  calamityName: "\u63A2\u7D22 \xB7 \u4F11\u606F\u7F3A\u5931"
+  calamityTier: 2
+  description: "\u5C06\u5730\u56FE\u4E2D\u7684 2 \u4E2A\u672A\u63A2\u7D22\u7684\u4F11\u606F\u683C\u53D8\u4E3A\u5BF9\u5E94\u533A\u57DF\u7684\u666E\u901A\u6218\u6597\u3002"
+  rarity: 0
+  icon: {fileID: 0}
+  builtInEffects:
+  - effectName: "\u63A2\u7D22 \xB7 \u4F11\u606F\u7F3A\u5931"
+    effectType: 22
+    effectAmount: 2
+    statusData: {fileID: 0}
+  customEffectHandler: {fileID: 0}

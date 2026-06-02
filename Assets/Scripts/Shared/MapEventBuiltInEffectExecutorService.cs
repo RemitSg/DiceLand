@@ -13,12 +13,18 @@ public sealed class MapEventBuiltInEffectExecutionRequest
     public string battleSceneName;
     public int encounterSeedSalt;
     public IDictionary<string, MapEventLootDiscardPreview> randomLootDiscardPreviewCache;
+    public int moneyBeforeSelection;
+    public int selectionMoneyCost;
 }
 
 public sealed class MapEventBuiltInEffectExecutionResult
 {
     public bool success;
     public string message;
+    public string resultContent;
+    public MapEvent_SO nextEventOverride;
+    public bool hasResolveEventOverride;
+    public bool resolveEventOverride;
     public BattleEncounterData pendingEncounterData;
     public SpecialDungeon_SO pendingSpecialDungeon;
 }
@@ -37,7 +43,17 @@ public static class MapEventBuiltInEffectExecutorService
         }
 
         List<string> effectMessages = new List<string>();
-        List<MapEventBuiltInEffectData> allEffects = MapEventEffectSequenceBuilder.BuildAllEffects(request.optionData);
+        MapEventPossibleResultData selectedResult = SelectPossibleResult(request.optionData);
+        List<MapEventBuiltInEffectData> allEffects = selectedResult != null
+            ? MapEventEffectSequenceBuilder.BuildAllEffects(selectedResult)
+            : MapEventEffectSequenceBuilder.BuildAllEffects(request.optionData);
+        if (selectedResult != null)
+        {
+            result.resultContent = selectedResult.resultContent;
+            result.nextEventOverride = selectedResult.nextEvent;
+            result.hasResolveEventOverride = true;
+            result.resolveEventOverride = selectedResult.resolveEvent;
+        }
 
         int encounterEffectIndex = FindFirstEncounterEffectIndex(allEffects);
         if (encounterEffectIndex >= 0)
@@ -74,7 +90,7 @@ public static class MapEventBuiltInEffectExecutorService
 
         result.message = effectMessages.Count > 0
             ? string.Join("\n", effectMessages)
-            : BuildFallbackMessage(request.optionData);
+            : BuildFallbackMessage(request.optionData, selectedResult);
         result.success = true;
         return true;
     }
@@ -98,10 +114,16 @@ public static class MapEventBuiltInEffectExecutorService
                 return ExecuteGainMoney(request.runState, effectData, out message);
             case MapEventOptionBuiltInEffectType.GainRandomMoney:
                 return ExecuteGainRandomMoney(request.runState, effectData, out message);
+            case MapEventOptionBuiltInEffectType.GainMoneyPercentOfPreSelectionMoney:
+                return ExecuteGainMoneyPercentOfPreSelectionMoney(request, effectData, out message);
+            case MapEventOptionBuiltInEffectType.RerollAllMoneyByPercentRange:
+                return ExecuteRerollAllMoneyByPercentRange(request.runState, effectData, out message);
             case MapEventOptionBuiltInEffectType.GainExperience:
                 return ExecuteGainExperience(request.runState, request.levelTable, effectData, out message);
             case MapEventOptionBuiltInEffectType.LoseMoney:
                 return ExecuteLoseMoney(request.runState, effectData, out message);
+            case MapEventOptionBuiltInEffectType.LoseMoneyPercent:
+                return ExecuteLoseMoneyPercent(request.runState, effectData, out message);
             case MapEventOptionBuiltInEffectType.HealAllPartyMembers:
                 return ExecuteHealAllPartyMembers(request.runState, out message);
             case MapEventOptionBuiltInEffectType.AdjustAllPartyMembersHpByMaxHpPercent:
@@ -117,6 +139,8 @@ public static class MapEventBuiltInEffectExecutorService
                 return MapEventRewardService.TryExecuteLootReward(request.runState, effectData, out message);
             case MapEventOptionBuiltInEffectType.GainRelics:
                 return MapEventRewardService.TryExecuteRelicReward(request.runState, effectData, out message);
+            case MapEventOptionBuiltInEffectType.GainWeapons:
+                return MapEventRewardService.TryExecuteWeaponReward(request.runState, effectData, out message);
             case MapEventOptionBuiltInEffectType.GainBlueprints:
                 return MapEventRewardService.TryExecuteBlueprintReward(request.runState, effectData, out message);
             case MapEventOptionBuiltInEffectType.LoseOwnedRandomLoot:
@@ -133,6 +157,8 @@ public static class MapEventBuiltInEffectExecutorService
                 return ExecuteStartEncounter(request, effectData, result, out message);
             case MapEventOptionBuiltInEffectType.StartSpecialDungeon:
                 return ExecuteStartSpecialDungeon(effectData, result, out message);
+            case MapEventOptionBuiltInEffectType.ReforgeOwnedRandomRelicsSameRarity:
+                return ExecuteReforgeOwnedRandomRelicsSameRarity(request.runState, effectData, out message);
             default:
                 message = "未知事件效果。";
                 return false;
@@ -161,6 +187,41 @@ public static class MapEventBuiltInEffectExecutorService
         return true;
     }
 
+    private static bool ExecuteGainMoneyPercentOfPreSelectionMoney(
+        MapEventBuiltInEffectExecutionRequest request,
+        MapEventBuiltInEffectData effectData,
+        out string message)
+    {
+        int percent = Mathf.Max(0, effectData.moneyPercent);
+        int baseMoney = Mathf.Max(0, request != null ? request.moneyBeforeSelection : 0);
+        int gainedAmount = Mathf.FloorToInt(baseMoney * (percent / 100f));
+        if (gainedAmount > 0)
+            request.runState.AddMoney(gainedAmount);
+
+        message = $"获得 {gainedAmount} 金钱。";
+        return true;
+    }
+
+    private static bool ExecuteRerollAllMoneyByPercentRange(
+        RunState runState,
+        MapEventBuiltInEffectData effectData,
+        out string message)
+    {
+        int moneyBefore = Mathf.Max(0, runState != null ? runState.money : 0);
+        if (moneyBefore > 0)
+            runState.TrySpendMoney(moneyBefore);
+
+        int minPercent = Mathf.Max(0, effectData.randomMoneyPercentMin);
+        int maxPercent = Mathf.Max(minPercent, effectData.randomMoneyPercentMax);
+        int rolledPercent = UnityEngine.Random.Range(minPercent, maxPercent + 1);
+        int gainedAmount = Mathf.FloorToInt(moneyBefore * (rolledPercent / 100f));
+        if (gainedAmount > 0)
+            runState.AddMoney(gainedAmount);
+
+        message = $"赌局重算了所有金钱：失去 {moneyBefore} 金钱，按 {rolledPercent}% 找回 {gainedAmount} 金钱。";
+        return true;
+    }
+
     private static bool ExecuteGainExperience(
         RunState runState,
         LevelTable_SO levelTable,
@@ -176,6 +237,21 @@ public static class MapEventBuiltInEffectExecutorService
     private static bool ExecuteLoseMoney(RunState runState, MapEventBuiltInEffectData effectData, out string message)
     {
         int cost = Mathf.Max(0, effectData.effectAmount);
+        if (!runState.TrySpendMoney(cost))
+        {
+            message = $"金钱不足，需要 {cost} 金钱。";
+            return false;
+        }
+
+        message = $"失去 {cost} 金钱。";
+        return true;
+    }
+
+    private static bool ExecuteLoseMoneyPercent(RunState runState, MapEventBuiltInEffectData effectData, out string message)
+    {
+        int percent = Mathf.Max(0, effectData.moneyPercent);
+        int currentMoney = Mathf.Max(0, runState != null ? runState.money : 0);
+        int cost = Mathf.FloorToInt(currentMoney * (percent / 100f));
         if (!runState.TrySpendMoney(cost))
         {
             message = $"金钱不足，需要 {cost} 金钱。";
@@ -317,6 +393,91 @@ public static class MapEventBuiltInEffectExecutorService
         return true;
     }
 
+    private static bool ExecuteReforgeOwnedRandomRelicsSameRarity(
+        RunState runState,
+        MapEventBuiltInEffectData effectData,
+        out string message)
+    {
+        if (runState == null || runState.relicInventory == null || runState.relicInventory.Count == 0)
+        {
+            message = "当前没有可重铸的遗物。";
+            return true;
+        }
+
+        if (effectData == null || effectData.relicTable == null || effectData.relicTable.Relics == null)
+        {
+            message = "该事件效果未配置遗物表。";
+            return false;
+        }
+
+        int reforgeCount = Mathf.Max(1, effectData.effectAmount);
+        List<Relic_SO> ownedRelics = BuildOwnedRelicPool(runState);
+        List<string> descriptions = new List<string>();
+        for (int i = 0; i < reforgeCount && ownedRelics.Count > 0; i++)
+        {
+            int selectedOwnedIndex = UnityEngine.Random.Range(0, ownedRelics.Count);
+            Relic_SO oldRelic = ownedRelics[selectedOwnedIndex];
+            ownedRelics.RemoveAt(selectedOwnedIndex);
+            if (oldRelic == null || !runState.TryConsumeRelic(oldRelic, 1))
+                continue;
+
+            Relic_SO newRelic = DrawRelicOfRarity(effectData.relicTable, oldRelic.rarity, oldRelic);
+            if (newRelic == null)
+            {
+                runState.AddRelic(oldRelic, 1);
+                continue;
+            }
+
+            runState.AddRelic(newRelic, 1);
+            descriptions.Add($"{oldRelic.DisplayName} -> {newRelic.DisplayName}");
+        }
+
+        message = descriptions.Count > 0
+            ? $"遗物被同品质重铸：{string.Join("，", descriptions)}。"
+            : "没有遗物发生变化。";
+        return true;
+    }
+
+    private static List<Relic_SO> BuildOwnedRelicPool(RunState runState)
+    {
+        List<Relic_SO> ownedRelics = new List<Relic_SO>();
+        if (runState == null || runState.relicInventory == null)
+            return ownedRelics;
+
+        for (int i = 0; i < runState.relicInventory.Count; i++)
+        {
+            RunRelicState stack = runState.relicInventory[i];
+            if (stack == null || stack.relicData == null)
+                continue;
+
+            int amount = Mathf.Max(0, stack.amount);
+            for (int j = 0; j < amount; j++)
+                ownedRelics.Add(stack.relicData);
+        }
+
+        return ownedRelics;
+    }
+
+    private static Relic_SO DrawRelicOfRarity(RelicTable_SO relicTable, LootRarity rarity, Relic_SO excludedRelic)
+    {
+        if (relicTable == null || relicTable.Relics == null)
+            return null;
+
+        List<Relic_SO> candidates = new List<Relic_SO>();
+        IReadOnlyList<Relic_SO> relics = relicTable.Relics;
+        for (int i = 0; i < relics.Count; i++)
+        {
+            Relic_SO relic = relics[i];
+            if (relic != null && relic != excludedRelic && relic.rarity == rarity)
+                candidates.Add(relic);
+        }
+
+        if (candidates.Count == 0)
+            return null;
+
+        return candidates[UnityEngine.Random.Range(0, candidates.Count)];
+    }
+
     private static int FindFirstEncounterEffectIndex(List<MapEventBuiltInEffectData> allEffects)
     {
         if (allEffects == null)
@@ -331,8 +492,43 @@ public static class MapEventBuiltInEffectExecutorService
         return -1;
     }
 
-    private static string BuildFallbackMessage(MapEventOptionData optionData)
+    private static MapEventPossibleResultData SelectPossibleResult(MapEventOptionData optionData)
     {
+        if (optionData == null || optionData.possibleResults == null || optionData.possibleResults.Count == 0)
+            return null;
+
+        float totalWeight = 0f;
+        for (int i = 0; i < optionData.possibleResults.Count; i++)
+        {
+            MapEventPossibleResultData possibleResult = optionData.possibleResults[i];
+            if (possibleResult != null)
+                totalWeight += Mathf.Max(0f, possibleResult.weight);
+        }
+
+        if (totalWeight <= 0f)
+            return null;
+
+        float roll = UnityEngine.Random.Range(0f, totalWeight);
+        float cumulative = 0f;
+        for (int i = 0; i < optionData.possibleResults.Count; i++)
+        {
+            MapEventPossibleResultData possibleResult = optionData.possibleResults[i];
+            if (possibleResult == null)
+                continue;
+
+            cumulative += Mathf.Max(0f, possibleResult.weight);
+            if (roll <= cumulative)
+                return possibleResult;
+        }
+
+        return optionData.possibleResults[optionData.possibleResults.Count - 1];
+    }
+
+    private static string BuildFallbackMessage(MapEventOptionData optionData, MapEventPossibleResultData selectedResult)
+    {
+        if (selectedResult != null && !string.IsNullOrWhiteSpace(selectedResult.consequenceDescription))
+            return selectedResult.consequenceDescription;
+
         return string.IsNullOrWhiteSpace(optionData.consequenceDescription)
             ? $"已选择：{optionData.DisplayLabel}"
             : optionData.consequenceDescription;

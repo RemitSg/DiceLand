@@ -36,7 +36,8 @@ public class EnemySkill_SO : ScriptableObject
         AllFriendlies = 4,
         LowestHpFriendly = 5,
         LowestHpOpponent = 6,
-        AllFriendliesExceptSelf = 7
+        AllFriendliesExceptSelf = 7,
+        AllOpponentsExceptCurrent = 8
     }
 
     public enum HealAmountMode

@@ -82,7 +82,7 @@ public class TileResolver : MonoBehaviour
             tile.isResolved = true;
             int gainedExp = tile.previewDangerRating * 5;
             runState.ApplyExperienceToPrimaryMember(gainedExp);
-            return $"\u6218\u6597\u683c\u5360\u4f4d\u7ed3\u7b97\uff1a\u5371\u9669\u5ea6 {tile.previewDangerRating}\uff0c\u83b7\u5f97 {gainedExp} \u7ecf\u9a8c\u3002";
+            return $"\u6218\u6597\u683c\u5360\u4f4d\u7ed3\u7b97\uff1a\u5371\u9669\u5ea6 {MapDangerRatingService.GetRatingPhrase(tile.previewDangerRating)}\uff0c\u83b7\u5f97 {gainedExp} \u7ecf\u9a8c\u3002";
         }
 
         return "\u8fd9\u4e2a\u6218\u6597\u683c\u5df2\u7ecf\u88ab\u6e05\u7406\u8fc7\u4e86\u3002";
@@ -95,7 +95,7 @@ public class TileResolver : MonoBehaviour
             tile.isResolved = true;
             int gainedExp = tile.previewDangerRating * 8;
             runState.ApplyExperienceToPrimaryMember(gainedExp);
-            return $"\u7cbe\u82f1\u6218\u6597\u683c\u5360\u4f4d\u7ed3\u7b97\uff1a\u5371\u9669\u5ea6 {tile.previewDangerRating}\uff0c\u83b7\u5f97 {gainedExp} \u7ecf\u9a8c\u3002";
+            return $"\u7cbe\u82f1\u6218\u6597\u683c\u5360\u4f4d\u7ed3\u7b97\uff1a\u5371\u9669\u5ea6 {MapDangerRatingService.GetRatingPhrase(tile.previewDangerRating)}\uff0c\u83b7\u5f97 {gainedExp} \u7ecf\u9a8c\u3002";
         }
 
         return "\u8fd9\u4e2a\u7cbe\u82f1\u683c\u5df2\u7ecf\u88ab\u6e05\u7406\u8fc7\u4e86\u3002";

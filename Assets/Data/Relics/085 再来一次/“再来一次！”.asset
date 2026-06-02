@@ -15,7 +15,7 @@ MonoBehaviour:
   relicId: 85
   relicName: "\u201C\u518D\u6765\u4E00\u6B21\uFF01\u201D"
   description: "\u9057\u7269\u888B\u5956\u52B1\u53EF\u4EE5\u5237\u65B0 1 \u6B21\u3002"
-  additionalDescription: "\u4E0A\u9762\u5E26\u7740\u4E00\u5F20\u5199\u6709\u6F66\u8349\u5B57\u8FF9\u7684\u5C0F\u7EB8\u6761\uFF0C\u8BED\u6C14\u7406\u76F4\u6C14\u58EE\uFF0C\u50CF\u547D\u8FD0\u4E5F\u6B20\u4F60\u4E00\u6B21\u91CD\u6295\u3002"
+  additionalDescription: "\u4E0A\u9762\u5E26\u7740\u4E00\u5F20\u5199\u6709\u6F66\u8349\u5B57\u8FF9\u7684\u5C0F\u7EB8\u6761\uFF0C\u8BED\u6C14\u7406\u76F4\u6C14\u58EE\uFF0C\u50CF\u547D\u8FD0\u6B20\u4F60\u4E00\u6B21\u91CD\u6295\u3002"
   rarity: 1
   icon: {fileID: 21300000, guid: b52312cf60088bb41820c540c4d53f09, type: 3}
   builtInEffects:
@@ -43,4 +43,5 @@ MonoBehaviour:
     requiredDistinctStatusCount: 1
     requiredConsecutiveSkillUses: 1
     relicTable: {fileID: 0}
+    enemyData: {fileID: 0}
   customEffectHandler: {fileID: 0}

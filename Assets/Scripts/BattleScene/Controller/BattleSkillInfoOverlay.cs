@@ -1928,6 +1928,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"\u968f\u673a {Mathf.Max(1, randomTargetCount)} \u540d\u76ee\u6807";
             case EnemySkill_SO.DamageTargetMode.AllOpponents:
                 return "\u6240\u6709\u76ee\u6807";
+            case EnemySkill_SO.DamageTargetMode.AllOpponentsExceptCurrent:
+                return "其它目标";
             case EnemySkill_SO.DamageTargetMode.AllFriendlies:
                 return "全体友方";
             case EnemySkill_SO.DamageTargetMode.AllFriendliesExceptSelf:
@@ -2320,6 +2322,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"随机 {Mathf.Max(1, effect.randomTargetCount)} 名目标";
             case EnemySkill_SO.DamageTargetMode.AllOpponents:
                 return "所有目标";
+            case EnemySkill_SO.DamageTargetMode.AllOpponentsExceptCurrent:
+                return "其它目标";
             case EnemySkill_SO.DamageTargetMode.AllFriendlies:
                 return "全体友方";
             case EnemySkill_SO.DamageTargetMode.AllFriendliesExceptSelf:

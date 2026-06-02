@@ -147,6 +147,33 @@ public class MapEventRewardServiceTests
     }
 
     [Test]
+    public void TryExecuteRelicReward_WithRelicTableIgnoresStaleExplicitRewards()
+    {
+        relic = CreateRelic("CommonRelic", LootRarity.Common);
+        rareRelic = CreateRelic("RareRelic", LootRarity.Rare);
+        relicTable = CreateRelicTable(relic, rareRelic);
+        RunState runState = new RunState();
+        MapEventBuiltInEffectData effect = new MapEventBuiltInEffectData
+        {
+            effectType = MapEventOptionBuiltInEffectType.GainRelics,
+            relicPickCountMin = 1,
+            relicPickCountMax = 1,
+            relicTable = relicTable,
+            relicRewards =
+            {
+                new MapEventRelicRewardEntry { relicData = relic, amount = 1 },
+                new MapEventRelicRewardEntry { relicData = rareRelic, amount = 1 }
+            }
+        };
+
+        bool result = MapEventRewardService.TryExecuteRelicReward(runState, effect, out string message);
+
+        Assert.IsTrue(result);
+        Assert.AreEqual(1, runState.GetRelicAmount(relic) + runState.GetRelicAmount(rareRelic));
+        StringAssert.Contains("获得遗物：", message);
+    }
+
+    [Test]
     public void TryExecuteBlueprintReward_AddsConfiguredBlueprintToRunState()
     {
         blueprint = CreateBlueprint("Needle", LootRarity.Common);

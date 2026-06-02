@@ -1,0 +1,112 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "031 王储的遗产"
+  m_EditorClassIdentifier: 
+  eventId: 031
+  eventName: "王储的遗产"
+  eventContent: "你经过一座破败不堪的城堡。厚重的木门被暴力洞穿，门前土地上插着一块腐朽木牌，字迹大多已经被风雨磨掉，只剩一句还能辨认：\n\n“得到我的一切……”\n\n城堡深处传来似有似无的吸引，像有人隔着长久的岁月等待回应。"
+  eventIllustration: {fileID: 0}
+  options:
+  - optionId: 1
+    optionLabel: "感觉有缘，进去看看"
+    requiredMoney: 0
+    consequenceDescription: "失去 5 行动点，进入特殊副本：王储的复仇"
+    resultContent: "你跨过破损的大门，城堡内阴冷潮湿。大厅里只有一张倾斜的木桌，桌上压着半张腐朽字条。\n\n字条上写着：“你是否愿意继承他的一切？”"
+    builtInEffectType: 17
+    effectAmount: 0
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
+    lootRewards: []
+    lootPickCountMin: 1
+    lootPickCountMax: 1
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 1
+    blueprintPickCountMax: 1
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
+    specialDungeon: {fileID: 11400000, guid: 7b51b633925743c48b1482b36e4417b1, type: 2}
+    additionalBuiltInEffects:
+    - effectType: 9
+      effectAmount: 5
+      randomMoneyMin: 0
+      randomMoneyMax: 0
+      randomOwnedLootAmountMin: 1
+      randomOwnedLootAmountMax: 1
+      lootRewards: []
+      lootPickCountMin: 1
+      lootPickCountMax: 1
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      relicPickCountMin: 1
+      relicPickCountMax: 1
+      relicRewards: []
+      blueprintTable: {fileID: 0}
+      blueprintRarityWeightTable: {fileID: 0}
+      blueprintPickCountMin: 1
+      blueprintPickCountMax: 1
+      blueprintRewards: []
+      encounterSelectionMode: 0
+      encounterEnemyGroups: []
+      encounterEnemies: []
+      encounterEnemyCountMin: 1
+      encounterEnemyCountMax: 1
+      specialDungeon: {fileID: 0}
+    nextEvent: {fileID: 0}
+    resolveEvent: 1
+    customHandler: {fileID: 0}
+  - optionId: 2
+    optionLabel: "还是算了"
+    requiredMoney: 0
+    consequenceDescription: "返还 2 行动点"
+    resultContent: "看着幽暗阴森的城堡内部，你萌生退意，转身便走。\n\n可就在你转身的那一刻，背后掠过一阵阴风，像有什么东西正注视着你。你回头看去，门洞里空空荡荡，什么也没有。"
+    builtInEffectType: 7
+    effectAmount: 2
+    randomMoneyMin: 0
+    randomMoneyMax: 0
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
+    lootRewards: []
+    lootPickCountMin: 1
+    lootPickCountMax: 1
+    relicTable: {fileID: 0}
+    relicRarityWeightTable: {fileID: 0}
+    relicPickCountMin: 1
+    relicPickCountMax: 1
+    relicRewards: []
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    blueprintPickCountMin: 1
+    blueprintPickCountMax: 1
+    blueprintRewards: []
+    encounterSelectionMode: 0
+    encounterEnemyGroups: []
+    encounterEnemies: []
+    encounterEnemyCountMin: 1
+    encounterEnemyCountMax: 1
+    specialDungeon: {fileID: 0}
+    additionalBuiltInEffects: []
+    nextEvent: {fileID: 0}
+    resolveEvent: 1
+    customHandler: {fileID: 0}

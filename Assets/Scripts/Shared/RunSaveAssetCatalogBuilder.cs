@@ -498,11 +498,26 @@ public static class RunSaveAssetCatalogBuilder
         AddEventEffectAssets(catalog, MapEventEffectSequenceBuilder.BuildPrimaryEffect(optionData));
         AddEventAssets(catalog, optionData.nextEvent, depth + 1, visitedEvents);
 
-        if (optionData.additionalBuiltInEffects == null)
+        if (optionData.additionalBuiltInEffects != null)
+        {
+            for (int i = 0; i < optionData.additionalBuiltInEffects.Count; i++)
+                AddEventEffectAssets(catalog, optionData.additionalBuiltInEffects[i]);
+        }
+
+        if (optionData.possibleResults == null)
             return;
 
-        for (int i = 0; i < optionData.additionalBuiltInEffects.Count; i++)
-            AddEventEffectAssets(catalog, optionData.additionalBuiltInEffects[i]);
+        for (int i = 0; i < optionData.possibleResults.Count; i++)
+        {
+            MapEventPossibleResultData possibleResult = optionData.possibleResults[i];
+            if (possibleResult == null)
+                continue;
+
+            AddEventAssets(catalog, possibleResult.nextEvent, depth + 1, visitedEvents);
+            List<MapEventBuiltInEffectData> resultEffects = MapEventEffectSequenceBuilder.BuildAllEffects(possibleResult);
+            for (int j = 0; j < resultEffects.Count; j++)
+                AddEventEffectAssets(catalog, resultEffects[j]);
+        }
     }
 
     private static void AddEventEffectAssets(MainMenuSaveAssetCatalog catalog, MapEventBuiltInEffectData effectData)
@@ -512,7 +527,9 @@ public static class RunSaveAssetCatalogBuilder
 
         AddEventLootRewardAssets(catalog, effectData.lootRewards);
         AddEventRelicRewardAssets(catalog, effectData.relicTable);
+        AddExplicitEventRelicRewardAssets(catalog, effectData.relicRewards);
         AddEventBlueprintRewardAssets(catalog, effectData.blueprintTable);
+        AddEventWeaponCatalogAssets(catalog, effectData.weaponCatalog);
         AddEnemyGroupList(catalog, effectData.encounterEnemyGroups);
         AddSpecialDungeonAssets(catalog, effectData.specialDungeon);
 
@@ -544,6 +561,33 @@ public static class RunSaveAssetCatalogBuilder
         IReadOnlyList<Relic_SO> relics = relicTable.Relics;
         for (int i = 0; i < relics.Count; i++)
             catalog.Add(relics[i]);
+    }
+
+    private static void AddExplicitEventRelicRewardAssets(MainMenuSaveAssetCatalog catalog, IReadOnlyList<MapEventRelicRewardEntry> rewards)
+    {
+        if (rewards == null)
+            return;
+
+        for (int i = 0; i < rewards.Count; i++)
+        {
+            MapEventRelicRewardEntry entry = rewards[i];
+            if (entry != null)
+                catalog.Add(entry.relicData);
+        }
+    }
+
+    private static void AddEventWeaponCatalogAssets(MainMenuSaveAssetCatalog catalog, WeaponCatalog_SO weaponCatalog)
+    {
+        if (catalog == null || weaponCatalog == null || weaponCatalog.Weapons == null)
+            return;
+
+        IReadOnlyList<WeaponCatalog_SO.WeaponEntry> entries = weaponCatalog.Weapons;
+        for (int i = 0; i < entries.Count; i++)
+        {
+            WeaponCatalog_SO.WeaponEntry entry = entries[i];
+            if (entry != null)
+                AddWeaponAssets(catalog, entry.weapon);
+        }
     }
 
     private static void AddEventBlueprintRewardAssets(MainMenuSaveAssetCatalog catalog, BlueprintTable_SO blueprintTable)

@@ -80,6 +80,8 @@ public class MapHUDTilePresentationTests
             hud.ShowTile(tile, 0);
 
             TextMeshProUGUI body = FindText(go.transform, "TileBody");
+            Assert.That(body.text, Does.Contain(MapDangerRatingService.GetRatingPhrase(6)));
+            Assert.That(body.text, Does.Contain(MapDangerRatingService.GetRatingColorHex(6)));
             Assert.That(body.text, Does.Contain("危险度"));
             Assert.That(body.text, Does.Not.Contain("区域"));
             Assert.That(body.text, Does.Not.Contain("核心"));

@@ -81,6 +81,7 @@ public sealed class SpecialDungeonTileEntry
 {
     public MapTileType tileType = MapTileType.Battle;
     public string previewTag;
+    [Tooltip("0 uses the enemy group override or area default danger rating.")]
     [Min(0)] public int previewDangerRating;
     public EnemyGroup_SO enemyGroup;
     public List<SpecialDungeonMerchantOfferEntry> merchantOffers = new List<SpecialDungeonMerchantOfferEntry>();

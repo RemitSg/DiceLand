@@ -33,7 +33,8 @@ public class EnemyData_SO : ScriptableObject
     {
         HealthBelowPercent = 0,
         RoundSequence = 1,
-        AliveEnemyCountAtMost = 2
+        AliveEnemyCountAtMost = 2,
+        SelfHasStatus = 3
     }
 
     public enum StageStatusTargetMode
@@ -65,6 +66,7 @@ public class EnemyData_SO : ScriptableObject
         [Min(1)] public int maxSlotsPerRound;
         public bool useOncePerBattle;
         [Min(1)] public int requiredAliveEnemyCount;
+        public BattleStatus_SO conditionStatusData;
     }
 
     [System.Serializable]
