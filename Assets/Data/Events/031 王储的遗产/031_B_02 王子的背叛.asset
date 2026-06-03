@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
-  m_Name: "031_B_02 王子的背叛"
+  m_Name: "031_B_02 \u738B\u5B50\u7684\u80CC\u53DB"
   m_EditorClassIdentifier: 
   eventId: 031_B_02
-  eventName: "王子的背叛"
-  eventContent: "王储被大批将士团团围住。众人怒吼着要杀掉叛徒，为国王报仇。\n\n你看得愣神，老者忽然从背后推了你一把。下一刻，你站到了王储身边，所有愤怒的目光都落在你身上。\n\n老者的声音在峡谷中回荡：“保护我家老爷回宫。否则，你得不到他的遗产。”"
+  eventName: "\u738B\u5B50\u7684\u80CC\u53DB"
+  eventContent: "\u738B\u50A8\u88AB\u5927\u6279\u5C06\u58EB\u56E2\u56E2\u56F4\u4F4F\u3002\u4F17\u4EBA\u6012\u543C\u7740\u8981\u6740\u6389\u53DB\u5F92\uFF0C\u4E3A\u56FD\u738B\u62A5\u4EC7\u3002\n\n\u4F60\u770B\u5F97\u6123\u795E\uFF0C\u8001\u8005\u5FFD\u7136\u4ECE\u80CC\u540E\u63A8\u4E86\u4F60\u4E00\u628A\u3002\u4E0B\u4E00\u523B\uFF0C\u4F60\u7AD9\u5230\u4E86\u738B\u50A8\u8EAB\u8FB9\uFF0C\u6240\u6709\u6124\u6012\u7684\u76EE\u5149\u90FD\u843D\u5728\u4F60\u8EAB\u4E0A\u3002\n\n\u8001\u8005\u7684\u58F0\u97F3\u5728\u5CE1\u8C37\u4E2D\u56DE\u8361\uFF1A\u201C\u4FDD\u62A4\u6211\u5BB6\u8001\u7237\u56DE\u5BAB\u3002\u5426\u5219\uFF0C\u4F60\u5F97\u4E0D\u5230\u4ED6\u7684\u9057\u4EA7\u3002\u201D"
   eventIllustration: {fileID: 0}
   options:
   - optionId: 1
-    optionLabel: "我会保护王储回宫！"
+    optionLabel: "\u6211\u4F1A\u4FDD\u62A4\u738B\u50A8\u56DE\u5BAB\uFF01"
     requiredMoney: 0
-    consequenceDescription: "结束事件"
-    resultContent: "你握紧长剑，站到王储和追兵之间。\n\n王储的亲信们也重新聚拢。你们必须杀出一条血路，带他离开峡谷。"
+    requiredMoneyPercent: 0
+    consequenceDescription: "\u7ED3\u675F\u4E8B\u4EF6"
+    resultContent: "\u4F60\u63E1\u7D27\u957F\u5251\uFF0C\u7AD9\u5230\u738B\u50A8\u548C\u8FFD\u5175\u4E4B\u95F4\u3002\n\n\u738B\u50A8\u7684\u4EB2\u4FE1\u4EEC\u4E5F\u91CD\u65B0\u805A\u62E2\u3002\u4F60\u4EEC\u5FC5\u987B\u6740\u51FA\u4E00\u6761\u8840\u8DEF\uFF0C\u5E26\u4ED6\u79BB\u5F00\u5CE1\u8C37\u3002"
     builtInEffectType: 0
     effectAmount: 0
     randomMoneyMin: 0
@@ -43,11 +44,13 @@ MonoBehaviour:
     blueprintRewards: []
     encounterSelectionMode: 0
     encounterEnemyGroups: []
-    encounterEnemies: []
+    encounterEnemies:
+    - {fileID: 11400000, guid: a2982bf583b2257468cdbc69a9a99734, type: 2}
     encounterEnemyCountMin: 1
     encounterEnemyCountMax: 1
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
+    possibleResults: []
     nextEvent: {fileID: 0}
     resolveEvent: 1
     customHandler: {fileID: 0}
