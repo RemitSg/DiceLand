@@ -50,6 +50,7 @@ public class MapViewController : MonoBehaviour
     private Func<bool> inputBlockedEvaluator;
 
     public event Action<BoardTileData> TileLongPressed;
+    public event Action ViewNavigationPerformed;
 
     public void SetInputBlockedEvaluator(Func<bool> evaluator)
     {
@@ -125,7 +126,10 @@ public class MapViewController : MonoBehaviour
     private void HandleMouseInput()
     {
         if (Mathf.Abs(Input.mouseScrollDelta.y) > 0.001f)
+        {
             ZoomBy(-Input.mouseScrollDelta.y * mouseWheelZoomStep, Input.mousePosition);
+            ViewNavigationPerformed?.Invoke();
+        }
 
         if (Input.GetMouseButtonDown(0))
             BeginPointer(Input.mousePosition, -1);
@@ -182,6 +186,7 @@ public class MapViewController : MonoBehaviour
 
         ZoomBy(-deltaDistance * pinchZoomSensitivity, currentMidpoint);
         PanBetweenScreenPositions(previousMidpoint, currentMidpoint);
+        ViewNavigationPerformed?.Invoke();
     }
 
     private void BeginPointer(Vector2 screenPosition, int pointerId)
@@ -211,7 +216,10 @@ public class MapViewController : MonoBehaviour
             dragging = true;
 
         if (dragging)
+        {
             PanBetweenScreenPositions(lastPointerScreenPosition, screenPosition);
+            ViewNavigationPerformed?.Invoke();
+        }
 
         if (!dragging && !longPressTriggered && pressedTile != null)
         {

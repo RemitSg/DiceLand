@@ -16,7 +16,7 @@ public class MapPauseMenuOverlay : MonoBehaviour
     [SerializeField] private Vector2 referenceResolution = new Vector2(1920f, 1080f);
 
     [Header("Panel")]
-    [SerializeField] private Vector2 panelSize = new Vector2(640f, 650f);
+    [SerializeField] private Vector2 panelSize = new Vector2(640f, 700f);
     [SerializeField] private Color backdropColor = new Color(0f, 0f, 0f, 0.62f);
     [SerializeField] private Color panelColor = new Color(0.08f, 0.1f, 0.14f, 0.97f);
     [SerializeField] private Sprite panelBackgroundSprite;

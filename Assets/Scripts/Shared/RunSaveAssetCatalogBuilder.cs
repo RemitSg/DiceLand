@@ -405,9 +405,10 @@ public static class RunSaveAssetCatalogBuilder
 
         catalog.Add(enemyGroup);
 
+        HashSet<EnemyData_SO> visitedEnemyData = new HashSet<EnemyData_SO>();
         IReadOnlyList<EnemyData_SO> enemies = enemyGroup.GetEnemies();
         for (int i = 0; i < enemies.Count; i++)
-            AddEnemyDataAssets(catalog, enemies[i]);
+            AddEnemyDataAssets(catalog, enemies[i], visitedEnemyData);
 
         IReadOnlyList<LootTable_SO> lootTables = enemyGroup.GetLootTables();
         for (int i = 0; i < lootTables.Count; i++)
@@ -416,8 +417,24 @@ public static class RunSaveAssetCatalogBuilder
 
     private static void AddEnemyDataAssets(MainMenuSaveAssetCatalog catalog, EnemyData_SO enemyData)
     {
-        if (enemyData == null)
+        AddEnemyDataAssets(catalog, enemyData, new HashSet<EnemyData_SO>());
+    }
+
+    private static void AddEnemyDataAssets(
+        MainMenuSaveAssetCatalog catalog,
+        EnemyData_SO enemyData,
+        HashSet<EnemyData_SO> visitedEnemyData)
+    {
+        if (catalog == null || enemyData == null)
             return;
+
+        if (visitedEnemyData == null)
+            visitedEnemyData = new HashSet<EnemyData_SO>();
+
+        if (!visitedEnemyData.Add(enemyData))
+            return;
+
+        AddEnemyDataAssets(catalog, enemyData.transformToEnemyDataWhenStatusMissing, visitedEnemyData);
 
         if (enemyData.onSpecificEnemyDeathStatusGains == null)
             return;
@@ -425,7 +442,7 @@ public static class RunSaveAssetCatalogBuilder
         for (int i = 0; i < enemyData.onSpecificEnemyDeathStatusGains.Count; i++)
         {
             EnemyData_SO.OnSpecificEnemyDeathStatusGainEntry entry = enemyData.onSpecificEnemyDeathStatusGains[i];
-            AddEnemyDataAssets(catalog, entry.watchedEnemyData);
+            AddEnemyDataAssets(catalog, entry.watchedEnemyData, visitedEnemyData);
         }
     }
 

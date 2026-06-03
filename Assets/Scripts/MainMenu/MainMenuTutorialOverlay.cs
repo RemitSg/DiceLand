@@ -13,6 +13,7 @@ public class MainMenuTutorialOverlay : MonoBehaviour
     private const string DefaultBackLabel = "Back";
 
     private Canvas canvas;
+    private RectTransform panelRect;
     private Text summaryTitleText;
     private Text summaryBodyText;
     private Text startButtonText;
@@ -35,13 +36,20 @@ public class MainMenuTutorialOverlay : MonoBehaviour
         Action onStart,
         Action onBack,
         string startButtonLabelOverride = null,
-        string backButtonLabelOverride = null)
+        string backButtonLabelOverride = null,
+        string titleOverride = null,
+        string bodyOverride = null,
+        bool hideSections = false)
     {
         EnsureUi();
 
         TutorialMenuCatalog_SO safeCatalog = catalog;
-        summaryTitleText.text = !string.IsNullOrEmpty(safeCatalog != null ? safeCatalog.summaryTitle : null) ? safeCatalog.summaryTitle : DefaultTitle;
-        summaryBodyText.text = !string.IsNullOrEmpty(safeCatalog != null ? safeCatalog.summaryBody : null) ? safeCatalog.summaryBody : DefaultBody;
+        summaryTitleText.text = !string.IsNullOrEmpty(titleOverride)
+            ? titleOverride
+            : (!string.IsNullOrEmpty(safeCatalog != null ? safeCatalog.summaryTitle : null) ? safeCatalog.summaryTitle : DefaultTitle);
+        summaryBodyText.text = !string.IsNullOrEmpty(bodyOverride)
+            ? bodyOverride
+            : (!string.IsNullOrEmpty(safeCatalog != null ? safeCatalog.summaryBody : null) ? safeCatalog.summaryBody : DefaultBody);
         startButtonText.text = !string.IsNullOrEmpty(startButtonLabelOverride)
             ? startButtonLabelOverride
             : (!string.IsNullOrEmpty(safeCatalog != null ? safeCatalog.startButtonLabel : null) ? safeCatalog.startButtonLabel : DefaultStartLabel);
@@ -59,6 +67,7 @@ public class MainMenuTutorialOverlay : MonoBehaviour
         });
 
         RebuildSections(safeCatalog);
+        ApplyLayout(hideSections);
         canvas.gameObject.SetActive(true);
     }
 
@@ -88,7 +97,7 @@ public class MainMenuTutorialOverlay : MonoBehaviour
         RectTransform rootRect = canvasGo.GetComponent<RectTransform>();
         StretchRect(rootRect);
 
-        RectTransform panelRect = CreateRect("Panel", rootRect, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1120f, 760f));
+        panelRect = CreateRect("Panel", rootRect, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1120f, 760f));
         Image panelImage = panelRect.gameObject.AddComponent<Image>();
         panelImage.color = new Color(0.07f, 0.09f, 0.13f, 0.96f);
 
@@ -139,6 +148,32 @@ public class MainMenuTutorialOverlay : MonoBehaviour
         backButtonText.text = "Back";
 
         canvas.gameObject.SetActive(false);
+    }
+
+    private void ApplyLayout(bool hideSections)
+    {
+        if (panelRect == null || summaryTitleText == null || summaryBodyText == null || startButton == null || backButton == null)
+            return;
+
+        if (hideSections)
+        {
+            panelRect.sizeDelta = new Vector2(920f, 420f);
+            SetRect(summaryTitleText.rectTransform, new Vector2(0f, -60f), new Vector2(780f, 72f));
+            SetRect(summaryBodyText.rectTransform, new Vector2(0f, -148f), new Vector2(760f, 150f));
+            SetRect(startButton.GetComponent<RectTransform>(), new Vector2(-126f, 58f), new Vector2(240f, 64f));
+            SetRect(backButton.GetComponent<RectTransform>(), new Vector2(126f, 58f), new Vector2(240f, 64f));
+        }
+        else
+        {
+            panelRect.sizeDelta = new Vector2(1120f, 760f);
+            SetRect(summaryTitleText.rectTransform, new Vector2(0f, -56f), new Vector2(860f, 72f));
+            SetRect(summaryBodyText.rectTransform, new Vector2(0f, -124f), new Vector2(860f, 120f));
+            SetRect(startButton.GetComponent<RectTransform>(), new Vector2(-126f, 48f), new Vector2(240f, 64f));
+            SetRect(backButton.GetComponent<RectTransform>(), new Vector2(126f, 48f), new Vector2(240f, 64f));
+        }
+
+        if (sectionScrollRect != null)
+            sectionScrollRect.gameObject.SetActive(!hideSections);
     }
 
     private void RebuildSections(TutorialMenuCatalog_SO catalog)
@@ -223,6 +258,15 @@ public class MainMenuTutorialOverlay : MonoBehaviour
         RectTransform rect = go.GetComponent<RectTransform>();
         StretchRect(rect);
         return rect;
+    }
+
+    private static void SetRect(RectTransform rect, Vector2 anchoredPosition, Vector2 size)
+    {
+        if (rect == null)
+            return;
+
+        rect.anchoredPosition = anchoredPosition;
+        rect.sizeDelta = size;
     }
 
     private static Text CreateText(string name, RectTransform parent, Vector2 anchorPivot, Vector2 anchoredPosition, Vector2 size, Font font, int fontSize, TextAnchor alignment, Color color)

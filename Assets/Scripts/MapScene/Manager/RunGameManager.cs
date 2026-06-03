@@ -10,7 +10,8 @@ public class RunGameManager : MonoBehaviour
 {
     private const int TutorialBoardSize = 12;
     private const int TutorialEncounterSeedBase = 26000;
-    private const string TutorialCatalogResourcePath = "TutorialMenuCatalog";
+    private const int TutorialFirstMoveSequenceIndex = 1;
+    private const int TutorialFirstBattleSequenceIndex = 2;
     private const string DefaultTreasureRewardTableResourcePath = "DefaultTreasureRewardTable";
     private const string TreasureBlueprintTableResourcePath = "TreasureBlueprintTable";
     private const string TreasureRelicTableResourcePath = "TreasureRelicTable";
@@ -30,6 +31,17 @@ public class RunGameManager : MonoBehaviour
         MapTileType.Key,
         MapTileType.Boss
     };
+
+    private enum MapTutorialGuideStep
+    {
+        None,
+        WaitingForViewNavigation,
+        WaitingForBattleInspect,
+        WaitingForFirstMoveSelect,
+        WaitingForFirstMoveConfirm,
+        WaitingForFirstMoveResolve,
+        WaitingForBattleEntry
+    }
 
     [System.Serializable]
     public class StartingPartyMemberDefinition
@@ -100,6 +112,7 @@ public class RunGameManager : MonoBehaviour
     [SerializeField] private bool autoStartOnAwake = true;
     [SerializeField] private string battleSceneName = "SampleScene";
     [SerializeField] private string restSceneName = "RestScene";
+    [SerializeField] private string mainMenuSceneName = BattleExitFlowService.DefaultMainMenuSceneName;
 
     [Header("Scene Refs")]
     [SerializeField] private Camera mapCamera;
@@ -137,6 +150,8 @@ public class RunGameManager : MonoBehaviour
     [SerializeField] private MapTreasureOverlay mapTreasureOverlay;
     [SerializeField] private MapEventOverlay mapEventOverlay;
     [SerializeField] private MapCalamityOverlay mapCalamityOverlay;
+    [SerializeField] private MapPauseMenuOverlay mapPauseMenuOverlay;
+    [SerializeField] private MapTutorialGuideOverlay mapTutorialGuideOverlay;
     [SerializeField] private MapViewController mapViewController;
     [SerializeField] private MapBackgroundController mapBackgroundController;
     [SerializeField] private SceneCurtainTransitionController sceneTransitionController;
@@ -164,7 +179,7 @@ public class RunGameManager : MonoBehaviour
     private bool movingToPreviouslyExploredEmptyTile;
     private readonly Dictionary<string, MapEventLootDiscardPreview> eventRandomLootDiscardPreviewCache = new Dictionary<string, MapEventLootDiscardPreview>(StringComparer.Ordinal);
     private bool isTutorialRun;
-    private MainMenuTutorialOverlay tutorialOverlay;
+    private MapTutorialGuideStep mapTutorialGuideStep = MapTutorialGuideStep.None;
     [NonSerialized] private SpecialDungeonRuntimeContext activeSpecialDungeonContext;
 
     private void Awake()
@@ -197,6 +212,8 @@ public class RunGameManager : MonoBehaviour
             tileResolver.KeyCollected -= HandleKeyCollected;
         if (mapViewController != null)
             mapViewController.TileLongPressed -= HandleTileLongPressed;
+        if (mapViewController != null)
+            mapViewController.ViewNavigationPerformed -= HandleMapViewNavigationPerformed;
         if (mapEventOverlay != null)
             mapEventOverlay.Hidden -= HandleMapEventOverlayHidden;
         if (mapMerchantOverlay != null)
@@ -311,7 +328,7 @@ public class RunGameManager : MonoBehaviour
         mapViewController.Initialize(mapCamera, boardManager, cameraPadding);
         mapViewController.SetInputBlockedEvaluator(IsMapViewInputBlocked);
         mapViewController.PlaySpawnIntro(boardManager.GridToWorld(boardManager.SpawnCoord));
-        ShowTutorialGuideOverlay();
+        StartMapTutorialGuide();
     }
 
     private bool TryRestoreRun()
@@ -404,26 +421,12 @@ public class RunGameManager : MonoBehaviour
         return RunBootstrapService.ResolveTutorialPreviewTag(tileType, stageId);
     }
 
-    private void ShowTutorialGuideOverlay()
-    {
-        TutorialMenuCatalog_SO catalog = Resources.Load<TutorialMenuCatalog_SO>(TutorialCatalogResourcePath);
-        if (catalog == null)
-            return;
-
-        if (tutorialOverlay == null)
-            tutorialOverlay = gameObject.GetComponent<MainMenuTutorialOverlay>() ?? gameObject.AddComponent<MainMenuTutorialOverlay>();
-
-        tutorialOverlay.Show(
-            catalog,
-            () => tutorialOverlay.Hide(),
-            null,
-            "继续",
-            "关闭");
-    }
-
     private void HandleTileClicked(BoardTileData tile)
     {
         if (tile == null || runState == null)
+            return;
+
+        if (!CanHandleTutorialTileClick(tile))
             return;
 
         EnsureTileAssignedEnemyGroup(tile);
@@ -434,6 +437,10 @@ public class RunGameManager : MonoBehaviour
         if (!isRepeatedSelection)
         {
             mapHUD.ShowStatus("正在查看格子详情。再次点击该格子可尝试进入。");
+            if (isTutorialRun && IsTutorialFirstBattleTile(tile) && mapTutorialGuideStep == MapTutorialGuideStep.None)
+                ContinueAfterBattleTileInspected();
+            else if (isTutorialRun && IsTutorialFirstMoveTile(tile) && mapTutorialGuideStep == MapTutorialGuideStep.WaitingForFirstMoveSelect)
+                ContinueAfterFirstMoveSelected();
             return;
         }
 
@@ -531,6 +538,8 @@ public class RunGameManager : MonoBehaviour
             boardManager.RefreshAllViews();
             mapHUD.ShowTile(tile, GetMoveCost(tile));
             ShowPendingMoveRelicStatusIfAny();
+            if (isTutorialRun && mapTutorialGuideStep == MapTutorialGuideStep.WaitingForBattleEntry && IsTutorialFirstBattleTile(tile))
+                mapTutorialGuideStep = MapTutorialGuideStep.None;
             if (!TryEnterBattle(tile))
                 TryPresentPendingCalamity();
             return;
@@ -590,6 +599,11 @@ public class RunGameManager : MonoBehaviour
         mapHUD.ShowTile(tile, GetMoveCost(tile));
         RefreshHUD(message);
         ShowPendingMoveRelicStatusIfAny();
+        if (isTutorialRun && mapTutorialGuideStep == MapTutorialGuideStep.WaitingForFirstMoveResolve && IsTutorialFirstMoveTile(tile))
+        {
+            mapTutorialGuideStep = MapTutorialGuideStep.None;
+            ContinueAfterFirstMoveCompleted();
+        }
         if (tile.tileType == MapTileType.Forge)
             OpenForgePanel(tile);
         else if (tile.tileType == MapTileType.Merchant)
@@ -880,6 +894,9 @@ public class RunGameManager : MonoBehaviour
         mapCalamityOverlay = GetOrCreateCalamityOverlay();
         if (mapKeywordFont != null || mapBodyFont != null)
             mapCalamityOverlay.ConfigureFonts(mapKeywordFont, mapBodyFont);
+        mapPauseMenuOverlay = GetOrCreatePauseMenuOverlay();
+        mapPauseMenuOverlay.Configure(CanOpenMapPauseMenu, HandlePauseMenuSaveAndReturn, HandlePauseMenuAbandon);
+        mapTutorialGuideOverlay = GetOrCreateTutorialGuideOverlay();
         mapViewController = GetOrCreateManager(mapViewController);
         mapBackgroundController = GetOrCreateManager(mapBackgroundController);
         if (sceneTransitionController == null)
@@ -902,6 +919,7 @@ public class RunGameManager : MonoBehaviour
             tileResolver.TileResolved += HandleTileResolved;
             tileResolver.KeyCollected += HandleKeyCollected;
             mapViewController.TileLongPressed += HandleTileLongPressed;
+            mapViewController.ViewNavigationPerformed += HandleMapViewNavigationPerformed;
             subscriptionsBound = true;
         }
     }
@@ -1084,6 +1102,50 @@ public class RunGameManager : MonoBehaviour
         go.transform.SetParent(uiRoot, false);
         mapCalamityOverlay = go.AddComponent<MapCalamityOverlay>();
         return mapCalamityOverlay;
+    }
+
+    private MapPauseMenuOverlay GetOrCreatePauseMenuOverlay()
+    {
+        if (mapPauseMenuOverlay != null)
+            return mapPauseMenuOverlay;
+
+        MapPauseMenuOverlay found = uiRoot != null ? uiRoot.GetComponent<MapPauseMenuOverlay>() : null;
+        if (found == null && uiRoot != null)
+            found = uiRoot.GetComponentInChildren<MapPauseMenuOverlay>(true);
+        if (found == null)
+            found = FindObjectOfType<MapPauseMenuOverlay>(true);
+        if (found != null)
+        {
+            mapPauseMenuOverlay = found;
+            return found;
+        }
+
+        GameObject go = new GameObject("MapPauseMenuOverlay");
+        go.transform.SetParent(uiRoot, false);
+        mapPauseMenuOverlay = go.AddComponent<MapPauseMenuOverlay>();
+        return mapPauseMenuOverlay;
+    }
+
+    private MapTutorialGuideOverlay GetOrCreateTutorialGuideOverlay()
+    {
+        if (mapTutorialGuideOverlay != null)
+            return mapTutorialGuideOverlay;
+
+        MapTutorialGuideOverlay found = uiRoot != null ? uiRoot.GetComponent<MapTutorialGuideOverlay>() : null;
+        if (found == null && uiRoot != null)
+            found = uiRoot.GetComponentInChildren<MapTutorialGuideOverlay>(true);
+        if (found == null)
+            found = FindObjectOfType<MapTutorialGuideOverlay>(true);
+        if (found != null)
+        {
+            mapTutorialGuideOverlay = found;
+            return found;
+        }
+
+        GameObject go = new GameObject("MapTutorialGuideOverlay");
+        go.transform.SetParent(uiRoot, false);
+        mapTutorialGuideOverlay = go.AddComponent<MapTutorialGuideOverlay>();
+        return mapTutorialGuideOverlay;
     }
 
     private DifficultyConfig_SO CreateFallbackDifficulty()
@@ -1859,7 +1921,64 @@ public class RunGameManager : MonoBehaviour
         TryPresentPendingCalamity();
     }
 
+    private bool CanOpenMapPauseMenu()
+    {
+        return runState != null && !IsGameplayOverlayVisible();
+    }
+
+    private void HandlePauseMenuSaveAndReturn()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        PersistCurrentRunSave();
+        MapRunRuntime.Clear(sceneName);
+        RestSceneRuntime.Clear();
+        BattleEncounterRuntime.Clear();
+        MainMenuRuntime.ClearContinueRequest();
+        MainMenuRuntime.ClearTutorialRequest();
+        TransitionToMainMenu();
+    }
+
+    private void HandlePauseMenuAbandon()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        MainMenuRunSaveSystem.DeleteSavedRun();
+        MapRunRuntime.Clear(sceneName);
+        RestSceneRuntime.Clear();
+        BattleEncounterRuntime.Clear();
+        MainMenuRuntime.ClearContinueRequest();
+        MainMenuRuntime.ClearTutorialRequest();
+        TransitionToMainMenu();
+    }
+
+    private void TransitionToMainMenu()
+    {
+        string targetSceneName = BattleExitFlowService.ResolveMainMenuSceneName(mainMenuSceneName);
+        if (sceneTransitionController != null)
+        {
+            sceneTransitionController.TransitionToScene(targetSceneName);
+            return;
+        }
+
+        if (SceneCurtainTransitionController.Instance != null)
+        {
+            SceneCurtainTransitionController.Instance.TransitionToScene(targetSceneName);
+            return;
+        }
+
+        SceneManager.LoadScene(targetSceneName);
+    }
+
     private bool IsMapViewInputBlocked()
+    {
+        if (mapPauseMenuOverlay != null && mapPauseMenuOverlay.IsVisible)
+            return true;
+        if (mapTutorialGuideOverlay != null && mapTutorialGuideOverlay.IsVisible)
+            return true;
+
+        return IsGameplayOverlayVisible();
+    }
+
+    private bool IsGameplayOverlayVisible()
     {
         if (mapEventOverlay != null && mapEventOverlay.IsVisible)
             return true;
@@ -1871,8 +1990,199 @@ public class RunGameManager : MonoBehaviour
             return true;
         if (mapCalamityOverlay != null && mapCalamityOverlay.IsVisible)
             return true;
+        if (mapTutorialGuideOverlay != null && mapTutorialGuideOverlay.IsVisible)
+            return true;
 
         return false;
+    }
+
+    private void StartMapTutorialGuide()
+    {
+        if (!isTutorialRun || mapTutorialGuideOverlay == null)
+            return;
+
+        mapTutorialGuideStep = MapTutorialGuideStep.None;
+        ShowMapTutorialMessage(
+            "欢迎来到骸烬大陆",
+            "这里会带你学会进入地图后的基本操作。首先试着拖动画面、滚动鼠标滚轮，或用双指缩放来观察地图。",
+            BeginWaitForViewNavigation,
+            "开始观察");
+    }
+
+    private void BeginWaitForViewNavigation()
+    {
+        mapTutorialGuideStep = MapTutorialGuideStep.WaitingForViewNavigation;
+        mapHUD?.ShowStatus("请先拖动或缩放地图。完成后教程会继续。");
+    }
+
+    private void HandleMapViewNavigationPerformed()
+    {
+        if (!isTutorialRun || mapTutorialGuideStep != MapTutorialGuideStep.WaitingForViewNavigation)
+            return;
+
+        mapTutorialGuideStep = MapTutorialGuideStep.None;
+        ShowMapTutorialMessage(
+            "左上角状态栏",
+            "左上角显示你的行动点、金币、钥匙等状态。移动到其它格子会消耗行动点；金币可在商店或事件中换取资源；钥匙用于开启 Boss 战。",
+            ShowMapTileInspectIntro);
+    }
+
+    private void ShowMapTileInspectIntro()
+    {
+        ShowMapTutorialMessage(
+            "查看格子详情",
+            "点击任意地图格子可以查看详情。现在请点击前方的战斗格，先了解你即将面对的内容。",
+            BeginWaitForBattleInspect);
+    }
+
+    private void BeginWaitForBattleInspect()
+    {
+        mapTutorialGuideStep = MapTutorialGuideStep.WaitingForBattleInspect;
+        mapHUD?.ShowStatus("请点击右侧的战斗格查看详情。");
+    }
+
+    private bool CanHandleTutorialTileClick(BoardTileData tile)
+    {
+        if (!isTutorialRun || mapTutorialGuideStep == MapTutorialGuideStep.None)
+            return true;
+
+        if (mapTutorialGuideOverlay != null && mapTutorialGuideOverlay.IsVisible)
+            return false;
+
+        switch (mapTutorialGuideStep)
+        {
+            case MapTutorialGuideStep.WaitingForViewNavigation:
+                mapHUD?.ShowStatus("请先拖动或缩放地图。");
+                return false;
+            case MapTutorialGuideStep.WaitingForBattleInspect:
+                if (!IsTutorialFirstBattleTile(tile))
+                {
+                    mapHUD?.ShowStatus("请先点击高亮的战斗格。");
+                    return false;
+                }
+                mapTutorialGuideStep = MapTutorialGuideStep.None;
+                return true;
+            case MapTutorialGuideStep.WaitingForFirstMoveSelect:
+                if (!IsTutorialFirstMoveTile(tile))
+                {
+                    mapHUD?.ShowStatus("请点击角色右侧相邻的空白格。");
+                    return false;
+                }
+                return true;
+            case MapTutorialGuideStep.WaitingForFirstMoveConfirm:
+                if (!IsTutorialFirstMoveTile(tile))
+                {
+                    mapHUD?.ShowStatus("请再次点击已选中的空白格来移动。");
+                    return false;
+                }
+                mapTutorialGuideStep = MapTutorialGuideStep.WaitingForFirstMoveResolve;
+                return true;
+            case MapTutorialGuideStep.WaitingForFirstMoveResolve:
+                mapHUD?.ShowStatus("正在移动，请稍候。");
+                return false;
+            case MapTutorialGuideStep.WaitingForBattleEntry:
+                if (!IsTutorialFirstBattleTile(tile))
+                {
+                    mapHUD?.ShowStatus("请继续前往右侧的战斗格。");
+                    return false;
+                }
+                return true;
+            default:
+                return true;
+        }
+    }
+
+    private void ContinueAfterBattleTileInspected()
+    {
+        ShowMapTutorialMessage(
+            "格子详情",
+            "第一行会显示坐标与格子类型。“战斗”代表进入该格后会开启一场战斗。第二行记录探索状态，完成格子内容后会变为已解决。",
+            ShowMapTileMovementCostGuide);
+    }
+
+    private void ShowMapTileMovementCostGuide()
+    {
+        ShowMapTutorialMessage(
+            "移动消耗",
+            "详情中还会显示进入格子需要的行动点。通常探索新格子消耗 2 点，移动到已探索格子只消耗 1 点。",
+            ShowMapBattleTileDetailGuide);
+    }
+
+    private void ShowMapBattleTileDetailGuide()
+    {
+        ShowMapTutorialMessage(
+            "战斗信息",
+            "战斗格会显示敌人属性、危险度与区域。提前观察这些信息，可以帮助你规划路线和准备装备。",
+            ShowMapFirstMoveIntro);
+    }
+
+    private void ShowMapFirstMoveIntro()
+    {
+        ShowMapTutorialMessage(
+            "试着移动",
+            "你已经知道如何查看格子了。接下来点击角色右侧相邻的空白格来选中它。",
+            BeginWaitForFirstMoveSelection);
+    }
+
+    private void BeginWaitForFirstMoveSelection()
+    {
+        mapTutorialGuideStep = MapTutorialGuideStep.WaitingForFirstMoveSelect;
+        mapHUD?.ShowStatus("请点击右侧相邻的空白格。");
+    }
+
+    private void ContinueAfterFirstMoveSelected()
+    {
+        ShowMapTutorialMessage(
+            "确认移动",
+            "第一次点击会查看并选中格子。现在再次点击同一个格子，角色就会移动过去。",
+            () =>
+            {
+                mapTutorialGuideStep = MapTutorialGuideStep.WaitingForFirstMoveConfirm;
+                mapHUD?.ShowStatus("请再次点击已选中的空白格来移动。");
+            });
+    }
+
+    private void ContinueAfterFirstMoveCompleted()
+    {
+        ShowMapTutorialMessage(
+            "准备进入战斗",
+            "你完成了一次移动。下一格会遭遇一场轻松的战斗，你已经提前看过它的详情了。继续点击右侧战斗格，进入第一场教程战斗。",
+            () =>
+            {
+                mapTutorialGuideStep = MapTutorialGuideStep.WaitingForBattleEntry;
+                if (TryGetTutorialFirstBattleTile(out BoardTileData battleTile))
+                {
+                    boardManager.SetSelectedTile(battleTile.coord);
+                    boardManager.RefreshAllViews();
+                }
+                mapHUD?.ShowStatus("请点击右侧战斗格进入教程战斗。");
+            });
+    }
+
+    private void ShowMapTutorialMessage(string title, string body, Action onContinue, string buttonLabel = "继续")
+    {
+        mapTutorialGuideStep = MapTutorialGuideStep.None;
+        mapTutorialGuideOverlay?.Show(title, body, onContinue, buttonLabel);
+    }
+
+    private bool TryGetTutorialFirstMoveTile(out BoardTileData tile)
+    {
+        return boardManager.TryGetTile(new Vector2Int(TutorialFirstMoveSequenceIndex, TutorialBoardSize / 2), out tile);
+    }
+
+    private bool TryGetTutorialFirstBattleTile(out BoardTileData tile)
+    {
+        return boardManager.TryGetTile(new Vector2Int(TutorialFirstBattleSequenceIndex, TutorialBoardSize / 2), out tile);
+    }
+
+    private bool IsTutorialFirstMoveTile(BoardTileData tile)
+    {
+        return tile != null && tile.coord == new Vector2Int(TutorialFirstMoveSequenceIndex, TutorialBoardSize / 2);
+    }
+
+    private bool IsTutorialFirstBattleTile(BoardTileData tile)
+    {
+        return tile != null && tile.coord == new Vector2Int(TutorialFirstBattleSequenceIndex, TutorialBoardSize / 2);
     }
 
     private void TryPresentPendingCalamity()
@@ -1892,6 +2202,10 @@ public class RunGameManager : MonoBehaviour
         if (mapTreasureOverlay != null && mapTreasureOverlay.IsVisible)
             return;
         if (mapCraftingOverlay != null && mapCraftingOverlay.IsVisible)
+            return;
+        if (mapPauseMenuOverlay != null && mapPauseMenuOverlay.IsVisible)
+            return;
+        if (mapTutorialGuideOverlay != null && mapTutorialGuideOverlay.IsVisible)
             return;
 
         while (runFlowState.PendingCalamityTiers.Count > 0)

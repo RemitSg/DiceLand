@@ -71,6 +71,32 @@ public class MainMenuTutorialOverlayTests
     }
 
     [Test]
+    public void Show_CanUseCompactConfirmationLayoutWithoutSections()
+    {
+        GameObject host = new GameObject("Host");
+        MainMenuTutorialOverlay overlay = host.AddComponent<MainMenuTutorialOverlay>();
+        TutorialMenuCatalog_SO catalog = ScriptableObject.CreateInstance<TutorialMenuCatalog_SO>();
+        catalog.Sections.Add(new TutorialMenuSection { sectionId = "map", title = "Map Basics", summary = "Find key paths." });
+
+        overlay.Show(
+            catalog,
+            null,
+            null,
+            "开始教程",
+            "返回主菜单",
+            "即将开始教程，是否开始？",
+            "进入教程会让你了解战斗规则、基本玩法、游戏系统等。",
+            true);
+
+        Assert.IsTrue(overlay.IsVisible);
+        Assert.AreEqual("即将开始教程，是否开始？", overlay.DebugSummaryTitleText.text);
+        Assert.AreEqual("进入教程会让你了解战斗规则、基本玩法、游戏系统等。", overlay.DebugSummaryBodyText.text);
+        Assert.AreEqual("开始教程", overlay.DebugStartButtonText.text);
+        Assert.AreEqual("返回主菜单", overlay.DebugBackButtonText.text);
+        Assert.IsFalse(GetSectionsScrollRect(overlay).gameObject.activeSelf);
+    }
+
+    [Test]
     public void BackButtonClick_InvokesCallbackAndHidesOverlay()
     {
         GameObject host = new GameObject("Host");
