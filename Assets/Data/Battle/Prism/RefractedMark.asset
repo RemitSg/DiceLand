@@ -15,7 +15,7 @@ MonoBehaviour:
   statusId: refracted_mark
   displayName: "\u6298\u5149\u5370"
   description: "\u88AB\u68F1\u5149\u9501\u5B9A\uFF0C\u90E8\u5206\u6280\u80FD\u4F1A\u6D88\u8017\u8BE5\u5370\u8BB0\u89E6\u53D1\u989D\u5916\u6548\u679C\u3002"
-  iconSprite: {fileID: 0}
+  iconSprite: {fileID: 21300000, guid: d53ee618d8cce9a4692ad94c0664b2ac, type: 3}
   accentColor: {r: 0.94, g: 0.96, b: 1, a: 1}
   tickEffectPrefab: {fileID: 0}
   tickEffectPositionOffset: {x: 0, y: 0, z: 0}

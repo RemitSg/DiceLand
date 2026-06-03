@@ -15,7 +15,7 @@ MonoBehaviour:
   statusId: prism_back
   displayName: "\u80CC\u9762"
   description: "\u5F53\u524D\u56DE\u5408\u7684\u627F\u63A5\u9762\u3002"
-  iconSprite: {fileID: 0}
+  iconSprite: {fileID: 21300000, guid: 22a239f97f27dc64cbcac16e14a9e32c, type: 3}
   accentColor: {r: 0.55, g: 0.72, b: 1, a: 1}
   tickEffectPrefab: {fileID: 0}
   tickEffectPositionOffset: {x: 0, y: 0, z: 0}

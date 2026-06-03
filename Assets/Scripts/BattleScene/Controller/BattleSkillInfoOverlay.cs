@@ -828,6 +828,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 effectSettings,
                 attackerIsAlly,
                 mergedStatusEffectIndices,
+                mergedPowerModifierIndices,
                 mergedStatusStackOperationIndices,
                 mergedHealingEffectIndices,
                 mergedBuiltInEffectIndices);
@@ -984,6 +985,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
             AppendBuiltInEffectLines(effectLines, diceEffectLabel, effectSettings, attackerIsAlly, mergedBuiltInEffectIndices);
             AppendRangeModifierLines(effectLines, diceEffectLabel, effectSettings);
+            AppendSummonEffectLines(effectLines, diceEffectLabel, effectSettings);
 
             if (effectSettings.powerModifiers != null)
             {
@@ -1128,6 +1130,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             effectSettings,
             attackerIsAlly,
             mergedStatusEffectIndices,
+            mergedPowerModifierIndices,
             mergedStatusStackOperationIndices,
             mergedHealingEffectIndices,
             mergedBuiltInEffectIndices);
@@ -1271,6 +1274,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
         AppendBuiltInEffectLines(effectLines, diceEffectLabel, effectSettings, attackerIsAlly, mergedBuiltInEffectIndices);
         AppendRangeModifierLines(effectLines, diceEffectLabel, effectSettings);
+        AppendSummonEffectLines(effectLines, diceEffectLabel, effectSettings);
 
         if (effectSettings.powerModifiers != null)
         {
@@ -1308,6 +1312,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         EnemySkill_SO.DiceEffectSettings effectSettings,
         bool attackerIsAlly,
         HashSet<int> mergedStatusEffectIndices,
+        HashSet<int> mergedPowerModifierIndices,
         HashSet<int> mergedStatusStackOperationIndices,
         HashSet<int> mergedHealingEffectIndices,
         HashSet<int> mergedBuiltInEffectIndices)
@@ -1326,6 +1331,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
             List<string> gains = new List<string>();
             CollectConsumedStatusStatusEffectGains(effectSettings, operation, gains, mergedStatusEffectIndices, attackerIsAlly);
+            CollectConsumedStatusPowerModifierGains(effectSettings, operation, gains, mergedPowerModifierIndices);
             CollectConsumedStatusHealingGains(effectSettings, operation, gains, mergedHealingEffectIndices, attackerIsAlly);
             CollectConsumedStatusBuiltInGains(effectSettings, operation, gains, mergedBuiltInEffectIndices, attackerIsAlly);
 
@@ -1373,6 +1379,37 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
             gains.Add($"{targetLabel}{BuildConsumedGainStatusTimingText(effect)}获得 {BuildColoredToken(effect.stackAmount.ToString(), valueHighlightColor)} 层 {BuildColoredToken(GetStatusLabel(effect), valueHighlightColor)}");
             mergedStatusEffectIndices.Add(i);
+        }
+    }
+
+    private void CollectConsumedStatusPowerModifierGains(
+        EnemySkill_SO.DiceEffectSettings effectSettings,
+        EnemySkill_SO.StatusStackOperationEffectEntry operation,
+        List<string> gains,
+        HashSet<int> mergedPowerModifierIndices)
+    {
+        if (effectSettings.powerModifiers == null)
+            return;
+
+        for (int i = 0; i < effectSettings.powerModifiers.Length; i++)
+        {
+            if (mergedPowerModifierIndices.Contains(i))
+                continue;
+
+            EnemySkill_SO.ConditionalPowerModifierEntry effect = effectSettings.powerModifiers[i];
+            if (!CanMergeConsumedStatusGainEffect(operation, effect))
+                continue;
+
+            if (IsScalingPowerModifier(effect))
+            {
+                gains.Add($"本骰子每达成一次条件，威力 {BuildColoredToken(FormatSignedInt(effect.powerBonusPerStep), valueHighlightColor)}{BuildPowerModifierCapSuffix(effect)}");
+            }
+            else
+            {
+                gains.Add($"本骰子威力 {BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor)}");
+            }
+
+            mergedPowerModifierIndices.Add(i);
         }
     }
 
@@ -1443,10 +1480,18 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                         continue;
                     gains.Add($"{targetLabel}恢复 {BuildColoredToken(effect.amount.ToString(), valueHighlightColor)} 点生命");
                     break;
+                case EnemySkill_SO.BuiltInEffectType.Damage:
+                    if (effect.amount <= 0)
+                        continue;
+                    gains.Add($"对{targetLabel}额外造成 {BuildColoredToken(effect.amount.ToString(), valueHighlightColor)} 点伤害");
+                    break;
                 case EnemySkill_SO.BuiltInEffectType.ApplyStatus:
                     if (effect.statusStackAmount <= 0)
                         continue;
                     gains.Add($"{targetLabel}{BuildConsumedGainBuiltInTimingText(effect)}获得 {BuildColoredToken(effect.statusStackAmount.ToString(), valueHighlightColor)} 层 {BuildColoredToken(GetBuiltInPrimaryStatusLabel(effect), valueHighlightColor)}");
+                    break;
+                case EnemySkill_SO.BuiltInEffectType.RepeatCurrentDie:
+                    gains.Add("重复使用该骰子");
                     break;
                 default:
                     continue;
@@ -1478,13 +1523,41 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
     private static bool CanMergeConsumedStatusGainEffect(
         EnemySkill_SO.StatusStackOperationEffectEntry operation,
+        EnemySkill_SO.ConditionalPowerModifierEntry effect)
+    {
+        return effect.trigger == operation.trigger
+            && effect.useCondition
+            && (effect.powerBonus != 0 || IsScalingPowerModifier(effect))
+            && IsConditionCompatibleWithConsumedStatus(operation, effect.condition, effect.requiredStatusStacks)
+            && IsSameConditionStatus(effect, operation);
+    }
+
+    private static bool CanMergeConsumedStatusGainEffect(
+        EnemySkill_SO.StatusStackOperationEffectEntry operation,
         EnemySkill_SO.BuiltInEffectEntry effect)
     {
         return effect.trigger == operation.trigger
-            && effect.useStatusCondition
+            && (HasBuiltInConsumedStatusCondition(operation, effect)
+                || HasBuiltInGeneralConsumedStatusCondition(operation, effect));
+    }
+
+    private static bool HasBuiltInConsumedStatusCondition(
+        EnemySkill_SO.StatusStackOperationEffectEntry operation,
+        EnemySkill_SO.BuiltInEffectEntry effect)
+    {
+        return effect.useStatusCondition
             && effect.conditionScope == EnemySkill_SO.BuiltInConditionScope.CurrentTarget
             && Mathf.Max(1, effect.requiredStatusStacks) >= Mathf.Max(1, operation.stackAmount)
             && IsSameConditionStatus(effect, operation);
+    }
+
+    private static bool HasBuiltInGeneralConsumedStatusCondition(
+        EnemySkill_SO.StatusStackOperationEffectEntry operation,
+        EnemySkill_SO.BuiltInEffectEntry effect)
+    {
+        return effect.useCondition
+            && IsConditionCompatibleWithConsumedStatus(operation, effect.condition, effect.requiredConditionStatusStacks)
+            && IsSameBuiltInGeneralConditionStatus(effect, operation);
     }
 
     private static bool IsConditionCompatibleWithConsumedStatus(
@@ -1635,6 +1708,26 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             return builtInEffect.conditionStatusData != null && builtInEffect.conditionStatusData == stackOperation.conditionStatusData;
 
         return builtInEffect.conditionStatusType == stackOperation.conditionStatusType;
+    }
+
+    private static bool IsSameConditionStatus(
+        EnemySkill_SO.ConditionalPowerModifierEntry powerModifier,
+        EnemySkill_SO.StatusStackOperationEffectEntry stackOperation)
+    {
+        if (powerModifier.targetStatusData != null || stackOperation.conditionStatusData != null)
+            return powerModifier.targetStatusData != null && powerModifier.targetStatusData == stackOperation.conditionStatusData;
+
+        return powerModifier.targetStatusType == stackOperation.conditionStatusType;
+    }
+
+    private static bool IsSameBuiltInGeneralConditionStatus(
+        EnemySkill_SO.BuiltInEffectEntry builtInEffect,
+        EnemySkill_SO.StatusStackOperationEffectEntry stackOperation)
+    {
+        if (builtInEffect.targetStatusData != null || stackOperation.conditionStatusData != null)
+            return builtInEffect.targetStatusData != null && builtInEffect.targetStatusData == stackOperation.conditionStatusData;
+
+        return builtInEffect.targetStatusType == stackOperation.conditionStatusType;
     }
 
     private static bool IsSameOperationAndConditionStatus(EnemySkill_SO.StatusStackOperationEffectEntry stackOperation)
@@ -1795,8 +1888,38 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                         : $"相当于 {targetLabel} 每 {BuildColoredToken(threshold.ToString(), valueHighlightColor)} 层 {statusLabel} {BuildColoredToken(effect.amount.ToString(), valueHighlightColor)} 点";
                     effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}对{targetLabel}额外造成 {damageLabel} 的伤害");
                     break;
+                case EnemySkill_SO.BuiltInEffectType.RepeatCurrentDie:
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}重复使用该骰子");
+                    break;
             }
         }
+    }
+
+    private void AppendSummonEffectLines(List<string> effectLines, string diceEffectLabel, EnemySkill_SO.DiceEffectSettings effectSettings)
+    {
+        if (effectSettings.summonEffects == null)
+            return;
+
+        for (int effectIndex = 0; effectIndex < effectSettings.summonEffects.Length; effectIndex++)
+        {
+            EnemySkill_SO.SummonEnemyEffectEntry effect = effectSettings.summonEffects[effectIndex];
+            if (effect.enemyData == null)
+                continue;
+
+            string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
+            string countLabel = BuildColoredToken(BattleSummonEffectService.NormalizeSummonCount(effect.summonCount).ToString(), valueHighlightColor);
+            string enemyLabel = BuildColoredToken(GetSummonEnemyLabel(effect, effectIndex), targetHighlightColor);
+            effectLines.Add($"{diceEffectLabel}：{triggerLabel} 召唤 {countLabel} 个 {enemyLabel}");
+        }
+    }
+
+    private static string GetSummonEnemyLabel(EnemySkill_SO.SummonEnemyEffectEntry effect, int effectIndex)
+    {
+        if (effect.enemyData != null && !string.IsNullOrWhiteSpace(effect.enemyData.enemyName))
+            return effect.enemyData.enemyName;
+        if (!string.IsNullOrWhiteSpace(effect.effectName))
+            return effect.effectName;
+        return $"召唤目标 {effectIndex + 1}";
     }
 
     private void AppendRangeModifierLines(List<string> effectLines, string diceEffectLabel, EnemySkill_SO.DiceEffectSettings effectSettings)

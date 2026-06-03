@@ -54,7 +54,8 @@ public class EnemySkill_SO : ScriptableObject
         ApplyStatus = 2,
         TransferRandomNegativeStatus = 3,
         QueueNextDicePowerBonus = 4,
-        DamageByTargetStatusStacksDivided = 5
+        DamageByTargetStatusStacksDivided = 5,
+        RepeatCurrentDie = 6
     }
 
     public enum BuiltInConditionScope
