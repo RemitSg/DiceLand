@@ -12,6 +12,8 @@ public class RunGameManager : MonoBehaviour
     private const int TutorialEncounterSeedBase = 26000;
     private const int TutorialFirstMoveSequenceIndex = 1;
     private const int TutorialFirstBattleSequenceIndex = 2;
+    private static readonly Vector2 TutorialTopLeftStatusHighlightAnchor = new Vector2(14f, -14f);
+    private static readonly Vector2 TutorialTopLeftStatusHighlightSize = new Vector2(438f, 236f);
     private const string DefaultTreasureRewardTableResourcePath = "DefaultTreasureRewardTable";
     private const string TreasureBlueprintTableResourcePath = "TreasureBlueprintTable";
     private const string TreasureRelicTableResourcePath = "TreasureRelicTable";
@@ -167,6 +169,9 @@ public class RunGameManager : MonoBehaviour
     [SerializeField] private string tutorialCompletionSceneName = "Menu Selection";
     [SerializeField] private TutorialEnemyVisualTemplateSet tutorialEnemyVisualTemplates = new TutorialEnemyVisualTemplateSet();
 
+    [Header("Tutorial Map Guide")]
+    [SerializeField] [Min(0.05f)] private float tutorialViewNavigationSettleSeconds = 0.8f;
+
     [Header("Camera")]
     [SerializeField] private Color cameraBackgroundColor = new Color(0.08f, 0.11f, 0.16f, 1f);
     [SerializeField] private float cameraPadding = 2.8f;
@@ -180,6 +185,12 @@ public class RunGameManager : MonoBehaviour
     private readonly Dictionary<string, MapEventLootDiscardPreview> eventRandomLootDiscardPreviewCache = new Dictionary<string, MapEventLootDiscardPreview>(StringComparer.Ordinal);
     private bool isTutorialRun;
     private MapTutorialGuideStep mapTutorialGuideStep = MapTutorialGuideStep.None;
+    private bool tutorialMapIntroSequenceActive;
+    private bool tutorialBattleInspectSelectionAllowed;
+    private bool tutorialViewNavigationObserved;
+    private float tutorialLastViewNavigationTime;
+    private bool tutorialViewPointerTracking;
+    private Vector2 tutorialViewPointerLastScreenPosition;
     [NonSerialized] private SpecialDungeonRuntimeContext activeSpecialDungeonContext;
 
     private void Awake()
@@ -224,6 +235,11 @@ public class RunGameManager : MonoBehaviour
             mapTreasureOverlay.Hidden -= HandleMapTreasureOverlayHidden;
     }
 
+    private void Update()
+    {
+        UpdateMapTutorialGuide();
+    }
+
     private void OnApplicationPause(bool pauseStatus)
     {
         if (pauseStatus)
@@ -239,6 +255,8 @@ public class RunGameManager : MonoBehaviour
     {
         EnsureSetup();
         isTutorialRun = false;
+        tutorialMapIntroSequenceActive = false;
+        tutorialBattleInspectSelectionAllowed = false;
         MainMenuRuntime.ClearTutorialRequest();
         MapRunRuntime.Clear(SceneManager.GetActiveScene().name);
         RestSceneRuntime.Clear();
@@ -285,6 +303,8 @@ public class RunGameManager : MonoBehaviour
     {
         EnsureSetup();
         isTutorialRun = true;
+        tutorialMapIntroSequenceActive = false;
+        tutorialBattleInspectSelectionAllowed = false;
         MapRunRuntime.Clear(SceneManager.GetActiveScene().name);
         RestSceneRuntime.Clear();
         runFlowState.Reset();
@@ -437,8 +457,11 @@ public class RunGameManager : MonoBehaviour
         if (!isRepeatedSelection)
         {
             mapHUD.ShowStatus("正在查看格子详情。再次点击该格子可尝试进入。");
-            if (isTutorialRun && IsTutorialFirstBattleTile(tile) && mapTutorialGuideStep == MapTutorialGuideStep.None)
+            if (isTutorialRun && tutorialBattleInspectSelectionAllowed && IsTutorialFirstBattleTile(tile))
+            {
+                tutorialBattleInspectSelectionAllowed = false;
                 ContinueAfterBattleTileInspected();
+            }
             else if (isTutorialRun && IsTutorialFirstMoveTile(tile) && mapTutorialGuideStep == MapTutorialGuideStep.WaitingForFirstMoveSelect)
                 ContinueAfterFirstMoveSelected();
             return;
@@ -1129,7 +1152,10 @@ public class RunGameManager : MonoBehaviour
     private MapTutorialGuideOverlay GetOrCreateTutorialGuideOverlay()
     {
         if (mapTutorialGuideOverlay != null)
+        {
+            PrepareTutorialGuideOverlay(mapTutorialGuideOverlay);
             return mapTutorialGuideOverlay;
+        }
 
         MapTutorialGuideOverlay found = uiRoot != null ? uiRoot.GetComponent<MapTutorialGuideOverlay>() : null;
         if (found == null && uiRoot != null)
@@ -1138,6 +1164,7 @@ public class RunGameManager : MonoBehaviour
             found = FindObjectOfType<MapTutorialGuideOverlay>(true);
         if (found != null)
         {
+            PrepareTutorialGuideOverlay(found);
             mapTutorialGuideOverlay = found;
             return found;
         }
@@ -1146,6 +1173,26 @@ public class RunGameManager : MonoBehaviour
         go.transform.SetParent(uiRoot, false);
         mapTutorialGuideOverlay = go.AddComponent<MapTutorialGuideOverlay>();
         return mapTutorialGuideOverlay;
+    }
+
+    private void PrepareTutorialGuideOverlay(MapTutorialGuideOverlay overlay)
+    {
+        if (overlay == null)
+            return;
+
+        if (uiRoot != null && overlay.transform.parent != uiRoot)
+            overlay.transform.SetParent(uiRoot, false);
+
+        Transform current = overlay.transform.parent;
+        while (current != null)
+        {
+            if (!current.gameObject.activeSelf)
+                current.gameObject.SetActive(true);
+            current = current.parent;
+        }
+
+        if (!overlay.gameObject.activeSelf)
+            overlay.gameObject.SetActive(true);
     }
 
     private DifficultyConfig_SO CreateFallbackDifficulty()
@@ -1998,20 +2045,32 @@ public class RunGameManager : MonoBehaviour
 
     private void StartMapTutorialGuide()
     {
-        if (!isTutorialRun || mapTutorialGuideOverlay == null)
+        if (!isTutorialRun)
             return;
 
+        if (mapTutorialGuideOverlay == null)
+            mapTutorialGuideOverlay = GetOrCreateTutorialGuideOverlay();
+
+        if (mapTutorialGuideOverlay == null)
+            return;
+
+        tutorialMapIntroSequenceActive = false;
         mapTutorialGuideStep = MapTutorialGuideStep.None;
         ShowMapTutorialMessage(
-            "欢迎来到骸烬大陆",
+            "欢迎来到骰掷大陆",
             "这里会带你学会进入地图后的基本操作。首先试着拖动画面、滚动鼠标滚轮，或用双指缩放来观察地图。",
             BeginWaitForViewNavigation,
             "开始观察");
+        tutorialMapIntroSequenceActive = mapTutorialGuideOverlay != null && mapTutorialGuideOverlay.IsVisible;
     }
 
     private void BeginWaitForViewNavigation()
     {
         mapTutorialGuideStep = MapTutorialGuideStep.WaitingForViewNavigation;
+        tutorialViewNavigationObserved = false;
+        tutorialLastViewNavigationTime = 0f;
+        tutorialViewPointerTracking = false;
+        tutorialViewPointerLastScreenPosition = Vector2.zero;
         mapHUD?.ShowStatus("请先拖动或缩放地图。完成后教程会继续。");
     }
 
@@ -2020,29 +2079,131 @@ public class RunGameManager : MonoBehaviour
         if (!isTutorialRun || mapTutorialGuideStep != MapTutorialGuideStep.WaitingForViewNavigation)
             return;
 
+        tutorialViewNavigationObserved = true;
+        tutorialLastViewNavigationTime = Time.unscaledTime;
+        mapHUD?.ShowStatus("很好，松开操作并稍等片刻，教程会继续。");
+    }
+
+    private void UpdateMapTutorialGuide()
+    {
+        if (!isTutorialRun || mapTutorialGuideStep != MapTutorialGuideStep.WaitingForViewNavigation)
+            return;
+
+        DetectTutorialViewNavigationFallback();
+
+        if (!tutorialViewNavigationObserved)
+            return;
+
+        if (Time.unscaledTime - tutorialLastViewNavigationTime < tutorialViewNavigationSettleSeconds)
+            return;
+
+        tutorialViewNavigationObserved = false;
+        tutorialViewPointerTracking = false;
         mapTutorialGuideStep = MapTutorialGuideStep.None;
+        ShowMapActionPointGuide();
+    }
+
+    private void DetectTutorialViewNavigationFallback()
+    {
+        if (mapTutorialGuideOverlay != null && mapTutorialGuideOverlay.IsVisible)
+            return;
+
+        if (Input.touchCount >= 2)
+        {
+            MarkTutorialViewNavigationObserved();
+            return;
+        }
+
+        if (Mathf.Abs(Input.mouseScrollDelta.y) > 0.001f)
+        {
+            MarkTutorialViewNavigationObserved();
+            return;
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            tutorialViewPointerTracking = true;
+            tutorialViewPointerLastScreenPosition = Input.mousePosition;
+            return;
+        }
+
+        if (Input.GetMouseButton(0) && tutorialViewPointerTracking)
+        {
+            Vector2 currentScreenPosition = Input.mousePosition;
+            if ((currentScreenPosition - tutorialViewPointerLastScreenPosition).sqrMagnitude >= 36f)
+                MarkTutorialViewNavigationObserved();
+            tutorialViewPointerLastScreenPosition = currentScreenPosition;
+            return;
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            tutorialViewPointerTracking = false;
+            tutorialViewPointerLastScreenPosition = Vector2.zero;
+        }
+    }
+
+    private void MarkTutorialViewNavigationObserved()
+    {
+        tutorialViewNavigationObserved = true;
+        tutorialLastViewNavigationTime = Time.unscaledTime;
+        mapHUD?.ShowStatus("很好，松开操作并稍等片刻，教程会继续。");
+    }
+
+    private void ShowMapActionPointGuide()
+    {
         ShowMapTutorialMessage(
-            "左上角状态栏",
-            "左上角显示你的行动点、金币、钥匙等状态。移动到其它格子会消耗行动点；金币可在商店或事件中换取资源；钥匙用于开启 Boss 战。",
-            ShowMapTileInspectIntro);
+            "行动点",
+            "左上角的状态栏显示了你当前的行动点，移动到其它格子都会消耗你的行动点。",
+            ShowMapMoneyGuide,
+            "继续",
+            true);
+    }
+
+    private void ShowMapMoneyGuide()
+    {
+        ShowMapTutorialMessage(
+            "金币",
+            "金币是游戏的必要资源！你可以用金币在商店或事件中换取你需要的资源。",
+            ShowMapKeyGuide,
+            "继续",
+            true);
+    }
+
+    private void ShowMapKeyGuide()
+    {
+        ShowMapTutorialMessage(
+            "钥匙",
+            "钥匙是开启 Boss 战、完成游戏的必经之路。左边的数字代表你目前拥有的钥匙数量，右边的数字代表所需钥匙数量。你可以在“钥匙格”拾取钥匙；地图通常会生成多余所需数量的钥匙格，所以不必完整探索地图，而是找到属于自己的路线。",
+            ShowMapTileInspectIntro,
+            "继续",
+            true);
     }
 
     private void ShowMapTileInspectIntro()
     {
         ShowMapTutorialMessage(
             "查看格子详情",
-            "点击任意地图格子可以查看详情。现在请点击前方的战斗格，先了解你即将面对的内容。",
+            "点击任意一个地图格子可以查看该格子的详情。",
             BeginWaitForBattleInspect);
     }
 
     private void BeginWaitForBattleInspect()
     {
+        tutorialMapIntroSequenceActive = false;
+        tutorialBattleInspectSelectionAllowed = true;
         mapTutorialGuideStep = MapTutorialGuideStep.WaitingForBattleInspect;
         mapHUD?.ShowStatus("请点击右侧的战斗格查看详情。");
     }
 
     private bool CanHandleTutorialTileClick(BoardTileData tile)
     {
+        if (isTutorialRun && tutorialMapIntroSequenceActive)
+        {
+            mapHUD?.ShowStatus("请先阅读并完成当前教程提示。");
+            return false;
+        }
+
         if (!isTutorialRun || mapTutorialGuideStep == MapTutorialGuideStep.None)
             return true;
 
@@ -2159,10 +2320,26 @@ public class RunGameManager : MonoBehaviour
             });
     }
 
-    private void ShowMapTutorialMessage(string title, string body, Action onContinue, string buttonLabel = "继续")
+    private void ShowMapTutorialMessage(string title, string body, Action onContinue, string buttonLabel = "继续", bool highlightTopLeftStatus = false)
     {
         mapTutorialGuideStep = MapTutorialGuideStep.None;
-        mapTutorialGuideOverlay?.Show(title, body, onContinue, buttonLabel);
+        if (mapTutorialGuideOverlay == null)
+            return;
+
+        if (highlightTopLeftStatus)
+        {
+            mapTutorialGuideOverlay.Show(
+                title,
+                body,
+                onContinue,
+                buttonLabel,
+                true,
+                TutorialTopLeftStatusHighlightAnchor,
+                TutorialTopLeftStatusHighlightSize);
+            return;
+        }
+
+        mapTutorialGuideOverlay.Show(title, body, onContinue, buttonLabel);
     }
 
     private bool TryGetTutorialFirstMoveTile(out BoardTileData tile)

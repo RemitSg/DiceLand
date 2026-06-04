@@ -992,6 +992,7 @@ MonoBehaviour:
   clashEffectDuration: 0.26
   hitEffectDuration: 0.24
   builtInHitDamageDelay: 0.07
+  waitForPlayerClickDuringDicePresentation: 1
   defenderKnockbackDistance: 3.5
   defenderKnockbackOutDuration: 0.16
   defenderKnockbackReturnDuration: 0.1
@@ -1027,8 +1028,9 @@ MonoBehaviour:
   closeupLargeTargetDepthOffset: 0.28
   closeupDamagePopupScale: 1.45
   closeupRangeLensPulseAmplitude: 0.06
-  closeupRangePositionPulseAmplitude: 0.16
-  closeupRangePulseFrequency: 0.08
+  closeupRangePositionPulseAmplitude: 0.4
+  closeupRangePulseFrequency: 0.16
+  continuousRangePulseIntensity: 0.45
   clashShakeAmplitude: 0.08
   hitShakeAmplitude: 0.16
   cameraPowerNormalization: 12

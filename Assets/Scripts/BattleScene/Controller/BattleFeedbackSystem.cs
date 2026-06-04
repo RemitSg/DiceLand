@@ -314,6 +314,11 @@ public class BattleFeedbackSystem : MonoBehaviour
         presentationDamageScaleOverride = Mathf.Max(0.1f, damageScaleOverride);
     }
 
+    public float GetClashDiceValueRevealDuration()
+    {
+        return Mathf.Max(0.01f, clashDiceValueRevealDuration);
+    }
+
     public ClashDiceDisplayHandle ShowClashDiceRange(
         Transform actor,
         bool isEnemy,

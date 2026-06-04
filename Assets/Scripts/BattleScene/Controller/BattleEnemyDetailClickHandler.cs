@@ -16,6 +16,9 @@ public class BattleEnemyDetailClickHandler : MonoBehaviour
         if (enemyController == null || enemyController.IsDead)
             return;
 
+        if (BattlePresentationContinueInputService.IsEnemyDetailInteractionBlocked)
+            return;
+
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return;
 
