@@ -24,12 +24,14 @@ public class MainMenuSettingsOverlay : MonoBehaviour
     private Toggle vibrationToggle;
     private Dropdown qualityDropdown;
     private Dropdown resolutionDropdown;
+    private Dropdown frameRateDropdown;
     private Text musicValueText;
     private Text sfxValueText;
     private Text titleText;
     private Button saveButton;
     private Button closeButton;
     private readonly List<RuntimeResolutionOption> resolutionOptions = new List<RuntimeResolutionOption>();
+    private readonly List<int> frameRateOptions = new List<int> { 30, 45, 60, 90, 120, 144 };
     private readonly List<Text> labelTexts = new List<Text>();
     private readonly List<Text> valueTexts = new List<Text>();
     private readonly List<Text> toggleStateTexts = new List<Text>();
@@ -81,6 +83,7 @@ public class MainMenuSettingsOverlay : MonoBehaviour
         vibrationToggle.SetIsOnWithoutNotify(safeSettings.vibrationEnabled);
         qualityDropdown.SetValueWithoutNotify(Mathf.Clamp(safeSettings.qualityLevel, 0, Mathf.Max(0, qualityDropdown.options.Count - 1)));
         resolutionDropdown.SetValueWithoutNotify(FindResolutionIndex(safeSettings));
+        frameRateDropdown.SetValueWithoutNotify(FindFrameRateIndex(safeSettings.targetFrameRate));
 
         RefreshSliderTexts();
         canvas.gameObject.SetActive(true);
@@ -130,8 +133,8 @@ public class MainMenuSettingsOverlay : MonoBehaviour
         float leftX = -300f;
         float rightX = 86f;
         float valueX = 344f;
-        float startY = -170f;
-        float rowGap = 96f;
+        float startY = -150f;
+        float rowGap = 86f;
 
         labelTexts.Add(CreateText("MusicLabel", panelRect, new Vector2(leftX, startY), new Vector2(220f, 40f), "Music", 28, labelFont, TextAnchor.MiddleLeft, Color.white));
         musicSlider = CreateSlider("MusicSlider", panelRect, new Vector2(rightX, startY), new Vector2(360f, 24f));
@@ -163,6 +166,12 @@ public class MainMenuSettingsOverlay : MonoBehaviour
         dropdownTexts.Add(resolutionCaptionText);
         dropdownTexts.Add(resolutionItemText);
 
+        labelTexts.Add(CreateText("FrameRateLabel", panelRect, new Vector2(leftX, startY - rowGap * 6f), new Vector2(220f, 40f), "Frame Rate", 28, labelFont, TextAnchor.MiddleLeft, Color.white));
+        frameRateDropdown = CreateDropdown("FrameRateDropdown", panelRect, new Vector2(rightX, startY - rowGap * 6f), new Vector2(360f, 48f), dropdownFont, out Text frameRateCaptionText, out Text frameRateItemText);
+        dropdownTexts.Add(frameRateCaptionText);
+        dropdownTexts.Add(frameRateItemText);
+        PopulateFrameRateOptions();
+
         saveButton = CreateButton("SaveButton", panelRect, new Vector2(-110f, 58f), new Vector2(220f, 64f), "Save", buttonFont, out Text saveButtonText);
         closeButton = CreateButton("CloseButton", panelRect, new Vector2(120f, 58f), new Vector2(220f, 64f), "Close", buttonFont, out Text closeButtonText);
         buttonTexts.Add(saveButtonText);
@@ -188,32 +197,45 @@ public class MainMenuSettingsOverlay : MonoBehaviour
         resolutionDropdown.ClearOptions();
 
         HashSet<string> seen = new HashSet<string>(StringComparer.Ordinal);
-        Resolution[] resolutions = Screen.resolutions;
-        for (int i = resolutions.Length - 1; i >= 0; i--)
+        if (!MainMenuSettingsPersistence.SupportsRuntimeResolutionChanges)
         {
-            Resolution resolution = resolutions[i];
-            string key = $"{resolution.width}x{resolution.height}@{Mathf.RoundToInt((float)resolution.refreshRateRatio.value)}";
-            if (!seen.Add(key))
-                continue;
-
             resolutionOptions.Add(new RuntimeResolutionOption
             {
-                width = resolution.width,
-                height = resolution.height,
-                refreshRate = Mathf.RoundToInt((float)resolution.refreshRateRatio.value),
-                label = $"{resolution.width} x {resolution.height} ({Mathf.RoundToInt((float)resolution.refreshRateRatio.value)}Hz)"
+                width = Screen.width,
+                height = Screen.height,
+                refreshRate = Mathf.Max(30, currentSettings.refreshRate),
+                label = $"{Screen.width} x {Screen.height} (Device)"
             });
         }
-
-        if (resolutionOptions.Count == 0)
+        else
         {
-            resolutionOptions.Add(new RuntimeResolutionOption
+            Resolution[] resolutions = Screen.resolutions;
+            for (int i = resolutions.Length - 1; i >= 0; i--)
             {
-                width = currentSettings.resolutionWidth,
-                height = currentSettings.resolutionHeight,
-                refreshRate = currentSettings.refreshRate,
-                label = $"{currentSettings.resolutionWidth} x {currentSettings.resolutionHeight}"
-            });
+                Resolution resolution = resolutions[i];
+                string key = $"{resolution.width}x{resolution.height}@{Mathf.RoundToInt((float)resolution.refreshRateRatio.value)}";
+                if (!seen.Add(key))
+                    continue;
+
+                resolutionOptions.Add(new RuntimeResolutionOption
+                {
+                    width = resolution.width,
+                    height = resolution.height,
+                    refreshRate = Mathf.RoundToInt((float)resolution.refreshRateRatio.value),
+                    label = $"{resolution.width} x {resolution.height} ({Mathf.RoundToInt((float)resolution.refreshRateRatio.value)}Hz)"
+                });
+            }
+
+            if (resolutionOptions.Count == 0)
+            {
+                resolutionOptions.Add(new RuntimeResolutionOption
+                {
+                    width = currentSettings.resolutionWidth,
+                    height = currentSettings.resolutionHeight,
+                    refreshRate = currentSettings.refreshRate,
+                    label = $"{currentSettings.resolutionWidth} x {currentSettings.resolutionHeight}"
+                });
+            }
         }
 
         List<string> labels = new List<string>(resolutionOptions.Count);
@@ -221,6 +243,7 @@ public class MainMenuSettingsOverlay : MonoBehaviour
             labels.Add(resolutionOptions[i].label);
 
         resolutionDropdown.AddOptions(labels);
+        resolutionDropdown.interactable = MainMenuSettingsPersistence.SupportsRuntimeResolutionChanges;
     }
 
     private int FindResolutionIndex(MainMenuSettingsData currentSettings)
@@ -236,6 +259,29 @@ public class MainMenuSettingsOverlay : MonoBehaviour
         }
 
         return 0;
+    }
+
+    private void PopulateFrameRateOptions()
+    {
+        frameRateDropdown.ClearOptions();
+
+        List<string> labels = new List<string>(frameRateOptions.Count);
+        for (int i = 0; i < frameRateOptions.Count; i++)
+            labels.Add($"{frameRateOptions[i]} FPS");
+
+        frameRateDropdown.AddOptions(labels);
+    }
+
+    private int FindFrameRateIndex(int frameRate)
+    {
+        int normalized = MainMenuSettingsPersistence.NormalizeTargetFrameRate(frameRate);
+        for (int i = 0; i < frameRateOptions.Count; i++)
+        {
+            if (frameRateOptions[i] == normalized)
+                return i;
+        }
+
+        return Mathf.Clamp(frameRateOptions.IndexOf(120), 0, Mathf.Max(0, frameRateOptions.Count - 1));
     }
 
     private void RefreshSliderTexts()
@@ -262,6 +308,8 @@ public class MainMenuSettingsOverlay : MonoBehaviour
         data.resolutionWidth = selectedResolution.width;
         data.resolutionHeight = selectedResolution.height;
         data.refreshRate = selectedResolution.refreshRate;
+        int frameRateIndex = Mathf.Clamp(frameRateDropdown.value, 0, Mathf.Max(0, frameRateOptions.Count - 1));
+        data.targetFrameRate = frameRateOptions[Mathf.Clamp(frameRateIndex, 0, frameRateOptions.Count - 1)];
 
         saveHandler?.Invoke(data);
         Hide();

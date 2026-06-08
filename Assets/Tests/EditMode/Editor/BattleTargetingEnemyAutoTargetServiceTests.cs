@@ -64,7 +64,23 @@ public class BattleTargetingEnemyAutoTargetServiceTests
         Assert.AreSame(markedAlly.SpeedButtons[0], preferred);
     }
 
-    private BattleAllyController CreateAlly(string name, int buttonCount)
+    [Test]
+    public void ResolvePreferredTargetButton_PrefersLowestHpAlly()
+    {
+        BattleEnemyController enemy = CreateEnemy("Executioner", buttonCount: 1);
+        BattleAllyController woundedAlly = CreateAlly("Wounded", buttonCount: 1, currentHp: 1, maxHp: 4);
+        BattleAllyController healthyAlly = CreateAlly("Healthy", buttonCount: 1, currentHp: 4, maxHp: 4);
+        SetSelectedSkillForButton(enemy, CreateSkillWithLowestHpPriority());
+
+        SpeedButton preferred = InvokeResolvePreferredTargetButton(
+            enemy,
+            enemy.SpeedButtons[0],
+            new List<SpeedButton> { healthyAlly.SpeedButtons[0], woundedAlly.SpeedButtons[0] });
+
+        Assert.AreSame(woundedAlly.SpeedButtons[0], preferred);
+    }
+
+    private BattleAllyController CreateAlly(string name, int buttonCount, int currentHp = 10, int maxHp = 10)
     {
         GameObject go = CreateGameObject(name);
         BattleAllyController ally = go.AddComponent<BattleAllyController>();
@@ -72,8 +88,8 @@ public class BattleTargetingEnemyAutoTargetServiceTests
         {
             characterData = CreateCharacter(name),
             level = 1,
-            maxHP = 10,
-            currentHP = 10
+            maxHP = maxHp,
+            currentHP = currentHp
         });
         ally.RegisterSpeedButtons(CreateSpeedButtons(go.transform, buttonCount, SpeedButton.ButtonType.Ally));
         return ally;
@@ -116,6 +132,14 @@ public class BattleTargetingEnemyAutoTargetServiceTests
         EnemySkill_SO skill = ScriptableObject.CreateInstance<EnemySkill_SO>();
         skill.targetPriorityMode = EnemySkill_SO.TargetPriorityMode.PreferTargetsWithNegativeStatusTypesAtLeast;
         skill.targetPriorityRequiredStacks = 2;
+        createdObjects.Add(skill);
+        return skill;
+    }
+
+    private EnemySkill_SO CreateSkillWithLowestHpPriority()
+    {
+        EnemySkill_SO skill = ScriptableObject.CreateInstance<EnemySkill_SO>();
+        skill.targetPriorityMode = EnemySkill_SO.TargetPriorityMode.PreferLowestHP;
         createdObjects.Add(skill);
         return skill;
     }

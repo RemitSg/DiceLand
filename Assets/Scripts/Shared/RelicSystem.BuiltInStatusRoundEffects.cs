@@ -74,7 +74,10 @@ public static partial class RelicSystem
                 continue;
 
             if (TryApplyStatus(enemy, effect, enemyStacksToApply))
+            {
+                ApplyImmediateBattleRoundStartSpeedBonus(context, enemy, effect, enemyStacksToApply);
                 appliedEnemyCount += 1;
+            }
         }
 
         if (appliedEnemyCount <= 0)
@@ -118,7 +121,10 @@ public static partial class RelicSystem
                 continue;
 
             if (TryApplyStatus(allyTarget, effect, allyStacksToApply))
+            {
+                ApplyImmediateBattleRoundStartSpeedBonus(context, allyTarget, effect, allyStacksToApply);
                 appliedAllyCount += 1;
+            }
         }
 
         if (appliedAllyCount <= 0)
@@ -169,6 +175,8 @@ public static partial class RelicSystem
         if (!TryApplyStatus(randomAlly, effect, randomAllyStacksToApply))
             return;
 
+        ApplyImmediateBattleRoundStartSpeedBonus(context, randomAlly, effect, randomAllyStacksToApply);
+
         string roundLabel = BuildRoundRangeLabel(requiredRoundMin, requiredRoundMax);
         AddRelicFeedback(context, relicData, $"{roundLabel}时，{randomAlly.GetDebugDisplayName()} 获得 {randomAllyStacksToApply} 层 {GetStatusDisplayName(effect.statusData)}。");
     }
@@ -206,6 +214,8 @@ public static partial class RelicSystem
         if (!TryApplyStatus(randomEnemy, effect, randomEnemyStacksToApply))
             return;
 
+        ApplyImmediateBattleRoundStartSpeedBonus(context, randomEnemy, effect, randomEnemyStacksToApply);
+
         string roundLabel = BuildRoundRangeLabel(requiredRoundMin, requiredRoundMax);
         AddRelicFeedback(context, relicData, $"{roundLabel}时，{randomEnemy.GetDebugDisplayName()} 获得 {randomEnemyStacksToApply} 层 {GetStatusDisplayName(effect.statusData)}。");
     }
@@ -233,7 +243,10 @@ public static partial class RelicSystem
                 continue;
 
             if (TryApplyStatus(oddRoundTarget, effect, oddRoundStacks))
+            {
+                ApplyImmediateBattleRoundStartSpeedBonus(context, oddRoundTarget, effect, oddRoundStacks);
                 oddRoundAffectedCount += 1;
+            }
         }
 
         if (oddRoundAffectedCount > 0)

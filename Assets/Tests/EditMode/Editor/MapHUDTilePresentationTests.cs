@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MapHUDTilePresentationTests
 {
@@ -116,6 +117,29 @@ public class MapHUDTilePresentationTests
     }
 
     [Test]
+    public void Initialize_WhenInventoryButtonSpriteMissing_BuildsVisibleFallbackMenuGlyph()
+    {
+        GameObject go = new GameObject("MapHUD");
+        try
+        {
+            MapHUD hud = go.AddComponent<MapHUD>();
+
+            hud.Initialize();
+
+            Image buttonImage = FindImage(go.transform, "InventoryButton");
+            Image[] glyphBars = FindImages(go.transform, "FallbackMenuBar");
+            Assert.AreEqual(3, glyphBars.Length);
+            Assert.Greater(buttonImage.color.r, 0.35f);
+            Assert.Greater(buttonImage.color.g, 0.2f);
+            Assert.Greater(buttonImage.color.b, 0.1f);
+        }
+        finally
+        {
+            Object.DestroyImmediate(go);
+        }
+    }
+
+    [Test]
     public void ResolveTile_SpecialDungeonExitReturnsExitMessage()
     {
         GameObject go = new GameObject("TileResolver");
@@ -149,5 +173,31 @@ public class MapHUDTilePresentationTests
 
         Assert.Fail($"Missing text named {name}.");
         return null;
+    }
+
+    private static Image FindImage(Transform root, string name)
+    {
+        Image[] images = root.GetComponentsInChildren<Image>(true);
+        for (int i = 0; i < images.Length; i++)
+        {
+            if (images[i].name == name)
+                return images[i];
+        }
+
+        Assert.Fail($"Missing image named {name}.");
+        return null;
+    }
+
+    private static Image[] FindImages(Transform root, string name)
+    {
+        Image[] images = root.GetComponentsInChildren<Image>(true);
+        System.Collections.Generic.List<Image> matches = new System.Collections.Generic.List<Image>();
+        for (int i = 0; i < images.Length; i++)
+        {
+            if (images[i].name == name)
+                matches.Add(images[i]);
+        }
+
+        return matches.ToArray();
     }
 }

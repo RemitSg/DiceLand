@@ -495,9 +495,9 @@ public class BattleAllyController : MonoBehaviour
 
         switch (ResolveForcedRollMode())
         {
-            case ForcedRollMode.Min:
+            case BattleDiceRollService.ForcedRollMode.Min:
                 return min;
-            case ForcedRollMode.Max:
+            case BattleDiceRollService.ForcedRollMode.Max:
                 return max;
             default:
                 return UnityEngine.Random.Range(min, max + 1);
@@ -846,7 +846,7 @@ public class BattleAllyController : MonoBehaviour
         return Mathf.Max(0, totalPenalty);
     }
 
-    private ForcedRollMode ResolveForcedRollMode()
+    public BattleDiceRollService.ForcedRollMode ResolveForcedRollMode()
     {
         bool forceMax = false;
         for (int i = 0; i < statusEntries.Count; i++)
@@ -858,21 +858,14 @@ public class BattleAllyController : MonoBehaviour
             switch (entry.statusData.BehaviorType)
             {
                 case BattleStatus_SO.StatusBehaviorType.ForceRollToMin:
-                    return ForcedRollMode.Min;
+                    return BattleDiceRollService.ForcedRollMode.Min;
                 case BattleStatus_SO.StatusBehaviorType.ForceRollToMax:
                     forceMax = true;
                     break;
             }
         }
 
-        return forceMax ? ForcedRollMode.Max : ForcedRollMode.None;
-    }
-
-    private enum ForcedRollMode
-    {
-        None = 0,
-        Min = 1,
-        Max = 2
+        return forceMax ? BattleDiceRollService.ForcedRollMode.Max : BattleDiceRollService.ForcedRollMode.None;
     }
 
     private int ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType behaviorType)
@@ -1122,7 +1115,15 @@ public class BattleAllyController : MonoBehaviour
                 continue;
 
             if (damage > 0)
-                TakeDamage(damage);
+            {
+                int dealtDamage = TakeDamage(damage);
+                Debug.Log(BattleDamageFormulaLogService.BuildStatusDamageFormula(
+                    GetDebugDisplayName(),
+                    entry.DisplayName,
+                    stacksBeforeTick,
+                    ResolveStatusDamagePerStack(entry, damage, stacksBeforeTick),
+                    dealtDamage));
+            }
             if (speedBonus != 0)
                 PendingRoundStartSpeedBonus += speedBonus;
             entry.stacks = ResolveRoundStartStatusStacksAfterTick(entry, stacksBeforeTick);
@@ -1165,7 +1166,13 @@ public class BattleAllyController : MonoBehaviour
             if (damage <= 0)
                 continue;
 
-            TakeDamage(damage);
+            int dealtDamage = TakeDamage(damage);
+            Debug.Log(BattleDamageFormulaLogService.BuildStatusDamageFormula(
+                GetDebugDisplayName(),
+                entry.DisplayName,
+                stacksBeforeTrigger,
+                ResolveStatusDamagePerStack(entry, damage, stacksBeforeTrigger),
+                dealtDamage));
             entry.stacks = ResolveOnHitStatusStacksAfterTrigger(entry, stacksBeforeTrigger);
             results.Add(new BattleStatusTickResult
             {
@@ -1520,6 +1527,13 @@ public class BattleAllyController : MonoBehaviour
             return entry.stacks;
 
         return 0;
+    }
+
+    private static int ResolveStatusDamagePerStack(BattleStatusRuntimeEntry entry, int resolvedDamage, int stacks)
+    {
+        if (entry != null && entry.statusData != null)
+            return Mathf.Max(0, entry.statusData.PowerPerStack);
+        return stacks > 0 ? Mathf.Max(0, resolvedDamage / stacks) : Mathf.Max(0, resolvedDamage);
     }
 
     private int ResolveRoundStartStatusSpeedBonus(BattleStatusRuntimeEntry entry)

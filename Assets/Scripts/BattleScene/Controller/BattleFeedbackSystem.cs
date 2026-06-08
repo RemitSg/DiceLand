@@ -143,6 +143,9 @@ public class BattleFeedbackSystem : MonoBehaviour
     [SerializeField, Min(0.1f)] private float clashDiceValueEndScale = 1f;
     [SerializeField] private bool clashDiceScaleWithCamera = true;
 
+    [Header("Audio")]
+    [SerializeField] private BattleSfxPlayer battleSfxPlayer;
+
     [Header("Health Bar")]
     [SerializeField] private Vector2 healthBarSize = new Vector2(110f, 14f);
     [SerializeField] private Vector3 healthBarWorldOffset = new Vector3(0f, -1.2f, 0f);
@@ -312,6 +315,11 @@ public class BattleFeedbackSystem : MonoBehaviour
     {
         presentationCameraOverride = cameraOverride;
         presentationDamageScaleOverride = Mathf.Max(0.1f, damageScaleOverride);
+    }
+
+    public float GetClashDiceValueRevealDuration()
+    {
+        return Mathf.Max(0.01f, clashDiceValueRevealDuration);
     }
 
     public ClashDiceDisplayHandle ShowClashDiceRange(
@@ -962,6 +970,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         if (ally == null || damage <= 0)
             return;
 
+        ResolveBattleSfxPlayer()?.PlayDamageTakenOncePerFrame();
         ShowDamagePopup(
             BattleActorVisualUtility.GetActorCenterWorld(ally.transform) + damageWorldOffset,
             damage,
@@ -975,6 +984,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         if (enemy == null || damage <= 0)
             return;
 
+        ResolveBattleSfxPlayer()?.PlayDamageTakenOncePerFrame();
         ShowDamagePopup(
             BattleActorVisualUtility.GetActorCenterWorld(enemy.transform) + damageWorldOffset,
             damage,
@@ -2141,6 +2151,16 @@ public class BattleFeedbackSystem : MonoBehaviour
             return 0f;
 
         return Mathf.Clamp01(1f - Mathf.Clamp(fadeDuration, 0f, lifetime) / lifetime);
+    }
+
+    private BattleSfxPlayer ResolveBattleSfxPlayer()
+    {
+        if (battleSfxPlayer == null)
+            battleSfxPlayer = GetComponent<BattleSfxPlayer>();
+        if (battleSfxPlayer == null)
+            battleSfxPlayer = FindObjectOfType<BattleSfxPlayer>();
+
+        return battleSfxPlayer;
     }
 
     private void OnDestroy()

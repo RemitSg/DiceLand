@@ -1,0 +1,15 @@
+Sources used:
+- PROJECT_ARCHITECTURE.md: high-level folder responsibilities, runtime map-to-battle flow, key classes.
+- GAMEPLAY_BLUEPRINT.md: roguelite run goal, board/difficulty rules, action points, calamity, boss unlock, growth systems.
+- PROJECT_PROGRESS.md: module maturity, completed systems, known risks, refactor priorities. Some sections are mojibake in terminal, so only stable class names and readable claims are used.
+- docs/CONTENT_TABLE.md: enemy/relic taxonomy and content scale. Some sections are mojibake in terminal; counts are verified from asset directories.
+- Assets/Screenshots/*.png: local project screenshots for visual proof, used without external provenance.
+- Local counts verified on 2026-06-08:
+  - Relic directories with numeric prefixes: 110
+  - Enemy directories with numeric prefixes: 37
+  - Weapon directories: 21
+  - EditMode test scripts: 194
+  - PlayMode test scripts: 2
+Asset policy:
+- No logo, mascot, or third-party identity assets are fabricated.
+- All diagrams are abstract editable shapes tied to project class names.

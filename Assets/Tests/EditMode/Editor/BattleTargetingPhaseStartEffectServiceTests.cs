@@ -104,6 +104,42 @@ public class BattleTargetingPhaseStartEffectServiceTests
     }
 
     [Test]
+    public void DispatchBattleStartSkillGrants_WhenTargetCharacterConfigured_GrantsOnlyToMatchingAlly()
+    {
+        EnemySkill_SO mollySkill = CreateSkill("Molly Skill");
+        EnemySkill_SO charaSkill = CreateSkill("Chara Skill");
+        BattleAllyController molly = CreateAlly("Molly", 10);
+        BattleAllyController chara = CreateAlly("Chara", 10);
+        BattleEnemyController enemy = CreateEnemy("Tutorial Enemy", 10, mollySkill);
+        enemy.enemyData.battleStartGrantedAllySkills = new List<EnemyData_SO.BattleStartAllySkillGrantEntry>
+        {
+            new EnemyData_SO.BattleStartAllySkillGrantEntry
+            {
+                skill = mollySkill,
+                replaceWeaponSkills = true,
+                targetAllyCharacterName = "Molly"
+            },
+            new EnemyData_SO.BattleStartAllySkillGrantEntry
+            {
+                skill = charaSkill,
+                replaceWeaponSkills = true,
+                targetAllyCharacterName = "Chara"
+            }
+        };
+
+        BattleEnemyBattleStartSkillGrantService.Dispatch(
+            new[] { enemy },
+            new[] { molly, chara },
+            null);
+
+        molly.SelectDefaultSkill();
+        chara.SelectDefaultSkill();
+
+        Assert.AreSame(mollySkill, molly.SelectedSkill);
+        Assert.AreSame(charaSkill, chara.SelectedSkill);
+    }
+
+    [Test]
     public void DispatchEnemyBattleStartStatusGains_FiltersInvalidEnemiesAndTransitionsOnlyWhenStatusApplied()
     {
         BattleEnemyController validEnemy = CreateEnemy("ValidEnemy", 10, CreateSkill("Skill"));

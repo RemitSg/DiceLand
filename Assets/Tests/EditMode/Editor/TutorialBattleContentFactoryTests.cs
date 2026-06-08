@@ -36,7 +36,7 @@ public class TutorialBattleContentFactoryTests
     }
 
     [Test]
-    public void CreateRuntimeEnemyGroup_Battle02AndBattle03UseTwoSpeedButtons()
+    public void CreateRuntimeEnemyGroup_Battle02UsesOneButtonAndBattle03UsesTwoButtons()
     {
         EnemyGroup_SO battle02 = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle02);
         EnemyGroup_SO battle03 = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle03);
@@ -47,7 +47,7 @@ public class TutorialBattleContentFactoryTests
         Assert.IsNotNull(battle03.enemies);
         Assert.Greater(battle02.enemies.Count, 0);
         Assert.Greater(battle03.enemies.Count, 0);
-        Assert.AreEqual(2, battle02.enemies[0].baseSpeedButtonCount);
+        Assert.AreEqual(1, battle02.enemies[0].baseSpeedButtonCount);
         Assert.AreEqual(2, battle03.enemies[0].baseSpeedButtonCount);
     }
 
@@ -73,7 +73,7 @@ public class TutorialBattleContentFactoryTests
         EnemyGroup_SO battle02 = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle02, templates);
         EnemyGroup_SO battle07 = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle07, templates);
 
-        Assert.AreEqual(2, battle02.enemies[0].GetStageSpeedButtonCount(0));
+        Assert.AreEqual(1, battle02.enemies[0].GetStageSpeedButtonCount(0));
         Assert.AreEqual(2, battle07.enemies[0].GetStageSpeedButtonCount(0));
 
         Object.DestroyImmediate(template);
@@ -95,9 +95,21 @@ public class TutorialBattleContentFactoryTests
 
         Assert.IsNotNull(definition);
         string combined = CombineDefinitionText(definition);
-        StringAssert.Contains("速度", combined);
+        StringAssert.Contains("敌人", combined);
+        StringAssert.Contains("速度按钮", combined);
+        StringAssert.Contains("拼点", combined);
         StringAssert.DoesNotContain("[拼点时]", combined);
         StringAssert.DoesNotContain("[单方面攻击时]", combined);
+    }
+
+    [Test]
+    public void CreateRuntimeDefinition_Battle01_StartsByViewingEnemyDetail()
+    {
+        TutorialBattleDefinition_SO definition = TutorialBattleContentFactory.CreateRuntimeDefinition(TutorialBattleStageId.Battle01);
+
+        Assert.IsNotNull(definition);
+        Assert.Greater(definition.GetOrderedSteps().Count, 0);
+        Assert.AreEqual(TutorialBattleEventType.EnemyDetailViewed, definition.GetOrderedSteps()[0].completionEvent);
     }
 
     [Test]
@@ -138,10 +150,101 @@ public class TutorialBattleContentFactoryTests
         Assert.Greater(battle02.enemies.Count, 0);
         Assert.Greater(battle05.enemies.Count, 0);
         Assert.Greater(battle06.enemies.Count, 0);
-        Assert.AreEqual(12, battle01.enemies[0].baseHP);
-        Assert.AreEqual(16, battle02.enemies[0].baseHP);
+        Assert.AreEqual(10, battle01.enemies[0].baseHP);
+        Assert.AreEqual(6, battle02.enemies[0].baseHP);
         Assert.AreEqual(20, battle05.enemies[0].baseHP);
         Assert.AreEqual(20, battle06.enemies[0].baseHP);
+    }
+
+    [Test]
+    public void CreateRuntimeEnemyGroup_Battle01_UsesSingleLightAttackEnemyAndHeavyAllySkill()
+    {
+        EnemyGroup_SO battle01 = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle01);
+
+        Assert.IsNotNull(battle01);
+        Assert.Greater(battle01.enemies.Count, 0);
+
+        EnemyData_SO enemy = battle01.enemies[0];
+        Assert.AreEqual(1, enemy.baseSpeedButtonCount);
+        Assert.AreEqual(2, enemy.minSpeed);
+        Assert.AreEqual(2, enemy.maxSpeed);
+        Assert.AreEqual(1, enemy.skillPool.Count);
+        Assert.AreEqual("轻击", enemy.skillPool[0].skillName);
+        Assert.AreEqual(1, enemy.skillPool[0].minPower);
+        Assert.AreEqual(2, enemy.skillPool[0].maxPower);
+        Assert.AreEqual(1, enemy.battleStartGrantedAllySkills.Count);
+        Assert.AreEqual("重击", enemy.battleStartGrantedAllySkills[0].skill.skillName);
+        Assert.AreEqual(3, enemy.battleStartGrantedAllySkills[0].skill.minPower);
+        Assert.AreEqual(4, enemy.battleStartGrantedAllySkills[0].skill.maxPower);
+    }
+
+    [Test]
+    public void CreateRuntimeEnemyGroup_Battle02_TeachesLowestHpExecutionAndGuard()
+    {
+        EnemyGroup_SO battle02 = TutorialBattleContentFactory.CreateRuntimeEnemyGroup(TutorialBattleStageId.Battle02);
+
+        Assert.IsNotNull(battle02);
+        Assert.Greater(battle02.enemies.Count, 0);
+
+        EnemyData_SO enemy = battle02.enemies[0];
+        Assert.AreEqual(1, enemy.baseSpeedButtonCount);
+        Assert.AreEqual(2, enemy.minSpeed);
+        Assert.AreEqual(2, enemy.maxSpeed);
+        Assert.AreEqual(1, enemy.skillPool.Count);
+        Assert.AreEqual("斩杀", enemy.skillPool[0].skillName);
+        Assert.AreEqual(2, enemy.skillPool[0].minPower);
+        Assert.AreEqual(4, enemy.skillPool[0].maxPower);
+        Assert.AreEqual(EnemySkill_SO.TargetPriorityMode.PreferLowestHP, enemy.skillPool[0].targetPriorityMode);
+        Assert.AreEqual(2, enemy.battleStartGrantedAllySkills.Count);
+        Assert.AreEqual("轻击", enemy.battleStartGrantedAllySkills[0].skill.skillName);
+        Assert.AreEqual(1, enemy.battleStartGrantedAllySkills[0].skill.minPower);
+        Assert.AreEqual(2, enemy.battleStartGrantedAllySkills[0].skill.maxPower);
+        Assert.AreEqual("守护", enemy.battleStartGrantedAllySkills[1].skill.skillName);
+        Assert.AreEqual(2, enemy.battleStartGrantedAllySkills[1].skill.minPower);
+        Assert.AreEqual(3, enemy.battleStartGrantedAllySkills[1].skill.maxPower);
+        Assert.AreEqual(EnemySkill_SO.SkillCategory.Defense, enemy.battleStartGrantedAllySkills[1].skill.skillCategory);
+        Assert.AreEqual("Molly", enemy.battleStartGrantedAllySkills[0].targetAllyCharacterName);
+        Assert.AreEqual("Chara", enemy.battleStartGrantedAllySkills[1].targetAllyCharacterName);
+    }
+
+    [Test]
+    public void CreateRuntimeDefinition_Battle02_FollowsGuardTutorialDraft()
+    {
+        TutorialBattleDefinition_SO definition = TutorialBattleContentFactory.CreateRuntimeDefinition(TutorialBattleStageId.Battle02);
+
+        Assert.IsNotNull(definition);
+        string combined = CombineDefinitionText(definition);
+        StringAssert.Contains("Molly", combined);
+        StringAssert.Contains("斩杀", combined);
+        StringAssert.Contains("守护", combined);
+        StringAssert.Contains("血量最低", combined);
+        StringAssert.Contains("转移", combined);
+    }
+
+    [Test]
+    public void CreateRuntimeDefinition_Battle02_StartsByPressingPrepareBeforeViewingSpeedButtons()
+    {
+        TutorialBattleDefinition_SO definition = TutorialBattleContentFactory.CreateRuntimeDefinition(TutorialBattleStageId.Battle02);
+
+        Assert.IsNotNull(definition);
+        Assert.Greater(definition.GetOrderedSteps().Count, 0);
+
+        TutorialBattleStepDefinition firstStep = definition.GetOrderedSteps()[0];
+        Assert.AreEqual(TutorialBattleEventType.CombatExecutePressed, firstStep.completionEvent);
+        Assert.AreEqual(TutorialBattleHighlightTarget.BattleButton, firstStep.highlightAfterContinue);
+    }
+
+    [Test]
+    public void CreateRuntimeDefinition_Battle03_StartsByPressingPrepareBeforeViewingSpeedButtons()
+    {
+        TutorialBattleDefinition_SO definition = TutorialBattleContentFactory.CreateRuntimeDefinition(TutorialBattleStageId.Battle03);
+
+        Assert.IsNotNull(definition);
+        Assert.Greater(definition.GetOrderedSteps().Count, 0);
+
+        TutorialBattleStepDefinition firstStep = definition.GetOrderedSteps()[0];
+        Assert.AreEqual(TutorialBattleEventType.CombatExecutePressed, firstStep.completionEvent);
+        Assert.AreEqual(TutorialBattleHighlightTarget.BattleButton, firstStep.highlightAfterContinue);
     }
 
     [Test]

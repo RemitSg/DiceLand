@@ -31,7 +31,7 @@ MonoBehaviour:
   diceCount: 1
   dicePowerRanges:
   - minPower: 2
-    maxPower: 5
+    maxPower: 4
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 0}
     hitEffectPrefab: {fileID: 7514323732379155374, guid: bbdcacd194697d44bb78a1d2fa1fae4c, type: 3}

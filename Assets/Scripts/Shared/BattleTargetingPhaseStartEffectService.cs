@@ -80,12 +80,26 @@ public static class BattleEnemyBattleStartSkillGrantService
                     if (ally == null || ally.IsDead)
                         continue;
 
+                    if (!ShouldGrantToAlly(grant, ally))
+                        continue;
+
                     ally.GrantTemporarySkill(grant.skill, grant.replaceWeaponSkills);
                 }
 
                 logGrant?.Invoke(enemy, grant.skill);
             }
         }
+    }
+
+    private static bool ShouldGrantToAlly(EnemyData_SO.BattleStartAllySkillGrantEntry grant, BattleAllyController ally)
+    {
+        if (string.IsNullOrWhiteSpace(grant.targetAllyCharacterName))
+            return true;
+
+        if (ally == null)
+            return false;
+
+        return string.Equals(ally.GetSettlementDisplayName(), grant.targetAllyCharacterName, System.StringComparison.OrdinalIgnoreCase);
     }
 
     private static void ClearTemporarySkills(IReadOnlyList<BattleAllyController> allies)

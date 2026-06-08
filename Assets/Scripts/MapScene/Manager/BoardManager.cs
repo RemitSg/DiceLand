@@ -206,6 +206,18 @@ public class BoardManager : MonoBehaviour
         return tiles.TryGetValue(coord, out tile);
     }
 
+    public bool TryGetTileScreenHighlightRect(Vector2Int coord, Camera targetCamera, out Rect screenRect, float paddingPixels = 18f)
+    {
+        screenRect = default;
+        if (targetCamera == null)
+            return false;
+
+        if (!views.TryGetValue(coord, out BoardTileView view) || view == null)
+            return false;
+
+        return view.TryGetScreenHighlightRect(targetCamera, out screenRect, paddingPixels);
+    }
+
     public bool IsAdjacent(Vector2Int from, Vector2Int to)
     {
         Vector2Int delta = to - from;

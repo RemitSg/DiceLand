@@ -37,7 +37,8 @@ public static partial class RelicSystem
             if (ally == null || ally.IsDead || ally.MaxHP <= 0 || ally.CurrentHP < ally.MaxHP)
                 continue;
 
-            TryApplyStatus(ally, effect, stacks);
+            if (TryApplyStatus(ally, effect, stacks))
+                ApplyImmediateBattleRoundStartSpeedBonus(context, ally, effect, stacks);
         }
     }
 
@@ -65,7 +66,8 @@ public static partial class RelicSystem
             if (hpRatio >= threshold)
                 continue;
 
-            TryApplyStatus(ally, effect, stacks);
+            if (TryApplyStatus(ally, effect, stacks))
+                ApplyImmediateBattleRoundStartSpeedBonus(context, ally, effect, stacks);
         }
     }
 }

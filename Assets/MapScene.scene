@@ -564,6 +564,7 @@ GameObject:
   - component: {fileID: 1019032853}
   - component: {fileID: 1019032854}
   - component: {fileID: 1019032856}
+  - component: {fileID: 1019032857}
   - component: {fileID: 1019032855}
   m_Layer: 0
   m_HasEditorInfo: 1
@@ -600,6 +601,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyConfig: {fileID: 11400000, guid: 4f6f34f8c8bf4cc0b5d8d5d65d4790e1, type: 2}
   enemyRoster: {fileID: 11400000, guid: dd3f26742821e6f45afc31e04ccad4a5, type: 2}
+  musicConfig: {fileID: 11400000, guid: bdeb8e5d03fb43d1b5bdcac4837e232f, type: 2}
   recruitCharacterRoster: {fileID: 11400000, guid: 5802743c86761f344ba093fffc0e03f2, type: 2}
   eventPool: {fileID: 11400000, guid: 5e7a7adcedb04f34f885440bc8e82c0e, type: 2}
   calamityPool: {fileID: 11400000, guid: c835f8b380017b54ab8c3f99190882f0, type: 2}
@@ -616,8 +618,9 @@ MonoBehaviour:
     startingLevel: 1
     startingExperience: 0
     startingMaxHP: 24
-    startingCurrentHP: 24
+    startingCurrentHP: 0
   tutorialStartingPartyMembers: []
+  tutorialBattle02MollyGuestCharacter: {fileID: 11400000, guid: 5121d91a4381d6748a08ee2236cc03fd, type: 2}
   startingLoot: []
   startingWeapons: []
   startingBlueprints: []
@@ -625,6 +628,7 @@ MonoBehaviour:
   autoStartOnAwake: 1
   battleSceneName: SampleScene
   restSceneName: RestScene
+  mainMenuSceneName: Menu Selection
   mapCamera: {fileID: 0}
   backgroundRoot: {fileID: 0}
   boardRoot: {fileID: 0}
@@ -653,6 +657,8 @@ MonoBehaviour:
   mapTreasureOverlay: {fileID: 0}
   mapEventOverlay: {fileID: 0}
   mapCalamityOverlay: {fileID: 0}
+  mapPauseMenuOverlay: {fileID: 0}
+  mapTutorialGuideOverlay: {fileID: 0}
   mapViewController: {fileID: 0}
   mapBackgroundController: {fileID: 0}
   sceneTransitionController: {fileID: 0}
@@ -664,12 +670,14 @@ MonoBehaviour:
   tutorialBossBattleDefinition: {fileID: 0}
   tutorialBattleStageOverrides: []
   tutorialCompletionSceneName: Menu Selection
+  tutorialMerchantBlueprint: {fileID: 11400000, guid: 16f9b7247ca356d4f9d1be67dd28d93d, type: 2}
   tutorialEnemyVisualTemplates:
     openingPrimaryTemplate: {fileID: 11400000, guid: a79c03a19f046ad478a2a1e9f339c1a2, type: 2}
     openingSecondaryTemplate: {fileID: 11400000, guid: a79c03a19f046ad478a2a1e9f339c1a2, type: 2}
     eliteTemplate: {fileID: 11400000, guid: 644a91785052d164390c08fd48468a74, type: 2}
     bossTemplate: {fileID: 11400000, guid: f3b54da2b2fd4a5584c0fb85294411ef, type: 2}
     burnStatusTemplate: {fileID: 0}
+  tutorialViewNavigationSettleSeconds: 0.8
   cameraBackgroundColor: {r: 0.08, g: 0.11, b: 0.16, a: 1}
   cameraPadding: 2.8
 --- !u!114 &1019032849
@@ -798,6 +806,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   backgroundRoot: {fileID: 0}
+  morningBackgroundSprite: {fileID: 21300000, guid: 8a51d4773381e3e4798700a724190860, type: 3}
+  noonBackgroundSprite: {fileID: 21300000, guid: ad59b4bab873a124cb7bc6b7d11d0639, type: 3}
+  duskBackgroundSprite: {fileID: 21300000, guid: 1f18b8b51a1d68143bc8de74d259c169, type: 3}
+  midnightBackgroundSprite: {fileID: 21300000, guid: 8a56ce2c97c1f0647b15396c024ee9eb, type: 3}
+  backgroundImageAlpha: 1
+  backgroundImageGradientWashAlpha: 0.11
+  backgroundImageBlurRadius: 1
+  backgroundImageBlurIterations: 0
+  blurredTextureMaxSize: 512
   backgroundMaterial: {fileID: 0}
   ambientParticleMaterial: {fileID: 0}
   sortingOrderBase: -200
@@ -806,12 +823,14 @@ MonoBehaviour:
   bottomGradientColor: {r: 0.02, g: 0.05, b: 0.09, a: 1}
   centerGlowColor: {r: 0.25, g: 0.62, b: 0.9, a: 0.2}
   sideGlowColor: {r: 0.95, g: 0.45, b: 0.22, a: 0.12}
-  mistColor: {r: 0.88, g: 0.94, b: 1, a: 0.08}
+  mistColor: {r: 1, g: 1, b: 1, a: 0}
   vignetteColor: {r: 0.02, g: 0.03, b: 0.05, a: 0.38}
   driftAmplitude: 0.28
   driftSpeed: 0.24
   rotationDriftAngle: 4
-  enableAmbientParticles: 1
+  fadeToBlackDuration: 0.22
+  fadeFromBlackDuration: 0.32
+  enableAmbientParticles: 0
   ambientParticleBurst: 36
   ambientParticleMinSize: 0.1
   ambientParticleMaxSize: 0.22
@@ -950,9 +969,10 @@ MonoBehaviour:
   titleColor: {r: 1, g: 1, b: 1, a: 1}
   bodyColor: {r: 0.92, g: 0.96, b: 1, a: 1}
   accentColor: {r: 1, g: 0.83, b: 0.35, a: 1}
+  mainColumnBackgroundSprite: {fileID: 21300000, guid: abda1c94c90af67408d9394ccf0edbd4, type: 3}
+  mainColumnBackgroundColor: {r: 1, g: 1, b: 1, a: 1}
   partyPanelSize: {x: 420, y: 420}
   partyPanelCollapsedSize: {x: 420, y: 64}
-  partyPanelOffset: {x: 22, y: -256}
   partyPanelBackgroundSprite: {fileID: 0}
   partyPanelColor: {r: 0, g: 0, b: 0, a: 0.63529414}
   partyPanelTitleOffset: {x: 18, y: -18}
@@ -1031,6 +1051,8 @@ MonoBehaviour:
   tileAttributeHighlightColor: {r: 0.78, g: 1, b: 0.46, a: 1}
   inventoryButtonSprite: {fileID: 21300000, guid: a5ae9e2143de022479020ead7bbe46dd, type: 3}
   inventoryButtonSpriteColor: {r: 1, g: 1, b: 1, a: 1}
+  inventoryButtonFallbackColor: {r: 0.62, g: 0.34, b: 0.2, a: 0.96}
+  inventoryButtonFallbackGlyphColor: {r: 1, g: 0.86, b: 0.68, a: 1}
   inventoryButtonOffset: {x: -24, y: -24}
   inventoryButtonFallbackSize: {x: 64, y: 64}
   inventoryPanelSize: {x: 540, y: 560}
@@ -1087,6 +1109,36 @@ MonoBehaviour:
   inventoryDetailActionButtonColor: {r: 1, g: 0.84, b: 0.36, a: 1}
   inventoryDetailActionButtonTextColor: {r: 0, g: 0, b: 0, a: 1}
   inventoryDetailActionDisabledColor: {r: 0.42, g: 0.42, b: 0.42, a: 0.9}
+--- !u!114 &1019032857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1019032846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f6e5819f99f4933bf3dcc643876bce0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvasSortOrder: 9650
+  referenceResolution: {x: 1920, y: 1080}
+  matchWidthOrHeight: 0.5
+  panelSize: {x: 980, y: 420}
+  panelAnchoredPosition: {x: 0, y: 120}
+  backdropColor: {r: 0, g: 0, b: 0, a: 0.3}
+  highlightBackdropColor: {r: 0, g: 0, b: 0, a: 0.8862745}
+  panelColor: {r: 0.07, g: 0.09, b: 0.13, a: 0.96}
+  titleColor: {r: 1, g: 1, b: 1, a: 1}
+  bodyColor: {r: 0.86, g: 0.9, b: 0.96, a: 1}
+  buttonColor: {r: 0.28, g: 0.78, b: 1, a: 1}
+  buttonTextColor: {r: 0, g: 0, b: 0, a: 1}
+  highlightFrameColor: {r: 1, g: 0.84, b: 0.36, a: 0.95}
+  highlightFrameThickness: 5
+  highlightBleedPixels: 2
+  titleFontSize: 34
+  bodyFontSize: 24
+  buttonFontSize: 22
 --- !u!1 &1023998438
 GameObject:
   m_ObjectHideFlags: 0
@@ -1280,6 +1332,8 @@ MonoBehaviour:
   panelBackgroundSprite: {fileID: 21300000, guid: aeb1aaed687499940bfa1c79c274096f, type: 3}
   panelBackgroundColor: {r: 0.08, g: 0.1, b: 0.14, a: 0.96}
   backdropColor: {r: 0, g: 0, b: 0, a: 0.66}
+  backdropBackgroundSprite: {fileID: 0}
+  backdropBackgroundColor: {r: 1, g: 1, b: 1, a: 0.72}
   cardSize: {x: 520, y: 470}
   cardSpacing: 32
   cardRootOffset: {x: 0, y: -130}

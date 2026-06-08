@@ -601,7 +601,15 @@ public class MainMenuSceneController : MonoBehaviour
         if (settingsOverlay != null && settingsOverlay.IsVisible)
             settingsOverlay.Hide();
 
-        tutorialOverlay.Show(ResolveTutorialCatalog(), StartTutorialFromMenu, TrackOverlayVisibilityState);
+        tutorialOverlay.Show(
+            ResolveTutorialCatalog(),
+            StartTutorialFromMenu,
+            TrackOverlayVisibilityState,
+            "开始教程",
+            "返回主菜单",
+            "即将开始教程，是否开始？",
+            "进入教程会让你了解战斗规则、基本玩法、游戏系统等。教程会从地图推进开始，逐步带你熟悉移动、战斗、资源管理与成长流程。",
+            true);
         SetGalleryInputEnabled(false);
     }
 

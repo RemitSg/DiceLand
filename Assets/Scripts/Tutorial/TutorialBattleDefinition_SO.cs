@@ -29,6 +29,14 @@ public enum TutorialBattleInputPolicy
     RequireBeforeCombat = 2
 }
 
+public enum TutorialBattleHighlightTarget
+{
+    None = 0,
+    BattleButton = 1,
+    FirstEnemySpeedButton = 2,
+    FirstAllySpeedButton = 3
+}
+
 [Serializable]
 public class TutorialBattleStepDefinition
 {
@@ -41,6 +49,7 @@ public class TutorialBattleStepDefinition
     public bool autoShow = true;
     public string continueButtonLabel = "继续";
     public string blockedMessage = "请先完成当前教程提示。";
+    public TutorialBattleHighlightTarget highlightAfterContinue = TutorialBattleHighlightTarget.None;
 }
 
 [Serializable]
@@ -52,6 +61,7 @@ public class TutorialBattleReactionDefinition
     public int sortOrder;
     public TutorialBattleEventType triggerEvent = TutorialBattleEventType.None;
     public bool pauseForAcknowledgement = true;
+    public TutorialBattleHighlightTarget highlightAfterContinue = TutorialBattleHighlightTarget.None;
     public string continueButtonLabel = "明白了";
 }
 

@@ -88,6 +88,36 @@ public class TutorialBattleRuntimeTests
     }
 
     [Test]
+    public void TryRequestCombatExecution_AllowsExecutionWhenCurrentStepRequiresCombatButton()
+    {
+        TutorialBattleDefinition_SO definition = ScriptableObject.CreateInstance<TutorialBattleDefinition_SO>();
+        definition.Steps.Add(new TutorialBattleStepDefinition
+        {
+            stepId = "press_combat",
+            sortOrder = 0,
+            title = "Press Combat",
+            completionEvent = TutorialBattleEventType.CombatExecutePressed,
+            inputPolicy = TutorialBattleInputPolicy.RequireBeforeCombat
+        });
+        definition.Steps.Add(new TutorialBattleStepDefinition
+        {
+            stepId = "view_skill",
+            sortOrder = 10,
+            title = "View Skill",
+            completionEvent = TutorialBattleEventType.AllySkillViewed,
+            inputPolicy = TutorialBattleInputPolicy.RequireBeforeCombat,
+            blockedMessage = "View skill first"
+        });
+        definition.ForceValidateForTests();
+
+        TutorialBattleRuntime.BeginBattle(definition);
+
+        Assert.IsTrue(TutorialBattleRuntime.TryRequestCombatExecution(out string blockedMessage));
+        Assert.IsTrue(string.IsNullOrWhiteSpace(blockedMessage));
+        Assert.AreEqual("view_skill", TutorialBattleRuntime.CurrentStep.stepId);
+    }
+
+    [Test]
     public void NotifyEvent_ReturnsConfiguredReactionOnlyOnce()
     {
         TutorialBattleDefinition_SO definition = ScriptableObject.CreateInstance<TutorialBattleDefinition_SO>();

@@ -87,7 +87,14 @@ public static class TutorialBattleRuntime
         if (!IsActive)
             return true;
 
+        TutorialBattleStepDefinition stepBeforeEvent = CurrentStep;
         NotifyEvent(TutorialBattleEventType.CombatExecutePressed);
+        if (stepBeforeEvent != null
+            && stepBeforeEvent.completionEvent == TutorialBattleEventType.CombatExecutePressed)
+        {
+            return true;
+        }
+
         TutorialBattleStepDefinition step = CurrentStep;
         if (step == null || step.inputPolicy != TutorialBattleInputPolicy.RequireBeforeCombat)
             return true;

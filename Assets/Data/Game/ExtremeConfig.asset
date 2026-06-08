@@ -15,6 +15,9 @@ MonoBehaviour:
   difficultyName: Extreme
   boardSize: 13
   startingActionPoints: 6
+  actionPointTiers:
+  - calamityTier: 0
+    actionPointLimit: 6
   requiredKeys: 3
   generatedKeyTileCount: 3
   spawnMinRingDistance: 2
@@ -29,3 +32,47 @@ MonoBehaviour:
     weight: 1
   - tileType: 9
     weight: 1
+  - tileType: 4
+    weight: 1
+  - tileType: 5
+    weight: 1
+  - tileType: 6
+    weight: 1
+  tileMinimums:
+  - tileType: 1
+    minimumCount: 0
+  - tileType: 2
+    minimumCount: 0
+  - tileType: 3
+    minimumCount: 0
+  - tileType: 4
+    minimumCount: 0
+  - tileType: 9
+    minimumCount: 0
+  - tileType: 5
+    minimumCount: 0
+  - tileType: 6
+    minimumCount: 0
+  maxRecruitCount: 4
+  recruitCostTiers: 320000005000000078000000b4000000
+  legacyMerchantRefreshCost: 30
+  merchantRefreshCostTiers: 1e0000002d0000003c000000
+  merchantRelicPrices:
+  - rarity: 0
+    minPrice: 14
+    maxPrice: 20
+  - rarity: 1
+    minPrice: 18
+    maxPrice: 26
+  - rarity: 2
+    minPrice: 26
+    maxPrice: 34
+  - rarity: 3
+    minPrice: 34
+    maxPrice: 42
+  - rarity: 4
+    minPrice: 42
+    maxPrice: 52
+  - rarity: 5
+    minPrice: 1
+    maxPrice: 1

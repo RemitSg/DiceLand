@@ -51,11 +51,15 @@ public sealed partial class RelicExecutionContext
     public int incomingDamagePercentModifier;
     public int incomingSourceSpeed;
     public int incomingTargetSpeed;
+    public List<BattleDamageFormulaModifierSource> incomingDamageFlatModifierSources;
+    public List<BattleDamageFormulaModifierSource> incomingDamagePercentModifierSources;
 
     // Outgoing damage context.
     public int outgoingDamage;
     public int outgoingDamageFlatModifier;
     public int outgoingDamagePercentModifier;
+    public List<BattleDamageFormulaModifierSource> outgoingDamageFlatModifierSources;
+    public List<BattleDamageFormulaModifierSource> outgoingDamagePercentModifierSources;
 
     // Lethal damage prevention context.
     public bool preventLethalDamage;
@@ -119,4 +123,44 @@ public sealed partial class RelicExecutionContext
 
     // User-facing feedback collected by relic effects.
     public List<string> feedbackMessages;
+
+    public void AddIncomingDamageFlatModifierSource(int amount, string sourceName)
+    {
+        if (amount == 0)
+            return;
+
+        if (incomingDamageFlatModifierSources == null)
+            incomingDamageFlatModifierSources = new List<BattleDamageFormulaModifierSource>();
+        incomingDamageFlatModifierSources.Add(new BattleDamageFormulaModifierSource(amount, sourceName));
+    }
+
+    public void AddIncomingDamagePercentModifierSource(int amount, string sourceName)
+    {
+        if (amount == 0)
+            return;
+
+        if (incomingDamagePercentModifierSources == null)
+            incomingDamagePercentModifierSources = new List<BattleDamageFormulaModifierSource>();
+        incomingDamagePercentModifierSources.Add(new BattleDamageFormulaModifierSource(amount, sourceName));
+    }
+
+    public void AddOutgoingDamageFlatModifierSource(int amount, string sourceName)
+    {
+        if (amount == 0)
+            return;
+
+        if (outgoingDamageFlatModifierSources == null)
+            outgoingDamageFlatModifierSources = new List<BattleDamageFormulaModifierSource>();
+        outgoingDamageFlatModifierSources.Add(new BattleDamageFormulaModifierSource(amount, sourceName));
+    }
+
+    public void AddOutgoingDamagePercentModifierSource(int amount, string sourceName)
+    {
+        if (amount == 0)
+            return;
+
+        if (outgoingDamagePercentModifierSources == null)
+            outgoingDamagePercentModifierSources = new List<BattleDamageFormulaModifierSource>();
+        outgoingDamagePercentModifierSources.Add(new BattleDamageFormulaModifierSource(amount, sourceName));
+    }
 }

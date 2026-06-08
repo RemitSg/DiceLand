@@ -48,12 +48,19 @@ public class MapViewController : MonoBehaviour
     private bool longPressTriggered;
     private Coroutine introRoutine;
     private Func<bool> inputBlockedEvaluator;
+    private Func<bool> pointerOverUiIgnoredEvaluator;
 
     public event Action<BoardTileData> TileLongPressed;
+    public event Action ViewNavigationPerformed;
 
     public void SetInputBlockedEvaluator(Func<bool> evaluator)
     {
         inputBlockedEvaluator = evaluator;
+    }
+
+    public void SetPointerOverUiIgnoredEvaluator(Func<bool> evaluator)
+    {
+        pointerOverUiIgnoredEvaluator = evaluator;
     }
 
     public void Initialize(Camera mapCamera, BoardManager board, float padding)
@@ -125,7 +132,10 @@ public class MapViewController : MonoBehaviour
     private void HandleMouseInput()
     {
         if (Mathf.Abs(Input.mouseScrollDelta.y) > 0.001f)
+        {
             ZoomBy(-Input.mouseScrollDelta.y * mouseWheelZoomStep, Input.mousePosition);
+            ViewNavigationPerformed?.Invoke();
+        }
 
         if (Input.GetMouseButtonDown(0))
             BeginPointer(Input.mousePosition, -1);
@@ -182,11 +192,12 @@ public class MapViewController : MonoBehaviour
 
         ZoomBy(-deltaDistance * pinchZoomSensitivity, currentMidpoint);
         PanBetweenScreenPositions(previousMidpoint, currentMidpoint);
+        ViewNavigationPerformed?.Invoke();
     }
 
     private void BeginPointer(Vector2 screenPosition, int pointerId)
     {
-        if (IsPointerOverUi(pointerId))
+        if (IsPointerOverUi(pointerId) && !ShouldIgnorePointerOverUi())
         {
             ResetPointerState();
             return;
@@ -211,7 +222,10 @@ public class MapViewController : MonoBehaviour
             dragging = true;
 
         if (dragging)
+        {
             PanBetweenScreenPositions(lastPointerScreenPosition, screenPosition);
+            ViewNavigationPerformed?.Invoke();
+        }
 
         if (!dragging && !longPressTriggered && pressedTile != null)
         {
@@ -381,6 +395,11 @@ public class MapViewController : MonoBehaviour
     private bool IsInputBlocked()
     {
         return inputBlockedEvaluator != null && inputBlockedEvaluator.Invoke();
+    }
+
+    private bool ShouldIgnorePointerOverUi()
+    {
+        return pointerOverUiIgnoredEvaluator != null && pointerOverUiIgnoredEvaluator.Invoke();
     }
 
     private IEnumerator PlaySpawnIntroRoutine(Vector3 focusWorldPosition)

@@ -133,7 +133,7 @@ public static class MapRunRuntime
             for (int i = 0; i < encounter.resolvedPartyMembers.Count; i++)
             {
                 RunPartyMemberState member = encounter.resolvedPartyMembers[i];
-                if (member != null)
+                if (member != null && !member.isTemporaryBattleGuest)
                     currentSnapshot.runState.partyMembers.Add(member.Clone());
             }
 

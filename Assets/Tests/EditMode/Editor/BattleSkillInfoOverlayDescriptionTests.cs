@@ -354,6 +354,185 @@ public class BattleSkillInfoOverlayDescriptionTests
     }
 
     [Test]
+    public void CompactSkillDetail_MergesConditionedConsumedStatusFlatPowerModifier()
+    {
+        BattleStatus_SO refractedMark = CreateStatus("refracted_mark", "\u6298\u5149\u5370");
+        EnemySkill_SO skill = ScriptableObject.CreateInstance<EnemySkill_SO>();
+        createdObjects.Add(skill);
+        skill.skillName = "\u7167\u9762\u5207\u843d";
+        skill.diceCount = 1;
+        skill.dicePowerRanges = new[]
+        {
+            new EnemySkill_SO.DicePowerRange { minPower = 4, maxPower = 6 }
+        };
+        skill.diceEffectSettings = new[]
+        {
+            new EnemySkill_SO.DiceEffectSettings
+            {
+                powerModifiers = new[]
+                {
+                    new EnemySkill_SO.ConditionalPowerModifierEntry
+                    {
+                        trigger = EnemySkill_SO.DiceEffectTrigger.OnSkillUse,
+                        useCondition = true,
+                        condition = EnemySkill_SO.PowerModifierCondition.TargetHasStatus,
+                        targetStatusData = refractedMark,
+                        requiredStatusStacks = 1,
+                        powerBonus = 1
+                    }
+                },
+                statusStackOperationEffects = new[]
+                {
+                    new EnemySkill_SO.StatusStackOperationEffectEntry
+                    {
+                        trigger = EnemySkill_SO.DiceEffectTrigger.OnSkillUse,
+                        targetMode = EnemySkill_SO.DamageTargetMode.CurrentTarget,
+                        statusData = refractedMark,
+                        operationType = EnemySkill_SO.StatusStackOperationType.ReduceStacks,
+                        stackAmount = 1,
+                        randomTargetCount = 1,
+                        useCondition = true,
+                        condition = EnemySkill_SO.PowerModifierCondition.TargetHasStatus,
+                        conditionStatusData = refractedMark,
+                        requiredConditionStatusStacks = 1
+                    }
+                }
+            }
+        };
+
+        string detail = InvokeCompactSkillHoverDetail(skill);
+        string consumeLine = FindLineContaining(detail, "\u6d88\u8017");
+
+        Assert.That(consumeLine, Does.Contain("\u4f7f\u7528\u65f6"));
+        Assert.That(consumeLine, Does.Contain("1"));
+        Assert.That(consumeLine, Does.Contain("\u6298\u5149\u5370"));
+        Assert.That(consumeLine, Does.Contain("\u5a01\u529b"));
+        Assert.That(consumeLine, Does.Contain("+1"));
+        Assert.That(detail, Does.Not.Contain("\u51cf\u5c11"));
+        Assert.That(detail, Does.Not.Contain("\u82e5 \u003ccolor"));
+    }
+
+    [Test]
+    public void CompactSkillDetail_MergesConditionedConsumedStatusBuiltInDamage()
+    {
+        BattleStatus_SO refractedMark = CreateStatus("refracted_mark", "\u6298\u5149\u5370");
+        EnemySkill_SO skill = ScriptableObject.CreateInstance<EnemySkill_SO>();
+        createdObjects.Add(skill);
+        skill.skillName = "\u7167\u9762\u5207\u843d";
+        skill.diceCount = 1;
+        skill.dicePowerRanges = new[]
+        {
+            new EnemySkill_SO.DicePowerRange { minPower = 2, maxPower = 4 }
+        };
+        skill.diceEffectSettings = new[]
+        {
+            new EnemySkill_SO.DiceEffectSettings
+            {
+                builtInEffects = new[]
+                {
+                    new EnemySkill_SO.BuiltInEffectEntry
+                    {
+                        trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                        effectType = EnemySkill_SO.BuiltInEffectType.Damage,
+                        targetMode = EnemySkill_SO.DamageTargetMode.CurrentTarget,
+                        amount = 2,
+                        useCondition = true,
+                        condition = EnemySkill_SO.PowerModifierCondition.TargetHasStatus,
+                        targetStatusData = refractedMark,
+                        requiredConditionStatusStacks = 1
+                    }
+                },
+                statusStackOperationEffects = new[]
+                {
+                    new EnemySkill_SO.StatusStackOperationEffectEntry
+                    {
+                        trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                        targetMode = EnemySkill_SO.DamageTargetMode.CurrentTarget,
+                        statusData = refractedMark,
+                        operationType = EnemySkill_SO.StatusStackOperationType.ReduceStacks,
+                        stackAmount = 1,
+                        randomTargetCount = 1,
+                        useCondition = true,
+                        condition = EnemySkill_SO.PowerModifierCondition.TargetHasStatus,
+                        conditionStatusData = refractedMark,
+                        requiredConditionStatusStacks = 1
+                    }
+                }
+            }
+        };
+
+        string detail = InvokeCompactSkillHoverDetail(skill);
+        string consumeLine = FindLineContaining(detail, "\u6d88\u8017");
+
+        Assert.That(consumeLine, Does.Contain("\u547d\u4e2d\u65f6"));
+        Assert.That(consumeLine, Does.Contain("1"));
+        Assert.That(consumeLine, Does.Contain("\u6298\u5149\u5370"));
+        Assert.That(consumeLine, Does.Contain("\u989d\u5916\u9020\u6210"));
+        Assert.That(consumeLine, Does.Contain("2"));
+        Assert.That(detail, Does.Not.Contain("\u51cf\u5c11"));
+        Assert.That(detail, Does.Not.Contain("\u82e5 \u003ccolor"));
+    }
+
+    [Test]
+    public void CompactSkillDetail_MergesConsumedStatusRepeatCurrentDie()
+    {
+        BattleStatus_SO refractedMark = CreateStatus("refracted_mark", "\u6298\u5149\u5370");
+        EnemySkill_SO skill = ScriptableObject.CreateInstance<EnemySkill_SO>();
+        createdObjects.Add(skill);
+        skill.skillName = "\u6666\u9762\u6298\u8fd4";
+        skill.diceCount = 1;
+        skill.dicePowerRanges = new[]
+        {
+            new EnemySkill_SO.DicePowerRange { minPower = 2, maxPower = 3 }
+        };
+        skill.diceEffectSettings = new[]
+        {
+            new EnemySkill_SO.DiceEffectSettings
+            {
+                builtInEffects = new[]
+                {
+                    new EnemySkill_SO.BuiltInEffectEntry
+                    {
+                        trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                        effectType = EnemySkill_SO.BuiltInEffectType.RepeatCurrentDie,
+                        targetMode = EnemySkill_SO.DamageTargetMode.CurrentTarget,
+                        useCondition = true,
+                        condition = EnemySkill_SO.PowerModifierCondition.TargetHasStatus,
+                        targetStatusData = refractedMark,
+                        requiredConditionStatusStacks = 1
+                    }
+                },
+                statusStackOperationEffects = new[]
+                {
+                    new EnemySkill_SO.StatusStackOperationEffectEntry
+                    {
+                        trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                        targetMode = EnemySkill_SO.DamageTargetMode.CurrentTarget,
+                        statusData = refractedMark,
+                        operationType = EnemySkill_SO.StatusStackOperationType.ReduceStacks,
+                        stackAmount = 1,
+                        randomTargetCount = 1,
+                        useCondition = true,
+                        condition = EnemySkill_SO.PowerModifierCondition.TargetHasStatus,
+                        conditionStatusData = refractedMark,
+                        requiredConditionStatusStacks = 1
+                    }
+                }
+            }
+        };
+
+        string detail = InvokeCompactSkillHoverDetail(skill);
+        string consumeLine = FindLineContaining(detail, "\u6d88\u8017");
+
+        Assert.That(consumeLine, Does.Contain("\u547d\u4e2d\u65f6"));
+        Assert.That(consumeLine, Does.Contain("1"));
+        Assert.That(consumeLine, Does.Contain("\u6298\u5149\u5370"));
+        Assert.That(consumeLine, Does.Contain("\u91cd\u590d\u4f7f\u7528\u8be5\u9ab0\u5b50"));
+        Assert.That(detail, Does.Not.Contain("\u51cf\u5c11"));
+        Assert.That(detail, Does.Not.Contain("\u82e5 \u003ccolor"));
+    }
+
+    [Test]
     public void CompactSkillDetail_ShowsScalingRangeModifierCap()
     {
         BattleStatus_SO current = CreateStatus("current", "\u7535\u6d41");
@@ -454,10 +633,49 @@ public class BattleSkillInfoOverlayDescriptionTests
         string[] sections = InvokeCompactSkillHoverSections(skill);
 
         Assert.That(sections, Has.Length.EqualTo(2));
-        Assert.That(sections[0], Does.Contain("\u7b2c 1 \u653b\u51fb\u6bb5"));
+        Assert.That(sections[0], Does.Contain("\u7b2c 1 \u653b\u51fb"));
         Assert.That(sections[0], Does.Not.Contain("\u8bcd\u6761"));
         Assert.That(sections[1], Does.StartWith("\u8bcd\u6761\uff1a"));
         Assert.That(sections[1], Does.Contain("\u8106\u5f31"));
+    }
+
+    [Test]
+    public void SkillDetail_IncludesSummonEffects()
+    {
+        EnemyData_SO summonedEnemy = ScriptableObject.CreateInstance<EnemyData_SO>();
+        createdObjects.Add(summonedEnemy);
+        summonedEnemy.enemyName = "\u8840\u8718\u86cb";
+
+        EnemySkill_SO skill = ScriptableObject.CreateInstance<EnemySkill_SO>();
+        createdObjects.Add(skill);
+        skill.skillName = "\u7e41\u6b96";
+        skill.diceCount = 1;
+        skill.dicePowerRanges = new[]
+        {
+            new EnemySkill_SO.DicePowerRange { minPower = 1, maxPower = 2 }
+        };
+        skill.diceEffectSettings = new[]
+        {
+            new EnemySkill_SO.DiceEffectSettings
+            {
+                summonEffects = new[]
+                {
+                    new EnemySkill_SO.SummonEnemyEffectEntry
+                    {
+                        trigger = EnemySkill_SO.DiceEffectTrigger.OnSkillUse,
+                        enemyData = summonedEnemy,
+                        summonCount = 2
+                    }
+                }
+            }
+        };
+
+        string detail = InvokeSkillDetail(skill);
+
+        Assert.That(detail, Does.Contain("\u4f7f\u7528\u65f6"));
+        Assert.That(detail, Does.Contain("\u53ec\u5524"));
+        Assert.That(detail, Does.Contain("\u8840\u8718\u86cb"));
+        Assert.That(detail, Does.Contain("2"));
     }
 
     private string InvokeCompactSkillHoverDetail(EnemySkill_SO skill)
@@ -471,6 +689,19 @@ public class BattleSkillInfoOverlayDescriptionTests
 
         Assert.IsNotNull(method);
         return (string)method.Invoke(overlay, new object[] { skill, true });
+    }
+
+    private string InvokeSkillDetail(EnemySkill_SO skill)
+    {
+        MethodInfo method = typeof(BattleSkillInfoOverlay).GetMethod(
+            "BuildSkillDetail",
+            BindingFlags.Instance | BindingFlags.NonPublic,
+            null,
+            new[] { typeof(EnemySkill_SO), typeof(string), typeof(bool), typeof(System.Func<int, EnemySkill_SO.DicePowerRange>), typeof(BattleAllyController) },
+            null);
+
+        Assert.IsNotNull(method);
+        return (string)method.Invoke(overlay, new object[] { skill, "\u5f53\u524d\u6280\u80fd", false, null, null });
     }
 
     private string[] InvokeCompactSkillHoverSections(EnemySkill_SO skill)
@@ -497,6 +728,19 @@ public class BattleSkillInfoOverlayDescriptionTests
 
         Assert.IsNotNull(method);
         return (string)method.Invoke(overlay, new object[] { skill, 0, baseRange, displayedRange });
+    }
+
+    private static string FindLineContaining(string text, string expectedSubstring)
+    {
+        string[] lines = text.Split('\n');
+        for (int i = 0; i < lines.Length; i++)
+        {
+            if (lines[i].Contains(expectedSubstring))
+                return lines[i];
+        }
+
+        Assert.Fail($"Could not find line containing {expectedSubstring} in:\n{text}");
+        return string.Empty;
     }
 
     private BattleStatus_SO CreateStatus(string id, string displayName)

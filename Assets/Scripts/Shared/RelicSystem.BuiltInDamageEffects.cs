@@ -20,6 +20,7 @@ public static partial class RelicSystem
             return;
 
         context.incomingDamageFlatModifier -= reductionAmount;
+        context.AddIncomingDamageFlatModifierSource(-reductionAmount, GetRelicDisplayName(relicData));
         AddRelicFeedback(context, relicData, $"本次单方面攻击伤害 -{reductionAmount}。");
         return;
     }
@@ -46,6 +47,7 @@ public static partial class RelicSystem
             return;
 
         context.incomingDamagePercentModifier += reductionPercent;
+        context.AddIncomingDamagePercentModifierSource(-reductionPercent, GetRelicDisplayName(relicData));
         AddRelicFeedback(
             context,
             relicData,
@@ -75,6 +77,7 @@ public static partial class RelicSystem
             return;
 
         context.incomingDamagePercentModifier += attackReductionPercent;
+        context.AddIncomingDamagePercentModifierSource(-attackReductionPercent, GetRelicDisplayName(relicData));
         AddRelicFeedback(
             context,
             relicData,
@@ -103,6 +106,7 @@ public static partial class RelicSystem
             return;
 
         context.incomingDamagePercentModifier += generalReductionPercent;
+        context.AddIncomingDamagePercentModifierSource(-generalReductionPercent, GetRelicDisplayName(relicData));
         return;
     }
 
@@ -127,6 +131,7 @@ public static partial class RelicSystem
             return;
 
         context.outgoingDamagePercentModifier += outgoingPercentBonus;
+        context.AddOutgoingDamagePercentModifierSource(outgoingPercentBonus, GetRelicDisplayName(relicData));
         return;
     }
 
@@ -151,6 +156,7 @@ public static partial class RelicSystem
             return;
 
         context.outgoingDamageFlatModifier += outgoingFlatBonus;
+        context.AddOutgoingDamageFlatModifierSource(outgoingFlatBonus, GetRelicDisplayName(relicData));
         return;
     }
 
@@ -212,6 +218,7 @@ public static partial class RelicSystem
             return;
 
         context.incomingDamagePercentModifier += attackStatusReductionPercent;
+        context.AddIncomingDamagePercentModifierSource(-attackStatusReductionPercent, GetRelicDisplayName(relicData));
         return;
     }
 
@@ -236,6 +243,7 @@ public static partial class RelicSystem
             return;
 
         context.incomingDamageFlatModifier -= attackStatusReductionFlat;
+        context.AddIncomingDamageFlatModifierSource(-attackStatusReductionFlat, GetRelicDisplayName(relicData));
         return;
     }
 
@@ -262,6 +270,7 @@ public static partial class RelicSystem
             return;
 
         context.incomingDamageFlatModifier -= flatReductionAmount;
+        context.AddIncomingDamageFlatModifierSource(-flatReductionAmount, GetRelicDisplayName(relicData));
         return;
     }
 

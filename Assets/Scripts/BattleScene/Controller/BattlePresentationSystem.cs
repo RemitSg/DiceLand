@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 
 [DisallowMultipleComponent]
@@ -97,6 +98,12 @@ public class BattlePresentationSystem : MonoBehaviour
     [SerializeField] private float hitEffectDuration = 0.5f;
     [SerializeField] private float builtInHitDamageDelay = 0.07f;
 
+    [Header("Interaction")]
+    [SerializeField] private bool waitForPlayerClickDuringDicePresentation = true;
+
+    [Header("Audio")]
+    [SerializeField] private BattleSfxPlayer battleSfxPlayer;
+
     [Header("Knockback")]
     [SerializeField] private float defenderKnockbackDistance = 0.32f;
     [SerializeField] private float defenderKnockbackOutDuration = 0.08f;
@@ -140,6 +147,7 @@ public class BattlePresentationSystem : MonoBehaviour
     [SerializeField, Min(0f)] private float closeupRangeLensPulseAmplitude = 0.18f;
     [SerializeField, Min(0f)] private float closeupRangePositionPulseAmplitude = 0.06f;
     [SerializeField, Min(0.01f)] private float closeupRangePulseFrequency = 2.1f;
+    [SerializeField, Range(0f, 1f)] private float continuousRangePulseIntensity = 0.45f;
     [SerializeField, Min(0f)] private float clashShakeAmplitude = 0.08f;
     [SerializeField, Min(0f)] private float hitShakeAmplitude = 0.16f;
     [SerializeField, Min(0f)] private float cameraPowerNormalization = 12f;
@@ -193,6 +201,8 @@ public class BattlePresentationSystem : MonoBehaviour
     private float closeupShakeRemaining;
     private float closeupRangePulseDuration;
     private float closeupRangePulseRemaining;
+    private float closeupRangePulseStartTime;
+    private bool closeupRangePulseContinuous;
 
     private void Awake()
     {
@@ -225,6 +235,8 @@ public class BattlePresentationSystem : MonoBehaviour
         if (ally == null || enemy == null)
             yield break;
 
+        using var presentationInteractionLock = BattlePresentationContinueInputService.BeginPresentationInteractionLock();
+
         EnsureRuntimeResources();
         BattleFeedbackSystem feedbackSystem = ResolveFeedbackSystem();
 
@@ -241,14 +253,22 @@ public class BattlePresentationSystem : MonoBehaviour
         if (moveIntoPosition)
             yield return MovePair(ally, plane.firstStart, allyTarget, enemy, plane.secondStart, enemyTarget, advanceDuration);
         int clashShotId = StartCloseupShot(ally, enemy, plane.midpoint + Vector3.up * impactHeightOffset, Mathf.Max(clashCameraPower, hitCameraPower));
-        BeginCloseupRangePulse(clashCloseupLeadDuration + delayBeforeClashDiceReveal);
+        BeginCloseupRangePulse(clashCloseupLeadDuration + delayBeforeClashDiceReveal, waitForPlayerClickDuringDicePresentation);
         if (clashShotId != 0 && clashCloseupLeadDuration > 0f)
             yield return new WaitForSeconds(clashCloseupLeadDuration);
-        if (delayBeforeClashDiceReveal > 0f)
+        if (waitForPlayerClickDuringDicePresentation)
+        {
+            yield return WaitForPresentationContinueClick();
+            StopCloseupRangePulse();
+        }
+        else if (delayBeforeClashDiceReveal > 0f)
             yield return new WaitForSeconds(delayBeforeClashDiceReveal);
         feedbackSystem?.RevealClashDiceValue(allyDiceDisplay, allyPower, allyPowerModifier);
         feedbackSystem?.RevealClashDiceValue(enemyDiceDisplay, enemyPower, enemyPowerModifier);
+        ResolveBattleSfxPlayer()?.PlayClashAnimation();
         yield return PlayClashExchangeFx(ally, enemy, plane.z, plane.midpoint + Vector3.up * impactHeightOffset, plane.direction, clashCameraPower, allyClashFx, enemyClashFx);
+        if (waitForPlayerClickDuringDicePresentation && hasWinner)
+            yield return WaitForPresentationContinueClick();
 
         if (delayAfterClash > 0f)
             yield return new WaitForSeconds(delayAfterClash);
@@ -308,6 +328,8 @@ public class BattlePresentationSystem : MonoBehaviour
         if (attacker == null || defender == null)
             yield break;
 
+        using var presentationInteractionLock = BattlePresentationContinueInputService.BeginPresentationInteractionLock();
+
         EnsureRuntimeResources();
         BattleFeedbackSystem feedbackSystem = ResolveFeedbackSystem();
         BattleFeedbackSystem.ClashDiceDisplayHandle diceDisplay = null;
@@ -328,12 +350,22 @@ public class BattlePresentationSystem : MonoBehaviour
 
         int hitShotId = StartCloseupShot(attacker, defender, Project(attackerCenter, plane.z) + Vector3.up * impactHeightOffset, hitCameraPower);
         diceDisplay = feedbackSystem?.ShowClashDiceRange(attacker, !attackerIsAlly, attackRange, baseAttackRange);
-        BeginCloseupRangePulse(singleAttackRangeDisplayDuration);
+        BeginCloseupRangePulse(singleAttackRangeDisplayDuration, waitForPlayerClickDuringDicePresentation);
 
-        if (singleAttackRangeDisplayDuration > 0f)
+        if (waitForPlayerClickDuringDicePresentation)
+        {
+            yield return WaitForPresentationContinueClick();
+            StopCloseupRangePulse();
+        }
+        else if (singleAttackRangeDisplayDuration > 0f)
             yield return new WaitForSeconds(singleAttackRangeDisplayDuration);
 
         feedbackSystem?.RevealClashDiceValue(diceDisplay, attackPower, attackPowerModifier);
+        if (waitForPlayerClickDuringDicePresentation)
+        {
+            yield return WaitForDiceValueReveal(feedbackSystem);
+            yield return WaitForPresentationContinueClick();
+        }
         float skillSpriteDuration = fx.overrideSkillSpriteDuration
             ? Mathf.Max(0.01f, fx.skillSpriteDuration)
             : hitEffectDuration;
@@ -382,6 +414,31 @@ public class BattlePresentationSystem : MonoBehaviour
             yield break;
 
         yield return MovePair(first, currentFirst, firstTarget, second, currentSecond, secondTarget, returnDuration);
+    }
+
+    private IEnumerator WaitForPresentationContinueClick()
+    {
+        BattlePresentationContinueInputState inputState = BattlePresentationContinueInputService.CreateState(Input.GetMouseButton(0));
+        while (true)
+        {
+            bool mousePressedThisFrame = Input.GetMouseButtonDown(0);
+            bool blockedGameplayClick = mousePressedThisFrame && IsPresentationContinueClickBlocked();
+            if (BattlePresentationContinueInputService.ShouldContinue(
+                    ref inputState,
+                    Input.GetMouseButton(0),
+                    mousePressedThisFrame,
+                    blockedGameplayClick))
+                yield break;
+
+            yield return null;
+        }
+    }
+
+    private static IEnumerator WaitForDiceValueReveal(BattleFeedbackSystem feedbackSystem)
+    {
+        float revealDuration = feedbackSystem != null ? feedbackSystem.GetClashDiceValueRevealDuration() : 0.01f;
+        if (revealDuration > 0f)
+            yield return new WaitForSeconds(revealDuration);
     }
 
     public void PlayStatusTickEffect(Transform target, BattleStatus_SO statusData)
@@ -1517,6 +1574,16 @@ public class BattlePresentationSystem : MonoBehaviour
         return battleFeedbackSystem;
     }
 
+    private BattleSfxPlayer ResolveBattleSfxPlayer()
+    {
+        if (battleSfxPlayer == null)
+            battleSfxPlayer = GetComponent<BattleSfxPlayer>();
+        if (battleSfxPlayer == null)
+            battleSfxPlayer = FindObjectOfType<BattleSfxPlayer>();
+
+        return battleSfxPlayer;
+    }
+
     private bool UseCloseupCutCamera()
     {
         return enableCameraImpact && enableCloseupCuts && closeupCamera != null && ResolveBattleCamera() != closeupCamera;
@@ -1536,6 +1603,8 @@ public class BattlePresentationSystem : MonoBehaviour
         closeupShakeRemaining = 0f;
         closeupRangePulseDuration = 0f;
         closeupRangePulseRemaining = 0f;
+        closeupRangePulseStartTime = 0f;
+        closeupRangePulseContinuous = false;
         activeCloseupShotRoutine = StartCoroutine(RunCloseupShot(shotId, first, second, fallbackFocus, power));
         return shotId;
     }
@@ -1608,13 +1677,15 @@ public class BattlePresentationSystem : MonoBehaviour
             Vector2 shake = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle * 0.83f)) * (baseShakeAmplitude * shakeStrength);
 
             float rangePulse = EvaluateCloseupRangePulse();
+            if (closeupRangePulseContinuous)
+                rangePulse *= continuousRangePulseIntensity;
             Vector3 pulsePositionOffset = new Vector3(
                 Mathf.Sin(Time.time * closeupRangePulseFrequency * Mathf.PI * 1.2f),
                 Mathf.Cos(Time.time * closeupRangePulseFrequency * Mathf.PI * 0.9f),
                 0f) * (closeupRangePositionPulseAmplitude * rangePulse);
 
-            Vector3 cameraPosition = Vector3.Lerp(shotCamera.transform.position, desiredPosition, followT);
-            cameraPosition += new Vector3(shake.x, shake.y, 0f) + pulsePositionOffset;
+            Vector3 cameraPosition = Vector3.Lerp(shotCamera.transform.position, desiredPosition + pulsePositionOffset, followT);
+            cameraPosition += new Vector3(shake.x, shake.y, 0f);
             shotCamera.transform.position = cameraPosition;
 
             if (shotCamera.orthographic)
@@ -1650,24 +1721,38 @@ public class BattlePresentationSystem : MonoBehaviour
         activeCloseupShotRoutine = null;
     }
 
-    private void BeginCloseupRangePulse(float duration)
+    private void BeginCloseupRangePulse(float duration, bool continuous = false)
     {
         if (duration <= 0f)
             return;
 
         closeupRangePulseDuration = Mathf.Max(closeupRangePulseDuration, duration);
         closeupRangePulseRemaining = Mathf.Max(closeupRangePulseRemaining, duration);
+        closeupRangePulseStartTime = Time.time;
+        closeupRangePulseContinuous = continuous;
+    }
+
+    private void StopCloseupRangePulse()
+    {
+        closeupRangePulseRemaining = 0f;
+        closeupRangePulseContinuous = false;
+    }
+
+    private bool IsPresentationContinueClickBlocked()
+    {
+        return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
     }
 
     private float EvaluateCloseupRangePulse()
     {
-        if (closeupRangePulseRemaining <= 0f || closeupRangePulseDuration <= 0.0001f)
+        if (!closeupRangePulseContinuous && closeupRangePulseRemaining <= 0f)
             return 0f;
 
-        float elapsedNormalized = 1f - Mathf.Clamp01(closeupRangePulseRemaining / closeupRangePulseDuration);
-        float envelope = Mathf.Sin(elapsedNormalized * Mathf.PI);
-        float wave = 0.5f - 0.5f * Mathf.Cos(elapsedNormalized * closeupRangePulseFrequency * Mathf.PI * 2f);
-        return envelope * wave;
+        return BattlePresentationRangePulseService.Evaluate(
+            Time.time - closeupRangePulseStartTime,
+            closeupRangePulseDuration,
+            closeupRangePulseFrequency,
+            closeupRangePulseContinuous);
     }
 
     private void StopActiveCloseupShotImmediate()
@@ -1682,6 +1767,8 @@ public class BattlePresentationSystem : MonoBehaviour
         closeupShakeRemaining = 0f;
         closeupRangePulseDuration = 0f;
         closeupRangePulseRemaining = 0f;
+        closeupRangePulseStartTime = 0f;
+        closeupRangePulseContinuous = false;
 
         Camera mainCamera = ResolveBattleCamera();
         if (closeupCamera != null)

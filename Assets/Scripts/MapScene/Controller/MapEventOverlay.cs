@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class MapEventOverlay : MonoBehaviour
 {
     private const int MaxNestedEventDepth = 16;
+    private const int EventOverlayCanvasSortingOrder = 9040;
 
     public sealed class EventOptionPreviewData
     {
@@ -123,10 +124,16 @@ public class MapEventOverlay : MonoBehaviour
 
     private void EnsureUi()
     {
-        if (canvas != null) { canvas.gameObject.SetActive(true); panelRect.gameObject.SetActive(true); return; }
+        if (canvas != null)
+        {
+            canvas.sortingOrder = EventOverlayCanvasSortingOrder;
+            canvas.gameObject.SetActive(true);
+            panelRect.gameObject.SetActive(true);
+            return;
+        }
         GameObject canvasGo = new GameObject("EventOverlayCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster), typeof(Image));
         canvasGo.transform.SetParent(transform, false);
-        canvas = canvasGo.GetComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 7990;
+        canvas = canvasGo.GetComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = EventOverlayCanvasSortingOrder;
         CanvasScaler scaler = canvasGo.GetComponent<CanvasScaler>(); scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize; scaler.referenceResolution = new Vector2(1920f, 1080f); scaler.matchWidthOrHeight = 0.5f;
         root = canvasGo.GetComponent<RectTransform>(); root.anchorMin = Vector2.zero; root.anchorMax = Vector2.one; root.offsetMin = Vector2.zero; root.offsetMax = Vector2.zero;
         canvasGo.GetComponent<Image>().color = backdropColor;

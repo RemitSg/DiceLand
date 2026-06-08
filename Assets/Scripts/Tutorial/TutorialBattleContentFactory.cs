@@ -62,95 +62,196 @@ public static class TutorialBattleContentFactory
 
     private static TutorialBattleDefinition_SO CreateBattle01Definition()
     {
-        TutorialBattleDefinition_SO definition = CreateDefinition("tutorial_battle_01_speed_and_clash", "战斗教程 01：速度、读招与拼点");
+        TutorialBattleDefinition_SO definition = CreateDefinition("tutorial_battle_01_first_combat", "战斗教程 01：敌人、速度与拼点");
         definition.Steps.Add(Step(
-            "battle01_read_enemy",
+            "battle01_intro_enemy_detail",
             0,
-            "先看两颗敌方速度按钮",
-            "最核心的开局习惯：每回合开始时先读敌人的技能与说明。\n\n速度不只是“谁先动”，它还会影响你应该优先处理哪一个目标。场上同时出现多颗敌方速度按钮时，通常先看更快、也会更早结算的那一颗。",
-            TutorialBattleEventType.EnemySkillViewed,
+            "第一场战斗",
+            "接下来是激动人心的战斗内容！你将学会如何与敌人战斗。\n\n先点击敌人的本体，查看当前敌人的基础信息。",
+            TutorialBattleEventType.EnemyDetailViewed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
-            "点击敌方速度按钮，确认两个技能分别是什么。"));
+            "请先点击敌人的本体，查看敌人详情。"));
         definition.Steps.Add(Step(
-            "battle01_draw_line",
+            "battle01_press_prepare",
             10,
-            "把线接到你想处理的那颗按钮上",
-            "请主动从我方速度按钮长按拖动，连到敌方的一颗速度按钮。",
-            TutorialBattleEventType.LineCreated,
-            TutorialBattleInputPolicy.RequireBeforeCombat,
-            "先将我方速度按钮连到你想处理的敌方按钮。"));
-        definition.Steps.Add(Step(
-            "battle01_start_round",
-            20,
-            "开始这一回合",
-            "被你连接的那条线会变成黄色，也就是拼点。没接住的那条线会照常结算，维持红色。如果对方的速度值比你大，你就无法成功将它变为拼点状态，而只能放掉它，接受它的单方面攻击结算，或是直接让它指向的友方角色应对攻击。",
+            "准备开始战斗",
+            "你已经了解了当前敌人的基础信息，接下来准备开始战斗。\n\n点击屏幕下方的准备按钮，让双方生成本回合的速度按钮。",
             TutorialBattleEventType.CombatExecutePressed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
-            "先完成读招和连线，再开始回合。"));
+            "请先点击准备按钮，进入本回合的目标指定阶段。",
+            TutorialBattleHighlightTarget.BattleButton));
+        definition.Steps.Add(Step(
+            "battle01_read_enemy_skill",
+            20,
+            "读取敌人的行动",
+            "敌人头顶的六边形按钮就是它的速度按钮，按钮上方的数字代表速度。\n\n速度按钮也可以理解为技能槽：速度按钮越多，敌人一回合能做的事就越多。现在点击敌人的速度按钮，查看它准备用什么技能。",
+            TutorialBattleEventType.EnemySkillViewed,
+            TutorialBattleInputPolicy.RequireBeforeCombat,
+            "请点击敌人的速度按钮，查看敌人技能。",
+            TutorialBattleHighlightTarget.FirstEnemySpeedButton));
+        definition.Steps.Add(Step(
+            "battle01_start_enemy_attack",
+            30,
+            "先看一次敌人的攻击",
+            "敌人的技能由若干颗骰子组成。攻击骰子会造成伤害，防御骰子会抵挡即将到来的伤害。\n\n“1 - 2” 这样的数值范围叫做威力范围，代表结算时会在 1 和 2 之间随机。现在关闭技能面板，再点击准备按钮。",
+            TutorialBattleEventType.CombatExecutePressed,
+            TutorialBattleInputPolicy.RequireBeforeCombat,
+            "请先查看敌人速度按钮上的技能，再点击准备按钮开始结算。"));
+        definition.Steps.Add(Step(
+            "battle01_prepare_counter",
+            40,
+            "准备反击",
+            "敌人的攻击已经结束，下一回合轮到我们主动处理它。\n\n再次点击准备按钮，生成新一回合的速度按钮。",
+            TutorialBattleEventType.CombatExecutePressed,
+            TutorialBattleInputPolicy.RequireBeforeCombat,
+            "请先点击准备按钮，生成新一回合的速度按钮。",
+            TutorialBattleHighlightTarget.BattleButton));
+        definition.Steps.Add(Step(
+            "battle01_view_ally_skill",
+            50,
+            "轮到我们反击",
+            "我们不能这样坐以待毙！展开有效反击来化解敌人的攻击。\n\n点击友方角色的速度按钮，查看我们有什么技能可以使用。",
+            TutorialBattleEventType.AllySkillViewed,
+            TutorialBattleInputPolicy.RequireBeforeCombat,
+            "请点击友方角色的速度按钮，查看友方技能。",
+            TutorialBattleHighlightTarget.FirstAllySpeedButton));
+        definition.Steps.Add(Step(
+            "battle01_draw_clash_line",
+            60,
+            "指定攻击目标",
+            "左侧列出了该名友方角色拥有的技能，右侧面板会显示当前技能的详细信息。\n\n选择并了解技能后，关闭技能面板。随后拖拽友方角色的速度按钮，把目标指定到敌人的速度按钮上。",
+            TutorialBattleEventType.LineCreated,
+            TutorialBattleInputPolicy.RequireBeforeCombat,
+            "请拖拽友方速度按钮，连到敌人的速度按钮。"));
+        definition.Steps.Add(Step(
+            "battle01_start_clash",
+            70,
+            "开始拼点",
+            "如果敌人的攻击线和友方角色的攻击线正好对上，线会变成黄色，这意味着双方将展开一次拼点。\n\n现在万事俱备，点击准备按钮进行结算。",
+            TutorialBattleEventType.CombatExecutePressed,
+            TutorialBattleInputPolicy.RequireBeforeCombat,
+            "请先完成连线，再点击准备按钮开始拼点结算。",
+            TutorialBattleHighlightTarget.BattleButton));
+        definition.Steps.RemoveAll(step => step != null && step.stepId == "battle01_prepare_counter");
         definition.Reactions.Add(Reaction(
             "battle01_clash_explained",
             0,
             TutorialBattleEventType.ClashResolved,
             "这就是拼点",
-            "只有双方行动真的对上，变成黄线时，才会进入拼点。以后看到多颗敌方速度按钮时，先判断哪一条更危险，再决定让谁去接。"));
+            "可以看到我方角色的威力范围更高，这意味着这次拼点非常稳定。\n\n在攻击骰子拼点中，胜利的一方会摧毁失败方的骰子，并打出自己骰子的伤害。拼点可以化解对手攻击，也可能让你失去进攻机会，需要仔细斟酌。"));
         definition.Reactions.Add(Reaction(
             "battle01_enemy_single_explained",
             10,
             TutorialBattleEventType.EnemyOneSidedAttackResolved,
-            "没接住的线会变成敌方单方面攻击",
-            "你没有接住的敌方行动，不会自动消失，而是会直接结算。"));
+            "敌人的单方面攻击",
+            "敌人刚才对友方角色造成了伤害。伤害取决于骰子的威力，威力越高，伤害越高。\n\n下一回合我们会主动连线，用拼点来化解这类攻击。"));
         definition.Reactions.Add(Reaction(
             "battle01_victory",
             20,
             TutorialBattleEventType.BattleWon,
             "恭喜你！",
-            "你已经学会了读招、看速度、自己选择拼点对象，继续你的旅程吧！"));
+            "你已经了解了基础战斗玩法：查看敌人、读取速度按钮、观察威力范围、拖拽连线并进行拼点。\n\n接下来的战斗就交给你自己了！"));
+        TutorialBattleReactionDefinition enemySingleReaction = definition.Reactions.Find(reaction =>
+            reaction != null && reaction.reactionId == "battle01_enemy_single_explained");
+        if (enemySingleReaction != null)
+        {
+            enemySingleReaction.body = "\u654c\u4eba\u521a\u624d\u5bf9\u53cb\u65b9\u89d2\u8272\u9020\u6210\u4e86\u4f24\u5bb3\u3002\u4f24\u5bb3\u53d6\u51b3\u4e8e\u9ab0\u5b50\u7684\u5a01\u529b\uff0c\u5a01\u529b\u8d8a\u9ad8\uff0c\u4f24\u5bb3\u8d8a\u9ad8\u3002";
+            enemySingleReaction.highlightAfterContinue = TutorialBattleHighlightTarget.BattleButton;
+        }
+
         return definition;
     }
 
     private static TutorialBattleDefinition_SO CreateBattle02Definition()
     {
-        TutorialBattleDefinition_SO definition = CreateDefinition("tutorial_battle_02_one_sided", "战斗教程 02：单方面攻击与取舍");
+        TutorialBattleDefinition_SO definition = CreateDefinition("tutorial_battle_02_guard_and_redirect", "战斗教程 02：速度、守护与目标转移");
         definition.Steps.Add(Step(
-            "battle02_read_enemy",
-            0,
-            "看清两条敌方行动",
-            "这一战开始练“取舍”。敌人会给出一条更危险的线和一条相对温和的线，你不需要每条都硬接，而是要先看清谁更值得处理。",
-            TutorialBattleEventType.EnemySkillViewed,
-            TutorialBattleInputPolicy.RequireBeforeCombat,
-            "还记得上一个教程吗？先查看敌人的基础信息与技能说明，再决定这一回合的连线策略。"));
-        definition.Steps.Add(Step(
-            "battle02_start_round",
-            10,
-            "保住关键线，再开始回合",
-            "这一回合不要求你把所有线都接住。当你比较判断一下就会发现，如果你放掉了更危险的线，你拼点的那个温和技能就会有更高概率拼点胜利，从而打出完整的伤害，当然你也会因此受到危险技能的更多伤害。如果你选择与更危险的线拼点，就要接受可能会拼点失败的结果，打不出来任何伤害，而你会同时受到两个技能的伤害。当然，如果你拼点成功，你就会完美化解更危险的线，反过来打出伤害，更高风险，更高回报。",
+            "battle02_press_prepare",
+            -10,
+            "先准备这一回合",
+            "Molly 已经残血了，敌人的斩杀会优先寻找血量最低的目标。\n\n先点击准备按钮，生成本回合双方的速度按钮，再查看敌人和队友的行动内容。",
             TutorialBattleEventType.CombatExecutePressed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
-            "先点击两个敌方的速度按钮，再开始回合。"));
-        definition.Reactions.Add(Reaction(
-            "battle02_ally_single",
+            "请先点击准备按钮，生成本回合的速度按钮。",
+            TutorialBattleHighlightTarget.BattleButton));
+        definition.Steps.Add(Step(
+            "battle02_read_execution",
             0,
-            TutorialBattleEventType.AllyOneSidedAttackResolved,
-            "我方也能打出单方面攻击",
-            "当你的行动没有被敌人拦住时，就会形成我方单方面攻击，也就是那些蓝色的线。以后看到适合打单方面攻击的技能，可以把这种机会留给它。"));
-        definition.Reactions.Add(Reaction(
-            "battle02_enemy_single",
+            "救下残血的同伴",
+            "快看，Molly 已经残血了，而敌人的斩杀即将指向血量最低的目标。\n\n先点击敌人的速度按钮，看看它准备用什么技能。",
+            TutorialBattleEventType.EnemySkillViewed,
+            TutorialBattleInputPolicy.RequireBeforeCombat,
+            "请先点击敌人的速度按钮，查看斩杀的目标偏好。",
+            TutorialBattleHighlightTarget.FirstEnemySpeedButton));
+        definition.Steps.Add(Step(
+            "battle02_view_molly_skill",
             10,
-            TutorialBattleEventType.EnemyOneSidedAttackResolved,
-            "敌方单方面攻击意味着你放掉了一条线",
-            "敌方的单方面攻击并不一定要完全避免，但你要知道自己为什么放掉它。有些技能的词条更倾向于促使你放掉，而有些技能的词条更倾向于促使你去接它。每次选择策略之前，先确认一下它的威胁程度和词条倾向。"));
+            "Molly 的反击不够稳",
+            "斩杀会优先攻击血量最低的目标。现在 Molly 只有 1 点生命，如果不处理这条线，她很可能会被击倒。\n\n先点击 Molly 的速度按钮，查看她能不能自己挡住这次攻击。",
+            TutorialBattleEventType.AllySkillViewed,
+            TutorialBattleInputPolicy.RequireBeforeCombat,
+            "请点击 Molly 的速度按钮，查看轻击的威力范围。",
+            TutorialBattleHighlightTarget.FirstAllySpeedButton));
+        definition.Steps.Add(Step(
+            "battle02_probe_with_molly",
+            20,
+            "先试着让 Molly 接敌人",
+            "Molly 的轻击最多只能投出 2 点，而敌人的斩杀威力是 2 - 4。直接让 Molly 接上去并不可靠。\n\n先拖拽 Molly 的速度按钮连到敌人的速度按钮，观察当前目标关系。",
+            TutorialBattleEventType.LineCreated,
+            TutorialBattleInputPolicy.RequireBeforeCombat,
+            "请先用 Molly 的速度按钮连到敌人的速度按钮。"));
+        definition.Steps.Add(Step(
+            "battle02_view_chara_guard",
+            30,
+            "看看 Chara 的守护",
+            "这样下去还不够稳。再看看 Chara 的技能能不能破局。\n\n点击 Chara 的速度按钮，查看守护技能。",
+            TutorialBattleEventType.AllySkillViewed,
+            TutorialBattleInputPolicy.RequireBeforeCombat,
+            "请点击 Chara 的速度按钮，查看守护。"));
+        definition.Steps.Add(Step(
+            "battle02_redirect_with_guard",
+            40,
+            "用高速角色接管目标",
+            "守护是防御技能，适合拿来拦截敌人的攻击。\n\n用 Chara 的速度按钮连到敌人的速度按钮。因为 Chara 的速度更高，她可以把敌人的目标从残血 Molly 转移到自己身上。",
+            TutorialBattleEventType.LineCreated,
+            TutorialBattleInputPolicy.RequireBeforeCombat,
+            "请用 Chara 的速度按钮连到敌人的速度按钮。"));
+        definition.Steps.Add(Step(
+            "battle02_execute_guard",
+            50,
+            "开始结算",
+            "注意到了吗？敌人的斩杀原本会找血量最低的 Molly，但现在目标已经被更快的 Chara 接走。\n\n熟练运用高速度角色的技能拉取目标，可以在关键时刻保护脆弱队友。现在点击准备按钮进行结算。",
+            TutorialBattleEventType.CombatExecutePressed,
+            TutorialBattleInputPolicy.RequireBeforeCombat,
+            "请先完成守护连线，再点击准备按钮开始结算。",
+            TutorialBattleHighlightTarget.BattleButton));
+        definition.Reactions.Add(Reaction(
+            "battle02_guard_clash",
+            0,
+            TutorialBattleEventType.ClashResolved,
+            "目标已经被转移",
+            "原本会与残血 Molly 拼点的敌人，被高速的 Chara 接走了。\n\n这就是速度的另一个重要作用：速度更高的一方，可以更主动地改变目标关系，让危险攻击打到更适合承受的人身上。"));
         definition.Reactions.Add(Reaction(
             "battle02_victory",
-            20,
+            10,
             TutorialBattleEventType.BattleWon,
             "恭喜你！",
-            "现在你已经知道：不是所有线都必须接，关键是先看速度和威胁。"));
+            "你已经理解了速度在目标转移中的作用。接下来遇到危险攻击时，先看谁被锁定，再判断有没有更快、更适合的人可以接走它。"));
         return definition;
     }
 
     private static TutorialBattleDefinition_SO CreateBattle03Definition()
     {
         TutorialBattleDefinition_SO definition = CreateDefinition("tutorial_battle_03_skill_and_energy", "战斗教程 03：技能切换与能量");
+        definition.Steps.Add(Step(
+            "battle03_press_prepare",
+            -10,
+            "先准备这一回合",
+            "这一战会学习技能选择和能量消耗。\n\n先点击准备按钮，生成本回合的速度按钮，再查看我方角色当前可用的技能。",
+            TutorialBattleEventType.CombatExecutePressed,
+            TutorialBattleInputPolicy.RequireBeforeCombat,
+            "请先点击准备按钮，生成本回合的速度按钮。",
+            TutorialBattleHighlightTarget.BattleButton));
         definition.Steps.Add(Step(
             "battle03_view_ally_skill",
             0,
@@ -383,54 +484,62 @@ public static class TutorialBattleContentFactory
 
     private static EnemyGroup_SO CreateBattle01EnemyGroup(TutorialEnemyVisualTemplateSet visualTemplates)
     {
-        EnemySkill_SO enemyFast = CreateSkill("抢先压步", "高速起手，用来逼你先观察速度按钮。", 0, 2, 3);
-        EnemySkill_SO enemySlow = CreateSkill("迟滞补击", "较慢但会正常结算，用来说明没接住的线依然会出手。", 0, 1, 2);
+        EnemySkill_SO enemyLight = CreateSkill("轻击", "基础攻击。用来演示敌方单方面攻击与拼点。", 0, 1, 2);
 
-        EnemySkill_SO allyGuard = CreateSkill("稳步拦截", "稳定的基础技能，适合拿来接最优先的那条线。", 0, 2, 3);
-        EnemySkill_SO allyProbe = CreateSkill("试探突刺", "较长的基础攻击，用来感受手动连线。", 0, 1, 4);
+        EnemySkill_SO allyHeavy = CreateSkill("重击", "稳定而有力的基础攻击。威力范围高于轻击，适合第一次学习拼点。", 0, 3, 4);
 
         EnemyData_SO enemy = CreateScriptedTutorialEnemy(
-            "速度教官",
-            12,
-            5,
-            7,
+            "木桩鼠",
+            10,
             2,
-            new[] { enemyFast, enemySlow },
-            new[] { allyGuard, allyProbe },
-            ("Round 1 Slot 1", enemyFast, 1, 200, 1),
-            ("Round 1 Slot 2", enemySlow, 1, 100, 1),
-            ("Round 2 Slot 1", enemyFast, 2, 200, 1),
-            ("Round 2 Slot 2", enemySlow, 2, 100, 1));
+            2,
+            1,
+            new[] { enemyLight },
+            new[] { allyHeavy },
+            ("Round 1 Slot 1", enemyLight, 1, 200, 1),
+            ("Round 2 Slot 1", enemyLight, 2, 200, 1),
+            ("Round 3 Slot 1", enemyLight, 3, 200, 1));
 
-        enemy.enemyDescription = "总是同时给出快慢两条线，迫使玩家先看速度再决定接哪一条。";
+        enemy.enemyDescription = "用于第一场教学战的低威胁敌人，只会使用轻击。";
         ApplyVisualTemplate(enemy, visualTemplates != null ? visualTemplates.openingPrimaryTemplate : null);
-        return CreateGroup("TutorialBattleGroup_01", 9201, "教程战 01", "速度、读招与拼点", enemy);
+        return CreateGroup("TutorialBattleGroup_01", 9201, "教程战 01", "基础战斗与拼点", enemy);
     }
 
     private static EnemyGroup_SO CreateBattle02EnemyGroup(TutorialEnemyVisualTemplateSet visualTemplates)
     {
-        EnemySkill_SO enemyDanger = CreateSkill("前压重击", "较危险的一条线，适合拿来练习优先处理。", 0, 2, 4);
-        EnemySkill_SO enemyLight = CreateSkill("牵制试探", "威胁较低，可以作为取舍练习的对象。", 0, 1, 2);
+        EnemySkill_SO enemyExecute = CreateSkill("斩杀", "始终优先指向血量最低的目标。", 0, 2, 4);
+        enemyExecute.targetPriorityMode = EnemySkill_SO.TargetPriorityMode.PreferLowestHP;
 
-        EnemySkill_SO allyStable = CreateSkill("观察切入", "稳妥的基础技能。", 0, 2, 3);
-        EnemySkill_SO allySingle = CreateSkill("贴身追击", "较适合拿去打没有被拦住的目标。", 0, 2, 4);
+        EnemySkill_SO mollyLight = CreateSkill("轻击", "Molly 的基础攻击。", 0, 1, 2);
+        EnemySkill_SO charaGuard = CreateSkill("守护", "Chara 用来转移危险攻击目标的防御技能。", 0, 2, 3);
+        charaGuard.skillCategory = EnemySkill_SO.SkillCategory.Defense;
 
         EnemyData_SO enemy = CreateScriptedTutorialEnemy(
-            "取舍教官",
-            16,
-            5,
+            "斩杀鼠",
             6,
             2,
-            new[] { enemyDanger, enemyLight },
-            new[] { allyStable, allySingle },
-            ("Round 1 Slot 1", enemyDanger, 1, 200, 1),
-            ("Round 1 Slot 2", enemyLight, 1, 100, 1),
-            ("Round 2 Slot 1", enemyLight, 2, 200, 1),
-            ("Round 2 Slot 2", enemyDanger, 2, 100, 1));
+            2,
+            1,
+            new[] { enemyExecute },
+            new[] { mollyLight, charaGuard },
+            ("Round 1 Slot 1", enemyExecute, 1, 200, 1),
+            ("Round 2 Slot 1", enemyExecute, 2, 200, 1),
+            ("Round 3 Slot 1", enemyExecute, 3, 200, 1));
 
-        enemy.enemyDescription = "一条线更危险，一条线更温和，专门用来练习该接哪条、该放哪条。";
+        if (enemy.battleStartGrantedAllySkills != null && enemy.battleStartGrantedAllySkills.Count >= 2)
+        {
+            EnemyData_SO.BattleStartAllySkillGrantEntry mollyGrant = enemy.battleStartGrantedAllySkills[0];
+            mollyGrant.targetAllyCharacterName = "Molly";
+            enemy.battleStartGrantedAllySkills[0] = mollyGrant;
+
+            EnemyData_SO.BattleStartAllySkillGrantEntry charaGrant = enemy.battleStartGrantedAllySkills[1];
+            charaGrant.targetAllyCharacterName = "Chara";
+            enemy.battleStartGrantedAllySkills[1] = charaGrant;
+        }
+
+        enemy.enemyDescription = "始终盯住血量最低的目标，用来教学高速守护与目标转移。";
         ApplyVisualTemplate(enemy, visualTemplates != null ? visualTemplates.openingSecondaryTemplate : null);
-        return CreateGroup("TutorialBattleGroup_02", 9202, "教程战 02", "单方面攻击与取舍", enemy);
+        return CreateGroup("TutorialBattleGroup_02", 9202, "教程战 02", "速度、守护与目标转移", enemy);
     }
 
     private static EnemyGroup_SO CreateBattle03EnemyGroup(TutorialEnemyVisualTemplateSet visualTemplates)
@@ -717,7 +826,8 @@ public static class TutorialBattleContentFactory
         string body,
         TutorialBattleEventType completionEvent,
         TutorialBattleInputPolicy inputPolicy,
-        string blockedMessage)
+        string blockedMessage,
+        TutorialBattleHighlightTarget highlightAfterContinue = TutorialBattleHighlightTarget.None)
     {
         return new TutorialBattleStepDefinition
         {
@@ -729,7 +839,8 @@ public static class TutorialBattleContentFactory
             inputPolicy = inputPolicy,
             blockedMessage = blockedMessage,
             continueButtonLabel = "继续",
-            autoShow = true
+            autoShow = true,
+            highlightAfterContinue = highlightAfterContinue
         };
     }
 
@@ -738,7 +849,8 @@ public static class TutorialBattleContentFactory
         int sortOrder,
         TutorialBattleEventType triggerEvent,
         string title,
-        string body)
+        string body,
+        TutorialBattleHighlightTarget highlightAfterContinue = TutorialBattleHighlightTarget.None)
     {
         return new TutorialBattleReactionDefinition
         {
@@ -748,7 +860,8 @@ public static class TutorialBattleContentFactory
             title = title,
             body = body,
             continueButtonLabel = "明白了",
-            pauseForAcknowledgement = true
+            pauseForAcknowledgement = true,
+            highlightAfterContinue = highlightAfterContinue
         };
     }
 

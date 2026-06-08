@@ -109,6 +109,7 @@ public class BattleButton : MonoBehaviour
     private int pendingAllyNextDicePowerBonus;
     private int pendingEnemyNextDicePowerBonus;
     private bool forceReturnToMapAfterDefeat;
+    private TutorialBattleHighlightTarget activeTutorialHighlightTarget = TutorialBattleHighlightTarget.None;
 
     private void Awake()
     {
@@ -151,6 +152,13 @@ public class BattleButton : MonoBehaviour
 
     public void OnBattleButtonClicked()
     {
+        if (tutorialBattleGuideOverlay != null
+            && tutorialBattleGuideOverlay.IsTargetHighlightVisible
+            && !tutorialBattleGuideOverlay.IsScreenPointInsideTarget(Input.mousePosition))
+        {
+            return;
+        }
+
         if (isResolvingCombat)
         {
             Debug.LogWarning($"[BattleButton][\u7b2c {currentRound} \u56de\u5408] \u6218\u6597\u6f14\u51fa\u8fdb\u884c\u4e2d\uff0c\u8bf7\u7b49\u5f85\u5f53\u524d\u7ed3\u7b97\u5b8c\u6210\u3002");
@@ -178,7 +186,7 @@ public class BattleButton : MonoBehaviour
 
         BattleButtonClickBlockResult clickBlock = BattleButtonUiOverlayStateService.ResolveClickBlock(
             battleSettlementOverlay != null && battleSettlementOverlay.IsVisible,
-            tutorialBattleGuideOverlay != null && tutorialBattleGuideOverlay.IsVisible,
+            tutorialBattleGuideOverlay != null && tutorialBattleGuideOverlay.IsModalVisible,
             battleSkillInfoOverlay != null && battleSkillInfoOverlay.IsVisible,
             battlePauseMenuOverlay != null && battlePauseMenuOverlay.IsVisible);
         if (clickBlock.ShouldBlock)
@@ -200,8 +208,19 @@ public class BattleButton : MonoBehaviour
 
         if (currentPhase == BattlePhase.Ready)
         {
+            bool consumeTutorialPrepareStep = ShouldConsumeTutorialPrepareStepInReadyPhase();
+            if (consumeTutorialPrepareStep && !TutorialBattleRuntime.TryRequestCombatExecution(out string readyPhaseBlockedMessage))
+            {
+                if (!string.IsNullOrWhiteSpace(readyPhaseBlockedMessage))
+                    BattleLog(readyPhaseBlockedMessage);
+                TryShowPendingTutorialStep();
+                return;
+            }
+
+            HideTutorialTargetHighlightIfVisible();
             SetupTargetingPhase(allies, enemies);
             currentPhase = BattlePhase.Targeting;
+            TryShowPendingTutorialStep();
             return;
         }
 
@@ -213,6 +232,7 @@ public class BattleButton : MonoBehaviour
             return;
         }
 
+        HideTutorialTargetHighlightIfVisible();
         StartCoroutine(ExecuteCombatPhaseRoutine(allies, enemies));
     }
 
@@ -349,7 +369,7 @@ public class BattleButton : MonoBehaviour
                 enemy.enemyData.battleStartStatusGains,
                 (statusName, appliedStacks, currentStacks) =>
                     $"敌方战斗开始效果：{enemy.GetDebugDisplayName()} 获得 {appliedStacks} 层 {statusName}，当前 {statusName} {currentStacks} 层"),
-            enemy => TryLogEnemyStatusDrivenStageTransition(enemy, allies, enemies));
+            enemy => TryLogAllEnemyStatusDrivenStageTransitions());
 
         ApplyEnemyBattleStartCalamityStatuses(enemies);
         ApplyInterlockingPrismBattleStartFaces(enemies);
@@ -535,6 +555,7 @@ public class BattleButton : MonoBehaviour
         if (hpLoss <= 0 && statusEffects.Count == 0)
             return;
 
+        bool appliedAnyStatus = false;
         for (int i = 0; i < allies.Length; i++)
         {
             BattleAllyController ally = allies[i];
@@ -558,9 +579,15 @@ public class BattleButton : MonoBehaviour
                 if (applied)
                     ally.AddPendingRoundStartSpeedBonusFromStatus(effect.statusData, effect.effectAmount);
                 if (applied)
+                {
                     BattleLog($"灾厄效果：{ally.GetDebugDisplayName()} 获得 {effect.effectAmount} 层 {effect.statusData.DisplayName}");
+                    appliedAnyStatus = true;
+                }
             }
         }
+
+        if (appliedAnyStatus)
+            TryLogAllEnemyStatusDrivenStageTransitions();
     }
 
     private void ApplyEnemyRepeatRoundStartStatusGains(BattleAllyController[] allies, BattleEnemyController[] enemies)
@@ -574,7 +601,7 @@ public class BattleButton : MonoBehaviour
                 (statusName, appliedStacks, currentStacks) =>
                     $"敌方回合效果：第 {currentRound} 回合开始时，{enemy.GetDebugDisplayName()} 获得 {appliedStacks} 层 {statusName}，当前 {statusName} {currentStacks} 层"),
             enemy => ApplyEnemyCustomRepeatRoundStartEffects(enemy, allies),
-            enemy => TryLogEnemyStatusDrivenStageTransition(enemy, allies, enemies));
+            enemy => TryLogAllEnemyStatusDrivenStageTransitions());
 
     }
 
@@ -707,6 +734,7 @@ public class BattleButton : MonoBehaviour
 
         if (button.ConnectedTarget != null)
         {
+            HideTutorialTargetHighlightIfVisible();
             TutorialBattleProgressResult progress = TutorialBattleRuntime.NotifyEvent(GetReservedEnergyCostForAlly(ally) > 0
                 ? TutorialBattleEventType.EnergyLineCreated
                 : TutorialBattleEventType.LineCreated);
@@ -1357,6 +1385,7 @@ public class BattleButton : MonoBehaviour
                 {
                     int stacks = GetResolvedStatusStacks(ally, erodeStatus, erodeStatusId);
                     BattleLog($"敌方回合效果：第 {currentRound} 回合开始时，{enemy.GetDebugDisplayName()}[涨潮] 使 {ally.GetDebugDisplayName()} 获得 1 层 {erodeStatusName}，当前 {erodeStatusName} {stacks} 层");
+                    TryLogAllEnemyStatusDrivenStageTransitions();
                 }
             }
         }
@@ -1378,6 +1407,7 @@ public class BattleButton : MonoBehaviour
             {
                 int stacks = GetResolvedStatusStacks(enemy, guardStatus, guardStatusId);
                 BattleLog($"敌方回合效果：第 {currentRound} 回合开始时，{enemy.GetDebugDisplayName()}[柔韧] 获得 {highestPoisonStacks} 层 {guardStatusName}，当前 {guardStatusName} {stacks} 层");
+                TryLogAllEnemyStatusDrivenStageTransitions();
             }
         }
     }
@@ -1441,9 +1471,11 @@ public class BattleButton : MonoBehaviour
 
         if (smallSpiders.Count == 0)
         {
-            attacker.AddStatus(weaknessStatus, weaknessStatusId, weaknessStatusName, 1);
-            attacker.AddStatus(guardbreakStatus, guardbreakStatusId, guardbreakStatusName, 1);
+            bool weaknessAdded = attacker.AddStatus(weaknessStatus, weaknessStatusId, weaknessStatusName, 1);
+            bool guardbreakAdded = attacker.AddStatus(guardbreakStatus, guardbreakStatusId, guardbreakStatusName, 1);
             BattleLog($"词条触发：{attacker.GetDebugDisplayName()}[饥饿] 未找到小血蛛，获得 1 层 {weaknessStatusName} 与 1 层 {guardbreakStatusName}");
+            if (weaknessAdded || guardbreakAdded)
+                TryLogAllEnemyStatusDrivenStageTransitions();
             return;
         }
 
@@ -1460,17 +1492,19 @@ public class BattleButton : MonoBehaviour
         }
 
         int healed = attacker.Heal(totalHeal);
-        attacker.AddStatus(strengthStatus, strengthStatusId, strengthStatusName, smallSpiders.Count);
+        bool addedAnyStatus = attacker.AddStatus(strengthStatus, strengthStatusId, strengthStatusName, smallSpiders.Count);
 
         List<BattleAllyController> allies = GetLivingAllies();
         for (int i = 0; i < allies.Count; i++)
         {
             BattleAllyController ally = allies[i];
             if (ally != null && !ally.IsDead)
-                ally.AddStatus(bleedStatus, bleedStatusId, bleedStatusName, 1);
+                addedAnyStatus |= ally.AddStatus(bleedStatus, bleedStatusId, bleedStatusName, 1);
         }
 
         BattleLog($"词条触发：{attacker.GetDebugDisplayName()}[噬亲] 吞噬 {smallSpiders.Count} 只小血蛛，恢复 {healed} 点生命并获得 {smallSpiders.Count} 层 {strengthStatusName}，所有目标获得 1 层 {bleedStatusName}");
+        if (addedAnyStatus)
+            TryLogAllEnemyStatusDrivenStageTransitions();
         RefreshActiveRoundEnemiesFromScene();
     }
 
@@ -1492,8 +1526,10 @@ public class BattleButton : MonoBehaviour
             return;
 
         ResolveBuiltinStatus("strength", "强壮", out BattleStatus_SO strengthStatus, out string strengthStatusId, out string strengthStatusName);
-        attacker.AddStatus(strengthStatus, strengthStatusId, strengthStatusName, remnantCount);
+        bool addedStatus = attacker.AddStatus(strengthStatus, strengthStatusId, strengthStatusName, remnantCount);
         BattleLog($"词条触发：{attacker.GetDebugDisplayName()}[融入暗影] 场上有 {remnantCount} 个陌路残影，获得 {remnantCount} 层 {strengthStatusName}");
+        if (addedStatus)
+            TryLogAllEnemyStatusDrivenStageTransitions();
     }
 
     private void ApplyEnemyBuiltInEffects(BattleEnemyController attacker, BattleAllyController currentTarget, int diceIndex, EnemySkill_SO.DiceEffectTrigger trigger)
@@ -1845,6 +1881,7 @@ public class BattleButton : MonoBehaviour
                     (selectedStatus, removedStacks) => transferTarget.AddStatus(selectedStatus.statusData, selectedStatus.fallbackStatusId, selectedStatus.DisplayName, removedStacks),
                     (selectedStatus, removedStacks) => BattleLog(BattleEnemyBuiltInEffectLogService.BuildTransferLog(attacker.GetDebugDisplayName(), effectLabel, selectedStatus.DisplayName, removedStacks, transferTarget.GetDebugDisplayName()))))
                 {
+                    TryLogAllEnemyStatusDrivenStageTransitions();
                     return;
                 }
             }
@@ -1883,6 +1920,7 @@ public class BattleButton : MonoBehaviour
                     (selectedStatus, removedStacks) => transferTarget.AddStatus(selectedStatus.statusData, selectedStatus.fallbackStatusId, selectedStatus.DisplayName, removedStacks),
                     (selectedStatus, removedStacks) => BattleLog(BattleEnemyBuiltInEffectLogService.BuildTransferLog(attacker.GetDebugDisplayName(), effectLabel, selectedStatus.DisplayName, removedStacks, transferTarget.GetDebugDisplayName()))))
                 {
+                    TryLogAllEnemyStatusDrivenStageTransitions();
                     return;
                 }
             }
@@ -2286,7 +2324,10 @@ public class BattleButton : MonoBehaviour
             {
                 bool added = target.AddStatus(statusData, statusId, statusName, stacks);
                 if (added)
+                {
                     BattleLog(BattleEnemyBuiltInStatusLogService.BuildImmediateLog(attacker.GetDebugDisplayName(), effectLabel, null, statusName, stacks, GetResolvedStatusStacks(target, statusData, statusId), logPrefix));
+                    TryLogAllEnemyStatusDrivenStageTransitions();
+                }
                 return added;
             },
             null);
@@ -2321,7 +2362,10 @@ public class BattleButton : MonoBehaviour
             {
                 bool added = target.AddStatus(statusData, statusId, statusName, stacks);
                 if (added)
+                {
                     BattleLog(BattleEnemyBuiltInStatusLogService.BuildImmediateLog(attacker.GetDebugDisplayName(), effectLabel, target.GetDebugDisplayName(), statusName, stacks, GetResolvedStatusStacks(target, statusData, statusId), null));
+                    TryLogAllEnemyStatusDrivenStageTransitions();
+                }
                 return added;
             },
             null);
@@ -2357,7 +2401,10 @@ public class BattleButton : MonoBehaviour
             {
                 bool added = target.AddStatus(statusData, statusId, statusName, stacks);
                 if (added)
+                {
                     BattleLog(BattleEnemyBuiltInStatusLogService.BuildImmediateLog(attacker.GetDebugDisplayName(), effectLabel, null, statusName, stacks, GetResolvedStatusStacks(target, statusData, statusId), logPrefix));
+                    TryLogAllEnemyStatusDrivenStageTransitions();
+                }
                 return added;
             },
             null);
@@ -2393,7 +2440,10 @@ public class BattleButton : MonoBehaviour
                 int adjustedStacks = ResolvePlayerRelicAdjustedStatusStacks(statusData, statusId, statusName, stacks, attacker, target);
                 bool added = target.AddStatus(statusData, statusId, statusName, adjustedStacks);
                 if (added)
+                {
                     BattleLog(BattleEnemyBuiltInStatusLogService.BuildImmediateLog(attacker.GetDebugDisplayName(), effectLabel, target.GetDebugDisplayName(), statusName, adjustedStacks, GetResolvedStatusStacks(target, statusData, statusId), null));
+                    TryLogAllEnemyStatusDrivenStageTransitions();
+                }
                 return added;
             },
             null);
@@ -2688,7 +2738,7 @@ public class BattleButton : MonoBehaviour
             : allyRange;
         EnemySkill_SO.DicePowerRange allyDisplayRange = ApplyAllyContextualDiceRangeModifiers(ally, enemy, diceIndex, allyBaseDisplayRange);
         allyDisplayRange = BattleDiceRollService.ApplyRangeBonus(allyDisplayRange, allyRelicModifier.minPowerBonus, allyRelicModifier.maxPowerBonus);
-        int allyBasePower = BattleDiceRollService.RollPower(allyRange);
+        int allyBasePower = BattleDiceRollService.RollPower(allyRange, ally.ResolveForcedRollMode());
         ProcessPlayerDiceRolledRelics(ally, enemy, diceIndex, allyBasePower, Mathf.Max(1, allyRange.minPower));
         bool isDefenseSkill = IsDefenseSkill(ally.SelectedSkill, diceIndex);
         int allyStatusPowerModifier = ally.GetStatusFlatPowerModifier(isDefenseSkill);
@@ -2723,7 +2773,7 @@ public class BattleButton : MonoBehaviour
         EnemySkill_SO.DicePowerRange enemyBaseDisplayRange = enemy.GetEffectiveDisplayedDicePowerRange(enemy.SelectedSkill, diceIndex);
         EnemySkill_SO.DicePowerRange enemyDisplayRange = enemyBaseDisplayRange;
         enemyDisplayRange = ApplyEnemyContextualDiceRangeModifiers(enemy, ally, diceIndex, enemyDisplayRange);
-        int enemyBasePower = BattleDiceRollService.RollPower(enemyRange);
+        int enemyBasePower = BattleDiceRollService.RollPower(enemyRange, enemy.ResolveForcedRollMode());
         bool isDefenseSkill = IsDefenseSkill(enemy.SelectedSkill, diceIndex);
         int enemyStatusPowerModifier = enemy.GetStatusFlatPowerModifier(isDefenseSkill);
         int queuedNextDicePowerBonus = ConsumePendingEnemyNextDicePowerBonus();
@@ -2902,8 +2952,8 @@ public class BattleButton : MonoBehaviour
             EnemySkill_SO.DicePowerRange enemyBaseDisplayRange = enemy.GetEffectiveDisplayedDicePowerRange(enemy.SelectedSkill, i);
             EnemySkill_SO.DicePowerRange enemyDisplayRange = enemyBaseDisplayRange;
             enemyDisplayRange = ApplyEnemyContextualDiceRangeModifiers(enemy, ally, i, enemyDisplayRange);
-            int allyBasePower = BattleDiceRollService.RollPower(allyRange);
-            int enemyBasePower = BattleDiceRollService.RollPower(enemyRange);
+            int allyBasePower = BattleDiceRollService.RollPower(allyRange, ally.ResolveForcedRollMode());
+            int enemyBasePower = BattleDiceRollService.RollPower(enemyRange, enemy.ResolveForcedRollMode());
             ProcessPlayerDiceRolledRelics(ally, enemy, i, allyBasePower, Mathf.Max(1, allyRange.minPower));
             int allyStatusPowerModifier = ally.GetStatusFlatPowerModifier(allyDefenseSkill);
             int enemyStatusPowerModifier = enemy.GetStatusFlatPowerModifier(enemyDefenseSkill);
@@ -3416,7 +3466,9 @@ public class BattleButton : MonoBehaviour
         if (attacker == null || target == null || attacker.IsDead)
             return 0;
 
-        int modifiedDamage = ResolveAllyHitDamage(attacker, target, diceIndex, baseDamage);
+        List<BattleDamageFormulaModifierSource> percentSources = new List<BattleDamageFormulaModifierSource>();
+        List<BattleDamageFormulaModifierSource> flatSources = new List<BattleDamageFormulaModifierSource>();
+        int modifiedDamage = ResolveAllyHitDamage(attacker, target, diceIndex, baseDamage, percentSources, flatSources);
         if (BattlePuppetPassiveService.TryApplyPuppetMasterDamageRedirect(
             target,
             modifiedDamage,
@@ -3430,6 +3482,7 @@ public class BattleButton : MonoBehaviour
         }
 
         int dealtDamage = target.TakeDamage(modifiedDamage, powerModifierAmount, baseDamage);
+        LogAttackDamageFormula("友方攻击", attacker.GetDebugDisplayName(), target.GetDebugDisplayName(), baseDamage, percentSources, flatSources, dealtDamage);
         ApplyAllyHitOutcome(attacker, target, diceIndex, dealtDamage, isSingleAttack);
         return dealtDamage;
     }
@@ -3439,8 +3492,11 @@ public class BattleButton : MonoBehaviour
         if (attacker == null || target == null || attacker.IsDead)
             return 0;
 
-        int incomingDamage = ResolveEnemyHitDamage(attacker, target, diceIndex, baseDamage, isSingleAttack);
+        List<BattleDamageFormulaModifierSource> percentSources = new List<BattleDamageFormulaModifierSource>();
+        List<BattleDamageFormulaModifierSource> flatSources = new List<BattleDamageFormulaModifierSource>();
+        int incomingDamage = ResolveEnemyHitDamage(attacker, target, diceIndex, baseDamage, isSingleAttack, percentSources, flatSources);
         int dealtDamage = target.TakeDamage(incomingDamage, powerModifierAmount, baseDamage);
+        LogAttackDamageFormula("敌方攻击", attacker.GetDebugDisplayName(), target.GetDebugDisplayName(), baseDamage, percentSources, flatSources, dealtDamage);
         ApplyEnemyHitOutcome(attacker, target, diceIndex, dealtDamage, isSingleAttack);
         return dealtDamage;
     }
@@ -3475,26 +3531,47 @@ public class BattleButton : MonoBehaviour
             () => ApplyEnemyMissEffects(attacker, target, diceIndex, dealtDamage));
     }
 
-    private int ResolveAllyHitDamage(BattleAllyController attacker, BattleEnemyController target, int diceIndex, int baseDamage)
+    private int ResolveAllyHitDamage(
+        BattleAllyController attacker,
+        BattleEnemyController target,
+        int diceIndex,
+        int baseDamage,
+        List<BattleDamageFormulaModifierSource> percentSources,
+        List<BattleDamageFormulaModifierSource> flatSources)
     {
         BattleAllyHitDamagePipelinePlan plan = BattleAllyHitDamagePipelinePlanService.Resolve();
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        AppendSources(percentSources, CalamitySystem.GetAllyDamageModifierSources(activeEncounter != null ? activeEncounter.activeCalamities : null));
+        AppendSources(percentSources, CalamitySystem.GetEnemyIncomingDamageModifierSources(activeEncounter != null ? activeEncounter.activeCalamities : null));
         return BattleAllyHitDamagePipelineDispatcher.Dispatch(
             baseDamage,
             plan,
-            damage => ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, diceIndex, damage));
+            damage => ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, diceIndex, damage, percentSources, flatSources));
     }
 
-    private int ResolveEnemyHitDamage(BattleEnemyController attacker, BattleAllyController target, int diceIndex, int baseDamage, bool isSingleAttack)
+    private int ResolveEnemyHitDamage(
+        BattleEnemyController attacker,
+        BattleAllyController target,
+        int diceIndex,
+        int baseDamage,
+        bool isSingleAttack,
+        List<BattleDamageFormulaModifierSource> percentSources,
+        List<BattleDamageFormulaModifierSource> flatSources)
     {
         BattleEnemyHitDamagePipelinePlan plan = BattleEnemyHitDamagePipelinePlanService.Resolve(isSingleAttack);
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        AppendSources(percentSources, CalamitySystem.GetEnemyDamageModifierSources(activeEncounter != null ? activeEncounter.activeCalamities : null));
         int resolvedDamage = BattleEnemyHitDamagePipelineDispatcher.Dispatch(
             baseDamage,
             plan,
             ApplyEnemyCalamityDamageModifiers,
-            damage => ApplyPlayerRelicIncomingAttackDamageModifiers(attacker, target, diceIndex, damage),
-            damage => ApplyPlayerRelicIncomingSingleAttackDamageModifiers(attacker, target, diceIndex, damage));
+            damage => ApplyPlayerRelicIncomingAttackDamageModifiers(attacker, target, diceIndex, damage, percentSources, flatSources),
+            damage => ApplyPlayerRelicIncomingSingleAttackDamageModifiers(attacker, target, diceIndex, damage, percentSources, flatSources));
         ResolveBuiltinStatus("target", "标记", out BattleStatus_SO markStatus, out _, out _);
-        return Mathf.Max(0, resolvedDamage + BattlePuppetPassiveService.ResolveSoullessPuppetUnmarkedTargetPowerPenalty(attacker, target, markStatus));
+        int puppetPenalty = BattlePuppetPassiveService.ResolveSoullessPuppetUnmarkedTargetPowerPenalty(attacker, target, markStatus);
+        if (puppetPenalty != 0)
+            flatSources?.Add(new BattleDamageFormulaModifierSource(puppetPenalty, "无魂傀儡"));
+        return Mathf.Max(0, resolvedDamage + puppetPenalty);
     }
 
     private void ApplyAllyMissEffects(BattleAllyController attacker, BattleEnemyController target, int diceIndex, int dealtDamage)
@@ -3576,6 +3653,17 @@ public class BattleButton : MonoBehaviour
         int diceIndex,
         int incomingDamage)
     {
+        return ApplyPlayerRelicIncomingAttackDamageModifiers(attacker, target, diceIndex, incomingDamage, null, null);
+    }
+
+    private int ApplyPlayerRelicIncomingAttackDamageModifiers(
+        BattleEnemyController attacker,
+        BattleAllyController target,
+        int diceIndex,
+        int incomingDamage,
+        List<BattleDamageFormulaModifierSource> percentSources,
+        List<BattleDamageFormulaModifierSource> flatSources)
+    {
         BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
 
         RelicExecutionContext context = BattleDamageModifierContextFactory.CreateIncomingAttack(
@@ -3589,6 +3677,8 @@ public class BattleButton : MonoBehaviour
         if (!BattleRelicBridge.Process(activeEncounter, context, (encounter, relicContext) => RelicTriggerDispatcher.ProcessBattleRelics(encounter, relicContext)))
             return Mathf.Max(0, incomingDamage);
 
+        AppendSources(percentSources, context.incomingDamagePercentModifierSources);
+        AppendSources(flatSources, context.incomingDamageFlatModifierSources);
         return BattleDamageModifierResolutionDispatcher.ResolveIncomingAndDispatchFeedback(
             incomingDamage,
             context,
@@ -3600,6 +3690,17 @@ public class BattleButton : MonoBehaviour
         BattleEnemyController target,
         int diceIndex,
         int outgoingDamage)
+    {
+        return ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, diceIndex, outgoingDamage, null, null);
+    }
+
+    private int ApplyPlayerRelicOutgoingDamageModifiers(
+        BattleAllyController attacker,
+        BattleEnemyController target,
+        int diceIndex,
+        int outgoingDamage,
+        List<BattleDamageFormulaModifierSource> percentSources,
+        List<BattleDamageFormulaModifierSource> flatSources)
     {
         if (outgoingDamage <= 0 || attacker == null || target == null)
             return Mathf.Max(0, outgoingDamage);
@@ -3617,6 +3718,8 @@ public class BattleButton : MonoBehaviour
         if (!BattleRelicBridge.Process(activeEncounter, context, (encounter, relicContext) => RelicTriggerDispatcher.ProcessBattleRelics(encounter, relicContext)))
             return Mathf.Max(0, calamityModifiedDamage);
 
+        AppendSources(percentSources, context.outgoingDamagePercentModifierSources);
+        AppendSources(flatSources, context.outgoingDamageFlatModifierSources);
         return BattleDamageModifierResolutionDispatcher.ResolveOutgoingAndDispatchFeedback(
             calamityModifiedDamage,
             context,
@@ -3639,6 +3742,17 @@ public class BattleButton : MonoBehaviour
         int diceIndex,
         int incomingDamage)
     {
+        return ApplyPlayerRelicIncomingSingleAttackDamageModifiers(attacker, target, diceIndex, incomingDamage, null, null);
+    }
+
+    private int ApplyPlayerRelicIncomingSingleAttackDamageModifiers(
+        BattleEnemyController attacker,
+        BattleAllyController target,
+        int diceIndex,
+        int incomingDamage,
+        List<BattleDamageFormulaModifierSource> percentSources,
+        List<BattleDamageFormulaModifierSource> flatSources)
+    {
         BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
 
         RelicExecutionContext context = BattleDamageModifierContextFactory.CreateIncomingSingleAttack(
@@ -3652,6 +3766,8 @@ public class BattleButton : MonoBehaviour
         if (!BattleRelicBridge.Process(activeEncounter, context, (encounter, relicContext) => RelicTriggerDispatcher.ProcessBattleRelics(encounter, relicContext)))
             return Mathf.Max(0, incomingDamage);
 
+        AppendSources(percentSources, context.incomingDamagePercentModifierSources);
+        AppendSources(flatSources, context.incomingDamageFlatModifierSources);
         return BattleDamageModifierResolutionDispatcher.ResolveIncomingAndDispatchFeedback(
             incomingDamage,
             context,
@@ -3789,6 +3905,7 @@ public class BattleButton : MonoBehaviour
                         additionalApplications > 0
                             ? $"敌方被动触发：{defeatedEnemy.GetDebugDisplayName()} 死亡后，{enemy.GetDebugDisplayName()} 立即获得 {rule.stackAmount} 层 {rule.statusData.DisplayName}，并将在后续 {additionalApplications} 个回合开始时继续获得相同效果，当前 {rule.statusData.DisplayName} {stacks} 层"
                             : $"敌方被动触发：{defeatedEnemy.GetDebugDisplayName()} 死亡后，{enemy.GetDebugDisplayName()} 获得 {rule.stackAmount} 层 {rule.statusData.DisplayName}，当前 {rule.statusData.DisplayName} {stacks} 层");
+                    TryLogAllEnemyStatusDrivenStageTransitions();
                 }
             }
         }
@@ -3821,6 +3938,7 @@ public class BattleButton : MonoBehaviour
 
                 int stacks = enemy.GetStatusStacks(effect.statusData);
                 BattleLog($"灾厄效果：{defeatedEnemy.GetDebugDisplayName()} 死亡后，{enemy.GetDebugDisplayName()} 获得 {effect.effectAmount} 层 {effect.statusData.DisplayName}，当前 {effect.statusData.DisplayName} {stacks} 层");
+                TryLogAllEnemyStatusDrivenStageTransitions();
             }
         }
     }
@@ -3869,12 +3987,33 @@ public class BattleButton : MonoBehaviour
 
     private void TryLogEnemyStatusDrivenStageTransition(BattleEnemyController enemy, BattleAllyController[] allies, BattleEnemyController[] enemies)
     {
-        if (!BattleStatusFlowTargetService.ShouldAttemptStatusDrivenStageTransition(enemy, target => target.IsDead, enemy != null && enemy.AppliedPendingStageTransitionThisRoundStart))
+        if (enemy == null)
             return;
 
-        int previousStage = enemy.CurrentStageIndex;
-        if (enemy.TryApplyStatusDrivenStageTransition(allies, enemies))
-            BattleLog(BattleStatusFlowTargetService.BuildStatusDrivenStageTransitionLog(enemy.GetDebugDisplayName(), previousStage, enemy.CurrentStageIndex));
+        TryLogEnemyStatusDrivenStageTransitions(new[] { enemy }, allies, enemies);
+    }
+
+    private void TryLogAllEnemyStatusDrivenStageTransitions()
+    {
+        BattleAllyController[] allies = GetLivingAllies().ToArray();
+        BattleEnemyController[] enemies = GetLivingEnemies().ToArray();
+        TryLogEnemyStatusDrivenStageTransitions(enemies, allies, enemies);
+    }
+
+    private void TryLogEnemyStatusDrivenStageTransitions(
+        IReadOnlyList<BattleEnemyController> candidates,
+        BattleAllyController[] allies,
+        BattleEnemyController[] enemies)
+    {
+        BattleStatusDrivenStageTransitionDispatcher.Dispatch(
+            candidates,
+            allies,
+            enemies,
+            (transitionedEnemy, previousStage, currentStage) =>
+                BattleLog(BattleStatusFlowTargetService.BuildStatusDrivenStageTransitionLog(
+                    transitionedEnemy.GetDebugDisplayName(),
+                    previousStage,
+                    currentStage)));
     }
 
     private void ApplyReactiveOnHitStatusEffects(BattleAllyController target)
@@ -4142,6 +4281,7 @@ public class BattleButton : MonoBehaviour
                     {
                         int stacks = statusPlan.StatusData != null ? attacker.GetStatusStacks(statusPlan.StatusData) : attacker.GetStatusStacks(statusPlan.StatusId);
                         BattleLog(BattleStatusEffectApplicationService.BuildImmediateAppliedLog(attacker.GetDebugDisplayName(), "\u81ea\u5df1", BuildStatusEffectLabel(effect, effectIndex), statusPlan.StatusName, plan.StackAmount, stacks));
+                        TryLogAllEnemyStatusDrivenStageTransitions();
                     }
                 }
                 continue;
@@ -4205,6 +4345,7 @@ public class BattleButton : MonoBehaviour
                     {
                         int stacks = statusPlan.StatusData != null ? attacker.GetStatusStacks(statusPlan.StatusData) : attacker.GetStatusStacks(statusPlan.StatusId);
                         BattleLog(BattleStatusEffectApplicationService.BuildImmediateAppliedLog(attacker.GetDebugDisplayName(), "\u81ea\u5df1", BuildStatusEffectLabel(effect, effectIndex), statusPlan.StatusName, plan.StackAmount, stacks));
+                        TryLogAllEnemyStatusDrivenStageTransitions();
                     }
                 }
                 continue;
@@ -4318,6 +4459,7 @@ public class BattleButton : MonoBehaviour
                 {
                     int currentStacks = statusPlan.StatusData != null ? target.GetStatusStacks(statusPlan.StatusData) : target.GetStatusStacks(statusPlan.StatusId);
                     BattleLog(BattleStatusEffectApplicationService.BuildImmediateAppliedLog(attacker.GetDebugDisplayName(), target.GetDebugDisplayName(), BuildStatusEffectLabel(effect, effectIndex), statusPlan.StatusName, stacks, currentStacks));
+                    TryLogAllEnemyStatusDrivenStageTransitions();
                 }
                 return added;
             },
@@ -4354,6 +4496,7 @@ public class BattleButton : MonoBehaviour
                 {
                     int currentStacks = statusPlan.StatusData != null ? target.GetStatusStacks(statusPlan.StatusData) : target.GetStatusStacks(statusPlan.StatusId);
                     BattleLog(BattleStatusEffectApplicationService.BuildImmediateAppliedLog(attacker.GetDebugDisplayName(), target.GetDebugDisplayName(), BuildStatusEffectLabel(effect, effectIndex), statusPlan.StatusName, stacks, currentStacks));
+                    TryLogAllEnemyStatusDrivenStageTransitions();
                 }
                 return added;
             },
@@ -4820,9 +4963,7 @@ public class BattleButton : MonoBehaviour
             enemy => BattleStatusFlowTargetService.ShouldAttemptStatusDrivenStageTransition(enemy, target => target.IsDead, enemy != null && enemy.AppliedPendingStageTransitionThisRoundStart),
             enemy =>
             {
-                int previousStage = enemy.CurrentStageIndex;
-                if (enemy.TryApplyStatusDrivenStageTransition(allies, enemies))
-                    BattleLog(BattleStatusFlowTargetService.BuildStatusDrivenStageTransitionLog(enemy.GetDebugDisplayName(), previousStage, enemy.CurrentStageIndex));
+                TryLogEnemyStatusDrivenStageTransition(enemy, allies, enemies);
             });
     }
 
@@ -5487,10 +5628,17 @@ public class BattleButton : MonoBehaviour
         if (encounter != null && encounter.isTutorialEncounter && encounter.tutorialBattleDefinition != null)
         {
             TutorialBattleRuntime.BeginBattle(encounter.tutorialBattleDefinition);
+            StartCoroutine(ShowPendingTutorialStepAfterInitialFrame());
             return;
         }
 
         TutorialBattleRuntime.Clear();
+    }
+
+    private IEnumerator ShowPendingTutorialStepAfterInitialFrame()
+    {
+        yield return null;
+        TryShowPendingTutorialStep();
     }
 
     private void HandleSkillInfoOverlayHidden()
@@ -5500,16 +5648,19 @@ public class BattleButton : MonoBehaviour
 
     private void HandleAllySkillSelectionShown(BattleAllyController ally)
     {
+        HideTutorialTargetHighlightIfVisible();
         HandleTutorialProgress(TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.AllySkillViewed), false);
     }
 
     private void HandleEnemySkillInfoShown(BattleEnemyController enemy, SpeedButton sourceButton)
     {
+        HideTutorialTargetHighlightIfVisible();
         HandleTutorialProgress(TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.EnemySkillViewed), false);
     }
 
     private void HandleEnemyDetailShown(BattleEnemyController enemy)
     {
+        HideTutorialTargetHighlightIfVisible();
         HandleTutorialProgress(TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.EnemyDetailViewed), false);
     }
 
@@ -5544,6 +5695,7 @@ public class BattleButton : MonoBehaviour
         tutorialBattleGuideOverlay.Show(step.title, step.body, step.continueButtonLabel, () =>
         {
             TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.ContinuePressed);
+            ShowTutorialTargetHighlightIfNeeded(step.highlightAfterContinue);
             TryShowPendingTutorialStep();
         });
     }
@@ -5553,7 +5705,138 @@ public class BattleButton : MonoBehaviour
         if (tutorialBattleGuideOverlay == null || reaction == null)
             return;
 
-        tutorialBattleGuideOverlay.Show(reaction.title, reaction.body, reaction.continueButtonLabel, null);
+        tutorialBattleGuideOverlay.Show(reaction.title, reaction.body, reaction.continueButtonLabel, () =>
+        {
+            if (ShowTutorialTargetHighlightIfNeeded(reaction.highlightAfterContinue))
+                return;
+
+            TryShowPendingTutorialStep();
+        });
+    }
+
+    private bool ShowTutorialTargetHighlightIfNeeded(TutorialBattleHighlightTarget target)
+    {
+        if (tutorialBattleGuideOverlay == null || target == TutorialBattleHighlightTarget.None)
+            return false;
+
+        if (TryResolveTutorialHighlightRect(target, out Rect screenRect))
+        {
+            activeTutorialHighlightTarget = target;
+            tutorialBattleGuideOverlay.ShowTargetHighlight(screenRect);
+            return true;
+        }
+
+        activeTutorialHighlightTarget = TutorialBattleHighlightTarget.None;
+        return false;
+    }
+
+    private void HideTutorialTargetHighlightIfVisible()
+    {
+        if (tutorialBattleGuideOverlay != null && tutorialBattleGuideOverlay.IsTargetHighlightVisible)
+            tutorialBattleGuideOverlay.Hide(false);
+        activeTutorialHighlightTarget = TutorialBattleHighlightTarget.None;
+    }
+
+    private bool ShouldConsumeTutorialPrepareStepInReadyPhase()
+    {
+        if (!TutorialBattleRuntime.IsActive)
+            return true;
+
+        TutorialBattleStepDefinition currentStep = TutorialBattleRuntime.CurrentStep;
+        if (currentStep == null)
+            return true;
+
+        if (currentStep.completionEvent == TutorialBattleEventType.CombatExecutePressed)
+            return true;
+
+        return activeTutorialHighlightTarget != TutorialBattleHighlightTarget.BattleButton;
+    }
+
+    private bool TryResolveTutorialHighlightRect(TutorialBattleHighlightTarget target, out Rect screenRect)
+    {
+        screenRect = default;
+        switch (target)
+        {
+            case TutorialBattleHighlightTarget.BattleButton:
+                return TryGetOwnButtonScreenRect(out screenRect);
+            case TutorialBattleHighlightTarget.FirstEnemySpeedButton:
+                return TryGetFirstEnemySpeedButtonScreenRect(out screenRect);
+            case TutorialBattleHighlightTarget.FirstAllySpeedButton:
+                return TryGetFirstAllySpeedButtonScreenRect(out screenRect);
+            default:
+                return false;
+        }
+    }
+
+    private bool TryGetOwnButtonScreenRect(out Rect screenRect)
+    {
+        screenRect = default;
+        RectTransform rectTransform = GetComponent<RectTransform>();
+        if (rectTransform == null)
+        {
+            Button button = GetComponentInChildren<Button>(true);
+            rectTransform = button != null ? button.GetComponent<RectTransform>() : null;
+        }
+
+        if (rectTransform == null)
+            return false;
+
+        Vector3[] corners = new Vector3[4];
+        rectTransform.GetWorldCorners(corners);
+        float minX = float.PositiveInfinity;
+        float minY = float.PositiveInfinity;
+        float maxX = float.NegativeInfinity;
+        float maxY = float.NegativeInfinity;
+        for (int i = 0; i < corners.Length; i++)
+        {
+            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(null, corners[i]);
+            minX = Mathf.Min(minX, screenPoint.x);
+            minY = Mathf.Min(minY, screenPoint.y);
+            maxX = Mathf.Max(maxX, screenPoint.x);
+            maxY = Mathf.Max(maxY, screenPoint.y);
+        }
+
+        const float padding = 18f;
+        screenRect = Rect.MinMaxRect(minX - padding, minY - padding, maxX + padding, maxY + padding);
+        return screenRect.width > 0.5f && screenRect.height > 0.5f;
+    }
+
+    private bool TryGetFirstEnemySpeedButtonScreenRect(out Rect screenRect)
+    {
+        screenRect = default;
+        BattleEnemyController[] enemies = activeRoundEnemies != null && activeRoundEnemies.Length > 0
+            ? activeRoundEnemies
+            : FindObjectsOfType<BattleEnemyController>(true);
+        for (int enemyIndex = 0; enemyIndex < enemies.Length; enemyIndex++)
+        {
+            IReadOnlyList<SpeedButton> buttons = BattleSpeedButtonListService.GetEnemyButtons(enemies[enemyIndex]);
+            for (int buttonIndex = 0; buttonIndex < buttons.Count; buttonIndex++)
+            {
+                if (buttons[buttonIndex] != null && buttons[buttonIndex].gameObject.activeInHierarchy)
+                    return buttons[buttonIndex].TryGetScreenHighlightRect(out screenRect);
+            }
+        }
+
+        return false;
+    }
+
+    private bool TryGetFirstAllySpeedButtonScreenRect(out Rect screenRect)
+    {
+        screenRect = default;
+        BattleAllyController[] allies = activeRoundAllies != null && activeRoundAllies.Length > 0
+            ? activeRoundAllies
+            : FindObjectsOfType<BattleAllyController>(true);
+        for (int allyIndex = 0; allyIndex < allies.Length; allyIndex++)
+        {
+            IReadOnlyList<SpeedButton> buttons = BattleSpeedButtonListService.GetAllyButtons(allies[allyIndex]);
+            for (int buttonIndex = 0; buttonIndex < buttons.Count; buttonIndex++)
+            {
+                if (buttons[buttonIndex] != null && buttons[buttonIndex].gameObject.activeInHierarchy)
+                    return buttons[buttonIndex].TryGetScreenHighlightRect(out screenRect);
+            }
+        }
+
+        return false;
     }
 
     private IEnumerator ShowTutorialReactionIfNeeded(TutorialBattleEventType eventType)
@@ -5563,7 +5846,7 @@ public class BattleButton : MonoBehaviour
             yield break;
 
         ShowTutorialReaction(progress.reactionToShow);
-        while (tutorialBattleGuideOverlay != null && tutorialBattleGuideOverlay.IsVisible)
+        while (tutorialBattleGuideOverlay != null && tutorialBattleGuideOverlay.IsModalVisible)
             yield return null;
     }
 
@@ -5623,6 +5906,7 @@ public class BattleButton : MonoBehaviour
 
         if (battleManager != null)
             battleManager.EndBattle();
+        GameMusicPlayer.FadeOutAndStop();
 
         SpeedButton.CombatLocked = true;
         currentPhase = BattlePhase.Ready;
@@ -5669,7 +5953,8 @@ public class BattleButton : MonoBehaviour
                 forceReturnToMapAfterDefeat = defeatContext.forceReturnToMapOnDefeat;
             }
         }
-        TutorialBattleRuntime.NotifyEvent(victory ? TutorialBattleEventType.BattleWon : TutorialBattleEventType.BattleLost);
+        TutorialBattleProgressResult tutorialCompletionProgress =
+            TutorialBattleRuntime.NotifyEvent(victory ? TutorialBattleEventType.BattleWon : TutorialBattleEventType.BattleLost);
         int expReward = victory ? CalculateVictoryExperienceReward(enemies) : 0;
         RelicExecutionContext completionContext = RelicTriggerDispatcher.ProcessBattleCompletion(
             activeEncounter,
@@ -5704,6 +5989,7 @@ public class BattleButton : MonoBehaviour
             activeEncounter.restartBattleOnDefeat = false;
         if (battleManager != null)
             battleManager.EndBattle();
+        GameMusicPlayer.FadeOutAndStop();
 
         SpeedButton.CombatLocked = true;
         currentPhase = BattlePhase.Ready;
@@ -5724,6 +6010,7 @@ public class BattleButton : MonoBehaviour
         BattleLog(victory
             ? $"Battle finished. Victory, EXP +{expReward}, Money +{moneyReward}."
             : "Battle finished. Defeat.");
+        HandleTutorialProgress(tutorialCompletionProgress, false);
         return true;
     }
 
@@ -5788,6 +6075,39 @@ public class BattleButton : MonoBehaviour
     {
         BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
         return CalamitySystem.ApplyEnemyDamageModifiers(baseDamage, activeEncounter != null ? activeEncounter.activeCalamities : null);
+    }
+
+    private static void AppendSources(
+        List<BattleDamageFormulaModifierSource> target,
+        IReadOnlyList<BattleDamageFormulaModifierSource> sources)
+    {
+        if (target == null || sources == null)
+            return;
+
+        for (int i = 0; i < sources.Count; i++)
+        {
+            if (sources[i].Amount != 0)
+                target.Add(sources[i]);
+        }
+    }
+
+    private static void LogAttackDamageFormula(
+        string label,
+        string attackerName,
+        string targetName,
+        int baseDamage,
+        IReadOnlyList<BattleDamageFormulaModifierSource> percentSources,
+        IReadOnlyList<BattleDamageFormulaModifierSource> flatSources,
+        int finalDamage)
+    {
+        Debug.Log(BattleDamageFormulaLogService.BuildAttackFormula(
+            label,
+            attackerName,
+            targetName,
+            baseDamage,
+            percentSources,
+            flatSources,
+            finalDamage));
     }
 
     private EncounterDropResults RollEncounterDrops(BattleEncounterData encounter, IReadOnlyList<LootTable_SO> overrideLootTables = null)

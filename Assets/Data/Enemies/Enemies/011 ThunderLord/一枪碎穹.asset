@@ -29,10 +29,10 @@ MonoBehaviour:
   maxPower: 3
   diceCount: 2
   dicePowerRanges:
-  - minPower: 5
-    maxPower: 6
-  - minPower: 4
-    maxPower: 6
+  - minPower: 3
+    maxPower: 5
+  - minPower: 2
+    maxPower: 4
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 0}
     hitEffectPrefab: {fileID: 2106323598568381076, guid: bb64d0943aae0c046b25ee9a18e96906, type: 3}
@@ -90,13 +90,21 @@ MonoBehaviour:
     - effectName: 
       trigger: 0
       targetMode: 0
-      statusData: {fileID: 11400000, guid: 504abc372b3b3644bae0ccb7da7e9ce1, type: 2}
+      statusData: {fileID: 11400000, guid: b137dabbfd68440d8ab3ca76492a4240, type: 2}
       statusType: 1
       applyTiming: 0
       applyAfterRoundStarts: 0
       applyRepeatCount: 0
       stackAmount: 2
       randomTargetCount: 5
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []

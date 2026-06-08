@@ -25,108 +25,108 @@ MonoBehaviour:
     randomWeight: 5
   relicMinimumCount:
     minimumCount: 1
-    randomWeight: 5
+    randomWeight: 8
   lootEntries:
   - goodsId: 1
     lootItem: {fileID: 11400000, guid: ea9793b0c90ae0c4f9dbaf13a832f375, type: 2}
     minPrice: 5
     maxPrice: 7
-    weight: 5
+    weight: 10
   - goodsId: 2
     lootItem: {fileID: 11400000, guid: 1a247d2fcfd14c141bd79e8a82154b1f, type: 2}
     minPrice: 8
     maxPrice: 12
-    weight: 5
+    weight: 10
   - goodsId: 3
     lootItem: {fileID: 11400000, guid: 2a5a440bab2e42f499a7fabcd4b29ead, type: 2}
     minPrice: 8
     maxPrice: 12
-    weight: 5
+    weight: 10
   - goodsId: 4
     lootItem: {fileID: 11400000, guid: 6e1752dc4702a1c44905a3559cb5f924, type: 2}
     minPrice: 3
     maxPrice: 7
-    weight: 25
+    weight: 100
   - goodsId: 5
     lootItem: {fileID: 11400000, guid: 3e23e2fc8a9e85945adee34acbb745f4, type: 2}
     minPrice: 8
     maxPrice: 12
-    weight: 5
+    weight: 10
   - goodsId: 6
     lootItem: {fileID: 11400000, guid: 868997ae4239f844f9ea876d8ad4057e, type: 2}
     minPrice: 8
     maxPrice: 12
-    weight: 5
+    weight: 10
   - goodsId: 7
     lootItem: {fileID: 11400000, guid: f7d97cfbea961c84ebb552d194bd09f1, type: 2}
     minPrice: 8
     maxPrice: 12
-    weight: 5
+    weight: 10
   - goodsId: 8
     lootItem: {fileID: 11400000, guid: 4ae5af66b58deb64bb0942a685e955c5, type: 2}
     minPrice: 18
     maxPrice: 26
-    weight: 1
+    weight: 3
   - goodsId: 9
     lootItem: {fileID: 11400000, guid: d472eb76e6a877043b3a98578a2db396, type: 2}
     minPrice: 18
     maxPrice: 26
-    weight: 1
+    weight: 3
   - goodsId: 10
     lootItem: {fileID: 11400000, guid: 264958ff28a8e5242b8197ce9765edbe, type: 2}
     minPrice: 24
     maxPrice: 32
-    weight: 1
+    weight: 3
   - goodsId: 11
     lootItem: {fileID: 11400000, guid: a86c6504bc8104048a4271c991a686c2, type: 2}
     minPrice: 18
     maxPrice: 26
-    weight: 1
+    weight: 3
   - goodsId: 11
     lootItem: {fileID: 11400000, guid: 6341a87cfa58ea5468dde7f6097e1937, type: 2}
     minPrice: 18
     maxPrice: 26
-    weight: 1
+    weight: 3
   - goodsId: 11
     lootItem: {fileID: 11400000, guid: 414655eb47424bc4a9b4d191c2fe0553, type: 2}
     minPrice: 18
     maxPrice: 26
-    weight: 1
+    weight: 4
   - goodsId: 11
     lootItem: {fileID: 11400000, guid: 92ff176e0600c3947ac0c78608a9c60d, type: 2}
     minPrice: 18
     maxPrice: 26
-    weight: 1
+    weight: 4
   - goodsId: 11
     lootItem: {fileID: 11400000, guid: 03848b90cd0c1c348b9a521cbc9087cf, type: 2}
     minPrice: 18
     maxPrice: 26
-    weight: 1
+    weight: 4
   - goodsId: 11
     lootItem: {fileID: 11400000, guid: 7aae93eb0de368647b9b0838cc9f0ad0, type: 2}
     minPrice: 18
     maxPrice: 26
-    weight: 1
+    weight: 4
   - goodsId: 11
     lootItem: {fileID: 11400000, guid: da452dc44c669c8408ba0c46c2c200fc, type: 2}
     minPrice: 18
     maxPrice: 26
-    weight: 1
+    weight: 4
   - goodsId: 11
     lootItem: {fileID: 11400000, guid: 3a4ba9525fb254343b801875708623fa, type: 2}
     minPrice: 18
     maxPrice: 26
-    weight: 1
+    weight: 4
   - goodsId: 11
     lootItem: {fileID: 11400000, guid: 5153681d7a3fed84995523c3b98540a8, type: 2}
     minPrice: 18
     maxPrice: 26
-    weight: 1
+    weight: 4
   - goodsId: 11
     lootItem: {fileID: 11400000, guid: 4298ab155e36dbe4ea7f85afe81d52fd, type: 2}
     minPrice: 18
     maxPrice: 26
-    weight: 1
+    weight: 4
   weaponEntries:
   - goodsId: 101
     weaponData: {fileID: 11400000, guid: cdf2798ce1fc9ed42954b0864d1ce01f, type: 2}

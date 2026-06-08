@@ -43,4 +43,40 @@ public class BattleDiceRollServiceTests
         Assert.AreEqual(2, observedMin);
         Assert.AreEqual(6, observedExclusiveMax);
     }
+
+    [Test]
+    public void RollPower_WhenForcedToMax_ReturnsNormalizedMaximumWithoutRandomRoll()
+    {
+        bool randomCalled = false;
+
+        int rolled = BattleDiceRollService.RollPower(
+            new EnemySkill_SO.DicePowerRange { minPower = 2, maxPower = 5 },
+            BattleDiceRollService.ForcedRollMode.Max,
+            (minInclusive, maxExclusive) =>
+            {
+                randomCalled = true;
+                return minInclusive;
+            });
+
+        Assert.AreEqual(5, rolled);
+        Assert.IsFalse(randomCalled);
+    }
+
+    [Test]
+    public void RollPower_WhenForcedToMin_ReturnsNormalizedMinimumWithoutRandomRoll()
+    {
+        bool randomCalled = false;
+
+        int rolled = BattleDiceRollService.RollPower(
+            new EnemySkill_SO.DicePowerRange { minPower = -3, maxPower = -1 },
+            BattleDiceRollService.ForcedRollMode.Min,
+            (minInclusive, maxExclusive) =>
+            {
+                randomCalled = true;
+                return maxExclusive;
+            });
+
+        Assert.AreEqual(1, rolled);
+        Assert.IsFalse(randomCalled);
+    }
 }

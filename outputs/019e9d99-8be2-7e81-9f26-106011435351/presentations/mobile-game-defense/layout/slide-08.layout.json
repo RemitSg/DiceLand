@@ -1,0 +1,1900 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/8gr1fj",
+    "id": "8gr1fj",
+    "slide": 8,
+    "layoutId": "c2ad8b7e-e33f-498b-a71e-e8e60671d37a",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "f9ace7d4-c39a-47f4-8931-bdda99d2ba47",
+    "masterLayoutName": "Master",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Consolas",
+      "Microsoft YaHei"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "c2ad8b7e-e33f-498b-a71e-e8e60671d37a",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "f9ace7d4-c39a-47f4-8931-bdda99d2ba47",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "f9ace7d4-c39a-47f4-8931-bdda99d2ba47",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/e9cvixcz",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/lwval87e",
+      "id": "2",
+      "bbox": [
+        54,
+        26,
+        500,
+        28
+      ],
+      "geometry": "rect",
+      "text": "07 遗物与状态系统",
+      "textPreview": "07 遗物与状态系统",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 15,
+        "typeface": "Microsoft YaHei",
+        "color": "#F4C95D",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "07 遗物与状态系统"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "07 遗物与状态系统",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 15,
+            "typeface": "Microsoft YaHei",
+            "color": "#F4C95D",
+            "bold": true,
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "07 遗物与状态系统",
+              "fontSize": 15,
+              "typeface": "Microsoft YaHei",
+              "color": "#F4C95D",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wb2hwfyx",
+      "id": "3",
+      "bbox": [
+        50,
+        56,
+        1120,
+        62
+      ],
+      "geometry": "rect",
+      "text": "遗物与状态系统是可扩展构筑的核心规则层",
+      "textPreview": "遗物与状态系统是可扩展构筑的核心规则层",
+      "resolvedFontSize": 32,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 32,
+        "typeface": "Microsoft YaHei",
+        "color": "#F6F7FB",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "遗物与状态系统是可扩展构筑的核心规则层"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "遗物与状态系统是可扩展构筑的核心规则层",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 32,
+            "typeface": "Microsoft YaHei",
+            "color": "#F6F7FB",
+            "bold": true,
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "遗物与状态系统是可扩展构筑的核心规则层",
+              "fontSize": 32,
+              "typeface": "Microsoft YaHei",
+              "color": "#F6F7FB",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3itgfmlk",
+      "id": "4",
+      "bbox": [
+        50,
+        122,
+        1180,
+        1.8
+      ],
+      "geometry": "rect",
+      "fillColor": "#34445F",
+      "lineColor": "#34445F",
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ex0nuxc3",
+      "id": "5",
+      "bbox": [
+        50,
+        675,
+        760,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Mobile Roguelite Turn-Based Game · Unity / Tuanjie 2022.3",
+      "textPreview": "Mobile Roguelite Turn-Based Game · Unity / Tuanjie 2022.3",
+      "resolvedFontSize": 11.67,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 13,
+        "typeface": "Microsoft YaHei",
+        "color": "#7F8AA1",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.9,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Mobile Roguelite Turn-Based Game · Unity / Tuanjie 2022.3"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Mobile Roguelite Turn-Based Game · Unity / Tuanjie 2022.3",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 13,
+            "typeface": "Microsoft YaHei",
+            "color": "#7F8AA1",
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Mobile Roguelite Turn-Based Game · Unity / Tuanjie 2022.3",
+              "fontSize": 13,
+              "typeface": "Microsoft YaHei",
+              "color": "#7F8AA1"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/loj2t83i",
+      "id": "6",
+      "bbox": [
+        1170,
+        668,
+        60,
+        28
+      ],
+      "geometry": "rect",
+      "text": "08",
+      "textPreview": "08",
+      "resolvedFontSize": 16,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 16,
+        "typeface": "Microsoft YaHei",
+        "color": "#F4C95D",
+        "bold": true,
+        "alignment": "right",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "08"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "08",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 16,
+            "typeface": "Microsoft YaHei",
+            "color": "#F4C95D",
+            "bold": true,
+            "alignment": "right",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "08",
+              "fontSize": 16,
+              "typeface": "Microsoft YaHei",
+              "color": "#F4C95D",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/w3m94fu1",
+      "id": "7",
+      "bbox": [
+        76,
+        178,
+        180,
+        104
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#182133",
+      "lineColor": "#34445F",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3ex0nuxc",
+      "id": "8",
+      "bbox": [
+        92,
+        196,
+        148,
+        40
+      ],
+      "geometry": "rect",
+      "text": "111",
+      "textPreview": "111",
+      "resolvedFontSize": 26.67,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 30,
+        "typeface": "Microsoft YaHei",
+        "color": "#F4C95D",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.89,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "111"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "111",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 30,
+            "typeface": "Microsoft YaHei",
+            "color": "#F4C95D",
+            "bold": true,
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "111",
+              "fontSize": 30,
+              "typeface": "Microsoft YaHei",
+              "color": "#F4C95D",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/at47y1kr",
+      "id": "9",
+      "bbox": [
+        92,
+        240,
+        148,
+        30
+      ],
+      "geometry": "rect",
+      "text": "遗物目录",
+      "textPreview": "遗物目录",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 15,
+        "typeface": "Microsoft YaHei",
+        "color": "#AEB8C9",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "遗物目录"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "遗物目录",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 15,
+            "typeface": "Microsoft YaHei",
+            "color": "#AEB8C9",
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "遗物目录",
+              "fontSize": 15,
+              "typeface": "Microsoft YaHei",
+              "color": "#AEB8C9"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/knih4byh",
+      "id": "10",
+      "bbox": [
+        292,
+        178,
+        210,
+        104
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#182133",
+      "lineColor": "#34445F",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/d8bat47y",
+      "id": "11",
+      "bbox": [
+        308,
+        196,
+        178,
+        40
+      ],
+      "geometry": "rect",
+      "text": "115",
+      "textPreview": "115",
+      "resolvedFontSize": 26.67,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 30,
+        "typeface": "Microsoft YaHei",
+        "color": "#58D7FF",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.89,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "115"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "115",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 30,
+            "typeface": "Microsoft YaHei",
+            "color": "#58D7FF",
+            "bold": true,
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "115",
+              "fontSize": 30,
+              "typeface": "Microsoft YaHei",
+              "color": "#58D7FF",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/2lszqtcj",
+      "id": "12",
+      "bbox": [
+        308,
+        240,
+        178,
+        30
+      ],
+      "geometry": "rect",
+      "text": "遗物 asset 文件",
+      "textPreview": "遗物 asset 文件",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 15,
+        "typeface": "Microsoft YaHei",
+        "color": "#AEB8C9",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "遗物 asset 文件"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "遗物 asset 文件",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 15,
+            "typeface": "Microsoft YaHei",
+            "color": "#AEB8C9",
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "遗物 asset 文件",
+              "fontSize": 15,
+              "typeface": "Microsoft YaHei",
+              "color": "#AEB8C9"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/v6psfil0",
+      "id": "13",
+      "bbox": [
+        538,
+        178,
+        210,
+        104
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#182133",
+      "lineColor": "#34445F",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/kf6dcbul",
+      "id": "14",
+      "bbox": [
+        554,
+        196,
+        178,
+        40
+      ],
+      "geometry": "rect",
+      "text": "Built-in",
+      "textPreview": "Built-in",
+      "resolvedFontSize": 26.67,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 30,
+        "typeface": "Microsoft YaHei",
+        "color": "#74D680",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.89,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Built-in"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Built-in",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 30,
+            "typeface": "Microsoft YaHei",
+            "color": "#74D680",
+            "bold": true,
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Built-in",
+              "fontSize": 30,
+              "typeface": "Microsoft YaHei",
+              "color": "#74D680",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/d0z61032",
+      "id": "15",
+      "bbox": [
+        554,
+        240,
+        178,
+        30
+      ],
+      "geometry": "rect",
+      "text": "效果注册表",
+      "textPreview": "效果注册表",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 15,
+        "typeface": "Microsoft YaHei",
+        "color": "#AEB8C9",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "效果注册表"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "效果注册表",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 15,
+            "typeface": "Microsoft YaHei",
+            "color": "#AEB8C9",
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "效果注册表",
+              "fontSize": 15,
+              "typeface": "Microsoft YaHei",
+              "color": "#AEB8C9"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/29gr2p8n",
+      "id": "16",
+      "bbox": [
+        78,
+        350,
+        250,
+        120
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#182133",
+      "lineColor": "#F4C95D",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vu9knih4",
+      "id": "17",
+      "bbox": [
+        92,
+        362,
+        222,
+        26
+      ],
+      "geometry": "rect",
+      "text": "触发时机",
+      "textPreview": "触发时机",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 18,
+        "typeface": "Microsoft YaHei",
+        "color": "#F6F7FB",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.83,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "触发时机"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "触发时机",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 18,
+            "typeface": "Microsoft YaHei",
+            "color": "#F6F7FB",
+            "bold": true,
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "触发时机",
+              "fontSize": 18,
+              "typeface": "Microsoft YaHei",
+              "color": "#F6F7FB",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/k3q5o7qp",
+      "id": "18",
+      "bbox": [
+        92,
+        392,
+        222,
+        70
+      ],
+      "geometry": "rect",
+      "text": "获得、战斗开始、回合开始、命中、死亡等",
+      "textPreview": "获得、战斗开始、回合开始、命中、死亡等",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 14,
+        "typeface": "Microsoft YaHei",
+        "color": "#AEB8C9",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "获得、战斗开始、回合开始、命中"
+          },
+          {
+            "index": 2,
+            "text": "、死亡等"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "获得、战斗开始、回合开始、命中、死亡等",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 14,
+            "typeface": "Microsoft YaHei",
+            "color": "#AEB8C9",
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "获得、战斗开始、回合开始、命中、死亡等",
+              "fontSize": 14,
+              "typeface": "Microsoft YaHei",
+              "color": "#AEB8C9"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/donyd0z6",
+      "id": "19",
+      "bbox": [
+        386,
+        350,
+        270,
+        120
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#182133",
+      "lineColor": "#58D7FF",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hcrmhk3q",
+      "id": "20",
+      "bbox": [
+        400,
+        362,
+        242,
+        26
+      ],
+      "geometry": "rect",
+      "text": "效果实现",
+      "textPreview": "效果实现",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 18,
+        "typeface": "Microsoft YaHei",
+        "color": "#F6F7FB",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.83,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "效果实现"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "效果实现",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 18,
+            "typeface": "Microsoft YaHei",
+            "color": "#F6F7FB",
+            "bold": true,
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "效果实现",
+              "fontSize": 18,
+              "typeface": "Microsoft YaHei",
+              "color": "#F6F7FB",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/orytsvu9",
+      "id": "21",
+      "bbox": [
+        400,
+        392,
+        242,
+        70
+      ],
+      "geometry": "rect",
+      "text": "内置效果按领域拆分到多个 partial 文件",
+      "textPreview": "内置效果按领域拆分到多个 partial 文件",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 14,
+        "typeface": "Microsoft YaHei",
+        "color": "#AEB8C9",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "内置效果按领域拆分到多个 partial"
+          },
+          {
+            "index": 2,
+            "text": "文件"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "内置效果按领域拆分到多个 partial 文件",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 14,
+            "typeface": "Microsoft YaHei",
+            "color": "#AEB8C9",
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "内置效果按领域拆分到多个 partial 文件",
+              "fontSize": 14,
+              "typeface": "Microsoft YaHei",
+              "color": "#AEB8C9"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/z61032ls",
+      "id": "22",
+      "bbox": [
+        714,
+        350,
+        310,
+        120
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#182133",
+      "lineColor": "#74D680",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/al87ed8b",
+      "id": "23",
+      "bbox": [
+        728,
+        362,
+        282,
+        26
+      ],
+      "geometry": "rect",
+      "text": "执行上下文",
+      "textPreview": "执行上下文",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 18,
+        "typeface": "Microsoft YaHei",
+        "color": "#F6F7FB",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.83,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "执行上下文"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "执行上下文",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 18,
+            "typeface": "Microsoft YaHei",
+            "color": "#F6F7FB",
+            "bold": true,
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "执行上下文",
+              "fontSize": 18,
+              "typeface": "Microsoft YaHei",
+              "color": "#F6F7FB",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/h0fepkzu",
+      "id": "24",
+      "bbox": [
+        728,
+        392,
+        282,
+        70
+      ],
+      "geometry": "rect",
+      "text": "通过上下文访问战斗、地图、奖励和反馈接口",
+      "textPreview": "通过上下文访问战斗、地图、奖励和反馈接口",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 14,
+        "typeface": "Microsoft YaHei",
+        "color": "#AEB8C9",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "通过上下文访问战斗、地图、奖励和反馈接"
+          },
+          {
+            "index": 2,
+            "text": "口"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "通过上下文访问战斗、地图、奖励和反馈接口",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 14,
+            "typeface": "Microsoft YaHei",
+            "color": "#AEB8C9",
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "通过上下文访问战斗、地图、奖励和反馈接口",
+              "fontSize": 14,
+              "typeface": "Microsoft YaHei",
+              "color": "#AEB8C9"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sfil0rqd",
+      "id": "25",
+      "bbox": [
+        328,
+        410,
+        58,
+        3
+      ],
+      "geometry": "rect",
+      "fillColor": "#F4C95D",
+      "lineColor": "#F4C95D",
+      "lineWidth": 0
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/zupwb2hw",
+      "id": "26",
+      "bbox": [
+        376,
+        405,
+        12,
+        12
+      ],
+      "geometry": "rect",
+      "fillColor": "#F4C95D",
+      "lineColor": "#F4C95D",
+      "lineWidth": 0
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/a9w3m94f",
+      "id": "27",
+      "bbox": [
+        656,
+        410,
+        58,
+        3
+      ],
+      "geometry": "rect",
+      "fillColor": "#58D7FF",
+      "lineColor": "#58D7FF",
+      "lineWidth": 0
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hwfyxobm",
+      "id": "28",
+      "bbox": [
+        704,
+        405,
+        12,
+        12
+      ],
+      "geometry": "rect",
+      "fillColor": "#58D7FF",
+      "lineColor": "#58D7FF",
+      "lineWidth": 0
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/obm58z25",
+      "id": "29",
+      "bbox": [
+        78,
+        510,
+        1060,
+        70
+      ],
+      "geometry": "rect",
+      "text": "· 核心不是把每个遗物写死在场景里，而是让效果接入统一生命周期\n· 状态效果和遗物效果共享战斗上下文，便于组合和测试",
+      "textPreview": "· 核心不是把每个遗物写死在场景里，而是让效果接入统一生命周期 | · 状态效果和遗物效果共享战斗上下文，便于组合和测试",
+      "resolvedFontSize": 19,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 19,
+        "typeface": "Microsoft YaHei",
+        "color": "#F6F7FB",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 8,
+          "right": 10,
+          "bottom": 8,
+          "left": 10
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "· 核心不是把每个遗物写死在场景里，而是让效果接入统一生命周期"
+          },
+          {
+            "index": 2,
+            "text": "· 状态效果和遗物效果共享战斗上下文，便于组合和测试"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "· 核心不是把每个遗物写死在场景里，而是让效果接入统一生命周期",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 19,
+            "typeface": "Microsoft YaHei",
+            "color": "#F6F7FB",
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 8,
+              "right": 10,
+              "bottom": 8,
+              "left": 10
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "· 核心不是把每个遗物写死在场景里，而是让效果接入统一生命周期",
+              "fontSize": 19,
+              "typeface": "Microsoft YaHei",
+              "color": "#F6F7FB"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "· 状态效果和遗物效果共享战斗上下文，便于组合和测试",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 19,
+            "typeface": "Microsoft YaHei",
+            "color": "#F6F7FB",
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 8,
+              "right": 10,
+              "bottom": 8,
+              "left": 10
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "· 状态效果和遗物效果共享战斗上下文，便于组合和测试",
+              "fontSize": 19,
+              "typeface": "Microsoft YaHei",
+              "color": "#F6F7FB"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#0F1420",
+      "lineColor": "#0F1420",
+      "lineWidth": 0
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/il0rqd4v",
+      "id": "30",
+      "bbox": [
+        78,
+        590,
+        1060,
+        70
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#121A28",
+      "lineColor": "#34445F",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 31,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/b6xkf6dc",
+      "id": "31",
+      "bbox": [
+        94,
+        600,
+        1028,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Relic system evidence",
+      "textPreview": "Relic system evidence",
+      "resolvedFontSize": 11.67,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 13,
+        "typeface": "Microsoft YaHei",
+        "color": "#F4C95D",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.9,
+        "insets": {
+          "top": 4,
+          "right": 6,
+          "bottom": 4,
+          "left": 6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Relic system evidence"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Relic system evidence",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 13,
+            "typeface": "Microsoft YaHei",
+            "color": "#F4C95D",
+            "bold": true,
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4,
+              "right": 6,
+              "bottom": 4,
+              "left": 6
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Relic system evidence",
+              "fontSize": 13,
+              "typeface": "Microsoft YaHei",
+              "color": "#F4C95D",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#121A28",
+      "lineColor": "#121A28",
+      "lineWidth": 0
+    },
+    {
+      "order": 32,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0rqd4vmt",
+      "id": "32",
+      "bbox": [
+        96,
+        624,
+        1024,
+        28
+      ],
+      "geometry": "rect",
+      "text": "RelicSystem.BuiltInEffectRegistry.cs\nRelicSystem.BuiltInDiceEffects.cs\nRelicSystem.BuiltInStatusEffects.cs\nRelicSystem.BuiltInRoundStartStatueEffects.cs",
+      "textPreview": "RelicSystem.BuiltInEffectRegistry.cs | RelicSystem.BuiltInDiceEffects.cs | RelicSystem.BuiltInStatusEffects.cs | RelicSystem.BuiltInRound...",
+      "resolvedFontSize": 5,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 10,
+        "typeface": "Consolas",
+        "color": "#DCE6F5",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.5,
+        "insets": {
+          "top": 2,
+          "right": 2,
+          "bottom": 2,
+          "left": 2
+        }
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "RelicSystem.BuiltInEffectRegistry.cs"
+          },
+          {
+            "index": 2,
+            "text": "RelicSystem.BuiltInDiceEffects.cs"
+          },
+          {
+            "index": 3,
+            "text": "RelicSystem.BuiltInStatusEffects.cs"
+          },
+          {
+            "index": 4,
+            "text": "RelicSystem.BuiltInRoundStartStatueEffects.cs"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "RelicSystem.BuiltInEffectRegistry.cs",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 10,
+            "typeface": "Consolas",
+            "color": "#DCE6F5",
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 2,
+              "right": 2,
+              "bottom": 2,
+              "left": 2
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "RelicSystem.BuiltInEffectRegistry.cs",
+              "fontSize": 10,
+              "typeface": "Consolas",
+              "color": "#DCE6F5"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "RelicSystem.BuiltInDiceEffects.cs",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 10,
+            "typeface": "Consolas",
+            "color": "#DCE6F5",
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 2,
+              "right": 2,
+              "bottom": 2,
+              "left": 2
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "RelicSystem.BuiltInDiceEffects.cs",
+              "fontSize": 10,
+              "typeface": "Consolas",
+              "color": "#DCE6F5"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "RelicSystem.BuiltInStatusEffects.cs",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 10,
+            "typeface": "Consolas",
+            "color": "#DCE6F5",
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 2,
+              "right": 2,
+              "bottom": 2,
+              "left": 2
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "RelicSystem.BuiltInStatusEffects.cs",
+              "fontSize": 10,
+              "typeface": "Consolas",
+              "color": "#DCE6F5"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 4,
+          "text": "RelicSystem.BuiltInRoundStartStatueEffects.cs",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "fontSize": 10,
+            "typeface": "Consolas",
+            "color": "#DCE6F5",
+            "alignment": "left",
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 2,
+              "right": 2,
+              "bottom": 2,
+              "left": 2
+            }
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "RelicSystem.BuiltInRoundStartStatueEffects.cs",
+              "fontSize": 10,
+              "typeface": "Consolas",
+              "color": "#DCE6F5"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#121A28",
+      "lineColor": "#121A28",
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}
