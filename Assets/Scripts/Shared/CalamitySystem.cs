@@ -13,6 +13,11 @@ public static class CalamitySystem
         return ApplyPercentageModifier(baseValue, activeCalamities, CalamityBuiltInEffectType.EnemyDamagePercentModifier, 1, true, ModifyEnemyDamageWithHandler);
     }
 
+    public static List<BattleDamageFormulaModifierSource> GetEnemyDamageModifierSources(IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return GetPercentageModifierSources(activeCalamities, CalamityBuiltInEffectType.EnemyDamagePercentModifier);
+    }
+
     public static int ApplyBattleExperienceModifiers(int baseValue, IReadOnlyList<RunCalamityState> activeCalamities)
     {
         return ApplyPercentageModifier(baseValue, activeCalamities, CalamityBuiltInEffectType.BattleExperiencePercentModifier, 0, false, ModifyBattleExperienceWithHandler);
@@ -33,6 +38,11 @@ public static class CalamitySystem
         return ApplyPercentageModifier(baseValue, activeCalamities, CalamityBuiltInEffectType.AllyDamagePercentModifier, 0, false, ModifyAllyDamageWithHandler);
     }
 
+    public static List<BattleDamageFormulaModifierSource> GetAllyDamageModifierSources(IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return GetPercentageModifierSources(activeCalamities, CalamityBuiltInEffectType.AllyDamagePercentModifier);
+    }
+
     public static int ApplyAllyMaxHpModifiers(int baseValue, IReadOnlyList<RunCalamityState> activeCalamities)
     {
         return ApplyPercentageModifier(baseValue, activeCalamities, CalamityBuiltInEffectType.AllyMaxHpPercentModifier, 1, true, ModifyAllyMaxHpWithHandler);
@@ -41,6 +51,11 @@ public static class CalamitySystem
     public static int ApplyEnemyIncomingDamageModifiers(int baseValue, IReadOnlyList<RunCalamityState> activeCalamities)
     {
         return ApplyPercentageModifier(baseValue, activeCalamities, CalamityBuiltInEffectType.EnemyIncomingDamagePercentModifier, 0, false, ModifyEnemyIncomingDamageWithHandler);
+    }
+
+    public static List<BattleDamageFormulaModifierSource> GetEnemyIncomingDamageModifierSources(IReadOnlyList<RunCalamityState> activeCalamities)
+    {
+        return GetPercentageModifierSources(activeCalamities, CalamityBuiltInEffectType.EnemyIncomingDamagePercentModifier);
     }
 
     public static int ApplyEnemySpeedModifiers(int baseValue, IReadOnlyList<RunCalamityState> activeCalamities)
@@ -184,6 +199,34 @@ public static class CalamitySystem
         }
 
         return modifiedValue;
+    }
+
+    private static List<BattleDamageFormulaModifierSource> GetPercentageModifierSources(
+        IReadOnlyList<RunCalamityState> activeCalamities,
+        CalamityBuiltInEffectType builtInType)
+    {
+        List<BattleDamageFormulaModifierSource> sources = new List<BattleDamageFormulaModifierSource>();
+        if (activeCalamities == null || activeCalamities.Count == 0)
+            return sources;
+
+        for (int i = 0; i < activeCalamities.Count; i++)
+        {
+            RunCalamityState state = activeCalamities[i];
+            if (state == null || state.calamityData == null)
+                continue;
+
+            IReadOnlyList<CalamityBuiltInEffectEntry> effects = state.calamityData.GetValidEffects();
+            for (int j = 0; j < effects.Count; j++)
+            {
+                CalamityBuiltInEffectEntry effect = effects[j];
+                if (effect == null || effect.effectType != builtInType || effect.effectAmount == 0)
+                    continue;
+
+                sources.Add(new BattleDamageFormulaModifierSource(effect.effectAmount, state.calamityData.DisplayName));
+            }
+        }
+
+        return sources;
     }
 
     private static int ModifyEnemyMaxHpWithHandler(int currentValue, RunCalamityState calamityState)

@@ -79,6 +79,43 @@ public static partial class RelicSystem
         return minimumStacks;
     }
 
+    private static void HandleSetEnemyStatusMinimumStacks(
+        Relic_SO relicData,
+        RunRelicState relicState,
+        RelicExecutionContext context,
+        Relic_SO.RelicBuiltInEffectEntry effect)
+    {
+        if ((context.trigger != Relic_SO.RelicTrigger.OnBattleSetup && context.trigger != Relic_SO.RelicTrigger.OnBattleRoundStart)
+            || effect.conditionStatusData == null
+            || context.enemies == null)
+        {
+            return;
+        }
+
+        int minimumStacks = CalculateScaledStatusStacks(relicState, effect);
+        if (minimumStacks <= 0)
+            return;
+
+        int affectedEnemies = 0;
+        for (int i = 0; i < context.enemies.Length; i++)
+        {
+            BattleEnemyController enemy = context.enemies[i];
+            if (enemy == null || enemy.IsDead)
+                continue;
+
+            int currentStacks = enemy.GetStatusStacks(effect.conditionStatusData);
+            if (currentStacks >= minimumStacks)
+                continue;
+
+            int stacksToApply = minimumStacks - Mathf.Max(0, currentStacks);
+            if (enemy.AddStatus(effect.conditionStatusData, effect.conditionStatusData.StatusId, effect.conditionStatusData.DisplayName, stacksToApply))
+                affectedEnemies++;
+        }
+
+        if (affectedEnemies > 0)
+            AddRelicFeedback(context, relicData, $"{affectedEnemies} 名敌人的 {GetStatusDisplayName(effect.conditionStatusData)} 被维持到至少 {minimumStacks} 层。");
+    }
+
     public static int ResolveEnemyRoundStartStatusDamage(
         BattleEnemyController target,
         BattleStatus_SO statusData,
@@ -419,7 +456,10 @@ public static partial class RelicSystem
 
         int percentBonus = conditionStacks * Mathf.Max(0, effect.amount) * Mathf.Max(1, relicState.amount);
         if (percentBonus > 0)
+        {
             context.outgoingDamagePercentModifier += percentBonus;
+            context.AddOutgoingDamagePercentModifierSource(percentBonus, GetRelicDisplayName(relicData));
+        }
     }
 
     private static void HandlePreventLethalDamageByConsumingEnemyStatusTotal(

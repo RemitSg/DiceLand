@@ -1115,7 +1115,15 @@ public class BattleAllyController : MonoBehaviour
                 continue;
 
             if (damage > 0)
-                TakeDamage(damage);
+            {
+                int dealtDamage = TakeDamage(damage);
+                Debug.Log(BattleDamageFormulaLogService.BuildStatusDamageFormula(
+                    GetDebugDisplayName(),
+                    entry.DisplayName,
+                    stacksBeforeTick,
+                    ResolveStatusDamagePerStack(entry, damage, stacksBeforeTick),
+                    dealtDamage));
+            }
             if (speedBonus != 0)
                 PendingRoundStartSpeedBonus += speedBonus;
             entry.stacks = ResolveRoundStartStatusStacksAfterTick(entry, stacksBeforeTick);
@@ -1158,7 +1166,13 @@ public class BattleAllyController : MonoBehaviour
             if (damage <= 0)
                 continue;
 
-            TakeDamage(damage);
+            int dealtDamage = TakeDamage(damage);
+            Debug.Log(BattleDamageFormulaLogService.BuildStatusDamageFormula(
+                GetDebugDisplayName(),
+                entry.DisplayName,
+                stacksBeforeTrigger,
+                ResolveStatusDamagePerStack(entry, damage, stacksBeforeTrigger),
+                dealtDamage));
             entry.stacks = ResolveOnHitStatusStacksAfterTrigger(entry, stacksBeforeTrigger);
             results.Add(new BattleStatusTickResult
             {
@@ -1513,6 +1527,13 @@ public class BattleAllyController : MonoBehaviour
             return entry.stacks;
 
         return 0;
+    }
+
+    private static int ResolveStatusDamagePerStack(BattleStatusRuntimeEntry entry, int resolvedDamage, int stacks)
+    {
+        if (entry != null && entry.statusData != null)
+            return Mathf.Max(0, entry.statusData.PowerPerStack);
+        return stacks > 0 ? Mathf.Max(0, resolvedDamage / stacks) : Mathf.Max(0, resolvedDamage);
     }
 
     private int ResolveRoundStartStatusSpeedBonus(BattleStatusRuntimeEntry entry)

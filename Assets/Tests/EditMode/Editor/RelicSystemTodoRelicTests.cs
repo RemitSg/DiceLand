@@ -106,6 +106,43 @@ public class RelicSystemTodoRelicTests
     }
 
     [Test]
+    public void MinimumEnemyStatusRelic_AppliesMissingStacksAtBattleRoundStart()
+    {
+        BattleEnemyController firstEnemy = CreateEnemy("NoBurn", 12);
+        BattleEnemyController secondEnemy = CreateEnemy("LowBurn", 12);
+        BattleEnemyController thirdEnemy = CreateEnemy("HighBurn", 12);
+        BattleStatus_SO burn = CreateStatus("burn", "燃烧", BattleStatus_SO.StatusBehaviorType.None);
+
+        secondEnemy.AddStatus(burn, burn.StatusId, burn.DisplayName, 1);
+        thirdEnemy.AddStatus(burn, burn.StatusId, burn.DisplayName, 4);
+
+        Relic_SO relic = CreateRelic(
+            "eternal-flame",
+            Relic_SO.RelicTrigger.OnBattleRoundStart,
+            Relic_SO.RelicBuiltInEffectType.SetEnemyStatusMinimumStacks,
+            effect =>
+            {
+                effect.conditionStatusData = burn;
+                effect.amount = 2;
+            });
+        List<RunRelicState> relicInventory = new List<RunRelicState>
+        {
+            new RunRelicState { relicData = relic, amount = 1 }
+        };
+
+        RelicExecutionContext context = RelicExecutionContext.CreateBattleRoundStart(
+            null,
+            1,
+            null,
+            new[] { firstEnemy, secondEnemy, thirdEnemy });
+        RelicSystem.Process(relicInventory, context);
+
+        Assert.AreEqual(2, firstEnemy.GetStatusStacks(burn));
+        Assert.AreEqual(2, secondEnemy.GetStatusStacks(burn));
+        Assert.AreEqual(4, thirdEnemy.GetStatusStacks(burn));
+    }
+
+    [Test]
     public void StubbornRelic_PreventsFirstLethalDamageOnlyOncePerBattle()
     {
         BattleAllyController ally = CreateAlly("Stubborn", 10, 10);

@@ -100,7 +100,7 @@ public static partial class RelicSystem
             { Relic_SO.RelicBuiltInEffectType.TransferStatusToLowestHpEnemyOnEnemyDeath, HandleTransferStatusToLowestHpEnemyOnEnemyDeath },
             { Relic_SO.RelicBuiltInEffectType.HealSourceWhenDamagingEnemyWithStatus, HandleHealSourceWhenDamagingEnemyWithStatus },
             { Relic_SO.RelicBuiltInEffectType.PreventLethalDamageByConsumingEnemyStatusTotal, HandlePreventLethalDamageByConsumingEnemyStatusTotal },
-            { Relic_SO.RelicBuiltInEffectType.SetEnemyStatusMinimumStacks, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.SetEnemyStatusMinimumStacks, HandleSetEnemyStatusMinimumStacks },
             { Relic_SO.RelicBuiltInEffectType.ChanceCopyAppliedStatusToOtherEnemy, HandleChanceCopyAppliedStatusToOtherEnemy },
             { Relic_SO.RelicBuiltInEffectType.ChanceRepeatAppliedStatusToSameEnemy, HandleChanceRepeatAppliedStatusToSameEnemy },
             { Relic_SO.RelicBuiltInEffectType.ApplyStatusToEnemiesBasedOnConditionStacksOnRoundStart, HandleApplyStatusToEnemiesBasedOnConditionStacksOnRoundStart },

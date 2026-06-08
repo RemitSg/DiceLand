@@ -3466,7 +3466,9 @@ public class BattleButton : MonoBehaviour
         if (attacker == null || target == null || attacker.IsDead)
             return 0;
 
-        int modifiedDamage = ResolveAllyHitDamage(attacker, target, diceIndex, baseDamage);
+        List<BattleDamageFormulaModifierSource> percentSources = new List<BattleDamageFormulaModifierSource>();
+        List<BattleDamageFormulaModifierSource> flatSources = new List<BattleDamageFormulaModifierSource>();
+        int modifiedDamage = ResolveAllyHitDamage(attacker, target, diceIndex, baseDamage, percentSources, flatSources);
         if (BattlePuppetPassiveService.TryApplyPuppetMasterDamageRedirect(
             target,
             modifiedDamage,
@@ -3480,6 +3482,7 @@ public class BattleButton : MonoBehaviour
         }
 
         int dealtDamage = target.TakeDamage(modifiedDamage, powerModifierAmount, baseDamage);
+        LogAttackDamageFormula("友方攻击", attacker.GetDebugDisplayName(), target.GetDebugDisplayName(), baseDamage, percentSources, flatSources, dealtDamage);
         ApplyAllyHitOutcome(attacker, target, diceIndex, dealtDamage, isSingleAttack);
         return dealtDamage;
     }
@@ -3489,8 +3492,11 @@ public class BattleButton : MonoBehaviour
         if (attacker == null || target == null || attacker.IsDead)
             return 0;
 
-        int incomingDamage = ResolveEnemyHitDamage(attacker, target, diceIndex, baseDamage, isSingleAttack);
+        List<BattleDamageFormulaModifierSource> percentSources = new List<BattleDamageFormulaModifierSource>();
+        List<BattleDamageFormulaModifierSource> flatSources = new List<BattleDamageFormulaModifierSource>();
+        int incomingDamage = ResolveEnemyHitDamage(attacker, target, diceIndex, baseDamage, isSingleAttack, percentSources, flatSources);
         int dealtDamage = target.TakeDamage(incomingDamage, powerModifierAmount, baseDamage);
+        LogAttackDamageFormula("敌方攻击", attacker.GetDebugDisplayName(), target.GetDebugDisplayName(), baseDamage, percentSources, flatSources, dealtDamage);
         ApplyEnemyHitOutcome(attacker, target, diceIndex, dealtDamage, isSingleAttack);
         return dealtDamage;
     }
@@ -3525,26 +3531,47 @@ public class BattleButton : MonoBehaviour
             () => ApplyEnemyMissEffects(attacker, target, diceIndex, dealtDamage));
     }
 
-    private int ResolveAllyHitDamage(BattleAllyController attacker, BattleEnemyController target, int diceIndex, int baseDamage)
+    private int ResolveAllyHitDamage(
+        BattleAllyController attacker,
+        BattleEnemyController target,
+        int diceIndex,
+        int baseDamage,
+        List<BattleDamageFormulaModifierSource> percentSources,
+        List<BattleDamageFormulaModifierSource> flatSources)
     {
         BattleAllyHitDamagePipelinePlan plan = BattleAllyHitDamagePipelinePlanService.Resolve();
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        AppendSources(percentSources, CalamitySystem.GetAllyDamageModifierSources(activeEncounter != null ? activeEncounter.activeCalamities : null));
+        AppendSources(percentSources, CalamitySystem.GetEnemyIncomingDamageModifierSources(activeEncounter != null ? activeEncounter.activeCalamities : null));
         return BattleAllyHitDamagePipelineDispatcher.Dispatch(
             baseDamage,
             plan,
-            damage => ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, diceIndex, damage));
+            damage => ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, diceIndex, damage, percentSources, flatSources));
     }
 
-    private int ResolveEnemyHitDamage(BattleEnemyController attacker, BattleAllyController target, int diceIndex, int baseDamage, bool isSingleAttack)
+    private int ResolveEnemyHitDamage(
+        BattleEnemyController attacker,
+        BattleAllyController target,
+        int diceIndex,
+        int baseDamage,
+        bool isSingleAttack,
+        List<BattleDamageFormulaModifierSource> percentSources,
+        List<BattleDamageFormulaModifierSource> flatSources)
     {
         BattleEnemyHitDamagePipelinePlan plan = BattleEnemyHitDamagePipelinePlanService.Resolve(isSingleAttack);
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        AppendSources(percentSources, CalamitySystem.GetEnemyDamageModifierSources(activeEncounter != null ? activeEncounter.activeCalamities : null));
         int resolvedDamage = BattleEnemyHitDamagePipelineDispatcher.Dispatch(
             baseDamage,
             plan,
             ApplyEnemyCalamityDamageModifiers,
-            damage => ApplyPlayerRelicIncomingAttackDamageModifiers(attacker, target, diceIndex, damage),
-            damage => ApplyPlayerRelicIncomingSingleAttackDamageModifiers(attacker, target, diceIndex, damage));
+            damage => ApplyPlayerRelicIncomingAttackDamageModifiers(attacker, target, diceIndex, damage, percentSources, flatSources),
+            damage => ApplyPlayerRelicIncomingSingleAttackDamageModifiers(attacker, target, diceIndex, damage, percentSources, flatSources));
         ResolveBuiltinStatus("target", "标记", out BattleStatus_SO markStatus, out _, out _);
-        return Mathf.Max(0, resolvedDamage + BattlePuppetPassiveService.ResolveSoullessPuppetUnmarkedTargetPowerPenalty(attacker, target, markStatus));
+        int puppetPenalty = BattlePuppetPassiveService.ResolveSoullessPuppetUnmarkedTargetPowerPenalty(attacker, target, markStatus);
+        if (puppetPenalty != 0)
+            flatSources?.Add(new BattleDamageFormulaModifierSource(puppetPenalty, "无魂傀儡"));
+        return Mathf.Max(0, resolvedDamage + puppetPenalty);
     }
 
     private void ApplyAllyMissEffects(BattleAllyController attacker, BattleEnemyController target, int diceIndex, int dealtDamage)
@@ -3626,6 +3653,17 @@ public class BattleButton : MonoBehaviour
         int diceIndex,
         int incomingDamage)
     {
+        return ApplyPlayerRelicIncomingAttackDamageModifiers(attacker, target, diceIndex, incomingDamage, null, null);
+    }
+
+    private int ApplyPlayerRelicIncomingAttackDamageModifiers(
+        BattleEnemyController attacker,
+        BattleAllyController target,
+        int diceIndex,
+        int incomingDamage,
+        List<BattleDamageFormulaModifierSource> percentSources,
+        List<BattleDamageFormulaModifierSource> flatSources)
+    {
         BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
 
         RelicExecutionContext context = BattleDamageModifierContextFactory.CreateIncomingAttack(
@@ -3639,6 +3677,8 @@ public class BattleButton : MonoBehaviour
         if (!BattleRelicBridge.Process(activeEncounter, context, (encounter, relicContext) => RelicTriggerDispatcher.ProcessBattleRelics(encounter, relicContext)))
             return Mathf.Max(0, incomingDamage);
 
+        AppendSources(percentSources, context.incomingDamagePercentModifierSources);
+        AppendSources(flatSources, context.incomingDamageFlatModifierSources);
         return BattleDamageModifierResolutionDispatcher.ResolveIncomingAndDispatchFeedback(
             incomingDamage,
             context,
@@ -3650,6 +3690,17 @@ public class BattleButton : MonoBehaviour
         BattleEnemyController target,
         int diceIndex,
         int outgoingDamage)
+    {
+        return ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, diceIndex, outgoingDamage, null, null);
+    }
+
+    private int ApplyPlayerRelicOutgoingDamageModifiers(
+        BattleAllyController attacker,
+        BattleEnemyController target,
+        int diceIndex,
+        int outgoingDamage,
+        List<BattleDamageFormulaModifierSource> percentSources,
+        List<BattleDamageFormulaModifierSource> flatSources)
     {
         if (outgoingDamage <= 0 || attacker == null || target == null)
             return Mathf.Max(0, outgoingDamage);
@@ -3667,6 +3718,8 @@ public class BattleButton : MonoBehaviour
         if (!BattleRelicBridge.Process(activeEncounter, context, (encounter, relicContext) => RelicTriggerDispatcher.ProcessBattleRelics(encounter, relicContext)))
             return Mathf.Max(0, calamityModifiedDamage);
 
+        AppendSources(percentSources, context.outgoingDamagePercentModifierSources);
+        AppendSources(flatSources, context.outgoingDamageFlatModifierSources);
         return BattleDamageModifierResolutionDispatcher.ResolveOutgoingAndDispatchFeedback(
             calamityModifiedDamage,
             context,
@@ -3689,6 +3742,17 @@ public class BattleButton : MonoBehaviour
         int diceIndex,
         int incomingDamage)
     {
+        return ApplyPlayerRelicIncomingSingleAttackDamageModifiers(attacker, target, diceIndex, incomingDamage, null, null);
+    }
+
+    private int ApplyPlayerRelicIncomingSingleAttackDamageModifiers(
+        BattleEnemyController attacker,
+        BattleAllyController target,
+        int diceIndex,
+        int incomingDamage,
+        List<BattleDamageFormulaModifierSource> percentSources,
+        List<BattleDamageFormulaModifierSource> flatSources)
+    {
         BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
 
         RelicExecutionContext context = BattleDamageModifierContextFactory.CreateIncomingSingleAttack(
@@ -3702,6 +3766,8 @@ public class BattleButton : MonoBehaviour
         if (!BattleRelicBridge.Process(activeEncounter, context, (encounter, relicContext) => RelicTriggerDispatcher.ProcessBattleRelics(encounter, relicContext)))
             return Mathf.Max(0, incomingDamage);
 
+        AppendSources(percentSources, context.incomingDamagePercentModifierSources);
+        AppendSources(flatSources, context.incomingDamageFlatModifierSources);
         return BattleDamageModifierResolutionDispatcher.ResolveIncomingAndDispatchFeedback(
             incomingDamage,
             context,
@@ -6009,6 +6075,39 @@ public class BattleButton : MonoBehaviour
     {
         BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
         return CalamitySystem.ApplyEnemyDamageModifiers(baseDamage, activeEncounter != null ? activeEncounter.activeCalamities : null);
+    }
+
+    private static void AppendSources(
+        List<BattleDamageFormulaModifierSource> target,
+        IReadOnlyList<BattleDamageFormulaModifierSource> sources)
+    {
+        if (target == null || sources == null)
+            return;
+
+        for (int i = 0; i < sources.Count; i++)
+        {
+            if (sources[i].Amount != 0)
+                target.Add(sources[i]);
+        }
+    }
+
+    private static void LogAttackDamageFormula(
+        string label,
+        string attackerName,
+        string targetName,
+        int baseDamage,
+        IReadOnlyList<BattleDamageFormulaModifierSource> percentSources,
+        IReadOnlyList<BattleDamageFormulaModifierSource> flatSources,
+        int finalDamage)
+    {
+        Debug.Log(BattleDamageFormulaLogService.BuildAttackFormula(
+            label,
+            attackerName,
+            targetName,
+            baseDamage,
+            percentSources,
+            flatSources,
+            finalDamage));
     }
 
     private EncounterDropResults RollEncounterDrops(BattleEncounterData encounter, IReadOnlyList<LootTable_SO> overrideLootTables = null)
