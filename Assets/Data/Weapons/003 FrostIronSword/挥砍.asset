@@ -14,22 +14,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: "\u6325\u780D"
   description: "\u501F\u529B\u6325\u780D\uFF0C\u7B80\u5355\u7684\u62DB\u5F0F"
+  skillCategory: 0
   energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 
-  minPower: 2
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 3
   maxPower: 4
   diceCount: 1
   dicePowerRanges: []
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 1037878741696276, guid: f6b2fd20db5712f4bae7a30cc8ef3e8d, type: 3}
     hitEffectPrefab: {fileID: 1037878741696276, guid: f6b2fd20db5712f4bae7a30cc8ef3e8d, type: 3}
+    clashOffsetSpace: 0
     clashPositionOffset: {x: 0, y: 0, z: 0}
     clashRotationOffset: {x: -90, y: -90, z: 0}
     clashScale: {x: 0, y: 0, z: 0}
     clashSortingOrderOffset: 0
     overrideClashDuration: 1
     clashDuration: 0.5
+    hitOffsetSpace: 0
     hitPositionOffset: {x: 0.14, y: 0, z: 0}
     hitRotationOffset: {x: -90, y: -90, z: 0}
     hitScale: {x: 1, y: 1, z: 1}
@@ -46,3 +56,4 @@ MonoBehaviour:
     overrideSkillSpriteDuration: 0
     skillSpriteDuration: 0
   diceEffectSettings: []
+  diceSkillCategories: 

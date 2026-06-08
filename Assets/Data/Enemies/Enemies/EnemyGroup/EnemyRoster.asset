@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 695b87a83e2f81c459489d58e93a4d23, type: 3}
+  m_Name: EnemyRoster
+  m_EditorClassIdentifier: 
+  pools:
+  - dangerBand: 0
+    standardGroups:
+    - {fileID: 11400000, guid: a89af90bdbc56854d93634034680beb7, type: 2}
+    - {fileID: 11400000, guid: 6ca2aa8f614a52f42b77a0abd05fee16, type: 2}
+    - {fileID: 11400000, guid: e4743da3777edd2478b6cb87bc7a86ea, type: 2}
+    - {fileID: 11400000, guid: 343e731a268f2f348b9251dee3029e8e, type: 2}
+    - {fileID: 11400000, guid: 25672f3a16da3634b88dc1f15d48cec3, type: 2}
+    - {fileID: 11400000, guid: 8fb7ce831cb95fc43a391b2e28650764, type: 2}
+    - {fileID: 11400000, guid: f7a60d3190ad3b6408d1f77d462d8e96, type: 2}
+    eliteGroups:
+    - {fileID: 11400000, guid: 651db9f9027b1e040b6e6bdbdcd2f664, type: 2}
+    - {fileID: 11400000, guid: d29fa34182c025348bfac3395647be29, type: 2}
+    - {fileID: 11400000, guid: 12c5d83ad6e87b242b18183fc3df8aca, type: 2}
+    - {fileID: 11400000, guid: 4bb958f73b584ae080fc87519f7742cd, type: 2}
+  - dangerBand: 1
+    standardGroups:
+    - {fileID: 11400000, guid: abec5439fa064a5b83642213a7e7b57b, type: 2}
+    - {fileID: 11400000, guid: e3fe9f74fb3942ac8d3d7f318185aecf, type: 2}
+    - {fileID: 11400000, guid: 5bcc94f1757f43ef96e5f0aa7767f586, type: 2}
+    - {fileID: 11400000, guid: a925f23c50bb45579874dcddfa0cd877, type: 2}
+    - {fileID: 11400000, guid: 18b7d2ff60fc4fc489e50c644dbeb095, type: 2}
+    - {fileID: 11400000, guid: 9e64812b6d7847649fca4e81997f61ba, type: 2}
+    - {fileID: 11400000, guid: 7c9c429736db2ba4c93de09308080634, type: 2}
+    eliteGroups:
+    - {fileID: 11400000, guid: 00a3b481e5184991a12d0d5980b1625a, type: 2}
+    - {fileID: 11400000, guid: 6045b72fce484f3429db61fca8710697, type: 2}
+    - {fileID: 11400000, guid: 097755e447a81ca43873e1f1dd5c899c, type: 2}
+  - dangerBand: 2
+    standardGroups: []
+    eliteGroups: []
+  - dangerBand: 3
+    standardGroups: []
+    eliteGroups: []
+  bossGroups:
+  - {fileID: 11400000, guid: a8df06d99102ea7408c19bf4a2c6312e, type: 2}
