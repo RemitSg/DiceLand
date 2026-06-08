@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f714091cd55ec1458ddd822765cce08, type: 3}
+  m_Name: 025 AshPriest
+  m_EditorClassIdentifier: 
+  groupID: 25
+  groupName: AshPriest
+  description: "\u7070\u796D\u53F8 x1"
+  enemies:
+  - {fileID: 11400000, guid: 561d4c5f65934e05a5b5edb7e95ef628, type: 2}
+  attributes:
+  - {fileID: 11400000, guid: d1b4ed53851df2549bd58022556ca4be, type: 2}
+  lootTables: []

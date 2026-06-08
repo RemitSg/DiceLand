@@ -17,7 +17,7 @@ MonoBehaviour:
   description: "\u8BB0\u8F7D\u7740\u5982\u4F55\u6253\u9020 \u3010\u6666\u8A93\u5251\u3011
     \u7684\u5377\u8F74"
   rarity: 2
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: d84cbc7ab3629dd42928e95e576c34df, type: 3}
   targetWeapon: {fileID: 11400000, guid: 6260b16c0b1f408f94edbd1e3285a078, type: 2}
   materialRequirements:
   - lootItem: {fileID: 11400000, guid: 264958ff28a8e5242b8197ce9765edbe, type: 2}
