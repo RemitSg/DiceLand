@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f714091cd55ec1458ddd822765cce08, type: 3}
+  m_Name: ResurrectedNobility
+  m_EditorClassIdentifier: 
+  groupID: 43
+  groupName: "\u590D\u751F\u8D35\u65CF"
+  description: 
+  enemies:
+  - {fileID: 11400000, guid: 293df36a850452048a2fd6b9eab269cc, type: 2}
+  attributes: []
+  dangerRatingOverride: 0
+  battleMusicOverride: {fileID: 0}
+  lootTables: []

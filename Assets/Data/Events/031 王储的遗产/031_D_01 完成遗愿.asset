@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
-  m_Name: "031_D_01 完成遗愿"
+  m_Name: "031_D_01 \u5B8C\u6210\u9057\u613F"
   m_EditorClassIdentifier: 
   eventId: 031_D_01
-  eventName: "完成遗愿？"
-  eventContent: "你按照老者的指示来到二王子所在的宫殿。\n\n殿内空荡，只有二王子坐在王座上。他看到你，毫不意外，只是冷笑一声：“兄长的亡灵罢了。你以为你能杀死我？”"
+  eventName: "\u5B8C\u6210\u9057\u613F\uFF1F"
+  eventContent: "\u4F60\u6309\u7167\u8001\u8005\u7684\u6307\u793A\u6765\u5230\u4E8C\u738B\u5B50\u6240\u5728\u7684\u5BAB\u6BBF\u3002\n\n\u6BBF\u5185\u7A7A\u8361\uFF0C\u53EA\u6709\u4E8C\u738B\u5B50\u5750\u5728\u738B\u5EA7\u4E0A\u3002\u4ED6\u770B\u5230\u4F60\uFF0C\u6BEB\u4E0D\u610F\u5916\uFF0C\u53EA\u662F\u51B7\u7B11\u4E00\u58F0\uFF1A\u201C\u5144\u957F\u7684\u4EA1\u7075\u7F62\u4E86\u3002\u4F60\u4EE5\u4E3A\u4F60\u80FD\u6740\u6B7B\u6211\uFF1F\u201D"
   eventIllustration: {fileID: 0}
   options:
   - optionId: 1
-    optionLabel: "不试试怎么知道？"
+    optionLabel: "\u4E0D\u8BD5\u8BD5\u600E\u4E48\u77E5\u9053\uFF1F"
     requiredMoney: 0
-    consequenceDescription: "结束事件"
-    resultContent: "你拔出长剑，直指二王子。\n\n王座前的烛火同时熄灭，宫殿被一片深沉的黑暗吞没。"
+    requiredMoneyPercent: 0
+    consequenceDescription: "\u7ED3\u675F\u4E8B\u4EF6"
+    resultContent: "\u4F60\u62D4\u51FA\u957F\u5251\uFF0C\u76F4\u6307\u4E8C\u738B\u5B50\u3002\n\n\u738B\u5EA7\u524D\u7684\u70DB\u706B\u540C\u65F6\u7184\u706D\uFF0C\u5BAB\u6BBF\u88AB\u4E00\u7247\u6DF1\u6C89\u7684\u9ED1\u6697\u541E\u6CA1\u3002"
     builtInEffectType: 0
     effectAmount: 0
     randomMoneyMin: 0
@@ -42,12 +43,14 @@ MonoBehaviour:
     blueprintPickCountMax: 1
     blueprintRewards: []
     encounterSelectionMode: 0
-    encounterEnemyGroups: []
+    encounterEnemyGroups:
+    - {fileID: 11400000, guid: 0570582b9d9d82943bdbbe5d186d7e35, type: 2}
     encounterEnemies: []
     encounterEnemyCountMin: 1
     encounterEnemyCountMax: 1
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
+    possibleResults: []
     nextEvent: {fileID: 0}
     resolveEvent: 1
     customHandler: {fileID: 0}

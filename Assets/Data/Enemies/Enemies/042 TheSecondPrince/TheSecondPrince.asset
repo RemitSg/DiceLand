@@ -50,4 +50,5 @@ MonoBehaviour:
   skillPool:
   - {fileID: 11400000, guid: 45ce8dc1cdd99b34589cacbe10d7a6fa, type: 2}
   - {fileID: 11400000, guid: d1adc0b6a32f7d84f8e703fb3d9003d3, type: 2}
+  - {fileID: 11400000, guid: 01dadb73a45d6944fbcecc620c95895f, type: 2}
   conditionalSkillRules: []

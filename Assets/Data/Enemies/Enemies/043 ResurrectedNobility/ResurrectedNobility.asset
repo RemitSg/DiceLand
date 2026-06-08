@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: ResurrectedNobility
+  m_EditorClassIdentifier: 
+  enemyID: 43
+  enemyName: "\u590D\u751F\u8D35\u65CF"
+  baseHP: 60
+  damageReductionPercent: 0
+  minSpeed: 4
+  maxSpeed: 6
+  baseSpeedButtonCount: 3
+  enemySprite: {fileID: 21300000, guid: 0d1247900f8415849a23f0b5f1e17d01, type: 3}
+  stageSprites: []
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.2
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules: []
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains: []
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  transformToEnemyDataWhenStatusMissing: {fileID: 0}
+  transformMissingStatusData: {fileID: 0}
+  copyOpponentLastRoundSpeedDiceCount: 0
+  copyOpponentLastRoundSkills: 0
+  reflectionSkillTemplate: {fileID: 0}
+  enemyDescription: "\u6614\u65E5\u7684\u201C\u7BA1\u5BB6\u201D\uFF0C\u4ECA\u65E5\u7684\u6B7B\u654C\u3002\u4E00\u8DEF\u8D70\u6765\uFF0C\u8EAB\u7ECF\u767E\u6218\u7684\u4F60\u4E0D\u4F1A\u7518\u613F\u88AB\u5229\u7528\uFF0C\u5BF9\u5427\uFF1F"
+  passiveDescriptions: []
+  enemyVisualScale: 1
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: 1776e46d5e62ef044937de78ea4b95dd, type: 2}
+  - {fileID: 11400000, guid: ae93e5d33a1e0ae4d8c30dfe08bec369, type: 2}
+  - {fileID: 11400000, guid: 0caa5b7fcd721ff4abae133656c7f945, type: 2}
+  - {fileID: 11400000, guid: fcaaefbc8d6003c4ebb0ecbdffba13ac, type: 2}
+  - {fileID: 11400000, guid: 5af52b3b93f7a0a4fa1ccabb6db765b5, type: 2}
+  conditionalSkillRules: []
