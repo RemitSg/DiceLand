@@ -94,7 +94,7 @@ public class BattlePresentationSystem : MonoBehaviour
     [SerializeField] private float singleAttackRangeDisplayDuration = 0.08f;
     [SerializeField] private float delayBeforeClashDiceReveal = 0.14f;
     [SerializeField] private float clashEffectDuration = 0.26f;
-    [SerializeField] private float hitEffectDuration = 0.24f;
+    [SerializeField] private float hitEffectDuration = 0.5f;
     [SerializeField] private float builtInHitDamageDelay = 0.07f;
 
     [Header("Knockback")]

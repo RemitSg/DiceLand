@@ -86,6 +86,6 @@ MonoBehaviour:
     specialDungeon: {fileID: 11400000, guid: 310679e8f3b39b74082fe76548e0f65d, type: 2}
     additionalBuiltInEffects: []
     possibleResults: []
-    nextEvent: {fileID: 11400000, guid: 24065cf65e374984da865ab1c21058e6, type: 2}
+    nextEvent: {fileID: 0}
     resolveEvent: 0
     customHandler: {fileID: 0}
