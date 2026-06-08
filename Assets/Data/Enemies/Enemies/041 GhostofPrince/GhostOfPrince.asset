@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: GhostOfPrince
+  m_EditorClassIdentifier: 
+  enemyID: 41
+  enemyName: "\u8840\u9AB8\u738B\u50A8"
+  baseHP: 999
+  damageReductionPercent: 0
+  minSpeed: 2
+  maxSpeed: 6
+  baseSpeedButtonCount: 2
+  enemySprite: {fileID: 21300000, guid: f6f0577db800a3a4986fd60183e5288d, type: 3}
+  stageSprites: []
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.2
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules: []
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains: []
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  transformToEnemyDataWhenStatusMissing: {fileID: 0}
+  transformMissingStatusData: {fileID: 0}
+  copyOpponentLastRoundSpeedDiceCount: 0
+  copyOpponentLastRoundSkills: 0
+  reflectionSkillTemplate: {fileID: 0}
+  enemyDescription: "\u65E5\u8BB0\u672C\u4E2D\u738B\u50A8\u7684\u6700\u540E\u56DE\u5FC6\n\u90A3\u6DF1\u6C89\u65E0\u6BD4\u7684\u6028\u6068\u8DB3\u4EE5\u541E\u566C\u4E00\u5207\n\u7EDD\u671B\u5427\uFF01\n\u4F60\u65E0\u6CD5\u6D3B\u7740\u79BB\u5F00"
+  passiveDescriptions: []
+  enemyVisualScale: 1
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: 8a689a8c8ab8fc44996e724625288903, type: 2}
+  - {fileID: 11400000, guid: 040406beae25bb34b902901e7aa830f3, type: 2}
+  - {fileID: 11400000, guid: 7853c59f3294d134cbe130b569664e46, type: 2}
+  - {fileID: 11400000, guid: e1bcdaf2f0ac5ba4c89da358fba6d709, type: 2}
+  - {fileID: 11400000, guid: a4171c36d2fdffa4780989a3e31553cd, type: 2}
+  conditionalSkillRules: []

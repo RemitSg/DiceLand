@@ -1,5 +1,5 @@
 %YAML 1.1
-%TAG !u! tag:yousandi.cn,2023:
+%TAG !u! tag:unity3d.com,2011:
 --- !u!114 &-3073685555949002628
 MonoBehaviour:
   m_ObjectHideFlags: 11
@@ -42,7 +42,6 @@ Material:
   disabledShaderPasses:
   - DepthOnly
   - SHADOWCASTER
-  - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -138,7 +137,6 @@ Material:
     - _Cutoff: 0.5
     - _DEPTHFADE: 1
     - _DepthFade: 0.88
-    - _DepthFadeDistance: 100
     - _DepthFadeMax: 0.17
     - _DepthFadeMin: 0
     - _DetailNormalMapScale: 1

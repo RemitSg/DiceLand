@@ -38,9 +38,51 @@ MonoBehaviour:
     treasureOptions: []
     eventData: {fileID: 11400000, guid: a8d66d43887463943a3e790e6bfcf869, type: 2}
   - tileType: 3
-    previewTag: 
+    previewTag: "\u79D1\u76EE\u4E8C"
     previewDangerRating: 0
     enemyGroup: {fileID: 0}
     merchantOffers: []
     treasureOptions: []
-    eventData: {fileID: 0}
+    eventData: {fileID: 11400000, guid: f1014dcb742cf0d4bbe5f06d9e3ca755, type: 2}
+  - tileType: 3
+    previewTag: "\u6839\u53F7\u4E8C"
+    previewDangerRating: 0
+    enemyGroup: {fileID: 0}
+    merchantOffers: []
+    treasureOptions: []
+    eventData: {fileID: 11400000, guid: 58b1b39bb0dbd2d4d89695ca0f070457, type: 2}
+  - tileType: 3
+    previewTag: "\u79D1\u76EE\u4E09"
+    previewDangerRating: 0
+    enemyGroup: {fileID: 0}
+    merchantOffers: []
+    treasureOptions: []
+    eventData: {fileID: 11400000, guid: ac38cc8f25127d149a4da023dfe0fe17, type: 2}
+  - tileType: 3
+    previewTag: "\u6839\u53F7\u4E09"
+    previewDangerRating: 0
+    enemyGroup: {fileID: 0}
+    merchantOffers: []
+    treasureOptions: []
+    eventData: {fileID: 11400000, guid: ec502bb5bb5d9994abf2abeb0b09a90c, type: 2}
+  - tileType: 3
+    previewTag: "\u79D1\u76EE\u56DB"
+    previewDangerRating: 0
+    enemyGroup: {fileID: 0}
+    merchantOffers: []
+    treasureOptions: []
+    eventData: {fileID: 11400000, guid: d3ea3621f67f7c144a5091a49068a106, type: 2}
+  - tileType: 3
+    previewTag: "\u6839\u53F7\u56DB\uFF1F"
+    previewDangerRating: 0
+    enemyGroup: {fileID: 0}
+    merchantOffers: []
+    treasureOptions: []
+    eventData: {fileID: 11400000, guid: e43af416c6afa824d990f2481d3d04f1, type: 2}
+  - tileType: 3
+    previewTag: "\u4F11\u606F\u5BA4"
+    previewDangerRating: 0
+    enemyGroup: {fileID: 0}
+    merchantOffers: []
+    treasureOptions: []
+    eventData: {fileID: 11400000, guid: c1dae8b633c5dff49a548be3a76e1c5c, type: 2}

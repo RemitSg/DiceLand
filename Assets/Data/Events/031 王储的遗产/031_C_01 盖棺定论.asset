@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
-  m_Name: "031_C_01 盖棺定论"
+  m_Name: "031_C_01 \u76D6\u68FA\u5B9A\u8BBA"
   m_EditorClassIdentifier: 
   eventId: 031_C_01
-  eventName: "盖棺定论"
-  eventContent: "你和王储的亲信杀出峡谷，护送受伤的王储回到宫前。\n\n二王子早已率军等在那里。\n\n“你回来了，弑父的畜生。”二王子冷冷看着王储，“父亲真是看走了眼，竟立你这种叛徒为王储。今天，我会替他清理门户。”\n\n王储被逼到石门前，手中断剑不住发抖：“我不是叛徒。不要听信小人的谗言。”\n\n“所有人都看见了，你还想抵赖？”二王子挺剑上前，将王储钉在石门上。鲜血飞溅，王储死死盯着他：“你会后悔……”\n\n话音未落，二王子拔剑，砍下了王储的头颅。\n\n老者又站到你身边：“这就是我家老爷的遗憾。回答我，他是否背叛了国家？”"
+  eventName: "\u76D6\u68FA\u5B9A\u8BBA"
+  eventContent: "\u4F60\u548C\u738B\u50A8\u7684\u4EB2\u4FE1\u6740\u51FA\u5CE1\u8C37\uFF0C\u62A4\u9001\u53D7\u4F24\u7684\u738B\u50A8\u56DE\u5230\u5BAB\u524D\u3002\n\n\u4E8C\u738B\u5B50\u65E9\u5DF2\u7387\u519B\u7B49\u5728\u90A3\u91CC\u3002\n\n\u201C\u4F60\u56DE\u6765\u4E86\uFF0C\u5F11\u7236\u7684\u755C\u751F\u3002\u201D\u4E8C\u738B\u5B50\u51B7\u51B7\u770B\u7740\u738B\u50A8\uFF0C\u201C\u7236\u4EB2\u771F\u662F\u770B\u8D70\u4E86\u773C\uFF0C\u7ADF\u7ACB\u4F60\u8FD9\u79CD\u53DB\u5F92\u4E3A\u738B\u50A8\u3002\u4ECA\u5929\uFF0C\u6211\u4F1A\u66FF\u4ED6\u6E05\u7406\u95E8\u6237\u3002\u201D\n\n\u738B\u50A8\u88AB\u903C\u5230\u77F3\u95E8\u524D\uFF0C\u624B\u4E2D\u65AD\u5251\u4E0D\u4F4F\u53D1\u6296\uFF1A\u201C\u6211\u4E0D\u662F\u53DB\u5F92\u3002\u4E0D\u8981\u542C\u4FE1\u5C0F\u4EBA\u7684\u8C17\u8A00\u3002\u201D\n\n\u201C\u6240\u6709\u4EBA\u90FD\u770B\u89C1\u4E86\uFF0C\u4F60\u8FD8\u60F3\u62B5\u8D56\uFF1F\u201D\u4E8C\u738B\u5B50\u633A\u5251\u4E0A\u524D\uFF0C\u5C06\u738B\u50A8\u9489\u5728\u77F3\u95E8\u4E0A\u3002\u9C9C\u8840\u98DE\u6E85\uFF0C\u738B\u50A8\u6B7B\u6B7B\u76EF\u7740\u4ED6\uFF1A\u201C\u4F60\u4F1A\u540E\u6094\u2026\u2026\u201D\n\n\u8BDD\u97F3\u672A\u843D\uFF0C\u4E8C\u738B\u5B50\u62D4\u5251\uFF0C\u780D\u4E0B\u4E86\u738B\u50A8\u7684\u5934\u9885\u3002\n\n\u8001\u8005\u53C8\u7AD9\u5230\u4F60\u8EAB\u8FB9\uFF1A\u201C\u8FD9\u5C31\u662F\u6211\u5BB6\u8001\u7237\u7684\u9057\u61BE\u3002\u56DE\u7B54\u6211\uFF0C\u4ED6\u662F\u5426\u80CC\u53DB\u4E86\u56FD\u5BB6\uFF1F\u201D"
   eventIllustration: {fileID: 0}
   options:
   - optionId: 1
-    optionLabel: "他背叛了国家，他该死！"
+    optionLabel: "\u4ED6\u80CC\u53DB\u4E86\u56FD\u5BB6\uFF0C\u4ED6\u8BE5\u6B7B\uFF01"
     requiredMoney: 0
-    consequenceDescription: "进入一场绝望的战斗，结束事件"
-    resultContent: "你的回答毫不犹豫。老者沉默半晌，忽然仰天大笑。\n\n“我以为你能看出真相，没想到你也有眼无珠。天意啊，天意！”\n\n他摇身一变，竟成了全身染血的王储，身披闪烁血光的战甲，举起染血长剑向你斩来。"
+    requiredMoneyPercent: 0
+    consequenceDescription: "\u8FDB\u5165\u4E00\u573A\u7EDD\u671B\u7684\u6218\u6597\uFF0C\u7ED3\u675F\u4E8B\u4EF6"
+    resultContent: "\u4F60\u7684\u56DE\u7B54\u6BEB\u4E0D\u72B9\u8C6B\u3002\u8001\u8005\u6C89\u9ED8\u534A\u664C\uFF0C\u5FFD\u7136\u4EF0\u5929\u5927\u7B11\u3002\n\n\u201C\u6211\u4EE5\u4E3A\u4F60\u80FD\u770B\u51FA\u771F\u76F8\uFF0C\u6CA1\u60F3\u5230\u4F60\u4E5F\u6709\u773C\u65E0\u73E0\u3002\u5929\u610F\u554A\uFF0C\u5929\u610F\uFF01\u201D\n\n\u4ED6\u6447\u8EAB\u4E00\u53D8\uFF0C\u7ADF\u6210\u4E86\u5168\u8EAB\u67D3\u8840\u7684\u738B\u50A8\uFF0C\u8EAB\u62AB\u95EA\u70C1\u8840\u5149\u7684\u6218\u7532\uFF0C\u4E3E\u8D77\u67D3\u8840\u957F\u5251\u5411\u4F60\u65A9\u6765\u3002"
     builtInEffectType: 0
     effectAmount: 0
     randomMoneyMin: 0
@@ -41,21 +42,24 @@ MonoBehaviour:
     blueprintPickCountMin: 1
     blueprintPickCountMax: 1
     blueprintRewards: []
-    encounterSelectionMode: 0
-    encounterEnemyGroups: []
+    encounterSelectionMode: 1
+    encounterEnemyGroups:
+    - {fileID: 0}
     encounterEnemies: []
     encounterEnemyCountMin: 1
     encounterEnemyCountMax: 1
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
+    possibleResults: []
     nextEvent: {fileID: 0}
     resolveEvent: 1
     customHandler: {fileID: 0}
   - optionId: 2
-    optionLabel: "不对，我总觉得有哪里不太对劲。"
+    optionLabel: "\u4E0D\u5BF9\uFF0C\u6211\u603B\u89C9\u5F97\u6709\u54EA\u91CC\u4E0D\u592A\u5BF9\u52B2\u3002"
     requiredMoney: 0
-    consequenceDescription: "继续剧情"
-    resultContent: "老者沉默片刻：“说说看。”\n\n你回想峡谷和宫前的两场围杀：“围攻王储的军队都佩戴绿色领巾，可与先王一同战死的军队没有佩戴领巾。佩戴绿色领巾的人，应该都是二王子的手下。”\n\n老者大笑起来：“没错！他们才是叛军。在我家老爷赶去救援之前，他们就杀害了先王，再把罪名栽赃给他。”"
+    requiredMoneyPercent: 0
+    consequenceDescription: "\u7EE7\u7EED\u5267\u60C5"
+    resultContent: "\u8001\u8005\u6C89\u9ED8\u7247\u523B\uFF1A\u201C\u8BF4\u8BF4\u770B\u3002\u201D\n\n\u4F60\u56DE\u60F3\u5CE1\u8C37\u548C\u5BAB\u524D\u7684\u4E24\u573A\u56F4\u6740\uFF1A\u201C\u56F4\u653B\u738B\u50A8\u7684\u519B\u961F\u90FD\u4F69\u6234\u7EFF\u8272\u9886\u5DFE\uFF0C\u53EF\u4E0E\u5148\u738B\u4E00\u540C\u6218\u6B7B\u7684\u519B\u961F\u6CA1\u6709\u4F69\u6234\u9886\u5DFE\u3002\u4F69\u6234\u7EFF\u8272\u9886\u5DFE\u7684\u4EBA\uFF0C\u5E94\u8BE5\u90FD\u662F\u4E8C\u738B\u5B50\u7684\u624B\u4E0B\u3002\u201D\n\n\u8001\u8005\u5927\u7B11\u8D77\u6765\uFF1A\u201C\u6CA1\u9519\uFF01\u4ED6\u4EEC\u624D\u662F\u53DB\u519B\u3002\u5728\u6211\u5BB6\u8001\u7237\u8D76\u53BB\u6551\u63F4\u4E4B\u524D\uFF0C\u4ED6\u4EEC\u5C31\u6740\u5BB3\u4E86\u5148\u738B\uFF0C\u518D\u628A\u7F6A\u540D\u683D\u8D43\u7ED9\u4ED6\u3002\u201D"
     builtInEffectType: 0
     effectAmount: 0
     randomMoneyMin: 0
@@ -82,6 +86,7 @@ MonoBehaviour:
     encounterEnemyCountMax: 1
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
+    possibleResults: []
     nextEvent: {fileID: 11400000, guid: 9a24d727054f462a84d7e26bf5b7933f, type: 2}
     resolveEvent: 1
     customHandler: {fileID: 0}

@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: TheSecondPrince
+  m_EditorClassIdentifier: 
+  enemyID: 42
+  enemyName: "\u53DB\u53D8\u7684\u65B0\u738B"
+  baseHP: 50
+  damageReductionPercent: 0
+  minSpeed: 3
+  maxSpeed: 6
+  baseSpeedButtonCount: 2
+  enemySprite: {fileID: 21300000, guid: fb6bcfe2ea933054e8efe25fa6dd2685, type: 3}
+  stageSprites: []
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.2
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules: []
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains: []
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  transformToEnemyDataWhenStatusMissing: {fileID: 0}
+  transformMissingStatusData: {fileID: 0}
+  copyOpponentLastRoundSpeedDiceCount: 0
+  copyOpponentLastRoundSkills: 0
+  reflectionSkillTemplate: {fileID: 0}
+  enemyDescription: "\u5B58\u5728\u4E8E\u5386\u53F2\u4E2D\u7684\u4E8C\u738B\u5B50\uFF0C\u4E3A\u4E86\u4ECE\u5144\u957F\u624B\u4E2D\u593A\u53D6\u738B\u4F4D\uFF0C\u6D3E\u5175\u5F11\u7236\u5E76\u5AC1\u7978\u4E8E\u5176\u5144\u957F\u3002\u5978\u8BC8\u7684\u67AD\u96C4\u3002"
+  passiveDescriptions: []
+  enemyVisualScale: 1
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: 45ce8dc1cdd99b34589cacbe10d7a6fa, type: 2}
+  - {fileID: 11400000, guid: d1adc0b6a32f7d84f8e703fb3d9003d3, type: 2}
+  conditionalSkillRules: []
