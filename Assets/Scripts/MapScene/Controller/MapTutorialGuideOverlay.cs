@@ -10,6 +10,7 @@ public class MapTutorialGuideOverlay : MonoBehaviour
 
     [SerializeField] private int canvasSortOrder = 9650;
     [SerializeField] private Vector2 referenceResolution = new Vector2(1920f, 1080f);
+    [SerializeField] private float matchWidthOrHeight = 0.5f;
     [SerializeField] private Vector2 panelSize = new Vector2(980f, 420f);
     [SerializeField] private Vector2 panelAnchoredPosition = new Vector2(0f, 120f);
     [SerializeField] private Color backdropColor = new Color(0f, 0f, 0f, 0.3f);
@@ -21,12 +22,14 @@ public class MapTutorialGuideOverlay : MonoBehaviour
     [SerializeField] private Color buttonTextColor = Color.black;
     [SerializeField] private Color highlightFrameColor = new Color(1f, 0.84f, 0.36f, 0.95f);
     [SerializeField] private float highlightFrameThickness = 5f;
+    [SerializeField] private float highlightBleedPixels = 2f;
     [SerializeField] private int titleFontSize = 34;
     [SerializeField] private int bodyFontSize = 24;
     [SerializeField] private int buttonFontSize = 22;
 
     private Canvas canvas;
     private Image backdropImage;
+    private RectTransform panelRoot;
     private Text titleText;
     private Text bodyText;
     private Text buttonText;
@@ -40,6 +43,8 @@ public class MapTutorialGuideOverlay : MonoBehaviour
     private bool showRequested;
 
     public bool IsVisible => canvas != null && canvas.gameObject.activeInHierarchy;
+    public bool IsModalVisible => panelRoot != null && panelRoot.gameObject.activeInHierarchy;
+    public bool IsTargetHighlightVisible => highlightRoot != null && highlightRoot.gameObject.activeInHierarchy && !IsModalVisible;
 
     private void Awake()
     {
@@ -68,6 +73,8 @@ public class MapTutorialGuideOverlay : MonoBehaviour
             gameObject.SetActive(true);
 
         EnsureUi();
+        if (panelRoot != null)
+            panelRoot.gameObject.SetActive(true);
         titleText.text = string.IsNullOrWhiteSpace(title) ? "教程" : title;
         bodyText.text = body ?? string.Empty;
         buttonText.text = string.IsNullOrWhiteSpace(buttonLabel) ? "继续" : buttonLabel;
@@ -77,11 +84,30 @@ public class MapTutorialGuideOverlay : MonoBehaviour
         canvas.gameObject.SetActive(true);
     }
 
+    public void ShowTargetHighlight(Rect screenRect)
+    {
+        showRequested = true;
+        if (!gameObject.activeSelf)
+            gameObject.SetActive(true);
+
+        EnsureUi();
+        continueHandler = null;
+        if (panelRoot != null)
+            panelRoot.gameObject.SetActive(false);
+
+        ConvertScreenRectToReferenceHighlight(screenRect, out Vector2 anchor, out Vector2 size);
+        ConfigureHighlight(true, anchor, size);
+        RestoreTimeScale();
+        canvas.gameObject.SetActive(true);
+    }
+
     public void Hide()
     {
         showRequested = false;
         continueHandler = null;
         ConfigureHighlight(false, Vector2.zero, Vector2.zero);
+        if (panelRoot != null)
+            panelRoot.gameObject.SetActive(false);
         RestoreTimeScale();
         if (canvas != null)
             canvas.gameObject.SetActive(false);
@@ -109,7 +135,7 @@ public class MapTutorialGuideOverlay : MonoBehaviour
         CanvasScaler scaler = canvasGo.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = referenceResolution;
-        scaler.matchWidthOrHeight = 0.5f;
+        scaler.matchWidthOrHeight = matchWidthOrHeight;
 
         RectTransform rootRect = canvasGo.GetComponent<RectTransform>();
         Stretch(rootRect);
@@ -124,16 +150,16 @@ public class MapTutorialGuideOverlay : MonoBehaviour
         highlightDimRects[3] = CreateImageRect("DimRight", highlightDimRoot, highlightBackdropColor);
         highlightDimRoot.gameObject.SetActive(false);
 
-        RectTransform panelRect = CreateRect("Panel", rootRect, new Vector2(0.5f, 0f), panelAnchoredPosition, panelSize);
-        Image panelImage = panelRect.gameObject.AddComponent<Image>();
+        panelRoot = CreateRect("Panel", rootRect, new Vector2(0.5f, 0f), panelAnchoredPosition, panelSize);
+        Image panelImage = panelRoot.gameObject.AddComponent<Image>();
         panelImage.color = panelColor;
 
-        titleText = CreateText("Title", panelRect, new Vector2(0.5f, 1f), new Vector2(0f, -34f), new Vector2(860f, 54f), font, titleFontSize, TextAnchor.MiddleCenter, titleColor);
-        bodyText = CreateText("Body", panelRect, new Vector2(0.5f, 1f), new Vector2(0f, -94f), new Vector2(860f, 230f), font, bodyFontSize, TextAnchor.UpperCenter, bodyColor);
+        titleText = CreateText("Title", panelRoot, new Vector2(0.5f, 1f), new Vector2(0f, -34f), new Vector2(860f, 54f), font, titleFontSize, TextAnchor.MiddleCenter, titleColor);
+        bodyText = CreateText("Body", panelRoot, new Vector2(0.5f, 1f), new Vector2(0f, -94f), new Vector2(860f, 230f), font, bodyFontSize, TextAnchor.UpperCenter, bodyColor);
         bodyText.horizontalOverflow = HorizontalWrapMode.Wrap;
         bodyText.verticalOverflow = VerticalWrapMode.Overflow;
 
-        RectTransform buttonRect = CreateRect("ContinueButton", panelRect, new Vector2(0.5f, 0f), new Vector2(0f, 26f), new Vector2(240f, 58f));
+        RectTransform buttonRect = CreateRect("ContinueButton", panelRoot, new Vector2(0.5f, 0f), new Vector2(0f, 26f), new Vector2(240f, 58f));
         Image buttonImage = buttonRect.gameObject.AddComponent<Image>();
         buttonImage.color = buttonColor;
         continueButton = buttonRect.gameObject.AddComponent<Button>();
@@ -163,7 +189,8 @@ public class MapTutorialGuideOverlay : MonoBehaviour
         if (!visible)
             return;
 
-        UpdateHighlightDimBackdrop(anchor, size);
+        Vector2 canvasSize = GetCurrentCanvasReferenceSize();
+        UpdateHighlightDimBackdrop(anchor, size, canvasSize);
 
         highlightRoot.anchorMin = new Vector2(0f, 1f);
         highlightRoot.anchorMax = new Vector2(0f, 1f);
@@ -178,13 +205,13 @@ public class MapTutorialGuideOverlay : MonoBehaviour
         SetFrameLine(highlightRoot.Find("Right") as RectTransform, new Vector2(1f, 0.5f), new Vector2(-t * 0.5f, 0f), new Vector2(t, size.y));
     }
 
-    private void UpdateHighlightDimBackdrop(Vector2 anchor, Vector2 size)
+    private void UpdateHighlightDimBackdrop(Vector2 anchor, Vector2 size, Vector2 canvasSize)
     {
         if (highlightDimRoot == null)
             return;
 
-        float width = Mathf.Max(0f, referenceResolution.x);
-        float height = Mathf.Max(0f, referenceResolution.y);
+        float width = Mathf.Max(1f, canvasSize.x);
+        float height = Mathf.Max(1f, canvasSize.y);
         float left = Mathf.Clamp(anchor.x, 0f, width);
         float top = Mathf.Clamp(-anchor.y, 0f, height);
         float right = Mathf.Clamp(left + Mathf.Max(0f, size.x), 0f, width);
@@ -211,6 +238,32 @@ public class MapTutorialGuideOverlay : MonoBehaviour
         rect.pivot = new Vector2(0f, 1f);
         rect.anchoredPosition = new Vector2(x, -y);
         rect.sizeDelta = new Vector2(width, height);
+    }
+
+    private void ConvertScreenRectToReferenceHighlight(Rect screenRect, out Vector2 anchor, out Vector2 size)
+    {
+        Vector2 canvasSize = GetCurrentCanvasReferenceSize();
+        Rect referenceRect = TutorialHighlightCoordinateUtility.ConvertScreenRectToReferenceRect(
+            screenRect,
+            new Vector2(Screen.width, Screen.height),
+            referenceResolution,
+            matchWidthOrHeight,
+            highlightBleedPixels);
+        float xMin = Mathf.Clamp(referenceRect.xMin, 0f, canvasSize.x);
+        float xMax = Mathf.Clamp(referenceRect.xMax, 0f, canvasSize.x);
+        float yMin = Mathf.Clamp(referenceRect.yMin, 0f, canvasSize.y);
+        float yMax = Mathf.Clamp(referenceRect.yMax, 0f, canvasSize.y);
+
+        size = new Vector2(Mathf.Max(0f, xMax - xMin), Mathf.Max(0f, yMax - yMin));
+        anchor = new Vector2(xMin, -(canvasSize.y - yMax));
+    }
+
+    private Vector2 GetCurrentCanvasReferenceSize()
+    {
+        return TutorialHighlightCoordinateUtility.CalculateCanvasReferenceSize(
+            new Vector2(Screen.width, Screen.height),
+            referenceResolution,
+            matchWidthOrHeight);
     }
 
     private void OnDestroy()
@@ -270,6 +323,7 @@ public class MapTutorialGuideOverlay : MonoBehaviour
         RectTransform line = CreateRect(name, parent, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
         Image image = line.gameObject.AddComponent<Image>();
         image.color = highlightFrameColor;
+        image.raycastTarget = false;
         return line;
     }
 

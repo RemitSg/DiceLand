@@ -14,6 +14,7 @@ public sealed class MapBattleEncounterBuildRequest
     public string tutorialCompletionSceneName;
     public TutorialBattleStageId tutorialBattleStageId;
     public TutorialBattleDefinition_SO tutorialBattleDefinition;
+    public CharacterData_SO tutorialBattle02MollyGuestCharacter;
     public List<PendingBattleStatusGrant> pendingBattleStartAllyStatusGrants;
     public bool isTutorialEncounter;
     public bool returnToMainMenuOnVictory;
@@ -89,6 +90,7 @@ public static class MapBattleEncounterService
             restartBattleOnDefeat = request.restartBattleOnDefeat
         };
 
+        TutorialBattlePartyOverrideService.ApplyOverrides(encounterData, request.tutorialBattle02MollyGuestCharacter);
         AppendRelicInventory(encounterData, request.runState);
         AppendActiveCalamities(encounterData, request.runState);
         return encounterData;

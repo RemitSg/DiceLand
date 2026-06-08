@@ -1,7 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class BattleSummonEffectService
 {
+    private const float AnchorOccupancyToleranceSqr = 0.25f;
+
     public static bool ShouldProcess(
         EnemySkill_SO.SummonEnemyEffectEntry effect,
         EnemySkill_SO.DiceEffectTrigger trigger)
@@ -44,6 +47,68 @@ public static class BattleSummonEffectService
         return null;
     }
 
+    public static int FindFirstOpenEnemyAnchorSlot(
+        IReadOnlyList<Transform> anchors,
+        BattleEnemyController[] existingEnemies)
+    {
+        int anchorCount = anchors != null ? anchors.Count : 0;
+        if (anchorCount <= 0)
+            return -1;
+
+        bool[] occupiedSlots = new bool[anchorCount];
+        for (int i = 0; existingEnemies != null && i < existingEnemies.Length; i++)
+        {
+            BattleEnemyController enemy = existingEnemies[i];
+            if (enemy == null || enemy.IsDead)
+                continue;
+
+            int slotIndex = enemy.FormationSlotIndex;
+            if (slotIndex < 0 || slotIndex >= anchorCount)
+                slotIndex = FindNearestOccupiedAnchorSlot(anchors, enemy.transform.position);
+
+            if (slotIndex >= 0 && slotIndex < anchorCount)
+                occupiedSlots[slotIndex] = true;
+        }
+
+        for (int i = 0; i < occupiedSlots.Length; i++)
+        {
+            if (!occupiedSlots[i])
+                return i;
+        }
+
+        return -1;
+    }
+
+    public static int FindFirstOpenFallbackFormationSlot(BattleEnemyController[] existingEnemies)
+    {
+        int aliveCount = 0;
+        bool hasIndexedEnemy = false;
+        HashSet<int> occupiedSlots = new HashSet<int>();
+
+        for (int i = 0; existingEnemies != null && i < existingEnemies.Length; i++)
+        {
+            BattleEnemyController enemy = existingEnemies[i];
+            if (enemy == null || enemy.IsDead)
+                continue;
+
+            aliveCount++;
+            if (enemy.FormationSlotIndex < 0)
+                continue;
+
+            hasIndexedEnemy = true;
+            occupiedSlots.Add(enemy.FormationSlotIndex);
+        }
+
+        if (!hasIndexedEnemy)
+            return aliveCount;
+
+        int slotIndex = 0;
+        while (occupiedSlots.Contains(slotIndex))
+            slotIndex++;
+
+        return slotIndex;
+    }
+
     private static bool ContainsEnemy(BattleEnemyController[] enemies, BattleEnemyController target)
     {
         if (enemies == null || target == null)
@@ -56,5 +121,27 @@ public static class BattleSummonEffectService
         }
 
         return false;
+    }
+
+    private static int FindNearestOccupiedAnchorSlot(IReadOnlyList<Transform> anchors, Vector3 position)
+    {
+        int bestIndex = -1;
+        float bestDistanceSqr = AnchorOccupancyToleranceSqr;
+
+        for (int i = 0; anchors != null && i < anchors.Count; i++)
+        {
+            Transform anchor = anchors[i];
+            if (anchor == null)
+                continue;
+
+            float distanceSqr = (anchor.position - position).sqrMagnitude;
+            if (distanceSqr <= bestDistanceSqr)
+            {
+                bestDistanceSqr = distanceSqr;
+                bestIndex = i;
+            }
+        }
+
+        return bestIndex;
     }
 }

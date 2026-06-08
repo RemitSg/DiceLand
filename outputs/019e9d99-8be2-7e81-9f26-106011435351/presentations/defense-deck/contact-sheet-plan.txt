@@ -1,0 +1,21 @@
+Slide plan and macro-layout rhythm:
+01 Cover: dark editorial hero with screenshot rail and content-scale metrics.
+02 Background: three-problem vertical proof stack with audience framing.
+03 Core loop: circular gameplay loop with resource pressure annotations.
+04 Architecture: three-lane system map with data bridge and runtime arrows.
+05 Map exploration: screenshot-led split layout plus tile/resolution callouts.
+06 Battle flow: horizontal phase timeline with speed button and clash proof.
+07 Speed/skill system: comparison diagram showing speed as order, resource, target signal.
+08 Relics/statuses: event-dispatch architecture with 009 疾时纺梭 example.
+09 Content production: content matrix with quantified asset counts.
+10 Tutorial/onboarding: progressive teaching ladder.
+11 UI/feedback/audio: production polish slide with feedback channels.
+12 Engineering quality: test pyramid and service extraction evidence.
+13 Technical challenges: risk register with mitigation status.
+14 Roadmap: three-horizon timeline from stabilization to content expansion.
+15 Closing: defense summary with three thesis statements.
+Visual rhythm gates:
+- no three consecutive slides share the same macro layout
+- screenshots appear on 01, 05, 11 only
+- diagrams appear on 03, 04, 06, 07, 08, 12, 14
+- content/evidence tables appear on 09 and 13 only

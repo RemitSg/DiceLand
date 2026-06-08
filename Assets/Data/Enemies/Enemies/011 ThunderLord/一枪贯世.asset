@@ -31,8 +31,10 @@ MonoBehaviour:
   dicePowerRanges:
   - minPower: 4
     maxPower: 5
-  - minPower: 3
-    maxPower: 5
+  - minPower: 2
+    maxPower: 2
+  - minPower: 2
+    maxPower: 2
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 0}
     hitEffectPrefab: {fileID: 2823724269095388637, guid: 415bbaa9a303efb42af175a39bfeb06b, type: 3}
@@ -95,7 +97,7 @@ MonoBehaviour:
     - effectName: 
       trigger: 0
       targetMode: 0
-      statusData: {fileID: 11400000, guid: 504abc372b3b3644bae0ccb7da7e9ce1, type: 2}
+      statusData: {fileID: 11400000, guid: b137dabbfd68440d8ab3ca76492a4240, type: 2}
       statusType: 1
       applyTiming: 0
       applyAfterRoundStarts: 0

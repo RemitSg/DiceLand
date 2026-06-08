@@ -21,13 +21,16 @@ public class RunServiceRefactorTests
     [Test]
     public void BuildTutorialBoardTiles_CreatesLinearTutorialRoute()
     {
-        List<BoardTileData> tiles = RunBootstrapService.BuildTutorialBoardTiles(12);
+        List<BoardTileData> tiles = RunBootstrapService.BuildTutorialBoardTiles(6);
 
-        Assert.AreEqual(12, tiles.Count);
+        Assert.AreEqual(6, tiles.Count);
         Assert.IsTrue(tiles[0].isSpawnTile);
+        Assert.AreEqual(MapTileType.Battle, tiles[1].tileType);
         Assert.AreEqual(MapTileType.Battle, tiles[2].tileType);
-        Assert.AreEqual(MapTileType.Boss, tiles[11].tileType);
-        Assert.AreEqual(TutorialBattleStageId.Battle07, RunBootstrapService.ResolveTutorialStageId(11));
+        Assert.AreEqual(MapTileType.Merchant, tiles[3].tileType);
+        Assert.AreEqual(MapTileType.Forge, tiles[4].tileType);
+        Assert.AreEqual(MapTileType.Elite, tiles[5].tileType);
+        Assert.AreEqual(TutorialBattleStageId.Battle03, RunBootstrapService.ResolveTutorialStageId(5));
     }
 
     [Test]
@@ -155,5 +158,60 @@ public class RunServiceRefactorTests
         Assert.AreEqual(1, encounter.relicInventory.Count);
         Assert.AreEqual(1, encounter.activeCalamities.Count);
         Assert.AreEqual(99, encounter.seed);
+    }
+
+    [Test]
+    public void BuildMapBattleEncounter_TutorialBattle02AddsTemporaryMollyAlly()
+    {
+        EnemyData_SO enemy = ScriptableObject.CreateInstance<EnemyData_SO>();
+        EnemyGroup_SO group = ScriptableObject.CreateInstance<EnemyGroup_SO>();
+        createdObjects.Add(enemy);
+        createdObjects.Add(group);
+
+        group.groupName = "Tutorial Group";
+        group.enemies = new List<EnemyData_SO> { enemy };
+
+        CharacterData_SO chara = ScriptableObject.CreateInstance<CharacterData_SO>();
+        chara.characterName = "Chara";
+        chara.baseHP = 24;
+        Weapon_SO charaWeapon = ScriptableObject.CreateInstance<Weapon_SO>();
+        charaWeapon.weaponName = "Chara Weapon";
+        createdObjects.Add(chara);
+        createdObjects.Add(charaWeapon);
+
+        RunState runState = new RunState
+        {
+            partyMembers = new List<RunPartyMemberState>
+            {
+                new RunPartyMemberState
+                {
+                    memberId = "Chara",
+                    characterData = chara,
+                    weaponData = charaWeapon,
+                    maxHP = 24,
+                    currentHP = 24
+                }
+            }
+        };
+
+        BattleEncounterData encounter = MapBattleEncounterService.BuildEncounter(
+            new MapBattleEncounterBuildRequest
+            {
+                runState = runState,
+                tile = new BoardTileData { coord = new Vector2Int(2, 3), tileType = MapTileType.Battle, encounterSeed = 26002 },
+                encounterGroup = group,
+                battleSceneName = "Battle",
+                isTutorialEncounter = true,
+                tutorialBattleStageId = TutorialBattleStageId.Battle02
+            });
+
+        Assert.IsNotNull(encounter);
+        Assert.AreEqual(2, encounter.partyMembers.Count);
+        Assert.AreEqual("Molly", encounter.partyMembers[0].DisplayName);
+        Assert.AreEqual("Chara", encounter.partyMembers[1].DisplayName);
+        Assert.AreEqual(1, encounter.partyMembers[0].currentHP);
+        Assert.IsTrue(encounter.partyMembers[0].isTemporaryBattleGuest);
+        Assert.AreEqual(1, encounter.partyMembers[0].weaponData.speedButtonCount);
+        Assert.AreEqual("轻击", encounter.partyMembers[0].weaponData.skillPool[0].skillName);
     }
 }

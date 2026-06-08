@@ -68,6 +68,24 @@ public static partial class RelicSystem
                 stacks);
     }
 
+    private static void ApplyImmediateBattleRoundStartSpeedBonus(
+        RelicExecutionContext context,
+        BattleAllyController target,
+        Relic_SO.RelicBuiltInEffectEntry effect,
+        int stacks)
+    {
+        if (context == null
+            || context.trigger != Relic_SO.RelicTrigger.OnBattleRoundStart
+            || target == null
+            || effect == null
+            || effect.statusApplyTiming != Relic_SO.RelicStatusApplyTiming.Immediate)
+        {
+            return;
+        }
+
+        target.AddPendingRoundStartSpeedBonusFromStatus(effect.statusData, stacks);
+    }
+
     private static bool TryApplyStatus(
         BattleEnemyController target,
         Relic_SO.RelicBuiltInEffectEntry effect,
@@ -89,5 +107,23 @@ public static partial class RelicSystem
                 effect.statusData.StatusId,
                 effect.statusData.DisplayName,
                 stacks);
+    }
+
+    private static void ApplyImmediateBattleRoundStartSpeedBonus(
+        RelicExecutionContext context,
+        BattleEnemyController target,
+        Relic_SO.RelicBuiltInEffectEntry effect,
+        int stacks)
+    {
+        if (context == null
+            || context.trigger != Relic_SO.RelicTrigger.OnBattleRoundStart
+            || target == null
+            || effect == null
+            || effect.statusApplyTiming != Relic_SO.RelicStatusApplyTiming.Immediate)
+        {
+            return;
+        }
+
+        target.AddPendingRoundStartSpeedBonusFromStatus(effect.statusData, stacks);
     }
 }

@@ -82,6 +82,50 @@ public class BattleSummonEffectServiceTests
         Assert.AreSame(newEnemy, resolved);
     }
 
+    [Test]
+    public void FindFirstOpenEnemyAnchorSlot_ReusesDeadEnemySlotBeforeOccupiedLaterSlots()
+    {
+        Transform[] anchors =
+        {
+            CreateAnchor("Enemy1", new Vector3(0f, 0f, 0f)),
+            CreateAnchor("Enemy2", new Vector3(1f, 0f, 0f)),
+            CreateAnchor("Enemy3", new Vector3(2f, 0f, 0f))
+        };
+        BattleEnemyController deadFirstSlot = CreateEnemy("Dead", null);
+        BattleEnemyController aliveSecondSlot = CreateEnemy("Alive Second", null);
+        BattleEnemyController aliveThirdSlot = CreateEnemy("Alive Third", null);
+        deadFirstSlot.AssignFormationSlotIndex(0);
+        aliveSecondSlot.AssignFormationSlotIndex(1);
+        aliveThirdSlot.AssignFormationSlotIndex(2);
+        deadFirstSlot.KillInstantly();
+
+        int resolvedSlot = BattleSummonEffectService.FindFirstOpenEnemyAnchorSlot(
+            anchors,
+            new[] { deadFirstSlot, aliveSecondSlot, aliveThirdSlot });
+
+        Assert.AreEqual(0, resolvedSlot);
+    }
+
+    [Test]
+    public void FindFirstOpenEnemyAnchorSlot_ReturnsMinusOneWhenEveryAnchorIsOccupied()
+    {
+        Transform[] anchors =
+        {
+            CreateAnchor("Enemy1", new Vector3(0f, 0f, 0f)),
+            CreateAnchor("Enemy2", new Vector3(1f, 0f, 0f))
+        };
+        BattleEnemyController first = CreateEnemy("First", null);
+        BattleEnemyController second = CreateEnemy("Second", null);
+        first.AssignFormationSlotIndex(0);
+        second.AssignFormationSlotIndex(1);
+
+        int resolvedSlot = BattleSummonEffectService.FindFirstOpenEnemyAnchorSlot(
+            anchors,
+            new[] { first, second });
+
+        Assert.AreEqual(-1, resolvedSlot);
+    }
+
     private BattleEnemyController CreateEnemy(string objectName, EnemyData_SO enemyData)
     {
         GameObject enemyObject = new GameObject(objectName);
@@ -89,5 +133,13 @@ public class BattleSummonEffectServiceTests
         BattleEnemyController enemy = enemyObject.AddComponent<BattleEnemyController>();
         enemy.enemyData = enemyData;
         return enemy;
+    }
+
+    private Transform CreateAnchor(string objectName, Vector3 position)
+    {
+        GameObject anchorObject = new GameObject(objectName);
+        createdObjects.Add(anchorObject);
+        anchorObject.transform.position = position;
+        return anchorObject.transform;
     }
 }

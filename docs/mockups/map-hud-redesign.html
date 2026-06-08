@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Map HUD MainColumn Mockup</title>
+  <style>
+    :root {
+      --text: #f6f4ee;
+      --gold: #ffd45d;
+      --ap: #9df2cf;
+      --calamity: #ff7b6d;
+      --key: #b9d7ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(255, 212, 93, 0.12), transparent 28%),
+        linear-gradient(135deg, #0b0d13 0%, #181723 55%, #0e1018 100%);
+      color: var(--text);
+      font-family: "Microsoft YaHei UI", "Noto Sans SC", "Segoe UI", sans-serif;
+    }
+
+    .stage {
+      width: 920px;
+      max-width: calc(100vw - 32px);
+      padding: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        rgba(8, 10, 16, 0.48);
+      background-size: 24px 24px;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.42);
+    }
+
+    .label {
+      margin: 0 0 18px;
+      color: #b8bbc8;
+      font-size: 14px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .hud {
+      position: relative;
+      width: 460px;
+      height: 252px;
+      overflow: hidden;
+      background: url("../../Assets/Assets/UI/MainColumn.png") center / 100% 100% no-repeat;
+      box-shadow:
+        0 18px 34px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    .value {
+      position: absolute;
+      z-index: 2;
+      font-weight: 900;
+      line-height: 1;
+      transform: translate(-50%, -50%);
+      text-shadow: 0 2px 0 rgba(0, 0, 0, 0.36);
+    }
+
+    .ap {
+      left: 124px;
+      top: 82px;
+      font-size: 44px;
+      color: var(--text);
+    }
+
+    .ap span {
+      color: var(--ap);
+      font-size: 29px;
+    }
+
+    .calamity {
+      left: 281px;
+      top: 82px;
+      width: 100px;
+      text-align: center;
+      font-size: 40px;
+      color: var(--calamity);
+    }
+
+    .money {
+      left: 100px;
+      top: 197px;
+      font-size: 28px;
+      color: var(--gold);
+    }
+
+    .keys {
+      left: 257px;
+      top: 197px;
+      font-size: 28px;
+      color: var(--key);
+    }
+
+    .difficulty {
+      left: 393px;
+      top: 128px;
+      width: 96px;
+      font-size: 32px;
+      color: var(--gold);
+      text-align: center;
+    }
+
+    .notes {
+      width: 460px;
+      margin-top: 18px;
+      color: #d5d6de;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <p class="label">Map HUD MainColumn Preview</p>
+    <section class="hud" aria-label="地图状态栏">
+      <div class="value ap">10<span>/10</span></div>
+      <div class="value calamity">0</div>
+      <div class="value money">100</div>
+      <div class="value keys">0/2</div>
+      <div class="value difficulty">Easy</div>
+    </section>
+    <div class="notes">底板负责标签、边框和质感；代码层只填充五个数值。</div>
+  </main>
+</body>
+</html>

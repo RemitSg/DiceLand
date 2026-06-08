@@ -20,6 +20,6 @@ public static class TutorialBattleStageUtility
 
     public static bool IsFinalStage(TutorialBattleStageId stageId)
     {
-        return stageId == TutorialBattleStageId.Battle07;
+        return stageId == TutorialBattleStageId.Battle03;
     }
 }

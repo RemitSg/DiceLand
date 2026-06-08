@@ -16,6 +16,9 @@ MonoBehaviour:
   description: "\u7CBE\u51C6\u800C\u534E\u4E3D\u7684\u6740\u62DB"
   skillCategory: 0
   energyCost: 3
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 
   targetPriorityMode: 0
@@ -26,19 +29,21 @@ MonoBehaviour:
   maxPower: 4
   diceCount: 2
   dicePowerRanges:
-  - minPower: 1
+  - minPower: 2
     maxPower: 3
-  - minPower: 1
+  - minPower: 2
     maxPower: 2
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 7336644444123945357, guid: f1b3b5aba6f697c438731d6a6adbeb97, type: 3}
     hitEffectPrefab: {fileID: 3588087243228889488, guid: 04ab07276e329f042bf83234a0f5d9e5, type: 3}
+    clashOffsetSpace: 0
     clashPositionOffset: {x: 1, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 0, y: 0, z: 0}
     clashSortingOrderOffset: 0
     overrideClashDuration: 0
     clashDuration: 0
+    hitOffsetSpace: 0
     hitPositionOffset: {x: 0, y: 0, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
     hitScale: {x: 0, y: 0, z: 0}
@@ -56,12 +61,14 @@ MonoBehaviour:
     skillSpriteDuration: 0
   - clashEffectPrefab: {fileID: 7336644444123945357, guid: f1b3b5aba6f697c438731d6a6adbeb97, type: 3}
     hitEffectPrefab: {fileID: 3588087243228889488, guid: 04ab07276e329f042bf83234a0f5d9e5, type: 3}
+    clashOffsetSpace: 0
     clashPositionOffset: {x: 0, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 0, y: 0, z: 0}
     clashSortingOrderOffset: 0
     overrideClashDuration: 0
     clashDuration: 0
+    hitOffsetSpace: 0
     hitPositionOffset: {x: 0, y: 0, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
     hitScale: {x: 0, y: 0, z: 0}
@@ -82,7 +89,7 @@ MonoBehaviour:
     statusEffects: []
     powerModifiers:
     - effectName: 
-      trigger: 4
+      trigger: 3
       useCondition: 1
       condition: 0
       targetStatusData: {fileID: 0}
@@ -93,10 +100,14 @@ MonoBehaviour:
       requiredSpeedDifference: 1
       powerBonus: 1
       powerBonusPerStep: 0
+      maxPowerBonus: 0
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
+    summonEffects: []
   - damageEffects: []
     statusEffects: []
     powerModifiers:
@@ -112,7 +123,12 @@ MonoBehaviour:
       requiredSpeedDifference: 1
       powerBonus: 1
       powerBonusPerStep: 0
+      maxPowerBonus: 0
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 

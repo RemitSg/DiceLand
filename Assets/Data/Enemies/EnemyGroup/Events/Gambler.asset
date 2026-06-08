@@ -19,4 +19,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 36a110e509b14fd1a112000000000339, type: 2}
   attributes:
   - {fileID: 11400000, guid: d1b4ed53851df2549bd58022556ca4be, type: 2}
+  dangerRatingOverride: 0
+  battleMusicOverride: {fileID: 8300000, guid: ed846e1166d1b4d489a44f86065182ec, type: 3}
   lootTables: []

@@ -3,11 +3,19 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 [DisallowMultipleComponent]
 public class MapHUD : MonoBehaviour
 {
     private const int DefaultCanvasSortingOrder = 8000;
+    private const float TileDetailTutorialHighlightPadding = 12f;
+    private const float PartyPanelTopGap = 24f;
+    private static readonly Vector2 TopLeftHudOffset = new Vector2(22f, -22f);
+    private static readonly Vector2 TopLeftHudSize = new Vector2(460f, 252f);
+    private static readonly Vector2 TutorialHighlightReferenceResolution = new Vector2(1920f, 1080f);
 
     private sealed class PartyMemberHudView
     {
@@ -28,6 +36,8 @@ public class MapHUD : MonoBehaviour
         Blueprints,
         Relics
     }
+
+    private const string MainColumnBackgroundAssetPath = "Assets/Assets/UI/MainColumn.png";
 
     [Header("Fonts")]
     [FormerlySerializedAs("uiFont")]
@@ -51,10 +61,13 @@ public class MapHUD : MonoBehaviour
     [SerializeField] private Color bodyColor = new Color(0.94f, 0.96f, 1f, 1f);
     [SerializeField] private Color accentColor = new Color(1f, 0.84f, 0.36f, 1f);
 
+    [Header("Top HUD")]
+    [SerializeField] private Sprite mainColumnBackgroundSprite;
+    [SerializeField] private Color mainColumnBackgroundColor = Color.white;
+
     [Header("Party Panel")]
     [SerializeField] private Vector2 partyPanelSize = new Vector2(420f, 420f);
     [SerializeField] private Vector2 partyPanelCollapsedSize = new Vector2(420f, 64f);
-    [SerializeField] private Vector2 partyPanelOffset = new Vector2(22f, -256f);
     [SerializeField] private Sprite partyPanelBackgroundSprite;
     [SerializeField] private Color partyPanelColor = new Color(0.1f, 0.12f, 0.18f, 0.94f);
     [SerializeField] private Vector2 partyPanelTitleOffset = new Vector2(18f, -18f);
@@ -114,6 +127,8 @@ public class MapHUD : MonoBehaviour
     [Header("Inventory Button")]
     [SerializeField] private Sprite inventoryButtonSprite;
     [SerializeField] private Color inventoryButtonSpriteColor = Color.white;
+    [SerializeField] private Color inventoryButtonFallbackColor = new Color(0.62f, 0.34f, 0.2f, 0.96f);
+    [SerializeField] private Color inventoryButtonFallbackGlyphColor = new Color(1f, 0.86f, 0.68f, 1f);
     [SerializeField] private Vector2 inventoryButtonOffset = new Vector2(-32f, -24f);
     [SerializeField] private Vector2 inventoryButtonFallbackSize = new Vector2(132f, 72f);
 
@@ -289,24 +304,24 @@ public class MapHUD : MonoBehaviour
         {
             int current = actionPointSystem != null ? actionPointSystem.CurrentPoints : 0;
             int total = actionPointSystem != null ? actionPointSystem.CurrentMaxPoints : 0;
-            actionPointText.text = $"行动点 {current}/{total}";
+            actionPointText.text = $"{current}<size=66%><color=#{ColorUtility.ToHtmlStringRGB(new Color(0.62f, 0.95f, 0.82f, 1f))}>/{total}</color></size>";
         }
 
         if (moneyText != null)
-            moneyText.text = $"金钱 {(runState != null ? runState.money : 0)}";
+            moneyText.text = (runState != null ? runState.money : 0).ToString();
 
         if (keysText != null)
         {
             int currentKeys = runState != null ? runState.currentKeys : 0;
             int required = runState != null ? runState.requiredKeys : 0;
-            keysText.text = $"钥匙 {currentKeys}/{required}";
+            keysText.text = $"{currentKeys}/{required}";
         }
 
         if (calamityText != null)
-            calamityText.text = $"灾厄 {Mathf.Max(0, runState != null ? runState.calamityTier : 0)}";
+            calamityText.text = Mathf.Max(0, runState != null ? runState.calamityTier : 0).ToString();
 
         if (difficultyText != null)
-            difficultyText.text = $"难度 {GetDisplayDifficultyName(runState != null ? runState.difficultyName : string.Empty)}";
+            difficultyText.text = GetDisplayDifficultyName(runState != null ? runState.difficultyName : string.Empty);
 
         if (currentTile != null)
             ShowTile(currentTile, currentMoveCost, currentDetailed);
@@ -375,6 +390,41 @@ public class MapHUD : MonoBehaviour
             tileAttributeValueText.gameObject.SetActive(false);
     }
 
+    public bool TryGetTileDetailTutorialHighlight(out Vector2 highlightAnchor, out Vector2 highlightSize)
+    {
+        Initialize();
+        highlightAnchor = Vector2.zero;
+        highlightSize = Vector2.zero;
+        if (tilePanelRect == null || canvas == null)
+            return false;
+
+        Vector3[] corners = new Vector3[4];
+        tilePanelRect.GetWorldCorners(corners);
+
+        float screenWidth = Mathf.Max(1f, Screen.width);
+        float screenHeight = Mathf.Max(1f, Screen.height);
+
+        float minX = float.PositiveInfinity;
+        float minY = float.PositiveInfinity;
+        float maxX = float.NegativeInfinity;
+        float maxY = float.NegativeInfinity;
+        for (int i = 0; i < corners.Length; i++)
+        {
+            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, corners[i]);
+            minX = Mathf.Min(minX, screenPoint.x);
+            minY = Mathf.Min(minY, screenPoint.y);
+            maxX = Mathf.Max(maxX, screenPoint.x);
+            maxY = Mathf.Max(maxY, screenPoint.y);
+        }
+
+        float scaleX = TutorialHighlightReferenceResolution.x / screenWidth;
+        float scaleY = TutorialHighlightReferenceResolution.y / screenHeight;
+        float padding = TileDetailTutorialHighlightPadding;
+        highlightAnchor = new Vector2(minX * scaleX - padding, -(screenHeight - maxY) * scaleY + padding);
+        highlightSize = new Vector2((maxX - minX) * scaleX + padding * 2f, (maxY - minY) * scaleY + padding * 2f);
+        return highlightSize.x > 0.5f && highlightSize.y > 0.5f;
+    }
+
     public void ShowStatus(string message)
     {
         Initialize();
@@ -415,20 +465,50 @@ public class MapHUD : MonoBehaviour
 
     private void BuildTopLeftHud()
     {
-        RectTransform panel = CreateRect("TopLeftPanel", rootRect, new Vector2(0f, 1f), new Vector2(22f, -22f), new Vector2(420f, 220f));
+        Sprite mainColumnSprite = ResolveMainColumnBackgroundSprite();
+        RectTransform panel = CreateRect("TopLeftPanel", rootRect, new Vector2(0f, 1f), TopLeftHudOffset, TopLeftHudSize);
         Image topPanelImage = panel.gameObject.AddComponent<Image>();
-        topPanelImage.color = panelColor;
+        topPanelImage.sprite = mainColumnSprite;
+        topPanelImage.type = Image.Type.Simple;
+        topPanelImage.color = mainColumnSprite != null ? mainColumnBackgroundColor : new Color(0.11f, 0.12f, 0.17f, 0.96f);
 
-        actionPointText = CreateText(panel, "ActionPoints", new Vector2(18f, -18f), new Vector2(380f, 34f), titleFontSize + 2, titleColor, string.Empty, keywordFont);
-        moneyText = CreateText(panel, "Money", new Vector2(18f, -58f), new Vector2(240f, 30f), bodyFontSize, accentColor, string.Empty, keywordFont);
-        keysText = CreateText(panel, "Keys", new Vector2(18f, -94f), new Vector2(240f, 30f), bodyFontSize, bodyColor, string.Empty, bodyFont);
-        calamityText = CreateText(panel, "Calamity", new Vector2(18f, -130f), new Vector2(240f, 30f), bodyFontSize, bodyColor, string.Empty, bodyFont);
-        difficultyText = CreateText(panel, "Difficulty", new Vector2(248f, -18f), new Vector2(154f, 30f), bodyFontSize, accentColor, string.Empty, keywordFont);
+        // Offsets are converted from MainColumn.png slot centers into this 460x252 panel.
+        actionPointText = CreateCenteredText(panel, "ActionPoints", new Vector2(-106f, 44f), new Vector2(220f, 76f), titleFontSize + 18, titleColor, string.Empty, keywordFont);
+        actionPointText.alignment = TextAlignmentOptions.Center;
+
+        calamityText = CreateCenteredText(panel, "Calamity", new Vector2(51f, 44f), new Vector2(108f, 76f), titleFontSize + 14, new Color(1f, 0.49f, 0.42f, 1f), string.Empty, keywordFont);
+        calamityText.alignment = TextAlignmentOptions.Center;
+
+        moneyText = CreateCenteredText(panel, "Money", new Vector2(-130f, -71f), new Vector2(150f, 52f), bodyFontSize + 6, accentColor, string.Empty, keywordFont);
+        moneyText.alignment = TextAlignmentOptions.Center;
+
+        keysText = CreateCenteredText(panel, "Keys", new Vector2(27f, -71f), new Vector2(150f, 52f), bodyFontSize + 6, new Color(0.73f, 0.84f, 1f, 1f), string.Empty, keywordFont);
+        keysText.alignment = TextAlignmentOptions.Center;
+
+        difficultyText = CreateCenteredText(panel, "Difficulty", new Vector2(163f, -2f), new Vector2(112f, 64f), titleFontSize + 6, accentColor, string.Empty, keywordFont);
+        difficultyText.alignment = TextAlignmentOptions.Center;
+        difficultyText.enableAutoSizing = true;
+        difficultyText.fontSizeMin = bodyFontSize;
+        difficultyText.fontSizeMax = titleFontSize + 6;
+    }
+
+    private Sprite ResolveMainColumnBackgroundSprite()
+    {
+        if (mainColumnBackgroundSprite != null)
+            return mainColumnBackgroundSprite;
+
+#if UNITY_EDITOR
+        mainColumnBackgroundSprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainColumnBackgroundAssetPath);
+        if (mainColumnBackgroundSprite != null)
+            return mainColumnBackgroundSprite;
+#endif
+
+        return null;
     }
 
     private void BuildPartyPanel()
     {
-        partyPanelRect = CreateRect("PartyPanel", rootRect, new Vector2(0f, 1f), partyPanelOffset, partyPanelSize);
+        partyPanelRect = CreateRect("PartyPanel", rootRect, new Vector2(0f, 1f), ResolvePartyPanelOffset(), partyPanelSize);
         partyPanelImage = partyPanelRect.gameObject.AddComponent<Image>();
         partyPanelImage.type = Image.Type.Sliced;
 
@@ -479,16 +559,42 @@ public class MapHUD : MonoBehaviour
     {
         RectTransform rect = CreateRect("InventoryButton", rootRect, new Vector2(1f, 1f), inventoryButtonOffset, inventoryButtonFallbackSize);
         Image image = rect.gameObject.AddComponent<Image>();
-        image.color = inventoryButtonSprite != null ? inventoryButtonSpriteColor : inventorySlotColor;
+        image.color = inventoryButtonSprite != null ? inventoryButtonSpriteColor : inventoryButtonFallbackColor;
         if (inventoryButtonSprite != null)
         {
             image.sprite = inventoryButtonSprite;
             image.type = Image.Type.Sliced;
         }
+        else
+        {
+            image.type = Image.Type.Simple;
+            BuildInventoryButtonFallbackGlyph(rect);
+        }
 
         inventoryButton = rect.gameObject.AddComponent<Button>();
         inventoryButton.transition = Selectable.Transition.ColorTint;
         inventoryButton.onClick.AddListener(ToggleInventoryPanel);
+    }
+
+    private void BuildInventoryButtonFallbackGlyph(RectTransform parent)
+    {
+        Vector2 barSize = new Vector2(
+            Mathf.Max(12f, inventoryButtonFallbackSize.x * 0.48f),
+            Mathf.Max(3f, inventoryButtonFallbackSize.y * 0.09f));
+        float spacing = Mathf.Max(6f, inventoryButtonFallbackSize.y * 0.2f);
+
+        for (int i = 0; i < 3; i++)
+        {
+            float y = (1 - i) * spacing;
+            Image bar = CreateCenteredImage(
+                parent,
+                "FallbackMenuBar",
+                new Vector2(0f, y),
+                barSize,
+                null,
+                inventoryButtonFallbackGlyphColor);
+            bar.raycastTarget = false;
+        }
     }
 
     private void BuildInventoryPanel()
@@ -640,6 +746,11 @@ public class MapHUD : MonoBehaviour
 
         float requiredHeight = 76f + memberCount * partyMemberCardSize.y + Mathf.Max(0, memberCount - 1) * partyMemberCardSpacing + 16f;
         return new Vector2(partyPanelSize.x, Mathf.Max(partyPanelSize.y, requiredHeight));
+    }
+
+    private static Vector2 ResolvePartyPanelOffset()
+    {
+        return new Vector2(TopLeftHudOffset.x, TopLeftHudOffset.y - TopLeftHudSize.y - PartyPanelTopGap);
     }
 
     private PartyMemberHudView GetOrCreatePartyMemberView(int index)
@@ -805,8 +916,8 @@ public class MapHUD : MonoBehaviour
 
         ApplyFont(actionPointText, keywordFont);
         ApplyFont(moneyText, keywordFont);
-        ApplyFont(keysText, bodyFont);
-        ApplyFont(calamityText, bodyFont);
+        ApplyFont(keysText, keywordFont);
+        ApplyFont(calamityText, keywordFont);
         ApplyFont(difficultyText, keywordFont);
         ApplyFont(tileTitleText, keywordFont);
         ApplyFont(tileBodyText, bodyFont != null ? bodyFont : keywordFont);
@@ -873,7 +984,7 @@ public class MapHUD : MonoBehaviour
         float viewportHeight = Mathf.Max(0f, fullListHeight * Mathf.Clamp01(partyPanelReveal));
         int memberCount = currentRunState != null && currentRunState.partyMembers != null ? currentRunState.partyMembers.Count : 0;
         bool showPartyDetails = partyPanelReveal > 0.001f;
-        ApplyRect(partyPanelRect, new Vector2(0f, 1f), partyPanelOffset, resolvedPanelSize);
+        ApplyRect(partyPanelRect, new Vector2(0f, 1f), ResolvePartyPanelOffset(), resolvedPanelSize);
         if (partyPanelImage != null)
         {
             partyPanelImage.sprite = partyPanelBackgroundSprite;
@@ -1437,6 +1548,21 @@ public class MapHUD : MonoBehaviour
         tmp.text = text;
         tmp.richText = true;
         tmp.alignment = TextAlignmentOptions.TopLeft;
+        tmp.enableWordWrapping = false;
+        tmp.raycastTarget = false;
+        ApplyFont(tmp, font);
+        return tmp;
+    }
+
+    private TextMeshProUGUI CreateCenteredText(RectTransform parent, string name, Vector2 anchoredPosition, Vector2 size, int fontSize, Color color, string text, TMP_FontAsset font)
+    {
+        RectTransform rect = CreateRect(name, parent, new Vector2(0.5f, 0.5f), anchoredPosition, size);
+        TextMeshProUGUI tmp = rect.gameObject.AddComponent<TextMeshProUGUI>();
+        tmp.fontSize = fontSize;
+        tmp.color = color;
+        tmp.text = text;
+        tmp.richText = true;
+        tmp.alignment = TextAlignmentOptions.Center;
         tmp.enableWordWrapping = false;
         tmp.raycastTarget = false;
         ApplyFont(tmp, font);

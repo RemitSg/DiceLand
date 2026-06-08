@@ -1,0 +1,24 @@
+task mode: create
+primary deck-profile: product-platform
+secondary profile gates: engineering-platform, consumer-game visual storytelling
+required proof objects:
+- playable loop map from map exploration to battle settlement
+- architecture map with MapScene / Shared / BattleScene / Data boundaries
+- content scale evidence from local asset counts
+- battle sequence proof object for speed buttons, skills, statuses, relics
+- quality and roadmap slide tied to current tests and known refactor risks
+source/asset requirements:
+- local project docs: PROJECT_ARCHITECTURE.md, GAMEPLAY_BLUEPRINT.md, PROJECT_PROGRESS.md, docs/CONTENT_TABLE.md
+- local Unity assets and screenshots under Assets/Screenshots
+- no external brand assets
+brand authenticity constraints:
+- do not invent a logo or mascot
+- use project screenshots and abstract editable diagrams
+profile-specific QA gates:
+- each slide title is a claim, not a topic label
+- diagrams use concrete project class and data names
+- no more than two repeated card-grid slides
+- screenshots and code/asset counts must be traceable to local files
+known missing inputs:
+- no official project title supplied, use "移动端 Roguelite 回合制游戏项目" as deck title
+- no school/company template supplied, create a self-contained defense deck

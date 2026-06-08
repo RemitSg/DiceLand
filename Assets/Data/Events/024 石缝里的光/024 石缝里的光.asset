@@ -20,6 +20,7 @@ MonoBehaviour:
   - optionId: 1
     optionLabel: "\u51FF\u5F00\u770B\u770B"
     requiredMoney: 0
+    requiredMoneyPercent: 0
     consequenceDescription: "\u5931\u53BB 2 \u884C\u52A8\u70B9\uFF0C\u83B7\u5F97\u968F\u673A\u56FE\u7EB8
       1 \u5F20"
     resultContent: "\u4F60\u51FF\u5F00\u4E86\u5CA9\u58C1\uFF0C\u53D1\u73B0\u91CC\u9762\u4F3C\u4E4E\u662F\u4E00\u4E2A\u66FE\u7ECF\u7684\u85CF\u4E66\u5BA4\u3002\n\u867D\u7136\u7070\u5C18\u94FA\u6EE1\u4E86\u5730\u677F\u4E0E\u684C\u9762\uFF0C\u4F46\u773C\u5C16\u7684\u4F60\u4E00\u773C\u5C31\u53D1\u73B0\u4E86\u684C\u5B50\u4E0A\u4E00\u5F20\u9887\u6709\u4EF7\u503C\u7684\u5377\u8F74\u3002"
@@ -48,13 +49,47 @@ MonoBehaviour:
     encounterEnemyCountMin: 0
     encounterEnemyCountMax: 0
     specialDungeon: {fileID: 0}
-    additionalBuiltInEffects: []
+    additionalBuiltInEffects:
+    - effectType: 12
+      effectAmount: 0
+      randomMoneyMin: 0
+      randomMoneyMax: 0
+      randomOwnedLootAmountMin: 0
+      randomOwnedLootAmountMax: 0
+      lootRewards: []
+      lootPickCountMin: 0
+      lootPickCountMax: 0
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      relicPickCountMin: 0
+      relicPickCountMax: 0
+      relicRewards: []
+      blueprintTable: {fileID: 11400000, guid: 0b95334a03d081d48975d7b1ec2265ad, type: 2}
+      blueprintRarityWeightTable: {fileID: 11400000, guid: 7b32e62646820d245a8fc87c54a37c36, type: 2}
+      blueprintPickCountMin: 0
+      blueprintPickCountMax: 0
+      blueprintRewards: []
+      encounterSelectionMode: 0
+      encounterEnemyGroups: []
+      encounterEnemies: []
+      encounterEnemyCountMin: 0
+      encounterEnemyCountMax: 0
+      specialDungeon: {fileID: 0}
+      moneyPercent: 0
+      randomMoneyPercentMin: 0
+      randomMoneyPercentMax: 0
+      weaponCatalog: {fileID: 0}
+      weaponRarity: 0
+      weaponPickCountMin: 0
+      weaponPickCountMax: 0
+    possibleResults: []
     nextEvent: {fileID: 0}
     resolveEvent: 1
     customHandler: {fileID: 0}
   - optionId: 2
     optionLabel: "\u5F84\u76F4\u79BB\u5F00"
     requiredMoney: 0
+    requiredMoneyPercent: 0
     consequenceDescription: "\u8FD4\u8FD8 1 \u884C\u52A8\u70B9"
     resultContent: "\u597D\u5947\u5FC3\u5BB3\u6B7B\u732B\uFF0C\u8FD8\u662F\u8D76\u8DEF\u8981\u7D27\u3002"
     builtInEffectType: 7
@@ -83,12 +118,14 @@ MonoBehaviour:
     encounterEnemyCountMax: 0
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
+    possibleResults: []
     nextEvent: {fileID: 0}
     resolveEvent: 1
     customHandler: {fileID: 0}
   - optionId: 3
     optionLabel: "\u70B9\u706B\u63A2\u67E5"
     requiredMoney: 0
+    requiredMoneyPercent: 0
     consequenceDescription: "\u83B7\u5F97 1 \u4E2A\u968F\u673A\u6218\u5229\u54C1"
     resultContent: "\u4F60\u70B9\u71C3\u4E86\u4E00\u6839\u706B\u628A\u4F38\u8FDB\u7F1D\u9699\u91CC\uFF0C\u4E0D\u6210\u60F3\u6E85\u51FA\u7684\u706B\u661F\u70B9\u71C3\u4E86\u6574\u4E2A\u7A7A\u95F4\uFF0C\u5927\u706B\u9877\u523B\u95F4\u5C06\u9694\u58C1\u7684\u7A7A\u95F4\u70E7\u4E86\u4E2A\u5E72\u51C0\u3002\n\u70E7\u5C3D\u540E\uFF0C\u4F60\u6CE8\u610F\u5230\u89E6\u624B\u53EF\u53CA\u7684\u5730\u65B9\u9732\u51FA\u4E86\u4E2A\u770B\u4E0A\u53BB\u8FD8\u7B97\u6709\u70B9\u4EF7\u503C\u7684\u4E1C\u897F\u3002"
     builtInEffectType: 8
@@ -123,6 +160,7 @@ MonoBehaviour:
     encounterEnemyCountMax: 0
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
+    possibleResults: []
     nextEvent: {fileID: 0}
     resolveEvent: 1
     customHandler: {fileID: 0}

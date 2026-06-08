@@ -135,6 +135,25 @@ public static class MapMovementService
         return actionPointSystem.CurrentPoints <= safeMoveCost;
     }
 
+    public static bool ShouldPresentPendingCalamityAfterArrival(BoardTileData tile)
+    {
+        if (tile == null || tile.IsHostileTile)
+            return false;
+
+        switch (tile.tileType)
+        {
+            case MapTileType.Event:
+            case MapTileType.Merchant:
+            case MapTileType.Forge:
+            case MapTileType.Rest:
+            case MapTileType.Treasure:
+            case MapTileType.SpecialDungeonExit:
+                return false;
+            default:
+                return true;
+        }
+    }
+
     public static void SpendActionPointsWithOverflow(ActionPointSystem actionPointSystem, int amount)
     {
         if (actionPointSystem == null)

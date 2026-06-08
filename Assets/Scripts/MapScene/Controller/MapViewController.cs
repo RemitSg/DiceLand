@@ -48,6 +48,7 @@ public class MapViewController : MonoBehaviour
     private bool longPressTriggered;
     private Coroutine introRoutine;
     private Func<bool> inputBlockedEvaluator;
+    private Func<bool> pointerOverUiIgnoredEvaluator;
 
     public event Action<BoardTileData> TileLongPressed;
     public event Action ViewNavigationPerformed;
@@ -55,6 +56,11 @@ public class MapViewController : MonoBehaviour
     public void SetInputBlockedEvaluator(Func<bool> evaluator)
     {
         inputBlockedEvaluator = evaluator;
+    }
+
+    public void SetPointerOverUiIgnoredEvaluator(Func<bool> evaluator)
+    {
+        pointerOverUiIgnoredEvaluator = evaluator;
     }
 
     public void Initialize(Camera mapCamera, BoardManager board, float padding)
@@ -191,7 +197,7 @@ public class MapViewController : MonoBehaviour
 
     private void BeginPointer(Vector2 screenPosition, int pointerId)
     {
-        if (IsPointerOverUi(pointerId))
+        if (IsPointerOverUi(pointerId) && !ShouldIgnorePointerOverUi())
         {
             ResetPointerState();
             return;
@@ -389,6 +395,11 @@ public class MapViewController : MonoBehaviour
     private bool IsInputBlocked()
     {
         return inputBlockedEvaluator != null && inputBlockedEvaluator.Invoke();
+    }
+
+    private bool ShouldIgnorePointerOverUi()
+    {
+        return pointerOverUiIgnoredEvaluator != null && pointerOverUiIgnoredEvaluator.Invoke();
     }
 
     private IEnumerator PlaySpawnIntroRoutine(Vector3 focusWorldPosition)

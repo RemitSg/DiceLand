@@ -16,17 +16,11 @@ public static class RunBootstrapService
     private static readonly MapTileType[] TutorialTileSequence =
     {
         MapTileType.Empty,
-        MapTileType.Empty,
         MapTileType.Battle,
-        MapTileType.Battle,
-        MapTileType.Rest,
         MapTileType.Battle,
         MapTileType.Merchant,
-        MapTileType.Battle,
         MapTileType.Forge,
-        MapTileType.Battle,
-        MapTileType.Key,
-        MapTileType.Boss
+        MapTileType.Elite
     };
 
     public static int ResolveActionPointLimitForTier(DifficultyConfig_SO config, int calamityTier)
@@ -67,18 +61,12 @@ public static class RunBootstrapService
     {
         switch (sequenceIndex)
         {
-            case 2:
+            case 1:
                 return TutorialBattleStageId.Battle01;
-            case 3:
+            case 2:
                 return TutorialBattleStageId.Battle02;
             case 5:
                 return TutorialBattleStageId.Battle03;
-            case 7:
-                return TutorialBattleStageId.Battle04;
-            case 9:
-                return TutorialBattleStageId.Battle05;
-            case 11:
-                return TutorialBattleStageId.Battle07;
             default:
                 return TutorialBattleStageId.None;
         }
@@ -113,12 +101,7 @@ public static class RunBootstrapService
             case TutorialBattleStageId.Battle02:
                 return 1;
             case TutorialBattleStageId.Battle03:
-            case TutorialBattleStageId.Battle04:
                 return 2;
-            case TutorialBattleStageId.Battle05:
-                return 4;
-            case TutorialBattleStageId.Battle07:
-                return 5;
             default:
                 return tileType == MapTileType.Boss
                     ? MapDangerRatingService.ResolveDefaultRating(tileType, dangerBand)

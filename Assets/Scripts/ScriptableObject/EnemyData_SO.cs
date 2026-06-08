@@ -97,6 +97,8 @@ public class EnemyData_SO : ScriptableObject
         public EnemySkill_SO skill;
         [Tooltip("When enabled, granted temporary skills replace the ally weapon skill pool for this battle.")]
         public bool replaceWeaponSkills;
+        [Tooltip("Optional character name filter. Leave empty to grant this skill to every living ally.")]
+        public string targetAllyCharacterName;
     }
 
     [System.Serializable]

@@ -21,6 +21,57 @@ public class BoardTileView : MonoBehaviour
 
     public BoardTileData TileData => tileData;
 
+    public bool TryGetScreenHighlightRect(Camera targetCamera, out Rect screenRect, float paddingPixels = 18f)
+    {
+        screenRect = default;
+        if (targetCamera == null)
+            return false;
+
+        EnsureVisuals();
+        Bounds bounds = boxCollider != null
+            ? boxCollider.bounds
+            : new Bounds(transform.position, transform.lossyScale);
+
+        Vector3 min = bounds.min;
+        Vector3 max = bounds.max;
+        Vector3[] corners =
+        {
+            new Vector3(min.x, min.y, min.z),
+            new Vector3(min.x, min.y, max.z),
+            new Vector3(min.x, max.y, min.z),
+            new Vector3(min.x, max.y, max.z),
+            new Vector3(max.x, min.y, min.z),
+            new Vector3(max.x, min.y, max.z),
+            new Vector3(max.x, max.y, min.z),
+            new Vector3(max.x, max.y, max.z)
+        };
+
+        float minX = float.PositiveInfinity;
+        float minY = float.PositiveInfinity;
+        float maxX = float.NegativeInfinity;
+        float maxY = float.NegativeInfinity;
+        bool hasVisibleCorner = false;
+        for (int i = 0; i < corners.Length; i++)
+        {
+            Vector3 screenPoint = targetCamera.WorldToScreenPoint(corners[i]);
+            if (screenPoint.z < 0f)
+                continue;
+
+            hasVisibleCorner = true;
+            minX = Mathf.Min(minX, screenPoint.x);
+            minY = Mathf.Min(minY, screenPoint.y);
+            maxX = Mathf.Max(maxX, screenPoint.x);
+            maxY = Mathf.Max(maxY, screenPoint.y);
+        }
+
+        if (!hasVisibleCorner)
+            return false;
+
+        float padding = Mathf.Max(0f, paddingPixels);
+        screenRect = Rect.MinMaxRect(minX - padding, minY - padding, maxX + padding, maxY + padding);
+        return screenRect.width > 0.5f && screenRect.height > 0.5f;
+    }
+
     public void Setup(BoardManager boardManager, BoardTileData data)
     {
         owner = boardManager;

@@ -12,6 +12,7 @@ public class RunPartyMemberState
     public int experience;
     public int maxHP;
     public int currentHP;
+    [NonSerialized] public bool isTemporaryBattleGuest;
 
     public string DisplayName =>
         characterData != null && !string.IsNullOrWhiteSpace(characterData.characterName)
@@ -35,7 +36,8 @@ public class RunPartyMemberState
             level = level,
             experience = experience,
             maxHP = maxHP,
-            currentHP = currentHP
+            currentHP = currentHP,
+            isTemporaryBattleGuest = isTemporaryBattleGuest
         };
     }
 }

@@ -87,4 +87,57 @@ public class MapRunRuntimeTutorialTests
         Assert.AreEqual(10, updated.runState.partyMembers[0].currentHP);
         Assert.AreEqual(14, updated.runState.partyMembers[1].currentHP);
     }
+
+    [Test]
+    public void ApplyEncounterResult_DoesNotPersistTemporaryBattleGuests()
+    {
+        MapRunSnapshot snapshot = new MapRunSnapshot
+        {
+            sceneName = "MapScene",
+            runState = new RunState
+            {
+                partyMembers = new List<RunPartyMemberState>
+                {
+                    new RunPartyMemberState
+                    {
+                        memberId = "Chara",
+                        maxHP = 24,
+                        currentHP = 24
+                    }
+                }
+            }
+        };
+
+        currentSnapshotField.SetValue(null, snapshot);
+
+        BattleEncounterData encounter = new BattleEncounterData
+        {
+            wasVictory = true,
+            isTutorialEncounter = true,
+            resolvedPartyMembers = new List<RunPartyMemberState>
+            {
+                new RunPartyMemberState
+                {
+                    memberId = "Molly",
+                    maxHP = 16,
+                    currentHP = 1,
+                    isTemporaryBattleGuest = true
+                },
+                new RunPartyMemberState
+                {
+                    memberId = "Chara",
+                    maxHP = 24,
+                    currentHP = 12
+                }
+            }
+        };
+
+        MapRunRuntime.ApplyEncounterResult(encounter);
+
+        MapRunSnapshot updated = (MapRunSnapshot)currentSnapshotField.GetValue(null);
+        Assert.IsNotNull(updated);
+        Assert.AreEqual(1, updated.runState.partyMembers.Count);
+        Assert.AreEqual("Chara", updated.runState.partyMembers[0].memberId);
+        Assert.AreEqual(24, updated.runState.partyMembers[0].currentHP);
+    }
 }

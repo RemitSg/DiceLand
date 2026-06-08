@@ -2177,6 +2177,9 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferLowestSpeed)
             return "\n目标偏好：优先攻击速度最低的目标";
 
+        if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferLowestHP)
+            return "\n目标偏好：优先攻击血量最低的目标";
+
         if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferTargetsWithNegativeStatusTypesAtLeast)
             return $"\n目标偏好：优先攻击拥有至少 {Mathf.Max(1, skill.targetPriorityRequiredStacks)} 种负面状态的目标";
 

@@ -117,7 +117,8 @@ public class EnemySkill_SO : ScriptableObject
         PreferLowestSpeed = 2,
         PreferTargetsWithNegativeStatusTypesAtLeast = 3,
         PreferTargetsWithLowestStatusStacks = 4,
-        PreferTargetsWithHighestStatusStacks = 5
+        PreferTargetsWithHighestStatusStacks = 5,
+        PreferLowestHP = 6
     }
 
     public enum TransformOffsetSpace

@@ -20,6 +20,8 @@ public class MapCalamityOverlay : MonoBehaviour
     [SerializeField] private Sprite panelBackgroundSprite;
     [SerializeField] private Color panelBackgroundColor = new Color(0.08f, 0.1f, 0.14f, 0.96f);
     [SerializeField] private Color backdropColor = new Color(0f, 0f, 0f, 0.66f);
+    [SerializeField] private Sprite backdropBackgroundSprite;
+    [SerializeField] private Color backdropBackgroundColor = new Color(1f, 1f, 1f, 0.72f);
 
     [Header("Cards")]
     [SerializeField] private Vector2 cardSize = new Vector2(520f, 470f);
@@ -41,6 +43,7 @@ public class MapCalamityOverlay : MonoBehaviour
     private Canvas canvas;
     private RectTransform rootRect;
     private RectTransform panelRect;
+    private Image backdropBackgroundImage;
     private TextMeshProUGUI titleText;
     private TextMeshProUGUI subtitleText;
     private RectTransform cardRoot;
@@ -62,6 +65,14 @@ public class MapCalamityOverlay : MonoBehaviour
             bodyFont = body;
 
         ApplyFonts();
+    }
+
+    public void ConfigureBackdropSprite(Sprite sprite)
+    {
+        if (sprite != null)
+            backdropBackgroundSprite = sprite;
+
+        ApplyBackdropSprite();
     }
 
     public void Show(int calamityTier, IReadOnlyList<Calamity_SO> choices, Action<Calamity_SO> onChoose)
@@ -114,6 +125,9 @@ public class MapCalamityOverlay : MonoBehaviour
         Image blocker = canvasGo.GetComponent<Image>();
         blocker.color = backdropColor;
 
+        backdropBackgroundImage = CreateStretchImage("MidnightBackdrop", rootRect);
+        ApplyBackdropSprite();
+
         panelRect = CreateRect("Panel", rootRect, new Vector2(0.5f, 0.5f), panelOffset, panelSize);
         Image panelImage = panelRect.gameObject.AddComponent<Image>();
         panelImage.color = panelBackgroundColor;
@@ -140,6 +154,22 @@ public class MapCalamityOverlay : MonoBehaviour
 
         ApplyFonts();
         canvas.gameObject.SetActive(false);
+    }
+
+    private void ApplyBackdropSprite()
+    {
+        if (backdropBackgroundImage == null)
+            return;
+
+        bool hasSprite = backdropBackgroundSprite != null;
+        backdropBackgroundImage.gameObject.SetActive(hasSprite);
+        if (!hasSprite)
+            return;
+
+        backdropBackgroundImage.sprite = backdropBackgroundSprite;
+        backdropBackgroundImage.color = backdropBackgroundColor;
+        backdropBackgroundImage.type = Image.Type.Simple;
+        backdropBackgroundImage.preserveAspect = false;
     }
 
     private void RebuildCards(IReadOnlyList<Calamity_SO> choices)
@@ -277,6 +307,18 @@ public class MapCalamityOverlay : MonoBehaviour
         rect.anchoredPosition = anchoredPosition;
         rect.sizeDelta = size;
         return rect;
+    }
+
+    private Image CreateStretchImage(string name, RectTransform parent)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image));
+        go.transform.SetParent(parent, false);
+        RectTransform rect = go.GetComponent<RectTransform>();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+        return go.GetComponent<Image>();
     }
 
     private string BuildColoredRarityLabel(LootRarity rarity)

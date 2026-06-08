@@ -37,6 +37,7 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private BattleManager battleManager;
+    [SerializeField] private GameMusicConfig_SO musicConfig;
     [SerializeField] private Transform alliesParent;
     [SerializeField] private Transform enemiesParent;
     [SerializeField] private Transform anchorRoot;
@@ -137,6 +138,8 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
             return;
         }
 
+        GameMusicPlayer.PlayBattleMusic(musicConfig, encounterData);
+
         ClearChildren(spawnedAlliesRoot);
         ClearChildren(spawnedEnemiesRoot);
         DisablePrebuiltCombatants<BattleAllyController>(alliesParent, spawnedAlliesRoot);
@@ -213,24 +216,31 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
         if (battleManager.ManagedData == null)
             battleManager.ManagedData = new BattleData();
 
-        int existingCount = 0;
         BattleEnemyController[] existingEnemies = enemiesParent != null
             ? enemiesParent.GetComponentsInChildren<BattleEnemyController>(false)
             : Array.Empty<BattleEnemyController>();
-        for (int i = 0; i < existingEnemies.Length; i++)
-        {
-            if (existingEnemies[i] != null && !existingEnemies[i].IsDead)
-                existingCount++;
-        }
 
         List<Transform> anchorPoints = CollectAnchorsByPrefix(enemyAnchorNamePrefix);
-        Transform anchor = existingCount < anchorPoints.Count ? anchorPoints[existingCount] : null;
-        Vector3 spawnPosition = anchor != null
-            ? anchor.position
-            : CalculateFallbackSpawnPosition(enemyFormationCenter, existingCount, existingCount + 1);
+        int spawnSlotIndex;
+        Vector3 spawnPosition;
+        if (anchorPoints.Count > 0)
+        {
+            spawnSlotIndex = BattleSummonEffectService.FindFirstOpenEnemyAnchorSlot(anchorPoints, existingEnemies);
+            if (spawnSlotIndex < 0 || spawnSlotIndex >= anchorPoints.Count)
+                return null;
+
+            spawnPosition = anchorPoints[spawnSlotIndex].position;
+        }
+        else
+        {
+            spawnSlotIndex = BattleSummonEffectService.FindFirstOpenFallbackFormationSlot(existingEnemies);
+            int aliveEnemyCount = CountAliveEnemies(existingEnemies);
+            int fallbackTotalCount = Mathf.Max(aliveEnemyCount + 1, spawnSlotIndex + 1);
+            spawnPosition = CalculateFallbackSpawnPosition(enemyFormationCenter, spawnSlotIndex, fallbackTotalCount);
+        }
 
         int previousEnemyCount = battleManager.ManagedData.EnemyCount;
-        SpawnEnemy(enemyData, spawnPosition, existingCount);
+        SpawnEnemy(enemyData, spawnPosition, spawnSlotIndex);
 
         BattleEnemyController[] refreshedEnemies = enemiesParent != null
             ? enemiesParent.GetComponentsInChildren<BattleEnemyController>(false)
@@ -272,6 +282,18 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
             : CalculateFallbackSpawnPosition(allyFormationCenter, existingCount, existingCount + 1);
 
         return SpawnEnemyDataAsAlly(enemyData, spawnPosition, existingCount);
+    }
+
+    private static int CountAliveEnemies(BattleEnemyController[] enemies)
+    {
+        int count = 0;
+        for (int i = 0; enemies != null && i < enemies.Length; i++)
+        {
+            if (enemies[i] != null && !enemies[i].IsDead)
+                count++;
+        }
+
+        return count;
     }
 
     private BattleAllyController SpawnAlly(RunPartyMemberState allyState, Vector3 worldPosition, int index)
@@ -366,6 +388,7 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
 
         BattleEnemyController enemyController = GetOrCreateRootComponent<BattleEnemyController>(enemyObject);
         enemyController.ApplyEnemyData(enemyData);
+        enemyController.AssignFormationSlotIndex(index);
         Sprite currentStageSprite = enemyController.GetCurrentStageSprite();
         BattleEnemyDetailClickHandler detailClickHandler = enemyObject.GetComponent<BattleEnemyDetailClickHandler>();
         if (detailClickHandler == null)

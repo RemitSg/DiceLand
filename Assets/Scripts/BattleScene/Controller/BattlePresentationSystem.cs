@@ -101,6 +101,9 @@ public class BattlePresentationSystem : MonoBehaviour
     [Header("Interaction")]
     [SerializeField] private bool waitForPlayerClickDuringDicePresentation = true;
 
+    [Header("Audio")]
+    [SerializeField] private BattleSfxPlayer battleSfxPlayer;
+
     [Header("Knockback")]
     [SerializeField] private float defenderKnockbackDistance = 0.32f;
     [SerializeField] private float defenderKnockbackOutDuration = 0.08f;
@@ -262,6 +265,7 @@ public class BattlePresentationSystem : MonoBehaviour
             yield return new WaitForSeconds(delayBeforeClashDiceReveal);
         feedbackSystem?.RevealClashDiceValue(allyDiceDisplay, allyPower, allyPowerModifier);
         feedbackSystem?.RevealClashDiceValue(enemyDiceDisplay, enemyPower, enemyPowerModifier);
+        ResolveBattleSfxPlayer()?.PlayClashAnimation();
         yield return PlayClashExchangeFx(ally, enemy, plane.z, plane.midpoint + Vector3.up * impactHeightOffset, plane.direction, clashCameraPower, allyClashFx, enemyClashFx);
         if (waitForPlayerClickDuringDicePresentation && hasWinner)
             yield return WaitForPresentationContinueClick();
@@ -1568,6 +1572,16 @@ public class BattlePresentationSystem : MonoBehaviour
             battleFeedbackSystem = FindObjectOfType<BattleFeedbackSystem>();
 
         return battleFeedbackSystem;
+    }
+
+    private BattleSfxPlayer ResolveBattleSfxPlayer()
+    {
+        if (battleSfxPlayer == null)
+            battleSfxPlayer = GetComponent<BattleSfxPlayer>();
+        if (battleSfxPlayer == null)
+            battleSfxPlayer = FindObjectOfType<BattleSfxPlayer>();
+
+        return battleSfxPlayer;
     }
 
     private bool UseCloseupCutCamera()

@@ -1,0 +1,22 @@
+task mode: create
+primary deck-profile: engineering-platform
+secondary gates: product/gameplay narrative, graduation defense clarity
+required proof objects:
+- Project architecture map from Assets/Scripts
+- Gameplay loop diagram
+- Data scale metrics from Assets/Data
+- Test scale metrics from Assets/Tests
+- Engineering incident case studies from recent fixes
+source/asset requirements:
+- Use repository structure, code file names, SO asset counts, and local asset images
+- Do not present resource-pack preview images as final gameplay screenshots
+brand authenticity constraints:
+- No external game logos or unverified third-party brand marks
+- Local UI/resource images are treated only as project assets or style materials
+profile-specific QA gates:
+- Every slide has a claim title and a proof object
+- Architecture labels remain technically accurate after simplification
+- Metrics are tied to actual project directories
+- Final deck exports to editable PPTX and renders to PNG
+known missing inputs:
+- No confirmed final runtime screenshots were found in the main project tree

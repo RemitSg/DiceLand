@@ -7,6 +7,7 @@ using UnityEngine.Rendering;
 public class SpeedButton : MonoBehaviour
 {
     private const int OverlayCurveRenderQueue = 5000;
+    private const float TutorialHighlightPaddingPixels = 16f;
 
     public GameObject unpressedButton;
     public GameObject pressedButton;
@@ -106,6 +107,8 @@ public class SpeedButton : MonoBehaviour
     /// <summary>全局战斗锁 —— 战斗结算阶段禁止所有按钮交互与画线</summary>
     public static bool CombatLocked = false;
     public static bool InputSuppressed = false;
+    private static bool tutorialAllowedScreenRectActive;
+    private static Rect tutorialAllowedScreenRect;
 
     public event Action<SpeedButton> AllyLongPressed;
     public event Action<SpeedButton> EnemyClicked;
@@ -141,6 +144,74 @@ public class SpeedButton : MonoBehaviour
 
     /// <summary>是否为拼点连线（黄色：友方吸收了敌方连线，双方直接对抗）</summary>
     public bool IsContestedConnection => isConnected && connectedButton != null && absorbedEnemyButton != null;
+
+    public static void SetTutorialAllowedScreenRect(Rect screenRect)
+    {
+        tutorialAllowedScreenRect = screenRect;
+        tutorialAllowedScreenRectActive = screenRect.width > 0.5f && screenRect.height > 0.5f;
+    }
+
+    public static void ClearTutorialAllowedScreenRect()
+    {
+        tutorialAllowedScreenRect = default;
+        tutorialAllowedScreenRectActive = false;
+    }
+
+    public static bool IsScreenPointAllowedByTutorialHighlight(Vector2 screenPoint)
+    {
+        return !tutorialAllowedScreenRectActive || tutorialAllowedScreenRect.Contains(screenPoint);
+    }
+
+    public bool TryGetScreenHighlightRect(out Rect rect)
+    {
+        rect = default;
+        Camera cam = Camera.main;
+        if (cam == null)
+            return false;
+
+        Bounds bounds = GetButtonBounds();
+        if (bounds.size.sqrMagnitude <= 0.0001f)
+            return false;
+
+        Vector3 min = bounds.min;
+        Vector3 max = bounds.max;
+        Vector3[] corners =
+        {
+            new Vector3(min.x, min.y, min.z),
+            new Vector3(min.x, min.y, max.z),
+            new Vector3(min.x, max.y, min.z),
+            new Vector3(min.x, max.y, max.z),
+            new Vector3(max.x, min.y, min.z),
+            new Vector3(max.x, min.y, max.z),
+            new Vector3(max.x, max.y, min.z),
+            new Vector3(max.x, max.y, max.z)
+        };
+
+        float minX = float.PositiveInfinity;
+        float minY = float.PositiveInfinity;
+        float maxX = float.NegativeInfinity;
+        float maxY = float.NegativeInfinity;
+        bool hasVisibleCorner = false;
+        for (int i = 0; i < corners.Length; i++)
+        {
+            Vector3 screenPoint = cam.WorldToScreenPoint(corners[i]);
+            if (screenPoint.z < 0f)
+                continue;
+
+            hasVisibleCorner = true;
+            minX = Mathf.Min(minX, screenPoint.x);
+            minY = Mathf.Min(minY, screenPoint.y);
+            maxX = Mathf.Max(maxX, screenPoint.x);
+            maxY = Mathf.Max(maxY, screenPoint.y);
+        }
+
+        if (!hasVisibleCorner)
+            return false;
+
+        float padding = TutorialHighlightPaddingPixels;
+        rect = Rect.MinMaxRect(minX - padding, minY - padding, maxX + padding, maxY + padding);
+        return rect.width > 0.5f && rect.height > 0.5f;
+    }
 
     [Header("Arrow Settings")]
     [Tooltip("箭头大小（世界单位）")]
@@ -199,6 +270,9 @@ public class SpeedButton : MonoBehaviour
 
     private void OnMouseEnter()
     {
+        if (!IsScreenPointAllowedByTutorialHighlight(Input.mousePosition))
+            return;
+
         isHovering = true;
         if (buttonType == ButtonType.Enemy)
         {
@@ -222,6 +296,7 @@ public class SpeedButton : MonoBehaviour
     private void OnMouseDown()
     {
         if (CombatLocked || InputSuppressed) return;
+        if (!IsScreenPointAllowedByTutorialHighlight(Input.mousePosition)) return;
         if (buttonType == ButtonType.Ally && !isInteractable) return;
 
         isPointerPressed = true;
@@ -238,6 +313,12 @@ public class SpeedButton : MonoBehaviour
     // 当鼠标/手指抬起时停止
     private void OnMouseUp()
     {
+        if (!IsScreenPointAllowedByTutorialHighlight(Input.mousePosition) && !isDragging)
+        {
+            ResetPointerPressState();
+            return;
+        }
+
         if (buttonType == ButtonType.Ally && isInteractable && isPointerPressed && !longPressTriggered && !isDragging)
         {
             if (Vector3.Distance(Input.mousePosition, pressStartScreenPosition) < dragStartThresholdPixels)
@@ -274,6 +355,16 @@ public class SpeedButton : MonoBehaviour
             isDragging = false;
         }
 
+        isPointerPressed = false;
+        longPressTriggered = false;
+        hoveredEnemyButton = null;
+        if (unpressedButton != null) unpressedButton.SetActive(true);
+        if (pressedButton != null) pressedButton.SetActive(false);
+        UpdateHoverOutlineVisibility();
+    }
+
+    private void ResetPointerPressState()
+    {
         isPointerPressed = false;
         longPressTriggered = false;
         hoveredEnemyButton = null;
@@ -715,6 +806,12 @@ public class SpeedButton : MonoBehaviour
         }
 
         if (InputSuppressed)
+        {
+            if (isDragging) StopCurve();
+            return;
+        }
+
+        if (!IsScreenPointAllowedByTutorialHighlight(Input.mousePosition))
         {
             if (isDragging) StopCurve();
             return;

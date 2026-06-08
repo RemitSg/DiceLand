@@ -895,6 +895,7 @@ GameObject:
   - component: {fileID: 885702439}
   - component: {fileID: 885702438}
   - component: {fileID: 885702441}
+  - component: {fileID: 885702442}
   m_Layer: 0
   m_HasEditorInfo: 1
   m_Name: BattleManager
@@ -993,6 +994,7 @@ MonoBehaviour:
   hitEffectDuration: 0.24
   builtInHitDamageDelay: 0.07
   waitForPlayerClickDuringDicePresentation: 1
+  battleSfxPlayer: {fileID: 0}
   defenderKnockbackDistance: 3.5
   defenderKnockbackOutDuration: 0.16
   defenderKnockbackReturnDuration: 0.1
@@ -1341,6 +1343,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   battleManager: {fileID: 0}
+  musicConfig: {fileID: 0}
   alliesParent: {fileID: 0}
   enemiesParent: {fileID: 0}
   anchorRoot: {fileID: 0}
@@ -1367,6 +1370,21 @@ MonoBehaviour:
   enemySpeedButtonLocalOffset: {x: 0, y: -1}
   enemyMultiSpeedButtonGroupOffset: {x: 0, y: 0}
   enemyMultiSpeedButtonHorizontalSpacing: 1.33
+--- !u!114 &885702442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 885702435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d901bda301af425fad833e78a2920bb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clashAnimationSfx: {fileID: 8300000, guid: 711fb199b42342543aee28c71863e502, type: 3}
+  damageTakenSfx: {fileID: 8300000, guid: 6b5f39f029d241e4fae3beb8c32585fd, type: 3}
+  sfxSource: {fileID: 0}
 --- !u!1 &915975690
 GameObject:
   m_ObjectHideFlags: 0
@@ -2187,6 +2205,7 @@ MonoBehaviour:
   clashDiceValueStartScale: 1.7
   clashDiceValueEndScale: 1
   clashDiceScaleWithCamera: 1
+  battleSfxPlayer: {fileID: 0}
   healthBarSize: {x: 110, y: 14}
   healthBarWorldOffset: {x: 0, y: -0.3, z: 0}
   allyHealthFillColor: {r: 0.3, g: 1, b: 0.55, a: 1}

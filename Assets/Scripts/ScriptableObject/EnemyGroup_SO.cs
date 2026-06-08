@@ -23,6 +23,9 @@ public class EnemyGroup_SO : ScriptableObject
     [Tooltip("0 uses the map area's default danger rating. Values above 0 override that rating.")]
     public int dangerRatingOverride;
 
+    [Header("Audio")]
+    public AudioClip battleMusicOverride;
+
     [Header("Loot Tables")]
     public List<LootTable_SO> lootTables = new List<LootTable_SO>();
 
