@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 057dbb9ab39f5f74bafd7272cac75c4d, type: 3}
+  m_Name: "303 \u837C\u863C"
+  m_EditorClassIdentifier: 
+  id: 303
+  weaponName: "\u837C\u863C"
+  description: "\u6756\u8EAB\u7531\u67AF\u767D\u85E4\u8513\u7F20\u7ED5\u800C\u6210\uFF0C\u9876\u7AEF\u76DB\u7740\u4E00\u6735\u8FDF\u8FDF\u4E0D\u80AF\u51CB\u8C22\u7684\u837C\u863C\u3002\u82B1\u74E3\u8FB9\u7F18\u6CDB\u7740\u6DE1\u7EFF\uFF0C\u9999\u6C14\u5F88\u8F7B\uFF0C\u5374\u50CF\u80FD\u505C\u5728\u5589\u5499\u6DF1\u5904\u5F88\u4E45\u3002\n\u201C\u82B1\u5F00\u5230\u5C3D\u5934\u65F6\uFF0C\u6625\u5929\u5DF2\u7ECF\u6CA1\u6709\u9000\u8DEF\u3002\u201D"
+  rarity: 1
+  weaponType: 3
+  icon: {fileID: 21300000, guid: 24914d1a8f8a574499327f63b5d059e8, type: 3}
+  weaponPrefab: {fileID: 1177551932977389611, guid: 8a4645834a5799a4ea539bae99257b26, type: 3}
+  speedButtonCount: 1
+  minPower: 1
+  maxPower: 3
+  skillPool:
+  - {fileID: 11400000, guid: 7a1d3ce0f0b24d188e4730b3b8c30301, type: 2}
+  - {fileID: 11400000, guid: 7a1d3ce0f0b24d188e4730b3b8c30302, type: 2}
+  - {fileID: 11400000, guid: 7a1d3ce0f0b24d188e4730b3b8c30303, type: 2}
+  - {fileID: 11400000, guid: 7a1d3ce0f0b24d188e4730b3b8c30304, type: 2}

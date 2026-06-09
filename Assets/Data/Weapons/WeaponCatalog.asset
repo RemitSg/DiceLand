@@ -53,3 +53,15 @@ MonoBehaviour:
     unlockWeight: 1
     starterAvailable: 0
     note: "203 \u70ED\u7827\u677F"
+  - weapon: {fileID: 11400000, guid: 6f94a2e6f7a047c8b3f0a3c3e7040204, type: 2}
+    unlockWeight: 1
+    starterAvailable: 0
+    note: "204 猎光者"
+  - weapon: {fileID: 11400000, guid: 1a4505efb8324479a1db7bc0afc30300, type: 2}
+    unlockWeight: 1
+    starterAvailable: 0
+    note: "303 荼蘼"
+  - weapon: {fileID: 11400000, guid: 2d6f4c2bb5794bb08e597a77fdc30400, type: 2}
+    unlockWeight: 1
+    starterAvailable: 0
+    note: "304 避雷针"
