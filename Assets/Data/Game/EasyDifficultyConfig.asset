@@ -60,11 +60,11 @@ MonoBehaviour:
   - tileType: 5
     minimumCount: 2
   - tileType: 6
-    minimumCount: 2
+    minimumCount: 4
   maxRecruitCount: 4
   recruitCostTiers: 320000005a0000008c000000c8000000
   legacyMerchantRefreshCost: 20
-  merchantRefreshCostTiers: 14000000190000001e0000002300000028000000
+  merchantRefreshCostTiers: 0f00000014000000190000001e0000002300000028000000
   merchantRelicPrices:
   - rarity: 0
     minPrice: 14
@@ -81,3 +81,6 @@ MonoBehaviour:
   - rarity: 4
     minPrice: 80
     maxPrice: 110
+  - rarity: 5
+    minPrice: 1
+    maxPrice: 1

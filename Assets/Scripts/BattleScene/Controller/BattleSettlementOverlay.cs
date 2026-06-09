@@ -915,7 +915,7 @@ public class BattleSettlementOverlay : MonoBehaviour
     private static bool ShouldReturnToMapAfterDefeat()
     {
         BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
-        return activeEncounter != null && !activeEncounter.wasVictory && !activeEncounter.restartBattleOnDefeat;
+        return activeEncounter != null && !activeEncounter.wasVictory && activeEncounter.returnToMapOnDefeat;
     }
 
     private void HandleAbandonToMainMenu()

@@ -44,6 +44,7 @@ public sealed class BattleEncounterData
     public bool isSpecialDungeonEncounter;
     public bool returnToMainMenuOnVictory;
     public bool restartBattleOnDefeat = true;
+    public bool returnToMapOnDefeat;
     [NonSerialized] public bool battleStartAllyStatusGrantsApplied;
     [NonSerialized] private HashSet<string> roundRelicProcKeys;
     [NonSerialized] private HashSet<string> battleRelicProcKeys;

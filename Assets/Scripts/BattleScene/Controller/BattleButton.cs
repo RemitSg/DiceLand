@@ -5986,7 +5986,10 @@ public class BattleButton : MonoBehaviour
             lootRewards,
             dropResults.relicRewards);
         if (!victory && forceReturnToMapAfterDefeat && activeEncounter != null)
+        {
             activeEncounter.restartBattleOnDefeat = false;
+            activeEncounter.returnToMapOnDefeat = true;
+        }
         if (battleManager != null)
             battleManager.EndBattle();
         GameMusicPlayer.FadeOutAndStop();

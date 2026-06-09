@@ -15,7 +15,7 @@ MonoBehaviour:
   skillName: "\u51A0\u7130\u88C1\u65AD"
   description: "\u5148\u4EE5\u51A0\u5F62\u706B\u5149\u538B\u4F4F\u5BF9\u624B\uFF0C\u518D\u5728\u88C2\u7EB9\u6700\u4EAE\u65F6\u843D\u4E0B\u88C1\u65AD\u3002"
   skillCategory: 0
-  energyCost: 5
+  energyCost: 4
   requiredSelfStatusData: {fileID: 0}
   requiredSelfStatusStacks: 0
   keepRequiredSelfStatusAfterUse: 0
@@ -30,8 +30,8 @@ MonoBehaviour:
   diceCount: 2
   dicePowerRanges:
   - minPower: 3
-    maxPower: 4
-  - minPower: 3
+    maxPower: 6
+  - minPower: 2
     maxPower: 4
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 0}
