@@ -303,6 +303,10 @@ public class BattlePresentationSystem : MonoBehaviour
                 plane.z,
                 onImpact);
         }
+        else
+        {
+            onImpact?.Invoke();
+        }
 
         if (returnToOrigin)
             yield return MovePair(ally, ally.position, plane.firstStart, enemy, enemy.position, plane.secondStart, returnDuration);

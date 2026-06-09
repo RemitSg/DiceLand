@@ -15,5 +15,17 @@ MonoBehaviour:
   tableID: 0
   tableName: 
   description: 
-  drops: []
-  relicDrops: []
+  drops:
+  - lootItem: {fileID: 11400000, guid: 3a4ba9525fb254343b801875708623fa, type: 2}
+    dropChance: 0.8
+    minAmount: 1
+    maxAmount: 1
+  - lootItem: {fileID: 11400000, guid: 3a4ba9525fb254343b801875708623fa, type: 2}
+    dropChance: 0.2
+    minAmount: 1
+    maxAmount: 1
+  relicDrops:
+  - relicTable: {fileID: 11400000, guid: 6650ae7fed330b7408b1cad987b54259, type: 2}
+    dropChance: 0.1
+    minAmount: 1
+    maxAmount: 1
