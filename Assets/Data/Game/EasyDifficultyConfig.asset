@@ -84,3 +84,28 @@ MonoBehaviour:
   - rarity: 5
     minPrice: 1
     maxPrice: 1
+  battleExperienceRewards:
+  - dangerBand: 0
+    tileType: 1
+    experience: 7
+  - dangerBand: 1
+    tileType: 1
+    experience: 15
+  - dangerBand: 2
+    tileType: 1
+    experience: 25
+  - dangerBand: 3
+    tileType: 1
+    experience: 35
+  - dangerBand: 0
+    tileType: 2
+    experience: 15
+  - dangerBand: 1
+    tileType: 2
+    experience: 35
+  - dangerBand: 2
+    tileType: 2
+    experience: 55
+  - dangerBand: 3
+    tileType: 2
+    experience: 75

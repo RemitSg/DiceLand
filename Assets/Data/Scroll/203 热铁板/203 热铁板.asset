@@ -17,13 +17,13 @@ MonoBehaviour:
   description: "\u8BB0\u8F7D\u7740\u5982\u4F55\u6253\u9020 \u3010\u70ED\u94C1\u677F\u3011
     \u7684\u5377\u8F74"
   rarity: 2
-  icon: {fileID: 21300000, guid: 4e0f9f9c503b732479ffe3df69908cb6, type: 3}
+  icon: {fileID: 21300000, guid: ffb9a1ad12df9a64ea5580f9fc470b11, type: 3}
   targetWeapon: {fileID: 11400000, guid: 9b6531b8c9e74ad0b6ed32f5e448ede3, type: 2}
   materialRequirements:
   - lootItem: {fileID: 11400000, guid: 1a247d2fcfd14c141bd79e8a82154b1f, type: 2}
-    amount: 1
+    amount: 2
   - lootItem: {fileID: 11400000, guid: 6e1752dc4702a1c44905a3559cb5f924, type: 2}
-    amount: 3
+    amount: 2
   - lootItem: {fileID: 11400000, guid: d472eb76e6a877043b3a98578a2db396, type: 2}
     amount: 1
   - lootItem: {fileID: 11400000, guid: 3e23e2fc8a9e85945adee34acbb745f4, type: 2}

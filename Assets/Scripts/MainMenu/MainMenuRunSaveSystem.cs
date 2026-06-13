@@ -169,6 +169,7 @@ internal sealed class SavedRunState
     public List<SavedCalamityState> activeCalamities = new List<SavedCalamityState>();
     public List<string> drawnCalamityIds = new List<string>();
     public List<string> drawnEventIds = new List<string>();
+    public RunSettlementStats settlementStats = new RunSettlementStats();
 }
 
 [Serializable]
@@ -440,7 +441,8 @@ public static class MainMenuRunSaveSystem
             playerLevel = runState.playerLevel,
             playerExperience = runState.playerExperience,
             calamityTier = runState.calamityTier,
-            currentCycle = runState.currentCycle
+            currentCycle = runState.currentCycle,
+            settlementStats = runState.settlementStats != null ? runState.settlementStats.Clone() : new RunSettlementStats()
         };
 
         if (runState.partyMembers != null)
@@ -813,7 +815,8 @@ public static class MainMenuRunSaveSystem
             playerLevel = savedState.playerLevel,
             playerExperience = savedState.playerExperience,
             calamityTier = savedState.calamityTier,
-            currentCycle = savedState.currentCycle
+            currentCycle = savedState.currentCycle,
+            settlementStats = savedState.settlementStats != null ? savedState.settlementStats.Clone() : new RunSettlementStats()
         };
 
         if (savedState.partyMembers != null)

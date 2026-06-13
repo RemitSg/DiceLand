@@ -160,6 +160,39 @@ public class BattleJinGuanSwordMechanicsTests
     }
 
     [Test]
+    public void ClashOnlyRelicPowerBonus_DoesNotIncreaseClashWinHitPower()
+    {
+        BattleDicePowerPreparation allyPower = BattleDicePowerPreparationService.Resolve(
+            basePower: 3,
+            statusPowerModifier: 0,
+            relicPowerBonus: 0,
+            skillUsePowerBonus: 0,
+            actionPowerBonus: 0,
+            nonFollowUpPowerBonus: 2);
+        BattleDicePowerPreparation enemyPower = BattleDicePowerPreparationService.Resolve(
+            basePower: 4,
+            statusPowerModifier: 0,
+            relicPowerBonus: 0,
+            skillUsePowerBonus: 0,
+            actionPowerBonus: 0);
+
+        BattleClashResult result = BattleClashResultService.Resolve(
+            allyPower: allyPower.FinalPower,
+            enemyPower: enemyPower.FinalPower,
+            allyDefenseSkill: false,
+            enemyDefenseSkill: false,
+            allyFollowUpBasePower: allyPower.FollowUpBasePower,
+            enemyFollowUpBasePower: enemyPower.FollowUpBasePower,
+            allyWinAttackBonus: 0,
+            enemyWinAttackBonus: 0);
+
+        Assert.AreEqual(5, allyPower.FinalPower);
+        Assert.AreEqual(3, allyPower.FollowUpBasePower);
+        Assert.IsTrue(result.AllyWonPresentation);
+        Assert.AreEqual(3, result.AllyHitPower);
+    }
+
+    [Test]
     public void AllyOnHitQueuedNextDicePowerEffect_AddsPendingBonusForNextDie()
     {
         GameObject buttonObject = new GameObject("BattleButton OnHit Probe");

@@ -21,8 +21,6 @@ MonoBehaviour:
   targetWeapon: {fileID: 11400000, guid: 1a4505efb8324479a1db7bc0afc30300, type: 2}
   materialRequirements:
   - lootItem: {fileID: 11400000, guid: ea9793b0c90ae0c4f9dbaf13a832f375, type: 2}
-    amount: 1
+    amount: 2
   - lootItem: {fileID: 11400000, guid: d1eb5424360bc9f40a2b6a89faa718cb, type: 2}
-    amount: 1
-  - lootItem: {fileID: 11400000, guid: 6e1752dc4702a1c44905a3559cb5f924, type: 2}
-    amount: 1
+    amount: 2

@@ -34,6 +34,8 @@ public static class BattleStatusEffectConditionService
                 return ResolveTargetStatusStacks(effect, getTargetStatusStacksByAsset, getTargetStatusStacksById) > 0;
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
                 return ResolveTargetStatusStacks(effect, getTargetStatusStacksByAsset, getTargetStatusStacksById) >= Mathf.Max(1, effect.requiredConditionStatusStacks);
+            case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksLessOrEqual:
+                return ResolveTargetStatusStacks(effect, getTargetStatusStacksByAsset, getTargetStatusStacksById) <= Mathf.Max(0, effect.requiredConditionStatusStacks);
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
                 return ResolveTargetStatusStacks(effect, getTargetStatusStacksByAsset, getTargetStatusStacksById) >= Mathf.Max(1, effect.requiredConditionStatusStacks);
             case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
@@ -56,8 +58,8 @@ public static class BattleStatusEffectConditionService
         if (effect.conditionStatusData != null && getSelfStatusStacksByAsset != null)
             return Mathf.Max(0, getSelfStatusStacksByAsset(effect.conditionStatusData));
 
-        if (effect.conditionStatusType == EnemySkill_SO.DiceStatusType.Burn && getSelfStatusStacksById != null)
-            return Mathf.Max(0, getSelfStatusStacksById("burn"));
+        if (TryResolveFallbackStatusId(effect.conditionStatusType, out string statusId) && getSelfStatusStacksById != null)
+            return Mathf.Max(0, getSelfStatusStacksById(statusId));
 
         return 0;
     }
@@ -70,8 +72,8 @@ public static class BattleStatusEffectConditionService
         if (effect.conditionStatusData != null && getTargetStatusStacksByAsset != null)
             return Mathf.Max(0, getTargetStatusStacksByAsset(effect.conditionStatusData));
 
-        if (effect.conditionStatusType == EnemySkill_SO.DiceStatusType.Burn && getTargetStatusStacksById != null)
-            return Mathf.Max(0, getTargetStatusStacksById("burn"));
+        if (TryResolveFallbackStatusId(effect.conditionStatusType, out string statusId) && getTargetStatusStacksById != null)
+            return Mathf.Max(0, getTargetStatusStacksById(statusId));
 
         return 0;
     }
@@ -107,6 +109,8 @@ public static class BattleStatusEffectConditionService
                 return ResolveTargetStatusStacks(effect, getTargetStatusStacksByAsset, getTargetStatusStacksById) > 0;
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
                 return ResolveTargetStatusStacks(effect, getTargetStatusStacksByAsset, getTargetStatusStacksById) >= Mathf.Max(1, effect.requiredConditionStatusStacks);
+            case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksLessOrEqual:
+                return ResolveTargetStatusStacks(effect, getTargetStatusStacksByAsset, getTargetStatusStacksById) <= Mathf.Max(0, effect.requiredConditionStatusStacks);
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
                 return ResolveTargetStatusStacks(effect, getTargetStatusStacksByAsset, getTargetStatusStacksById) >= Mathf.Max(1, effect.requiredConditionStatusStacks);
             case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
@@ -129,8 +133,8 @@ public static class BattleStatusEffectConditionService
         if (effect.conditionStatusData != null && getSelfStatusStacksByAsset != null)
             return Mathf.Max(0, getSelfStatusStacksByAsset(effect.conditionStatusData));
 
-        if (effect.conditionStatusType == EnemySkill_SO.DiceStatusType.Burn && getSelfStatusStacksById != null)
-            return Mathf.Max(0, getSelfStatusStacksById("burn"));
+        if (TryResolveFallbackStatusId(effect.conditionStatusType, out string statusId) && getSelfStatusStacksById != null)
+            return Mathf.Max(0, getSelfStatusStacksById(statusId));
 
         return 0;
     }
@@ -143,9 +147,31 @@ public static class BattleStatusEffectConditionService
         if (effect.conditionStatusData != null && getTargetStatusStacksByAsset != null)
             return Mathf.Max(0, getTargetStatusStacksByAsset(effect.conditionStatusData));
 
-        if (effect.conditionStatusType == EnemySkill_SO.DiceStatusType.Burn && getTargetStatusStacksById != null)
-            return Mathf.Max(0, getTargetStatusStacksById("burn"));
+        if (TryResolveFallbackStatusId(effect.conditionStatusType, out string statusId) && getTargetStatusStacksById != null)
+            return Mathf.Max(0, getTargetStatusStacksById(statusId));
 
         return 0;
+    }
+
+    private static bool TryResolveFallbackStatusId(EnemySkill_SO.DiceStatusType statusType, out string statusId)
+    {
+        switch (statusType)
+        {
+            case EnemySkill_SO.DiceStatusType.Burn:
+                statusId = "burn";
+                return true;
+            case EnemySkill_SO.DiceStatusType.Electro:
+                statusId = "current";
+                return true;
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                statusId = "darkness";
+                return true;
+            case EnemySkill_SO.DiceStatusType.Mark:
+                statusId = "target";
+                return true;
+            default:
+                statusId = string.Empty;
+                return false;
+        }
     }
 }

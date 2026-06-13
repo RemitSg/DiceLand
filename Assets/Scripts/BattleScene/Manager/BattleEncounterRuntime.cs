@@ -39,9 +39,11 @@ public sealed class BattleEncounterData
     public int seed;
     public bool wasVictory;
     public int experienceGained;
+    public int configuredExperienceReward = -1;
     public int moneyGained;
     public bool isTutorialEncounter;
     public bool isSpecialDungeonEncounter;
+    public bool isEventEncounter;
     public bool returnToMainMenuOnVictory;
     public bool restartBattleOnDefeat = true;
     public bool returnToMapOnDefeat;

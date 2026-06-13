@@ -122,6 +122,11 @@ public static class MapRunRuntime
         currentSnapshot = snapshot;
     }
 
+    public static void RestoreSnapshot(MapRunSnapshot snapshot)
+    {
+        currentSnapshot = snapshot != null ? snapshot.Clone() : null;
+    }
+
     public static void ApplyEncounterResult(BattleEncounterData encounter)
     {
         if (currentSnapshot == null || encounter == null)
@@ -226,6 +231,16 @@ public static class MapRunRuntime
 
         if (encounter.wasVictory && encounter.moneyGained > 0)
             currentSnapshot.runState.AddMoney(encounter.moneyGained);
+
+        if (encounter.wasVictory)
+        {
+            if (currentSnapshot.runState.settlementStats == null)
+                currentSnapshot.runState.settlementStats = new RunSettlementStats();
+
+            currentSnapshot.runState.settlementStats.IncrementBattle(encounter.tileType, encounter.dangerBand);
+            if (encounter.isEventEncounter)
+                currentSnapshot.runState.settlementStats.eventBattlesCompleted++;
+        }
 
         SyncConsumedBattleRelics(encounter);
 

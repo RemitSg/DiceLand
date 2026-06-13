@@ -1,6 +1,7 @@
 using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainMenuSceneControllerTutorialTests
 {
@@ -25,6 +26,17 @@ public class MainMenuSceneControllerTutorialTests
     }
 
     [Test]
+    public void ResolveMenuAction_RecognizesLocalizedTutorialIdentity()
+    {
+        MethodInfo method = typeof(MainMenuSceneController).GetMethod("ResolveMenuAction", BindingFlags.Static | BindingFlags.NonPublic, null, new[] { typeof(string) }, null);
+
+        object resolved = method.Invoke(null, new object[] { "教程" });
+
+        Assert.IsNotNull(resolved);
+        Assert.AreEqual("Tutorial", resolved.ToString());
+    }
+
+    [Test]
     public void ConfigureMainMenuItems_WhenTutorialMissing_InjectsTutorialEntryAfterContinue()
     {
         GameObject root = new GameObject("MainMenuRoot");
@@ -43,14 +55,51 @@ public class MainMenuSceneControllerTutorialTests
         };
 
         SetPrivateField(controller, "mainMenuGallery", gallery);
+        SetPrivateField(controller, "newGameLabel", "NewGame");
+        SetPrivateField(controller, "continueLabel", "Continue");
+        SetPrivateField(controller, "tutorialLabel", "Tutorial");
+        SetPrivateField(controller, "demoTestLabel", "DemoTest");
+        InvokePrivate(controller, "NormalizeLegacyDefaultLabels");
+        SetPrivateField(controller, "tutorialLabel", "教程");
         InvokePrivate(controller, "ConfigureMainMenuItems");
 
         Assert.AreEqual(4, gallery.items.Length);
-        Assert.AreEqual("NewGame", gallery.items[0].levelName);
-        Assert.AreEqual("Continue", gallery.items[1].levelName);
-        Assert.AreEqual("Tutorial", gallery.items[2].levelName);
-        Assert.AreEqual("DemoTest", gallery.items[3].levelName);
+        Assert.AreEqual("新游戏", gallery.items[0].levelName);
+        Assert.AreEqual("继续游戏", gallery.items[1].levelName);
+        Assert.AreEqual("教程", gallery.items[2].levelName);
+        Assert.AreEqual("测试战斗", gallery.items[3].levelName);
         Assert.AreNotSame(demoItem.gameObject, gallery.items[2].gameObject);
+    }
+
+    [Test]
+    public void ConfigureMainMenuItems_AppliesConfiguredMainMenuItemFontAndSize()
+    {
+        GameObject root = new GameObject("MainMenuRoot");
+        MainMenuSceneController controller = root.AddComponent<MainMenuSceneController>();
+        GalleryLevelSelectionManager gallery = root.AddComponent<GalleryLevelSelectionManager>();
+        Font itemFont = new Font("CustomMainMenuItemFont");
+
+        gallery.items = new GalleryLevelView[]
+        {
+            CreateMenuItem("Solo Play", root.transform),
+            CreateMenuItem("Load", root.transform),
+            CreateMenuItem("Demo", root.transform)
+        };
+
+        SetPrivateField(controller, "mainMenuGallery", gallery);
+        SetPrivateField(controller, "mainMenuItemFont", itemFont);
+        SetPrivateField(controller, "mainMenuItemFontSize", 64);
+
+        InvokePrivate(controller, "ConfigureMainMenuItems");
+
+        for (int i = 0; i < gallery.items.Length; i++)
+        {
+            Assert.IsNotNull(gallery.items[i].text);
+            Assert.AreSame(itemFont, gallery.items[i].text.font);
+            Assert.AreEqual(64, gallery.items[i].text.fontSize);
+        }
+
+        Object.DestroyImmediate(itemFont);
     }
 
     [Test]
@@ -80,6 +129,7 @@ public class MainMenuSceneControllerTutorialTests
 
         DemoGalleryMenuItem item = itemObject.GetComponent<DemoGalleryMenuItem>();
         item.levelName = name;
+        item.text = itemObject.AddComponent<Text>();
         return item;
     }
 

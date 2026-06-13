@@ -45,7 +45,7 @@ public static class CalamitySystem
 
     public static int ApplyAllyMaxHpModifiers(int baseValue, IReadOnlyList<RunCalamityState> activeCalamities)
     {
-        return ApplyPercentageModifier(baseValue, activeCalamities, CalamityBuiltInEffectType.AllyMaxHpPercentModifier, 1, true, ModifyAllyMaxHpWithHandler);
+        return ApplyPercentageModifier(baseValue, activeCalamities, CalamityBuiltInEffectType.AllyMaxHpPercentModifier, 1, true, ModifyAllyMaxHpWithHandler, true);
     }
 
     public static int ApplyEnemyIncomingDamageModifiers(int baseValue, IReadOnlyList<RunCalamityState> activeCalamities)
@@ -155,7 +155,8 @@ public static class CalamitySystem
         CalamityBuiltInEffectType builtInType,
         int minimumWhenPositive,
         bool preservePositiveMinimum,
-        System.Func<int, RunCalamityState, int> customModifier)
+        System.Func<int, RunCalamityState, int> customModifier,
+        bool roundToNearest = false)
     {
         if (baseValue <= 0 || activeCalamities == null || activeCalamities.Count == 0)
             return Mathf.Max(0, baseValue);
@@ -181,7 +182,8 @@ public static class CalamitySystem
         int modifiedValue = baseValue;
         if (totalPercent != 0)
         {
-            modifiedValue = Mathf.FloorToInt(baseValue * (1f + totalPercent / 100f));
+            float scaledValue = baseValue * (1f + totalPercent / 100f);
+            modifiedValue = roundToNearest ? Mathf.RoundToInt(scaledValue) : Mathf.FloorToInt(scaledValue);
             modifiedValue = Mathf.Max(0, modifiedValue);
             if (preservePositiveMinimum && baseValue > 0)
                 modifiedValue = Mathf.Max(minimumWhenPositive, modifiedValue);

@@ -18,7 +18,9 @@ public class EnemySkill_SO : ScriptableObject
     public enum DiceStatusType
     {
         Burn = 0,
-        Electro = 1
+        Electro = 1,
+        Darkness = 2,
+        Mark = 3
     }
 
     public enum StatusApplyTiming
@@ -55,7 +57,8 @@ public class EnemySkill_SO : ScriptableObject
         TransferRandomNegativeStatus = 3,
         QueueNextDicePowerBonus = 4,
         DamageByTargetStatusStacksDivided = 5,
-        RepeatCurrentDie = 6
+        RepeatCurrentDie = 6,
+        TriggerTargetLinkedStatus = 7
     }
 
     public enum BuiltInConditionScope
@@ -101,7 +104,8 @@ public class EnemySkill_SO : ScriptableObject
         SelfSpeedLowerThanValue = 13,
         TargetNegativeStatusTypesAtLeast = 14,
         SelfHpRatioBelowOrEqual = 15,
-        AnyOpponentNegativeStatusTypesAtLeast = 16
+        AnyOpponentNegativeStatusTypesAtLeast = 16,
+        TargetStatusStacksLessOrEqual = 17
     }
 
     public enum SkillCategory

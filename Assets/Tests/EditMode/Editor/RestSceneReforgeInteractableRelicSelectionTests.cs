@@ -76,6 +76,31 @@ public class RestSceneReforgeInteractableRelicSelectionTests
         CollectionAssert.AreEqual(new[] { clotspore, fang }, candidates);
     }
 
+    [Test]
+    public void OnMouseUpAsButton_WhenMainPanelIsOpen_DoesNotReturnToOpenPrompt()
+    {
+        SetMapRunSnapshot(new MapRunSnapshot
+        {
+            sceneName = "TestRestReturnScene",
+            runState = new RunState()
+        });
+        RestSceneRuntime.BeginVisit("TestRestReturnScene", Vector2Int.zero);
+
+        RestSceneReforgeInteractable interactable = CreateInteractable();
+        interactable.ShowOpenPrompt();
+        Assert.IsTrue(GetPrivateField<bool>(interactable, "promptVisible"));
+        Assert.IsFalse(GetPrivateField<bool>(interactable, "mainPanelVisible"));
+
+        InvokePrivateMethod(interactable, "HandlePromptConfirm");
+        Assert.IsFalse(GetPrivateField<bool>(interactable, "promptVisible"));
+        Assert.IsTrue(GetPrivateField<bool>(interactable, "mainPanelVisible"));
+
+        InvokePrivateMethod(interactable, "OnMouseUpAsButton");
+
+        Assert.IsFalse(GetPrivateField<bool>(interactable, "promptVisible"));
+        Assert.IsTrue(GetPrivateField<bool>(interactable, "mainPanelVisible"));
+    }
+
     private RestSceneReforgeInteractable CreateInteractable()
     {
         testObject = new GameObject("RestSceneReforgeInteractableTest");
@@ -99,6 +124,15 @@ public class RestSceneReforgeInteractableRelicSelectionTests
             BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.IsNotNull(method);
         return (System.Collections.Generic.List<LootItem_SO>)method.Invoke(interactable, null);
+    }
+
+    private static void InvokePrivateMethod(RestSceneReforgeInteractable interactable, string methodName)
+    {
+        MethodInfo method = typeof(RestSceneReforgeInteractable).GetMethod(
+            methodName,
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(method);
+        method.Invoke(interactable, null);
     }
 
     private static Relic_SO GetSelectedRelicA(RestSceneReforgeInteractable interactable)

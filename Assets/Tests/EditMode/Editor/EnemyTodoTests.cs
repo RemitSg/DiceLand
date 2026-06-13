@@ -139,6 +139,58 @@ public class EnemyTodoTests
     }
 
     [Test]
+    public void UnyieldingCalamity_KeepsEnemyAliveAfterRepeatedLethalDamageInSameRound()
+    {
+        BattleEncounterRuntime.SetEncounter(new BattleEncounterData
+        {
+            activeCalamities = new List<RunCalamityState>
+            {
+                new RunCalamityState { calamityData = CreateCalamity(CalamityBuiltInEffectType.EnemyDelayDeathUntilNextRoundStart, 1) }
+            }
+        });
+        BattleEncounterRuntime.ConsumeEncounter();
+
+        EnemySkill_SO skill = CreateSkill("Scratch");
+        EnemyData_SO enemyData = CreateEnemyData("Unyielding", 10, skill, default);
+        BattleEnemyController enemy = CreateEnemyController("Unyielding Enemy", enemyData);
+
+        Assert.AreEqual(9, enemy.TakeDamage(99));
+        Assert.AreEqual(1, enemy.CurrentHP);
+        Assert.IsFalse(enemy.IsDead);
+
+        Assert.AreEqual(0, enemy.TakeDamage(99));
+        Assert.AreEqual(1, enemy.CurrentHP);
+        Assert.IsFalse(enemy.IsDead);
+    }
+
+    [Test]
+    public void UnyieldingCalamity_HealingAboveOneCancelsPendingRoundStartDeath()
+    {
+        BattleEncounterRuntime.SetEncounter(new BattleEncounterData
+        {
+            activeCalamities = new List<RunCalamityState>
+            {
+                new RunCalamityState { calamityData = CreateCalamity(CalamityBuiltInEffectType.EnemyDelayDeathUntilNextRoundStart, 1) }
+            }
+        });
+        BattleEncounterRuntime.ConsumeEncounter();
+
+        EnemySkill_SO skill = CreateSkill("Scratch");
+        EnemyData_SO enemyData = CreateEnemyData("Unyielding", 10, skill, default);
+        BattleEnemyController enemy = CreateEnemyController("Unyielding Enemy", enemyData);
+
+        enemy.TakeDamage(99);
+        Assert.AreEqual(1, enemy.CurrentHP);
+
+        Assert.AreEqual(3, enemy.Heal(3));
+        Assert.AreEqual(4, enemy.CurrentHP);
+
+        Assert.IsFalse(enemy.TryApplyPendingCalamityDelayedDeath());
+        Assert.AreEqual(4, enemy.CurrentHP);
+        Assert.IsFalse(enemy.IsDead);
+    }
+
+    [Test]
     public void GetDebugDisplayName_UsesCurrentEnemyDataNameAfterTransform()
     {
         EnemySkill_SO skill = CreateSkill("Bite");
@@ -300,6 +352,22 @@ public class EnemyTodoTests
         };
         createdObjects.Add(skill);
         return skill;
+    }
+
+    private Calamity_SO CreateCalamity(CalamityBuiltInEffectType effectType, int amount)
+    {
+        Calamity_SO calamity = ScriptableObject.CreateInstance<Calamity_SO>();
+        calamity.calamityId = $"{effectType}_{amount}_{createdObjects.Count}";
+        calamity.builtInEffects = new List<CalamityBuiltInEffectEntry>
+        {
+            new CalamityBuiltInEffectEntry
+            {
+                effectType = effectType,
+                effectAmount = amount
+            }
+        };
+        createdObjects.Add(calamity);
+        return calamity;
     }
 
     private SpeedButton CreateSpeedButton(GameObject parent, string name)

@@ -13,6 +13,10 @@ public class BattlePauseMenuOverlay : MonoBehaviour
     [SerializeField] private string mainMenuSceneName = BattleExitFlowService.DefaultMainMenuSceneName;
     [SerializeField] private bool allowEscapeToggle = true;
 
+    [Header("Run Settlement")]
+    [SerializeField] private string runSettlementSceneName = RunSettlementFlowService.DefaultSettlementSceneName;
+    [SerializeField] private RunScoreConfig_SO runScoreConfig;
+
     [Header("Canvas")]
     [SerializeField] private int canvasSortOrder = 9400;
     [SerializeField] private Vector2 referenceResolution = new Vector2(1920f, 1080f);
@@ -123,10 +127,63 @@ public class BattlePauseMenuOverlay : MonoBehaviour
     private void HandleAbandonClicked()
     {
         SaveCurrentSliderSettings();
+        if (TryExecuteRunSettlementForAbandon())
+            return;
+
         BattleExitFlowService.ExecuteAbandonToMainMenu(
             mainMenuSceneName,
             sceneName => SceneCurtainTransitionController.Instance.TransitionToScene(sceneName),
             () => SetVisible(false));
+    }
+
+    private bool TryExecuteRunSettlementForAbandon()
+    {
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (activeEncounter == null || activeEncounter.isTutorialEncounter)
+            return false;
+
+        if (!MapRunRuntime.TryGetSnapshot(activeEncounter.sourceSceneName, out MapRunSnapshot snapshot) || snapshot == null || snapshot.runState == null)
+            return false;
+
+        RunState settlementRunState = snapshot.runState;
+        SyncResolvedPartyMembersToRunState(settlementRunState, activeEncounter);
+
+        RunSettlementFlowService.ExecuteSettlement(new RunSettlementFlowRequest
+        {
+            runState = settlementRunState,
+            scoreConfig = runScoreConfig,
+            runCleared = false,
+            settlementSceneName = runSettlementSceneName,
+            returnSceneName = mainMenuSceneName,
+            deleteSavedRun = MainMenuRunSaveSystem.DeleteSavedRun,
+            clearRuntimeState = () =>
+            {
+                MapRunRuntime.Clear(activeEncounter.sourceSceneName);
+                BattleEncounterRuntime.Clear();
+                MainMenuRuntime.ClearTutorialRequest();
+                TutorialBattleRuntime.Clear();
+                SpeedButton.CombatLocked = false;
+                SpeedButton.InputSuppressed = false;
+                SetVisible(false);
+            },
+            transitionToScene = sceneName => SceneCurtainTransitionController.Instance.TransitionToScene(sceneName)
+        });
+        return true;
+    }
+
+    private static void SyncResolvedPartyMembersToRunState(RunState runState, BattleEncounterData activeEncounter)
+    {
+        if (runState == null || activeEncounter == null || activeEncounter.resolvedPartyMembers == null || activeEncounter.resolvedPartyMembers.Count <= 0)
+            return;
+
+        runState.partyMembers = new System.Collections.Generic.List<RunPartyMemberState>(activeEncounter.resolvedPartyMembers.Count);
+        for (int i = 0; i < activeEncounter.resolvedPartyMembers.Count; i++)
+        {
+            RunPartyMemberState member = activeEncounter.resolvedPartyMembers[i];
+            if (member != null && !member.isTemporaryBattleGuest)
+                runState.partyMembers.Add(member.Clone());
+        }
+        runState.SyncLegacyPlayerFieldsFromParty();
     }
 
     private void ApplyCurrentSettingsToSliders()

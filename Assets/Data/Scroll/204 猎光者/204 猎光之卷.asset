@@ -18,11 +18,11 @@ MonoBehaviour:
     \u7684\u5377\u8F74"
   rarity: 2
   icon: {fileID: 21300000, guid: 062179f910f32af43a673551d9e206b6, type: 3}
-  targetWeapon: {fileID: 11400000, guid: 2d6f4c2bb5794bb08e597a77fdc30400, type: 2}
+  targetWeapon: {fileID: 11400000, guid: 6f94a2e6f7a047c8b3f0a3c3e7040204, type: 2}
   materialRequirements:
   - lootItem: {fileID: 11400000, guid: 6e1752dc4702a1c44905a3559cb5f924, type: 2}
     amount: 2
-  - lootItem: {fileID: 11400000, guid: 6341a87cfa58ea5468dde7f6097e1937, type: 2}
+  - lootItem: {fileID: 11400000, guid: d0843e8639d4e334c85f8a6016c955ef, type: 2}
     amount: 1
-  - lootItem: {fileID: 11400000, guid: 6341a87cfa58ea5468dde7f6097e1937, type: 2}
-    amount: 1
+  - lootItem: {fileID: 11400000, guid: 2a5a440bab2e42f499a7fabcd4b29ead, type: 2}
+    amount: 2

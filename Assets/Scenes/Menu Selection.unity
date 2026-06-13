@@ -223,7 +223,7 @@ Transform:
   m_GameObject: {fileID: 6095499}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0.04, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11363,7 +11363,7 @@ MonoBehaviour:
   contributorsConfig:
     title: Contributors
     openingText: "\u4E00\u4E2A\u5C0F\u6E38\u620F\uFF0C\u4F46\u56E0\u4E3A\u4F60\u4EEC\u7684\u4ED8\u51FA\u624D\u5F97\u4EE5\u5B9E\u73B0"
-    creditsText: "\u7B56\u5212\r\n\u9B4F\u79B9\u8C0B\r\n\r\n\u7A0B\u5E8F\r\n\u9B4F\u79B9\u8C0B\u3001\u5415\u535A\u6D69\u3001\u8D64\u70C8\u6C5F\u63AA\r\n\r\n\u573A\u666F\u8BBE\u8BA1\r\n\u5415\u535A\u6D69\u3001\u9B4F\u79B9\u8C0B\r\n\r\n\u7D20\u6750\u6536\u96C6\r\n\u8D64\u70C8\u6C5F\u63AA\u3001\u5415\u535A\u6D69\r\n\r\n\u7279\u522B\u9E23\u8C22\r\n\u674E\u609F\u3001\u5F00"
+    creditsText: "\u7B56\u5212\r\n\u9B4F\u79B9\u8C0B\r\n\r\n\u7A0B\u5E8F\r\n\u9B4F\u79B9\u8C0B\u3001\u5415\u535A\u6D69\u3001\u8D64\u70C8\u6C5F\u63AA\r\n\r\n\u573A\u666F\u8BBE\u8BA1\r\n\u5415\u535A\u6D69\u3001\u9B4F\u79B9\u8C0B\r\n\r\n\u7D20\u6750\u6536\u96C6\r\n\u8D64\u70C8\u6C5F\u63AA\u3001\u5415\u535A\u6D69\r\n\r\n\u7279\u522B\u9E23\u8C22\r\n\u674E\u609F\u3001\u5F00\n\n\u90E8\u5206\u7075\u611F\u6765\u6E90\n\u6740\u622E\u5C16\u5854\n\u5E9F\u589F\u56FE\u4E66\u9986\n\u4E3A\u4E86\u543E\u738B\n"
     endingText: "\u8C22\u8C22\u4F60\u7684\u6E38\u73A9"
     fadeDuration: 1.2
     startDelay: 0.6
@@ -11376,7 +11376,7 @@ MonoBehaviour:
     titleFontSize: 60
     bodyFontSize: 36
   demoTestEncounterLabel: Demo Battle Test
-  demoTestEnemyGroup: {fileID: 11400000, guid: 589ff2320b57432458063c3393bb458b, type: 2}
+  demoTestEnemyGroup: {fileID: 11400000, guid: c143d8044b654f36a000c2647fa26c9a, type: 2}
   demoTestPartyMembers:
   - memberId: 
     characterData: {fileID: 11400000, guid: fce426096f554744093a4718f5aa0f45, type: 2}
@@ -11399,6 +11399,9 @@ MonoBehaviour:
   settingsToggleStateFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
   settingsDropdownFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
   settingsButtonFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
+  mainMenuItemFont: {fileID: 12800000, guid: 4d5640e1dd6cf9c4785268f568deb088, type: 3}
+  mainMenuItemFontSize: 68
+  tutorialStartPopupBodyFont: {fileID: 12800000, guid: 484ab9585f5e809499172abd408d9db2, type: 3}
   contributorsTitleFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
   contributorsBodyFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
 --- !u!1 &1612790337

@@ -153,6 +153,9 @@ public class RunGameManager : MonoBehaviour
 
     [Header("Tutorial Map Guide")]
     [SerializeField] [Min(0.05f)] private float tutorialViewNavigationSettleSeconds = 0.8f;
+    [SerializeField] private Font tutorialMapGuideTitleFont;
+    [SerializeField] private Font tutorialMapGuideBodyFont;
+    [SerializeField] private Font tutorialMapGuideButtonFont;
 
     [Header("Camera")]
     [SerializeField] private Color cameraBackgroundColor = new Color(0.08f, 0.11f, 0.16f, 1f);
@@ -164,6 +167,7 @@ public class RunGameManager : MonoBehaviour
     private readonly RunSceneFlowState runFlowState = new RunSceneFlowState();
     private string pendingMoveRelicStatusMessage;
     private bool movingToPreviouslyExploredEmptyTile;
+    private bool movingToUnexploredSettlementTile;
     private readonly Dictionary<string, MapEventLootDiscardPreview> eventRandomLootDiscardPreviewCache = new Dictionary<string, MapEventLootDiscardPreview>(StringComparer.Ordinal);
     private bool isTutorialRun;
     private MapTutorialGuideStep mapTutorialGuideStep = MapTutorialGuideStep.None;
@@ -243,6 +247,7 @@ public class RunGameManager : MonoBehaviour
         tutorialMapIntroSequenceActive = false;
         tutorialBattleInspectSelectionAllowed = false;
         MainMenuRuntime.ClearTutorialRequest();
+        RunSettlementRuntime.Clear();
         MapRunRuntime.Clear(SceneManager.GetActiveScene().name);
         RestSceneRuntime.Clear();
         runFlowState.Reset();
@@ -257,7 +262,8 @@ public class RunGameManager : MonoBehaviour
             requiredKeys = config.requiredKeys,
             currentCycle = 1,
             money = Mathf.Max(0, startingMoney),
-            partyMembers = BuildStartingPartyMembers(startingPartyMembers)
+            partyMembers = BuildStartingPartyMembers(startingPartyMembers),
+            settlementStats = new RunSettlementStats { runStartedUnixSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds() }
         };
 
         ApplyStartingInventory(runState);
@@ -292,6 +298,7 @@ public class RunGameManager : MonoBehaviour
         ResetTutorialFlowState();
         tutorialMapIntroSequenceActive = false;
         tutorialBattleInspectSelectionAllowed = false;
+        RunSettlementRuntime.Clear();
         MapRunRuntime.Clear(SceneManager.GetActiveScene().name);
         RestSceneRuntime.Clear();
         runFlowState.Reset();
@@ -306,7 +313,8 @@ public class RunGameManager : MonoBehaviour
             requiredKeys = 1,
             currentCycle = 1,
             money = Mathf.Max(0, startingMoney),
-            partyMembers = BuildTutorialStartingPartyMembers()
+            partyMembers = BuildTutorialStartingPartyMembers(),
+            settlementStats = new RunSettlementStats { runStartedUnixSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds() }
         };
 
         ApplyStartingInventory(runState);
@@ -543,6 +551,13 @@ public class RunGameManager : MonoBehaviour
 
         bool canTriggerVisitedEmptyAmbush = movingToPreviouslyExploredEmptyTile;
         movingToPreviouslyExploredEmptyTile = false;
+        if (movingToUnexploredSettlementTile && runState != null)
+        {
+            if (runState.settlementStats == null)
+                runState.settlementStats = new RunSettlementStats();
+            runState.settlementStats.unexploredTilesVisited++;
+        }
+        movingToUnexploredSettlementTile = false;
         if (canTriggerVisitedEmptyAmbush && TryTriggerVisitedEmptyTileAmbush(tile, message))
             return;
 
@@ -686,6 +701,10 @@ public class RunGameManager : MonoBehaviour
         if (tile == null || runState == null || actionPointSystem == null)
             return;
 
+        if (runState.settlementStats == null)
+            runState.settlementStats = new RunSettlementStats();
+        runState.settlementStats.keysCollected++;
+
         RelicExecutionContext context = RelicTriggerDispatcher.ProcessKeyCollected(
             runState,
             this,
@@ -779,6 +798,9 @@ public class RunGameManager : MonoBehaviour
             runState.TrySpendMoney(forgeCost);
 
         runState.AddWeapon(blueprint.targetWeapon, 1);
+        if (runState.settlementStats == null)
+            runState.settlementStats = new RunSettlementStats();
+        runState.settlementStats.craftedWeaponCount++;
         string successMessage = $"\u6210\u529f\u953b\u9020\uff1a{blueprint.targetWeapon.weaponName}";
         RefreshHUD(successMessage);
         return successMessage;
@@ -919,6 +941,8 @@ public class RunGameManager : MonoBehaviour
         mapPauseMenuOverlay = GetOrCreatePauseMenuOverlay();
         mapPauseMenuOverlay.Configure(CanOpenMapPauseMenu, HandlePauseMenuSaveAndReturn, HandlePauseMenuAbandon);
         mapTutorialGuideOverlay = GetOrCreateTutorialGuideOverlay();
+        if (tutorialMapGuideTitleFont != null || tutorialMapGuideBodyFont != null || tutorialMapGuideButtonFont != null)
+            mapTutorialGuideOverlay.ConfigureFonts(tutorialMapGuideTitleFont, tutorialMapGuideBodyFont, tutorialMapGuideButtonFont);
         mapViewController = GetOrCreateManager(mapViewController);
         mapBackgroundController = GetOrCreateManager(mapBackgroundController);
         if (sceneTransitionController == null)
@@ -1287,7 +1311,11 @@ public class RunGameManager : MonoBehaviour
             && tile.tileType == MapTileType.Empty
             && tile.isVisited
             && tile.isResolved;
+        bool wasUnexploredSettlementTile = tile != null
+            && !tile.isVisited
+            && !tile.isSpawnTile;
         movingToPreviouslyExploredEmptyTile = wasPreviouslyExploredEmptyTile;
+        movingToUnexploredSettlementTile = wasUnexploredSettlementTile;
         bool moved = MapMovementService.TryExecuteMove(
             new MapMovementExecutionRequest
             {
@@ -1308,7 +1336,10 @@ public class RunGameManager : MonoBehaviour
             RefreshHUD(string.Empty);
 
         if (!moved)
+        {
             movingToPreviouslyExploredEmptyTile = false;
+            movingToUnexploredSettlementTile = false;
+        }
 
         return moved;
     }
@@ -1421,6 +1452,7 @@ public class RunGameManager : MonoBehaviour
                 tutorialBattleDefinition = tutorialBattleDefinition,
                 tutorialBattle02MollyGuestCharacter = ResolveTutorialBattle02MollyGuestCharacter(),
                 pendingBattleStartAllyStatusGrants = pendingBattleStartGrants,
+                difficultyConfig = activeDifficultyConfig != null ? activeDifficultyConfig : difficultyConfig,
                 isTutorialEncounter = isTutorialRun,
                 returnToMainMenuOnVictory = tutorialReturnsToMainMenu,
                 restartBattleOnDefeat = isTutorialRun
@@ -1720,7 +1752,7 @@ public class RunGameManager : MonoBehaviour
                 out MapEventBuiltInEffectExecutionResult builtInResult))
         {
             if (spentSelectionMoney)
-                runState.AddMoney(requiredMoney);
+                runState.AddMoney(requiredMoney, countAsRunGain: false);
             runFlowState.PendingEventEncounterData = null;
             message = builtInResult != null ? builtInResult.message : "事件执行失败。";
             return false;
@@ -1747,7 +1779,7 @@ public class RunGameManager : MonoBehaviour
             if (!optionData.customHandler.Execute(context, out string customMessage))
             {
                 if (spentSelectionMoney)
-                    runState.AddMoney(requiredMoney);
+                    runState.AddMoney(requiredMoney, countAsRunGain: false);
                 runFlowState.PendingEventEncounterData = null;
                 runFlowState.PendingSpecialDungeon = null;
                 message = string.IsNullOrWhiteSpace(customMessage) ? "事件的自定义效果未能执行。" : customMessage;
@@ -1766,7 +1798,12 @@ public class RunGameManager : MonoBehaviour
                 : optionData.resolveEvent;
             tile.isResolved = shouldResolveEvent;
             if (shouldResolveEvent)
+            {
                 tile.assignedEvent = null;
+                if (runState.settlementStats == null)
+                    runState.settlementStats = new RunSettlementStats();
+                runState.settlementStats.eventTilesCompleted++;
+            }
         }
 
         if (spentSelectionMoney)
@@ -1825,6 +1862,7 @@ public class RunGameManager : MonoBehaviour
 
         BattleEncounterData encounterData = runFlowState.PendingEventEncounterData;
         runFlowState.PendingEventEncounterData = null;
+        encounterData.isEventEncounter = true;
         if (runState != null)
             encounterData.pendingBattleStartAllyStatusGrants = runState.ConsumePendingNextBattleAllyStatusGrants();
 
@@ -1914,11 +1952,21 @@ public class RunGameManager : MonoBehaviour
             return;
         }
 
+        bool exitsFromRightSide = runState != null && runState.playerGridPosition.x >= Mathf.Max(0, runState.boardSize - 1);
+        SpecialDungeon_SO completedDungeon = activeSpecialDungeonContext != null ? activeSpecialDungeonContext.activeDungeon : null;
         MapRunSnapshot restored = SpecialDungeonExitService.BuildReturnedMainMapSnapshot(activeSpecialDungeonContext, runState);
         if (restored == null || restored.runState == null)
         {
             RefreshHUD("离开特殊副本失败：无法恢复主地图。");
             return;
+        }
+
+        if (exitsFromRightSide)
+        {
+            if (restored.runState.settlementStats == null)
+                restored.runState.settlementStats = new RunSettlementStats();
+            int scoreValue = completedDungeon != null ? completedDungeon.settlementScoreValue : RunScoreConfig_SO.CreateDefaultRuntimeConfig().defaultSpecialDungeonScore;
+            restored.runState.settlementStats.AddSpecialDungeonScore(scoreValue);
         }
 
         List<int> deferredCalamities = activeSpecialDungeonContext.deferredCalamityTiers != null

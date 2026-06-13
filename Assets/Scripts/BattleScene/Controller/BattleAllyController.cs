@@ -117,8 +117,9 @@ public class BattleAllyController : MonoBehaviour
             ? BattleEncounterRuntime.ActiveEncounter.activeCalamities
             : null;
         PersistentMaxHP = Mathf.Max(1, partyMemberState.maxHP);
-        MaxHP = Mathf.Max(1, CalamitySystem.ApplyAllyMaxHpModifiers(PersistentMaxHP, activeCalamities));
-        CurrentHP = Mathf.Clamp(partyMemberState.currentHP, 0, MaxHP);
+        RunPartyMemberEffectiveStats effectiveStats = RunPartyMemberEffectiveStatsService.Resolve(partyMemberState, activeCalamities);
+        MaxHP = effectiveStats.maxHP;
+        CurrentHP = effectiveStats.currentHP;
         IsDead = CurrentHP <= 0;
         RefreshActiveSpeedButtons();
     }

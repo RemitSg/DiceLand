@@ -97,6 +97,28 @@ public class MainMenuTutorialOverlayTests
     }
 
     [Test]
+    public void Show_UsesConfiguredSummaryBodyFontForTutorialStartPopupBody()
+    {
+        GameObject host = new GameObject("Host");
+        MainMenuTutorialOverlay overlay = host.AddComponent<MainMenuTutorialOverlay>();
+        Font customBodyFont = new Font("CustomTutorialStartBodyFont");
+
+        SetPrivateField(overlay, "summaryBodyFont", customBodyFont);
+
+        overlay.Show(
+            null,
+            null,
+            null,
+            "开始教程",
+            "返回",
+            "进入教程？",
+            "这里是进入教程前的弹窗正文。",
+            true);
+
+        Assert.AreSame(customBodyFont, overlay.DebugSummaryBodyText.font);
+    }
+
+    [Test]
     public void BackButtonClick_InvokesCallbackAndHidesOverlay()
     {
         GameObject host = new GameObject("Host");
@@ -140,5 +162,14 @@ public class MainMenuTutorialOverlayTests
         Transform sectionsRoot = overlay.DebugSummaryTitleText.canvas.transform.Find("Panel/Sections");
         Assert.IsNotNull(sectionsRoot);
         return sectionsRoot.GetComponent<ScrollRect>();
+    }
+
+    private static void SetPrivateField(object target, string fieldName, object value)
+    {
+        System.Reflection.FieldInfo field = target.GetType().GetField(
+            fieldName,
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        Assert.IsNotNull(field, fieldName);
+        field.SetValue(target, value);
     }
 }

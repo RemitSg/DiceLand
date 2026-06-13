@@ -79,6 +79,9 @@ public static class BattleDiceRangeModifierService
                 case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
                     conditionMet = ResolveTargetStatusStacks(modifier, getTargetStatusStacksByAsset, getTargetStatusStacksById) >= Mathf.Max(1, modifier.requiredStatusStacks);
                     break;
+                case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksLessOrEqual:
+                    conditionMet = ResolveTargetStatusStacks(modifier, getTargetStatusStacksByAsset, getTargetStatusStacksById) <= Mathf.Max(0, modifier.requiredStatusStacks);
+                    break;
                 case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
                     return ApplyPerThresholdRangeModifier(
                         range,
@@ -131,8 +134,8 @@ public static class BattleDiceRangeModifierService
         if (modifier.targetStatusData != null && getSelfStatusStacksByAsset != null)
             return Mathf.Max(0, getSelfStatusStacksByAsset(modifier.targetStatusData));
 
-        if (modifier.targetStatusType == EnemySkill_SO.DiceStatusType.Burn && getSelfStatusStacksById != null)
-            return Mathf.Max(0, getSelfStatusStacksById("burn"));
+        if (TryResolveFallbackStatusId(modifier.targetStatusType, out string statusId) && getSelfStatusStacksById != null)
+            return Mathf.Max(0, getSelfStatusStacksById(statusId));
 
         return 0;
     }
@@ -145,9 +148,31 @@ public static class BattleDiceRangeModifierService
         if (modifier.targetStatusData != null && getTargetStatusStacksByAsset != null)
             return Mathf.Max(0, getTargetStatusStacksByAsset(modifier.targetStatusData));
 
-        if (modifier.targetStatusType == EnemySkill_SO.DiceStatusType.Burn && getTargetStatusStacksById != null)
-            return Mathf.Max(0, getTargetStatusStacksById("burn"));
+        if (TryResolveFallbackStatusId(modifier.targetStatusType, out string statusId) && getTargetStatusStacksById != null)
+            return Mathf.Max(0, getTargetStatusStacksById(statusId));
 
         return 0;
+    }
+
+    private static bool TryResolveFallbackStatusId(EnemySkill_SO.DiceStatusType statusType, out string statusId)
+    {
+        switch (statusType)
+        {
+            case EnemySkill_SO.DiceStatusType.Burn:
+                statusId = "burn";
+                return true;
+            case EnemySkill_SO.DiceStatusType.Electro:
+                statusId = "current";
+                return true;
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                statusId = "darkness";
+                return true;
+            case EnemySkill_SO.DiceStatusType.Mark:
+                statusId = "target";
+                return true;
+            default:
+                statusId = string.Empty;
+                return false;
+        }
     }
 }

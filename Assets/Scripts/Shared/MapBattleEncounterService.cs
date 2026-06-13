@@ -16,6 +16,7 @@ public sealed class MapBattleEncounterBuildRequest
     public TutorialBattleDefinition_SO tutorialBattleDefinition;
     public CharacterData_SO tutorialBattle02MollyGuestCharacter;
     public List<PendingBattleStatusGrant> pendingBattleStartAllyStatusGrants;
+    public DifficultyConfig_SO difficultyConfig;
     public bool isTutorialEncounter;
     public bool returnToMainMenuOnVictory;
     public bool restartBattleOnDefeat = true;
@@ -84,6 +85,7 @@ public static class MapBattleEncounterService
             moneyGained = request.moneyRewardTable != null
                 ? request.moneyRewardTable.RollReward(tile.tileType, tile.dangerBand, tile.encounterSeed)
                 : 0,
+            configuredExperienceReward = ResolveConfiguredExperienceReward(request.difficultyConfig, tile),
             isTutorialEncounter = request.isTutorialEncounter,
             isSpecialDungeonEncounter = tile.sourceSpecialDungeon != null,
             returnToMainMenuOnVictory = request.returnToMainMenuOnVictory,
@@ -94,6 +96,16 @@ public static class MapBattleEncounterService
         AppendRelicInventory(encounterData, request.runState);
         AppendActiveCalamities(encounterData, request.runState);
         return encounterData;
+    }
+
+    private static int ResolveConfiguredExperienceReward(DifficultyConfig_SO difficultyConfig, BoardTileData tile)
+    {
+        if (difficultyConfig == null || tile == null)
+            return -1;
+
+        return difficultyConfig.TryGetBattleExperienceReward(tile.dangerBand, tile.tileType, out int experience)
+            ? experience
+            : -1;
     }
 
     private static void AppendRelicInventory(BattleEncounterData encounterData, RunState runState)

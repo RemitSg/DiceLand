@@ -115,6 +115,8 @@ public static class BattleEnemyBuiltInEffectDispatcher
                         indexedEffect.Index,
                         effectLabel);
                     break;
+                case EnemySkill_SO.BuiltInEffectType.TriggerTargetLinkedStatus:
+                    break;
             }
         }
     }

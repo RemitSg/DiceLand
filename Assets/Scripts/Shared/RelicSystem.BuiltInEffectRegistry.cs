@@ -139,6 +139,19 @@ public static partial class RelicSystem
             { Relic_SO.RelicBuiltInEffectType.SummonTemporaryAllyFromEnemyDataAtBattleStart, HandleSummonTemporaryAllyFromEnemyDataAtBattleStart },
             { Relic_SO.RelicBuiltInEffectType.QueueNextRoundMinPowerBonusOnMinRollOncePerRound, HandleQueueNextRoundMinPowerBonusOnMinRollOncePerRound },
             { Relic_SO.RelicBuiltInEffectType.HealPartyPercentAfterBattleInSpecialDungeon, HandleHealPartyPercentAfterBattleInSpecialDungeon },
+            { Relic_SO.RelicBuiltInEffectType.DealDamageWhenEnemyStatusReachesStacksOncePerRound, HandleDealDamageWhenEnemyStatusReachesStacksOncePerRound },
+            { Relic_SO.RelicBuiltInEffectType.TransferStatusToAllEnemiesOnEnemyDeath, HandleTransferStatusToAllEnemiesOnEnemyDeath },
+            { Relic_SO.RelicBuiltInEffectType.HealRandomDamagedAllyOnEnemyDeathWithStatus, HandleHealRandomDamagedAllyOnEnemyDeathWithStatus },
+            { Relic_SO.RelicBuiltInEffectType.ReflectEnemyStatusStacksDamageAfterTakingAttackDamage, HandleReflectEnemyStatusStacksDamageAfterTakingAttackDamage },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToEnemyOnEnemyClashWinWithStatusOncePerRound, HandleApplyStatusToEnemyOnEnemyClashWinWithStatusOncePerRound },
+            { Relic_SO.RelicBuiltInEffectType.PromotePlayerOnHitStatusToSkillUse, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.SetEnemyStatusRoundEndDecayPercent, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.PreserveEnemyStatusWhenAllLivingEnemiesHaveStatus, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.PreventEnemyHealingWhenHasStatus, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.PreventLethalDamageByTransferringHighestHpAllyHealth, HandlePreventLethalDamageByTransferringHighestHpAllyHealth },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusOnTransferredLethalProtectionWhenEnemyStatusAtLeast, HandleApplyStatusOnTransferredLethalProtectionWhenEnemyStatusAtLeast },
+            { Relic_SO.RelicBuiltInEffectType.ModifyPlayerClashDiceWhenTargetHasStatusOncePerRound, HandleModifyPlayerClashDiceWhenTargetHasStatusOncePerRound },
+            { Relic_SO.RelicBuiltInEffectType.ModifyOutgoingDamagePercentWhenTargetHasStatus, HandleModifyOutgoingDamagePercentWhenTargetHasStatus },
         };
     }
 

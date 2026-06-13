@@ -850,6 +850,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
             if (effectSettings.statusEffects != null)
             {
+                AppendMergedStatusBranchLines(effectLines, diceEffectLabel, effectSettings.statusEffects, mergedStatusEffectIndices, attackerIsAlly);
                 for (int effectIndex = 0; effectIndex < effectSettings.statusEffects.Length; effectIndex++)
                 {
                     if (mergedStatusEffectIndices.Contains(effectIndex))
@@ -872,11 +873,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                     string statusLabel = BuildColoredToken(GetStatusLabel(effect), valueHighlightColor);
                     string conditionPrefix = BuildStatusEffectConditionPrefix(effect);
                     string timingLabel = effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
-                        ? BuildColoredToken(
-                            Mathf.Max(1, effect.applyRepeatCount) > 1
-                                ? $"\u63a5\u4e0b\u6765 {Mathf.Max(1, effect.applyRepeatCount)} \u4e2a\u56de\u5408\u5f00\u59cb\u65f6"
-                                : $"\u4e0b {Mathf.Max(1, effect.applyAfterRoundStarts)} \u4e2a\u56de\u5408\u5f00\u59cb\u65f6",
-                            triggerHighlightColor)
+                        ? BuildColoredToken(BuildStatusEffectTimingLabel(effect), triggerHighlightColor)
                         : string.Empty;
                     effectLines.Add(effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
                         ? $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 于 {timingLabel} 获得 {stackLabel} 层 {statusLabel}"
@@ -1152,6 +1149,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
         if (effectSettings.statusEffects != null)
         {
+            AppendMergedStatusBranchLines(effectLines, diceEffectLabel, effectSettings.statusEffects, mergedStatusEffectIndices, attackerIsAlly);
             for (int effectIndex = 0; effectIndex < effectSettings.statusEffects.Length; effectIndex++)
             {
                 if (mergedStatusEffectIndices.Contains(effectIndex))
@@ -1174,11 +1172,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 string statusLabel = BuildColoredToken(GetStatusLabel(effect), valueHighlightColor);
                 string conditionPrefix = BuildStatusEffectConditionPrefix(effect);
                 string timingLabel = effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
-                    ? BuildColoredToken(
-                        Mathf.Max(1, effect.applyRepeatCount) > 1
-                            ? $"接下来 {Mathf.Max(1, effect.applyRepeatCount)} 个回合开始时"
-                            : $"下 {Mathf.Max(1, effect.applyAfterRoundStarts)} 个回合开始时",
-                        triggerHighlightColor)
+                    ? BuildColoredToken(BuildStatusEffectTimingLabel(effect), triggerHighlightColor)
                     : string.Empty;
                 effectLines.Add(effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
                     ? $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 于 {timingLabel} 获得 {stackLabel} 层 {statusLabel}"
@@ -1453,6 +1447,98 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         }
     }
 
+    private void AppendMergedStatusBranchLines(
+        List<string> effectLines,
+        string diceEffectLabel,
+        EnemySkill_SO.StatusEffectEntry[] statusEffects,
+        HashSet<int> mergedStatusEffectIndices,
+        bool attackerIsAlly)
+    {
+        for (int i = 0; i < statusEffects.Length; i++)
+        {
+            if (mergedStatusEffectIndices.Contains(i))
+                continue;
+
+            EnemySkill_SO.StatusEffectEntry baseEffect = statusEffects[i];
+            if (!CanBeUnmarkedBranch(baseEffect))
+                continue;
+
+            for (int j = 0; j < statusEffects.Length; j++)
+            {
+                if (i == j || mergedStatusEffectIndices.Contains(j))
+                    continue;
+
+                EnemySkill_SO.StatusEffectEntry markedEffect = statusEffects[j];
+                if (!CanBeMarkedBranchPair(baseEffect, markedEffect))
+                    continue;
+
+                AppendMergedStatusBranchLine(effectLines, diceEffectLabel, baseEffect, markedEffect, attackerIsAlly);
+                mergedStatusEffectIndices.Add(i);
+                mergedStatusEffectIndices.Add(j);
+                break;
+            }
+        }
+    }
+
+    private void AppendMergedStatusBranchLine(
+        List<string> effectLines,
+        string diceEffectLabel,
+        EnemySkill_SO.StatusEffectEntry baseEffect,
+        EnemySkill_SO.StatusEffectEntry markedEffect,
+        bool attackerIsAlly)
+    {
+        string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(baseEffect.trigger), triggerHighlightColor);
+        string targetLabel = BuildColoredToken(GetDamageTargetLabel(baseEffect.targetMode, baseEffect.randomTargetCount, attackerIsAlly), targetHighlightColor);
+        string baseStackLabel = BuildColoredToken(baseEffect.stackAmount.ToString(), valueHighlightColor);
+        string baseStatusLabel = BuildColoredToken(GetStatusLabel(baseEffect), valueHighlightColor);
+        string markedStackLabel = BuildColoredToken(markedEffect.stackAmount.ToString(), valueHighlightColor);
+        string markedStatusLabel = BuildColoredToken(GetStatusLabel(markedEffect), valueHighlightColor);
+        string timingLabel = BuildColoredToken(BuildStatusEffectTimingLabel(baseEffect), triggerHighlightColor);
+        string conditionStatusLabel = BuildColoredToken(GetStatusEffectConditionStatusLabel(markedEffect), targetHighlightColor);
+
+        effectLines.Add(
+            $"{diceEffectLabel}：{triggerLabel} {timingLabel}对{targetLabel}施加 {baseStackLabel} 层 {baseStatusLabel}。\n" +
+            $"若{targetLabel}已有{conditionStatusLabel}，改为{timingLabel}对{targetLabel}施加 {markedStackLabel} 层 {markedStatusLabel}。");
+    }
+
+    private static bool CanBeUnmarkedBranch(EnemySkill_SO.StatusEffectEntry effect)
+    {
+        return effect.stackAmount > 0
+            && effect.useCondition
+            && effect.condition == EnemySkill_SO.PowerModifierCondition.TargetStatusStacksLessOrEqual
+            && Mathf.Max(0, effect.requiredConditionStatusStacks) <= 0
+            && effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart;
+    }
+
+    private static bool CanBeMarkedBranchPair(
+        EnemySkill_SO.StatusEffectEntry baseEffect,
+        EnemySkill_SO.StatusEffectEntry markedEffect)
+    {
+        return markedEffect.stackAmount > 0
+            && markedEffect.useCondition
+            && markedEffect.condition == EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast
+            && Mathf.Max(1, markedEffect.requiredConditionStatusStacks) == 1
+            && markedEffect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
+            && markedEffect.trigger == baseEffect.trigger
+            && markedEffect.targetMode == baseEffect.targetMode
+            && Mathf.Max(1, markedEffect.randomTargetCount) == Mathf.Max(1, baseEffect.randomTargetCount)
+            && Mathf.Max(1, markedEffect.applyAfterRoundStarts) == Mathf.Max(1, baseEffect.applyAfterRoundStarts)
+            && Mathf.Max(1, markedEffect.applyRepeatCount) == Mathf.Max(1, baseEffect.applyRepeatCount)
+            && IsSameStatus(markedEffect.conditionStatusData, markedEffect.conditionStatusType, baseEffect.statusData, baseEffect.statusType);
+    }
+
+    private static bool IsSameStatus(
+        BattleStatus_SO leftData,
+        EnemySkill_SO.DiceStatusType leftType,
+        BattleStatus_SO rightData,
+        EnemySkill_SO.DiceStatusType rightType)
+    {
+        if (leftData != null || rightData != null)
+            return leftData == rightData;
+
+        return leftType == rightType;
+    }
+
     private void CollectConsumedStatusBuiltInGains(
         EnemySkill_SO.DiceEffectSettings effectSettings,
         EnemySkill_SO.StatusStackOperationEffectEntry operation,
@@ -1578,6 +1664,13 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             return string.Empty;
 
         return $"于 {BuildConsumedStatusStatusEffectTimingLabel(effect)} ";
+    }
+
+    private static string BuildStatusEffectTimingLabel(EnemySkill_SO.StatusEffectEntry effect)
+    {
+        return Mathf.Max(1, effect.applyRepeatCount) > 1
+            ? $"接下来 {Mathf.Max(1, effect.applyRepeatCount)} 个回合开始时"
+            : $"下 {Mathf.Max(1, effect.applyAfterRoundStarts)} 个回合开始时";
     }
 
     private string BuildConsumedGainBuiltInTimingText(EnemySkill_SO.BuiltInEffectEntry effect)
@@ -1891,6 +1984,9 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 case EnemySkill_SO.BuiltInEffectType.RepeatCurrentDie:
                     effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}重复使用该骰子");
                     break;
+                case EnemySkill_SO.BuiltInEffectType.TriggerTargetLinkedStatus:
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}结算{targetLabel}的 {BuildColoredToken(GetBuiltInGeneralConditionStatusLabel(effect), valueHighlightColor)} 状态");
+                    break;
             }
         }
     }
@@ -2077,6 +2173,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "\u71c3\u70e7";
             case EnemySkill_SO.DiceStatusType.Electro:
                 return "\u7535\u6d41";
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                return "\u9ed1\u6697";
+            case EnemySkill_SO.DiceStatusType.Mark:
+                return "标记";
             default:
                 return "\u672a\u914d\u7f6e\u72b6\u6001";
         }
@@ -2093,6 +2193,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "\u71c3\u70e7";
             case EnemySkill_SO.DiceStatusType.Electro:
                 return "\u7535\u6d41";
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                return "\u9ed1\u6697";
+            case EnemySkill_SO.DiceStatusType.Mark:
+                return "标记";
             default:
                 return "\u672a\u914d\u7f6e\u72b6\u6001";
         }
@@ -2109,6 +2213,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "\u71c3\u70e7";
             case EnemySkill_SO.DiceStatusType.Electro:
                 return "\u7535\u6d41";
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                return "\u9ed1\u6697";
+            case EnemySkill_SO.DiceStatusType.Mark:
+                return "标记";
             default:
                 return "\u672a\u914d\u7f6e\u72b6\u6001";
         }
@@ -2125,6 +2233,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "燃烧";
             case EnemySkill_SO.DiceStatusType.Electro:
                 return "电流";
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                return "黑暗";
+            case EnemySkill_SO.DiceStatusType.Mark:
+                return "标记";
             default:
                 return "未配置状态";
         }
@@ -2141,6 +2253,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "燃烧";
             case EnemySkill_SO.DiceStatusType.Electro:
                 return "电流";
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                return "黑暗";
+            case EnemySkill_SO.DiceStatusType.Mark:
+                return "标记";
             default:
                 return "未配置状态";
         }
@@ -2157,6 +2273,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "\u71c3\u70e7";
             case EnemySkill_SO.DiceStatusType.Electro:
                 return "\u7535\u6d41";
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                return "\u9ed1\u6697";
+            case EnemySkill_SO.DiceStatusType.Mark:
+                return "标记";
             default:
                 return "\u672a\u914d\u7f6e\u72b6\u6001";
         }
@@ -2206,6 +2326,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "\u71c3\u70e7";
             case EnemySkill_SO.DiceStatusType.Electro:
                 return "\u7535\u6d41";
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                return "\u9ed1\u6697";
+            case EnemySkill_SO.DiceStatusType.Mark:
+                return "标记";
             default:
                 return "\u672a\u914d\u7f6e\u72b6\u6001";
         }
@@ -2239,6 +2363,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"目标拥有 {GetHealingConditionStatusLabel(effect)}";
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
                 return $"目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetHealingConditionStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksLessOrEqual:
+                return $"目标 {GetHealingConditionStatusLabel(effect)} 层数 至多为 {Mathf.Max(0, effect.requiredConditionStatusStacks)}";
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
                 return $"目标每拥有 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetHealingConditionStatusLabel(effect)}";
             case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
@@ -2288,6 +2414,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"目标拥有 {GetStatusEffectConditionStatusLabel(effect)}";
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
                 return $"目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetStatusEffectConditionStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksLessOrEqual:
+                return $"目标 {GetStatusEffectConditionStatusLabel(effect)} 层数 至多为 {Mathf.Max(0, effect.requiredConditionStatusStacks)}";
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
                 return $"目标每拥有 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetStatusEffectConditionStatusLabel(effect)}";
             case EnemySkill_SO.PowerModifierCondition.TargetSkillIsSpecific:
@@ -2314,6 +2442,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "燃烧";
             case EnemySkill_SO.DiceStatusType.Electro:
                 return "电流";
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                return "黑暗";
+            case EnemySkill_SO.DiceStatusType.Mark:
+                return "标记";
             default:
                 return "未配置状态";
         }
@@ -2424,6 +2556,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "燃烧";
             case EnemySkill_SO.DiceStatusType.Electro:
                 return "电流";
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                return "黑暗";
+            case EnemySkill_SO.DiceStatusType.Mark:
+                return "标记";
             default:
                 return "未配置状态";
         }
@@ -2477,6 +2613,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "\u71c3\u70e7";
             case EnemySkill_SO.DiceStatusType.Electro:
                 return "\u7535\u6d41";
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                return "\u9ed1\u6697";
+            case EnemySkill_SO.DiceStatusType.Mark:
+                return "标记";
             default:
                 return "\u672a\u914d\u7f6e\u72b6\u6001";
         }
@@ -2510,6 +2650,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"目标拥有 {GetPowerModifierStatusLabel(effect)}";
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
                 return $"目标拥有至少 {Mathf.Max(1, effect.requiredStatusStacks)} 层 {GetPowerModifierStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksLessOrEqual:
+                return $"目标 {GetPowerModifierStatusLabel(effect)} 层数 至多为 {Mathf.Max(0, effect.requiredStatusStacks)}";
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
                 return $"目标每拥有 {Mathf.Max(1, effect.requiredStatusStacks)} 层 {GetPowerModifierStatusLabel(effect)}";
             case EnemySkill_SO.PowerModifierCondition.TargetSkillIsSpecific:
@@ -2536,6 +2678,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "燃烧";
             case EnemySkill_SO.DiceStatusType.Electro:
                 return "电流";
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                return "黑暗";
+            case EnemySkill_SO.DiceStatusType.Mark:
+                return "标记";
             default:
                 return "未配置状态";
         }
@@ -2576,6 +2722,8 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return $"目标拥有 {GetRangeModifierStatusLabel(effect)}";
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
                 return $"目标拥有至少 {Mathf.Max(1, effect.requiredStatusStacks)} 层 {GetRangeModifierStatusLabel(effect)}";
+            case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksLessOrEqual:
+                return $"目标 {GetRangeModifierStatusLabel(effect)} 层数 至多为 {Mathf.Max(0, effect.requiredStatusStacks)}";
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
                 return $"目标每拥有 {Mathf.Max(1, effect.requiredStatusStacks)} 层 {GetRangeModifierStatusLabel(effect)}";
             case EnemySkill_SO.PowerModifierCondition.TargetSkillIsSpecific:
@@ -2619,6 +2767,10 @@ public class BattleSkillInfoOverlay : MonoBehaviour
                 return "燃烧";
             case EnemySkill_SO.DiceStatusType.Electro:
                 return "电流";
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                return "黑暗";
+            case EnemySkill_SO.DiceStatusType.Mark:
+                return "标记";
             default:
                 return "未配置状态";
         }

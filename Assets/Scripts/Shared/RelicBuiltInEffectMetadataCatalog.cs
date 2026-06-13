@@ -186,6 +186,19 @@ public static class RelicBuiltInEffectMetadataCatalog
         Add(metadata, Relic_SO.RelicBuiltInEffectType.SummonTemporaryAllyFromEnemyDataAtBattleStart, numericRequirement: RelicBuiltInNumericRequirement.None);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.QueueNextRoundMinPowerBonusOnMinRollOncePerRound);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.HealPartyPercentAfterBattleInSpecialDungeon);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.DealDamageWhenEnemyStatusReachesStacksOncePerRound, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.TransferStatusToAllEnemiesOnEnemyDeath, requiresStatusData: true, numericRequirement: RelicBuiltInNumericRequirement.None);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.HealRandomDamagedAllyOnEnemyDeathWithStatus, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ReflectEnemyStatusStacksDamageAfterTakingAttackDamage, requiresConditionStatusData: true, numericRequirement: RelicBuiltInNumericRequirement.None);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToEnemyOnEnemyClashWinWithStatusOncePerRound, requiresStatusData: true, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.PromotePlayerOnHitStatusToSkillUse, requiresConditionStatusData: true, numericRequirement: RelicBuiltInNumericRequirement.None);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.SetEnemyStatusRoundEndDecayPercent, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.PreserveEnemyStatusWhenAllLivingEnemiesHaveStatus, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.PreventEnemyHealingWhenHasStatus, requiresConditionStatusData: true, numericRequirement: RelicBuiltInNumericRequirement.None);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.PreventLethalDamageByTransferringHighestHpAllyHealth, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusOnTransferredLethalProtectionWhenEnemyStatusAtLeast, requiresStatusData: true, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ModifyPlayerClashDiceWhenTargetHasStatusOncePerRound, requiresConditionStatusData: true, numericRequirement: RelicBuiltInNumericRequirement.AnyPowerDeltaNonZero, numericFieldPath: "powerAmount/minPowerAmount/maxPowerAmount");
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ModifyOutgoingDamagePercentWhenTargetHasStatus, requiresConditionStatusData: true);
 
         return metadata;
     }

@@ -823,8 +823,11 @@ public class MapHUD : MonoBehaviour
 
         string memberName = member != null ? member.DisplayName : "未知成员";
         int level = member != null ? Mathf.Max(1, member.level) : 1;
-        int maxHP = member != null ? Mathf.Max(1, member.maxHP) : 1;
-        int currentHP = member != null ? Mathf.Clamp(member.currentHP, 0, maxHP) : 0;
+        RunPartyMemberEffectiveStats effectiveStats = RunPartyMemberEffectiveStatsService.Resolve(
+            member,
+            currentRunState != null ? currentRunState.activeCalamities : null);
+        int maxHP = effectiveStats.maxHP;
+        int currentHP = effectiveStats.currentHP;
         int currentExp = member != null ? Mathf.Max(0, member.experience) : 0;
         int expToNext = levelTable != null ? Mathf.Max(0, levelTable.GetExperienceToNextLevel(level)) : 0;
         float hpRatio = maxHP > 0 ? Mathf.Clamp01(currentHP / (float)maxHP) : 0f;

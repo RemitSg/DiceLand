@@ -40,15 +40,15 @@ public class MainMenuSceneController : MonoBehaviour
     [SerializeField] private string demoTestSceneName = "SampleScene";
 
     [Header("Labels")]
-    [SerializeField] private string newGameLabel = "NewGame";
-    [SerializeField] private string continueLabel = "Continue";
-    [SerializeField] private string tutorialLabel = "Tutorial";
-    [SerializeField] private string contributorsLabel = "Contributors";
-    [SerializeField] private string settingsLabel = "Settings";
-    [SerializeField] private string exitLabel = "Exit";
-    [SerializeField] private string demoTestLabel = "DemoTest";
+    [SerializeField] private string newGameLabel = "新游戏";
+    [SerializeField] private string continueLabel = "继续游戏";
+    [SerializeField] private string tutorialLabel = "教程";
+    [SerializeField] private string contributorsLabel = "制作人员";
+    [SerializeField] private string settingsLabel = "设置";
+    [SerializeField] private string exitLabel = "退出";
+    [SerializeField] private string demoTestLabel = "测试战斗";
     [SerializeField] private Color disabledContinueColor = new Color(0.55f, 0.55f, 0.55f, 0.9f);
-    [SerializeField] private string noSaveSuffix = " (No Save)";
+    [SerializeField] private string noSaveSuffix = "（无存档）";
 
     [Header("Tutorial")]
     [SerializeField] private TutorialMenuCatalog_SO tutorialCatalog;
@@ -70,6 +70,9 @@ public class MainMenuSceneController : MonoBehaviour
     [SerializeField] private Font settingsToggleStateFont;
     [SerializeField] private Font settingsDropdownFont;
     [SerializeField] private Font settingsButtonFont;
+    [SerializeField] private Font mainMenuItemFont;
+    [SerializeField, Min(1)] private int mainMenuItemFontSize = 48;
+    [SerializeField] private Font tutorialStartPopupBodyFont;
     [SerializeField] private Font contributorsTitleFont;
     [SerializeField] private Font contributorsBodyFont;
 
@@ -112,6 +115,7 @@ public class MainMenuSceneController : MonoBehaviour
             settingsOverlay = gameObject.AddComponent<MainMenuSettingsOverlay>();
 
         contributorsOverlay.ConfigureFonts(contributorsTitleFont, contributorsBodyFont);
+        tutorialOverlay.ConfigureFonts(tutorialStartPopupBodyFont);
         settingsOverlay.ConfigureFonts(
             settingsTitleFont,
             settingsBodyFont,
@@ -121,6 +125,7 @@ public class MainMenuSceneController : MonoBehaviour
             settingsDropdownFont,
             settingsButtonFont);
 
+        NormalizeLegacyDefaultLabels();
         ApplyMainMenuSettings();
         ConfigureMainMenuItems();
         ConfigureDifficultyMenu();
@@ -203,6 +208,26 @@ public class MainMenuSceneController : MonoBehaviour
         MainMenuSettingsPersistence.Apply(settings);
     }
 
+    private void NormalizeLegacyDefaultLabels()
+    {
+        newGameLabel = ReplaceLegacyDefaultLabel(newGameLabel, "NewGame", "新游戏");
+        continueLabel = ReplaceLegacyDefaultLabel(continueLabel, "Continue", "继续游戏");
+        tutorialLabel = ReplaceLegacyDefaultLabel(tutorialLabel, "Tutorial", "教程");
+        contributorsLabel = ReplaceLegacyDefaultLabel(contributorsLabel, "Contributors", "制作人员");
+        settingsLabel = ReplaceLegacyDefaultLabel(settingsLabel, "Settings", "设置");
+        exitLabel = ReplaceLegacyDefaultLabel(exitLabel, "Exit", "退出");
+        demoTestLabel = ReplaceLegacyDefaultLabel(demoTestLabel, "DemoTest", "测试战斗");
+        noSaveSuffix = ReplaceLegacyDefaultLabel(noSaveSuffix, "(No Save)", "（无存档）");
+        noSaveSuffix = ReplaceLegacyDefaultLabel(noSaveSuffix, " (No Save)", "（无存档）");
+    }
+
+    private static string ReplaceLegacyDefaultLabel(string currentValue, string legacyDefault, string localizedDefault)
+    {
+        return string.Equals(currentValue, legacyDefault, StringComparison.Ordinal)
+            ? localizedDefault
+            : currentValue;
+    }
+
     private void HandleFocusedMenuOverlayState()
     {
         if (mainMenuGallery == null)
@@ -247,8 +272,7 @@ public class MainMenuSceneController : MonoBehaviour
             if (item == null)
                 continue;
 
-            string identity = GetMenuIdentity(item);
-            MenuAction action = ResolveMenuAction(identity);
+            MenuAction action = ResolveMenuAction(item);
             if (action == MenuAction.None)
             {
                 item.gameObject.SetActive(false);
@@ -259,7 +283,10 @@ public class MainMenuSceneController : MonoBehaviour
             menuActions[item] = action;
             item.levelName = GetDisplayLabel(action);
             if (item.text != null)
+            {
                 item.text.text = item.levelName;
+                ApplyMainMenuItemFont(item.text);
+            }
 
             DemoGalleryMenuItem demoItem = item as DemoGalleryMenuItem;
             if (action == MenuAction.NewGame)
@@ -284,6 +311,17 @@ public class MainMenuSceneController : MonoBehaviour
 
         if (newGameItem is DemoGalleryMenuItem newGameDemoItem && newGameDemoItem.contentToShow != null)
             difficultyGallery = newGameDemoItem.contentToShow.GetComponentInChildren<GalleryLevelSelectionManager>(true);
+    }
+
+    private void ApplyMainMenuItemFont(Text target)
+    {
+        if (target == null)
+            return;
+
+        if (mainMenuItemFont != null)
+            target.font = mainMenuItemFont;
+
+        target.fontSize = Mathf.Max(1, mainMenuItemFontSize);
     }
 
     private void ConfigureDifficultyMenu()
@@ -721,6 +759,18 @@ public class MainMenuSceneController : MonoBehaviour
         return string.Empty;
     }
 
+    private static MenuAction ResolveMenuAction(GalleryLevelView item)
+    {
+        if (item == null)
+            return MenuAction.None;
+
+        MenuAction action = ResolveMenuAction(item.levelName);
+        if (action != MenuAction.None)
+            return action;
+
+        return ResolveMenuAction(item.gameObject != null ? item.gameObject.name : string.Empty);
+    }
+
     private static MenuAction ResolveMenuAction(string value)
     {
         string normalized = (value ?? string.Empty).Trim().ToLowerInvariant();
@@ -729,30 +779,37 @@ public class MainMenuSceneController : MonoBehaviour
             case "solo play":
             case "newgame":
             case "new game":
+            case "新游戏":
                 return MenuAction.NewGame;
 
             case "load":
             case "continue":
+            case "继续游戏":
                 return MenuAction.Continue;
 
             case "tutorial":
             case "guide":
+            case "教程":
                 return MenuAction.Tutorial;
 
             case "credits":
             case "contributors":
+            case "制作人员":
                 return MenuAction.Contributors;
 
             case "options":
             case "settings":
+            case "设置":
                 return MenuAction.Settings;
 
             case "exit":
+            case "退出":
                 return MenuAction.Exit;
 
             case "demo":
             case "demotest":
             case "demo test":
+            case "测试战斗":
                 return MenuAction.DemoTest;
 
             default:
@@ -804,7 +861,7 @@ public class MainMenuSceneController : MonoBehaviour
     {
         for (int i = 0; i < items.Count; i++)
         {
-            if (ResolveMenuAction(GetMenuIdentity(items[i])) == MenuAction.Tutorial)
+            if (ResolveMenuAction(items[i]) == MenuAction.Tutorial)
                 return;
         }
 
@@ -820,7 +877,7 @@ public class MainMenuSceneController : MonoBehaviour
     private GalleryLevelView CreateRuntimeTutorialMenuItem(GalleryLevelView prototype)
     {
         GameObject runtimeClone = Instantiate(prototype.gameObject, prototype.transform.parent, false);
-        runtimeClone.name = tutorialLabel;
+        runtimeClone.name = "Tutorial";
         runtimeClone.SetActive(true);
 
         GalleryLevelView tutorialItem = runtimeClone.GetComponent<GalleryLevelView>();
@@ -853,7 +910,7 @@ public class MainMenuSceneController : MonoBehaviour
         for (int i = 0; i < items.Count; i++)
         {
             GalleryLevelView item = items[i];
-            if (item != null && ResolveMenuAction(GetMenuIdentity(item)) == MenuAction.DemoTest)
+            if (item != null && ResolveMenuAction(item) == MenuAction.DemoTest)
                 return item;
         }
 
@@ -870,7 +927,7 @@ public class MainMenuSceneController : MonoBehaviour
     {
         for (int i = 0; i < items.Count; i++)
         {
-            MenuAction action = ResolveMenuAction(GetMenuIdentity(items[i]));
+            MenuAction action = ResolveMenuAction(items[i]);
             if (action == MenuAction.Continue)
                 return i + 1;
 

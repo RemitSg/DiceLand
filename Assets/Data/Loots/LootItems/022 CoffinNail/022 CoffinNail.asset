@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3abebfccfa94bb4f844818d7206d4dc, type: 3}
+  m_Name: 022 CoffinNail
+  m_EditorClassIdentifier: 
+  lootID: 22
+  lootName: "\u68FA\u9489"
+  description: "\u9489\u8EAB\u4E0A\u6B8B\u7559\u7740\u6E7F\u51B7\u7684\u6C14\u606F\uFF0C\u4E0D\u8981\u88AB\u8FD9\u79CD\u4E0D\u7965\u7684\u4E1C\u897F\u624E\u5230\u3002"
+  attribute: {fileID: 11400000, guid: d1b4ed53851df2549bd58022556ca4be, type: 2}
+  rarity: 1
+  icon: {fileID: 21300000, guid: 31c38c264d878314496f10a0fd7550ca, type: 3}

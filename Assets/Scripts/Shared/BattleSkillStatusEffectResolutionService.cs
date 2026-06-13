@@ -26,7 +26,8 @@ public static class BattleSkillStatusEffectResolutionService
     public static IReadOnlyList<BattleIndexedEffect<EnemySkill_SO.StatusEffectEntry>> BuildEligibleStatusEffects(
         EnemySkill_SO.StatusEffectEntry[] effects,
         EnemySkill_SO.DiceEffectTrigger trigger,
-        bool conditionalOnly)
+        bool conditionalOnly,
+        Func<EnemySkill_SO.StatusEffectEntry, EnemySkill_SO.DiceEffectTrigger, bool> shouldTreatAsMatchingTrigger = null)
     {
         List<BattleIndexedEffect<EnemySkill_SO.StatusEffectEntry>> result = new List<BattleIndexedEffect<EnemySkill_SO.StatusEffectEntry>>();
         if (effects == null)
@@ -35,7 +36,12 @@ public static class BattleSkillStatusEffectResolutionService
         for (int i = 0; i < effects.Length; i++)
         {
             EnemySkill_SO.StatusEffectEntry effect = effects[i];
-            if (!BattleStatusEffectEligibilityService.ShouldProcess(effect, trigger, conditionalOnly))
+            bool triggerMatches = BattleStatusEffectEligibilityService.ShouldProcess(effect, trigger, conditionalOnly);
+            if (!triggerMatches && shouldTreatAsMatchingTrigger != null)
+                triggerMatches = shouldTreatAsMatchingTrigger(effect, trigger)
+                    && effect.stackAmount > 0
+                    && effect.useCondition == conditionalOnly;
+            if (!triggerMatches)
                 continue;
 
             result.Add(new BattleIndexedEffect<EnemySkill_SO.StatusEffectEntry>(i, effect));

@@ -75,6 +75,43 @@ public class CalamitySystemTodoTests
     }
 
     [Test]
+    public void AllyMaxHpCalamity_RecalculatesFromPersistentMaxHpWithRounding()
+    {
+        List<RunCalamityState> calamities = BuildCalamities(
+            CreateCalamity(CalamityBuiltInEffectType.AllyMaxHpPercentModifier, -30));
+
+        Assert.AreEqual(14, CalamitySystem.ApplyAllyMaxHpModifiers(20, calamities));
+        Assert.AreEqual(17, CalamitySystem.ApplyAllyMaxHpModifiers(24, calamities));
+    }
+
+    [Test]
+    public void PartyEffectiveStats_ExposeCalamityAdjustedHpWithoutRewritingPersistentMaxHp()
+    {
+        List<RunCalamityState> calamities = BuildCalamities(
+            CreateCalamity(CalamityBuiltInEffectType.AllyMaxHpPercentModifier, -30));
+        RunPartyMemberState member = new RunPartyMemberState
+        {
+            memberId = "Strawberry Ally",
+            maxHP = 20,
+            currentHP = 20
+        };
+
+        RunPartyMemberEffectiveStats stats = RunPartyMemberEffectiveStatsService.Resolve(member, calamities);
+
+        Assert.AreEqual(20, member.maxHP);
+        Assert.AreEqual(14, stats.maxHP);
+        Assert.AreEqual(14, stats.currentHP);
+
+        member.maxHP = 24;
+        member.currentHP = 24;
+        stats = RunPartyMemberEffectiveStatsService.Resolve(member, calamities);
+
+        Assert.AreEqual(24, member.maxHP);
+        Assert.AreEqual(17, stats.maxHP);
+        Assert.AreEqual(17, stats.currentHP);
+    }
+
+    [Test]
     public void AllyMaxHpCalamity_DoesNotRewritePersistentPartyMaxHpAfterSettlement()
     {
         BattleEncounterData encounter = new BattleEncounterData

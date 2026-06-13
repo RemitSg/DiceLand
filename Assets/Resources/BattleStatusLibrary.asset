@@ -37,3 +37,9 @@ MonoBehaviour:
     statusData: {fileID: 11400000, guid: 6066b89b10d82244fa0763020675fb44, type: 2}
   - statusId: refracted_mark
     statusData: {fileID: 11400000, guid: 0a6541a266887ec4e8d71475ee0106e2, type: 2}
+  - statusId: current
+    statusData: {fileID: 11400000, guid: b137dabbfd68440d8ab3ca76492a4240, type: 2}
+  - statusId: target
+    statusData: {fileID: 0}
+  - statusId: darkness
+    statusData: {fileID: 0}

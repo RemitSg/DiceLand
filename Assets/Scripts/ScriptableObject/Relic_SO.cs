@@ -154,7 +154,20 @@ public class Relic_SO : ScriptableObject
         ModifyBattleExperiencePercentAndHealMissingHp = 95,
         SummonTemporaryAllyFromEnemyDataAtBattleStart = 96,
         QueueNextRoundMinPowerBonusOnMinRollOncePerRound = 97,
-        HealPartyPercentAfterBattleInSpecialDungeon = 98
+        HealPartyPercentAfterBattleInSpecialDungeon = 98,
+        DealDamageWhenEnemyStatusReachesStacksOncePerRound = 99,
+        TransferStatusToAllEnemiesOnEnemyDeath = 100,
+        HealRandomDamagedAllyOnEnemyDeathWithStatus = 101,
+        ReflectEnemyStatusStacksDamageAfterTakingAttackDamage = 102,
+        ApplyStatusToEnemyOnEnemyClashWinWithStatusOncePerRound = 103,
+        PromotePlayerOnHitStatusToSkillUse = 104,
+        SetEnemyStatusRoundEndDecayPercent = 105,
+        PreserveEnemyStatusWhenAllLivingEnemiesHaveStatus = 106,
+        PreventEnemyHealingWhenHasStatus = 107,
+        PreventLethalDamageByTransferringHighestHpAllyHealth = 108,
+        ApplyStatusOnTransferredLethalProtectionWhenEnemyStatusAtLeast = 109,
+        ModifyPlayerClashDiceWhenTargetHasStatusOncePerRound = 110,
+        ModifyOutgoingDamagePercentWhenTargetHasStatus = 111
     }
 
     [Serializable]
