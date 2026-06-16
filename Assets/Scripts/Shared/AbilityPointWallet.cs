@@ -41,6 +41,22 @@ public sealed class AbilityPointWallet
         Save(new WalletData { version = 1, abilityPoints = Mathf.Max(0, amount) });
     }
 
+    public bool TrySpendPoints(int amount, out int remainingPoints)
+    {
+        int cost = Mathf.Max(0, amount);
+        WalletData data = Load();
+        if (data.abilityPoints < cost)
+        {
+            remainingPoints = data.abilityPoints;
+            return false;
+        }
+
+        data.abilityPoints = Mathf.Max(0, data.abilityPoints - cost);
+        Save(data);
+        remainingPoints = data.abilityPoints;
+        return true;
+    }
+
     public void Clear()
     {
         try

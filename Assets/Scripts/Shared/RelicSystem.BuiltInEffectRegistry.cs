@@ -152,6 +152,18 @@ public static partial class RelicSystem
             { Relic_SO.RelicBuiltInEffectType.ApplyStatusOnTransferredLethalProtectionWhenEnemyStatusAtLeast, HandleApplyStatusOnTransferredLethalProtectionWhenEnemyStatusAtLeast },
             { Relic_SO.RelicBuiltInEffectType.ModifyPlayerClashDiceWhenTargetHasStatusOncePerRound, HandleModifyPlayerClashDiceWhenTargetHasStatusOncePerRound },
             { Relic_SO.RelicBuiltInEffectType.ModifyOutgoingDamagePercentWhenTargetHasStatus, HandleModifyOutgoingDamagePercentWhenTargetHasStatus },
+            { Relic_SO.RelicBuiltInEffectType.SetStatusBurstConsumptionPercent, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.ChanceTriggerNonConsumingStatusBurstWhenDamagingStatusTarget, HandleChanceTriggerNonConsumingStatusBurstWhenDamagingStatusTarget },
+            { Relic_SO.RelicBuiltInEffectType.TreatAllyWithStatusAsSpeedBonusAtRoundStart, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.SpreadPlayerStatusBurstDamageToOtherEnemies, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToTargetOnPlayerDamageWhenSourceHasStatus, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.DealDamageToEnemiesWithStatusStacksAtLeastOnBattleRoundEnd, HandleDealDamageToEnemiesWithStatusStacksAtLeastOnBattleRoundEnd },
+            { Relic_SO.RelicBuiltInEffectType.QueueNextRoundStatusOnSourceWhenPlayerStatusBurstDamageAtLeast, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToAllAlliesAtBattleSetup, HandleApplyStatusToAllAlliesAtBattleSetup },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToAllAlliesWhenAllLivingAlliesHaveStatusOnBattleRoundStart, HandleApplyStatusToAllAlliesWhenAllLivingAlliesHaveStatusOnBattleRoundStart },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToSourceOnPlayerStatusBurstDamage, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.DealDamageToPlayerStatusBurstTargetWithConditionStatus, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.PreventLethalDamageByConsumingAllyStatusOncePerBattle, HandlePreventLethalDamageByConsumingAllyStatusOncePerBattle },
         };
     }
 

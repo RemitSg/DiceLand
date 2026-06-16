@@ -199,6 +199,18 @@ public static class RelicBuiltInEffectMetadataCatalog
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusOnTransferredLethalProtectionWhenEnemyStatusAtLeast, requiresStatusData: true, requiresConditionStatusData: true);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ModifyPlayerClashDiceWhenTargetHasStatusOncePerRound, requiresConditionStatusData: true, numericRequirement: RelicBuiltInNumericRequirement.AnyPowerDeltaNonZero, numericFieldPath: "powerAmount/minPowerAmount/maxPowerAmount");
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ModifyOutgoingDamagePercentWhenTargetHasStatus, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.SetStatusBurstConsumptionPercent, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ChanceTriggerNonConsumingStatusBurstWhenDamagingStatusTarget, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.TreatAllyWithStatusAsSpeedBonusAtRoundStart, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.SpreadPlayerStatusBurstDamageToOtherEnemies, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToTargetOnPlayerDamageWhenSourceHasStatus, requiresStatusData: true, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.DealDamageToEnemiesWithStatusStacksAtLeastOnBattleRoundEnd, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.QueueNextRoundStatusOnSourceWhenPlayerStatusBurstDamageAtLeast, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToAllAlliesAtBattleSetup, requiresStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToAllAlliesWhenAllLivingAlliesHaveStatusOnBattleRoundStart, requiresStatusData: true, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToSourceOnPlayerStatusBurstDamage, requiresStatusData: true, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.DealDamageToPlayerStatusBurstTargetWithConditionStatus, requiresStatusData: true, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.PreventLethalDamageByConsumingAllyStatusOncePerBattle, requiresStatusData: true, requiresConditionStatusData: true);
 
         return metadata;
     }

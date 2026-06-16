@@ -19,6 +19,21 @@ public static class AbilityPointWalletEditor
         Debug.Log($"[AbilityPointWallet] Cleared ability points. Current ability points: {wallet.GetCurrentPoints()} | Path: {wallet.FilePath}");
     }
 
+    [MenuItem("Tools/Meta Progression/Clear Ability Progression")]
+    public static void ClearAbilityProgression()
+    {
+        AbilityProgressionService service = new AbilityProgressionService(null);
+        if (!EditorUtility.DisplayDialog(
+                "Clear Ability Progression",
+                $"Clear unlocked ability nodes and enabled states?\n\nAbility points will not be changed.\n\nPath:\n{service.FilePath}",
+                "Clear",
+                "Cancel"))
+            return;
+
+        service.ClearProgression();
+        Debug.Log($"[AbilityProgressionService] Cleared ability progression. Ability points were not changed. Path: {service.FilePath}");
+    }
+
     [MenuItem("Tools/Meta Progression/Set Ability Points...")]
     public static void OpenSetAbilityPointsWindow()
     {

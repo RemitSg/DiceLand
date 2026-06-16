@@ -49,6 +49,21 @@ public class AbilityPointWalletTests
     }
 
     [Test]
+    public void TrySpendPoints_DeductsOnlyWhenEnoughPointsExist()
+    {
+        AbilityPointWallet wallet = new AbilityPointWallet(testPath);
+        wallet.SetPoints(5);
+
+        Assert.IsTrue(wallet.TrySpendPoints(3, out int remainingAfterSuccess));
+        Assert.AreEqual(2, remainingAfterSuccess);
+        Assert.AreEqual(2, wallet.GetCurrentPoints());
+
+        Assert.IsFalse(wallet.TrySpendPoints(3, out int remainingAfterFailure));
+        Assert.AreEqual(2, remainingAfterFailure);
+        Assert.AreEqual(2, wallet.GetCurrentPoints());
+    }
+
+    [Test]
     public void Clear_RemovesStoredPoints()
     {
         AbilityPointWallet wallet = new AbilityPointWallet(testPath);

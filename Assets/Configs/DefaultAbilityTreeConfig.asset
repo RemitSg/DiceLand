@@ -1,0 +1,702 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b89f59d22850b2943b357f5ab6daadeb, type: 3}
+  m_Name: DefaultAbilityTreeConfig
+  m_EditorClassIdentifier: 
+  nodes:
+  - nodeId: start-money-1
+    displayName: "\u8D44\u91D1\u652F\u6301 I"
+    description: "\u5F00\u5C40\u521D\u59CB\u91D1\u5E01 +10\u3002"
+    cost: 1
+    position: {x: -360, y: 180}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - journey-start
+    effects:
+    - effectType: 1
+      intValue: 10
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-money-2
+    displayName: "\u8D44\u91D1\u652F\u6301 II"
+    description: "\u5F00\u5C40\u521D\u59CB\u91D1\u5E01 +10\u3002"
+    cost: 1
+    position: {x: -120, y: 180}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - start-money-1
+    effects:
+    - effectType: 1
+      intValue: 10
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-money-3
+    displayName: "\u8D44\u91D1\u652F\u6301 III"
+    description: "\u5F00\u5C40\u521D\u59CB\u91D1\u5E01 +10\u3002"
+    cost: 1
+    position: {x: 120, y: 180}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - start-money-2
+    effects:
+    - effectType: 1
+      intValue: 10
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: action-limit-1
+    displayName: "\u884C\u52A8\u51C6\u5907 I"
+    description: "\u521D\u59CB\u884C\u52A8\u70B9\u4E0A\u9650 +1\u3002"
+    cost: 1
+    position: {x: -360, y: -57.333298}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - journey-start
+    effects:
+    - effectType: 2
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: action-limit-2
+    displayName: "\u884C\u52A8\u51C6\u5907 II"
+    description: "\u521D\u59CB\u884C\u52A8\u70B9\u4E0A\u9650 +1\u3002"
+    cost: 1
+    position: {x: -120, y: -57.333298}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - action-limit-1
+    effects:
+    - effectType: 2
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: journey-start
+    displayName: "\u65C5\u9014\u7684\u542F\u7A0B"
+    description: "\u6B22\u8FCE\u6765\u5230\u9AB0\u63B7\u5927\u9646\uFF01"
+    cost: 0
+    position: {x: -599, y: 180}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds: []
+    effects: []
+  - nodeId: action-limit-3
+    displayName: "\u884C\u52A8\u51C6\u5907 III"
+    description: "\u521D\u59CB\u884C\u52A8\u70B9\u4E0A\u9650 +1\u3002"
+    cost: 1
+    position: {x: 120, y: -57.333298}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - action-limit-2
+    effects:
+    - effectType: 2
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-health-1
+    displayName: "\u5F3A\u8EAB\u5065\u4F53 I"
+    description: "\u961F\u4F0D\u6700\u5927\u751F\u547D\u503C +1\u3002"
+    cost: 2
+    position: {x: -120, y: 411.1667}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - journey-start
+    effects:
+    - effectType: 14
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-health-2
+    displayName: "\u5F3A\u8EAB\u5065\u4F53 II"
+    description: "\u961F\u4F0D\u6700\u5927\u751F\u547D\u503C +1\u3002"
+    cost: 3
+    position: {x: 896.3335, y: 411.1667}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - start-random-relic
+    effects:
+    - effectType: 14
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-health-3
+    displayName: "\u5F3A\u8EAB\u5065\u4F53 III"
+    description: "\u961F\u4F0D\u6700\u5927\u751F\u547D\u503C +1"
+    cost: 3
+    position: {x: 2001.0002, y: 411.1667}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - start-scroll
+    effects:
+    - effectType: 14
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-weapon-update
+    displayName: "\u6B66\u5668\u5347\u7EA7"
+    description: "Chara \u7684\u521D\u59CB\u6B66\u5668\u66FF\u6362\u4E3A \u94C1\u5251"
+    cost: 5
+    position: {x: 3186.3335, y: 411.1667}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - start-health-4
+    effects:
+    - effectType: 12
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 11400000, guid: cdf2798ce1fc9ed42954b0864d1ce01f, type: 2}
+  - nodeId: start-random-relic
+    displayName: "\u521D\u59CB\u9057\u7269"
+    description: "\u521D\u59CB\u83B7\u5F97\u4E00\u4E2A\u968F\u673A\u9057\u7269"
+    cost: 3
+    position: {x: 406.99994, y: 180}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - action-limit-3
+    - start-money-3
+    - start-health-1
+    effects:
+    - effectType: 4
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 11400000, guid: 6650ae7fed330b7408b1cad987b54259, type: 2}
+      relicRarityWeightTable: {fileID: 11400000, guid: 7da05b5e6bfa4573996fa75fcb8c6e90, type: 2}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: shop-member
+    displayName: "\u4F1A\u5458\u7528\u6237"
+    description: "\u8FDB\u5165\u672A\u63A2\u7D22\u7684\u5546\u5E97\u4F1A\u83B7\u5F97
+      1 \u6B21\u514D\u8D39\u5237\u65B0"
+    cost: 5
+    position: {x: 3186.3335, y: 180}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - start-money-10
+    effects:
+    - effectType: 5
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-scroll
+    displayName: "\u521D\u59CB\u5377\u8F74"
+    description: "\u521D\u59CB\u83B7\u5F97\u4E00\u5F20\u968F\u673A\u5377\u8F74"
+    cost: 5
+    position: {x: 1424.333, y: 180}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - action-limit-5
+    - start-money-6
+    - start-health-2
+    effects:
+    - effectType: 3
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 11400000, guid: 0b95334a03d081d48975d7b1ec2265ad, type: 2}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: temp-energy
+    displayName: "\u80FD\u91CF\u7206\u53D1"
+    description: "\u6218\u6597\u5F00\u59CB\u65F6\uFF0C\u83B7\u5F97 2 \u70B9\u4E34\u65F6\u80FD\u91CF"
+    cost: 5
+    position: {x: 1424.333, y: -57.333298}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - action-limit-5
+    effects:
+    - effectType: 7
+      intValue: 2
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: action-limit-4
+    displayName: "\u884C\u52A8\u51C6\u5907 IV"
+    description: "\u521D\u59CB\u884C\u52A8\u70B9\u4E0A\u9650 +1\u3002"
+    cost: 2
+    position: {x: 790.33325, y: -57.333298}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - start-random-relic
+    effects:
+    - effectType: 2
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: action-limit-5
+    displayName: "\u884C\u52A8\u51C6\u5907 V"
+    description: "\u521D\u59CB\u884C\u52A8\u70B9\u4E0A\u9650 +1\u3002"
+    cost: 2
+    position: {x: 1012.3334, y: -57.333298}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - action-limit-4
+    effects:
+    - effectType: 2
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-money-4
+    displayName: "\u8D44\u91D1\u652F\u6301 IV"
+    description: "\u5F00\u5C40\u521D\u59CB\u91D1\u5E01 +10\u3002"
+    cost: 2
+    position: {x: 675.6666, y: 180}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - start-random-relic
+    effects:
+    - effectType: 1
+      intValue: 10
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-money-5
+    displayName: "\u8D44\u91D1\u652F\u6301 V"
+    description: "\u5F00\u5C40\u521D\u59CB\u91D1\u5E01 +10\u3002"
+    cost: 2
+    position: {x: 896.3335, y: 180}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - start-money-4
+    effects:
+    - effectType: 1
+      intValue: 10
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-money-6
+    displayName: "\u8D44\u91D1\u652F\u6301 VI"
+    description: "\u5F00\u5C40\u521D\u59CB\u91D1\u5E01 +10\u3002"
+    cost: 2
+    position: {x: 1127.0001, y: 180}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - start-money-5
+    effects:
+    - effectType: 1
+      intValue: 10
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-money-7
+    displayName: "\u8D44\u91D1\u652F\u6301 VII"
+    description: "\u5F00\u5C40\u521D\u59CB\u91D1\u5E01 +10\u3002"
+    cost: 3
+    position: {x: 1725.0002, y: 180}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - start-scroll
+    effects:
+    - effectType: 1
+      intValue: 10
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-money-8
+    displayName: "\u8D44\u91D1\u652F\u6301 VIII"
+    description: "\u5F00\u5C40\u521D\u59CB\u91D1\u5E01 +10\u3002"
+    cost: 3
+    position: {x: 2001.0002, y: 180}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - start-money-7
+    effects:
+    - effectType: 1
+      intValue: 10
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-money-9
+    displayName: "\u8D44\u91D1\u652F\u6301 IX"
+    description: "\u5F00\u5C40\u521D\u59CB\u91D1\u5E01 +10\u3002"
+    cost: 3
+    position: {x: 2563.0002, y: 180}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - half-price
+    effects:
+    - effectType: 1
+      intValue: 10
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-money-10
+    displayName: "\u8D44\u91D1\u652F\u6301 X"
+    description: "\u5F00\u5C40\u521D\u59CB\u91D1\u5E01 +10\u3002"
+    cost: 3
+    position: {x: 2882.3337, y: 180}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - start-money-9
+    effects:
+    - effectType: 1
+      intValue: 10
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-health-4
+    displayName: "\u5F3A\u8EAB\u5065\u4F53 IV"
+    description: "\u961F\u4F0D\u6700\u5927\u751F\u547D\u503C +1"
+    cost: 3
+    position: {x: 2563.0002, y: 411.1667}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - start-health-3
+    effects:
+    - effectType: 14
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-companion
+    displayName: "\u65B0\u7684\u4F19\u4F34"
+    description: "\u521D\u59CB\u961F\u4F0D\u4EBA\u6570 +1\u3002"
+    cost: 5
+    position: {x: 2001.0002, y: -293.33334}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - temp-energy
+    effects:
+    - effectType: 9
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: start-with-Jenny
+    displayName: "Jenny \u7684\u6CD5\u6756"
+    description: "\u56FA\u5B9A\u9009\u62E9 Jenny \u4F5C\u4E3A\u521D\u59CB\u4F19\u4F34"
+    cost: 5
+    position: {x: 2276.3333, y: -407.50165}
+    isToggleable: 1
+    enabledByDefault: 1
+    mutualExclusionGroupId: 1
+    prerequisiteNodeIds:
+    - start-companion
+    effects:
+    - effectType: 10
+      intValue: 10
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 11400000, guid: 658e22cc7dec223479091c6817751025, type: 2}
+      weaponData: {fileID: 0}
+  - nodeId: start-with-Molly
+    displayName: "Molly \u7684\u77ED\u5315"
+    description: "\u56FA\u5B9A\u9009\u62E9 Molly \u4F5C\u4E3A\u521D\u59CB\u4F19\u4F34"
+    cost: 5
+    position: {x: 2276.3333, y: -293.33334}
+    isToggleable: 1
+    enabledByDefault: 1
+    mutualExclusionGroupId: 1
+    prerequisiteNodeIds:
+    - start-companion
+    effects:
+    - effectType: 10
+      intValue: 10
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 11400000, guid: 5121d91a4381d6748a08ee2236cc03fd, type: 2}
+      weaponData: {fileID: 0}
+  - nodeId: start-with-Man
+    displayName: "Man \u7684\u5DE8\u65A7"
+    description: "\u56FA\u5B9A\u9009\u62E9 Molly \u4F5C\u4E3A\u521D\u59CB\u4F19\u4F34"
+    cost: 5
+    position: {x: 2276.3333, y: -176.66666}
+    isToggleable: 1
+    enabledByDefault: 1
+    mutualExclusionGroupId: 1
+    prerequisiteNodeIds:
+    - start-companion
+    effects:
+    - effectType: 10
+      intValue: 10
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 11400000, guid: fce426096f554744093a4718f5aa0f45, type: 2}
+      weaponData: {fileID: 0}
+  - nodeId: relic-refresh
+    displayName: "\u91CD\u65B0\u518D\u6765"
+    description: 
+    cost: 8
+    position: {x: 3524.3335, y: 180}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - shop-member
+    effects:
+    - effectType: 13
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: action-limit-6
+    displayName: "\u884C\u52A8\u51C6\u5907 VI"
+    description: "\u521D\u59CB\u884C\u52A8\u70B9\u4E0A\u9650 +1\u3002"
+    cost: 3
+    position: {x: 2001.0002, y: -57.333298}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - temp-energy
+    effects:
+    - effectType: 2
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: action-limit-7
+    displayName: "\u884C\u52A8\u51C6\u5907 VII"
+    description: "\u521D\u59CB\u884C\u52A8\u70B9\u4E0A\u9650 +1\u3002"
+    cost: 3
+    position: {x: 2276.3333, y: -57.333298}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - action-limit-6
+    effects:
+    - effectType: 2
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}
+  - nodeId: half-price
+    displayName: "\u534A\u4EF7\u4F18\u60E0"
+    description: "\u9996\u6B21\u5728\u5546\u5E97\u8D2D\u7269\u4EAB\u53D7\u534A\u4EF7\u4F18\u60E0"
+    cost: 5
+    position: {x: 2276.3333, y: 180}
+    isToggleable: 0
+    enabledByDefault: 1
+    mutualExclusionGroupId: 
+    prerequisiteNodeIds:
+    - start-money-8
+    effects:
+    - effectType: 6
+      intValue: 1
+      blueprintData: {fileID: 0}
+      blueprintTable: {fileID: 0}
+      lootTable: {fileID: 0}
+      relicTable: {fileID: 0}
+      relicRarityWeightTable: {fileID: 0}
+      treasureRewardTable: {fileID: 0}
+      characterData: {fileID: 0}
+      weaponData: {fileID: 0}

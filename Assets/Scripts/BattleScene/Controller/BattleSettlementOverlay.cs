@@ -783,6 +783,21 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private void BuildButtons(BattleSettlementData data)
     {
+        if (data != null && data.isVictory && showRetryButton)
+        {
+            CreateRetryButton(data);
+            CreateReturnButton(data);
+            return;
+        }
+
+        CreateReturnButton(data);
+
+        if (showRetryButton)
+            CreateRetryButton(data);
+    }
+
+    private void CreateReturnButton(BattleSettlementData data)
+    {
         CreateActionButton(
             buttonRoot,
             "ReturnButton",
@@ -794,15 +809,15 @@ public class BattleSettlementOverlay : MonoBehaviour
                 else
                     HandleReturnToMap(data);
             });
+    }
 
-        if (!showRetryButton)
-            return;
-
+    private void CreateRetryButton(BattleSettlementData data)
+    {
         CreateActionButton(
             buttonRoot,
             "RetryButton",
             retryButtonLabel,
-            () => HandleRetryBattle(data.retrySceneName));
+            () => HandleRetryBattle(data != null ? data.retrySceneName : null));
     }
 
     private void HandleReturnToMap(BattleSettlementData data)

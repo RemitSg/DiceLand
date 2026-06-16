@@ -11358,6 +11358,8 @@ MonoBehaviour:
   demoTestLabel: DemoTest
   disabledContinueColor: {r: 0.55, g: 0.55, b: 0.55, a: 0.9}
   noSaveSuffix: (No Save)
+  abilityLabel: "\u80FD\u529B"
+  abilityTreeConfig: {fileID: 11400000, guid: 7ed652836a7ea3e4abb6de15e94ce9e4, type: 2}
   tutorialCatalog: {fileID: 0}
   tutorialCatalogResourcesPath: TutorialMenuCatalog
   contributorsConfig:

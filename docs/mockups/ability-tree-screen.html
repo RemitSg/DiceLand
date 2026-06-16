@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>能力菜单 Mockup</title>
+  <style>
+    :root {
+      --bg: #080b0f;
+      --panel: rgba(11, 19, 26, .92);
+      --panel-2: rgba(7, 13, 18, .86);
+      --gold: #d7a94d;
+      --gold-soft: #8d6a2d;
+      --text: #eee2c8;
+      --muted: #a99d85;
+      --locked: #363a3f;
+      --available: #24415a;
+      --unlocked: #4a3512;
+      --line: #b88735;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 26% 18%, rgba(105, 74, 28, .22), transparent 28%),
+        radial-gradient(circle at 76% 12%, rgba(64, 42, 121, .16), transparent 22%),
+        linear-gradient(135deg, #050608, #101721 48%, #07090d);
+      color: var(--text);
+      font-family: "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+      overflow: hidden;
+    }
+
+    .screen {
+      width: 100vw;
+      height: 100vh;
+      padding: 34px 42px;
+      display: grid;
+      grid-template-columns: 300px 1fr 360px;
+      gap: 22px;
+    }
+
+    .sidebar, .tree, .details {
+      border: 2px solid rgba(208, 157, 66, .45);
+      background: var(--panel);
+      box-shadow: inset 0 0 0 1px rgba(255, 224, 149, .08), 0 20px 60px rgba(0,0,0,.38);
+    }
+
+    .sidebar {
+      padding: 26px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .brand {
+      height: 86px;
+      border: 1px solid rgba(215, 169, 77, .28);
+      display: grid;
+      place-items: center;
+      color: #ffd86f;
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      background: rgba(0,0,0,.24);
+    }
+
+    .points {
+      padding: 20px;
+      border: 1px solid rgba(215, 169, 77, .35);
+      background: rgba(20, 13, 7, .58);
+    }
+    .points small { color: var(--muted); font-weight: 700; }
+    .points strong {
+      display: block;
+      margin-top: 10px;
+      font-size: 54px;
+      line-height: 1;
+      color: #ffe08f;
+    }
+
+    .menu-btn {
+      height: 58px;
+      border: 1px solid rgba(215, 169, 77, .38);
+      background: rgba(21, 27, 31, .9);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 800;
+    }
+    .menu-btn.active {
+      background: linear-gradient(90deg, rgba(118, 73, 19, .9), rgba(39, 28, 18, .9));
+      color: #ffe3a2;
+    }
+    .spacer { flex: 1; }
+
+    .tree {
+      position: relative;
+      padding: 26px 32px;
+      overflow: hidden;
+    }
+    .tree-header {
+      height: 72px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .tree h1 {
+      margin: 0;
+      font-size: 34px;
+      color: #f2e6cb;
+    }
+    .tree-header .hint {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 15px;
+    }
+    .legend {
+      display: flex;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      padding-top: 8px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      display: inline-block;
+      margin-right: 6px;
+      vertical-align: middle;
+      border-radius: 50%;
+      background: var(--locked);
+    }
+    .dot.available { background: #4f89b8; }
+    .dot.unlocked { background: #d6a548; }
+
+    .canvas {
+      position: absolute;
+      left: 32px;
+      right: 32px;
+      top: 106px;
+      bottom: 28px;
+      border: 1px solid rgba(215, 169, 77, .2);
+      background:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px),
+        var(--panel-2);
+      background-size: 42px 42px;
+    }
+
+    svg.links {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .links path {
+      fill: none;
+      stroke: rgba(184, 135, 53, .72);
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+    .links path.locked { stroke: rgba(98, 101, 105, .55); }
+
+    .node {
+      position: absolute;
+      width: 170px;
+      height: 92px;
+      transform: translate(-50%, -50%);
+      border: 2px solid rgba(255,255,255,.12);
+      background: var(--locked);
+      display: grid;
+      grid-template-columns: 50px 1fr;
+      align-items: center;
+      padding: 10px;
+      gap: 8px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.32);
+    }
+    .node.available {
+      background: linear-gradient(135deg, #1a3348, #0e1721);
+      border-color: rgba(95, 165, 215, .75);
+    }
+    .node.unlocked {
+      background: linear-gradient(135deg, #53390f, #181007);
+      border-color: rgba(229, 181, 80, .9);
+    }
+    .icon {
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(255,255,255,.18);
+      display: grid;
+      place-items: center;
+      color: #ffd980;
+      font-size: 24px;
+      background: rgba(0,0,0,.28);
+    }
+    .node-title {
+      font-weight: 900;
+      font-size: 16px;
+      white-space: nowrap;
+    }
+    .node-cost {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .node.available .node-cost { color: #b8def5; }
+    .node.unlocked .node-cost { color: #ffe0a0; }
+
+    .details {
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .details h2 {
+      margin: 0;
+      font-size: 30px;
+      color: #ffe0a0;
+    }
+    .state {
+      display: inline-block;
+      width: fit-content;
+      padding: 6px 12px;
+      border: 1px solid rgba(95,165,215,.7);
+      color: #b8def5;
+      background: rgba(22, 55, 80, .45);
+      font-weight: 800;
+    }
+    .desc {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+    .effect-list, .req-list {
+      border-top: 1px solid rgba(215,169,77,.28);
+      padding-top: 16px;
+    }
+    .section-title {
+      color: #f0d18d;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+    .line {
+      height: 42px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .line span:last-child { color: #ffe08f; font-weight: 900; }
+    .unlock {
+      margin-top: auto;
+      height: 64px;
+      border: 1px solid rgba(215,169,77,.64);
+      background: linear-gradient(90deg, #694215, #2d2114);
+      color: #ffe2a0;
+      font-size: 22px;
+      font-weight: 900;
+    }
+  </style>
+</head>
+<body>
+  <main class="screen">
+    <aside class="sidebar">
+      <div class="brand">骰掷大陆</div>
+      <div class="points">
+        <small>当前能力点</small>
+        <strong>7</strong>
+      </div>
+      <div class="menu-btn">开始游戏</div>
+      <div class="menu-btn">继续游戏</div>
+      <div class="menu-btn active">能力</div>
+      <div class="menu-btn">设置</div>
+      <div class="spacer"></div>
+      <div class="menu-btn">返回主菜单</div>
+    </aside>
+
+    <section class="tree">
+      <div class="tree-header">
+        <div>
+          <h1>能力树</h1>
+          <div class="hint">解锁前置节点后，消耗能力点激活后续加成。</div>
+        </div>
+        <div class="legend">
+          <span><i class="dot unlocked"></i>已解锁</span>
+          <span><i class="dot available"></i>可解锁</span>
+          <span><i class="dot"></i>未开放</span>
+        </div>
+      </div>
+
+      <div class="canvas">
+        <svg class="links" viewBox="0 0 1000 650" preserveAspectRatio="none">
+          <path d="M120 310 C210 310 210 310 300 310"></path>
+          <path d="M300 310 C390 310 390 310 480 310"></path>
+          <path d="M480 310 C560 230 610 220 690 210"></path>
+          <path d="M480 310 C570 310 600 310 700 310"></path>
+          <path class="locked" d="M700 310 C790 310 800 310 880 310"></path>
+        </svg>
+
+        <div class="node unlocked" style="left:12%; top:48%">
+          <div class="icon">金</div>
+          <div><div class="node-title">初始资金 I</div><div class="node-cost">已解锁</div></div>
+        </div>
+        <div class="node unlocked" style="left:30%; top:48%">
+          <div class="icon">金</div>
+          <div><div class="node-title">初始资金 II</div><div class="node-cost">已解锁</div></div>
+        </div>
+        <div class="node available" style="left:48%; top:48%">
+          <div class="icon">金</div>
+          <div><div class="node-title">初始资金 III</div><div class="node-cost">消耗 3 点</div></div>
+        </div>
+        <div class="node" style="left:69%; top:32%">
+          <div class="icon">行</div>
+          <div><div class="node-title">行动准备 I</div><div class="node-cost">需要 初始资金 III</div></div>
+        </div>
+        <div class="node" style="left:70%; top:48%">
+          <div class="icon">行</div>
+          <div><div class="node-title">行动准备 II</div><div class="node-cost">需要 初始资金 III</div></div>
+        </div>
+        <div class="node" style="left:88%; top:48%">
+          <div class="icon">钥</div>
+          <div><div class="node-title">备用钥匙</div><div class="node-cost">需要 行动准备 II</div></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="details">
+      <h2>初始资金 III</h2>
+      <div class="state">可解锁</div>
+      <p class="desc">在每局开始时获得额外启动资金。适合更早购买补给、打造武器或应对前期事件。</p>
+
+      <div class="effect-list">
+        <div class="section-title">节点效果</div>
+        <div class="line"><span>初始金币量</span><span>+10</span></div>
+      </div>
+
+      <div class="req-list">
+        <div class="section-title">解锁条件</div>
+        <div class="line"><span>前置节点</span><span>初始资金 II</span></div>
+        <div class="line"><span>消耗能力点</span><span>3</span></div>
+      </div>
+
+      <button class="unlock">花费 3 点解锁</button>
+    </aside>
+  </main>
+</body>
+</html>

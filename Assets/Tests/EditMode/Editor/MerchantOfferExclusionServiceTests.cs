@@ -57,6 +57,38 @@ public class MerchantOfferExclusionServiceTests
     }
 
     [Test]
+    public void BuildUnavailableBlueprintSet_IncludesBlueprintsForOwnedWeapons()
+    {
+        Weapon_SO ownedWeapon = CreateWeapon();
+        Weapon_SO missingWeapon = CreateWeapon();
+        CraftingBlueprint_SO ownedBlueprint = CreateBlueprint();
+        CraftingBlueprint_SO ownedWeaponBlueprint = CreateBlueprint(ownedWeapon);
+        CraftingBlueprint_SO availableBlueprint = CreateBlueprint(missingWeapon);
+        RunState runState = new RunState
+        {
+            weaponInventory = new List<RunWeaponState>
+            {
+                new RunWeaponState { weaponData = ownedWeapon, amount = 1 }
+            },
+            blueprintInventory = new List<RunBlueprintState>
+            {
+                new RunBlueprintState { blueprintData = ownedBlueprint, amount = 1 }
+            }
+        };
+        List<MerchantCatalog_SO.BlueprintGoodsEntry> source = new List<MerchantCatalog_SO.BlueprintGoodsEntry>
+        {
+            new MerchantCatalog_SO.BlueprintGoodsEntry { blueprintData = ownedBlueprint },
+            new MerchantCatalog_SO.BlueprintGoodsEntry { blueprintData = ownedWeaponBlueprint },
+            new MerchantCatalog_SO.BlueprintGoodsEntry { blueprintData = availableBlueprint }
+        };
+
+        HashSet<CraftingBlueprint_SO> unavailable = MerchantOfferExclusionService.BuildUnavailableBlueprintSet(runState, source);
+
+        CollectionAssert.AreEquivalent(new[] { ownedBlueprint, ownedWeaponBlueprint }, unavailable);
+        Assert.IsFalse(unavailable.Contains(availableBlueprint));
+    }
+
+    [Test]
     public void BuildCurrentMerchantLootSet_HonorsIgnoreOfferAndSoldOutFilter()
     {
         LootItem_SO activeLoot = CreateLoot();
@@ -144,6 +176,13 @@ public class MerchantOfferExclusionServiceTests
     {
         CraftingBlueprint_SO asset = ScriptableObject.CreateInstance<CraftingBlueprint_SO>();
         createdObjects.Add(asset);
+        return asset;
+    }
+
+    private CraftingBlueprint_SO CreateBlueprint(Weapon_SO targetWeapon)
+    {
+        CraftingBlueprint_SO asset = CreateBlueprint();
+        asset.targetWeapon = targetWeapon;
         return asset;
     }
 

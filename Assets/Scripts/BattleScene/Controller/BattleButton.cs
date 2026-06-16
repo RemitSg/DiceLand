@@ -88,6 +88,7 @@ public class BattleButton : MonoBehaviour
     private bool enemyBattleStartEffectsApplied;
     private bool battleStartEnergyCalamityApplied;
     private bool allyBattleStartCalamityApplied;
+    private bool abilityBattleStartMaxHealthApplied;
     private int currentSharedEnergy;
     private int temporarySharedEnergy;
     private int currentSharedEnergyMax;
@@ -120,6 +121,7 @@ public class BattleButton : MonoBehaviour
         enemyBattleStartEffectsApplied = false;
         battleStartEnergyCalamityApplied = false;
         allyBattleStartCalamityApplied = false;
+        abilityBattleStartMaxHealthApplied = false;
         currentSharedEnergyMax = Mathf.Max(0, initialSharedEnergyMax);
         currentSharedEnergy = currentSharedEnergyMax;
         temporarySharedEnergy = 0;
@@ -300,6 +302,7 @@ public class BattleButton : MonoBehaviour
         temporarySharedEnergy = energyRoundStartState.TemporarySharedEnergy;
         reservedSharedEnergy = energyRoundStartState.ReservedSharedEnergy;
         ApplyBattleStartSharedEnergyCalamityIfNeeded();
+        ApplyAbilityBattleStartMaxHealthIfNeeded(allies);
         ApplyAllyBattleStartCalamityEffectsIfNeeded(allies);
         RefreshSharedEnergyUi();
 
@@ -387,6 +390,25 @@ public class BattleButton : MonoBehaviour
         battleStartEnergyCalamityApplied = true;
         BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
         int energyDelta = CalamitySystem.ResolveBattleStartSharedEnergyDelta(activeEncounter != null ? activeEncounter.activeCalamities : null);
+        if (activeEncounter != null)
+        {
+            int maxEnergyBonus = Mathf.Max(0, activeEncounter.abilityBattleStartEnergyMaxFlat);
+            if (maxEnergyBonus > 0)
+            {
+                int addedMax = IncreaseSharedEnergyMaxAtBattleStart(maxEnergyBonus);
+                if (addedMax > 0)
+                    BattleLog($"能力效果：战斗开始时能量上限 +{addedMax}");
+            }
+
+            int temporaryEnergyBonus = Mathf.Max(0, activeEncounter.abilityBattleStartTemporaryEnergy);
+            if (temporaryEnergyBonus > 0)
+            {
+                int addedTemporary = AddTemporarySharedEnergy(temporaryEnergyBonus);
+                if (addedTemporary > 0)
+                    BattleLog($"能力效果：战斗开始时获得 {addedTemporary} 点临时能量");
+            }
+        }
+
         if (energyDelta == 0)
             return;
 
@@ -395,6 +417,32 @@ public class BattleButton : MonoBehaviour
         BattleLog(energyDelta > 0
             ? $"灾厄效果：战斗开始时获得 {energyDelta} 点能量"
             : $"灾厄效果：战斗开始时失去 {Mathf.Abs(energyDelta)} 点能量");
+    }
+
+    private void ApplyAbilityBattleStartMaxHealthIfNeeded(BattleAllyController[] allies)
+    {
+        if (abilityBattleStartMaxHealthApplied)
+            return;
+
+        abilityBattleStartMaxHealthApplied = true;
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        int maxHealthBonus = activeEncounter != null ? Mathf.Max(0, activeEncounter.abilityBattleStartMaxHealthFlat) : 0;
+        if (maxHealthBonus <= 0 || allies == null)
+            return;
+
+        int affectedCount = 0;
+        for (int i = 0; i < allies.Length; i++)
+        {
+            BattleAllyController ally = allies[i];
+            if (ally == null || ally.IsDead)
+                continue;
+
+            if (ally.IncreaseMaxHealthAndHeal(maxHealthBonus) > 0)
+                affectedCount++;
+        }
+
+        if (affectedCount > 0)
+            BattleLog($"能力效果：所有友方最大生命 +{maxHealthBonus}，并回复相同数值");
     }
 
     private void ApplyEnemyBattleStartCalamityStatuses(BattleEnemyController[] enemies)
@@ -3977,6 +4025,7 @@ public class BattleButton : MonoBehaviour
             attacker,
             target);
         BattleRelicBridge.Process(activeEncounter, context, (encounter, relicContext) => BattleRelicEffectRunner.Process(encounter, relicContext, BattleLog));
+        RelicSystem.ApplyRelicStatusOnPlayerDamage(attacker, target, dealtDamage);
     }
 
     private void ApplyEnemyKilledByPlayerRelics(
@@ -5631,7 +5680,27 @@ public class BattleButton : MonoBehaviour
 
     private void ApplyStatusBurst(BattleAllyController attacker, BattleEnemyController target, EnemySkill_SO.StatusBurstDamageEffectEntry effect, int effectIndex)
     {
-        ApplyStatusBurst(attacker.GetDebugDisplayName(), BuildStatusBurstEffectLabel(effect, effectIndex), CreateStatusTargetAdapter(target, true), effect, damage => ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, -1, damage));
+        if (attacker == null || target == null)
+            return;
+        if (!TryResolveStatus(effect, out BattleStatus_SO statusData, out string statusId, out string statusName))
+            return;
+
+        int stacks = target.GetStatusStacks(statusData);
+        if (stacks <= 0)
+            stacks = target.GetStatusStacks(statusId);
+
+        string attackerName = attacker.GetDebugDisplayName();
+        string effectLabel = BuildStatusBurstEffectLabel(effect, effectIndex);
+        RelicSystem.DispatchPlayerStatusBurst(
+            attacker,
+            target,
+            statusData,
+            statusId,
+            statusName,
+            effect.damagePerStack,
+            effect.clearStacksAfterBurst,
+            damage => ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, -1, damage),
+            (modifiedDamage, _) => BattleLog($"\u8bcd\u6761\u89e6\u53d1\uff1a{attackerName}[{effectLabel}] \u5f15\u53d1 {target.GetDebugDisplayName()} \u7684 {statusName}\uff0c\u9020\u6210 {modifiedDamage} \u70b9\u989d\u5916\u4f24\u5bb3\uff08{effect.damagePerStack} x {stacks}\uff09{(effect.clearStacksAfterBurst ? $"\uff0c\u6d88\u8017 {statusName}" : string.Empty)}\uff0c\u5269\u4f59HP {target.CurrentHP}/{target.MaxHP}"));
     }
 
     private void ApplyStatusBurst(BattleEnemyController attacker, BattleAllyController target, EnemySkill_SO.StatusBurstDamageEffectEntry effect, int effectIndex)
@@ -6372,6 +6441,7 @@ public class BattleButton : MonoBehaviour
         results.lootRewards = BattleRewardAggregationService.BuildLootRewardsFromAggregation(aggregated);
 
         ApplyRelicChoiceRefreshRelics(encounter, results.relicChoice);
+        AbilityRunBonusRuntimeService.ApplyRelicChoiceRefreshBonus(encounter, results.relicChoice);
 
         BattleBonusLootRewardService.ApplyBonusLootRewards(
             results.lootRewards,

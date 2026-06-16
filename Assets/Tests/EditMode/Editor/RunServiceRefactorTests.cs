@@ -148,12 +148,13 @@ public class RunServiceRefactorTests
         {
             partyMembers = new List<RunPartyMemberState>
             {
-                new RunPartyMemberState { memberId = "Alive", maxHP = 10, currentHP = 5 },
+                new RunPartyMemberState { memberId = "Alive", preCalamityMaxHP = 10, maxHP = 10, currentHP = 5 },
                 new RunPartyMemberState { memberId = "Dead", maxHP = 10, currentHP = 0 }
             },
             relicInventory = new List<RunRelicState> { new RunRelicState { relicData = relic, amount = 1 } },
-            activeCalamities = new List<RunCalamityState> { new RunCalamityState { calamityData = calamity, acquiredAtTier = 1 } }
+            activeCalamities = new List<RunCalamityState> { new RunCalamityState { calamityData = calamity, acquiredAtTier = 1 } },
         };
+        AbilityRunBonusRuntimeService.ApplyPersistentRunBonuses(runState, new AbilityRunBonus { battleStartMaxHealthFlat = 8 });
 
         BattleEncounterData encounter = MapBattleEncounterService.BuildEncounter(
             new MapBattleEncounterBuildRequest
@@ -171,6 +172,10 @@ public class RunServiceRefactorTests
         Assert.AreEqual(1, encounter.activeCalamities.Count);
         Assert.AreEqual(37, encounter.configuredExperienceReward);
         Assert.AreEqual(99, encounter.seed);
+        Assert.AreEqual(18, encounter.partyMembers[0].preCalamityMaxHP);
+        Assert.AreEqual(18, encounter.partyMembers[0].maxHP);
+        Assert.AreEqual(13, encounter.partyMembers[0].currentHP);
+        Assert.AreEqual(0, encounter.abilityBattleStartMaxHealthFlat);
     }
 
     [Test]

@@ -37,6 +37,16 @@ public class MainMenuSceneControllerTutorialTests
     }
 
     [Test]
+    public void ResolveMenuAction_RecognizesAbilityIdentity()
+    {
+        MethodInfo method = typeof(MainMenuSceneController).GetMethod("ResolveMenuAction", BindingFlags.Static | BindingFlags.NonPublic, null, new[] { typeof(string) }, null);
+
+        Assert.AreEqual("Ability", method.Invoke(null, new object[] { "Ability" }).ToString());
+        Assert.AreEqual("Ability", method.Invoke(null, new object[] { "ability" }).ToString());
+        Assert.AreEqual("Ability", method.Invoke(null, new object[] { "能力" }).ToString());
+    }
+
+    [Test]
     public void ConfigureMainMenuItems_WhenTutorialMissing_InjectsTutorialEntryAfterContinue()
     {
         GameObject root = new GameObject("MainMenuRoot");
@@ -58,17 +68,19 @@ public class MainMenuSceneControllerTutorialTests
         SetPrivateField(controller, "newGameLabel", "NewGame");
         SetPrivateField(controller, "continueLabel", "Continue");
         SetPrivateField(controller, "tutorialLabel", "Tutorial");
+        SetPrivateField(controller, "abilityLabel", "Ability");
         SetPrivateField(controller, "demoTestLabel", "DemoTest");
         InvokePrivate(controller, "NormalizeLegacyDefaultLabels");
         SetPrivateField(controller, "tutorialLabel", "教程");
         InvokePrivate(controller, "ConfigureMainMenuItems");
 
-        Assert.AreEqual(4, gallery.items.Length);
+        Assert.AreEqual(5, gallery.items.Length);
         Assert.AreEqual("新游戏", gallery.items[0].levelName);
         Assert.AreEqual("继续游戏", gallery.items[1].levelName);
         Assert.AreEqual("教程", gallery.items[2].levelName);
         Assert.AreEqual("测试战斗", gallery.items[3].levelName);
         Assert.AreNotSame(demoItem.gameObject, gallery.items[2].gameObject);
+        Assert.AreEqual("Ability", gallery.items[4].levelName);
     }
 
     [Test]

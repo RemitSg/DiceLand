@@ -400,9 +400,11 @@ public static class MapRunRuntime
             weaponData = initialWeapon,
             level = 1,
             experience = 0,
+            preCalamityMaxHP = baseHp,
             maxHP = baseHp,
             currentHP = baseHp
         });
+        RunPartyMemberMaxHpService.RecalculateParty(currentSnapshot.runState);
 
         if (initialWeapon != null)
             currentSnapshot.runState.AddWeapon(initialWeapon, 1);

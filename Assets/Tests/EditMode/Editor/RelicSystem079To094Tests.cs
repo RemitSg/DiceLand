@@ -38,8 +38,8 @@ public class RelicSystem079To094Tests
         {
             partyMembers = new List<RunPartyMemberState>
             {
-                new RunPartyMemberState { memberId = "a", maxHP = 10, currentHP = 7 },
-                new RunPartyMemberState { memberId = "b", maxHP = 20, currentHP = 20 }
+                new RunPartyMemberState { memberId = "a", preCalamityMaxHP = 10, maxHP = 10, currentHP = 7 },
+                new RunPartyMemberState { memberId = "b", preCalamityMaxHP = 20, maxHP = 20, currentHP = 20 }
             }
         };
 
@@ -51,6 +51,40 @@ public class RelicSystem079To094Tests
         Assert.AreEqual(10, runState.partyMembers[0].currentHP);
         Assert.AreEqual(23, runState.partyMembers[1].maxHP);
         Assert.AreEqual(23, runState.partyMembers[1].currentHP);
+    }
+
+    [Test]
+    public void AcquireMaxHpRelic_RecalculatesEffectiveMaxHpUnderCalamity()
+    {
+        Relic_SO strawberry = CreateRelic(
+            "strawberry",
+            Relic_SO.RelicTrigger.OnRelicAcquired,
+            Relic_SO.RelicBuiltInEffectType.IncreasePartyMaxHpOnAcquire,
+            effect => effect.amount = 4);
+        RunState runState = new RunState
+        {
+            partyMembers = new List<RunPartyMemberState>
+            {
+                new RunPartyMemberState
+                {
+                    memberId = "a",
+                    preCalamityMaxHP = 16,
+                    maxHP = 11,
+                    currentHP = 8
+                }
+            },
+            activeCalamities = new List<RunCalamityState>
+            {
+                new RunCalamityState { calamityData = CreateCalamity(CalamityBuiltInEffectType.AllyMaxHpPercentModifier, -30) }
+            }
+        };
+
+        runState.AddRelic(strawberry, 1);
+
+        Assert.AreEqual(4, runState.partyMembers[0].maxHPFlatBonus);
+        Assert.AreEqual(20, runState.partyMembers[0].preCalamityMaxHP);
+        Assert.AreEqual(14, runState.partyMembers[0].maxHP);
+        Assert.AreEqual(11, runState.partyMembers[0].currentHP);
     }
 
     [Test]
@@ -337,6 +371,22 @@ public class RelicSystem079To094Tests
         relic.builtInEffects.Add(effect);
         createdObjects.Add(relic);
         return relic;
+    }
+
+    private Calamity_SO CreateCalamity(CalamityBuiltInEffectType effectType, int amount)
+    {
+        Calamity_SO calamity = ScriptableObject.CreateInstance<Calamity_SO>();
+        calamity.calamityId = $"{effectType}_{amount}";
+        calamity.builtInEffects = new List<CalamityBuiltInEffectEntry>
+        {
+            new CalamityBuiltInEffectEntry
+            {
+                effectType = effectType,
+                effectAmount = amount
+            }
+        };
+        createdObjects.Add(calamity);
+        return calamity;
     }
 
     private static void SetPrivateField<T>(object target, string fieldName, T value)

@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Man
   basicDescription: "\u64C5\u957F\u8FDB\u653B\u7684\u72C2\u6218\u58EB\uFF0C\u4E13\u7CBE\u4E8E\u9020\u6210\u5927\u91CF\u4F24\u5BB3"
-  baseHP: 25
+  baseHP: 20
   minSpeed: 1
   maxSpeed: 5
   compatibleWeaponType: 1
   initialWeaponData: {fileID: 11400000, guid: 66e425e32f62902418159abffd6dedc5, type: 2}
   icon: {fileID: 0}
-  battleSprite: {fileID: 21300000, guid: 90fbc0ade880afb4996638ef99f4b3ab, type: 3}
+  battleSprite: {fileID: 21300000, guid: a601225b1e7d802479f0f1cb53897183, type: 3}
   characterPrefab: {fileID: 337647126021373419, guid: 9e8c534556d34d84285bfb629d103936, type: 3}

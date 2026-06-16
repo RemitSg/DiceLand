@@ -82,6 +82,10 @@ public static class MapBattleEncounterService
             activeCalamities = new List<RunCalamityState>(),
             pendingBattleStartAllyStatusGrants = request.pendingBattleStartAllyStatusGrants ?? new List<PendingBattleStatusGrant>(),
             seed = tile.encounterSeed,
+            abilityBattleStartTemporaryEnergy = Mathf.Max(0, request.runState.abilityBattleStartTemporaryEnergy),
+            abilityBattleStartEnergyMaxFlat = Mathf.Max(0, request.runState.abilityBattleStartEnergyMaxFlat),
+            abilityBattleStartMaxHealthFlat = Mathf.Max(0, request.runState.abilityBattleStartMaxHealthFlat),
+            abilityRelicChoiceRefreshCount = Mathf.Max(0, request.runState.abilityRelicChoiceRefreshCount),
             moneyGained = request.moneyRewardTable != null
                 ? request.moneyRewardTable.RollReward(tile.tileType, tile.dangerBand, tile.encounterSeed)
                 : 0,

@@ -20,6 +20,7 @@ MonoBehaviour:
   - optionId: 1
     optionLabel: "\u201C\u51C6\u5907\u597D\u4E86\uFF01\u201D"
     requiredMoney: 0
+    requiredMoneyPercent: 0
     consequenceDescription: "\uFF1F\uFF1F\uFF1F"
     resultContent: "\u4F60\u628A\u8EAB\u4EFD\u8BC1\u9012\u7ED9\u4E86\u76D1\u8003\u5B98\uFF0C\u76D1\u8003\u5B98\u9762\u65E0\u8868\u60C5\u5730\u6536\u4E0B\uFF0C\u793A\u610F\u4F60\u7ED5\u8F66\u4E00\u5468\uFF0C\u51ED\u501F\u957F\u671F\u4EE5\u6765\u79EF\u7D2F\u7684\u7ECF\u9A8C\uFF0C\u4F60\u975E\u5E38\u987A\u5229\u5730\u901A\u8FC7\u4E86\u8003\u8BD5\uFF0C\u76D1\u8003\u5B98\u5FAE\u7B11\u7740\u628A\u8EAB\u4EFD\u8BC1\u8FD8\u7ED9\u4F60\uFF0C\u793A\u610F\u4F60\u53EF\u4EE5\u53BB\u8003\u79D1\u76EE\u56DB\u4E86\u3002\r\n\r\n\u770B\u7740\u8FDC\u53BB\u7684\u5C0F\u7834\u8F66\uFF0C\u4F60\u7684\u5FC3\u60C5\u683C\u5916\u7684\u597D\u3002"
     builtInEffectType: 8
@@ -28,7 +29,28 @@ MonoBehaviour:
     randomMoneyMax: 0
     randomOwnedLootAmountMin: 0
     randomOwnedLootAmountMax: 0
-    lootRewards: []
+    lootRewards:
+    - lootItem: {fileID: 11400000, guid: 3e23e2fc8a9e85945adee34acbb745f4, type: 2}
+      amountMin: 1
+      amountMax: 1
+    - lootItem: {fileID: 11400000, guid: 6e1752dc4702a1c44905a3559cb5f924, type: 2}
+      amountMin: 1
+      amountMax: 1
+    - lootItem: {fileID: 11400000, guid: 1a247d2fcfd14c141bd79e8a82154b1f, type: 2}
+      amountMin: 1
+      amountMax: 1
+    - lootItem: {fileID: 11400000, guid: 2a5a440bab2e42f499a7fabcd4b29ead, type: 2}
+      amountMin: 1
+      amountMax: 1
+    - lootItem: {fileID: 11400000, guid: f7d97cfbea961c84ebb552d194bd09f1, type: 2}
+      amountMin: 1
+      amountMax: 1
+    - lootItem: {fileID: 11400000, guid: 868997ae4239f844f9ea876d8ad4057e, type: 2}
+      amountMin: 1
+      amountMax: 1
+    - lootItem: {fileID: 11400000, guid: ea9793b0c90ae0c4f9dbaf13a832f375, type: 2}
+      amountMin: 1
+      amountMax: 1
     lootPickCountMin: 0
     lootPickCountMax: 0
     relicTable: {fileID: 0}
@@ -48,12 +70,14 @@ MonoBehaviour:
     encounterEnemyCountMax: 0
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
+    possibleResults: []
     nextEvent: {fileID: 11400000, guid: d3ea3621f67f7c144a5091a49068a106, type: 2}
     resolveEvent: 0
     customHandler: {fileID: 0}
   - optionId: 2
     optionLabel: "\u201C\u563F\u563F\u563F\uFF0C\u6211\u61C2\uFF0C\u6211\u61C2\uFF01\u201D"
     requiredMoney: 0
+    requiredMoneyPercent: 0
     consequenceDescription: "\uFF1F\uFF1F\uFF1F"
     resultContent: "\u4F60\u628A\u4E00\u5305\u9999\u70DF\u548C\u8EAB\u4EFD\u8BC1\u9012\u7ED9\u4E86\u76D1\u8003\u5B98\uFF0C\u521A\u51C6\u5907\u7ED5\u8F66\u4E00\u5468\uFF0C\u5C31\u89C1\u5230\u76D1\u8003\u5B98\u6012\u6C14\u51B2\u51B2\u5730\u5F00\u95E8\u4E0B\u8F66\uFF0C\u4E00\u628A\u62FD\u4F4F\u4F60\u7684\u8863\u9886\uFF1A\u201C\u81ED\u5C0F\u5B50\uFF0C\u4F60\u5728\u4FAE\u8FB1\u6211\uFF01\u201D\u4ED6\u628A\u4F60\u62FD\u4E86\u8D77\u6765\uFF0C\u58F0\u97F3\u653E\u4F4E\u4E86\u4E9B\uFF1A\u201C\u6211\u544A\u8BC9\u4F60\uFF0C\u8003\u8BD5\u5168\u7A0B\u76D1\u63A7\uFF0C\u4F60\u8981\u5BB3\u6B7B\u6211\u554A\uFF01\u4E0B\u6B21\u4E0A\u8003\u573A\u4E4B\u524D\u518D\u9012\uFF01\u201D\r\n\r\n\u201C\u4E0D\u8FC7\u8FD9\u6B21\u6CA1\u620F\u4E86\uFF0C\u6EDA\u56DE\u53BB\u91CD\u5F00\u5427\uFF01\u201D\u76D1\u8003\u5B98\u628A\u4F60\u653E\u4E0B\uFF0C\u6446\u51FA\u4E86\u4E00\u526F\u5F00\u5927\u811A\u7684\u59FF\u52BF\uFF0C\u4F60\u8FD9\u624D\u8BA4\u51FA\u6765\u5230\u4ED6\u662F\u524D\u56FD\u8DB3\u961F\u5458\uFF0C\u6CA1\u60F3\u5230\u4ED6\u73B0\u5728\u8FD9\u4E48\u5706\u4E86\uFF0C\u770B\u4E0A\u53BB\u50CF\u662F\u6D77\u53C2\u5403\u591A\u4E86\u2026\u2026\u4F60\u5728\u60F3\u4EC0\u4E48\uFF01\u8FD9\u88AB\u8E22\u4E2D\u4E86\u53EF\u4E0D\u597D\u53D7\uFF01\u4E0D\u8FC7\u5DF2\u7ECF\u6765\u4E0D\u53CA\u4E86\uFF0C\u4F60\u88AB\u4E00\u811A\u8E39\u56DE\u4E86\u76E5\u6D17\u5BA4\uFF0C\u4E00\u5C41\u80A1\u5750\u5728\u4E86\u9A6C\u6876\u4E0A\u3002"
     builtInEffectType: 6
@@ -107,12 +131,21 @@ MonoBehaviour:
       encounterEnemyCountMin: 0
       encounterEnemyCountMax: 0
       specialDungeon: {fileID: 0}
+      moneyPercent: 0
+      randomMoneyPercentMin: 0
+      randomMoneyPercentMax: 0
+      weaponCatalog: {fileID: 0}
+      weaponRarity: 4
+      weaponPickCountMin: 1
+      weaponPickCountMax: 1
+    possibleResults: []
     nextEvent: {fileID: 11400000, guid: 24065cf65e374984da865ab1c21058e6, type: 2}
     resolveEvent: 0
     customHandler: {fileID: 0}
   - optionId: 3
     optionLabel: "\u201C\u8FD9\u5565\u610F\u601D\uFF1F\u4E0D\u8003\u4E86\uFF01\u201D"
     requiredMoney: 0
+    requiredMoneyPercent: 0
     consequenceDescription: "\uFF1F\uFF1F\uFF1F"
     resultContent: "\u4F60\u706B\u5192\u4E09\u4E08\uFF0C\u521A\u9A82\u5B8C\uFF0C\u4F60\u53D1\u73B0\u76D1\u8003\u5B98\u4E00\u8138\u61F5\u903C\uFF0C\u4F60\u4E5F\u4E00\u8138\u61F5\u903C\uFF0C\u751A\u81F3\u773C\u524D\u7684\u5C0F\u7834\u8F66\u4E5F\u4E00\u8138\u61F5\u903C\u3002\u201C\u53E8\u53E8\u5565\u5462\uFF1F\u6709\u75C5\u5427\uFF01\u6211\u8BA9\u4F60\u628A\u8EAB\u4EFD\u8BC1\u7ED9\u6211\uFF01\u201D\u53CD\u5E94\u8FC7\u6765\u7684\u76D1\u8003\u5B98\u5FCD\u4E0D\u4F4F\u7834\u53E3\u5927\u9A82\u201C\u4EE5\u540E\u8003\u9A7E\u7167\u524D\u7684\u4F53\u68C0\u5F97\u591A\u6D4B\u6D4B\u667A\u529B\uFF01\u56DE\u53BB\u4E0A\u5B66\u5427\u5B69\u5B50\uFF01\u201D\u4ED6\u62A1\u5706\u4E86\u817F\u8E39\u51FA\u4E00\u811A\uFF0C\u4F60\u88AB\u8E39\u8FDB\u4E86\u201C\u6839\u53F7\u56DB\uFF1F\u201D\r\n\r\n\u8FD9\u4E00\u811A\u592A\u75BC\u4E86\uFF01\u4F60\u53D1\u73B0\u5C31\u7B97\u4F60\u51C6\u5907\u4E86\u57AB\u5B50\uFF0C\u5C41\u80A1\u8FD8\u662F\u88AB\u8E39\u6210\u4E86\u516B\u74E3\uFF0C\u4F60\u8FD8\u5F97\u62FC\uFF0C\u771F\u662F\u592A\u5012\u9709\u4E86\uFF01"
     builtInEffectType: 0
@@ -141,6 +174,7 @@ MonoBehaviour:
     encounterEnemyCountMax: 0
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
+    possibleResults: []
     nextEvent: {fileID: 11400000, guid: e43af416c6afa824d990f2481d3d04f1, type: 2}
     resolveEvent: 0
     customHandler: {fileID: 0}

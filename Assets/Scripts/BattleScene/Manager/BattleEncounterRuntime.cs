@@ -37,6 +37,10 @@ public sealed class BattleEncounterData
     public List<PendingBattleStatusGrant> pendingBattleStartAllyStatusGrants = new List<PendingBattleStatusGrant>();
     public BattleEncounterResolutionOverride resolutionOverride;
     public int seed;
+    public int abilityBattleStartTemporaryEnergy;
+    public int abilityBattleStartEnergyMaxFlat;
+    public int abilityBattleStartMaxHealthFlat;
+    public int abilityRelicChoiceRefreshCount;
     public bool wasVictory;
     public int experienceGained;
     public int configuredExperienceReward = -1;

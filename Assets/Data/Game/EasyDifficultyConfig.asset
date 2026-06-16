@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyName: Easy
   boardSize: 7
-  startingActionPoints: 10
+  startingActionPoints: 5
   actionPointTiers:
   - calamityTier: 0
-    actionPointLimit: 10
+    actionPointLimit: 5
   - calamityTier: 1
     actionPointLimit: 15
   - calamityTier: 2
@@ -25,6 +25,18 @@ MonoBehaviour:
   - calamityTier: 3
     actionPointLimit: 20
   - calamityTier: 4
+    actionPointLimit: 20
+  - calamityTier: 5
+    actionPointLimit: 20
+  - calamityTier: 6
+    actionPointLimit: 20
+  - calamityTier: 7
+    actionPointLimit: 20
+  - calamityTier: 8
+    actionPointLimit: 20
+  - calamityTier: 9
+    actionPointLimit: 20
+  - calamityTier: 10
     actionPointLimit: 20
   requiredKeys: 2
   generatedKeyTileCount: 3
@@ -64,7 +76,7 @@ MonoBehaviour:
   maxRecruitCount: 4
   recruitCostTiers: 320000005a0000008c000000c8000000
   legacyMerchantRefreshCost: 20
-  merchantRefreshCostTiers: 0f00000014000000190000001e0000002300000028000000
+  merchantRefreshCostTiers: 1400000014000000190000001e0000002300000028000000
   merchantRelicPrices:
   - rarity: 0
     minPrice: 14

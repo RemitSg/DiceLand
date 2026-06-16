@@ -12,6 +12,7 @@ public class BattleAllyController : MonoBehaviour
     public int CurrentHP { get; private set; }
     public int MaxHP { get; private set; }
     public int PersistentMaxHP { get; private set; }
+    public int PersistentMaxHPFlatBonus { get; private set; }
     public int LastDamageModifierRatioPercent { get; private set; } = 100;
     public int LastPowerModifierAmount { get; private set; }
     public int Level { get; private set; } = 1;
@@ -93,6 +94,7 @@ public class BattleAllyController : MonoBehaviour
 
         MaxHP = CurrentHP = Mathf.Max(1, baseHP);
         PersistentMaxHP = MaxHP;
+        PersistentMaxHPFlatBonus = 0;
     }
 
     public void ApplyRuntimeState(RunPartyMemberState partyMemberState)
@@ -116,10 +118,11 @@ public class BattleAllyController : MonoBehaviour
         IReadOnlyList<RunCalamityState> activeCalamities = BattleEncounterRuntime.ActiveEncounter != null
             ? BattleEncounterRuntime.ActiveEncounter.activeCalamities
             : null;
-        PersistentMaxHP = Mathf.Max(1, partyMemberState.maxHP);
-        RunPartyMemberEffectiveStats effectiveStats = RunPartyMemberEffectiveStatsService.Resolve(partyMemberState, activeCalamities);
-        MaxHP = effectiveStats.maxHP;
-        CurrentHP = effectiveStats.currentHP;
+        RunPartyMemberMaxHpService.Recalculate(partyMemberState, activeCalamities);
+        PersistentMaxHP = RunPartyMemberMaxHpService.ResolvePreCalamityMaxHP(partyMemberState);
+        PersistentMaxHPFlatBonus = partyMemberState.maxHPFlatBonus;
+        MaxHP = Mathf.Max(1, partyMemberState.maxHP);
+        CurrentHP = Mathf.Clamp(partyMemberState.currentHP, 0, MaxHP);
         IsDead = CurrentHP <= 0;
         RefreshActiveSpeedButtons();
     }
@@ -916,6 +919,18 @@ public class BattleAllyController : MonoBehaviour
         return actualHeal;
     }
 
+    public int IncreaseMaxHealthAndHeal(int amount)
+    {
+        int safeAmount = Mathf.Max(0, amount);
+        if (IsDead || safeAmount <= 0)
+            return 0;
+
+        MaxHP = Mathf.Max(1, MaxHP + safeAmount);
+        CurrentHP = Mathf.Clamp(CurrentHP + safeAmount, 0, MaxHP);
+        HealthChanged?.Invoke(this);
+        return safeAmount;
+    }
+
     public void RestoreToFullHealth(bool reviveDead = false)
     {
         if (MaxHP <= 0)
@@ -1094,7 +1109,10 @@ public class BattleAllyController : MonoBehaviour
         PendingRoundStartSpeedBonus = 0;
         ResolvePendingStatusesAtRoundStart();
         if (statusEntries.Count == 0)
+        {
+            PendingRoundStartSpeedBonus += RelicSystem.ResolveAllyRelicRoundStartSpeedBonus(this);
             return results;
+        }
 
         for (int i = 0; i < statusEntries.Count; i++)
         {
@@ -1147,6 +1165,7 @@ public class BattleAllyController : MonoBehaviour
         if (results.Count > 0)
             StatusChanged?.Invoke(this);
 
+        PendingRoundStartSpeedBonus += RelicSystem.ResolveAllyRelicRoundStartSpeedBonus(this);
         return results;
     }
 

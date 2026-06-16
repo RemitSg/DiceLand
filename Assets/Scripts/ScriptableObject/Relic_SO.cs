@@ -167,7 +167,19 @@ public class Relic_SO : ScriptableObject
         PreventLethalDamageByTransferringHighestHpAllyHealth = 108,
         ApplyStatusOnTransferredLethalProtectionWhenEnemyStatusAtLeast = 109,
         ModifyPlayerClashDiceWhenTargetHasStatusOncePerRound = 110,
-        ModifyOutgoingDamagePercentWhenTargetHasStatus = 111
+        ModifyOutgoingDamagePercentWhenTargetHasStatus = 111,
+        SetStatusBurstConsumptionPercent = 112,
+        ChanceTriggerNonConsumingStatusBurstWhenDamagingStatusTarget = 113,
+        TreatAllyWithStatusAsSpeedBonusAtRoundStart = 114,
+        SpreadPlayerStatusBurstDamageToOtherEnemies = 115,
+        ApplyStatusToTargetOnPlayerDamageWhenSourceHasStatus = 116,
+        DealDamageToEnemiesWithStatusStacksAtLeastOnBattleRoundEnd = 117,
+        QueueNextRoundStatusOnSourceWhenPlayerStatusBurstDamageAtLeast = 118,
+        ApplyStatusToAllAlliesAtBattleSetup = 119,
+        ApplyStatusToAllAlliesWhenAllLivingAlliesHaveStatusOnBattleRoundStart = 120,
+        ApplyStatusToSourceOnPlayerStatusBurstDamage = 121,
+        DealDamageToPlayerStatusBurstTargetWithConditionStatus = 122,
+        PreventLethalDamageByConsumingAllyStatusOncePerBattle = 123
     }
 
     [Serializable]
