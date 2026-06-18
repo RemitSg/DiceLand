@@ -28,6 +28,24 @@ public static class BattleStatusResolutionService
             return true;
         }
 
+        if (statusType == EnemySkill_SO.DiceStatusType.Electro)
+        {
+            result = new BattleResolvedStatus(null, "current", "电流");
+            return true;
+        }
+
+        if (statusType == EnemySkill_SO.DiceStatusType.Darkness)
+        {
+            result = new BattleResolvedStatus(null, "darkness", "黑暗");
+            return true;
+        }
+
+        if (statusType == EnemySkill_SO.DiceStatusType.Mark)
+        {
+            result = new BattleResolvedStatus(null, "target", "标记");
+            return true;
+        }
+
         result = new BattleResolvedStatus(null, string.Empty, string.Empty);
         return false;
     }

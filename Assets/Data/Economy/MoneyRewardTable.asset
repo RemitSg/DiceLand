@@ -15,9 +15,17 @@ MonoBehaviour:
   rewardEntries:
   - tileType: 1
     dangerBand: 0
-    minMoney: 10
-    maxMoney: 15
+    minMoney: 20
+    maxMoney: 25
   - tileType: 2
     dangerBand: 0
-    minMoney: 25
-    maxMoney: 35
+    minMoney: 35
+    maxMoney: 50
+  - tileType: 1
+    dangerBand: 1
+    minMoney: 35
+    maxMoney: 50
+  - tileType: 2
+    dangerBand: 1
+    minMoney: 55
+    maxMoney: 70

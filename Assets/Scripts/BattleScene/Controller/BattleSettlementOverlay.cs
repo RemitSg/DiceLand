@@ -134,6 +134,10 @@ public class BattleSettlementOverlay : MonoBehaviour
     [SerializeField] private int canvasSortOrder = 9500;
     [SerializeField] private string mainMenuSceneName = BattleExitFlowService.DefaultMainMenuSceneName;
 
+    [Header("Run Settlement")]
+    [SerializeField] private string runSettlementSceneName = RunSettlementFlowService.DefaultSettlementSceneName;
+    [SerializeField] private RunScoreConfig_SO runScoreConfig;
+
     [Header("Panel")]
     [SerializeField] private Vector2 panelSize = new Vector2(900f, 620f);
     [SerializeField] private Color backdropColor = new Color(0f, 0f, 0f, 0.72f);
@@ -779,6 +783,21 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private void BuildButtons(BattleSettlementData data)
     {
+        if (data != null && data.isVictory && showRetryButton)
+        {
+            CreateRetryButton(data);
+            CreateReturnButton(data);
+            return;
+        }
+
+        CreateReturnButton(data);
+
+        if (showRetryButton)
+            CreateRetryButton(data);
+    }
+
+    private void CreateReturnButton(BattleSettlementData data)
+    {
         CreateActionButton(
             buttonRoot,
             "ReturnButton",
@@ -790,15 +809,15 @@ public class BattleSettlementOverlay : MonoBehaviour
                 else
                     HandleReturnToMap(data);
             });
+    }
 
-        if (!showRetryButton)
-            return;
-
+    private void CreateRetryButton(BattleSettlementData data)
+    {
         CreateActionButton(
             buttonRoot,
             "RetryButton",
             retryButtonLabel,
-            () => HandleRetryBattle(data.retrySceneName));
+            () => HandleRetryBattle(data != null ? data.retrySceneName : null));
     }
 
     private void HandleReturnToMap(BattleSettlementData data)
@@ -811,6 +830,16 @@ public class BattleSettlementOverlay : MonoBehaviour
         string targetScene = !string.IsNullOrWhiteSpace(sceneName)
             ? sceneName
             : "MapScene";
+
+        if (activeEncounter != null && data != null && data.isVictory && activeEncounter.tileType == MapTileType.Boss && !activeEncounter.isTutorialEncounter)
+        {
+            MapRunRuntime.ApplyEncounterResult(activeEncounter);
+            if (MapRunRuntime.TryGetSnapshot(activeEncounter.sourceSceneName, out MapRunSnapshot snapshot))
+            {
+                ExecuteRunSettlement(snapshot.runState, true, activeEncounter.sourceSceneName);
+                return;
+            }
+        }
 
         if (activeEncounter != null && activeEncounter.isTutorialEncounter && activeEncounter.returnToMainMenuOnVictory)
         {
@@ -915,15 +944,63 @@ public class BattleSettlementOverlay : MonoBehaviour
     private static bool ShouldReturnToMapAfterDefeat()
     {
         BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
-        return activeEncounter != null && !activeEncounter.wasVictory && !activeEncounter.restartBattleOnDefeat;
+        return activeEncounter != null && !activeEncounter.wasVictory && activeEncounter.returnToMapOnDefeat;
     }
 
     private void HandleAbandonToMainMenu()
     {
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        RunState settlementRunState = null;
+        if (activeEncounter != null && MapRunRuntime.TryGetSnapshot(activeEncounter.sourceSceneName, out MapRunSnapshot snapshot))
+        {
+            settlementRunState = snapshot.runState;
+            if (settlementRunState != null && activeEncounter.resolvedPartyMembers != null && activeEncounter.resolvedPartyMembers.Count > 0)
+            {
+                settlementRunState.partyMembers = new List<RunPartyMemberState>(activeEncounter.resolvedPartyMembers.Count);
+                for (int i = 0; i < activeEncounter.resolvedPartyMembers.Count; i++)
+                {
+                    RunPartyMemberState member = activeEncounter.resolvedPartyMembers[i];
+                    if (member != null && !member.isTemporaryBattleGuest)
+                        settlementRunState.partyMembers.Add(member.Clone());
+                }
+                settlementRunState.SyncLegacyPlayerFieldsFromParty();
+            }
+        }
+
+        if (settlementRunState != null)
+        {
+            ExecuteRunSettlement(settlementRunState, false, activeEncounter != null ? activeEncounter.sourceSceneName : null);
+            return;
+        }
+
         BattleExitFlowService.ExecuteAbandonToMainMenu(
             mainMenuSceneName,
             sceneName => SceneCurtainTransitionController.Instance.TransitionToScene(sceneName),
             HideResult);
+    }
+
+    private void ExecuteRunSettlement(RunState settlementRunState, bool runCleared, string sourceSceneName)
+    {
+        RunSettlementFlowService.ExecuteSettlement(new RunSettlementFlowRequest
+        {
+            runState = settlementRunState,
+            scoreConfig = runScoreConfig,
+            runCleared = runCleared,
+            settlementSceneName = runSettlementSceneName,
+            returnSceneName = mainMenuSceneName,
+            deleteSavedRun = MainMenuRunSaveSystem.DeleteSavedRun,
+            clearRuntimeState = () =>
+            {
+                MapRunRuntime.Clear(sourceSceneName);
+                BattleEncounterRuntime.Clear();
+                MainMenuRuntime.ClearTutorialRequest();
+                TutorialBattleRuntime.Clear();
+                SpeedButton.CombatLocked = false;
+                SpeedButton.InputSuppressed = false;
+                HideResult();
+            },
+            transitionToScene = sceneName => SceneCurtainTransitionController.Instance.TransitionToScene(sceneName)
+        });
     }
 
     private void EnsureCanvas()

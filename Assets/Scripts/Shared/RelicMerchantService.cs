@@ -19,7 +19,8 @@ public static class RelicMerchantService
         float multiplier = Mathf.Max(0f, 1f - (Mathf.Max(0, context.merchantDiscountPercent) / 100f));
         multiplier *= Mathf.Max(0f, context.merchantPriceMultiplier);
         int relicModifiedPrice = Mathf.Max(0, Mathf.FloorToInt((basePrice * multiplier) + 0.5f));
-        return CalamitySystem.ApplyMerchantPriceModifiers(relicModifiedPrice, runState.activeCalamities);
+        int calamityModifiedPrice = CalamitySystem.ApplyMerchantPriceModifiers(relicModifiedPrice, runState.activeCalamities);
+        return AbilityRunBonusRuntimeService.ResolveMerchantPurchasePrice(runState, calamityModifiedPrice);
     }
 
     public static int CalculateMerchantStockTargetCount(RunState runState, BoardTileData tile, int baseTargetCount)
@@ -50,6 +51,7 @@ public static class RelicMerchantService
 
         RelicExecutionContext context = RelicExecutionContext.CreateMerchantPurchaseCompleted(runState, tile, offer);
         RelicSystem.Process(runState, Relic_SO.RelicTrigger.OnMerchantPurchaseCompleted, context);
+        AbilityRunBonusRuntimeService.NotifyMerchantPurchaseCompleted(runState, RelicMerchantService.CalculateOfferPrice(runState, tile, offer));
     }
 
     public static void ResetVisitState(BoardTileData tile)

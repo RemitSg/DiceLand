@@ -10,6 +10,8 @@ public class RunPartyMemberState
     public Weapon_SO weaponData;
     public int level = 1;
     public int experience;
+    public int maxHPFlatBonus;
+    public int preCalamityMaxHP;
     public int maxHP;
     public int currentHP;
     [NonSerialized] public bool isTemporaryBattleGuest;
@@ -35,6 +37,8 @@ public class RunPartyMemberState
             weaponData = weaponData,
             level = level,
             experience = experience,
+            maxHPFlatBonus = maxHPFlatBonus,
+            preCalamityMaxHP = preCalamityMaxHP,
             maxHP = maxHP,
             currentHP = currentHP,
             isTemporaryBattleGuest = isTemporaryBattleGuest
@@ -186,6 +190,15 @@ public class RunState
     public List<string> drawnCalamityIds = new List<string>();
     public List<string> drawnEventIds = new List<string>();
     public List<PendingBattleStatusGrant> pendingNextBattleAllyStatusGrants = new List<PendingBattleStatusGrant>();
+    public int abilityMerchantFreeRefreshPerShop;
+    public bool abilityFirstMerchantPurchaseHalfDiscountAvailable;
+    public bool abilityFirstMerchantPurchaseHalfDiscountConsumed;
+    public int abilityBattleStartTemporaryEnergy;
+    public int abilityBattleStartEnergyMaxFlat;
+    public int abilityBattleStartMaxHealthFlat;
+    public int abilityRelicChoiceRefreshCount;
+    public TreasureRewardTable_SO abilityTreasureRewardTableOverride;
+    public RunSettlementStats settlementStats = new RunSettlementStats();
 
     public bool IsBossUnlocked => currentKeys >= requiredKeys;
 
@@ -289,12 +302,18 @@ public class RunState
         });
     }
 
-    public void AddMoney(int amount)
+    public void AddMoney(int amount, bool countAsRunGain = true)
     {
         if (amount <= 0)
             return;
 
         money += amount;
+        if (countAsRunGain)
+        {
+            if (settlementStats == null)
+                settlementStats = new RunSettlementStats();
+            settlementStats.AddMoneyGained(amount);
+        }
     }
 
     public bool TrySpendMoney(int amount)
@@ -634,6 +653,7 @@ public class RunState
             calamityData = calamityData,
             acquiredAtTier = Mathf.Max(1, acquiredTier)
         });
+        RunPartyMemberMaxHpService.RecalculateParty(this);
     }
 
     public void QueueNextBattleAllyStatusGrant(BattleStatus_SO statusData, int stacks)
@@ -754,7 +774,16 @@ public class RunState
             playerLevel = playerLevel,
             playerExperience = playerExperience,
             calamityTier = calamityTier,
-            currentCycle = currentCycle
+            currentCycle = currentCycle,
+            abilityMerchantFreeRefreshPerShop = abilityMerchantFreeRefreshPerShop,
+            abilityFirstMerchantPurchaseHalfDiscountAvailable = abilityFirstMerchantPurchaseHalfDiscountAvailable,
+            abilityFirstMerchantPurchaseHalfDiscountConsumed = abilityFirstMerchantPurchaseHalfDiscountConsumed,
+            abilityBattleStartTemporaryEnergy = abilityBattleStartTemporaryEnergy,
+            abilityBattleStartEnergyMaxFlat = abilityBattleStartEnergyMaxFlat,
+            abilityBattleStartMaxHealthFlat = abilityBattleStartMaxHealthFlat,
+            abilityRelicChoiceRefreshCount = abilityRelicChoiceRefreshCount,
+            abilityTreasureRewardTableOverride = abilityTreasureRewardTableOverride,
+            settlementStats = settlementStats != null ? settlementStats.Clone() : new RunSettlementStats()
         };
 
         if (partyMembers != null)

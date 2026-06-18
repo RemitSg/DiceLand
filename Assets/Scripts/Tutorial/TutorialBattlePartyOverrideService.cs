@@ -83,6 +83,7 @@ public static class TutorialBattlePartyOverrideService
             weaponData = weapon,
             level = 1,
             experience = 0,
+            preCalamityMaxHP = 16,
             maxHP = 16,
             currentHP = 1,
             isTemporaryBattleGuest = true

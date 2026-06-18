@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92a6c8410a56dcb4db5bca4c318c5c64, type: 3}
+  m_Name: "\u7535\u7206\u76FE"
+  m_EditorClassIdentifier: 
+  relicId: 140
+  relicName: "\u7535\u7206\u76FE"
+  description: "\u53CB\u65B9\u89D2\u8272\u9020\u6210\u7535\u6D41\u7206\u53D1\u4F24\u5BB3\u65F6\uFF0C\u83B7\u5F97\u7B49\u540C\u4E8E\u4F24\u5BB3\u7684\u62A4\u76FE\u5C42\u6570"
+  additionalDescription: "\u5B83\u6536\u96C6\u90A3\u4E9B\u56DB\u6563\u7684\u4F59\u70EC\uFF0C\u628A\u4F24\u5BB3\u91CD\u65B0\u94F8\u6210\u9632\u7EBF\u3002"
+  rarity: 1
+  icon: {fileID: 21300000, guid: 901501c5c1d83f64ca6fe5b99643755f, type: 3}
+  builtInEffects:
+  - effectName: Current burst damage grants shield
+    trigger: 25
+    effectType: 121
+    chance: 1
+    requireUnvisitedTile: 1
+    statusData: {fileID: 11400000, guid: d9960fbafac14cf6b9c6bd093fd9293f, type: 2}
+    amount: 1
+    conditionStatusData: {fileID: 11400000, guid: b137dabbfd68440d8ab3ca76492a4240, type: 2}
+    requiredStatusStacks: 1
+    requiredSpeed: 1
+    requiredSpeedMin: 1
+    requiredSpeedMax: 1
+    statusApplyTiming: 0
+    applyAfterRoundStarts: 1
+    requiredRound: 1
+    requiredRoundMin: 1
+    requiredRoundMax: 1
+    powerAmount: 0
+    minPowerAmount: 0
+    maxPowerAmount: 0
+    maxStacks: 1
+    requiredDistinctStatusCount: 1
+    requiredConsecutiveSkillUses: 1
+    relicTable: {fileID: 0}
+    enemyData: {fileID: 0}
+  customEffectHandler: {fileID: 0}

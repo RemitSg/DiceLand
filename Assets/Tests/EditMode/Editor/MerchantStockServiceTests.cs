@@ -44,7 +44,9 @@ public class MerchantStockServiceTests
     {
         LootItem_SO loot = CreateLoot("Loot");
         Weapon_SO weapon = CreateWeapon("Weapon");
-        CraftingBlueprint_SO blueprint = CreateBlueprint("Blueprint");
+        Weapon_SO ownedBlueprintWeapon = CreateWeapon("OwnedBlueprintWeapon");
+        CraftingBlueprint_SO ownedWeaponBlueprint = CreateBlueprint("OwnedWeaponBlueprint", ownedBlueprintWeapon);
+        CraftingBlueprint_SO blueprint = CreateBlueprint("Blueprint", weapon);
         Relic_SO ownedRelic = CreateRelic("Owned", LootRarity.Common);
         Relic_SO availableRelic = CreateRelic("Available", LootRarity.Rare);
         MerchantCatalog_SO catalog = CreateCatalog(4, 4);
@@ -54,11 +56,16 @@ public class MerchantStockServiceTests
         catalog.relicMinimumCount.minimumCount = 1;
         catalog.lootEntries.Add(new MerchantCatalog_SO.LootGoodsEntry { lootItem = loot, minPrice = 1, maxPrice = 1, weight = 1 });
         catalog.weaponEntries.Add(new MerchantCatalog_SO.WeaponGoodsEntry { weaponData = weapon, minPrice = 2, maxPrice = 2, weight = 1 });
+        catalog.blueprintEntries.Add(new MerchantCatalog_SO.BlueprintGoodsEntry { blueprintData = ownedWeaponBlueprint, minPrice = 3, maxPrice = 3, weight = 100 });
         catalog.blueprintEntries.Add(new MerchantCatalog_SO.BlueprintGoodsEntry { blueprintData = blueprint, minPrice = 3, maxPrice = 3, weight = 1 });
         catalog.relicEntries.Add(CreateRelicGoodsEntry(null, ownedRelic));
         catalog.relicEntries.Add(CreateRelicGoodsEntry(null, availableRelic));
         RunState runState = new RunState
         {
+            weaponInventory = new List<RunWeaponState>
+            {
+                new RunWeaponState { weaponData = ownedBlueprintWeapon, amount = 1 }
+            },
             relicInventory = new List<RunRelicState>
             {
                 new RunRelicState { relicData = ownedRelic, amount = 1 }
@@ -78,7 +85,7 @@ public class MerchantStockServiceTests
         Assert.AreEqual(4, tile.merchantOffers.Count);
         AssertOfferWithType(tile.merchantOffers, MerchantItemType.Loot);
         AssertOfferWithType(tile.merchantOffers, MerchantItemType.Weapon);
-        AssertOfferWithType(tile.merchantOffers, MerchantItemType.Blueprint);
+        Assert.AreSame(blueprint, FindOfferWithType(tile.merchantOffers, MerchantItemType.Blueprint).blueprintData);
         MerchantOfferState relicOffer = FindOfferWithType(tile.merchantOffers, MerchantItemType.Relic);
         Assert.AreSame(availableRelic, relicOffer.relicData);
     }
@@ -91,9 +98,11 @@ public class MerchantStockServiceTests
         Weapon_SO oldWeapon = CreateWeapon("OldWeapon");
         Weapon_SO ownedWeapon = CreateWeapon("OwnedWeapon");
         Weapon_SO newWeapon = CreateWeapon("NewWeapon");
+        Weapon_SO ownedBlueprintWeapon = CreateWeapon("OwnedBlueprintWeapon");
         CraftingBlueprint_SO oldBlueprint = CreateBlueprint("OldBlueprint");
         CraftingBlueprint_SO ownedBlueprint = CreateBlueprint("OwnedBlueprint");
-        CraftingBlueprint_SO newBlueprint = CreateBlueprint("NewBlueprint");
+        CraftingBlueprint_SO ownedWeaponBlueprint = CreateBlueprint("OwnedWeaponBlueprint", ownedBlueprintWeapon);
+        CraftingBlueprint_SO newBlueprint = CreateBlueprint("NewBlueprint", newWeapon);
         Relic_SO oldRelic = CreateRelic("OldRelic", LootRarity.Common);
         Relic_SO ownedRelic = CreateRelic("OwnedRelic", LootRarity.Common);
         Relic_SO newRelic = CreateRelic("NewRelic", LootRarity.Common);
@@ -105,6 +114,7 @@ public class MerchantStockServiceTests
         catalog.weaponEntries.Add(new MerchantCatalog_SO.WeaponGoodsEntry { weaponData = newWeapon, minPrice = 2, maxPrice = 2, weight = 1 });
         catalog.blueprintEntries.Add(new MerchantCatalog_SO.BlueprintGoodsEntry { blueprintData = oldBlueprint, minPrice = 3, maxPrice = 3, weight = 1 });
         catalog.blueprintEntries.Add(new MerchantCatalog_SO.BlueprintGoodsEntry { blueprintData = ownedBlueprint, minPrice = 3, maxPrice = 3, weight = 1 });
+        catalog.blueprintEntries.Add(new MerchantCatalog_SO.BlueprintGoodsEntry { blueprintData = ownedWeaponBlueprint, minPrice = 3, maxPrice = 3, weight = 100 });
         catalog.blueprintEntries.Add(new MerchantCatalog_SO.BlueprintGoodsEntry { blueprintData = newBlueprint, minPrice = 3, maxPrice = 3, weight = 1 });
         catalog.relicEntries.Add(CreateRelicGoodsEntry(null, oldRelic));
         catalog.relicEntries.Add(CreateRelicGoodsEntry(null, ownedRelic));
@@ -113,7 +123,8 @@ public class MerchantStockServiceTests
         {
             weaponInventory = new List<RunWeaponState>
             {
-                new RunWeaponState { weaponData = ownedWeapon, amount = 1 }
+                new RunWeaponState { weaponData = ownedWeapon, amount = 1 },
+                new RunWeaponState { weaponData = ownedBlueprintWeapon, amount = 1 }
             },
             blueprintInventory = new List<RunBlueprintState>
             {
@@ -211,6 +222,13 @@ public class MerchantStockServiceTests
         CraftingBlueprint_SO blueprint = ScriptableObject.CreateInstance<CraftingBlueprint_SO>();
         blueprint.blueprintName = name;
         createdObjects.Add(blueprint);
+        return blueprint;
+    }
+
+    private CraftingBlueprint_SO CreateBlueprint(string name, Weapon_SO targetWeapon)
+    {
+        CraftingBlueprint_SO blueprint = CreateBlueprint(name);
+        blueprint.targetWeapon = targetWeapon;
         return blueprint;
     }
 

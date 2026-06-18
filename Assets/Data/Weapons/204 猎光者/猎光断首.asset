@@ -1,0 +1,120 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: "猎光断首"
+  m_EditorClassIdentifier: 
+  skillName: "猎光断首"
+  description: "棱镜核心完全张开，斧刃把折光印压成一道直落的处刑白线。"
+  skillCategory: 0
+  energyCost: 5
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  targetPriorityMode: 1
+  targetPriorityStatusData: {fileID: 11400000, guid: 0a6541a266887ec4e8d71475ee0106e2, type: 2}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 4
+  maxPower: 7
+  diceCount: 1
+  dicePowerRanges:
+  - minPower: 4
+    maxPower: 7
+  dicePresentationSettings: []
+  diceEffectSettings:
+  - builtInEffects:
+    - effectName: "断首一印"
+      trigger: 0
+      effectType: 1
+      targetMode: 0
+      useStatusCondition: 0
+      conditionScope: 0
+      conditionStatusData: {fileID: 0}
+      conditionStatusType: 0
+      requiredStatusStacks: 1
+      amount: 2
+      randomTargetCount: 1
+      useCondition: 1
+      condition: 3
+      targetStatusData: {fileID: 11400000, guid: 0a6541a266887ec4e8d71475ee0106e2, type: 2}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
+      statusData: {fileID: 0}
+      statusType: 0
+      applyTiming: 0
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
+      statusStackAmount: 0
+      fallbackAmount: 0
+    - effectName: "断首二印"
+      trigger: 0
+      effectType: 1
+      targetMode: 0
+      useStatusCondition: 0
+      conditionScope: 0
+      conditionStatusData: {fileID: 0}
+      conditionStatusType: 0
+      requiredStatusStacks: 1
+      amount: 2
+      randomTargetCount: 1
+      useCondition: 1
+      condition: 4
+      targetStatusData: {fileID: 11400000, guid: 0a6541a266887ec4e8d71475ee0106e2, type: 2}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredConditionStatusStacks: 2
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
+      statusData: {fileID: 0}
+      statusType: 0
+      applyTiming: 0
+      applyAfterRoundStarts: 1
+      applyRepeatCount: 1
+      statusStackAmount: 0
+      fallbackAmount: 0
+    rangeModifiers:
+    - effectName: "断首锁光"
+      useCondition: 1
+      condition: 4
+      targetStatusData: {fileID: 11400000, guid: 0a6541a266887ec4e8d71475ee0106e2, type: 2}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 0
+      requiredStatusStacks: 2
+      requiredSpeedValue: 0
+      requiredSpeedDifference: 0
+      minPowerBonus: 2
+      minPowerBonusCap: 0
+      maxPowerBonus: 0
+      maxPowerBonusCap: 0
+    statusStackOperationEffects:
+    - effectName: "断首耗印"
+      trigger: 0
+      targetMode: 0
+      statusData: {fileID: 11400000, guid: 0a6541a266887ec4e8d71475ee0106e2, type: 2}
+      statusType: 0
+      operationType: 0
+      stackAmount: 2
+      randomTargetCount: 1
+      useCondition: 1
+      condition: 3
+      conditionStatusData: {fileID: 11400000, guid: 0a6541a266887ec4e8d71475ee0106e2, type: 2}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
+  diceSkillCategories: 

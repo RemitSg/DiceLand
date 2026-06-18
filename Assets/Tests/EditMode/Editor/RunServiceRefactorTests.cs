@@ -124,32 +124,45 @@ public class RunServiceRefactorTests
     {
         EnemyData_SO enemy = ScriptableObject.CreateInstance<EnemyData_SO>();
         EnemyGroup_SO group = ScriptableObject.CreateInstance<EnemyGroup_SO>();
+        DifficultyConfig_SO difficulty = ScriptableObject.CreateInstance<DifficultyConfig_SO>();
         Relic_SO relic = ScriptableObject.CreateInstance<Relic_SO>();
         Calamity_SO calamity = ScriptableObject.CreateInstance<Calamity_SO>();
         createdObjects.Add(enemy);
         createdObjects.Add(group);
+        createdObjects.Add(difficulty);
         createdObjects.Add(relic);
         createdObjects.Add(calamity);
 
         group.groupName = "Test Group";
         group.enemies = new List<EnemyData_SO> { enemy };
+        difficulty.battleExperienceRewards = new List<DifficultyConfig_SO.BattleExperienceRewardEntry>
+        {
+            new DifficultyConfig_SO.BattleExperienceRewardEntry
+            {
+                dangerBand = MapDangerBand.Mid,
+                tileType = MapTileType.Battle,
+                experience = 37
+            }
+        };
         RunState runState = new RunState
         {
             partyMembers = new List<RunPartyMemberState>
             {
-                new RunPartyMemberState { memberId = "Alive", maxHP = 10, currentHP = 5 },
+                new RunPartyMemberState { memberId = "Alive", preCalamityMaxHP = 10, maxHP = 10, currentHP = 5 },
                 new RunPartyMemberState { memberId = "Dead", maxHP = 10, currentHP = 0 }
             },
             relicInventory = new List<RunRelicState> { new RunRelicState { relicData = relic, amount = 1 } },
-            activeCalamities = new List<RunCalamityState> { new RunCalamityState { calamityData = calamity, acquiredAtTier = 1 } }
+            activeCalamities = new List<RunCalamityState> { new RunCalamityState { calamityData = calamity, acquiredAtTier = 1 } },
         };
+        AbilityRunBonusRuntimeService.ApplyPersistentRunBonuses(runState, new AbilityRunBonus { battleStartMaxHealthFlat = 8 });
 
         BattleEncounterData encounter = MapBattleEncounterService.BuildEncounter(
             new MapBattleEncounterBuildRequest
             {
                 runState = runState,
-                tile = new BoardTileData { coord = new Vector2Int(2, 3), tileType = MapTileType.Battle, encounterSeed = 99 },
+                tile = new BoardTileData { coord = new Vector2Int(2, 3), tileType = MapTileType.Battle, dangerBand = MapDangerBand.Mid, encounterSeed = 99 },
                 encounterGroup = group,
+                difficultyConfig = difficulty,
                 battleSceneName = "Battle"
             });
 
@@ -157,7 +170,12 @@ public class RunServiceRefactorTests
         Assert.AreEqual(1, encounter.partyMembers.Count);
         Assert.AreEqual(1, encounter.relicInventory.Count);
         Assert.AreEqual(1, encounter.activeCalamities.Count);
+        Assert.AreEqual(37, encounter.configuredExperienceReward);
         Assert.AreEqual(99, encounter.seed);
+        Assert.AreEqual(18, encounter.partyMembers[0].preCalamityMaxHP);
+        Assert.AreEqual(18, encounter.partyMembers[0].maxHP);
+        Assert.AreEqual(13, encounter.partyMembers[0].currentHP);
+        Assert.AreEqual(0, encounter.abilityBattleStartMaxHealthFlat);
     }
 
     [Test]

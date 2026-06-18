@@ -204,26 +204,33 @@ internal sealed class BattleFlowPlayModeFixture
 
     public void ClickSettlementReturnButton()
     {
-        object overlay = GetSettlementOverlay();
-        IList buttons = (IList)GetField(overlay, "spawnedButtons");
-        Assert.IsNotNull(buttons, "Settlement action buttons were not created.");
-        Assert.Greater(buttons.Count, 0, "Settlement return button was not created.");
-
-        Button button = buttons[0] as Button;
+        Button button = FindSettlementActionButton("ReturnButton");
         Assert.IsNotNull(button, "Settlement return action is not a Button.");
         button.onClick.Invoke();
     }
 
     public void ClickSettlementRetryButton()
     {
+        Button button = FindSettlementActionButton("RetryButton");
+        Assert.IsNotNull(button, "Settlement retry action is not a Button.");
+        button.onClick.Invoke();
+    }
+
+    private Button FindSettlementActionButton(string buttonName)
+    {
         object overlay = GetSettlementOverlay();
         IList buttons = (IList)GetField(overlay, "spawnedButtons");
         Assert.IsNotNull(buttons, "Settlement action buttons were not created.");
-        Assert.Greater(buttons.Count, 1, "Settlement retry button was not created.");
 
-        Button button = buttons[1] as Button;
-        Assert.IsNotNull(button, "Settlement retry action is not a Button.");
-        button.onClick.Invoke();
+        for (int i = 0; i < buttons.Count; i++)
+        {
+            Button button = buttons[i] as Button;
+            if (button != null && button.gameObject.name == buttonName)
+                return button;
+        }
+
+        Assert.Fail($"Settlement action button was not created: {buttonName}");
+        return null;
     }
 
     public void ForceContestedConnection()

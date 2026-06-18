@@ -12,6 +12,7 @@ public sealed class MainMenuSaveAssetCatalog
     private readonly Dictionary<string, CraftingBlueprint_SO> blueprints = new Dictionary<string, CraftingBlueprint_SO>(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, Relic_SO> relics = new Dictionary<string, Relic_SO>(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, RelicTable_SO> relicTables = new Dictionary<string, RelicTable_SO>(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, TreasureRewardTable_SO> treasureRewardTables = new Dictionary<string, TreasureRewardTable_SO>(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, Calamity_SO> calamities = new Dictionary<string, Calamity_SO>(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, EnemyGroup_SO> enemyGroups = new Dictionary<string, EnemyGroup_SO>(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, MapEvent_SO> events = new Dictionary<string, MapEvent_SO>(StringComparer.OrdinalIgnoreCase);
@@ -47,6 +48,11 @@ public sealed class MainMenuSaveAssetCatalog
         Add(relicTables, MainMenuRunSaveSystem.GetRelicTableId(relicTable), relicTable);
     }
 
+    public void Add(TreasureRewardTable_SO treasureRewardTable)
+    {
+        Add(treasureRewardTables, MainMenuRunSaveSystem.GetTreasureRewardTableId(treasureRewardTable), treasureRewardTable);
+    }
+
     public void Add(Calamity_SO calamity)
     {
         Add(calamities, MainMenuRunSaveSystem.GetCalamityId(calamity), calamity);
@@ -73,6 +79,7 @@ public sealed class MainMenuSaveAssetCatalog
     public CraftingBlueprint_SO ResolveBlueprint(string id) => Resolve(blueprints, id);
     public Relic_SO ResolveRelic(string id) => Resolve(relics, id);
     public RelicTable_SO ResolveRelicTable(string id) => Resolve(relicTables, id);
+    public TreasureRewardTable_SO ResolveTreasureRewardTable(string id) => Resolve(treasureRewardTables, id);
     public Calamity_SO ResolveCalamity(string id) => Resolve(calamities, id);
     public EnemyGroup_SO ResolveEnemyGroup(string id) => Resolve(enemyGroups, id);
     public MapEvent_SO ResolveEvent(string id) => Resolve(events, id);
@@ -169,6 +176,15 @@ internal sealed class SavedRunState
     public List<SavedCalamityState> activeCalamities = new List<SavedCalamityState>();
     public List<string> drawnCalamityIds = new List<string>();
     public List<string> drawnEventIds = new List<string>();
+    public int abilityMerchantFreeRefreshPerShop;
+    public bool abilityFirstMerchantPurchaseHalfDiscountAvailable;
+    public bool abilityFirstMerchantPurchaseHalfDiscountConsumed;
+    public int abilityBattleStartTemporaryEnergy;
+    public int abilityBattleStartEnergyMaxFlat;
+    public int abilityBattleStartMaxHealthFlat;
+    public int abilityRelicChoiceRefreshCount;
+    public string abilityTreasureRewardTableId;
+    public RunSettlementStats settlementStats = new RunSettlementStats();
 }
 
 [Serializable]
@@ -179,6 +195,8 @@ internal sealed class SavedPartyMemberState
     public string weaponId;
     public int level;
     public int experience;
+    public int maxHPFlatBonus;
+    public int preCalamityMaxHP;
     public int maxHP;
     public int currentHP;
 }
@@ -440,7 +458,16 @@ public static class MainMenuRunSaveSystem
             playerLevel = runState.playerLevel,
             playerExperience = runState.playerExperience,
             calamityTier = runState.calamityTier,
-            currentCycle = runState.currentCycle
+            currentCycle = runState.currentCycle,
+            abilityMerchantFreeRefreshPerShop = runState.abilityMerchantFreeRefreshPerShop,
+            abilityFirstMerchantPurchaseHalfDiscountAvailable = runState.abilityFirstMerchantPurchaseHalfDiscountAvailable,
+            abilityFirstMerchantPurchaseHalfDiscountConsumed = runState.abilityFirstMerchantPurchaseHalfDiscountConsumed,
+            abilityBattleStartTemporaryEnergy = runState.abilityBattleStartTemporaryEnergy,
+            abilityBattleStartEnergyMaxFlat = runState.abilityBattleStartEnergyMaxFlat,
+            abilityBattleStartMaxHealthFlat = runState.abilityBattleStartMaxHealthFlat,
+            abilityRelicChoiceRefreshCount = runState.abilityRelicChoiceRefreshCount,
+            abilityTreasureRewardTableId = GetTreasureRewardTableId(runState.abilityTreasureRewardTableOverride),
+            settlementStats = runState.settlementStats != null ? runState.settlementStats.Clone() : new RunSettlementStats()
         };
 
         if (runState.partyMembers != null)
@@ -458,6 +485,8 @@ public static class MainMenuRunSaveSystem
                     weaponId = GetWeaponId(member.weaponData),
                     level = member.level,
                     experience = member.experience,
+                    maxHPFlatBonus = member.maxHPFlatBonus,
+                    preCalamityMaxHP = RunPartyMemberMaxHpService.ResolvePreCalamityMaxHP(member),
                     maxHP = member.maxHP,
                     currentHP = member.currentHP
                 });
@@ -813,7 +842,16 @@ public static class MainMenuRunSaveSystem
             playerLevel = savedState.playerLevel,
             playerExperience = savedState.playerExperience,
             calamityTier = savedState.calamityTier,
-            currentCycle = savedState.currentCycle
+            currentCycle = savedState.currentCycle,
+            abilityMerchantFreeRefreshPerShop = savedState.abilityMerchantFreeRefreshPerShop,
+            abilityFirstMerchantPurchaseHalfDiscountAvailable = savedState.abilityFirstMerchantPurchaseHalfDiscountAvailable,
+            abilityFirstMerchantPurchaseHalfDiscountConsumed = savedState.abilityFirstMerchantPurchaseHalfDiscountConsumed,
+            abilityBattleStartTemporaryEnergy = savedState.abilityBattleStartTemporaryEnergy,
+            abilityBattleStartEnergyMaxFlat = savedState.abilityBattleStartEnergyMaxFlat,
+            abilityBattleStartMaxHealthFlat = savedState.abilityBattleStartMaxHealthFlat,
+            abilityRelicChoiceRefreshCount = savedState.abilityRelicChoiceRefreshCount,
+            abilityTreasureRewardTableOverride = catalog.ResolveTreasureRewardTable(savedState.abilityTreasureRewardTableId),
+            settlementStats = savedState.settlementStats != null ? savedState.settlementStats.Clone() : new RunSettlementStats()
         };
 
         if (savedState.partyMembers != null)
@@ -831,6 +869,8 @@ public static class MainMenuRunSaveSystem
                     weaponData = catalog.ResolveWeapon(member.weaponId),
                     level = member.level,
                     experience = member.experience,
+                    maxHPFlatBonus = member.maxHPFlatBonus,
+                    preCalamityMaxHP = member.preCalamityMaxHP > 0 ? member.preCalamityMaxHP : member.maxHP,
                     maxHP = member.maxHP,
                     currentHP = member.currentHP
                 });
@@ -1098,6 +1138,13 @@ public static class MainMenuRunSaveSystem
         if (relicTable == null)
             return string.Empty;
         return relicTable.name;
+    }
+
+    public static string GetTreasureRewardTableId(TreasureRewardTable_SO treasureRewardTable)
+    {
+        if (treasureRewardTable == null)
+            return string.Empty;
+        return treasureRewardTable.name;
     }
 
     public static string GetCalamityId(Calamity_SO calamity)

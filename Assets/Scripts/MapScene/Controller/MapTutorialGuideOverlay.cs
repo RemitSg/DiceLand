@@ -23,6 +23,10 @@ public class MapTutorialGuideOverlay : MonoBehaviour
     [SerializeField] private Color highlightFrameColor = new Color(1f, 0.84f, 0.36f, 0.95f);
     [SerializeField] private float highlightFrameThickness = 5f;
     [SerializeField] private float highlightBleedPixels = 2f;
+    [Header("Fonts")]
+    [SerializeField] private Font titleFont;
+    [SerializeField] private Font bodyFont;
+    [SerializeField] private Font buttonFont;
     [SerializeField] private int titleFontSize = 34;
     [SerializeField] private int bodyFontSize = 24;
     [SerializeField] private int buttonFontSize = 22;
@@ -45,6 +49,18 @@ public class MapTutorialGuideOverlay : MonoBehaviour
     public bool IsVisible => canvas != null && canvas.gameObject.activeInHierarchy;
     public bool IsModalVisible => panelRoot != null && panelRoot.gameObject.activeInHierarchy;
     public bool IsTargetHighlightVisible => highlightRoot != null && highlightRoot.gameObject.activeInHierarchy && !IsModalVisible;
+
+    public void ConfigureFonts(Font titleFontOverride, Font bodyFontOverride, Font buttonFontOverride)
+    {
+        if (titleFontOverride != null)
+            titleFont = titleFontOverride;
+        if (bodyFontOverride != null)
+            bodyFont = bodyFontOverride;
+        if (buttonFontOverride != null)
+            buttonFont = buttonFontOverride;
+
+        ApplyFonts();
+    }
 
     private void Awake()
     {
@@ -125,7 +141,7 @@ public class MapTutorialGuideOverlay : MonoBehaviour
         if (canvas != null)
             return;
 
-        Font font = Resources.GetBuiltinResource<Font>(FallbackFontName);
+        Font font = ResolveFallbackFont();
         GameObject canvasGo = new GameObject("MapTutorialGuideCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         canvasGo.transform.SetParent(transform, false);
         canvas = canvasGo.GetComponent<Canvas>();
@@ -154,8 +170,8 @@ public class MapTutorialGuideOverlay : MonoBehaviour
         Image panelImage = panelRoot.gameObject.AddComponent<Image>();
         panelImage.color = panelColor;
 
-        titleText = CreateText("Title", panelRoot, new Vector2(0.5f, 1f), new Vector2(0f, -34f), new Vector2(860f, 54f), font, titleFontSize, TextAnchor.MiddleCenter, titleColor);
-        bodyText = CreateText("Body", panelRoot, new Vector2(0.5f, 1f), new Vector2(0f, -94f), new Vector2(860f, 230f), font, bodyFontSize, TextAnchor.UpperCenter, bodyColor);
+        titleText = CreateText("Title", panelRoot, new Vector2(0.5f, 1f), new Vector2(0f, -34f), new Vector2(860f, 54f), ResolveTitleFont(font), titleFontSize, TextAnchor.MiddleCenter, titleColor);
+        bodyText = CreateText("Body", panelRoot, new Vector2(0.5f, 1f), new Vector2(0f, -94f), new Vector2(860f, 230f), ResolveBodyFont(font), bodyFontSize, TextAnchor.UpperCenter, bodyColor);
         bodyText.horizontalOverflow = HorizontalWrapMode.Wrap;
         bodyText.verticalOverflow = VerticalWrapMode.Overflow;
 
@@ -165,7 +181,7 @@ public class MapTutorialGuideOverlay : MonoBehaviour
         continueButton = buttonRect.gameObject.AddComponent<Button>();
         continueButton.targetGraphic = buttonImage;
         continueButton.onClick.AddListener(HandleContinueClicked);
-        buttonText = CreateText("Label", buttonRect, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(240f, 58f), font, buttonFontSize, TextAnchor.MiddleCenter, buttonTextColor);
+        buttonText = CreateText("Label", buttonRect, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(240f, 58f), ResolveButtonFont(font), buttonFontSize, TextAnchor.MiddleCenter, buttonTextColor);
 
         highlightRoot = CreateRect("HighlightFrame", rootRect, new Vector2(0f, 1f), Vector2.zero, Vector2.zero);
         CreateFrameLine("Top", highlightRoot);
@@ -173,6 +189,41 @@ public class MapTutorialGuideOverlay : MonoBehaviour
         CreateFrameLine("Left", highlightRoot);
         CreateFrameLine("Right", highlightRoot);
         highlightRoot.gameObject.SetActive(false);
+    }
+
+    private void ApplyFonts()
+    {
+        Font fallbackFont = ResolveFallbackFont();
+        if (titleText != null)
+            titleText.font = ResolveTitleFont(fallbackFont);
+        if (bodyText != null)
+            bodyText.font = ResolveBodyFont(fallbackFont);
+        if (buttonText != null)
+            buttonText.font = ResolveButtonFont(fallbackFont);
+    }
+
+    private Font ResolveTitleFont(Font fallbackFont)
+    {
+        return titleFont != null ? titleFont : fallbackFont;
+    }
+
+    private Font ResolveBodyFont(Font fallbackFont)
+    {
+        return bodyFont != null ? bodyFont : fallbackFont;
+    }
+
+    private Font ResolveButtonFont(Font fallbackFont)
+    {
+        if (buttonFont != null)
+            return buttonFont;
+        if (bodyFont != null)
+            return bodyFont;
+        return fallbackFont;
+    }
+
+    private static Font ResolveFallbackFont()
+    {
+        return Resources.GetBuiltinResource<Font>(FallbackFontName);
     }
 
     private void ConfigureHighlight(bool visible, Vector2 anchor, Vector2 size)

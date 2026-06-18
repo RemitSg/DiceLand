@@ -70,7 +70,7 @@ MonoBehaviour:
       blueprintRewards: []
       encounterSelectionMode: 0
       encounterEnemyGroups:
-      - {fileID: 11400000, guid: 882939af49b94f4b92da7b8fb18417b8, type: 2}
+      - {fileID: 11400000, guid: 589ff2320b57432458063c3393bb458b, type: 2}
       encounterEnemies: []
       encounterEnemyCountMin: 1
       encounterEnemyCountMax: 1
@@ -144,7 +144,8 @@ MonoBehaviour:
     blueprintPickCountMax: 1
     blueprintRewards: []
     encounterSelectionMode: 0
-    encounterEnemyGroups: []
+    encounterEnemyGroups:
+    - {fileID: 11400000, guid: 589ff2320b57432458063c3393bb458b, type: 2}
     encounterEnemies: []
     encounterEnemyCountMin: 1
     encounterEnemyCountMax: 1

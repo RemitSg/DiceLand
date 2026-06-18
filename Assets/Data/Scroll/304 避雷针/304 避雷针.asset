@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19ce612b365eeb7448eee7f17b18ada8, type: 3}
+  m_Name: "304 \u907F\u96F7\u9488"
+  m_EditorClassIdentifier: 
+  blueprintID: 304
+  blueprintName: "\u907F\u96F7\u4E4B\u5377"
+  description: "\u8BB0\u8F7D\u7740\u5982\u4F55\u6253\u9020 \u3010\u907F\u96F7\u9488\u3011
+    \u7684\u5377\u8F74"
+  rarity: 1
+  icon: {fileID: 21300000, guid: 9904e867812593b46a0d6811aa9326f7, type: 3}
+  targetWeapon: {fileID: 11400000, guid: 2d6f4c2bb5794bb08e597a77fdc30400, type: 2}
+  materialRequirements:
+  - lootItem: {fileID: 11400000, guid: 3e23e2fc8a9e85945adee34acbb745f4, type: 2}
+    amount: 2
+  - lootItem: {fileID: 11400000, guid: 6e1752dc4702a1c44905a3559cb5f924, type: 2}
+    amount: 1
+  - lootItem: {fileID: 11400000, guid: f7d97cfbea961c84ebb552d194bd09f1, type: 2}
+    amount: 1

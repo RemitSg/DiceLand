@@ -222,6 +222,73 @@ public class BattleSkillInfoOverlayDescriptionTests
     }
 
     [Test]
+    public void CompactSkillDetail_MergesMarkedDelayedStatusBranches()
+    {
+        BattleStatus_SO mark = CreateStatus("target", "\u6807\u8bb0");
+        BattleStatus_SO darkness = CreateStatus("darkness", "\u9ed1\u6697");
+        EnemySkill_SO skill = ScriptableObject.CreateInstance<EnemySkill_SO>();
+        createdObjects.Add(skill);
+        skill.skillName = "\u68fa\u9489";
+        skill.diceCount = 1;
+        skill.dicePowerRanges = new[]
+        {
+            new EnemySkill_SO.DicePowerRange { minPower = 3, maxPower = 5 }
+        };
+        skill.diceEffectSettings = new[]
+        {
+            new EnemySkill_SO.DiceEffectSettings
+            {
+                statusEffects = new[]
+                {
+                    new EnemySkill_SO.StatusEffectEntry
+                    {
+                        trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                        targetMode = EnemySkill_SO.DamageTargetMode.CurrentTarget,
+                        statusData = mark,
+                        applyTiming = EnemySkill_SO.StatusApplyTiming.NextRoundStart,
+                        applyAfterRoundStarts = 1,
+                        applyRepeatCount = 1,
+                        stackAmount = 1,
+                        randomTargetCount = 1,
+                        useCondition = true,
+                        condition = EnemySkill_SO.PowerModifierCondition.TargetStatusStacksLessOrEqual,
+                        conditionStatusData = mark,
+                        requiredConditionStatusStacks = 0
+                    },
+                    new EnemySkill_SO.StatusEffectEntry
+                    {
+                        trigger = EnemySkill_SO.DiceEffectTrigger.OnHit,
+                        targetMode = EnemySkill_SO.DamageTargetMode.CurrentTarget,
+                        statusData = darkness,
+                        applyTiming = EnemySkill_SO.StatusApplyTiming.NextRoundStart,
+                        applyAfterRoundStarts = 1,
+                        applyRepeatCount = 1,
+                        stackAmount = 1,
+                        randomTargetCount = 1,
+                        useCondition = true,
+                        condition = EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast,
+                        conditionStatusData = mark,
+                        requiredConditionStatusStacks = 1
+                    }
+                }
+            }
+        };
+
+        string detail = InvokeCompactSkillHoverDetail(skill);
+
+        Assert.That(detail, Does.Contain("\u547d\u4e2d\u65f6"));
+        Assert.That(detail, Does.Contain("\u4e0b 1 \u4e2a\u56de\u5408\u5f00\u59cb\u65f6"));
+        Assert.That(detail, Does.Contain("\u65bd\u52a0"));
+        Assert.That(detail, Does.Contain("\u6807\u8bb0"));
+        Assert.That(detail, Does.Contain("\u82e5"));
+        Assert.That(detail, Does.Contain("\u5df2\u6709"));
+        Assert.That(detail, Does.Contain("\u6539\u4e3a"));
+        Assert.That(detail, Does.Contain("\u9ed1\u6697"));
+        Assert.That(detail, Does.Not.Contain("\u81f3\u591a\u4e3a"));
+        Assert.That(detail, Does.Not.Contain("\u62e5\u6709\u81f3\u5c11"));
+    }
+
+    [Test]
     public void CompactSkillDetail_StatusEffectShowsNegativeStatusTypeCondition()
     {
         BattleStatus_SO stun = CreateStatus("stun", "\u7729\u6655");

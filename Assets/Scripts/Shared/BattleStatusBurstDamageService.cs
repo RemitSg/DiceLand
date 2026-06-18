@@ -21,6 +21,27 @@ public static class BattleStatusBurstDispatcher
         bool clearStacksAfterBurst,
         Action<int, int> logApplied)
     {
+        return DispatchBurst(
+            stacks,
+            damagePerStack,
+            modifyDamage,
+            applyDamage,
+            clearStacks,
+            null,
+            clearStacksAfterBurst,
+            logApplied);
+    }
+
+    public static int DispatchBurst(
+        int stacks,
+        int damagePerStack,
+        Func<int, int> modifyDamage,
+        Action<int, int> applyDamage,
+        Action clearStacks,
+        Func<int, int> consumeStacks,
+        bool clearStacksAfterBurst,
+        Action<int, int> logApplied)
+    {
         int burstDamage = BattleStatusBurstDamageService.CalculateBurstDamage(stacks, damagePerStack);
         if (burstDamage <= 0)
             return 0;
@@ -29,7 +50,12 @@ public static class BattleStatusBurstDispatcher
         applyDamage?.Invoke(modifiedDamage, burstDamage);
 
         if (clearStacksAfterBurst)
-            clearStacks?.Invoke();
+        {
+            if (consumeStacks != null)
+                consumeStacks(stacks);
+            else
+                clearStacks?.Invoke();
+        }
 
         logApplied?.Invoke(modifiedDamage, burstDamage);
         return modifiedDamage;

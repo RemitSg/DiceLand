@@ -20,6 +20,8 @@ public static class BattleEnemyBuiltInEffectEligibilityService
                 return effect.amount != 0;
             case EnemySkill_SO.BuiltInEffectType.DamageByTargetStatusStacksDivided:
                 return effect.amount > 0;
+            case EnemySkill_SO.BuiltInEffectType.TriggerTargetLinkedStatus:
+                return effect.targetStatusData != null;
             default:
                 return false;
         }

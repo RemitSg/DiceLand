@@ -17,14 +17,20 @@ public static class MerchantStockService
         IReadOnlyList<MerchantCatalog_SO.WeaponGoodsEntry> validWeaponEntries = catalog.GetValidWeaponEntries();
         IReadOnlyList<MerchantCatalog_SO.BlueprintGoodsEntry> validBlueprintEntries = catalog.GetValidBlueprintEntries();
         IReadOnlyList<MerchantCatalog_SO.RelicGoodsEntry> validRelicEntries = catalog.GetValidRelicEntries();
+        HashSet<Weapon_SO> excludedWeapons = MerchantOfferExclusionService.BuildOwnedWeaponSet(runState);
+        HashSet<CraftingBlueprint_SO> excludedBlueprints = MerchantOfferExclusionService.BuildUnavailableBlueprintSet(runState, validBlueprintEntries);
         HashSet<Relic_SO> excludedRelics = MerchantOfferExclusionService.BuildOwnedRelicSet(runState);
+        List<MerchantCatalog_SO.WeaponGoodsEntry> filteredWeaponEntries =
+            RewardCandidateFilterService.BuildAvailableMerchantWeaponGoodsEntries(validWeaponEntries, excludedWeapons);
+        List<MerchantCatalog_SO.BlueprintGoodsEntry> filteredBlueprintEntries =
+            RewardCandidateFilterService.BuildAvailableMerchantBlueprintGoodsEntries(validBlueprintEntries, excludedBlueprints);
         List<MerchantCatalog_SO.RelicGoodsEntry> filteredRelicEntries =
             RewardCandidateFilterService.BuildAvailableMerchantRelicGoodsEntries(validRelicEntries, excludedRelics);
 
         bool hasAnyValidEntries =
             (validLootEntries != null && validLootEntries.Count > 0) ||
-            (validWeaponEntries != null && validWeaponEntries.Count > 0) ||
-            (validBlueprintEntries != null && validBlueprintEntries.Count > 0) ||
+            (filteredWeaponEntries != null && filteredWeaponEntries.Count > 0) ||
+            (filteredBlueprintEntries != null && filteredBlueprintEntries.Count > 0) ||
             (filteredRelicEntries != null && filteredRelicEntries.Count > 0);
 
         if (!hasAnyValidEntries)
@@ -36,8 +42,12 @@ public static class MerchantStockService
 
         List<MerchantOfferState> generated = new List<MerchantOfferState>();
         List<MerchantCatalog_SO.LootGoodsEntry> remainingLootEntries = new List<MerchantCatalog_SO.LootGoodsEntry>(validLootEntries);
-        List<MerchantCatalog_SO.WeaponGoodsEntry> remainingWeaponEntries = new List<MerchantCatalog_SO.WeaponGoodsEntry>(validWeaponEntries);
-        List<MerchantCatalog_SO.BlueprintGoodsEntry> remainingBlueprintEntries = new List<MerchantCatalog_SO.BlueprintGoodsEntry>(validBlueprintEntries);
+        List<MerchantCatalog_SO.WeaponGoodsEntry> remainingWeaponEntries = filteredWeaponEntries != null
+            ? new List<MerchantCatalog_SO.WeaponGoodsEntry>(filteredWeaponEntries)
+            : new List<MerchantCatalog_SO.WeaponGoodsEntry>();
+        List<MerchantCatalog_SO.BlueprintGoodsEntry> remainingBlueprintEntries = filteredBlueprintEntries != null
+            ? new List<MerchantCatalog_SO.BlueprintGoodsEntry>(filteredBlueprintEntries)
+            : new List<MerchantCatalog_SO.BlueprintGoodsEntry>();
         List<MerchantCatalog_SO.RelicGoodsEntry> remainingRelicEntries = filteredRelicEntries != null
             ? new List<MerchantCatalog_SO.RelicGoodsEntry>(filteredRelicEntries)
             : new List<MerchantCatalog_SO.RelicGoodsEntry>();
@@ -101,7 +111,8 @@ public static class MerchantStockService
         HashSet<LootItem_SO> excludedLoot = MerchantOfferExclusionService.BuildCurrentMerchantLootSet(tile, null, true);
         HashSet<Weapon_SO> excludedWeapons = MerchantOfferExclusionService.BuildOwnedWeaponSet(runState);
         MerchantOfferExclusionService.AppendCurrentMerchantWeapons(tile, excludedWeapons, null, true);
-        HashSet<CraftingBlueprint_SO> excludedBlueprints = MerchantOfferExclusionService.BuildOwnedBlueprintSet(runState);
+        IReadOnlyList<MerchantCatalog_SO.BlueprintGoodsEntry> validBlueprintEntries = catalog.GetValidBlueprintEntries();
+        HashSet<CraftingBlueprint_SO> excludedBlueprints = MerchantOfferExclusionService.BuildUnavailableBlueprintSet(runState, validBlueprintEntries);
         MerchantOfferExclusionService.AppendCurrentMerchantBlueprints(tile, excludedBlueprints, null, true);
         HashSet<Relic_SO> excludedRelics = MerchantOfferExclusionService.BuildOwnedRelicSet(runState);
         MerchantOfferExclusionService.AppendCurrentMerchantRelics(tile, excludedRelics, null, true);

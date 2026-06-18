@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RestScene.scene
     guid: 3451887ed158ecd4c8abe4628d55e908
+  - enabled: 1
+    path: Assets/Scenes/RunSettlementScene.unity
+    guid: ac2d3c3ced68a1c4f8d017494978e6ec
   m_BuildProfiles: []
   m_configObjects: {}
   m_SlimFeaturesWeixinMiniGame:

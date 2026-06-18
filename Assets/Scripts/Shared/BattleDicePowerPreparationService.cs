@@ -16,14 +16,15 @@ public static class BattleDicePowerPreparationService
         int statusPowerModifier,
         int relicPowerBonus,
         int skillUsePowerBonus,
-        int actionPowerBonus)
+        int actionPowerBonus,
+        int nonFollowUpPowerBonus = 0)
     {
         int skillUseBonus = relicPowerBonus + skillUsePowerBonus;
-        int bonusPower = skillUseBonus + actionPowerBonus;
+        int bonusPower = skillUseBonus + actionPowerBonus + nonFollowUpPowerBonus;
         return new BattleDicePowerPreparation
         {
             SkillUseBonus = skillUseBonus,
-            ActionBonus = actionPowerBonus,
+            ActionBonus = actionPowerBonus + nonFollowUpPowerBonus,
             BonusPower = bonusPower,
             FinalPower = BattlePowerCalculationService.ClampFinalPower(basePower, bonusPower),
             FollowUpBasePower = BattlePowerCalculationService.ClampFinalPower(basePower, skillUseBonus),

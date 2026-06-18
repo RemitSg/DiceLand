@@ -7,10 +7,13 @@ using UnityEngine.UI;
 public class MainMenuTutorialOverlay : MonoBehaviour
 {
     private const string FallbackFontName = "LegacyRuntime.ttf";
-    private const string DefaultTitle = "Tutorial";
-    private const string DefaultBody = "Tutorial details are currently unavailable.";
-    private const string DefaultStartLabel = "Start";
-    private const string DefaultBackLabel = "Back";
+    private const string DefaultTitle = "教程";
+    private const string DefaultBody = "暂无教程说明。";
+    private const string DefaultStartLabel = "开始";
+    private const string DefaultBackLabel = "返回";
+
+    [Header("Fonts")]
+    [SerializeField] private Font summaryBodyFont;
 
     private Canvas canvas;
     private RectTransform panelRect;
@@ -30,6 +33,14 @@ public class MainMenuTutorialOverlay : MonoBehaviour
     public Text DebugStartButtonText => startButtonText;
     public Text DebugBackButtonText => backButtonText;
     public int DebugSectionCount => sectionViews.Count;
+
+    public void ConfigureFonts(Font summaryBodyFontOverride)
+    {
+        if (summaryBodyFontOverride != null)
+            summaryBodyFont = summaryBodyFontOverride;
+
+        ApplyConfiguredFonts();
+    }
 
     public void Show(
         TutorialMenuCatalog_SO catalog,
@@ -83,6 +94,7 @@ public class MainMenuTutorialOverlay : MonoBehaviour
             return;
 
         Font font = Resources.GetBuiltinResource<Font>(FallbackFontName);
+        Font resolvedSummaryBodyFont = ResolveSummaryBodyFont(font);
 
         GameObject canvasGo = new GameObject("MainMenuTutorialOverlay", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         canvas = canvasGo.GetComponent<Canvas>();
@@ -102,7 +114,7 @@ public class MainMenuTutorialOverlay : MonoBehaviour
         panelImage.color = new Color(0.07f, 0.09f, 0.13f, 0.96f);
 
         summaryTitleText = CreateText("SummaryTitle", panelRect, new Vector2(0.5f, 1f), new Vector2(0f, -56f), new Vector2(860f, 72f), font, 42, TextAnchor.MiddleCenter, Color.white);
-        summaryBodyText = CreateText("SummaryBody", panelRect, new Vector2(0.5f, 1f), new Vector2(0f, -124f), new Vector2(860f, 120f), font, 24, TextAnchor.UpperCenter, new Color(0.85f, 0.88f, 0.92f, 1f));
+        summaryBodyText = CreateText("SummaryBody", panelRect, new Vector2(0.5f, 1f), new Vector2(0f, -124f), new Vector2(860f, 120f), resolvedSummaryBodyFont, 24, TextAnchor.UpperCenter, new Color(0.85f, 0.88f, 0.92f, 1f));
         summaryBodyText.horizontalOverflow = HorizontalWrapMode.Wrap;
         summaryBodyText.verticalOverflow = VerticalWrapMode.Overflow;
 
@@ -148,6 +160,20 @@ public class MainMenuTutorialOverlay : MonoBehaviour
         backButtonText.text = "Back";
 
         canvas.gameObject.SetActive(false);
+    }
+
+    private void ApplyConfiguredFonts()
+    {
+        if (summaryBodyText == null)
+            return;
+
+        Font fallbackFont = Resources.GetBuiltinResource<Font>(FallbackFontName);
+        summaryBodyText.font = ResolveSummaryBodyFont(fallbackFont);
+    }
+
+    private Font ResolveSummaryBodyFont(Font fallbackFont)
+    {
+        return summaryBodyFont != null ? summaryBodyFont : fallbackFont;
     }
 
     private void ApplyLayout(bool hideSections)

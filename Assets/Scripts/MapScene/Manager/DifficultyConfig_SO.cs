@@ -36,6 +36,14 @@ public class DifficultyConfig_SO : ScriptableObject
         [Min(0)] public int maxPrice = 18;
     }
 
+    [Serializable]
+    public class BattleExperienceRewardEntry
+    {
+        public MapDangerBand dangerBand = MapDangerBand.Outer;
+        public MapTileType tileType = MapTileType.Battle;
+        [Min(0)] public int experience = 12;
+    }
+
     public string difficultyName = "Normal";
     [Range(7, 13)] public int boardSize = 9;
     [Min(1)] public int startingActionPoints = 6;
@@ -60,6 +68,17 @@ public class DifficultyConfig_SO : ScriptableObject
         new MerchantRelicPriceEntry { rarity = LootRarity.Rare, minPrice = 26, maxPrice = 34 },
         new MerchantRelicPriceEntry { rarity = LootRarity.Epic, minPrice = 34, maxPrice = 42 },
         new MerchantRelicPriceEntry { rarity = LootRarity.Legendary, minPrice = 42, maxPrice = 52 }
+    };
+    public List<BattleExperienceRewardEntry> battleExperienceRewards = new List<BattleExperienceRewardEntry>
+    {
+        new BattleExperienceRewardEntry { dangerBand = MapDangerBand.Outer, tileType = MapTileType.Battle, experience = 12 },
+        new BattleExperienceRewardEntry { dangerBand = MapDangerBand.Mid, tileType = MapTileType.Battle, experience = 16 },
+        new BattleExperienceRewardEntry { dangerBand = MapDangerBand.Inner, tileType = MapTileType.Battle, experience = 20 },
+        new BattleExperienceRewardEntry { dangerBand = MapDangerBand.Core, tileType = MapTileType.Battle, experience = 24 },
+        new BattleExperienceRewardEntry { dangerBand = MapDangerBand.Outer, tileType = MapTileType.Elite, experience = 24 },
+        new BattleExperienceRewardEntry { dangerBand = MapDangerBand.Mid, tileType = MapTileType.Elite, experience = 32 },
+        new BattleExperienceRewardEntry { dangerBand = MapDangerBand.Inner, tileType = MapTileType.Elite, experience = 40 },
+        new BattleExperienceRewardEntry { dangerBand = MapDangerBand.Core, tileType = MapTileType.Elite, experience = 48 }
     };
 
     public int BoardSize
@@ -110,6 +129,25 @@ public class DifficultyConfig_SO : ScriptableObject
             return minPrice;
 
         return rng.Next(minPrice, maxPrice + 1);
+    }
+
+    public bool TryGetBattleExperienceReward(MapDangerBand dangerBand, MapTileType tileType, out int experience)
+    {
+        experience = 0;
+        if (battleExperienceRewards == null)
+            return false;
+
+        for (int i = 0; i < battleExperienceRewards.Count; i++)
+        {
+            BattleExperienceRewardEntry entry = battleExperienceRewards[i];
+            if (entry == null || entry.dangerBand != dangerBand || entry.tileType != tileType)
+                continue;
+
+            experience = Mathf.Max(0, entry.experience);
+            return true;
+        }
+
+        return false;
     }
 
     public void GetMerchantRelicPriceRange(LootRarity rarity, out int minPrice, out int maxPrice)
@@ -235,6 +273,7 @@ public class DifficultyConfig_SO : ScriptableObject
         legacyMerchantRefreshCost = Mathf.Max(0, legacyMerchantRefreshCost);
         EnsureMerchantRefreshCosts();
         EnsureMerchantRelicPrices();
+        EnsureBattleExperienceRewards();
 
         if (recruitCostTiers == null || recruitCostTiers.Count == 0)
             recruitCostTiers = new List<int> { 50, 80, 120, 180 };
@@ -352,6 +391,36 @@ public class DifficultyConfig_SO : ScriptableObject
         merchantRelicPrices.Sort((left, right) => left.rarity.CompareTo(right.rarity));
     }
 
+    private void EnsureBattleExperienceRewards()
+    {
+        if (battleExperienceRewards == null)
+            battleExperienceRewards = new List<BattleExperienceRewardEntry>();
+
+        EnsureBattleExperienceRewardEntry(MapDangerBand.Outer, MapTileType.Battle, 12);
+        EnsureBattleExperienceRewardEntry(MapDangerBand.Mid, MapTileType.Battle, 16);
+        EnsureBattleExperienceRewardEntry(MapDangerBand.Inner, MapTileType.Battle, 20);
+        EnsureBattleExperienceRewardEntry(MapDangerBand.Core, MapTileType.Battle, 24);
+        EnsureBattleExperienceRewardEntry(MapDangerBand.Outer, MapTileType.Elite, 24);
+        EnsureBattleExperienceRewardEntry(MapDangerBand.Mid, MapTileType.Elite, 32);
+        EnsureBattleExperienceRewardEntry(MapDangerBand.Inner, MapTileType.Elite, 40);
+        EnsureBattleExperienceRewardEntry(MapDangerBand.Core, MapTileType.Elite, 48);
+
+        for (int i = 0; i < battleExperienceRewards.Count; i++)
+        {
+            if (battleExperienceRewards[i] == null)
+            {
+                battleExperienceRewards[i] = new BattleExperienceRewardEntry
+                {
+                    dangerBand = MapDangerBand.Outer,
+                    tileType = MapTileType.Battle,
+                    experience = 12
+                };
+            }
+
+            battleExperienceRewards[i].experience = Mathf.Max(0, battleExperienceRewards[i].experience);
+        }
+    }
+
     private static void GetDefaultMerchantRelicPriceRange(LootRarity rarity, out int minPrice, out int maxPrice)
     {
         minPrice = GetDefaultMerchantRelicMinPrice(rarity);
@@ -425,6 +494,23 @@ public class DifficultyConfig_SO : ScriptableObject
         {
             tileType = tileType,
             minimumCount = Mathf.Max(0, defaultMinimumCount)
+        });
+    }
+
+    private void EnsureBattleExperienceRewardEntry(MapDangerBand dangerBand, MapTileType tileType, int defaultExperience)
+    {
+        for (int i = 0; i < battleExperienceRewards.Count; i++)
+        {
+            BattleExperienceRewardEntry entry = battleExperienceRewards[i];
+            if (entry != null && entry.dangerBand == dangerBand && entry.tileType == tileType)
+                return;
+        }
+
+        battleExperienceRewards.Add(new BattleExperienceRewardEntry
+        {
+            dangerBand = dangerBand,
+            tileType = tileType,
+            experience = Mathf.Max(0, defaultExperience)
         });
     }
 }

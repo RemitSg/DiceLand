@@ -20,6 +20,7 @@ MonoBehaviour:
   - optionId: 1
     optionLabel: "\u201C\u5B66\u5B66\u53C8\u80FD\u548B\u6837\uFF1F\u201D"
     requiredMoney: 0
+    requiredMoneyPercent: 0
     consequenceDescription: "\uFF1F\uFF1F\uFF1F"
     resultContent: "\u4F60\u901A\u8FC7\u4E86\u79D1\u76EE\u4E00\u8003\u8BD5\uFF0C\u8DDD\u79BB\u83B7\u5F97\u9A7E\u7167\u53C8\u8FD1\u4E86\u4E00\u6B65\u3002\r\n"
     builtInEffectType: 8
@@ -28,7 +29,28 @@ MonoBehaviour:
     randomMoneyMax: 0
     randomOwnedLootAmountMin: 0
     randomOwnedLootAmountMax: 0
-    lootRewards: []
+    lootRewards:
+    - lootItem: {fileID: 11400000, guid: 1a247d2fcfd14c141bd79e8a82154b1f, type: 2}
+      amountMin: 1
+      amountMax: 1
+    - lootItem: {fileID: 11400000, guid: 6e1752dc4702a1c44905a3559cb5f924, type: 2}
+      amountMin: 1
+      amountMax: 1
+    - lootItem: {fileID: 11400000, guid: 3e23e2fc8a9e85945adee34acbb745f4, type: 2}
+      amountMin: 1
+      amountMax: 1
+    - lootItem: {fileID: 11400000, guid: ea9793b0c90ae0c4f9dbaf13a832f375, type: 2}
+      amountMin: 1
+      amountMax: 1
+    - lootItem: {fileID: 11400000, guid: 868997ae4239f844f9ea876d8ad4057e, type: 2}
+      amountMin: 1
+      amountMax: 1
+    - lootItem: {fileID: 11400000, guid: f7d97cfbea961c84ebb552d194bd09f1, type: 2}
+      amountMin: 1
+      amountMax: 1
+    - lootItem: {fileID: 11400000, guid: 2a5a440bab2e42f499a7fabcd4b29ead, type: 2}
+      amountMin: 1
+      amountMax: 1
     lootPickCountMin: 0
     lootPickCountMax: 0
     relicTable: {fileID: 0}
@@ -48,12 +70,14 @@ MonoBehaviour:
     encounterEnemyCountMax: 0
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
+    possibleResults: []
     nextEvent: {fileID: 11400000, guid: f1014dcb742cf0d4bbe5f06d9e3ca755, type: 2}
     resolveEvent: 0
     customHandler: {fileID: 0}
   - optionId: 2
     optionLabel: "\u201C\u4E0D\u5B66\u4E86\uFF0C\u76F4\u63A5\u4E0A\u8DEF\uFF01\u201D"
     requiredMoney: 0
+    requiredMoneyPercent: 0
     consequenceDescription: "\uFF1F\uFF1F\uFF1F"
     resultContent: "\u8FDE\u95EF\u5341\u4E2A\u7EA2\u706F\u7684\u4F60\u88AB\u4EA4\u8B66\u62E6\u4E0B\u3002\u201C\u4F60\u4E0D\u8981\u547D\u4E86\uFF01\u201D\u4EA4\u8B66\u6012\u543C\u3002\u4ED6\u5411\u4F60\u4F38\u51FA\u624B\uFF0C\u793A\u610F\u8981\u770B\u4F60\u7684\u9A7E\u7167\uFF0C\u4F60\u8FD9\u624D\u53D1\u73B0\u4F60\u8FDE\u9A7E\u7167\u90FD\u6CA1\u6709\uFF0C\u4EA4\u8B66\u4E00\u811A\u628A\u4F60\u8E39\u56DE\u4E86\u76E5\u6D17\u5BA4\uFF1A\u201C\u6EDA\u56DE\u53BB\u5B66\u79D1\u76EE\u4E00\uFF01\u201D"
     builtInEffectType: 6
@@ -107,12 +131,21 @@ MonoBehaviour:
       encounterEnemyCountMin: 0
       encounterEnemyCountMax: 0
       specialDungeon: {fileID: 0}
+      moneyPercent: 0
+      randomMoneyPercentMin: 0
+      randomMoneyPercentMax: 0
+      weaponCatalog: {fileID: 0}
+      weaponRarity: 4
+      weaponPickCountMin: 1
+      weaponPickCountMax: 1
+    possibleResults: []
     nextEvent: {fileID: 11400000, guid: 24065cf65e374984da865ab1c21058e6, type: 2}
     resolveEvent: 0
     customHandler: {fileID: 0}
   - optionId: 3
     optionLabel: "\u201C\u6211\u4E0D\u5B66\u4E5F\u4E0D\u4E0A\u8DEF\uFF01\u8FD9\u4F60\u80FD\u62FF\u6211\u600E\u4E48\u6837\uFF1F\u201D"
     requiredMoney: 0
+    requiredMoneyPercent: 0
     consequenceDescription: "\uFF1F\uFF1F\uFF1F"
     resultContent: "\u5730\u677F\u7A81\u7136\u6D88\u5931\uFF0C\u4F60\u60E8\u53EB\u7740\u6389\u4E86\u4E0B\u53BB\uFF0C\u56DE\u97F3\u542C\u4E0A\u53BB\u50CF\u662F\u5632\u7B11\u3002\u4F60\u4E00\u5C41\u80A1\u5750\u5728\u4E00\u672C\u4E66\u4E0A\uFF0C\u521A\u62FC\u597D\u7684\u5C41\u80A1\u53C8\u88C2\u6210\u4E86\u516B\u74E3\u3002\u600E\u4E48\uFF1F\u5565\u90FD\u4E0D\u505A\u4F60\u8FD8\u60F3\u8981\u5956\u52B1\uFF1F\u505A\u68A6\u5462\uFF01"
     builtInEffectType: 0
@@ -141,6 +174,7 @@ MonoBehaviour:
     encounterEnemyCountMax: 0
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
+    possibleResults: []
     nextEvent: {fileID: 11400000, guid: 58b1b39bb0dbd2d4d89695ca0f070457, type: 2}
     resolveEvent: 0
     customHandler: {fileID: 0}

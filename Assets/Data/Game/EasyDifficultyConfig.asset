@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyName: Easy
   boardSize: 7
-  startingActionPoints: 10
+  startingActionPoints: 5
   actionPointTiers:
   - calamityTier: 0
-    actionPointLimit: 10
+    actionPointLimit: 5
   - calamityTier: 1
     actionPointLimit: 15
   - calamityTier: 2
@@ -25,6 +25,18 @@ MonoBehaviour:
   - calamityTier: 3
     actionPointLimit: 20
   - calamityTier: 4
+    actionPointLimit: 20
+  - calamityTier: 5
+    actionPointLimit: 20
+  - calamityTier: 6
+    actionPointLimit: 20
+  - calamityTier: 7
+    actionPointLimit: 20
+  - calamityTier: 8
+    actionPointLimit: 20
+  - calamityTier: 9
+    actionPointLimit: 20
+  - calamityTier: 10
     actionPointLimit: 20
   requiredKeys: 2
   generatedKeyTileCount: 3
@@ -60,11 +72,11 @@ MonoBehaviour:
   - tileType: 5
     minimumCount: 2
   - tileType: 6
-    minimumCount: 2
+    minimumCount: 4
   maxRecruitCount: 4
   recruitCostTiers: 320000005a0000008c000000c8000000
   legacyMerchantRefreshCost: 20
-  merchantRefreshCostTiers: 14000000190000001e0000002300000028000000
+  merchantRefreshCostTiers: 1400000014000000190000001e0000002300000028000000
   merchantRelicPrices:
   - rarity: 0
     minPrice: 14
@@ -81,3 +93,31 @@ MonoBehaviour:
   - rarity: 4
     minPrice: 80
     maxPrice: 110
+  - rarity: 5
+    minPrice: 1
+    maxPrice: 1
+  battleExperienceRewards:
+  - dangerBand: 0
+    tileType: 1
+    experience: 7
+  - dangerBand: 1
+    tileType: 1
+    experience: 15
+  - dangerBand: 2
+    tileType: 1
+    experience: 25
+  - dangerBand: 3
+    tileType: 1
+    experience: 35
+  - dangerBand: 0
+    tileType: 2
+    experience: 15
+  - dangerBand: 1
+    tileType: 2
+    experience: 35
+  - dangerBand: 2
+    tileType: 2
+    experience: 55
+  - dangerBand: 3
+    tileType: 2
+    experience: 75

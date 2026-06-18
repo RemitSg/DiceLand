@@ -16,6 +16,9 @@ MonoBehaviour:
   description: "\u628A\u81EA\u5DF1\u65CB\u8F6C\u6210\u4E00\u4E2A\u7403\u51B2\u5411\u654C\u4EBA\u3002"
   skillCategory: 0
   energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 
   targetPriorityMode: 0
@@ -31,12 +34,14 @@ MonoBehaviour:
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 9116813544789905048, guid: c63483318a3b9b44b94e54fe8f8ff7a2, type: 3}
     hitEffectPrefab: {fileID: 9116813544789905048, guid: c63483318a3b9b44b94e54fe8f8ff7a2, type: 3}
+    clashOffsetSpace: 0
     clashPositionOffset: {x: 1, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 1, y: 1, z: 1}
     clashSortingOrderOffset: 0
     overrideClashDuration: 0
     clashDuration: 0
+    hitOffsetSpace: 0
     hitPositionOffset: {x: 2, y: 0, z: 0}
     hitRotationOffset: {x: 0, y: 0, z: 0}
     hitScale: {x: 1, y: 1, z: 1}
@@ -68,7 +73,12 @@ MonoBehaviour:
       requiredSpeedDifference: 1
       powerBonus: 1
       powerBonusPerStep: 1
+      maxPowerBonus: 2
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 

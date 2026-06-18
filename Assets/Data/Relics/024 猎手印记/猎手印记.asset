@@ -15,7 +15,7 @@ MonoBehaviour:
   relicId: 24
   relicName: "\u730E\u624B\u5370\u8BB0"
   description: "\u6BCF\u56DE\u5408\u5F00\u59CB\u65F6\u7ED9\u4E88\u968F\u673A\u654C\u4EBA
-    1 \u5C42\u6807\u8BB0\uFF0C\u53CB\u65B9\u653B\u51FB\u88AB\u6807\u8BB0\u7684\u654C\u4EBA\u65F6\u4F24\u5BB3
+    1 \u5C42\u4E34\u65F6\u6807\u8BB0\uFF0C\u53CB\u65B9\u653B\u51FB\u88AB\u6807\u8BB0\u7684\u654C\u4EBA\u65F6\u4F24\u5BB3
     +1"
   additionalDescription: "\u731B\u517D\u4F1A\u91CD\u590D\u6495\u54AC\u88AB\u5212\u51FA\u75D5\u8FF9\u7684\u90E8\u4F4D\uFF0C\u730E\u624B\u4E5F\u4E00\u6837\u3002"
   rarity: 2
@@ -26,7 +26,7 @@ MonoBehaviour:
     effectType: 26
     chance: 1
     requireUnvisitedTile: 0
-    statusData: {fileID: 11400000, guid: 6b25ae09b0051bc45bb594fe153c832b, type: 2}
+    statusData: {fileID: 11400000, guid: a676db03e598850478a3bed23f9109a4, type: 2}
     amount: 1
     conditionStatusData: {fileID: 0}
     requiredStatusStacks: 1
@@ -44,6 +44,8 @@ MonoBehaviour:
     maxStacks: 1
     requiredDistinctStatusCount: 1
     requiredConsecutiveSkillUses: 1
+    relicTable: {fileID: 0}
+    enemyData: {fileID: 0}
   - effectName: 
     trigger: 14
     effectType: 27
@@ -67,4 +69,6 @@ MonoBehaviour:
     maxStacks: 1
     requiredDistinctStatusCount: 1
     requiredConsecutiveSkillUses: 1
+    relicTable: {fileID: 0}
+    enemyData: {fileID: 0}
   customEffectHandler: {fileID: 0}

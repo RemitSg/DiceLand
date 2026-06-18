@@ -546,20 +546,21 @@ public static class MapEventBuiltInEffectExecutorService
             return;
 
         for (int i = 0; i < runState.partyMembers.Count; i++)
-            ApplyExperienceToPartyMember(runState.partyMembers[i], levelTable, amount);
+            ApplyExperienceToPartyMember(runState, runState.partyMembers[i], levelTable, amount);
 
         runState.SyncLegacyPlayerFieldsFromParty();
     }
 
-    private static void ApplyExperienceToPartyMember(RunPartyMemberState member, LevelTable_SO levelTable, int amount)
+    private static void ApplyExperienceToPartyMember(RunState runState, RunPartyMemberState member, LevelTable_SO levelTable, int amount)
     {
         if (member == null || amount <= 0)
             return;
 
         int currentLevel = Mathf.Max(1, member.level);
         int currentExperience = Mathf.Max(0, member.experience);
-        int currentMaxHP = Mathf.Max(1, member.maxHP);
-        int currentHP = Mathf.Clamp(member.currentHP, 0, currentMaxHP);
+        RunPartyMemberMaxHpService.InitializeBaseTracking(member);
+        int currentBaseMaxHP = Mathf.Max(1, member.preCalamityMaxHP - member.maxHPFlatBonus);
+        int currentHP = Mathf.Clamp(member.currentHP, 0, Mathf.Max(1, member.maxHP));
         int remaining = Mathf.Max(0, amount);
 
         while (remaining > 0)
@@ -581,19 +582,22 @@ public static class MapEventBuiltInEffectExecutorService
             currentLevel += 1;
             currentExperience = 0;
 
-            int upgradedMaxHP = ResolveMaxHPForLevel(levelTable, member.characterData, currentLevel, currentMaxHP);
-            currentMaxHP = upgradedMaxHP;
+            currentBaseMaxHP = ResolveMaxHPForLevel(levelTable, member.characterData, currentLevel, currentBaseMaxHP);
             if (currentHP > 0)
             {
-                int healAmount = Mathf.CeilToInt(upgradedMaxHP * 0.5f);
-                currentHP = Mathf.Clamp(currentHP + healAmount, 0, upgradedMaxHP);
+                int upgradedPreCalamityMaxHP = Mathf.Max(1, currentBaseMaxHP + member.maxHPFlatBonus);
+                int upgradedEffectiveMaxHP = CalamitySystem.ApplyAllyMaxHpModifiers(
+                    upgradedPreCalamityMaxHP,
+                    runState != null ? runState.activeCalamities : null);
+                int healAmount = Mathf.CeilToInt(Mathf.Max(1, upgradedEffectiveMaxHP) * 0.5f);
+                currentHP = Mathf.Clamp(currentHP + healAmount, 0, Mathf.Max(1, upgradedEffectiveMaxHP));
             }
         }
 
         member.level = currentLevel;
         member.experience = currentExperience;
-        member.maxHP = currentMaxHP;
-        member.currentHP = Mathf.Clamp(currentHP, 0, currentMaxHP);
+        member.currentHP = currentHP;
+        RunPartyMemberMaxHpService.SetBaseMaxHp(member, currentBaseMaxHP, runState != null ? runState.activeCalamities : null);
     }
 
     private static int ResolveExperienceToNextLevel(LevelTable_SO levelTable, int level)

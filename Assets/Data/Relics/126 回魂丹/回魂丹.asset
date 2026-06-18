@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92a6c8410a56dcb4db5bca4c318c5c64, type: 3}
+  m_Name: "\u56DE\u9B42\u4E39"
+  m_EditorClassIdentifier: 
+  relicId: 126
+  relicName: "\u56DE\u9B42\u4E39"
+  description: "\u53CB\u65B9\u89D2\u8272\u53D7\u5230\u81F4\u547D\u4F24\u5BB3\u65F6\u4E0D\u6B7B\u4EA1\uFF0C\u7531\u751F\u547D\u503C\u6BD4\u4F8B\u6700\u9AD8\u7684\u53CB\u65B9\u89D2\u8272\u751F\u547D\u503C\u7684\u4E00\u534A\u8F6C\u79FB\u7ED9\u6FD2\u6B7B\u89D2\u8272\uFF0C\u82E5\u654C\u65B9\u5B58\u5728\u4E0D\u4F4E\u4E8E
+    2 \u5C42\u4E2D\u6BD2\u7684\u76EE\u6807\uFF0C\u6FD2\u6B7B\u7684\u89D2\u8272\u989D\u5916\u83B7\u5F97
+    1 \u5C42\u5F3A\u58EE\u4E0E 1 \u5C42\u91CD\u9632\uFF08\u6BCF\u573A\u6218\u6597\u4EC5\u4E00\u6B21\uFF09\u3002"
+  additionalDescription: "\u4EBA\u4EBA\u90FD\u68A6\u5BD0\u4EE5\u6C42\u7684\u4E07\u7075\u836F\u3002"
+  rarity: 4
+  icon: {fileID: 21300000, guid: 16e5f2b88b0968e4ab64e14cac68102a, type: 3}
+  builtInEffects:
+  - effectName: "\u751F\u547D\u8F6C\u79FB\u9632\u81F4\u547D"
+    trigger: 16
+    effectType: 108
+    chance: 1
+    requireUnvisitedTile: 1
+    statusData: {fileID: 11400000, guid: d7f98e43df6b46d7a67f2b97cb5d7ed2, type: 2}
+    amount: 1
+    conditionStatusData: {fileID: 11400000, guid: 5c2d83ddce914792abd7211bb94635f6, type: 2}
+    requiredStatusStacks: 2
+    requiredSpeed: 1
+    requiredSpeedMin: 1
+    requiredSpeedMax: 1
+    statusApplyTiming: 0
+    applyAfterRoundStarts: 1
+    requiredRound: 1
+    requiredRoundMin: 1
+    requiredRoundMax: 1
+    powerAmount: 0
+    minPowerAmount: 0
+    maxPowerAmount: 0
+    maxStacks: 1
+    requiredDistinctStatusCount: 1
+    requiredConsecutiveSkillUses: 1
+    relicTable: {fileID: 0}
+    enemyData: {fileID: 0}
+  - effectName: "\u751F\u547D\u8F6C\u79FB\u989D\u5916\u91CD\u9632"
+    trigger: 16
+    effectType: 109
+    chance: 1
+    requireUnvisitedTile: 1
+    statusData: {fileID: 11400000, guid: 7ba5af759a594fcbbc0a7f0dfe0660d2, type: 2}
+    amount: 1
+    conditionStatusData: {fileID: 11400000, guid: 5c2d83ddce914792abd7211bb94635f6, type: 2}
+    requiredStatusStacks: 2
+    requiredSpeed: 1
+    requiredSpeedMin: 1
+    requiredSpeedMax: 1
+    statusApplyTiming: 0
+    applyAfterRoundStarts: 1
+    requiredRound: 1
+    requiredRoundMin: 1
+    requiredRoundMax: 1
+    powerAmount: 0
+    minPowerAmount: 0
+    maxPowerAmount: 0
+    maxStacks: 1
+    requiredDistinctStatusCount: 1
+    requiredConsecutiveSkillUses: 1
+    relicTable: {fileID: 0}
+    enemyData: {fileID: 0}
+  customEffectHandler: {fileID: 0}

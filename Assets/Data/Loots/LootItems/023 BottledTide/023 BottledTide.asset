@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3abebfccfa94bb4f844818d7206d4dc, type: 3}
+  m_Name: 023 BottledTide
+  m_EditorClassIdentifier: 
+  lootID: 23
+  lootName: "\u74F6\u88C5\u6D0B\u6D41"
+  description: "\u5C0F\u5C0F\u7684\u74F6\u5B50\u91CC\u7FFB\u6D8C\u7740\u5C0F\u5C0F\u7684\u6D6A\u82B1\uFF0C\u74F6\u4E2D\u5DF2\u7136\u6CA1\u6709\u53EF\u4EE5\u963B\u6B62\u5B83\u7684\u4E1C\u897F\u4E86\uFF0C\u5982\u679C\u5B83\u805A\u96C6\u4E86\u5343\u500D\u4E07\u500D\u5462\uFF1F"
+  attribute: {fileID: 11400000, guid: 10b5292773e80184294cee26c42baca4, type: 2}
+  rarity: 1
+  icon: {fileID: 21300000, guid: a28b999ee2c5de145a3a89b53a565311, type: 3}

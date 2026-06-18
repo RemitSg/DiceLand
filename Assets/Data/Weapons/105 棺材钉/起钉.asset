@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: "\u8D77\u9489"
+  m_EditorClassIdentifier: 
+  skillName: "\u8D77\u9489"
+  description: "\u987A\u7740\u9ED1\u6697\u7684\u7F1D\u9699\u64AC\u8D77\u68FA\u9489\uFF0C\u76EE\u6807\u8D8A\u88AB\u9634\u5F71\u6D78\u900F\uFF0C\u8FD9\u4E00\u4E0B\u8D8A\u6DF1\u3002"
+  skillCategory: 0
+  energyCost: 1
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 3
+  maxPower: 5
+  diceCount: 1
+  dicePowerRanges:
+  - minPower: 3
+    maxPower: 5
+  dicePresentationSettings: []
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers:
+    - effectName: "\u4F7F\u7528\u65F6\u76EE\u6807\u6BCF 1 \u5C42\u9ED1\u6697\u5A01\u529B
+        +1\uFF0C\u6700\u591A +2"
+      trigger: 3
+      useCondition: 1
+      condition: 5
+      targetStatusData: {fileID: 11400000, guid: 3732a63112346b545a395695e35c0110, type: 2}
+      targetSkillData: {fileID: 0}
+      targetStatusType: 2
+      requiredStatusStacks: 1
+      requiredSpeedValue: 0
+      requiredSpeedDifference: 0
+      powerBonus: 0
+      powerBonusPerStep: 1
+      maxPowerBonus: 2
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 

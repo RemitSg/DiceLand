@@ -12,6 +12,8 @@ public sealed class BattleSettlementPartyProgression
     public int InitialExperience;
     public int InitialMaxHP;
     public int InitialCurrentHP;
+    public int PreCalamityMaxHP;
+    public int MaxHPFlatBonus;
     public int MaxExperience;
     public int FinalLevel;
     public int FinalExperience;
@@ -30,7 +32,9 @@ public static class BattleSettlementPartyMemberFactory
         int level,
         int experience,
         int maxHP,
-        int currentHP)
+        int currentHP,
+        int preCalamityMaxHP = 0,
+        int maxHPFlatBonus = 0)
     {
         return new RunPartyMemberState
         {
@@ -39,6 +43,8 @@ public static class BattleSettlementPartyMemberFactory
             weaponData = weaponData,
             level = level,
             experience = experience,
+            maxHPFlatBonus = maxHPFlatBonus,
+            preCalamityMaxHP = preCalamityMaxHP > 0 ? preCalamityMaxHP : maxHP,
             maxHP = maxHP,
             currentHP = currentHP
         };
@@ -94,7 +100,9 @@ public static class BattleSettlementPartyMemberFactory
                 progression.FinalLevel,
                 progression.FinalExperience,
                 progression.FinalMaxHP,
-                progression.FinalCurrentHP));
+                progression.FinalCurrentHP,
+                progression.PreCalamityMaxHP,
+                progression.MaxHPFlatBonus));
         }
 
         return result;
@@ -172,6 +180,7 @@ public static class BattleSettlementPartyMemberFactory
         int initialLevel = ally != null ? Mathf.Max(1, ally.Level) : 1;
         int initialExperience = ally != null ? Mathf.Max(0, ally.Experience) : 0;
         int persistentMaxHP = ally != null ? Mathf.Max(1, ally.PersistentMaxHP) : 1;
+        int persistentMaxHPFlatBonus = ally != null ? ally.PersistentMaxHPFlatBonus : 0;
         int initialMaxHP = ally != null ? Mathf.Max(1, ally.MaxHP) : 1;
         int initialCurrentHP = ally != null ? Mathf.Max(0, ally.CurrentHP) : 0;
         BattleSettlementPartyProgression result = new BattleSettlementPartyProgression
@@ -184,6 +193,8 @@ public static class BattleSettlementPartyMemberFactory
             InitialExperience = initialExperience,
             InitialMaxHP = initialMaxHP,
             InitialCurrentHP = initialCurrentHP,
+            PreCalamityMaxHP = persistentMaxHP,
+            MaxHPFlatBonus = persistentMaxHPFlatBonus,
             MaxExperience = resolveExperienceToNextLevel != null ? resolveExperienceToNextLevel(initialLevel) : 100,
             IsAlive = ally != null && !ally.IsDead
         };
@@ -195,14 +206,26 @@ public static class BattleSettlementPartyMemberFactory
             persistentMaxHP,
             experienceReward,
             resolveExperienceToNextLevel ?? (_ => 100),
-            (level, fallbackMaxHP) => resolveMaxHPForLevel != null
-                ? resolveMaxHPForLevel(characterData, level, fallbackMaxHP)
-                : Mathf.Max(1, fallbackMaxHP));
+            (level, fallbackMaxHP) =>
+            {
+                int currentBaseMaxHP = Mathf.Max(1, fallbackMaxHP - persistentMaxHPFlatBonus);
+                int upgradedBaseMaxHP = resolveMaxHPForLevel != null
+                    ? resolveMaxHPForLevel(characterData, level, currentBaseMaxHP)
+                    : currentBaseMaxHP;
+                return Mathf.Max(1, upgradedBaseMaxHP + persistentMaxHPFlatBonus);
+            });
 
         result.FinalLevel = progression.FinalLevel;
         result.FinalExperience = progression.FinalExperience;
-        result.FinalMaxHP = progression.FinalMaxHP;
-        result.FinalCurrentHP = progression.FinalCurrentHP;
+        result.PreCalamityMaxHP = progression.FinalMaxHP;
+        result.MaxHPFlatBonus = persistentMaxHPFlatBonus;
+        IReadOnlyList<RunCalamityState> activeCalamities = BattleEncounterRuntime.ActiveEncounter != null
+            ? BattleEncounterRuntime.ActiveEncounter.activeCalamities
+            : null;
+        result.FinalMaxHP = CalamitySystem.ApplyAllyMaxHpModifiers(progression.FinalMaxHP, activeCalamities);
+        result.FinalCurrentHP = Mathf.Min(progression.FinalCurrentHP, result.FinalMaxHP);
+        if (result.FinalCurrentHP > result.FinalMaxHP)
+            result.FinalCurrentHP = result.FinalMaxHP;
         return result;
     }
 }

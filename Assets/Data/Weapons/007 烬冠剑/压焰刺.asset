@@ -29,7 +29,7 @@ MonoBehaviour:
   maxPower: 5
   diceCount: 1
   dicePowerRanges:
-  - minPower: 2
+  - minPower: 3
     maxPower: 5
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 0}

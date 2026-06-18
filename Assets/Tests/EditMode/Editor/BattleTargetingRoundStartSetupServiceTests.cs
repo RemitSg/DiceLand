@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -69,6 +70,39 @@ public class BattleTargetingRoundStartSetupServiceTests
     }
 
     [Test]
+    public void PrepareEnemies_AppliesStatusDrivenStageTransitionBeforeSkillSelection()
+    {
+        BattleStatus_SO bleed = CreateStatus("bleed", "Bleed");
+        EnemySkill_SO allySkill = CreateSkill("Ally Skill");
+        EnemySkill_SO stageOneSkill = CreateSkill("Stage One Skill", allowedStage: 1);
+        EnemySkill_SO stageTwoSkill = CreateSkill("Stage Two Skill", allowedStage: 2);
+        BattleAllyController bleedingAlly = CreateAlly("Bleeding Ally", currentHp: 10, speed: 4, allySkill);
+        BattleEnemyController enemy = CreateEnemyWithStatusStageRule(
+            "CrimsonBroodmotherLikeEnemy",
+            currentHp: 12,
+            speed: 5,
+            bleed,
+            stageOneSkill,
+            stageTwoSkill);
+        bleedingAlly.AddStatus(bleed, bleed.StatusId, bleed.DisplayName, 3);
+
+        List<string> logs = BattleTargetingRoundStartSetupService.PrepareEnemies(
+            new[] { enemy },
+            currentRound: 2,
+            opposingAllies: new[] { bleedingAlly },
+            applyStatusDrivenStageTransition: target =>
+                BattleStatusDrivenStageTransitionDispatcher.Dispatch(
+                    new[] { target },
+                    new[] { bleedingAlly },
+                    new[] { target },
+                    null));
+
+        Assert.AreEqual(1, enemy.CurrentStageIndex);
+        Assert.AreSame(stageTwoSkill, enemy.SelectedSkill);
+        Assert.AreEqual(1, logs.Count);
+    }
+
+    [Test]
     public void PrepareMethods_HandleNullCollections()
     {
         Assert.AreEqual(0, BattleTargetingRoundStartSetupService.PrepareAllies(null, 1, 2, 1, null).Count);
@@ -92,11 +126,35 @@ public class BattleTargetingRoundStartSetupServiceTests
         return ally;
     }
 
-    private BattleEnemyController CreateEnemy(string name, int currentHp, int speed, EnemySkill_SO skill)
+    private BattleEnemyController CreateEnemy(string name, int currentHp, int speed, params EnemySkill_SO[] skills)
     {
         GameObject go = CreateGameObject(name);
         BattleEnemyController enemy = go.AddComponent<BattleEnemyController>();
-        enemy.ApplyEnemyData(CreateEnemyData(name, currentHp > 0 ? currentHp : 12, speed, skill));
+        enemy.ApplyEnemyData(CreateEnemyData(name, currentHp > 0 ? currentHp : 12, speed, skills));
+        if (currentHp <= 0)
+            enemy.TakeDamage(enemy.CurrentHP);
+        return enemy;
+    }
+
+    private BattleEnemyController CreateEnemyWithStatusStageRule(string name, int currentHp, int speed, BattleStatus_SO statusData, params EnemySkill_SO[] skills)
+    {
+        GameObject go = CreateGameObject(name);
+        BattleEnemyController enemy = go.AddComponent<BattleEnemyController>();
+        EnemyData_SO enemyData = CreateEnemyData(name, currentHp > 0 ? currentHp : 12, speed, skills);
+        enemyData.statusStageTransitionRules = new List<EnemyData_SO.StatusStageTransitionRule>
+        {
+            new EnemyData_SO.StatusStageTransitionRule
+            {
+                ruleName = "Wake on blood",
+                statusData = statusData,
+                targetMode = EnemyData_SO.StageStatusTargetMode.AnyUnit,
+                comparisonType = EnemyData_SO.StageStatusComparisonType.GreaterOrEqual,
+                stackThreshold = 3,
+                targetStageIndex = 1,
+                priority = 1
+            }
+        };
+        enemy.ApplyEnemyData(enemyData);
         if (currentHp <= 0)
             enemy.TakeDamage(enemy.CurrentHP);
         return enemy;
@@ -113,7 +171,7 @@ public class BattleTargetingRoundStartSetupServiceTests
         return character;
     }
 
-    private EnemyData_SO CreateEnemyData(string name, int hp, int speed, EnemySkill_SO skill)
+    private EnemyData_SO CreateEnemyData(string name, int hp, int speed, EnemySkill_SO[] skills)
     {
         EnemyData_SO enemyData = ScriptableObject.CreateInstance<EnemyData_SO>();
         enemyData.enemyName = name;
@@ -121,7 +179,12 @@ public class BattleTargetingRoundStartSetupServiceTests
         enemyData.minSpeed = speed;
         enemyData.maxSpeed = speed;
         enemyData.baseSpeedButtonCount = 1;
-        enemyData.skillPool = new List<EnemySkill_SO> { skill };
+        enemyData.stageSprites = new List<EnemyData_SO.EnemyStageEntry>
+        {
+            new EnemyData_SO.EnemyStageEntry { stageName = "Stage 1", speedButtonCountOverride = 1 },
+            new EnemyData_SO.EnemyStageEntry { stageName = "Stage 2", speedButtonCountOverride = 1 }
+        };
+        enemyData.skillPool = new List<EnemySkill_SO>(skills);
         createdObjects.Add(enemyData);
         return enemyData;
     }
@@ -135,16 +198,32 @@ public class BattleTargetingRoundStartSetupServiceTests
         return weapon;
     }
 
-    private EnemySkill_SO CreateSkill(string name)
+    private EnemySkill_SO CreateSkill(string name, int allowedStage = 1)
     {
         EnemySkill_SO skill = ScriptableObject.CreateInstance<EnemySkill_SO>();
         skill.skillName = name;
         skill.diceCount = 1;
         skill.minPower = 1;
         skill.maxPower = 1;
-        skill.allowedEnemyStages = new List<int> { 1 };
+        skill.allowedEnemyStages = new List<int> { allowedStage };
         createdObjects.Add(skill);
         return skill;
+    }
+
+    private BattleStatus_SO CreateStatus(string statusId, string displayName)
+    {
+        BattleStatus_SO status = ScriptableObject.CreateInstance<BattleStatus_SO>();
+        SetPrivateField(status, "statusId", statusId);
+        SetPrivateField(status, "displayName", displayName);
+        createdObjects.Add(status);
+        return status;
+    }
+
+    private static void SetPrivateField<TValue>(object target, string fieldName, TValue value)
+    {
+        FieldInfo field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(field, $"Field {fieldName} was not found on {target.GetType().Name}.");
+        field.SetValue(target, value);
     }
 
     private GameObject CreateGameObject(string name)

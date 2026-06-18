@@ -14,9 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: "\u707C\u70ED\u6A2A\u65A9"
   description: "\u7528\u707C\u70ED\u7684\u5251\u5203\u501F\u529B\u6A2A\u5288\u654C\u4EBA\uFF0C\u8BA9\u654C\u4EBA\u611F\u53D7\u53CC\u91CD\u75DB\u82E6"
+  skillCategory: 0
   energyCost: 4
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
   transformEnemyToStageIndex: -1
   allowedEnemyStages: 
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
   minPower: 3
   maxPower: 5
   diceCount: 1
@@ -24,12 +32,14 @@ MonoBehaviour:
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 7336644444123945357, guid: aca0a21d01e496443933c923b06b60e1, type: 3}
     hitEffectPrefab: {fileID: 5771472496795921052, guid: f29dc0bbfbba14542b2f1e53b71b875f, type: 3}
+    clashOffsetSpace: 0
     clashPositionOffset: {x: 1, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
     clashScale: {x: 0, y: 0, z: 0}
     clashSortingOrderOffset: 0
     overrideClashDuration: 0
     clashDuration: 0
+    hitOffsetSpace: 0
     hitPositionOffset: {x: 0, y: 0, z: 0}
     hitRotationOffset: {x: 90, y: 180, z: 0}
     hitScale: {x: 3, y: 3, z: 3}
@@ -46,7 +56,12 @@ MonoBehaviour:
     overrideSkillSpriteDuration: 0
     skillSpriteDuration: 0
   diceEffectSettings:
-  - damageEffects: []
+  - damageEffects:
+    - effectName: 
+      trigger: 0
+      targetMode: 2
+      damageAmount: 1
+      randomTargetCount: 1
     statusEffects:
     - effectName: 
       trigger: 0
@@ -58,8 +73,20 @@ MonoBehaviour:
       applyRepeatCount: 0
       stackAmount: 2
       randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
     powerModifiers: []
     statusBurstEffects: []
     healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
     statusStackOperationEffects: []
     enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 

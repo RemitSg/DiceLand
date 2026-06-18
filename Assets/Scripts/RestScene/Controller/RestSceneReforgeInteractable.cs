@@ -200,6 +200,8 @@ public class RestSceneReforgeInteractable : MonoBehaviour
 
     private void OnMouseUpAsButton()
     {
+        if (promptVisible || mainPanelVisible)
+            return;
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return;
         if (RestSceneModalState.IsLocked && !RestSceneModalState.IsLockedBy(this))
@@ -212,6 +214,8 @@ public class RestSceneReforgeInteractable : MonoBehaviour
 
     public void ShowOpenPrompt()
     {
+        if (promptVisible || mainPanelVisible)
+            return;
         if (!RestSceneModalState.TryAcquire(this))
             return;
 

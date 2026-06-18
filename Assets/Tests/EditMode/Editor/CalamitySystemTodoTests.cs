@@ -75,7 +75,150 @@ public class CalamitySystemTodoTests
     }
 
     [Test]
-    public void AllyMaxHpCalamity_DoesNotRewritePersistentPartyMaxHpAfterSettlement()
+    public void AllyMaxHpCalamity_RecalculatesFromPersistentMaxHpWithRounding()
+    {
+        List<RunCalamityState> calamities = BuildCalamities(
+            CreateCalamity(CalamityBuiltInEffectType.AllyMaxHpPercentModifier, -30));
+
+        Assert.AreEqual(14, CalamitySystem.ApplyAllyMaxHpModifiers(20, calamities));
+        Assert.AreEqual(17, CalamitySystem.ApplyAllyMaxHpModifiers(24, calamities));
+    }
+
+    [Test]
+    public void PartyEffectiveStats_ExposeCalamityAdjustedHpWithoutRewritingPersistentMaxHp()
+    {
+        List<RunCalamityState> calamities = BuildCalamities(
+            CreateCalamity(CalamityBuiltInEffectType.AllyMaxHpPercentModifier, -30));
+        RunPartyMemberState member = new RunPartyMemberState
+        {
+            memberId = "Strawberry Ally",
+            preCalamityMaxHP = 20,
+            maxHP = 20,
+            currentHP = 20
+        };
+
+        RunPartyMemberMaxHpService.Recalculate(member, calamities);
+
+        Assert.AreEqual(20, member.preCalamityMaxHP);
+        Assert.AreEqual(14, member.maxHP);
+        Assert.AreEqual(14, member.currentHP);
+
+        member.preCalamityMaxHP = 24;
+        member.currentHP = 24;
+        RunPartyMemberMaxHpService.Recalculate(member, calamities);
+
+        Assert.AreEqual(24, member.preCalamityMaxHP);
+        Assert.AreEqual(17, member.maxHP);
+        Assert.AreEqual(17, member.currentHP);
+    }
+
+    [Test]
+    public void PartyMaxHpRecalculation_AdjustsCurrentHpByMaxHpIncreaseOnly()
+    {
+        List<RunCalamityState> calamities = BuildCalamities(
+            CreateCalamity(CalamityBuiltInEffectType.AllyMaxHpPercentModifier, -30));
+        RunPartyMemberState member = new RunPartyMemberState
+        {
+            memberId = "Strawberry Ally",
+            preCalamityMaxHP = 16,
+            maxHP = 11,
+            currentHP = 8
+        };
+
+        RunPartyMemberMaxHpService.AddPreCalamityMaxHp(member, 4, calamities);
+
+        Assert.AreEqual(20, member.preCalamityMaxHP);
+        Assert.AreEqual(14, member.maxHP);
+        Assert.AreEqual(11, member.currentHP);
+
+        RunPartyMemberMaxHpService.AddPreCalamityMaxHp(member, -6, calamities);
+
+        Assert.AreEqual(14, member.preCalamityMaxHP);
+        Assert.AreEqual(10, member.maxHP);
+        Assert.AreEqual(10, member.currentHP);
+
+        member.currentHP = 6;
+        RunPartyMemberMaxHpService.AddPreCalamityMaxHp(member, -4, calamities);
+
+        Assert.AreEqual(10, member.preCalamityMaxHP);
+        Assert.AreEqual(7, member.maxHP);
+        Assert.AreEqual(6, member.currentHP);
+    }
+
+    [Test]
+    public void ApplyChosenCalamity_RewritesRunPartyMaxHpForMapAndFutureBattles()
+    {
+        RunState runState = new RunState
+        {
+            partyMembers = new List<RunPartyMemberState>
+            {
+                new RunPartyMemberState
+                {
+                    memberId = "Molly",
+                    preCalamityMaxHP = 20,
+                    maxHP = 20,
+                    currentHP = 20
+                }
+            }
+        };
+        Calamity_SO calamity = CreateCalamity(CalamityBuiltInEffectType.AllyMaxHpPercentModifier, -30);
+
+        CalamitySelectionService.ApplyChosenCalamity(runState, calamity, 1);
+
+        Assert.AreEqual(20, runState.partyMembers[0].preCalamityMaxHP);
+        Assert.AreEqual(14, runState.partyMembers[0].maxHP);
+        Assert.AreEqual(14, runState.partyMembers[0].currentHP);
+    }
+
+    [Test]
+    public void AllyMaxHpCalamity_SettlementLevelUpHealsHalfOfEffectiveMaxHp()
+    {
+        BattleEncounterData encounter = new BattleEncounterData
+        {
+            activeCalamities = BuildCalamities(CreateCalamity(CalamityBuiltInEffectType.AllyMaxHpPercentModifier, -30))
+        };
+        BattleEncounterRuntime.SetEncounter(encounter);
+        BattleEncounterRuntime.ConsumeEncounter();
+        BattleAllyController ally = CreateAlly("Growing Ally", 20, 8);
+
+        List<BattleSettlementPartyProgression> progressions = BattleSettlementPartyMemberFactory.BuildProgressions(
+            new[] { ally },
+            10,
+            _ => 10,
+            (_, level, _) => level == 2 ? 24 : 20);
+        List<RunPartyMemberState> runStates = BattleSettlementPartyMemberFactory.BuildRunStates(progressions);
+
+        Assert.AreEqual(24, runStates[0].preCalamityMaxHP);
+        Assert.AreEqual(17, runStates[0].maxHP);
+        Assert.AreEqual(17, runStates[0].currentHP);
+    }
+
+    [Test]
+    public void AllyMaxHpCalamity_SettlementLevelUpKeepsFlatMaxHpBonus()
+    {
+        BattleEncounterData encounter = new BattleEncounterData
+        {
+            activeCalamities = BuildCalamities(CreateCalamity(CalamityBuiltInEffectType.AllyMaxHpPercentModifier, -30))
+        };
+        BattleEncounterRuntime.SetEncounter(encounter);
+        BattleEncounterRuntime.ConsumeEncounter();
+        BattleAllyController ally = CreateAlly("Strawberry Ally", 20, 10, characterBaseHp: 16, maxHpFlatBonus: 4);
+
+        List<BattleSettlementPartyProgression> progressions = BattleSettlementPartyMemberFactory.BuildProgressions(
+            new[] { ally },
+            10,
+            _ => 10,
+            (_, level, _) => level == 2 ? 24 : 16);
+        List<RunPartyMemberState> runStates = BattleSettlementPartyMemberFactory.BuildRunStates(progressions);
+
+        Assert.AreEqual(4, runStates[0].maxHPFlatBonus);
+        Assert.AreEqual(28, runStates[0].preCalamityMaxHP);
+        Assert.AreEqual(20, runStates[0].maxHP);
+        Assert.AreEqual(20, runStates[0].currentHP);
+    }
+
+    [Test]
+    public void AllyMaxHpCalamity_SettlementCarriesEffectiveAndPreCalamityMaxHp()
     {
         BattleEncounterData encounter = new BattleEncounterData
         {
@@ -95,7 +238,8 @@ public class CalamitySystemTodoTests
         Assert.AreEqual(70, ally.MaxHP);
         Assert.AreEqual(100, ally.PersistentMaxHP);
         Assert.AreEqual(1, runStates.Count);
-        Assert.AreEqual(100, runStates[0].maxHP);
+        Assert.AreEqual(100, runStates[0].preCalamityMaxHP);
+        Assert.AreEqual(70, runStates[0].maxHP);
         Assert.AreEqual(70, runStates[0].currentHP);
     }
 
@@ -130,7 +274,7 @@ public class CalamitySystemTodoTests
         return calamity;
     }
 
-    private BattleAllyController CreateAlly(string name, int maxHp, int currentHp)
+    private BattleAllyController CreateAlly(string name, int maxHp, int currentHp, int characterBaseHp = 0, int maxHpFlatBonus = 0)
     {
         GameObject go = new GameObject(name);
         createdObjects.Add(go);
@@ -138,7 +282,7 @@ public class CalamitySystemTodoTests
         BattleAllyController ally = go.AddComponent<BattleAllyController>();
         CharacterData_SO character = ScriptableObject.CreateInstance<CharacterData_SO>();
         character.characterName = name;
-        character.baseHP = maxHp;
+        character.baseHP = characterBaseHp > 0 ? characterBaseHp : maxHp;
         createdObjects.Add(character);
 
         ally.ApplyRuntimeState(new RunPartyMemberState
@@ -147,6 +291,8 @@ public class CalamitySystemTodoTests
             characterData = character,
             level = 1,
             experience = 0,
+            maxHPFlatBonus = maxHpFlatBonus,
+            preCalamityMaxHP = maxHp,
             maxHP = maxHp,
             currentHP = currentHp
         });

@@ -610,14 +610,15 @@ MonoBehaviour:
   treasureRewardTable: {fileID: 11400000, guid: 2c6a88a1f5a447e58833c755f5e4073b, type: 2}
   eliteRelicChoiceTable: {fileID: 0}
   levelTable: {fileID: 11400000, guid: 1c8dd34d2260a1b4a90e6e6e6e759828, type: 2}
-  startingMoney: 100
+  abilityTreeConfig: {fileID: 11400000, guid: 7ed652836a7ea3e4abb6de15e94ce9e4, type: 2}
+  startingMoney: 0
   startingPartyMembers:
   - memberId: 0
     characterData: {fileID: 11400000, guid: 27e817266af382946804dea6afd2e374, type: 2}
     equippedWeapon: {fileID: 11400000, guid: 9b8c5d177c240334a9734636830a139f, type: 2}
     startingLevel: 1
     startingExperience: 0
-    startingMaxHP: 24
+    startingMaxHP: 16
     startingCurrentHP: 0
   tutorialStartingPartyMembers: []
   tutorialBattle02MollyGuestCharacter: {fileID: 11400000, guid: 5121d91a4381d6748a08ee2236cc03fd, type: 2}
@@ -678,6 +679,9 @@ MonoBehaviour:
     bossTemplate: {fileID: 11400000, guid: f3b54da2b2fd4a5584c0fb85294411ef, type: 2}
     burnStatusTemplate: {fileID: 0}
   tutorialViewNavigationSettleSeconds: 0.8
+  tutorialMapGuideTitleFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
+  tutorialMapGuideBodyFont: {fileID: 12800000, guid: 484ab9585f5e809499172abd408d9db2, type: 3}
+  tutorialMapGuideButtonFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
   cameraBackgroundColor: {r: 0.08, g: 0.11, b: 0.16, a: 1}
   cameraPadding: 2.8
 --- !u!114 &1019032849
@@ -1136,6 +1140,9 @@ MonoBehaviour:
   highlightFrameColor: {r: 1, g: 0.84, b: 0.36, a: 0.95}
   highlightFrameThickness: 5
   highlightBleedPixels: 2
+  titleFont: {fileID: 0}
+  bodyFont: {fileID: 0}
+  buttonFont: {fileID: 0}
   titleFontSize: 34
   bodyFontSize: 24
   buttonFontSize: 22

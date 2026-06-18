@@ -37,7 +37,8 @@ public static class BattleTargetingRoundStartSetupService
     public static List<string> PrepareEnemies(
         IReadOnlyList<BattleEnemyController> enemies,
         int currentRound,
-        IReadOnlyList<BattleAllyController> opposingAllies = null)
+        IReadOnlyList<BattleAllyController> opposingAllies = null,
+        Action<BattleEnemyController> applyStatusDrivenStageTransition = null)
     {
         List<string> logs = new List<string>();
         if (enemies == null)
@@ -51,6 +52,7 @@ public static class BattleTargetingRoundStartSetupService
             if (enemy == null || enemy.IsDead)
                 continue;
 
+            applyStatusDrivenStageTransition?.Invoke(enemy);
             ApplyReflectionSpeedButtonPassive(enemy, previousAllyDiceTotal, currentRound);
             enemy.GenerateRandomSpeed();
             enemy.SelectRandomSkills(currentRound);

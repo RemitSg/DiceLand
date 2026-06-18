@@ -469,6 +469,12 @@ public class BattleEnemyController : MonoBehaviour
         if (!pendingCalamityDelayedDeath || IsDead)
             return false;
 
+        if (CurrentHP > 1)
+        {
+            pendingCalamityDelayedDeath = false;
+            return false;
+        }
+
         pendingCalamityDelayedDeath = false;
         CurrentHP = 0;
         HealthChanged?.Invoke(this);
@@ -716,6 +722,8 @@ public class BattleEnemyController : MonoBehaviour
     {
         if (IsDead || amount <= 0)
             return 0;
+        if (RelicSystem.ShouldPreventEnemyHealing(this))
+            return 0;
 
         int previousHP = CurrentHP;
         CurrentHP = Mathf.Clamp(CurrentHP + amount, 0, MaxHP);
@@ -723,6 +731,7 @@ public class BattleEnemyController : MonoBehaviour
         if (actualHeal <= 0)
             return 0;
 
+        CancelPendingCalamityDelayedDeathIfRecovered();
         HealthChanged?.Invoke(this);
         return actualHeal;
     }
@@ -773,6 +782,16 @@ public class BattleEnemyController : MonoBehaviour
         if (minimumStacks > 0)
             entry.stacks = Mathf.Max(entry.stacks, minimumStacks);
         NotifyStatusChanged(entry);
+        RelicTriggerDispatcher.ProcessStatusApplied(
+            BattleEncounterRuntime.ActiveEncounter,
+            null,
+            statusData,
+            0,
+            false,
+            null,
+            this,
+            entry.Key,
+            entry.DisplayName);
         BattleGamblerPassiveService.TryApplyDebtInstantDeath(this, statusData, fallbackStatusId, null);
         if (IsSpeedButtonPenaltyStatus(entry))
             RefreshActiveSpeedButtons();
@@ -1666,8 +1685,11 @@ public class BattleEnemyController : MonoBehaviour
 
     private int ApplyCalamityDelayedDeathRule(int resultingHP)
     {
-        if (resultingHP > 0 || pendingCalamityDelayedDeath)
+        if (resultingHP > 0)
             return resultingHP;
+
+        if (pendingCalamityDelayedDeath)
+            return 1;
 
         IReadOnlyList<RunCalamityState> activeCalamities = BattleEncounterRuntime.ActiveEncounter != null
             ? BattleEncounterRuntime.ActiveEncounter.activeCalamities
@@ -1677,6 +1699,12 @@ public class BattleEnemyController : MonoBehaviour
 
         pendingCalamityDelayedDeath = true;
         return 1;
+    }
+
+    private void CancelPendingCalamityDelayedDeathIfRecovered()
+    {
+        if (pendingCalamityDelayedDeath && CurrentHP > 1)
+            pendingCalamityDelayedDeath = false;
     }
 
     private bool HasOtherLivingAllyAboveOneHp()
@@ -1754,9 +1782,19 @@ public class BattleEnemyController : MonoBehaviour
         if (skill.targetPriorityStatusData != null)
             return ally.GetStatusStacks(skill.targetPriorityStatusData);
 
-        return skill.targetPriorityStatusType == EnemySkill_SO.DiceStatusType.Burn
-            ? ally.GetStatusStacks("burn")
-            : 0;
+        switch (skill.targetPriorityStatusType)
+        {
+            case EnemySkill_SO.DiceStatusType.Burn:
+                return ally.GetStatusStacks("burn");
+            case EnemySkill_SO.DiceStatusType.Electro:
+                return ally.GetStatusStacks("current");
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                return ally.GetStatusStacks("darkness");
+            case EnemySkill_SO.DiceStatusType.Mark:
+                return ally.GetStatusStacks("target");
+            default:
+                return 0;
+        }
     }
 
     private void RefreshSpeedButtonsFromHierarchy()
@@ -2121,13 +2159,13 @@ public class BattleEnemyController : MonoBehaviour
         switch (entry.statusData.RoundEndDecayMode)
         {
             case BattleStatus_SO.StackDecayMode.HalveRoundedDown:
-                return Mathf.Max(0, stacksBeforeDecay / 2);
+                return RelicSystem.ResolveEnemyStatusRoundEndStacksAfterDecay(this, entry.statusData, entry.Key, stacksBeforeDecay, Mathf.Max(0, stacksBeforeDecay / 2));
             case BattleStatus_SO.StackDecayMode.LoseAll:
-                return 0;
+                return RelicSystem.ResolveEnemyStatusRoundEndStacksAfterDecay(this, entry.statusData, entry.Key, stacksBeforeDecay, 0);
             case BattleStatus_SO.StackDecayMode.LoseOne:
-                return Mathf.Max(0, stacksBeforeDecay - 1);
+                return RelicSystem.ResolveEnemyStatusRoundEndStacksAfterDecay(this, entry.statusData, entry.Key, stacksBeforeDecay, Mathf.Max(0, stacksBeforeDecay - 1));
             default:
-                return stacksBeforeDecay;
+                return RelicSystem.ResolveEnemyStatusRoundEndStacksAfterDecay(this, entry.statusData, entry.Key, stacksBeforeDecay, stacksBeforeDecay);
         }
     }
 

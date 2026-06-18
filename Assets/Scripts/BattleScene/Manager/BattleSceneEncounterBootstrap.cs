@@ -457,6 +457,7 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
             weaponData = runtimeWeapon,
             level = 1,
             experience = 0,
+            preCalamityMaxHP = runtimeCharacter.baseHP,
             maxHP = runtimeCharacter.baseHP,
             currentHP = runtimeCharacter.baseHP
         };

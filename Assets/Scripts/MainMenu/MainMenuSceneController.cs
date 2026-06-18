@@ -29,7 +29,8 @@ public class MainMenuSceneController : MonoBehaviour
         Contributors = 4,
         Settings = 5,
         Exit = 6,
-        DemoTest = 7
+        DemoTest = 7,
+        Ability = 8
     }
 
     [Header("Difficulty Configs")]
@@ -40,15 +41,20 @@ public class MainMenuSceneController : MonoBehaviour
     [SerializeField] private string demoTestSceneName = "SampleScene";
 
     [Header("Labels")]
-    [SerializeField] private string newGameLabel = "NewGame";
-    [SerializeField] private string continueLabel = "Continue";
-    [SerializeField] private string tutorialLabel = "Tutorial";
-    [SerializeField] private string contributorsLabel = "Contributors";
-    [SerializeField] private string settingsLabel = "Settings";
-    [SerializeField] private string exitLabel = "Exit";
-    [SerializeField] private string demoTestLabel = "DemoTest";
+    [SerializeField] private string newGameLabel = "新游戏";
+    [SerializeField] private string continueLabel = "继续游戏";
+    [SerializeField] private string tutorialLabel = "教程";
+    [SerializeField] private string contributorsLabel = "制作人员";
+    [SerializeField] private string settingsLabel = "设置";
+    [SerializeField] private string exitLabel = "退出";
+    [SerializeField] private string demoTestLabel = "测试战斗";
     [SerializeField] private Color disabledContinueColor = new Color(0.55f, 0.55f, 0.55f, 0.9f);
-    [SerializeField] private string noSaveSuffix = " (No Save)";
+    [SerializeField] private string noSaveSuffix = "（无存档）";
+
+    [SerializeField] private string abilityLabel = "能力";
+
+    [Header("Ability")]
+    [SerializeField] private AbilityTreeConfig_SO abilityTreeConfig;
 
     [Header("Tutorial")]
     [SerializeField] private TutorialMenuCatalog_SO tutorialCatalog;
@@ -70,12 +76,16 @@ public class MainMenuSceneController : MonoBehaviour
     [SerializeField] private Font settingsToggleStateFont;
     [SerializeField] private Font settingsDropdownFont;
     [SerializeField] private Font settingsButtonFont;
+    [SerializeField] private Font mainMenuItemFont;
+    [SerializeField, Min(1)] private int mainMenuItemFontSize = 48;
+    [SerializeField] private Font tutorialStartPopupBodyFont;
     [SerializeField] private Font contributorsTitleFont;
     [SerializeField] private Font contributorsBodyFont;
 
     private GalleryLevelSelectionManager mainMenuGallery;
     private GalleryLevelSelectionManager difficultyGallery;
     private MainMenuTutorialOverlay tutorialOverlay;
+    private AbilityMenuOverlay abilityOverlay;
     private MainMenuContributorsOverlay contributorsOverlay;
     private MainMenuSettingsOverlay settingsOverlay;
     private readonly Dictionary<GalleryLevelView, MenuAction> menuActions = new Dictionary<GalleryLevelView, MenuAction>();
@@ -107,11 +117,17 @@ public class MainMenuSceneController : MonoBehaviour
         if (tutorialOverlay == null)
             tutorialOverlay = gameObject.AddComponent<MainMenuTutorialOverlay>();
 
+        abilityOverlay = GetComponent<AbilityMenuOverlay>();
+        if (abilityOverlay == null)
+            abilityOverlay = gameObject.AddComponent<AbilityMenuOverlay>();
+
         settingsOverlay = GetComponent<MainMenuSettingsOverlay>();
         if (settingsOverlay == null)
             settingsOverlay = gameObject.AddComponent<MainMenuSettingsOverlay>();
 
         contributorsOverlay.ConfigureFonts(contributorsTitleFont, contributorsBodyFont);
+        tutorialOverlay.ConfigureFonts(tutorialStartPopupBodyFont);
+        abilityOverlay.ConfigureFonts(settingsTitleFont, settingsBodyFont, settingsButtonFont);
         settingsOverlay.ConfigureFonts(
             settingsTitleFont,
             settingsBodyFont,
@@ -121,6 +137,7 @@ public class MainMenuSceneController : MonoBehaviour
             settingsDropdownFont,
             settingsButtonFont);
 
+        NormalizeLegacyDefaultLabels();
         ApplyMainMenuSettings();
         ConfigureMainMenuItems();
         ConfigureDifficultyMenu();
@@ -152,12 +169,13 @@ public class MainMenuSceneController : MonoBehaviour
             return;
 
         bool tutorialVisibleAtStart = tutorialOverlay != null && tutorialOverlay.IsVisible;
+        bool abilityVisibleAtStart = abilityOverlay != null && abilityOverlay.IsVisible;
         bool contributorsVisibleAtStart = contributorsOverlay != null && contributorsOverlay.IsVisible;
         bool settingsVisibleAtStart = settingsOverlay != null && settingsOverlay.IsVisible;
 
-        SetGalleryInputEnabled(!(tutorialVisibleAtStart || contributorsVisibleAtStart || settingsVisibleAtStart));
+        SetGalleryInputEnabled(!(tutorialVisibleAtStart || abilityVisibleAtStart || contributorsVisibleAtStart || settingsVisibleAtStart));
 
-        if (!tutorialVisibleAtStart && !contributorsVisibleAtStart && !settingsVisibleAtStart)
+        if (!tutorialVisibleAtStart && !abilityVisibleAtStart && !contributorsVisibleAtStart && !settingsVisibleAtStart)
             HandleFocusedMenuOverlayState();
 
         if (!Input.GetKeyDown(KeyCode.Escape))
@@ -169,6 +187,13 @@ public class MainMenuSceneController : MonoBehaviour
         if (tutorialVisibleAtStart)
         {
             tutorialOverlay.Hide();
+            TrackOverlayVisibilityState();
+            return;
+        }
+
+        if (abilityVisibleAtStart)
+        {
+            abilityOverlay.Hide();
             TrackOverlayVisibilityState();
             return;
         }
@@ -201,6 +226,26 @@ public class MainMenuSceneController : MonoBehaviour
     {
         MainMenuSettingsData settings = MainMenuSettingsPersistence.Load();
         MainMenuSettingsPersistence.Apply(settings);
+    }
+
+    private void NormalizeLegacyDefaultLabels()
+    {
+        newGameLabel = ReplaceLegacyDefaultLabel(newGameLabel, "NewGame", "新游戏");
+        continueLabel = ReplaceLegacyDefaultLabel(continueLabel, "Continue", "继续游戏");
+        tutorialLabel = ReplaceLegacyDefaultLabel(tutorialLabel, "Tutorial", "教程");
+        contributorsLabel = ReplaceLegacyDefaultLabel(contributorsLabel, "Contributors", "制作人员");
+        settingsLabel = ReplaceLegacyDefaultLabel(settingsLabel, "Settings", "设置");
+        exitLabel = ReplaceLegacyDefaultLabel(exitLabel, "Exit", "退出");
+        demoTestLabel = ReplaceLegacyDefaultLabel(demoTestLabel, "DemoTest", "测试战斗");
+        noSaveSuffix = ReplaceLegacyDefaultLabel(noSaveSuffix, "(No Save)", "（无存档）");
+        noSaveSuffix = ReplaceLegacyDefaultLabel(noSaveSuffix, " (No Save)", "（无存档）");
+    }
+
+    private static string ReplaceLegacyDefaultLabel(string currentValue, string legacyDefault, string localizedDefault)
+    {
+        return string.Equals(currentValue, legacyDefault, StringComparison.Ordinal)
+            ? localizedDefault
+            : currentValue;
     }
 
     private void HandleFocusedMenuOverlayState()
@@ -247,8 +292,7 @@ public class MainMenuSceneController : MonoBehaviour
             if (item == null)
                 continue;
 
-            string identity = GetMenuIdentity(item);
-            MenuAction action = ResolveMenuAction(identity);
+            MenuAction action = ResolveMenuAction(item);
             if (action == MenuAction.None)
             {
                 item.gameObject.SetActive(false);
@@ -259,7 +303,10 @@ public class MainMenuSceneController : MonoBehaviour
             menuActions[item] = action;
             item.levelName = GetDisplayLabel(action);
             if (item.text != null)
+            {
                 item.text.text = item.levelName;
+                ApplyMainMenuItemFont(item.text);
+            }
 
             DemoGalleryMenuItem demoItem = item as DemoGalleryMenuItem;
             if (action == MenuAction.NewGame)
@@ -284,6 +331,17 @@ public class MainMenuSceneController : MonoBehaviour
 
         if (newGameItem is DemoGalleryMenuItem newGameDemoItem && newGameDemoItem.contentToShow != null)
             difficultyGallery = newGameDemoItem.contentToShow.GetComponentInChildren<GalleryLevelSelectionManager>(true);
+    }
+
+    private void ApplyMainMenuItemFont(Text target)
+    {
+        if (target == null)
+            return;
+
+        if (mainMenuItemFont != null)
+            target.font = mainMenuItemFont;
+
+        target.fontSize = Mathf.Max(1, mainMenuItemFontSize);
     }
 
     private void ConfigureDifficultyMenu()
@@ -418,6 +476,10 @@ public class MainMenuSceneController : MonoBehaviour
 
             case MenuAction.Tutorial:
                 ShowTutorialOverlay();
+                break;
+
+            case MenuAction.Ability:
+                ShowAbilityOverlay();
                 break;
 
             case MenuAction.Contributors:
@@ -556,6 +618,7 @@ public class MainMenuSceneController : MonoBehaviour
                 weaponData = resolvedWeapon,
                 level = Mathf.Max(1, definition.startingLevel),
                 experience = Mathf.Max(0, definition.startingExperience),
+                preCalamityMaxHP = resolvedMaxHp,
                 maxHP = resolvedMaxHp,
                 currentHP = resolvedCurrentHp
             });
@@ -613,6 +676,22 @@ public class MainMenuSceneController : MonoBehaviour
         SetGalleryInputEnabled(false);
     }
 
+    private void ShowAbilityOverlay()
+    {
+        if (abilityOverlay == null || abilityOverlay.IsVisible)
+            return;
+
+        if (tutorialOverlay != null && tutorialOverlay.IsVisible)
+            tutorialOverlay.Hide();
+        if (contributorsOverlay != null && contributorsOverlay.IsVisible)
+            contributorsOverlay.Hide();
+        if (settingsOverlay != null && settingsOverlay.IsVisible)
+            settingsOverlay.Hide();
+
+        abilityOverlay.Show(abilityTreeConfig, new AbilityPointWallet(), TrackOverlayVisibilityState);
+        SetGalleryInputEnabled(false);
+    }
+
     private void StartTutorialFromMenu()
     {
         PrepareTutorialRun();
@@ -654,6 +733,7 @@ public class MainMenuSceneController : MonoBehaviour
     private bool IsBlockingOverlayVisible()
     {
         return (tutorialOverlay != null && tutorialOverlay.IsVisible)
+            || (abilityOverlay != null && abilityOverlay.IsVisible)
             || (contributorsOverlay != null && contributorsOverlay.IsVisible)
             || (settingsOverlay != null && settingsOverlay.IsVisible);
     }
@@ -721,6 +801,18 @@ public class MainMenuSceneController : MonoBehaviour
         return string.Empty;
     }
 
+    private static MenuAction ResolveMenuAction(GalleryLevelView item)
+    {
+        if (item == null)
+            return MenuAction.None;
+
+        MenuAction action = ResolveMenuAction(item.levelName);
+        if (action != MenuAction.None)
+            return action;
+
+        return ResolveMenuAction(item.gameObject != null ? item.gameObject.name : string.Empty);
+    }
+
     private static MenuAction ResolveMenuAction(string value)
     {
         string normalized = (value ?? string.Empty).Trim().ToLowerInvariant();
@@ -729,30 +821,44 @@ public class MainMenuSceneController : MonoBehaviour
             case "solo play":
             case "newgame":
             case "new game":
+            case "新游戏":
                 return MenuAction.NewGame;
 
             case "load":
             case "continue":
+            case "继续游戏":
                 return MenuAction.Continue;
 
             case "tutorial":
             case "guide":
+            case "教程":
                 return MenuAction.Tutorial;
+
+            case "ability":
+            case "abilities":
+            case "skill":
+            case "skills":
+            case "能力":
+                return MenuAction.Ability;
 
             case "credits":
             case "contributors":
+            case "制作人员":
                 return MenuAction.Contributors;
 
             case "options":
             case "settings":
+            case "设置":
                 return MenuAction.Settings;
 
             case "exit":
+            case "退出":
                 return MenuAction.Exit;
 
             case "demo":
             case "demotest":
             case "demo test":
+            case "测试战斗":
                 return MenuAction.DemoTest;
 
             default:
@@ -770,6 +876,8 @@ public class MainMenuSceneController : MonoBehaviour
                 return continueLabel;
             case MenuAction.Tutorial:
                 return tutorialLabel;
+            case MenuAction.Ability:
+                return abilityLabel;
             case MenuAction.Contributors:
                 return contributorsLabel;
             case MenuAction.Settings:
@@ -797,6 +905,7 @@ public class MainMenuSceneController : MonoBehaviour
         }
 
         EnsureTutorialMenuItem(items);
+        EnsureAbilityMenuItem(items);
         return items;
     }
 
@@ -804,7 +913,7 @@ public class MainMenuSceneController : MonoBehaviour
     {
         for (int i = 0; i < items.Count; i++)
         {
-            if (ResolveMenuAction(GetMenuIdentity(items[i])) == MenuAction.Tutorial)
+            if (ResolveMenuAction(items[i]) == MenuAction.Tutorial)
                 return;
         }
 
@@ -817,22 +926,44 @@ public class MainMenuSceneController : MonoBehaviour
         items.Insert(insertIndex, tutorialItem);
     }
 
+    private void EnsureAbilityMenuItem(List<GalleryLevelView> items)
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (ResolveMenuAction(items[i]) == MenuAction.Ability)
+                return;
+        }
+
+        GalleryLevelView prototype = FindTutorialPrototype(items);
+        if (prototype == null)
+            return;
+
+        GalleryLevelView abilityItem = CreateRuntimeMenuItem(prototype, "Ability", abilityLabel);
+        int insertIndex = DetermineAbilityInsertIndex(items);
+        items.Insert(insertIndex, abilityItem);
+    }
+
     private GalleryLevelView CreateRuntimeTutorialMenuItem(GalleryLevelView prototype)
     {
+        return CreateRuntimeMenuItem(prototype, "Tutorial", tutorialLabel);
+    }
+
+    private GalleryLevelView CreateRuntimeMenuItem(GalleryLevelView prototype, string objectName, string label)
+    {
         GameObject runtimeClone = Instantiate(prototype.gameObject, prototype.transform.parent, false);
-        runtimeClone.name = tutorialLabel;
+        runtimeClone.name = objectName;
         runtimeClone.SetActive(true);
 
-        GalleryLevelView tutorialItem = runtimeClone.GetComponent<GalleryLevelView>();
-        if (tutorialItem == null)
-            tutorialItem = runtimeClone.AddComponent<GalleryLevelView>();
+        GalleryLevelView item = runtimeClone.GetComponent<GalleryLevelView>();
+        if (item == null)
+            item = runtimeClone.AddComponent<GalleryLevelView>();
 
-        tutorialItem.manager = mainMenuGallery;
-        tutorialItem.levelName = tutorialLabel;
-        if (tutorialItem.text != null)
-            tutorialItem.text.text = tutorialLabel;
+        item.manager = mainMenuGallery;
+        item.levelName = label;
+        if (item.text != null)
+            item.text.text = label;
 
-        if (tutorialItem is DemoGalleryMenuItem demoItem)
+        if (item is DemoGalleryMenuItem demoItem)
         {
             if (demoItem.contentToShow != null)
                 demoItem.contentToShow.SetActive(false);
@@ -845,7 +976,7 @@ public class MainMenuSceneController : MonoBehaviour
             }
         }
 
-        return tutorialItem;
+        return item;
     }
 
     private static GalleryLevelView FindTutorialPrototype(IReadOnlyList<GalleryLevelView> items)
@@ -853,7 +984,7 @@ public class MainMenuSceneController : MonoBehaviour
         for (int i = 0; i < items.Count; i++)
         {
             GalleryLevelView item = items[i];
-            if (item != null && ResolveMenuAction(GetMenuIdentity(item)) == MenuAction.DemoTest)
+            if (item != null && ResolveMenuAction(item) == MenuAction.DemoTest)
                 return item;
         }
 
@@ -870,10 +1001,22 @@ public class MainMenuSceneController : MonoBehaviour
     {
         for (int i = 0; i < items.Count; i++)
         {
-            MenuAction action = ResolveMenuAction(GetMenuIdentity(items[i]));
+            MenuAction action = ResolveMenuAction(items[i]);
             if (action == MenuAction.Continue)
                 return i + 1;
 
+            if (action == MenuAction.Contributors || action == MenuAction.Settings)
+                return i;
+        }
+
+        return items.Count;
+    }
+
+    private static int DetermineAbilityInsertIndex(IReadOnlyList<GalleryLevelView> items)
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            MenuAction action = ResolveMenuAction(items[i]);
             if (action == MenuAction.Contributors || action == MenuAction.Settings)
                 return i;
         }

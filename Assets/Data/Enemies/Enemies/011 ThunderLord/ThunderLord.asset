@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyID: 11
   enemyName: "\u96F7\u5BF0\u9738\u4E3B"
-  baseHP: 60
+  baseHP: 54
   damageReductionPercent: 0
   minSpeed: 2
   maxSpeed: 6
@@ -49,6 +49,11 @@ MonoBehaviour:
     settlementLootTables: []
   preventAllyBleedDecayOnHitWhileAlive: 0
   surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  transformToEnemyDataWhenStatusMissing: {fileID: 0}
+  transformMissingStatusData: {fileID: 0}
+  copyOpponentLastRoundSpeedDiceCount: 0
+  copyOpponentLastRoundSkills: 0
+  reflectionSkillTemplate: {fileID: 0}
   enemyDescription: "\u96F7\u4E91\u4E2D\u8BDE\u751F\u7684\u738B\u8005\uFF0C\u51FB\u8D25\u5B83\u5C31\u610F\u5473\u7740\u771F\u6B63\u7684\u80DC\u5229"
   passiveDescriptions:
   - passiveName: "\u7535\u8D28\u4F53"
@@ -75,3 +80,4 @@ MonoBehaviour:
     maxSlotsPerRound: 1
     useOncePerBattle: 1
     requiredAliveEnemyCount: 1
+    conditionStatusData: {fileID: 0}

@@ -53,3 +53,23 @@ MonoBehaviour:
     unlockWeight: 1
     starterAvailable: 0
     note: "203 \u70ED\u7827\u677F"
+  - weapon: {fileID: 11400000, guid: 6f94a2e6f7a047c8b3f0a3c3e7040204, type: 2}
+    unlockWeight: 1
+    starterAvailable: 0
+    note: "204 \u730E\u5149\u8005"
+  - weapon: {fileID: 11400000, guid: 1a4505efb8324479a1db7bc0afc30300, type: 2}
+    unlockWeight: 1
+    starterAvailable: 0
+    note: "303 \u837C\u863C"
+  - weapon: {fileID: 11400000, guid: 2d6f4c2bb5794bb08e597a77fdc30400, type: 2}
+    unlockWeight: 1
+    starterAvailable: 0
+    note: "304 \u907F\u96F7\u9488"
+  - weapon: {fileID: 11400000, guid: eea361039f44d5040930f029a1cdd86b, type: 2}
+    unlockWeight: 1
+    starterAvailable: 1
+    note: "TODO \u7535\u9E23\u6756"
+  - weapon: {fileID: 11400000, guid: 142bc82f316aa0846b306632a64fea42, type: 2}
+    unlockWeight: 1
+    starterAvailable: 1
+    note: "TODO \u68FA\u6750\u9489"

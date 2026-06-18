@@ -166,6 +166,7 @@ public static class RunBootstrapService
                     weaponData = resolvedStartingWeapon,
                     level = Mathf.Max(1, definition.startingLevel),
                     experience = Mathf.Max(0, definition.startingExperience),
+                    preCalamityMaxHP = maxHP,
                     maxHP = maxHP,
                     currentHP = definition.startingCurrentHP > 0
                         ? Mathf.Clamp(definition.startingCurrentHP, 0, maxHP)
@@ -181,6 +182,7 @@ public static class RunBootstrapService
                 memberId = "DefaultPartyMember",
                 level = 1,
                 experience = 0,
+                preCalamityMaxHP = 20,
                 maxHP = 20,
                 currentHP = 20
             });

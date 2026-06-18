@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
-  m_Name: "031_D_02 幕后之人"
+  m_Name: "031_D_02 \u5E55\u540E\u4E4B\u4EBA"
   m_EditorClassIdentifier: 
   eventId: 031_D_02
-  eventName: "幕后之人"
-  eventContent: "你一剑砍伤二王子。二王子倒在血泊中，却惊恐地看向你背后。\n\n你猛地回头，看见老者站在那里。他手中日记本的封皮片片剥落，而他的面容也迅速变得年轻，竟成了那名被二王子灭口的中年贵族。\n\n“殿下，我才是最终的赢家。”贵族冷笑，“你最大的错误，就是把我的尸身和你兄长的日记本封在一起。日记本的力量让我苟活下来，也让我等到了改写历史的机会。”\n\n他看向你：“虽然蠢了点，但你是一把好用的刀。可惜，我和殿下一样相信，只有死人才会保守秘密。”"
+  eventName: "\u5E55\u540E\u4E4B\u4EBA"
+  eventContent: "\u4F60\u4E00\u5251\u780D\u4F24\u4E8C\u738B\u5B50\u3002\u4E8C\u738B\u5B50\u5012\u5728\u8840\u6CCA\u4E2D\uFF0C\u5374\u60CA\u6050\u5730\u770B\u5411\u4F60\u80CC\u540E\u3002\n\n\u4F60\u731B\u5730\u56DE\u5934\uFF0C\u770B\u89C1\u8001\u8005\u7AD9\u5728\u90A3\u91CC\u3002\u4ED6\u624B\u4E2D\u65E5\u8BB0\u672C\u7684\u5C01\u76AE\u7247\u7247\u5265\u843D\uFF0C\u800C\u4ED6\u7684\u9762\u5BB9\u4E5F\u8FC5\u901F\u53D8\u5F97\u5E74\u8F7B\uFF0C\u7ADF\u6210\u4E86\u90A3\u540D\u88AB\u4E8C\u738B\u5B50\u706D\u53E3\u7684\u4E2D\u5E74\u8D35\u65CF\u3002\n\n\u201C\u6BBF\u4E0B\uFF0C\u6211\u624D\u662F\u6700\u7EC8\u7684\u8D62\u5BB6\u3002\u201D\u8D35\u65CF\u51B7\u7B11\uFF0C\u201C\u4F60\u6700\u5927\u7684\u9519\u8BEF\uFF0C\u5C31\u662F\u628A\u6211\u7684\u5C38\u8EAB\u548C\u4F60\u5144\u957F\u7684\u65E5\u8BB0\u672C\u5C01\u5728\u4E00\u8D77\u3002\u65E5\u8BB0\u672C\u7684\u529B\u91CF\u8BA9\u6211\u82DF\u6D3B\u4E0B\u6765\uFF0C\u4E5F\u8BA9\u6211\u7B49\u5230\u4E86\u6539\u5199\u5386\u53F2\u7684\u673A\u4F1A\u3002\u201D\n\n\u4ED6\u770B\u5411\u4F60\uFF1A\u201C\u867D\u7136\u8822\u4E86\u70B9\uFF0C\u4F46\u4F60\u662F\u4E00\u628A\u597D\u7528\u7684\u5200\u3002\u53EF\u60DC\uFF0C\u6211\u548C\u6BBF\u4E0B\u4E00\u6837\u76F8\u4FE1\uFF0C\u53EA\u6709\u6B7B\u4EBA\u624D\u4F1A\u4FDD\u5B88\u79D8\u5BC6\u3002\u201D"
   eventIllustration: {fileID: 0}
   options:
   - optionId: 1
-    optionLabel: "前提是你能杀死我。"
+    optionLabel: "\u524D\u63D0\u662F\u4F60\u80FD\u6740\u6B7B\u6211\u3002"
     requiredMoney: 0
-    consequenceDescription: "结束事件"
-    resultContent: "你以最快的速度把剑指向贵族。\n\n日记本在他手中发出暗淡金光，宫殿的墙壁开始剥落，旧日与现实重叠在一起。真正的幕后之人终于露出了面目。"
+    requiredMoneyPercent: 0
+    consequenceDescription: "\u7ED3\u675F\u4E8B\u4EF6"
+    resultContent: "\u4F60\u4EE5\u6700\u5FEB\u7684\u901F\u5EA6\u628A\u5251\u6307\u5411\u8D35\u65CF\u3002\n\n\u65E5\u8BB0\u672C\u5728\u4ED6\u624B\u4E2D\u53D1\u51FA\u6697\u6DE1\u91D1\u5149\uFF0C\u5BAB\u6BBF\u7684\u5899\u58C1\u5F00\u59CB\u5265\u843D\uFF0C\u65E7\u65E5\u4E0E\u73B0\u5B9E\u91CD\u53E0\u5728\u4E00\u8D77\u3002\u771F\u6B63\u7684\u5E55\u540E\u4E4B\u4EBA\u7EC8\u4E8E\u9732\u51FA\u4E86\u9762\u76EE\u3002"
     builtInEffectType: 0
     effectAmount: 0
     randomMoneyMin: 0
@@ -42,12 +43,14 @@ MonoBehaviour:
     blueprintPickCountMax: 1
     blueprintRewards: []
     encounterSelectionMode: 0
-    encounterEnemyGroups: []
+    encounterEnemyGroups:
+    - {fileID: 0}
     encounterEnemies: []
     encounterEnemyCountMin: 1
     encounterEnemyCountMax: 1
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
+    possibleResults: []
     nextEvent: {fileID: 0}
     resolveEvent: 1
     customHandler: {fileID: 0}

@@ -168,6 +168,7 @@ public static class RunSaveAssetCatalogBuilder
         if (catalog == null || treasureRewardTable == null)
             return;
 
+        catalog.Add(treasureRewardTable);
         AddEventBlueprintRewardAssets(catalog, treasureRewardTable.BlueprintTable);
         AddEventRelicRewardAssets(catalog, treasureRewardTable.RelicTable);
     }
@@ -183,6 +184,7 @@ public static class RunSaveAssetCatalogBuilder
         AddRunBlueprintAssets(catalog, runState.blueprintInventory);
         AddRunRelicAssets(catalog, runState.relicInventory);
         AddRunCalamityAssets(catalog, runState.activeCalamities);
+        AddTreasureRewardTableAssets(catalog, runState.abilityTreasureRewardTableOverride);
     }
 
     private static void AddBoardAssets(MainMenuSaveAssetCatalog catalog, BoardManager boardManager)

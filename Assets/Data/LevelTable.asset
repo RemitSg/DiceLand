@@ -27,32 +27,48 @@ MonoBehaviour:
   - characterData: {fileID: 11400000, guid: 27e817266af382946804dea6afd2e374, type: 2}
     maxHPByLevel:
     - level: 1
-      maxHP: 24
+      maxHP: 16
     - level: 2
-      maxHP: 28
+      maxHP: 19
     - level: 3
-      maxHP: 34
+      maxHP: 22
+    - level: 4
+      maxHP: 25
+    - level: 5
+      maxHP: 29
   - characterData: {fileID: 11400000, guid: 5121d91a4381d6748a08ee2236cc03fd, type: 2}
     maxHPByLevel:
     - level: 1
-      maxHP: 16
+      maxHP: 14
     - level: 2
-      maxHP: 20
+      maxHP: 17
     - level: 3
-      maxHP: 24
+      maxHP: 20
+    - level: 4
+      maxHP: 23
+    - level: 5
+      maxHP: 27
   - characterData: {fileID: 11400000, guid: fce426096f554744093a4718f5aa0f45, type: 2}
     maxHPByLevel:
     - level: 1
-      maxHP: 25
+      maxHP: 20
     - level: 2
-      maxHP: 30
+      maxHP: 23
     - level: 3
-      maxHP: 35
+      maxHP: 26
+    - level: 4
+      maxHP: 29
+    - level: 5
+      maxHP: 33
   - characterData: {fileID: 11400000, guid: 658e22cc7dec223479091c6817751025, type: 2}
     maxHPByLevel:
     - level: 1
-      maxHP: 20
+      maxHP: 15
     - level: 2
-      maxHP: 24
+      maxHP: 18
     - level: 3
+      maxHP: 21
+    - level: 4
+      maxHP: 24
+    - level: 5
       maxHP: 28

@@ -88,6 +88,7 @@ public class BattleButton : MonoBehaviour
     private bool enemyBattleStartEffectsApplied;
     private bool battleStartEnergyCalamityApplied;
     private bool allyBattleStartCalamityApplied;
+    private bool abilityBattleStartMaxHealthApplied;
     private int currentSharedEnergy;
     private int temporarySharedEnergy;
     private int currentSharedEnergyMax;
@@ -120,6 +121,7 @@ public class BattleButton : MonoBehaviour
         enemyBattleStartEffectsApplied = false;
         battleStartEnergyCalamityApplied = false;
         allyBattleStartCalamityApplied = false;
+        abilityBattleStartMaxHealthApplied = false;
         currentSharedEnergyMax = Mathf.Max(0, initialSharedEnergyMax);
         currentSharedEnergy = currentSharedEnergyMax;
         temporarySharedEnergy = 0;
@@ -300,6 +302,7 @@ public class BattleButton : MonoBehaviour
         temporarySharedEnergy = energyRoundStartState.TemporarySharedEnergy;
         reservedSharedEnergy = energyRoundStartState.ReservedSharedEnergy;
         ApplyBattleStartSharedEnergyCalamityIfNeeded();
+        ApplyAbilityBattleStartMaxHealthIfNeeded(allies);
         ApplyAllyBattleStartCalamityEffectsIfNeeded(allies);
         RefreshSharedEnergyUi();
 
@@ -330,7 +333,11 @@ public class BattleButton : MonoBehaviour
         RegisterSharedEnergyListeners(allies);
         RefreshSharedEnergyReservations(allies);
 
-        List<string> enemyRoundStartLogs = BattleTargetingRoundStartSetupService.PrepareEnemies(enemies, currentRound, allies);
+        List<string> enemyRoundStartLogs = BattleTargetingRoundStartSetupService.PrepareEnemies(
+            enemies,
+            currentRound,
+            allies,
+            enemy => TryLogEnemyStatusDrivenStageTransition(enemy, allies, enemies));
         for (int i = 0; i < enemyRoundStartLogs.Count; i++)
             BattleLog(enemyRoundStartLogs[i]);
 
@@ -383,6 +390,25 @@ public class BattleButton : MonoBehaviour
         battleStartEnergyCalamityApplied = true;
         BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
         int energyDelta = CalamitySystem.ResolveBattleStartSharedEnergyDelta(activeEncounter != null ? activeEncounter.activeCalamities : null);
+        if (activeEncounter != null)
+        {
+            int maxEnergyBonus = Mathf.Max(0, activeEncounter.abilityBattleStartEnergyMaxFlat);
+            if (maxEnergyBonus > 0)
+            {
+                int addedMax = IncreaseSharedEnergyMaxAtBattleStart(maxEnergyBonus);
+                if (addedMax > 0)
+                    BattleLog($"能力效果：战斗开始时能量上限 +{addedMax}");
+            }
+
+            int temporaryEnergyBonus = Mathf.Max(0, activeEncounter.abilityBattleStartTemporaryEnergy);
+            if (temporaryEnergyBonus > 0)
+            {
+                int addedTemporary = AddTemporarySharedEnergy(temporaryEnergyBonus);
+                if (addedTemporary > 0)
+                    BattleLog($"能力效果：战斗开始时获得 {addedTemporary} 点临时能量");
+            }
+        }
+
         if (energyDelta == 0)
             return;
 
@@ -391,6 +417,32 @@ public class BattleButton : MonoBehaviour
         BattleLog(energyDelta > 0
             ? $"灾厄效果：战斗开始时获得 {energyDelta} 点能量"
             : $"灾厄效果：战斗开始时失去 {Mathf.Abs(energyDelta)} 点能量");
+    }
+
+    private void ApplyAbilityBattleStartMaxHealthIfNeeded(BattleAllyController[] allies)
+    {
+        if (abilityBattleStartMaxHealthApplied)
+            return;
+
+        abilityBattleStartMaxHealthApplied = true;
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        int maxHealthBonus = activeEncounter != null ? Mathf.Max(0, activeEncounter.abilityBattleStartMaxHealthFlat) : 0;
+        if (maxHealthBonus <= 0 || allies == null)
+            return;
+
+        int affectedCount = 0;
+        for (int i = 0; i < allies.Length; i++)
+        {
+            BattleAllyController ally = allies[i];
+            if (ally == null || ally.IsDead)
+                continue;
+
+            if (ally.IncreaseMaxHealthAndHeal(maxHealthBonus) > 0)
+                affectedCount++;
+        }
+
+        if (affectedCount > 0)
+            BattleLog($"能力效果：所有友方最大生命 +{maxHealthBonus}，并回复相同数值");
     }
 
     private void ApplyEnemyBattleStartCalamityStatuses(BattleEnemyController[] enemies)
@@ -1329,7 +1381,7 @@ public class BattleButton : MonoBehaviour
         if (enemy == null || target == null || enemy.SelectedSkill == null)
             return range;
 
-        return BattleDiceRangeModifierService.ApplyRangeModifiers(
+        range = BattleDiceRangeModifierService.ApplyRangeModifiers(
             enemy.SelectedSkill,
             diceIndex,
             range,
@@ -1340,6 +1392,8 @@ public class BattleButton : MonoBehaviour
             target.GetStatusStacks,
             target.GetStatusStacks,
             target.SelectedSkill);
+
+        return range;
     }
 
     private EnemySkill_SO.DicePowerRange ApplyAllyContextualDiceRangeModifiers(
@@ -1408,6 +1462,43 @@ public class BattleButton : MonoBehaviour
                 int stacks = GetResolvedStatusStacks(enemy, guardStatus, guardStatusId);
                 BattleLog($"敌方回合效果：第 {currentRound} 回合开始时，{enemy.GetDebugDisplayName()}[柔韧] 获得 {highestPoisonStacks} 层 {guardStatusName}，当前 {guardStatusName} {stacks} 层");
                 TryLogAllEnemyStatusDrivenStageTransitions();
+            }
+        }
+
+        if (enemy.EnemyID == Enemy037To039EffectService.TideEnemyId)
+        {
+            ResolveBuiltinStatus(Enemy037To039EffectService.ErodeStatusId, "水蚀", out BattleStatus_SO erodeStatus, out string erodeStatusId, out string erodeStatusName);
+            for (int allyIndex = 0; allyIndex < allies.Length; allyIndex++)
+            {
+                BattleAllyController ally = allies[allyIndex];
+                if (!BattleStatusFlowTargetService.ShouldConsumeStatusEffects(ally, target => target.IsDead))
+                    continue;
+
+                if (!Enemy037To039EffectService.ShouldApplyUndercurrent())
+                    continue;
+
+                if (ally.AddStatus(erodeStatus, erodeStatusId, erodeStatusName, 1))
+                {
+                    int stacks = GetResolvedStatusStacks(ally, erodeStatus, erodeStatusId);
+                    BattleLog($"敌方回合效果：第 {currentRound} 回合开始时，{enemy.GetDebugDisplayName()}[暗流] 使 {ally.GetDebugDisplayName()} 获得 1 层 {erodeStatusName}，当前 {erodeStatusName} {stacks} 层");
+                    TryLogAllEnemyStatusDrivenStageTransitions();
+                }
+            }
+        }
+
+        if (enemy.EnemyID == Enemy037To039EffectService.ThunderWolfEnemyId)
+        {
+            ResolveBuiltinStatus(Enemy037To039EffectService.CurrentStatusId, "电流", out BattleStatus_SO currentStatus, out string currentStatusId, out _);
+            int currentStacks = GetResolvedStatusStacks(enemy, currentStatus, currentStatusId);
+            if (Enemy037To039EffectService.ShouldGrantElectrophileStrength(currentStacks))
+            {
+                ResolveBuiltinStatus(Enemy037To039EffectService.TemporaryStrengthStatusId, "临时强壮", out BattleStatus_SO strengthStatus, out string strengthStatusId, out string strengthStatusName);
+                if (enemy.AddStatus(strengthStatus, strengthStatusId, strengthStatusName, 1))
+                {
+                    int stacks = GetResolvedStatusStacks(enemy, strengthStatus, strengthStatusId);
+                    BattleLog($"敌方回合效果：第 {currentRound} 回合开始时，{enemy.GetDebugDisplayName()}[亲电] 获得 1 层 {strengthStatusName}，当前 {strengthStatusName} {stacks} 层");
+                    TryLogAllEnemyStatusDrivenStageTransitions();
+                }
             }
         }
     }
@@ -1551,6 +1642,7 @@ public class BattleButton : MonoBehaviour
 
         ApplyQueuedNextDicePowerEffects(eligibleEffects, false);
         ApplyEnemyStatusScaledBuiltInDamageEffects(attacker, currentTarget, eligibleEffects);
+        ApplyEnemyLinkedStatusTriggerEffects(attacker, currentTarget, eligibleEffects);
 
         BattleEnemyBuiltInEffectDispatcher.Dispatch(
             eligibleEffects,
@@ -1638,6 +1730,7 @@ public class BattleButton : MonoBehaviour
 
         ApplyQueuedNextDicePowerEffects(eligibleEffects, true);
         ApplyAllyStatusScaledBuiltInDamageEffects(attacker, currentTarget, diceIndex, eligibleEffects);
+        ApplyAllyLinkedStatusTriggerEffects(attacker, currentTarget, eligibleEffects);
 
         BattleEnemyBuiltInEffectDispatcher.Dispatch(
             eligibleEffects,
@@ -1841,6 +1934,84 @@ public class BattleButton : MonoBehaviour
             return 0;
 
         return (statusStacks / threshold) * damagePerStep;
+    }
+
+    private void ApplyEnemyLinkedStatusTriggerEffects(
+        BattleEnemyController attacker,
+        BattleAllyController currentTarget,
+        IReadOnlyList<BattleIndexedEffect<EnemySkill_SO.BuiltInEffectEntry>> eligibleEffects)
+    {
+        if (attacker == null || currentTarget == null || eligibleEffects == null)
+            return;
+
+        for (int i = 0; i < eligibleEffects.Count; i++)
+        {
+            BattleIndexedEffect<EnemySkill_SO.BuiltInEffectEntry> indexedEffect = eligibleEffects[i];
+            EnemySkill_SO.BuiltInEffectEntry effect = indexedEffect.Effect;
+            if (effect.effectType != EnemySkill_SO.BuiltInEffectType.TriggerTargetLinkedStatus)
+                continue;
+
+            string effectLabel = BuildBuiltInEffectLabel(effect, indexedEffect.Index);
+            ApplyLinkedStatusTriggerToAlly(attacker.GetDebugDisplayName(), currentTarget, effect, effectLabel);
+        }
+    }
+
+    private void ApplyAllyLinkedStatusTriggerEffects(
+        BattleAllyController attacker,
+        BattleEnemyController currentTarget,
+        IReadOnlyList<BattleIndexedEffect<EnemySkill_SO.BuiltInEffectEntry>> eligibleEffects)
+    {
+        if (attacker == null || currentTarget == null || eligibleEffects == null)
+            return;
+
+        for (int i = 0; i < eligibleEffects.Count; i++)
+        {
+            BattleIndexedEffect<EnemySkill_SO.BuiltInEffectEntry> indexedEffect = eligibleEffects[i];
+            EnemySkill_SO.BuiltInEffectEntry effect = indexedEffect.Effect;
+            if (effect.effectType != EnemySkill_SO.BuiltInEffectType.TriggerTargetLinkedStatus)
+                continue;
+
+            string effectLabel = BuildBuiltInEffectLabel(effect, indexedEffect.Index);
+            ApplyLinkedStatusTriggerToEnemy(attacker.GetDebugDisplayName(), currentTarget, effect, effectLabel);
+        }
+    }
+
+    private void ApplyLinkedStatusTriggerToAlly(string attackerName, BattleAllyController target, EnemySkill_SO.BuiltInEffectEntry effect, string effectLabel)
+    {
+        if (target == null || target.IsDead || effect.targetStatusData == null || effect.targetStatusData.LinkedStatusData == null)
+            return;
+
+        int sourceStacks = target.GetStatusStacks(effect.targetStatusData);
+        int appliedStacks = Mathf.Max(0, effect.targetStatusData.PowerPerStack) * sourceStacks;
+        if (appliedStacks <= 0)
+            return;
+
+        BattleStatus_SO linkedStatus = effect.targetStatusData.LinkedStatusData;
+        if (target.AddStatus(linkedStatus, linkedStatus.StatusId, linkedStatus.DisplayName, appliedStacks))
+        {
+            int currentStacks = target.GetStatusStacks(linkedStatus);
+            BattleLog($"敌方技能效果：{attackerName}[{effectLabel}] 结算 {target.GetDebugDisplayName()} 的 {effect.targetStatusData.DisplayName}，施加 {appliedStacks} 层 {linkedStatus.DisplayName}，当前 {linkedStatus.DisplayName} {currentStacks} 层");
+            TryLogAllEnemyStatusDrivenStageTransitions();
+        }
+    }
+
+    private void ApplyLinkedStatusTriggerToEnemy(string attackerName, BattleEnemyController target, EnemySkill_SO.BuiltInEffectEntry effect, string effectLabel)
+    {
+        if (target == null || target.IsDead || effect.targetStatusData == null || effect.targetStatusData.LinkedStatusData == null)
+            return;
+
+        int sourceStacks = target.GetStatusStacks(effect.targetStatusData);
+        int appliedStacks = Mathf.Max(0, effect.targetStatusData.PowerPerStack) * sourceStacks;
+        if (appliedStacks <= 0)
+            return;
+
+        BattleStatus_SO linkedStatus = effect.targetStatusData.LinkedStatusData;
+        if (target.AddStatus(linkedStatus, linkedStatus.StatusId, linkedStatus.DisplayName, appliedStacks))
+        {
+            int currentStacks = target.GetStatusStacks(linkedStatus);
+            BattleLog($"技能效果：{attackerName}[{effectLabel}] 结算 {target.GetDebugDisplayName()} 的 {effect.targetStatusData.DisplayName}，施加 {appliedStacks} 层 {linkedStatus.DisplayName}，当前 {linkedStatus.DisplayName} {currentStacks} 层");
+            TryLogAllEnemyStatusDrivenStageTransitions();
+        }
     }
 
     private int ConsumePendingAllyNextDicePowerBonus()
@@ -2149,6 +2320,8 @@ public class BattleButton : MonoBehaviour
                 return ResolveBuiltInTargetStatusStacks(effect, currentTarget) > 0;
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
                 return ResolveBuiltInTargetStatusStacks(effect, currentTarget) >= Mathf.Max(1, effect.requiredConditionStatusStacks);
+            case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksLessOrEqual:
+                return ResolveBuiltInTargetStatusStacks(effect, currentTarget) <= Mathf.Max(0, effect.requiredConditionStatusStacks);
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
                 return ResolveBuiltInTargetStatusStacks(effect, currentTarget) >= Mathf.Max(1, effect.requiredConditionStatusStacks);
             case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
@@ -2190,6 +2363,8 @@ public class BattleButton : MonoBehaviour
                 return ResolveBuiltInTargetStatusStacks(effect, currentTarget) > 0;
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
                 return ResolveBuiltInTargetStatusStacks(effect, currentTarget) >= Mathf.Max(1, effect.requiredConditionStatusStacks);
+            case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksLessOrEqual:
+                return ResolveBuiltInTargetStatusStacks(effect, currentTarget) <= Mathf.Max(0, effect.requiredConditionStatusStacks);
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
                 return ResolveBuiltInTargetStatusStacks(effect, currentTarget) >= Mathf.Max(1, effect.requiredConditionStatusStacks);
             case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
@@ -2256,8 +2431,8 @@ public class BattleButton : MonoBehaviour
             return 0;
         if (effect.targetStatusData != null)
             return Mathf.Max(0, attacker.GetStatusStacks(effect.targetStatusData));
-        if (effect.targetStatusType == EnemySkill_SO.DiceStatusType.Burn)
-            return Mathf.Max(0, attacker.GetStatusStacks("burn"));
+        if (TryResolveFallbackStatusId(effect.targetStatusType, out string statusId))
+            return Mathf.Max(0, attacker.GetStatusStacks(statusId));
         return 0;
     }
 
@@ -2267,8 +2442,8 @@ public class BattleButton : MonoBehaviour
             return 0;
         if (effect.targetStatusData != null)
             return Mathf.Max(0, attacker.GetStatusStacks(effect.targetStatusData));
-        if (effect.targetStatusType == EnemySkill_SO.DiceStatusType.Burn)
-            return Mathf.Max(0, attacker.GetStatusStacks("burn"));
+        if (TryResolveFallbackStatusId(effect.targetStatusType, out string statusId))
+            return Mathf.Max(0, attacker.GetStatusStacks(statusId));
         return 0;
     }
 
@@ -2278,8 +2453,8 @@ public class BattleButton : MonoBehaviour
             return 0;
         if (effect.targetStatusData != null)
             return Mathf.Max(0, currentTarget.GetStatusStacks(effect.targetStatusData));
-        if (effect.targetStatusType == EnemySkill_SO.DiceStatusType.Burn)
-            return Mathf.Max(0, currentTarget.GetStatusStacks("burn"));
+        if (TryResolveFallbackStatusId(effect.targetStatusType, out string statusId))
+            return Mathf.Max(0, currentTarget.GetStatusStacks(statusId));
         return 0;
     }
 
@@ -2289,8 +2464,8 @@ public class BattleButton : MonoBehaviour
             return 0;
         if (effect.targetStatusData != null)
             return Mathf.Max(0, currentTarget.GetStatusStacks(effect.targetStatusData));
-        if (effect.targetStatusType == EnemySkill_SO.DiceStatusType.Burn)
-            return Mathf.Max(0, currentTarget.GetStatusStacks("burn"));
+        if (TryResolveFallbackStatusId(effect.targetStatusType, out string statusId))
+            return Mathf.Max(0, currentTarget.GetStatusStacks(statusId));
         return 0;
     }
 
@@ -2468,9 +2643,9 @@ public class BattleButton : MonoBehaviour
             return true;
         }
 
-        if (effect.conditionStatusType == EnemySkill_SO.DiceStatusType.Burn)
+        if (TryResolveFallbackStatus(effect.conditionStatusType, out string fallbackStatusId, out string fallbackStatusName))
         {
-            ResolveBuiltinStatus("burn", "鐕冪儳", out statusData, out statusId, out statusName);
+            ResolveBuiltinStatus(fallbackStatusId, fallbackStatusName, out statusData, out statusId, out statusName);
             return true;
         }
 
@@ -2489,9 +2664,9 @@ public class BattleButton : MonoBehaviour
             return true;
         }
 
-        if (effect.statusType == EnemySkill_SO.DiceStatusType.Burn)
+        if (TryResolveFallbackStatus(effect.statusType, out string fallbackStatusId, out string fallbackStatusName))
         {
-            ResolveBuiltinStatus("burn", "鐕冪儳", out statusData, out statusId, out statusName);
+            ResolveBuiltinStatus(fallbackStatusId, fallbackStatusName, out statusData, out statusId, out statusName);
             return true;
         }
 
@@ -2505,6 +2680,38 @@ public class BattleButton : MonoBehaviour
         statusName = statusData != null && !string.IsNullOrWhiteSpace(statusData.DisplayName)
             ? statusData.DisplayName
             : fallbackDisplayName;
+    }
+
+    private static bool TryResolveFallbackStatus(EnemySkill_SO.DiceStatusType statusType, out string statusId, out string statusName)
+    {
+        switch (statusType)
+        {
+            case EnemySkill_SO.DiceStatusType.Burn:
+                statusId = "burn";
+                statusName = "燃烧";
+                return true;
+            case EnemySkill_SO.DiceStatusType.Electro:
+                statusId = "current";
+                statusName = "电流";
+                return true;
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                statusId = "darkness";
+                statusName = "黑暗";
+                return true;
+            case EnemySkill_SO.DiceStatusType.Mark:
+                statusId = "target";
+                statusName = "标记";
+                return true;
+            default:
+                statusId = string.Empty;
+                statusName = string.Empty;
+                return false;
+        }
+    }
+
+    private static bool TryResolveFallbackStatusId(EnemySkill_SO.DiceStatusType statusType, out string statusId)
+    {
+        return TryResolveFallbackStatus(statusType, out statusId, out _);
     }
 
     private static int GetResolvedStatusStacks(BattleAllyController target, BattleStatus_SO statusData, string statusId)
@@ -2958,7 +3165,7 @@ public class BattleButton : MonoBehaviour
             int allyStatusPowerModifier = ally.GetStatusFlatPowerModifier(allyDefenseSkill);
             int enemyStatusPowerModifier = enemy.GetStatusFlatPowerModifier(enemyDefenseSkill);
             int allySkillUseBonus = BattleDicePowerModifierCollectionService.GetSkillUseBonus(
-                ally.SelectedSkill, i, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks, enemy.SelectedSkill, allyRelicModifier.powerBonus);
+                ally.SelectedSkill, i, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks, enemy.SelectedSkill);
             int enemySkillUseBonus = BattleDicePowerModifierCollectionService.GetSkillUseBonus(
                 enemy.SelectedSkill, i, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks, ally.SelectedSkill);
             allySkillUseBonus += ConsumePendingAllyNextDicePowerBonus();
@@ -2969,7 +3176,7 @@ public class BattleButton : MonoBehaviour
                 enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClash, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks, ally.SelectedSkill);
             if (enemy.EnemyID == 24 && enemy.Speed > ally.Speed)
                 enemyClashOnlyBonus += 1;
-            BattleDicePowerPreparation allyPowerInput = BattleDicePowerPreparationService.Resolve(allyBasePower, allyStatusPowerModifier, 0, allySkillUseBonus, allyClashOnlyBonus);
+            BattleDicePowerPreparation allyPowerInput = BattleDicePowerPreparationService.Resolve(allyBasePower, allyStatusPowerModifier, 0, allySkillUseBonus, allyClashOnlyBonus, allyRelicModifier.powerBonus);
             BattleDicePowerPreparation enemyPowerInput = BattleDicePowerPreparationService.Resolve(enemyBasePower, enemyStatusPowerModifier, 0, enemySkillUseBonus, enemyClashOnlyBonus);
             int allyBonusPower = allyPowerInput.BonusPower;
             int enemyBonusPower = enemyPowerInput.BonusPower;
@@ -3818,6 +4025,7 @@ public class BattleButton : MonoBehaviour
             attacker,
             target);
         BattleRelicBridge.Process(activeEncounter, context, (encounter, relicContext) => BattleRelicEffectRunner.Process(encounter, relicContext, BattleLog));
+        RelicSystem.ApplyRelicStatusOnPlayerDamage(attacker, target, dealtDamage);
     }
 
     private void ApplyEnemyKilledByPlayerRelics(
@@ -4252,7 +4460,8 @@ public class BattleButton : MonoBehaviour
         IReadOnlyList<BattleIndexedEffect<EnemySkill_SO.StatusEffectEntry>> eligibleEffects = BattleSkillStatusEffectResolutionService.BuildEligibleStatusEffects(
             settings.statusEffects,
             trigger,
-            conditionalOnly);
+            conditionalOnly,
+            ShouldPromoteAllyStatusEffectTrigger);
 
         for (int i = 0; i < eligibleEffects.Count; i++)
         {
@@ -4803,7 +5012,37 @@ public class BattleButton : MonoBehaviour
             diceIndex,
             attacker,
             target,
+            currentRound,
             BattleLog);
+    }
+
+    private static bool ShouldPromoteAllyStatusEffectTrigger(
+        EnemySkill_SO.StatusEffectEntry effect,
+        EnemySkill_SO.DiceEffectTrigger requestedTrigger)
+    {
+        if (requestedTrigger != EnemySkill_SO.DiceEffectTrigger.OnSkillUse || effect.trigger != EnemySkill_SO.DiceEffectTrigger.OnHit)
+            return false;
+
+        BattleStatus_SO statusData = effect.statusData;
+        string statusId = statusData != null ? statusData.StatusId : ResolveStatusId(effect.statusType);
+        return RelicSystem.ShouldPromotePlayerOnHitStatusToSkillUse(statusData, statusId);
+    }
+
+    private static string ResolveStatusId(EnemySkill_SO.DiceStatusType statusType)
+    {
+        switch (statusType)
+        {
+            case EnemySkill_SO.DiceStatusType.Burn:
+                return "burn";
+            case EnemySkill_SO.DiceStatusType.Electro:
+                return "current";
+            case EnemySkill_SO.DiceStatusType.Darkness:
+                return "darkness";
+            case EnemySkill_SO.DiceStatusType.Mark:
+                return "target";
+            default:
+                return string.Empty;
+        }
     }
 
     private void ApplyPlayerRoundStartRelics(BattleAllyController ally)
@@ -5441,7 +5680,27 @@ public class BattleButton : MonoBehaviour
 
     private void ApplyStatusBurst(BattleAllyController attacker, BattleEnemyController target, EnemySkill_SO.StatusBurstDamageEffectEntry effect, int effectIndex)
     {
-        ApplyStatusBurst(attacker.GetDebugDisplayName(), BuildStatusBurstEffectLabel(effect, effectIndex), CreateStatusTargetAdapter(target, true), effect, damage => ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, -1, damage));
+        if (attacker == null || target == null)
+            return;
+        if (!TryResolveStatus(effect, out BattleStatus_SO statusData, out string statusId, out string statusName))
+            return;
+
+        int stacks = target.GetStatusStacks(statusData);
+        if (stacks <= 0)
+            stacks = target.GetStatusStacks(statusId);
+
+        string attackerName = attacker.GetDebugDisplayName();
+        string effectLabel = BuildStatusBurstEffectLabel(effect, effectIndex);
+        RelicSystem.DispatchPlayerStatusBurst(
+            attacker,
+            target,
+            statusData,
+            statusId,
+            statusName,
+            effect.damagePerStack,
+            effect.clearStacksAfterBurst,
+            damage => ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, -1, damage),
+            (modifiedDamage, _) => BattleLog($"\u8bcd\u6761\u89e6\u53d1\uff1a{attackerName}[{effectLabel}] \u5f15\u53d1 {target.GetDebugDisplayName()} \u7684 {statusName}\uff0c\u9020\u6210 {modifiedDamage} \u70b9\u989d\u5916\u4f24\u5bb3\uff08{effect.damagePerStack} x {stacks}\uff09{(effect.clearStacksAfterBurst ? $"\uff0c\u6d88\u8017 {statusName}" : string.Empty)}\uff0c\u5269\u4f59HP {target.CurrentHP}/{target.MaxHP}"));
     }
 
     private void ApplyStatusBurst(BattleEnemyController attacker, BattleAllyController target, EnemySkill_SO.StatusBurstDamageEffectEntry effect, int effectIndex)
@@ -5986,7 +6245,10 @@ public class BattleButton : MonoBehaviour
             lootRewards,
             dropResults.relicRewards);
         if (!victory && forceReturnToMapAfterDefeat && activeEncounter != null)
+        {
             activeEncounter.restartBattleOnDefeat = false;
+            activeEncounter.returnToMapOnDefeat = true;
+        }
         if (battleManager != null)
             battleManager.EndBattle();
         GameMusicPlayer.FadeOutAndStop();
@@ -6048,6 +6310,14 @@ public class BattleButton : MonoBehaviour
 
     private int CalculateVictoryExperienceReward(BattleEnemyController[] enemies)
     {
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (activeEncounter != null && activeEncounter.configuredExperienceReward >= 0)
+        {
+            return CalamitySystem.ApplyBattleExperienceModifiers(
+                activeEncounter.configuredExperienceReward,
+                activeEncounter.activeCalamities);
+        }
+
         if (enemies == null || enemies.Length == 0)
             return 0;
 
@@ -6062,7 +6332,6 @@ public class BattleButton : MonoBehaviour
         }
 
         int baseReward = BattleExperienceRewardService.CalculateBaseReward(enemyBaseHpValues);
-        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
         if (activeEncounter == null)
             return baseReward;
 
@@ -6172,6 +6441,7 @@ public class BattleButton : MonoBehaviour
         results.lootRewards = BattleRewardAggregationService.BuildLootRewardsFromAggregation(aggregated);
 
         ApplyRelicChoiceRefreshRelics(encounter, results.relicChoice);
+        AbilityRunBonusRuntimeService.ApplyRelicChoiceRefreshBonus(encounter, results.relicChoice);
 
         BattleBonusLootRewardService.ApplyBonusLootRewards(
             results.lootRewards,

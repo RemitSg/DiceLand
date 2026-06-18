@@ -43,9 +43,7 @@ public static partial class RelicSystem
             if (member == null)
                 continue;
 
-            member.maxHP = Mathf.Max(1, member.maxHP + hpGain);
-            if (member.currentHP > 0)
-                member.currentHP = Mathf.Clamp(member.currentHP + hpGain, 0, member.maxHP);
+            RunPartyMemberMaxHpService.AddPreCalamityMaxHp(member, hpGain, context.runState.activeCalamities);
         }
 
         context.runState.SyncLegacyPlayerFieldsFromParty();

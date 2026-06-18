@@ -51,4 +51,21 @@ public class BattleDicePowerPreparationServiceTests
         Assert.AreEqual(14, result.FinalPower);
         Assert.AreEqual(7, result.FollowUpBasePower);
     }
+
+    [Test]
+    public void Resolve_UsesNonFollowUpBonusForComparisonOnly()
+    {
+        BattleDicePowerPreparation result = BattleDicePowerPreparationService.Resolve(
+            basePower: 5,
+            statusPowerModifier: 0,
+            relicPowerBonus: 0,
+            skillUsePowerBonus: 2,
+            actionPowerBonus: 1,
+            nonFollowUpPowerBonus: 4);
+
+        Assert.AreEqual(12, result.FinalPower);
+        Assert.AreEqual(7, result.FollowUpBasePower);
+        Assert.AreEqual(7, result.BonusPower);
+        Assert.AreEqual(5, result.ActionBonus);
+    }
 }

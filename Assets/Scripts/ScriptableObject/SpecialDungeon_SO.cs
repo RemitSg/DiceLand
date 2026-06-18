@@ -107,6 +107,7 @@ public class SpecialDungeon_SO : ScriptableObject
     public string dungeonId = "SpecialDungeon";
     public string dungeonName = "Special Dungeon";
     [TextArea(3, 8)] public string description;
+    [Min(0)] public int settlementScoreValue = 200;
     public List<SpecialDungeonTileEntry> entries = new List<SpecialDungeonTileEntry>();
 
     public string DisplayName => string.IsNullOrWhiteSpace(dungeonName) ? name : dungeonName;
@@ -131,6 +132,8 @@ public class SpecialDungeon_SO : ScriptableObject
     {
         if (entries == null)
             entries = new List<SpecialDungeonTileEntry>();
+
+        settlementScoreValue = Mathf.Max(0, settlementScoreValue);
 
         for (int i = 0; i < entries.Count; i++)
         {

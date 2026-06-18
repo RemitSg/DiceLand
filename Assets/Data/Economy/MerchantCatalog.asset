@@ -195,5 +195,11 @@ MonoBehaviour:
     legacyRelicData: {fileID: 0}
     minPrice: 1
     maxPrice: 1
+    weight: 99
+  - goodsId: 1
+    relicTable: {fileID: 11400000, guid: 223a5bbc1941d2d49ac66e9f3353a06c, type: 2}
+    legacyRelicData: {fileID: 0}
+    minPrice: 1
+    maxPrice: 1
     weight: 1
   goodsEntries: []

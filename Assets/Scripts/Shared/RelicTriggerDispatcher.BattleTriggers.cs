@@ -108,6 +108,7 @@ public static partial class RelicTriggerDispatcher
         int diceIndex,
         Object source,
         Object target,
+        int currentRound = 1,
         Action<string> logFeedback = null)
     {
         RelicExecutionContext context = RelicExecutionContext.CreatePlayerClashLost(
@@ -116,6 +117,7 @@ public static partial class RelicTriggerDispatcher
             diceIndex,
             source,
             target);
+        context.currentRound = Math.Max(1, currentRound);
         ProcessBattleRelics(encounter, context, logFeedback);
         return context;
     }

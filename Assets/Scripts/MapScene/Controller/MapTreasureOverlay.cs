@@ -9,6 +9,7 @@ public class MapTreasureOverlay : MonoBehaviour
 {
     public delegate bool TreasureOptionSelectionHandler(BoardTileData tile, TreasureRewardChoice choice, out TreasureRewardResult result);
     public delegate bool RelicChoiceConfirmHandler(BoardTileData tile, BattleSettlementRelicChoiceData choiceData, out string message);
+    public delegate bool DirectRelicChoiceConfirmHandler(BattleSettlementRelicChoiceData choiceData, out string message);
     public event Action Hidden;
 
     [Header("Font")]
@@ -70,6 +71,7 @@ public class MapTreasureOverlay : MonoBehaviour
     private BoardTileData currentTile;
     private TreasureOptionSelectionHandler selectionHandler;
     private RelicChoiceConfirmHandler relicChoiceConfirmHandler;
+    private DirectRelicChoiceConfirmHandler directRelicChoiceConfirmHandler;
     private BattleSettlementRelicChoiceData activeRelicChoiceData;
     private bool isShowingResult;
 
@@ -134,6 +136,7 @@ public class MapTreasureOverlay : MonoBehaviour
         currentTile = tile;
         selectionHandler = onSelect;
         relicChoiceConfirmHandler = onConfirmRelicChoice;
+        directRelicChoiceConfirmHandler = null;
         activeRelicChoiceData = null;
         isShowingResult = false;
         gameObject.SetActive(true);
@@ -150,12 +153,30 @@ public class MapTreasureOverlay : MonoBehaviour
         ApplyFonts();
     }
 
+    public void ShowRelicChoice(BattleSettlementRelicChoiceData choiceData, DirectRelicChoiceConfirmHandler onConfirmRelicChoice)
+    {
+        EnsureUi();
+        currentTile = null;
+        selectionHandler = null;
+        relicChoiceConfirmHandler = null;
+        directRelicChoiceConfirmHandler = onConfirmRelicChoice;
+        isShowingResult = false;
+        gameObject.SetActive(true);
+        canvas.gameObject.SetActive(true);
+        panel.gameObject.SetActive(true);
+        cardRoot.gameObject.SetActive(true);
+        resultText.gameObject.SetActive(false);
+        continueButton.gameObject.SetActive(false);
+        ShowRelicChoice(choiceData, "请选择一个初始遗物。");
+    }
+
     public void Hide()
     {
         bool wasVisible = IsVisible;
         isShowingResult = false;
         selectionHandler = null;
         relicChoiceConfirmHandler = null;
+        directRelicChoiceConfirmHandler = null;
         activeRelicChoiceData = null;
         currentTile = null;
         if (panel != null)
@@ -406,7 +427,7 @@ public class MapTreasureOverlay : MonoBehaviour
 
     private void ConfirmRelicChoice()
     {
-        if (activeRelicChoiceData == null || relicChoiceConfirmHandler == null || currentTile == null)
+        if (activeRelicChoiceData == null || (relicChoiceConfirmHandler == null && directRelicChoiceConfirmHandler == null))
             return;
 
         if (activeRelicChoiceData.selectedChoice == null)
@@ -417,7 +438,9 @@ public class MapTreasureOverlay : MonoBehaviour
             return;
         }
 
-        bool success = relicChoiceConfirmHandler.Invoke(currentTile, activeRelicChoiceData, out string message);
+        bool success = currentTile != null && relicChoiceConfirmHandler != null
+            ? relicChoiceConfirmHandler.Invoke(currentTile, activeRelicChoiceData, out string message)
+            : directRelicChoiceConfirmHandler.Invoke(activeRelicChoiceData, out message);
         if (!success)
         {
             subtitleText.text = string.IsNullOrWhiteSpace(message) ? "\u9057\u7269\u9886\u53d6\u5931\u8d25\u3002" : message;

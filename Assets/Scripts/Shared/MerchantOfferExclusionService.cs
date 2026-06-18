@@ -56,6 +56,39 @@ public static class MerchantOfferExclusionService
         return owned;
     }
 
+    public static HashSet<CraftingBlueprint_SO> BuildUnavailableBlueprintSet(
+        RunState runState,
+        IReadOnlyList<MerchantCatalog_SO.BlueprintGoodsEntry> blueprintEntries)
+    {
+        HashSet<CraftingBlueprint_SO> unavailable = BuildOwnedBlueprintSet(runState);
+        AppendBlueprintsForOwnedWeapons(runState, blueprintEntries, unavailable);
+        return unavailable;
+    }
+
+    public static void AppendBlueprintsForOwnedWeapons(
+        RunState runState,
+        IReadOnlyList<MerchantCatalog_SO.BlueprintGoodsEntry> blueprintEntries,
+        HashSet<CraftingBlueprint_SO> targetSet)
+    {
+        if (runState == null || blueprintEntries == null || targetSet == null)
+            return;
+
+        HashSet<Weapon_SO> ownedWeapons = BuildOwnedWeaponSet(runState);
+        if (ownedWeapons.Count == 0)
+            return;
+
+        for (int i = 0; i < blueprintEntries.Count; i++)
+        {
+            MerchantCatalog_SO.BlueprintGoodsEntry entry = blueprintEntries[i];
+            CraftingBlueprint_SO blueprint = entry != null ? entry.blueprintData : null;
+            if (blueprint == null || blueprint.targetWeapon == null)
+                continue;
+
+            if (ownedWeapons.Contains(blueprint.targetWeapon))
+                targetSet.Add(blueprint);
+        }
+    }
+
     public static HashSet<LootItem_SO> BuildCurrentMerchantLootSet(
         BoardTileData tile,
         MerchantOfferState ignoreOffer,
