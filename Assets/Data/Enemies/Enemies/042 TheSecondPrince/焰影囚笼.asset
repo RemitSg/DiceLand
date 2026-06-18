@@ -63,7 +63,7 @@ MonoBehaviour:
     - effectName: 
       trigger: 0
       targetMode: 0
-      statusData: {fileID: 0}
+      statusData: {fileID: 11400000, guid: f9527c3eb2f8085418c8ae9a04a00b9a, type: 2}
       statusType: 0
       applyTiming: 0
       applyAfterRoundStarts: 0

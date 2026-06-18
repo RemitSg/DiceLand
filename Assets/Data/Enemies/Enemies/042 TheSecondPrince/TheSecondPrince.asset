@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyID: 42
   enemyName: "\u53DB\u53D8\u7684\u65B0\u738B"
-  baseHP: 50
+  baseHP: 40
   damageReductionPercent: 0
   minSpeed: 3
   maxSpeed: 6
