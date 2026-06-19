@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyID: 2
   enemyName: "\u7130\u86FE"
-  baseHP: 12
+  baseHP: 10
   damageReductionPercent: 0
   minSpeed: 1
   maxSpeed: 5
@@ -37,6 +37,11 @@ MonoBehaviour:
     settlementLootTables: []
   preventAllyBleedDecayOnHitWhileAlive: 0
   surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  transformToEnemyDataWhenStatusMissing: {fileID: 0}
+  transformMissingStatusData: {fileID: 0}
+  copyOpponentLastRoundSpeedDiceCount: 0
+  copyOpponentLastRoundSkills: 0
+  reflectionSkillTemplate: {fileID: 0}
   enemyDescription: 
   passiveDescriptions: []
   enemyVisualScale: 1

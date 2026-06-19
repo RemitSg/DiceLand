@@ -211,6 +211,18 @@ public static class RelicBuiltInEffectMetadataCatalog
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToSourceOnPlayerStatusBurstDamage, requiresStatusData: true, requiresConditionStatusData: true);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.DealDamageToPlayerStatusBurstTargetWithConditionStatus, requiresStatusData: true, requiresConditionStatusData: true);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.PreventLethalDamageByConsumingAllyStatusOncePerBattle, requiresStatusData: true, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.RefundEnergyOnClashLostOncePerSkillPerRound);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.MatchLowestAllySpeedToHighestOnBattleRoundStart, numericRequirement: RelicBuiltInNumericRequirement.None);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToLowestHpAllyOnBattleRoundStart, requiresStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.DamageRandomEnemyWhenAllyLosesShieldStacks);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ModifyDefenseDiceMinPowerWhenSelfHasStatus, requiresConditionStatusData: true, numericRequirement: RelicBuiltInNumericRequirement.MaxPowerAmountOrAmountNonZero, numericFieldPath: "minPowerAmount/amount");
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.GrantRandomRelicsAndBlueprintsOnAcquire);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.EnableDiagonalMapMovement, numericRequirement: RelicBuiltInNumericRequirement.None);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.KeepOnlyInitialPartyMemberAndDisableRecruitOnAcquire);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ChanceApplyStatusToAllAlliesOnBattleRoundStart, requiresStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.DoubleFirstEnemyDamageEachBattle, numericRequirement: RelicBuiltInNumericRequirement.None);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ResetKeysAndRegenerateMapOnAcquire, numericRequirement: RelicBuiltInNumericRequirement.None);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ConfigureFixedRelicReforgePair, numericRequirement: RelicBuiltInNumericRequirement.None);
 
         return metadata;
     }

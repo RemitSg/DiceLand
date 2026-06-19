@@ -166,6 +166,16 @@ public class BattleAllyController : MonoBehaviour
         }
     }
 
+    public void SetRoundSpeed(int speed)
+    {
+        Speed = IsDead ? 0 : Mathf.Max(1, speed);
+        for (int i = 0; i < activeSpeedButtons.Count; i++)
+        {
+            if (activeSpeedButtons[i] != null)
+                activeSpeedButtons[i].Speed = Speed;
+        }
+    }
+
     public void RegisterSpeedButtons(IEnumerable<SpeedButton> buttons)
     {
         speedButtons.Clear();
@@ -748,10 +758,34 @@ public class BattleAllyController : MonoBehaviour
 
             entry.stacks = Mathf.Max(0, entry.stacks - absorbed);
             NotifyStatusChanged(entry);
+            ProcessShieldStacksLostRelics(entry, absorbed);
             return Mathf.Max(0, incomingDamage - absorbed);
         }
 
         return Mathf.Max(0, incomingDamage);
+    }
+
+    private void ProcessShieldStacksLostRelics(BattleStatusRuntimeEntry entry, int lostStacks)
+    {
+        if (lostStacks <= 0)
+            return;
+
+        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
+        if (activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
+            return;
+
+        BattleAllyController[] allies = FindObjectsOfType<BattleAllyController>(false);
+        BattleEnemyController[] enemies = FindObjectsOfType<BattleEnemyController>(false);
+        RelicTriggerDispatcher.ProcessPlayerShieldStacksLost(
+            activeEncounter,
+            null,
+            entry != null ? entry.statusData : null,
+            lostStacks,
+            1,
+            this,
+            this,
+            allies,
+            enemies);
     }
 
     private bool HasImmuneStatus()

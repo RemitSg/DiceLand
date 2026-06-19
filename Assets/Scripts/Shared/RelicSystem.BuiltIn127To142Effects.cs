@@ -324,7 +324,12 @@ public static partial class RelicSystem
         RelicExecutionContext context,
         Relic_SO.RelicBuiltInEffectEntry effect)
     {
-        if (context.trigger != Relic_SO.RelicTrigger.OnBattleSetup || effect.statusData == null || context.allies == null)
+        if (context.trigger != Relic_SO.RelicTrigger.OnBattleSetup || context.currentRound != 1 || effect.statusData == null || context.allies == null)
+            return;
+
+        BattleEncounterData encounter = BattleEncounterRuntime.ActiveEncounter;
+        string procKey = BuildRelicProcKey(relicData, $"battle-setup-all-ally-status:{GetStatusKey(effect.statusData, effect.statusData.StatusId)}");
+        if (encounter != null && !encounter.TryRegisterBattleRelicProc(procKey))
             return;
 
         int stacks = CalculateScaledStatusStacks(relicState, effect);

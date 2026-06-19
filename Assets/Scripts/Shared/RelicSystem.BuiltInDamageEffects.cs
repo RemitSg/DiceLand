@@ -144,11 +144,14 @@ public static partial class RelicSystem
         if (context.trigger != Relic_SO.RelicTrigger.OnPlayerAboutToDealDamage)
             return;
 
+        if (!IsSkillDiceDamageContext(context))
+            return;
+
         BattleEnemyController outgoingFlatTarget = context.target as BattleEnemyController;
         if (outgoingFlatTarget == null || effect.conditionStatusData == null)
             return;
 
-        if (outgoingFlatTarget.GetStatusStacks(effect.conditionStatusData) < Mathf.Max(1, effect.requiredStatusStacks))
+        if (!TargetHasRequiredStatusStacks(outgoingFlatTarget, effect.conditionStatusData, Mathf.Max(1, effect.requiredStatusStacks)))
             return;
 
         int outgoingFlatBonus = Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
@@ -158,6 +161,28 @@ public static partial class RelicSystem
         context.outgoingDamageFlatModifier += outgoingFlatBonus;
         context.AddOutgoingDamageFlatModifierSource(outgoingFlatBonus, GetRelicDisplayName(relicData));
         return;
+    }
+
+    private static bool IsSkillDiceDamageContext(RelicExecutionContext context)
+    {
+        return context != null && context.skillData != null && context.diceIndex >= 0;
+    }
+
+    private static bool TargetHasRequiredStatusStacks(BattleEnemyController target, BattleStatus_SO statusData, int requiredStacks)
+    {
+        if (target == null || statusData == null)
+            return false;
+
+        if (target.GetStatusStacks(statusData) >= requiredStacks)
+            return true;
+
+        if (string.Equals(statusData.StatusId, "target", System.StringComparison.OrdinalIgnoreCase)
+            && target.GetStatusStacks("targetTemp") >= requiredStacks)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private static void HandleSurviveLethalDamageOncePerBattleAndApplyStatus(

@@ -99,25 +99,25 @@ MonoBehaviour:
   battleExperienceRewards:
   - dangerBand: 0
     tileType: 1
-    experience: 7
+    experience: 10
   - dangerBand: 1
     tileType: 1
-    experience: 15
+    experience: 20
   - dangerBand: 2
     tileType: 1
-    experience: 25
+    experience: 30
   - dangerBand: 3
     tileType: 1
-    experience: 35
+    experience: 40
   - dangerBand: 0
     tileType: 2
-    experience: 15
+    experience: 20
   - dangerBand: 1
     tileType: 2
-    experience: 35
+    experience: 40
   - dangerBand: 2
     tileType: 2
-    experience: 55
+    experience: 60
   - dangerBand: 3
     tileType: 2
-    experience: 75
+    experience: 80

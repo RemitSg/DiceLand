@@ -106,7 +106,7 @@ public class PlayerMapController : MonoBehaviour
             return false;
         }
 
-        if (!boardManager.IsAdjacent(runState.playerGridPosition, targetTile.coord))
+        if (!boardManager.IsAdjacent(runState.playerGridPosition, targetTile.coord, runState != null && runState.allowDiagonalMapMovement))
             return false;
 
         int safeMoveCost = Mathf.Max(0, moveCost);

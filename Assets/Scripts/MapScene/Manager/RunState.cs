@@ -197,6 +197,11 @@ public class RunState
     public int abilityBattleStartEnergyMaxFlat;
     public int abilityBattleStartMaxHealthFlat;
     public int abilityRelicChoiceRefreshCount;
+    public bool allowDiagonalMapMovement;
+    public bool recruitmentDisabled;
+    public bool pendingMapRegenerationFromRelic;
+    public Relic_SO fixedRelicReforgeFrom;
+    public Relic_SO fixedRelicReforgeTo;
     public TreasureRewardTable_SO abilityTreasureRewardTableOverride;
     public RunSettlementStats settlementStats = new RunSettlementStats();
 
@@ -782,6 +787,11 @@ public class RunState
             abilityBattleStartEnergyMaxFlat = abilityBattleStartEnergyMaxFlat,
             abilityBattleStartMaxHealthFlat = abilityBattleStartMaxHealthFlat,
             abilityRelicChoiceRefreshCount = abilityRelicChoiceRefreshCount,
+            allowDiagonalMapMovement = allowDiagonalMapMovement,
+            recruitmentDisabled = recruitmentDisabled,
+            pendingMapRegenerationFromRelic = pendingMapRegenerationFromRelic,
+            fixedRelicReforgeFrom = fixedRelicReforgeFrom,
+            fixedRelicReforgeTo = fixedRelicReforgeTo,
             abilityTreasureRewardTableOverride = abilityTreasureRewardTableOverride,
             settlementStats = settlementStats != null ? settlementStats.Clone() : new RunSettlementStats()
         };

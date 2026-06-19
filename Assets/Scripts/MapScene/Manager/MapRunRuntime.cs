@@ -367,6 +367,12 @@ public static class MapRunRuntime
             return false;
         }
 
+        if (currentSnapshot.runState.recruitmentDisabled)
+        {
+            errorMessage = "当前遗物效果禁止招募。";
+            return false;
+        }
+
         if (characterData == null)
         {
             errorMessage = "\u672a\u9009\u62e9\u53ef\u62db\u52df\u89d2\u8272\u3002";
@@ -555,7 +561,13 @@ public static class MapRunRuntime
             return false;
         }
 
-        if (resultRelic.rarity <= firstRelic.rarity)
+        bool isFixedReforgeResult = RelicFixedReforgeService.IsFixedResult(
+            currentSnapshot.runState,
+            firstRelic,
+            secondRelic,
+            resultRelic);
+
+        if (!isFixedReforgeResult && resultRelic.rarity <= firstRelic.rarity)
         {
             errorMessage = "结果遗物必须高于材料阶级。";
             return false;

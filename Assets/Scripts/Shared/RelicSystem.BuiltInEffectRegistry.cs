@@ -164,6 +164,18 @@ public static partial class RelicSystem
             { Relic_SO.RelicBuiltInEffectType.ApplyStatusToSourceOnPlayerStatusBurstDamage, HandlePassiveMarker },
             { Relic_SO.RelicBuiltInEffectType.DealDamageToPlayerStatusBurstTargetWithConditionStatus, HandlePassiveMarker },
             { Relic_SO.RelicBuiltInEffectType.PreventLethalDamageByConsumingAllyStatusOncePerBattle, HandlePreventLethalDamageByConsumingAllyStatusOncePerBattle },
+            { Relic_SO.RelicBuiltInEffectType.RefundEnergyOnClashLostOncePerSkillPerRound, HandleRefundEnergyOnClashLostOncePerSkillPerRound },
+            { Relic_SO.RelicBuiltInEffectType.MatchLowestAllySpeedToHighestOnBattleRoundStart, HandleMatchLowestAllySpeedToHighestOnBattleRoundStart },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToLowestHpAllyOnBattleRoundStart, HandleApplyStatusToLowestHpAllyOnBattleRoundStart },
+            { Relic_SO.RelicBuiltInEffectType.DamageRandomEnemyWhenAllyLosesShieldStacks, HandleDamageRandomEnemyWhenAllyLosesShieldStacks },
+            { Relic_SO.RelicBuiltInEffectType.ModifyDefenseDiceMinPowerWhenSelfHasStatus, HandleModifyDefenseDiceMinPowerWhenSelfHasStatus },
+            { Relic_SO.RelicBuiltInEffectType.GrantRandomRelicsAndBlueprintsOnAcquire, HandleGrantRandomRelicsAndBlueprintsOnAcquire },
+            { Relic_SO.RelicBuiltInEffectType.EnableDiagonalMapMovement, HandleEnableDiagonalMapMovement },
+            { Relic_SO.RelicBuiltInEffectType.KeepOnlyInitialPartyMemberAndDisableRecruitOnAcquire, HandleKeepOnlyInitialPartyMemberAndDisableRecruitOnAcquire },
+            { Relic_SO.RelicBuiltInEffectType.ChanceApplyStatusToAllAlliesOnBattleRoundStart, HandleChanceApplyStatusToAllAlliesOnBattleRoundStart },
+            { Relic_SO.RelicBuiltInEffectType.DoubleFirstEnemyDamageEachBattle, HandleDoubleFirstEnemyDamageEachBattle },
+            { Relic_SO.RelicBuiltInEffectType.ResetKeysAndRegenerateMapOnAcquire, HandleResetKeysAndRegenerateMapOnAcquire },
+            { Relic_SO.RelicBuiltInEffectType.ConfigureFixedRelicReforgePair, HandleConfigureFixedRelicReforgePair },
         };
     }
 

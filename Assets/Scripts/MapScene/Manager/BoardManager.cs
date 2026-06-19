@@ -196,6 +196,69 @@ public class BoardManager : MonoBehaviour
         RefreshAllViews();
     }
 
+    public void RegenerateTilesExceptCurrentAndBoss(DifficultyConfig_SO config, int seed, Vector2Int currentCoord)
+    {
+        Initialize();
+        DifficultyConfig_SO effectiveConfig = config != null ? config : CreateFallbackConfig();
+        System.Random rng = new System.Random(seed);
+        HashSet<Vector2Int> keyCoords = PickKeyCoordsForRegeneration(effectiveConfig, rng, currentCoord);
+        Dictionary<Vector2Int, BoardTileData> preservedTiles = new Dictionary<Vector2Int, BoardTileData>();
+        if (tiles.TryGetValue(currentCoord, out BoardTileData currentTile) && currentTile != null)
+            preservedTiles[currentCoord] = currentTile.Clone();
+        if (tiles.TryGetValue(BossCoord, out BoardTileData bossTile) && bossTile != null)
+            preservedTiles[BossCoord] = bossTile.Clone();
+
+        ClearBoard();
+
+        for (int x = 0; x < BoardSize; x++)
+        {
+            for (int y = 0; y < BoardSize; y++)
+            {
+                Vector2Int coord = new Vector2Int(x, y);
+                if (preservedTiles.TryGetValue(coord, out BoardTileData preserved))
+                {
+                    tiles[coord] = preserved;
+                    continue;
+                }
+
+                BoardTileData tile = new BoardTileData
+                {
+                    coord = coord,
+                    encounterSeed = rng.Next(int.MinValue, int.MaxValue),
+                    dangerBand = CalculateDangerBand(coord),
+                    isSpawnTile = false
+                };
+
+                tile.tileType = keyCoords.Contains(coord)
+                    ? MapTileType.Key
+                    : PickWeightedTileType(effectiveConfig, rng);
+
+                tiles[coord] = tile;
+            }
+        }
+
+        ApplyGuaranteedTileMinimums(
+            effectiveConfig,
+            rng,
+            new HashSet<Vector2Int> { currentCoord, BossCoord });
+
+        for (int x = 0; x < BoardSize; x++)
+        {
+            for (int y = 0; y < BoardSize; y++)
+            {
+                Vector2Int coord = new Vector2Int(x, y);
+                if (!tiles.TryGetValue(coord, out BoardTileData tile) || tile == null)
+                    continue;
+
+                PopulatePreview(tile, rng);
+                CreateTileView(tile);
+            }
+        }
+
+        selectedCoord = currentCoord;
+        RefreshAllViews();
+    }
+
     public IEnumerable<BoardTileData> GetAllTiles()
     {
         return tiles.Values;
@@ -220,8 +283,18 @@ public class BoardManager : MonoBehaviour
 
     public bool IsAdjacent(Vector2Int from, Vector2Int to)
     {
+        return IsAdjacent(from, to, false);
+    }
+
+    public bool IsAdjacent(Vector2Int from, Vector2Int to, bool allowDiagonal)
+    {
         Vector2Int delta = to - from;
-        return Mathf.Abs(delta.x) + Mathf.Abs(delta.y) == 1;
+        int absX = Mathf.Abs(delta.x);
+        int absY = Mathf.Abs(delta.y);
+        if (absX + absY == 1)
+            return true;
+
+        return allowDiagonal && absX == 1 && absY == 1;
     }
 
     public void SetSelectedTile(Vector2Int coord)
@@ -623,7 +696,10 @@ public class BoardManager : MonoBehaviour
         tile.previewTag = isElite ? $"Elite {tile.GetDangerLabel()}" : tile.GetDangerLabel();
     }
 
-    private void ApplyGuaranteedTileMinimums(DifficultyConfig_SO config, System.Random rng)
+    private void ApplyGuaranteedTileMinimums(
+        DifficultyConfig_SO config,
+        System.Random rng,
+        HashSet<Vector2Int> protectedCoords = null)
     {
         if (config == null || tiles.Count == 0)
             return;
@@ -644,7 +720,7 @@ public class BoardManager : MonoBehaviour
                 if (donorType == MapTileType.Empty)
                     break;
 
-                List<BoardTileData> donorTiles = GetTilesByType(donorType);
+                List<BoardTileData> donorTiles = GetTilesByType(donorType, protectedCoords);
                 if (donorTiles.Count == 0)
                     break;
 
@@ -748,13 +824,18 @@ public class BoardManager : MonoBehaviour
         return fallbackDonor;
     }
 
-    private List<BoardTileData> GetTilesByType(MapTileType tileType)
+    private List<BoardTileData> GetTilesByType(MapTileType tileType, HashSet<Vector2Int> protectedCoords = null)
     {
         List<BoardTileData> result = new List<BoardTileData>();
         foreach (BoardTileData tile in tiles.Values)
         {
-            if (tile != null && tile.tileType == tileType && IsGuaranteeEligibleTile(tile))
+            if (tile != null
+                && tile.tileType == tileType
+                && IsGuaranteeEligibleTile(tile)
+                && (protectedCoords == null || !protectedCoords.Contains(tile.coord)))
+            {
                 result.Add(tile);
+            }
         }
 
         return result;
@@ -834,6 +915,33 @@ public class BoardManager : MonoBehaviour
             {
                 Vector2Int coord = new Vector2Int(x, y);
                 if (coord == BossCoord || coord == SpawnCoord)
+                    continue;
+
+                candidates.Add(coord);
+            }
+        }
+
+        HashSet<Vector2Int> result = new HashSet<Vector2Int>();
+        int targetCount = Mathf.Min(config.generatedKeyTileCount, candidates.Count);
+        while (result.Count < targetCount && candidates.Count > 0)
+        {
+            int index = rng.Next(0, candidates.Count);
+            result.Add(candidates[index]);
+            candidates.RemoveAt(index);
+        }
+
+        return result;
+    }
+
+    private HashSet<Vector2Int> PickKeyCoordsForRegeneration(DifficultyConfig_SO config, System.Random rng, Vector2Int currentCoord)
+    {
+        List<Vector2Int> candidates = new List<Vector2Int>();
+        for (int x = 0; x < BoardSize; x++)
+        {
+            for (int y = 0; y < BoardSize; y++)
+            {
+                Vector2Int coord = new Vector2Int(x, y);
+                if (coord == BossCoord || coord == currentCoord)
                     continue;
 
                 candidates.Add(coord);

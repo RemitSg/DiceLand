@@ -21,7 +21,7 @@ MonoBehaviour:
     optionLabel: "\u201C\u4EC0\u4E48\u4E71\u4E03\u516B\u7CDF\u7684\uFF1F\u201D"
     requiredMoney: 0
     requiredMoneyPercent: 0
-    consequenceDescription: "\u989D\u5916\u6263\u96642\u884C\u52A8\u70B9"
+    consequenceDescription: "\u5931\u53BB 2 \u884C\u52A8\u70B9"
     resultContent: "\u4F60\u6124\u6012\u5730\u7529\u5F00\u5973\u5DEB\u7684\u624B\uFF0C\u8F6C\u8EAB\u5C31\u8D70\u3002\u5973\u5DEB\u5C16\u9510\u7684\u6307\u7532\u5212\u5F00\u4E86\u4F60\u7684\u76AE\u80A4\uFF0C\u5E26\u8D70\u4E86\u4F60\u76842\u884C\u52A8\u70B9\uFF0C\u4F60\u4E00\u65E0\u6240\u83B7\uFF0C\u8FD8\u4E8F\u4E86\u3002"
     builtInEffectType: 9
     effectAmount: 2
@@ -83,9 +83,9 @@ MonoBehaviour:
     encounterEnemies: []
     encounterEnemyCountMin: 0
     encounterEnemyCountMax: 0
-    specialDungeon: {fileID: 11400000, guid: 310679e8f3b39b74082fe76548e0f65d, type: 2}
+    specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
     possibleResults: []
-    nextEvent: {fileID: 0}
-    resolveEvent: 0
+    nextEvent: {fileID: 11400000, guid: 24065cf65e374984da865ab1c21058e6, type: 2}
+    resolveEvent: 1
     customHandler: {fileID: 0}

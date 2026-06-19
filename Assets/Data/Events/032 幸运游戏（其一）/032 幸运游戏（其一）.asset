@@ -108,5 +108,5 @@ MonoBehaviour:
     additionalBuiltInEffects: []
     possibleResults: []
     nextEvent: {fileID: 0}
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}

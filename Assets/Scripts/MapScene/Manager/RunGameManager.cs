@@ -227,8 +227,29 @@ public class RunGameManager : MonoBehaviour
 
     private void Update()
     {
+        TryConsumePendingMapRegenerationFromRelic();
         UpdateMapTutorialGuide();
         UpdateMapTutorialTargetHighlight();
+    }
+
+    private void TryConsumePendingMapRegenerationFromRelic()
+    {
+        if (runState == null || !runState.pendingMapRegenerationFromRelic)
+            return;
+        if (boardManager == null)
+            return;
+
+        runState.pendingMapRegenerationFromRelic = false;
+        boardManager.RegenerateTilesExceptCurrentAndBoss(
+            activeDifficultyConfig != null ? activeDifficultyConfig : difficultyConfig,
+            UnityEngine.Random.Range(int.MinValue, int.MaxValue),
+            runState.playerGridPosition);
+        AssignEnemyGroupsToHostileTiles();
+        if (playerMapController != null && boardManager.TryGetTile(runState.playerGridPosition, out BoardTileData currentTile))
+            playerMapController.SetPosition(currentTile, false);
+        if (mapHUD != null && boardManager.TryGetTile(runState.playerGridPosition, out BoardTileData tile))
+            mapHUD.ShowTile(tile, GetMoveCost(tile), true);
+        RefreshHUD("新世界展开，除当前格与 BOSS 外的地图格子已重新生成。");
     }
 
     private void OnApplicationPause(bool pauseStatus)
@@ -534,7 +555,7 @@ public class RunGameManager : MonoBehaviour
             return;
         }
 
-        if (!boardManager.IsAdjacent(runState.playerGridPosition, tile.coord))
+        if (!boardManager.IsAdjacent(runState.playerGridPosition, tile.coord, runState != null && runState.allowDiagonalMapMovement))
         {
             mapHUD.ShowStatus("该格子不在可进入范围内，已显示详细信息。");
             return;

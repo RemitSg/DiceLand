@@ -483,6 +483,12 @@ public class RestSceneReforgeInteractable : MonoBehaviour
         if (selectedRelicA == null || selectedRelicB == null)
             return null;
 
+        if (RestSceneRuntime.TryGetCurrentSnapshot(out MapRunSnapshot snapshot)
+            && RelicFixedReforgeService.TryResolveFixedResult(snapshot.runState, selectedRelicA, selectedRelicB, out Relic_SO fixedResult))
+        {
+            return fixedResult;
+        }
+
         int startRarityIndex = Mathf.Clamp((int)selectedRelicA.rarity + 1, 0, (int)LootRarity.Legendary);
         IReadOnlyList<Relic_SO> relicPool = GetResolvedRelicReforgePool();
         for (int rarityIndex = startRarityIndex; rarityIndex <= (int)LootRarity.Legendary; rarityIndex++)

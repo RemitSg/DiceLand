@@ -10,77 +10,78 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5a4f1339d8304fc7a0d10525e9e3c1f8, type: 3}
-  m_Name: "031 王储的复仇特殊副本"
+  m_Name: "031 \u738B\u50A8\u7684\u590D\u4EC7\u7279\u6B8A\u526F\u672C"
   m_EditorClassIdentifier: 
   dungeonId: 031
-  dungeonName: "王储的复仇"
-  description: "旧城堡里封存着一位王储的日记。你被卷入被篡改的历史，必须看清真正的遗愿。"
+  dungeonName: "\u738B\u50A8\u7684\u590D\u4EC7"
+  description: "\u65E7\u57CE\u5821\u91CC\u5C01\u5B58\u7740\u4E00\u4F4D\u738B\u50A8\u7684\u65E5\u8BB0\u3002\u4F60\u88AB\u5377\u5165\u88AB\u7BE1\u6539\u7684\u5386\u53F2\uFF0C\u5FC5\u987B\u770B\u6E05\u771F\u6B63\u7684\u9057\u613F\u3002"
+  settlementScoreValue: 200
   entries:
   - tileType: 3
-    previewTag: "剧情"
+    previewTag: "\u5267\u60C5"
     previewDangerRating: 0
     enemyGroup: {fileID: 0}
     merchantOffers: []
     treasureOptions: []
     eventData: {fileID: 11400000, guid: 6a4147f3ae3a4fa1acf16c3190de046d, type: 2}
   - tileType: 3
-    previewTag: "剧情"
+    previewTag: "\u5267\u60C5"
     previewDangerRating: 0
     enemyGroup: {fileID: 0}
     merchantOffers: []
     treasureOptions: []
     eventData: {fileID: 11400000, guid: 659a02c6f4a04796a05279725e6e6166, type: 2}
   - tileType: 1
-    previewTag: "背水之战"
-    previewDangerRating: 0
-    enemyGroup: {fileID: 0}
+    previewTag: "\u80CC\u6C34\u4E4B\u6218"
+    previewDangerRating: 1
+    enemyGroup: {fileID: 11400000, guid: 589ff2320b57432458063c3393bb458b, type: 2}
     merchantOffers: []
     treasureOptions: []
     eventData: {fileID: 0}
   - tileType: 3
-    previewTag: "剧情"
+    previewTag: "\u5267\u60C5"
     previewDangerRating: 0
     enemyGroup: {fileID: 0}
     merchantOffers: []
     treasureOptions: []
     eventData: {fileID: 11400000, guid: 17bc5e0131f748d18c4b0fc383d611d5, type: 2}
   - tileType: 3
-    previewTag: "剧情"
+    previewTag: "\u5267\u60C5"
     previewDangerRating: 0
     enemyGroup: {fileID: 0}
     merchantOffers: []
     treasureOptions: []
     eventData: {fileID: 11400000, guid: 862863be71be4487858ca21d75397c96, type: 2}
   - tileType: 1
-    previewTag: "王座前"
-    previewDangerRating: 0
-    enemyGroup: {fileID: 0}
+    previewTag: "\u738B\u5EA7\u524D"
+    previewDangerRating: 2
+    enemyGroup: {fileID: 11400000, guid: 0570582b9d9d82943bdbbe5d186d7e35, type: 2}
     merchantOffers: []
     treasureOptions: []
     eventData: {fileID: 0}
   - tileType: 3
-    previewTag: "剧情"
+    previewTag: "\u5267\u60C5"
     previewDangerRating: 0
     enemyGroup: {fileID: 0}
     merchantOffers: []
     treasureOptions: []
     eventData: {fileID: 11400000, guid: 95a7debda72449a3ac8bb33f1677e92b, type: 2}
   - tileType: 2
-    previewTag: "幕后之人"
-    previewDangerRating: 0
-    enemyGroup: {fileID: 0}
+    previewTag: "\u5E55\u540E\u4E4B\u4EBA"
+    previewDangerRating: 4
+    enemyGroup: {fileID: 11400000, guid: c64f39a40add02140b78d3f2f6602154, type: 2}
     merchantOffers: []
     treasureOptions: []
     eventData: {fileID: 0}
   - tileType: 3
-    previewTag: "剧情"
+    previewTag: "\u5267\u60C5"
     previewDangerRating: 0
     enemyGroup: {fileID: 0}
     merchantOffers: []
     treasureOptions: []
     eventData: {fileID: 11400000, guid: 0b7a04b74dd540bdbb4e998afd0a016c, type: 2}
   - tileType: 9
-    previewTag: "王国宝库"
+    previewTag: "\u738B\u56FD\u5B9D\u5E93"
     previewDangerRating: 0
     enemyGroup: {fileID: 0}
     merchantOffers: []

@@ -51,7 +51,8 @@ public class Relic_SO : ScriptableObject
         OnPlayerSkillUsed = 35,
         OnBattleCompletion = 36,
         OnBattleDefeat = 37,
-        OnPlayerDiceRolled = 38
+        OnPlayerDiceRolled = 38,
+        OnPlayerShieldStacksLost = 39
     }
 
     public enum RelicBuiltInEffectType
@@ -179,7 +180,19 @@ public class Relic_SO : ScriptableObject
         ApplyStatusToAllAlliesWhenAllLivingAlliesHaveStatusOnBattleRoundStart = 120,
         ApplyStatusToSourceOnPlayerStatusBurstDamage = 121,
         DealDamageToPlayerStatusBurstTargetWithConditionStatus = 122,
-        PreventLethalDamageByConsumingAllyStatusOncePerBattle = 123
+        PreventLethalDamageByConsumingAllyStatusOncePerBattle = 123,
+        RefundEnergyOnClashLostOncePerSkillPerRound = 124,
+        MatchLowestAllySpeedToHighestOnBattleRoundStart = 125,
+        ApplyStatusToLowestHpAllyOnBattleRoundStart = 126,
+        DamageRandomEnemyWhenAllyLosesShieldStacks = 127,
+        ModifyDefenseDiceMinPowerWhenSelfHasStatus = 128,
+        GrantRandomRelicsAndBlueprintsOnAcquire = 129,
+        EnableDiagonalMapMovement = 130,
+        KeepOnlyInitialPartyMemberAndDisableRecruitOnAcquire = 131,
+        ChanceApplyStatusToAllAlliesOnBattleRoundStart = 132,
+        DoubleFirstEnemyDamageEachBattle = 133,
+        ResetKeysAndRegenerateMapOnAcquire = 134,
+        ConfigureFixedRelicReforgePair = 135
     }
 
     [Serializable]
@@ -209,6 +222,9 @@ public class Relic_SO : ScriptableObject
         [Min(1)] public int requiredDistinctStatusCount = 1;
         [Min(1)] public int requiredConsecutiveSkillUses = 1;
         public RelicTable_SO relicTable;
+        public BlueprintTable_SO blueprintTable;
+        public LootRarityWeightTable_SO blueprintRarityWeightTable;
+        public Relic_SO relicData;
         public EnemyData_SO enemyData;
     }
 

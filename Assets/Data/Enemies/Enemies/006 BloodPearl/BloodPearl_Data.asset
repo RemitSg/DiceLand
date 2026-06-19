@@ -14,13 +14,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyID: 6
   enemyName: "\u8840\u5B62\u5B50"
-  baseHP: 14
+  baseHP: 12
+  damageReductionPercent: 0
   minSpeed: 2
   maxSpeed: 4
   baseSpeedButtonCount: 1
   enemySprite: {fileID: 21300000, guid: 0d260784fb1d2ce4dbe7fcff357d887f, type: 3}
+  stageSprites: []
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.2
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules: []
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains: []
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 1
+    settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  transformToEnemyDataWhenStatusMissing: {fileID: 0}
+  transformMissingStatusData: {fileID: 0}
+  copyOpponentLastRoundSpeedDiceCount: 0
+  copyOpponentLastRoundSkills: 0
+  reflectionSkillTemplate: {fileID: 0}
+  enemyDescription: 
+  passiveDescriptions: []
   enemyVisualScale: 1
   enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
   skillPool:
   - {fileID: 11400000, guid: 74abea2e8cb934b47bea35d55fd17196, type: 2}
   - {fileID: 11400000, guid: e74e0153f519a6c49aa334abb2c6d75c, type: 2}

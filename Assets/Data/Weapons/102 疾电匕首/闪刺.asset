@@ -41,7 +41,7 @@ MonoBehaviour:
       applyTiming: 0
       applyAfterRoundStarts: 1
       applyRepeatCount: 1
-      stackAmount: 99
+      stackAmount: 2
       randomTargetCount: 1
       useCondition: 0
       condition: 0

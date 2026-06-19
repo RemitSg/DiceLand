@@ -16,11 +16,13 @@ MonoBehaviour:
   blueprintName: "\u70EC\u543B\u4E4B\u5377"
   description: "\u8BB0\u8F7D\u7740\u5982\u4F55\u6253\u9020 \u3010\u70EC\u543B\u77ED\u5315\u3011
     \u7684\u5377\u8F74"
-  rarity: 2
+  rarity: 1
   icon: {fileID: 0}
   targetWeapon: {fileID: 11400000, guid: 1d01aa9ffd9c3984fa238b6e18c20cd3, type: 2}
   materialRequirements:
-  - lootItem: {fileID: 11400000, guid: d472eb76e6a877043b3a98578a2db396, type: 2}
-    amount: 1
   - lootItem: {fileID: 11400000, guid: 1a247d2fcfd14c141bd79e8a82154b1f, type: 2}
-    amount: 3
+    amount: 2
+  - lootItem: {fileID: 11400000, guid: 6e1752dc4702a1c44905a3559cb5f924, type: 2}
+    amount: 1
+  - lootItem: {fileID: 11400000, guid: 868997ae4239f844f9ea876d8ad4057e, type: 2}
+    amount: 1

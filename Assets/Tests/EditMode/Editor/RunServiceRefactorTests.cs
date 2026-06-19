@@ -120,6 +120,65 @@ public class RunServiceRefactorTests
     }
 
     [Test]
+    public void ExecuteLoseMoneyConsequence_AllowsInsufficientMoneyAndClampsToZero()
+    {
+        RunState runState = new RunState { money = 5 };
+        MapEventOptionData optionData = new MapEventOptionData
+        {
+            optionId = "lose-money",
+            optionLabel = "Lose Money",
+            builtInEffectType = MapEventOptionBuiltInEffectType.LoseMoney,
+            effectAmount = 10
+        };
+
+        bool executed = MapEventBuiltInEffectExecutorService.TryExecute(
+            new MapEventBuiltInEffectExecutionRequest
+            {
+                runState = runState,
+                optionData = optionData
+            },
+            out MapEventBuiltInEffectExecutionResult result);
+
+        Assert.IsTrue(executed);
+        Assert.IsTrue(result.success);
+        Assert.AreEqual(0, runState.money);
+        Assert.That(result.message, Does.Contain("5"));
+    }
+
+    [Test]
+    public void ExecuteLoseMoneyPercentConsequence_AllowsPercentAboveCurrentMoneyAndClampsToZero()
+    {
+        RunState runState = new RunState { money = 5 };
+        MapEventOptionData optionData = new MapEventOptionData
+        {
+            optionId = "lose-money-percent",
+            optionLabel = "Lose Money Percent",
+            builtInEffectType = MapEventOptionBuiltInEffectType.None,
+            additionalBuiltInEffects = new List<MapEventBuiltInEffectData>
+            {
+                new MapEventBuiltInEffectData
+                {
+                    effectType = MapEventOptionBuiltInEffectType.LoseMoneyPercent,
+                    moneyPercent = 200
+                }
+            }
+        };
+
+        bool executed = MapEventBuiltInEffectExecutorService.TryExecute(
+            new MapEventBuiltInEffectExecutionRequest
+            {
+                runState = runState,
+                optionData = optionData
+            },
+            out MapEventBuiltInEffectExecutionResult result);
+
+        Assert.IsTrue(executed);
+        Assert.IsTrue(result.success);
+        Assert.AreEqual(0, runState.money);
+        Assert.That(result.message, Does.Contain("5"));
+    }
+
+    [Test]
     public void BuildMapBattleEncounter_ClonesRelicsCalamitiesAndLivingParty()
     {
         EnemyData_SO enemy = ScriptableObject.CreateInstance<EnemyData_SO>();

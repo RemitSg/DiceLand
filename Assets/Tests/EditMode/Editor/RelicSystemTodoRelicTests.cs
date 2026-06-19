@@ -263,6 +263,65 @@ public class RelicSystemTodoRelicTests
     }
 
     [Test]
+    public void HunterMarkDamageRelic_AppliesOnlyToSkillDiceDamageAgainstNormalOrTemporaryMark()
+    {
+        BattleAllyController ally = CreateAlly("Hunter", 10, 10);
+        BattleEnemyController enemy = CreateEnemy("MarkedEnemy", 20);
+        EnemySkill_SO skill = CreateSkill("Strike");
+        BattleStatus_SO normalMark = CreateStatus("target", "标记", BattleStatus_SO.StatusBehaviorType.None);
+        BattleStatus_SO temporaryMark = CreateStatus("targetTemp", "临时标记", BattleStatus_SO.StatusBehaviorType.None);
+
+        Relic_SO relic = CreateRelic(
+            "hunter-mark",
+            Relic_SO.RelicTrigger.OnPlayerAboutToDealDamage,
+            Relic_SO.RelicBuiltInEffectType.ModifyOutgoingDamageFlatWhenTargetHasStatus,
+            effect =>
+            {
+                effect.amount = 1;
+                effect.conditionStatusData = normalMark;
+                effect.requiredStatusStacks = 1;
+            });
+        List<RunRelicState> relicInventory = new List<RunRelicState>
+        {
+            new RunRelicState { relicData = relic, amount = 1 }
+        };
+
+        enemy.AddStatus(temporaryMark, temporaryMark.StatusId, temporaryMark.DisplayName, 1);
+        RelicExecutionContext skillDiceContext = RelicExecutionContext.CreatePlayerAboutToDealDamage(
+            null,
+            skill,
+            0,
+            10,
+            ally,
+            enemy);
+        RelicSystem.Process(relicInventory, skillDiceContext);
+
+        RelicExecutionContext extraDamageContext = RelicExecutionContext.CreatePlayerAboutToDealDamage(
+            null,
+            skill,
+            -1,
+            10,
+            ally,
+            enemy);
+        RelicSystem.Process(relicInventory, extraDamageContext);
+
+        enemy.ClearStatus(temporaryMark, temporaryMark.StatusId, temporaryMark.DisplayName);
+        enemy.AddStatus(normalMark, normalMark.StatusId, normalMark.DisplayName, 1);
+        RelicExecutionContext normalMarkContext = RelicExecutionContext.CreatePlayerAboutToDealDamage(
+            null,
+            skill,
+            0,
+            10,
+            ally,
+            enemy);
+        RelicSystem.Process(relicInventory, normalMarkContext);
+
+        Assert.AreEqual(1, skillDiceContext.outgoingDamageFlatModifier);
+        Assert.AreEqual(0, extraDamageContext.outgoingDamageFlatModifier);
+        Assert.AreEqual(1, normalMarkContext.outgoingDamageFlatModifier);
+    }
+
+    [Test]
     public void DefenseSkillRelic_IncreasesDefenseSkillMaxPowerOnly()
     {
         BattleAllyController ally = CreateAlly("Guarder", 12, 12);

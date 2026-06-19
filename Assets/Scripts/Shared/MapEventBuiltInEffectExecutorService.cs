@@ -237,13 +237,14 @@ public static class MapEventBuiltInEffectExecutorService
     private static bool ExecuteLoseMoney(RunState runState, MapEventBuiltInEffectData effectData, out string message)
     {
         int cost = Mathf.Max(0, effectData.effectAmount);
-        if (!runState.TrySpendMoney(cost))
-        {
-            message = $"金钱不足，需要 {cost} 金钱。";
-            return false;
-        }
+        int currentMoney = Mathf.Max(0, runState != null ? runState.money : 0);
+        int actualLost = Mathf.Min(currentMoney, cost);
+        if (actualLost > 0)
+            runState.TrySpendMoney(actualLost);
 
-        message = $"失去 {cost} 金钱。";
+        message = actualLost < cost
+            ? $"失去 {actualLost} 金钱，金钱已降至 0。"
+            : $"失去 {actualLost} 金钱。";
         return true;
     }
 
@@ -252,13 +253,13 @@ public static class MapEventBuiltInEffectExecutorService
         int percent = Mathf.Max(0, effectData.moneyPercent);
         int currentMoney = Mathf.Max(0, runState != null ? runState.money : 0);
         int cost = Mathf.FloorToInt(currentMoney * (percent / 100f));
-        if (!runState.TrySpendMoney(cost))
-        {
-            message = $"金钱不足，需要 {cost} 金钱。";
-            return false;
-        }
+        int actualLost = Mathf.Min(currentMoney, cost);
+        if (actualLost > 0)
+            runState.TrySpendMoney(actualLost);
 
-        message = $"失去 {cost} 金钱。";
+        message = actualLost < cost
+            ? $"失去 {actualLost} 金钱，金钱已降至 0。"
+            : $"失去 {actualLost} 金钱。";
         return true;
     }
 

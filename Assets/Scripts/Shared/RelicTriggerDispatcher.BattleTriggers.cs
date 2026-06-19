@@ -101,6 +101,31 @@ public static partial class RelicTriggerDispatcher
         return context;
     }
 
+    public static RelicExecutionContext ProcessPlayerShieldStacksLost(
+        BattleEncounterData encounter,
+        RunState runState,
+        BattleStatus_SO statusData,
+        int lostStacks,
+        int currentRound,
+        Object source,
+        Object target,
+        BattleAllyController[] allies,
+        BattleEnemyController[] enemies,
+        Action<string> logFeedback = null)
+    {
+        RelicExecutionContext context = RelicExecutionContext.CreatePlayerShieldStacksLost(
+            runState,
+            statusData,
+            lostStacks,
+            currentRound,
+            source,
+            target,
+            allies,
+            enemies);
+        ProcessBattleRelics(encounter, context, logFeedback);
+        return context;
+    }
+
     public static RelicExecutionContext ProcessPlayerClashLost(
         BattleEncounterData encounter,
         RunState runState,

@@ -4,6 +4,34 @@ using Object = UnityEngine.Object;
 
 public sealed partial class RelicExecutionContext
 {
+    public static RelicExecutionContext CreatePlayerShieldStacksLost(
+        RunState runState,
+        BattleStatus_SO statusData,
+        int lostStacks,
+        int currentRound,
+        Object source,
+        Object target,
+        BattleAllyController[] allies,
+        BattleEnemyController[] enemies)
+    {
+        return new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnPlayerShieldStacksLost,
+            runState = runState,
+            sourceIsPlayer = true,
+            statusData = statusData,
+            statusId = statusData != null ? statusData.StatusId : string.Empty,
+            statusName = statusData != null ? statusData.DisplayName : string.Empty,
+            statusStacks = Mathf.Max(0, lostStacks),
+            currentRound = Mathf.Max(1, currentRound),
+            source = source,
+            target = target,
+            allies = allies,
+            enemies = enemies,
+            feedbackMessages = new List<string>()
+        };
+    }
+
     public static RelicExecutionContext CreateStatusApplied(
         RunState runState,
         RunGameManager runGameManager,

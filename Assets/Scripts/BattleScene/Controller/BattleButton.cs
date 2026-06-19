@@ -1765,7 +1765,7 @@ public class BattleButton : MonoBehaviour
             },
             (target, effect, _, effectLabel) =>
             {
-                int resolvedDamage = ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, diceIndex, effect.amount);
+                int resolvedDamage = ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, -1, effect.amount);
                 int dealtDamage = target.TakeDamage(resolvedDamage, 0, effect.amount);
                 if (dealtDamage > 0)
                     BattleLog(BattleEnemyBuiltInEffectLogService.BuildDamageLog(attacker.GetDebugDisplayName(), effectLabel, target.GetDebugDisplayName(), dealtDamage));
@@ -1873,7 +1873,7 @@ public class BattleButton : MonoBehaviour
                 if (baseDamage <= 0)
                     continue;
 
-                int resolvedDamage = ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, diceIndex, baseDamage);
+                int resolvedDamage = ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, -1, baseDamage);
                 int dealtDamage = target.TakeDamage(resolvedDamage, 0, baseDamage);
                 if (dealtDamage > 0)
                     BattleLog(BattleEnemyBuiltInEffectLogService.BuildDamageLog(attacker.GetDebugDisplayName(), effectLabel, target.GetDebugDisplayName(), dealtDamage));
@@ -4288,7 +4288,7 @@ public class BattleButton : MonoBehaviour
 
                 BattleDamageEffectDispatcher.DispatchDamage(
                     effect.damageAmount,
-                    damage => ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, diceIndex, damage),
+                    damage => ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, -1, damage),
                     (modifiedDamage, originalDamage) => target.TakeDamage(modifiedDamage, 0, originalDamage),
                     modifiedDamage => BattleLog($"\u8bcd\u6761\u89e6\u53d1\uff1a{attacker.GetDebugDisplayName()}[{BuildEffectLabel(effect, i)}] \u5bf9 {target.GetDebugDisplayName()} \u9020\u6210 {modifiedDamage} \u989d\u5916\u4f24\u5bb3\uff0c\u5269\u4f59HP {target.CurrentHP}/{target.MaxHP}"));
             }
@@ -5005,7 +5005,7 @@ public class BattleButton : MonoBehaviour
         if (activeEncounter == null || activeEncounter.relicInventory == null || activeEncounter.relicInventory.Count == 0)
             return;
 
-        RelicTriggerDispatcher.ProcessPlayerClashLost(
+        RelicExecutionContext context = RelicTriggerDispatcher.ProcessPlayerClashLost(
             activeEncounter,
             null,
             attacker.SelectedSkill,
@@ -5014,6 +5014,12 @@ public class BattleButton : MonoBehaviour
             target,
             currentRound,
             BattleLog);
+
+        if (context.additionalSharedEnergyRecovery > 0)
+        {
+            int restored = RestoreSharedEnergy(context.additionalSharedEnergyRecovery);
+            ShowSharedEnergyRefundPopupIfNeeded(attacker, restored);
+        }
     }
 
     private static bool ShouldPromoteAllyStatusEffectTrigger(

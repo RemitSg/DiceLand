@@ -73,6 +73,8 @@ public static class RestSceneRuntime
 
         if (!TryGetCurrentSnapshot(out MapRunSnapshot snapshot) || snapshot?.runState == null)
             return recruitCandidates;
+        if (snapshot.runState.recruitmentDisabled)
+            return recruitCandidates;
 
         int maxRecruitCount = Mathf.Max(1, difficultyConfig.maxRecruitCount);
         if (snapshot.runState.recruitedMemberCount >= maxRecruitCount)
@@ -99,6 +101,12 @@ public static class RestSceneRuntime
         if (!HasPendingVisit)
         {
             errorMessage = "\u5f53\u524d\u4e0d\u5728\u4f11\u606f\u573a\u666f\u8bbf\u95ee\u6d41\u7a0b\u4e2d\u3002";
+            return false;
+        }
+
+        if (TryGetCurrentSnapshot(out MapRunSnapshot snapshot) && snapshot?.runState != null && snapshot.runState.recruitmentDisabled)
+        {
+            errorMessage = "当前遗物效果禁止招募。";
             return false;
         }
 
