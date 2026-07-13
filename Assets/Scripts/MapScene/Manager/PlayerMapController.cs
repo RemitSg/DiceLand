@@ -165,6 +165,21 @@ public class PlayerMapController : MonoBehaviour
         return true;
     }
 
+    public bool CanMoveTo(BoardTileData targetTile)
+    {
+        if (targetTile == null || boardManager == null || actionPointSystem == null || runState == null)
+            return false;
+        if (isMoving || previewCommitPending)
+            return false;
+        if (targetTile.coord == runState.playerGridPosition)
+            return false;
+
+        return boardManager.IsAdjacent(
+            runState.playerGridPosition,
+            targetTile.coord,
+            runState.allowDiagonalMapMovement);
+    }
+
     public bool CompletePendingBattlePreviewArrival()
     {
         if (!previewCommitPending || previewArrivalCompleting)

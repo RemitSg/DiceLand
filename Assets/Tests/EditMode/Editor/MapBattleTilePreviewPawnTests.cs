@@ -155,6 +155,21 @@ public class MapBattleTilePreviewPawnTests
     }
 
     [Test]
+    public void CanMoveTo_ValidatesWithoutChangingPreviewPresentationOrState()
+    {
+        controller.BeginBattleTilePreview(target, true);
+        Vector3 previewPosition = pawn.position;
+
+        Assert.IsTrue(controller.CanMoveTo(target));
+
+        Assert.IsTrue(controller.IsBattlePreviewActive);
+        Assert.IsFalse(controller.IsPreviewCommitPending);
+        Assert.AreEqual(origin.coord, runState.playerGridPosition);
+        Assert.AreEqual(previewPosition, pawn.position);
+        Assert.AreEqual(5, points.CurrentPoints);
+    }
+
+    [Test]
     public void InvalidMismatchedMove_KeepsPreviewAtTarget()
     {
         BoardTileData nonAdjacent = new BoardTileData { coord = new Vector2Int(2, 0), tileType = MapTileType.Empty };

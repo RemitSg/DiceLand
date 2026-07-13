@@ -64,7 +64,7 @@ public class MapMovementServiceTests
 
     [TestCase(0, 5)]
     [TestCase(2, 3)]
-    public void TryExecuteMove_PreviewArrivalCompletesAfterZeroOrNormalCostSettlement(int moveCost, int expectedPoints)
+    public void TryExecuteMove_ZeroOrNormalCostReturnsArrivalHandoffWithoutEmitting(int moveCost, int expectedPoints)
     {
         int callbackPoints = -1;
         controller.PlayerMovedToTile += (_, __) => callbackPoints = points.CurrentPoints;
@@ -75,12 +75,17 @@ public class MapMovementServiceTests
         Assert.IsTrue(moved);
         Assert.IsTrue(result.moved);
         Assert.AreEqual(expectedPoints, points.CurrentPoints);
+        Assert.IsTrue(result.shouldCompleteBattlePreviewArrival);
+        Assert.AreEqual(-1, callbackPoints);
+        Assert.IsTrue(controller.IsPreviewCommitPending);
+
+        Assert.IsTrue(controller.CompletePendingBattlePreviewArrival());
         Assert.AreEqual(expectedPoints, callbackPoints);
         Assert.IsFalse(controller.IsPreviewCommitPending);
     }
 
     [Test]
-    public void TryExecuteMove_OverflowPreviewArrivalObservesBothSpendsAndFinalizedCycle()
+    public void TryExecuteMove_OverflowReturnsHandoffThenArrivalObservesFinalActionPoints()
     {
         points.RestoreState(1, 0, 1);
         int exhaustedCount = 0;
@@ -103,15 +108,42 @@ public class MapMovementServiceTests
         Assert.IsTrue(moved);
         Assert.IsTrue(result.moved);
         Assert.IsTrue(result.shouldRefreshHudWithEmptyStatus);
+        Assert.IsTrue(result.shouldCompleteBattlePreviewArrival);
         Assert.AreEqual(2, exhaustedCount);
         Assert.AreEqual(1, points.CurrentPoints);
+        Assert.AreEqual(-1, callbackPoints);
+        Assert.AreEqual(-1, callbackExhaustions);
+        Assert.IsTrue(controller.IsPreviewCommitPending);
+
+        Assert.IsTrue(controller.CompletePendingBattlePreviewArrival());
         Assert.AreEqual(1, callbackPoints);
         Assert.AreEqual(2, callbackExhaustions);
         Assert.IsFalse(controller.IsPreviewCommitPending);
     }
 
     [Test]
-    public void TryExecuteMove_IgnoreCostCompletesPreviewArrivalWithoutSpending()
+    public void TryExecuteMove_OverflowSecondSpendFailureLeavesPawnAndCoordinateAtOrigin()
+    {
+        points.RestoreState(1, 0, 1);
+        int callbackCount = 0;
+        controller.PlayerMovedToTile += (_, __) => callbackCount++;
+        Assert.IsTrue(controller.BeginBattleTilePreview(target, true));
+
+        bool moved = MapMovementService.TryExecuteMove(CreateRequest(2), out MapMovementExecutionResult result);
+
+        Assert.IsFalse(moved);
+        Assert.IsFalse(result.moved);
+        Assert.IsFalse(result.shouldCompleteBattlePreviewArrival);
+        Assert.AreEqual(origin.coord, runState.playerGridPosition);
+        Assert.AreEqual(World(origin), controller.PawnWorldPosition);
+        Assert.AreEqual(0, points.CurrentPoints);
+        Assert.AreEqual(0, callbackCount);
+        Assert.IsFalse(controller.IsPreviewCommitPending);
+        Assert.IsFalse(controller.IsBattlePreviewActive);
+    }
+
+    [Test]
+    public void TryExecuteMove_IgnoreCostReturnsFeedbackBeforeArrivalHandoff()
     {
         Relic_SO relic = ScriptableObject.CreateInstance<Relic_SO>();
         createdObjects.Add(relic);
@@ -127,8 +159,9 @@ public class MapMovementServiceTests
             }
         };
         runState.AddRelic(relic, 1);
-        int callbackCount = 0;
-        controller.PlayerMovedToTile += (_, __) => callbackCount++;
+        string publishedFeedback = null;
+        string observedFeedback = null;
+        controller.PlayerMovedToTile += (_, __) => observedFeedback = publishedFeedback;
         Assert.IsTrue(controller.BeginBattleTilePreview(target, true));
 
         bool moved = MapMovementService.TryExecuteMove(CreateRequest(2), out MapMovementExecutionResult result);
@@ -136,7 +169,14 @@ public class MapMovementServiceTests
         Assert.IsTrue(moved);
         Assert.IsTrue(result.moved);
         Assert.AreEqual(5, points.CurrentPoints);
-        Assert.AreEqual(1, callbackCount);
+        Assert.IsTrue(result.shouldCompleteBattlePreviewArrival);
+        Assert.IsNotEmpty(result.pendingRelicStatusMessage);
+        Assert.IsNull(observedFeedback);
+        Assert.IsTrue(controller.IsPreviewCommitPending);
+
+        publishedFeedback = result.pendingRelicStatusMessage;
+        Assert.IsTrue(controller.CompletePendingBattlePreviewArrival());
+        Assert.AreEqual(publishedFeedback, observedFeedback);
         Assert.IsFalse(controller.IsPreviewCommitPending);
     }
 
@@ -152,5 +192,10 @@ public class MapMovementServiceTests
             previousCycleFlags = new MapMovementCycleFlags(),
             applyCycleFlags = _ => { }
         };
+    }
+
+    private Vector3 World(BoardTileData tile)
+    {
+        return board.GridToWorld(tile.coord) + new Vector3(0f, 0f, -0.2f);
     }
 }

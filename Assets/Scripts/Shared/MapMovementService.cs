@@ -34,6 +34,7 @@ public sealed class MapMovementExecutionResult
 {
     public bool moved;
     public bool shouldRefreshHudWithEmptyStatus;
+    public bool shouldCompleteBattlePreviewArrival;
     public string pendingRelicStatusMessage;
 }
 
@@ -207,7 +208,7 @@ public static class MapMovementService
             if (movedWithoutCost && relicContext.feedbackMessages != null && relicContext.feedbackMessages.Count > 0)
                 result.pendingRelicStatusMessage = string.Join("\n", relicContext.feedbackMessages);
             if (movedWithoutCost)
-                request.playerMapController.CompletePendingBattlePreviewArrival();
+                result.shouldCompleteBattlePreviewArrival = request.playerMapController.IsPreviewCommitPending;
             return movedWithoutCost;
         }
 
@@ -218,7 +219,7 @@ public static class MapMovementService
             bool moved = request.playerMapController.TryMoveTo(tile, 0);
             result.moved = moved;
             if (moved)
-                request.playerMapController.CompletePendingBattlePreviewArrival();
+                result.shouldCompleteBattlePreviewArrival = request.playerMapController.IsPreviewCommitPending;
             return moved;
         }
 
@@ -233,11 +234,17 @@ public static class MapMovementService
 
             result.moved = moved;
             if (moved)
-                request.playerMapController.CompletePendingBattlePreviewArrival();
+                result.shouldCompleteBattlePreviewArrival = request.playerMapController.IsPreviewCommitPending;
             return moved;
         }
 
         if (moveCost != 2 || request.actionPointSystem.CurrentPoints != 1)
+        {
+            RestoreFlags(request);
+            return false;
+        }
+
+        if (!request.playerMapController.CanMoveTo(tile))
         {
             RestoreFlags(request);
             return false;
@@ -249,26 +256,25 @@ public static class MapMovementService
             return false;
         }
 
-        if (!request.playerMapController.TryMoveTo(tile, 0))
+        if (!request.actionPointSystem.TrySpend(1))
         {
+            request.playerMapController.CancelBattleTilePreview(true);
             RestoreFlags(request);
             return false;
         }
 
-        bool spentOverflowPoint = request.actionPointSystem.TrySpend(1);
-        if (spentOverflowPoint)
+        if (!request.playerMapController.TryMoveTo(tile, 0))
         {
-            RelicTriggerDispatcher.ProcessActionPointsSpent(request.runState, request.runGameManager, tile, 2);
-            result.moved = true;
-            result.shouldRefreshHudWithEmptyStatus = true;
-            request.playerMapController.CompletePendingBattlePreviewArrival();
-        }
-        else
-        {
+            request.playerMapController.CancelBattleTilePreview(true);
             RestoreFlags(request);
+            return false;
         }
 
-        return spentOverflowPoint;
+        RelicTriggerDispatcher.ProcessActionPointsSpent(request.runState, request.runGameManager, tile, 2);
+        result.moved = true;
+        result.shouldRefreshHudWithEmptyStatus = true;
+        result.shouldCompleteBattlePreviewArrival = request.playerMapController.IsPreviewCommitPending;
+        return true;
     }
 
     private static MapMovementCycleFlags BuildCycleFlags(

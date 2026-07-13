@@ -1368,10 +1368,27 @@ public class RunGameManager : MonoBehaviour
             },
             out MapMovementExecutionResult result);
 
-        if (moved && !string.IsNullOrWhiteSpace(result.pendingRelicStatusMessage))
-            pendingMoveRelicStatusMessage = result.pendingRelicStatusMessage;
+        if (moved)
+        {
+            pendingMoveRelicStatusMessage = string.IsNullOrWhiteSpace(result.pendingRelicStatusMessage)
+                ? null
+                : result.pendingRelicStatusMessage;
+        }
         if (moved && result.shouldRefreshHudWithEmptyStatus)
             RefreshHUD(string.Empty);
+        if (moved && result.shouldCompleteBattlePreviewArrival)
+        {
+            if (!playerMapController.CompletePendingBattlePreviewArrival())
+            {
+                pendingMoveRelicStatusMessage = null;
+                movingToPreviouslyExploredEmptyTile = false;
+                movingToUnexploredSettlementTile = false;
+                Debug.LogError("Battle preview movement settled, but its pending arrival could not be completed.");
+                return false;
+            }
+
+            pendingMoveRelicStatusMessage = null;
+        }
 
         if (!moved)
         {
