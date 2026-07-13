@@ -3,6 +3,15 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+public struct MapCameraPreviewState
+{
+    public Vector3 position;
+    public Quaternion rotation;
+    public bool orthographic;
+    public float orthographicSize;
+    public float fieldOfView;
+}
+
 [DisallowMultipleComponent]
 public class MapViewController : MonoBehaviour
 {
@@ -29,6 +38,13 @@ public class MapViewController : MonoBehaviour
     [SerializeField] private float spawnIntroTravelDuration = 0.95f;
     [SerializeField] private AnimationCurve spawnIntroCurve = null;
 
+    [Header("Battle Preview")]
+    [SerializeField] private float previewBaseDistance = 7f;
+    [SerializeField] private float previewApproachOffset = 1.2f;
+    [SerializeField] private float previewFieldOfView = 34f;
+    [SerializeField] private float previewEnterDuration = 0.8f;
+    [SerializeField] private float previewExitDuration = 0.3f;
+
     private Camera targetCamera;
     private BoardManager boardManager;
     private float boardPadding;
@@ -49,9 +65,18 @@ public class MapViewController : MonoBehaviour
     private Coroutine introRoutine;
     private Func<bool> inputBlockedEvaluator;
     private Func<bool> pointerOverUiIgnoredEvaluator;
+    private bool battlePreviewActive;
+    private bool hasPreBattlePreviewState;
+    private MapCameraPreviewState preBattlePreviewState;
+    private Vector3 preBattleTargetCameraPosition;
+    private float preBattleTargetZoomSize;
 
     public event Action<BoardTileData> TileLongPressed;
     public event Action ViewNavigationPerformed;
+
+    public bool IsBattlePreviewActive => battlePreviewActive;
+    public float DefaultPreviewEnterDuration => previewEnterDuration;
+    public float DefaultPreviewExitDuration => previewExitDuration;
 
     public void SetInputBlockedEvaluator(Func<bool> evaluator)
     {
@@ -81,6 +106,8 @@ public class MapViewController : MonoBehaviour
         targetZoomSize = initialZoom;
         panSmoothVelocity = Vector3.zero;
         zoomSmoothVelocity = 0f;
+        battlePreviewActive = false;
+        hasPreBattlePreviewState = false;
         targetCamera.transform.position = targetCameraPosition;
         targetCamera.orthographicSize = targetZoomSize;
         ClampTargetCameraToBoard();
@@ -107,6 +134,9 @@ public class MapViewController : MonoBehaviour
         if (!configured || targetCamera == null || boardManager == null)
             return;
 
+        if (battlePreviewActive)
+            return;
+
         if (introRoutine != null)
             return;
 
@@ -127,6 +157,170 @@ public class MapViewController : MonoBehaviour
         }
 
         ApplyCameraSmoothing();
+    }
+
+    public MapCameraPreviewState CaptureCameraState()
+    {
+        if (targetCamera == null)
+            return default;
+
+        return new MapCameraPreviewState
+        {
+            position = targetCamera.transform.position,
+            rotation = targetCamera.transform.rotation,
+            orthographic = targetCamera.orthographic,
+            orthographicSize = targetCamera.orthographicSize,
+            fieldOfView = targetCamera.fieldOfView
+        };
+    }
+
+    public void ApplyBattlePreviewImmediate(Vector3 origin, Vector3 target, float zoomMultiplier = 1.75f)
+    {
+        if (!BeginBattlePreview())
+            return;
+
+        ApplyCameraState(CalculateBattlePreviewState(origin, target, zoomMultiplier));
+    }
+
+    public void RestoreBattlePreviewImmediate()
+    {
+        if (targetCamera == null || !battlePreviewActive || !hasPreBattlePreviewState)
+            return;
+
+        CompleteBattlePreviewRestore();
+    }
+
+    public IEnumerator PlayBattlePreviewRoutine(Vector3 origin, Vector3 target, float zoomMultiplier, float duration)
+    {
+        if (!BeginBattlePreview())
+            yield break;
+
+        MapCameraPreviewState start = CaptureCameraState();
+        MapCameraPreviewState destination = CalculateBattlePreviewState(origin, target, zoomMultiplier);
+        float safeDuration = Mathf.Max(0f, duration);
+        if (safeDuration <= 0.0001f)
+        {
+            ApplyCameraState(destination);
+            yield break;
+        }
+
+        targetCamera.orthographic = false;
+        for (float elapsed = 0f; elapsed < safeDuration; elapsed += Time.unscaledDeltaTime)
+        {
+            float t = Mathf.Clamp01(elapsed / safeDuration);
+            ApplyInterpolatedCameraState(start, destination, t, false);
+            yield return null;
+        }
+
+        ApplyCameraState(destination);
+    }
+
+    public IEnumerator RestoreBattlePreviewRoutine(float duration)
+    {
+        if (targetCamera == null || !battlePreviewActive || !hasPreBattlePreviewState)
+            yield break;
+
+        MapCameraPreviewState start = CaptureCameraState();
+        MapCameraPreviewState destination = preBattlePreviewState;
+        float safeDuration = Mathf.Max(0f, duration);
+        if (safeDuration <= 0.0001f)
+        {
+            CompleteBattlePreviewRestore();
+            yield break;
+        }
+
+        for (float elapsed = 0f; elapsed < safeDuration; elapsed += Time.unscaledDeltaTime)
+        {
+            float t = Mathf.Clamp01(elapsed / safeDuration);
+            ApplyInterpolatedCameraState(start, destination, t, destination.orthographic ? start.orthographic : false);
+            yield return null;
+        }
+
+        CompleteBattlePreviewRestore();
+    }
+
+    private bool BeginBattlePreview()
+    {
+        if (targetCamera == null)
+            return false;
+
+        if (!battlePreviewActive)
+        {
+            preBattlePreviewState = CaptureCameraState();
+            preBattleTargetCameraPosition = targetCameraPosition;
+            preBattleTargetZoomSize = targetZoomSize;
+            hasPreBattlePreviewState = true;
+        }
+
+        battlePreviewActive = true;
+        ResetPointerState();
+        panSmoothVelocity = Vector3.zero;
+        zoomSmoothVelocity = 0f;
+
+        if (introRoutine != null)
+        {
+            StopCoroutine(introRoutine);
+            introRoutine = null;
+        }
+
+        return true;
+    }
+
+    private MapCameraPreviewState CalculateBattlePreviewState(Vector3 origin, Vector3 target, float zoomMultiplier)
+    {
+        Vector3 targetDelta = target - origin;
+        Vector3 approach = targetDelta.sqrMagnitude > 0.001f ? targetDelta.normalized : Vector3.up;
+        float distance = previewBaseDistance / Mathf.Max(1f, zoomMultiplier);
+        Vector3 position = target - approach * previewApproachOffset + Vector3.back * distance;
+        Vector3 lookDirection = target - position;
+        Quaternion rotation = lookDirection.sqrMagnitude > 0.0001f
+            ? Quaternion.LookRotation(lookDirection, Vector3.up)
+            : Quaternion.identity;
+
+        return new MapCameraPreviewState
+        {
+            position = position,
+            rotation = rotation,
+            orthographic = false,
+            orthographicSize = targetCamera != null ? targetCamera.orthographicSize : 0f,
+            fieldOfView = previewFieldOfView
+        };
+    }
+
+    private void ApplyInterpolatedCameraState(
+        MapCameraPreviewState start,
+        MapCameraPreviewState destination,
+        float t,
+        bool orthographic)
+    {
+        targetCamera.orthographic = orthographic;
+        targetCamera.transform.SetPositionAndRotation(
+            Vector3.LerpUnclamped(start.position, destination.position, t),
+            Quaternion.SlerpUnclamped(start.rotation, destination.rotation, t));
+        targetCamera.orthographicSize = Mathf.LerpUnclamped(start.orthographicSize, destination.orthographicSize, t);
+        targetCamera.fieldOfView = Mathf.LerpUnclamped(start.fieldOfView, destination.fieldOfView, t);
+    }
+
+    private void ApplyCameraState(MapCameraPreviewState state)
+    {
+        if (targetCamera == null)
+            return;
+
+        targetCamera.orthographic = state.orthographic;
+        targetCamera.orthographicSize = state.orthographicSize;
+        targetCamera.fieldOfView = state.fieldOfView;
+        targetCamera.transform.SetPositionAndRotation(state.position, state.rotation);
+    }
+
+    private void CompleteBattlePreviewRestore()
+    {
+        ApplyCameraState(preBattlePreviewState);
+        targetCameraPosition = preBattleTargetCameraPosition;
+        targetZoomSize = preBattleTargetZoomSize;
+        panSmoothVelocity = Vector3.zero;
+        zoomSmoothVelocity = 0f;
+        battlePreviewActive = false;
+        hasPreBattlePreviewState = false;
     }
 
     private void HandleMouseInput()
