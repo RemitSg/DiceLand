@@ -240,7 +240,7 @@ public class MapViewController : MonoBehaviour
                 yield break;
 
             float t = Mathf.Clamp01(elapsed / safeDuration);
-            ApplyInterpolatedCameraState(perspectiveStart, destination, t, false);
+            ApplyInterpolatedCameraState(perspectiveStart, destination, MapBattleTilePreviewMotion.Evaluate(t), false);
             yield return null;
             elapsed += Mathf.Max(MinimumTransitionDeltaTime, Time.unscaledDeltaTime);
         }
@@ -274,7 +274,7 @@ public class MapViewController : MonoBehaviour
                 yield break;
 
             float t = Mathf.Clamp01(elapsed / safeDuration);
-            ApplyInterpolatedCameraState(start, perspectiveDestination, t, false);
+            ApplyInterpolatedCameraState(start, perspectiveDestination, MapBattleTilePreviewMotion.Evaluate(t), false);
             yield return null;
             elapsed += Mathf.Max(MinimumTransitionDeltaTime, Time.unscaledDeltaTime);
         }

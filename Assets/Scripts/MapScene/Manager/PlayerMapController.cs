@@ -276,7 +276,7 @@ public class PlayerMapController : MonoBehaviour
                 yield break;
 
             float t = Mathf.Clamp01(time / safeDuration);
-            float eased = 1f - Mathf.Pow(1f - t, 3f);
+            float eased = MapBattleTilePreviewMotion.Evaluate(t);
             ApplyBattlePreviewPose(Vector3.LerpUnclamped(start, worldTarget, eased), Mathf.Sin(t * Mathf.PI), direction);
             yield return null;
         }
@@ -313,7 +313,7 @@ public class PlayerMapController : MonoBehaviour
                 yield break;
 
             float t = Mathf.Clamp01(time / safeDuration);
-            float eased = 1f - Mathf.Pow(1f - t, 3f);
+            float eased = MapBattleTilePreviewMotion.Evaluate(t);
             playerPawn.localPosition = Vector3.LerpUnclamped(start, previewPawnLocalPosition, eased);
             ApplyPreviewVisual(Mathf.Sin(t * Mathf.PI), direction);
             yield return null;
