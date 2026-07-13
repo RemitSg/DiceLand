@@ -36,13 +36,28 @@ public class PlayerMapController : MonoBehaviour
     private RunState runState;
     private Sprite runtimeWhiteSprite;
     private Coroutine moveRoutine;
+    private Coroutine battlePreviewRoutine;
     private Transform visualRoot;
     private bool isMoving;
+    private bool battlePreviewActive;
+    private bool hasBattlePreviewSnapshot;
+    private int battlePreviewGeneration;
+    private BoardTileData battlePreviewTarget;
+    private Vector3 previewPawnLocalPosition;
+    private Quaternion previewPawnLocalRotation;
+    private Vector3 previewPawnLocalScale;
+    private Vector3 previewVisualLocalPosition;
+    private Quaternion previewVisualLocalRotation;
+    private Vector3 previewVisualLocalScale;
 
     public event Action<BoardTileData, string> PlayerMovedToTile;
 
+    public bool IsBattlePreviewActive => battlePreviewActive;
+    public Vector3 PawnWorldPosition => playerPawn != null ? playerPawn.position : Vector3.zero;
+
     public void Initialize(Transform root, BoardManager board, ActionPointSystem points, TileResolver resolver, RunState state)
     {
+        InvalidateBattlePreview(true);
         unitsRoot = root != null ? root : unitsRoot;
         boardManager = board;
         actionPointSystem = points;
@@ -61,6 +76,7 @@ public class PlayerMapController : MonoBehaviour
 
     public void SetSpawn(BoardTileData spawnTile)
     {
+        InvalidateBattlePreview(true);
         if (spawnTile == null || boardManager == null || runState == null)
             return;
 
@@ -72,6 +88,7 @@ public class PlayerMapController : MonoBehaviour
 
     public void SetPosition(BoardTileData tile, bool playLandingEffect = false)
     {
+        InvalidateBattlePreview(true);
         if (tile == null || boardManager == null || runState == null)
             return;
 
@@ -93,6 +110,10 @@ public class PlayerMapController : MonoBehaviour
     {
         if (targetTile == null || boardManager == null || actionPointSystem == null || runState == null)
             return false;
+
+        bool commitsBattlePreview = battlePreviewActive && BattlePreviewMatches(targetTile);
+        if (battlePreviewActive && !commitsBattlePreview)
+            InvalidateBattlePreview(true);
 
         if (isMoving)
             return false;
@@ -116,11 +137,279 @@ public class PlayerMapController : MonoBehaviour
         runState.playerGridPosition = targetTile.coord;
         Vector3 worldTarget = boardManager.GridToWorld(targetTile.coord) + new Vector3(0f, 0f, -0.2f);
 
+        if (commitsBattlePreview)
+        {
+            CommitBattlePreview(worldTarget);
+            StartCoroutine(NotifyBattlePreviewCommitNextTick(targetTile));
+            return true;
+        }
+
         if (moveRoutine != null)
             StopCoroutine(moveRoutine);
         isMoving = true;
         moveRoutine = StartCoroutine(MovePawnTo(worldTarget, targetTile));
         return true;
+    }
+
+    public void BeginBattleTilePreview(BoardTileData target, bool immediate)
+    {
+        if (immediate)
+        {
+            if (!PrepareBattlePreview(target, out int generation, out Vector3 worldTarget))
+                return;
+
+            ApplyBattlePreviewPose(worldTarget, 0f, Vector3.right);
+            if (generation == battlePreviewGeneration)
+                battlePreviewRoutine = null;
+            return;
+        }
+
+        if (target == null || boardManager == null)
+            return;
+
+        battlePreviewRoutine = StartCoroutine(PlayBattleTilePreviewRoutine(target, moveDuration));
+    }
+
+    public void CancelBattleTilePreview(bool immediate)
+    {
+        if (!hasBattlePreviewSnapshot)
+        {
+            InvalidateBattlePreview(false);
+            return;
+        }
+
+        if (immediate)
+        {
+            InvalidateBattlePreview(true);
+            return;
+        }
+
+        battlePreviewRoutine = StartCoroutine(RestoreBattleTilePreviewRoutine(moveDuration));
+    }
+
+    public IEnumerator PlayBattleTilePreviewRoutine(BoardTileData target, float duration)
+    {
+        if (!PrepareBattlePreview(target, out int generation, out Vector3 worldTarget))
+            yield break;
+
+        float safeDuration = NormalizePreviewDuration(duration);
+        Vector3 start = playerPawn.position;
+        Vector3 direction = worldTarget - start;
+        direction.z = 0f;
+        direction = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector3.right;
+        if (safeDuration <= 0f)
+        {
+            ApplyBattlePreviewPose(worldTarget, 0f, direction);
+            battlePreviewRoutine = null;
+            yield break;
+        }
+
+        for (float time = 0f; time < safeDuration; time += PreviewDeltaTime())
+        {
+            if (generation != battlePreviewGeneration)
+                yield break;
+
+            float t = Mathf.Clamp01(time / safeDuration);
+            float eased = 1f - Mathf.Pow(1f - t, 3f);
+            ApplyBattlePreviewPose(Vector3.LerpUnclamped(start, worldTarget, eased), Mathf.Sin(t * Mathf.PI), direction);
+            yield return null;
+        }
+
+        if (generation != battlePreviewGeneration)
+            yield break;
+
+        ApplyBattlePreviewPose(worldTarget, 0f, direction);
+        battlePreviewRoutine = null;
+    }
+
+    public IEnumerator RestoreBattleTilePreviewRoutine(float duration)
+    {
+        if (!hasBattlePreviewSnapshot || playerPawn == null)
+            yield break;
+
+        StopOwnedBattlePreviewRoutine();
+        int generation = ++battlePreviewGeneration;
+        float safeDuration = NormalizePreviewDuration(duration);
+        Vector3 start = playerPawn.localPosition;
+        Vector3 direction = previewPawnLocalPosition - start;
+        direction.z = 0f;
+        direction = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector3.right;
+        if (safeDuration <= 0f)
+        {
+            RestoreBattlePreviewSnapshot();
+            ClearBattlePreviewState();
+            yield break;
+        }
+
+        for (float time = 0f; time < safeDuration; time += PreviewDeltaTime())
+        {
+            if (generation != battlePreviewGeneration)
+                yield break;
+
+            float t = Mathf.Clamp01(time / safeDuration);
+            float eased = 1f - Mathf.Pow(1f - t, 3f);
+            playerPawn.localPosition = Vector3.LerpUnclamped(start, previewPawnLocalPosition, eased);
+            ApplyPreviewVisual(Mathf.Sin(t * Mathf.PI), direction);
+            yield return null;
+        }
+
+        if (generation != battlePreviewGeneration)
+            yield break;
+
+        RestoreBattlePreviewSnapshot();
+        ClearBattlePreviewState();
+    }
+
+    private bool PrepareBattlePreview(BoardTileData target, out int generation, out Vector3 worldTarget)
+    {
+        generation = battlePreviewGeneration;
+        worldTarget = Vector3.zero;
+        if (target == null || boardManager == null)
+            return false;
+
+        EnsurePawn();
+        if (playerPawn == null)
+            return false;
+
+        StopOwnedBattlePreviewRoutine();
+        if (!hasBattlePreviewSnapshot)
+            CaptureBattlePreviewSnapshot();
+
+        battlePreviewActive = true;
+        battlePreviewTarget = target;
+        generation = ++battlePreviewGeneration;
+        worldTarget = boardManager.GridToWorld(target.coord) + new Vector3(0f, 0f, -0.2f);
+        return true;
+    }
+
+    private void CaptureBattlePreviewSnapshot()
+    {
+        previewPawnLocalPosition = playerPawn.localPosition;
+        previewPawnLocalRotation = playerPawn.localRotation;
+        previewPawnLocalScale = playerPawn.localScale;
+        if (visualRoot != null)
+        {
+            previewVisualLocalPosition = visualRoot.localPosition;
+            previewVisualLocalRotation = visualRoot.localRotation;
+            previewVisualLocalScale = visualRoot.localScale;
+        }
+        hasBattlePreviewSnapshot = true;
+    }
+
+    private void ApplyBattlePreviewPose(Vector3 worldPosition, float hop, Vector3 direction)
+    {
+        if (playerPawn == null)
+            return;
+
+        playerPawn.position = worldPosition;
+        playerPawn.localRotation = previewPawnLocalRotation;
+        playerPawn.localScale = previewPawnLocalScale;
+        ApplyPreviewVisual(hop, direction);
+    }
+
+    private void ApplyPreviewVisual(float hop, Vector3 direction)
+    {
+        if (visualRoot == null)
+            return;
+
+        float tiltSign = Mathf.Abs(direction.x) > Mathf.Abs(direction.y)
+            ? -Mathf.Sign(direction.x)
+            : Mathf.Sign(direction.y) * 0.6f;
+        float stretch = 1f + hop * moveStretchAmount;
+        float squash = 1f - hop * moveStretchAmount * 0.45f;
+        visualRoot.localPosition = previewVisualLocalPosition + new Vector3(0f, hop * jumpVisualHeight, 0f);
+        visualRoot.localRotation = previewVisualLocalRotation * Quaternion.Euler(0f, 0f, hop * moveTiltAngle * tiltSign);
+        visualRoot.localScale = Vector3.Scale(previewVisualLocalScale, new Vector3(squash, stretch, 1f));
+    }
+
+    private void InvalidateBattlePreview(bool restoreSnapshot)
+    {
+        StopOwnedBattlePreviewRoutine();
+        ++battlePreviewGeneration;
+        if (restoreSnapshot && hasBattlePreviewSnapshot)
+            RestoreBattlePreviewSnapshot();
+        ClearBattlePreviewState();
+    }
+
+    private void CommitBattlePreview(Vector3 worldTarget)
+    {
+        StopOwnedBattlePreviewRoutine();
+        ++battlePreviewGeneration;
+        if (playerPawn != null)
+        {
+            playerPawn.position = worldTarget;
+            playerPawn.localRotation = previewPawnLocalRotation;
+            playerPawn.localScale = previewPawnLocalScale;
+        }
+        if (visualRoot != null)
+        {
+            visualRoot.localPosition = previewVisualLocalPosition;
+            visualRoot.localRotation = previewVisualLocalRotation;
+            visualRoot.localScale = previewVisualLocalScale;
+        }
+        ClearBattlePreviewState();
+    }
+
+    private void RestoreBattlePreviewSnapshot()
+    {
+        if (playerPawn != null)
+        {
+            playerPawn.localPosition = previewPawnLocalPosition;
+            playerPawn.localRotation = previewPawnLocalRotation;
+            playerPawn.localScale = previewPawnLocalScale;
+        }
+        if (visualRoot != null)
+        {
+            visualRoot.localPosition = previewVisualLocalPosition;
+            visualRoot.localRotation = previewVisualLocalRotation;
+            visualRoot.localScale = previewVisualLocalScale;
+        }
+    }
+
+    private void ClearBattlePreviewState()
+    {
+        battlePreviewActive = false;
+        hasBattlePreviewSnapshot = false;
+        battlePreviewTarget = null;
+        battlePreviewRoutine = null;
+    }
+
+    private void StopOwnedBattlePreviewRoutine()
+    {
+        if (battlePreviewRoutine == null)
+            return;
+
+        StopCoroutine(battlePreviewRoutine);
+        battlePreviewRoutine = null;
+    }
+
+    private bool BattlePreviewMatches(BoardTileData target)
+    {
+        return battlePreviewTarget != null && target != null && battlePreviewTarget.coord == target.coord;
+    }
+
+    private IEnumerator NotifyBattlePreviewCommitNextTick(BoardTileData targetTile)
+    {
+        yield return null;
+        string resultMessage = (tileResolver != null && ShouldResolveImmediately(targetTile))
+            ? tileResolver.ResolveTile(targetTile, runState)
+            : string.Empty;
+        PlayerMovedToTile?.Invoke(targetTile, resultMessage);
+    }
+
+    private static float NormalizePreviewDuration(float duration)
+    {
+        return float.IsNaN(duration) || float.IsInfinity(duration) ? 0f : Mathf.Clamp(duration, 0f, 10f);
+    }
+
+    private static float PreviewDeltaTime()
+    {
+        return Mathf.Max(Time.unscaledDeltaTime, 0.0001f);
+    }
+
+    private void OnDisable()
+    {
+        InvalidateBattlePreview(true);
     }
 
     private IEnumerator MovePawnTo(Vector3 target, BoardTileData targetTile)
