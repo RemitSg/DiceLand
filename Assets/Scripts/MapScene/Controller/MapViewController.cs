@@ -15,6 +15,9 @@ public struct MapCameraPreviewState
 [DisallowMultipleComponent]
 public class MapViewController : MonoBehaviour
 {
+    private const float MinimumTransitionDeltaTime = 0.0001f;
+    private const float MinimumPlaneIntersectionDistance = 0.0001f;
+
     [Header("Zoom")]
     [SerializeField] private float minZoomSize = 3f;
     [SerializeField] private float maxZoomMultiplier = 1.45f;
@@ -70,6 +73,7 @@ public class MapViewController : MonoBehaviour
     private MapCameraPreviewState preBattlePreviewState;
     private Vector3 preBattleTargetCameraPosition;
     private float preBattleTargetZoomSize;
+    private int previewOperationGeneration;
 
     public event Action<BoardTileData> TileLongPressed;
     public event Action ViewNavigationPerformed;
@@ -90,6 +94,13 @@ public class MapViewController : MonoBehaviour
 
     public void Initialize(Camera mapCamera, BoardManager board, float padding)
     {
+        InvalidatePreviewOperations();
+        if (targetCamera != null && battlePreviewActive && hasPreBattlePreviewState)
+            CompleteBattlePreviewRestore();
+
+        configured = false;
+        battlePreviewActive = false;
+        hasPreBattlePreviewState = false;
         targetCamera = mapCamera;
         boardManager = board;
         boardPadding = Mathf.Max(0f, padding);
@@ -106,8 +117,6 @@ public class MapViewController : MonoBehaviour
         targetZoomSize = initialZoom;
         panSmoothVelocity = Vector3.zero;
         zoomSmoothVelocity = 0f;
-        battlePreviewActive = false;
-        hasPreBattlePreviewState = false;
         targetCamera.transform.position = targetCameraPosition;
         targetCamera.orthographicSize = targetZoomSize;
         ClampTargetCameraToBoard();
@@ -119,7 +128,7 @@ public class MapViewController : MonoBehaviour
 
     public void PlaySpawnIntro(Vector3 focusWorldPosition)
     {
-        if (!configured || targetCamera == null || !playSpawnIntro)
+        if (!configured || targetCamera == null || !playSpawnIntro || battlePreviewActive)
             return;
 
         if (introRoutine != null)
@@ -176,6 +185,7 @@ public class MapViewController : MonoBehaviour
 
     public void ApplyBattlePreviewImmediate(Vector3 origin, Vector3 target, float zoomMultiplier = 1.75f)
     {
+        BeginPreviewOperation();
         if (!BeginBattlePreview())
             return;
 
@@ -184,6 +194,7 @@ public class MapViewController : MonoBehaviour
 
     public void RestoreBattlePreviewImmediate()
     {
+        BeginPreviewOperation();
         if (targetCamera == null || !battlePreviewActive || !hasPreBattlePreviewState)
             return;
 
@@ -192,6 +203,7 @@ public class MapViewController : MonoBehaviour
 
     public IEnumerator PlayBattlePreviewRoutine(Vector3 origin, Vector3 target, float zoomMultiplier, float duration)
     {
+        int operationGeneration = BeginPreviewOperation();
         if (!BeginBattlePreview())
             yield break;
 
@@ -200,23 +212,36 @@ public class MapViewController : MonoBehaviour
         float safeDuration = Mathf.Max(0f, duration);
         if (safeDuration <= 0.0001f)
         {
-            ApplyCameraState(destination);
+            if (OwnsPreviewOperation(operationGeneration))
+                ApplyCameraState(destination);
             yield break;
         }
 
-        targetCamera.orthographic = false;
-        for (float elapsed = 0f; elapsed < safeDuration; elapsed += Time.unscaledDeltaTime)
+        MapCameraPreviewState perspectiveStart = CreatePerspectiveTransitionState(start);
+        if (!OwnsPreviewOperation(operationGeneration))
+            yield break;
+        ApplyCameraState(perspectiveStart);
+
+        float elapsed = 0f;
+        while (elapsed < safeDuration)
         {
+            if (!OwnsPreviewOperation(operationGeneration))
+                yield break;
+
             float t = Mathf.Clamp01(elapsed / safeDuration);
-            ApplyInterpolatedCameraState(start, destination, t, false);
+            ApplyInterpolatedCameraState(perspectiveStart, destination, t, false);
             yield return null;
+            elapsed += Mathf.Max(MinimumTransitionDeltaTime, Time.unscaledDeltaTime);
         }
 
+        if (!OwnsPreviewOperation(operationGeneration))
+            yield break;
         ApplyCameraState(destination);
     }
 
     public IEnumerator RestoreBattlePreviewRoutine(float duration)
     {
+        int operationGeneration = BeginPreviewOperation();
         if (targetCamera == null || !battlePreviewActive || !hasPreBattlePreviewState)
             yield break;
 
@@ -225,18 +250,38 @@ public class MapViewController : MonoBehaviour
         float safeDuration = Mathf.Max(0f, duration);
         if (safeDuration <= 0.0001f)
         {
-            CompleteBattlePreviewRestore();
+            if (OwnsPreviewOperation(operationGeneration))
+                CompleteBattlePreviewRestore();
             yield break;
         }
 
-        for (float elapsed = 0f; elapsed < safeDuration; elapsed += Time.unscaledDeltaTime)
+        MapCameraPreviewState perspectiveDestination = CreatePerspectiveTransitionState(destination);
+        float elapsed = 0f;
+        while (elapsed < safeDuration)
         {
+            if (!OwnsPreviewOperation(operationGeneration))
+                yield break;
+
             float t = Mathf.Clamp01(elapsed / safeDuration);
-            ApplyInterpolatedCameraState(start, destination, t, destination.orthographic ? start.orthographic : false);
+            ApplyInterpolatedCameraState(start, perspectiveDestination, t, false);
             yield return null;
+            elapsed += Mathf.Max(MinimumTransitionDeltaTime, Time.unscaledDeltaTime);
         }
 
+        if (!OwnsPreviewOperation(operationGeneration))
+            yield break;
+        ApplyCameraState(perspectiveDestination);
         CompleteBattlePreviewRestore();
+    }
+
+    private void OnDisable()
+    {
+        InvalidatePreviewOperations();
+        if (targetCamera != null && battlePreviewActive && hasPreBattlePreviewState)
+            CompleteBattlePreviewRestore();
+
+        introRoutine = null;
+        ResetPointerState();
     }
 
     private bool BeginBattlePreview()
@@ -287,6 +332,68 @@ public class MapViewController : MonoBehaviour
         };
     }
 
+    private MapCameraPreviewState CreatePerspectiveTransitionState(MapCameraPreviewState state)
+    {
+        if (!state.orthographic)
+            return state;
+
+        state.orthographic = false;
+        state.fieldOfView = CalculateEquivalentPerspectiveFieldOfView(
+            state.position,
+            state.rotation,
+            state.orthographicSize,
+            state.fieldOfView);
+        return state;
+    }
+
+    public static float CalculateEquivalentPerspectiveFieldOfView(
+        Vector3 cameraPosition,
+        Quaternion cameraRotation,
+        float orthographicSize,
+        float fallbackFieldOfView)
+    {
+        float fallback = IsFinite(fallbackFieldOfView)
+            ? Mathf.Clamp(fallbackFieldOfView, 1f, 179f)
+            : 60f;
+        if (!IsFinite(orthographicSize) || orthographicSize <= 0f)
+            return fallback;
+
+        Vector3 forward = cameraRotation * Vector3.forward;
+        if (!IsFinite(forward.z) || Mathf.Abs(forward.z) <= MinimumPlaneIntersectionDistance)
+            return fallback;
+
+        float distance = -cameraPosition.z / forward.z;
+        if (!IsFinite(distance) || distance <= MinimumPlaneIntersectionDistance)
+            return fallback;
+
+        float fieldOfView = 2f * Mathf.Atan(orthographicSize / distance) * Mathf.Rad2Deg;
+        return IsFinite(fieldOfView) ? Mathf.Clamp(fieldOfView, 1f, 179f) : fallback;
+    }
+
+    private static bool IsFinite(float value)
+    {
+        return !float.IsNaN(value) && !float.IsInfinity(value);
+    }
+
+    private int BeginPreviewOperation()
+    {
+        InvalidatePreviewOperations();
+        return previewOperationGeneration;
+    }
+
+    private void InvalidatePreviewOperations()
+    {
+        unchecked
+        {
+            previewOperationGeneration++;
+        }
+    }
+
+    private bool OwnsPreviewOperation(int operationGeneration)
+    {
+        return operationGeneration == previewOperationGeneration;
+    }
+
     private void ApplyInterpolatedCameraState(
         MapCameraPreviewState start,
         MapCameraPreviewState destination,
@@ -306,10 +413,10 @@ public class MapViewController : MonoBehaviour
         if (targetCamera == null)
             return;
 
-        targetCamera.orthographic = state.orthographic;
+        targetCamera.transform.SetPositionAndRotation(state.position, state.rotation);
         targetCamera.orthographicSize = state.orthographicSize;
         targetCamera.fieldOfView = state.fieldOfView;
-        targetCamera.transform.SetPositionAndRotation(state.position, state.rotation);
+        targetCamera.orthographic = state.orthographic;
     }
 
     private void CompleteBattlePreviewRestore()
