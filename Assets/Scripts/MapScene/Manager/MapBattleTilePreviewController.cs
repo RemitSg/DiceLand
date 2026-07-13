@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum MapBattleTilePreviewCommitResult
@@ -13,12 +12,10 @@ public enum MapBattleTilePreviewCommitResult
 [DisallowMultipleComponent]
 public sealed class MapBattleTilePreviewController : MonoBehaviour
 {
-    private const float FirstPreviewDuration = 0.8f;
-    private const float RepeatPreviewDuration = 0.3f;
-    private const float PreviewExitDuration = 0.3f;
+    private const float PreviewEnterDuration = 0.18f;
+    private const float PreviewExitDuration = 0.20f;
     private const float PreviewZoom = 1.75f;
 
-    private readonly HashSet<BoardTileData> previewedTiles = new HashSet<BoardTileData>();
     private MapViewController mapViewController;
     private PlayerMapController playerMapController;
     private BoardManager boardManager;
@@ -80,9 +77,7 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
         currentContext = context;
         commitInvoked = false;
         State = MapBattleTilePreviewState.Entering;
-        lastEnterDuration = previewedTiles.Contains(context.tile)
-            ? RepeatPreviewDuration
-            : FirstPreviewDuration;
+        lastEnterDuration = PreviewEnterDuration;
         overlay.Hide();
 
         Vector3 origin = playerMapController.PawnWorldPosition;
@@ -314,7 +309,6 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
             return;
         }
 
-        previewedTiles.Add(currentContext.tile);
         State = MapBattleTilePreviewState.Ready;
         overlay.Show(currentContext);
     }

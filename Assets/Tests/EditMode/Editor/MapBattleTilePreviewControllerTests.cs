@@ -272,36 +272,19 @@ public class MapBattleTilePreviewControllerTests
     }
 
     [Test]
-    public void RepeatedCoordinate_UsesShorterEntryDuration()
+    public void EveryPreview_UsesUnifiedFastEntryDuration()
     {
         controller.BeginPreview(Context(), true);
-        Assert.AreEqual(0.8f, GetPrivateField<float>(controller, "lastEnterDuration"), 0.001f);
+        Assert.AreEqual(0.18f, GetPrivateField<float>(controller, "lastEnterDuration"), 0.001f);
         controller.CancelImmediate();
 
         controller.BeginPreview(Context(), true);
 
-        Assert.AreEqual(0.3f, GetPrivateField<float>(controller, "lastEnterDuration"), 0.001f);
+        Assert.AreEqual(0.18f, GetPrivateField<float>(controller, "lastEnterDuration"), 0.001f);
     }
 
     [Test]
-    public void NewTileInstanceAtSameCoordinate_UsesFirstEntryDuration()
-    {
-        controller.BeginPreview(Context(), true);
-        controller.CancelImmediate();
-        BoardTileData regeneratedTile = new BoardTileData
-        {
-            coord = target.coord,
-            tileType = MapTileType.Battle,
-            previewDangerRating = target.previewDangerRating
-        };
-
-        controller.BeginPreview(Context(regeneratedTile), true);
-
-        Assert.AreEqual(0.8f, GetPrivateField<float>(controller, "lastEnterDuration"), 0.001f);
-    }
-
-    [Test]
-    public void FailedEntry_DoesNotPollutePreviewHistory()
+    public void FailedEntry_AllowsNextPreviewAttempt()
     {
         SetPrivateField(player, "isMoving", true);
         Assert.IsFalse(controller.BeginPreview(Context(), true));
@@ -309,7 +292,7 @@ public class MapBattleTilePreviewControllerTests
 
         Assert.IsTrue(controller.BeginPreview(Context(), true));
 
-        Assert.AreEqual(0.8f, GetPrivateField<float>(controller, "lastEnterDuration"), 0.001f);
+        Assert.AreEqual(MapBattleTilePreviewState.Ready, controller.State);
     }
 
     [Test]

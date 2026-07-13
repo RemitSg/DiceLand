@@ -353,13 +353,13 @@ public class MapBattleTilePreviewCameraTests
 
         enterDuration.SetValue(view, float.NaN);
         exitDuration.SetValue(view, float.PositiveInfinity);
-        Assert.AreEqual(0.8f, view.DefaultPreviewEnterDuration);
-        Assert.AreEqual(0.3f, view.DefaultPreviewExitDuration);
+        Assert.AreEqual(0.18f, view.DefaultPreviewEnterDuration);
+        Assert.AreEqual(0.20f, view.DefaultPreviewExitDuration);
 
         enterDuration.SetValue(view, -1f);
         exitDuration.SetValue(view, float.NegativeInfinity);
-        Assert.AreEqual(0.8f, view.DefaultPreviewEnterDuration);
-        Assert.AreEqual(0.3f, view.DefaultPreviewExitDuration);
+        Assert.AreEqual(0.18f, view.DefaultPreviewEnterDuration);
+        Assert.AreEqual(0.20f, view.DefaultPreviewExitDuration);
     }
 
     [Test]

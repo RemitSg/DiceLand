@@ -21,8 +21,8 @@ public class MapViewController : MonoBehaviour
     private const float DefaultPreviewBaseDistance = 7f;
     private const float DefaultPreviewApproachOffset = 1.2f;
     private const float DefaultPreviewFieldOfView = 34f;
-    private const float DefaultPreviewEnterDurationValue = 0.8f;
-    private const float DefaultPreviewExitDurationValue = 0.3f;
+    private const float DefaultPreviewEnterDurationValue = 0.18f;
+    private const float DefaultPreviewExitDurationValue = 0.20f;
 
     [Header("Zoom")]
     [SerializeField] private float minZoomSize = 3f;
@@ -51,8 +51,8 @@ public class MapViewController : MonoBehaviour
     [SerializeField] private float previewBaseDistance = 7f;
     [SerializeField] private float previewApproachOffset = 1.2f;
     [SerializeField] private float previewFieldOfView = 34f;
-    [SerializeField] private float previewEnterDuration = 0.8f;
-    [SerializeField] private float previewExitDuration = 0.3f;
+    [SerializeField] private float previewEnterDuration = 0.18f;
+    [SerializeField] private float previewExitDuration = 0.20f;
 
     private Camera targetCamera;
     private BoardManager boardManager;
