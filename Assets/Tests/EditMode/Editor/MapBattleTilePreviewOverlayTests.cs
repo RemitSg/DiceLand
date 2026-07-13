@@ -118,7 +118,9 @@ public class MapBattleTilePreviewOverlayTests
         Assert.IsTrue(overlay.IsVisible);
         Assert.IsFalse(FindButton("ConfirmButton").interactable);
         Assert.IsTrue(FindButton("ReturnButton").interactable);
-        Assert.That(FindText("StatusText").text, Does.Contain("Unavailable"));
+        Assert.That(FindText("StatusText").text, Does.Contain("预览不可用"));
+        Assert.That(AllRenderedText(), Does.Not.Contain("Battle Preview"));
+        Assert.That(AllRenderedText(), Does.Not.Contain("Enter Battle"));
     }
 
     [Test]

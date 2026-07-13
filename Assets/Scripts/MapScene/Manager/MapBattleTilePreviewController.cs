@@ -25,6 +25,7 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
     private MapBattleTilePreviewOverlay overlay;
     private Func<BoardTileData, int, MapBattleTilePreviewCommitResult> tryCommitMove;
     private Action<string> showStatus;
+    private Func<MapBattleTilePreviewContext, MapBattleTilePreviewContext> refreshContext;
     private MapBattleTilePreviewContext currentContext;
     private Coroutine transitionRoutine;
     private int transitionGeneration;
@@ -40,7 +41,8 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
         BoardManager board,
         MapBattleTilePreviewOverlay previewOverlay,
         Func<BoardTileData, int, MapBattleTilePreviewCommitResult> commitMove,
-        Action<string> statusPresenter)
+        Action<string> statusPresenter,
+        Func<MapBattleTilePreviewContext, MapBattleTilePreviewContext> contextRefresher = null)
     {
         if (overlay != null)
         {
@@ -55,6 +57,7 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
         overlay = previewOverlay;
         tryCommitMove = commitMove;
         showStatus = statusPresenter;
+        refreshContext = contextRefresher;
 
         if (overlay != null)
         {
@@ -106,11 +109,13 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
 
     public void Confirm()
     {
-        if (State != MapBattleTilePreviewState.Ready || currentContext == null ||
-            !currentContext.canConfirm || commitInvoked)
+        if (State != MapBattleTilePreviewState.Ready || currentContext == null || commitInvoked)
         {
             return;
         }
+
+        if (!TryRefreshContextForCommit())
+            return;
 
         commitInvoked = true;
         State = MapBattleTilePreviewState.Committing;
@@ -129,11 +134,16 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
             result = MapBattleTilePreviewCommitResult.NotCommitted;
         }
 
-        if (result != MapBattleTilePreviewCommitResult.NotCommitted)
+        if (result == MapBattleTilePreviewCommitResult.BattleHandoffStarted)
+        {
+            CompleteBattleHandoffPreview();
+            return;
+        }
+
+        if (result == MapBattleTilePreviewCommitResult.MovementCommittedWithoutHandoff)
         {
             CompleteCommittedPreview();
-            if (result == MapBattleTilePreviewCommitResult.MovementCommittedWithoutHandoff)
-                showStatus?.Invoke("已进入战斗格，但战斗未能启动，请再次点击重试");
+            showStatus?.Invoke("已进入战斗格，但战斗未能启动，请再次点击重试");
             return;
         }
 
@@ -315,6 +325,42 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
         mapViewController?.RestoreBattlePreviewImmediate();
         playerMapController?.CancelBattleTilePreview(true);
         ResetHidden();
+    }
+
+    private void CompleteBattleHandoffPreview()
+    {
+        overlay?.Hide();
+        ResetHidden();
+    }
+
+    private bool TryRefreshContextForCommit()
+    {
+        if (refreshContext != null)
+        {
+            MapBattleTilePreviewContext refreshed;
+            try
+            {
+                refreshed = refreshContext(currentContext);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception, this);
+                overlay?.ShowFailure("战斗信息刷新失败，请重试或返回地图。");
+                return false;
+            }
+
+            if (refreshed == null || refreshed.tile != currentContext.tile || !refreshed.canPreview)
+            {
+                CancelImmediate();
+                showStatus?.Invoke("战斗格预览已失效，已返回地图。");
+                return false;
+            }
+
+            currentContext = refreshed;
+            overlay?.Show(currentContext);
+        }
+
+        return currentContext.canConfirm;
     }
 
     private void HandleCancelRequested()

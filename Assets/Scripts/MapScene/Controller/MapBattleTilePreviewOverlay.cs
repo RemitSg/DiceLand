@@ -87,7 +87,7 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
             return;
 
         interactionEnabled = true;
-        statusText.text = string.IsNullOrWhiteSpace(message) ? "Battle preview unavailable." : message;
+        statusText.text = string.IsNullOrWhiteSpace(message) ? "战斗预览当前不可用。" : message;
         statusText.color = failureColor;
         RefreshButtonStates();
     }
@@ -261,7 +261,7 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
         Color accent = ResolveAccent(tileType);
         accentImage.color = accent;
         battleClassText.color = accent;
-        battleClassText.text = valid ? GetBattleClassLabel(tileType) : "Battle Preview";
+        battleClassText.text = valid ? GetBattleClassLabel(tileType) : "战斗预览";
 
         if (valid)
         {
@@ -269,18 +269,18 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
             dangerText.text = $"\u5371\u9669\u5ea6: {MapDangerRatingService.GetRatingRichText(dangerRating)}  {dangerRating}/8";
             SetAttributes(currentContext.attributeNames);
             confirmLabelText.text = string.IsNullOrWhiteSpace(currentContext.confirmLabel)
-                ? "Enter Battle"
+                ? "进入战斗"
                 : currentContext.confirmLabel;
             statusText.text = currentContext.canConfirm
                 ? string.Empty
-                : (string.IsNullOrWhiteSpace(currentContext.blockReason) ? "Battle unavailable." : currentContext.blockReason);
+                : (string.IsNullOrWhiteSpace(currentContext.blockReason) ? "当前无法进入战斗。" : currentContext.blockReason);
         }
         else
         {
             dangerText.text = string.Empty;
             SetAttributes(Array.Empty<string>());
-            confirmLabelText.text = "Enter Battle";
-            statusText.text = "Preview Unavailable: this tile cannot start a battle.";
+            confirmLabelText.text = "进入战斗";
+            statusText.text = "预览不可用：该格子当前无法进入战斗。";
         }
 
         statusText.color = mutedColor;

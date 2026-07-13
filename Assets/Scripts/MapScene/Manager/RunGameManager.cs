@@ -1027,7 +1027,8 @@ public class RunGameManager : MonoBehaviour
             boardManager,
             mapBattleTilePreviewOverlay,
             TryCommitBattlePreviewMove,
-            RefreshHUD);
+            RefreshHUD,
+            RefreshBattlePreviewContext);
         mapBackgroundController = GetOrCreateManager(mapBackgroundController);
         if (sceneTransitionController == null)
             sceneTransitionController = FindObjectOfType<SceneCurtainTransitionController>(true);
@@ -1458,6 +1459,24 @@ public class RunGameManager : MonoBehaviour
         return battlePreviewBattleEntryAccepted
             ? MapBattleTilePreviewCommitResult.BattleHandoffStarted
             : MapBattleTilePreviewCommitResult.MovementCommittedWithoutHandoff;
+    }
+
+    private MapBattleTilePreviewContext RefreshBattlePreviewContext(MapBattleTilePreviewContext previousContext)
+    {
+        BoardTileData tile = previousContext != null ? previousContext.tile : null;
+        if (tile == null || boardManager == null ||
+            !boardManager.TryGetTile(tile.coord, out BoardTileData currentTile) ||
+            !ReferenceEquals(currentTile, tile) || currentTile.isResolved || !currentTile.IsHostileTile)
+        {
+            return null;
+        }
+
+        int moveCost = GetMoveCost(currentTile);
+        return MapBattleTilePreviewService.BuildContext(
+            runState,
+            currentTile,
+            moveCost,
+            CanAttemptMove(currentTile, moveCost));
     }
 
     private bool TryExecuteMove(BoardTileData tile, int moveCost)

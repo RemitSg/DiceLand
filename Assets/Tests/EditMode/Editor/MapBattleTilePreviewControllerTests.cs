@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
@@ -111,7 +112,58 @@ public class MapBattleTilePreviewControllerTests
         Assert.AreEqual(MapBattleTilePreviewState.Hidden, controller.State);
         Assert.IsFalse(controller.IsActive);
         Assert.IsFalse(overlay.IsVisible);
+        Assert.IsTrue(view.IsBattlePreviewActive);
+    }
+
+    [TestCase(false, "行动点不足")]
+    [TestCase(true, "Boss 未解锁")]
+    public void Confirm_RevalidatesDynamicBlockBeforeCommitting(bool boss, string reason)
+    {
+        MapBattleTilePreviewContext refreshed = Context();
+        refreshed.tile.tileType = boss ? MapTileType.Boss : MapTileType.Battle;
+        refreshed.canConfirm = false;
+        refreshed.blockReason = reason;
+        controller.Configure(
+            view,
+            player,
+            board,
+            overlay,
+            CommitMove,
+            _ => { },
+            _ => refreshed);
+        controller.BeginPreview(Context(refreshed.tile), true);
+
+        controller.Confirm();
+
+        Assert.AreEqual(0, commitCount);
+        Assert.AreEqual(MapBattleTilePreviewState.Ready, controller.State);
+        Assert.IsTrue(overlay.IsVisible);
+        Assert.That(AllOverlayText(), Does.Contain(reason));
+        Assert.IsFalse(FindConfirmButton().interactable);
+    }
+
+    [Test]
+    public void Confirm_InvalidatedTileCancelsPreviewWithoutCommitting()
+    {
+        string status = string.Empty;
+        controller.Configure(
+            view,
+            player,
+            board,
+            overlay,
+            CommitMove,
+            message => status = message,
+            _ => null);
+        controller.BeginPreview(Context(), true);
+
+        controller.Confirm();
+
+        Assert.AreEqual(0, commitCount);
+        Assert.AreEqual(MapBattleTilePreviewState.Hidden, controller.State);
+        Assert.IsFalse(overlay.IsVisible);
         Assert.IsFalse(view.IsBattlePreviewActive);
+        Assert.IsFalse(player.IsBattlePreviewActive);
+        Assert.That(status, Does.Contain("失效"));
     }
 
     [Test]
@@ -335,6 +387,59 @@ public class MapBattleTilePreviewControllerTests
     }
 
     [Test]
+    public void RunGameManagerRefreshPreviewContext_UsesCurrentActionPointsAndBossUnlockState()
+    {
+        RunGameManager manager = CreateInactiveRunGameManager();
+        SetPrivateField(manager, "boardManager", board);
+        SetPrivateField(manager, "actionPointSystem", actionPoints);
+        Assert.IsTrue(board.TryGetTile(target.coord, out BoardTileData currentTarget));
+
+        Assert.IsTrue(actionPoints.TrySpend(5));
+        MapBattleTilePreviewContext noActionPoints = InvokePrivate<MapBattleTilePreviewContext>(
+            manager,
+            "RefreshBattlePreviewContext",
+            Context(currentTarget));
+        Assert.IsFalse(noActionPoints.canConfirm);
+        Assert.That(noActionPoints.blockReason, Does.Contain("行动点"));
+
+        actionPoints.RestoreState(5, 0, 5);
+        currentTarget.tileType = MapTileType.Boss;
+        runState.currentKeys = 1;
+        runState.requiredKeys = 3;
+        MapBattleTilePreviewContext lockedBoss = InvokePrivate<MapBattleTilePreviewContext>(
+            manager,
+            "RefreshBattlePreviewContext",
+            Context(currentTarget));
+        Assert.IsFalse(lockedBoss.canConfirm);
+        Assert.That(lockedBoss.blockReason, Does.Contain("1/3"));
+    }
+
+    [Test]
+    public void RunGameManagerRefreshPreviewContext_RejectsStaleTileInstance()
+    {
+        RunGameManager manager = CreateInactiveRunGameManager();
+        SetPrivateField(manager, "boardManager", board);
+        SetPrivateField(manager, "actionPointSystem", actionPoints);
+        Assert.IsTrue(board.TryGetTile(target.coord, out BoardTileData currentTarget));
+        MapBattleTilePreviewContext staleContext = Context(currentTarget);
+        BoardTileData replacement = new BoardTileData
+        {
+            coord = target.coord,
+            tileType = MapTileType.Battle,
+            previewDangerRating = target.previewDangerRating
+        };
+        Dictionary<Vector2Int, BoardTileData> tiles = GetPrivateField<Dictionary<Vector2Int, BoardTileData>>(board, "tiles");
+        tiles[currentTarget.coord] = replacement;
+
+        MapBattleTilePreviewContext refreshed = InvokePrivate<MapBattleTilePreviewContext>(
+            manager,
+            "RefreshBattlePreviewContext",
+            staleContext);
+
+        Assert.IsNull(refreshed);
+    }
+
+    [Test]
     public void RunGameManagerEscape_CancelsPreviewAndKeepsPauseBlockedDuringExit()
     {
         controller.BeginPreview(Context(), true);
@@ -399,6 +504,12 @@ public class MapBattleTilePreviewControllerTests
     {
         TMPro.TextMeshProUGUI[] labels = root.GetComponentsInChildren<TMPro.TextMeshProUGUI>(true);
         return string.Join("|", Array.ConvertAll(labels, label => label.text));
+    }
+
+    private UnityEngine.UI.Button FindConfirmButton()
+    {
+        return root.GetComponentsInChildren<UnityEngine.UI.Button>(true)
+            .Single(button => button.name == "ConfirmButton");
     }
 
     private static T GetPrivateField<T>(object instance, string name)

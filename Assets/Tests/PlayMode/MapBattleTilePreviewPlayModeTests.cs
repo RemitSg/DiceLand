@@ -67,6 +67,21 @@ public sealed class MapBattleTilePreviewPlayModeTests
     }
 
     [UnityTest]
+    public IEnumerator BattleHandoff_KeepsPreviewCameraUntilSceneTransitionTakesOver()
+    {
+        fixture.CommitResultName = "BattleHandoffStarted";
+        Assert.IsTrue(fixture.BeginPreview(immediate: true));
+
+        fixture.Confirm();
+        yield return null;
+
+        Assert.AreEqual("Hidden", fixture.StateName);
+        Assert.IsFalse(fixture.IsOverlayVisible);
+        Assert.IsTrue(fixture.IsCameraPreviewActive);
+        Assert.IsFalse(fixture.Camera.orthographic);
+    }
+
+    [UnityTest]
     public IEnumerator LockedBoss_PreviewsKeyRequirementWithoutAllowingConfirm()
     {
         fixture.ConfigureLockedBoss(currentKeys: 1, requiredKeys: 3);
@@ -118,6 +133,7 @@ internal sealed class MapBattleTilePreviewPlayModeFixture
 
     public Camera Camera { get; private set; }
     public int CommitCount { get; private set; }
+    public string CommitResultName { get; set; } = "MovementCommittedWithoutHandoff";
 
     public int CurrentActionPoints => (int)GetProperty(actionPoints, "CurrentPoints");
     public Vector2Int PlayerCoordinate => (Vector2Int)GetField(runState, "playerGridPosition");
@@ -125,6 +141,7 @@ internal sealed class MapBattleTilePreviewPlayModeFixture
     public Vector2Int TargetCoordinate => (Vector2Int)GetField(target, "coord");
     public string StateName => GetProperty(controller, "State").ToString();
     public bool IsOverlayVisible => (bool)GetProperty(overlay, "IsVisible");
+    public bool IsCameraPreviewActive => (bool)GetProperty(view, "IsBattlePreviewActive");
     public Button ConfirmButton => FindButton("ConfirmButton");
     public string AllOverlayText
     {
@@ -265,7 +282,7 @@ internal sealed class MapBattleTilePreviewPlayModeFixture
             tileParameter,
             costParameter).Compile();
 
-        configure.Invoke(controller, new[] { view, player, board, overlay, commitDelegate, null });
+        configure.Invoke(controller, new[] { view, player, board, overlay, commitDelegate, null, null });
     }
 
     private object CommitBridge(object tile, int cost)
@@ -276,7 +293,7 @@ internal sealed class MapBattleTilePreviewPlayModeFixture
             return Enum.Parse(RuntimeType("MapBattleTilePreviewCommitResult"), "NotCommitted");
 
         Invoke(player, "CompletePendingBattlePreviewArrival");
-        return Enum.Parse(RuntimeType("MapBattleTilePreviewCommitResult"), "MovementCommittedWithoutHandoff");
+        return Enum.Parse(RuntimeType("MapBattleTilePreviewCommitResult"), CommitResultName);
     }
 
     private object CreateContext(object tile, bool canConfirm, string blockReason)
