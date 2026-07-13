@@ -86,6 +86,19 @@ public class MapBattleTilePreviewServiceTests
         Assert.AreEqual("Boss 未解锁：1/3 钥匙", result.blockReason);
     }
 
+    [TestCase(0)]
+    [TestCase(-4)]
+    public void BuildContext_ClampsNonPositiveDangerRatingToOne(int previewDangerRating)
+    {
+        BoardTileData tile = CreateHostileTile();
+        tile.previewDangerRating = previewDangerRating;
+
+        MapBattleTilePreviewContext result = MapBattleTilePreviewService.BuildContext(
+            new RunState(), tile, 2, true);
+
+        Assert.AreEqual(1, result.dangerRating);
+    }
+
     [Test]
     public void BuildContext_InsufficientMovementCannotConfirmAndReportsRequiredCost()
     {
