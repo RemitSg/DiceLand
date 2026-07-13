@@ -141,6 +141,85 @@ public class MapBattleTilePreviewPawnTests
     }
 
     [Test]
+    public void PreviewDuringNormalMovement_IsRejectedWithoutCapturingOrMutatingPresentation()
+    {
+        Assert.IsTrue(controller.TryMoveTo(otherTarget, 0));
+        Vector3 movementPosition = pawn.position;
+
+        bool beganPreview = controller.BeginBattleTilePreview(target, true);
+
+        Assert.IsFalse(beganPreview);
+        Assert.IsFalse(controller.IsBattlePreviewActive);
+        Assert.IsFalse(GetPrivateField<bool>(controller, "hasBattlePreviewSnapshot"));
+        Assert.AreEqual(movementPosition, pawn.position);
+    }
+
+    [Test]
+    public void InvalidMismatchedMove_KeepsPreviewAtTarget()
+    {
+        BoardTileData nonAdjacent = new BoardTileData { coord = new Vector2Int(2, 0), tileType = MapTileType.Empty };
+        controller.BeginBattleTilePreview(target, true);
+
+        Assert.IsFalse(controller.TryMoveTo(nonAdjacent, 0));
+        Assert.IsTrue(controller.IsBattlePreviewActive);
+        Assert.AreEqual(World(target), pawn.position);
+
+        points.RestoreState(1, 0, 1);
+        Assert.IsFalse(controller.TryMoveTo(otherTarget, 2));
+        Assert.IsTrue(controller.IsBattlePreviewActive);
+        Assert.AreEqual(World(target), pawn.position);
+        Assert.AreEqual(1, points.CurrentPoints);
+    }
+
+    [Test]
+    public void PendingCommit_EmitsExactlyOnceOnNextTickAndRejectsOtherOwnership()
+    {
+        int callbackCount = 0;
+        controller.PlayerMovedToTile += (_, __) => callbackCount++;
+        controller.BeginBattleTilePreview(target, true);
+        Assert.IsTrue(controller.TryMoveTo(target, 0));
+
+        Assert.IsTrue(controller.IsPreviewCommitPending);
+        Assert.IsFalse(controller.TryMoveTo(otherTarget, 0));
+        Assert.IsFalse(controller.BeginBattleTilePreview(otherTarget, true));
+        Assert.AreEqual(0, callbackCount);
+
+        IEnumerator pending = GetPrivateField<IEnumerator>(controller, "previewCommitIterator");
+        Assert.IsFalse(pending.MoveNext());
+        Assert.AreEqual(1, callbackCount);
+        Assert.IsFalse(controller.IsPreviewCommitPending);
+
+        Assert.IsFalse(pending.MoveNext());
+        Assert.AreEqual(1, callbackCount);
+    }
+
+    [Test]
+    public void ReinitializeSetPositionSetSpawnAndDisable_InvalidatePendingCommitNotification()
+    {
+        AssertPendingCommitInvalidated(() => controller.Initialize(root.transform, board, points, null, runState));
+        controller.SetPosition(origin);
+        AssertPendingCommitInvalidated(() => controller.SetPosition(origin));
+        AssertPendingCommitInvalidated(() => controller.SetSpawn(origin));
+        AssertPendingCommitInvalidated(() => controller.enabled = false);
+    }
+
+    [Test]
+    public void PendingCommitWithMismatchedLogicalState_DoesNotEmitOldTileEvent()
+    {
+        int callbackCount = 0;
+        controller.PlayerMovedToTile += (_, __) => callbackCount++;
+        controller.BeginBattleTilePreview(target, true);
+        Assert.IsTrue(controller.TryMoveTo(target, 0));
+        IEnumerator pending = GetPrivateField<IEnumerator>(controller, "previewCommitIterator");
+
+        runState.playerGridPosition = otherTarget.coord;
+        Drain(pending);
+
+        Assert.AreEqual(0, callbackCount);
+        Assert.IsFalse(controller.IsPreviewCommitPending);
+    }
+
+    [Test]
     public void InitializeSetPositionAndDisable_InvalidatePreviewAndRestoreSafely()
     {
         Vector3 original = pawn.position;
@@ -206,6 +285,26 @@ public class MapBattleTilePreviewPawnTests
     private static void SetPrivateField(object instance, string name, object value)
     {
         instance.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(instance, value);
+    }
+
+    private void AssertPendingCommitInvalidated(System.Action invalidate)
+    {
+        if (!controller.enabled)
+            controller.enabled = true;
+        controller.SetPosition(origin);
+        int callbackCount = 0;
+        System.Action<BoardTileData, string> handler = (_, __) => callbackCount++;
+        controller.PlayerMovedToTile += handler;
+        controller.BeginBattleTilePreview(target, true);
+        Assert.IsTrue(controller.TryMoveTo(target, 0));
+        IEnumerator stale = GetPrivateField<IEnumerator>(controller, "previewCommitIterator");
+
+        invalidate();
+        Drain(stale);
+
+        controller.PlayerMovedToTile -= handler;
+        Assert.AreEqual(0, callbackCount);
+        Assert.IsFalse(controller.IsPreviewCommitPending);
     }
 
     private static void Drain(IEnumerator routine)

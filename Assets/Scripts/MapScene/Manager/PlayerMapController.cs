@@ -37,8 +37,11 @@ public class PlayerMapController : MonoBehaviour
     private Sprite runtimeWhiteSprite;
     private Coroutine moveRoutine;
     private Coroutine battlePreviewRoutine;
+    private Coroutine previewCommitCoroutine;
+    private IEnumerator previewCommitIterator;
     private Transform visualRoot;
     private bool isMoving;
+    private bool previewCommitPending;
     private bool battlePreviewActive;
     private bool hasBattlePreviewSnapshot;
     private int battlePreviewGeneration;
@@ -49,14 +52,21 @@ public class PlayerMapController : MonoBehaviour
     private Vector3 previewVisualLocalPosition;
     private Quaternion previewVisualLocalRotation;
     private Vector3 previewVisualLocalScale;
+    private int previewCommitGeneration;
+    private BoardTileData previewCommittedTile;
+    private RunState previewCommittedRunState;
+    private TileResolver previewCommittedResolver;
+    private Vector2Int previewCommittedCoordinate;
 
     public event Action<BoardTileData, string> PlayerMovedToTile;
 
     public bool IsBattlePreviewActive => battlePreviewActive;
+    public bool IsPreviewCommitPending => previewCommitPending;
     public Vector3 PawnWorldPosition => playerPawn != null ? playerPawn.position : Vector3.zero;
 
     public void Initialize(Transform root, BoardManager board, ActionPointSystem points, TileResolver resolver, RunState state)
     {
+        InvalidatePendingPreviewCommit();
         InvalidateBattlePreview(true);
         unitsRoot = root != null ? root : unitsRoot;
         boardManager = board;
@@ -76,6 +86,7 @@ public class PlayerMapController : MonoBehaviour
 
     public void SetSpawn(BoardTileData spawnTile)
     {
+        InvalidatePendingPreviewCommit();
         InvalidateBattlePreview(true);
         if (spawnTile == null || boardManager == null || runState == null)
             return;
@@ -88,6 +99,7 @@ public class PlayerMapController : MonoBehaviour
 
     public void SetPosition(BoardTileData tile, bool playLandingEffect = false)
     {
+        InvalidatePendingPreviewCommit();
         InvalidateBattlePreview(true);
         if (tile == null || boardManager == null || runState == null)
             return;
@@ -111,12 +123,10 @@ public class PlayerMapController : MonoBehaviour
         if (targetTile == null || boardManager == null || actionPointSystem == null || runState == null)
             return false;
 
-        bool commitsBattlePreview = battlePreviewActive && BattlePreviewMatches(targetTile);
-        if (battlePreviewActive && !commitsBattlePreview)
-            InvalidateBattlePreview(true);
-
-        if (isMoving)
+        if (isMoving || previewCommitPending)
             return false;
+
+        bool commitsBattlePreview = battlePreviewActive && BattlePreviewMatches(targetTile);
 
         if (targetTile.coord == runState.playerGridPosition)
         {
@@ -131,6 +141,12 @@ public class PlayerMapController : MonoBehaviour
             return false;
 
         int safeMoveCost = Mathf.Max(0, moveCost);
+        if (safeMoveCost > 0 && !actionPointSystem.CanSpend(safeMoveCost))
+            return false;
+
+        if (battlePreviewActive && !commitsBattlePreview)
+            InvalidateBattlePreview(true);
+
         if (safeMoveCost > 0 && !actionPointSystem.TrySpend(safeMoveCost))
             return false;
 
@@ -140,7 +156,7 @@ public class PlayerMapController : MonoBehaviour
         if (commitsBattlePreview)
         {
             CommitBattlePreview(worldTarget);
-            StartCoroutine(NotifyBattlePreviewCommitNextTick(targetTile));
+            BeginPendingPreviewCommit(targetTile);
             return true;
         }
 
@@ -151,23 +167,27 @@ public class PlayerMapController : MonoBehaviour
         return true;
     }
 
-    public void BeginBattleTilePreview(BoardTileData target, bool immediate)
+    public bool BeginBattleTilePreview(BoardTileData target, bool immediate)
     {
+        if (isMoving || previewCommitPending)
+            return false;
+
         if (immediate)
         {
             if (!PrepareBattlePreview(target, out int generation, out Vector3 worldTarget))
-                return;
+                return false;
 
             ApplyBattlePreviewPose(worldTarget, 0f, Vector3.right);
             if (generation == battlePreviewGeneration)
                 battlePreviewRoutine = null;
-            return;
+            return true;
         }
 
         if (target == null || boardManager == null)
-            return;
+            return false;
 
         battlePreviewRoutine = StartCoroutine(PlayBattleTilePreviewRoutine(target, moveDuration));
+        return true;
     }
 
     public void CancelBattleTilePreview(bool immediate)
@@ -264,7 +284,7 @@ public class PlayerMapController : MonoBehaviour
     {
         generation = battlePreviewGeneration;
         worldTarget = Vector3.zero;
-        if (target == null || boardManager == null)
+        if (target == null || boardManager == null || isMoving || previewCommitPending)
             return false;
 
         EnsurePawn();
@@ -388,13 +408,106 @@ public class PlayerMapController : MonoBehaviour
         return battlePreviewTarget != null && target != null && battlePreviewTarget.coord == target.coord;
     }
 
-    private IEnumerator NotifyBattlePreviewCommitNextTick(BoardTileData targetTile)
+    private void BeginPendingPreviewCommit(BoardTileData targetTile)
+    {
+        InvalidatePendingPreviewCommit();
+        int generation = ++previewCommitGeneration;
+        previewCommitPending = true;
+        previewCommittedTile = targetTile;
+        previewCommittedRunState = runState;
+        previewCommittedResolver = tileResolver;
+        previewCommittedCoordinate = targetTile.coord;
+        previewCommitIterator = NotifyBattlePreviewCommitNextTick(
+            generation,
+            previewCommittedTile,
+            previewCommittedRunState,
+            previewCommittedResolver,
+            previewCommittedCoordinate);
+        previewCommitCoroutine = StartCoroutine(previewCommitIterator);
+    }
+
+    private IEnumerator NotifyBattlePreviewCommitNextTick(
+        int generation,
+        BoardTileData targetTile,
+        RunState committedRunState,
+        TileResolver committedResolver,
+        Vector2Int committedCoordinate)
     {
         yield return null;
-        string resultMessage = (tileResolver != null && ShouldResolveImmediately(targetTile))
-            ? tileResolver.ResolveTile(targetTile, runState)
-            : string.Empty;
-        PlayerMovedToTile?.Invoke(targetTile, resultMessage);
+
+        if (!IsPendingPreviewCommitValid(
+                generation,
+                targetTile,
+                committedRunState,
+                committedResolver,
+                committedCoordinate))
+        {
+            ClearPendingPreviewCommit(generation);
+            yield break;
+        }
+
+        try
+        {
+            string resultMessage = (committedResolver != null && ShouldResolveImmediately(targetTile))
+                ? committedResolver.ResolveTile(targetTile, committedRunState)
+                : string.Empty;
+            PlayerMovedToTile?.Invoke(targetTile, resultMessage);
+        }
+        finally
+        {
+            ClearPendingPreviewCommit(generation);
+        }
+    }
+
+    private bool IsPendingPreviewCommitValid(
+        int generation,
+        BoardTileData targetTile,
+        RunState committedRunState,
+        TileResolver committedResolver,
+        Vector2Int committedCoordinate)
+    {
+        return previewCommitPending &&
+               generation == previewCommitGeneration &&
+               isActiveAndEnabled &&
+               ReferenceEquals(previewCommittedTile, targetTile) &&
+               ReferenceEquals(previewCommittedRunState, committedRunState) &&
+               ReferenceEquals(previewCommittedResolver, committedResolver) &&
+               ReferenceEquals(runState, committedRunState) &&
+               ReferenceEquals(tileResolver, committedResolver) &&
+               committedRunState != null &&
+               previewCommittedCoordinate == committedCoordinate &&
+               targetTile != null &&
+               targetTile.coord == committedCoordinate &&
+               committedRunState.playerGridPosition == committedCoordinate;
+    }
+
+    private void InvalidatePendingPreviewCommit()
+    {
+        ++previewCommitGeneration;
+        if (previewCommitCoroutine != null)
+            StopCoroutine(previewCommitCoroutine);
+
+        previewCommitPending = false;
+        previewCommitCoroutine = null;
+        previewCommitIterator = null;
+        previewCommittedTile = null;
+        previewCommittedRunState = null;
+        previewCommittedResolver = null;
+        previewCommittedCoordinate = default;
+    }
+
+    private void ClearPendingPreviewCommit(int generation)
+    {
+        if (generation != previewCommitGeneration)
+            return;
+
+        previewCommitPending = false;
+        previewCommitCoroutine = null;
+        previewCommitIterator = null;
+        previewCommittedTile = null;
+        previewCommittedRunState = null;
+        previewCommittedResolver = null;
+        previewCommittedCoordinate = default;
     }
 
     private static float NormalizePreviewDuration(float duration)
@@ -409,6 +522,7 @@ public class PlayerMapController : MonoBehaviour
 
     private void OnDisable()
     {
+        InvalidatePendingPreviewCommit();
         InvalidateBattlePreview(true);
     }
 
