@@ -343,6 +343,38 @@ public class MapBattleTilePreviewCameraTests
         AssertFiniteCameraState();
     }
 
+    [Test]
+    public void DefaultPreviewDurations_FallBackWhenSerializedValuesAreMalformed()
+    {
+        FieldInfo enterDuration = typeof(MapViewController).GetField("previewEnterDuration", BindingFlags.Instance | BindingFlags.NonPublic);
+        FieldInfo exitDuration = typeof(MapViewController).GetField("previewExitDuration", BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(enterDuration);
+        Assert.IsNotNull(exitDuration);
+
+        enterDuration.SetValue(view, float.NaN);
+        exitDuration.SetValue(view, float.PositiveInfinity);
+        Assert.AreEqual(0.8f, view.DefaultPreviewEnterDuration);
+        Assert.AreEqual(0.3f, view.DefaultPreviewExitDuration);
+
+        enterDuration.SetValue(view, -1f);
+        exitDuration.SetValue(view, float.NegativeInfinity);
+        Assert.AreEqual(0.8f, view.DefaultPreviewEnterDuration);
+        Assert.AreEqual(0.3f, view.DefaultPreviewExitDuration);
+    }
+
+    [Test]
+    public void DefaultPreviewDurations_PreserveFiniteNonnegativeValues()
+    {
+        FieldInfo enterDuration = typeof(MapViewController).GetField("previewEnterDuration", BindingFlags.Instance | BindingFlags.NonPublic);
+        FieldInfo exitDuration = typeof(MapViewController).GetField("previewExitDuration", BindingFlags.Instance | BindingFlags.NonPublic);
+
+        enterDuration.SetValue(view, 0f);
+        exitDuration.SetValue(view, 1.25f);
+
+        Assert.AreEqual(0f, view.DefaultPreviewEnterDuration);
+        Assert.AreEqual(1.25f, view.DefaultPreviewExitDuration);
+    }
+
     private void AssertCameraStateEquals(MapCameraPreviewState expected)
     {
         Assert.AreEqual(expected.position, camera.transform.position);

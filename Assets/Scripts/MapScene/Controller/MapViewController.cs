@@ -21,6 +21,8 @@ public class MapViewController : MonoBehaviour
     private const float DefaultPreviewBaseDistance = 7f;
     private const float DefaultPreviewApproachOffset = 1.2f;
     private const float DefaultPreviewFieldOfView = 34f;
+    private const float DefaultPreviewEnterDurationValue = 0.8f;
+    private const float DefaultPreviewExitDurationValue = 0.3f;
 
     [Header("Zoom")]
     [SerializeField] private float minZoomSize = 3f;
@@ -84,8 +86,12 @@ public class MapViewController : MonoBehaviour
 
     public bool IsBattlePreviewActive => battlePreviewActive;
     public bool IsSpawnIntroActive => introRoutine != null;
-    public float DefaultPreviewEnterDuration => previewEnterDuration;
-    public float DefaultPreviewExitDuration => previewExitDuration;
+    public float DefaultPreviewEnterDuration => NormalizeDefaultPreviewDuration(
+        previewEnterDuration,
+        DefaultPreviewEnterDurationValue);
+    public float DefaultPreviewExitDuration => NormalizeDefaultPreviewDuration(
+        previewExitDuration,
+        DefaultPreviewExitDurationValue);
 
     public void SetInputBlockedEvaluator(Func<bool> evaluator)
     {
@@ -397,6 +403,11 @@ public class MapViewController : MonoBehaviour
     private static float NormalizePreviewDuration(float duration)
     {
         return IsFinite(duration) && duration > 0f ? duration : 0f;
+    }
+
+    private static float NormalizeDefaultPreviewDuration(float duration, float fallback)
+    {
+        return IsFinite(duration) && duration >= 0f ? duration : fallback;
     }
 
     private int BeginPreviewOperation()
