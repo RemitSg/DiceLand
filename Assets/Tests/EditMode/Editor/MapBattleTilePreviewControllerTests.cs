@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class MapBattleTilePreviewControllerTests
 {
@@ -57,6 +58,9 @@ public class MapBattleTilePreviewControllerTests
     public void TearDown()
     {
         UnityEngine.Object.DestroyImmediate(root);
+        EventSystem[] eventSystems = UnityEngine.Object.FindObjectsOfType<EventSystem>();
+        for (int i = 0; i < eventSystems.Length; i++)
+            UnityEngine.Object.DestroyImmediate(eventSystems[i].gameObject);
     }
 
     [Test]
@@ -76,14 +80,24 @@ public class MapBattleTilePreviewControllerTests
     [Test]
     public void ConfirmTwice_CommitsExactlyOnce()
     {
+        MapBattleTilePreviewState stateDuringCommit = MapBattleTilePreviewState.Hidden;
+        controller.Configure(view, player, board, overlay, (_, __) =>
+        {
+            stateDuringCommit = controller.State;
+            commitCount++;
+            return MapBattleTilePreviewCommitResult.BattleHandoffStarted;
+        }, _ => { });
         controller.BeginPreview(Context(), true);
 
         controller.Confirm();
         controller.Confirm();
 
         Assert.AreEqual(1, commitCount);
-        Assert.AreEqual(MapBattleTilePreviewState.Committing, controller.State);
-        Assert.IsTrue(controller.IsActive);
+        Assert.AreEqual(MapBattleTilePreviewState.Committing, stateDuringCommit);
+        Assert.AreEqual(MapBattleTilePreviewState.Hidden, controller.State);
+        Assert.IsFalse(controller.IsActive);
+        Assert.IsFalse(overlay.IsVisible);
+        Assert.IsFalse(view.IsBattlePreviewActive);
     }
 
     [Test]
@@ -111,7 +125,13 @@ public class MapBattleTilePreviewControllerTests
     [Test]
     public void FailedCommit_ReturnsToReadyAndShowsFailure()
     {
-        controller.Configure(view, player, board, overlay, (_, __) => false, _ => { });
+        controller.Configure(
+            view,
+            player,
+            board,
+            overlay,
+            (_, __) => MapBattleTilePreviewCommitResult.NotCommitted,
+            _ => { });
         controller.BeginPreview(Context(), true);
 
         controller.Confirm();
@@ -120,6 +140,28 @@ public class MapBattleTilePreviewControllerTests
         Assert.IsTrue(controller.IsActive);
         Assert.IsTrue(overlay.IsVisible);
         Assert.That(AllOverlayText(), Does.Contain("未能完成"));
+    }
+
+    [Test]
+    public void MovementCommittedWithoutHandoff_CleansPreviewAndCannotCommitAgain()
+    {
+        string status = string.Empty;
+        controller.Configure(view, player, board, overlay, (_, __) =>
+        {
+            commitCount++;
+            return MapBattleTilePreviewCommitResult.MovementCommittedWithoutHandoff;
+        }, message => status = message);
+        controller.BeginPreview(Context(), true);
+
+        controller.Confirm();
+        controller.Confirm();
+
+        Assert.AreEqual(1, commitCount);
+        Assert.AreEqual(MapBattleTilePreviewState.Hidden, controller.State);
+        Assert.IsFalse(controller.IsActive);
+        Assert.IsFalse(view.IsBattlePreviewActive);
+        Assert.IsFalse(player.IsBattlePreviewActive);
+        Assert.AreEqual("已进入战斗格，但战斗未能启动，请再次点击重试", status);
     }
 
     [TestCase(false, "行动点不足")]
@@ -176,9 +218,40 @@ public class MapBattleTilePreviewControllerTests
     }
 
     [Test]
-    public void RunInParallel_CompletesInLongestRoutineDurationInsteadOfTheirSum()
+    public void NewTileInstanceAtSameCoordinate_UsesFirstEntryDuration()
     {
-        System.Collections.IEnumerator combined = MapBattleTilePreviewController.RunInParallel(
+        controller.BeginPreview(Context(), true);
+        controller.CancelImmediate();
+        BoardTileData regeneratedTile = new BoardTileData
+        {
+            coord = target.coord,
+            tileType = MapTileType.Battle,
+            previewDangerRating = target.previewDangerRating
+        };
+
+        controller.BeginPreview(Context(regeneratedTile), true);
+
+        Assert.AreEqual(0.8f, GetPrivateField<float>(controller, "lastEnterDuration"), 0.001f);
+    }
+
+    [Test]
+    public void FailedEntry_DoesNotPollutePreviewHistory()
+    {
+        SetPrivateField(player, "isMoving", true);
+        Assert.IsFalse(controller.BeginPreview(Context(), true));
+        SetPrivateField(player, "isMoving", false);
+
+        Assert.IsTrue(controller.BeginPreview(Context(), true));
+
+        Assert.AreEqual(0.8f, GetPrivateField<float>(controller, "lastEnterDuration"), 0.001f);
+    }
+
+    [Test]
+    public void RunFrameOnlyParallel_CompletesInLongestRoutineDurationInsteadOfTheirSum()
+    {
+        System.Collections.IEnumerator combined = InvokePrivateStatic<System.Collections.IEnumerator>(
+            typeof(MapBattleTilePreviewController),
+            "RunFrameOnlyParallel",
             Frames(2),
             Frames(4));
 
@@ -187,6 +260,60 @@ public class MapBattleTilePreviewControllerTests
             yieldedFrames++;
 
         Assert.AreEqual(4, yieldedFrames);
+    }
+
+    [Test]
+    public void RunFrameOnlyParallel_NonNullYieldFailsLoudlyAndDisposesBothRoutines()
+    {
+        TrackedEnumerator first = new TrackedEnumerator(new WaitForSeconds(0.1f));
+        TrackedEnumerator second = new TrackedEnumerator(null);
+        System.Collections.IEnumerator combined = InvokePrivateStatic<System.Collections.IEnumerator>(
+            typeof(MapBattleTilePreviewController),
+            "RunFrameOnlyParallel",
+            first,
+            second);
+
+        Assert.Throws<InvalidOperationException>(() => combined.MoveNext());
+        Assert.IsTrue(first.disposed);
+        Assert.IsTrue(second.disposed);
+    }
+
+    [Test]
+    public void RunGameManagerCommitWrapper_ClassifiesMovementAndHandoffOutcomes()
+    {
+        RunGameManager manager = CreateInactiveRunGameManager();
+        SetPrivateField(manager, "boardManager", board);
+        SetPrivateField(manager, "actionPointSystem", actionPoints);
+        SetPrivateField(manager, "playerMapController", player);
+
+        MapBattleTilePreviewCommitResult movedWithoutHandoff = InvokePrivate<MapBattleTilePreviewCommitResult>(
+            manager,
+            "TryCommitBattlePreviewMove",
+            target,
+            2);
+        Assert.AreEqual(MapBattleTilePreviewCommitResult.MovementCommittedWithoutHandoff, movedWithoutHandoff);
+
+        player.SetPosition(origin);
+        player.PlayerMovedToTile += (_, __) =>
+            SetPrivateField(manager, "battlePreviewBattleEntryAccepted", true);
+        MapBattleTilePreviewCommitResult handoffStarted = InvokePrivate<MapBattleTilePreviewCommitResult>(
+            manager,
+            "TryCommitBattlePreviewMove",
+            target,
+            0);
+        Assert.AreEqual(MapBattleTilePreviewCommitResult.BattleHandoffStarted, handoffStarted);
+
+        BoardTileData nonAdjacent = new BoardTileData
+        {
+            coord = new Vector2Int(9, 9),
+            tileType = MapTileType.Battle
+        };
+        MapBattleTilePreviewCommitResult notCommitted = InvokePrivate<MapBattleTilePreviewCommitResult>(
+            manager,
+            "TryCommitBattlePreviewMove",
+            nonAdjacent,
+            0);
+        Assert.AreEqual(MapBattleTilePreviewCommitResult.NotCommitted, notCommitted);
     }
 
     [Test]
@@ -215,17 +342,17 @@ public class MapBattleTilePreviewControllerTests
         Assert.IsFalse(player.IsBattlePreviewActive);
     }
 
-    private bool CommitMove(BoardTileData tile, int cost)
+    private MapBattleTilePreviewCommitResult CommitMove(BoardTileData tile, int cost)
     {
         commitCount++;
-        return true;
+        return MapBattleTilePreviewCommitResult.BattleHandoffStarted;
     }
 
-    private MapBattleTilePreviewContext Context()
+    private MapBattleTilePreviewContext Context(BoardTileData tile = null)
     {
         return new MapBattleTilePreviewContext
         {
-            tile = target,
+            tile = tile ?? target,
             moveCost = 2,
             dangerRating = 4,
             attributeNames = new[] { "Fire", "Dark" },
@@ -275,9 +402,49 @@ public class MapBattleTilePreviewControllerTests
         return result == null ? default : (T)result;
     }
 
+    private static T InvokePrivateStatic<T>(Type type, string name, params object[] arguments)
+    {
+        MethodInfo method = type.GetMethod(name, BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.IsNotNull(method, $"Missing private static method {name}.");
+        object result = method.Invoke(null, arguments);
+        return result == null ? default : (T)result;
+    }
+
     private static System.Collections.IEnumerator Frames(int count)
     {
         for (int i = 0; i < count; i++)
             yield return null;
+    }
+
+    private sealed class TrackedEnumerator : System.Collections.IEnumerator, IDisposable
+    {
+        private readonly object value;
+        private bool moved;
+        public bool disposed;
+
+        public TrackedEnumerator(object value)
+        {
+            this.value = value;
+        }
+
+        public object Current => value;
+
+        public bool MoveNext()
+        {
+            if (moved)
+                return false;
+            moved = true;
+            return true;
+        }
+
+        public void Reset()
+        {
+            moved = false;
+        }
+
+        public void Dispose()
+        {
+            disposed = true;
+        }
     }
 }

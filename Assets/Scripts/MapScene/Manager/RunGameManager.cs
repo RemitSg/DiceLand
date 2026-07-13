@@ -171,6 +171,8 @@ public class RunGameManager : MonoBehaviour
     private string pendingMoveRelicStatusMessage;
     private bool movingToPreviouslyExploredEmptyTile;
     private bool movingToUnexploredSettlementTile;
+    private bool battlePreviewCommitInProgress;
+    private bool battlePreviewBattleEntryAccepted;
     private readonly Dictionary<string, MapEventLootDiscardPreview> eventRandomLootDiscardPreviewCache = new Dictionary<string, MapEventLootDiscardPreview>(StringComparer.Ordinal);
     private bool isTutorialRun;
     private MapTutorialGuideStep mapTutorialGuideStep = MapTutorialGuideStep.None;
@@ -637,7 +639,10 @@ public class RunGameManager : MonoBehaviour
             ShowPendingMoveRelicStatusIfAny();
             if (isTutorialRun && mapTutorialGuideStep == MapTutorialGuideStep.WaitingForBattleEntry && IsTutorialFirstBattleTile(tile))
                 mapTutorialGuideStep = MapTutorialGuideStep.None;
-            if (!TryEnterBattle(tile))
+            bool battleEntryAccepted = TryEnterBattle(tile);
+            if (battlePreviewCommitInProgress)
+                battlePreviewBattleEntryAccepted = battleEntryAccepted;
+            if (!battleEntryAccepted)
                 TryPresentPendingCalamity();
             return;
         }
@@ -1021,7 +1026,7 @@ public class RunGameManager : MonoBehaviour
             playerMapController,
             boardManager,
             mapBattleTilePreviewOverlay,
-            TryExecuteMove,
+            TryCommitBattlePreviewMove,
             RefreshHUD);
         mapBackgroundController = GetOrCreateManager(mapBackgroundController);
         if (sceneTransitionController == null)
@@ -1425,6 +1430,34 @@ public class RunGameManager : MonoBehaviour
     private bool CanPotentiallyIgnoreMoveCostViaRelic(BoardTileData tile)
     {
         return MapMovementService.CanPotentiallyIgnoreMoveCostViaRelic(runState, tile);
+    }
+
+    private MapBattleTilePreviewCommitResult TryCommitBattlePreviewMove(BoardTileData tile, int moveCost)
+    {
+        battlePreviewCommitInProgress = true;
+        battlePreviewBattleEntryAccepted = false;
+        bool moved = false;
+        try
+        {
+            moved = TryExecuteMove(tile, moveCost);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+        }
+        finally
+        {
+            battlePreviewCommitInProgress = false;
+        }
+
+        bool movementCommitted = moved ||
+            (runState != null && tile != null && runState.playerGridPosition == tile.coord);
+        if (!movementCommitted)
+            return MapBattleTilePreviewCommitResult.NotCommitted;
+
+        return battlePreviewBattleEntryAccepted
+            ? MapBattleTilePreviewCommitResult.BattleHandoffStarted
+            : MapBattleTilePreviewCommitResult.MovementCommittedWithoutHandoff;
     }
 
     private bool TryExecuteMove(BoardTileData tile, int moveCost)

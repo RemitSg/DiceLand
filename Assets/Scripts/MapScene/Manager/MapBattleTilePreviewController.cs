@@ -3,6 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum MapBattleTilePreviewCommitResult
+{
+    NotCommitted,
+    BattleHandoffStarted,
+    MovementCommittedWithoutHandoff
+}
+
 [DisallowMultipleComponent]
 public sealed class MapBattleTilePreviewController : MonoBehaviour
 {
@@ -11,12 +18,12 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
     private const float PreviewExitDuration = 0.3f;
     private const float PreviewZoom = 1.75f;
 
-    private readonly HashSet<Vector2Int> previewedCoordinates = new HashSet<Vector2Int>();
+    private readonly HashSet<BoardTileData> previewedTiles = new HashSet<BoardTileData>();
     private MapViewController mapViewController;
     private PlayerMapController playerMapController;
     private BoardManager boardManager;
     private MapBattleTilePreviewOverlay overlay;
-    private Func<BoardTileData, int, bool> tryCommitMove;
+    private Func<BoardTileData, int, MapBattleTilePreviewCommitResult> tryCommitMove;
     private Action<string> showStatus;
     private MapBattleTilePreviewContext currentContext;
     private Coroutine transitionRoutine;
@@ -32,7 +39,7 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
         PlayerMapController player,
         BoardManager board,
         MapBattleTilePreviewOverlay previewOverlay,
-        Func<BoardTileData, int, bool> commitMove,
+        Func<BoardTileData, int, MapBattleTilePreviewCommitResult> commitMove,
         Action<string> statusPresenter)
     {
         if (overlay != null)
@@ -70,9 +77,9 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
         currentContext = context;
         commitInvoked = false;
         State = MapBattleTilePreviewState.Entering;
-        lastEnterDuration = previewedCoordinates.Add(context.tile.coord)
-            ? FirstPreviewDuration
-            : RepeatPreviewDuration;
+        lastEnterDuration = previewedTiles.Contains(context.tile)
+            ? RepeatPreviewDuration
+            : FirstPreviewDuration;
         overlay.Hide();
 
         Vector3 origin = playerMapController.PawnWorldPosition;
@@ -109,21 +116,24 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
         State = MapBattleTilePreviewState.Committing;
         overlay?.SetInteractionEnabled(false);
 
-        bool committed;
+        MapBattleTilePreviewCommitResult result;
         try
         {
-            committed = tryCommitMove != null &&
-                tryCommitMove(currentContext.tile, currentContext.moveCost);
+            result = tryCommitMove != null
+                ? tryCommitMove(currentContext.tile, currentContext.moveCost)
+                : MapBattleTilePreviewCommitResult.NotCommitted;
         }
         catch (Exception exception)
         {
             Debug.LogException(exception, this);
-            committed = false;
+            result = MapBattleTilePreviewCommitResult.NotCommitted;
         }
 
-        if (committed)
+        if (result != MapBattleTilePreviewCommitResult.NotCommitted)
         {
-            overlay?.Hide();
+            CompleteCommittedPreview();
+            if (result == MapBattleTilePreviewCommitResult.MovementCommittedWithoutHandoff)
+                showStatus?.Invoke("已进入战斗格，但战斗未能启动，请再次点击重试");
             return;
         }
 
@@ -172,7 +182,7 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
             currentContext.tile,
             lastEnterDuration);
 
-        IEnumerator combined = RunInParallel(cameraRoutine, pawnRoutine);
+        IEnumerator combined = RunFrameOnlyParallel(cameraRoutine, pawnRoutine);
         while (true)
         {
             bool hasNext;
@@ -205,7 +215,7 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
             ? playerMapController.RestoreBattleTilePreviewRoutine(PreviewExitDuration)
             : null;
 
-        IEnumerator combined = RunInParallel(cameraRoutine, pawnRoutine);
+        IEnumerator combined = RunFrameOnlyParallel(cameraRoutine, pawnRoutine);
         while (true)
         {
             bool hasNext;
@@ -232,19 +242,38 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
         ResetHidden();
     }
 
-    public static IEnumerator RunInParallel(IEnumerator first, IEnumerator second)
+    private static IEnumerator RunFrameOnlyParallel(IEnumerator first, IEnumerator second)
     {
-        bool firstActive = first != null;
-        bool secondActive = second != null;
-        while (firstActive || secondActive)
+        IDisposable firstDisposable = first as IDisposable;
+        IDisposable secondDisposable = second as IDisposable;
+        try
         {
-            if (firstActive)
-                firstActive = first.MoveNext();
-            if (secondActive)
-                secondActive = second.MoveNext();
+            bool firstActive = first != null;
+            bool secondActive = second != null;
+            while (firstActive || secondActive)
+            {
+                if (firstActive)
+                {
+                    firstActive = first.MoveNext();
+                    if (firstActive && first.Current != null)
+                        throw new InvalidOperationException("Battle preview frame routines may only yield null.");
+                }
 
-            if (firstActive || secondActive)
-                yield return null;
+                if (secondActive)
+                {
+                    secondActive = second.MoveNext();
+                    if (secondActive && second.Current != null)
+                        throw new InvalidOperationException("Battle preview frame routines may only yield null.");
+                }
+
+                if (firstActive || secondActive)
+                    yield return null;
+            }
+        }
+        finally
+        {
+            firstDisposable?.Dispose();
+            secondDisposable?.Dispose();
         }
     }
 
@@ -261,8 +290,17 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
             return;
         }
 
+        previewedTiles.Add(currentContext.tile);
         State = MapBattleTilePreviewState.Ready;
         overlay.Show(currentContext);
+    }
+
+    private void CompleteCommittedPreview()
+    {
+        overlay?.Hide();
+        mapViewController?.RestoreBattlePreviewImmediate();
+        playerMapController?.CancelBattleTilePreview(true);
+        ResetHidden();
     }
 
     private void HandleCancelRequested()
