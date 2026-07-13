@@ -306,6 +306,50 @@ public class MapBattleTilePreviewOverlayTests
     }
 
     [Test]
+    public void RefreshResponsiveLayoutIfChanged_RotationSwitchesLayoutWhileVisible()
+    {
+        overlay.Show(CreateContext(MapTileType.Battle, true));
+        RectTransform panel = FindRect("PreviewPanel");
+
+        overlay.ApplyResponsiveLayout(
+            new Vector2(1920f, 1080f),
+            new Rect(0f, 0f, 1920f, 1080f));
+
+        Assert.IsTrue(overlay.IsVisible);
+        Assert.AreEqual(new Vector2(1f, 0.5f), panel.anchorMin);
+        Assert.AreEqual(new Vector2(500f, 620f), panel.sizeDelta);
+
+        bool appliedPortrait = overlay.RefreshResponsiveLayoutIfChanged(
+            new Vector2(720f, 1280f),
+            new Rect(0f, 0f, 720f, 1280f));
+
+        Assert.IsTrue(appliedPortrait);
+        Assert.IsTrue(overlay.IsVisible);
+        Assert.AreEqual(new Vector2(0.5f, 0f), panel.anchorMin);
+        Assert.AreEqual(new Vector2(0.5f, 0f), panel.anchorMax);
+        Assert.AreEqual(new Vector2(920f, 330f), panel.sizeDelta);
+    }
+
+    [Test]
+    public void RefreshResponsiveLayoutIfChanged_NonReferencePortraitConvertsBottomInsetToReferenceUnits()
+    {
+        overlay.Show(CreateContext(MapTileType.Battle, true));
+        RectTransform panel = FindRect("PreviewPanel");
+        Vector2 screenSize = new Vector2(720f, 1280f);
+        Rect safeArea = new Rect(0f, 80f, 720f, 1200f);
+
+        overlay.RefreshResponsiveLayoutIfChanged(screenSize, safeArea);
+
+        const float expectedScaleFactor = 2f / 3f;
+        float panelBottomPixels = panel.anchoredPosition.y * expectedScaleFactor;
+        float panelTopPixels = (panel.anchoredPosition.y + panel.sizeDelta.y) * expectedScaleFactor;
+        Assert.AreEqual(new Vector2(920f, 330f), panel.sizeDelta);
+        Assert.That(panel.anchoredPosition.y, Is.EqualTo(144f).Within(0.01f));
+        Assert.GreaterOrEqual(panelBottomPixels, safeArea.yMin);
+        Assert.LessOrEqual(panelTopPixels, safeArea.yMax);
+    }
+
+    [Test]
     public void ConfigureFonts_AfterCreationUpdatesEveryTextRole()
     {
         TMP_FontAsset keyword = ScriptableObject.CreateInstance<TMP_FontAsset>();
@@ -333,17 +377,26 @@ public class MapBattleTilePreviewOverlayTests
     }
 
     [Test]
-    public void HandleCancelInput_IsTheOnlyCancelPollingEntryAndRequiresVisibleInteractiveState()
+    public void HandleCancelInput_IsOnlyCancellationPathAndLayoutRefreshNeverRaisesCancel()
     {
         int cancels = 0;
         overlay.CancelRequested += () => cancels++;
 
-        Assert.IsNull(typeof(MapBattleTilePreviewOverlay).GetMethod(
-            "Update",
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic));
-
         overlay.HandleCancelInput();
         overlay.Show(CreateContext(MapTileType.Battle, true));
+        overlay.RefreshResponsiveLayoutIfChanged(
+            new Vector2(1920f, 1080f),
+            new Rect(0f, 0f, 1920f, 1080f));
+        bool repeatedLayoutApplied = overlay.RefreshResponsiveLayoutIfChanged(
+            new Vector2(1920f, 1080f),
+            new Rect(0f, 0f, 1920f, 1080f));
+        overlay.RefreshResponsiveLayoutIfChanged(
+            new Vector2(720f, 1280f),
+            new Rect(0f, 80f, 720f, 1200f));
+
+        Assert.IsFalse(repeatedLayoutApplied);
+        Assert.AreEqual(0, cancels);
+
         overlay.SetInteractionEnabled(false);
         overlay.HandleCancelInput();
         overlay.SetInteractionEnabled(true);

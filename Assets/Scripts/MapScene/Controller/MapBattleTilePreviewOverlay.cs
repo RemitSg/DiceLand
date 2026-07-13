@@ -44,6 +44,10 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
     private TextMeshProUGUI returnLabelText;
     private MapBattleTilePreviewContext currentContext;
     private bool interactionEnabled = true;
+    private Vector2 cachedScreenSize;
+    private Rect cachedSafeArea;
+    private bool hasCachedLayout;
+    private bool isApplyingResponsiveLayout;
 
     public bool IsVisible => canvas != null && canvas.gameObject.activeInHierarchy;
 
@@ -66,7 +70,8 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
         interactionEnabled = true;
         gameObject.SetActive(true);
         canvas.gameObject.SetActive(true);
-        ApplyResponsiveLayout();
+        ResetResponsiveLayoutCache();
+        RefreshResponsiveLayoutIfChanged(GetCurrentScreenSize(), Screen.safeArea);
         RenderContext();
     }
 
@@ -91,6 +96,7 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
     {
         currentContext = null;
         interactionEnabled = true;
+        ResetResponsiveLayoutCache();
         if (statusText != null)
         {
             statusText.text = string.Empty;
@@ -114,25 +120,52 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
     public void ApplyResponsiveLayout(Vector2 screenSize, Rect safeArea)
     {
         EnsureUi();
-        if (screenSize.x <= 0f || screenSize.y <= 0f)
+        NormalizeLayoutInputs(ref screenSize, ref safeArea);
+        ApplyResponsiveLayoutInternal(screenSize, safeArea);
+    }
+
+    public bool RefreshResponsiveLayoutIfChanged(Vector2 screenSize, Rect safeArea)
+    {
+        if (!IsVisible || isApplyingResponsiveLayout)
+            return false;
+
+        NormalizeLayoutInputs(ref screenSize, ref safeArea);
+        if (hasCachedLayout && cachedScreenSize == screenSize && cachedSafeArea == safeArea)
+            return false;
+
+        ApplyResponsiveLayoutInternal(screenSize, safeArea);
+        return true;
+    }
+
+    private void ApplyResponsiveLayoutInternal(Vector2 screenSize, Rect safeArea)
+    {
+        if (isApplyingResponsiveLayout)
+            return;
+
+        isApplyingResponsiveLayout = true;
+        cachedScreenSize = screenSize;
+        cachedSafeArea = safeArea;
+        hasCachedLayout = true;
+
+        try
         {
-            screenSize = ReferenceResolution;
-            safeArea = new Rect(Vector2.zero, screenSize);
+            float scaleFactor = ResolveReferenceScaleFactor(screenSize);
+            float canvasWidth = screenSize.x / scaleFactor;
+            float canvasHeight = screenSize.y / scaleFactor;
+            float safeLeft = safeArea.xMin / scaleFactor;
+            float safeRight = (screenSize.x - safeArea.xMax) / scaleFactor;
+            float safeBottom = safeArea.yMin / scaleFactor;
+            float safeTop = (screenSize.y - safeArea.yMax) / scaleFactor;
+
+            if (screenSize.x / screenSize.y >= LandscapeAspectThreshold)
+                ApplyLandscapeLayout(canvasHeight, safeRight, safeBottom, safeTop);
+            else
+                ApplyPortraitLayout(canvasWidth, safeLeft, safeRight, safeBottom);
         }
-
-        safeArea = NormalizeSafeArea(screenSize, safeArea);
-        float scaleFactor = ResolveReferenceScaleFactor(screenSize);
-        float canvasWidth = screenSize.x / scaleFactor;
-        float canvasHeight = screenSize.y / scaleFactor;
-        float safeLeft = safeArea.xMin / scaleFactor;
-        float safeRight = (screenSize.x - safeArea.xMax) / scaleFactor;
-        float safeBottom = safeArea.yMin / scaleFactor;
-        float safeTop = (screenSize.y - safeArea.yMax) / scaleFactor;
-
-        if (screenSize.x / screenSize.y >= LandscapeAspectThreshold)
-            ApplyLandscapeLayout(canvasHeight, safeRight, safeBottom, safeTop);
-        else
-            ApplyPortraitLayout(canvasWidth, safeLeft, safeRight, safeBottom);
+        finally
+        {
+            isApplyingResponsiveLayout = false;
+        }
     }
 
     public void HandleCancelInput()
@@ -141,6 +174,18 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
             return;
 
         CancelRequested?.Invoke();
+    }
+
+    private void LateUpdate()
+    {
+        if (IsVisible)
+            RefreshResponsiveLayoutIfChanged(GetCurrentScreenSize(), Screen.safeArea);
+    }
+
+    private void OnRectTransformDimensionsChange()
+    {
+        if (IsVisible)
+            RefreshResponsiveLayoutIfChanged(GetCurrentScreenSize(), Screen.safeArea);
     }
 
     private void OnDestroy()
@@ -510,6 +555,25 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
             return new Rect(Vector2.zero, screenSize);
 
         return Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+    }
+
+    private static void NormalizeLayoutInputs(ref Vector2 screenSize, ref Rect safeArea)
+    {
+        if (screenSize.x <= 0f || screenSize.y <= 0f)
+        {
+            screenSize = ReferenceResolution;
+            safeArea = new Rect(Vector2.zero, screenSize);
+            return;
+        }
+
+        safeArea = NormalizeSafeArea(screenSize, safeArea);
+    }
+
+    private void ResetResponsiveLayoutCache()
+    {
+        cachedScreenSize = Vector2.zero;
+        cachedSafeArea = default;
+        hasCachedLayout = false;
     }
 
     private static float ResolveReferenceScaleFactor(Vector2 screenSize)
