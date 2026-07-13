@@ -172,7 +172,7 @@ public class MapBattleTilePreviewPawnTests
     }
 
     [Test]
-    public void PendingCommit_EmitsExactlyOnceOnNextTickAndRejectsOtherOwnership()
+    public void PendingArrival_ExplicitCompletionEmitsExactlyOnceAndRejectsOtherOwnership()
     {
         int callbackCount = 0;
         controller.PlayerMovedToTile += (_, __) => callbackCount++;
@@ -184,23 +184,22 @@ public class MapBattleTilePreviewPawnTests
         Assert.IsFalse(controller.BeginBattleTilePreview(otherTarget, true));
         Assert.AreEqual(0, callbackCount);
 
-        IEnumerator pending = GetPrivateField<IEnumerator>(controller, "previewCommitIterator");
-        Assert.IsFalse(pending.MoveNext());
+        Assert.IsTrue(controller.CompletePendingBattlePreviewArrival());
         Assert.AreEqual(1, callbackCount);
         Assert.IsFalse(controller.IsPreviewCommitPending);
 
-        Assert.IsFalse(pending.MoveNext());
+        Assert.IsFalse(controller.CompletePendingBattlePreviewArrival());
         Assert.AreEqual(1, callbackCount);
     }
 
     [Test]
-    public void ReinitializeSetPositionSetSpawnAndDisable_InvalidatePendingCommitNotification()
+    public void ReinitializeSetPositionSetSpawnAndDisable_CompletePendingArrivalBeforeReset()
     {
-        AssertPendingCommitInvalidated(() => controller.Initialize(root.transform, board, points, null, runState));
+        AssertPendingArrivalCompleted(() => controller.Initialize(root.transform, board, points, null, runState));
         controller.SetPosition(origin);
-        AssertPendingCommitInvalidated(() => controller.SetPosition(origin));
-        AssertPendingCommitInvalidated(() => controller.SetSpawn(origin));
-        AssertPendingCommitInvalidated(() => controller.enabled = false);
+        AssertPendingArrivalCompleted(() => controller.SetPosition(origin));
+        AssertPendingArrivalCompleted(() => controller.SetSpawn(origin));
+        AssertPendingArrivalCompleted(() => controller.enabled = false);
     }
 
     [Test]
@@ -210,10 +209,9 @@ public class MapBattleTilePreviewPawnTests
         controller.PlayerMovedToTile += (_, __) => callbackCount++;
         controller.BeginBattleTilePreview(target, true);
         Assert.IsTrue(controller.TryMoveTo(target, 0));
-        IEnumerator pending = GetPrivateField<IEnumerator>(controller, "previewCommitIterator");
 
         runState.playerGridPosition = otherTarget.coord;
-        Drain(pending);
+        Assert.IsFalse(controller.CompletePendingBattlePreviewArrival());
 
         Assert.AreEqual(0, callbackCount);
         Assert.IsFalse(controller.IsPreviewCommitPending);
@@ -287,7 +285,7 @@ public class MapBattleTilePreviewPawnTests
         instance.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(instance, value);
     }
 
-    private void AssertPendingCommitInvalidated(System.Action invalidate)
+    private void AssertPendingArrivalCompleted(System.Action lifecycleAction)
     {
         if (!controller.enabled)
             controller.enabled = true;
@@ -297,13 +295,11 @@ public class MapBattleTilePreviewPawnTests
         controller.PlayerMovedToTile += handler;
         controller.BeginBattleTilePreview(target, true);
         Assert.IsTrue(controller.TryMoveTo(target, 0));
-        IEnumerator stale = GetPrivateField<IEnumerator>(controller, "previewCommitIterator");
 
-        invalidate();
-        Drain(stale);
+        lifecycleAction();
 
         controller.PlayerMovedToTile -= handler;
-        Assert.AreEqual(0, callbackCount);
+        Assert.AreEqual(1, callbackCount);
         Assert.IsFalse(controller.IsPreviewCommitPending);
     }
 

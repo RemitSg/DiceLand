@@ -206,6 +206,8 @@ public static class MapMovementService
             result.moved = movedWithoutCost;
             if (movedWithoutCost && relicContext.feedbackMessages != null && relicContext.feedbackMessages.Count > 0)
                 result.pendingRelicStatusMessage = string.Join("\n", relicContext.feedbackMessages);
+            if (movedWithoutCost)
+                request.playerMapController.CompletePendingBattlePreviewArrival();
             return movedWithoutCost;
         }
 
@@ -215,6 +217,8 @@ public static class MapMovementService
         {
             bool moved = request.playerMapController.TryMoveTo(tile, 0);
             result.moved = moved;
+            if (moved)
+                request.playerMapController.CompletePendingBattlePreviewArrival();
             return moved;
         }
 
@@ -228,6 +232,8 @@ public static class MapMovementService
                 RelicTriggerDispatcher.ProcessActionPointsSpent(request.runState, request.runGameManager, tile, moveCost);
 
             result.moved = moved;
+            if (moved)
+                request.playerMapController.CompletePendingBattlePreviewArrival();
             return moved;
         }
 
@@ -255,6 +261,7 @@ public static class MapMovementService
             RelicTriggerDispatcher.ProcessActionPointsSpent(request.runState, request.runGameManager, tile, 2);
             result.moved = true;
             result.shouldRefreshHudWithEmptyStatus = true;
+            request.playerMapController.CompletePendingBattlePreviewArrival();
         }
         else
         {
