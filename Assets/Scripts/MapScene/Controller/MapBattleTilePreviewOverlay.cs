@@ -284,7 +284,7 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
         }
 
         statusText.color = mutedColor;
-        returnLabelText.text = "Return";
+        returnLabelText.text = "返回地图";
         RefreshButtonStates();
         ApplyFonts();
     }
@@ -402,11 +402,11 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
         float buttonWidth = Mathf.Max(120f, (panelWidth - 80f) / 2f);
 
         SetTopStretch(accentImage.rectTransform, 0f, 0f, 6f);
-        SetTopLeft(battleClassText.rectTransform, 32f, 24f, leftWidth - 48f, 44f);
-        SetTopLeft(dangerText.rectTransform, 32f, 78f, leftWidth - 48f, 38f);
-        SetTopLeft(attributeHeadingText.rectTransform, 32f, 128f, leftWidth - 48f, 26f);
+        SetTopLeft(battleClassText.rectTransform, 32f, 18f, leftWidth - 48f, 56f);
+        SetTopLeft(dangerText.rectTransform, 32f, 80f, leftWidth - 48f, 42f);
+        SetTopLeft(attributeHeadingText.rectTransform, 32f, 132f, leftWidth - 48f, 34f);
         for (int i = 0; i < attributeTexts.Length; i++)
-            SetTopLeft(attributeTexts[i].rectTransform, 32f + i * (attributeWidth + 8f), 166f, attributeWidth, 34f);
+            SetTopLeft(attributeTexts[i].rectTransform, 32f + i * (attributeWidth + 8f), 172f, attributeWidth, 36f);
         SetTopLeft(statusText.rectTransform, rightX, 26f, rightWidth, 116f);
         SetBottomLeft(returnButton.GetComponent<RectTransform>(), 32f, 22f, buttonWidth, 58f);
         SetBottomLeft(confirmButton.GetComponent<RectTransform>(), 48f + buttonWidth, 22f, buttonWidth, 58f);

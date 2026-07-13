@@ -36,7 +36,9 @@ public class MapBattleTilePreviewOverlayTests
         {
             EventSystem system = systems[i];
             if (system != null && !preExistingEventSystemIds.Contains(system.GetInstanceID()))
+            {
                 UnityEngine.Object.DestroyImmediate(system.gameObject);
+            }
         }
     }
 
@@ -60,6 +62,7 @@ public class MapBattleTilePreviewOverlayTests
         Assert.That(rendered, Does.Contain("Fire"));
         Assert.That(rendered, Does.Contain("Dark"));
         Assert.That(rendered, Does.Contain("Enter Battle - 2 AP"));
+        Assert.That(rendered, Does.Contain("返回地图"));
         Assert.That(rendered, Does.Not.Contain("17"));
         Assert.That(rendered, Does.Not.Contain("EnemyGroupOmega"));
         Assert.That(rendered, Does.Not.Contain("LegendaryReward"));
@@ -241,6 +244,8 @@ public class MapBattleTilePreviewOverlayTests
         Assert.AreEqual(new Vector2(0.5f, 0f), panel.pivot);
         Assert.That(panel.sizeDelta.x, Is.EqualTo(920f).Within(0.01f));
         Assert.That(panel.sizeDelta.y, Is.EqualTo(330f).Within(0.01f));
+        Assert.That(FindRect("BattleClassText").rect.height, Is.GreaterThanOrEqualTo(52f));
+        Assert.That(FindRect("AttributeHeadingText").rect.height, Is.GreaterThanOrEqualTo(32f));
     }
 
     [Test]
@@ -352,9 +357,11 @@ public class MapBattleTilePreviewOverlayTests
     [Test]
     public void ConfigureFonts_AfterCreationUpdatesEveryTextRole()
     {
-        TMP_FontAsset keyword = ScriptableObject.CreateInstance<TMP_FontAsset>();
-        TMP_FontAsset body = ScriptableObject.CreateInstance<TMP_FontAsset>();
-        TMP_FontAsset attribute = ScriptableObject.CreateInstance<TMP_FontAsset>();
+        TMP_FontAsset template = TMP_Settings.defaultFontAsset;
+        Assert.IsNotNull(template);
+        TMP_FontAsset keyword = UnityEngine.Object.Instantiate(template);
+        TMP_FontAsset body = UnityEngine.Object.Instantiate(template);
+        TMP_FontAsset attribute = UnityEngine.Object.Instantiate(template);
         try
         {
             overlay.Show(CreateContext(MapTileType.Battle, true));

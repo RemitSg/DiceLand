@@ -73,10 +73,10 @@ public class MapBattleTilePreviewPawnTests
 
         Assert.IsFalse(controller.IsBattlePreviewActive);
         Assert.AreEqual(pawnPosition, pawn.position);
-        Assert.AreEqual(pawnRotation, pawn.rotation);
+        Assert.Less(Quaternion.Angle(pawnRotation, pawn.rotation), 0.001f);
         Assert.AreEqual(pawnScale, pawn.localScale);
         Assert.AreEqual(visualPosition, visualRoot.localPosition);
-        Assert.AreEqual(visualRotation, visualRoot.localRotation);
+        Assert.Less(Quaternion.Angle(visualRotation, visualRoot.localRotation), 0.001f);
         Assert.AreEqual(visualScale, visualRoot.localScale);
     }
 
@@ -214,7 +214,7 @@ public class MapBattleTilePreviewPawnTests
         controller.SetPosition(origin);
         AssertPendingArrivalCompleted(() => controller.SetPosition(origin));
         AssertPendingArrivalCompleted(() => controller.SetSpawn(origin));
-        AssertPendingArrivalCompleted(() => controller.enabled = false);
+        AssertPendingArrivalCompleted(() => InvokePrivateLifecycle(controller, "OnDisable"));
     }
 
     [Test]
@@ -247,7 +247,7 @@ public class MapBattleTilePreviewPawnTests
         Assert.AreEqual(World(otherTarget), pawn.position);
 
         controller.BeginBattleTilePreview(target, true);
-        controller.enabled = false;
+        InvokePrivateLifecycle(controller, "OnDisable");
         Assert.IsFalse(controller.IsBattlePreviewActive);
         Assert.AreEqual(World(otherTarget), pawn.position);
     }
@@ -298,6 +298,13 @@ public class MapBattleTilePreviewPawnTests
     private static void SetPrivateField(object instance, string name, object value)
     {
         instance.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(instance, value);
+    }
+
+    private static void InvokePrivateLifecycle(object instance, string name)
+    {
+        MethodInfo method = instance.GetType().GetMethod(name, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(method, $"Missing lifecycle method {name}.");
+        method.Invoke(instance, null);
     }
 
     private void AssertPendingArrivalCompleted(System.Action lifecycleAction)

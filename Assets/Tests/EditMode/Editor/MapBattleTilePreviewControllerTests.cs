@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
@@ -18,10 +19,16 @@ public class MapBattleTilePreviewControllerTests
     private BoardTileData target;
     private Camera mapCamera;
     private int commitCount;
+    private int[] preExistingEventSystemIds;
 
     [SetUp]
     public void SetUp()
     {
+        commitCount = 0;
+        preExistingEventSystemIds = UnityEngine.Object
+            .FindObjectsByType<EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+            .Select(system => system.GetInstanceID())
+            .ToArray();
         root = new GameObject("BattleTilePreviewControllerTest");
         board = root.AddComponent<BoardManager>();
         actionPoints = root.AddComponent<ActionPointSystem>();
@@ -58,9 +65,16 @@ public class MapBattleTilePreviewControllerTests
     public void TearDown()
     {
         UnityEngine.Object.DestroyImmediate(root);
-        EventSystem[] eventSystems = UnityEngine.Object.FindObjectsOfType<EventSystem>();
+        EventSystem[] eventSystems = UnityEngine.Object.FindObjectsByType<EventSystem>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
         for (int i = 0; i < eventSystems.Length; i++)
-            UnityEngine.Object.DestroyImmediate(eventSystems[i].gameObject);
+        {
+            EventSystem system = eventSystems[i];
+            if (system == null || preExistingEventSystemIds.Contains(system.GetInstanceID()))
+                continue;
+            UnityEngine.Object.DestroyImmediate(system.gameObject);
+        }
     }
 
     [Test]
@@ -285,6 +299,7 @@ public class MapBattleTilePreviewControllerTests
         SetPrivateField(manager, "boardManager", board);
         SetPrivateField(manager, "actionPointSystem", actionPoints);
         SetPrivateField(manager, "playerMapController", player);
+        Assert.IsTrue(player.BeginBattleTilePreview(target, true));
 
         MapBattleTilePreviewCommitResult movedWithoutHandoff = InvokePrivate<MapBattleTilePreviewCommitResult>(
             manager,
@@ -292,8 +307,10 @@ public class MapBattleTilePreviewControllerTests
             target,
             2);
         Assert.AreEqual(MapBattleTilePreviewCommitResult.MovementCommittedWithoutHandoff, movedWithoutHandoff);
+        Assert.AreEqual(3, actionPoints.CurrentPoints);
 
         player.SetPosition(origin);
+        Assert.IsTrue(player.BeginBattleTilePreview(target, true));
         player.PlayerMovedToTile += (_, __) =>
             SetPrivateField(manager, "battlePreviewBattleEntryAccepted", true);
         MapBattleTilePreviewCommitResult handoffStarted = InvokePrivate<MapBattleTilePreviewCommitResult>(
@@ -302,6 +319,7 @@ public class MapBattleTilePreviewControllerTests
             target,
             0);
         Assert.AreEqual(MapBattleTilePreviewCommitResult.BattleHandoffStarted, handoffStarted);
+        Assert.AreEqual(3, actionPoints.CurrentPoints);
 
         BoardTileData nonAdjacent = new BoardTileData
         {

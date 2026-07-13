@@ -34,7 +34,8 @@ public static class EventSystemUtility
         if (!inputModule.enabled)
             inputModule.enabled = true;
 
-        EventSystem.current = preferred;
+        if (Application.isPlaying && EventSystem.current != preferred)
+            EventSystem.current = preferred;
         return preferred;
     }
 
