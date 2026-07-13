@@ -183,24 +183,31 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
             lastEnterDuration);
 
         IEnumerator combined = RunFrameOnlyParallel(cameraRoutine, pawnRoutine);
-        while (true)
+        try
         {
-            bool hasNext;
-            try
+            while (true)
             {
-                hasNext = combined.MoveNext();
-            }
-            catch (Exception exception)
-            {
-                Debug.LogException(exception, this);
-                CancelImmediate();
-                showStatus?.Invoke("战斗格预览未能打开。");
-                yield break;
-            }
+                bool hasNext;
+                try
+                {
+                    hasNext = combined.MoveNext();
+                }
+                catch (Exception exception)
+                {
+                    Debug.LogException(exception, this);
+                    CancelImmediate();
+                    showStatus?.Invoke("战斗格预览未能打开。");
+                    yield break;
+                }
 
-            if (!hasNext)
-                break;
-            yield return combined.Current;
+                if (!hasNext)
+                    break;
+                yield return combined.Current;
+            }
+        }
+        finally
+        {
+            (combined as IDisposable)?.Dispose();
         }
 
         CompleteEntering(generation);
@@ -216,24 +223,31 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
             : null;
 
         IEnumerator combined = RunFrameOnlyParallel(cameraRoutine, pawnRoutine);
-        while (true)
+        try
         {
-            bool hasNext;
-            try
+            while (true)
             {
-                hasNext = combined.MoveNext();
-            }
-            catch (Exception exception)
-            {
-                Debug.LogException(exception, this);
-                CancelImmediate();
-                showStatus?.Invoke("战斗格预览恢复失败，已立即返回地图。");
-                yield break;
-            }
+                bool hasNext;
+                try
+                {
+                    hasNext = combined.MoveNext();
+                }
+                catch (Exception exception)
+                {
+                    Debug.LogException(exception, this);
+                    CancelImmediate();
+                    showStatus?.Invoke("战斗格预览恢复失败，已立即返回地图。");
+                    yield break;
+                }
 
-            if (!hasNext)
-                break;
-            yield return combined.Current;
+                if (!hasNext)
+                    break;
+                yield return combined.Current;
+            }
+        }
+        finally
+        {
+            (combined as IDisposable)?.Dispose();
         }
 
         if (generation != transitionGeneration || State != MapBattleTilePreviewState.Exiting)

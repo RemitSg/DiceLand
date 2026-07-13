@@ -2211,7 +2211,7 @@ public class RunGameManager : MonoBehaviour
 
     private bool CanOpenMapPauseMenu()
     {
-        return runState != null && !IsGameplayOverlayVisible();
+        return runState != null && !IsSceneTransitionInProgress() && !IsGameplayOverlayVisible();
     }
 
     private void HandlePauseMenuSaveAndReturn()
@@ -2258,6 +2258,8 @@ public class RunGameManager : MonoBehaviour
 
     private bool IsMapViewInputBlocked()
     {
+        if (IsSceneTransitionInProgress())
+            return true;
         if (mapBattleTilePreviewController != null && mapBattleTilePreviewController.IsActive)
             return true;
         if (mapPauseMenuOverlay != null && mapPauseMenuOverlay.IsVisible)
@@ -2266,6 +2268,11 @@ public class RunGameManager : MonoBehaviour
             return true;
 
         return IsGameplayOverlayVisible();
+    }
+
+    private bool IsSceneTransitionInProgress()
+    {
+        return sceneTransitionController != null && sceneTransitionController.IsTransitioning;
     }
 
     private bool ShouldMapViewIgnorePointerOverUi()

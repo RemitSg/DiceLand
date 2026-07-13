@@ -342,6 +342,21 @@ public class MapBattleTilePreviewControllerTests
         Assert.IsFalse(player.IsBattlePreviewActive);
     }
 
+    [Test]
+    public void SceneTransitionInProgress_BlocksMapInputAndPauseAfterPreviewHandsOff()
+    {
+        RunGameManager manager = CreateInactiveRunGameManager();
+        GameObject transitionObject = new GameObject("TransitionInProgress");
+        transitionObject.SetActive(false);
+        transitionObject.transform.SetParent(root.transform, false);
+        SceneCurtainTransitionController transition = transitionObject.AddComponent<SceneCurtainTransitionController>();
+        SetPrivateField(transition, "isTransitioning", true);
+        SetPrivateField(manager, "sceneTransitionController", transition);
+
+        Assert.IsTrue(InvokePrivate<bool>(manager, "IsMapViewInputBlocked"));
+        Assert.IsFalse(InvokePrivate<bool>(manager, "CanOpenMapPauseMenu"));
+    }
+
     private MapBattleTilePreviewCommitResult CommitMove(BoardTileData tile, int cost)
     {
         commitCount++;
