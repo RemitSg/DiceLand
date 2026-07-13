@@ -110,7 +110,7 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
         if (screenSize.x / screenSize.y >= LandscapeAspectThreshold)
             ApplyLandscapeLayout();
         else
-            ApplyPortraitLayout(screenSize.x);
+            ApplyPortraitLayout();
     }
 
     public void HandleCancelInput()
@@ -304,12 +304,12 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
         statusText.alignment = TextAlignmentOptions.TopLeft;
     }
 
-    private void ApplyPortraitLayout(float availableWidth)
+    private void ApplyPortraitLayout()
     {
         if (panel == null)
             return;
 
-        float panelWidth = Mathf.Min(PortraitPanelSize.x, Mathf.Max(320f, availableWidth - 32f));
+        float panelWidth = PortraitPanelSize.x;
         panel.anchorMin = new Vector2(0.5f, 0f);
         panel.anchorMax = new Vector2(0.5f, 0f);
         panel.pivot = new Vector2(0.5f, 0f);

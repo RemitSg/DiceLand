@@ -194,6 +194,30 @@ public class MapBattleTilePreviewOverlayTests
     }
 
     [Test]
+    public void ApplyResponsiveLayout_EquivalentPortraitResolutionsUseSameReferencePanelSizeAndAnchors()
+    {
+        overlay.Show(CreateContext(MapTileType.Battle, true));
+        RectTransform panel = FindRect("PreviewPanel");
+
+        overlay.ApplyResponsiveLayout(new Vector2(720f, 1280f));
+        Vector2 smallSize = panel.sizeDelta;
+        Vector2 smallAnchorMin = panel.anchorMin;
+        Vector2 smallAnchorMax = panel.anchorMax;
+        Vector2 smallPivot = panel.pivot;
+
+        overlay.ApplyResponsiveLayout(new Vector2(1080f, 1920f));
+
+        Assert.AreEqual(new Vector2(920f, 330f), smallSize);
+        Assert.AreEqual(smallSize, panel.sizeDelta);
+        Assert.AreEqual(new Vector2(0.5f, 0f), smallAnchorMin);
+        Assert.AreEqual(smallAnchorMin, panel.anchorMin);
+        Assert.AreEqual(new Vector2(0.5f, 0f), smallAnchorMax);
+        Assert.AreEqual(smallAnchorMax, panel.anchorMax);
+        Assert.AreEqual(new Vector2(0.5f, 0f), smallPivot);
+        Assert.AreEqual(smallPivot, panel.pivot);
+    }
+
+    [Test]
     public void ConfigureFonts_AfterCreationUpdatesEveryTextRole()
     {
         TMP_FontAsset keyword = ScriptableObject.CreateInstance<TMP_FontAsset>();
