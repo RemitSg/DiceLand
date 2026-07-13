@@ -136,6 +136,8 @@ public class RunGameManager : MonoBehaviour
     [SerializeField] private MapCalamityOverlay mapCalamityOverlay;
     [SerializeField] private MapPauseMenuOverlay mapPauseMenuOverlay;
     [SerializeField] private MapTutorialGuideOverlay mapTutorialGuideOverlay;
+    [SerializeField] private MapBattleTilePreviewOverlay mapBattleTilePreviewOverlay;
+    [SerializeField] private MapBattleTilePreviewController mapBattleTilePreviewController;
     [SerializeField] private MapViewController mapViewController;
     [SerializeField] private MapBackgroundController mapBackgroundController;
     [SerializeField] private SceneCurtainTransitionController sceneTransitionController;
@@ -201,6 +203,8 @@ public class RunGameManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (mapBattleTilePreviewController != null)
+            mapBattleTilePreviewController.CancelImmediate();
         if (boardManager != null)
             boardManager.TileClicked -= HandleTileClicked;
         if (playerMapController != null)
@@ -227,6 +231,9 @@ public class RunGameManager : MonoBehaviour
 
     private void Update()
     {
+        if (TryHandleBattlePreviewEscape(Input.GetKeyDown(KeyCode.Escape)))
+            return;
+
         TryConsumePendingMapRegenerationFromRelic();
         UpdateMapTutorialGuide();
         UpdateMapTutorialTargetHighlight();
@@ -255,7 +262,23 @@ public class RunGameManager : MonoBehaviour
     private void OnApplicationPause(bool pauseStatus)
     {
         if (pauseStatus)
+        {
+            mapBattleTilePreviewController?.CancelImmediate();
             PersistCurrentRunSave();
+        }
+    }
+
+    public bool TryHandleBattlePreviewEscape(bool escapePressed)
+    {
+        if (!escapePressed || mapBattleTilePreviewController == null || !mapBattleTilePreviewController.IsActive)
+            return false;
+
+        if (mapBattleTilePreviewOverlay != null && mapBattleTilePreviewOverlay.IsVisible)
+            mapBattleTilePreviewOverlay.HandleCancelInput();
+        else
+            mapBattleTilePreviewController.Cancel(false);
+
+        return true;
     }
 
     private void OnApplicationQuit()
@@ -562,6 +585,21 @@ public class RunGameManager : MonoBehaviour
         }
 
         int selectedTileMoveCost = GetMoveCost(tile);
+        if (tile.IsHostileTile && !tile.isResolved)
+        {
+            MapBattleTilePreviewContext previewContext = MapBattleTilePreviewService.BuildContext(
+                runState,
+                tile,
+                selectedTileMoveCost,
+                CanAttemptMove(tile, selectedTileMoveCost));
+            if (previewContext.canPreview && mapBattleTilePreviewController != null)
+            {
+                if (!mapBattleTilePreviewController.BeginPreview(previewContext))
+                    RefreshHUD("战斗格预览未能打开。");
+                return;
+            }
+        }
+
         if (!CanAttemptMove(tile, selectedTileMoveCost))
         {
             RefreshHUD($"行动点不足，需要 {selectedTileMoveCost} 点。");
@@ -974,6 +1012,17 @@ public class RunGameManager : MonoBehaviour
         if (tutorialMapGuideTitleFont != null || tutorialMapGuideBodyFont != null || tutorialMapGuideButtonFont != null)
             mapTutorialGuideOverlay.ConfigureFonts(tutorialMapGuideTitleFont, tutorialMapGuideBodyFont, tutorialMapGuideButtonFont);
         mapViewController = GetOrCreateManager(mapViewController);
+        mapBattleTilePreviewOverlay = GetOrCreateBattleTilePreviewOverlay();
+        if (mapKeywordFont != null || mapBodyFont != null || mapAttributeFont != null)
+            mapBattleTilePreviewOverlay.ConfigureFonts(mapKeywordFont, mapBodyFont, mapAttributeFont);
+        mapBattleTilePreviewController = GetOrCreateBattleTilePreviewController();
+        mapBattleTilePreviewController.Configure(
+            mapViewController,
+            playerMapController,
+            boardManager,
+            mapBattleTilePreviewOverlay,
+            TryExecuteMove,
+            RefreshHUD);
         mapBackgroundController = GetOrCreateManager(mapBackgroundController);
         if (sceneTransitionController == null)
             sceneTransitionController = FindObjectOfType<SceneCurtainTransitionController>(true);
@@ -1200,6 +1249,42 @@ public class RunGameManager : MonoBehaviour
         go.transform.SetParent(uiRoot, false);
         mapPauseMenuOverlay = go.AddComponent<MapPauseMenuOverlay>();
         return mapPauseMenuOverlay;
+    }
+
+    private MapBattleTilePreviewOverlay GetOrCreateBattleTilePreviewOverlay()
+    {
+        if (mapBattleTilePreviewOverlay == null && uiRoot != null)
+            mapBattleTilePreviewOverlay = uiRoot.GetComponentInChildren<MapBattleTilePreviewOverlay>(true);
+        if (mapBattleTilePreviewOverlay == null)
+        {
+            GameObject go = new GameObject("MapBattleTilePreviewOverlay");
+            go.transform.SetParent(uiRoot, false);
+            mapBattleTilePreviewOverlay = go.AddComponent<MapBattleTilePreviewOverlay>();
+        }
+        else if (uiRoot != null && mapBattleTilePreviewOverlay.transform.parent != uiRoot)
+        {
+            mapBattleTilePreviewOverlay.transform.SetParent(uiRoot, false);
+        }
+
+        return mapBattleTilePreviewOverlay;
+    }
+
+    private MapBattleTilePreviewController GetOrCreateBattleTilePreviewController()
+    {
+        if (mapBattleTilePreviewController == null && uiRoot != null)
+            mapBattleTilePreviewController = uiRoot.GetComponentInChildren<MapBattleTilePreviewController>(true);
+        if (mapBattleTilePreviewController == null)
+        {
+            GameObject go = new GameObject("MapBattleTilePreviewController");
+            go.transform.SetParent(uiRoot, false);
+            mapBattleTilePreviewController = go.AddComponent<MapBattleTilePreviewController>();
+        }
+        else if (uiRoot != null && mapBattleTilePreviewController.transform.parent != uiRoot)
+        {
+            mapBattleTilePreviewController.transform.SetParent(uiRoot, false);
+        }
+
+        return mapBattleTilePreviewController;
     }
 
     private MapTutorialGuideOverlay GetOrCreateTutorialGuideOverlay()
@@ -2140,6 +2225,8 @@ public class RunGameManager : MonoBehaviour
 
     private bool IsMapViewInputBlocked()
     {
+        if (mapBattleTilePreviewController != null && mapBattleTilePreviewController.IsActive)
+            return true;
         if (mapPauseMenuOverlay != null && mapPauseMenuOverlay.IsVisible)
             return true;
         if (mapTutorialGuideOverlay != null && mapTutorialGuideOverlay.IsModalVisible)
@@ -2155,6 +2242,10 @@ public class RunGameManager : MonoBehaviour
 
     private bool IsGameplayOverlayVisible()
     {
+        if (mapBattleTilePreviewController != null && mapBattleTilePreviewController.IsActive)
+            return true;
+        if (mapBattleTilePreviewOverlay != null && mapBattleTilePreviewOverlay.IsVisible)
+            return true;
         if (mapEventOverlay != null && mapEventOverlay.IsVisible)
             return true;
         if (mapMerchantOverlay != null && mapMerchantOverlay.IsVisible)
