@@ -294,6 +294,55 @@ public class MapBattleTilePreviewCameraTests
         Assert.IsNull(introRoutine.GetValue(view));
     }
 
+    [Test]
+    public void Disable_StopsActiveSpawnIntro()
+    {
+        view.PlaySpawnIntro(Vector3.zero);
+        Assert.IsTrue(view.IsSpawnIntroActive);
+
+        MethodInfo onDisable = typeof(MapViewController).GetMethod("OnDisable", BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(onDisable);
+        onDisable.Invoke(view, null);
+
+        Assert.IsFalse(view.IsSpawnIntroActive);
+    }
+
+    [Test]
+    public void NaNZoomMultiplier_UsesFiniteDefaultPreviewPose()
+    {
+        view.ApplyBattlePreviewImmediate(Vector3.zero, Vector3.up, float.NaN);
+
+        AssertFiniteCameraState();
+        Assert.IsTrue(view.IsBattlePreviewActive);
+        Assert.IsFalse(camera.orthographic);
+    }
+
+    [Test]
+    public void PositiveInfinityDuration_CompletesImmediatelyWithoutEndlessIteration()
+    {
+        IEnumerator enter = view.PlayBattlePreviewRoutine(Vector3.zero, Vector3.up, 1.75f, float.PositiveInfinity);
+
+        Assert.IsFalse(enter.MoveNext());
+        AssertFiniteCameraState();
+        Assert.IsTrue(view.IsBattlePreviewActive);
+
+        IEnumerator exit = view.RestoreBattlePreviewRoutine(float.PositiveInfinity);
+        Assert.IsFalse(exit.MoveNext());
+        AssertFiniteCameraState();
+        Assert.IsFalse(view.IsBattlePreviewActive);
+    }
+
+    [Test]
+    public void NaNAndNegativeDurations_CompleteImmediately()
+    {
+        Assert.IsFalse(view.PlayBattlePreviewRoutine(Vector3.zero, Vector3.up, 1.75f, float.NaN).MoveNext());
+        Assert.IsTrue(view.IsBattlePreviewActive);
+
+        Assert.IsFalse(view.RestoreBattlePreviewRoutine(-1f).MoveNext());
+        Assert.IsFalse(view.IsBattlePreviewActive);
+        AssertFiniteCameraState();
+    }
+
     private void AssertCameraStateEquals(MapCameraPreviewState expected)
     {
         Assert.AreEqual(expected.position, camera.transform.position);
@@ -301,6 +350,21 @@ public class MapBattleTilePreviewCameraTests
         Assert.AreEqual(expected.orthographic, camera.orthographic);
         Assert.AreEqual(expected.orthographicSize, camera.orthographicSize);
         Assert.AreEqual(expected.fieldOfView, camera.fieldOfView);
+    }
+
+    private void AssertFiniteCameraState()
+    {
+        Vector3 position = camera.transform.position;
+        Quaternion rotation = camera.transform.rotation;
+        Assert.IsFalse(float.IsNaN(position.x) || float.IsInfinity(position.x));
+        Assert.IsFalse(float.IsNaN(position.y) || float.IsInfinity(position.y));
+        Assert.IsFalse(float.IsNaN(position.z) || float.IsInfinity(position.z));
+        Assert.IsFalse(float.IsNaN(rotation.x) || float.IsInfinity(rotation.x));
+        Assert.IsFalse(float.IsNaN(rotation.y) || float.IsInfinity(rotation.y));
+        Assert.IsFalse(float.IsNaN(rotation.z) || float.IsInfinity(rotation.z));
+        Assert.IsFalse(float.IsNaN(rotation.w) || float.IsInfinity(rotation.w));
+        Assert.IsFalse(float.IsNaN(camera.orthographicSize) || float.IsInfinity(camera.orthographicSize));
+        Assert.IsFalse(float.IsNaN(camera.fieldOfView) || float.IsInfinity(camera.fieldOfView));
     }
 
     private static void AdvanceToCompletion(IEnumerator routine)

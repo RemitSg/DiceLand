@@ -17,6 +17,10 @@ public class MapViewController : MonoBehaviour
 {
     private const float MinimumTransitionDeltaTime = 0.0001f;
     private const float MinimumPlaneIntersectionDistance = 0.0001f;
+    private const float DefaultPreviewZoomMultiplier = 1.75f;
+    private const float DefaultPreviewBaseDistance = 7f;
+    private const float DefaultPreviewApproachOffset = 1.2f;
+    private const float DefaultPreviewFieldOfView = 34f;
 
     [Header("Zoom")]
     [SerializeField] private float minZoomSize = 3f;
@@ -79,6 +83,7 @@ public class MapViewController : MonoBehaviour
     public event Action ViewNavigationPerformed;
 
     public bool IsBattlePreviewActive => battlePreviewActive;
+    public bool IsSpawnIntroActive => introRoutine != null;
     public float DefaultPreviewEnterDuration => previewEnterDuration;
     public float DefaultPreviewExitDuration => previewExitDuration;
 
@@ -209,7 +214,7 @@ public class MapViewController : MonoBehaviour
 
         MapCameraPreviewState start = CaptureCameraState();
         MapCameraPreviewState destination = CalculateBattlePreviewState(origin, target, zoomMultiplier);
-        float safeDuration = Mathf.Max(0f, duration);
+        float safeDuration = NormalizePreviewDuration(duration);
         if (safeDuration <= 0.0001f)
         {
             if (OwnsPreviewOperation(operationGeneration))
@@ -247,7 +252,7 @@ public class MapViewController : MonoBehaviour
 
         MapCameraPreviewState start = CaptureCameraState();
         MapCameraPreviewState destination = preBattlePreviewState;
-        float safeDuration = Mathf.Max(0f, duration);
+        float safeDuration = NormalizePreviewDuration(duration);
         if (safeDuration <= 0.0001f)
         {
             if (OwnsPreviewOperation(operationGeneration))
@@ -280,6 +285,8 @@ public class MapViewController : MonoBehaviour
         if (targetCamera != null && battlePreviewActive && hasPreBattlePreviewState)
             CompleteBattlePreviewRestore();
 
+        if (introRoutine != null)
+            StopCoroutine(introRoutine);
         introRoutine = null;
         ResetPointerState();
     }
@@ -315,8 +322,20 @@ public class MapViewController : MonoBehaviour
     {
         Vector3 targetDelta = target - origin;
         Vector3 approach = targetDelta.sqrMagnitude > 0.001f ? targetDelta.normalized : Vector3.up;
-        float distance = previewBaseDistance / Mathf.Max(1f, zoomMultiplier);
-        Vector3 position = target - approach * previewApproachOffset + Vector3.back * distance;
+        float safeZoomMultiplier = IsFinite(zoomMultiplier)
+            ? Mathf.Max(1f, zoomMultiplier)
+            : DefaultPreviewZoomMultiplier;
+        float safeBaseDistance = IsFinite(previewBaseDistance)
+            ? Mathf.Max(MinimumPlaneIntersectionDistance, previewBaseDistance)
+            : DefaultPreviewBaseDistance;
+        float safeApproachOffset = IsFinite(previewApproachOffset)
+            ? Mathf.Max(0f, previewApproachOffset)
+            : DefaultPreviewApproachOffset;
+        float safeFieldOfView = IsFinite(previewFieldOfView)
+            ? Mathf.Clamp(previewFieldOfView, 1f, 179f)
+            : DefaultPreviewFieldOfView;
+        float distance = safeBaseDistance / safeZoomMultiplier;
+        Vector3 position = target - approach * safeApproachOffset + Vector3.back * distance;
         Vector3 lookDirection = target - position;
         Quaternion rotation = lookDirection.sqrMagnitude > 0.0001f
             ? Quaternion.LookRotation(lookDirection, Vector3.up)
@@ -328,7 +347,7 @@ public class MapViewController : MonoBehaviour
             rotation = rotation,
             orthographic = false,
             orthographicSize = targetCamera != null ? targetCamera.orthographicSize : 0f,
-            fieldOfView = previewFieldOfView
+            fieldOfView = safeFieldOfView
         };
     }
 
@@ -373,6 +392,11 @@ public class MapViewController : MonoBehaviour
     private static bool IsFinite(float value)
     {
         return !float.IsNaN(value) && !float.IsInfinity(value);
+    }
+
+    private static float NormalizePreviewDuration(float duration)
+    {
+        return IsFinite(duration) && duration > 0f ? duration : 0f;
     }
 
     private int BeginPreviewOperation()
