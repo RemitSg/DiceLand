@@ -3,16 +3,22 @@ using System.Linq;
 using NUnit.Framework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class MapBattleTilePreviewOverlayTests
 {
     private GameObject root;
     private MapBattleTilePreviewOverlay overlay;
+    private int[] preExistingEventSystemIds;
 
     [SetUp]
     public void SetUp()
     {
+        preExistingEventSystemIds = UnityEngine.Object
+            .FindObjectsByType<EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+            .Select(system => system.GetInstanceID())
+            .ToArray();
         root = new GameObject("MapBattleTilePreviewOverlay");
         overlay = root.AddComponent<MapBattleTilePreviewOverlay>();
     }
@@ -22,6 +28,16 @@ public class MapBattleTilePreviewOverlayTests
     {
         if (root != null)
             UnityEngine.Object.DestroyImmediate(root);
+
+        EventSystem[] systems = UnityEngine.Object.FindObjectsByType<EventSystem>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+        for (int i = 0; i < systems.Length; i++)
+        {
+            EventSystem system = systems[i];
+            if (system != null && !preExistingEventSystemIds.Contains(system.GetInstanceID()))
+                UnityEngine.Object.DestroyImmediate(system.gameObject);
+        }
     }
 
     [Test]
@@ -132,6 +148,40 @@ public class MapBattleTilePreviewOverlayTests
     }
 
     [Test]
+    public void ShowFailure_WhileHiddenDoesNotCreateUiOrRetainFailureState()
+    {
+        overlay.ShowFailure("Invisible stale failure");
+
+        Assert.IsFalse(overlay.IsVisible);
+        Assert.AreEqual(0, root.GetComponentsInChildren<Canvas>(true).Length);
+
+        overlay.Show(CreateContext(MapTileType.Battle, true));
+
+        Assert.That(FindText("StatusText").text, Does.Not.Contain("Invisible stale failure"));
+    }
+
+    [Test]
+    public void Show_CreatesOrReusesExactlyOneEventSystem()
+    {
+        EventSystem preferredBefore = EventSystem.current;
+        if (preferredBefore == null)
+        {
+            preferredBefore = UnityEngine.Object
+                .FindObjectsByType<EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+                .FirstOrDefault();
+        }
+
+        overlay.Show(CreateContext(MapTileType.Battle, true));
+
+        EventSystem[] systems = UnityEngine.Object.FindObjectsByType<EventSystem>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+        Assert.AreEqual(1, systems.Length);
+        if (preferredBefore != null)
+            Assert.AreSame(preferredBefore, systems[0]);
+    }
+
+    [Test]
     public void ButtonsFireOncePerClickAcrossRepeatedShowAndCancelDoesNotHide()
     {
         int confirms = 0;
@@ -199,13 +249,13 @@ public class MapBattleTilePreviewOverlayTests
         overlay.Show(CreateContext(MapTileType.Battle, true));
         RectTransform panel = FindRect("PreviewPanel");
 
-        overlay.ApplyResponsiveLayout(new Vector2(720f, 1280f));
+        overlay.ApplyResponsiveLayout(new Vector2(720f, 1280f), new Rect(0f, 0f, 720f, 1280f));
         Vector2 smallSize = panel.sizeDelta;
         Vector2 smallAnchorMin = panel.anchorMin;
         Vector2 smallAnchorMax = panel.anchorMax;
         Vector2 smallPivot = panel.pivot;
 
-        overlay.ApplyResponsiveLayout(new Vector2(1080f, 1920f));
+        overlay.ApplyResponsiveLayout(new Vector2(1080f, 1920f), new Rect(0f, 0f, 1080f, 1920f));
 
         Assert.AreEqual(new Vector2(920f, 330f), smallSize);
         Assert.AreEqual(smallSize, panel.sizeDelta);
@@ -215,6 +265,44 @@ public class MapBattleTilePreviewOverlayTests
         Assert.AreEqual(smallAnchorMax, panel.anchorMax);
         Assert.AreEqual(new Vector2(0.5f, 0f), smallPivot);
         Assert.AreEqual(smallPivot, panel.pivot);
+    }
+
+    [Test]
+    public void ApplyResponsiveLayout_PortraitSafeAreaOffsetsPanelAboveBottomInset()
+    {
+        overlay.Show(CreateContext(MapTileType.Battle, true));
+        RectTransform panel = FindRect("PreviewPanel");
+        Vector2 screenSize = new Vector2(1080f, 1920f);
+        Rect safeArea = new Rect(0f, 120f, 1080f, 1800f);
+
+        overlay.ApplyResponsiveLayout(screenSize, safeArea);
+
+        Assert.AreEqual(new Vector2(920f, 330f), panel.sizeDelta);
+        Assert.AreEqual(new Vector2(0.5f, 0f), panel.anchorMin);
+        Assert.AreEqual(new Vector2(0.5f, 0f), panel.anchorMax);
+        Assert.That(panel.anchoredPosition.y, Is.EqualTo(144f).Within(0.01f));
+        Assert.GreaterOrEqual(panel.anchoredPosition.y, safeArea.yMin + 24f);
+    }
+
+    [Test]
+    public void ApplyResponsiveLayout_LandscapeSafeAreaAvoidsRightAndTopInsets()
+    {
+        overlay.Show(CreateContext(MapTileType.Battle, true));
+        RectTransform panel = FindRect("PreviewPanel");
+        Vector2 screenSize = new Vector2(1920f, 1080f);
+        Rect safeArea = new Rect(0f, 0f, 1800f, 980f);
+
+        overlay.ApplyResponsiveLayout(screenSize, safeArea);
+
+        float panelRight = screenSize.x + panel.anchoredPosition.x;
+        float panelTop = screenSize.y * 0.5f + panel.anchoredPosition.y + panel.sizeDelta.y * 0.5f;
+        Assert.AreEqual(new Vector2(500f, 620f), panel.sizeDelta);
+        Assert.AreEqual(new Vector2(1f, 0.5f), panel.anchorMin);
+        Assert.AreEqual(new Vector2(1f, 0.5f), panel.anchorMax);
+        Assert.That(panel.anchoredPosition.x, Is.EqualTo(-160f).Within(0.01f));
+        Assert.That(panel.anchoredPosition.y, Is.EqualTo(-50f).Within(0.01f));
+        Assert.LessOrEqual(panelRight, safeArea.xMax - 40f);
+        Assert.LessOrEqual(panelTop, safeArea.yMax - 24f);
     }
 
     [Test]
@@ -245,10 +333,14 @@ public class MapBattleTilePreviewOverlayTests
     }
 
     [Test]
-    public void HandleCancelInput_OnlyRequestsCancelWhileVisibleAndInteractive()
+    public void HandleCancelInput_IsTheOnlyCancelPollingEntryAndRequiresVisibleInteractiveState()
     {
         int cancels = 0;
         overlay.CancelRequested += () => cancels++;
+
+        Assert.IsNull(typeof(MapBattleTilePreviewOverlay).GetMethod(
+            "Update",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic));
 
         overlay.HandleCancelInput();
         overlay.Show(CreateContext(MapTileType.Battle, true));
@@ -256,9 +348,11 @@ public class MapBattleTilePreviewOverlayTests
         overlay.HandleCancelInput();
         overlay.SetInteractionEnabled(true);
         overlay.HandleCancelInput();
+        overlay.Hide();
+        overlay.HandleCancelInput();
 
         Assert.AreEqual(1, cancels);
-        Assert.IsTrue(overlay.IsVisible);
+        Assert.IsFalse(overlay.IsVisible);
     }
 
     private static MapBattleTilePreviewContext CreateContext(MapTileType tileType, bool canConfirm)

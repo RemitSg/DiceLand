@@ -44,7 +44,6 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
     private TextMeshProUGUI returnLabelText;
     private MapBattleTilePreviewContext currentContext;
     private bool interactionEnabled = true;
-    private Vector2 lastScreenSize;
 
     public bool IsVisible => canvas != null && canvas.gameObject.activeInHierarchy;
 
@@ -67,7 +66,7 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
         interactionEnabled = true;
         gameObject.SetActive(true);
         canvas.gameObject.SetActive(true);
-        ApplyResponsiveLayout(GetCurrentScreenSize());
+        ApplyResponsiveLayout();
         RenderContext();
     }
 
@@ -79,7 +78,9 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
 
     public void ShowFailure(string message)
     {
-        EnsureUi();
+        if (!IsVisible)
+            return;
+
         interactionEnabled = true;
         statusText.text = string.IsNullOrWhiteSpace(message) ? "Battle preview unavailable." : message;
         statusText.color = failureColor;
@@ -102,15 +103,36 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
 
     public void ApplyResponsiveLayout(Vector2 screenSize)
     {
+        ApplyResponsiveLayout(screenSize, new Rect(Vector2.zero, screenSize));
+    }
+
+    public void ApplyResponsiveLayout()
+    {
+        ApplyResponsiveLayout(GetCurrentScreenSize(), Screen.safeArea);
+    }
+
+    public void ApplyResponsiveLayout(Vector2 screenSize, Rect safeArea)
+    {
         EnsureUi();
         if (screenSize.x <= 0f || screenSize.y <= 0f)
+        {
             screenSize = ReferenceResolution;
+            safeArea = new Rect(Vector2.zero, screenSize);
+        }
 
-        lastScreenSize = screenSize;
+        safeArea = NormalizeSafeArea(screenSize, safeArea);
+        float scaleFactor = ResolveReferenceScaleFactor(screenSize);
+        float canvasWidth = screenSize.x / scaleFactor;
+        float canvasHeight = screenSize.y / scaleFactor;
+        float safeLeft = safeArea.xMin / scaleFactor;
+        float safeRight = (screenSize.x - safeArea.xMax) / scaleFactor;
+        float safeBottom = safeArea.yMin / scaleFactor;
+        float safeTop = (screenSize.y - safeArea.yMax) / scaleFactor;
+
         if (screenSize.x / screenSize.y >= LandscapeAspectThreshold)
-            ApplyLandscapeLayout();
+            ApplyLandscapeLayout(canvasHeight, safeRight, safeBottom, safeTop);
         else
-            ApplyPortraitLayout();
+            ApplyPortraitLayout(canvasWidth, safeLeft, safeRight, safeBottom);
     }
 
     public void HandleCancelInput()
@@ -119,19 +141,6 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
             return;
 
         CancelRequested?.Invoke();
-    }
-
-    private void Update()
-    {
-        if (!IsVisible)
-            return;
-
-        Vector2 screenSize = GetCurrentScreenSize();
-        if (screenSize != lastScreenSize)
-            ApplyResponsiveLayout(screenSize);
-
-        if (interactionEnabled && Input.GetKeyDown(KeyCode.Escape))
-            HandleCancelInput();
     }
 
     private void OnDestroy()
@@ -144,6 +153,7 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
 
     private void EnsureUi()
     {
+        EventSystemUtility.EnsureSingleEventSystem();
         if (canvas != null)
             return;
 
@@ -195,7 +205,7 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
         returnButton.onClick.AddListener(OnReturnClicked);
 
         ApplyFonts();
-        ApplyLandscapeLayout();
+        ApplyLandscapeLayout(ReferenceResolution.y, 0f, 0f, 0f);
         canvasObject.SetActive(false);
     }
 
@@ -278,16 +288,28 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
         ApplyFont(returnLabelText, keywordFont);
     }
 
-    private void ApplyLandscapeLayout()
+    private void ApplyLandscapeLayout(
+        float canvasHeight,
+        float safeRight,
+        float safeBottom,
+        float safeTop)
     {
         if (panel == null)
             return;
 
+        const float horizontalMargin = 40f;
+        const float verticalMargin = 24f;
+        float safeHeight = Mathf.Max(1f, canvasHeight - safeBottom - safeTop);
+        float panelHeight = Mathf.Min(LandscapePanelSize.y, Mathf.Max(1f, safeHeight - verticalMargin * 2f));
+        float safeCenterY = safeBottom + safeHeight * 0.5f;
+
         panel.anchorMin = new Vector2(1f, 0.5f);
         panel.anchorMax = new Vector2(1f, 0.5f);
         panel.pivot = new Vector2(1f, 0.5f);
-        panel.sizeDelta = LandscapePanelSize;
-        panel.anchoredPosition = new Vector2(-40f, 0f);
+        panel.sizeDelta = new Vector2(LandscapePanelSize.x, panelHeight);
+        panel.anchoredPosition = new Vector2(
+            -horizontalMargin - safeRight,
+            safeCenterY - canvasHeight * 0.5f);
 
         SetTopStretch(accentImage.rectTransform, 0f, 0f, 6f);
         SetTopLeft(battleClassText.rectTransform, 32f, 26f, 436f, 48f);
@@ -304,17 +326,29 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
         statusText.alignment = TextAlignmentOptions.TopLeft;
     }
 
-    private void ApplyPortraitLayout()
+    private void ApplyPortraitLayout(
+        float canvasWidth,
+        float safeLeft,
+        float safeRight,
+        float safeBottom)
     {
         if (panel == null)
             return;
 
-        float panelWidth = PortraitPanelSize.x;
+        const float horizontalMargin = 16f;
+        const float bottomMargin = 24f;
+        float safeWidth = Mathf.Max(1f, canvasWidth - safeLeft - safeRight);
+        float panelWidth = Mathf.Min(
+            PortraitPanelSize.x,
+            Mathf.Max(1f, safeWidth - horizontalMargin * 2f));
+        float safeCenterX = safeLeft + safeWidth * 0.5f;
         panel.anchorMin = new Vector2(0.5f, 0f);
         panel.anchorMax = new Vector2(0.5f, 0f);
         panel.pivot = new Vector2(0.5f, 0f);
         panel.sizeDelta = new Vector2(panelWidth, PortraitPanelSize.y);
-        panel.anchoredPosition = new Vector2(0f, 24f);
+        panel.anchoredPosition = new Vector2(
+            safeCenterX - canvasWidth * 0.5f,
+            safeBottom + bottomMargin);
 
         float leftWidth = Mathf.Min(500f, panelWidth * 0.56f);
         float rightX = leftWidth + 24f;
@@ -464,6 +498,25 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
     private static Vector2 GetCurrentScreenSize()
     {
         return new Vector2(Screen.width, Screen.height);
+    }
+
+    private static Rect NormalizeSafeArea(Vector2 screenSize, Rect safeArea)
+    {
+        float xMin = Mathf.Clamp(safeArea.xMin, 0f, screenSize.x);
+        float yMin = Mathf.Clamp(safeArea.yMin, 0f, screenSize.y);
+        float xMax = Mathf.Clamp(safeArea.xMax, 0f, screenSize.x);
+        float yMax = Mathf.Clamp(safeArea.yMax, 0f, screenSize.y);
+        if (xMax <= xMin || yMax <= yMin)
+            return new Rect(Vector2.zero, screenSize);
+
+        return Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+    }
+
+    private static float ResolveReferenceScaleFactor(Vector2 screenSize)
+    {
+        float widthScale = screenSize.x / ReferenceResolution.x;
+        float heightScale = screenSize.y / ReferenceResolution.y;
+        return Mathf.Sqrt(widthScale * heightScale);
     }
 
     private void OnConfirmClicked()
