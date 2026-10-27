@@ -22,14 +22,29 @@ public static class RunSettlementFlowService
 
     public static RunSettlementData ExecuteSettlement(RunSettlementFlowRequest request)
     {
+        return ExecuteSettlement(request, RunSettlementRuntime.Context, true);
+    }
+
+    // Explicit contexts never fall back to the player's global settlement or wallet.
+    public static RunSettlementData ExecuteSettlement(RunSettlementFlowRequest request, RunSettlementContext context)
+    {
+        if (context == null) throw new ArgumentNullException(nameof(context));
+        return ExecuteSettlement(request, context, false);
+    }
+
+    private static RunSettlementData ExecuteSettlement(RunSettlementFlowRequest request, RunSettlementContext context, bool usePlayerWallet)
+    {
         if (request == null)
             return null;
 
-        if (RunSettlementRuntime.HasData)
+        if (context.HasData)
         {
             request.transitionToScene?.Invoke(ResolveSettlementSceneName(request.settlementSceneName));
-            return RunSettlementRuntime.Current;
+            return context.Current;
         }
+
+        if (!usePlayerWallet && (request.getAbilityPoints == null || request.addAbilityPoints == null))
+            throw new ArgumentException("An explicit settlement context requires both isolated wallet callbacks.", nameof(request));
 
         RunSettlementScoreResult scoreResult = RunScoreService.Calculate(
             request.runState,
@@ -58,7 +73,7 @@ public static class RunSettlementFlowService
             returnSceneName = ResolveReturnSceneName(request.returnSceneName)
         };
 
-        RunSettlementRuntime.Set(data);
+        context.Set(data);
         request.deleteSavedRun?.Invoke();
         request.clearRuntimeState?.Invoke();
         request.transitionToScene?.Invoke(ResolveSettlementSceneName(request.settlementSceneName));

@@ -1575,3 +1575,11 @@ Shared treasure tile reward flow; money/blueprint/relic bags, one-time selection
 - Normal HTTP seed 127: real treasure income 77, recruit Jenny for 50, two Door battle victories, relic reward, right exit score 200 and AP 1->1; fresh left retreat score 0. No resource/outcome injection.
 - Maze probe remains blocked by an authored missing relic reward at the rest room. Existing roster gaps and PlayMode limits remain.
 - Evidence: docs/agent-battle/B005c-validation.json. Next: B006 shared victory/defeat/abandon settlement, isolated meta and next run. Goal remains active; full save/replay and full external-agent audit are still pending.
+
+
+## 2026-10-27 B006a - shared isolated settlement context
+
+- Added RunSettlementContext and an explicit-context overload on the existing settlement service. Formal runtime delegates to its default context. Explicit callers must provide both wallet callbacks before side effects; no fallback to player settlement/wallet.
+- Same-context retry does not award/clean twice. Separate contexts remain independent; score formula unchanged. Settlement data is serializable.
+- Isolated headless EditMode: related 18/18, 7 new pass; full 928 total, 907 passed, same 21 failed names as B005c (921/900/21). Evidence: docs/agent-battle/B006a-validation.json.
+- This is a primitive-only batch; no public terminal command yet. Formal map abandon grants no points; battle abandon settles as not cleared. B006b must preserve these policies and implement isolated meta/next run, then B007 full saves/replays and B008 normal full-run audit. Goal remains active.

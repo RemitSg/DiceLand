@@ -1,3 +1,4 @@
+[System.Serializable]
 public sealed class RunSettlementData
 {
     public bool runCleared;
