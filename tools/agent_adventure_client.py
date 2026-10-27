@@ -12,6 +12,15 @@ from agent_battle_client import Client
 from agent_adventure_policy import choose_battle_action, choose_calamity_action
 
 
+def resolve_difficulty(client, value):
+    definitions = client.call(op="catalog")["catalogue"]["difficulties"]
+    matches = [d for d in definitions if value.casefold() in (d["id"].casefold(), d["name"].casefold())
+               or (value.casefold() == "normal" and d["isDefault"])]
+    if len(matches) != 1:
+        raise ValueError(f"Expected one menu difficulty named or identified by {value!r}; found {len(matches)}. Use an ID from difficulties.")
+    return matches[0]["id"]
+
+
 def inspect_equipment(client, item):
     catalog = client.call(op="catalog")["catalogue"]
     matches = [(kind, definition) for kind, key in (("weapon", "weaponDetails"), ("blueprint", "blueprintDetails"), ("character", "characterDetails"))
@@ -52,6 +61,8 @@ def choose_reforge_action(state):
 
 def demo(client, args):
     create = dict(op="create_run", seed=args.seed, maxRounds=args.max_rounds)
+    if getattr(args, "difficulty", None):
+        create["difficultyId"] = resolve_difficulty(client, args.difficulty)
     if getattr(args, "profile", None):
         create["profileId"] = args.profile
     if getattr(args, "resume_slot", None):
@@ -184,6 +195,7 @@ def main():
     start.add_argument("--resume-slot", help="Resume a playable save slot instead of creating a new run")
     start.add_argument("--recover-profile", help="Recover the last committed command of a persistent profile instead of creating a new run")
     play.add_argument("--save-slot", help="Save a playable checkpoint before closing")
+    play.add_argument("--difficulty", help="Menu difficulty ID or exact name for a new adventure; omitted keeps the Normal default")
     play.add_argument("--replay-slot", help="Export the complete journal into a named slot on this host before closing")
     play.add_argument("--verify-replay", action="store_true", help="After closing, verify --replay-slot with recorded timestamps and a temporary profile")
     raw = commands.add_parser("command")
@@ -198,9 +210,16 @@ def main():
     load.add_argument("slot")
     recover = commands.add_parser("recover-run", help="Recover a persistent profile and leave its new session active")
     recover.add_argument("profile")
+    commands.add_parser("difficulties", help="List actual saved-menu difficulties and their base action-point/recruit rules")
+    next_run = commands.add_parser("next-run", help="Start the next run of a finished active session")
+    next_run.add_argument("session_id")
+    next_run.add_argument("--seed", type=int, default=1)
+    next_run.add_argument("--difficulty", help="Menu difficulty ID or exact name; omitted retains the current mode")
     args = parser.parse_args()
     client = Client(args.url)
     if args.mode == "demo":
+        if args.difficulty and (args.resume_slot or args.recover_profile):
+            parser.error("Restored adventures retain their difficulty; change it with next-run after settlement.")
         if args.verify_replay and not args.replay_slot:
             parser.error("--verify-replay requires --replay-slot")
         result = demo(client, args)
@@ -217,6 +236,14 @@ def main():
         result = client.call(op="run_load", slotId=args.slot)["state"]
     elif args.mode == "recover-run":
         result = client.call(op="run_recover", profileId=args.profile)["state"]
+    elif args.mode == "difficulties":
+        result = client.call(op="catalog")["catalogue"]["difficulties"]
+    elif args.mode == "next-run":
+        action = dict(op="run_next", seed=args.seed)
+        if args.difficulty:
+            action["difficultyId"] = resolve_difficulty(client, args.difficulty)
+        state = client.call(op="observe_run", sessionId=args.session_id)["state"]
+        result = client.act(state, **action)
     else:
         result = client.call(**json.loads(sys.stdin.read() if args.json == "-" else args.json))
     print(json.dumps(result, ensure_ascii=False, indent=2))

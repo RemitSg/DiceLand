@@ -21,6 +21,54 @@ public sealed class AgentAdventureConfiguration
     public AbilityTreeConfig_SO abilities;
     public RunReforgeDefinition reforge;
 
+    public static DifficultyConfig_SO[] SelectableDifficulties()
+    {
+        if (EditorApplication.isPlayingOrWillChangePlaymode)
+            throw new InvalidOperationException("Read adventure configuration in Edit Mode.");
+        MethodInfo open = typeof(EditorSceneManager).GetMethod("OpenPreviewScene", BindingFlags.Static | BindingFlags.NonPublic,
+            null, new[] { typeof(string) }, null);
+        if (open == null) throw new NotSupportedException("This engine does not expose the required preview scene reader.");
+        var outsideRandom = UnityEngine.Random.state;
+        bool outsideInput = SpeedButton.InputSuppressed, outsideCombat = SpeedButton.CombatLocked;
+        Scene preview = default;
+        try
+        {
+            preview = (Scene)open.Invoke(null, new object[] { "Assets/Scenes/Menu Selection.unity" });
+            return preview.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<MainMenuSceneController>(true))
+                .Single().GetDifficultyConfigurations();
+        }
+        finally
+        {
+            try { if (preview.IsValid()) EditorSceneManager.ClosePreviewScene(preview); }
+            finally
+            {
+                UnityEngine.Random.state = outsideRandom;
+                SpeedButton.InputSuppressed = outsideInput; SpeedButton.CombatLocked = outsideCombat;
+            }
+        }
+    }
+
+    public static DifficultyConfig_SO ResolveDifficulty(string id)
+    {
+        var difficulty = SelectableDifficulties().FirstOrDefault(d => string.Equals(
+            AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(d)), id, StringComparison.OrdinalIgnoreCase));
+        if (difficulty == null) throw new ArgumentException("Unknown difficultyId; select an ID from catalog.difficulties.");
+        return difficulty;
+    }
+
+    public static AgentAdventureDifficulty[] DescribeDifficulties()
+    {
+        return SelectableDifficulties().Select(d => new AgentAdventureDifficulty
+        {
+            id = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(d)), name = d.difficultyName,
+            isDefault = AssetDatabase.GetAssetPath(d) == "Assets/Data/Game/NormalConfig.asset",
+            boardSize = d.BoardSize, requiredKeys = d.requiredKeys, maxRecruitCount = Mathf.Max(1, d.maxRecruitCount),
+            startingActionPoints = RunBootstrapService.ResolveActionPointLimitForTier(d, 0),
+            actionPointLimits = Enumerable.Range(0, 11).Select(t => RunBootstrapService.ResolveActionPointLimitForTier(d, t)).ToArray(),
+            recruitCosts = Enumerable.Range(0, Mathf.Max(1, d.maxRecruitCount)).Select(d.GetRecruitCostForCurrentRecruitCount).ToArray()
+        }).ToArray();
+    }
+
     public static AgentAdventureConfiguration Load(DifficultyConfig_SO difficulty = null)
     {
         if (EditorApplication.isPlayingOrWillChangePlaymode)

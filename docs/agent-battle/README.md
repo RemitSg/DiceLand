@@ -129,7 +129,7 @@ B003b 在相同 HTTP 地址提供以下命令，协议见 `adventure-openapi.jso
 
 | op | 行为 |
 |---|---|
-| `create_run` | 使用 `seed` 和可选 `maxRounds` 创建正常冒险 |
+| `create_run` | 使用 `seed`、可选 `maxRounds` 和 `difficultyId` 创建冒险；省略难度时沿用 NormalConfig |
 | `observe_run` | 使用 `sessionId` 观察冒险，保留地图、队伍、物品、灾厄、内层战斗和合法动作 |
 | `run_move` | 使用合法动作中的 `x/y` 移动；未探索/已探索花费、溢出周期和遗物触发沿用正式移动服务 |
 | `run_interact` | 在当前位置重新交互，仍检查 Boss 钥匙门槛与敌群配置 |
@@ -204,7 +204,7 @@ B006a 为同一个 `RunSettlementFlowService` 增加显式 `RunSettlementContext
 | `run_abandon` | 仅地图/战斗阶段可用；地图放弃不发能力点，战斗放弃调用正式未通关结算，不领取未确认的战斗奖励 |
 | `run_unlock_ability` | 在 `finished` 使用 `meta.nodes` 的节点 id；费用/前置条件由正式能力服务执行 |
 | `run_set_ability` | 在 `finished` 开关已解锁的可开关节点；复制合法动作中的节点 id 和 choiceIndex |
-| `run_next` | 从 `finished` 开始下一局；附加 `seed` 指定新种子（省略默认 1），保留初始 maxRounds 和隔离进度，重新应用正式开局加成 |
+| `run_next` | 从 `finished` 开始下一局；附加 `seed` 指定新种子（省略默认 1），可用 `difficultyId` 选择菜单难度（省略沿用当前模式）；保留初始 maxRounds 和隔离进度，重新应用正式开局加成 |
 | `run_choose_starting_relic` / `run_refresh_starting_relics` | 处理能力加成产生的开局遗物袋；必须完成选择才能移动，获得效果走正式服务 |
 
 `settlement.completed` 表示本局已结束；`policy` 分别为 `shared_score` 或 `map_abandon_no_rewards`。空对象的默认字段不表示有结算奖励。观察不改变时间或发奖；计分使用真实创建/结算 UTC，沿用正式短局倍率。`runIndex` 随下一局递增，外层 revision 和 requestId 缓存跨局保留，重试旧请求不会再次放弃/开局/发奖。`run_close` 只清理会话，不代替正式结算。
@@ -269,6 +269,24 @@ python tools/agent_adventure_client.py load-run latest
 B007b 验证：新增 22 项 EditMode 通过，最终全量 986 项中 965 通过、21 既有失败，失败名称与上一批一致。正常 HTTP 三条路线共 48 个检查点保存恢复并继续，覆盖副本、胜利奖励、购买、锻造、装备、重铸各步骤、失败结算与下一局；完整日志也全部重放通过。强制结束隔离宿主后，未手动保存的战斗指令自动恢复，重试该指令和结算均未重复执行。CLI 的创建保存、继续、自动恢复及独立命令已通过实际 HTTP。正向钱包与付费能力的中断边界是定向测试；正常 Boss 胜利、实际赚点后的付费升级，以及胜利待结算恢复仍待联验。详见 `B007b-validation.json`。
 
 示例策略新增分类式灾厄偏好：优先保留战斗能力，区分营地治疗、锻造价格、永久虚弱、敌人增伤及回复；已有资金且只持有储蓄罐时，也允许牺牲后续收入以避免敌人力量提升。法师受到攻击且未蓄够能时，会比较保证蓄能的防御与普通攻击。所有返回动作仍来自 legalActions；这些是偏好启发式，不预测或复制正式伤害结果。14 项 Python 回归通过，新增蓄能用例来自实际正常战斗帧。新的正常试跑仍失败（398 分/0 能力点），138 条行动重放一致。100 个开局的调查、定向试算和失败分支见 `B006b2-strategy-validation.json`；当前还没有正常通关证据。
+
+## 正式菜单的难度选择（B008a）
+
+`catalog.difficulties` 从保存的正式菜单读取可选配置，并调用菜单自身的筛选与排序；未列入菜单的配置副本不能通过接口选择。每项包含 `id`、显示名 `name`、API 默认标记 `isDefault`、棋盘大小、所需钥匙、基础行动点和招募费用。`actionPointLimits[0..10]` 通过正式行动点服务计算对应灾厄层级的基础上限，未包含能力树加成；实际运行上限仍以观察为准。
+
+`create_run` 可附加 `difficultyId`，使用目录返回的 GUID。省略时保持既有 NormalConfig 行为（当前显示名为 Medium）。`state.difficulty` 保留显示名，新增 `state.difficultyId` 表示实际配置。`run_next` 在已结束的冒险中也可附加 difficultyId，创建下一局时切换配置并保留隔离局外成长；省略则沿用当前难度。冒险进行中的修改动作携带 difficultyId 会被拒绝，不消耗行动点或推进 revision。
+
+保存、恢复和重放会保留初始难度及每次下一局的选择；恢复不会替换为默认模式。菜单场景及其 meta 纳入内容版本指纹，保存内容变更后会明确拒绝旧版本运行日志。读取菜单使用只读预览，不保存用户场景。
+
+```powershell
+python tools/agent_adventure_client.py difficulties
+python tools/agent_adventure_client.py demo --difficulty Easy --profile agent1 --save-slot latest --max-moves 2
+python tools/agent_adventure_client.py next-run SESSION_ID --difficulty normal --seed 7
+```
+
+CLI 接受目录的 ID 或不区分大小写的完整显示名；`normal` 对应目录中的 API 默认配置，重名时需使用 ID。`--difficulty` 用于创建新冒险；存档继续或档案恢复保持原模式，结束后通过 next-run 再选下一局。Normal 胜利、实际赚点升级和正向结算恢复仍是独立验收门槛。
+
+当前菜单实际配置为 Easy 7×7、Medium（NormalConfig）9×9、Hard 11×11、Extreme 13×13。B008a 新增 10 项 EditMode 测试全部通过；全量 996 项中 975 通过、21 项失败名称与上一批相同，18 项 Python 测试通过。四模式的公开 HTTP 开局、切换、保存恢复和完整重放，以及 CLI 真实移动/选择后保存并切回 Normal 均通过；未重跑既有失败的 PlayMode 回归。详见 `B008a-validation.json`。
 
 ## 后续迁移原则
 

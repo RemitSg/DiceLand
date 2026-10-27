@@ -2,7 +2,7 @@ using System;
 
 [Serializable] public sealed class AgentAdventureRequest
 {
-    public string op, sessionId, requestId, assetId, profileId, slotId;
+    public string op, sessionId, requestId, assetId, profileId, slotId, difficultyId;
     public int revision = -1, seed = 1, maxRounds = 1000, x, y, choiceIndex;
     public AgentBattleLegalAction battleAction;
 }
@@ -24,7 +24,7 @@ using System;
 }
 [Serializable] public sealed class AgentAdventureObservation
 {
-    public string sessionId, phase, outcome, message, difficulty;
+    public string sessionId, phase, outcome, message, difficulty, difficultyId;
     public int revision, seed, x, y, boardSize, actionPoints, maxActionPoints, cycle, calamityTier, keys, requiredKeys, money;
     public string[] configurationIssues;
     public AgentAdventureTile[] tiles;

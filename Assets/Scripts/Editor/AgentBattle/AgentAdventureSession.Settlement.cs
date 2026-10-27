@@ -78,9 +78,10 @@ public sealed partial class AgentAdventureSession
         message = result.message;
     }
 
-    private void StartNextRun(int nextSeed)
+    private void StartNextRun(int nextSeed, DifficultyConfig_SO nextDifficulty)
     {
-        AgentAdventureConfiguration configuration = map.Configuration;
+        AgentAdventureConfiguration configuration = nextDifficulty != null && nextDifficulty != map.Configuration.starting.difficulty
+            ? AgentAdventureConfiguration.Load(nextDifficulty) : map.Configuration;
         map.Dispose(); map = null;
         map = new AgentAdventureMapRuntime(configuration, nextSeed, profile.Progression.BuildRunBonus(), operationUtcSeconds);
         seed = nextSeed; runIndex++; outcome = message = settlementPolicy = null;

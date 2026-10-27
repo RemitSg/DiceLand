@@ -85,7 +85,7 @@ public static class AgentBattleServer
             switch (request.op)
             {
                 case "health":
-                    response = new AgentBattleResponse { success = true, message = "editor-backed shared-rule API; one battle or adventure session; normal shared-rule adventure with settlement, isolated abilities and next runs; run_save/run_load restore playable checkpoints, run_recover restores the last committed command of a persistent profile; run_replay/run_export/run_verify support isolated timestamped replay; engine required" }; break;
+                    response = new AgentBattleResponse { success = true, message = "editor-backed shared-rule API; one battle or adventure session; menu-configured difficulties, shared-rule adventure with settlement, isolated abilities and next runs; run_save/run_load restore playable checkpoints, run_recover restores the last committed command of a persistent profile; run_replay/run_export/run_verify support isolated timestamped replay; engine required" }; break;
                 case "catalog":
                     response = new AgentBattleResponse { success = true, catalogue = AgentBattleSession.Catalogue() }; break;
                 case "create":

@@ -34,7 +34,8 @@ public sealed partial class AgentAdventureSession : IDisposable
         AgentAdventureProfile.ValidateId(request.profileId);
         this.utcNow = utcNow ?? (() => DateTimeOffset.UtcNow.ToUnixTimeSeconds());
         seed = request.seed; maxRounds = request.maxRounds;
-        var configuration = AgentAdventureConfiguration.Load();
+        var configuration = AgentAdventureConfiguration.Load(string.IsNullOrWhiteSpace(request.difficultyId)
+            ? null : AgentAdventureConfiguration.ResolveDifficulty(request.difficultyId));
         profile = new AgentAdventureProfile(configuration.abilities, request.profileId);
         try
         {
@@ -55,7 +56,8 @@ public sealed partial class AgentAdventureSession : IDisposable
         return new AgentAdventureObservation
         {
             sessionId = id, revision = revision, seed = seed, phase = phase, outcome = outcome, message = message,
-            difficulty = state.difficultyName, x = state.playerGridPosition.x, y = state.playerGridPosition.y, boardSize = map.Board.BoardSize,
+            difficulty = state.difficultyName, difficultyId = AssetId(map.Configuration.starting.difficulty),
+            x = state.playerGridPosition.x, y = state.playerGridPosition.y, boardSize = map.Board.BoardSize,
             actionPoints = map.Points.CurrentPoints, maxActionPoints = map.Points.CurrentMaxPoints, cycle = state.currentCycle,
             calamityTier = state.calamityTier, keys = state.currentKeys, requiredKeys = state.requiredKeys, money = state.money,
             configurationIssues = map.ConfigurationIssues,
@@ -92,8 +94,12 @@ public sealed partial class AgentAdventureSession : IDisposable
             return JsonUtility.FromJson<AgentAdventureResponse>(cached);
         }
         if (request.revision != revision) throw new ArgumentException("Stale revision; observe the adventure.");
+        if (request.op != "run_next" && !string.IsNullOrWhiteSpace(request.difficultyId))
+            throw new ArgumentException("difficultyId can only be selected when creating an adventure or starting the next run.");
         if (bodies.Count >= 10000) throw new ArgumentException("Adventure command limit reached.");
         if (!LegalActions().Any(a => Matches(a, request))) throw new ArgumentException("Illegal action; select from legalActions.");
+        DifficultyConfig_SO nextDifficulty = request.op == "run_next" && !string.IsNullOrWhiteSpace(request.difficultyId)
+            ? AgentAdventureConfiguration.ResolveDifficulty(request.difficultyId) : null;
         operationUtcSeconds = utcNow();
         try
         {
@@ -117,7 +123,7 @@ public sealed partial class AgentAdventureSession : IDisposable
                 case "run_return": ReturnFromBattle(); break;
                 case "run_settle": SettleRun(); break;
                 case "run_abandon": AbandonRun(); break;
-                case "run_next": StartNextRun(request.seed); break;
+                case "run_next": StartNextRun(request.seed, nextDifficulty); break;
                 case "run_unlock_ability": case "run_set_ability": ExecuteMetaAction(request); break;
                 case "run_choose_starting_relic": case "run_refresh_starting_relics": ExecuteStartingRelic(request); break;
                 case "run_choose_treasure": case "run_choose_treasure_relic": case "run_refresh_treasure_relics": case "run_continue_treasure":

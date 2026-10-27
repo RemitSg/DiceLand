@@ -57,6 +57,7 @@ public static class AgentAdventureReplayService
             .Where(p => new[] { ".cs", ".asset", ".meta", ".json", ".asmdef", ".txt", ".unity", ".scene", ".anim", ".controller" }
                 .Contains(Path.GetExtension(p).ToLowerInvariant()))
             .Concat(new[] { "Assets/MapScene.scene", "Assets/MapScene.scene.meta", "Assets/Scenes/RestScene.scene", "Assets/Scenes/RestScene.scene.meta",
+                "Assets/Scenes/Menu Selection.unity", "Assets/Scenes/Menu Selection.unity.meta",
                 "Packages/manifest.json", "Packages/packages-lock.json", "ProjectSettings/ProjectVersion.txt" }.Where(File.Exists))
             .Select(p => p.Replace('\\', '/')).Distinct().OrderBy(p => p, StringComparer.Ordinal);
         var input = new StringBuilder();

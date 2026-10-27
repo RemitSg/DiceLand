@@ -15,7 +15,8 @@ public sealed partial class AgentAdventureSession
         replayJournal = new AgentAdventureReplay
         {
             engineVersion = Application.unityVersion, contentHash = AgentAdventureReplayService.ContentHash(),
-            create = new AgentAdventureRequest { op = "create_run", seed = request.seed, maxRounds = request.maxRounds },
+            create = new AgentAdventureRequest { op = "create_run", seed = request.seed, maxRounds = request.maxRounds,
+                difficultyId = AssetId(map.Configuration.starting.difficulty) },
             initialProfile = profile.Capture(), startedUtcSeconds = operationUtcSeconds,
             initialStateHash = AgentAdventureReplayService.StateHash(Observe())
         };

@@ -437,6 +437,7 @@ public sealed class AgentBattleSession : IDisposable
         }).ToArray();
         catalogue.blueprintDetails = Assets<CraftingBlueprint_SO>(b => b.DisplayName, b => b.description)
             .Select(b => AgentBattleAssetReader.Blueprint(Load<CraftingBlueprint_SO>(b.id))).ToArray();
+        catalogue.difficulties = AgentAdventureConfiguration.DescribeDifficulties();
         return catalogue;
     }
     private static bool HasAcquisitionEffect(Relic_SO relic) => relic.builtInEffects != null && relic.builtInEffects.Any(e => e != null && e.trigger == Relic_SO.RelicTrigger.OnRelicAcquired);

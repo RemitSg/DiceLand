@@ -116,6 +116,14 @@ using System;
     public AgentBattleWeaponDetails[] weaponDetails;
     public AgentBattleCharacterDetails[] characterDetails;
     public AgentBattleBlueprintDetails[] blueprintDetails;
+    public AgentAdventureDifficulty[] difficulties;
+}
+[Serializable] public sealed class AgentAdventureDifficulty
+{
+    public string id, name;
+    public bool isDefault;
+    public int boardSize, requiredKeys, startingActionPoints, maxRecruitCount;
+    public int[] actionPointLimits, recruitCosts;
 }
 [Serializable] public sealed class AgentBattleWeaponDetails
 {
