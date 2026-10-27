@@ -46,13 +46,14 @@ class SharedEnergyPolicyTests(unittest.TestCase):
                              a["battleAction"]["op"] == "set_skill" and a["battleAction"]["skillIndex"] == 2 for a in state["legalActions"]))
         self.assertIn(choose_battle_action(state), state["legalActions"])
 
-    def test_long_fight_preserves_energy_instead_of_small_paid_sword_gain(self):
+    def test_full_energy_can_fund_a_small_paid_sword_gain(self):
         state = self.frames["opening"]
         # Scope this decision to the sword's offered skills and commit, freezing
-        # other choices so the conservation preference can be checked directly.
+        # other choices to check that conservation does not hoard a full budget.
         state["legalActions"] = [a for a in state["legalActions"] if a["battleAction"]["op"] == "commit" or
                                  (a["battleAction"]["op"] == "set_skill" and a["battleAction"]["actorId"] == "ally_0")]
-        self.assertEqual("commit", choose_battle_action(state)["battleAction"]["op"])
+        action = choose_battle_action(state)["battleAction"]
+        self.assertEqual(("set_skill", "ally_0", 1), tuple(action[k] for k in ("op", "actorId", "skillIndex")))
 
     def test_weak_caster_connects_before_stronger_fronts(self):
         state = self.frames["opening"]

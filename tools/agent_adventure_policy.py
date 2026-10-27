@@ -57,7 +57,7 @@ def choose_calamity_action(state):
     return min(actions, key=lambda a: calamity_risk(state["calamityChoices"][a["choiceIndex"]], state), default=None)
 
 
-def skill_value(skill, enemy_count=1, actor=None, incoming=False, enemies=None):
+def skill_value(skill, enemy_count=1, actor=None, incoming=False, enemies=None, charge_armor=False):
     """A preference score, not a damage or clash simulator."""
     dice = skill.get("displayedDice") or skill.get("dice") or []
     attack = sum((d["min"] + d["max"]) / 2 for d in dice if d["category"] == "Attack")
@@ -66,11 +66,13 @@ def skill_value(skill, enemy_count=1, actor=None, incoming=False, enemies=None):
     self_harm = re.findall(r"对\s*自己\s*造成\s*(\d+)", description)
     bonus = max(0, sum(int(n) for n in extra) - sum(int(n) for n in self_harm)) * (enemy_count if "所有目标" in description else 1)
     setup = 0
-    if actor is not None and incoming:
+    if actor is not None and (incoming or charge_armor):
         charge = sum(s["stacks"] for s in actor.get("statuses", []) if s["id"] == "energy")
         guaranteed_charge = any(re.search(r"\[\s*使用时\s*\].*自己.*获得\s*\d+\s*层\s*蓄能", line) for line in description.splitlines())
         if charge < 2 and guaranteed_charge:
             setup = 2.5 + .7 * sum((d["min"] + d["max"]) / 2 for d in dice if d["category"] == "Defense")
+        if charge_armor and incoming and actor.get("maxHp", 0) > 0 and actor.get("hp", 0) <= actor["maxHp"] * .3:
+            setup = max(setup, 2.5 * sum((d["min"] + d["max"]) / 2 for d in dice if d["category"] == "Defense"))
     burst = 0
     if enemies and "电流 爆发" in description:
         charges = [sum(s["stacks"] for s in e.get("statuses", []) if s["id"] == "current") for e in enemies]
@@ -93,6 +95,7 @@ def choose_battle_action(state):
         return None
     enemies = {a["id"]: a for a in battle["actors"] if a["side"] == "enemy" and not a["dead"]}
     allies = [a for a in battle["actors"] if a["side"] == "ally" and not a["dead"]]
+    charge_armor = any(relic.get("name") == "龙鳞甲" for relic in battle.get("relics", []))
     claimed = {(s["targetId"], s["targetButtonIndex"]) for a in allies for s in a["slots"] if s.get("targetId")}
     slots = []
     for actor in allies:
@@ -102,7 +105,7 @@ def choose_battle_action(state):
                            for e in enemies.values() for s in e["slots"])
             available = [a for a in inner if a["battleAction"]["op"] == "set_skill"
                          and a["battleAction"]["actorId"] == actor["id"] and a["battleAction"]["buttonIndex"] == slot["index"]]
-            value = lambda skill: skill_value(skill, len(enemies), actor, incoming, list(enemies.values()))
+            value = lambda skill: skill_value(skill, len(enemies), actor, incoming, list(enemies.values()), charge_armor)
             current_legal = any(a["battleAction"]["skillIndex"] == slot["skillIndex"] for a in available)
             if available and not current_legal:
                 # Release an unaffordable carried-over selection before allocating this
@@ -113,6 +116,23 @@ def choose_battle_action(state):
                                                     -value(skills[a["battleAction"]["skillIndex"]])))
             slots.append((actor, slot, skills, available, incoming))
 
+    def charge_cost(skill):
+        text = skill.get("description") or ""
+        required = re.search(r"自身至少拥有\s*(\d+)\s*层\s*蓄能", text)
+        return int(required.group(1)) if required and "施放后消耗" in text else 0
+
+    charges = {actor["id"]: sum(s["stacks"] for s in actor.get("statuses", []) if s["id"] == "energy") for actor in allies}
+    charge_spend = {actor["id"]: sum(charge_cost(slot.get("selectedSkill") or {}) for slot in actor["slots"]) for actor in allies}
+    if charge_armor:
+        for actor, slot, skills, available, incoming in slots:
+            current = slot.get("selectedSkill") or {}
+            if slot.get("targetId") or not charge_cost(current) or charge_spend[actor["id"]] <= max(0, charges[actor["id"]] - 2):
+                continue
+            alternatives = [a for a in available if charge_cost(skills[a["battleAction"]["skillIndex"]]) == 0
+                            and skills[a["battleAction"]["skillIndex"]].get("energyCost", 0) <= current.get("energyCost", 0)]
+            if alternatives:
+                return max(alternatives, key=lambda a: skill_value(skills[a["battleAction"]["skillIndex"]], len(enemies), actor, incoming, list(enemies.values()), charge_armor))
+
     budget = battle.get("energy", 0) + battle.get("temporaryEnergy", 0)
     selected_cost = sum((slot.get("selectedSkill") or {}).get("energyCost", 0) for _, slot, _, _, _ in slots)
     if selected_cost > budget:
@@ -121,7 +141,7 @@ def choose_battle_action(state):
             if slot.get("targetId"):
                 continue
             current = slot.get("selectedSkill") or {}
-            value = lambda skill: skill_value(skill, len(enemies), actor, incoming, list(enemies.values()))
+            value = lambda skill: skill_value(skill, len(enemies), actor, incoming, list(enemies.values()), charge_armor)
             for action in available:
                 skill = skills[action["battleAction"]["skillIndex"]]
                 saved = current.get("energyCost", 0) - skill.get("energyCost", 0)
@@ -131,15 +151,17 @@ def choose_battle_action(state):
             return min(releases, key=lambda release: release[:2])[2]
 
     long_fight = len(enemies) == 1 and next(iter(enemies.values())).get("maxHp", 0) > 1.5 * max((a.get("maxHp", 0) for a in allies), default=0)
-    minimum_efficiency = .75 if long_fight else 0
+    minimum_efficiency = .75 if long_fight and budget < 5 else 0
     upgrades = []
     for actor, slot, skills, available, incoming in slots:
         if slot.get("targetId"):
             continue
-        value = lambda skill: skill_value(skill, len(enemies), actor, incoming, list(enemies.values()))
+        value = lambda skill: skill_value(skill, len(enemies), actor, incoming, list(enemies.values()), charge_armor)
         current = slot.get("selectedSkill") or {}
         for action in available:
             skill = skills[action["battleAction"]["skillIndex"]]
+            if charge_armor and charge_spend[actor["id"]] - charge_cost(current) + charge_cost(skill) > max(0, charges[actor["id"]] - 2):
+                continue
             gain = value(skill) - value(current)
             cost_change = skill.get("energyCost", 0) - current.get("energyCost", 0)
             if gain > .01 and selected_cost + cost_change <= budget:
@@ -167,6 +189,7 @@ def choose_battle_action(state):
         targets = [a for a in inner if a["battleAction"]["op"] == "target"
                    and a["battleAction"]["actorId"] == actor["id"] and a["battleAction"]["buttonIndex"] == slot["index"]
                    and a["battleAction"]["targetId"] in enemies]
+        can_redirect_all = all(slot["speed"] > hostile["speed"] for enemy in enemies.values() for hostile in enemy["slots"])
 
         def priority(action):
             target = action["battleAction"]
@@ -177,6 +200,12 @@ def choose_battle_action(state):
             # Preserve reciprocal counters before redirecting another ally's incoming attack.
             can_intercept = incoming or slot["speed"] > enemy_slot["speed"]
             threat = skill_value(enemy_slot.get("selectedSkill") or {}, len(allies))
+            if len(enemies) == 1 and len(actor["slots"]) > 1 and can_redirect_all:
+                # Inherited actions belong to one health pool. Spread damage into
+                # one opponent without making that unit clash every hostile slot.
+                focused = [(s["targetId"], s["targetButtonIndex"]) for s in actor["slots"] if s.get("targetId")]
+                focus = max(set(focused), key=lambda pair: (focused.count(pair), -pair[1]), default=None)
+                return ((enemy["id"], enemy_slot["index"]) == focus, -threat, incoming, can_intercept)
             return (unclaimed and incoming, unclaimed and can_intercept, unclaimed, threat, -enemy["hp"])
 
         if targets:

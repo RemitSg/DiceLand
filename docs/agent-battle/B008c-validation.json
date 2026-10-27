@@ -1,0 +1,477 @@
+{
+  "batch": "B008c",
+  "date": "2026-10-27",
+  "sourceParent": "e5900b08dc474829b0e6dc855793cdd40e6006c9",
+  "status": "Formal Normal victory, victorious settlement crash/retry, earned paid upgrades and next-run starting-relic restore verified; final B008 contract audit remains",
+  "normalVictoryGatePassed": true,
+  "engineOrBalanceChanges": false,
+  "gameplayStateInjection": false,
+  "python": {
+    "passed": 33,
+    "failed": 0,
+    "newTests": 7,
+    "fixtures": "tools/tests/fixtures/inherited_charge_policy.json",
+    "evidence": "outputs/agent-battle/b008c-python-tests.log",
+    "actualPublicObservations": true,
+    "previousTestUpdate": "Full energy no longer conserves every small paid gain; low-energy conservation and shared-budget regression remain."
+  },
+  "unity": {
+    "rerun": false,
+    "reason": "Python policy, fixtures and docs only; engine/rule/config hash unchanged.",
+    "baselineEvidence": "docs/agent-battle/B008a-validation.json",
+    "total": 996,
+    "passed": 975,
+    "failed": 21,
+    "playMode": "Not rerun; prior failures unresolved",
+    "filesCompared": 3199,
+    "sourceAndValidationFilesEqual": true,
+    "contentHash": "46431b698bb54ad61c8d97e8225052af179160f066d675f735aad1620c6e72f8"
+  },
+  "environment": {
+    "engine": "Tuanjie 1.8.4 / 2022.3.62t6",
+    "mode": "batchmode -nographics",
+    "originalEditorPid": 21328,
+    "originalEditorRestarted": false,
+    "userSceneSaved": false
+  },
+  "playthrough": {
+    "difficulty": "Medium / NormalConfig",
+    "difficultyId": "a6f4f93e54074516a032e45ec4d7cf0e",
+    "seed": 55,
+    "boardSize": 9,
+    "profileId": "b008b-progress-283db68c3ac3",
+    "initialProfilePoints": 0,
+    "startingBonus": "Only AP +1, paid with the genuine Easy earned point from B008b; Normal seed7 map-abandoned without reward before run_next seed55.",
+    "party": [
+      "Chara",
+      "Molly",
+      "Jenny",
+      "Man"
+    ],
+    "weapons": "Authored starter weapons; no upgraded weapon on this winning Normal route.",
+    "route": [
+      "Opening legendary treasure: Martyr",
+      "Epic treasure: Unyielding Heart",
+      "Recruit Molly and Jenny at formal costs",
+      "Collect two keys and win four ordinary encounters",
+      "Win outer elite Crimson Nest Mother; choose Again relic",
+      "Recruit Man at formal cost",
+      "Win outer elite Radiant Knight; choose Dragon Scale Armor",
+      "Choose maxHP -30% and exploration ambush rather than enemy strength/HP increases",
+      "Enter center Boss (4,4) after nine actual calamities"
+    ],
+    "activeCalamities": [
+      {
+        "id": "8d5603aacfb9440891068fcab5132e53",
+        "name": "探索 · 价格提升 I",
+        "description": "商店中的商品价格额外提升 5%",
+        "limitation": ""
+      },
+      {
+        "id": "842d4ae135b740afbf11cdbc7fa7123f",
+        "name": "弱化 · 回复无力",
+        "description": "在休息格恢复血量时，效果变为恢复友方角色最大生命值的 70%",
+        "limitation": ""
+      },
+      {
+        "id": "5e9a024cb1b44f3b918b0b0c7145d04e",
+        "name": "劲敌 · 状态免疫",
+        "description": "所有敌人开场获得 3 层抵抗",
+        "limitation": ""
+      },
+      {
+        "id": "0b941cb7ff5da244a8a19e6cecefe266",
+        "name": "弱化 · 震慑",
+        "description": "战斗开始时，所有友方角色损失 2 生命值。",
+        "limitation": ""
+      },
+      {
+        "id": "81f9d2b8c9a5abd4e99a46ad016b1891",
+        "name": "劲敌 · 回复机体 II",
+        "description": "回合结束时，所有敌人额外恢复 2 点血量。",
+        "limitation": ""
+      },
+      {
+        "id": "f9774610a19e042489ab8a7cde9535ff",
+        "name": "劲敌 · 伤害强化 IV",
+        "description": "所有敌人造成伤害额外增加 40%。",
+        "limitation": ""
+      },
+      {
+        "id": "bd06e62a8d884ee1a5d92db1448c4e34",
+        "name": "探索 · 铁匠涨价",
+        "description": "锻造需要额外的 40 金币",
+        "limitation": ""
+      },
+      {
+        "id": "01fa53bb7e3c45169a072709cb0cd100",
+        "name": "弱化 · 疾病缠身 I",
+        "description": "友方角色最大生命值 -30%",
+        "limitation": ""
+      },
+      {
+        "id": "b7ca3a946df60804b8f66e6529929124",
+        "name": "探索 · 伏击",
+        "description": "前往已探索的空格子将有 10% 概率触发对应区域的普通敌人战斗。",
+        "limitation": ""
+      }
+    ],
+    "relics": [
+      {
+        "id": "3f972197e26547e8b4f80aa5215f92ba",
+        "name": "殉道者",
+        "description": "",
+        "amount": 1,
+        "index": 0
+      },
+      {
+        "id": "beba49ee520f4ca3a52c28bdda4bfbe7",
+        "name": "不死心",
+        "description": "",
+        "amount": 1,
+        "index": 0
+      },
+      {
+        "id": "4716e7d991eb488a914ae14a6ebc9537",
+        "name": "“再来一次！”",
+        "description": "",
+        "amount": 1,
+        "index": 0
+      },
+      {
+        "id": "ad7aa4b35dc541a590524eb94362464f",
+        "name": "龙鳞甲",
+        "description": "",
+        "amount": 1,
+        "index": 0
+      }
+    ],
+    "progress": {
+      "runStartedUnixSeconds": 1793106597,
+      "normalBattleOuterCleared": 4,
+      "normalBattleMidCleared": 0,
+      "normalBattleInnerCleared": 0,
+      "normalBattleCoreCleared": 0,
+      "eliteBattleOuterCleared": 2,
+      "eliteBattleMidCleared": 0,
+      "eliteBattleInnerCleared": 0,
+      "eliteBattleCoreCleared": 0,
+      "specialDungeonCleared": 0,
+      "specialDungeonScoreTotal": 0,
+      "totalMoneyGained": 321,
+      "craftedWeaponCount": 0,
+      "eventTilesCompleted": 4,
+      "eventBattlesCompleted": 0,
+      "unexploredTilesVisited": 24,
+      "keysCollected": 2,
+      "bossesDefeated": 1
+    },
+    "boss": {
+      "name": "雷寰霸主(ID:11)",
+      "authoredHp": 54,
+      "remainingHp": 0,
+      "round": 8
+    },
+    "survivors": [
+      [
+        "Jenny[老旧法杖]",
+        1,
+        4
+      ]
+    ],
+    "checkpointBranches": "Retained failed Boss attempts; restored legitimately earned same-generation four-party / pre-Boss / round checkpoints before any meta settlement. Winning journal contains only accepted winning branch. No point duplication, no forced results.",
+    "automaticScope": "Route and earlier rounds selected through public HTTP with bounded checkpoint exploration. Final decisive round separately restored and driven by checked-in Python policy, not a claim of generic demo full-run autonomy.",
+    "automaticFinalRound": {
+      "outcome": "victory",
+      "round": 8,
+      "decisions": [
+        {
+          "op": "set_skill",
+          "actorId": "ally_2",
+          "buttonIndex": 0,
+          "skillIndex": 1,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        {
+          "op": "set_skill",
+          "actorId": "ally_2",
+          "buttonIndex": 1,
+          "skillIndex": 1,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        {
+          "op": "set_skill",
+          "actorId": "ally_2",
+          "buttonIndex": 2,
+          "skillIndex": 2,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        {
+          "op": "set_skill",
+          "actorId": "ally_2",
+          "buttonIndex": 3,
+          "skillIndex": 2,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        {
+          "op": "target",
+          "actorId": "ally_2",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "enemy_0",
+          "targetButtonIndex": 1,
+          "choiceIndex": 0
+        },
+        {
+          "op": "target",
+          "actorId": "ally_2",
+          "buttonIndex": 1,
+          "skillIndex": 0,
+          "targetId": "enemy_0",
+          "targetButtonIndex": 2,
+          "choiceIndex": 0
+        },
+        {
+          "op": "target",
+          "actorId": "ally_2",
+          "buttonIndex": 2,
+          "skillIndex": 0,
+          "targetId": "enemy_0",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        {
+          "op": "target",
+          "actorId": "ally_2",
+          "buttonIndex": 3,
+          "skillIndex": 0,
+          "targetId": "enemy_0",
+          "targetButtonIndex": 2,
+          "choiceIndex": 0
+        },
+        {
+          "op": "commit",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      ],
+      "policyHash": "86fddddc2b3f6eb7441e90db972a08b4a71dc62039154231cb8f566eb7f7b306"
+    },
+    "evidence": [
+      "outputs/agent-battle/b008c-normal55-round8-auto.json",
+      "outputs/agent-battle/b008c-round8-search-results.json",
+      "outputs/agent-battle/b008c-victory-proof.json"
+    ],
+    "configurationIssues": [
+      "No valid enemy group for Elite Inner at (4, 3)",
+      "No valid enemy group for Battle Inner at (4, 5)",
+      "No valid enemy group for Battle Inner at (5, 5)"
+    ],
+    "configurationIssueHandling": "Invalid enemy groups remain visible. No clear or victory credited for those unavailable tiles; winning route uses valid encounters."
+  },
+  "settlement": {
+    "runCleared": true,
+    "scoreResult": {
+      "baseScore": 11784,
+      "finalScore": 11784,
+      "gainedAbilityPoints": 11,
+      "finalMultiplier": 1.0,
+      "displayStats": {
+        "durationSeconds": 6127,
+        "normalBattleOuterCleared": 4,
+        "normalBattleMidCleared": 0,
+        "normalBattleInnerCleared": 0,
+        "normalBattleCoreCleared": 0,
+        "eliteBattleOuterCleared": 2,
+        "eliteBattleMidCleared": 0,
+        "eliteBattleInnerCleared": 0,
+        "eliteBattleCoreCleared": 0,
+        "specialDungeonCleared": 0,
+        "partyMemberCount": 4,
+        "totalMoneyGained": 321,
+        "craftedWeaponCount": 0,
+        "eventTilesCompleted": 4,
+        "eventBattlesCompleted": 0,
+        "unexploredTilesVisited": 24,
+        "relicCount": 4,
+        "keysCollected": 2,
+        "calamityTier": 9,
+        "bossesDefeated": 1,
+        "calamityScoreCounted": true
+      },
+      "debugLines": [
+        "Normal Battle Outer: count=4, each=20, score=80",
+        "Normal Battle Mid: count=0, each=50, score=0",
+        "Normal Battle Inner: count=0, each=100, score=0",
+        "Normal Battle Core: count=0, each=200, score=0",
+        "Elite Battle Outer: count=2, each=50, score=100",
+        "Elite Battle Mid: count=0, each=150, score=0",
+        "Elite Battle Inner: count=0, each=250, score=0",
+        "Elite Battle Core: count=0, each=500, score=0",
+        "Special Dungeon: cleared=0, score=0",
+        "Party Members: count=4, score=200",
+        "Money: gained=321, multiplier=0.2, score=64",
+        "Crafted Weapons: count=0, each=100, score=0",
+        "Event Tiles: count=4, each=10, score=40",
+        "Event Battles: count=0, each=50, score=0",
+        "Unexplored Tiles: count=24, each=5, score=120",
+        "Relics: count=4, each=20, score=80",
+        "Keys: count=2, each=50, score=100",
+        "Calamity: tier=9, score=10000",
+        "Bosses: count=1, each=1000, score=1000",
+        "Final: base=11784, duration=6127, multiplier=1, final=11784, abilityPoints=11"
+      ]
+    },
+    "displayStats": {
+      "durationSeconds": 6127,
+      "normalBattleOuterCleared": 4,
+      "normalBattleMidCleared": 0,
+      "normalBattleInnerCleared": 0,
+      "normalBattleCoreCleared": 0,
+      "eliteBattleOuterCleared": 2,
+      "eliteBattleMidCleared": 0,
+      "eliteBattleInnerCleared": 0,
+      "eliteBattleCoreCleared": 0,
+      "specialDungeonCleared": 0,
+      "partyMemberCount": 4,
+      "totalMoneyGained": 321,
+      "craftedWeaponCount": 0,
+      "eventTilesCompleted": 4,
+      "eventBattlesCompleted": 0,
+      "unexploredTilesVisited": 24,
+      "relicCount": 4,
+      "keysCollected": 2,
+      "calamityTier": 9,
+      "bossesDefeated": 1,
+      "calamityScoreCounted": true
+    },
+    "abilityPointsBefore": 0,
+    "gainedAbilityPoints": 11,
+    "abilityPointsAfter": 11,
+    "returnSceneName": "Menu Selection"
+  },
+  "recovery": {
+    "victoryPendingSaveLoadMatched": true,
+    "victoryPendingActualRestartMatched": true,
+    "victoryPendingTerminatedHost": 63088,
+    "postCommitHostTerminated": 46128,
+    "finalRecoveryHostPid": 63376,
+    "generationBefore": 6,
+    "generationAfter": 7,
+    "responseConsumed": false,
+    "settlementActualRestartAndRetryMatched": true,
+    "committedPoints": 11,
+    "method": "Raw HTTP run_settle, no response read, observe atomic head for request ID and positive wallet, check exact owned process and force terminate; restart and retry original request with new transport session ID.",
+    "harnessIssue": "An escaped Windows path failed the owned-process identity check before run_settle was sent. The canonical head still held unawarded victory; corrected to a raw string and restarted only the owned host.",
+    "evidence": "outputs/agent-battle/b008c-victory-proof.json"
+  },
+  "earnedProgression": {
+    "unlocks": [
+      {
+        "id": "action-limit-2",
+        "cost": 1,
+        "before": 11,
+        "after": 10,
+        "retryMatched": true
+      },
+      {
+        "id": "action-limit-3",
+        "cost": 1,
+        "before": 10,
+        "after": 9,
+        "retryMatched": true
+      },
+      {
+        "id": "start-money-1",
+        "cost": 1,
+        "before": 9,
+        "after": 8,
+        "retryMatched": true
+      },
+      {
+        "id": "start-money-2",
+        "cost": 1,
+        "before": 8,
+        "after": 7,
+        "retryMatched": true
+      },
+      {
+        "id": "start-money-3",
+        "cost": 1,
+        "before": 7,
+        "after": 6,
+        "retryMatched": true
+      },
+      {
+        "id": "start-health-1",
+        "cost": 2,
+        "before": 6,
+        "after": 4,
+        "retryMatched": true
+      },
+      {
+        "id": "start-random-relic",
+        "cost": 3,
+        "before": 4,
+        "after": 1,
+        "retryMatched": true
+      }
+    ],
+    "pointsRemaining": 1,
+    "nextDifficulty": "Medium",
+    "nextSeed": 55,
+    "nextAP": 9,
+    "nextMoney": 30,
+    "nextParty": [
+      {
+        "id": "0",
+        "name": "Chara",
+        "character": "27e817266af382946804dea6afd2e374",
+        "weapon": "9b8c5d177c240334a9734636830a139f",
+        "hp": 17,
+        "maxHp": 17,
+        "level": 1,
+        "experience": 0
+      }
+    ],
+    "startingRelicSaveLoadMatched": true,
+    "startingRelicChoice": {
+      "id": "a83d9d9d88f0e684489a5fda3879ac32",
+      "name": "淬火剑鞘",
+      "description": "敌方目标若拥有不低于 4 层燃烧，我方角色对其拼点威力 +1。",
+      "amount": 1,
+      "index": 0
+    },
+    "startingRelicRetryMatched": true,
+    "continuationSlot": "b008c-normal-victory-earned-next"
+  },
+  "replay": {
+    "slot": "b008c-normal-victory-earned-next",
+    "engineVersion": "2022.3.62t6",
+    "contentHash": "46431b698bb54ad61c8d97e8225052af179160f066d675f735aad1620c6e72f8",
+    "startedUtcSeconds": 1793103187,
+    "finalStateHash": "819abde9c2d5b3bee11162f3153652a05ad4c551a3e73e08b45de6356d781f3f",
+    "commands": 739,
+    "verified": true,
+    "commandsChecked": 739,
+    "persistentHeadUnchangedByVerification": true,
+    "initialProfilePoints": 0,
+    "includes": "Earlier genuine Easy earning, AP1 purchase, Normal abandon, Normal victory, actual settlement, seven paid unlocks, next run and real starting-relic choice"
+  },
+  "remainingGates": [
+    "Reconcile adventure OpenAPI with implemented save/recover/replay/difficulty fields",
+    "Final requirement-to-evidence audit and public-client handoff"
+  ]
+}
