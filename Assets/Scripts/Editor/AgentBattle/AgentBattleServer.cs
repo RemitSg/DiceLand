@@ -85,7 +85,7 @@ public static class AgentBattleServer
             switch (request.op)
             {
                 case "health":
-                    response = new AgentBattleResponse { success = true, message = "editor-backed shared-rule API; one battle or adventure session; create_run supports normal map, battles, calamities, economy, camps, events, treasure, special dungeons, settlement, isolated abilities and next runs; run_replay/run_export record timestamped journals; run_verify replays in temporary storage after close; playable restore still in progress; engine required" }; break;
+                    response = new AgentBattleResponse { success = true, message = "editor-backed shared-rule API; one battle or adventure session; normal shared-rule adventure with settlement, isolated abilities and next runs; run_save/run_load restore playable checkpoints, run_recover restores the last committed command of a persistent profile; run_replay/run_export/run_verify support isolated timestamped replay; engine required" }; break;
                 case "catalog":
                     response = new AgentBattleResponse { success = true, catalogue = AgentBattleSession.Catalogue() }; break;
                 case "create":
@@ -117,6 +117,12 @@ public static class AgentBattleServer
     private static string DispatchAdventure(string json)
     {
         var request = new AgentAdventureRequest(); JsonUtility.FromJsonOverwrite(json, request);
+        if (request.op == "run_load" || request.op == "run_recover")
+        {
+            if (adventure != null || session != null) throw new ArgumentException("Close the existing session before restoring an adventure.");
+            adventure = request.op == "run_load" ? AgentAdventureSaveService.Load(request.slotId) : AgentAdventureSaveService.Recover(request.profileId);
+            return JsonUtility.ToJson(new AgentAdventureResponse { success = true, state = adventure.Observe() });
+        }
         if (request.op == "run_verify")
         {
             if (adventure != null || session != null) throw new ArgumentException("Close the existing session before verifying a replay.");
@@ -130,6 +136,8 @@ public static class AgentBattleServer
             return JsonUtility.ToJson(new AgentAdventureResponse { success = true, state = adventure.Observe() });
         }
         if (adventure == null || request.sessionId != adventure.Id) throw new ArgumentException("Unknown adventure sessionId.");
+        if (request.op == "run_save")
+            return JsonUtility.ToJson(new AgentAdventureResponse { success = true, save = adventure.Save(request.slotId) });
         if (request.op == "run_replay" || request.op == "run_export")
         {
             var replay = adventure.Replay();

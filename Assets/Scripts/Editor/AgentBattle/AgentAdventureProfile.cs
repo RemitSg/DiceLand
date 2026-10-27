@@ -12,6 +12,7 @@ public sealed class AgentAdventureProfile : IDisposable
     public AbilityProgressionService Progression { get; }
     private readonly AbilityTreeConfig_SO config;
     private readonly string directory;
+    internal string StorageDirectory => directory;
 
     public AgentAdventureProfile(AbilityTreeConfig_SO config, string profileId)
     {
@@ -38,16 +39,25 @@ public sealed class AgentAdventureProfile : IDisposable
         return result;
     }
 
-    internal AgentAdventureProfileSnapshot Capture() => new AgentAdventureProfileSnapshot
+    internal AgentAdventureProfileSnapshot Capture()
     {
-        points = Wallet.GetCurrentPoints(),
-        progressionJson = File.Exists(Progression.FilePath) ? File.ReadAllText(Progression.FilePath) : null
-    };
+        string progressionJson = File.Exists(Progression.FilePath) ? File.ReadAllText(Progression.FilePath) : null;
+        if ((File.Exists(Wallet.FilePath) && !AbilityPointWallet.IsValidSaveJson(File.ReadAllText(Wallet.FilePath)))
+            || (progressionJson != null && !AbilityProgressionService.IsValidSaveJson(progressionJson)))
+            throw new IOException("The isolated profile contains an invalid or unsupported save; it was not imported as zero progress.");
+        return new AgentAdventureProfileSnapshot { points = Wallet.GetCurrentPoints(), progressionJson = progressionJson };
+    }
 
     internal void InitializeReplay(AgentAdventureProfileSnapshot snapshot)
     {
         if (Persistent) throw new InvalidOperationException("Replay initialization requires a temporary profile.");
-        if (snapshot == null || snapshot.points < 0 || (snapshot.progressionJson?.Length ?? 0) > 131072)
+        RestoreSnapshot(snapshot);
+    }
+
+    internal void RestoreSnapshot(AgentAdventureProfileSnapshot snapshot)
+    {
+        if (snapshot == null || snapshot.points < 0 || (snapshot.progressionJson?.Length ?? 0) > 131072
+            || (!string.IsNullOrWhiteSpace(snapshot.progressionJson) && !AbilityProgressionService.IsValidSaveJson(snapshot.progressionJson)))
             throw new ArgumentException("Invalid initial replay profile.");
         Wallet.SetPoints(snapshot.points);
         if (Wallet.GetCurrentPoints() != snapshot.points) throw new IOException("Replay wallet could not be initialized.");
@@ -56,6 +66,7 @@ public sealed class AgentAdventureProfile : IDisposable
             // Only the existing progression service interprets its saved data; replay hashes verify the result.
             File.WriteAllText(Progression.FilePath, snapshot.progressionJson);
         }
+        else if (File.Exists(Progression.FilePath)) File.Delete(Progression.FilePath);
     }
 
     public AgentAdventureMeta Describe()

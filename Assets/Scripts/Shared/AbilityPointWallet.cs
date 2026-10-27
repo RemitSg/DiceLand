@@ -20,6 +20,12 @@ public sealed class AbilityPointWallet
 
     public string FilePath => path;
 
+    public static bool IsValidSaveJson(string json)
+    {
+        try { var data = JsonUtility.FromJson<WalletData>(json); return data != null && data.version == 1 && data.abilityPoints >= 0; }
+        catch { return false; }
+    }
+
     public int GetCurrentPoints()
     {
         return Load().abilityPoints;

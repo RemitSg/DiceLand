@@ -1,7 +1,7 @@
 """Standard-library client for the in-progress shared-rule adventure API.
 
-The demo can export a timestamped adventure journal and verify it after closing.
-Restoring a playable saved session is a later batch.
+The demo can save/resume a playable session, recover a persistent profile's last
+committed command, and export/verify timestamped journals.
 """
 import argparse
 import json
@@ -54,7 +54,12 @@ def demo(client, args):
     create = dict(op="create_run", seed=args.seed, maxRounds=args.max_rounds)
     if getattr(args, "profile", None):
         create["profileId"] = args.profile
-    state = client.call(**create)["state"]
+    if getattr(args, "resume_slot", None):
+        state = client.call(op="run_load", slotId=args.resume_slot)["state"]
+    elif getattr(args, "recover_profile", None):
+        state = client.call(op="run_recover", profileId=args.recover_profile)["state"]
+    else:
+        state = client.call(**create)["state"]
     session_id = state["sessionId"]
     trace = []
     moved = 0
@@ -152,10 +157,11 @@ def demo(client, args):
             path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
         if getattr(args, "replay_slot", None):
             client.call(op="run_export", sessionId=session_id, slotId=args.replay_slot)
+        saved = client.call(op="run_save", sessionId=session_id, slotId=args.save_slot)["save"] if getattr(args, "save_slot", None) else None
         return {"phase": state["phase"], "outcome": state.get("outcome"), "moves": moved, "actions": len(trace),
                 "cycle": state["cycle"], "money": state["money"], "keys": state["keys"], "party": state["party"],
                 "configurationIssues": state["configurationIssues"], "settlement": state["settlement"], "meta": state["meta"],
-                "trace": args.output, "replaySlot": getattr(args, "replay_slot", None)}
+                "trace": args.output, "replaySlot": getattr(args, "replay_slot", None), "save": saved}
     finally:
         client.call(op="run_close", sessionId=session_id)
 
@@ -173,7 +179,11 @@ def main():
     play.add_argument("--max-actions", type=int, default=300)
     play.add_argument("--output")
     play.add_argument("--reforge", action="store_true", help="Try a legal reforge once per rest visit before other rest actions")
-    play.add_argument("--profile", help="Explicit isolated persistent agent profile; omitted profiles are discarded on close")
+    start = play.add_mutually_exclusive_group()
+    start.add_argument("--profile", help="Create a fresh run in an isolated persistent profile; replaces its recoverable adventure")
+    start.add_argument("--resume-slot", help="Resume a playable save slot instead of creating a new run")
+    start.add_argument("--recover-profile", help="Recover the last committed command of a persistent profile instead of creating a new run")
+    play.add_argument("--save-slot", help="Save a playable checkpoint before closing")
     play.add_argument("--replay-slot", help="Export the complete journal into a named slot on this host before closing")
     play.add_argument("--verify-replay", action="store_true", help="After closing, verify --replay-slot with recorded timestamps and a temporary profile")
     raw = commands.add_parser("command")
@@ -182,6 +192,12 @@ def main():
     inspect.add_argument("item", help="Catalog asset ID or exact equipment/blueprint/character name")
     verify = commands.add_parser("verify-replay", help="Verify a named journal on this host; all sessions must be closed")
     verify.add_argument("slot")
+    save = commands.add_parser("save-run", help="Save the active session to a named checkpoint")
+    save.add_argument("session_id"); save.add_argument("slot")
+    load = commands.add_parser("load-run", help="Restore a named checkpoint and leave its new session active")
+    load.add_argument("slot")
+    recover = commands.add_parser("recover-run", help="Recover a persistent profile and leave its new session active")
+    recover.add_argument("profile")
     args = parser.parse_args()
     client = Client(args.url)
     if args.mode == "demo":
@@ -195,6 +211,12 @@ def main():
         result = inspect_equipment(client, args.item)
     elif args.mode == "verify-replay":
         result = client.call(op="run_verify", slotId=args.slot)["verification"]
+    elif args.mode == "save-run":
+        result = client.call(op="run_save", sessionId=args.session_id, slotId=args.slot)["save"]
+    elif args.mode == "load-run":
+        result = client.call(op="run_load", slotId=args.slot)["state"]
+    elif args.mode == "recover-run":
+        result = client.call(op="run_recover", profileId=args.profile)["state"]
     else:
         result = client.call(**json.loads(sys.stdin.read() if args.json == "-" else args.json))
     print(json.dumps(result, ensure_ascii=False, indent=2))

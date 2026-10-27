@@ -95,6 +95,12 @@ public sealed class AbilityProgressionService
 
     public string FilePath => path;
 
+    public static bool IsValidSaveJson(string json)
+    {
+        try { var data = JsonUtility.FromJson<AbilityProgressionData>(json); return data != null && data.version == 1; }
+        catch { return false; }
+    }
+
     public AbilityNodeState GetNodeState(string nodeId)
     {
         AbilityNodeDefinition node = config != null ? config.FindNode(nodeId) : null;

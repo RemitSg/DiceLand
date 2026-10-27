@@ -52,7 +52,7 @@ public static class AgentAdventureReplayService
     {
         // Saved gameplay definitions, code and referenced scene configuration. Include meta files
         // because asset identity is part of the protocol. No timestamps or Library import artifacts.
-        var paths = new[] { "Assets/Data", "Assets/Resources", "Assets/Scripts" }
+        var paths = new[] { "Assets/Data", "Assets/Resources", "Assets/Configs", "Assets/Scripts" }
             .Where(Directory.Exists).SelectMany(p => Directory.EnumerateFiles(p, "*", SearchOption.AllDirectories))
             .Where(p => new[] { ".cs", ".asset", ".meta", ".json", ".asmdef", ".txt", ".unity", ".scene", ".anim", ".controller" }
                 .Contains(Path.GetExtension(p).ToLowerInvariant()))
@@ -67,6 +67,16 @@ public static class AgentAdventureReplayService
 
     public static AgentAdventureReplayVerification Verify(AgentAdventureReplay replay)
     {
+        using (var session = Rebuild(replay))
+        {
+            var state = session.Observe();
+            return new AgentAdventureReplayVerification { verified = true, commandsChecked = replay.commands.Length,
+                finalStateHash = StateHash(state), finalState = state };
+        }
+    }
+
+    internal static AgentAdventureSession Rebuild(AgentAdventureReplay replay, Func<long> liveClock = null)
+    {
         if (replay == null || replay.formatVersion != 1 || replay.apiVersion != "1")
             throw new ArgumentException("Unsupported adventure replay version.");
         if (replay.engineVersion != Application.unityVersion || replay.contentHash != ContentHash())
@@ -75,8 +85,11 @@ public static class AgentAdventureReplayService
             || replay.initialProfile == null || replay.commands == null || replay.commands.Length > 10000)
             throw new ArgumentException("Invalid replay header or command count.");
         long now = replay.startedUtcSeconds;
+        bool live = false;
+        Func<long> realTime = liveClock ?? (() => DateTimeOffset.UtcNow.ToUnixTimeSeconds());
         // The journal cannot select a persistent profile, even if a caller edits its JSON.
-        using (var session = new AgentAdventureSession(Clone(replay.create), () => now, Clone(replay.initialProfile), false))
+        var session = new AgentAdventureSession(Clone(replay.create), () => live ? realTime() : now, Clone(replay.initialProfile), false);
+        try
         {
             Check(session.Observe(), replay.initialStateHash, 0);
             for (int i = 0; i < replay.commands.Length; i++)
@@ -91,9 +104,11 @@ public static class AgentAdventureReplayService
             }
             var state = session.Observe();
             Check(state, replay.finalStateHash, replay.commands.Length);
-            return new AgentAdventureReplayVerification { verified = true, commandsChecked = replay.commands.Length,
-                finalStateHash = StateHash(state), finalState = state };
+            session.AdoptReplay(replay);
+            live = true;
+            return session;
         }
+        catch { session.Dispose(); throw; }
     }
 
     private static void Check(AgentAdventureObservation state, string expected, int revision)
@@ -103,27 +118,12 @@ public static class AgentAdventureReplayService
 
     public static void Save(string slotId, AgentAdventureReplay replay)
     {
-        string path = SlotPath(slotId), json = JsonUtility.ToJson(replay);
-        if (Encoding.UTF8.GetByteCount(json) > FileLimit) throw new ArgumentException("Replay exceeds 16 MiB.");
-        Directory.CreateDirectory(Path.GetDirectoryName(path));
-        string temporary = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
-        try
-        {
-            File.WriteAllText(temporary, json, new UTF8Encoding(false));
-            if (File.Exists(path)) File.Replace(temporary, path, null);
-            else File.Move(temporary, path);
-        }
-        finally { if (File.Exists(temporary)) File.Delete(temporary); }
+        AgentAdventureAtomicFile.Write(SlotPath(slotId), replay, FileLimit);
     }
 
     public static AgentAdventureReplay Load(string slotId)
     {
-        string path = SlotPath(slotId);
-        if (!File.Exists(path)) throw new ArgumentException("Unknown replay slot.");
-        if (new FileInfo(path).Length > FileLimit) throw new ArgumentException("Replay exceeds 16 MiB.");
-        var replay = JsonUtility.FromJson<AgentAdventureReplay>(File.ReadAllText(path));
-        if (replay == null) throw new ArgumentException("Invalid replay file.");
-        return replay;
+        return AgentAdventureAtomicFile.Read<AgentAdventureReplay>(SlotPath(slotId), FileLimit);
     }
 
     public static string SlotPath(string slotId)

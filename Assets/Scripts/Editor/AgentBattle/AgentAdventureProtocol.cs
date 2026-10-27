@@ -20,6 +20,7 @@ using System;
     public AgentAdventureObservation state;
     public AgentAdventureReplay replay;
     public AgentAdventureReplayVerification verification;
+    public AgentAdventureSaveInfo save;
 }
 [Serializable] public sealed class AgentAdventureObservation
 {

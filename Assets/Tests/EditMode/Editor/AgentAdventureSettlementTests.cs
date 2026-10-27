@@ -142,6 +142,8 @@ public sealed class AgentAdventureSettlementTests
         {
             if (wallet != null && File.Exists(wallet)) File.Delete(wallet);
             if (progression != null && File.Exists(progression)) File.Delete(progression);
+            foreach (string file in new[] { "committed.json", "lease.lock" })
+                if (wallet != null && File.Exists(Path.Combine(Path.GetDirectoryName(wallet), file))) File.Delete(Path.Combine(Path.GetDirectoryName(wallet), file));
             if (wallet != null && Directory.Exists(Path.GetDirectoryName(wallet))) Directory.Delete(Path.GetDirectoryName(wallet), false);
         }
     }

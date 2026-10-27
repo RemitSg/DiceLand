@@ -39,6 +39,7 @@ public sealed partial class AgentAdventureSession : IDisposable
         try
         {
             if (replayProfile != null) profile.InitializeReplay(replayProfile);
+            if (profile.Persistent) profileStore = new AgentAdventureProfileStore(profile);
             operationUtcSeconds = this.utcNow();
             map = new AgentAdventureMapRuntime(configuration, seed, profile.Progression.BuildRunBonus(), operationUtcSeconds);
             if (StartingRelic != null) phase = "starting_relic";
@@ -81,6 +82,7 @@ public sealed partial class AgentAdventureSession : IDisposable
     public AgentAdventureResponse Act(AgentAdventureRequest request)
     {
         if (disposed) throw new ObjectDisposedException(nameof(AgentAdventureSession));
+        if (phase == "faulted") throw new InvalidOperationException("This adventure faulted; close it and recover its last committed command.");
         if (request.sessionId != id || string.IsNullOrWhiteSpace(request.requestId)) throw new ArgumentException("A matching sessionId and unique requestId are required.");
         string body = JsonUtility.ToJson(request);
         if (bodies.TryGetValue(request.requestId, out string old))
@@ -143,6 +145,8 @@ public sealed partial class AgentAdventureSession : IDisposable
         RecordReplayCommand(request, response.state);
         bodies.Add(request.requestId, body); responses.Add(request.requestId, JsonUtility.ToJson(response)); recent.Enqueue(request.requestId);
         while (recent.Count > 32) responses.Remove(recent.Dequeue());
+        try { CommitAcceptedCommand(request.op); }
+        catch { phase = "faulted"; outcome = "storage_error"; throw; }
         return response;
     }
 
@@ -282,5 +286,5 @@ public sealed partial class AgentAdventureSession : IDisposable
         if (a.op == "run_battle") return JsonUtility.ToJson(a.battleAction) == JsonUtility.ToJson(r.battleAction);
         return true;
     }
-    public void Dispose() { if (disposed) return; disposed = true; bridge?.Dispose(); bridge = null; ReleasePendingEventEncounter(); map?.Dispose(); map = null; profile?.Dispose(); profile = null; }
+    public void Dispose() { if (disposed) return; disposed = true; bridge?.Dispose(); bridge = null; ReleasePendingEventEncounter(); map?.Dispose(); map = null; profileStore?.Dispose(); profileStore = null; profile?.Dispose(); profile = null; }
 }
