@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "DiceLand Agent Battle API",
-    "version": "0.8.1",
-    "description": "Shared-rule, editor-backed single battles. The separate adventure-openapi.json documents the in-progress normal adventure operations on this endpoint."
+    "version": "0.8.4",
+    "description": "Shared-rule editor-backed single battles and shared health/catalog discovery. adventure-openapi.json documents complete adventure, persistence and progression on the same endpoint. One battle or adventure session per host; engine required."
   },
   "servers": [
     {
@@ -37,11 +37,30 @@
             }
           },
           "400": {
-            "description": "Invalid request; illegal actions are rejected before mutation",
+            "description": "Invalid command or malformed HTTP input; check success, error and message when present.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AgentBattleResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/AgentBattleResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "error": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "success",
+                        "error"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -191,7 +210,11 @@
           "replay": {
             "$ref": "#/components/schemas/AgentBattleReplay"
           }
-        }
+        },
+        "required": [
+          "apiVersion",
+          "success"
+        ]
       },
       "AgentBattleObservation": {
         "type": "object",
@@ -217,8 +240,10 @@
               "targeting",
               "reward",
               "terminal",
-              "faulted"
-            ]
+              "faulted",
+              ""
+            ],
+            "description": "Active phases as listed. Empty string is serialized for an inactive/default nested DTO; check the outer response and current adventure phase."
           },
           "outcome": {
             "type": "string"
@@ -436,7 +461,10 @@
             "format": "int32",
             "description": "Index from legalActions for choose_relic."
           }
-        }
+        },
+        "required": [
+          "op"
+        ]
       },
       "AgentBattleEvent": {
         "type": "object",
@@ -508,6 +536,12 @@
             "items": {
               "$ref": "#/components/schemas/AgentBattleBlueprintDetails"
             }
+          },
+          "difficulties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureDifficulty"
+            }
           }
         }
       },
@@ -538,7 +572,26 @@
             "type": "string"
           },
           "create": {
-            "$ref": "#/components/schemas/AgentBattleRequest"
+            "description": "Recorded create request. In inactive/default response DTOs Unity serializes an empty create object with op empty string; this is not an executable request.",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentBattleRequest"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "enum": [
+                      ""
+                    ]
+                  }
+                },
+                "required": [
+                  "op"
+                ]
+              }
+            ]
           },
           "commands": {
             "type": "array",
@@ -758,6 +811,52 @@
           "amount": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "AgentAdventureDifficulty": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Saved-menu difficulty asset GUID."
+          },
+          "name": {
+            "type": "string"
+          },
+          "isDefault": {
+            "type": "boolean"
+          },
+          "boardSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requiredKeys": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startingActionPoints": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxRecruitCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actionPointLimits": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Base AP limits at calamity tiers 0..10, excluding ability bonuses."
+          },
+          "recruitCosts": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         }
       }

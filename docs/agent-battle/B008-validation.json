@@ -1,0 +1,169 @@
+{
+  "batch": "B008",
+  "date": "2026-10-27T23:08:15+08:00",
+  "sourceParent": "10fb25c306669b8f5fd3f3691257bcc533b5805d",
+  "status": "Agreed editor-backed, shared-rule full-game agent loop complete; documented engine/content/regression limits remain",
+  "scope": {
+    "providerNeutralHttp": true,
+    "sharedUiAndAgentRules": true,
+    "formalNormalVictory": true,
+    "earnedSettlementPaidUpgradeNextRun": true,
+    "playableCheckpointRestore": true,
+    "actualVictoriousPostCommitCrashRetry": true,
+    "isolatedFullJournalVerification": true,
+    "independentDotNetEngine": false,
+    "parallelSessionsPerHost": false,
+    "genericDemoGuaranteedWin": false,
+    "allGameContentCombinationsVerified": false
+  },
+  "protocolAudit": {
+    "specificationsValidated": 2,
+    "schemasComparedWithDeclaredDtoFields": 54,
+    "fieldsCompared": 443,
+    "documentedMutationOperations": 36,
+    "documentedAdventureOperations": 45,
+    "nativeSampleCounts": {
+      "AgentAdventureObservation": 6,
+      "AgentAdventureAction": 13,
+      "AgentAdventureSaveInfo": 4,
+      "AgentAdventureReplay": 1,
+      "AgentAdventureRequest": 741,
+      "AgentBattleResponse": 2,
+      "AgentBattleCatalogue": 1,
+      "AgentAdventureResponse": 7
+    },
+    "native739CommandVictoryJournalValidated": true,
+    "freshHttpSmoke": {
+      "normalDefault": "Medium",
+      "boardSize": 9,
+      "moveRetryMatched": true,
+      "staleRevisionRejectedWithoutMutation": true,
+      "saveLoadMatched": true,
+      "replayVerified": true,
+      "closedAtEnd": true
+    },
+    "invalidSchemaCommandsRejected": 5,
+    "method": "OpenAPI specification validator plus OAS30 schema validator; DTO field names/types and session mutation enum checked against current source. Native persisted journal and live HTTP samples validated, not a claim that schema alone enforces gameplay legality."
+  },
+  "validationDependencies": {
+    "location": "outputs/agent-battle/protocol-validation-deps only; no global install and no new runtime/client dependency",
+    "openapi-spec-validator": "0.9.0",
+    "openapi-schema-validator": "0.9.0",
+    "jsonschema": "4.26.0"
+  },
+  "normalGate": {
+    "evidence": "docs/agent-battle/B008c-validation.json",
+    "difficulty": "NormalConfig / Medium",
+    "seed": 55,
+    "bossAuthoredHp": 54,
+    "bossFinalHp": 0,
+    "round": 8,
+    "survivor": "Jenny at 1 HP",
+    "actualScore": 11784,
+    "actualEarnedPoints": 11,
+    "actualPaidCost": 10,
+    "remainingPoints": 1,
+    "nextRunAP": 9,
+    "nextRunMoney": 30,
+    "nextRunHP": 17,
+    "realStartingRelicSaveLoadAndRetry": true,
+    "commandsReplayed": 739,
+    "persistentHeadUnchangedByVerification": true,
+    "strategyScope": "Only public requests; bounded legitimate checkpoint branches before meta commits; final round additionally reproduced by checked-in policy. No resource/outcome injection and no claim of universal fully automatic demo wins."
+  },
+  "coverageEvidence": {
+    "normalMapCalamityAndKeys": "B003b-validation.json",
+    "battleBridgeAndRewards": "B002-validation.json",
+    "commerceAndCrafting": "B004a-validation.json",
+    "restRecruitEquipment": "B004b1-validation.json",
+    "reforge": "B004b2-validation.json",
+    "events": "B005a-validation.json",
+    "treasures": "B005b-validation.json",
+    "specialDungeons": "B005c-validation.json",
+    "isolatedTerminalProgressionAndAbandon": "B006b1-validation.json",
+    "equipmentObservation": "B006b2-equipment-validation.json",
+    "timestampedReplay": "B007a-validation.json",
+    "saveAndTransactionalRecovery": "B007b-validation.json",
+    "menuDifficulties": "B008a-validation.json",
+    "genuineEasyEarnings": "B008b-validation.json",
+    "normalVictoryAndEarnings": "B008c-validation.json"
+  },
+  "checks": {
+    "pythonPolicy": {
+      "passed": 33,
+      "failed": 0,
+      "evidence": "outputs/agent-battle/b008c-python-tests.log"
+    },
+    "unity": {
+      "rerunForFinalDocs": false,
+      "baselineTotal": 996,
+      "baselinePassed": 975,
+      "baselineFailed": 21,
+      "evidence": "docs/agent-battle/B008a-validation.json",
+      "reason": "Final batch changes only protocol/documentation and a client docstring. Runtime/rule/config fingerprint remains unchanged; Python policy was verified in B008c.",
+      "playMode": "Existing failures remain unresolved; no new green claim"
+    },
+    "sourceMatch": {
+      "filesCompared": 3199,
+      "contentHash": "46431b698bb54ad61c8d97e8225052af179160f066d675f735aad1620c6e72f8",
+      "sourceAndValidationProjectEqual": true,
+      "evidence": "B008c-validation.json"
+    },
+    "linkedLocalDocumentsExist": true,
+    "linksChecked": 25,
+    "historicalProgressPrefixPreserved": true
+  },
+  "environment": {
+    "validationHostPid": 63376,
+    "validationHostGracefullyStopped": true,
+    "allSmokeSessionsClosed": true,
+    "originalEditorPid": 21328,
+    "originalEditorStillRunning": true,
+    "originalEditorRestarted": false,
+    "userSceneSaved": false,
+    "playerWalletUsed": false
+  },
+  "limitations": [
+    "Licensed Tuanjie/Unity editor required; one battle/adventure per host; no independent .NET runtime or concurrent-session guarantee",
+    "21 known EditMode failures and prior PlayMode failures are outside this completed adapter-loop scope and remain unresolved",
+    "Authored missing enemy groups and event reward defects remain observable, not substituted or credited as clears",
+    "Same engine/API/saved-content fingerprint required for save/replay; no migration for old journals",
+    "Recovery uses full journal replay and grows with action count; process/file replacement interruption tested, not arbitrary hardware power loss or anti-tamper security",
+    "No claim to validate animation, UI readability, controls, every build, every difficulty win or all content combinations"
+  ],
+  "artifactHashes": {
+    "docs/agent-battle/B002-validation.json": "24790a8823bcb754a1b66403b9f7345836b4273112864f49a112f8e38e556f2c",
+    "docs/agent-battle/B003b-validation.json": "1c701f773d96a03da2c8f3617b50dfba0856bab89977eab9e55ffe11fa1cbdb2",
+    "docs/agent-battle/B004a-validation.json": "e5e5a8af338a94f822371d78c75d8ad14aa27d259bc49e3a5abec070ef7c7230",
+    "docs/agent-battle/B004b1-validation.json": "ab88d5cb2ee4216fd81ba677236bf5809e55e3c0ad2e2eb9232bbb1ada0d6f54",
+    "docs/agent-battle/B004b2-validation.json": "11b54fad61470e94349a4bcc5869826483d4577c8f1da94b575f86384e25de1c",
+    "docs/agent-battle/B005a-validation.json": "5f8b10ebbde473c78397b79300483765c7192233c1e639697015bced325f3276",
+    "docs/agent-battle/B005b-validation.json": "652a39f6eed94991eeaec6447427a59906cda99eaec50cb6e63f4afdda8dab7f",
+    "docs/agent-battle/B005c-validation.json": "df4edd720a84775ee52cadde6bc22bb45b1ecab0f96582c15a5bacd8e5570c4c",
+    "docs/agent-battle/B006a-validation.json": "2d00b4e3aa4ac4d13175560baacb2685f46bd72545586d85a0d76697e103db61",
+    "docs/agent-battle/B006b1-validation.json": "f4eb40b6fb318bedae57f8db33523f7ab0a9b53dc3da4187a5a132345bd887c0",
+    "docs/agent-battle/B006b2-equipment-validation.json": "85e631e88122507543faea65250150a4ac0b1615e9c608a56ac77d4f2012800d",
+    "docs/agent-battle/B006b2-strategy-validation.json": "bd286927289ce722976b917cc9cc3eb5b1882f34b96b77f59e3bd82cf53b4205",
+    "docs/agent-battle/B007a-validation.json": "73677475db989a454e6d48303511c522d9a81a74b6c39c0f766ac39913cebfcb",
+    "docs/agent-battle/B007b-validation.json": "33e9a6c19bef35b685923b7d6f2a8043d344fcd280b3c4e285c0b124ae87c086",
+    "docs/agent-battle/B008a-validation.json": "55591d2932398b5a20bc1c8aaf02cd158f37b32bd5989ff982ec4fc9b16cf794",
+    "docs/agent-battle/B008b-validation.json": "f55eb05a618213986c87eafbaa13d9d8974226471ad87e9cae95dc70edba48dc",
+    "docs/agent-battle/B008c-validation.json": "f2615952e90469e8481443aa1517ea7acabe36541cd396224706d1b5d587411e",
+    "outputs/agent-battle/b008-protocol-audit.json": "a8af6d159ffa4febd93da29742e2443ef704ca0e6f36cfebc831747782f604e6",
+    "outputs/agent-battle/b008c-victory-proof.json": "8ba3f150674bcf8e59f61a7c1be9364db2ef070dbcf1cb0c0dff99d12f0cc2fd",
+    "outputs/agent-battle/b005b-validation-project/Library/AgentAdventure/Replays/b008c-normal-victory-earned-next.json": "269c6722768e55c3d351d37ab112cc24c21dbf2f14784cb614942de29e564aef",
+    "docs/agent-battle/AGENT_GUIDE.md": "c03ca55738f146ff58910b2c785d509008d84d2f57a3533a8edbe03f0304093e",
+    "docs/agent-battle/ACCEPTANCE.md": "f5273f666dfc5fecef309b7263053829e70e15b9aa3749f5c69633bcf204b50b",
+    "docs/agent-battle/openapi.json": "0e78647172ad33961d96a9bc4b00416984fa7ea2eb2f185604af215f35694c99",
+    "docs/agent-battle/adventure-openapi.json": "6fa5a47d21d3ba25ccfc92abef57be59890a7e18e7647f739dbafbba89dc99bc"
+  },
+  "delivery": [
+    "docs/agent-battle/AGENT_GUIDE.md",
+    "docs/agent-battle/ACCEPTANCE.md",
+    "docs/agent-battle/openapi.json",
+    "docs/agent-battle/adventure-openapi.json",
+    "tools/agent_battle_client.py",
+    "tools/agent_adventure_client.py",
+    "tools/agent_adventure_policy.py"
+  ]
+}

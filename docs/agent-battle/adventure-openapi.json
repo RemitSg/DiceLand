@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "DiceLand Agent Adventure API (B006b1)",
-    "version": "0.8.1",
-    "description": "Shared-rule adventure with terminal settlement, isolated ability progression and next runs. Full normal victory/earned-upgrade audit and complete save/replay remain pending."
+    "title": "DiceLand Agent Adventure API",
+    "version": "0.8.4",
+    "description": "Shared-rule, editor-backed full adventure: menu difficulties, map/economy/events/dungeons, battles, terminal settlement, isolated earned progression and next runs; playable save/load, atomic profile recovery and timestamped isolated replay. One session per host; engine required. health/catalog and battle DTOs are documented in openapi.json. See AGENT_GUIDE.md for the command loop and retry rules."
   },
   "servers": [
     {
@@ -20,6 +20,34 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/AgentAdventureRequest"
+              },
+              "examples": {
+                "newRun": {
+                  "value": {
+                    "op": "create_run",
+                    "seed": 55,
+                    "profileId": "my-agent"
+                  }
+                },
+                "recover": {
+                  "value": {
+                    "op": "run_recover",
+                    "profileId": "my-agent"
+                  }
+                },
+                "save": {
+                  "value": {
+                    "op": "run_save",
+                    "sessionId": "FROM_RESPONSE",
+                    "slotId": "checkpoint"
+                  }
+                },
+                "verify": {
+                  "value": {
+                    "op": "run_verify",
+                    "slotId": "journal"
+                  }
+                }
               }
             }
           }
@@ -36,12 +64,113 @@
             }
           },
           "400": {
-            "description": "Invalid command, stale revision or illegal action."
+            "description": "Invalid command or malformed HTTP input; check success, error and message when present.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/AgentAdventureResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "error": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "success",
+                        "error"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
-            "description": "Execution error; observe or close the faulted session."
+            "description": "Execution/storage fault; observe/export/close, then recover the last committed state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentAdventureResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "HTTP request body exceeds 64 KiB or lacks Content-Length.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "At most 32 pending requests.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service stopped before processing the queued request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "error"
+                  ]
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Create, observe, play, settle, save, recover or verify an adventure",
+        "description": "One active battle or adventure per host. run_load/run_recover/run_verify require no active session. run_close releases the session/profile lease without abandoning or awarding points. Successful mutations atomically commit persistent progression plus journal before acknowledging."
       }
     }
   },
@@ -61,7 +190,7 @@
           "choiceIndex": {
             "type": "integer",
             "format": "int32",
-            "description": "Choice index; run_set_ability uses 0 (disable) or 1 (enable), copied from legalActions."
+            "description": "Copy the offered index; run_set_ability uses 0 (disable) or 1 (enable). run_equip needs only the offered weapon assetId; the formal service selects its compatible member."
           },
           "op": {
             "type": "string",
@@ -104,29 +233,38 @@
               "run_unlock_ability",
               "run_set_ability",
               "run_choose_starting_relic",
-              "run_refresh_starting_relics"
+              "run_refresh_starting_relics",
+              "run_save",
+              "run_load",
+              "run_recover",
+              "run_replay",
+              "run_export",
+              "run_verify"
             ],
-            "description": "Copy an item from legalActions. run_next accepts an additional seed for the next run. Only map/battle phases expose abandon. Check dungeon.active and settlement.completed rather than optional object truthiness."
+            "description": "Choose a legalActions entry for gameplay mutations. Lifecycle/storage commands are not listed in legalActions. run_next optionally accepts seed/difficultyId. All mutations use the outer adventure revision."
           },
           "battleAction": {
-            "$ref": "./openapi.json#/components/schemas/AgentBattleLegalAction"
+            "$ref": "./openapi.json#/components/schemas/AgentBattleLegalAction",
+            "description": "Copy the nested battleAction exactly from an offered run_battle action. Do not attach an inner session/revision/requestId; the outer adventure owns sequencing."
           },
           "sessionId": {
             "type": "string"
           },
           "requestId": {
             "type": "string",
-            "description": "Required for mutations; retries must preserve the entire command."
+            "description": "Required unique ID for gameplay mutations. Persist the complete request before sending; a lost response must be retried with identical parameters. After load/recover only sessionId changes. Last 32 successful responses are cached; older duplicate IDs are rejected, never executed again. Lifecycle/storage calls do not consume revision/requestId."
           },
           "revision": {
             "type": "integer",
-            "default": -1,
-            "description": "Latest outer adventure revision, required for mutations."
+            "description": "Latest outer adventure revision, required for mutations.",
+            "minimum": -1,
+            "default": -1
           },
           "seed": {
             "type": "integer",
             "default": 1,
-            "description": "Signed 32-bit seed for create_run or run_next; next-run omission uses default 1. maxRounds is retained from the initial create_run."
+            "description": "Signed 32-bit seed for create_run or run_next; next-run omission uses default 1. maxRounds is retained from the initial create_run.",
+            "format": "int32"
           },
           "maxRounds": {
             "type": "integer",
@@ -140,9 +278,251 @@
           },
           "profileId": {
             "type": "string",
-            "description": "create_run only: omit/blank for disposable session progression. Explicit 1-64 letters/digits/underscore/hyphen selects isolated project-local Library/AgentAdventure/Profiles/<id>; Windows device names rejected. Never uses the player wallet/save. Persistent across close/reopen on the same host/project; deleting Library removes these test profiles."
+            "description": "create_run: omit/blank for disposable progression; explicit isolated project-local profile survives close and enables run_recover. run_recover: required existing profile. IDs: 1-64 ASCII letters/digits/underscore/hyphen, Windows device names rejected. Never reads the player wallet/save. Library deletion removes these test profiles. Creating a fresh run in an existing profile replaces its recoverable adventure."
+          },
+          "slotId": {
+            "type": "string",
+            "description": "Required for run_save/run_load/run_export/run_verify. Same restricted ID format as profileId. Host-local name, never an arbitrary path. Saves and exported replay journals use separate directories."
+          },
+          "difficultyId": {
+            "type": "string",
+            "description": "Optional saved-menu GUID from catalog.catalogue.difficulties for create_run or run_next only. Omitted create_run defaults to NormalConfig (display name Medium); omitted run_next retains the current mode. Restore retains recorded difficulty."
           }
-        }
+        },
+        "required": [
+          "op"
+        ],
+        "oneOf": [
+          {
+            "properties": {
+              "op": {
+                "enum": [
+                  "create_run"
+                ]
+              }
+            }
+          },
+          {
+            "properties": {
+              "op": {
+                "enum": [
+                  "observe_run",
+                  "run_close",
+                  "run_replay"
+                ]
+              }
+            },
+            "required": [
+              "sessionId"
+            ]
+          },
+          {
+            "properties": {
+              "op": {
+                "enum": [
+                  "run_save",
+                  "run_export"
+                ]
+              }
+            },
+            "required": [
+              "sessionId",
+              "slotId"
+            ]
+          },
+          {
+            "properties": {
+              "op": {
+                "enum": [
+                  "run_load",
+                  "run_verify"
+                ]
+              }
+            },
+            "required": [
+              "slotId"
+            ]
+          },
+          {
+            "properties": {
+              "op": {
+                "enum": [
+                  "run_recover"
+                ]
+              }
+            },
+            "required": [
+              "profileId"
+            ]
+          },
+          {
+            "properties": {
+              "op": {
+                "enum": [
+                  "run_move",
+                  "run_interact",
+                  "run_battle",
+                  "run_return",
+                  "run_choose_calamity",
+                  "run_leave_location",
+                  "run_buy",
+                  "run_refresh_shop",
+                  "run_craft",
+                  "run_rest_heal",
+                  "run_rest_restore_ap",
+                  "run_recruit",
+                  "run_equip",
+                  "run_open_reforge",
+                  "run_reforge_loot",
+                  "run_reforge_relic",
+                  "run_reforge_first",
+                  "run_reforge_second",
+                  "run_reforge_attribute",
+                  "run_reforge_reset",
+                  "run_reforge_confirm",
+                  "run_reforge_cancel",
+                  "run_reforge_finish",
+                  "run_choose_event",
+                  "run_continue_event",
+                  "run_choose_treasure",
+                  "run_choose_treasure_relic",
+                  "run_refresh_treasure_relics",
+                  "run_continue_treasure",
+                  "run_settle",
+                  "run_abandon",
+                  "run_next",
+                  "run_unlock_ability",
+                  "run_set_ability",
+                  "run_choose_starting_relic",
+                  "run_refresh_starting_relics"
+                ]
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "sessionId",
+              "revision",
+              "requestId"
+            ],
+            "oneOf": [
+              {
+                "properties": {
+                  "op": {
+                    "enum": [
+                      "run_move"
+                    ]
+                  }
+                },
+                "required": [
+                  "x",
+                  "y"
+                ]
+              },
+              {
+                "properties": {
+                  "op": {
+                    "enum": [
+                      "run_battle"
+                    ]
+                  }
+                },
+                "required": [
+                  "battleAction"
+                ]
+              },
+              {
+                "properties": {
+                  "op": {
+                    "enum": [
+                      "run_choose_calamity",
+                      "run_buy",
+                      "run_recruit",
+                      "run_choose_event",
+                      "run_choose_treasure",
+                      "run_choose_treasure_relic",
+                      "run_choose_starting_relic"
+                    ]
+                  }
+                },
+                "required": [
+                  "choiceIndex"
+                ]
+              },
+              {
+                "properties": {
+                  "op": {
+                    "enum": [
+                      "run_craft",
+                      "run_reforge_first",
+                      "run_reforge_second",
+                      "run_reforge_attribute",
+                      "run_unlock_ability"
+                    ]
+                  }
+                },
+                "required": [
+                  "assetId"
+                ]
+              },
+              {
+                "properties": {
+                  "op": {
+                    "enum": [
+                      "run_set_ability"
+                    ]
+                  }
+                },
+                "required": [
+                  "assetId",
+                  "choiceIndex"
+                ]
+              },
+              {
+                "properties": {
+                  "op": {
+                    "enum": [
+                      "run_interact",
+                      "run_return",
+                      "run_leave_location",
+                      "run_refresh_shop",
+                      "run_rest_heal",
+                      "run_rest_restore_ap",
+                      "run_open_reforge",
+                      "run_reforge_loot",
+                      "run_reforge_relic",
+                      "run_reforge_reset",
+                      "run_reforge_confirm",
+                      "run_reforge_cancel",
+                      "run_reforge_finish",
+                      "run_continue_event",
+                      "run_refresh_treasure_relics",
+                      "run_continue_treasure",
+                      "run_settle",
+                      "run_abandon",
+                      "run_next",
+                      "run_refresh_starting_relics"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "op": {
+                    "enum": [
+                      "run_equip"
+                    ]
+                  }
+                },
+                "required": [
+                  "assetId"
+                ]
+              }
+            ]
+          }
+        ]
       },
       "AgentAdventureAction": {
         "type": "object",
@@ -162,15 +542,12 @@
           "op": {
             "type": "string",
             "enum": [
-              "create_run",
-              "observe_run",
               "run_move",
               "run_interact",
               "run_battle",
               "run_return",
               "run_choose_calamity",
               "run_leave_location",
-              "run_close",
               "run_buy",
               "run_refresh_shop",
               "run_craft",
@@ -202,7 +579,7 @@
               "run_choose_starting_relic",
               "run_refresh_starting_relics"
             ],
-            "description": "Copy an item from legalActions. run_next accepts an additional seed for the next run. Only map/battle phases expose abandon. Check dungeon.active and settlement.completed rather than optional object truthiness."
+            "description": "Gameplay mutation offered in the current state. Copy its full fields and add outer sessionId/revision/requestId. run_next may additionally select seed/difficultyId."
           },
           "battleAction": {
             "$ref": "./openapi.json#/components/schemas/AgentBattleLegalAction"
@@ -211,7 +588,10 @@
             "type": "string",
             "description": "Asset GUID from legalActions: blueprint for crafting, weapon for equipment, material for reforge_first/second, or attribute for reforge_attribute. Ability commands use the node id in meta.nodes, not an asset GUID."
           }
-        }
+        },
+        "required": [
+          "op"
+        ]
       },
       "AgentAdventureResponse": {
         "type": "object",
@@ -230,8 +610,21 @@
           },
           "state": {
             "$ref": "#/components/schemas/AgentAdventureObservation"
+          },
+          "replay": {
+            "$ref": "#/components/schemas/AgentAdventureReplay"
+          },
+          "verification": {
+            "$ref": "#/components/schemas/AgentAdventureReplayVerification"
+          },
+          "save": {
+            "$ref": "#/components/schemas/AgentAdventureSaveInfo"
           }
-        }
+        },
+        "required": [
+          "apiVersion",
+          "success"
+        ]
       },
       "AgentAdventureObservation": {
         "type": "object",
@@ -240,7 +633,28 @@
             "type": "string"
           },
           "phase": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "map",
+              "battle",
+              "calamity",
+              "merchant",
+              "forge",
+              "rest",
+              "reforge",
+              "event",
+              "event_result",
+              "treasure",
+              "treasure_relic",
+              "treasure_result",
+              "starting_relic",
+              "victory_pending_settlement",
+              "defeat_pending_settlement",
+              "finished",
+              "faulted",
+              ""
+            ],
+            "description": "Active phases as listed. Empty string is serialized for an inactive/default nested DTO; check the outer response and current adventure phase."
           },
           "outcome": {
             "type": "string"
@@ -303,7 +717,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "description": "Authored content errors reported without substituting encounters or inventing rewards."
           },
           "tiles": {
             "type": "array",
@@ -416,8 +831,13 @@
             "type": "integer",
             "format": "int32",
             "description": "Current formal forge money cost, including active calamities, available in all phases even with no owned blueprint. Catalog blueprintDetails gives unowned material requirements. This observation is not permission to craft; use current legalActions."
+          },
+          "difficultyId": {
+            "type": "string",
+            "description": "Actual selected saved-menu difficulty GUID; difficulty is its display name."
           }
-        }
+        },
+        "description": "Observe without advancing rules or RNG. Optional nested DTOs may serialize with empty/default fields; use phase plus dungeon.active / settlement.completed, not object truthiness. configurationIssues exposes missing authored content; unavailable encounters are not auto-cleared."
       },
       "AgentAdventureTile": {
         "type": "object",
@@ -1263,6 +1683,138 @@
           }
         },
         "description": "starting_relic blocks movement until shared acquisition of all ability-provided starting bags. Refresh/acquisition use formal services, including OnRelicAcquired effects."
+      },
+      "AgentAdventureSaveInfo": {
+        "type": "object",
+        "properties": {
+          "slotId": {
+            "type": "string"
+          },
+          "profileId": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "profileGeneration": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "persistent": {
+            "type": "boolean"
+          },
+          "replayBacked": {
+            "type": "boolean",
+            "description": "Restores a playable decision by replaying the journal; not a raw Unity scene snapshot."
+          }
+        }
+      },
+      "AgentAdventureProfileSnapshot": {
+        "type": "object",
+        "properties": {
+          "points": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "progressionJson": {
+            "type": "string",
+            "description": "Serialized isolated ability service progress, used only inside replay/save files."
+          }
+        }
+      },
+      "AgentAdventureReplayCommand": {
+        "type": "object",
+        "properties": {
+          "utcSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "request": {
+            "$ref": "#/components/schemas/AgentAdventureRequest"
+          },
+          "stateHash": {
+            "type": "string"
+          }
+        }
+      },
+      "AgentAdventureReplay": {
+        "type": "object",
+        "properties": {
+          "formatVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "apiVersion": {
+            "type": "string"
+          },
+          "engineVersion": {
+            "type": "string"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "initialStateHash": {
+            "type": "string"
+          },
+          "finalStateHash": {
+            "type": "string"
+          },
+          "startedUtcSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "create": {
+            "description": "Recorded create request. In inactive/default response DTOs Unity serializes an empty create object with op empty string; this is not an executable request.",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentAdventureRequest"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "enum": [
+                      ""
+                    ]
+                  }
+                },
+                "required": [
+                  "op"
+                ]
+              }
+            ]
+          },
+          "initialProfile": {
+            "$ref": "#/components/schemas/AgentAdventureProfileSnapshot"
+          },
+          "commands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureReplayCommand"
+            }
+          }
+        },
+        "description": "Complete accepted mutation journal, including actual operation UTC, initial isolated progress and every observation hash. Replays cannot select a persistent profile. Engine/API/content versions must match; verify after closing every active session."
+      },
+      "AgentAdventureReplayVerification": {
+        "type": "object",
+        "properties": {
+          "verified": {
+            "type": "boolean"
+          },
+          "commandsChecked": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "finalStateHash": {
+            "type": "string"
+          },
+          "finalState": {
+            "$ref": "#/components/schemas/AgentAdventureObservation"
+          }
+        }
       }
     }
   }

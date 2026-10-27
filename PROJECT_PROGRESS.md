@@ -1627,3 +1627,6 @@ Shared treasure tile reward flow; money/blueprint/relic bags, one-time selection
 
 
 [2026-10-27 B008c] Formal Normal seed55 Boss victory at round8, actual score11784/11 points. Victory-pending restart, post-commit lost-response crash/retry, seven earned paid unlocks and next-run AP9/money30/HP17 plus starting-relic save/load verified. Full739-command replay matched without changing persistent head. Python33 passed; engine/rules/config3199 files unchanged; Unity996/975/21 baseline retained. Final B008 contract/evidence audit remains. See docs/agent-battle/B008c-validation.json.
+
+
+[2026-10-27 B008 COMPLETE] Agreed editor-backed shared-rule full-game agent loop accepted. Added AGENT_GUIDE.md, ACCEPTANCE.md and final B008-validation.json; updated both OpenAPI documents to0.8.4 (wire API remains1). Two specifications validated;54 DTOs/443 fields and45 adventure operations including36 mutations matched source. Real739-command victory journal, native states and fresh HTTP retry/stale/save/load/replay smoke passed. Existing Unity996/975/21 and PlayMode limitations retained; Python33 passed from B008c. No rule/balance edits. Validation host63376 stopped gracefully; original editor21328 preserved. Independent .NET, concurrency, old-version migration and universal demo wins remain outside scope.

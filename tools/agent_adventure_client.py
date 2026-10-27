@@ -1,4 +1,4 @@
-"""Standard-library client for the in-progress shared-rule adventure API.
+"""Standard-library client for the shared-rule adventure API.
 
 The demo can save/resume a playable session, recover a persistent profile's last
 committed command, and export/verify timestamped journals.
