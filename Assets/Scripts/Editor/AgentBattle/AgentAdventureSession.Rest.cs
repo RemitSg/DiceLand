@@ -10,6 +10,7 @@ public sealed partial class AgentAdventureSession
     {
         if (tile.tileType != MapTileType.Rest || tile.isResolved) return false;
         tile.isVisited = true; phase = "rest";
+        ResetReforgeVisit();
         // Snapshot.sceneName identifies the isolated owner; recruit rolls use the formal map's logical name.
         recruitCandidates = RunRestService.GetRecruitCandidates(map.Snapshot.runState, tile.coord, "MapScene",
             map.Configuration.starting.recruitRoster, map.Configuration.starting.difficulty);
@@ -47,6 +48,7 @@ public sealed partial class AgentAdventureSession
     {
         yield return new AgentAdventureAction { op = "run_rest_heal" };
         yield return new AgentAdventureAction { op = "run_rest_restore_ap" };
+        yield return new AgentAdventureAction { op = "run_open_reforge" };
         for (int i = 0; i < recruitCandidates.Count; i++)
             if (CanRecruit(recruitCandidates[i])) yield return new AgentAdventureAction { op = "run_recruit", choiceIndex = i };
     }
@@ -82,6 +84,11 @@ public sealed partial class AgentAdventureSession
             map.ApplySnapshotTransientState();
             return true;
         });
+        CompleteRestReturn();
+    }
+
+    private void CompleteRestReturn()
+    {
         recruitCandidates.Clear();
         map.CycleFlags.suppressPendingCalamityOnNextRestActionPointRestore = false;
         phase = "map"; ClearDeferrals(); PresentCalamity();

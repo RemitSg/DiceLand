@@ -35,12 +35,37 @@ def choose_battle_action(state):
     return action
 
 
+def choose_reforge_action(state):
+    actions = state["legalActions"]
+    reforge = state["reforge"]
+    confirm = next((a for a in actions if a["op"] == "run_reforge_confirm"), None)
+    if confirm:
+        return confirm
+    close = next((a for a in actions if a["op"] in ("run_reforge_finish", "run_reforge_cancel")), None)
+    if reforge["stage"] == "first":
+        materials = {m["id"]: m for m in reforge["materials"]}
+        for action in actions:
+            if action["op"] != "run_reforge_first":
+                continue
+            material = materials[action["assetId"]]
+            if material["amount"] >= 2 or any(m["id"] != material["id"] and m["rarity"] == material["rarity"] for m in materials.values()):
+                return action
+        if reforge["mode"] == "loot":
+            return next((a for a in actions if a["op"] == "run_reforge_relic"), close)
+    elif reforge["stage"] == "second":
+        return next((a for a in actions if a["op"] == "run_reforge_second"), close)
+    elif reforge["stage"] == "attribute":
+        return next((a for a in actions if a["op"] == "run_reforge_attribute"), close)
+    return close
+
+
 def demo(client, args):
     state = client.call(op="create_run", seed=args.seed, maxRounds=args.max_rounds)["state"]
     session_id = state["sessionId"]
     trace = []
     moved = 0
     seen_equipment = {member["weapon"] for member in state["party"]}
+    considered_reforges = set()
     try:
         for _ in range(args.max_actions):
             actions = state["legalActions"]
@@ -82,11 +107,17 @@ def demo(client, args):
                 if action is None:
                     action = next((a for a in actions if a["op"] == "run_leave_location"), None)
             elif state["phase"] == "rest":
-                if len(state["party"]) < 2:
+                location = (state["x"], state["y"])
+                if getattr(args, "reforge", False) and location not in considered_reforges:
+                    considered_reforges.add(location)
+                    action = next((a for a in actions if a["op"] == "run_open_reforge"), None)
+                if action is None and len(state["party"]) < 2:
                     action = next((a for a in actions if a["op"] == "run_recruit"), None)
                 if action is None:
                     op = "run_rest_heal" if any(p["hp"] < p["maxHp"] for p in state["party"]) else "run_rest_restore_ap"
                     action = next((a for a in actions if a["op"] == op), None)
+            elif state["phase"] == "reforge":
+                action = choose_reforge_action(state)
             if action is None:
                 break
             trace.append(action)
@@ -113,6 +144,7 @@ def main():
     play.add_argument("--max-moves", type=int, default=2)
     play.add_argument("--max-actions", type=int, default=300)
     play.add_argument("--output")
+    play.add_argument("--reforge", action="store_true", help="Try a legal reforge once per rest visit before other rest actions")
     raw = commands.add_parser("command")
     raw.add_argument("json", help="JSON command, or - to read stdin")
     args = parser.parse_args()

@@ -1548,3 +1548,10 @@
 - Added rest heal/AP/recruit actions and map equipment actions. Consumed rest sites cannot be reused; AP and deferred calamity queues restore to runtime components after snapshot writes. New party members and actual equipped skills reach the existing battle core.
 - Validation: targeted EditMode 68/68 passed (dacab3f483604defafe3aad18b18a8d9). Public HTTP normal seed 32: HP 16/19 to 19/19 after a battle with two legal untargeted rounds; separate AP route 1 to 6. Each used the rest site once and returned to map in 17 actions. No normal-route resource injection.
 - B004a committed b50b39d5. B004b2 still needs reforge selection/preview/limits and visit locking. Full adventure completion remains unproven; existing full-suite/PlayMode limitations remain. See B004b1-validation.json and PLAN.md.
+
+## 2026-10-27 - Agent adventure B004b2: staged rest reforge
+
+- Shared formal UI material validation, candidate filters, deterministic seeds/rolls and limit rules in RunRestService. Loaded actual reforge tables/attributes from the saved rest scene.
+- Added staged loot/relic reforge actions and formal preview information. Selection/observation is read-only; first success commits the visit, preventing other rest actions; limit exhaustion automatically consumes the rest site. Acquisition and reforge effects use the existing explicit snapshot writers.
+- Validation: related EditMode 90/90 passed (fb9a955a75d24a468d32c4120afb3fbf), including 13 new tests. Public HTTP normal seed 46: two slime mucus drops plus purchased iron ore, two reforges, one Corroded Fang result, automatic return to cycle 2 map in 28 actions; no normal-route state injection.
+- B004b1 committed 99302948. B005 events/treasure/subdungeons, final settlement and full save/replay remain incomplete. Existing full-suite/PlayMode limitations remain. See B004b2-validation.json and PLAN.md.

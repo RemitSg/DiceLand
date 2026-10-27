@@ -56,7 +56,7 @@ public sealed partial class AgentAdventureSession : IDisposable
             activeCalamities = state.activeCalamities.Where(c => c?.calamityData != null).Select(c => new AgentBattleAsset { id = AssetId(c.calamityData), name = c.calamityData.DisplayName, description = c.calamityData.description }).ToArray(),
             battle = bridge != null ? bridge.Battle.Observe() : null, legalActions = LegalActions().ToArray(),
             merchantOffers = DescribeMerchant(), merchantRefreshCost = phase == "merchant" ? MerchantStockService.RefreshCost(state, CurrentTile, map.Configuration.starting.difficulty) : 0,
-            recipes = DescribeRecipes(), rest = DescribeRest()
+            recipes = DescribeRecipes(), rest = DescribeRest(), reforge = DescribeReforge(), lastReforgeResult = lastReforgeResult
         };
     }
 
@@ -97,6 +97,9 @@ public sealed partial class AgentAdventureSession : IDisposable
                 case "run_choose_calamity": ChooseCalamity(request.choiceIndex); break;
                 case "run_buy": case "run_refresh_shop": case "run_craft": ExecuteEconomyAction(request); break;
                 case "run_rest_heal": case "run_rest_restore_ap": case "run_recruit": ExecuteRestAction(request); break;
+                case "run_open_reforge": case "run_reforge_loot": case "run_reforge_relic": case "run_reforge_first": case "run_reforge_second":
+                case "run_reforge_attribute": case "run_reforge_reset": case "run_reforge_confirm": case "run_reforge_cancel": case "run_reforge_finish":
+                    ExecuteReforgeAction(request); break;
                 case "run_equip":
                     Weapon_SO equip = map.Snapshot.runState.weaponInventory.Select(w => w.weaponData).First(w => w != null && AssetId(w) == request.assetId);
                     if (!map.Snapshot.runState.TryEquipWeapon(equip, out RunPartyMemberState owner, out message)) throw new InvalidOperationException(message);
@@ -132,6 +135,8 @@ public sealed partial class AgentAdventureSession : IDisposable
             for (int i = 0; i < choices.Count; i++) yield return new AgentAdventureAction { op = "run_choose_calamity", choiceIndex = i };
         else if (phase == "rest")
             foreach (AgentAdventureAction action in RestActions()) yield return action;
+        else if (phase == "reforge")
+            foreach (AgentAdventureAction action in ReforgeActions()) yield return action;
         else if (phase == "merchant" || phase == "forge")
         {
             foreach (AgentAdventureAction action in EconomyActions()) yield return action;
@@ -222,6 +227,7 @@ public sealed partial class AgentAdventureSession : IDisposable
         if (a.op == "run_choose_calamity") return a.choiceIndex == r.choiceIndex;
         if (a.op == "run_buy" || a.op == "run_recruit") return a.choiceIndex == r.choiceIndex;
         if (a.op == "run_craft" || a.op == "run_equip") return a.assetId == r.assetId;
+        if (a.op == "run_reforge_first" || a.op == "run_reforge_second" || a.op == "run_reforge_attribute") return a.assetId == r.assetId;
         if (a.op == "run_battle") return JsonUtility.ToJson(a.battleAction) == JsonUtility.ToJson(r.battleAction);
         return true;
     }

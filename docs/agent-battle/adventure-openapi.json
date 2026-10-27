@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "DiceLand Agent Adventure API (B004b1)",
-    "version": "0.3.0",
-    "description": "Shared-rule normal adventure including map, calamities, battles, merchant, forge, rest healing/AP restoration, recruitment and equipment. Reforge decisions, events/treasure, final settlement and full save/replay remain upcoming batches."
+    "title": "DiceLand Agent Adventure API (B004b2)",
+    "version": "0.4.0",
+    "description": "Shared-rule normal adventure including map, calamities, battles, merchant, forge, rest, recruits, equipment and staged loot/relic reforge. Events/treasure/subdungeons, final settlement and full save/replay remain upcoming batches."
   },
   "servers": [
     {
@@ -80,7 +80,17 @@
               "run_rest_heal",
               "run_rest_restore_ap",
               "run_recruit",
-              "run_equip"
+              "run_equip",
+              "run_open_reforge",
+              "run_reforge_loot",
+              "run_reforge_relic",
+              "run_reforge_first",
+              "run_reforge_second",
+              "run_reforge_attribute",
+              "run_reforge_reset",
+              "run_reforge_confirm",
+              "run_reforge_cancel",
+              "run_reforge_finish"
             ]
           },
           "battleAction": {
@@ -110,7 +120,7 @@
           },
           "assetId": {
             "type": "string",
-            "description": "Asset GUID from legalActions: owned blueprint for run_craft or owned compatible weapon for run_equip."
+            "description": "Asset GUID from legalActions: blueprint for crafting, weapon for equipment, material for reforge_first/second, or attribute for reforge_attribute."
           }
         }
       },
@@ -147,7 +157,17 @@
               "run_rest_heal",
               "run_rest_restore_ap",
               "run_recruit",
-              "run_equip"
+              "run_equip",
+              "run_open_reforge",
+              "run_reforge_loot",
+              "run_reforge_relic",
+              "run_reforge_first",
+              "run_reforge_second",
+              "run_reforge_attribute",
+              "run_reforge_reset",
+              "run_reforge_confirm",
+              "run_reforge_cancel",
+              "run_reforge_finish"
             ]
           },
           "battleAction": {
@@ -155,7 +175,7 @@
           },
           "assetId": {
             "type": "string",
-            "description": "Asset GUID from legalActions: owned blueprint for run_craft or owned compatible weapon for run_equip."
+            "description": "Asset GUID from legalActions: blueprint for crafting, weapon for equipment, material for reforge_first/second, or attribute for reforge_attribute."
           }
         }
       },
@@ -326,6 +346,12 @@
           },
           "rest": {
             "$ref": "#/components/schemas/AgentAdventureRest"
+          },
+          "reforge": {
+            "$ref": "#/components/schemas/AgentAdventureReforge"
+          },
+          "lastReforgeResult": {
+            "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
           }
         }
       },
@@ -534,6 +560,89 @@
             "items": {
               "$ref": "#/components/schemas/AgentAdventureRecruit"
             }
+          }
+        }
+      },
+      "AgentAdventureReforgeMaterial": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "rarity": {
+            "type": "string"
+          },
+          "attribute": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AgentAdventureReforge": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "first": {
+            "type": "string"
+          },
+          "second": {
+            "type": "string"
+          },
+          "attribute": {
+            "type": "string"
+          },
+          "completed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "remaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "committed": {
+            "type": "boolean"
+          },
+          "canConfirm": {
+            "type": "boolean"
+          },
+          "materials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureReforgeMaterial"
+            }
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleAsset"
+            }
+          },
+          "possibleResults": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "resultPreview": {
+            "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
           }
         }
       }

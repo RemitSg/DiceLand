@@ -34,6 +34,23 @@ using System;
     public int merchantRefreshCost;
     public AgentAdventureRecipe[] recipes;
     public AgentAdventureRest rest;
+    public AgentAdventureReforge reforge;
+    public AgentBattleRewardItem lastReforgeResult;
+}
+[Serializable] public sealed class AgentAdventureReforge
+{
+    public string mode, stage, first, second, attribute;
+    public int completed, limit, remaining;
+    public bool committed, canConfirm;
+    public AgentAdventureReforgeMaterial[] materials;
+    public AgentBattleAsset[] attributes;
+    public AgentBattleRewardItem[] possibleResults;
+    public AgentBattleRewardItem resultPreview;
+}
+[Serializable] public sealed class AgentAdventureReforgeMaterial
+{
+    public string id, name, description, rarity, attribute;
+    public int amount;
 }
 [Serializable] public sealed class AgentAdventureRest
 {

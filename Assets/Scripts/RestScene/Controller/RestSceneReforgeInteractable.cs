@@ -295,6 +295,12 @@ public class RestSceneReforgeInteractable : MonoBehaviour
             return;
         }
 
+        if (successfulReforgeCount >= GetMaxReforgeCount())
+        {
+            SetStatus("本次访问的重铸次数已用完。", true);
+            return;
+        }
+
         string resultName;
         bool succeeded = currentMode == ReforgeMode.Loot
             ? TryExecuteLootReforge(out resultName)
@@ -304,7 +310,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour
             return;
 
         int maxReforgeCount = GetMaxReforgeCount();
-        successfulReforgeCount = Mathf.Clamp(successfulReforgeCount + 1, 0, maxReforgeCount);
+        successfulReforgeCount = RunRestService.AdvanceReforgeCount(successfulReforgeCount, maxReforgeCount);
         ClearCurrentModeSelection();
         RefreshMainPanel();
 
@@ -314,7 +320,6 @@ public class RestSceneReforgeInteractable : MonoBehaviour
             return;
         }
 
-        SetStatus($"重铸成功：获得 {resultName}\n还可以继续重铸 1 次，或直接离开休息场景。", false);
         int remainingReforgeCount = Mathf.Max(0, maxReforgeCount - successfulReforgeCount);
         SetStatus($"重铸成功：获得 {resultName}\n还可以继续重铸 {remainingReforgeCount} 次，或直接离开休息场景。", false);
     }
@@ -373,164 +378,35 @@ public class RestSceneReforgeInteractable : MonoBehaviour
 
     private bool ValidateLootSelection(out string errorMessage)
     {
-        errorMessage = string.Empty;
-        if (selectedLootA == null || selectedLootB == null)
-        {
-            errorMessage = "请先选择两件战利品材料。";
-            return false;
-        }
-
-        if (selectedLootAttribute == null)
-        {
-            errorMessage = "请先选择目标属性。";
-            return false;
-        }
-
-        if (selectedLootA.rarity != selectedLootB.rarity)
-        {
-            errorMessage = "两件战利品必须为同阶级。";
-            return false;
-        }
-
-        if (!RestSceneRuntime.TryGetCurrentSnapshot(out MapRunSnapshot snapshot) || snapshot?.runState == null)
-        {
-            errorMessage = "未找到当前队伍背包数据。";
-            return false;
-        }
-
-        int requiredAmount = selectedLootA == selectedLootB ? 2 : 1;
-        if (snapshot.runState.GetLootAmount(selectedLootA) < requiredAmount)
-        {
-            errorMessage = $"材料不足：{GetLootDisplayName(selectedLootA)}";
-            return false;
-        }
-
-        if (selectedLootA != selectedLootB && snapshot.runState.GetLootAmount(selectedLootB) < 1)
-        {
-            errorMessage = $"材料不足：{GetLootDisplayName(selectedLootB)}";
-            return false;
-        }
-
-        return true;
+        RestSceneRuntime.TryGetCurrentSnapshot(out MapRunSnapshot snapshot);
+        return RunRestService.ValidateLootReforge(snapshot?.runState, selectedLootA, selectedLootB, selectedLootAttribute, out errorMessage);
     }
 
     private bool ValidateRelicSelection(out string errorMessage)
     {
-        errorMessage = string.Empty;
-        if (selectedRelicA == null || selectedRelicB == null)
-        {
-            errorMessage = "请先选择两件遗物材料。";
-            return false;
-        }
-
-        if (selectedRelicA.rarity != selectedRelicB.rarity)
-        {
-            errorMessage = "两件遗物必须为同阶级。";
-            return false;
-        }
-
-        if (selectedRelicA.rarity >= LootRarity.Legendary)
-        {
-            errorMessage = "传说遗物无法继续升阶重铸。";
-            return false;
-        }
-
-        if (!RestSceneRuntime.TryGetCurrentSnapshot(out MapRunSnapshot snapshot) || snapshot?.runState == null)
-        {
-            errorMessage = "未找到当前队伍遗物数据。";
-            return false;
-        }
-
-        int requiredAmount = selectedRelicA == selectedRelicB ? 2 : 1;
-        if (snapshot.runState.GetRelicAmount(selectedRelicA) < requiredAmount)
-        {
-            errorMessage = $"材料不足：{GetRelicDisplayName(selectedRelicA)}";
-            return false;
-        }
-
-        if (selectedRelicA != selectedRelicB && snapshot.runState.GetRelicAmount(selectedRelicB) < 1)
-        {
-            errorMessage = $"材料不足：{GetRelicDisplayName(selectedRelicB)}";
-            return false;
-        }
-
-        return true;
+        RestSceneRuntime.TryGetCurrentSnapshot(out MapRunSnapshot snapshot);
+        return RunRestService.ValidateRelicReforge(snapshot?.runState, selectedRelicA, selectedRelicB, out errorMessage);
     }
 
     private LootItem_SO RollLootReforgeResult()
     {
-        List<LootItem_SO> resolvedCandidates = BuildCurrentLootReforgeCandidates();
-        if (resolvedCandidates.Count <= 0)
-            return null;
-
-        System.Random rng = CreateDeterministicRandom("LootReforge");
-        return resolvedCandidates[rng.Next(resolvedCandidates.Count)];
+        return RunRestService.RollLootReforge(GetReforgeDefinition(), selectedLootA, selectedLootB, selectedLootAttribute, CreateDeterministicRandom("LootReforge"));
     }
 
     private List<LootItem_SO> BuildCurrentLootReforgeCandidates()
     {
-        if (selectedLootA == null || selectedLootB == null || selectedLootAttribute == null)
-            return new List<LootItem_SO>();
-
-        return RewardCandidateFilterService.BuildLootReforgeCandidates(
-            GetResolvedLootReforgePool(),
-            selectedLootA.rarity,
-            selectedLootAttribute);
+        return RunRestService.LootReforgeCandidates(GetReforgeDefinition(), selectedLootA, selectedLootB, selectedLootAttribute);
     }
 
     private Relic_SO RollRelicReforgeResult()
     {
-        if (selectedRelicA == null || selectedRelicB == null)
-            return null;
-
-        int startRarityIndex = Mathf.Clamp((int)selectedRelicA.rarity + 1, 0, (int)LootRarity.Legendary);
-        IReadOnlyList<Relic_SO> relicPool = GetResolvedRelicReforgePool();
-        for (int rarityIndex = startRarityIndex; rarityIndex <= (int)LootRarity.Legendary; rarityIndex++)
-        {
-            LootRarity rarity = (LootRarity)rarityIndex;
-            List<Relic_SO> candidates = new List<Relic_SO>();
-            for (int i = 0; i < relicPool.Count; i++)
-            {
-                Relic_SO candidate = relicPool[i];
-                if (candidate == null || candidate.rarity != rarity)
-                    continue;
-
-                candidates.Add(candidate);
-            }
-
-            if (candidates.Count <= 0)
-                continue;
-
-            System.Random rng = CreateDeterministicRandom("RelicReforge");
-            return candidates[rng.Next(candidates.Count)];
-        }
-
-        return null;
+        return RunRestService.RollRelicReforge(GetReforgeDefinition(), selectedRelicA, selectedRelicB, CreateDeterministicRandom("RelicReforge"));
     }
 
     private System.Random CreateDeterministicRandom(string salt)
     {
-        unchecked
-        {
-            int seed = 17;
-            seed = seed * 31 + successfulReforgeCount;
-            seed = seed * 31 + (int)currentMode;
-            seed = seed * 31 + RestSceneRuntime.SourceCoord.x;
-            seed = seed * 31 + RestSceneRuntime.SourceCoord.y;
-            seed = seed * 31 + (RestSceneRuntime.ReturnSceneName != null ? RestSceneRuntime.ReturnSceneName.GetHashCode() : 0);
-            seed = seed * 31 + GetObjectIdentityHash(selectedLootA);
-            seed = seed * 31 + GetObjectIdentityHash(selectedLootB);
-            seed = seed * 31 + GetObjectIdentityHash(selectedLootAttribute);
-            seed = seed * 31 + GetObjectIdentityHash(selectedRelicA);
-            seed = seed * 31 + GetObjectIdentityHash(selectedRelicB);
-            seed = seed * 31 + (salt != null ? salt.GetHashCode() : 0);
-            return new System.Random(seed);
-        }
-    }
-
-    private static int GetObjectIdentityHash(UnityEngine.Object obj)
-    {
-        return obj != null ? obj.name.GetHashCode() : 0;
+        return RunRestService.ReforgeRandom(successfulReforgeCount, (int)currentMode, RestSceneRuntime.SourceCoord, RestSceneRuntime.ReturnSceneName,
+            selectedLootA, selectedLootB, selectedLootAttribute, selectedRelicA, selectedRelicB, salt);
     }
 
     private void RefreshMainPanel()
@@ -708,12 +584,6 @@ public class RestSceneReforgeInteractable : MonoBehaviour
 
         if (actionButton != null)
         {
-            bool interactable = successfulReforgeCount < 2 && (currentMode == ReforgeMode.Loot
-                ? CanExecuteLootReforge()
-                : CanExecuteRelicReforge());
-            actionButton.interactable = interactable;
-            ApplyActionButtonVisual(actionButton, interactable);
-
             bool dynamicInteractable = successfulReforgeCount < GetMaxReforgeCount() && (currentMode == ReforgeMode.Loot
                 ? CanExecuteLootReforge()
                 : CanExecuteRelicReforge());
@@ -920,11 +790,8 @@ public class RestSceneReforgeInteractable : MonoBehaviour
 
     private int GetMaxReforgeCount()
     {
-        const int baseReforgeCount = 2;
-        if (!RestSceneRuntime.TryGetCurrentSnapshot(out MapRunSnapshot snapshot) || snapshot?.runState == null)
-            return baseReforgeCount;
-
-        return Mathf.Max(baseReforgeCount, RelicRestReforgeService.CalculateLimit(snapshot.runState, baseReforgeCount));
+        RestSceneRuntime.TryGetCurrentSnapshot(out MapRunSnapshot snapshot);
+        return RunRestService.ReforgeLimit(snapshot?.runState);
     }
 
     private void RefreshPromptText()
@@ -1007,53 +874,14 @@ public class RestSceneReforgeInteractable : MonoBehaviour
         return relics;
     }
 
-    private IReadOnlyList<LootAttribute_SO> GetResolvedAttributeOptions()
+    public RunReforgeDefinition GetReforgeDefinition()
     {
-        List<LootAttribute_SO> attributes = new List<LootAttribute_SO>();
-        HashSet<LootAttribute_SO> seen = new HashSet<LootAttribute_SO>();
-
-        if (lootAttributeOptions != null)
-        {
-            for (int i = 0; i < lootAttributeOptions.Count; i++)
-            {
-                LootAttribute_SO attribute = lootAttributeOptions[i];
-                if (attribute == null || !seen.Add(attribute))
-                    continue;
-
-                attributes.Add(attribute);
-            }
-        }
-
-        if (attributes.Count > 0)
-            return attributes;
-
-        IReadOnlyList<LootItem_SO> lootPool = GetResolvedLootReforgePool();
-        for (int i = 0; i < lootPool.Count; i++)
-        {
-            LootItem_SO item = lootPool[i];
-            if (item == null || item.attribute == null || !seen.Add(item.attribute))
-                continue;
-
-            attributes.Add(item.attribute);
-        }
-
-        attributes.Sort((left, right) => string.Compare(GetLootAttributeDisplayName(left), GetLootAttributeDisplayName(right), StringComparison.OrdinalIgnoreCase));
-        return attributes;
+        return new RunReforgeDefinition { lootTable = lootReforgeTable, relicTable = relicReforgeTable, attributes = lootAttributeOptions };
     }
 
-    private IReadOnlyList<LootItem_SO> GetResolvedLootReforgePool()
-    {
-        return lootReforgeTable != null && lootReforgeTable.IsValid
-            ? lootReforgeTable.LootItems
-            : Array.Empty<LootItem_SO>();
-    }
-
-    private IReadOnlyList<Relic_SO> GetResolvedRelicReforgePool()
-    {
-        return relicReforgeTable != null && relicReforgeTable.IsValid
-            ? relicReforgeTable.Relics
-            : Array.Empty<Relic_SO>();
-    }
+    private IReadOnlyList<LootAttribute_SO> GetResolvedAttributeOptions() => RunRestService.ReforgeAttributes(GetReforgeDefinition());
+    private IReadOnlyList<LootItem_SO> GetResolvedLootReforgePool() => GetReforgeDefinition().LootPool;
+    private IReadOnlyList<Relic_SO> GetResolvedRelicReforgePool() => GetReforgeDefinition().RelicPool;
 
     private void EnsureOutlineRenderer()
     {

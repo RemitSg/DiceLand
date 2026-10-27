@@ -19,6 +19,7 @@ public sealed class AgentAdventureConfiguration
     public MerchantCatalog_SO merchant;
     public TreasureRewardTable_SO treasure;
     public AbilityTreeConfig_SO abilities;
+    public RunReforgeDefinition reforge;
 
     public static AgentAdventureConfiguration Load(DifficultyConfig_SO difficulty = null)
     {
@@ -43,9 +44,17 @@ public sealed class AgentAdventureConfiguration
                 eliteRelics = Asset<RelicTable_SO>(fields, "eliteRelicChoiceTable"), levels = Asset<LevelTable_SO>(fields, "levelTable"),
                 calamities = Asset<CalamityPool_SO>(fields, "calamityPool"), events = Asset<MapEventPool_SO>(fields, "eventPool"),
                 merchant = Asset<MerchantCatalog_SO>(fields, "merchantCatalog"), treasure = Asset<TreasureRewardTable_SO>(fields, "treasureRewardTable"),
-                abilities = Asset<AbilityTreeConfig_SO>(fields, "abilityTreeConfig")
+                abilities = Asset<AbilityTreeConfig_SO>(fields, "abilityTreeConfig"),
+                reforge = LoadReforgeDefinition(open)
             };
         }
+        finally { EditorSceneManager.ClosePreviewScene(preview); }
+    }
+
+    private static RunReforgeDefinition LoadReforgeDefinition(MethodInfo open)
+    {
+        Scene preview = (Scene)open.Invoke(null, new object[] { "Assets/Scenes/RestScene.scene" });
+        try { return preview.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<RestSceneReforgeInteractable>(true)).Single().GetReforgeDefinition(); }
         finally { EditorSceneManager.ClosePreviewScene(preview); }
     }
 
