@@ -17,6 +17,7 @@ using System;
     public int skillIndex;
     public string targetId;
     public int targetButtonIndex;
+    public int choiceIndex;
 }
 [Serializable] public sealed class AgentBattlePartyMember
 {
@@ -48,6 +49,7 @@ using System;
     public AgentBattleAsset[] relics;
     public AgentBattleEvent[] events;
     public AgentBattleLegalAction[] legalActions;
+    public AgentBattleRewards rewards;
 }
 [Serializable] public sealed class AgentBattleActor
 {
@@ -91,7 +93,18 @@ using System;
     public int skillIndex;
     public string targetId;
     public int targetButtonIndex;
+    public int choiceIndex;
 }
+[Serializable] public sealed class AgentBattleRewards
+{
+    public int experience;
+    public int money;
+    public int refreshesRemaining;
+    public AgentBattleRewardItem[] loot;
+    public AgentBattleRewardItem[] relics;
+    public AgentBattleRewardItem[] choices;
+}
+[Serializable] public sealed class AgentBattleRewardItem { public string id; public string name; public string description; public int amount; public int index; }
 [Serializable] public sealed class AgentBattleEvent { public int index; public int round; public string kind; public string actorId; public int amount; public string message; }
 [Serializable] public sealed class AgentBattleCatalogue { public AgentBattleAsset[] characters; public AgentBattleAsset[] weapons; public AgentBattleAsset[] enemies; public AgentBattleAsset[] relics; }
 [Serializable] public sealed class AgentBattleAsset { public string id; public string name; public string description; public string limitation; }

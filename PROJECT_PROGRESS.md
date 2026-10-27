@@ -1512,3 +1512,11 @@
 - HTTP 端到端完成木剑、燃烧、中毒、电流和召唤 5 组对战，并全部从开局重放一致；巨型史莱姆的分裂与断线傀儡召唤进入真实运行时流程。
 - PlayMode 12 项为 3 通过、9 失败，主要为演出超时及教程断言；原代码对照也出现同样的演出超时，但在 7/12 后取消，未取得完整基线。保留此限制，不将图形化回归报告为通过。
 - 详细验证结果保存在 `outputs/agent-battle/verification-summary.json`。未保存或覆盖当前用户场景；后续按领域模块提取规则，正式界面和接口共同切换到提取后的实现。
+
+
+## 2026-10-27 - Agent adventure B002
+
+- Added isolated adventure encounter bridge, shared map settlement writer, reward choice and refresh service, and deterministic acquisition RNG. UI and agent use the same rules.
+- Fixed persistent party IDs being overwritten by display names during settlement.
+- Validation: 46/46 targeted EditMode tests passed; HTTP wood-sword battle won in 3 rounds, replay matched. Full EditMode: 828 total, 804 passed, 24 failed (23 prior failures plus an EventSystem.current error in BattleExitFlowServiceTests, reproduced alone). Full suite is not green; existing PlayMode limitations remain.
+- B001 checkpoint: 4186339. B002 bridge is internal; B003 will expose normal adventure creation and movement. Full completion remains governed by docs/agent-battle/PLAN.md. Evidence: docs/agent-battle/B002-validation.json.

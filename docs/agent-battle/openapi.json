@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "DiceLand Agent Battle API",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Editor-backed, single-session, graphics-free access to the existing game battle rules. See README for per-operation required fields, replay guarantees and unsupported acquisition/map features."
   },
   "servers": [
@@ -76,7 +76,9 @@
               "target",
               "commit",
               "replay",
-              "close"
+              "close",
+              "choose_relic",
+              "refresh_rewards"
             ]
           },
           "sessionId": {
@@ -84,12 +86,12 @@
           },
           "requestId": {
             "type": "string",
-            "description": "Required unique ID for set_skill, target and commit; retries must preserve every parameter."
+            "description": "Required unique ID for set_skill, target and commit; retries must preserve every parameter. Also required for choose_relic and refresh_rewards."
           },
           "revision": {
             "type": "integer",
             "format": "int32",
-            "description": "Required for set_skill, target and commit; must match the latest state revision."
+            "description": "Required for set_skill, target and commit; must match the latest state revision. Also required for choose_relic and refresh_rewards."
           },
           "seed": {
             "type": "integer",
@@ -143,6 +145,11 @@
           "targetButtonIndex": {
             "type": "integer",
             "format": "int32"
+          },
+          "choiceIndex": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Index from legalActions for choose_relic."
           }
         },
         "required": [
@@ -208,6 +215,7 @@
             "type": "string",
             "enum": [
               "targeting",
+              "reward",
               "terminal",
               "faulted"
             ]
@@ -250,6 +258,9 @@
             "items": {
               "$ref": "#/components/schemas/AgentBattleLegalAction"
             }
+          },
+          "rewards": {
+            "$ref": "#/components/schemas/AgentBattleRewards"
           }
         }
       },
@@ -412,6 +423,11 @@
           "targetButtonIndex": {
             "type": "integer",
             "format": "int32"
+          },
+          "choiceIndex": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Index from legalActions for choose_relic."
           }
         }
       },
@@ -503,6 +519,63 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AgentBattleRequest"
+            }
+          }
+        }
+      },
+      "AgentBattleRewardItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AgentBattleRewards": {
+        "type": "object",
+        "properties": {
+          "experience": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "money": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "refreshesRemaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "loot": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "relics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleRewardItem"
             }
           }
         }

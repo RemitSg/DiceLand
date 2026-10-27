@@ -6487,6 +6487,7 @@ public partial class BattleButton : MonoBehaviour
 
         results.relicRewards = BattleRewardAggregationService.BuildRelicRewardsFromAggregation(aggregatedRelics);
 
+        if (headlessExecution) headlessRelicChoice = results.relicChoice;
         return results;
     }
 

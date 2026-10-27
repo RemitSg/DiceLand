@@ -34,7 +34,9 @@ public sealed class AgentBattleSession : IDisposable
 
     public string Id => id;
 
-    public AgentBattleSession(AgentBattleRequest request)
+    public AgentBattleSession(AgentBattleRequest request) : this(request, null, null) { }
+
+    public AgentBattleSession(AgentBattleRequest request, BattleEncounterData adventureEncounter, LevelTable_SO levels)
     {
         if (EditorApplication.isPlayingOrWillChangePlaymode)
             throw new InvalidOperationException("Stop Play Mode before opening an agent session.");
@@ -44,20 +46,20 @@ public sealed class AgentBattleSession : IDisposable
             || UnityEngine.Object.FindObjectsOfType<BattleAllyController>(true).Length != 0
             || UnityEngine.Object.FindObjectsOfType<BattleEnemyController>(true).Length != 0)
             throw new InvalidOperationException("An existing battle owns the global runtime. Close it first.");
-        if (request.party == null || request.party.Length < 1 || request.party.Length > 4)
+        if (adventureEncounter == null && (request.party == null || request.party.Length < 1 || request.party.Length > 4))
             throw new ArgumentException("party must contain 1 to 4 characters.");
-        if (request.enemies == null || request.enemies.Length < 1 || request.enemies.Length > 8)
+        if (adventureEncounter == null && (request.enemies == null || request.enemies.Length < 1 || request.enemies.Length > 8))
             throw new ArgumentException("enemies must contain 1 to 8 enemy asset IDs.");
         if (request.maxRounds < 1 || request.maxRounds > 1000)
             throw new ArgumentException("maxRounds must be between 1 and 1000.");
         if (request.relics != null && request.relics.Length > 32)
             throw new ArgumentException("At most 32 relics are supported per session.");
         // Validate every asset before changing the scene or any global runtime state.
-        CharacterData_SO[] characters = request.party.Select(p => Load<CharacterData_SO>(p.character)).ToArray();
-        Weapon_SO[] weapons = request.party.Select(p => Load<Weapon_SO>(p.weapon)).ToArray();
-        EnemyData_SO[] enemyData = request.enemies.Select(Load<EnemyData_SO>).ToArray();
+        CharacterData_SO[] characters = adventureEncounter != null ? adventureEncounter.partyMembers.Select(m => m.characterData).ToArray() : request.party.Select(p => Load<CharacterData_SO>(p.character)).ToArray();
+        Weapon_SO[] weapons = adventureEncounter != null ? adventureEncounter.partyMembers.Select(m => m.weaponData).ToArray() : request.party.Select(p => Load<Weapon_SO>(p.weapon)).ToArray();
+        EnemyData_SO[] enemyData = adventureEncounter != null ? adventureEncounter.Enemies.ToArray() : request.enemies.Select(Load<EnemyData_SO>).ToArray();
         Relic_SO[] relics = (request.relics ?? new string[0]).Select(Load<Relic_SO>).ToArray();
-        if (relics.Any(HasAcquisitionEffect))
+        if (adventureEncounter == null && relics.Any(HasAcquisitionEffect))
             throw new ArgumentException("This battle-only API does not simulate relic acquisition. Relics with OnRelicAcquired effects cannot be equipped yet.");
         configuration = Clone(request);
         contentHash = ContentHash();
@@ -74,21 +76,29 @@ public sealed class AgentBattleSession : IDisposable
             manager.enemiesParent = Child("Enemies", root.transform);
             manager.Initialize();
             manager.StartBattle();
-            EnemyGroup_SO group = ScriptableObject.CreateInstance<EnemyGroup_SO>();
-            group.name = "Agent battle group";
-            group.enemies = new List<EnemyData_SO>(enemyData);
-            runtimeGroup = group;
-            encounter = new BattleEncounterData { seed = request.seed, enemyGroup = group, encounterLabel = "Agent battle", tileType = MapTileType.Battle, configuredExperienceReward = 0 };
-            encounter.relicInventory = relics.Select(r => new RunRelicState { relicData = r, amount = 1 }).ToList();
+            manager.LevelTable = levels;
+            if (adventureEncounter == null)
+            {
+                runtimeGroup = ScriptableObject.CreateInstance<EnemyGroup_SO>();
+                runtimeGroup.name = "Agent battle group";
+                runtimeGroup.enemies = new List<EnemyData_SO>(enemyData);
+                encounter = new BattleEncounterData { seed = request.seed, enemyGroup = runtimeGroup, encounterLabel = "Agent battle", tileType = MapTileType.Battle, configuredExperienceReward = 0 };
+                encounter.relicInventory = relics.Select(r => new RunRelicState { relicData = r, amount = 1 }).ToList();
+            }
+            else
+            {
+                encounter = adventureEncounter;
+                encounter.partyMembers = adventureEncounter.partyMembers.Select(m => m.Clone()).ToList();
+            }
             BattleEncounterRuntime.SetEncounter(encounter);
             BattleEncounterRuntime.ConsumeEncounter();
             for (int i = 0; i < characters.Length; i++)
             {
-                var member = new RunPartyMemberState { memberId = "ally_" + i, characterData = characters[i], weaponData = weapons[i], level = 1, maxHP = characters[i].baseHP, currentHP = characters[i].baseHP };
-                encounter.partyMembers.Add(member);
+                var member = adventureEncounter != null ? encounter.partyMembers[i] : new RunPartyMemberState { memberId = "ally_" + i, characterData = characters[i], weaponData = weapons[i], level = 1, maxHP = characters[i].baseHP, currentHP = characters[i].baseHP };
+                if (adventureEncounter == null) encounter.partyMembers.Add(member);
                 BattleAllyController ally = BattleHeadlessCombatantFactory.CreateAlly(manager.alliesParent.transform, member);
-                actors.Add(member.memberId, ally);
-                TrackAlly(member.memberId, ally);
+                actors.Add("ally_" + i, ally);
+                TrackAlly("ally_" + i, ally);
             }
             for (int i = 0; i < enemyData.Length; i++)
             {
@@ -115,6 +125,27 @@ public sealed class AgentBattleSession : IDisposable
         }
     }
 
+    private bool adventureResultApplied;
+    public bool ResultReady => flow.HeadlessCompleted && !AwaitingRelicChoice && failure == null && !truncated;
+    public BattleEncounterData Encounter => encounter;
+    private bool AwaitingRelicChoice => flow.HeadlessCompleted && encounter.wasVictory && flow.HeadlessRelicChoice != null && flow.HeadlessRelicChoice.HasChoices && !flow.HeadlessRelicChoice.rewardApplied;
+
+    public void ApplyAdventureResult(MapRunSnapshot snapshot)
+    {
+        if (adventureResultApplied) return;
+        if (!ResultReady) throw new InvalidOperationException("Finish the battle and required rewards before returning to the adventure.");
+        if (snapshot?.runState == null || snapshot.sceneName != encounter.sourceSceneName)
+            throw new ArgumentException("Adventure snapshot does not match the encounter.");
+        Random.State outside = Random.state;
+        try
+        {
+            Random.state = randomState;
+            MapRunRuntime.ApplyEncounterResult(snapshot, encounter);
+            adventureResultApplied = true;
+        }
+        finally { randomState = Random.state; Random.state = outside; }
+    }
+
     private EnemyGroup_SO runtimeGroup;
     public AgentBattleObservation Observe()
     {
@@ -123,13 +154,14 @@ public sealed class AgentBattleSession : IDisposable
         var result = new AgentBattleObservation
         {
             sessionId = id, revision = revision, seed = configuration.seed, round = flow.HeadlessRound,
-            phase = failure != null ? "faulted" : (truncated || flow.HeadlessCompleted ? "terminal" : "targeting"),
+            phase = failure != null ? "faulted" : (AwaitingRelicChoice ? "reward" : (truncated || flow.HeadlessCompleted ? "terminal" : "targeting")),
             outcome = failure ?? (truncated ? "round_limit" : flow.HeadlessOutcome),
             energy = flow.HeadlessEnergy, temporaryEnergy = flow.HeadlessTemporaryEnergy, reservedEnergy = flow.HeadlessReservedEnergy,
             actors = actors.Select(pair => DescribeActor(pair.Key, pair.Value)).ToArray(), events = events.ToArray(),
-            relics = encounter.relicInventory.Where(r => r != null && r.relicData != null).Select(r => DescribeRelic(r.relicData)).ToArray()
+            relics = encounter.relicInventory.Where(r => r != null && r.relicData != null).Select(r => DescribeRelic(r.relicData)).ToArray(),
+            rewards = DescribeRewards()
         };
-        result.legalActions = result.phase == "targeting" ? LegalActions().ToArray() : new AgentBattleLegalAction[0];
+        result.legalActions = (result.phase == "targeting" || result.phase == "reward") ? LegalActions().ToArray() : new AgentBattleLegalAction[0];
         return result;
     }
 
@@ -146,7 +178,7 @@ public sealed class AgentBattleSession : IDisposable
             return JsonUtility.FromJson<AgentBattleResponse>(cached);
         }
         if (request.revision != revision) throw new ArgumentException("Stale revision. Observe the session before retrying.");
-        if (failure != null || truncated || flow.HeadlessCompleted) throw new ArgumentException("The session is terminal.");
+        if (failure != null || truncated || (flow.HeadlessCompleted && !AwaitingRelicChoice)) throw new ArgumentException("The session is terminal.");
         if (commands.Count >= 10000) throw new ArgumentException("Session command limit reached. Export the replay and close the session.");
         // Reject invalid requests before consuming RNG or changing the battle.
         AgentBattleLegalAction legal = LegalActions().FirstOrDefault(a => Matches(a, request));
@@ -155,7 +187,18 @@ public sealed class AgentBattleSession : IDisposable
         try
         {
             Random.state = randomState;
-            if (request.op == "set_skill")
+            if (request.op == "choose_relic")
+            {
+                BattleSettlementRelicChoiceData choice = flow.HeadlessRelicChoice;
+                choice.selectedChoice = choice.choices[request.choiceIndex];
+                if (!BattleRelicChoiceSelectionService.TryApply(encounter, choice, out string error)) throw new InvalidOperationException(error);
+            }
+            else if (request.op == "refresh_rewards")
+            {
+                if (!BattleRelicChoiceSelectionService.TryRefresh(flow.HeadlessRelicChoice, new System.Random(Random.Range(int.MinValue, int.MaxValue))))
+                    throw new InvalidOperationException("No replacement reward choices were available.");
+            }
+            else if (request.op == "set_skill")
             {
                 BattleAllyController ally = (BattleAllyController)actors[request.actorId];
                 if (!ally.SetSelectedSkillIndexForButton(ally.SpeedButtons[request.buttonIndex], request.skillIndex, flow.HeadlessRound))
@@ -196,10 +239,23 @@ public sealed class AgentBattleSession : IDisposable
         return response;
     }
 
-    public AgentBattleReplay Replay() => new AgentBattleReplay { engineVersion = Application.unityVersion, contentHash = contentHash, create = Clone(configuration), commands = commands.Select(Clone).ToArray() };
+    public AgentBattleReplay Replay()
+    {
+        if (runtimeGroup == null)
+            throw new InvalidOperationException("Adventure battles require the owning adventure replay, including carried state and encounter configuration.");
+        return new AgentBattleReplay { engineVersion = Application.unityVersion, contentHash = contentHash, create = Clone(configuration), commands = commands.Select(Clone).ToArray() };
+    }
 
     private IEnumerable<AgentBattleLegalAction> LegalActions()
     {
+        if (AwaitingRelicChoice)
+        {
+            BattleSettlementRelicChoiceData choice = flow.HeadlessRelicChoice;
+            for (int i = 0; i < choice.choices.Count; i++)
+                if (choice.choices[i]?.relicData != null) yield return new AgentBattleLegalAction { op = "choose_relic", choiceIndex = i };
+            if (BattleRelicChoiceSelectionService.CanRefresh(choice)) yield return new AgentBattleLegalAction { op = "refresh_rewards" };
+            yield break;
+        }
         yield return new AgentBattleLegalAction { op = "commit" };
         foreach (var pair in actors)
         {
@@ -228,10 +284,24 @@ public sealed class AgentBattleSession : IDisposable
     private static bool Matches(AgentBattleLegalAction action, AgentBattleRequest request)
     {
         if (action.op != request.op) return false;
-        if (action.op == "commit") return true;
+        if (action.op == "commit" || action.op == "refresh_rewards") return true;
+        if (action.op == "choose_relic") return action.choiceIndex == request.choiceIndex;
         if (action.actorId != request.actorId || action.buttonIndex != request.buttonIndex) return false;
         return action.op == "set_skill" ? action.skillIndex == request.skillIndex
             : action.targetId == request.targetId && action.targetButtonIndex == request.targetButtonIndex;
+    }
+
+    private AgentBattleRewards DescribeRewards()
+    {
+        BattleSettlementRelicChoiceData choice = flow.HeadlessRelicChoice;
+        return new AgentBattleRewards
+        {
+            experience = encounter.experienceGained, money = encounter.moneyGained,
+            refreshesRemaining = choice != null ? choice.refreshesRemaining : 0,
+            loot = (encounter.resolvedLoot ?? new List<RunLootState>()).Where(x => x?.lootItem != null).Select(x => new AgentBattleRewardItem { id = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(x.lootItem)), name = x.lootItem.lootName, description = x.lootItem.description, amount = x.amount }).ToArray(),
+            relics = (encounter.resolvedRelics ?? new List<RunRelicState>()).Where(x => x?.relicData != null).Select(x => new AgentBattleRewardItem { id = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(x.relicData)), name = x.relicData.DisplayName, description = x.relicData.description, amount = x.amount }).ToArray(),
+            choices = choice?.choices != null ? choice.choices.Select((x,i) => new AgentBattleRewardItem { index = i, id = x?.relicData != null ? AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(x.relicData)) : "", name = x?.displayName, description = x?.description, amount = x != null ? x.amount : 0 }).ToArray() : new AgentBattleRewardItem[0]
+        };
     }
 
     private AgentBattleActor DescribeActor(string actorId, UnityEngine.Object value)

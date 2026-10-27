@@ -154,6 +154,7 @@ public class BattleSettlementPartyMemberFactoryTests
 
         Assert.AreEqual("新手木剑", progressions[0].DisplayName);
         StringAssert.DoesNotContain("[", progressions[0].DisplayName);
+        Assert.AreEqual("Ally One", BattleSettlementPartyMemberFactory.BuildRunStates(progressions)[0].memberId);
         Object.DestroyImmediate(character);
         Object.DestroyImmediate(weapon);
     }

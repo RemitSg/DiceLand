@@ -54,6 +54,8 @@ python tools/agent_battle_client.py demo --weapon '熔火铁剑' --enemy '浪灵
 | `set_skill` | 会话参数、`actorId`、`buttonIndex`、`skillIndex` | 修改指定友方速度槽的技能 |
 | `target` | 会话参数、`actorId`、`buttonIndex`、`targetId`、`targetButtonIndex` | 使用正式游戏的速度与拼点连线规则连接目标 |
 | `commit` | 会话参数 | 执行整回合，再推进到下一次决策点或终局 |
+| `choose_relic` | 会话参数、`choiceIndex` | 在奖励阶段选择合法遗物，完成后才允许返回冒险 |
+| `refresh_rewards` | 会话参数 | 使用剩余奖励刷新次数，并排除当前展示的选项 |
 | `replay` | `sessionId` | 导出开局配置、已接受的行动、内容指纹和引擎版本 |
 | `close` | `sessionId` | 销毁会话对象、清理遭遇和沙盒场景 |
 
@@ -91,7 +93,7 @@ python tools/agent_battle_client.py demo --weapon '熔火铁剑' --enemy '浪灵
 
 ## 状态、错误与重放
 
-- `state.phase` 为 `targeting`、`terminal` 或 `faulted`。
+- `state.phase` 为 `targeting`、`reward`、`terminal` 或 `faulted`。奖励阶段可读取 `rewards` 中的经验、金币、战利品、遗物选项及刷新次数。
 - 正常终局结果包括 `victory`、`defeat`、`retreat` 和 `defeat_prevented`。达到回合上限为 `round_limit`，不当作胜利。
 - `actors` 包含双方生命、状态、速度槽、当前技能和目标；友方 `skills` 列出可切换技能。技能说明复用正式游戏的效果文案生成器。`relics` 列出本场遗物。
 - `events` 保留流程文本和结构化的伤害、状态变化、死亡通知。它不是完整的底层规则事件模型；新召唤单位在下一个观察点登记，其此前的信息可能只出现在流程文本中。
@@ -102,11 +104,21 @@ python tools/agent_battle_client.py demo --weapon '熔火铁剑' --enemy '浪灵
 
 ## 当前边界
 
-- 只提供单场战斗，尚未接入地图探索、商店、锻造、奖励选择、局外成长、存档分支和完整冒险。
+- 公开 HTTP 开局仍只提供单场战斗；完整冒险创建、地图探索、商店、锻造、局外成长和存档分支正在后续批次接入。
 - 遗物按已携带的战斗装备处理。具有 `OnRelicAcquired` 效果的遗物暂时明确拒绝，catalog 中标为 `acquisition_not_supported`，避免草莓等获得时效果被静默遗漏。地图或经济触发在单场战斗中不会发生。
 - 不支持任意局面 snapshot/restore。当前可导出并从开局重放行动；这与恢复任意中间状态不同。
 - 并非全部敌人、技能与遗物组合都已完成回归验证；它们会走正式实现，原有配置缺陷也会如实影响结果，不会被替换成简化效果。
 - 此接口验证战斗逻辑，无法判断画面可读性、动画节奏和点击手感。
+
+## B002：冒险战斗衔接
+
+内部 `AgentAdventureBattleBridge` 从独立 `MapRunSnapshot` 和实际敌群构造正式遭遇，保留队伍生命、等级、经验、装备、遗物、灾厄与开战状态；不替换正式界面的全局地图快照。战斗结束后，通过正式 `MapRunRuntime.ApplyEncounterResult(snapshot, encounter)` 回写结果，且桥接层保证重复返回不重复发奖。
+
+遗物选择和刷新已提取为正式结算面板与接口共同使用的服务。精英奖励需要选择后才可返回；草莓、礼包等获得效果在回写背包时执行一次。礼包抽取改用可捕获的随机种子。持久队员 ID 与结算显示名称分别保留，修正了原结算把 ID 替换成角色名的问题。
+
+本批尚未开放 HTTP 任意冒险状态注入。`create` 仍使用上文的单场配置，不会凭空生成奖励阶段；上述奖励命令供后续正式冒险入口复用。内部冒险战斗拒绝导出缺少携带状态的单场重放，完整重放由后续冒险协议负责。
+
+B002 相关定向测试 46/46 通过，覆盖连续两场战斗、等级与金币、失败、Boss 钥匙门槛、奖励选择/刷新、重复请求、礼包随机和全局快照隔离；新单场 HTTP 对战重放一致。全量 EditMode 为 828 项、804 通过、24 失败：原有 23 项之外，另观察到结算按钮测试的 EventSystem.current 日志错误，单独运行仍复现；未将全量称为通过，详情见 `B002-validation.json`。测试中的小型敌群不作为完整冒险通关证据。原有 PlayMode 限制继续保留。
 
 ## 后续迁移原则
 

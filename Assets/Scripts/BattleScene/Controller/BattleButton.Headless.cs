@@ -8,6 +8,8 @@ public partial class BattleButton
     private bool headlessExecution;
     private bool headlessCompleted;
     private string headlessOutcome;
+    private BattleSettlementRelicChoiceData headlessRelicChoice;
+    public BattleSettlementRelicChoiceData HeadlessRelicChoice => headlessRelicChoice;
     public event Action<int, string> HeadlessLog;
     public bool HeadlessCompleted => headlessCompleted;
     public string HeadlessOutcome => headlessOutcome;

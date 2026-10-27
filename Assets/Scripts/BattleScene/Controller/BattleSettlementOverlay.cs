@@ -865,25 +865,11 @@ public class BattleSettlementOverlay : MonoBehaviour
         if (choiceData == null || !choiceData.HasChoices || !data.isVictory)
             return true;
 
-        if (choiceData.selectedChoice == null || choiceData.selectedChoice.relicData == null)
+        if (!BattleRelicChoiceSelectionService.TryApply(BattleEncounterRuntime.ActiveEncounter, choiceData, out _))
         {
             ShowRelicChoiceRequiredMessage(choiceData);
             return false;
         }
-
-        if (choiceData.rewardApplied)
-            return true;
-
-        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
-        if (activeEncounter != null)
-        {
-            if (activeEncounter.resolvedRelics == null)
-                activeEncounter.resolvedRelics = new List<RunRelicState>();
-
-            AddOrMergeResolvedRelic(activeEncounter.resolvedRelics, choiceData.selectedChoice.relicData, 1);
-        }
-
-        choiceData.rewardApplied = true;
         return true;
     }
 
@@ -904,28 +890,6 @@ public class BattleSettlementOverlay : MonoBehaviour
                 ? choiceData.requiredMessage
                 : relicChoiceRequiredMessage;
         }
-    }
-
-    private static void AddOrMergeResolvedRelic(List<RunRelicState> relics, Relic_SO relicData, int amount)
-    {
-        if (relics == null || relicData == null || amount <= 0)
-            return;
-
-        for (int i = 0; i < relics.Count; i++)
-        {
-            RunRelicState existing = relics[i];
-            if (existing == null || existing.relicData != relicData)
-                continue;
-
-            existing.amount += amount;
-            return;
-        }
-
-        relics.Add(new RunRelicState
-        {
-            relicData = relicData,
-            amount = amount
-        });
     }
 
     private void HandleRetryBattle(string sceneName)
@@ -1487,22 +1451,8 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private void RefreshRelicChoiceModal()
     {
-        if (activeRelicChoiceData == null || activeRelicChoiceData.refreshesRemaining <= 0 || activeRelicChoiceData.sourceTable == null)
-            return;
-
-        HashSet<Relic_SO> excluded = BuildRelicChoiceRefreshExclusions(activeRelicChoiceData);
-        List<Relic_SO> refreshedRelics = activeRelicChoiceData.sourceTable.DrawRandomRelicChoices(
-            new System.Random(),
-            Mathf.Max(1, activeRelicChoiceData.choiceCount),
-            excluded);
-        BattleSettlementRelicChoiceData refreshedData = BattleSettlementRelicChoiceBuilder.Build(refreshedRelics);
-        if (refreshedData == null || !refreshedData.HasChoices)
-            return;
-
-        activeRelicChoiceData.refreshesRemaining -= 1;
-        activeRelicChoiceData.choices = refreshedData.choices;
-        activeRelicChoiceData.selectedChoice = null;
-        OpenRelicChoiceModal(activeRelicChoiceData);
+        if (BattleRelicChoiceSelectionService.TryRefresh(activeRelicChoiceData, new System.Random()))
+            OpenRelicChoiceModal(activeRelicChoiceData);
     }
 
     private void ShowRelicChoiceDetail(BattleSettlementLootEntry entry, LootItemView hoveredView)
@@ -1580,9 +1530,7 @@ public class BattleSettlementOverlay : MonoBehaviour
         if (relicChoiceRefreshButton == null)
             return;
 
-        bool canRefresh = activeRelicChoiceData != null
-            && activeRelicChoiceData.refreshesRemaining > 0
-            && activeRelicChoiceData.sourceTable != null
+        bool canRefresh = BattleRelicChoiceSelectionService.CanRefresh(activeRelicChoiceData)
             && activeRelicChoiceData.selectedChoice == null;
         relicChoiceRefreshButton.gameObject.SetActive(activeRelicChoiceData != null && activeRelicChoiceData.refreshesRemaining > 0);
         relicChoiceRefreshButton.interactable = canRefresh;
@@ -1592,18 +1540,7 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private static HashSet<Relic_SO> BuildRelicChoiceRefreshExclusions(BattleSettlementRelicChoiceData choiceData)
     {
-        HashSet<Relic_SO> excluded = new HashSet<Relic_SO>();
-        if (choiceData == null || choiceData.choices == null)
-            return excluded;
-
-        for (int i = 0; i < choiceData.choices.Count; i++)
-        {
-            BattleSettlementLootEntry choice = choiceData.choices[i];
-            if (choice != null && choice.relicData != null)
-                excluded.Add(choice.relicData);
-        }
-
-        return excluded;
+        return BattleRelicChoiceSelectionService.RefreshExclusions(choiceData);
     }
 
     private void CloseRelicChoiceModal()

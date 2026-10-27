@@ -129,24 +129,29 @@ public static class MapRunRuntime
 
     public static void ApplyEncounterResult(BattleEncounterData encounter)
     {
-        if (currentSnapshot == null || encounter == null)
+        ApplyEncounterResult(currentSnapshot, encounter);
+    }
+
+    public static void ApplyEncounterResult(MapRunSnapshot snapshot, BattleEncounterData encounter)
+    {
+        if (snapshot == null || encounter == null)
             return;
 
         if (encounter.resolvedPartyMembers != null && encounter.resolvedPartyMembers.Count > 0)
         {
-            currentSnapshot.runState.partyMembers = new List<RunPartyMemberState>(encounter.resolvedPartyMembers.Count);
+            snapshot.runState.partyMembers = new List<RunPartyMemberState>(encounter.resolvedPartyMembers.Count);
             for (int i = 0; i < encounter.resolvedPartyMembers.Count; i++)
             {
                 RunPartyMemberState member = encounter.resolvedPartyMembers[i];
                 if (member != null && !member.isTemporaryBattleGuest)
-                    currentSnapshot.runState.partyMembers.Add(member.Clone());
+                    snapshot.runState.partyMembers.Add(member.Clone());
             }
 
             if (encounter.wasVictory && encounter.isTutorialEncounter)
             {
-                for (int i = 0; i < currentSnapshot.runState.partyMembers.Count; i++)
+                for (int i = 0; i < snapshot.runState.partyMembers.Count; i++)
                 {
-                    RunPartyMemberState member = currentSnapshot.runState.partyMembers[i];
+                    RunPartyMemberState member = snapshot.runState.partyMembers[i];
                     if (member == null)
                         continue;
 
@@ -154,7 +159,7 @@ public static class MapRunRuntime
                 }
             }
 
-            currentSnapshot.runState.SyncLegacyPlayerFieldsFromParty();
+            snapshot.runState.SyncLegacyPlayerFieldsFromParty();
         }
 
         if (encounter.wasVictory && encounter.resolvedLoot != null && encounter.resolvedLoot.Count > 0)
@@ -165,7 +170,7 @@ public static class MapRunRuntime
                 if (loot == null || loot.lootItem == null || loot.amount <= 0)
                     continue;
 
-                currentSnapshot.runState.AddLoot(loot.lootItem, loot.amount);
+                snapshot.runState.AddLoot(loot.lootItem, loot.amount);
             }
         }
 
@@ -177,7 +182,7 @@ public static class MapRunRuntime
                 if (relic == null || relic.relicData == null || relic.amount <= 0)
                     continue;
 
-                currentSnapshot.runState.AddRelic(relic.relicData, relic.amount);
+                snapshot.runState.AddRelic(relic.relicData, relic.amount);
             }
         }
 
@@ -189,7 +194,7 @@ public static class MapRunRuntime
                 if (loot == null || loot.lootItem == null || loot.amount <= 0)
                     continue;
 
-                currentSnapshot.runState.AddLoot(loot.lootItem, loot.amount);
+                snapshot.runState.AddLoot(loot.lootItem, loot.amount);
             }
         }
 
@@ -201,7 +206,7 @@ public static class MapRunRuntime
                 if (relic == null || relic.relicData == null || relic.amount <= 0)
                     continue;
 
-                currentSnapshot.runState.AddRelic(relic.relicData, relic.amount);
+                snapshot.runState.AddRelic(relic.relicData, relic.amount);
             }
         }
 
@@ -213,7 +218,7 @@ public static class MapRunRuntime
                 if (blueprint == null || blueprint.blueprintData == null || blueprint.amount <= 0)
                     continue;
 
-                currentSnapshot.runState.AddBlueprint(blueprint.blueprintData, blueprint.amount);
+                snapshot.runState.AddBlueprint(blueprint.blueprintData, blueprint.amount);
             }
         }
 
@@ -225,28 +230,28 @@ public static class MapRunRuntime
                 if (weapon == null || weapon.weaponData == null || weapon.amount <= 0)
                     continue;
 
-                currentSnapshot.runState.AddWeapon(weapon.weaponData, weapon.amount);
+                snapshot.runState.AddWeapon(weapon.weaponData, weapon.amount);
             }
         }
 
         if (encounter.wasVictory && encounter.moneyGained > 0)
-            currentSnapshot.runState.AddMoney(encounter.moneyGained);
+            snapshot.runState.AddMoney(encounter.moneyGained);
 
         if (encounter.wasVictory)
         {
-            if (currentSnapshot.runState.settlementStats == null)
-                currentSnapshot.runState.settlementStats = new RunSettlementStats();
+            if (snapshot.runState.settlementStats == null)
+                snapshot.runState.settlementStats = new RunSettlementStats();
 
-            currentSnapshot.runState.settlementStats.IncrementBattle(encounter.tileType, encounter.dangerBand);
+            snapshot.runState.settlementStats.IncrementBattle(encounter.tileType, encounter.dangerBand);
             if (encounter.isEventEncounter)
-                currentSnapshot.runState.settlementStats.eventBattlesCompleted++;
+                snapshot.runState.settlementStats.eventBattlesCompleted++;
         }
 
-        SyncConsumedBattleRelics(encounter);
+        SyncConsumedBattleRelics(snapshot, encounter);
 
-        for (int i = 0; i < currentSnapshot.tiles.Count; i++)
+        for (int i = 0; i < snapshot.tiles.Count; i++)
         {
-            BoardTileData tile = currentSnapshot.tiles[i];
+            BoardTileData tile = snapshot.tiles[i];
             if (tile == null || tile.coord != encounter.sourceCoord)
                 continue;
 
@@ -262,9 +267,9 @@ public static class MapRunRuntime
         }
     }
 
-    private static void SyncConsumedBattleRelics(BattleEncounterData encounter)
+    private static void SyncConsumedBattleRelics(MapRunSnapshot snapshot, BattleEncounterData encounter)
     {
-        if (currentSnapshot?.runState == null || encounter == null || encounter.relicInventory == null)
+        if (snapshot?.runState == null || encounter == null || encounter.relicInventory == null)
             return;
 
         for (int i = 0; i < encounter.relicInventory.Count; i++)
@@ -273,9 +278,9 @@ public static class MapRunRuntime
             if (battleRelic == null || battleRelic.relicData == null || battleRelic.amount > 0)
                 continue;
 
-            int ownedAmount = currentSnapshot.runState.GetRelicAmount(battleRelic.relicData);
+            int ownedAmount = snapshot.runState.GetRelicAmount(battleRelic.relicData);
             if (ownedAmount > 0)
-                currentSnapshot.runState.TryConsumeRelic(battleRelic.relicData, ownedAmount);
+                snapshot.runState.TryConsumeRelic(battleRelic.relicData, ownedAmount);
         }
     }
 
