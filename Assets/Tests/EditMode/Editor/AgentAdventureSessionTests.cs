@@ -124,12 +124,13 @@ public sealed class AgentAdventureSessionTests
         Assert.AreEqual(MapTileType.Battle, tile.tileType); Assert.IsFalse(tile.isResolved); Assert.IsTrue(tile.assignedEnemyGroup.IsValid);
     }
 
-    [Test] public void MapLocation_IsNotReplacedWithPlaceholderRewards()
+    [Test] public void EventArrival_ShowsRealOptionsWithoutGrantingRewards()
     {
         Open(); var action = session.Observe().legalActions.First(a => a.op == "run_move" && a.x == 2 && a.y == 2);
         var state = Act(action);
         Assert.AreEqual("event", state.phase);
-        Assert.IsEmpty(state.legalActions);
+        Assert.IsNotNull(state.mapEvent); Assert.IsNotEmpty(state.mapEvent.options);
+        Assert.IsTrue(state.legalActions.All(a => a.op == "run_choose_event"));
         Assert.AreEqual(0, state.money); Assert.AreEqual(0, state.party[0].experience);
         Assert.IsFalse(state.tiles.Single(t => t.x == 2 && t.y == 2).resolved);
     }

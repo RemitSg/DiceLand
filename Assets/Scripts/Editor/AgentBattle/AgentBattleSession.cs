@@ -294,14 +294,17 @@ public sealed class AgentBattleSession : IDisposable
     private AgentBattleRewards DescribeRewards()
     {
         BattleSettlementRelicChoiceData choice = flow.HeadlessRelicChoice;
+        bool victory = flow.HeadlessCompleted && encounter.wasVictory;
         return new AgentBattleRewards
         {
             experience = encounter.experienceGained, money = encounter.moneyGained,
             refreshesRemaining = choice != null ? choice.refreshesRemaining : 0,
             party = (encounter.resolvedPartyMembers ?? new List<RunPartyMemberState>()).Where(m => m != null).Select(m => new AgentBattleSettledMember
                 { memberId = m.memberId, hp = m.currentHP, maxHp = m.maxHP, level = m.level, experience = m.experience }).ToArray(),
-            loot = (encounter.resolvedLoot ?? new List<RunLootState>()).Where(x => x?.lootItem != null).Select(x => new AgentBattleRewardItem { id = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(x.lootItem)), name = x.lootItem.lootName, description = x.lootItem.description, amount = x.amount }).ToArray(),
-            relics = (encounter.resolvedRelics ?? new List<RunRelicState>()).Where(x => x?.relicData != null).Select(x => new AgentBattleRewardItem { id = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(x.relicData)), name = x.relicData.DisplayName, description = x.relicData.description, amount = x.amount }).ToArray(),
+            loot = (encounter.resolvedLoot ?? new List<RunLootState>()).Concat(victory ? encounter.pendingVictoryLootRewards : new List<RunLootState>()).Where(x => x?.lootItem != null).Select(x => new AgentBattleRewardItem { id = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(x.lootItem)), name = x.lootItem.lootName, description = x.lootItem.description, amount = x.amount }).ToArray(),
+            relics = (encounter.resolvedRelics ?? new List<RunRelicState>()).Concat(victory ? encounter.pendingVictoryRelicRewards : new List<RunRelicState>()).Where(x => x?.relicData != null).Select(x => new AgentBattleRewardItem { id = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(x.relicData)), name = x.relicData.DisplayName, description = x.relicData.description, amount = x.amount }).ToArray(),
+            blueprints = (victory ? encounter.pendingVictoryBlueprintRewards : new List<RunBlueprintState>()).Where(x => x?.blueprintData != null).Select(x => new AgentBattleRewardItem { id = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(x.blueprintData)), name = x.blueprintData.DisplayName, description = x.blueprintData.description, amount = x.amount }).ToArray(),
+            weapons = (victory ? encounter.pendingVictoryWeaponRewards : new List<RunWeaponState>()).Where(x => x?.weaponData != null).Select(x => new AgentBattleRewardItem { id = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(x.weaponData)), name = x.weaponData.weaponName, description = x.weaponData.description, amount = x.amount }).ToArray(),
             choices = choice?.choices != null ? choice.choices.Select((x,i) => new AgentBattleRewardItem { index = i, id = x?.relicData != null ? AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(x.relicData)) : "", name = x?.displayName, description = x?.description, amount = x != null ? x.amount : 0 }).ToArray() : new AgentBattleRewardItem[0]
         };
     }

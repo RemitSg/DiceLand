@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "DiceLand Agent Adventure API (B004b2)",
-    "version": "0.4.0",
-    "description": "Shared-rule normal adventure including map, calamities, battles, merchant, forge, rest, recruits, equipment and staged loot/relic reforge. Events/treasure/subdungeons, final settlement and full save/replay remain upcoming batches."
+    "title": "DiceLand Agent Adventure API (B005a)",
+    "version": "0.5.0",
+    "description": "Shared-rule normal adventure including map, calamities, battles, merchant, forge, rest, recruits, equipment, staged reforge and event options/results/follow-ups/encounters. Treasure/subdungeons, final settlement and full save/replay remain upcoming batches."
   },
   "servers": [
     {
@@ -90,8 +90,11 @@
               "run_reforge_reset",
               "run_reforge_confirm",
               "run_reforge_cancel",
-              "run_reforge_finish"
-            ]
+              "run_reforge_finish",
+              "run_choose_event",
+              "run_continue_event"
+            ],
+            "description": "Choose from legalActions. Event choices use choiceIndex; run_continue_event acknowledges the result and enters a follow-up, battle, map or pending dungeon."
           },
           "battleAction": {
             "$ref": "./openapi.json#/components/schemas/AgentBattleLegalAction"
@@ -167,8 +170,11 @@
               "run_reforge_reset",
               "run_reforge_confirm",
               "run_reforge_cancel",
-              "run_reforge_finish"
-            ]
+              "run_reforge_finish",
+              "run_choose_event",
+              "run_continue_event"
+            ],
+            "description": "Choose from legalActions. Event choices use choiceIndex; run_continue_event acknowledges the result and enters a follow-up, battle, map or pending dungeon."
           },
           "battleAction": {
             "$ref": "./openapi.json#/components/schemas/AgentBattleLegalAction"
@@ -352,6 +358,9 @@
           },
           "lastReforgeResult": {
             "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+          },
+          "mapEvent": {
+            "$ref": "#/components/schemas/AgentAdventureEvent"
           }
         }
       },
@@ -643,6 +652,83 @@
           },
           "resultPreview": {
             "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+          }
+        }
+      },
+      "AgentAdventureEvent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "resultContent": {
+            "type": "string"
+          },
+          "resultMessage": {
+            "type": "string"
+          },
+          "nextEvent": {
+            "type": "string"
+          },
+          "pendingDungeon": {
+            "type": "string"
+          },
+          "blockedReason": {
+            "type": "string"
+          },
+          "depth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasPendingBattle": {
+            "type": "boolean"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureEventOption"
+            }
+          }
+        },
+        "description": "Present during event, event_result or dungeon_pending. Options and random discard previews are frozen at presentation. No unrevealed weighted result is predicted. Depth is capped by the same limit as the overlay. Dungeon entry is pending B005c."
+      },
+      "AgentAdventureEventOption": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "consequence": {
+            "type": "string"
+          },
+          "additionalDetail": {
+            "type": "string"
+          },
+          "unavailableReason": {
+            "type": "string"
+          },
+          "nextEvent": {
+            "type": "string"
+          },
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requiredMoney": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "selectable": {
+            "type": "boolean"
           }
         }
       }

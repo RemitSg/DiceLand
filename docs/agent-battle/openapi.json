@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "DiceLand Agent Battle API",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "description": "Shared-rule, editor-backed single battles. The separate adventure-openapi.json documents the in-progress normal adventure operations on this endpoint."
   },
   "servers": [
@@ -584,8 +584,21 @@
               "$ref": "#/components/schemas/AgentBattleSettledMember"
             },
             "description": "Formal settlement party state, including level-up healing; available after resolution."
+          },
+          "blueprints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "weapons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleRewardItem"
+            }
           }
-        }
+        },
+        "description": "Formal battle rewards; on event victory includes queued loot/relic/blueprint/weapon rewards which are applied only when returning to the adventure. Defeat grants none of those queued rewards."
       },
       "AgentBattleSettledMember": {
         "type": "object",

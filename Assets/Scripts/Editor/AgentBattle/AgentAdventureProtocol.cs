@@ -36,6 +36,20 @@ using System;
     public AgentAdventureRest rest;
     public AgentAdventureReforge reforge;
     public AgentBattleRewardItem lastReforgeResult;
+    public AgentAdventureEvent mapEvent;
+}
+[Serializable] public sealed class AgentAdventureEvent
+{
+    public string id, name, content, resultContent, resultMessage, nextEvent, pendingDungeon, blockedReason;
+    public int depth;
+    public bool hasPendingBattle;
+    public AgentAdventureEventOption[] options;
+}
+[Serializable] public sealed class AgentAdventureEventOption
+{
+    public int index, requiredMoney;
+    public string id, label, consequence, additionalDetail, unavailableReason, nextEvent;
+    public bool selectable;
 }
 [Serializable] public sealed class AgentAdventureReforge
 {

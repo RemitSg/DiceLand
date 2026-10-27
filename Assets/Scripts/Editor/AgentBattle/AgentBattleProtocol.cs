@@ -102,6 +102,7 @@ using System;
     public int refreshesRemaining;
     public AgentBattleRewardItem[] loot;
     public AgentBattleRewardItem[] relics;
+    public AgentBattleRewardItem[] blueprints, weapons;
     public AgentBattleRewardItem[] choices;
     public AgentBattleSettledMember[] party;
 }

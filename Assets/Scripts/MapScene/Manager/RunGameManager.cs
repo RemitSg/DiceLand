@@ -1604,141 +1604,27 @@ public class RunGameManager : MonoBehaviour
 
     private MapEventOverlay.EventOptionPreviewData BuildEventOptionPreview(BoardTileData tile, MapEvent_SO eventData, MapEventOptionData optionData)
     {
-        MapEventOverlay.EventOptionPreviewData preview = new MapEventOverlay.EventOptionPreviewData();
-        if (optionData == null || runState == null)
-            return preview;
-
-        int requiredMoney = CalculateRequiredEventMoney(optionData, runState.money);
-        MapEventLootCostPreviewData lootCostPreview =
-            MapEventLootCostService.BuildPreview(runState, optionData, eventRandomLootDiscardPreviewCache);
-        bool hasEnoughMoney = requiredMoney <= 0 || runState.money >= requiredMoney;
-        preview.isSelectable = lootCostPreview.isSelectable && hasEnoughMoney;
-        preview.additionalDetail = lootCostPreview.additionalDetail;
-        preview.unavailableReason = lootCostPreview.unavailableReason;
-        if (!hasEnoughMoney)
-        {
-            preview.unavailableReason = $"金钱不足，需要 {requiredMoney} 金钱。";
-        }
-        return preview;
+        MapEventOptionPreview preview = MapEventOptionService.BuildPreview(runState, optionData, eventRandomLootDiscardPreviewCache);
+        return new MapEventOverlay.EventOptionPreviewData { isSelectable = preview.isSelectable,
+            additionalDetail = preview.additionalDetail, unavailableReason = preview.unavailableReason };
     }
 
     private bool HandleEventOptionSelected(BoardTileData tile, MapEvent_SO eventData, MapEventOptionData optionData, out string message, out string resultContent, out MapEvent_SO nextEventOverride)
     {
-        resultContent = string.Empty;
-        nextEventOverride = null;
-        if (tile == null || eventData == null || optionData == null || runState == null)
+        bool success = MapEventOptionService.TryExecute(new MapEventBuiltInEffectExecutionRequest
         {
-            message = "事件执行失败。";
-            return false;
-        }
-
-        int moneyBeforeSelection = Mathf.Max(0, runState.money);
-        int requiredMoney = CalculateRequiredEventMoney(optionData, moneyBeforeSelection);
-        bool spentSelectionMoney = false;
-        if (requiredMoney > 0)
-        {
-            if (!runState.TrySpendMoney(requiredMoney))
-            {
-                message = $"金钱不足，需要 {requiredMoney} 金钱。";
-                return false;
-            }
-
-            spentSelectionMoney = true;
-        }
-
-        if (!MapEventBuiltInEffectExecutorService.TryExecute(
-                new MapEventBuiltInEffectExecutionRequest
-                {
-                    runState = runState,
-                    actionPointSystem = actionPointSystem,
-                    currentEventTile = tile,
-                    optionData = optionData,
-                    levelTable = levelTable,
-                    sourceSceneName = SceneManager.GetActiveScene().name,
-                    battleSceneName = battleSceneName,
-                    encounterSeedSalt = Environment.TickCount,
-                    randomLootDiscardPreviewCache = eventRandomLootDiscardPreviewCache,
-                    moneyBeforeSelection = moneyBeforeSelection,
-                    selectionMoneyCost = requiredMoney
-                },
-                out MapEventBuiltInEffectExecutionResult builtInResult))
-        {
-            if (spentSelectionMoney)
-                runState.AddMoney(requiredMoney, countAsRunGain: false);
-            runFlowState.PendingEventEncounterData = null;
-            message = builtInResult != null ? builtInResult.message : "事件执行失败。";
-            return false;
-        }
-
-        message = builtInResult.message;
-        resultContent = builtInResult.resultContent;
-        nextEventOverride = builtInResult.nextEventOverride;
-        runFlowState.PendingEventEncounterData = builtInResult.pendingEncounterData;
-        runFlowState.PendingSpecialDungeon = builtInResult.pendingSpecialDungeon;
-
-        if (optionData.customHandler != null)
-        {
-            MapEventExecutionContext context = new MapEventExecutionContext
-            {
-                runState = runState,
-                actionPointSystem = actionPointSystem,
-                tile = tile,
-                eventData = eventData,
-                optionData = optionData,
-                runGameManager = this
-            };
-
-            if (!optionData.customHandler.Execute(context, out string customMessage))
-            {
-                if (spentSelectionMoney)
-                    runState.AddMoney(requiredMoney, countAsRunGain: false);
-                runFlowState.PendingEventEncounterData = null;
-                runFlowState.PendingSpecialDungeon = null;
-                message = string.IsNullOrWhiteSpace(customMessage) ? "事件的自定义效果未能执行。" : customMessage;
-                return false;
-            }
-
-            if (!string.IsNullOrWhiteSpace(customMessage))
-                message = customMessage;
-        }
-
-        bool hasFollowUpEvent = (builtInResult.nextEventOverride != null) || optionData.nextEvent != null;
-        if (!hasFollowUpEvent)
-        {
-            bool shouldResolveEvent = builtInResult.hasResolveEventOverride
-                ? builtInResult.resolveEventOverride
-                : optionData.resolveEvent;
-            tile.isResolved = shouldResolveEvent;
-            if (shouldResolveEvent)
-            {
-                tile.assignedEvent = null;
-                if (runState.settlementStats == null)
-                    runState.settlementStats = new RunSettlementStats();
-                runState.settlementStats.eventTilesCompleted++;
-            }
-        }
-
-        if (spentSelectionMoney)
-        {
-            message = string.IsNullOrWhiteSpace(message)
-                ? $"支付 {requiredMoney} 金钱。"
-                : $"支付 {requiredMoney} 金钱。\n{message}";
-        }
-
+            runState = runState, actionPointSystem = actionPointSystem, currentEventTile = tile, optionData = optionData,
+            levelTable = levelTable, sourceSceneName = SceneManager.GetActiveScene().name, battleSceneName = battleSceneName,
+            encounterSeedSalt = Environment.TickCount, randomLootDiscardPreviewCache = eventRandomLootDiscardPreviewCache
+        }, eventData, this, out MapEventBuiltInEffectExecutionResult result);
+        message = result.message; resultContent = result.resultContent; nextEventOverride = result.nextEventOverride;
+        runFlowState.PendingEventEncounterData = success ? result.pendingEncounterData : null;
+        runFlowState.PendingSpecialDungeon = success ? result.pendingSpecialDungeon : null;
+        if (!success) return false;
         boardManager.RefreshTile(tile.coord);
         mapHUD.ShowTile(tile, GetMoveCost(tile), true);
         RefreshHUD(message);
         return true;
-    }
-
-    private static int CalculateRequiredEventMoney(MapEventOptionData optionData, int currentMoney)
-    {
-        if (optionData == null)
-            return 0;
-
-        int fixedCost = Mathf.Max(0, optionData.requiredMoney);
-        int percentCost = Mathf.FloorToInt(Mathf.Max(0, currentMoney) * (Mathf.Max(0, optionData.requiredMoneyPercent) / 100f));
-        return fixedCost + percentCost;
     }
 
     private void HandleMapEventOverlayHidden()

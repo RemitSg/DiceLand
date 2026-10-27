@@ -7,7 +7,7 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public class MapEventOverlay : MonoBehaviour
 {
-    private const int MaxNestedEventDepth = 16;
+    private const int MaxNestedEventDepth = MapEventOptionService.MaxNestedEventDepth;
     private const int EventOverlayCanvasSortingOrder = 9040;
 
     public sealed class EventOptionPreviewData

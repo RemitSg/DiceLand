@@ -1,0 +1,117 @@
+{
+  "batch": "B005a",
+  "date": "2026-10-27",
+  "relatedJob": "f64daf9b12d3472291a51cf4b294c578",
+  "related": {
+    "total": 100,
+    "passed": 100,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 9.916231,
+    "resultState": "Passed"
+  },
+  "newTests": 12,
+  "firstEventSweep": {
+    "job": "9affa758e1a240178902cee2a14d4ec4",
+    "total": 40,
+    "passed": 39,
+    "failed": 1,
+    "failure": "MapEventNestedFlowTests.SaveAssetCatalog_IncludesNestedFollowUpEvents",
+    "baselineEvidence": [
+      "docs/agent-battle/B002-validation.json",
+      "outputs/agent-battle/verification-summary.json"
+    ],
+    "note": "This failure was already recorded in the pre-agent baseline. The final targeted suite includes the other nested-flow test; this known save-catalog failure is not reported as passed."
+  },
+  "http": [
+    {
+      "seed": 1234,
+      "difficulty": "Medium",
+      "event": "断桥",
+      "before": {
+        "money": 0,
+        "hp": 16,
+        "ap": 4
+      },
+      "after": {
+        "money": 0,
+        "hp": 15,
+        "ap": 6
+      },
+      "resultMessage": "恢复 2 点行动点。\n所有角色失去了最大生命值的 10% 。",
+      "returnedPhase": "map",
+      "resolved": true,
+      "choice": "快速通过",
+      "actions": 3
+    },
+    {
+      "seed": 1234,
+      "difficulty": "Medium",
+      "event": "断桥",
+      "before": {
+        "money": 0,
+        "hp": 16,
+        "ap": 4
+      },
+      "after": {
+        "money": 0,
+        "hp": 16,
+        "ap": 3
+      },
+      "resultMessage": "失去 1 点行动点。\n所有角色恢复了最大生命值的 10% 。",
+      "returnedPhase": "map",
+      "resolved": true,
+      "choice": "绕远路",
+      "actions": 3
+    },
+    {
+      "seed": 1234,
+      "difficulty": "Medium",
+      "event": "断桥",
+      "before": {
+        "money": 0,
+        "hp": 16,
+        "ap": 4
+      },
+      "after": {
+        "money": 31,
+        "hp": 16,
+        "ap": 2
+      },
+      "resultMessage": "失去 2 点行动点。\n获得 31 金钱。",
+      "returnedPhase": "map",
+      "resolved": true,
+      "choice": "修补断桥",
+      "actions": 3
+    },
+    {
+      "seed": 1234,
+      "difficulty": "Medium",
+      "event": "断桥",
+      "before": {
+        "money": 0,
+        "hp": 16,
+        "ap": 4
+      },
+      "after": {
+        "money": 31,
+        "hp": 16,
+        "ap": 2
+      },
+      "resultMessage": "失去 2 点行动点。\n获得 31 金钱。",
+      "returnedPhase": "map",
+      "resolved": true,
+      "choice": "修补断桥",
+      "actions": 3
+    }
+  ],
+  "notes": [
+    "Normal HTTP seed 1234 uses the actual NormalConfig and original Broken Bridge event at (2,2); no asset, tile or resource injection. All three options return to the map with the tile resolved. Repair repeats produce the same 31 gold. Trace: outputs/agent-battle/b005a-normal-event-trace.json.",
+    "UI and agent share MapEventOptionService for option preview, money costs, built-in/custom execution and completion bookkeeping. Effect formulas remain in existing event services.",
+    "Directed tests inject event options/resources to cover pre-selection percentage money, refunds, negative money, stale/duplicate/invalid actions, frozen discard previews, weighted follow-ups, recursion guard, AP/calamity deferral, actual event combat victory/defeat, queued loot/relic/blueprint rewards and once-only acquisition on return.",
+    "Generated event enemy groups are owned and disposed by the adapter; asset enemy groups are preserved. UI snapshot and both random streams remain isolated. The relic-table event path now seeds its random draw from the scoped Unity RNG instead of wall-clock time.",
+    "Current MapEvent assets reference no custom handlers. Future handlers requiring RunGameManager are explicitly disabled until adapted; no effects are silently skipped.",
+    "Treasure and special dungeon entry remain B005b/B005c, with StartSpecialDungeon stopping explicitly at dungeon_pending. Final settlement and full save/replay remain incomplete. This is not a full-run completion claim.",
+    "Only targeted checks are green. Existing full-suite/EditMode and PlayMode failures remain documented."
+  ]
+}

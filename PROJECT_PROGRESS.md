@@ -1555,3 +1555,8 @@
 - Added staged loot/relic reforge actions and formal preview information. Selection/observation is read-only; first success commits the visit, preventing other rest actions; limit exhaustion automatically consumes the rest site. Acquisition and reforge effects use the existing explicit snapshot writers.
 - Validation: related EditMode 90/90 passed (fb9a955a75d24a468d32c4120afb3fbf), including 13 new tests. Public HTTP normal seed 46: two slime mucus drops plus purchased iron ore, two reforges, one Corroded Fang result, automatic return to cycle 2 map in 28 actions; no normal-route state injection.
 - B004b1 committed 99302948. B005 events/treasure/subdungeons, final settlement and full save/replay remain incomplete. Existing full-suite/PlayMode limitations remain. See B004b2-validation.json and PLAN.md.
+
+
+## Agent adventure B005a - 2026-10-27
+
+Shared UI/agent event selection costs, effects and completion; frozen discard previews; result acknowledgment, weighted follow-ups and actual event encounters with deferred victory rewards. 12 new tests; related EditMode 100/100 passed (job f64daf9b12d3472291a51cf4b294c578). Normal HTTP seed 1234 verified all three Broken Bridge options and repeated repair yielding 31 gold. Known nested save-catalog failure remains recorded. Treasure, special dungeons, final settlement and full save/replay remain incomplete. See docs/agent-battle/B005a-validation.json.

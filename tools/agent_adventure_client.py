@@ -85,12 +85,20 @@ def demo(client, args):
                     if move["op"] != "run_move":
                         continue
                     tile = tiles[(move["x"], move["y"])]
-                    if tile["type"] in ("Empty", "Key", "Merchant", "Forge") or (tile["type"] == "Rest" and not tile["resolved"]) or (tile["type"] in ("Battle", "Elite") and tile["encounterAvailable"]):
+                    if tile["type"] in ("Empty", "Key", "Merchant", "Forge") or (tile["type"] == "Event" and not tile["resolved"]) or (tile["type"] == "Rest" and not tile["resolved"]) or (tile["type"] in ("Battle", "Elite") and tile["encounterAvailable"]):
                         candidates.append((tile, move))
                 candidates.sort(key=lambda pair: (pair[0]["visited"], pair[0]["type"] != "Key", pair[0]["danger"], pair[0]["x"], pair[0]["y"]))
                 if candidates:
                     action = candidates[0][1]
                     moved += 1
+            elif state["phase"] == "event":
+                # No textual strategy is assumed: choose the lowest-cost legal option.
+                options = {o["index"]: o for o in state["mapEvent"]["options"]}
+                choices = [a for a in actions if a["op"] == "run_choose_event"]
+                if choices:
+                    action = min(choices, key=lambda a: options[a["choiceIndex"]]["requiredMoney"])
+            elif state["phase"] == "event_result":
+                action = next((a for a in actions if a["op"] == "run_continue_event"), None)
             elif state["phase"] == "calamity":
                 action = next((a for a in actions if a["op"] == "run_choose_calamity"), None)
             elif state["phase"] == "battle":
