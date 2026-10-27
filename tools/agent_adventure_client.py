@@ -9,7 +9,7 @@ from pathlib import Path
 import sys
 
 from agent_battle_client import Client
-from agent_adventure_policy import choose_battle_action
+from agent_adventure_policy import choose_battle_action, choose_calamity_action
 
 
 def inspect_equipment(client, item):
@@ -120,7 +120,7 @@ def demo(client, args):
             elif state["phase"] == "event_result":
                 action = next((a for a in actions if a["op"] == "run_continue_event"), None)
             elif state["phase"] == "calamity":
-                action = next((a for a in actions if a["op"] == "run_choose_calamity"), None)
+                action = choose_calamity_action(state)
             elif state["phase"] == "battle":
                 action = choose_battle_action(state)
             elif state["phase"] == "merchant":

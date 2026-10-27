@@ -1,0 +1,98 @@
+{
+  "batch": "B006b2 strategy progress",
+  "date": "2026-10-27",
+  "sourceParent": "51fbe560",
+  "normalWinGatePassed": false,
+  "engineOrBalanceChanges": false,
+  "changes": [
+    "Calamity preferences use explicit categories rather than counting negative words; rest-heal penalties are no longer ranked above enemy damage, and permanent ally weakness is avoided",
+    "Guaranteed self-charge defenses are considered when an uncharged caster is under attack; already targeted affordable skills remain stable",
+    "Demo uses the same calamity selector; every decision still selects from offered legal actions"
+  ],
+  "pythonTests": {
+    "passed": 14,
+    "failed": 0,
+    "command": "python -B -m unittest discover -s tools/tests -p test_agent_adventure_policy.py -v",
+    "evidence": "outputs\\agent-battle\\b006b2-strategy-python-tests.log",
+    "newTests": 8
+  },
+  "unity": {
+    "newRun": false,
+    "reason": "Only Python strategy and documentation changed; all 18 previously validated C# and meta files retain their B007b hashes",
+    "unchangedOwnedFiles": 18,
+    "baselineTotal": 986,
+    "baselinePassed": 965,
+    "baselineFailed": 21,
+    "evidence": "docs/agent-battle/B007b-validation.json"
+  },
+  "survey": {
+    "evidence": "outputs\\agent-battle\\b006b2-starting-survey.json",
+    "normalSeedsCreated": 100,
+    "safeTreasureWithinTwoMoves": 23,
+    "bagRarities": {
+      "Uncommon": 11,
+      "Common": 10,
+      "Legendary": 1,
+      "Rare": 1
+    },
+    "progressionInjected": false
+  },
+  "actualNormalTrial": {
+    "seed": 7,
+    "profileId": "b006b2-normal-7-piggy",
+    "evidence": "outputs\\agent-battle\\b006b2-normal7-settled-defeat.json",
+    "outcome": "defeat",
+    "score": 398,
+    "abilityPoints": 0,
+    "durationSeconds": 3228,
+    "replayVerified": true,
+    "replayCommands": 138,
+    "replayEvidence": "outputs\\agent-battle\\b006b2-normal7-replay-proof.json",
+    "failedBranches": [
+      "outputs\\agent-battle\\b006b2-normal7-failed-farm.json",
+      "outputs\\agent-battle\\b006b2-normal7-weakness-branch.json"
+    ],
+    "observations": [
+      "Long AP farming accumulated many calamities and eventually discarded the piggy relic; that failed branch was retained",
+      "The selected legal route won one normal battle and recruited Jenny, but a later event encounter ended in defeat",
+      "The failed normal run settled for 398 points / zero ability points; it is not a completed victory loop"
+    ],
+    "eventEncounterCasterSelectedSkillIndices": {
+      "1": 5,
+      "0": 1,
+      "2": 2
+    }
+  },
+  "directedProbes": [
+    {
+      "evidence": "outputs\\agent-battle\\b006b2-cold-directed-probe.json",
+      "normalVictoryEvidence": false,
+      "purpose": "Observe actual cold range changes with a configured weapon in the battle-only endpoint"
+    },
+    {
+      "evidence": "outputs\\agent-battle\\b006b2-poison-directed-probe.json",
+      "normalVictoryEvidence": false,
+      "purpose": "Check the proposed poison pairing with configured relics; the directed battle also lost"
+    },
+    {
+      "evidence": "outputs\\agent-battle\\b006b2-seed86-gift-probe.json",
+      "normalVictoryEvidence": false,
+      "purpose": "Observe an actual early treasure gift through a normal seeded save; no resource injection"
+    }
+  ],
+  "nextBatch": {
+    "problem": "Formal saved menu has four selectable difficulty references; create_run currently hardcodes NormalConfig, whose display name is Medium",
+    "plan": "Expose exactly the saved menu difficulties, preserve omitted Normal compatibility, retain difficulty across save/replay and allow next-run selection. Exercise formal early progression, then return to the still-mandatory Normal victory and earned-upgrade gate. Easy wins do not satisfy the Normal gate."
+  },
+  "remaining": [
+    "Normal Boss victory -> earned points -> paid ability -> next run",
+    "Victory-pending restoration and actual positive settlement crash recovery",
+    "Full B008 external-agent audit"
+  ],
+  "sha256": {
+    "tools/agent_adventure_policy.py": "5a2b289d0fa84311150b799b7c471591014eee28cd02f15ade371a89c92dd972",
+    "tools/agent_adventure_client.py": "22d91a035491ecb146560273dd10916e1c2075d4f47045e3bd6fd720e5f77157",
+    "tools/tests/test_agent_adventure_policy.py": "d4d56a4f9ebedaaabeb26df1fbfe031f32c841428023175a2f9ae6666ec2023d",
+    "tools/tests/fixtures/normal_charge_policy.json": "8a60c07abc9fb374587ebc738ef3d3dbaedb1db9244a93b74cc187a2c9130d4d"
+  }
+}
