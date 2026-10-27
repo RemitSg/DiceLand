@@ -1541,3 +1541,10 @@
 - Added purchase/refresh/craft actions and offer/recipe/material observations. Duplicate ingredient rows are aggregated before checking and consuming materials; owned blueprint and calamity fee validation is shared.
 - Validation: 85/85 related EditMode tests plus 2/2 formal merchant UI tests passed. Public HTTP NormalConfig seed 46: battle income 21, iron ore purchase 6, remaining money 15, level 2 HP 19/19, returned to map in 14 actions. No normal-route resource injection.
 - B004b still needs rest, recruitment, reforge and equipment management. Full completion, full replay and final settlement remain incomplete. See B004a-validation.json and PLAN.md.
+
+## 2026-10-27 - Agent adventure B004b1: rest, recruits and equipment
+
+- Added explicit snapshot overloads for formal rest/AP/recruit/reforge writers; global UI wrappers delegate to the same bodies. Recruit candidate selection/cost is shared with the formal rest scene.
+- Added rest heal/AP/recruit actions and map equipment actions. Consumed rest sites cannot be reused; AP and deferred calamity queues restore to runtime components after snapshot writes. New party members and actual equipped skills reach the existing battle core.
+- Validation: targeted EditMode 68/68 passed (dacab3f483604defafe3aad18b18a8d9). Public HTTP normal seed 32: HP 16/19 to 19/19 after a battle with two legal untargeted rounds; separate AP route 1 to 6. Each used the rest site once and returned to map in 17 actions. No normal-route resource injection.
+- B004a committed b50b39d5. B004b2 still needs reforge selection/preview/limits and visit locking. Full adventure completion remains unproven; existing full-suite/PlayMode limitations remain. See B004b1-validation.json and PLAN.md.

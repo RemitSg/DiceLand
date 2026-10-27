@@ -138,6 +138,15 @@ public sealed class AgentAdventureMapRuntime : IDisposable
         Snapshot.suppressOnePendingCalamityOnActionPointRestore = CycleFlags.suppressPendingCalamityOnNextRestActionPointRestore;
     }
 
+    // Explicit snapshot writers update stored AP/queues; restore their runtime counterparts before syncing again.
+    public void ApplySnapshotTransientState()
+    {
+        PendingCalamities.Clear();
+        foreach (int tier in Snapshot.pendingCalamityTiers) PendingCalamities.Enqueue(tier);
+        CycleFlags.suppressPendingCalamityOnNextRestActionPointRestore = Snapshot.suppressOnePendingCalamityOnActionPointRestore;
+        Points.RestoreState(Snapshot.actionPointBase, Snapshot.actionPointBonus, Snapshot.actionPointCurrent);
+    }
+
     public void Dispose()
     {
         if (disposed) return; disposed = true;

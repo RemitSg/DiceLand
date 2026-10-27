@@ -74,13 +74,7 @@ public static class RestSceneRuntime
         if (!TryGetCurrentSnapshot(out MapRunSnapshot snapshot) || snapshot?.runState == null)
             return recruitCandidates;
 
-        int maxRecruitCount = Mathf.Max(1, difficultyConfig.maxRecruitCount);
-        if (snapshot.runState.recruitedMemberCount >= maxRecruitCount)
-            return recruitCandidates;
-
-        int seed = sourceCoord.x * 73856093 ^ sourceCoord.y * 19349663 ^ returnSceneName.GetHashCode();
-        System.Random rng = new System.Random(seed);
-        recruitCandidates.AddRange(recruitRoster.GetRandomUnownedCharacters(snapshot.runState, 0, 2, rng));
+        recruitCandidates.AddRange(RunRestService.GetRecruitCandidates(snapshot.runState, sourceCoord, returnSceneName, recruitRoster, difficultyConfig));
         return recruitCandidates;
     }
 
@@ -91,7 +85,7 @@ public static class RestSceneRuntime
         if (!TryGetCurrentSnapshot(out MapRunSnapshot snapshot) || snapshot?.runState == null)
             return 0;
 
-        return difficultyConfig.GetRecruitCostForCurrentRecruitCount(snapshot.runState.recruitedMemberCount);
+        return RunRestService.RecruitCost(snapshot.runState, difficultyConfig);
     }
 
     public static bool TryRecruitAndReturn(CharacterData_SO characterData, out string errorMessage)

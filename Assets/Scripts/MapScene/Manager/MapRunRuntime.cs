@@ -286,34 +286,39 @@ public static class MapRunRuntime
 
     public static void ApplyRestResult(string sceneName, Vector2Int sourceCoord)
     {
-        if (currentSnapshot == null || string.IsNullOrWhiteSpace(sceneName))
+        ApplyRestResult(currentSnapshot, sceneName, sourceCoord);
+    }
+
+    public static void ApplyRestResult(MapRunSnapshot snapshot, string sceneName, Vector2Int sourceCoord)
+    {
+        if (snapshot == null || string.IsNullOrWhiteSpace(sceneName))
             return;
 
-        if (!string.Equals(currentSnapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(snapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
             return;
 
-        if (currentSnapshot.runState?.partyMembers != null)
+        if (snapshot.runState?.partyMembers != null)
         {
-            for (int i = 0; i < currentSnapshot.runState.partyMembers.Count; i++)
+            for (int i = 0; i < snapshot.runState.partyMembers.Count; i++)
             {
-                RunPartyMemberState member = currentSnapshot.runState.partyMembers[i];
+                RunPartyMemberState member = snapshot.runState.partyMembers[i];
                 if (member == null)
                     continue;
 
                 int maxHP = Mathf.Max(0, member.maxHP);
-                int healPercent = CalamitySystem.ResolveRestHealPercent(100, currentSnapshot.runState.activeCalamities);
+                int healPercent = CalamitySystem.ResolveRestHealPercent(100, snapshot.runState.activeCalamities);
                 int healAmount = Mathf.CeilToInt(maxHP * (healPercent / 100f));
                 member.currentHP = Mathf.Clamp(member.currentHP + healAmount, 0, maxHP);
             }
 
-            currentSnapshot.runState.SyncLegacyPlayerFieldsFromParty();
+            snapshot.runState.SyncLegacyPlayerFieldsFromParty();
         }
 
-        RelicTriggerDispatcher.ProcessRestHealCompleted(currentSnapshot.runState);
+        RelicTriggerDispatcher.ProcessRestHealCompleted(snapshot.runState);
 
-        for (int i = 0; i < currentSnapshot.tiles.Count; i++)
+        for (int i = 0; i < snapshot.tiles.Count; i++)
         {
-            BoardTileData tile = currentSnapshot.tiles[i];
+            BoardTileData tile = snapshot.tiles[i];
             if (tile == null || tile.coord != sourceCoord)
                 continue;
 
@@ -325,24 +330,29 @@ public static class MapRunRuntime
 
     public static void ApplyRestoreActionPointsResult(string sceneName, Vector2Int sourceCoord)
     {
-        if (currentSnapshot == null || string.IsNullOrWhiteSpace(sceneName))
+        ApplyRestoreActionPointsResult(currentSnapshot, sceneName, sourceCoord);
+    }
+
+    public static void ApplyRestoreActionPointsResult(MapRunSnapshot snapshot, string sceneName, Vector2Int sourceCoord)
+    {
+        if (snapshot == null || string.IsNullOrWhiteSpace(sceneName))
             return;
 
-        if (!string.Equals(currentSnapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(snapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
             return;
 
-        int maxActionPoints = Mathf.Max(0, currentSnapshot.actionPointBase + currentSnapshot.actionPointBonus);
-        int restorePercent = CalamitySystem.ResolveRestActionPointRestorePercent(100, currentSnapshot.runState != null ? currentSnapshot.runState.activeCalamities : null);
+        int maxActionPoints = Mathf.Max(0, snapshot.actionPointBase + snapshot.actionPointBonus);
+        int restorePercent = CalamitySystem.ResolveRestActionPointRestorePercent(100, snapshot.runState != null ? snapshot.runState.activeCalamities : null);
         int restoreAmount = Mathf.CeilToInt(maxActionPoints * (restorePercent / 100f));
-        currentSnapshot.actionPointCurrent = Mathf.Clamp(currentSnapshot.actionPointCurrent + restoreAmount, 0, maxActionPoints);
-        if (currentSnapshot.suppressOnePendingCalamityOnActionPointRestore && currentSnapshot.pendingCalamityTiers.Count > 0)
-            currentSnapshot.pendingCalamityTiers.RemoveAt(0);
-        currentSnapshot.suppressOnePendingCalamityOnActionPointRestore = false;
-        RelicTriggerDispatcher.ProcessRestActionPointRestored(currentSnapshot.runState);
+        snapshot.actionPointCurrent = Mathf.Clamp(snapshot.actionPointCurrent + restoreAmount, 0, maxActionPoints);
+        if (snapshot.suppressOnePendingCalamityOnActionPointRestore && snapshot.pendingCalamityTiers.Count > 0)
+            snapshot.pendingCalamityTiers.RemoveAt(0);
+        snapshot.suppressOnePendingCalamityOnActionPointRestore = false;
+        RelicTriggerDispatcher.ProcessRestActionPointRestored(snapshot.runState);
 
-        for (int i = 0; i < currentSnapshot.tiles.Count; i++)
+        for (int i = 0; i < snapshot.tiles.Count; i++)
         {
-            BoardTileData tile = currentSnapshot.tiles[i];
+            BoardTileData tile = snapshot.tiles[i];
             if (tile == null || tile.coord != sourceCoord)
                 continue;
 
@@ -354,19 +364,24 @@ public static class MapRunRuntime
 
     public static bool TryApplyRecruitResult(string sceneName, Vector2Int sourceCoord, CharacterData_SO characterData, int recruitCost, int maxRecruitCount, out string errorMessage)
     {
-        if (currentSnapshot == null || string.IsNullOrWhiteSpace(sceneName))
+        return TryApplyRecruitResult(currentSnapshot, sceneName, sourceCoord, characterData, recruitCost, maxRecruitCount, out errorMessage);
+    }
+
+    public static bool TryApplyRecruitResult(MapRunSnapshot snapshot, string sceneName, Vector2Int sourceCoord, CharacterData_SO characterData, int recruitCost, int maxRecruitCount, out string errorMessage)
+    {
+        if (snapshot == null || string.IsNullOrWhiteSpace(sceneName))
         {
             errorMessage = "\u672a\u627e\u5230\u5730\u56fe\u8fdb\u5ea6\u5feb\u7167\u3002";
             return false;
         }
 
-        if (!string.Equals(currentSnapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(snapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
         {
             errorMessage = "\u5f53\u524d\u5730\u56fe\u8fdb\u5ea6\u4e0e\u4f11\u606f\u573a\u666f\u4e0d\u5339\u914d\u3002";
             return false;
         }
 
-        if (currentSnapshot.runState == null)
+        if (snapshot.runState == null)
         {
             errorMessage = "\u8fd0\u884c\u4e2d\u961f\u4f0d\u6570\u636e\u4e22\u5931\u3002";
             return false;
@@ -378,19 +393,19 @@ public static class MapRunRuntime
             return false;
         }
 
-        if (maxRecruitCount > 0 && currentSnapshot.runState.recruitedMemberCount >= maxRecruitCount)
+        if (maxRecruitCount > 0 && snapshot.runState.recruitedMemberCount >= maxRecruitCount)
         {
             errorMessage = "\u62db\u52df\u6b21\u6570\u5df2\u8fbe\u4e0a\u9650\uff0c\u65e0\u6cd5\u7ee7\u7eed\u62db\u52df\u3002";
             return false;
         }
 
-        if (currentSnapshot.runState.HasCharacter(characterData))
+        if (snapshot.runState.HasCharacter(characterData))
         {
             errorMessage = "\u8be5\u89d2\u8272\u5df2\u5728\u961f\u4f0d\u4e2d\u3002";
             return false;
         }
 
-        if (!currentSnapshot.runState.TrySpendMoney(Mathf.Max(0, recruitCost)))
+        if (!snapshot.runState.TrySpendMoney(Mathf.Max(0, recruitCost)))
         {
             errorMessage = $"\u91d1\u94b1\u4e0d\u8db3\uff0c\u9700\u8981 {Mathf.Max(0, recruitCost)} \u91d1\u5e01\u3002";
             return false;
@@ -398,7 +413,7 @@ public static class MapRunRuntime
 
         int baseHp = Mathf.Max(1, characterData.baseHP);
         Weapon_SO initialWeapon = characterData.initialWeaponData;
-        currentSnapshot.runState.AddPartyMember(new RunPartyMemberState
+        snapshot.runState.AddPartyMember(new RunPartyMemberState
         {
             memberId = string.IsNullOrWhiteSpace(characterData.characterName) ? characterData.name : characterData.characterName,
             characterData = characterData,
@@ -409,16 +424,16 @@ public static class MapRunRuntime
             maxHP = baseHp,
             currentHP = baseHp
         });
-        RunPartyMemberMaxHpService.RecalculateParty(currentSnapshot.runState);
+        RunPartyMemberMaxHpService.RecalculateParty(snapshot.runState);
 
         if (initialWeapon != null)
-            currentSnapshot.runState.AddWeapon(initialWeapon, 1);
+            snapshot.runState.AddWeapon(initialWeapon, 1);
 
-        currentSnapshot.runState.recruitedMemberCount = Mathf.Max(0, currentSnapshot.runState.recruitedMemberCount + 1);
+        snapshot.runState.recruitedMemberCount = Mathf.Max(0, snapshot.runState.recruitedMemberCount + 1);
 
-        for (int i = 0; i < currentSnapshot.tiles.Count; i++)
+        for (int i = 0; i < snapshot.tiles.Count; i++)
         {
-            BoardTileData tile = currentSnapshot.tiles[i];
+            BoardTileData tile = snapshot.tiles[i];
             if (tile == null || tile.coord != sourceCoord)
                 continue;
 
@@ -439,19 +454,30 @@ public static class MapRunRuntime
         IReadOnlyList<LootItem_SO> lootReforgePool,
         out string errorMessage)
     {
-        if (currentSnapshot == null || string.IsNullOrWhiteSpace(sceneName))
+        return TryApplyLootReforgeResult(currentSnapshot, sceneName, firstLoot, secondLoot, resultLoot, lootReforgePool, out errorMessage);
+    }
+
+    public static bool TryApplyLootReforgeResult(MapRunSnapshot snapshot,
+        string sceneName,
+        LootItem_SO firstLoot,
+        LootItem_SO secondLoot,
+        LootItem_SO resultLoot,
+        IReadOnlyList<LootItem_SO> lootReforgePool,
+        out string errorMessage)
+    {
+        if (snapshot == null || string.IsNullOrWhiteSpace(sceneName))
         {
             errorMessage = "未找到地图进度快照。";
             return false;
         }
 
-        if (!string.Equals(currentSnapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(snapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
         {
             errorMessage = "当前地图进度与休息场景不匹配。";
             return false;
         }
 
-        if (currentSnapshot.runState == null)
+        if (snapshot.runState == null)
         {
             errorMessage = "运行中的队伍数据丢失。";
             return false;
@@ -476,50 +502,50 @@ public static class MapRunRuntime
         }
 
         int requiredFirstAmount = firstLoot == secondLoot ? 2 : 1;
-        if (currentSnapshot.runState.GetLootAmount(firstLoot) < requiredFirstAmount)
+        if (snapshot.runState.GetLootAmount(firstLoot) < requiredFirstAmount)
         {
             errorMessage = $"材料不足：{GetLootDisplayName(firstLoot)}";
             return false;
         }
 
-        if (firstLoot != secondLoot && currentSnapshot.runState.GetLootAmount(secondLoot) < 1)
+        if (firstLoot != secondLoot && snapshot.runState.GetLootAmount(secondLoot) < 1)
         {
             errorMessage = $"材料不足：{GetLootDisplayName(secondLoot)}";
             return false;
         }
 
         RelicExecutionContext lootReforgeContext = RelicTriggerDispatcher.ProcessLootReforge(
-            currentSnapshot.runState,
+            snapshot.runState,
             firstLoot,
             secondLoot,
             resultLoot,
             lootReforgePool);
 
-        if (!currentSnapshot.runState.TryConsumeLoot(firstLoot, 1))
+        if (!snapshot.runState.TryConsumeLoot(firstLoot, 1))
         {
             errorMessage = $"无法消耗材料：{GetLootDisplayName(firstLoot)}";
             return false;
         }
 
-        if (!currentSnapshot.runState.TryConsumeLoot(secondLoot, 1))
+        if (!snapshot.runState.TryConsumeLoot(secondLoot, 1))
         {
-            currentSnapshot.runState.AddLoot(firstLoot, 1);
+            snapshot.runState.AddLoot(firstLoot, 1);
             errorMessage = $"无法消耗材料：{GetLootDisplayName(secondLoot)}";
             return false;
         }
 
-        currentSnapshot.runState.AddLoot(resultLoot, 1);
+        snapshot.runState.AddLoot(resultLoot, 1);
         if (lootReforgeContext.bonusLootReforgeRewards != null)
         {
             for (int bonusIndex = 0; bonusIndex < lootReforgeContext.bonusLootReforgeRewards.Count; bonusIndex++)
             {
                 LootItem_SO bonusLoot = lootReforgeContext.bonusLootReforgeRewards[bonusIndex];
                 if (bonusLoot != null)
-                    currentSnapshot.runState.AddLoot(bonusLoot, 1);
+                    snapshot.runState.AddLoot(bonusLoot, 1);
             }
         }
         errorMessage = string.Empty;
-        RelicTriggerDispatcher.ProcessRestReforgeCompleted(currentSnapshot.runState);
+        RelicTriggerDispatcher.ProcessRestReforgeCompleted(snapshot.runState);
         return true;
     }
 
@@ -530,19 +556,29 @@ public static class MapRunRuntime
         Relic_SO resultRelic,
         out string errorMessage)
     {
-        if (currentSnapshot == null || string.IsNullOrWhiteSpace(sceneName))
+        return TryApplyRelicReforgeResult(currentSnapshot, sceneName, firstRelic, secondRelic, resultRelic, out errorMessage);
+    }
+
+    public static bool TryApplyRelicReforgeResult(MapRunSnapshot snapshot,
+        string sceneName,
+        Relic_SO firstRelic,
+        Relic_SO secondRelic,
+        Relic_SO resultRelic,
+        out string errorMessage)
+    {
+        if (snapshot == null || string.IsNullOrWhiteSpace(sceneName))
         {
             errorMessage = "未找到地图进度快照。";
             return false;
         }
 
-        if (!string.Equals(currentSnapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(snapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
         {
             errorMessage = "当前地图进度与休息场景不匹配。";
             return false;
         }
 
-        if (currentSnapshot.runState == null)
+        if (snapshot.runState == null)
         {
             errorMessage = "运行中的队伍数据丢失。";
             return false;
@@ -567,20 +603,20 @@ public static class MapRunRuntime
         }
 
         int requiredFirstAmount = firstRelic == secondRelic ? 2 : 1;
-        if (currentSnapshot.runState.GetRelicAmount(firstRelic) < requiredFirstAmount)
+        if (snapshot.runState.GetRelicAmount(firstRelic) < requiredFirstAmount)
         {
             errorMessage = $"材料不足：{GetRelicDisplayName(firstRelic)}";
             return false;
         }
 
-        if (firstRelic != secondRelic && currentSnapshot.runState.GetRelicAmount(secondRelic) < 1)
+        if (firstRelic != secondRelic && snapshot.runState.GetRelicAmount(secondRelic) < 1)
         {
             errorMessage = $"材料不足：{GetRelicDisplayName(secondRelic)}";
             return false;
         }
 
         RelicExecutionContext reforgeContext = RelicTriggerDispatcher.ProcessRelicReforge(
-            currentSnapshot.runState,
+            snapshot.runState,
             firstRelic,
             secondRelic,
             resultRelic);
@@ -591,38 +627,43 @@ public static class MapRunRuntime
         else if (reforgeContext.preservedReforgeMaterialSlot == 1)
             preservedMaterial = secondRelic;
 
-        if (!currentSnapshot.runState.TryConsumeRelic(firstRelic, 1))
+        if (!snapshot.runState.TryConsumeRelic(firstRelic, 1))
         {
             errorMessage = $"无法消耗材料：{GetRelicDisplayName(firstRelic)}";
             return false;
         }
 
-        if (!currentSnapshot.runState.TryConsumeRelic(secondRelic, 1))
+        if (!snapshot.runState.TryConsumeRelic(secondRelic, 1))
         {
-            currentSnapshot.runState.AddRelic(firstRelic, 1);
+            snapshot.runState.AddRelic(firstRelic, 1);
             errorMessage = $"无法消耗材料：{GetRelicDisplayName(secondRelic)}";
             return false;
         }
 
-        currentSnapshot.runState.AddRelic(resultRelic, 1);
+        snapshot.runState.AddRelic(resultRelic, 1);
         if (preservedMaterial != null)
-            currentSnapshot.runState.AddRelic(preservedMaterial, 1);
+            snapshot.runState.AddRelic(preservedMaterial, 1);
         errorMessage = string.Empty;
-        RelicTriggerDispatcher.ProcessRestReforgeCompleted(currentSnapshot.runState);
+        RelicTriggerDispatcher.ProcessRestReforgeCompleted(snapshot.runState);
         return true;
     }
 
     public static void ApplyRestVisitConsumedResult(string sceneName, Vector2Int sourceCoord)
     {
-        if (currentSnapshot == null || string.IsNullOrWhiteSpace(sceneName))
+        ApplyRestVisitConsumedResult(currentSnapshot, sceneName, sourceCoord);
+    }
+
+    public static void ApplyRestVisitConsumedResult(MapRunSnapshot snapshot, string sceneName, Vector2Int sourceCoord)
+    {
+        if (snapshot == null || string.IsNullOrWhiteSpace(sceneName))
             return;
 
-        if (!string.Equals(currentSnapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(snapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
             return;
 
-        for (int i = 0; i < currentSnapshot.tiles.Count; i++)
+        for (int i = 0; i < snapshot.tiles.Count; i++)
         {
-            BoardTileData tile = currentSnapshot.tiles[i];
+            BoardTileData tile = snapshot.tiles[i];
             if (tile == null || tile.coord != sourceCoord)
                 continue;
 

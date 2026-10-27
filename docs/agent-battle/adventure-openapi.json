@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "DiceLand Agent Adventure API (B004a)",
-    "version": "0.2.0",
-    "description": "Shared-rule normal adventure with map, calamities, battles, merchant purchase/refresh and forge crafting. Rest/events/treasure, final settlement and full save/replay are upcoming batches. Always select legalActions; no full-run completion is implied."
+    "title": "DiceLand Agent Adventure API (B004b1)",
+    "version": "0.3.0",
+    "description": "Shared-rule normal adventure including map, calamities, battles, merchant, forge, rest healing/AP restoration, recruitment and equipment. Reforge decisions, events/treasure, final settlement and full save/replay remain upcoming batches."
   },
   "servers": [
     {
@@ -76,7 +76,11 @@
               "run_close",
               "run_buy",
               "run_refresh_shop",
-              "run_craft"
+              "run_craft",
+              "run_rest_heal",
+              "run_rest_restore_ap",
+              "run_recruit",
+              "run_equip"
             ]
           },
           "battleAction": {
@@ -106,7 +110,7 @@
           },
           "assetId": {
             "type": "string",
-            "description": "Owned blueprint GUID from legalActions for run_craft."
+            "description": "Asset GUID from legalActions: owned blueprint for run_craft or owned compatible weapon for run_equip."
           }
         }
       },
@@ -139,7 +143,11 @@
               "run_close",
               "run_buy",
               "run_refresh_shop",
-              "run_craft"
+              "run_craft",
+              "run_rest_heal",
+              "run_rest_restore_ap",
+              "run_recruit",
+              "run_equip"
             ]
           },
           "battleAction": {
@@ -147,7 +155,7 @@
           },
           "assetId": {
             "type": "string",
-            "description": "Owned blueprint GUID from legalActions for run_craft."
+            "description": "Asset GUID from legalActions: owned blueprint for run_craft or owned compatible weapon for run_equip."
           }
         }
       },
@@ -315,6 +323,9 @@
             "items": {
               "$ref": "#/components/schemas/AgentAdventureRecipe"
             }
+          },
+          "rest": {
+            "$ref": "#/components/schemas/AgentAdventureRest"
           }
         }
       },
@@ -463,6 +474,65 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AgentAdventureMaterial"
+            }
+          }
+        }
+      },
+      "AgentAdventureRecruit": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "weapon": {
+            "type": "string"
+          },
+          "canRecruit": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AgentAdventureRest": {
+        "type": "object",
+        "properties": {
+          "healPercent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actionPointRestorePercent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recruitCost": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recruitedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxRecruitCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "candidates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureRecruit"
             }
           }
         }

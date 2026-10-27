@@ -1,0 +1,40 @@
+{
+  "batch": "B004b1",
+  "date": "2026-10-27",
+  "relatedJob": "dacab3f483604defafe3aad18b18a8d9",
+  "related": {
+    "total": 68,
+    "passed": 68,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 3.666101,
+    "resultState": "Passed"
+  },
+  "http": {
+    "difficulty": "Medium (NormalConfig)",
+    "seed": 32,
+    "healing": {
+      "initialPassedRounds": 2,
+      "beforeHp": 16,
+      "afterHp": 19,
+      "maxHp": 19,
+      "actions": 17,
+      "visitConsumed": true,
+      "returnedPhase": "map"
+    },
+    "actionPointRestore": {
+      "before": 1,
+      "after": 6,
+      "actions": 17,
+      "visitConsumed": true,
+      "returnedPhase": "map"
+    }
+  },
+  "notes": [
+    "HTTP routes used unmodified normal assets and public commands only. Passing a battle round without targeting is a legal game action; no HP/resource injection was used.",
+    "Recruitment/equipment, half-heal calamity and cycle-boundary tests use directed resource/location setups. These are not full normal-run completion evidence.",
+    "Explicit snapshot overloads share the formal rest/recruit/reforge writers. Original global wrappers remain available to the formal scene.",
+    "Reforge decision/preview/limit workflow is still B004b2; event/treasure/subdungeons, final settlement, save/restore and full replay remain incomplete.",
+    "Existing full-suite/PlayMode failures remain recorded; only the listed targeted suite is reported green."
+  ]
+}

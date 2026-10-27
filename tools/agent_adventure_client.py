@@ -40,11 +40,18 @@ def demo(client, args):
     session_id = state["sessionId"]
     trace = []
     moved = 0
+    seen_equipment = {member["weapon"] for member in state["party"]}
     try:
         for _ in range(args.max_actions):
             actions = state["legalActions"]
             action = None
             if state["phase"] == "map":
+                equipment = next((a for a in actions if a["op"] == "run_equip" and a["assetId"] not in seen_equipment), None)
+                if equipment:
+                    seen_equipment.add(equipment["assetId"])
+                    trace.append(equipment)
+                    state = client.act(state, **equipment)
+                    continue
                 if moved >= args.max_moves:
                     break
                 tiles = {(t["x"], t["y"]): t for t in state["tiles"]}
@@ -53,7 +60,7 @@ def demo(client, args):
                     if move["op"] != "run_move":
                         continue
                     tile = tiles[(move["x"], move["y"])]
-                    if tile["type"] in ("Empty", "Key", "Merchant", "Forge") or (tile["type"] in ("Battle", "Elite") and tile["encounterAvailable"]):
+                    if tile["type"] in ("Empty", "Key", "Merchant", "Forge") or (tile["type"] == "Rest" and not tile["resolved"]) or (tile["type"] in ("Battle", "Elite") and tile["encounterAvailable"]):
                         candidates.append((tile, move))
                 candidates.sort(key=lambda pair: (pair[0]["visited"], pair[0]["type"] != "Key", pair[0]["danger"], pair[0]["x"], pair[0]["y"]))
                 if candidates:
@@ -74,6 +81,12 @@ def demo(client, args):
                 action = next((a for a in actions if a["op"] == "run_craft"), None)
                 if action is None:
                     action = next((a for a in actions if a["op"] == "run_leave_location"), None)
+            elif state["phase"] == "rest":
+                if len(state["party"]) < 2:
+                    action = next((a for a in actions if a["op"] == "run_recruit"), None)
+                if action is None:
+                    op = "run_rest_heal" if any(p["hp"] < p["maxHp"] for p in state["party"]) else "run_rest_restore_ap"
+                    action = next((a for a in actions if a["op"] == op), None)
             if action is None:
                 break
             trace.append(action)

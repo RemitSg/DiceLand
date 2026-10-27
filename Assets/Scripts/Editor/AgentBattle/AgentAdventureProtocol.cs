@@ -33,6 +33,18 @@ using System;
     public AgentAdventureMerchantOffer[] merchantOffers;
     public int merchantRefreshCost;
     public AgentAdventureRecipe[] recipes;
+    public AgentAdventureRest rest;
+}
+[Serializable] public sealed class AgentAdventureRest
+{
+    public int healPercent, actionPointRestorePercent, recruitCost, recruitedCount, maxRecruitCount;
+    public AgentAdventureRecruit[] candidates;
+}
+[Serializable] public sealed class AgentAdventureRecruit
+{
+    public int index, hp;
+    public string id, name, description, weapon;
+    public bool canRecruit;
 }
 [Serializable] public sealed class AgentAdventureMerchantOffer
 {

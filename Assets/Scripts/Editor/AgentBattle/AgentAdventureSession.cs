@@ -56,7 +56,7 @@ public sealed partial class AgentAdventureSession : IDisposable
             activeCalamities = state.activeCalamities.Where(c => c?.calamityData != null).Select(c => new AgentBattleAsset { id = AssetId(c.calamityData), name = c.calamityData.DisplayName, description = c.calamityData.description }).ToArray(),
             battle = bridge != null ? bridge.Battle.Observe() : null, legalActions = LegalActions().ToArray(),
             merchantOffers = DescribeMerchant(), merchantRefreshCost = phase == "merchant" ? MerchantStockService.RefreshCost(state, CurrentTile, map.Configuration.starting.difficulty) : 0,
-            recipes = DescribeRecipes()
+            recipes = DescribeRecipes(), rest = DescribeRest()
         };
     }
 
@@ -96,6 +96,11 @@ public sealed partial class AgentAdventureSession : IDisposable
                 case "run_return": ReturnFromBattle(); break;
                 case "run_choose_calamity": ChooseCalamity(request.choiceIndex); break;
                 case "run_buy": case "run_refresh_shop": case "run_craft": ExecuteEconomyAction(request); break;
+                case "run_rest_heal": case "run_rest_restore_ap": case "run_recruit": ExecuteRestAction(request); break;
+                case "run_equip":
+                    Weapon_SO equip = map.Snapshot.runState.weaponInventory.Select(w => w.weaponData).First(w => w != null && AssetId(w) == request.assetId);
+                    if (!map.Snapshot.runState.TryEquipWeapon(equip, out RunPartyMemberState owner, out message)) throw new InvalidOperationException(message);
+                    message = owner.DisplayName + " 装备了 " + equip.weaponName; break;
                 case "run_leave_location":
                     if (phase == "merchant") RelicMerchantService.ResetVisitState(CurrentTile);
                     phase = "map"; ClearDeferrals(); PresentCalamity(); break;
@@ -116,6 +121,7 @@ public sealed partial class AgentAdventureSession : IDisposable
             foreach (BoardTileData tile in map.LegalDestinations()) yield return new AgentAdventureAction { op = "run_move", x = tile.coord.x, y = tile.coord.y };
             map.Board.TryGetTile(map.Snapshot.runState.playerGridPosition, out BoardTileData tileHere);
             if (CanInteract(tileHere)) yield return new AgentAdventureAction { op = "run_interact" };
+            foreach (AgentAdventureAction equip in EquipmentActions()) yield return equip;
         }
         else if (phase == "battle")
         {
@@ -124,6 +130,8 @@ public sealed partial class AgentAdventureSession : IDisposable
         }
         else if (phase == "calamity")
             for (int i = 0; i < choices.Count; i++) yield return new AgentAdventureAction { op = "run_choose_calamity", choiceIndex = i };
+        else if (phase == "rest")
+            foreach (AgentAdventureAction action in RestActions()) yield return action;
         else if (phase == "merchant" || phase == "forge")
         {
             foreach (AgentAdventureAction action in EconomyActions()) yield return action;
@@ -136,7 +144,7 @@ public sealed partial class AgentAdventureSession : IDisposable
         if (tile == null) return false;
         if (tile.IsHostileTile) return !tile.isResolved && tile.assignedEnemyGroup != null && tile.assignedEnemyGroup.IsValid
             && (tile.tileType != MapTileType.Boss || map.Snapshot.runState.IsBossUnlocked);
-        return tile.tileType == MapTileType.Merchant || tile.tileType == MapTileType.Forge || tile.tileType == MapTileType.Rest
+        return tile.tileType == MapTileType.Merchant || tile.tileType == MapTileType.Forge || (tile.tileType == MapTileType.Rest && !tile.isResolved)
             || (!tile.isResolved && (tile.tileType == MapTileType.Event || tile.tileType == MapTileType.Treasure));
     }
 
@@ -159,6 +167,7 @@ public sealed partial class AgentAdventureSession : IDisposable
         else if (CanInteract(tile))
         {
             if (OpenEconomyLocation(tile)) return;
+            if (OpenRestLocation(tile)) return;
             phase = tile.tileType.ToString().ToLowerInvariant();
             message = "This location requires the next adventure feature batch; no placeholder rewards have been applied.";
             return;
@@ -211,8 +220,8 @@ public sealed partial class AgentAdventureSession : IDisposable
         if (a.op != r.op) return false;
         if (a.op == "run_move") return a.x == r.x && a.y == r.y;
         if (a.op == "run_choose_calamity") return a.choiceIndex == r.choiceIndex;
-        if (a.op == "run_buy") return a.choiceIndex == r.choiceIndex;
-        if (a.op == "run_craft") return a.assetId == r.assetId;
+        if (a.op == "run_buy" || a.op == "run_recruit") return a.choiceIndex == r.choiceIndex;
+        if (a.op == "run_craft" || a.op == "run_equip") return a.assetId == r.assetId;
         if (a.op == "run_battle") return JsonUtility.ToJson(a.battleAction) == JsonUtility.ToJson(r.battleAction);
         return true;
     }
