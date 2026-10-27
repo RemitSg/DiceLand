@@ -79,6 +79,14 @@ def demo(client, args):
                     continue
                 if moved >= args.max_moves:
                     break
+                if (state.get("dungeon") or {}).get("active", False):
+                    # The shared dungeon board is a line: retreat is left, completion is right.
+                    forward = next((a for a in actions if a["op"] == "run_move" and a["x"] > state["x"]), None)
+                    if forward:
+                        trace.append(forward)
+                        state = client.act(state, **forward)
+                        moved += 1
+                        continue
                 tiles = {(t["x"], t["y"]): t for t in state["tiles"]}
                 candidates = []
                 for move in actions:

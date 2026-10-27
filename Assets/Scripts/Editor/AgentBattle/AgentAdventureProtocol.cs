@@ -38,6 +38,14 @@ using System;
     public AgentBattleRewardItem lastReforgeResult;
     public AgentAdventureEvent mapEvent;
     public AgentAdventureTreasure treasure;
+    public AgentAdventureDungeon dungeon;
+    public RunSettlementStats progress;
+}
+[Serializable] public sealed class AgentAdventureDungeon
+{
+    public bool active;
+    public string id, name, description;
+    public int returnX, returnY, leftExitX, leftExitY, rightExitX, rightExitY, scoreValue, entriesTotal, entriesResolved;
 }
 [Serializable] public sealed class AgentAdventureTreasure
 {
@@ -114,8 +122,8 @@ using System;
 [Serializable] public sealed class AgentAdventureMaterial { public string id, name; public int required, available; }
 [Serializable] public sealed class AgentAdventureTile
 {
-    public int x, y, danger, moveCost;
-    public string type, dangerBand;
+    public int x, y, danger, moveCost, dungeonEntryIndex;
+    public string type, dangerBand, previewTag, sourceDungeon;
     public bool visited, resolved, encounterAvailable;
 }
 [Serializable] public sealed class AgentAdventurePartyMember

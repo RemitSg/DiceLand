@@ -45,7 +45,8 @@ public sealed partial class AgentAdventureSession : IDisposable
             configurationIssues = map.ConfigurationIssues,
             tiles = map.Snapshot.tiles.Select(t => new AgentAdventureTile { x = t.coord.x, y = t.coord.y, type = t.tileType.ToString(), dangerBand = t.dangerBand.ToString(),
                 danger = t.previewDangerRating, visited = t.isVisited, resolved = t.isResolved, encounterAvailable = t.assignedEnemyGroup != null && t.assignedEnemyGroup.IsValid,
-                moveCost = MapMovementService.GetMoveCost(state, t) }).ToArray(),
+                moveCost = map.GetMoveCost(t), previewTag = t.previewTag, dungeonEntryIndex = t.specialDungeonEntryIndex,
+                sourceDungeon = AssetId(t.sourceSpecialDungeon) }).ToArray(),
             party = state.partyMembers.Select(m => new AgentAdventurePartyMember { id = m.memberId, name = m.characterData != null ? m.characterData.characterName : m.memberId,
                 character = AssetId(m.characterData), weapon = AssetId(m.weaponData), hp = m.currentHP, maxHp = m.maxHP, level = m.level, experience = m.experience }).ToArray(),
             loot = state.lootInventory.Where(s => s?.lootItem != null).Select(s => Item(s.lootItem, s.lootItem.lootName, s.amount)).ToArray(),
@@ -56,7 +57,8 @@ public sealed partial class AgentAdventureSession : IDisposable
             activeCalamities = state.activeCalamities.Where(c => c?.calamityData != null).Select(c => new AgentBattleAsset { id = AssetId(c.calamityData), name = c.calamityData.DisplayName, description = c.calamityData.description }).ToArray(),
             battle = bridge != null ? bridge.Battle.Observe() : null, legalActions = LegalActions().ToArray(),
             merchantOffers = DescribeMerchant(), merchantRefreshCost = phase == "merchant" ? MerchantStockService.RefreshCost(state, CurrentTile, map.Configuration.starting.difficulty) : 0,
-            recipes = DescribeRecipes(), rest = DescribeRest(), reforge = DescribeReforge(), lastReforgeResult = lastReforgeResult, mapEvent = DescribeEvent(), treasure = DescribeTreasure()
+            recipes = DescribeRecipes(), rest = DescribeRest(), reforge = DescribeReforge(), lastReforgeResult = lastReforgeResult, mapEvent = DescribeEvent(), treasure = DescribeTreasure(),
+            dungeon = DescribeDungeon(), progress = state.settlementStats != null ? state.settlementStats.Clone() : new RunSettlementStats()
         };
     }
 
@@ -155,6 +157,7 @@ public sealed partial class AgentAdventureSession : IDisposable
     private bool CanInteract(BoardTileData tile)
     {
         if (tile == null) return false;
+        if (tile.tileType == MapTileType.SpecialDungeonExit) return map.IsInSpecialDungeon;
         if (tile.IsHostileTile) return !tile.isResolved && tile.assignedEnemyGroup != null && tile.assignedEnemyGroup.IsValid
             && (tile.tileType != MapTileType.Boss || map.Snapshot.runState.IsBossUnlocked);
         return tile.tileType == MapTileType.Merchant || tile.tileType == MapTileType.Forge || (tile.tileType == MapTileType.Rest && !tile.isResolved)
@@ -164,6 +167,11 @@ public sealed partial class AgentAdventureSession : IDisposable
     private void EnterLocation(BoardTileData tile)
     {
         phase = "map";
+        if (tile.tileType == MapTileType.SpecialDungeonExit && map.IsInSpecialDungeon)
+        {
+            if (!map.ExitSpecialDungeon(out message)) throw new InvalidOperationException(message);
+            ClearDeferrals(); PresentCalamity(); return;
+        }
         if (tile.IsHostileTile)
         {
             if (tile.tileType == MapTileType.Boss && !map.Snapshot.runState.IsBossUnlocked)
@@ -187,9 +195,7 @@ public sealed partial class AgentAdventureSession : IDisposable
                 if (OpenEventLocation(tile)) return;
                 ClearDeferrals(); PresentCalamity(); return;
             }
-            phase = tile.tileType.ToString().ToLowerInvariant();
-            message = "This location requires the next adventure feature batch; no placeholder rewards have been applied.";
-            return;
+            throw new InvalidOperationException("No adapter exists for this interactive tile: " + tile.tileType);
         }
         ClearDeferrals(); PresentCalamity();
     }

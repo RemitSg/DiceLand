@@ -218,4 +218,56 @@ public sealed class AgentAdventureEventTests
         Assert.AreSame(first.relicInventory.Single().relicData, second.relicInventory.Single().relicData);
         Assert.AreEqual(end, JsonUtility.ToJson(Random.state));
     }
+
+    [Test] public void UnaffordableMoneyEffectCannotPartiallyDamageTheParty()
+    {
+        Open(); var option = Option(MapEventOptionBuiltInEffectType.AdjustAllPartyMembersHpByMaxHpPercent, -20);
+        option.additionalBuiltInEffects.Add(new MapEventBuiltInEffectData { effectType = MapEventOptionBuiltInEffectType.LoseMoney, effectAmount = 20 });
+        var ev = Event(option); var state = Enter(ev); int hp = state.party.Single().hp;
+        Assert.IsFalse(state.mapEvent.options.Single().selectable); Assert.IsEmpty(state.legalActions);
+        Assert.That(state.mapEvent.options.Single().unavailableReason, Does.Contain("20"));
+        Assert.Throws<ArgumentException>(() => Act("run_choose_event"));
+        Assert.IsFalse(MapEventOptionService.TryExecute(new MapEventBuiltInEffectExecutionRequest { runState = Map.Snapshot.runState,
+            currentEventTile = Tile, optionData = option }, ev, null, out var result));
+        Assert.That(result.message, Does.Contain("20")); Assert.AreEqual(hp, Map.Snapshot.runState.partyMembers.Single().currentHP);
+        Assert.AreEqual(0, Map.Snapshot.runState.money); Assert.IsFalse(Tile.isResolved);
+    }
+
+    [Test] public void MoneyPreflightUsesTheSameOrderedIncomeAndSelectionFeeRules()
+    {
+        var option = Option(MapEventOptionBuiltInEffectType.GainMoney, 10); option.requiredMoney = 5;
+        option.additionalBuiltInEffects.Add(new MapEventBuiltInEffectData { effectType = MapEventOptionBuiltInEffectType.LoseMoney, effectAmount = 20 });
+        var state = new RunState { money = 15 }; var ev = Event(option); var tile = new BoardTileData { tileType = MapTileType.Event };
+        Assert.IsTrue(MapEventOptionService.BuildPreview(state, option, null).isSelectable);
+        Assert.IsTrue(MapEventOptionService.TryExecute(new MapEventBuiltInEffectExecutionRequest { runState = state, currentEventTile = tile, optionData = option }, ev, null, out _));
+        Assert.AreEqual(0, state.money); Assert.IsTrue(tile.isResolved);
+    }
+
+    [Test] public void WeightedMoneyPreflightChecksEveryBranchWithoutDrawingOrAdvancingRandomness()
+    {
+        var option = Option(); option.possibleResults.Add(new MapEventPossibleResultData { weight = 1,
+            primaryEffect = new MapEventBuiltInEffectData { effectType = MapEventOptionBuiltInEffectType.LoseMoney, effectAmount = 20 } });
+        option.possibleResults.Add(new MapEventPossibleResultData { weight = 1,
+            primaryEffect = new MapEventBuiltInEffectData { effectType = MapEventOptionBuiltInEffectType.GainRandomMoney, randomMoneyMin = 20, randomMoneyMax = 50 } });
+        var state = new RunState { money = 19 }; string rng = JsonUtility.ToJson(Random.state);
+        Assert.IsFalse(MapEventOptionService.BuildPreview(state, option, null).isSelectable);
+        state.money = 20; Assert.IsTrue(MapEventOptionService.BuildPreview(state, option, null).isSelectable);
+        Assert.AreEqual(rng, JsonUtility.ToJson(Random.state)); Assert.AreEqual(20, state.money);
+    }
+
+    [Test] public void BuiltInFailurePreservesTheActualEffectErrorMessage()
+    {
+        var option = Option(MapEventOptionBuiltInEffectType.LoseMoney, 20);
+        Assert.IsFalse(MapEventBuiltInEffectExecutorService.TryExecute(new MapEventBuiltInEffectExecutionRequest { runState = new RunState(), optionData = option }, out var result));
+        Assert.That(result.message, Does.Contain("20"));
+    }
+
+    [Test] public void RandomIncomeCannotHideAnUnaffordableHighPercentageLoss()
+    {
+        var option = Option(MapEventOptionBuiltInEffectType.GainRandomMoney); option.randomMoneyMin = 0; option.randomMoneyMax = 10;
+        option.additionalBuiltInEffects.Add(new MapEventBuiltInEffectData { effectType = MapEventOptionBuiltInEffectType.LoseMoneyPercent, moneyPercent = 150 });
+        string rng = JsonUtility.ToJson(Random.state);
+        Assert.IsFalse(MapEventOptionService.BuildPreview(new RunState(), option, null).isSelectable);
+        Assert.AreEqual(rng, JsonUtility.ToJson(Random.state));
+    }
 }

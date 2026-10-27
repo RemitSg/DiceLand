@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "DiceLand Agent Adventure API (B005b)",
-    "version": "0.6.0",
-    "description": "Shared-rule normal adventure with map, battles, calamities, economy, rest, reforge, events, treasure rewards and relic bag choices/refresh. Special dungeon traversal, final settlement and full save/replay remain upcoming batches."
+    "title": "DiceLand Agent Adventure API (B005c)",
+    "version": "0.7.0",
+    "description": "Shared-rule normal adventure with map, battle, calamities, economy, rest, reforge, events, treasure and special dungeon traversal/return. Final settlement/meta and full save/replay remain upcoming batches."
   },
   "servers": [
     {
@@ -98,7 +98,7 @@
               "run_refresh_treasure_relics",
               "run_continue_treasure"
             ],
-            "description": "Copy an item from legalActions. Event/treasure choices use choiceIndex. Continue actions acknowledge the result before leaving the location."
+            "description": "Copy an item from legalActions. Events, treasure and special dungeon entry/exit use their normal choice, continue and move actions. Check dungeon.active to distinguish the linear dungeon board."
           },
           "battleAction": {
             "$ref": "./openapi.json#/components/schemas/AgentBattleLegalAction"
@@ -182,7 +182,7 @@
               "run_refresh_treasure_relics",
               "run_continue_treasure"
             ],
-            "description": "Copy an item from legalActions. Event/treasure choices use choiceIndex. Continue actions acknowledge the result before leaving the location."
+            "description": "Copy an item from legalActions. Events, treasure and special dungeon entry/exit use their normal choice, continue and move actions. Check dungeon.active to distinguish the linear dungeon board."
           },
           "battleAction": {
             "$ref": "./openapi.json#/components/schemas/AgentBattleLegalAction"
@@ -372,6 +372,12 @@
           },
           "treasure": {
             "$ref": "#/components/schemas/AgentAdventureTreasure"
+          },
+          "dungeon": {
+            "$ref": "#/components/schemas/AgentAdventureDungeon"
+          },
+          "progress": {
+            "$ref": "#/components/schemas/RunSettlementStats"
           }
         }
       },
@@ -408,6 +414,16 @@
           },
           "encounterAvailable": {
             "type": "boolean"
+          },
+          "dungeonEntryIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sourceDungeon": {
+            "type": "string"
+          },
+          "previewTag": {
+            "type": "string"
           }
         }
       },
@@ -707,7 +723,7 @@
             }
           }
         },
-        "description": "Present during event, event_result or dungeon_pending. Options and random discard previews are frozen at presentation. No unrevealed weighted result is predicted. Depth is capped by the same limit as the overlay. Dungeon entry is pending B005c."
+        "description": "Present during event and event_result. Options/discard previews are frozen at presentation. Continue enters a follow-up, actual event encounter, special dungeon or map. The recursion limit is shared with the overlay."
       },
       "AgentAdventureEventOption": {
         "type": "object",
@@ -833,6 +849,138 @@
           },
           "relic": {
             "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+          }
+        }
+      },
+      "AgentAdventureDungeon": {
+        "type": "object",
+        "description": "Check active explicitly. Unity may serialize an absent optional object as a default object. Dungeon moves cost zero AP; the left exit retreats and the right exit records completion score. Entry and exit happen through ordinary event continuation and movement. Nested dungeon entry is rejected like the formal UI.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "returnX": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "returnY": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "leftExitX": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "leftExitY": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rightExitX": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rightExitY": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "scoreValue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "entriesTotal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "entriesResolved": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RunSettlementStats": {
+        "type": "object",
+        "description": "Cloned formal run counters, including dungeon completion and score. Final settlement is still pending B006.",
+        "properties": {
+          "runStartedUnixSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "normalBattleOuterCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "normalBattleMidCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "normalBattleInnerCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "normalBattleCoreCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eliteBattleOuterCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eliteBattleMidCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eliteBattleInnerCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eliteBattleCoreCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "specialDungeonCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "specialDungeonScoreTotal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalMoneyGained": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "craftedWeaponCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eventTilesCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eventBattlesCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unexploredTilesVisited": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keysCollected": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bossesDefeated": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       }

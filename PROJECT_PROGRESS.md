@@ -1565,3 +1565,13 @@ Shared UI/agent event selection costs, effects and completion; frozen discard pr
 ## Agent adventure B005b - 2026-10-27
 
 Shared treasure tile reward flow; money/blueprint/relic bags, one-time selection, result acknowledgment and deferred calamities. Shared bag refresh pool and formal UI refresh control; fixed EditMode card cleanup. 14 new tests; related EditMode 112/112 passed in an isolated -batchmode -nographics host with matching source hashes. Normal HTTP seed 32 verified 39 gold, a blueprint, and a chosen relic from treasure (8,3). Original editor remained in domain reload; no restart/save of user scenes. Dungeon traversal, final settlement/meta and full save/replay remain pending. See docs/agent-battle/B005b-validation.json.
+
+
+## 2026-10-27 B005c - shared special dungeon traversal
+
+- Shared UI/API dungeon context, zero-AP movement, validated left/right exits, score once, main board/AP/carry restoration and deferred calamities once.
+- Repaired three authored links: Door entry, Maze effect type, Door final bag relic pool (unchanged rarity/count). Shared direct-money event preflight prevents unaffordable partial HP effects.
+- Isolated Tuanjie batchmode/nographics: final EditMode 921 total, 900 passed, 21 failed; baseline HEAD 983d6816: 899 total, 878 passed, same 21 failing names. All 22 new tests and 142 selected related cases pass.
+- Normal HTTP seed 127: real treasure income 77, recruit Jenny for 50, two Door battle victories, relic reward, right exit score 200 and AP 1->1; fresh left retreat score 0. No resource/outcome injection.
+- Maze probe remains blocked by an authored missing relic reward at the rest room. Existing roster gaps and PlayMode limits remain.
+- Evidence: docs/agent-battle/B005c-validation.json. Next: B006 shared victory/defeat/abandon settlement, isolated meta and next run. Goal remains active; full save/replay and full external-agent audit are still pending.

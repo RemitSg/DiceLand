@@ -108,8 +108,11 @@ public sealed partial class AgentAdventureSession
         }
         if (pendingEventDungeon != null)
         {
-            // Board entry/exit is the next B005 sub-batch; no simulated dungeon reward is granted.
-            phase = "dungeon_pending"; message = "Special dungeon entry is pending the dungeon adapter."; return;
+            SpecialDungeon_SO dungeon = pendingEventDungeon; pendingEventDungeon = null;
+            if (map.IsInSpecialDungeon) message = "当前已经在特殊副本中，无法重复进入。";
+            else if (!map.EnterSpecialDungeon(dungeon)) throw new InvalidOperationException("Cannot enter the special dungeon.");
+            else message = "进入特殊副本：" + dungeon.DisplayName + "。副本内移动不消耗行动点。";
+            phase = "map"; ClearDeferrals(); PresentCalamity(); return;
         }
         phase = "map"; ClearDeferrals(); PresentCalamity();
     }

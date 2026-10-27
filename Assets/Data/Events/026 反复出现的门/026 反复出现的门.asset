@@ -47,7 +47,7 @@ MonoBehaviour:
     encounterEnemies: []
     encounterEnemyCountMin: 0
     encounterEnemyCountMax: 0
-    specialDungeon: {fileID: 0}
+    specialDungeon: {fileID: 11400000, guid: 6b09b83e249dc4240a2e45e86decd635, type: 2}
     additionalBuiltInEffects: []
     possibleResults: []
     nextEvent: {fileID: 0}

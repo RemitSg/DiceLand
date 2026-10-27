@@ -40,6 +40,7 @@ public static class MapEventEncounterService
             seed = encounterSeed,
             moneyGained = 0
         };
+        encounterData.isSpecialDungeonEncounter = currentEventTile != null && currentEventTile.sourceSpecialDungeon != null;
 
         AppendRelicInventory(encounterData, runState);
         AppendActiveCalamities(encounterData, runState);

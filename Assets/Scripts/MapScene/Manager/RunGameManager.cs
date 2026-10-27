@@ -1198,10 +1198,7 @@ public class RunGameManager : MonoBehaviour
 
     private int GetMoveCost(BoardTileData tile)
     {
-        if (IsInSpecialDungeon())
-            return 0;
-
-        return MapMovementService.GetMoveCost(runState, tile);
+        return MapMovementService.GetMoveCost(runState, tile, IsInSpecialDungeon());
     }
 
     private bool CanAttemptMove(BoardTileData tile, int moveCost)
@@ -1676,17 +1673,9 @@ public class RunGameManager : MonoBehaviour
             return;
         }
 
-        List<int> deferredCalamities = runFlowState.DrainPendingCalamityTiers();
-        activeSpecialDungeonContext = new SpecialDungeonRuntimeContext
-        {
-            isActive = true,
-            activeDungeon = dungeon,
-            activeDungeonId = !string.IsNullOrWhiteSpace(dungeon.dungeonId) ? dungeon.dungeonId : dungeon.name,
-            returnEventCoord = returnCoord,
-            mainMapSnapshot = mainMapSnapshot,
-            deferredCalamityTiers = deferredCalamities
-        };
-        mainMapSnapshot.specialDungeonContext = null;
+        activeSpecialDungeonContext = SpecialDungeonRuntimeContext.Create(dungeon, mainMapSnapshot, returnCoord);
+        if (activeSpecialDungeonContext == null) { RefreshHUD("无法创建特殊副本上下文。"); return; }
+        runFlowState.DrainPendingCalamityTiers();
 
         SpecialDungeonBoardBuildResult buildResult = SpecialDungeonBoardBuilder.Build(dungeon, Environment.TickCount);
         runState.boardSize = buildResult.boardSize;
@@ -1722,26 +1711,10 @@ public class RunGameManager : MonoBehaviour
             return;
         }
 
-        bool exitsFromRightSide = runState != null && runState.playerGridPosition.x >= Mathf.Max(0, runState.boardSize - 1);
-        SpecialDungeon_SO completedDungeon = activeSpecialDungeonContext != null ? activeSpecialDungeonContext.activeDungeon : null;
-        MapRunSnapshot restored = SpecialDungeonExitService.BuildReturnedMainMapSnapshot(activeSpecialDungeonContext, runState);
-        if (restored == null || restored.runState == null)
-        {
-            RefreshHUD("离开特殊副本失败：无法恢复主地图。");
-            return;
-        }
-
-        if (exitsFromRightSide)
-        {
-            if (restored.runState.settlementStats == null)
-                restored.runState.settlementStats = new RunSettlementStats();
-            int scoreValue = completedDungeon != null ? completedDungeon.settlementScoreValue : RunScoreConfig_SO.CreateDefaultRuntimeConfig().defaultSpecialDungeonScore;
-            restored.runState.settlementStats.AddSpecialDungeonScore(scoreValue);
-        }
-
-        List<int> deferredCalamities = activeSpecialDungeonContext.deferredCalamityTiers != null
-            ? new List<int>(activeSpecialDungeonContext.deferredCalamityTiers)
-            : new List<int>();
+        boardManager.TryGetTile(runState.playerGridPosition, out BoardTileData exitTile);
+        if (!SpecialDungeonExitService.TryCompleteExit(activeSpecialDungeonContext, runState, exitTile,
+            runFlowState.PendingCalamityTiers, out MapRunSnapshot restored, out string exitMessage))
+        { RefreshHUD(exitMessage); return; }
         activeSpecialDungeonContext = null;
         runState = restored.runState.Clone();
         boardManager.LoadBoard(
@@ -1756,7 +1729,6 @@ public class RunGameManager : MonoBehaviour
             restored.actionPointBonus,
             restored.actionPointCurrent);
         runFlowState.RestorePendingCalamityTiers(restored.pendingCalamityTiers);
-        runFlowState.EnqueuePendingCalamityTiers(deferredCalamities);
 
         playerMapController.Initialize(unitsRoot, boardManager, actionPointSystem, tileResolver, runState);
         if (boardManager.TryGetTile(runState.playerGridPosition, out BoardTileData returnTile))

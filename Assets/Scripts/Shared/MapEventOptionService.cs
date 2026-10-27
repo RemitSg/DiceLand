@@ -30,6 +30,8 @@ public static class MapEventOptionService
         preview.isSelectable = loot.isSelectable && enough;
         preview.additionalDetail = loot.additionalDetail;
         preview.unavailableReason = enough ? loot.unavailableReason : $"金钱不足，需要 {preview.requiredMoney} 金钱。";
+        if (preview.isSelectable && !MapEventBuiltInEffectExecutorService.CanAffordMoneyEffects(state, option, preview.requiredMoney, out string moneyReason))
+        { preview.isSelectable = false; preview.unavailableReason = moneyReason; }
         return preview;
     }
 
@@ -43,6 +45,8 @@ public static class MapEventOptionService
         MapEventOptionData option = request.optionData;
         request.moneyBeforeSelection = Mathf.Max(0, state.money);
         int cost = request.selectionMoneyCost = RequiredMoney(option, request.moneyBeforeSelection);
+        if (!MapEventBuiltInEffectExecutorService.CanAffordMoneyEffects(state, option, cost, out string moneyReason))
+        { result.message = moneyReason; return false; }
         if (cost > 0 && !state.TrySpendMoney(cost))
         { result.message = $"金钱不足，需要 {cost} 金钱。"; return false; }
 

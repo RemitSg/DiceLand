@@ -85,7 +85,7 @@ public static class AgentBattleServer
             switch (request.op)
             {
                 case "health":
-                    response = new AgentBattleResponse { success = true, message = "editor-backed shared-rule API; one battle or adventure session; create_run supports normal map, movement, calamities and battles; location features and final settlement still in progress; engine required" }; break;
+                    response = new AgentBattleResponse { success = true, message = "editor-backed shared-rule API; one battle or adventure session; create_run supports normal map, battles, calamities, economy, camps, events, treasure and special dungeons; final settlement and full save/replay still in progress; engine required" }; break;
                 case "catalog":
                     response = new AgentBattleResponse { success = true, catalogue = AgentBattleSession.Catalogue() }; break;
                 case "create":

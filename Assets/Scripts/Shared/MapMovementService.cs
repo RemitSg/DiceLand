@@ -91,8 +91,9 @@ public static class MapMovementService
         return RelicTriggerDispatcher.ProcessKeyCollected(state, manager, tile, points);
     }
 
-    public static int GetMoveCost(RunState runState, BoardTileData tile)
+    public static int GetMoveCost(RunState runState, BoardTileData tile, bool isInSpecialDungeon = false)
     {
+        if (isInSpecialDungeon) return 0;
         if (tile == null || runState == null)
             return 0;
 

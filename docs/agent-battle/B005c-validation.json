@@ -1,0 +1,451 @@
+{
+  "batch": "B005c",
+  "date": "2026-10-27",
+  "engine": "2022.3.62t6 (Tuanjie 1.8.4)",
+  "execution": {
+    "mode": "EditMode CLI and real HTTP host, -batchmode -nographics, NullGfxDevice",
+    "isolatedProject": "outputs/agent-battle/b005b-validation-project",
+    "companyName": "DiceLandAgentValidation",
+    "isolation": "Copied Assets/Packages/ProjectSettings and cache; companyName changed only in validation copy to isolate persistent data and PlayerPrefs. Validation-only helper starts real AgentBattleServer.RunBatch and exits on a marker; no gameplay overrides.",
+    "originalEditor": "PID 21328 remains untouched with unsaved user scene; domain reload had stalled, so no save/restart was performed.",
+    "httpProcessId": 10316,
+    "httpEndpoint": "http://127.0.0.1:8092/v1/command",
+    "httpLog": "outputs/agent-battle/b005c-headless-http-complete.log",
+    "testResult": "outputs/agent-battle/b005c-complete-all.xml",
+    "testLog": "outputs/agent-battle/b005c-complete-all.log",
+    "baselineResult": "outputs/agent-battle/b005c-baseline-all.xml",
+    "baselineCommit": "983d6816",
+    "baselineMethod": "Temporarily restored only batch-owned source/content rows to HEAD in isolated validation copy; removed new owned files there, ran same full suite, then restored and rehashed current files. Main workspace was not reset."
+  },
+  "baseline": {
+    "total": 899,
+    "passed": 878,
+    "failed": 21,
+    "skipped": 0,
+    "durationSeconds": 8.3321764
+  },
+  "current": {
+    "total": 921,
+    "passed": 900,
+    "failed": 21,
+    "skipped": 0,
+    "durationSeconds": 8.4950294
+  },
+  "sameFailingTestNames": true,
+  "newFailures": [],
+  "existingFailures": [
+    "BattleButtonSkillSelectionTests.AllySpeedButtons_CanKeepIndependentSelectedSkills",
+    "BattleButtonSpriteStateSwitcherTests.OnEnable_AppliesUnpressedSprite",
+    "BattleGamblerPassiveServiceTests.TryApplyDebtInstantDeath_KillsAllyAtThreeDebtStacks",
+    "BattleImmediateEffectPlanServiceTests.ResolveAlly_UsesCurrentAllyImmediateOrder",
+    "BattleSkillInfoOverlayDescriptionTests.CompactSkillDetail_MergesMarkedDelayedStatusBranches",
+    "BattleStatusResolutionServiceTests.TryResolve_ReturnsFalseForUnsupportedLegacyStatus",
+    "BattleTargetingPhaseStartEffectServiceTests.ApplyPendingAllyStatusGrants_AppliesImmediateSpeedBonusForOpeningRoll",
+    "MainMenuSceneControllerTutorialTests.ResolveMenuAction_RecognizesTutorialIdentity",
+    "MapEventNestedFlowTests.SaveAssetCatalog_IncludesNestedFollowUpEvents",
+    "MapTutorialFlowServiceTests.TryConsumeArrivalGuide_ShowsMerchantForgeAndEliteFinalOnce",
+    "PuppetMasterEnemyAssetTests.PuppetMasterAndPuppet_HaveExpectedCoreStatsAndPassives",
+    "PuppetMasterEnemyAssetTests.PuppetMasterEncounter_HasExpectedEnemyGroupComposition",
+    "PuppetMasterEnemyAssetTests.PuppetSkills_HaveExpectedStatusAndRoundRules",
+    "RelicSystem079To094Tests.MerchantWhiteSlip_AllowsPurchaseWhenMoneyPositiveAndSpendsRemainingMoney",
+    "RestSceneReforgeInteractableRelicSelectionTests.HandleRelicSelection_ClickingOnlySelectedRelicAgainClearsSelection",
+    "RestSceneReforgeInteractableRelicSelectionTests.OnMouseUpAsButton_WhenMainPanelIsOpen_DoesNotReturnToOpenPrompt",
+    "TodoWeaponAssetTests.HotAnvilBoard_LoadsWithBurnSpreadAndSelfBurnSkills",
+    "TodoWeaponAssetTests.WeaponCatalog_ContainsTodoWeapons",
+    "TutorialBattleContentFactoryTests.CreateRuntimeDefinition_Battle03_AdvancesWhenAllySkillIsViewed",
+    "TutorialHighlightCoordinateUtilityTests.ConvertScreenRectToReferenceRect_UsesCanvasScalerMatchScale",
+    "WanderingShadowEnemyAssetTests.Echo_UsesConfiguredEffectsAndEventGroup"
+  ],
+  "newTests": [
+    "AgentAdventureDungeonTests.ASecondDungeonEntryInsideTheDungeonDoesNotReplaceTheOuterContext",
+    "AgentAdventureDungeonTests.DungeonActivityFlagSurvivesWireSerializationAtEntryAndExit",
+    "AgentAdventureDungeonTests.DungeonBattleUsesSharedCombatAndSettledPartySurvivesBoardRestoration",
+    "AgentAdventureDungeonTests.EntryLoadsTheSharedLinearBoardAndEveryDungeonMoveCostsZero",
+    "AgentAdventureDungeonTests.FixedDungeonMerchantCannotRefreshAndPurchasedItemsCarryBack",
+    "AgentAdventureDungeonTests.InvalidDungeonMoveAndStaleExitDoNotChangeBoardOrAp",
+    "AgentAdventureDungeonTests.LeftExitRestoresTheOuterBoardPositionAndActionPointsWithoutCompletionScore",
+    "AgentAdventureDungeonTests.ObservationAndEntryDoNotReplaceTheUiSnapshotOrTheExternalRandomStream",
+    "AgentAdventureDungeonTests.PendingEntryCalamityReturnsExactlyOnceAfterLeavingTheDungeon",
+    "AgentAdventureDungeonTests.RightExitCarriesRealTreasureAndScoresOnceEvenWhenTheMoveIsRetried",
+    "AgentAdventureEventTests.BuiltInFailurePreservesTheActualEffectErrorMessage",
+    "AgentAdventureEventTests.MoneyPreflightUsesTheSameOrderedIncomeAndSelectionFeeRules",
+    "AgentAdventureEventTests.RandomIncomeCannotHideAnUnaffordableHighPercentageLoss",
+    "AgentAdventureEventTests.UnaffordableMoneyEffectCannotPartiallyDamageTheParty",
+    "AgentAdventureEventTests.WeightedMoneyPreflightChecksEveryBranchWithoutDrawingOrAdvancingRandomness",
+    "MapEventDungeonContentTests.AuthoredDungeonEntranceUsesItsExistingDungeon(\"Assets/Data/Events/026 反复出现的门/026 反复出现的门.asset\",0,\"反复出现的门\")",
+    "MapEventDungeonContentTests.AuthoredDungeonEntranceUsesItsExistingDungeon(\"Assets/Data/Events/033 幸运游戏（其二）/033 幸运游戏（其二）.asset\",1,\"幸运迷宫\")",
+    "MapEventDungeonContentTests.DoorRewardBagUsesTheFormalTreasureTableWithoutChangingItsRarityOrCount",
+    "SpecialDungeonEventEffectTests.EventEncounterCarriesTheDungeonContext(False)",
+    "SpecialDungeonEventEffectTests.EventEncounterCarriesTheDungeonContext(True)",
+    "SpecialDungeonRuntimeContextTests.SharedEntryMovesPendingTiersToOneOwnedQueueWithoutMutatingTheCaller",
+    "SpecialDungeonRuntimeContextTests.SharedExitRejectsForeignCoordinatesAndCannotScoreTwice"
+  ],
+  "related": {
+    "total": 142,
+    "passed": 142,
+    "failed": 0,
+    "selection": "Selected related cases from final full-suite XML, not a separate test job.",
+    "filters": [
+      "AgentAdventureDungeonTests",
+      "SpecialDungeonRuntimeContextTests",
+      "SpecialDungeonBoardBuilderTests",
+      "SpecialDungeonEventEffectTests",
+      "SpecialDungeonDataModelTests",
+      "SpecialDungeonTreasureServiceTests",
+      "MapEventDungeonContentTests",
+      "AgentAdventureTreasureTests",
+      "AgentAdventureEventTests",
+      "AgentAdventureSessionTests",
+      "AgentAdventureMapRuntimeTests",
+      "AgentAdventureBattleBridgeTests",
+      "AgentBattleSessionTests",
+      "AgentAdventureRestTests",
+      "AgentAdventureEconomyTests",
+      "AgentAdventureReforgeTests",
+      "MapEventMoneyRequirementTests",
+      "MapEventRewardServiceTests",
+      "MapEventLootCostServiceTests",
+      "MapEventEffectSequenceBuilderTests",
+      "MapEventEncounterServiceTests",
+      "MapEventNestedFlowTests.MapEventOption_CanReferenceFollowUpEvent"
+    ]
+  },
+  "http": {
+    "normalRightExit": {
+      "seed": 127,
+      "difficulty": "Medium",
+      "dungeon": {
+        "active": true,
+        "id": "6b09b83e249dc4240a2e45e86decd635",
+        "name": "反复出现的门",
+        "description": "",
+        "returnX": 2,
+        "returnY": 2,
+        "leftExitX": 0,
+        "leftExitY": 3,
+        "rightExitX": 5,
+        "rightExitY": 3,
+        "scoreValue": 200,
+        "entriesTotal": 3,
+        "entriesResolved": 0
+      },
+      "entryAp": 1,
+      "exitAp": 1,
+      "preparedParty": [
+        {
+          "id": "0",
+          "name": "Chara",
+          "character": "27e817266af382946804dea6afd2e374",
+          "weapon": "9b8c5d177c240334a9734636830a139f",
+          "hp": 16,
+          "maxHp": 16,
+          "level": 1,
+          "experience": 0
+        },
+        {
+          "id": "Jenny",
+          "name": "Jenny",
+          "character": "658e22cc7dec223479091c6817751025",
+          "weapon": "6c1aed0bff9b3a74ba193a8ff2895f74",
+          "hp": 15,
+          "maxHp": 15,
+          "level": 1,
+          "experience": 0
+        }
+      ],
+      "progress": {
+        "runStartedUnixSeconds": 0,
+        "normalBattleOuterCleared": 2,
+        "normalBattleMidCleared": 0,
+        "normalBattleInnerCleared": 0,
+        "normalBattleCoreCleared": 0,
+        "eliteBattleOuterCleared": 0,
+        "eliteBattleMidCleared": 0,
+        "eliteBattleInnerCleared": 0,
+        "eliteBattleCoreCleared": 0,
+        "specialDungeonCleared": 1,
+        "specialDungeonScoreTotal": 200,
+        "totalMoneyGained": 125,
+        "craftedWeaponCount": 0,
+        "eventTilesCompleted": 0,
+        "eventBattlesCompleted": 0,
+        "unexploredTilesVisited": 8,
+        "keysCollected": 0,
+        "bossesDefeated": 0
+      },
+      "party": [
+        {
+          "id": "0",
+          "name": "Chara",
+          "character": "27e817266af382946804dea6afd2e374",
+          "weapon": "9b8c5d177c240334a9734636830a139f",
+          "hp": 5,
+          "maxHp": 19,
+          "level": 2,
+          "experience": 14
+        },
+        {
+          "id": "Jenny",
+          "name": "Jenny",
+          "character": "658e22cc7dec223479091c6817751025",
+          "weapon": "6c1aed0bff9b3a74ba193a8ff2895f74",
+          "hp": 3,
+          "maxHp": 18,
+          "level": 2,
+          "experience": 14
+        }
+      ],
+      "money": 75,
+      "phase": "map",
+      "battles": [
+        {
+          "outcome": "victory",
+          "round": 3,
+          "party": [
+            {
+              "memberId": "0",
+              "hp": 19,
+              "maxHp": 19,
+              "level": 2,
+              "experience": 2
+            },
+            {
+              "memberId": "Jenny",
+              "hp": 18,
+              "maxHp": 18,
+              "level": 2,
+              "experience": 2
+            }
+          ]
+        },
+        {
+          "outcome": "victory",
+          "round": 6,
+          "party": [
+            {
+              "memberId": "0",
+              "hp": 5,
+              "maxHp": 19,
+              "level": 2,
+              "experience": 14
+            },
+            {
+              "memberId": "Jenny",
+              "hp": 3,
+              "maxHp": 18,
+              "level": 2,
+              "experience": 14
+            }
+          ]
+        }
+      ]
+    },
+    "rightExitActions": 52,
+    "rightExitTrace": "outputs/agent-battle/b005c-prepared-normal-dungeon-trace.json",
+    "rightExitFinalBoardSize": 9,
+    "rightExitFinalPosition": [
+      2,
+      2
+    ],
+    "rightExitRelics": [
+      {
+        "id": "46785947940ce524da1ac7301e4964a2",
+        "name": "会员卡",
+        "description": "",
+        "amount": 1,
+        "index": 0
+      }
+    ],
+    "normalLeftRetreat": {
+      "seed": 127,
+      "phase": "map",
+      "boardSize": 9,
+      "x": 2,
+      "y": 2,
+      "entryAp": 1,
+      "exitAp": 1,
+      "progress": {
+        "runStartedUnixSeconds": 0,
+        "normalBattleOuterCleared": 0,
+        "normalBattleMidCleared": 0,
+        "normalBattleInnerCleared": 0,
+        "normalBattleCoreCleared": 0,
+        "eliteBattleOuterCleared": 0,
+        "eliteBattleMidCleared": 0,
+        "eliteBattleInnerCleared": 0,
+        "eliteBattleCoreCleared": 0,
+        "specialDungeonCleared": 0,
+        "specialDungeonScoreTotal": 0,
+        "totalMoneyGained": 77,
+        "craftedWeaponCount": 0,
+        "eventTilesCompleted": 0,
+        "eventBattlesCompleted": 0,
+        "unexploredTilesVisited": 5,
+        "keysCollected": 0,
+        "bossesDefeated": 0
+      },
+      "entranceResolved": true,
+      "party": [
+        {
+          "id": "0",
+          "name": "Chara",
+          "character": "27e817266af382946804dea6afd2e374",
+          "weapon": "9b8c5d177c240334a9734636830a139f",
+          "hp": 16,
+          "maxHp": 16,
+          "level": 1,
+          "experience": 0
+        },
+        {
+          "id": "Jenny",
+          "name": "Jenny",
+          "character": "658e22cc7dec223479091c6817751025",
+          "weapon": "6c1aed0bff9b3a74ba193a8ff2895f74",
+          "hp": 15,
+          "maxHp": 15,
+          "level": 1,
+          "experience": 0
+        }
+      ]
+    },
+    "leftRetreatTrace": "outputs/agent-battle/b005c-normal-left-retreat-trace.json",
+    "method": "Fresh create_run seed 127 with actual NormalConfig (difficultyName Medium); only public commands, actual treasure income 37+40, recruit Jenny for 50, visible legal skills/targets. No HP, money, board, enemy or outcome injection. Final corrected authored asset links listed below are shared by UI and API.",
+    "combatPolicy": "Validation client assigns distinct enemy action slots and prefers visible high attack skills/targets; it does not execute combat rules. This is flow evidence, not a balance claim.",
+    "failedTrials": [
+      "Simple solo policies lost the first authored Door fight; original scouting retained in b005c-baseline-scout.json.",
+      "Recruitment with overlapping targets still lost; traces retained in b005c-prepared-man-defeat.json and b005c-prepared-jenny-defeat.json.",
+      "Two real wins initially reached an unconfigured bag; preserved in b005c-door-two-victories-treasure-failure.json before the shared content repair."
+    ],
+    "mazeProbe": {
+      "seed": 76,
+      "status": "Not passed; configuration failure",
+      "detail": "Reached the authored rest room via event followups. Its only affordable option has GainRelics with neither a relic table nor explicit rewards; real executor rejects it. Money-in-effect preflight correctly disables options requiring 20 absent gold. No replacement reward was invented.",
+      "failureTrace": "outputs/agent-battle/b005c-maze-command-failure.json"
+    }
+  },
+  "sharedChanges": [
+    "UI and agent use same dungeon context creation, zero-cost movement and validated exit/score service.",
+    "Returning restores main board size, AP, return event resolution, carried party/inventory and deferred calamities once. Board snapshot points to live cloned tiles after loading.",
+    "Event-origin encounters retain dungeon context. Fixed merchant, treasure and battle reuse existing services.",
+    "Event option affordability preflights all positive-weight direct-money branches and income bounds using existing effect methods, saving/restoring RNG. It blocks insufficient money before earlier HP effects/selection fee; effect error text is retained. Other effects are not a transactional simulation.",
+    "Wire observations expose dungeon.active and cloned settlement progress; clients must test active rather than optional object truthiness."
+  ],
+  "authoredContentRepairs": [
+    {
+      "path": "Assets/Data/Events/026 反复出现的门/026 反复出现的门.asset",
+      "change": "Connect existing Door dungeon to its Open Door option."
+    },
+    {
+      "path": "Assets/Data/Events/026 反复出现的门/026 反复出现的门_特殊副本.asset",
+      "change": "Connect final Uncommon relic bag to existing formal default treasure relic pool; preserve rarity and choice count 1."
+    },
+    {
+      "path": "Assets/Data/Events/033 幸运游戏（其二）/033 幸运游戏（其二）.asset",
+      "change": "Set existing maze-linked option builtInEffectType to StartSpecialDungeon."
+    }
+  ],
+  "remaining": [
+    "Final run settlement/meta/next-run (B006), save/restore/full replay (B007), external-agent full normal run audit (B008). This batch is not a full game completion.",
+    "21 pre-existing full EditMode failures remain. No new PlayMode run; previous PlayMode limitations remain.",
+    "Original Inner/Core enemy roster gaps and authored Royal dungeon missing groups remain explicit configurationIssues; missing groups are never counted as wins.",
+    "Maze rest room reward is unconfigured; additional content review is still needed."
+  ],
+  "sourceHashes": [
+    {
+      "path": "Assets/Data/Events/026 反复出现的门/026 反复出现的门.asset",
+      "sha256": "d7854185c17562bbc57cedc31afc9fb13ef7d11738ae8f9cf3741f1be63aafca"
+    },
+    {
+      "path": "Assets/Data/Events/026 反复出现的门/026 反复出现的门_特殊副本.asset",
+      "sha256": "2a272d4f5fb0effe1bb7af025a24db9812e6a0a2b4c98ff5ecfef4e8d5152c2a"
+    },
+    {
+      "path": "Assets/Data/Events/033 幸运游戏（其二）/033 幸运游戏（其二）.asset",
+      "sha256": "43d088d6d63ae59e0c98c036e6e41b8af5d13b47ca22c40927c05cb7086f5bec"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureMapRuntime.cs",
+      "sha256": "01932a80279175f05ea91a77a42c1ea74ab9121bac1dea1f1de6f19119049c5c"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureProtocol.cs",
+      "sha256": "efb684d938b43329d0544f94d586ad9f7801b946c0c17f34bfa864681902f6fb"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.Events.cs",
+      "sha256": "2b876dc01bb8a011de492bf385371265b5fef77b5eb9b15c4ccd343bc53e4e7a"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.cs",
+      "sha256": "12056945dacefcfde0429239db05d9b94299b668af52153022cc8c9de65c72e5"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentBattleServer.cs",
+      "sha256": "6bc74b3d34a9f6fe698eb6c217952823cf92321c14fb3aef40a0c7c3b0b099be"
+    },
+    {
+      "path": "Assets/Scripts/MapScene/Manager/RunGameManager.cs",
+      "sha256": "6fea61ddc4f3827b0acb27fce0d820dce105ee73d5d9cbbde9c17b0347dfb67c"
+    },
+    {
+      "path": "Assets/Scripts/Shared/MapEventBuiltInEffectExecutorService.cs",
+      "sha256": "f3cc6c4a4051d3db8b9abbb962f32b71e78ce6b87746bc929246462cd247134c"
+    },
+    {
+      "path": "Assets/Scripts/Shared/MapEventEncounterService.cs",
+      "sha256": "c36c7fca19aaee074de5861e8e6662510c7dae56e3e44743edc455dcf1266d9f"
+    },
+    {
+      "path": "Assets/Scripts/Shared/MapEventOptionService.cs",
+      "sha256": "31b8f95b6fee0f0e36bc08b919814b8c863297fd362439d35f33505f5af91851"
+    },
+    {
+      "path": "Assets/Scripts/Shared/MapMovementService.cs",
+      "sha256": "1bf2efb04176dc560ae2fbbf7427ce834189a157bba3fe0d522cfdfffa60c4e7"
+    },
+    {
+      "path": "Assets/Scripts/Shared/SpecialDungeonExitService.cs",
+      "sha256": "cbec140dfc80edcd7bbdd49da498f6205ac0fac212976d7d808e2873606da093"
+    },
+    {
+      "path": "Assets/Scripts/Shared/SpecialDungeonRuntimeContext.cs",
+      "sha256": "82983b45caadc6b6c4c872176a65390954f3bba67091f60a0b7b051fabb3df49"
+    },
+    {
+      "path": "Assets/Tests/EditMode/Editor/AgentAdventureEventTests.cs",
+      "sha256": "169d7a923ed453200bad6ee1116d30321ac134ce4f4aa85f7ee8e7cc2400024e"
+    },
+    {
+      "path": "Assets/Tests/EditMode/Editor/SpecialDungeonEventEffectTests.cs",
+      "sha256": "6920441c551df7890792588aba60e1f07eaae43e145c496e5be0f7772969d404"
+    },
+    {
+      "path": "Assets/Tests/EditMode/Editor/SpecialDungeonRuntimeContextTests.cs",
+      "sha256": "c259d0899e5fc4625383fe901fdf217369ea7dd7901a382144ef678670534948"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.Dungeon.cs",
+      "sha256": "9bf0e1537cb919f8c7b1ef616326b9823d52096dd29d6971f21df1c66eb068ed"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.Dungeon.cs.meta",
+      "sha256": "ee784237401fb9b4d9b3b5e7807811477a32625ea6a5e81fe2dd07655a2caba5"
+    },
+    {
+      "path": "Assets/Tests/EditMode/Editor/AgentAdventureDungeonTests.cs",
+      "sha256": "52a66c22d210032feba010f80b732cd25a53f4b0377422f4a1c62f30b8e0bfb3"
+    },
+    {
+      "path": "Assets/Tests/EditMode/Editor/AgentAdventureDungeonTests.cs.meta",
+      "sha256": "ad8c8db75a674c54649e29a538f3a5c542e15e97193542b71e5673e3ec1271a3"
+    },
+    {
+      "path": "Assets/Tests/EditMode/Editor/MapEventDungeonContentTests.cs",
+      "sha256": "cd49c040ac5d69ce886dc5667aab446cf77d37d7a9452667b681143815b15383"
+    },
+    {
+      "path": "Assets/Tests/EditMode/Editor/MapEventDungeonContentTests.cs.meta",
+      "sha256": "46bb0b40265c56ab0aa9b39907372f5724eb2bf6e000b28f3717cd5c1a3cc333"
+    }
+  ]
+}

@@ -25,6 +25,8 @@ public sealed class AgentAdventureMapRuntime : IDisposable
     public List<BattleSettlementRelicChoiceData> StartingChoices { get; private set; }
     public MapMovementCycleFlags CycleFlags { get; private set; } = new MapMovementCycleFlags();
     public string LastMoveMessage { get; private set; }
+    public bool IsInSpecialDungeon => Snapshot?.specialDungeonContext?.isActive == true;
+    public int GetMoveCost(BoardTileData tile) => MapMovementService.GetMoveCost(Snapshot.runState, tile, IsInSpecialDungeon);
     public string[] ConfigurationIssues => Snapshot.tiles.Where(t => t.IsHostileTile && (t.assignedEnemyGroup == null || !t.assignedEnemyGroup.IsValid))
         .Select(t => "No valid enemy group for " + t.tileType + " " + t.dangerBand + " at " + t.coord).ToArray();
 
@@ -54,11 +56,7 @@ public sealed class AgentAdventureMapRuntime : IDisposable
             Snapshot = new MapRunSnapshot { sceneName = "AgentAdventure_" + Guid.NewGuid().ToString("N"), runState = state };
             Points.Initialize(Mathf.Max(1, RunBootstrapService.ResolveActionPointLimitForTier(configuration.starting.difficulty, 0) + bonus.startingActionPointLimitFlat));
             Board.GenerateBoard(configuration.starting.difficulty, Random.Range(int.MinValue, int.MaxValue));
-            foreach (BoardTileData tile in Board.GetAllTiles())
-            {
-                MapBattleEncounterService.EnsureTileAssignedEnemyGroup(configuration.enemies, tile);
-                if (tile.IsHostileTile) tile.previewDangerRating = MapDangerRatingService.ResolveRating(tile.tileType, tile.dangerBand, tile.assignedEnemyGroup);
-            }
+            AssignEnemyGroups();
             Snapshot.tiles = Board.GetAllTiles().ToList(); Snapshot.boardSize = Board.BoardSize;
             Snapshot.spawnCoord = Board.SpawnCoord; Snapshot.bossCoord = Board.BossCoord;
             mover.Initialize(root.transform, Board, Points, resolver, state);
@@ -81,7 +79,7 @@ public sealed class AgentAdventureMapRuntime : IDisposable
     {
         if (disposed) throw new ObjectDisposedException(nameof(AgentAdventureMapRuntime));
         return Board.GetAllTiles().Where(t => Board.IsAdjacent(Snapshot.runState.playerGridPosition, t.coord)
-            && MapMovementService.CanAttemptMove(Snapshot.runState, Points, t, MapMovementService.GetMoveCost(Snapshot.runState, t))).ToArray();
+            && MapMovementService.CanAttemptMove(Snapshot.runState, Points, t, GetMoveCost(t))).ToArray();
     }
 
     public bool TryMove(Vector2Int coord)
@@ -96,7 +94,7 @@ public sealed class AgentAdventureMapRuntime : IDisposable
             movingToUnvisited = !tile.isVisited;
             bool moved = MapMovementService.TryExecuteMove(new MapMovementExecutionRequest
             {
-                runState = Snapshot.runState, tile = tile, moveCost = MapMovementService.GetMoveCost(Snapshot.runState, tile),
+                runState = Snapshot.runState, tile = tile, moveCost = GetMoveCost(tile),
                 actionPointSystem = Points, playerMapController = mover, previousCycleFlags = CycleFlags.Clone(), applyCycleFlags = flags => CycleFlags = flags
             }, out MapMovementExecutionResult result);
             if (!string.IsNullOrEmpty(result.pendingRelicStatusMessage)) LastMoveMessage = result.pendingRelicStatusMessage;
@@ -145,6 +143,64 @@ public sealed class AgentAdventureMapRuntime : IDisposable
         foreach (int tier in Snapshot.pendingCalamityTiers) PendingCalamities.Enqueue(tier);
         CycleFlags.suppressPendingCalamityOnNextRestActionPointRestore = Snapshot.suppressOnePendingCalamityOnActionPointRestore;
         Points.RestoreState(Snapshot.actionPointBase, Snapshot.actionPointBonus, Snapshot.actionPointCurrent);
+    }
+
+    public bool EnterSpecialDungeon(SpecialDungeon_SO dungeon)
+    {
+        if (disposed) throw new ObjectDisposedException(nameof(AgentAdventureMapRuntime));
+        if (dungeon == null || IsInSpecialDungeon) return false;
+        return WithRandom(() =>
+        {
+            SynchronizeSnapshot();
+            var context = SpecialDungeonRuntimeContext.Create(dungeon, Snapshot, Snapshot.runState.playerGridPosition);
+            if (context == null) return false;
+            SpecialDungeonBoardBuildResult built = SpecialDungeonBoardBuilder.Build(dungeon, Random.Range(int.MinValue, int.MaxValue));
+            Snapshot.specialDungeonContext = context;
+            Snapshot.boardSize = built.boardSize; Snapshot.spawnCoord = built.spawnCoord; Snapshot.bossCoord = built.rightExitCoord;
+            Snapshot.selectedCoord = built.spawnCoord; Snapshot.tiles = built.tiles;
+            Snapshot.runState.boardSize = built.boardSize; Snapshot.runState.playerGridPosition = built.spawnCoord;
+            PendingCalamities.Clear(); CycleFlags = new MapMovementCycleFlags();
+            LoadSnapshotBoard();
+            return true;
+        });
+    }
+
+    public bool ExitSpecialDungeon(out string message)
+    {
+        if (disposed) throw new ObjectDisposedException(nameof(AgentAdventureMapRuntime));
+        string resultMessage = null;
+        bool success = WithRandom(() =>
+        {
+            Board.TryGetTile(Snapshot.runState.playerGridPosition, out BoardTileData exit);
+            if (!SpecialDungeonExitService.TryCompleteExit(Snapshot.specialDungeonContext, Snapshot.runState, exit,
+                PendingCalamities, out MapRunSnapshot restored, out resultMessage)) return false;
+            Snapshot = restored;
+            ApplySnapshotTransientState(); CycleFlags.deferPendingCalamityUntilMapResume = false; CycleFlags.deferPendingCalamityUntilOverlayClosed = false;
+            LoadSnapshotBoard();
+            return true;
+        });
+        message = resultMessage;
+        return success;
+    }
+
+    private void LoadSnapshotBoard()
+    {
+        Board.LoadBoard(Snapshot.boardSize, Snapshot.spawnCoord, Snapshot.bossCoord, Snapshot.selectedCoord, Snapshot.tiles);
+        AssignEnemyGroups();
+        // Board.LoadBoard clones its inputs; battle writers must receive the live board objects.
+        Snapshot.tiles = Board.GetAllTiles().ToList();
+        mover.Initialize(root.transform, Board, Points, resolver, Snapshot.runState);
+        if (Board.TryGetTile(Snapshot.runState.playerGridPosition, out BoardTileData current)) mover.SetPosition(current);
+    }
+
+    private void AssignEnemyGroups()
+    {
+        foreach (BoardTileData tile in Board.GetAllTiles())
+        {
+            MapBattleEncounterService.EnsureTileAssignedEnemyGroup(Configuration.enemies, tile);
+            if (tile.IsHostileTile) tile.previewDangerRating = MapDangerRatingService.ResolveRating(tile.tileType, tile.dangerBand,
+                tile.assignedEnemyGroup, tile.sourceSpecialDungeon != null ? tile.previewDangerRating : 0);
+        }
     }
 
     public void Dispose()
