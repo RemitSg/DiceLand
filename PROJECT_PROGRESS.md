@@ -1592,3 +1592,11 @@ Shared treasure tile reward flow; money/blueprint/relic bags, one-time selection
 - Isolated final full EditMode: 942 total, 921 passed, same 21 failing names as B006a. All 14 new tests and 116 selected related cases pass. Directed resources/Boss fixture are not normal-win evidence.
 - Normal seed 127: real treasure income/recruitment, two ordinary wins, third recruit and healing, two keys, full-health three-person party enters configured ThunderLord; actual defeat in Boss round 2. Seed 46 preparation also failed. Traces retained. No forced win/resource injection.
 - Evidence: docs/agent-battle/B006b1-validation.json. B006b2 still requires true normal Boss victory -> earned points -> paid upgrade -> next run, followed by B007 full save/replay and B008 external-agent audit. Goal remains active.
+
+
+## 2026-10-27 B006b2 in progress - real-frame client policy repairs
+
+- Added shared visible-state client policy: replace unaffordable persisted skills, prefer reciprocal counters before redirects, and discount self-harm without counting it as outgoing damage. Demo imports this policy; no game C#/data changes.
+- Six Python regressions from real normal Boss frames pass. Live normal Boss probe used only offered actions and targeted all actionable slots; still defeated in round 3, so the victory gate is NOT complete.
+- Another actual seed-127 route won an outer elite, bought blueprint/materials, crafted/equipped Gale dagger, recovered the downed Molly through formal rest, collected two keys, then lost to Boss. Actual score 653, zero points, duration 652 seconds. No state/resources/outcome injection.
+- Evidence: docs/agent-battle/B006b2-progress.json. Continue preparation path/calamarity planning, equipment skill observability and real normal victory -> earned paid upgrade -> next run. B007/B008 remain. Goal stays active.

@@ -8,31 +8,7 @@ from pathlib import Path
 import sys
 
 from agent_battle_client import Client
-
-
-def choose_battle_action(state):
-    actions = state["legalActions"]
-    battle = state["battle"]
-    action = next((a for a in actions if a["op"] == "run_return"), None)
-    if action is None and battle["phase"] == "reward":
-        action = next((a for a in actions if a["battleAction"]["op"] == "choose_relic"), None)
-    if action is None and battle["phase"] == "targeting":
-        # Fill each unconnected slot using its current skill, then commit.
-        for actor in battle["actors"]:
-            if actor["side"] != "ally" or actor["dead"]:
-                continue
-            for slot in actor["slots"]:
-                if slot.get("targetId"):
-                    continue
-                action = next((a for a in actions if a["op"] == "run_battle" and a["battleAction"]["op"] == "target"
-                               and a["battleAction"]["actorId"] == actor["id"] and a["battleAction"]["buttonIndex"] == slot["index"]), None)
-                if action:
-                    break
-            if action:
-                break
-        if action is None:
-            action = next((a for a in actions if a["op"] == "run_battle" and a["battleAction"]["op"] == "commit"), None)
-    return action
+from agent_adventure_policy import choose_battle_action
 
 
 def choose_reforge_action(state):

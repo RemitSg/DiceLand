@@ -1,0 +1,99 @@
+{
+  "batch": "B006b2",
+  "status": "in_progress_not_complete",
+  "date": "2026-10-27",
+  "baseCommit": "51863694",
+  "goalGate": "True normal Boss win -> earn ability points -> paid unlock -> next run reflects upgrade. Still unproved; full save/replay and external-agent audit also remain.",
+  "clientChanges": [
+    "Shared visible-state Python policy replaces the demo combat baseline. No server damage/status/reward formula was changed or duplicated.",
+    "Always replace a selected skill when it is no longer offered by current legal set_skill actions, even if an affordable replacement has a lower heuristic score.",
+    "Prefer reciprocal incoming attacks before redirecting a different ally attack; rank actual enemy action slots rather than an actor-wide threat.",
+    "Account for visible self-damage text and energy cost in skill preference; do not count damage to self as outgoing damage.",
+    "All returned decisions are actual offered legal actions; no dice outcome, hidden random state or battle result is predicted."
+  ],
+  "verification": {
+    "pythonTests": {
+      "command": "python -B -m unittest discover -s tools/tests -p test_agent_adventure_policy.py -v",
+      "total": 6,
+      "passed": 6,
+      "fixture": "tools/tests/fixtures/normal_boss_policy.json",
+      "source": "Three actual public-HTTP normal Boss decision frames, event lists/unrelated outer fields omitted, no synthetic combat outcome."
+    },
+    "initialRegressionFailure": "The self-harm test initially failed because the formal description has whitespace between Chinese words. Fixed the text match; all six then pass.",
+    "engine": "2022.3.62t6 (Tuanjie 1.8.4), batchmode/nographics NullGfxDevice",
+    "httpProcessId": 60980,
+    "httpLog": "outputs/agent-battle/b006b2-http.log",
+    "isolatedProject": "outputs/agent-battle/b005b-validation-project",
+    "companyName": "DiceLandAgentValidation",
+    "coreSourceParity": "All 12 B006b1 source/test/meta file hashes match original and isolated copy; this progress commit changes no game C# or data assets.",
+    "csharpTests": "No new C# job for Python-only changes. Last full result remains B006b1: 942 total, 921 passed, same 21 pre-existing failures; not described as a new test run.",
+    "livePolicy": {
+      "trace": "outputs/agent-battle/b006b2-policy-live.json",
+      "seed": 127,
+      "preparation": "Replayed actual original normal three-person/two-key prefix through public commands, then used the new policy for every Boss decision.",
+      "allActionsWereOffered": true,
+      "allTargetableAffordableSlotsAssignedBeforeCommit": true,
+      "outcome": "defeat",
+      "rounds": 3,
+      "comparison": "Previous heuristic ended in defeat in round 2. New policy ends in round 3; this does not establish better balance, a general win rate, or a normal win.",
+      "bossHpAfterRounds": [
+        53,
+        52,
+        52
+      ]
+    }
+  },
+  "actualEquipmentProbe": {
+    "trace": "outputs/agent-battle/b006b2-gear-boss-defeat.json",
+    "seed": 127,
+    "method": "Normal create_run, actual initial treasure/recruitment prefix. Chose Molly, entered and won the authored outer elite, selected a real relic, bought Gale blueprint for 17, two speed fluids for 11+9 and iron for 4; spent the actual 40 forge cost and equipped the crafted dagger. Used an actual rest to recover the downed Molly, collected the real two keys and fought configured ThunderLord. No resource, tile, enemy or outcome injection.",
+    "actions": 141,
+    "battles": [
+      {
+        "position": [
+          3,
+          8
+        ],
+        "outcome": "victory",
+        "round": 4
+      },
+      {
+        "position": [
+          4,
+          4
+        ],
+        "outcome": "defeat",
+        "round": 3
+      }
+    ],
+    "outcome": "defeat",
+    "finalScore": 653,
+    "gainedPoints": 0,
+    "durationSeconds": 652,
+    "limitation": "Route reached calamity tier 10. More preparation also accumulated +40% enemy damage and -30% ally damage; one basic weapon upgrade was insufficient. This is failed-route evidence, not a passing normal victory gate."
+  },
+  "nextActions": [
+    "Reduce preparation path/AP waste and choose calamities in relation to the planned equipment build.",
+    "Expose sufficient authored equipment/skill information before purchase/crafting so an external agent can plan upgrades without source-file knowledge.",
+    "Continue real normal-game routes; consider required status/defense actions and relic synergy instead of maximizing only attack dice.",
+    "Retain the normal victory/earned-paid-upgrade gate, then finish B007 save/replay and B008 full external-agent audit."
+  ],
+  "sourceHashes": [
+    {
+      "path": "tools/agent_adventure_policy.py",
+      "sha256": "67fe25df221de858d09d4389b714b68b3c5eadd3109bc1627e3e1b0ddd64485e"
+    },
+    {
+      "path": "tools/agent_adventure_client.py",
+      "sha256": "678f382cde5d3abcd38282516347cbdd3c8e418d48961c65f977ef55d0a1cffc"
+    },
+    {
+      "path": "tools/tests/test_agent_adventure_policy.py",
+      "sha256": "b65cce19d8bcb8df0c72af4f1e0ada0187e2f9f2ae54f110c3ee9393a23b3791"
+    },
+    {
+      "path": "tools/tests/fixtures/normal_boss_policy.json",
+      "sha256": "923445cdf043f8718022b04f204ccf9af1d11d88f0915d5f1a723694d5171e5b"
+    }
+  ]
+}
