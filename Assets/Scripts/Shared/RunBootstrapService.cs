@@ -9,8 +9,118 @@ public sealed class RunStartingInventoryDefinition
     public IReadOnlyList<RunGameManager.StartingRelicDefinition> startingRelics;
 }
 
+public sealed class RunStartingConfiguration
+{
+    public DifficultyConfig_SO difficulty;
+    public int startingMoney;
+    public IReadOnlyList<RunGameManager.StartingPartyMemberDefinition> party;
+    public CharacterRoster_SO recruitRoster;
+    public RunStartingInventoryDefinition inventory;
+}
+
 public static class RunBootstrapService
 {
+    public static RunState CreateNormalRun(RunStartingConfiguration definition, AbilityRunBonus bonus,
+        long startedUnixSeconds, out List<BattleSettlementRelicChoiceData> startingChoices)
+    {
+        if (definition == null || definition.difficulty == null) throw new System.ArgumentException("A difficulty configuration is required.");
+        bonus = bonus ?? new AbilityRunBonus();
+        DifficultyConfig_SO config = definition.difficulty;
+        var state = new RunState
+        {
+            difficultyName = config.difficultyName, boardSize = config.BoardSize, requiredKeys = config.requiredKeys,
+            currentCycle = 1, money = Mathf.Max(0, definition.startingMoney + bonus.startingMoneyFlat),
+            partyMembers = BuildStartingPartyMembers(definition.party),
+            settlementStats = new RunSettlementStats { runStartedUnixSeconds = startedUnixSeconds }
+        };
+        AbilityRunBonusRuntimeService.ApplyPersistentRunBonuses(state, bonus);
+        ApplyAbilityStartingPartyBonuses(state, bonus, definition.recruitRoster);
+        ApplyStartingInventory(state, definition.inventory);
+        startingChoices = ApplyAbilityStartingInventory(state, bonus);
+        state.SyncLegacyPlayerFieldsFromParty();
+        return state;
+    }
+
+    public static List<BattleSettlementRelicChoiceData> ApplyAbilityStartingInventory(RunState state, AbilityRunBonus bonus)
+    {
+        if (state == null || bonus == null) return new List<BattleSettlementRelicChoiceData>();
+        int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        AbilityRunBonusRuntimeService.ApplyStartingBlueprints(state, bonus, seed);
+        AbilityRunBonusRuntimeService.ApplyStartingLootTableRolls(state, bonus, seed);
+        return AbilityRunBonusRuntimeService.BuildStartingRelicBagChoices(state, bonus, seed);
+    }
+
+    public static void ApplyAbilityStartingPartyBonuses(RunState targetRunState, AbilityRunBonus abilityBonus, CharacterRoster_SO recruitCharacterRoster)
+    {
+        if (targetRunState == null || abilityBonus == null)
+            return;
+
+        ApplyAbilityStartingWeaponReplacement(targetRunState, abilityBonus.startingWeaponReplacement);
+
+        int extraCount = Mathf.Max(0, abilityBonus.startingPartySizeFlat);
+        if (extraCount <= 0)
+            return;
+
+        CharacterData_SO extraCompanion = abilityBonus.extraStartingCompanion != null
+            ? abilityBonus.extraStartingCompanion
+            : ResolveRandomExtraStartingCompanion(targetRunState, recruitCharacterRoster);
+        if (extraCompanion == null || targetRunState.HasCharacter(extraCompanion))
+            return;
+
+        targetRunState.AddPartyMember(CreateAbilityStartingPartyMember(extraCompanion));
+    }
+
+    private static void ApplyAbilityStartingWeaponReplacement(RunState targetRunState, Weapon_SO replacementWeapon)
+    {
+        if (targetRunState == null || replacementWeapon == null || targetRunState.partyMembers == null || targetRunState.partyMembers.Count == 0)
+            return;
+
+        RunPartyMemberState primaryMember = targetRunState.partyMembers[0];
+        if (primaryMember != null)
+            primaryMember.weaponData = replacementWeapon;
+    }
+
+    private static CharacterData_SO ResolveRandomExtraStartingCompanion(RunState targetRunState, CharacterRoster_SO recruitCharacterRoster)
+    {
+        if (recruitCharacterRoster == null)
+            return null;
+
+        IReadOnlyList<CharacterData_SO> characters = recruitCharacterRoster.Characters;
+        if (characters == null || characters.Count == 0)
+            return null;
+
+        List<CharacterData_SO> candidates = new List<CharacterData_SO>();
+        for (int i = 0; i < characters.Count; i++)
+        {
+            CharacterData_SO character = characters[i];
+            if (character != null && !targetRunState.HasCharacter(character))
+                candidates.Add(character);
+        }
+
+        if (candidates.Count == 0)
+            return null;
+
+        return candidates[UnityEngine.Random.Range(0, candidates.Count)];
+    }
+
+    private static RunPartyMemberState CreateAbilityStartingPartyMember(CharacterData_SO characterData)
+    {
+        int baseHP = characterData != null ? Mathf.Max(1, characterData.baseHP) : 20;
+        return new RunPartyMemberState
+        {
+            memberId = characterData != null && !string.IsNullOrWhiteSpace(characterData.characterName)
+                ? characterData.characterName
+                : "AbilityCompanion",
+            characterData = characterData,
+            weaponData = characterData != null ? characterData.initialWeaponData : null,
+            level = 1,
+            experience = 0,
+            preCalamityMaxHP = baseHP,
+            maxHP = baseHP,
+            currentHP = baseHP
+        };
+    }
+
     private const int TutorialEncounterSeedBase = 26000;
 
     private static readonly MapTileType[] TutorialTileSequence =

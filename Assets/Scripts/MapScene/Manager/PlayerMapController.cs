@@ -38,6 +38,8 @@ public class PlayerMapController : MonoBehaviour
     private Coroutine moveRoutine;
     private Transform visualRoot;
     private bool isMoving;
+    private bool headlessExecution;
+    public void ConfigureHeadlessExecution() { headlessExecution = true; }
 
     public event Action<BoardTileData, string> PlayerMovedToTile;
 
@@ -116,6 +118,13 @@ public class PlayerMapController : MonoBehaviour
         runState.playerGridPosition = targetTile.coord;
         Vector3 worldTarget = boardManager.GridToWorld(targetTile.coord) + new Vector3(0f, 0f, -0.2f);
 
+        if (headlessExecution)
+        {
+            playerPawn.position = worldTarget;
+            CompleteArrival(targetTile);
+            return true;
+        }
+
         if (moveRoutine != null)
             StopCoroutine(moveRoutine);
         isMoving = true;
@@ -167,6 +176,11 @@ public class PlayerMapController : MonoBehaviour
         }
 
         PlayLandingEffect(target);
+        CompleteArrival(targetTile);
+    }
+
+    private void CompleteArrival(BoardTileData targetTile)
+    {
         string resultMessage = (tileResolver != null && ShouldResolveImmediately(targetTile))
             ? tileResolver.ResolveTile(targetTile, runState)
             : string.Empty;
@@ -177,6 +191,15 @@ public class PlayerMapController : MonoBehaviour
 
     private void EnsurePawn()
     {
+        if (headlessExecution)
+        {
+            if (playerPawn == null)
+            {
+                playerPawn = new GameObject("PlayerMapPawn").transform;
+                playerPawn.SetParent(unitsRoot, false);
+            }
+            return;
+        }
         EnsureWhiteSprite();
         if (playerPawn != null)
         {
@@ -273,6 +296,7 @@ public class PlayerMapController : MonoBehaviour
 
     private void PlayLandingEffect(Vector3 playerWorldPosition)
     {
+        if (headlessExecution) return;
         if (landingEffectPrefab == null)
             return;
 

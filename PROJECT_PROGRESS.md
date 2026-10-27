@@ -1520,3 +1520,10 @@
 - Fixed persistent party IDs being overwritten by display names during settlement.
 - Validation: 46/46 targeted EditMode tests passed; HTTP wood-sword battle won in 3 rounds, replay matched. Full EditMode: 828 total, 804 passed, 24 failed (23 prior failures plus an EventSystem.current error in BattleExitFlowServiceTests, reproduced alone). Full suite is not green; existing PlayMode limitations remain.
 - B001 checkpoint: 4186339. B002 bridge is internal; B003 will expose normal adventure creation and movement. Full completion remains governed by docs/agent-battle/PLAN.md. Evidence: docs/agent-battle/B002-validation.json.
+
+## 2026-10-27 - Agent adventure B003a: shared map primitives
+
+- Extracted normal run bootstrap, ability starting party/inventory, exhausted-cycle and key callbacks into shared services used by RunGameManager.
+- Added saved-config reader and isolated map runtime; existing BoardManager and PlayerMapController skip visuals/animation only. No duplicate map generator or AP rules.
+- Validation: 7 new map tests; related targeted EditMode 40/40 passed (be0938a0ccd1425399f6800b78589347). Real NormalConfig/Medium generated 81 tiles and 3 keys; one-point overflow, key idempotency, seeded maps, rejected moves, carried battle state and starting bonuses covered.
+- Shipped Inner/Core enemy pools are empty; ConfigurationIssues reports missing groups instead of synthesizing content. B003b still needs HTTP adventure decisions and calamity handling.

@@ -39,6 +39,23 @@ public sealed class MapMovementExecutionResult
 
 public static class MapMovementService
 {
+    public static void AdvanceExhaustedCycle(RunState state, ActionPointSystem points, DifficultyConfig_SO config, Queue<int> pendingTiers)
+    {
+        if (state == null || points == null) return;
+        state.calamityTier++;
+        state.currentCycle++;
+        points.SetBasePoints(RunBootstrapService.ResolveActionPointLimitForTier(config, state.calamityTier));
+        points.AdvanceCycle(0);
+        pendingTiers.Enqueue(Mathf.Max(1, state.calamityTier));
+    }
+
+    public static RelicExecutionContext ApplyKeyCollected(RunState state, RunGameManager manager, BoardTileData tile, ActionPointSystem points)
+    {
+        if (state.settlementStats == null) state.settlementStats = new RunSettlementStats();
+        state.settlementStats.keysCollected++;
+        return RelicTriggerDispatcher.ProcessKeyCollected(state, manager, tile, points);
+    }
+
     public static int GetMoveCost(RunState runState, BoardTileData tile)
     {
         if (tile == null || runState == null)

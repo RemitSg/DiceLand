@@ -242,6 +242,18 @@ public class RunGameManager : MonoBehaviour
         PersistCurrentRunSave();
     }
 
+    // Configuration only: consumers can retain these asset references after closing a preview scene.
+    public RunStartingConfiguration GetStartingConfiguration(DifficultyConfig_SO config = null)
+    {
+        return new RunStartingConfiguration
+        {
+            difficulty = config != null ? config : difficultyConfig,
+            startingMoney = startingMoney, party = startingPartyMembers, recruitRoster = recruitCharacterRoster,
+            inventory = new RunStartingInventoryDefinition { startingLoot = startingLoot, startingWeapons = startingWeapons,
+                startingBlueprints = startingBlueprints, startingRelics = startingRelics }
+        };
+    }
+
     public void StartRun()
     {
         EnsureSetup();
@@ -259,22 +271,9 @@ public class RunGameManager : MonoBehaviour
         DifficultyConfig_SO config = ResolvePreferredDifficultyForNewRun();
         AbilityRunBonus abilityBonus = BuildAbilityRunBonus();
         activeDifficultyConfig = config;
-        runState = new RunState
-        {
-            difficultyName = config.difficultyName,
-            boardSize = config.BoardSize,
-            requiredKeys = config.requiredKeys,
-            currentCycle = 1,
-            money = Mathf.Max(0, startingMoney + abilityBonus.startingMoneyFlat),
-            partyMembers = BuildStartingPartyMembers(startingPartyMembers),
-            settlementStats = new RunSettlementStats { runStartedUnixSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds() }
-        };
-
-        AbilityRunBonusRuntimeService.ApplyPersistentRunBonuses(runState, abilityBonus);
-        ApplyAbilityStartingPartyBonuses(runState, abilityBonus);
-        ApplyStartingInventory(runState);
-        ApplyAbilityStartingInventory(runState, abilityBonus);
-        runState.SyncLegacyPlayerFieldsFromParty();
+        runState = RunBootstrapService.CreateNormalRun(GetStartingConfiguration(config), abilityBonus,
+            DateTimeOffset.UtcNow.ToUnixTimeSeconds(), out List<BattleSettlementRelicChoiceData> startingChoices);
+        EnqueueStartingRelicBagChoices(startingChoices);
 
         actionPointSystem.Initialize(Mathf.Max(1, ResolveActionPointLimitForTier(config, 0) + abilityBonus.startingActionPointLimitFlat));
         boardManager.GenerateBoard(config, UnityEngine.Random.Range(int.MinValue, int.MaxValue));
@@ -709,15 +708,7 @@ public class RunGameManager : MonoBehaviour
         if (tile == null || runState == null || actionPointSystem == null)
             return;
 
-        if (runState.settlementStats == null)
-            runState.settlementStats = new RunSettlementStats();
-        runState.settlementStats.keysCollected++;
-
-        RelicExecutionContext context = RelicTriggerDispatcher.ProcessKeyCollected(
-            runState,
-            this,
-            tile,
-            actionPointSystem);
+        RelicExecutionContext context = MapMovementService.ApplyKeyCollected(runState, this, tile, actionPointSystem);
         if (context.feedbackMessages != null && context.feedbackMessages.Count > 0)
             RefreshHUD(string.Join("\n", context.feedbackMessages));
 
@@ -882,11 +873,8 @@ public class RunGameManager : MonoBehaviour
         if (runState == null)
             return;
 
-        runState.calamityTier += 1;
-        runState.currentCycle += 1;
-        actionPointSystem.SetBasePoints(ResolveActionPointLimitForCurrentTier());
-        actionPointSystem.AdvanceCycle(0);
-        runFlowState.PendingCalamityTiers.Enqueue(Mathf.Max(1, runState.calamityTier));
+        MapMovementService.AdvanceExhaustedCycle(runState, actionPointSystem,
+            activeDifficultyConfig != null ? activeDifficultyConfig : difficultyConfig, runFlowState.PendingCalamityTiers);
         RefreshHUD($"\u707e\u5384\u6c14\u606f\u6fc0\u5316\uff0c\u5f53\u524d\u707e\u5384\u7b49\u7ea7 {runState.calamityTier}\u3002");
         if (runFlowState.DeferPendingCalamityUntilMapResume || runFlowState.DeferPendingCalamityUntilOverlayClosed)
             return;
@@ -2912,84 +2900,12 @@ public class RunGameManager : MonoBehaviour
 
     private void ApplyAbilityStartingPartyBonuses(RunState targetRunState, AbilityRunBonus abilityBonus)
     {
-        if (targetRunState == null || abilityBonus == null)
-            return;
-
-        ApplyAbilityStartingWeaponReplacement(targetRunState, abilityBonus.startingWeaponReplacement);
-
-        int extraCount = Mathf.Max(0, abilityBonus.startingPartySizeFlat);
-        if (extraCount <= 0)
-            return;
-
-        CharacterData_SO extraCompanion = abilityBonus.extraStartingCompanion != null
-            ? abilityBonus.extraStartingCompanion
-            : ResolveRandomExtraStartingCompanion(targetRunState);
-        if (extraCompanion == null || targetRunState.HasCharacter(extraCompanion))
-            return;
-
-        targetRunState.AddPartyMember(CreateAbilityStartingPartyMember(extraCompanion));
-    }
-
-    private void ApplyAbilityStartingWeaponReplacement(RunState targetRunState, Weapon_SO replacementWeapon)
-    {
-        if (targetRunState == null || replacementWeapon == null || targetRunState.partyMembers == null || targetRunState.partyMembers.Count == 0)
-            return;
-
-        RunPartyMemberState primaryMember = targetRunState.partyMembers[0];
-        if (primaryMember != null)
-            primaryMember.weaponData = replacementWeapon;
-    }
-
-    private CharacterData_SO ResolveRandomExtraStartingCompanion(RunState targetRunState)
-    {
-        if (recruitCharacterRoster == null)
-            return null;
-
-        IReadOnlyList<CharacterData_SO> characters = recruitCharacterRoster.Characters;
-        if (characters == null || characters.Count == 0)
-            return null;
-
-        List<CharacterData_SO> candidates = new List<CharacterData_SO>();
-        for (int i = 0; i < characters.Count; i++)
-        {
-            CharacterData_SO character = characters[i];
-            if (character != null && !targetRunState.HasCharacter(character))
-                candidates.Add(character);
-        }
-
-        if (candidates.Count == 0)
-            return null;
-
-        return candidates[UnityEngine.Random.Range(0, candidates.Count)];
-    }
-
-    private static RunPartyMemberState CreateAbilityStartingPartyMember(CharacterData_SO characterData)
-    {
-        int baseHP = characterData != null ? Mathf.Max(1, characterData.baseHP) : 20;
-        return new RunPartyMemberState
-        {
-            memberId = characterData != null && !string.IsNullOrWhiteSpace(characterData.characterName)
-                ? characterData.characterName
-                : "AbilityCompanion",
-            characterData = characterData,
-            weaponData = characterData != null ? characterData.initialWeaponData : null,
-            level = 1,
-            experience = 0,
-            preCalamityMaxHP = baseHP,
-            maxHP = baseHP,
-            currentHP = baseHP
-        };
+        RunBootstrapService.ApplyAbilityStartingPartyBonuses(targetRunState, abilityBonus, recruitCharacterRoster);
     }
 
     private void ApplyAbilityStartingInventory(RunState targetRunState, AbilityRunBonus abilityBonus)
     {
-        if (targetRunState == null || abilityBonus == null)
-            return;
-
-        int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-        AbilityRunBonusRuntimeService.ApplyStartingBlueprints(targetRunState, abilityBonus, seed);
-        AbilityRunBonusRuntimeService.ApplyStartingLootTableRolls(targetRunState, abilityBonus, seed);
-        EnqueueStartingRelicBagChoices(AbilityRunBonusRuntimeService.BuildStartingRelicBagChoices(targetRunState, abilityBonus, seed));
+        EnqueueStartingRelicBagChoices(RunBootstrapService.ApplyAbilityStartingInventory(targetRunState, abilityBonus));
     }
 
     private void EnqueueStartingRelicBagChoices(IReadOnlyList<BattleSettlementRelicChoiceData> choices)
