@@ -57,7 +57,7 @@ def choose_calamity_action(state):
     return min(actions, key=lambda a: calamity_risk(state["calamityChoices"][a["choiceIndex"]], state), default=None)
 
 
-def skill_value(skill, enemy_count=1, actor=None, incoming=False):
+def skill_value(skill, enemy_count=1, actor=None, incoming=False, enemies=None):
     """A preference score, not a damage or clash simulator."""
     dice = skill.get("displayedDice") or skill.get("dice") or []
     attack = sum((d["min"] + d["max"]) / 2 for d in dice if d["category"] == "Attack")
@@ -71,7 +71,13 @@ def skill_value(skill, enemy_count=1, actor=None, incoming=False):
         guaranteed_charge = any(re.search(r"\[\s*使用时\s*\].*自己.*获得\s*\d+\s*层\s*蓄能", line) for line in description.splitlines())
         if charge < 2 and guaranteed_charge:
             setup = 2.5 + .7 * sum((d["min"] + d["max"]) / 2 for d in dice if d["category"] == "Defense")
-    return attack + bonus + setup - sum(int(n) for n in self_harm) * 1.5 - skill.get("energyCost", 0) * .12
+    burst = 0
+    if enemies and "电流 爆发" in description:
+        charges = [sum(s["stacks"] for s in e.get("statuses", []) if s["id"] == "current") for e in enemies]
+        # Prefer an explicitly described burst when observable stacks have built up.
+        # This is a bounded policy preference; the shared engine resolves the effect.
+        burst = 2 * min(12, sum(charges) if "所有目标" in description else max(charges, default=0))
+    return attack + bonus + setup + burst - sum(int(n) for n in self_harm) * 1.5 - skill.get("energyCost", 0) * .12
 
 
 def choose_battle_action(state):
@@ -88,6 +94,7 @@ def choose_battle_action(state):
     enemies = {a["id"]: a for a in battle["actors"] if a["side"] == "enemy" and not a["dead"]}
     allies = [a for a in battle["actors"] if a["side"] == "ally" and not a["dead"]]
     claimed = {(s["targetId"], s["targetButtonIndex"]) for a in allies for s in a["slots"] if s.get("targetId")}
+    slots = []
     for actor in allies:
         skills = {s["index"]: s for s in actor["skills"]}
         for slot in actor["slots"]:
@@ -95,29 +102,83 @@ def choose_battle_action(state):
                            for e in enemies.values() for s in e["slots"])
             available = [a for a in inner if a["battleAction"]["op"] == "set_skill"
                          and a["battleAction"]["actorId"] == actor["id"] and a["battleAction"]["buttonIndex"] == slot["index"]]
-            value = lambda skill: skill_value(skill, len(enemies), actor, incoming)
-            best = max(available, key=lambda a: value(skills[a["battleAction"]["skillIndex"]]), default=None)
+            value = lambda skill: skill_value(skill, len(enemies), actor, incoming, list(enemies.values()))
             current_legal = any(a["battleAction"]["skillIndex"] == slot["skillIndex"] for a in available)
-            if best and (not current_legal or (not slot.get("targetId") and value(skills[best["battleAction"]["skillIndex"]])
-                                             > value(slot["selectedSkill"]) + .01)):
-                return best
+            if available and not current_legal:
+                # Release an unaffordable carried-over selection before allocating this
+                # round's shared energy. A targeted slot needs its final legal skill now.
+                if slot.get("targetId"):
+                    return max(available, key=lambda a: value(skills[a["battleAction"]["skillIndex"]]))
+                return min(available, key=lambda a: (skills[a["battleAction"]["skillIndex"]].get("energyCost", 0),
+                                                    -value(skills[a["battleAction"]["skillIndex"]])))
+            slots.append((actor, slot, skills, available, incoming))
+
+    budget = battle.get("energy", 0) + battle.get("temporaryEnergy", 0)
+    selected_cost = sum((slot.get("selectedSkill") or {}).get("energyCost", 0) for _, slot, _, _, _ in slots)
+    if selected_cost > budget:
+        releases = []
+        for actor, slot, skills, available, incoming in slots:
             if slot.get("targetId"):
                 continue
-            targets = [a for a in inner if a["battleAction"]["op"] == "target"
-                       and a["battleAction"]["actorId"] == actor["id"] and a["battleAction"]["buttonIndex"] == slot["index"]
-                       and a["battleAction"]["targetId"] in enemies]
+            current = slot.get("selectedSkill") or {}
+            value = lambda skill: skill_value(skill, len(enemies), actor, incoming, list(enemies.values()))
+            for action in available:
+                skill = skills[action["battleAction"]["skillIndex"]]
+                saved = current.get("energyCost", 0) - skill.get("energyCost", 0)
+                if saved > 0:
+                    releases.append(((value(current) - value(skill)) / saved, -saved, action))
+        if releases:
+            return min(releases, key=lambda release: release[:2])[2]
 
-            def priority(action):
-                target = action["battleAction"]
-                enemy = enemies[target["targetId"]]
-                enemy_slot = next(s for s in enemy["slots"] if s["index"] == target["targetButtonIndex"])
-                unclaimed = (enemy["id"], enemy_slot["index"]) not in claimed
-                incoming = enemy_slot.get("targetId") == actor["id"] and enemy_slot.get("targetButtonIndex") == slot["index"]
-                # Preserve reciprocal counters before redirecting another ally's incoming attack.
-                can_intercept = incoming or slot["speed"] > enemy_slot["speed"]
-                threat = skill_value(enemy_slot.get("selectedSkill") or {}, len(allies))
-                return (unclaimed and incoming, unclaimed and can_intercept, unclaimed, threat, -enemy["hp"])
+    long_fight = len(enemies) == 1 and next(iter(enemies.values())).get("maxHp", 0) > 1.5 * max((a.get("maxHp", 0) for a in allies), default=0)
+    minimum_efficiency = .75 if long_fight else 0
+    upgrades = []
+    for actor, slot, skills, available, incoming in slots:
+        if slot.get("targetId"):
+            continue
+        value = lambda skill: skill_value(skill, len(enemies), actor, incoming, list(enemies.values()))
+        current = slot.get("selectedSkill") or {}
+        for action in available:
+            skill = skills[action["battleAction"]["skillIndex"]]
+            gain = value(skill) - value(current)
+            cost_change = skill.get("energyCost", 0) - current.get("energyCost", 0)
+            if gain > .01 and selected_cost + cost_change <= budget:
+                extra_cost = max(1, cost_change)
+                if cost_change <= 0 or gain / extra_cost >= minimum_efficiency:
+                    upgrades.append((gain / extra_cost, gain, action))
+    if upgrades:
+        # Allocate across the party before choosing targets, so the first actor does
+        # not consume the entire shared budget on a small damage improvement.
+        return max(upgrades, key=lambda upgrade: upgrade[:2])[2]
 
-            if targets:
-                return max(targets, key=priority)
+    def clash_front(entry):
+        dice = (entry[1].get("selectedSkill") or {}).get("displayedDice") or (entry[1].get("selectedSkill") or {}).get("dice") or []
+        if not dice:
+            return 0
+        first = dice[0]
+        power = (first["min"] + first["max"]) / 2 + .25 * (first["max"] - first["min"])
+        return power * (.9 if first["category"] == "Defense" else 1)
+
+    # A later fast attacker can take over a clash. Connect the weaker fronts
+    # first so a fragile caster does not take it back from a stronger weapon.
+    for actor, slot, _, _, _ in sorted(slots, key=clash_front):
+        if slot.get("targetId"):
+            continue
+        targets = [a for a in inner if a["battleAction"]["op"] == "target"
+                   and a["battleAction"]["actorId"] == actor["id"] and a["battleAction"]["buttonIndex"] == slot["index"]
+                   and a["battleAction"]["targetId"] in enemies]
+
+        def priority(action):
+            target = action["battleAction"]
+            enemy = enemies[target["targetId"]]
+            enemy_slot = next(s for s in enemy["slots"] if s["index"] == target["targetButtonIndex"])
+            unclaimed = (enemy["id"], enemy_slot["index"]) not in claimed
+            incoming = enemy_slot.get("targetId") == actor["id"] and enemy_slot.get("targetButtonIndex") == slot["index"]
+            # Preserve reciprocal counters before redirecting another ally's incoming attack.
+            can_intercept = incoming or slot["speed"] > enemy_slot["speed"]
+            threat = skill_value(enemy_slot.get("selectedSkill") or {}, len(allies))
+            return (unclaimed and incoming, unclaimed and can_intercept, unclaimed, threat, -enemy["hp"])
+
+        if targets:
+            return max(targets, key=priority)
     return next((a for a in inner if a["battleAction"]["op"] == "commit"), None)

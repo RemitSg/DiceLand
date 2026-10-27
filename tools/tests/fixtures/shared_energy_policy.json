@@ -1,0 +1,2946 @@
+{
+  "source": "Actual public HTTP Easy seed 7, run 2, geared Boss attempt; source parent bef9d004; no injected gameplay state",
+  "frames": {
+    "opening": {
+      "battle": {
+        "sessionId": "71fd17780e6349678d35578572e6fe33",
+        "revision": 0,
+        "seed": 1984052289,
+        "round": 1,
+        "phase": "targeting",
+        "outcome": "",
+        "energy": 10,
+        "temporaryEnergy": 0,
+        "reservedEnergy": 0,
+        "actors": [
+          {
+            "id": "ally_0",
+            "side": "ally",
+            "name": "0[铁剑]",
+            "hp": 23,
+            "maxHp": 25,
+            "stage": 0,
+            "dead": false,
+            "statuses": [],
+            "skills": [
+              {
+                "index": 0,
+                "id": "9e003dc77410eba42b1806f317e54580",
+                "name": "挥砍",
+                "description": "挥砍\n技能：挥砍\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n描述：\n借力挥砍，简单的招式",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              {
+                "index": 1,
+                "id": "078246cde6431a94c8b86186526d6bbd",
+                "name": "横砍",
+                "description": "横砍\n技能：横砍\n能耗：3\n骰子数：1\n第 1 攻击骰：3 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 1 点伤害\n\n描述：\n大力横劈，利用挥剑的广度攻击所有敌人",
+                "energyCost": 3,
+                "dice": [
+                  {
+                    "min": 3,
+                    "max": 5,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 3,
+                    "max": 5,
+                    "category": "Attack"
+                  }
+                ]
+              }
+            ],
+            "slots": [
+              {
+                "index": 0,
+                "speed": 4,
+                "skillIndex": 0,
+                "selectedSkill": {
+                  "index": -1,
+                  "id": "9e003dc77410eba42b1806f317e54580",
+                  "name": "挥砍",
+                  "description": "挥砍\n技能：挥砍\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n描述：\n借力挥砍，简单的招式",
+                  "energyCost": 0,
+                  "dice": [
+                    {
+                      "min": 2,
+                      "max": 4,
+                      "category": "Attack"
+                    }
+                  ],
+                  "displayedDice": [
+                    {
+                      "min": 2,
+                      "max": 4,
+                      "category": "Attack"
+                    }
+                  ]
+                },
+                "targetId": "",
+                "targetButtonIndex": -1,
+                "contested": false
+              }
+            ]
+          },
+          {
+            "id": "ally_1",
+            "side": "ally",
+            "name": "Molly[掠风短匕]",
+            "hp": 24,
+            "maxHp": 26,
+            "stage": 0,
+            "dead": false,
+            "statuses": [],
+            "skills": [
+              {
+                "index": 0,
+                "id": "4f46e0545514a794e946ceb2f8f9c3cb",
+                "name": "速切",
+                "description": "速切\n技能：速切\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 使用该技能时 ] 若 自身速度 高出 目标单位速度 2 点（含） ，则 威力 +1\n\n描述：\n以迅雷不及掩耳盗铃之势捅刀子",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              {
+                "index": 1,
+                "id": "52be59ce67e18e442928e076efe6df69",
+                "name": "花切",
+                "description": "花切\n技能：花切\n能耗：3\n骰子数：2\n第 1 攻击骰：2 ~ 3\n第 2 攻击骰：2 ~ 2\n\n词条：\n第 1 攻击骰词条：[ 使用该技能时 ] 若 自身速度 高出 目标单位速度 1 点（含） ，则 威力 +1\n第 2 攻击骰词条：[ 拼点胜利时 ] 若 自身速度 高出 目标单位速度 1 点（含） ，则 威力 +1\n\n描述：\n精准而华丽的杀招",
+                "energyCost": 3,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Attack"
+                  },
+                  {
+                    "min": 2,
+                    "max": 2,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Attack"
+                  },
+                  {
+                    "min": 2,
+                    "max": 2,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              {
+                "index": 2,
+                "id": "0e56f4866db35f2428568776fad92119",
+                "name": "刀舞",
+                "description": "刀舞\n技能：刀舞\n能耗：1\n骰子数：1\n第 1 防御骰：2 ~ 3\n\n词条：\n第 1 防御骰词条：[ 使用时 ] 使 自己 于 下 1 个回合开始时 获得 2 层 急速\n\n描述：\n展示刀舞可以有效舒减压力，前提是不失败",
+                "energyCost": 1,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Defense"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Defense"
+                  }
+                ]
+              }
+            ],
+            "slots": [
+              {
+                "index": 0,
+                "speed": 4,
+                "skillIndex": 0,
+                "selectedSkill": {
+                  "index": -1,
+                  "id": "4f46e0545514a794e946ceb2f8f9c3cb",
+                  "name": "速切",
+                  "description": "速切\n技能：速切\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 使用该技能时 ] 若 自身速度 高出 目标单位速度 2 点（含） ，则 威力 +1\n\n描述：\n以迅雷不及掩耳盗铃之势捅刀子",
+                  "energyCost": 0,
+                  "dice": [
+                    {
+                      "min": 2,
+                      "max": 4,
+                      "category": "Attack"
+                    }
+                  ],
+                  "displayedDice": [
+                    {
+                      "min": 2,
+                      "max": 4,
+                      "category": "Attack"
+                    }
+                  ]
+                },
+                "targetId": "",
+                "targetButtonIndex": -1,
+                "contested": false
+              }
+            ]
+          },
+          {
+            "id": "ally_2",
+            "side": "ally",
+            "name": "Man[电磁断斧]",
+            "hp": 30,
+            "maxHp": 32,
+            "stage": 0,
+            "dead": false,
+            "statuses": [],
+            "skills": [
+              {
+                "index": 0,
+                "id": "f89efb80615f3644591b73d9ad2f56f1",
+                "name": "电流贯穿",
+                "description": "电流贯穿\n技能：电流贯穿\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 电流\n\n描述：\n使用带电的斧刃劈砍敌人，让电流穿透目标。",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              {
+                "index": 1,
+                "id": "a3af2ab643e5dfa4aa33df8cd5872a89",
+                "name": "电场",
+                "description": "电场\n技能：电场\n能耗：2\n骰子数：2\n第 1 攻击骰：3 ~ 4\n第 2 攻击骰：1 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 当前目标 造成 1 点伤害\n第 1 攻击骰词条：[ 命中时 ] 使 所有目标 获得 1 层 电流\n第 2 攻击骰词条：[ 命中时 ] 使 所有目标 获得 1 层 电流\n\n描述：\n通过制造电场来向全体敌人施加电流",
+                "energyCost": 2,
+                "dice": [
+                  {
+                    "min": 3,
+                    "max": 4,
+                    "category": "Attack"
+                  },
+                  {
+                    "min": 1,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 3,
+                    "max": 4,
+                    "category": "Attack"
+                  },
+                  {
+                    "min": 1,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              {
+                "index": 2,
+                "id": "3b0d96557384e9a43a9d00f320663e87",
+                "name": "磁暴",
+                "description": "磁暴\n技能：磁暴\n能耗：4\n骰子数：1\n第 1 攻击骰：3 ~ 6\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 自己 获得 2 层 电流\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 引发 1 重 电流 爆发，造成 1 x 层数 的额外伤害，并清空 电流\n\n描述：\n引发大规模磁暴来造成相当可观的电磁伤害",
+                "energyCost": 4,
+                "dice": [
+                  {
+                    "min": 3,
+                    "max": 6,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 3,
+                    "max": 6,
+                    "category": "Attack"
+                  }
+                ]
+              }
+            ],
+            "slots": [
+              {
+                "index": 0,
+                "speed": 5,
+                "skillIndex": 0,
+                "selectedSkill": {
+                  "index": -1,
+                  "id": "f89efb80615f3644591b73d9ad2f56f1",
+                  "name": "电流贯穿",
+                  "description": "电流贯穿\n技能：电流贯穿\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 电流\n\n描述：\n使用带电的斧刃劈砍敌人，让电流穿透目标。",
+                  "energyCost": 0,
+                  "dice": [
+                    {
+                      "min": 2,
+                      "max": 4,
+                      "category": "Attack"
+                    }
+                  ],
+                  "displayedDice": [
+                    {
+                      "min": 2,
+                      "max": 4,
+                      "category": "Attack"
+                    }
+                  ]
+                },
+                "targetId": "",
+                "targetButtonIndex": -1,
+                "contested": false
+              }
+            ]
+          },
+          {
+            "id": "ally_3",
+            "side": "ally",
+            "name": "Jenny[老旧法杖]",
+            "hp": 22,
+            "maxHp": 24,
+            "stage": 0,
+            "dead": false,
+            "statuses": [],
+            "skills": [
+              {
+                "index": 0,
+                "id": "b60e3e1c70b6afe4a9016d18febc5b6a",
+                "name": "随意施法",
+                "description": "随意施法\n技能：随意施法\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 自己 获得 1 层 蓄能\n\n描述：\n简单而实用的法术，可以为随后的技能积攒力气",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              {
+                "index": 1,
+                "id": "9afa03908bac668459f24e4ea4b53341",
+                "name": "随意防御",
+                "description": "随意防御\n技能：随意防御\n能耗：1\n骰子数：1\n第 1 防御骰：2 ~ 3\n\n词条：\n第 1 防御骰词条：[ 使用时 ] 使 自己 获得 1 层 蓄能\n\n描述：\n简单而实用的法术，可以为自身施加防御法术来抵挡攻击",
+                "energyCost": 1,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Defense"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Defense"
+                  }
+                ]
+              },
+              {
+                "index": 2,
+                "id": "6f323dbfc6080254aa17d3baedb126ba",
+                "name": "星辰冲击",
+                "description": "星辰冲击\n技能：星辰冲击\n能耗：1\n施放条件：自身至少拥有 2 层 蓄能，施放后消耗\n骰子数：2\n第 1 攻击骰：2 ~ 5\n第 2 攻击骰：1 ~ 3\n\n描述：\nJenny 的拿手技能，她年复一年的训练就是为了现在。",
+                "energyCost": 1,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 5,
+                    "category": "Attack"
+                  },
+                  {
+                    "min": 1,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 5,
+                    "category": "Attack"
+                  },
+                  {
+                    "min": 1,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ]
+              }
+            ],
+            "slots": [
+              {
+                "index": 0,
+                "speed": 4,
+                "skillIndex": 0,
+                "selectedSkill": {
+                  "index": -1,
+                  "id": "b60e3e1c70b6afe4a9016d18febc5b6a",
+                  "name": "随意施法",
+                  "description": "随意施法\n技能：随意施法\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 自己 获得 1 层 蓄能\n\n描述：\n简单而实用的法术，可以为随后的技能积攒力气",
+                  "energyCost": 0,
+                  "dice": [
+                    {
+                      "min": 2,
+                      "max": 3,
+                      "category": "Attack"
+                    }
+                  ],
+                  "displayedDice": [
+                    {
+                      "min": 2,
+                      "max": 3,
+                      "category": "Attack"
+                    }
+                  ]
+                },
+                "targetId": "",
+                "targetButtonIndex": -1,
+                "contested": false
+              }
+            ]
+          },
+          {
+            "id": "enemy_0",
+            "side": "enemy",
+            "name": "雷寰霸主(ID:11)",
+            "hp": 91,
+            "maxHp": 91,
+            "stage": 0,
+            "dead": false,
+            "statuses": [],
+            "skills": [],
+            "slots": [
+              {
+                "index": 0,
+                "speed": 3,
+                "skillIndex": -1,
+                "selectedSkill": {
+                  "index": -1,
+                  "id": "6cd2d239a580ecc44afc27c199a0a083",
+                  "name": "一枪贯世",
+                  "description": "一枪贯世\n技能：一枪贯世\n能耗：0\n骰子数：2\n第 1 攻击骰：4 ~ 5\n第 2 攻击骰：2 ~ 2\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 2 点伤害\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流\n第 2 攻击骰词条：[ 命中时 ] 对 所有目标 造成 2 点伤害\n第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流\n\n描述：\n你可知道被雷劈的感觉？",
+                  "energyCost": 0,
+                  "dice": [
+                    {
+                      "min": 4,
+                      "max": 5,
+                      "category": "Attack"
+                    },
+                    {
+                      "min": 2,
+                      "max": 2,
+                      "category": "Attack"
+                    }
+                  ],
+                  "displayedDice": [
+                    {
+                      "min": 4,
+                      "max": 5,
+                      "category": "Attack"
+                    },
+                    {
+                      "min": 2,
+                      "max": 2,
+                      "category": "Attack"
+                    }
+                  ]
+                },
+                "targetId": "ally_2",
+                "targetButtonIndex": 0,
+                "contested": false
+              },
+              {
+                "index": 1,
+                "speed": 3,
+                "skillIndex": -1,
+                "selectedSkill": {
+                  "index": -1,
+                  "id": "f2fa6c823e4f8b74b92df5c95b6cf1f9",
+                  "name": "磁暴雷锁",
+                  "description": "磁暴雷锁\n技能：磁暴雷锁\n能耗：0\n骰子数：1\n第 1 攻击骰：3 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流\n\n描述：\n落雷攻击，小子！",
+                  "energyCost": 0,
+                  "dice": [
+                    {
+                      "min": 3,
+                      "max": 5,
+                      "category": "Attack"
+                    }
+                  ],
+                  "displayedDice": [
+                    {
+                      "min": 3,
+                      "max": 5,
+                      "category": "Attack"
+                    }
+                  ]
+                },
+                "targetId": "ally_3",
+                "targetButtonIndex": 0,
+                "contested": false
+              }
+            ]
+          }
+        ],
+        "relics": [
+          {
+            "id": "c96f6a584f3048a19c8720d4ddbd8d9b",
+            "name": "小猪储蓄罐",
+            "description": "消耗行动点时，获得 3 金币。",
+            "limitation": ""
+          },
+          {
+            "id": "4f17319034f248de827c298b48d708e6",
+            "name": "电爆盾",
+            "description": "友方角色造成电流爆发伤害时，获得等同于伤害的护盾层数",
+            "limitation": ""
+          }
+        ],
+        "events": [
+          {
+            "index": 0,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_0",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 1,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "灾厄效果：战斗开始时 0[铁剑] 损失 2 点生命"
+          },
+          {
+            "index": 2,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_1",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 3,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "灾厄效果：战斗开始时 Molly[掠风短匕] 损失 2 点生命"
+          },
+          {
+            "index": 4,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_2",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 5,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "灾厄效果：战斗开始时 Man[电磁断斧] 损失 2 点生命"
+          },
+          {
+            "index": 6,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_3",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 7,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "灾厄效果：战斗开始时 Jenny[老旧法杖] 损失 2 点生命"
+          },
+          {
+            "index": 8,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "◆◆◆ 目标指定阶段 ◆◆◆ 友方 4 名 / 敌方 1 名"
+          },
+          {
+            "index": 9,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "友方 0[铁剑] 速度=4 HP=23/25"
+          },
+          {
+            "index": 10,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "友方 Molly[掠风短匕] 速度=4 HP=24/26"
+          },
+          {
+            "index": 11,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "友方 Man[电磁断斧] 速度=5 HP=30/32"
+          },
+          {
+            "index": 12,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "友方 Jenny[老旧法杖] 速度=4 HP=22/24"
+          },
+          {
+            "index": 13,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "敌方 雷寰霸主(ID:11) 速度=3 HP=91/91"
+          },
+          {
+            "index": 14,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "敌方 雷寰霸主(ID:11) [按钮 1] 已锁定目标 -> Man[电磁断斧] | 技能 一枪贯世(2 dice, ranges: 1:4~5, 2:2~2)"
+          },
+          {
+            "index": 15,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "敌方 雷寰霸主(ID:11) [按钮 2] 已锁定目标 -> Jenny[老旧法杖] | 技能 磁暴雷锁(1 dice, ranges: 1:3~5)"
+          },
+          {
+            "index": 16,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "敌方已完成自动指定目标。请玩家完成画线后再次按下战斗按钮进入结算。"
+          }
+        ],
+        "legalActions": [
+          {
+            "op": "commit",
+            "actorId": "",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_0",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_0",
+            "buttonIndex": 0,
+            "skillIndex": 1,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "target",
+            "actorId": "ally_0",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "target",
+            "actorId": "ally_0",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 1,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 1,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 2,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "target",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "target",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 1,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 1,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 2,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "target",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "target",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 1,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_3",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_3",
+            "buttonIndex": 0,
+            "skillIndex": 1,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "target",
+            "actorId": "ally_3",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "target",
+            "actorId": "ally_3",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 1,
+            "choiceIndex": 0
+          }
+        ],
+        "rewards": {
+          "experience": 0,
+          "money": 0,
+          "refreshesRemaining": 0,
+          "loot": [],
+          "relics": [],
+          "blueprints": [],
+          "weapons": [],
+          "choices": [],
+          "party": []
+        }
+      },
+      "legalActions": [
+        {
+          "op": "run_abandon",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "",
+            "actorId": "",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "commit",
+            "actorId": "",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_0",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_0",
+            "buttonIndex": 0,
+            "skillIndex": 1,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "target",
+            "actorId": "ally_0",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "target",
+            "actorId": "ally_0",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 1,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 1,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 2,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "target",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "target",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 1,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 1,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 2,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "target",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "target",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 1,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_3",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_3",
+            "buttonIndex": 0,
+            "skillIndex": 1,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "target",
+            "actorId": "ally_3",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "target",
+            "actorId": "ally_3",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 1,
+            "choiceIndex": 0
+          }
+        }
+      ]
+    },
+    "exhausted": {
+      "battle": {
+        "sessionId": "71fd17780e6349678d35578572e6fe33",
+        "revision": 10,
+        "seed": 1984052289,
+        "round": 2,
+        "phase": "targeting",
+        "outcome": "",
+        "energy": 3,
+        "temporaryEnergy": 0,
+        "reservedEnergy": 0,
+        "actors": [
+          {
+            "id": "ally_0",
+            "side": "ally",
+            "name": "0[铁剑]",
+            "hp": 19,
+            "maxHp": 25,
+            "stage": 0,
+            "dead": false,
+            "statuses": [],
+            "skills": [
+              {
+                "index": 0,
+                "id": "9e003dc77410eba42b1806f317e54580",
+                "name": "挥砍",
+                "description": "挥砍\n技能：挥砍\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n描述：\n借力挥砍，简单的招式",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              {
+                "index": 1,
+                "id": "078246cde6431a94c8b86186526d6bbd",
+                "name": "横砍",
+                "description": "横砍\n技能：横砍\n能耗：3\n骰子数：1\n第 1 攻击骰：3 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 1 点伤害\n\n描述：\n大力横劈，利用挥剑的广度攻击所有敌人",
+                "energyCost": 3,
+                "dice": [
+                  {
+                    "min": 3,
+                    "max": 5,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 3,
+                    "max": 5,
+                    "category": "Attack"
+                  }
+                ]
+              }
+            ],
+            "slots": [
+              {
+                "index": 0,
+                "speed": 4,
+                "skillIndex": 1,
+                "selectedSkill": {
+                  "index": -1,
+                  "id": "078246cde6431a94c8b86186526d6bbd",
+                  "name": "横砍",
+                  "description": "横砍\n技能：横砍\n能耗：3\n骰子数：1\n第 1 攻击骰：3 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 1 点伤害\n\n描述：\n大力横劈，利用挥剑的广度攻击所有敌人",
+                  "energyCost": 3,
+                  "dice": [
+                    {
+                      "min": 3,
+                      "max": 5,
+                      "category": "Attack"
+                    }
+                  ],
+                  "displayedDice": [
+                    {
+                      "min": 3,
+                      "max": 5,
+                      "category": "Attack"
+                    }
+                  ]
+                },
+                "targetId": "",
+                "targetButtonIndex": -1,
+                "contested": false
+              }
+            ]
+          },
+          {
+            "id": "ally_1",
+            "side": "ally",
+            "name": "Molly[掠风短匕]",
+            "hp": 15,
+            "maxHp": 26,
+            "stage": 0,
+            "dead": false,
+            "statuses": [
+              {
+                "id": "current",
+                "name": "电流",
+                "stacks": 2
+              }
+            ],
+            "skills": [
+              {
+                "index": 0,
+                "id": "4f46e0545514a794e946ceb2f8f9c3cb",
+                "name": "速切",
+                "description": "速切\n技能：速切\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 使用该技能时 ] 若 自身速度 高出 目标单位速度 2 点（含） ，则 威力 +1\n\n描述：\n以迅雷不及掩耳盗铃之势捅刀子",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              {
+                "index": 1,
+                "id": "52be59ce67e18e442928e076efe6df69",
+                "name": "花切",
+                "description": "花切\n技能：花切\n能耗：3\n骰子数：2\n第 1 攻击骰：2 ~ 3\n第 2 攻击骰：2 ~ 2\n\n词条：\n第 1 攻击骰词条：[ 使用该技能时 ] 若 自身速度 高出 目标单位速度 1 点（含） ，则 威力 +1\n第 2 攻击骰词条：[ 拼点胜利时 ] 若 自身速度 高出 目标单位速度 1 点（含） ，则 威力 +1\n\n描述：\n精准而华丽的杀招",
+                "energyCost": 3,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Attack"
+                  },
+                  {
+                    "min": 2,
+                    "max": 2,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Attack"
+                  },
+                  {
+                    "min": 2,
+                    "max": 2,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              {
+                "index": 2,
+                "id": "0e56f4866db35f2428568776fad92119",
+                "name": "刀舞",
+                "description": "刀舞\n技能：刀舞\n能耗：1\n骰子数：1\n第 1 防御骰：2 ~ 3\n\n词条：\n第 1 防御骰词条：[ 使用时 ] 使 自己 于 下 1 个回合开始时 获得 2 层 急速\n\n描述：\n展示刀舞可以有效舒减压力，前提是不失败",
+                "energyCost": 1,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Defense"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Defense"
+                  }
+                ]
+              }
+            ],
+            "slots": [
+              {
+                "index": 0,
+                "speed": 3,
+                "skillIndex": 1,
+                "selectedSkill": {
+                  "index": -1,
+                  "id": "52be59ce67e18e442928e076efe6df69",
+                  "name": "花切",
+                  "description": "花切\n技能：花切\n能耗：3\n骰子数：2\n第 1 攻击骰：2 ~ 3\n第 2 攻击骰：2 ~ 2\n\n词条：\n第 1 攻击骰词条：[ 使用该技能时 ] 若 自身速度 高出 目标单位速度 1 点（含） ，则 威力 +1\n第 2 攻击骰词条：[ 拼点胜利时 ] 若 自身速度 高出 目标单位速度 1 点（含） ，则 威力 +1\n\n描述：\n精准而华丽的杀招",
+                  "energyCost": 3,
+                  "dice": [
+                    {
+                      "min": 2,
+                      "max": 3,
+                      "category": "Attack"
+                    },
+                    {
+                      "min": 2,
+                      "max": 2,
+                      "category": "Attack"
+                    }
+                  ],
+                  "displayedDice": [
+                    {
+                      "min": 2,
+                      "max": 3,
+                      "category": "Attack"
+                    },
+                    {
+                      "min": 2,
+                      "max": 2,
+                      "category": "Attack"
+                    }
+                  ]
+                },
+                "targetId": "",
+                "targetButtonIndex": -1,
+                "contested": false
+              }
+            ]
+          },
+          {
+            "id": "ally_2",
+            "side": "ally",
+            "name": "Man[电磁断斧]",
+            "hp": 26,
+            "maxHp": 32,
+            "stage": 0,
+            "dead": false,
+            "statuses": [],
+            "skills": [
+              {
+                "index": 0,
+                "id": "f89efb80615f3644591b73d9ad2f56f1",
+                "name": "电流贯穿",
+                "description": "电流贯穿\n技能：电流贯穿\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 电流\n\n描述：\n使用带电的斧刃劈砍敌人，让电流穿透目标。",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              {
+                "index": 1,
+                "id": "a3af2ab643e5dfa4aa33df8cd5872a89",
+                "name": "电场",
+                "description": "电场\n技能：电场\n能耗：2\n骰子数：2\n第 1 攻击骰：3 ~ 4\n第 2 攻击骰：1 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 当前目标 造成 1 点伤害\n第 1 攻击骰词条：[ 命中时 ] 使 所有目标 获得 1 层 电流\n第 2 攻击骰词条：[ 命中时 ] 使 所有目标 获得 1 层 电流\n\n描述：\n通过制造电场来向全体敌人施加电流",
+                "energyCost": 2,
+                "dice": [
+                  {
+                    "min": 3,
+                    "max": 4,
+                    "category": "Attack"
+                  },
+                  {
+                    "min": 1,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 3,
+                    "max": 4,
+                    "category": "Attack"
+                  },
+                  {
+                    "min": 1,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              {
+                "index": 2,
+                "id": "3b0d96557384e9a43a9d00f320663e87",
+                "name": "磁暴",
+                "description": "磁暴\n技能：磁暴\n能耗：4\n骰子数：1\n第 1 攻击骰：3 ~ 6\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 自己 获得 2 层 电流\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 引发 1 重 电流 爆发，造成 1 x 层数 的额外伤害，并清空 电流\n\n描述：\n引发大规模磁暴来造成相当可观的电磁伤害",
+                "energyCost": 4,
+                "dice": [
+                  {
+                    "min": 3,
+                    "max": 6,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 3,
+                    "max": 6,
+                    "category": "Attack"
+                  }
+                ]
+              }
+            ],
+            "slots": [
+              {
+                "index": 0,
+                "speed": 2,
+                "skillIndex": 1,
+                "selectedSkill": {
+                  "index": -1,
+                  "id": "a3af2ab643e5dfa4aa33df8cd5872a89",
+                  "name": "电场",
+                  "description": "电场\n技能：电场\n能耗：2\n骰子数：2\n第 1 攻击骰：3 ~ 4\n第 2 攻击骰：1 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 当前目标 造成 1 点伤害\n第 1 攻击骰词条：[ 命中时 ] 使 所有目标 获得 1 层 电流\n第 2 攻击骰词条：[ 命中时 ] 使 所有目标 获得 1 层 电流\n\n描述：\n通过制造电场来向全体敌人施加电流",
+                  "energyCost": 2,
+                  "dice": [
+                    {
+                      "min": 3,
+                      "max": 4,
+                      "category": "Attack"
+                    },
+                    {
+                      "min": 1,
+                      "max": 3,
+                      "category": "Attack"
+                    }
+                  ],
+                  "displayedDice": [
+                    {
+                      "min": 3,
+                      "max": 4,
+                      "category": "Attack"
+                    },
+                    {
+                      "min": 1,
+                      "max": 3,
+                      "category": "Attack"
+                    }
+                  ]
+                },
+                "targetId": "",
+                "targetButtonIndex": -1,
+                "contested": false
+              }
+            ]
+          },
+          {
+            "id": "ally_3",
+            "side": "ally",
+            "name": "Jenny[老旧法杖]",
+            "hp": 12,
+            "maxHp": 24,
+            "stage": 0,
+            "dead": false,
+            "statuses": [
+              {
+                "id": "current",
+                "name": "电流",
+                "stacks": 4
+              }
+            ],
+            "skills": [
+              {
+                "index": 0,
+                "id": "b60e3e1c70b6afe4a9016d18febc5b6a",
+                "name": "随意施法",
+                "description": "随意施法\n技能：随意施法\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 自己 获得 1 层 蓄能\n\n描述：\n简单而实用的法术，可以为随后的技能积攒力气",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              {
+                "index": 1,
+                "id": "9afa03908bac668459f24e4ea4b53341",
+                "name": "随意防御",
+                "description": "随意防御\n技能：随意防御\n能耗：1\n骰子数：1\n第 1 防御骰：2 ~ 3\n\n词条：\n第 1 防御骰词条：[ 使用时 ] 使 自己 获得 1 层 蓄能\n\n描述：\n简单而实用的法术，可以为自身施加防御法术来抵挡攻击",
+                "energyCost": 1,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Defense"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Defense"
+                  }
+                ]
+              },
+              {
+                "index": 2,
+                "id": "6f323dbfc6080254aa17d3baedb126ba",
+                "name": "星辰冲击",
+                "description": "星辰冲击\n技能：星辰冲击\n能耗：1\n施放条件：自身至少拥有 2 层 蓄能，施放后消耗\n骰子数：2\n第 1 攻击骰：2 ~ 5\n第 2 攻击骰：1 ~ 3\n\n描述：\nJenny 的拿手技能，她年复一年的训练就是为了现在。",
+                "energyCost": 1,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 5,
+                    "category": "Attack"
+                  },
+                  {
+                    "min": 1,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 5,
+                    "category": "Attack"
+                  },
+                  {
+                    "min": 1,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ]
+              }
+            ],
+            "slots": [
+              {
+                "index": 0,
+                "speed": 4,
+                "skillIndex": 0,
+                "selectedSkill": {
+                  "index": -1,
+                  "id": "b60e3e1c70b6afe4a9016d18febc5b6a",
+                  "name": "随意施法",
+                  "description": "随意施法\n技能：随意施法\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 自己 获得 1 层 蓄能\n\n描述：\n简单而实用的法术，可以为随后的技能积攒力气",
+                  "energyCost": 0,
+                  "dice": [
+                    {
+                      "min": 2,
+                      "max": 3,
+                      "category": "Attack"
+                    }
+                  ],
+                  "displayedDice": [
+                    {
+                      "min": 2,
+                      "max": 3,
+                      "category": "Attack"
+                    }
+                  ]
+                },
+                "targetId": "",
+                "targetButtonIndex": -1,
+                "contested": false
+              }
+            ]
+          },
+          {
+            "id": "enemy_0",
+            "side": "enemy",
+            "name": "雷寰霸主(ID:11)",
+            "hp": 81,
+            "maxHp": 91,
+            "stage": 0,
+            "dead": false,
+            "statuses": [
+              {
+                "id": "current",
+                "name": "电流",
+                "stacks": 2
+              }
+            ],
+            "skills": [],
+            "slots": [
+              {
+                "index": 0,
+                "speed": 2,
+                "skillIndex": -1,
+                "selectedSkill": {
+                  "index": -1,
+                  "id": "6cd2d239a580ecc44afc27c199a0a083",
+                  "name": "一枪贯世",
+                  "description": "一枪贯世\n技能：一枪贯世\n能耗：0\n骰子数：2\n第 1 攻击骰：4 ~ 5\n第 2 攻击骰：2 ~ 2\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 2 点伤害\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流\n第 2 攻击骰词条：[ 命中时 ] 对 所有目标 造成 2 点伤害\n第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流\n\n描述：\n你可知道被雷劈的感觉？",
+                  "energyCost": 0,
+                  "dice": [
+                    {
+                      "min": 4,
+                      "max": 5,
+                      "category": "Attack"
+                    },
+                    {
+                      "min": 2,
+                      "max": 2,
+                      "category": "Attack"
+                    }
+                  ],
+                  "displayedDice": [
+                    {
+                      "min": 4,
+                      "max": 5,
+                      "category": "Attack"
+                    },
+                    {
+                      "min": 2,
+                      "max": 2,
+                      "category": "Attack"
+                    }
+                  ]
+                },
+                "targetId": "ally_0",
+                "targetButtonIndex": 0,
+                "contested": false
+              },
+              {
+                "index": 1,
+                "speed": 2,
+                "skillIndex": -1,
+                "selectedSkill": {
+                  "index": -1,
+                  "id": "6c900b8f5042fcf40a566db5529cdaab",
+                  "name": "雷罚突刺",
+                  "description": "雷罚突刺\n技能：雷罚突刺\n能耗：0\n骰子数：2\n第 1 攻击骰：3 ~ 5\n第 2 攻击骰：2 ~ 2\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流\n第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流\n\n描述：\n它刺出了雷枪，枪尖的电流噼啪作响",
+                  "energyCost": 0,
+                  "dice": [
+                    {
+                      "min": 3,
+                      "max": 5,
+                      "category": "Attack"
+                    },
+                    {
+                      "min": 2,
+                      "max": 2,
+                      "category": "Attack"
+                    }
+                  ],
+                  "displayedDice": [
+                    {
+                      "min": 3,
+                      "max": 5,
+                      "category": "Attack"
+                    },
+                    {
+                      "min": 2,
+                      "max": 2,
+                      "category": "Attack"
+                    }
+                  ]
+                },
+                "targetId": "ally_1",
+                "targetButtonIndex": 0,
+                "contested": false
+              }
+            ]
+          }
+        ],
+        "relics": [
+          {
+            "id": "c96f6a584f3048a19c8720d4ddbd8d9b",
+            "name": "小猪储蓄罐",
+            "description": "消耗行动点时，获得 3 金币。",
+            "limitation": ""
+          },
+          {
+            "id": "4f17319034f248de827c298b48d708e6",
+            "name": "电爆盾",
+            "description": "友方角色造成电流爆发伤害时，获得等同于伤害的护盾层数",
+            "limitation": ""
+          }
+        ],
+        "events": [
+          {
+            "index": 0,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_0",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 1,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "灾厄效果：战斗开始时 0[铁剑] 损失 2 点生命"
+          },
+          {
+            "index": 2,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_1",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 3,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "灾厄效果：战斗开始时 Molly[掠风短匕] 损失 2 点生命"
+          },
+          {
+            "index": 4,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_2",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 5,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "灾厄效果：战斗开始时 Man[电磁断斧] 损失 2 点生命"
+          },
+          {
+            "index": 6,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_3",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 7,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "灾厄效果：战斗开始时 Jenny[老旧法杖] 损失 2 点生命"
+          },
+          {
+            "index": 8,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "◆◆◆ 目标指定阶段 ◆◆◆ 友方 4 名 / 敌方 1 名"
+          },
+          {
+            "index": 9,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "友方 0[铁剑] 速度=4 HP=23/25"
+          },
+          {
+            "index": 10,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "友方 Molly[掠风短匕] 速度=4 HP=24/26"
+          },
+          {
+            "index": 11,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "友方 Man[电磁断斧] 速度=5 HP=30/32"
+          },
+          {
+            "index": 12,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "友方 Jenny[老旧法杖] 速度=4 HP=22/24"
+          },
+          {
+            "index": 13,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "敌方 雷寰霸主(ID:11) 速度=3 HP=91/91"
+          },
+          {
+            "index": 14,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "敌方 雷寰霸主(ID:11) [按钮 1] 已锁定目标 -> Man[电磁断斧] | 技能 一枪贯世(2 dice, ranges: 1:4~5, 2:2~2)"
+          },
+          {
+            "index": 15,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "敌方 雷寰霸主(ID:11) [按钮 2] 已锁定目标 -> Jenny[老旧法杖] | 技能 磁暴雷锁(1 dice, ranges: 1:3~5)"
+          },
+          {
+            "index": 16,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "敌方已完成自动指定目标。请玩家完成画线后再次按下战斗按钮进入结算。"
+          },
+          {
+            "index": 17,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "◆◆◆ 战斗结算阶段 ◆◆◆"
+          },
+          {
+            "index": 18,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "[友方单方面攻击] Man[电磁断斧][电场(2 dice, ranges: 1:3~4, 2:1~3)] -> 雷寰霸主(ID:11)"
+          },
+          {
+            "index": 19,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "enemy_0",
+            "amount": 3,
+            "message": ""
+          },
+          {
+            "index": 20,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "enemy_0",
+            "amount": 1,
+            "message": ""
+          },
+          {
+            "index": 21,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "词条触发：Man[电磁断斧][额外伤害#1] 对 雷寰霸主(ID:11) 造成 1 额外伤害，剩余HP 87/91"
+          },
+          {
+            "index": 22,
+            "round": 1,
+            "kind": "status_changed",
+            "actorId": "enemy_0",
+            "amount": 0,
+            "message": ""
+          },
+          {
+            "index": 23,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "词条触发：Man[电磁断斧][状态效果#1] 使 雷寰霸主(ID:11) 获得 1 层 电流，当前 电流 1 层"
+          },
+          {
+            "index": 24,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "第 1 段：Man[电磁断斧][电场(2 dice, ranges: 1:3~4, 2:1~3)](3) -> 雷寰霸主(ID:11)，剩余HP 87/91"
+          },
+          {
+            "index": 25,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "enemy_0",
+            "amount": 1,
+            "message": ""
+          },
+          {
+            "index": 26,
+            "round": 1,
+            "kind": "status_changed",
+            "actorId": "enemy_0",
+            "amount": 0,
+            "message": ""
+          },
+          {
+            "index": 27,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "词条触发：Man[电磁断斧][状态效果#1] 使 雷寰霸主(ID:11) 获得 1 层 电流，当前 电流 2 层"
+          },
+          {
+            "index": 28,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "第 2 段：Man[电磁断斧][电场(2 dice, ranges: 1:3~4, 2:1~3)](1) -> 雷寰霸主(ID:11)，剩余HP 86/91"
+          },
+          {
+            "index": 29,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "[拼点] Molly[掠风短匕][花切(2 dice, ranges: 1:2~3, 2:2~2)] vs 雷寰霸主(ID:11)[磁暴雷锁(1 dice, ranges: 1:3~5)]"
+          },
+          {
+            "index": 30,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_1",
+            "amount": 5,
+            "message": ""
+          },
+          {
+            "index": 31,
+            "round": 1,
+            "kind": "status_changed",
+            "actorId": "ally_1",
+            "amount": 0,
+            "message": ""
+          },
+          {
+            "index": 32,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "词条触发：雷寰霸主(ID:11)[状态效果#1] 使 Molly[掠风短匕] 获得 2 层 电流，当前 电流 2 层"
+          },
+          {
+            "index": 33,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "第 1 段拼点：Molly[掠风短匕](3+1=4) vs 雷寰霸主(ID:11)(5)"
+          },
+          {
+            "index": 34,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "-> 敌方胜！追击威力 5 ，雷寰霸主(ID:11) 对 Molly[掠风短匕] 造成 5 伤害，剩余HP 24/26"
+          },
+          {
+            "index": 35,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "enemy_0",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 36,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "第 2 段（友方余骰单方面）：Molly[掠风短匕][花切(2 dice, ranges: 1:2~3, 2:2~2)](2) -> 雷寰霸主(ID:11)，剩余HP 84/91"
+          },
+          {
+            "index": 37,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "[拼点] Jenny[老旧法杖][随意施法(1 dice, ranges: 1:2~3)] vs 雷寰霸主(ID:11)[一枪贯世(2 dice, ranges: 1:4~5, 2:2~2)]"
+          },
+          {
+            "index": 38,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_3",
+            "amount": 4,
+            "message": ""
+          },
+          {
+            "index": 39,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_0",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 40,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "词条触发：雷寰霸主(ID:11)[额外伤害#1] 对 0[铁剑] 造成 2 额外伤害，剩余HP 21/25"
+          },
+          {
+            "index": 41,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_1",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 42,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "词条触发：雷寰霸主(ID:11)[额外伤害#1] 对 Molly[掠风短匕] 造成 2 额外伤害，剩余HP 17/26"
+          },
+          {
+            "index": 43,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_2",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 44,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "词条触发：雷寰霸主(ID:11)[额外伤害#1] 对 Man[电磁断斧] 造成 2 额外伤害，剩余HP 28/32"
+          },
+          {
+            "index": 45,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_3",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 46,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "词条触发：雷寰霸主(ID:11)[额外伤害#1] 对 Jenny[老旧法杖] 造成 2 额外伤害，剩余HP 16/24"
+          },
+          {
+            "index": 47,
+            "round": 1,
+            "kind": "status_changed",
+            "actorId": "ally_3",
+            "amount": 0,
+            "message": ""
+          },
+          {
+            "index": 48,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "词条触发：雷寰霸主(ID:11)[状态效果#1] 使 Jenny[老旧法杖] 获得 2 层 电流，当前 电流 2 层"
+          },
+          {
+            "index": 49,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "第 1 段拼点：Jenny[老旧法杖](3) vs 雷寰霸主(ID:11)(4)"
+          },
+          {
+            "index": 50,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "-> 敌方胜！追击威力 4 ，雷寰霸主(ID:11) 对 Jenny[老旧法杖] 造成 4 伤害，剩余HP 22/24"
+          },
+          {
+            "index": 51,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_3",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 52,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_0",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 53,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "词条触发：雷寰霸主(ID:11)[额外伤害#1] 对 0[铁剑] 造成 2 额外伤害，剩余HP 19/25"
+          },
+          {
+            "index": 54,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_1",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 55,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "词条触发：雷寰霸主(ID:11)[额外伤害#1] 对 Molly[掠风短匕] 造成 2 额外伤害，剩余HP 15/26"
+          },
+          {
+            "index": 56,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_2",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 57,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "词条触发：雷寰霸主(ID:11)[额外伤害#1] 对 Man[电磁断斧] 造成 2 额外伤害，剩余HP 26/32"
+          },
+          {
+            "index": 58,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_3",
+            "amount": 2,
+            "message": ""
+          },
+          {
+            "index": 59,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "词条触发：雷寰霸主(ID:11)[额外伤害#1] 对 Jenny[老旧法杖] 造成 2 额外伤害，剩余HP 12/24"
+          },
+          {
+            "index": 60,
+            "round": 1,
+            "kind": "status_changed",
+            "actorId": "ally_3",
+            "amount": 0,
+            "message": ""
+          },
+          {
+            "index": 61,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "词条触发：雷寰霸主(ID:11)[状态效果#1] 使 Jenny[老旧法杖] 获得 2 层 电流，当前 电流 4 层"
+          },
+          {
+            "index": 62,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "第 2 段（敌方余骰单方面）：雷寰霸主(ID:11)[一枪贯世(2 dice, ranges: 1:4~5, 2:2~2)](2) -> Jenny[老旧法杖]，剩余HP 12/24"
+          },
+          {
+            "index": 63,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "[友方单方面攻击] 0[铁剑][横砍(1 dice, ranges: 1:3~5)] -> 雷寰霸主(ID:11)"
+          },
+          {
+            "index": 64,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "enemy_0",
+            "amount": 4,
+            "message": ""
+          },
+          {
+            "index": 65,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "enemy_0",
+            "amount": 1,
+            "message": ""
+          },
+          {
+            "index": 66,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "词条触发：0[铁剑][横砍] 对 雷寰霸主(ID:11) 造成 1 额外伤害，剩余HP 79/91"
+          },
+          {
+            "index": 67,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "第 1 段：0[铁剑][横砍(1 dice, ranges: 1:3~5)](4) -> 雷寰霸主(ID:11)，剩余HP 79/91"
+          },
+          {
+            "index": 68,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "── 回合结算汇总 ──"
+          },
+          {
+            "index": 69,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "友方 0[铁剑] HP 19/25"
+          },
+          {
+            "index": 70,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "友方 Molly[掠风短匕] HP 15/26"
+          },
+          {
+            "index": 71,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "友方 Man[电磁断斧] HP 26/32"
+          },
+          {
+            "index": 72,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "友方 Jenny[老旧法杖] HP 12/24"
+          },
+          {
+            "index": 73,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "敌方 雷寰霸主(ID:11) HP 79/91"
+          },
+          {
+            "index": 74,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "灾厄效果：回合结束时 雷寰霸主(ID:11) 恢复 2 点生命"
+          },
+          {
+            "index": 75,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "再次按下战斗按钮开始下一回合目标指定。"
+          },
+          {
+            "index": 76,
+            "round": 2,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "◆◆◆ 目标指定阶段 ◆◆◆ 友方 4 名 / 敌方 1 名"
+          },
+          {
+            "index": 77,
+            "round": 2,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "友方 0[铁剑] 速度=4 HP=19/25"
+          },
+          {
+            "index": 78,
+            "round": 2,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "友方 Molly[掠风短匕] 速度=3 HP=15/26"
+          },
+          {
+            "index": 79,
+            "round": 2,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "友方 Man[电磁断斧] 速度=2 HP=26/32"
+          },
+          {
+            "index": 80,
+            "round": 2,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "友方 Jenny[老旧法杖] 速度=4 HP=12/24"
+          },
+          {
+            "index": 81,
+            "round": 2,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "敌方 雷寰霸主(ID:11) 速度=2 HP=81/91"
+          },
+          {
+            "index": 82,
+            "round": 2,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "敌方 雷寰霸主(ID:11) [按钮 1] 已锁定目标 -> 0[铁剑] | 技能 一枪贯世(2 dice, ranges: 1:4~5, 2:2~2)"
+          },
+          {
+            "index": 83,
+            "round": 2,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "敌方 雷寰霸主(ID:11) [按钮 2] 已锁定目标 -> Molly[掠风短匕] | 技能 雷罚突刺(2 dice, ranges: 1:3~5, 2:2~2)"
+          },
+          {
+            "index": 84,
+            "round": 2,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "敌方已完成自动指定目标。请玩家完成画线后再次按下战斗按钮进入结算。"
+          }
+        ],
+        "legalActions": [
+          {
+            "op": "commit",
+            "actorId": "",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_0",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_0",
+            "buttonIndex": 0,
+            "skillIndex": 1,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "target",
+            "actorId": "ally_0",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "target",
+            "actorId": "ally_0",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 1,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 1,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 2,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "target",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "target",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 1,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 1,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "target",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "target",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 1,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_3",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "set_skill",
+            "actorId": "ally_3",
+            "buttonIndex": 0,
+            "skillIndex": 1,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "target",
+            "actorId": "ally_3",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          },
+          {
+            "op": "target",
+            "actorId": "ally_3",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 1,
+            "choiceIndex": 0
+          }
+        ],
+        "rewards": {
+          "experience": 0,
+          "money": 0,
+          "refreshesRemaining": 0,
+          "loot": [],
+          "relics": [],
+          "blueprints": [],
+          "weapons": [],
+          "choices": [],
+          "party": []
+        }
+      },
+      "legalActions": [
+        {
+          "op": "run_abandon",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "",
+            "actorId": "",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "commit",
+            "actorId": "",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_0",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_0",
+            "buttonIndex": 0,
+            "skillIndex": 1,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "target",
+            "actorId": "ally_0",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "target",
+            "actorId": "ally_0",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 1,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 1,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 2,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "target",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "target",
+            "actorId": "ally_1",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 1,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 1,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "target",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "target",
+            "actorId": "ally_2",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 1,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_3",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "set_skill",
+            "actorId": "ally_3",
+            "buttonIndex": 0,
+            "skillIndex": 1,
+            "targetId": "",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "target",
+            "actorId": "ally_3",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 0,
+            "choiceIndex": 0
+          }
+        },
+        {
+          "op": "run_battle",
+          "assetId": "",
+          "x": 0,
+          "y": 0,
+          "choiceIndex": 0,
+          "battleAction": {
+            "op": "target",
+            "actorId": "ally_3",
+            "buttonIndex": 0,
+            "skillIndex": 0,
+            "targetId": "enemy_0",
+            "targetButtonIndex": 1,
+            "choiceIndex": 0
+          }
+        }
+      ]
+    }
+  }
+}

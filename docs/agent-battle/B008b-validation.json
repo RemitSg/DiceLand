@@ -1,0 +1,251 @@
+{
+  "batch": "B008b",
+  "date": "2026-10-27",
+  "sourceParent": "bef9d0049b0a7bc463931acbbaac78a75cde31b4",
+  "status": "Actual earned paid progression and post-commit crash recovery verified on Easy defeat; Normal victory and complete-loop audit remain pending",
+  "normalVictoryGatePassed": false,
+  "easyVictoryGatePassed": false,
+  "engineOrBalanceChanges": false,
+  "gameplayStateInjection": false,
+  "changes": [
+    "Select party-wide skill upgrades before targeting, using the observed shared energy budget and marginal value",
+    "Release low-value unaffordable carry-over choices; avoid weak paid upgrades in long single-enemy fights",
+    "Value explicit electric bursts using actual visible enemy current stacks",
+    "Connect weak skill fronts first so a late fragile caster does not take over the stronger unit clash"
+  ],
+  "python": {
+    "passed": 26,
+    "failed": 0,
+    "newTests": 8,
+    "evidence": "outputs/agent-battle/b008b-python-tests.log",
+    "fixtures": "tools/tests/fixtures/shared_energy_policy.json",
+    "fixturesFromActualPublicObservations": true,
+    "existingCounterTestAdjustment": "Focused its legal-action subset on that actor: global skill preparation can now precede this targeting decision."
+  },
+  "unity": {
+    "rerun": false,
+    "reason": "Only Python policy, fixtures and documentation changed. All runtime/rule/config files retain the previous verified content hash.",
+    "baselineEvidence": "docs/agent-battle/B008a-validation.json",
+    "baselineTotal": 996,
+    "baselinePassed": 975,
+    "baselineFailed": 21,
+    "filesCompared": 3199,
+    "ruleFilesMatchValidationProject": true,
+    "contentHash": "46431b698bb54ad61c8d97e8225052af179160f066d675f735aad1620c6e72f8",
+    "matchesRuntimeJournalAndPriorBatch": true,
+    "playMode": "Not rerun; existing failures remain unresolved"
+  },
+  "environment": {
+    "engine": "Tuanjie 1.8.4 / 2022.3.62t6",
+    "mode": "batchmode -nographics",
+    "originalEditorPid": 21328,
+    "originalEditorRestarted": false,
+    "userSceneSaved": false,
+    "validationHostBeforeCrash": 20976,
+    "validationHostAfterCrash": 48760
+  },
+  "playthrough": {
+    "difficulty": "Easy",
+    "seed": 7,
+    "profileId": "b008b-progress-283db68c3ac3",
+    "initialProfilePoints": 0,
+    "earlyEliteFailure": {
+      "score": 496,
+      "gainedPoints": 0,
+      "evidence": "outputs/agent-battle/b008b-easy7-early-elite-defeat.json"
+    },
+    "earnedRun": {
+      "outcome": "defeat",
+      "scoreResult": {
+        "baseScore": 1265,
+        "finalScore": 1265,
+        "gainedAbilityPoints": 1,
+        "finalMultiplier": 1.0,
+        "displayStats": {
+          "durationSeconds": 2275,
+          "normalBattleOuterCleared": 12,
+          "normalBattleMidCleared": 0,
+          "normalBattleInnerCleared": 0,
+          "normalBattleCoreCleared": 0,
+          "eliteBattleOuterCleared": 0,
+          "eliteBattleMidCleared": 0,
+          "eliteBattleInnerCleared": 0,
+          "eliteBattleCoreCleared": 0,
+          "specialDungeonCleared": 0,
+          "partyMemberCount": 4,
+          "totalMoneyGained": 575,
+          "craftedWeaponCount": 3,
+          "eventTilesCompleted": 4,
+          "eventBattlesCompleted": 0,
+          "unexploredTilesVisited": 36,
+          "relicCount": 2,
+          "keysCollected": 3,
+          "calamityTier": 7,
+          "bossesDefeated": 0,
+          "calamityScoreCounted": false
+        },
+        "debugLines": [
+          "Normal Battle Outer: count=12, each=20, score=240",
+          "Normal Battle Mid: count=0, each=50, score=0",
+          "Normal Battle Inner: count=0, each=100, score=0",
+          "Normal Battle Core: count=0, each=200, score=0",
+          "Elite Battle Outer: count=0, each=50, score=0",
+          "Elite Battle Mid: count=0, each=150, score=0",
+          "Elite Battle Inner: count=0, each=250, score=0",
+          "Elite Battle Core: count=0, each=500, score=0",
+          "Special Dungeon: cleared=0, score=0",
+          "Party Members: count=4, score=200",
+          "Money: gained=575, multiplier=0.2, score=115",
+          "Crafted Weapons: count=3, each=100, score=300",
+          "Event Tiles: count=4, each=10, score=40",
+          "Event Battles: count=0, each=50, score=0",
+          "Unexplored Tiles: count=36, each=5, score=180",
+          "Relics: count=2, each=20, score=40",
+          "Keys: count=3, each=50, score=150",
+          "Calamity skipped: tier=7, score=0",
+          "Bosses: count=0, each=1000, score=0",
+          "Final: base=1265, duration=2275, multiplier=1, final=1265, abilityPoints=1"
+        ]
+      },
+      "recruits": [
+        "Molly",
+        "Man",
+        "Jenny"
+      ],
+      "craftedAndEquipped": [
+        "Iron Sword",
+        "Electromagnetic Axe",
+        "Gale Dagger"
+      ],
+      "purchasedRelic": "Electric Burst Shield",
+      "progress": {
+        "runStartedUnixSeconds": 1793103645,
+        "normalBattleOuterCleared": 12,
+        "normalBattleMidCleared": 0,
+        "normalBattleInnerCleared": 0,
+        "normalBattleCoreCleared": 0,
+        "eliteBattleOuterCleared": 0,
+        "eliteBattleMidCleared": 0,
+        "eliteBattleInnerCleared": 0,
+        "eliteBattleCoreCleared": 0,
+        "specialDungeonCleared": 0,
+        "specialDungeonScoreTotal": 0,
+        "totalMoneyGained": 575,
+        "craftedWeaponCount": 3,
+        "eventTilesCompleted": 4,
+        "eventBattlesCompleted": 0,
+        "unexploredTilesVisited": 36,
+        "keysCollected": 3,
+        "bossesDefeated": 0
+      }
+    },
+    "bossAttempts": [
+      {
+        "evidence": "outputs/agent-battle/b008b-easy7-boss-first-attempt.json",
+        "outcome": "defeat",
+        "round": 6,
+        "bossRemainingHp": 62
+      },
+      {
+        "evidence": "outputs/agent-battle/b008b-easy7-boss-second-attempt.json",
+        "outcome": "defeat",
+        "round": 5,
+        "bossRemainingHp": 56
+      }
+    ],
+    "checkpointBranch": "The second Boss attempt restored the legitimately earned pre-Boss named checkpoint before any meta settlement. Failed branch exported separately. No profile points were duplicated.",
+    "finalAttemptCommitChecks": [
+      {
+        "round": 1,
+        "energy": 10,
+        "temporaryEnergy": 0,
+        "selectedCost": 3,
+        "everyLivingSlotAssigned": true
+      },
+      {
+        "round": 2,
+        "energy": 8,
+        "temporaryEnergy": 0,
+        "selectedCost": 2,
+        "everyLivingSlotAssigned": true
+      },
+      {
+        "round": 3,
+        "energy": 7,
+        "temporaryEnergy": 0,
+        "selectedCost": 5,
+        "everyLivingSlotAssigned": true
+      },
+      {
+        "round": 4,
+        "energy": 3,
+        "temporaryEnergy": 0,
+        "selectedCost": 3,
+        "everyLivingSlotAssigned": true
+      },
+      {
+        "round": 5,
+        "energy": 1,
+        "temporaryEnergy": 0,
+        "selectedCost": 0,
+        "everyLivingSlotAssigned": true
+      }
+    ]
+  },
+  "recovery": {
+    "evidence": "outputs/agent-battle/b008b-positive-crash-proof.json",
+    "pendingDefeatSaveLoadMatched": true,
+    "actualEarnedSettlementCommitted": true,
+    "pointsBefore": 0,
+    "committedPoints": 1,
+    "generationBefore": 2,
+    "generationAfter": 3,
+    "responseConsumed": false,
+    "actualOwnedHostTerminationAfterCommit": true,
+    "method": "Send run_settle over a raw HTTP socket, never consume the response, observe the atomic head for its request ID and positive wallet, verify exact validation process identity and force terminate it.",
+    "restartedHostRecoveredFinishedSettlement": true,
+    "lostSettlementRetryDidNotMutateOrAwardAgain": true,
+    "requestId": "f80251200bbc4bd1babcefb70a2e6af9"
+  },
+  "paidProgression": {
+    "unlocks": [
+      {
+        "node": "journey-start",
+        "pointsBefore": 1,
+        "pointsAfter": 1,
+        "retryMatched": true
+      },
+      {
+        "node": "action-limit-1",
+        "pointsBefore": 1,
+        "pointsAfter": 0,
+        "retryMatched": true
+      }
+    ],
+    "nextRun": {
+      "difficulty": "Medium",
+      "difficultyId": "a6f4f93e54074516a032e45ec4d7cf0e",
+      "runIndex": 3,
+      "baseActionPoints": 6,
+      "actualActionPoints": 7,
+      "paidPointsRemaining": 0
+    },
+    "actualEarnedPaidUpgradeAndNextRunVerified": true,
+    "continuationProfile": "b008b-progress-283db68c3ac3",
+    "continuationSlot": "b008b-earned-normal-ap7"
+  },
+  "replay": {
+    "evidence": "outputs/agent-battle/b008b-positive-crash-proof.json",
+    "slot": "b008b-earned-progress-complete",
+    "verified": true,
+    "commandsChecked": 505,
+    "finalStateHash": "74c9d538fc9ad852aca3c01f76f6b82eb2cd2de20646cac6b996f212cc20a69a"
+  },
+  "remainingGates": [
+    "Normal/Medium Boss victory using public commands",
+    "Normal victory -> actual earned settlement -> paid upgrade -> next-run sequence",
+    "Victory-pending restore and positive victorious Normal settlement recovery",
+    "Final B008 external-agent complete-loop audit"
+  ],
+  "nextBatch": "Continue genuine Normal progression with the earned AP bonus; inspect the known seed-55 authored legendary opening and prepare damage/control before Boss. Do not change balance or replace Normal victory with Easy evidence."
+}

@@ -21,6 +21,9 @@ class AdventurePolicyTests(unittest.TestCase):
 
     def test_counter_own_incoming_attack_instead_of_redirecting_a_teammates(self):
         state = self.frames["reciprocal_counter"]
+        # Focus on this actor's targeting decision. Shared-budget preparation and
+        # other actors' connections may now correctly happen before this one.
+        state["legalActions"] = [a for a in state["legalActions"] if a.get("battleAction", {}).get("actorId") == "ally_0"]
         action = choose_battle_action(state)["battleAction"]
         self.assertEqual((action["op"], action["actorId"], action["targetButtonIndex"]), ("target", "ally_0", 1))
 
