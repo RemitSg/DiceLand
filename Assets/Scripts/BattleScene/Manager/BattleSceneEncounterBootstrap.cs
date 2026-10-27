@@ -33,7 +33,7 @@ public static class BattleSceneBootstrap
 }
 
 [DisallowMultipleComponent]
-public class BattleSceneEncounterBootstrap : MonoBehaviour
+public partial class BattleSceneEncounterBootstrap : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private BattleManager battleManager;
@@ -298,6 +298,13 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
 
     private BattleAllyController SpawnAlly(RunPartyMemberState allyState, Vector3 worldPosition, int index)
     {
+        if (headlessExecution)
+        {
+            BattleAllyController actor = BattleHeadlessCombatantFactory.CreateAlly(spawnedAlliesRoot, allyState);
+            actor.transform.position = worldPosition;
+            return actor;
+        }
+
         EnsureWhiteSprite();
 
         GameObject allyObject = BuildAllyObject(allyState, worldPosition, index);
@@ -368,6 +375,14 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
 
     private void SpawnEnemy(EnemyData_SO enemyData, Vector3 worldPosition, int index)
     {
+        if (headlessExecution)
+        {
+            BattleEnemyController actor = BattleHeadlessCombatantFactory.CreateEnemy(spawnedEnemiesRoot, enemyData, index);
+            actor.transform.position = worldPosition;
+            battleManager.AddEnemy();
+            return;
+        }
+
         EnsureWhiteSprite();
         Vector3 resolvedEnemyScale = ResolveEnemyBodyScale(enemyData);
         Vector3 resolvedEnemyOffset = ResolveEnemyVisualOffset(enemyData);
@@ -462,6 +477,11 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
             currentHP = runtimeCharacter.baseHP
         };
 
+        if (headlessExecution)
+        {
+            headlessDefinitions.Add(runtimeCharacter);
+            headlessDefinitions.Add(runtimeWeapon);
+        }
         BattleAllyController spawned = SpawnAlly(allyState, worldPosition, index);
         if (spawned != null)
             spawned.ApplyEnemyDataVisualSource(enemyData, true);
@@ -1188,6 +1208,7 @@ public class BattleSceneEncounterBootstrap : MonoBehaviour
 
     private void EnsureWhiteSprite()
     {
+        if (headlessExecution) return;
         if (runtimeWhiteSprite != null)
             return;
 

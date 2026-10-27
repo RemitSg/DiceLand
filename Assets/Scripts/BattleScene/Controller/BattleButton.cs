@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BattleButton : MonoBehaviour
+public partial class BattleButton : MonoBehaviour
 {
     private const string BattleStatusLibraryResourcePath = "BattleStatusLibrary";
     private const int PrismDawnServantEnemyId = 4001;
@@ -113,6 +113,11 @@ public class BattleButton : MonoBehaviour
     private TutorialBattleHighlightTarget activeTutorialHighlightTarget = TutorialBattleHighlightTarget.None;
 
     private void Awake()
+    {
+        InitializeBattleRuntime();
+    }
+
+    private void InitializeBattleRuntime()
     {
         // Retry/return transitions can leave the global combat lock raised because
         // SpeedButton.CombatLocked is static. Reset it whenever a battle scene boots.
@@ -981,6 +986,7 @@ public class BattleButton : MonoBehaviour
 
     private void EnsureSharedEnergyUi()
     {
+        if (headlessExecution) return;
         if (sharedEnergyRoot != null)
             return;
 
@@ -1111,6 +1117,7 @@ public class BattleButton : MonoBehaviour
 
     private void RefreshSharedEnergyUi()
     {
+        if (headlessExecution) return;
         EnsureSharedEnergyUi();
         if (sharedEnergyText == null)
             return;
@@ -1290,6 +1297,12 @@ public class BattleButton : MonoBehaviour
         bool moveIntoPosition = true,
         bool returnToOrigin = true)
     {
+        if (headlessExecution)
+        {
+            onImpactResolved?.Invoke();
+            yield break;
+        }
+
         if (battlePresentationSystem == null)
             yield break;
 
@@ -1334,6 +1347,12 @@ public class BattleButton : MonoBehaviour
         bool moveIntoPosition = true,
         bool returnToOrigin = true)
     {
+        if (headlessExecution)
+        {
+            onImpactResolved?.Invoke();
+            yield break;
+        }
+
         if (battlePresentationSystem == null)
             yield break;
 
@@ -3092,6 +3111,8 @@ public class BattleButton : MonoBehaviour
         Transform targetTransform,
         Vector3 targetStartPosition)
     {
+        if (headlessExecution) yield break;
+
         if (!shouldReturn || battlePresentationSystem == null)
             yield break;
 
@@ -3658,6 +3679,8 @@ public class BattleButton : MonoBehaviour
         BattleEnemyController enemy,
         Vector3 enemyStartPosition)
     {
+        if (headlessExecution) yield break;
+
         if (battlePresentationSystem == null || ally == null || enemy == null)
             yield break;
 
@@ -5825,24 +5848,28 @@ public class BattleButton : MonoBehaviour
 
     private void ResolvePresentationSystem()
     {
+        if (headlessExecution) return;
         GameObject host = battleManager != null ? battleManager.gameObject : gameObject;
         battlePresentationSystem = BattleComponentResolver.ResolveSceneOrHost(battlePresentationSystem, host, false, true);
     }
 
     private void ResolveFeedbackSystem()
     {
+        if (headlessExecution) return;
         GameObject host = battleManager != null ? battleManager.gameObject : gameObject;
         battleFeedbackSystem = BattleComponentResolver.ResolveSceneOrHost(battleFeedbackSystem, host, false, true);
     }
 
     private void ResolveSettlementOverlay()
     {
+        if (headlessExecution) return;
         GameObject host = battleManager != null ? battleManager.gameObject : gameObject;
         battleSettlementOverlay = BattleComponentResolver.ResolveSceneOrHost(battleSettlementOverlay, host, false, true);
     }
 
     private void ResolveSkillInfoOverlay()
     {
+        if (headlessExecution) return;
         GameObject host = battleManager != null ? battleManager.gameObject : gameObject;
         battleSkillInfoOverlay = BattleComponentResolver.ResolveSceneOrHost(battleSkillInfoOverlay, host, true, true);
 
@@ -5861,6 +5888,7 @@ public class BattleButton : MonoBehaviour
 
     private void ResolveTutorialGuideOverlay()
     {
+        if (headlessExecution) return;
         GameObject host = battleManager != null ? battleManager.gameObject : gameObject;
         tutorialBattleGuideOverlay = BattleComponentResolver.ResolveSceneOrHost(tutorialBattleGuideOverlay, host, true, true);
 
@@ -5874,12 +5902,14 @@ public class BattleButton : MonoBehaviour
 
     private void ResolvePauseMenuOverlay()
     {
+        if (headlessExecution) return;
         GameObject host = battleManager != null ? battleManager.gameObject : gameObject;
         battlePauseMenuOverlay = BattleComponentResolver.ResolveSceneOrHost(battlePauseMenuOverlay, host, true, true);
     }
 
     private void InitializeTutorialBattleForEncounter()
     {
+        if (headlessExecution) return;
         BattleEncounterData encounter = BattleEncounterRuntime.ActiveEncounter;
         if (encounter == null)
             encounter = BattleEncounterRuntime.CurrentEncounter;
@@ -6111,6 +6141,7 @@ public class BattleButton : MonoBehaviour
 
     private void BattleLog(string message)
     {
+        HeadlessLog?.Invoke(currentRound, message);
         Debug.Log($"\u005bBattleButton\u005d\u005b\u7b2c {currentRound} \u56de\u5408\u005d {message}");
     }
 
@@ -6165,7 +6196,7 @@ public class BattleButton : MonoBehaviour
 
         if (battleManager != null)
             battleManager.EndBattle();
-        GameMusicPlayer.FadeOutAndStop();
+        if (!headlessExecution) GameMusicPlayer.FadeOutAndStop();
 
         SpeedButton.CombatLocked = true;
         currentPhase = BattlePhase.Ready;
@@ -6182,6 +6213,8 @@ public class BattleButton : MonoBehaviour
                 dropResults.relicChoice));
         }
 
+        headlessCompleted = headlessExecution;
+        headlessOutcome = "retreat";
         BattleLog($"{retreatingEnemy.GetDebugDisplayName()} 在回合开始时脱离战斗，结算已改用特殊掉落表。");
     }
 
@@ -6251,7 +6284,7 @@ public class BattleButton : MonoBehaviour
         }
         if (battleManager != null)
             battleManager.EndBattle();
-        GameMusicPlayer.FadeOutAndStop();
+        if (!headlessExecution) GameMusicPlayer.FadeOutAndStop();
 
         SpeedButton.CombatLocked = true;
         currentPhase = BattlePhase.Ready;
@@ -6269,6 +6302,8 @@ public class BattleButton : MonoBehaviour
                 dropResults.relicChoice));
         }
 
+        headlessCompleted = headlessExecution;
+        headlessOutcome = forceReturnToMapAfterDefeat ? "defeat_prevented" : (victory ? "victory" : "defeat");
         BattleLog(victory
             ? $"Battle finished. Victory, EXP +{expReward}, Money +{moneyReward}."
             : "Battle finished. Defeat.");

@@ -6,6 +6,14 @@ using UnityEngine.Rendering;
 [RequireComponent(typeof(LineRenderer))]
 public class SpeedButton : MonoBehaviour
 {
+    [SerializeField, HideInInspector] private bool headlessExecution;
+    public void ConfigureHeadlessExecution()
+    {
+        headlessExecution = true;
+        lineRenderer = GetComponent<LineRenderer>();
+        if (lineRenderer != null) lineRenderer.enabled = false;
+    }
+
     private const int OverlayCurveRenderQueue = 5000;
     private const float TutorialHighlightPaddingPixels = 16f;
 
@@ -488,6 +496,11 @@ public class SpeedButton : MonoBehaviour
 
     private void EnsureRuntimeReferences()
     {
+        if (headlessExecution)
+        {
+            if (lineRenderer == null) lineRenderer = GetComponent<LineRenderer>();
+            return;
+        }
         if (polygonCollider2D == null)
             polygonCollider2D = GetComponent<PolygonCollider2D>();
 
@@ -551,6 +564,16 @@ public class SpeedButton : MonoBehaviour
     /// <summary>
     /// 友方连线落点判定：根据速度关系决定连线颜色并处理敌方连线
     /// </summary>
+    // Pointer input and agent commands share these contest rules.
+    public bool TryAssignTarget(SpeedButton target)
+    {
+        if (buttonType != ButtonType.Ally || target == null || target.buttonType != ButtonType.Enemy
+            || !IsInteractable || CombatLocked || InputSuppressed) return false;
+        EnsureRuntimeReferences();
+        ResolveAllyConnection(target);
+        return ConnectedTarget == target;
+    }
+
     private void ResolveAllyConnection(SpeedButton enemy)
     {
         // 先断开当前连线（若先前有黄色连线，此处会恢复被吸收的敌方连线）
@@ -675,7 +698,7 @@ public class SpeedButton : MonoBehaviour
 
         // 关闭拖拽状态
         isDragging = false;
-        lineRenderer.enabled = true; // 保持显示连接后的曲线
+        lineRenderer.enabled = !headlessExecution; // 保持显示连接后的曲线
 
         // 重置按钮状态
         if (unpressedButton != null) unpressedButton.SetActive(true);
@@ -724,6 +747,7 @@ public class SpeedButton : MonoBehaviour
     /// </summary>
     private void DrawConnectedCurve(Color arrowColor)
     {
+        if (headlessExecution) return;
         if (connectedButton == null) return;
 
         Vector3 startPos = transform.position;
@@ -997,6 +1021,7 @@ public class SpeedButton : MonoBehaviour
 
     private void CreateHoverOutlineRenderer()
     {
+        if (headlessExecution) return;
         GameObject outlineObj = new GameObject("HoverOutline");
         outlineObj.transform.SetParent(transform, false);
         outlineObj.transform.localPosition = Vector3.zero;
@@ -1022,6 +1047,7 @@ public class SpeedButton : MonoBehaviour
 
     private void UpdateHoverOutlineStyle()
     {
+        if (headlessExecution) return;
         hoverOutlineRenderer.startWidth = hoverOutlineThickness;
         hoverOutlineRenderer.endWidth = hoverOutlineThickness;
         hoverOutlineRenderer.startColor = hoverOutlineColor;
@@ -1030,12 +1056,14 @@ public class SpeedButton : MonoBehaviour
 
     private void UpdateHoverOutlineVisibility()
     {
+        if (headlessExecution) return;
         if (hoverOutlineRenderer == null) return;
         hoverOutlineRenderer.enabled = isHovering && !isDragging;
     }
 
     private void UpdateHoverOutlineGeometry()
     {
+        if (headlessExecution) return;
         if (hoverOutlineRenderer == null) return;
         if (TryUpdateOutlineFromPolygonCollider()) return;
 
@@ -1234,6 +1262,7 @@ public class SpeedButton : MonoBehaviour
 
     private void CreateArrowObject()
     {
+        if (headlessExecution) return;
         arrowObj = new GameObject("CurveArrow");
         // 继承与 SpeedButton 相同的层，确保相机剔除遮罩一致
         arrowObj.layer = gameObject.layer;
@@ -1447,6 +1476,7 @@ public class SpeedButton : MonoBehaviour
 
     private void EnsureSpeedTextObject()
     {
+        if (headlessExecution) return;
         if (speedText != null)
             return;
 

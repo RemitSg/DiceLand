@@ -801,6 +801,12 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         return string.Join("\n", lines);
     }
 
+    // Reuses the in-game effect formatter without constructing any UI.
+    public string DescribeSkillRules(EnemySkill_SO skill, bool attackerIsAlly)
+    {
+        return BuildSkillDetail(skill, skill != null ? skill.skillName : "", attackerIsAlly);
+    }
+
     private string BuildSkillDetail(EnemySkill_SO skill, string header, bool attackerIsAlly, Func<int, EnemySkill_SO.DicePowerRange> rangeResolver = null, BattleAllyController allyContext = null)
     {
         if (skill == null)

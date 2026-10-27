@@ -1,0 +1,512 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "DiceLand Agent Battle API",
+    "version": "1.0.0",
+    "description": "Editor-backed, single-session, graphics-free access to the existing game battle rules. See README for per-operation required fields, replay guarantees and unsupported acquisition/map features."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8091"
+    }
+  ],
+  "paths": {
+    "/v1/command": {
+      "post": {
+        "operationId": "battleCommand",
+        "summary": "Inspect content or drive a battle decision",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentBattleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command succeeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentBattleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request; illegal actions are rejected before mutation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentBattleResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Execution error; observe or close the faulted session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentBattleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgentBattleRequest": {
+        "type": "object",
+        "properties": {
+          "op": {
+            "type": "string",
+            "enum": [
+              "health",
+              "catalog",
+              "create",
+              "observe",
+              "set_skill",
+              "target",
+              "commit",
+              "replay",
+              "close"
+            ]
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "Required unique ID for set_skill, target and commit; retries must preserve every parameter."
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Required for set_skill, target and commit; must match the latest state revision."
+          },
+          "seed": {
+            "type": "integer",
+            "format": "int32",
+            "default": 1
+          },
+          "maxRounds": {
+            "type": "integer",
+            "format": "int32",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "party": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattlePartyMember"
+            },
+            "minItems": 1,
+            "maxItems": 4
+          },
+          "enemies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "maxItems": 8
+          },
+          "relics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 32
+          },
+          "actorId": {
+            "type": "string"
+          },
+          "buttonIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skillIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "targetButtonIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": [
+          "op"
+        ]
+      },
+      "AgentBattlePartyMember": {
+        "type": "object",
+        "properties": {
+          "character": {
+            "type": "string"
+          },
+          "weapon": {
+            "type": "string"
+          }
+        }
+      },
+      "AgentBattleResponse": {
+        "type": "object",
+        "properties": {
+          "apiVersion": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/AgentBattleObservation"
+          },
+          "catalogue": {
+            "$ref": "#/components/schemas/AgentBattleCatalogue"
+          },
+          "replay": {
+            "$ref": "#/components/schemas/AgentBattleReplay"
+          }
+        }
+      },
+      "AgentBattleObservation": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "seed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "round": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "phase": {
+            "type": "string",
+            "enum": [
+              "targeting",
+              "terminal",
+              "faulted"
+            ]
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "energy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "temporaryEnergy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reservedEnergy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleActor"
+            }
+          },
+          "relics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleAsset"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleEvent"
+            }
+          },
+          "legalActions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleLegalAction"
+            }
+          }
+        }
+      },
+      "AgentBattleActor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "side": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "hp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxHp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dead": {
+            "type": "boolean"
+          },
+          "statuses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleStatus"
+            }
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleSkill"
+            }
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleSlot"
+            }
+          }
+        }
+      },
+      "AgentBattleStatus": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "stacks": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AgentBattleSkill": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "energyCost": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dice": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleDie"
+            }
+          }
+        }
+      },
+      "AgentBattleDie": {
+        "type": "object",
+        "properties": {
+          "min": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "max": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "category": {
+            "type": "string"
+          }
+        }
+      },
+      "AgentBattleSlot": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "speed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skillIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "selectedSkill": {
+            "$ref": "#/components/schemas/AgentBattleSkill"
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "targetButtonIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "contested": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AgentBattleLegalAction": {
+        "type": "object",
+        "properties": {
+          "op": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string"
+          },
+          "buttonIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skillIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "targetButtonIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AgentBattleEvent": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "round": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "AgentBattleCatalogue": {
+        "type": "object",
+        "properties": {
+          "characters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleAsset"
+            }
+          },
+          "weapons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleAsset"
+            }
+          },
+          "enemies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleAsset"
+            }
+          },
+          "relics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleAsset"
+            }
+          }
+        }
+      },
+      "AgentBattleAsset": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "limitation": {
+            "type": "string"
+          }
+        }
+      },
+      "AgentBattleReplay": {
+        "type": "object",
+        "properties": {
+          "engineVersion": {
+            "type": "string"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "create": {
+            "$ref": "#/components/schemas/AgentBattleRequest"
+          },
+          "commands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleRequest"
+            }
+          }
+        }
+      }
+    }
+  }
+}

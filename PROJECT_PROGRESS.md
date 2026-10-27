@@ -1499,3 +1499,16 @@
 - 回合结束与结算：扩展 `BattleCombatRoundEndDispatcher` 统一 round-end status 消耗过滤；扩展 `BattleSettlementPartyMemberFactory` 统一 party progression 构建，删除 `BattleButton` 中部分 legacy wrapper 和死代码。
 - 当前 `BattleButton.cs` 约 3773 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 仍约 123 个，未新增生产 cs 文件。
 - 验证：本阶段提交前执行 dotnet build、目标 EditMode、Unity 全量 EditMode/PlayMode 和 Console 检查，结果记录在本轮对话结论中。
+
+
+## 2026-10-27 - 共用正式规则的无界面 Agent 战斗接口（第一阶段）
+
+- 新增编辑器后端 `AgentBattleServer`、`AgentBattleSession` 和 JSON 协议，通过 localhost HTTP 创建单场战斗、读取局面与合法行动、切换技能、连接目标、提交回合、导出重放和关闭会话。
+- `BattleButton.Headless` 直接驱动既有回合准备与结算协程；仅跳过演出、HUD 和音频，命中回调仍执行。正式界面保留原入口，不复制伤害、状态或遗物规则。
+- `SpeedButton.TryAssignTarget` 复用正式的速度与拼点连线判定；技能说明复用游戏内文案生成器。专用沙盒场景不保存会话对象，创建后恢复原活动场景。
+- 接入既有战斗生成器的敌方召唤和临时友方召唤，共用无视觉组件工厂；支持固定种子、请求版本、幂等重试、回合与事件上限，以及异常后的终止状态。
+- 增加 Python 标准库客户端、OpenAPI 和 `docs/agent-battle/README.md`。当前仍依赖团结/Unity 编辑器，可用 batchmode/nographics 托管；并非独立 .NET 内核。暂不提供完整冒险、任意状态快照或并行会话，获得时遗物效果明确拒绝。
+- 验证：新增 EditMode 14/14 通过。全量当前 817 项为 794 通过、23 失败；临时使用本次修改前源代码对照，基线 803 项为 780 通过、23 失败，失败项完全一致。所有修改均已逐字节恢复。
+- HTTP 端到端完成木剑、燃烧、中毒、电流和召唤 5 组对战，并全部从开局重放一致；巨型史莱姆的分裂与断线傀儡召唤进入真实运行时流程。
+- PlayMode 12 项为 3 通过、9 失败，主要为演出超时及教程断言；原代码对照也出现同样的演出超时，但在 7/12 后取消，未取得完整基线。保留此限制，不将图形化回归报告为通过。
+- 详细验证结果保存在 `outputs/agent-battle/verification-summary.json`。未保存或覆盖当前用户场景；后续按领域模块提取规则，正式界面和接口共同切换到提取后的实现。
