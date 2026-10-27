@@ -36,7 +36,19 @@ public static class BattleRelicChoiceSelectionService
     public static bool TryRefresh(BattleSettlementRelicChoiceData choice, System.Random random)
     {
         if (!CanRefresh(choice)) return false;
-        List<Relic_SO> relics = choice.sourceTable.DrawRandomRelicChoices(random, Mathf.Max(1, choice.choiceCount), RefreshExclusions(choice));
+        List<Relic_SO> relics;
+        if (choice.refreshPool != null)
+        {
+            List<Relic_SO> remaining = RefreshPoolCandidates(choice);
+            relics = new List<Relic_SO>();
+            System.Random rng = random ?? new System.Random();
+            while (relics.Count < Mathf.Max(1, choice.choiceCount) && remaining.Count > 0)
+            {
+                int index = rng.Next(remaining.Count);
+                relics.Add(remaining[index]); remaining.RemoveAt(index);
+            }
+        }
+        else relics = choice.sourceTable.DrawRandomRelicChoices(random, Mathf.Max(1, choice.choiceCount), RefreshExclusions(choice));
         BattleSettlementRelicChoiceData refreshed = BattleSettlementRelicChoiceBuilder.Build(relics);
         if (refreshed == null || !refreshed.HasChoices) return false;
         choice.refreshesRemaining--;
@@ -47,10 +59,21 @@ public static class BattleRelicChoiceSelectionService
 
     public static bool CanRefresh(BattleSettlementRelicChoiceData choice)
     {
-        if (choice == null || choice.rewardApplied || choice.refreshesRemaining <= 0 || choice.sourceTable?.Relics == null) return false;
+        if (choice == null || choice.rewardApplied || choice.refreshesRemaining <= 0) return false;
+        if (choice.refreshPool != null) return RefreshPoolCandidates(choice).Count > 0;
+        if (choice.sourceTable?.Relics == null) return false;
         HashSet<Relic_SO> excluded = RefreshExclusions(choice);
         foreach (Relic_SO relic in choice.sourceTable.Relics)
             if (relic != null && !excluded.Contains(relic)) return true;
         return false;
+    }
+
+    private static List<Relic_SO> RefreshPoolCandidates(BattleSettlementRelicChoiceData choice)
+    {
+        var excluded = RefreshExclusions(choice);
+        var candidates = new List<Relic_SO>();
+        foreach (Relic_SO relic in choice.refreshPool)
+            if (relic != null && !excluded.Contains(relic) && !candidates.Contains(relic)) candidates.Add(relic);
+        return candidates;
     }
 }

@@ -1560,3 +1560,8 @@
 ## Agent adventure B005a - 2026-10-27
 
 Shared UI/agent event selection costs, effects and completion; frozen discard previews; result acknowledgment, weighted follow-ups and actual event encounters with deferred victory rewards. 12 new tests; related EditMode 100/100 passed (job f64daf9b12d3472291a51cf4b294c578). Normal HTTP seed 1234 verified all three Broken Bridge options and repeated repair yielding 31 gold. Known nested save-catalog failure remains recorded. Treasure, special dungeons, final settlement and full save/replay remain incomplete. See docs/agent-battle/B005a-validation.json.
+
+
+## Agent adventure B005b - 2026-10-27
+
+Shared treasure tile reward flow; money/blueprint/relic bags, one-time selection, result acknowledgment and deferred calamities. Shared bag refresh pool and formal UI refresh control; fixed EditMode card cleanup. 14 new tests; related EditMode 112/112 passed in an isolated -batchmode -nographics host with matching source hashes. Normal HTTP seed 32 verified 39 gold, a blueprint, and a chosen relic from treasure (8,3). Original editor remained in domain reload; no restart/save of user scenes. Dungeon traversal, final settlement/meta and full save/replay remain pending. See docs/agent-battle/B005b-validation.json.

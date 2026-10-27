@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "DiceLand Agent Adventure API (B005a)",
-    "version": "0.5.0",
-    "description": "Shared-rule normal adventure including map, calamities, battles, merchant, forge, rest, recruits, equipment, staged reforge and event options/results/follow-ups/encounters. Treasure/subdungeons, final settlement and full save/replay remain upcoming batches."
+    "title": "DiceLand Agent Adventure API (B005b)",
+    "version": "0.6.0",
+    "description": "Shared-rule normal adventure with map, battles, calamities, economy, rest, reforge, events, treasure rewards and relic bag choices/refresh. Special dungeon traversal, final settlement and full save/replay remain upcoming batches."
   },
   "servers": [
     {
@@ -92,9 +92,13 @@
               "run_reforge_cancel",
               "run_reforge_finish",
               "run_choose_event",
-              "run_continue_event"
+              "run_continue_event",
+              "run_choose_treasure",
+              "run_choose_treasure_relic",
+              "run_refresh_treasure_relics",
+              "run_continue_treasure"
             ],
-            "description": "Choose from legalActions. Event choices use choiceIndex; run_continue_event acknowledges the result and enters a follow-up, battle, map or pending dungeon."
+            "description": "Copy an item from legalActions. Event/treasure choices use choiceIndex. Continue actions acknowledge the result before leaving the location."
           },
           "battleAction": {
             "$ref": "./openapi.json#/components/schemas/AgentBattleLegalAction"
@@ -172,9 +176,13 @@
               "run_reforge_cancel",
               "run_reforge_finish",
               "run_choose_event",
-              "run_continue_event"
+              "run_continue_event",
+              "run_choose_treasure",
+              "run_choose_treasure_relic",
+              "run_refresh_treasure_relics",
+              "run_continue_treasure"
             ],
-            "description": "Choose from legalActions. Event choices use choiceIndex; run_continue_event acknowledges the result and enters a follow-up, battle, map or pending dungeon."
+            "description": "Copy an item from legalActions. Event/treasure choices use choiceIndex. Continue actions acknowledge the result before leaving the location."
           },
           "battleAction": {
             "$ref": "./openapi.json#/components/schemas/AgentBattleLegalAction"
@@ -361,6 +369,9 @@
           },
           "mapEvent": {
             "$ref": "#/components/schemas/AgentAdventureEvent"
+          },
+          "treasure": {
+            "$ref": "#/components/schemas/AgentAdventureTreasure"
           }
         }
       },
@@ -729,6 +740,99 @@
           },
           "selectable": {
             "type": "boolean"
+          }
+        }
+      },
+      "AgentAdventureTreasure": {
+        "type": "object",
+        "properties": {
+          "selectedOptionIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "refreshesRemaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "canRefresh": {
+            "type": "boolean"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureTreasureOption"
+            }
+          },
+          "relicChoices": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "result": {
+            "$ref": "#/components/schemas/AgentAdventureTreasureResult"
+          }
+        },
+        "description": "Present in treasure, treasure_relic and treasure_result. A relic bag is not granted until one of its revealed relics is chosen; continue is available only after the reward is applied. Options are frozen at entry; reading them never grants or rolls rewards."
+      },
+      "AgentAdventureTreasureOption": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "Money",
+              "Blueprint",
+              "Relic",
+              "RelicBag"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "unavailableReason": {
+            "type": "string"
+          },
+          "blueprint": {
+            "type": "string"
+          },
+          "relic": {
+            "type": "string"
+          },
+          "rarity": {
+            "type": "string"
+          },
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "money": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "selectable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AgentAdventureTreasureResult": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "money": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blueprint": {
+            "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+          },
+          "relic": {
+            "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
           }
         }
       }

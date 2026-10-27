@@ -166,6 +166,29 @@ public class MapTreasureOverlayVisualTests
         return go.AddComponent<MapTreasureOverlay>();
     }
 
+    [Test]
+    public void RelicRefreshButtonUsesTheSharedPoolClearsSelectionAndRespectsTheLimit()
+    {
+        MapTreasureOverlay overlay = CreateOverlay();
+        Relic_SO[] pool = { CreateRelic("A", LootRarity.Common), CreateRelic("B", LootRarity.Common),
+            CreateRelic("C", LootRarity.Common), CreateRelic("D", LootRarity.Common) };
+        Assert.IsTrue(BattleEliteRelicChoiceBuilderService.TryBuildFromRelicsWithRarity(out var choice,
+            pool, LootRarity.Common, new System.Random(77), null, 2));
+        choice.refreshesRemaining = 1;
+        overlay.ShowRelicChoice(choice, (BattleSettlementRelicChoiceData data, out string message) => { message = "chosen"; return true; });
+        Button refresh = FindChild(overlay.transform, "RefreshRelicChoiceButton").GetComponent<Button>();
+        Button confirm = FindChild(overlay.transform, "ConfirmRelicChoiceButton").GetComponent<Button>();
+        Assert.IsTrue(refresh.gameObject.activeSelf); Assert.IsTrue(refresh.interactable);
+        Assert.Less(confirm.GetComponent<RectTransform>().anchoredPosition.x, refresh.GetComponent<RectTransform>().anchoredPosition.x);
+        Relic_SO first = choice.choices[0].relicData, second = choice.choices[1].relicData;
+        FindChild(overlay.transform, "TreasureRelicChoice_0").GetComponent<Button>().onClick.Invoke();
+        Assert.NotNull(choice.selectedChoice);
+        refresh.onClick.Invoke();
+        Assert.IsNull(choice.selectedChoice); Assert.AreEqual(0, choice.refreshesRemaining);
+        Assert.IsFalse(refresh.gameObject.activeSelf); Assert.AreEqual(0f, confirm.GetComponent<RectTransform>().anchoredPosition.x);
+        foreach (var entry in choice.choices) { Assert.AreNotSame(first, entry.relicData); Assert.AreNotSame(second, entry.relicData); }
+    }
+
     private BoardTileData CreateTreasureTile()
     {
         return new BoardTileData

@@ -37,6 +37,27 @@ using System;
     public AgentAdventureReforge reforge;
     public AgentBattleRewardItem lastReforgeResult;
     public AgentAdventureEvent mapEvent;
+    public AgentAdventureTreasure treasure;
+}
+[Serializable] public sealed class AgentAdventureTreasure
+{
+    public int selectedOptionIndex, refreshesRemaining;
+    public bool canRefresh;
+    public AgentAdventureTreasureOption[] options;
+    public AgentBattleRewardItem[] relicChoices;
+    public AgentAdventureTreasureResult result;
+}
+[Serializable] public sealed class AgentAdventureTreasureOption
+{
+    public int index, money;
+    public string kind, title, description, unavailableReason, blueprint, relic, rarity;
+    public bool selectable;
+}
+[Serializable] public sealed class AgentAdventureTreasureResult
+{
+    public string message;
+    public int money;
+    public AgentBattleRewardItem blueprint, relic;
 }
 [Serializable] public sealed class AgentAdventureEvent
 {

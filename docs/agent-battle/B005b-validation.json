@@ -1,0 +1,198 @@
+{
+  "batch": "B005b",
+  "date": "2026-10-27",
+  "engine": "2022.3.62t6 (Tuanjie 1.8.4)",
+  "related": {
+    "total": 112,
+    "passed": 112,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 7.1401267,
+    "resultState": "Passed"
+  },
+  "newTests": 14,
+  "execution": {
+    "mode": "EditMode CLI, -batchmode -nographics",
+    "testProcessId": 37564,
+    "testResult": "outputs/agent-battle/b005b-headless-tests-final.xml",
+    "testLog": "outputs/agent-battle/b005b-headless-tests-final.log",
+    "httpProcessId": 58008,
+    "httpEndpoint": "http://127.0.0.1:8092/v1/command",
+    "httpLog": "outputs/agent-battle/b005b-headless-http.log",
+    "graphicsDriver": "NullGfxDevice; no game window",
+    "isolation": "Copied Assets, Packages, ProjectSettings and import cache to outputs/agent-battle/b005b-validation-project; source/test hashes below match the main workspace. A validation-only helper starts the real AgentBattleServer.RunBatch and exits on a stop marker; it implements no gameplay."
+  },
+  "initialRun": {
+    "result": "109/112 passed; 3 failed",
+    "testResult": "outputs/agent-battle/b005b-headless-tests.xml",
+    "failures": [
+      "MapTreasureOverlayVisualTests.RelicRefreshButtonUsesTheSharedPoolClearsSelectionAndRespectsTheLimit",
+      "MapTreasureOverlayVisualTests.Show_OpensRelicChoiceCardsAndConfirmsSelectedRelic",
+      "MapTreasureOverlayVisualTests.Show_UsesRelicBagIconForChoiceRarity"
+    ],
+    "repair": "Clear generated cards immediately in EditMode and retain normal delayed destruction in PlayMode. The two existing failures were already recorded in the old baseline and B002; all three pass after the repair."
+  },
+  "http": [
+    {
+      "seed": 32,
+      "difficulty": "Medium",
+      "kind": "Money",
+      "location": [
+        8,
+        3
+      ],
+      "result": {
+        "message": "获得 39 金钱。",
+        "money": 39,
+        "blueprint": {
+          "id": "",
+          "name": "",
+          "description": "",
+          "amount": 0,
+          "index": 0
+        },
+        "relic": {
+          "id": "",
+          "name": "",
+          "description": "",
+          "amount": 0,
+          "index": 0
+        }
+      },
+      "selected": null,
+      "actions": 7,
+      "phase": "map",
+      "resolved": true
+    },
+    {
+      "seed": 32,
+      "difficulty": "Medium",
+      "kind": "Blueprint",
+      "location": [
+        8,
+        3
+      ],
+      "result": {
+        "message": "获得图纸：蚀毒之卷。",
+        "money": 0,
+        "blueprint": {
+          "id": "f3b07049a74cf51409a7e4127e06d57f",
+          "name": "蚀毒之卷",
+          "description": "",
+          "amount": 1,
+          "index": 0
+        },
+        "relic": {
+          "id": "",
+          "name": "",
+          "description": "",
+          "amount": 0,
+          "index": 0
+        }
+      },
+      "selected": null,
+      "actions": 7,
+      "phase": "map",
+      "resolved": true
+    },
+    {
+      "seed": 32,
+      "difficulty": "Medium",
+      "kind": "RelicBag",
+      "location": [
+        8,
+        3
+      ],
+      "result": {
+        "message": "获得遗物：焦火绒。",
+        "money": 0,
+        "blueprint": {
+          "id": "",
+          "name": "",
+          "description": "",
+          "amount": 0,
+          "index": 0
+        },
+        "relic": {
+          "id": "0f7ab2f47cbc41d4b96980e7933b4a7c",
+          "name": "焦火绒",
+          "description": "",
+          "amount": 1,
+          "index": 0
+        }
+      },
+      "selected": {
+        "id": "0f7ab2f47cbc41d4b96980e7933b4a7c",
+        "name": "焦火绒",
+        "description": "回合开始时，若敌方目标存在燃烧状态，则有 50% 概率对其额外施加 1 层燃烧。",
+        "amount": 1,
+        "index": 0
+      },
+      "actions": 8,
+      "phase": "map",
+      "resolved": true
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.Treasure.cs",
+      "sha256": "4d5950e204838e6326085b4ae11411a64d547a1c270dff4d57c2ce7b6f77f156"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.Treasure.cs.meta",
+      "sha256": "8b81666ba881555646d3dec5c636804422a4578002a9865a47f976894160b85d"
+    },
+    {
+      "path": "Assets/Tests/EditMode/Editor/AgentAdventureTreasureTests.cs",
+      "sha256": "7d50bdf50d1cacb654395c16594ba18bc16034c749f215c436457f6ca32329c9"
+    },
+    {
+      "path": "Assets/Tests/EditMode/Editor/AgentAdventureTreasureTests.cs.meta",
+      "sha256": "463a7541ea00fbd7fe574c72484fd0cc3e50869eee9e89756df9628d0b71fba5"
+    },
+    {
+      "path": "Assets/Scripts/Shared/TreasureRewardService.cs",
+      "sha256": "ffb43caaa25d59436951f18141172796443b091ba76ddcb41ddbe76d643fbf91"
+    },
+    {
+      "path": "Assets/Scripts/Shared/BattleRelicChoiceSelectionService.cs",
+      "sha256": "070c7a1b4ca1c81933fe534744eeb3d2888c29679bf79e98ca07bea6d893ab4e"
+    },
+    {
+      "path": "Assets/Scripts/Shared/BattleEliteRelicChoiceBuilderService.cs",
+      "sha256": "25a8f2a93217a1eb57fee371db01f786553f5570ab0fd07946343e64fe10d3b3"
+    },
+    {
+      "path": "Assets/Scripts/BattleScene/Controller/BattleSettlementOverlay.cs",
+      "sha256": "c7728343834e1b714bdae8471474e301158de118dafcddf707eaa0812446e8bb"
+    },
+    {
+      "path": "Assets/Scripts/MapScene/Controller/MapTreasureOverlay.cs",
+      "sha256": "7889c21dd6d93867127e7bcf79cd115129ea9c1c8064232d35b1822647852a88"
+    },
+    {
+      "path": "Assets/Scripts/MapScene/Manager/RunGameManager.cs",
+      "sha256": "19435d8da2d7288d557e15f144b0f7eb0d58752ef5c394bfe3b1fb0bbe30c371"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureProtocol.cs",
+      "sha256": "4a798759efd2b8243182b01c50ff0b44a4d595e27ddbb874517681ee3f04f3bf"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.cs",
+      "sha256": "5b467da0daa9416cf972804d5ea0e4ab344afb4a050b37aa6f24a869d2d8e3ec"
+    },
+    {
+      "path": "Assets/Tests/EditMode/Editor/MapTreasureOverlayVisualTests.cs",
+      "sha256": "d9303fbf86c38f8b11fbdaa73962f41573578989e5413fac98c49165c2093c0a"
+    }
+  ],
+  "notes": [
+    "Normal seed 32: safe map moves to rest (restore AP), then treasure (8,3). Money, blueprint and relic bag each run from a fresh real normal adventure. No tile, resource or asset injection. Trace: outputs/agent-battle/b005b-normal-treasure-trace.json.",
+    "Shared TreasureRewardService owns tile choice building, ability table override, eligibility, reward grants, refresh bonuses and completion. API and formal map UI both delegate to it. A bag must be opened, then one revealed relic selected before continuation.",
+    "Bag refresh retains the selected rarity bucket and owned exclusions. UI and agent share BattleRelicChoiceSelectionService; current candidates are excluded, selection is cleared and a successful refresh consumes one use. Empty pools consume no use. Original table-based battle refresh continues through the same service.",
+    "Directed tests inject locations, tables, ability bonuses and inventory for retry/invalid/stale requests, once-only acquired effects, owned exclusions, empty pools, snapshot/RNG isolation, deferred calamities, ability table overrides and special dungeon reward shapes. These tests do not prove dungeon traversal.",
+    "The original user editor remained in domain reload; window activation failed with activate_window timeout. Its process/scenes were not restarted or saved. Validation succeeded through the isolated host instead; its HTTP process received a graceful stop marker after all runs closed.",
+    "Special dungeon traversal, final settlement/meta, full save/replay and full-run external-agent completion are still pending. Only the targeted suite is reported green; no new full-suite/PlayMode completion claim."
+  ]
+}

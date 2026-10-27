@@ -154,6 +154,10 @@ B003b 在相同 HTTP 地址提供以下命令，协议见 `adventure-openapi.jso
 | `run_reforge_finish` | 首次成功后结束重铸，消耗营地并返回地图；达到次数上限时自动执行 |
 | `run_choose_event` | 按合法 `choiceIndex` 支付事件费用并执行正式效果，进入结果步骤 |
 | `run_continue_event` | 确认事件结果，进入后续事件/战斗或返回地图；副本入口暂为 `dungeon_pending` |
+| `run_choose_treasure` | 按合法 `choiceIndex` 选择金币、图纸或遗物袋；副本宝藏也支持直接遗物 |
+| `run_choose_treasure_relic` | 从已打开的袋中选择一个遗物，调用正式获得效果并完成宝藏 |
+| `run_refresh_treasure_relics` | 有剩余次数和候选时刷新遗物袋；排除已持有与当前选项，保留实际品质 |
+| `run_continue_treasure` | 确认已获得的宝藏结果，再返回地图并处理延后的灾厄 |
 | `run_close` | 任意阶段销毁临时冒险；目前不代表放弃结算、不发放局外奖励 |
 
 所有修改动作都需要外层冒险的 `sessionId`、最新 `revision` 和唯一 `requestId`。原样复制一个 `state.legalActions` 项，再添加这三个字段即可；嵌套战斗的版本和 ID 由适配层处理。重复、非法和过期请求不重复扣费。一场冒险和一场单独战斗不能同时创建。
@@ -168,7 +172,9 @@ B003b 在相同 HTTP 地址提供以下命令，协议见 `adventure-openapi.jso
 
 事件阶段的 `mapEvent` 提供正文、选项说明、实际金币费用、丢弃预览和不可选原因。`run_choose_event` 与正式界面共用 `MapEventOptionService` 扣费、效果、自定义调用和完成统计；选择后进入 `event_result`，通过 `run_continue_event` 展示后续事件或开始实际遭遇。不会在观察时执行或预知加权结果。丢弃预览只在选项显示时生成，观察不推进随机数。事件战斗保留延后到胜利才给出的奖励，战斗奖励观察包含其战利品、遗物、图纸和武器，返回时才回写冒险；失败不发放。随机遗物改为使用作用域随机源生成抽取种子，去除了该事件路径的墙钟随机。自定义处理器当前资产引用为零；未来有依赖正式界面的处理器时会明确标记不可选，需提供适配。
 
-**当前仍未完成整局闭环。** 宝藏和特殊副本入口仍停在待实现阶段，暂时需要 `run_close`。Boss 胜利或普通失败进入 `victory_pending_settlement` / `defeat_pending_settlement`，最终结算待 B006。地图原内容的 Inner/Core 敌群池为空，`configurationIssues` 列出相应格子；缺敌群的格子不会被假结算为胜利。演示客户端会处理已支持的事件、商店、锻造、营地和新装备，增加 `--reforge` 可优先尝试重铸；仍只记录行动 trace，尚不提供完整冒险保存或重放保证。
+宝藏阶段的 `treasure.options` 显示已确定的金币数额、图纸和遗物袋品质，不提前展示袋内选项。选择袋后进入 `treasure_relic`，显示候选遗物与刷新次数；必须先选择一个遗物才能进入 `treasure_result` 并继续。正式界面与接口共同调用 `TreasureRewardService.BuildTileChoices/ApplyTileChoice/ApplyTileRelicChoice`，发奖、次数加成和完成标记在同一实现中。刷新使用 `BattleRelicChoiceSelectionService`，本批同时补上宝藏界面的刷新按钮和遗物袋候选池；普通战斗的原有表格刷新规则保持一致。没有可刷新候选时不消耗次数。重复请求不会再次发奖，已完成宝藏不能重领。
+
+**当前仍未完成整局闭环。** 特殊副本入口仍停在待实现阶段，暂时需要 `run_close`。Boss 胜利或普通失败进入 `victory_pending_settlement` / `defeat_pending_settlement`，最终结算待 B006。地图原内容的 Inner/Core 敌群池为空，`configurationIssues` 列出相应格子；缺敌群的格子不会被假结算为胜利。演示客户端会处理已支持的宝藏、事件、商店、锻造、营地和新装备，增加 `--reforge` 可优先尝试重铸；仍只记录行动 trace，尚不提供完整冒险保存或重放保证。
 
 B003b 定向测试 60/60 通过。真实 HTTP 路线从正常地图进入战斗、胜利升级、携带 HP/金币返回，随后在已探索格移动耗尽行动点并完成一次实际灾厄选择，进入第 2 周期；未修改这条路线的资产或状态。详见 `B003b-validation.json`。原有全量回归失败记录继续保留。
 
@@ -179,6 +185,8 @@ B004b1 相关测试 68/68 通过，覆盖营地一次性消耗、灾厄回血比
 B004b2 相关测试 90/90 通过，包含 13 项新增重铸测试及正式界面的候选筛选回归。正常难度种子 46 的 HTTP 路线通过战斗获得两份史莱姆粘液、购买一份铁矿，在实际营地完成两次重铸，最终获得一份秽蚀尖牙并自动消耗营地返回第 2 周期地图。此路线仅使用公开命令和原配置；遗物升阶、礼包获得效果、额外次数、非法材料和快照隔离采用定向测试。详见 `B004b2-validation.json`，原有全量/PlayMode 失败记录继续保留。
 
 B005a 相关测试 100/100 通过，包含 12 项新增事件测试。正常难度种子 1234 通过 HTTP 实际进入“断桥”，分别验证三个选项：快速通过 HP 16→15、AP 4→6；绕路 AP 4→3；修桥 AP 4→2 并获得 31 金币，再次从相同种子执行结果一致。均确认结果后返回地图且事件消耗。首次事件专项 40 项中 39 项通过，另有既有 `MapEventNestedFlowTests.SaveAssetCatalog_IncludesNestedFollowUpEvents` 失败，已在原基线与 B002 记录；不把它报告为通过。详见 `B005a-validation.json`。
+
+B005b 在隔离的 Tuanjie `-batchmode -nographics` 工程中运行，112/112 相关 EditMode 测试通过，包含 14 项新增测试。正式宝藏界面同时修复了 EditMode 重建卡片时延迟销毁导致的两项既有失败。正常种子 32 的三条 HTTP 路线经实际营地恢复 AP 后到达 `(8,3)` 宝藏：分别获得 39 金币、图纸“蚀毒之卷”、从袋中选择遗物“焦火绒”，均消费宝藏并返回地图。宿主日志确认 `NullGfxDevice`，未打开游戏窗口。原编辑器域重载停滞时采用隔离副本验证，核心源码与测试文件哈希一致；未对用户原场景执行保存或重启。详见 `B005b-validation.json`。这不是完整冒险通关证据。
 
 ## 后续迁移原则
 

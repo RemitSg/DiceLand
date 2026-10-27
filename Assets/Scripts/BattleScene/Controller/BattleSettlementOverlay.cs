@@ -47,6 +47,7 @@ public sealed class BattleSettlementRelicChoiceData
     public string title;
     public string requiredMessage;
     public RelicTable_SO sourceTable;
+    public List<Relic_SO> refreshPool;
     public int choiceCount = 3;
     public int refreshesRemaining;
     public List<BattleSettlementLootEntry> choices = new List<BattleSettlementLootEntry>();

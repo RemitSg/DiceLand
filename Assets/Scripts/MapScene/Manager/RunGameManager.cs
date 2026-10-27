@@ -1537,9 +1537,7 @@ public class RunGameManager : MonoBehaviour
         boardManager?.RefreshTile(tile.coord);
         mapHUD?.ShowTile(tile, GetMoveCost(tile), tile.coord == runState.playerGridPosition);
 
-        IReadOnlyList<TreasureRewardChoice> choices = IsSpecialDungeonTreasure(tile)
-            ? SpecialDungeonTreasureService.BuildChoices(tile)
-            : TreasureRewardService.BuildChoices(AbilityRunBonusRuntimeService.ResolveTreasureRewardTable(runState, treasureRewardTable), tile.encounterSeed);
+        IReadOnlyList<TreasureRewardChoice> choices = TreasureRewardService.BuildTileChoices(runState, treasureRewardTable, tile);
         mapTreasureOverlay.Show(tile, choices, HandleTreasureOptionSelected, HandleTreasureRelicChoiceConfirmed);
         RefreshHUD("\u53d1\u73b0\u5b9d\u85cf\uff0c\u8bf7\u9009\u62e9\u4e00\u4efd\u5956\u52b1\u3002");
         return true;
@@ -1547,34 +1545,11 @@ public class RunGameManager : MonoBehaviour
 
     private bool HandleTreasureOptionSelected(BoardTileData tile, TreasureRewardChoice choice, out TreasureRewardResult result)
     {
-        result = null;
-        if (tile == null || choice == null || runState == null)
-        {
-            result = new TreasureRewardResult
-            {
-                success = false,
-                message = "\u5b9d\u85cf\u5956\u52b1\u9886\u53d6\u5931\u8d25\u3002"
-            };
-            return false;
-        }
-
-        result = IsSpecialDungeonTreasure(tile)
-            ? SpecialDungeonTreasureService.ApplyChoice(
-                runState,
-                SpecialDungeonTreasureService.ResolveOption(tile, choice),
-                tile.encounterSeed)
-            : TreasureRewardService.ApplyChoice(runState, AbilityRunBonusRuntimeService.ResolveTreasureRewardTable(runState, treasureRewardTable), choice, tile.encounterSeed);
-        if (result == null || !result.success)
-            return false;
+        result = TreasureRewardService.ApplyTileChoice(runState, treasureRewardTable, tile, choice);
+        if (!result.success) return false;
         if (result.relicChoiceData != null && result.relicChoiceData.HasChoices)
-        {
-            AbilityRunBonusRuntimeService.ApplyRelicChoiceRefreshBonus(runState, result.relicChoiceData);
-            RefreshHUD(result.message);
-            return true;
-        }
+        { RefreshHUD(result.message); return true; }
 
-        tile.isVisited = true;
-        tile.isResolved = true;
         boardManager?.RefreshTile(tile.coord);
         mapHUD?.ShowTile(tile, GetMoveCost(tile), true);
         RefreshHUD(result.message);
@@ -1583,19 +1558,10 @@ public class RunGameManager : MonoBehaviour
 
     private bool HandleTreasureRelicChoiceConfirmed(BoardTileData tile, BattleSettlementRelicChoiceData relicChoiceData, out string message)
     {
-        if (tile == null || relicChoiceData == null || runState == null)
-        {
-            message = "\u9057\u7269\u9886\u53d6\u5931\u8d25\u3002";
-            return false;
-        }
+        TreasureRewardResult result = TreasureRewardService.ApplyTileRelicChoice(runState, tile, relicChoiceData);
+        message = result.message;
+        if (!result.success) return false;
 
-        TreasureRewardResult result = TreasureRewardService.ApplyRelicChoice(runState, relicChoiceData);
-        message = result != null ? result.message : "\u9057\u7269\u9886\u53d6\u5931\u8d25\u3002";
-        if (result == null || !result.success)
-            return false;
-
-        tile.isVisited = true;
-        tile.isResolved = true;
         boardManager?.RefreshTile(tile.coord);
         mapHUD?.ShowTile(tile, GetMoveCost(tile), true);
         RefreshHUD(message);
@@ -2351,14 +2317,6 @@ public class RunGameManager : MonoBehaviour
     private bool IsInSpecialDungeon()
     {
         return activeSpecialDungeonContext != null && activeSpecialDungeonContext.isActive;
-    }
-
-    private static bool IsSpecialDungeonTreasure(BoardTileData tile)
-    {
-        return tile != null &&
-            tile.sourceSpecialDungeon != null &&
-            tile.specialDungeonTreasureOptions != null &&
-            tile.specialDungeonTreasureOptions.Count > 0;
     }
 
     private MapRunSnapshot CaptureCurrentMapSnapshot(SpecialDungeonRuntimeContext specialDungeonContext)

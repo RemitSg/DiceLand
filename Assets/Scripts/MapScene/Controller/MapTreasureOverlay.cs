@@ -67,6 +67,7 @@ public class MapTreasureOverlay : MonoBehaviour
     private Button continueButton;
     private readonly List<GameObject> spawnedCards = new List<GameObject>();
     private Button confirmRelicChoiceButton;
+    private Button refreshRelicChoiceButton;
 
     private BoardTileData currentTile;
     private TreasureOptionSelectionHandler selectionHandler;
@@ -145,6 +146,7 @@ public class MapTreasureOverlay : MonoBehaviour
         cardRoot.gameObject.SetActive(true);
         resultText.gameObject.SetActive(false);
         continueButton.gameObject.SetActive(false);
+        if (refreshRelicChoiceButton != null) refreshRelicChoiceButton.gameObject.SetActive(false);
         if (confirmRelicChoiceButton != null)
             confirmRelicChoiceButton.gameObject.SetActive(false);
         titleText.text = "\u53d1\u73b0\u5b9d\u85cf";
@@ -251,16 +253,29 @@ public class MapTreasureOverlay : MonoBehaviour
         confirmRelicChoiceButton.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0f);
         confirmRelicChoiceButton.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0f);
         confirmRelicChoiceButton.gameObject.SetActive(false);
+        refreshRelicChoiceButton = BuildButton(panel, "RefreshRelicChoiceButton", new Vector2(100f, 48f), "刷新", RefreshRelicChoice);
+        RectTransform refreshRect = refreshRelicChoiceButton.GetComponent<RectTransform>();
+        refreshRect.anchorMin = refreshRect.anchorMax = refreshRect.pivot = new Vector2(0.5f, 0f);
+        refreshRelicChoiceButton.gameObject.SetActive(false);
 
         ApplyFonts();
         canvas.gameObject.SetActive(false);
     }
 
+    private void ClearCards()
+    {
+        foreach (GameObject card in spawnedCards)
+        {
+            if (card == null) continue;
+            if (Application.isPlaying) Destroy(card);
+            else DestroyImmediate(card);
+        }
+        spawnedCards.Clear();
+    }
+
     private void RebuildCards(IReadOnlyList<TreasureRewardChoice> choices)
     {
-        for (int i = 0; i < spawnedCards.Count; i++)
-            Destroy(spawnedCards[i]);
-        spawnedCards.Clear();
+        ClearCards();
 
         int count = choices != null ? choices.Count : 0;
         if (count <= 0)
@@ -338,6 +353,7 @@ public class MapTreasureOverlay : MonoBehaviour
         }
 
         isShowingResult = true;
+        if (refreshRelicChoiceButton != null) refreshRelicChoiceButton.gameObject.SetActive(false);
         cardRoot.gameObject.SetActive(false);
         resultText.gameObject.SetActive(true);
         continueButton.gameObject.SetActive(true);
@@ -359,14 +375,29 @@ public class MapTreasureOverlay : MonoBehaviour
         continueButton.gameObject.SetActive(false);
         confirmRelicChoiceButton.gameObject.SetActive(true);
         RebuildRelicChoiceCards(choiceData);
+        UpdateRelicRefreshButton();
         ApplyFonts();
+    }
+
+    private void RefreshRelicChoice()
+    {
+        if (!BattleRelicChoiceSelectionService.TryRefresh(activeRelicChoiceData,
+            new System.Random(UnityEngine.Random.Range(int.MinValue, int.MaxValue)))) return;
+        ShowRelicChoice(activeRelicChoiceData, "遗物选项已刷新，请重新选择。");
+    }
+
+    private void UpdateRelicRefreshButton()
+    {
+        bool visible = activeRelicChoiceData != null && activeRelicChoiceData.refreshesRemaining > 0 && !activeRelicChoiceData.rewardApplied;
+        refreshRelicChoiceButton.gameObject.SetActive(visible);
+        refreshRelicChoiceButton.interactable = BattleRelicChoiceSelectionService.CanRefresh(activeRelicChoiceData);
+        refreshRelicChoiceButton.GetComponentInChildren<TMP_Text>().text = "刷新 (" + (activeRelicChoiceData != null ? activeRelicChoiceData.refreshesRemaining : 0) + ")";
+        confirmRelicChoiceButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(visible ? -100f : 0f, 48f);
     }
 
     private void RebuildRelicChoiceCards(BattleSettlementRelicChoiceData choiceData)
     {
-        for (int i = 0; i < spawnedCards.Count; i++)
-            Destroy(spawnedCards[i]);
-        spawnedCards.Clear();
+        ClearCards();
 
         IReadOnlyList<BattleSettlementLootEntry> choices = choiceData != null ? choiceData.choices : null;
         int count = choices != null ? choices.Count : 0;
@@ -448,6 +479,7 @@ public class MapTreasureOverlay : MonoBehaviour
         }
 
         isShowingResult = true;
+        if (refreshRelicChoiceButton != null) refreshRelicChoiceButton.gameObject.SetActive(false);
         cardRoot.gameObject.SetActive(false);
         resultText.gameObject.SetActive(true);
         continueButton.gameObject.SetActive(true);

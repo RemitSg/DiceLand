@@ -51,6 +51,52 @@ public static class TreasureRewardService
         return choices;
     }
 
+    public static bool IsSpecialDungeonTreasure(BoardTileData tile) => tile != null && tile.sourceSpecialDungeon != null
+        && tile.specialDungeonTreasureOptions != null && tile.specialDungeonTreasureOptions.Count > 0;
+
+    public static IReadOnlyList<TreasureRewardChoice> BuildTileChoices(RunState state, TreasureRewardTable_SO table, BoardTileData tile)
+    {
+        if (state == null || tile == null || tile.tileType != MapTileType.Treasure || tile.isResolved)
+            return Array.Empty<TreasureRewardChoice>();
+        table = AbilityRunBonusRuntimeService.ResolveTreasureRewardTable(state, table);
+        bool special = IsSpecialDungeonTreasure(tile);
+        IReadOnlyList<TreasureRewardChoice> choices = special ? SpecialDungeonTreasureService.BuildChoices(tile) : BuildChoices(table, tile.encounterSeed);
+        foreach (TreasureRewardChoice choice in choices)
+        {
+            if (!choice.isAvailable || choice.rewardType != TreasureRewardType.Power || choice.relic != null) continue;
+            // Preview bag availability without granting anything or revealing the rolled contents.
+            BattleSettlementRelicChoiceData bag = special
+                ? SpecialDungeonTreasureService.ApplyChoice(state, SpecialDungeonTreasureService.ResolveOption(tile, choice), tile.encounterSeed).relicChoiceData
+                : BuildRelicChoiceData(state, table, choice.relicBagRarity, tile.encounterSeed);
+            if (bag == null || !bag.HasChoices)
+            { choice.isAvailable = false; choice.unavailableReason = "未找到可从遗物袋中获得的遗物。"; }
+        }
+        return choices;
+    }
+
+    public static TreasureRewardResult ApplyTileChoice(RunState state, TreasureRewardTable_SO table, BoardTileData tile, TreasureRewardChoice choice)
+    {
+        if (state == null || tile == null || tile.tileType != MapTileType.Treasure || tile.isResolved || choice == null || !choice.isAvailable)
+            return Fail("宝藏奖励不可领取。");
+        TreasureRewardResult result = IsSpecialDungeonTreasure(tile)
+            ? SpecialDungeonTreasureService.ApplyChoice(state, SpecialDungeonTreasureService.ResolveOption(tile, choice), tile.encounterSeed)
+            : ApplyChoice(state, AbilityRunBonusRuntimeService.ResolveTreasureRewardTable(state, table), choice, tile.encounterSeed);
+        if (!result.success) return result;
+        if (result.relicChoiceData != null && result.relicChoiceData.HasChoices)
+            AbilityRunBonusRuntimeService.ApplyRelicChoiceRefreshBonus(state, result.relicChoiceData);
+        else { tile.isVisited = true; tile.isResolved = true; }
+        return result;
+    }
+
+    public static TreasureRewardResult ApplyTileRelicChoice(RunState state, BoardTileData tile, BattleSettlementRelicChoiceData choice)
+    {
+        if (state == null || tile == null || tile.tileType != MapTileType.Treasure || tile.isResolved)
+            return Fail("遗物奖励不可领取。");
+        TreasureRewardResult result = ApplyRelicChoice(state, choice);
+        if (result.success) { tile.isVisited = true; tile.isResolved = true; }
+        return result;
+    }
+
     public static TreasureRewardResult ApplyChoice(
         RunState runState,
         TreasureRewardTable_SO rewardTable,
@@ -108,7 +154,7 @@ public static class TreasureRewardService
             return Fail("\u8be5\u9057\u7269\u5956\u52b1\u5df2\u7ecf\u9886\u53d6\u3002");
 
         BattleSettlementLootEntry selectedChoice = choiceData.selectedChoice;
-        if (selectedChoice == null || selectedChoice.relicData == null)
+        if (selectedChoice == null || selectedChoice.relicData == null || choiceData.choices == null || !choiceData.choices.Contains(selectedChoice))
             return Fail("\u8bf7\u5148\u9009\u62e9\u4e00\u4e2a\u9057\u7269\u3002");
 
         int amount = Mathf.Max(1, selectedChoice.amount);
