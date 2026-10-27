@@ -3,6 +3,41 @@ using UnityEngine;
 
 public static class MerchantStockService
 {
+    public static System.Random CreateRandom(BoardTileData tile, int refreshSalt)
+    {
+        unchecked { return new System.Random(((tile != null ? tile.encounterSeed : 0) * 397) ^ 0x2A57C9 ^ (refreshSalt * 486187739)); }
+    }
+
+    public static void EnsureStock(BoardTileData tile, MerchantCatalog_SO catalog, RunState state, DifficultyConfig_SO difficulty)
+    {
+        if (tile == null || tile.tileType != MapTileType.Merchant || tile.merchantStockGenerated || catalog == null) return;
+        if (tile.sourceSpecialDungeon != null) { tile.merchantStockGenerated = true; return; }
+        TryGenerateInitialStock(tile, catalog, state, difficulty, CreateRandom(tile, tile.merchantRefreshCount));
+    }
+
+    public static int RefreshCost(RunState state, BoardTileData tile, DifficultyConfig_SO difficulty)
+    {
+        int baseCost = difficulty != null ? Mathf.Max(0, difficulty.GetMerchantRefreshCost(tile != null ? Mathf.Max(0, tile.merchantRefreshCount) : 0)) : 0;
+        return AbilityRunBonusRuntimeService.ResolveMerchantRefreshCost(state, tile, baseCost);
+    }
+
+    public static bool TryRefreshStock(RunState state, BoardTileData tile, MerchantCatalog_SO catalog, DifficultyConfig_SO difficulty, out string message)
+    {
+        message = "当前无法刷新商店。";
+        if (state == null || tile == null || tile.tileType != MapTileType.Merchant || catalog == null) return false;
+        if (tile.sourceSpecialDungeon != null) { message = "特殊副本商店商品固定，无法刷新。"; return false; }
+        if (tile.merchantOffers == null || tile.merchantOffers.Count == 0) { message = "当前没有可刷新的商品。"; return false; }
+        int cost = RefreshCost(state, tile, difficulty);
+        if (state.money < cost) { message = $"金钱不足，需要 {cost} 金钱。"; return false; }
+        int total = CountRefreshableOffers(tile);
+        int refreshed = RefreshOffers(tile, catalog, state, difficulty, CreateRandom(tile, tile.merchantRefreshCount + 1));
+        if (refreshed <= 0) { message = "当前没有可用的新商品可刷新。"; return false; }
+        if (!state.TrySpendMoney(cost)) { message = $"金钱不足，需要 {cost} 金钱。"; return false; }
+        tile.merchantRefreshCount++;
+        message = refreshed >= total ? $"刷新成功：替换了 {refreshed} 个商品。" : $"部分刷新成功：替换了 {refreshed}/{total} 个商品。";
+        return true;
+    }
+
     public static bool TryGenerateInitialStock(
         BoardTileData tile,
         MerchantCatalog_SO catalog,

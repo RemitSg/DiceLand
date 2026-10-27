@@ -738,48 +738,8 @@ public class RunGameManager : MonoBehaviour
 
     private string HandleCraftBlueprint(CraftingBlueprint_SO blueprint)
     {
-        if (runState == null || blueprint == null)
-            return "\u65e0\u6cd5\u8fdb\u884c\u953b\u9020\u3002";
-
-        if (blueprint.targetWeapon == null)
-            return "\u8be5\u56fe\u7eb8\u672a\u914d\u7f6e\u76ee\u6807\u6b66\u5668\u3002";
-
-        if (blueprint.materialRequirements == null || blueprint.materialRequirements.Count == 0)
-            return "\u8be5\u56fe\u7eb8\u672a\u914d\u7f6e\u6750\u6599\u9700\u6c42\u3002";
-
-        int forgeCost = CalamitySystem.ApplyForgeCostModifiers(0, runState.activeCalamities);
-        if (forgeCost > 0 && runState.money < forgeCost)
-            return $"金币不足：需要 {forgeCost} 金币";
-
-        for (int i = 0; i < blueprint.materialRequirements.Count; i++)
-        {
-            CraftingMaterialRequirement requirement = blueprint.materialRequirements[i];
-            if (requirement == null || requirement.lootItem == null)
-                continue;
-
-            if (runState.GetLootAmount(requirement.lootItem) < requirement.amount)
-                return $"\u6750\u6599\u4e0d\u8db3\uff1a{requirement.lootItem.lootName} x{requirement.amount}";
-        }
-
-        for (int i = 0; i < blueprint.materialRequirements.Count; i++)
-        {
-            CraftingMaterialRequirement requirement = blueprint.materialRequirements[i];
-            if (requirement == null || requirement.lootItem == null)
-                continue;
-
-            runState.TryConsumeLoot(requirement.lootItem, requirement.amount);
-        }
-
-        if (forgeCost > 0)
-            runState.TrySpendMoney(forgeCost);
-
-        runState.AddWeapon(blueprint.targetWeapon, 1);
-        if (runState.settlementStats == null)
-            runState.settlementStats = new RunSettlementStats();
-        runState.settlementStats.craftedWeaponCount++;
-        string successMessage = $"\u6210\u529f\u953b\u9020\uff1a{blueprint.targetWeapon.weaponName}";
-        RefreshHUD(successMessage);
-        return successMessage;
+        if (RunCraftingService.TryCraft(runState, blueprint, out string message)) RefreshHUD(message);
+        return message;
     }
 
     private string HandleBuyMerchantOffer(BoardTileData tile, MerchantOfferState offer)
@@ -794,10 +754,7 @@ public class RunGameManager : MonoBehaviour
 
     private int ResolveMerchantRefreshCost(BoardTileData tile)
     {
-        DifficultyConfig_SO config = activeDifficultyConfig != null ? activeDifficultyConfig : difficultyConfig;
-        int refreshCount = tile != null ? Mathf.Max(0, tile.merchantRefreshCount) : 0;
-        int baseCost = config != null ? Mathf.Max(0, config.GetMerchantRefreshCost(refreshCount)) : 0;
-        return AbilityRunBonusRuntimeService.ResolveMerchantRefreshCost(runState, tile, baseCost);
+        return MerchantStockService.RefreshCost(runState, tile, activeDifficultyConfig != null ? activeDifficultyConfig : difficultyConfig);
     }
 
     private DifficultyConfig_SO ResolveMerchantDifficultyConfig()
@@ -812,37 +769,8 @@ public class RunGameManager : MonoBehaviour
 
     private string HandleRefreshMerchantOffers(BoardTileData tile)
     {
-        if (runState == null || tile == null || tile.tileType != MapTileType.Merchant || merchantCatalog == null)
-            return "当前无法刷新商店。";
-
-        if (tile.sourceSpecialDungeon != null)
-            return "特殊副本商店商品固定，无法刷新。";
-
-        if (tile.merchantOffers == null || tile.merchantOffers.Count == 0)
-            return "当前没有可刷新的商品。";
-
-        int refreshCost = ResolveMerchantRefreshCost(tile);
-        if (runState.money < refreshCost)
-            return $"金钱不足，需要 {refreshCost} 金钱。";
-
-        System.Random rng = CreateMerchantRandom(tile, tile.merchantRefreshCount + 1);
-        int refreshableCount = CountRefreshableMerchantOffers(tile);
-        int refreshedCount = RefreshMerchantOffers(tile, rng);
-        if (refreshedCount <= 0)
-            return "当前没有可用的新商品可刷新。";
-
-        if (!runState.TrySpendMoney(refreshCost))
-            return $"金钱不足，需要 {refreshCost} 金钱。";
-
-        tile.merchantRefreshCount += 1;
-        string hudMessage = refreshedCount >= refreshableCount
-            ? $"商店已刷新 - {refreshCost} 金钱"
-            : $"商店部分刷新：{refreshedCount}/{refreshableCount} - {refreshCost} 金钱";
-        RefreshHUD(hudMessage);
-
-        return refreshedCount >= refreshableCount
-            ? $"刷新成功：替换了 {refreshedCount} 个商品。"
-            : $"部分刷新成功：替换了 {refreshedCount}/{refreshableCount} 个商品。";
+        if (MerchantStockService.TryRefreshStock(runState, tile, merchantCatalog, ResolveMerchantDifficultyConfig(), out string message)) RefreshHUD(message);
+        return message;
     }
 
     private void HandleActionPointsExhausted()
@@ -2647,48 +2575,9 @@ public class RunGameManager : MonoBehaviour
 
     private void EnsureMerchantStock(BoardTileData tile)
     {
-        if (tile == null || tile.tileType != MapTileType.Merchant || tile.merchantStockGenerated)
-            return;
-
-        if (isTutorialRun && MapTutorialMerchantStockService.TryApplyTutorialStock(tile, tutorialMerchantBlueprint))
-            return;
-
-        if (merchantCatalog == null)
-            return;
-
-        if (tile.sourceSpecialDungeon != null)
-        {
-            tile.merchantStockGenerated = true;
-            return;
-        }
-
-        System.Random rng = CreateMerchantRandom(tile, tile.merchantRefreshCount);
-        MerchantStockService.TryGenerateInitialStock(
-            tile,
-            merchantCatalog,
-            runState,
-            ResolveMerchantDifficultyConfig(),
-            rng);
-    }
-
-    private int CountRefreshableMerchantOffers(BoardTileData tile)
-    {
-        return MerchantStockService.CountRefreshableOffers(tile);
-    }
-
-    private int RefreshMerchantOffers(BoardTileData tile, System.Random rng)
-    {
-        return MerchantStockService.RefreshOffers(tile, merchantCatalog, runState, ResolveMerchantDifficultyConfig(), rng);
-    }
-
-    private static System.Random CreateMerchantRandom(BoardTileData tile, int refreshSalt)
-    {
-        int baseSeed = tile != null ? tile.encounterSeed : 0;
-        unchecked
-        {
-            int combinedSeed = (baseSeed * 397) ^ 0x2A57C9 ^ (refreshSalt * 486187739);
-            return new System.Random(combinedSeed);
-        }
+        if (tile == null || tile.tileType != MapTileType.Merchant || tile.merchantStockGenerated) return;
+        if (isTutorialRun && MapTutorialMerchantStockService.TryApplyTutorialStock(tile, tutorialMerchantBlueprint)) return;
+        MerchantStockService.EnsureStock(tile, merchantCatalog, runState, ResolveMerchantDifficultyConfig());
     }
 
     private string ResolveTutorialCompletionSceneName()

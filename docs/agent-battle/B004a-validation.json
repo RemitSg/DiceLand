@@ -1,0 +1,44 @@
+{
+  "batch": "B004a",
+  "date": "2026-10-27",
+  "relatedJob": "1c72920209e1459787aa8743342c77ad",
+  "related": {
+    "total": 85,
+    "passed": 85,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 6.4942632,
+    "resultState": "Passed"
+  },
+  "merchantUIJob": "579ed33244e54c07a45dd00261246b62",
+  "merchantUI": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 0.3900778,
+    "resultState": "Passed"
+  },
+  "http": {
+    "seed": 46,
+    "difficulty": "Medium (NormalConfig)",
+    "actions": 14,
+    "battleIncome": 21,
+    "purchased": "铁矿",
+    "price": 6,
+    "remainingMoney": 15,
+    "returnedPhase": "map",
+    "party": {
+      "level": 2,
+      "experience": 2,
+      "hp": 19,
+      "maxHp": 19
+    }
+  },
+  "notes": [
+    "HTTP route used unmodified normal assets and public commands only. Trace under outputs/agent-battle/b004a-shop-trace.json.",
+    "Economy adapter tests inject locations/resources only for directed tests. They are not evidence of full adventure completion.",
+    "Duplicate ingredient rows are aggregated before crafting validation and deduction; the blueprint is retained and weapon/stat rewards are applied once per accepted action.",
+    "Existing full-suite and PlayMode limitations remain recorded; no new full-suite green claim."
+  ]
+}

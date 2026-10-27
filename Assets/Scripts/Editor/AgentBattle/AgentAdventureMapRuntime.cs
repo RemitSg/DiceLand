@@ -119,6 +119,15 @@ public sealed class AgentAdventureMapRuntime : IDisposable
         try { Random.state = randomState; return action(); }
         finally { randomState = Random.state; Random.state = outside; SynchronizeSnapshot(); }
     }
+
+    // Quotes/legality must not advance either the adventure RNG or the user's RNG.
+    public T PreviewWithRandom<T>(Func<T> action)
+    {
+        if (disposed) throw new ObjectDisposedException(nameof(AgentAdventureMapRuntime));
+        Random.State outside = Random.state;
+        try { Random.state = randomState; return action(); }
+        finally { Random.state = outside; }
+    }
     private void OnExhausted() { MapMovementService.AdvanceExhaustedCycle(Snapshot.runState, Points, Configuration.starting.difficulty, PendingCalamities); }
     private void OnKey(BoardTileData tile) { MapMovementService.ApplyKeyCollected(Snapshot.runState, null, tile, Points); }
 

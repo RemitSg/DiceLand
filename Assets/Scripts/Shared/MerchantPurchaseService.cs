@@ -20,11 +20,12 @@ public struct MerchantPurchaseResult
     public int price;
     public string displayName;
     public string message;
+    public bool usesPositiveMoneyOverride;
 }
 
 public static class MerchantPurchaseService
 {
-    public static MerchantPurchaseResult TryPurchaseOffer(RunState runState, BoardTileData tile, MerchantOfferState offer)
+    public static MerchantPurchaseResult EvaluateOffer(RunState runState, BoardTileData tile, MerchantOfferState offer)
     {
         MerchantPurchaseResult invalidResult = ValidatePurchaseContext(runState, tile, offer);
         if (!invalidResult.success)
@@ -39,16 +40,12 @@ public static class MerchantPurchaseService
                 MerchantPurchaseFailureReason.InsufficientMoney,
                 price,
                 displayName,
-                $"閲戦挶涓嶈冻锛岄渶瑕?{price} 閲戦挶銆?");
+                $"金钱不足，需要 {price} 金钱。");
         }
 
         bool canUsePositiveMoneyOverride = price > 0 && runState.money < price &&
             RelicMerchantService.CanPurchaseWithPositiveMoneyOverride(runState, tile, offer, price);
-        if (canUsePositiveMoneyOverride)
-        {
-            runState.money -= price;
-        }
-        else if (!runState.TrySpendMoney(price))
+        if (!canUsePositiveMoneyOverride && runState.money < price)
         {
             return Failure(
                 MerchantPurchaseFailureReason.InsufficientMoney,
@@ -56,6 +53,20 @@ public static class MerchantPurchaseService
                 displayName,
                 $"金钱不足，需要 {price} 金钱。");
         }
+
+        return new MerchantPurchaseResult { success = true, price = price, displayName = displayName,
+            usesPositiveMoneyOverride = canUsePositiveMoneyOverride };
+    }
+
+    public static MerchantPurchaseResult TryPurchaseOffer(RunState runState, BoardTileData tile, MerchantOfferState offer)
+    {
+        MerchantPurchaseResult evaluation = EvaluateOffer(runState, tile, offer);
+        if (!evaluation.success) return evaluation;
+        int price = evaluation.price;
+        string displayName = evaluation.displayName;
+        if (evaluation.usesPositiveMoneyOverride) runState.money -= price;
+        else if (!runState.TrySpendMoney(price))
+            return Failure(MerchantPurchaseFailureReason.InsufficientMoney, price, displayName, $"金钱不足，需要 {price} 金钱。");
 
         switch (offer.itemType)
         {

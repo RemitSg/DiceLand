@@ -10,6 +10,31 @@ import sys
 from agent_battle_client import Client
 
 
+def choose_battle_action(state):
+    actions = state["legalActions"]
+    battle = state["battle"]
+    action = next((a for a in actions if a["op"] == "run_return"), None)
+    if action is None and battle["phase"] == "reward":
+        action = next((a for a in actions if a["battleAction"]["op"] == "choose_relic"), None)
+    if action is None and battle["phase"] == "targeting":
+        # Fill each unconnected slot using its current skill, then commit.
+        for actor in battle["actors"]:
+            if actor["side"] != "ally" or actor["dead"]:
+                continue
+            for slot in actor["slots"]:
+                if slot.get("targetId"):
+                    continue
+                action = next((a for a in actions if a["op"] == "run_battle" and a["battleAction"]["op"] == "target"
+                               and a["battleAction"]["actorId"] == actor["id"] and a["battleAction"]["buttonIndex"] == slot["index"]), None)
+                if action:
+                    break
+            if action:
+                break
+        if action is None:
+            action = next((a for a in actions if a["op"] == "run_battle" and a["battleAction"]["op"] == "commit"), None)
+    return action
+
+
 def demo(client, args):
     state = client.call(op="create_run", seed=args.seed, maxRounds=args.max_rounds)["state"]
     session_id = state["sessionId"]
@@ -28,7 +53,7 @@ def demo(client, args):
                     if move["op"] != "run_move":
                         continue
                     tile = tiles[(move["x"], move["y"])]
-                    if tile["type"] in ("Empty", "Key") or (tile["type"] in ("Battle", "Elite") and tile["encounterAvailable"]):
+                    if tile["type"] in ("Empty", "Key", "Merchant", "Forge") or (tile["type"] in ("Battle", "Elite") and tile["encounterAvailable"]):
                         candidates.append((tile, move))
                 candidates.sort(key=lambda pair: (pair[0]["visited"], pair[0]["type"] != "Key", pair[0]["danger"], pair[0]["x"], pair[0]["y"]))
                 if candidates:
@@ -37,26 +62,18 @@ def demo(client, args):
             elif state["phase"] == "calamity":
                 action = next((a for a in actions if a["op"] == "run_choose_calamity"), None)
             elif state["phase"] == "battle":
-                battle = state["battle"]
-                action = next((a for a in actions if a["op"] == "run_return"), None)
-                if action is None and battle["phase"] == "reward":
-                    action = next((a for a in actions if a["battleAction"]["op"] == "choose_relic"), None)
-                if action is None and battle["phase"] == "targeting":
-                    # Fill each unconnected slot using its current skill, then commit.
-                    for actor in battle["actors"]:
-                        if actor["side"] != "ally" or actor["dead"]:
-                            continue
-                        for slot in actor["slots"]:
-                            if slot.get("targetId"):
-                                continue
-                            action = next((a for a in actions if a["op"] == "run_battle" and a["battleAction"]["op"] == "target"
-                                           and a["battleAction"]["actorId"] == actor["id"] and a["battleAction"]["buttonIndex"] == slot["index"]), None)
-                            if action:
-                                break
-                        if action:
-                            break
-                    if action is None:
-                        action = next((a for a in actions if a["op"] == "run_battle" and a["battleAction"]["op"] == "commit"), None)
+                action = choose_battle_action(state)
+            elif state["phase"] == "merchant":
+                buyable = [a for a in actions if a["op"] == "run_buy"]
+                offers = {o["index"]: o for o in state["merchantOffers"]}
+                if buyable:
+                    action = min(buyable, key=lambda a: offers[a["choiceIndex"]]["price"])
+                else:
+                    action = next((a for a in actions if a["op"] == "run_leave_location"), None)
+            elif state["phase"] == "forge":
+                action = next((a for a in actions if a["op"] == "run_craft"), None)
+                if action is None:
+                    action = next((a for a in actions if a["op"] == "run_leave_location"), None)
             if action is None:
                 break
             trace.append(action)

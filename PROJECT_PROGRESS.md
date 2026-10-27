@@ -1534,3 +1534,10 @@
 - Shared calamity teleport/relic loss/rest conversion and visited-empty ambush implementations with RunGameManager. Deferred headless arrival until AP/relic cost callbacks finish, including overflow. Settlement response now exposes actual post-level-up party state.
 - Validation: targeted EditMode 60/60 passed (09e548a4de3e4cd8a1ccaf100f3568b9). Public HTTP normal map route won a battle, returned with level 2 and HP 18/19, then exhausted AP and selected an actual calamity in cycle 2. Four invalid requests rejected; duplicate move returned cached result. Python syntax and OpenAPI references validated.
 - Incomplete: location decisions/transactions, final settlement, isolated meta progression, save/restore and full replay. No placeholder rewards. Full-suite/PlayMode limitations remain as recorded in B002-validation.json. See docs/agent-battle/PLAN.md and B003b-validation.json.
+
+## 2026-10-27 - Agent adventure B004a: merchant and forge
+
+- Shared merchant price/affordability evaluation, stock/refresh orchestration, and forge validation/resource consumption with formal UI. Agent observations quote on cloned state without advancing RNG.
+- Added purchase/refresh/craft actions and offer/recipe/material observations. Duplicate ingredient rows are aggregated before checking and consuming materials; owned blueprint and calamity fee validation is shared.
+- Validation: 85/85 related EditMode tests plus 2/2 formal merchant UI tests passed. Public HTTP NormalConfig seed 46: battle income 21, iron ore purchase 6, remaining money 15, level 2 HP 19/19, returned to map in 14 actions. No normal-route resource injection.
+- B004b still needs rest, recruitment, reforge and equipment management. Full completion, full replay and final settlement remain incomplete. See B004a-validation.json and PLAN.md.

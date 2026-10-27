@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "DiceLand Agent Adventure API (B003b)",
-    "version": "0.1.0",
-    "description": "In-progress normal adventure loop using formal game rules. Map movement, calamities and battles work; location features and final settlement are upcoming batches. Always select legalActions. Event/rest/treasure phases may currently require run_close; no placeholder rewards or full-run completion is implied."
+    "title": "DiceLand Agent Adventure API (B004a)",
+    "version": "0.2.0",
+    "description": "Shared-rule normal adventure with map, calamities, battles, merchant purchase/refresh and forge crafting. Rest/events/treasure, final settlement and full save/replay are upcoming batches. Always select legalActions; no full-run completion is implied."
   },
   "servers": [
     {
@@ -73,7 +73,10 @@
               "run_return",
               "run_choose_calamity",
               "run_leave_location",
-              "run_close"
+              "run_close",
+              "run_buy",
+              "run_refresh_shop",
+              "run_craft"
             ]
           },
           "battleAction": {
@@ -100,6 +103,10 @@
             "default": 1000,
             "minimum": 1,
             "maximum": 1000
+          },
+          "assetId": {
+            "type": "string",
+            "description": "Owned blueprint GUID from legalActions for run_craft."
           }
         }
       },
@@ -129,11 +136,18 @@
               "run_return",
               "run_choose_calamity",
               "run_leave_location",
-              "run_close"
+              "run_close",
+              "run_buy",
+              "run_refresh_shop",
+              "run_craft"
             ]
           },
           "battleAction": {
             "$ref": "./openapi.json#/components/schemas/AgentBattleLegalAction"
+          },
+          "assetId": {
+            "type": "string",
+            "description": "Owned blueprint GUID from legalActions for run_craft."
           }
         }
       },
@@ -285,6 +299,22 @@
             "items": {
               "$ref": "#/components/schemas/AgentAdventureAction"
             }
+          },
+          "merchantOffers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureMerchantOffer"
+            }
+          },
+          "merchantRefreshCost": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recipes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureRecipe"
+            }
           }
         }
       },
@@ -354,6 +384,86 @@
           "experience": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "AgentAdventureMerchantOffer": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "price": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "soldOut": {
+            "type": "boolean"
+          },
+          "canPurchase": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AgentAdventureMaterial": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "required": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "available": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AgentAdventureRecipe": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "weapon": {
+            "type": "string"
+          },
+          "cost": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "canCraft": {
+            "type": "boolean"
+          },
+          "materials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureMaterial"
+            }
           }
         }
       }

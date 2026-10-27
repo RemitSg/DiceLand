@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 
 // Decision adapter. Gameplay changes remain in the existing run, map and battle services.
-public sealed class AgentAdventureSession : IDisposable
+public sealed partial class AgentAdventureSession : IDisposable
 {
     private readonly string id = Guid.NewGuid().ToString("N");
     private readonly int seed, maxRounds;
@@ -54,7 +54,9 @@ public sealed class AgentAdventureSession : IDisposable
             blueprints = state.blueprintInventory.Where(s => s?.blueprintData != null).Select(s => Item(s.blueprintData, s.blueprintData.name, s.amount)).ToArray(),
             calamityChoices = choices.Select(c => new AgentBattleAsset { id = AssetId(c), name = c.DisplayName, description = c.description }).ToArray(),
             activeCalamities = state.activeCalamities.Where(c => c?.calamityData != null).Select(c => new AgentBattleAsset { id = AssetId(c.calamityData), name = c.calamityData.DisplayName, description = c.calamityData.description }).ToArray(),
-            battle = bridge != null ? bridge.Battle.Observe() : null, legalActions = LegalActions().ToArray()
+            battle = bridge != null ? bridge.Battle.Observe() : null, legalActions = LegalActions().ToArray(),
+            merchantOffers = DescribeMerchant(), merchantRefreshCost = phase == "merchant" ? MerchantStockService.RefreshCost(state, CurrentTile, map.Configuration.starting.difficulty) : 0,
+            recipes = DescribeRecipes()
         };
     }
 
@@ -93,7 +95,9 @@ public sealed class AgentAdventureSession : IDisposable
                     break;
                 case "run_return": ReturnFromBattle(); break;
                 case "run_choose_calamity": ChooseCalamity(request.choiceIndex); break;
+                case "run_buy": case "run_refresh_shop": case "run_craft": ExecuteEconomyAction(request); break;
                 case "run_leave_location":
+                    if (phase == "merchant") RelicMerchantService.ResetVisitState(CurrentTile);
                     phase = "map"; ClearDeferrals(); PresentCalamity(); break;
             }
             revision++;
@@ -120,7 +124,11 @@ public sealed class AgentAdventureSession : IDisposable
         }
         else if (phase == "calamity")
             for (int i = 0; i < choices.Count; i++) yield return new AgentAdventureAction { op = "run_choose_calamity", choiceIndex = i };
-        else if (phase == "merchant" || phase == "forge") yield return new AgentAdventureAction { op = "run_leave_location" };
+        else if (phase == "merchant" || phase == "forge")
+        {
+            foreach (AgentAdventureAction action in EconomyActions()) yield return action;
+            yield return new AgentAdventureAction { op = "run_leave_location" };
+        }
     }
 
     private bool CanInteract(BoardTileData tile)
@@ -150,6 +158,7 @@ public sealed class AgentAdventureSession : IDisposable
         }
         else if (CanInteract(tile))
         {
+            if (OpenEconomyLocation(tile)) return;
             phase = tile.tileType.ToString().ToLowerInvariant();
             message = "This location requires the next adventure feature batch; no placeholder rewards have been applied.";
             return;
@@ -202,6 +211,8 @@ public sealed class AgentAdventureSession : IDisposable
         if (a.op != r.op) return false;
         if (a.op == "run_move") return a.x == r.x && a.y == r.y;
         if (a.op == "run_choose_calamity") return a.choiceIndex == r.choiceIndex;
+        if (a.op == "run_buy") return a.choiceIndex == r.choiceIndex;
+        if (a.op == "run_craft") return a.assetId == r.assetId;
         if (a.op == "run_battle") return JsonUtility.ToJson(a.battleAction) == JsonUtility.ToJson(r.battleAction);
         return true;
     }
