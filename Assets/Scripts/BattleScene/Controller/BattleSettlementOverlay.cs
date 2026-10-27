@@ -919,17 +919,7 @@ public class BattleSettlementOverlay : MonoBehaviour
         if (activeEncounter != null && MapRunRuntime.TryGetSnapshot(activeEncounter.sourceSceneName, out MapRunSnapshot snapshot))
         {
             settlementRunState = snapshot.runState;
-            if (settlementRunState != null && activeEncounter.resolvedPartyMembers != null && activeEncounter.resolvedPartyMembers.Count > 0)
-            {
-                settlementRunState.partyMembers = new List<RunPartyMemberState>(activeEncounter.resolvedPartyMembers.Count);
-                for (int i = 0; i < activeEncounter.resolvedPartyMembers.Count; i++)
-                {
-                    RunPartyMemberState member = activeEncounter.resolvedPartyMembers[i];
-                    if (member != null && !member.isTemporaryBattleGuest)
-                        settlementRunState.partyMembers.Add(member.Clone());
-                }
-                settlementRunState.SyncLegacyPlayerFieldsFromParty();
-            }
+            RunSettlementFlowService.SyncResolvedPartyMembers(settlementRunState, activeEncounter);
         }
 
         if (settlementRunState != null)

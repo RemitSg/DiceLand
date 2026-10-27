@@ -1,6 +1,6 @@
 """Standard-library client for the in-progress shared-rule adventure API.
 
-The demo records a trace; full adventure replay/save and location features are later batches.
+The demo records a trace; full adventure replay/save is a later batch.
 """
 import argparse
 import json
@@ -60,7 +60,10 @@ def choose_reforge_action(state):
 
 
 def demo(client, args):
-    state = client.call(op="create_run", seed=args.seed, maxRounds=args.max_rounds)["state"]
+    create = dict(op="create_run", seed=args.seed, maxRounds=args.max_rounds)
+    if getattr(args, "profile", None):
+        create["profileId"] = args.profile
+    state = client.call(**create)["state"]
     session_id = state["sessionId"]
     trace = []
     moved = 0
@@ -70,7 +73,13 @@ def demo(client, args):
         for _ in range(args.max_actions):
             actions = state["legalActions"]
             action = None
-            if state["phase"] == "map":
+            if state["phase"] in ("victory_pending_settlement", "defeat_pending_settlement"):
+                action = next((a for a in actions if a["op"] == "run_settle"), None)
+            elif state["phase"] == "finished":
+                break
+            elif state["phase"] == "starting_relic":
+                action = next((a for a in actions if a["op"] == "run_choose_starting_relic"), None)
+            elif state["phase"] == "map":
                 equipment = next((a for a in actions if a["op"] == "run_equip" and a["assetId"] not in seen_equipment), None)
                 if equipment:
                     seen_equipment.add(equipment["assetId"])
@@ -145,14 +154,14 @@ def demo(client, args):
                 break
             trace.append(action)
             state = client.act(state, **action)
-        result = {"create": {"op": "create_run", "seed": args.seed, "maxRounds": args.max_rounds}, "actions": trace, "result": state}
+        result = {"create": create, "actions": trace, "result": state}
         if args.output:
             path = Path(args.output)
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
         return {"phase": state["phase"], "outcome": state.get("outcome"), "moves": moved, "actions": len(trace),
                 "cycle": state["cycle"], "money": state["money"], "keys": state["keys"], "party": state["party"],
-                "configurationIssues": state["configurationIssues"], "trace": args.output}
+                "configurationIssues": state["configurationIssues"], "settlement": state["settlement"], "meta": state["meta"], "trace": args.output}
     finally:
         client.call(op="run_close", sessionId=session_id)
 
@@ -168,6 +177,7 @@ def main():
     play.add_argument("--max-actions", type=int, default=300)
     play.add_argument("--output")
     play.add_argument("--reforge", action="store_true", help="Try a legal reforge once per rest visit before other rest actions")
+    play.add_argument("--profile", help="Explicit isolated persistent agent profile; omitted profiles are discarded on close")
     raw = commands.add_parser("command")
     raw.add_argument("json", help="JSON command, or - to read stdin")
     args = parser.parse_args()

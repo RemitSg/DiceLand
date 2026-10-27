@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "DiceLand Agent Adventure API (B005c)",
-    "version": "0.7.0",
-    "description": "Shared-rule normal adventure with map, battle, calamities, economy, rest, reforge, events, treasure and special dungeon traversal/return. Final settlement/meta and full save/replay remain upcoming batches."
+    "title": "DiceLand Agent Adventure API (B006b1)",
+    "version": "0.8.0",
+    "description": "Shared-rule adventure with terminal settlement, isolated ability progression and next runs. Full normal victory/earned-upgrade audit and complete save/replay remain pending."
   },
   "servers": [
     {
@@ -60,7 +60,8 @@
           },
           "choiceIndex": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "description": "Choice index; run_set_ability uses 0 (disable) or 1 (enable), copied from legalActions."
           },
           "op": {
             "type": "string",
@@ -96,9 +97,16 @@
               "run_choose_treasure",
               "run_choose_treasure_relic",
               "run_refresh_treasure_relics",
-              "run_continue_treasure"
+              "run_continue_treasure",
+              "run_settle",
+              "run_abandon",
+              "run_next",
+              "run_unlock_ability",
+              "run_set_ability",
+              "run_choose_starting_relic",
+              "run_refresh_starting_relics"
             ],
-            "description": "Copy an item from legalActions. Events, treasure and special dungeon entry/exit use their normal choice, continue and move actions. Check dungeon.active to distinguish the linear dungeon board."
+            "description": "Copy an item from legalActions. run_next accepts an additional seed for the next run. Only map/battle phases expose abandon. Check dungeon.active and settlement.completed rather than optional object truthiness."
           },
           "battleAction": {
             "$ref": "./openapi.json#/components/schemas/AgentBattleLegalAction"
@@ -117,7 +125,8 @@
           },
           "seed": {
             "type": "integer",
-            "default": 1
+            "default": 1,
+            "description": "Signed 32-bit seed for create_run or run_next; next-run omission uses default 1. maxRounds is retained from the initial create_run."
           },
           "maxRounds": {
             "type": "integer",
@@ -127,7 +136,11 @@
           },
           "assetId": {
             "type": "string",
-            "description": "Asset GUID from legalActions: blueprint for crafting, weapon for equipment, material for reforge_first/second, or attribute for reforge_attribute."
+            "description": "Asset GUID from legalActions: blueprint for crafting, weapon for equipment, material for reforge_first/second, or attribute for reforge_attribute. Ability commands use the node id in meta.nodes, not an asset GUID."
+          },
+          "profileId": {
+            "type": "string",
+            "description": "create_run only: omit/blank for disposable session progression. Explicit 1-64 letters/digits/underscore/hyphen selects isolated project-local Library/AgentAdventure/Profiles/<id>; Windows device names rejected. Never uses the player wallet/save. Persistent across close/reopen on the same host/project; deleting Library removes these test profiles."
           }
         }
       },
@@ -180,16 +193,23 @@
               "run_choose_treasure",
               "run_choose_treasure_relic",
               "run_refresh_treasure_relics",
-              "run_continue_treasure"
+              "run_continue_treasure",
+              "run_settle",
+              "run_abandon",
+              "run_next",
+              "run_unlock_ability",
+              "run_set_ability",
+              "run_choose_starting_relic",
+              "run_refresh_starting_relics"
             ],
-            "description": "Copy an item from legalActions. Events, treasure and special dungeon entry/exit use their normal choice, continue and move actions. Check dungeon.active to distinguish the linear dungeon board."
+            "description": "Copy an item from legalActions. run_next accepts an additional seed for the next run. Only map/battle phases expose abandon. Check dungeon.active and settlement.completed rather than optional object truthiness."
           },
           "battleAction": {
             "$ref": "./openapi.json#/components/schemas/AgentBattleLegalAction"
           },
           "assetId": {
             "type": "string",
-            "description": "Asset GUID from legalActions: blueprint for crafting, weapon for equipment, material for reforge_first/second, or attribute for reforge_attribute."
+            "description": "Asset GUID from legalActions: blueprint for crafting, weapon for equipment, material for reforge_first/second, or attribute for reforge_attribute. Ability commands use the node id in meta.nodes, not an asset GUID."
           }
         }
       },
@@ -378,6 +398,19 @@
           },
           "progress": {
             "$ref": "#/components/schemas/RunSettlementStats"
+          },
+          "runIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/AgentAdventureMeta"
+          },
+          "settlement": {
+            "$ref": "#/components/schemas/AgentAdventureSettlement"
+          },
+          "startingRelic": {
+            "$ref": "#/components/schemas/AgentAdventureStartingRelic"
           }
         }
       },
@@ -908,7 +941,7 @@
       },
       "RunSettlementStats": {
         "type": "object",
-        "description": "Cloned formal run counters, including dungeon completion and score. Final settlement is still pending B006.",
+        "description": "Cloned formal counters including dungeon score; runStartedUnixSeconds is actual server time for this run.",
         "properties": {
           "runStartedUnixSeconds": {
             "type": "integer",
@@ -983,6 +1016,248 @@
             "format": "int32"
           }
         }
+      },
+      "AgentAdventureMeta": {
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "type": "string"
+          },
+          "persistent": {
+            "type": "boolean"
+          },
+          "abilityPoints": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureAbility"
+            }
+          }
+        },
+        "description": "Formal ability tree read from the isolated wallet/progression services. Unlocks/toggles are legal only after the run finishes; applied by the shared bootstrap on the next run."
+      },
+      "AgentAdventureAbility": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "prerequisites": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cost": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "toggleable": {
+            "type": "boolean"
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "description": "state is Locked, Available or Unlocked. Enabled is the formal toggle preference; locked nodes do not grant bonuses."
+      },
+      "AgentAdventureSettlement": {
+        "type": "object",
+        "properties": {
+          "completed": {
+            "type": "boolean"
+          },
+          "policy": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/RunSettlementData"
+          }
+        },
+        "description": "completed indicates a finished run. shared_score uses the formal calculator/wallet service; map_abandon_no_rewards preserves formal map abandon and has no score data. Retrying a mutation does not award again. In-process guarantee; crash-safe persistence/replay is B007."
+      },
+      "RunSettlementData": {
+        "type": "object",
+        "properties": {
+          "runCleared": {
+            "type": "boolean"
+          },
+          "scoreResult": {
+            "$ref": "#/components/schemas/RunSettlementScoreResult"
+          },
+          "displayStats": {
+            "$ref": "#/components/schemas/RunSettlementDisplayStats"
+          },
+          "abilityPointsBefore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gainedAbilityPoints": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "abilityPointsAfter": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "returnSceneName": {
+            "type": "string"
+          }
+        }
+      },
+      "RunSettlementScoreResult": {
+        "type": "object",
+        "properties": {
+          "baseScore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "finalScore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gainedAbilityPoints": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "finalMultiplier": {
+            "type": "number",
+            "format": "float"
+          },
+          "displayStats": {
+            "$ref": "#/components/schemas/RunSettlementDisplayStats"
+          },
+          "debugLines": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "RunSettlementDisplayStats": {
+        "type": "object",
+        "properties": {
+          "durationSeconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "normalBattleOuterCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "normalBattleMidCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "normalBattleInnerCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "normalBattleCoreCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eliteBattleOuterCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eliteBattleMidCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eliteBattleInnerCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eliteBattleCoreCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "specialDungeonCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "partyMemberCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalMoneyGained": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "craftedWeaponCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eventTilesCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eventBattlesCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unexploredTilesVisited": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "relicCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keysCollected": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "calamityTier": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bossesDefeated": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "calamityScoreCounted": {
+            "type": "boolean"
+          }
+        },
+        "description": "Duration uses actual server UTC at create/settlement; formal short-run multiplier applies. Observe never advances the saved start time or awards points. Replay must record settlement time in B007."
+      },
+      "AgentAdventureStartingRelic": {
+        "type": "object",
+        "properties": {
+          "bagsRemaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "refreshesRemaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "canRefresh": {
+            "type": "boolean"
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+            }
+          }
+        },
+        "description": "starting_relic blocks movement until shared acquisition of all ability-provided starting bags. Refresh/acquisition use formal services, including OnRelicAcquired effects."
       }
     }
   }

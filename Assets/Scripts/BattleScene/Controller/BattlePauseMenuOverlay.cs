@@ -146,7 +146,7 @@ public class BattlePauseMenuOverlay : MonoBehaviour
             return false;
 
         RunState settlementRunState = snapshot.runState;
-        SyncResolvedPartyMembersToRunState(settlementRunState, activeEncounter);
+        RunSettlementFlowService.SyncResolvedPartyMembers(settlementRunState, activeEncounter);
 
         RunSettlementFlowService.ExecuteSettlement(new RunSettlementFlowRequest
         {
@@ -169,21 +169,6 @@ public class BattlePauseMenuOverlay : MonoBehaviour
             transitionToScene = sceneName => SceneCurtainTransitionController.Instance.TransitionToScene(sceneName)
         });
         return true;
-    }
-
-    private static void SyncResolvedPartyMembersToRunState(RunState runState, BattleEncounterData activeEncounter)
-    {
-        if (runState == null || activeEncounter == null || activeEncounter.resolvedPartyMembers == null || activeEncounter.resolvedPartyMembers.Count <= 0)
-            return;
-
-        runState.partyMembers = new System.Collections.Generic.List<RunPartyMemberState>(activeEncounter.resolvedPartyMembers.Count);
-        for (int i = 0; i < activeEncounter.resolvedPartyMembers.Count; i++)
-        {
-            RunPartyMemberState member = activeEncounter.resolvedPartyMembers[i];
-            if (member != null && !member.isTemporaryBattleGuest)
-                runState.partyMembers.Add(member.Clone());
-        }
-        runState.SyncLegacyPlayerFieldsFromParty();
     }
 
     private void ApplyCurrentSettingsToSliders()

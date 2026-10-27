@@ -1583,3 +1583,12 @@ Shared treasure tile reward flow; money/blueprint/relic bags, one-time selection
 - Same-context retry does not award/clean twice. Separate contexts remain independent; score formula unchanged. Settlement data is serializable.
 - Isolated headless EditMode: related 18/18, 7 new pass; full 928 total, 907 passed, same 21 failed names as B005c (921/900/21). Evidence: docs/agent-battle/B006a-validation.json.
 - This is a primitive-only batch; no public terminal command yet. Formal map abandon grants no points; battle abandon settles as not cleared. B006b must preserve these policies and implement isolated meta/next run, then B007 full saves/replays and B008 normal full-run audit. Goal remains active.
+
+
+## 2026-10-27 B006b1 - terminal API, isolated abilities and next run
+
+- Added run_settle/run_abandon/run_next, isolated profile unlock/toggle, and ability-provided starting relic choice/refresh. Reuses shared score, ability, bootstrap and acquisition services. Real UTC short-run scoring applies. Map abandon gives no points; battle abandon uses non-clear scoring.
+- Public HTTP normal seed 1234: real defeat -> return -> settlement, exact request retry unchanged, zero-cost root unlock -> next run. Both abandon policies verified, plus explicit isolated profile close/reopen. No player save/wallet access.
+- Isolated final full EditMode: 942 total, 921 passed, same 21 failing names as B006a. All 14 new tests and 116 selected related cases pass. Directed resources/Boss fixture are not normal-win evidence.
+- Normal seed 127: real treasure income/recruitment, two ordinary wins, third recruit and healing, two keys, full-health three-person party enters configured ThunderLord; actual defeat in Boss round 2. Seed 46 preparation also failed. Traces retained. No forced win/resource injection.
+- Evidence: docs/agent-battle/B006b1-validation.json. B006b2 still requires true normal Boss victory -> earned points -> paid upgrade -> next run, followed by B007 full save/replay and B008 external-agent audit. Goal remains active.

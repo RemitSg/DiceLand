@@ -1,0 +1,247 @@
+{
+  "batch": "B006b1",
+  "date": "2026-10-27",
+  "engine": "2022.3.62t6 (Tuanjie 1.8.4)",
+  "scope": "Public terminal/abandon/next-run commands, isolated formal ability progression, starting relic selection. Normal Boss victory and earned paid-upgrade gate remains B006b2; full save/replay B007 and external-agent audit B008 are not complete.",
+  "implementation": [
+    "RunSettlementFlowService with owned RunSettlementContext and explicit isolated wallet callbacks; no global UI settlement or player wallet substitution.",
+    "run_return from a true Boss victory or ordinary defeat exposes run_settle; actual UTC start/settlement time feeds the same formal score and short-run multiplier.",
+    "Formal map abandon has no points; battle abandon uses the formal non-clear settlement and syncs only resolved persistent party members, without claiming unconfirmed loot. Both battle UI overlays use the same extracted party synchronization.",
+    "run_next retains session revision/request cache and isolated profile; replaces the owned map with the real shared bootstrap and chosen seed, clearing per-run locations/events/rewards.",
+    "Ability unlock/toggle is available only after a finished run and uses AbilityProgressionService. Initial ability bonuses and bags use the same formal bootstrap, acquisition and refresh services.",
+    "Default profile is session-specific and discarded on close. Explicit sanitized profileId persists in project-local Library/AgentAdventure/Profiles. Windows device names and path syntax are rejected. Deleting Library removes test profiles.",
+    "Full adventure crash-safe save, replay and durable cross-process idempotency are not claimed in this batch."
+  ],
+  "execution": {
+    "mode": "EditMode CLI and real HTTP host, -batchmode -nographics, NullGfxDevice",
+    "isolatedProject": "outputs/agent-battle/b005b-validation-project",
+    "companyName": "DiceLandAgentValidation",
+    "initialTestProcessId": 59124,
+    "firstFullTestProcessId": 61552,
+    "finalTestProcessId": 10056,
+    "httpProcessId": 42180,
+    "finalResult": "outputs/agent-battle/b006b-final-tests.xml",
+    "finalLog": "outputs/agent-battle/b006b-final-tests.log",
+    "httpLog": "outputs/agent-battle/b006b-http.log",
+    "httpEndpoint": "http://127.0.0.1:8092/v1/command",
+    "baselineCommit": "3daca7a1",
+    "baselineResult": "outputs/agent-battle/b006a-full-tests.xml",
+    "isolation": "All 12 batch-owned source/test/meta files hash-match original and validation copy. No scene save/restart or player persistence mutation performed in original project. Clone-only startup helper calls real server and exits on a marker; no gameplay overrides."
+  },
+  "baseline": {
+    "total": 928,
+    "passed": 907,
+    "failed": 21,
+    "skipped": 0,
+    "durationSeconds": 8.6739937
+  },
+  "current": {
+    "total": 942,
+    "passed": 921,
+    "failed": 21,
+    "skipped": 0,
+    "durationSeconds": 11.5862732
+  },
+  "newTests": [
+    "AgentAdventureSettlementTests.BattleAbandonUsesFormalNonClearScoreOnceAndDoesNotClaimBattleRewards",
+    "AgentAdventureSettlementTests.DirectedBossWinRequiresRealCombatAndUsesTheClearMultiplierRules",
+    "AgentAdventureSettlementTests.IllegalTerminalCommandsAndObservationCannotAdvanceTimeOrAwardPoints",
+    "AgentAdventureSettlementTests.MapAbandonAwardsNothingAndRetryDoesNotAbandonTheNextRun",
+    "AgentAdventureSettlementTests.PersistentProfileSurvivesCloseAndDefaultProfileDoesNotShareIt",
+    "AgentAdventureSettlementTests.ProfileRejectsPathsAndDeviceNamesBeforeCreatingAnAdventure(\"../player\")",
+    "AgentAdventureSettlementTests.ProfileRejectsPathsAndDeviceNamesBeforeCreatingAnAdventure(\"C:/player\")",
+    "AgentAdventureSettlementTests.ProfileRejectsPathsAndDeviceNamesBeforeCreatingAnAdventure(\"CON\")",
+    "AgentAdventureSettlementTests.ProfileRejectsPathsAndDeviceNamesBeforeCreatingAnAdventure(\"a b\")",
+    "AgentAdventureSettlementTests.ProfileRejectsPathsAndDeviceNamesBeforeCreatingAnAdventure(\"x.y\")",
+    "AgentAdventureSettlementTests.RealNormalBattleDefeatReturnsSettlesAndStartsFresh",
+    "AgentAdventureSettlementTests.SharedAbilityUnlockAffectsOnlyTheNextRunAndKeepsTheUserSettlement",
+    "AgentAdventureSettlementTests.SharedResolvedPartySyncClonesPersistentMembersAndExcludesGuests",
+    "AgentAdventureSettlementTests.StartingBagUsesFormalRelicAcquisitionAndRetryDoesNotApplyTwice"
+  ],
+  "sameFailedTestNames": true,
+  "existingFailures": [
+    "BattleButtonSkillSelectionTests.AllySpeedButtons_CanKeepIndependentSelectedSkills",
+    "BattleButtonSpriteStateSwitcherTests.OnEnable_AppliesUnpressedSprite",
+    "BattleGamblerPassiveServiceTests.TryApplyDebtInstantDeath_KillsAllyAtThreeDebtStacks",
+    "BattleImmediateEffectPlanServiceTests.ResolveAlly_UsesCurrentAllyImmediateOrder",
+    "BattleSkillInfoOverlayDescriptionTests.CompactSkillDetail_MergesMarkedDelayedStatusBranches",
+    "BattleStatusResolutionServiceTests.TryResolve_ReturnsFalseForUnsupportedLegacyStatus",
+    "BattleTargetingPhaseStartEffectServiceTests.ApplyPendingAllyStatusGrants_AppliesImmediateSpeedBonusForOpeningRoll",
+    "MainMenuSceneControllerTutorialTests.ResolveMenuAction_RecognizesTutorialIdentity",
+    "MapEventNestedFlowTests.SaveAssetCatalog_IncludesNestedFollowUpEvents",
+    "MapTutorialFlowServiceTests.TryConsumeArrivalGuide_ShowsMerchantForgeAndEliteFinalOnce",
+    "PuppetMasterEnemyAssetTests.PuppetMasterAndPuppet_HaveExpectedCoreStatsAndPassives",
+    "PuppetMasterEnemyAssetTests.PuppetMasterEncounter_HasExpectedEnemyGroupComposition",
+    "PuppetMasterEnemyAssetTests.PuppetSkills_HaveExpectedStatusAndRoundRules",
+    "RelicSystem079To094Tests.MerchantWhiteSlip_AllowsPurchaseWhenMoneyPositiveAndSpendsRemainingMoney",
+    "RestSceneReforgeInteractableRelicSelectionTests.HandleRelicSelection_ClickingOnlySelectedRelicAgainClearsSelection",
+    "RestSceneReforgeInteractableRelicSelectionTests.OnMouseUpAsButton_WhenMainPanelIsOpen_DoesNotReturnToOpenPrompt",
+    "TodoWeaponAssetTests.HotAnvilBoard_LoadsWithBurnSpreadAndSelfBurnSkills",
+    "TodoWeaponAssetTests.WeaponCatalog_ContainsTodoWeapons",
+    "TutorialBattleContentFactoryTests.CreateRuntimeDefinition_Battle03_AdvancesWhenAllySkillIsViewed",
+    "TutorialHighlightCoordinateUtilityTests.ConvertScreenRectToReferenceRect_UsesCanvasScalerMatchScale",
+    "WanderingShadowEnemyAssetTests.Echo_UsesConfiguredEffectsAndEventGroup"
+  ],
+  "newFailures": [],
+  "related": {
+    "total": 116,
+    "passed": 116,
+    "failed": 0,
+    "selection": "Same 116 named related cases selected from final full-suite XML; this is not a separate final targeted test job."
+  },
+  "initialRelatedRun": {
+    "result": {
+      "total": 116,
+      "passed": 115,
+      "failed": 1,
+      "skipped": 0,
+      "durationSeconds": 8.8084287
+    },
+    "failure": "AgentAdventureSettlementTests.StartingBagUsesFormalRelicAcquisitionAndRetryDoesNotApplyTwice",
+    "cause": "Directed test used the map serialized elite reward table, which was not a configured pool, so the formal bag builder returned no choices.",
+    "repair": "Use the configured default treasure relic pool in the directed test; retain production builder behavior. Final full suite includes this passing test."
+  },
+  "http": {
+    "trace": "outputs/agent-battle/b006b-normal-terminal-http.json",
+    "passed": [
+      {
+        "kind": "normal_defeat",
+        "phase": "finished",
+        "outcome": "defeat",
+        "runIndex": 1,
+        "settlementPolicy": "shared_score",
+        "points": 0
+      },
+      {
+        "kind": "map_abandon_and_meta_next",
+        "phase": "finished",
+        "outcome": "abandoned",
+        "runIndex": 2,
+        "settlementPolicy": "map_abandon_no_rewards",
+        "points": 0
+      },
+      {
+        "kind": "normal_battle_abandon",
+        "phase": "finished",
+        "outcome": "abandoned",
+        "runIndex": 3,
+        "settlementPolicy": "shared_score",
+        "points": 0
+      },
+      {
+        "kind": "explicit_profile_reopen",
+        "phase": "map",
+        "outcome": "",
+        "runIndex": 1,
+        "settlementPolicy": "",
+        "points": 0
+      }
+    ],
+    "method": "Fresh normal create_run and public commands only. Normal seed 1234 first battle was allowed to attack until real defeat; returned, settled, retried same full request and observed unchanged result. Free journey-start node unlocked before next run. Map abandon and normal battle abandon used their distinct formal policies. Explicit test profile was closed/reopened and retained the free node.",
+    "resourceLimits": "Normal HTTP profile/next-run proof only unlocks the zero-cost root node; it does not prove earned-point paid progression. Positive point awards, paid unlock affecting next run, Boss victory branch, and starting bags have directed tests with explicit setup.",
+    "normalVictoryProbe": {
+      "seed": 127,
+      "status": "Failed; not a normal victory",
+      "trace": "outputs/agent-battle/b006b-seed127-boss-probe-defeat.json",
+      "actions": 72,
+      "battles": [
+        {
+          "outcome": "victory",
+          "round": 3,
+          "position": [
+            1,
+            2
+          ],
+          "enemies": [
+            "血孢子(ID:6)"
+          ]
+        },
+        {
+          "outcome": "victory",
+          "round": 3,
+          "position": [
+            1,
+            3
+          ],
+          "enemies": [
+            "嗜血啮鼠(ID:14)",
+            "嗜血啮鼠(ID:14)",
+            "嗜血啮鼠(ID:14)"
+          ]
+        },
+        {
+          "outcome": "defeat",
+          "round": 2,
+          "position": [
+            4,
+            4
+          ],
+          "enemies": [
+            "雷寰霸主(ID:11)"
+          ]
+        }
+      ],
+      "preBossParty": "Chara 19/19, Jenny 18/18, Man 20/20; two keys. Actual treasury income, recruitment, two ordinary wins and rest before entering the configured 54-HP ThunderLord Boss.",
+      "outcome": "All three defeated in Boss round 2; actual defeat settlement completed. No resources, enemy attributes, asset pools or outcomes injected.",
+      "next": "B006b2 must improve actual equipment preparation and battle policy, then verify true normal Boss win -> earned points -> paid unlock -> next run."
+    },
+    "otherFailedProbe": "outputs/agent-battle/b006b-seed46-victory-probe-defeat.json: exploration before sufficient recruitment ended in a real elite defeat. Retained, not counted as a win."
+  },
+  "remaining": [
+    "B006b2 true normal victory/earned paid upgrade/next-run evidence remains required.",
+    "B007 full saves/restores, recorded settlement time, versioned deterministic replay and restart-safe idempotency.",
+    "B008 stronger generic client and full multi-route external-agent audit.",
+    "21 pre-existing EditMode failures remain. No new PlayMode run; original UI verification limits remain.",
+    "Inner/Core enemy pool gaps, Royal dungeon missing groups and Maze reward configuration issues remain documented; none are counted as cleared battles."
+  ],
+  "sourceHashes": [
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureProfile.cs",
+      "sha256": "d50991283564db62a04203b5ccfb24f5de07323c64d698702a70f6c18d196aea"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureProtocol.cs",
+      "sha256": "9a460be07df6f9c7745b24ee0d612aa3c946f090e47645d1ab966ecb7b9d4322"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.Settlement.cs",
+      "sha256": "4412b794bcbcd9acdda6c2890fb7d7936c4467d3df9be39a92cb9ac80d2e7c48"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.cs",
+      "sha256": "36100c7f3f8392ea8da70622ddfaee7955e3d0ff9e70995defb5ef81c5980a34"
+    },
+    {
+      "path": "Assets/Scripts/Shared/RunSettlementFlowService.cs",
+      "sha256": "9f01f3c9606c60b8ef9dbfbbc235f8984dcc050d17f92107449a3fe5798245bf"
+    },
+    {
+      "path": "Assets/Scripts/BattleScene/Controller/BattlePauseMenuOverlay.cs",
+      "sha256": "a714cb710527865217dfdb15e7c10153d0ad857fc9504bc34f8abaecf2bbbf9e"
+    },
+    {
+      "path": "Assets/Scripts/BattleScene/Controller/BattleSettlementOverlay.cs",
+      "sha256": "c20d818e63e89b234ce3c9c9efa50ca9d13b4482de2754f2a3733875fb003fb5"
+    },
+    {
+      "path": "Assets/Tests/EditMode/Editor/AgentAdventureSettlementTests.cs",
+      "sha256": "05c5bbaa3445cdfd69c767bfdeb42dce2371b8b4226c3bca671e5f03f3d7d205"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureProfile.cs.meta",
+      "sha256": "b9f57af2a3e0e5d9e49be3bcb1082f8d6b7746f04f808238b5d224a0a325238d"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.Settlement.cs.meta",
+      "sha256": "d14c8bd40c0fd50e1db2e26ad10f06daf3c0f375832ea2e042f3f49e1c283e1c"
+    },
+    {
+      "path": "Assets/Tests/EditMode/Editor/AgentAdventureSettlementTests.cs.meta",
+      "sha256": "d037169681a8e82d97b8f2b6029db23323fd474eac9fcc22db38d66280c9125f"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentBattleServer.cs",
+      "sha256": "b921730a082b05211fbd52265c37fd5d759c9596789a3f7be072b63a595d4d66"
+    }
+  ]
+}

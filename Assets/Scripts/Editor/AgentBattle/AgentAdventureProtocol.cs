@@ -2,7 +2,7 @@ using System;
 
 [Serializable] public sealed class AgentAdventureRequest
 {
-    public string op, sessionId, requestId, assetId;
+    public string op, sessionId, requestId, assetId, profileId;
     public int revision = -1, seed = 1, maxRounds = 1000, x, y, choiceIndex;
     public AgentBattleLegalAction battleAction;
 }
@@ -40,6 +40,36 @@ using System;
     public AgentAdventureTreasure treasure;
     public AgentAdventureDungeon dungeon;
     public RunSettlementStats progress;
+    public int runIndex;
+    public AgentAdventureMeta meta;
+    public AgentAdventureSettlement settlement;
+    public AgentAdventureStartingRelic startingRelic;
+}
+[Serializable] public sealed class AgentAdventureSettlement
+{
+    public bool completed;
+    public string policy;
+    public RunSettlementData data;
+}
+[Serializable] public sealed class AgentAdventureMeta
+{
+    public string profileId;
+    public bool persistent;
+    public int abilityPoints;
+    public AgentAdventureAbility[] nodes;
+}
+[Serializable] public sealed class AgentAdventureAbility
+{
+    public string id, name, description, state;
+    public string[] prerequisites;
+    public int cost;
+    public bool toggleable, enabled;
+}
+[Serializable] public sealed class AgentAdventureStartingRelic
+{
+    public int bagsRemaining, refreshesRemaining;
+    public bool canRefresh;
+    public AgentBattleRewardItem[] choices;
 }
 [Serializable] public sealed class AgentAdventureDungeon
 {

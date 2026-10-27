@@ -8,7 +8,8 @@ using UnityEngine;
 public sealed partial class AgentAdventureSession : IDisposable
 {
     private readonly string id = Guid.NewGuid().ToString("N");
-    private readonly int seed, maxRounds;
+    private int seed;
+    private readonly int maxRounds;
     private readonly Dictionary<string, string> bodies = new Dictionary<string, string>();
     private readonly Dictionary<string, string> responses = new Dictionary<string, string>();
     private readonly Queue<string> recent = new Queue<string>();
@@ -20,7 +21,7 @@ public sealed partial class AgentAdventureSession : IDisposable
     private bool disposed;
     public string Id => id;
 
-    public AgentAdventureSession(AgentAdventureRequest request)
+    public AgentAdventureSession(AgentAdventureRequest request, Func<long> utcNow = null)
     {
         if (request.maxRounds < 1 || request.maxRounds > 1000) throw new ArgumentException("maxRounds must be between 1 and 1000.");
         if (BattleEncounterRuntime.ActiveEncounter != null || BattleEncounterRuntime.CurrentEncounter != null || TutorialBattleRuntime.IsActive)
@@ -28,8 +29,14 @@ public sealed partial class AgentAdventureSession : IDisposable
         if (UnityEngine.Object.FindObjectsOfType<BattleManager>(true).Length != 0 || UnityEngine.Object.FindObjectsOfType<BattleAllyController>(true).Length != 0
             || UnityEngine.Object.FindObjectsOfType<BattleEnemyController>(true).Length != 0)
             throw new InvalidOperationException("An existing battle scene owns the runtime.");
+        AgentAdventureProfile.ValidateId(request.profileId);
+        this.utcNow = utcNow ?? (() => DateTimeOffset.UtcNow.ToUnixTimeSeconds());
         seed = request.seed; maxRounds = request.maxRounds;
-        map = new AgentAdventureMapRuntime(AgentAdventureConfiguration.Load(), seed);
+        var configuration = AgentAdventureConfiguration.Load();
+        profile = new AgentAdventureProfile(configuration.abilities, request.profileId);
+        try { map = new AgentAdventureMapRuntime(configuration, seed, profile.Progression.BuildRunBonus(), this.utcNow()); }
+        catch { profile.Dispose(); throw; }
+        if (StartingRelic != null) phase = "starting_relic";
     }
 
     public AgentAdventureObservation Observe()
@@ -58,7 +65,8 @@ public sealed partial class AgentAdventureSession : IDisposable
             battle = bridge != null ? bridge.Battle.Observe() : null, legalActions = LegalActions().ToArray(),
             merchantOffers = DescribeMerchant(), merchantRefreshCost = phase == "merchant" ? MerchantStockService.RefreshCost(state, CurrentTile, map.Configuration.starting.difficulty) : 0,
             recipes = DescribeRecipes(), rest = DescribeRest(), reforge = DescribeReforge(), lastReforgeResult = lastReforgeResult, mapEvent = DescribeEvent(), treasure = DescribeTreasure(),
-            dungeon = DescribeDungeon(), progress = state.settlementStats != null ? state.settlementStats.Clone() : new RunSettlementStats()
+            dungeon = DescribeDungeon(), progress = state.settlementStats != null ? state.settlementStats.Clone() : new RunSettlementStats(),
+            runIndex = runIndex, meta = profile.Describe(), settlement = DescribeSettlement(), startingRelic = DescribeStartingRelic()
         };
     }
 
@@ -96,6 +104,11 @@ public sealed partial class AgentAdventureSession : IDisposable
                         sessionId = before.sessionId, revision = before.revision, requestId = request.requestId });
                     break;
                 case "run_return": ReturnFromBattle(); break;
+                case "run_settle": SettleRun(); break;
+                case "run_abandon": AbandonRun(); break;
+                case "run_next": StartNextRun(request.seed); break;
+                case "run_unlock_ability": case "run_set_ability": ExecuteMetaAction(request); break;
+                case "run_choose_starting_relic": case "run_refresh_starting_relics": ExecuteStartingRelic(request); break;
                 case "run_choose_treasure": case "run_choose_treasure_relic": case "run_refresh_treasure_relics": case "run_continue_treasure":
                     ExecuteTreasureAction(request); break;
                 case "run_choose_event": ChooseEvent(request.choiceIndex); break;
@@ -125,7 +138,12 @@ public sealed partial class AgentAdventureSession : IDisposable
 
     private IEnumerable<AgentAdventureAction> LegalActions()
     {
-        if (phase == "map")
+        foreach (AgentAdventureAction action in SettlementActions()) yield return action;
+        if (phase == "starting_relic")
+        {
+            foreach (AgentAdventureAction action in StartingRelicActions()) yield return action;
+        }
+        else if (phase == "map")
         {
             foreach (BoardTileData tile in map.LegalDestinations()) yield return new AgentAdventureAction { op = "run_move", x = tile.coord.x, y = tile.coord.y };
             map.Board.TryGetTile(map.Snapshot.runState.playerGridPosition, out BoardTileData tileHere);
@@ -245,11 +263,14 @@ public sealed partial class AgentAdventureSession : IDisposable
         if (a.op != r.op) return false;
         if (a.op == "run_move") return a.x == r.x && a.y == r.y;
         if (a.op == "run_choose_calamity") return a.choiceIndex == r.choiceIndex;
+        if (a.op == "run_choose_starting_relic") return a.choiceIndex == r.choiceIndex;
+        if (a.op == "run_unlock_ability") return a.assetId == r.assetId;
+        if (a.op == "run_set_ability") return a.assetId == r.assetId && a.choiceIndex == r.choiceIndex;
         if (a.op == "run_buy" || a.op == "run_recruit" || a.op == "run_choose_event" || a.op == "run_choose_treasure" || a.op == "run_choose_treasure_relic") return a.choiceIndex == r.choiceIndex;
         if (a.op == "run_craft" || a.op == "run_equip") return a.assetId == r.assetId;
         if (a.op == "run_reforge_first" || a.op == "run_reforge_second" || a.op == "run_reforge_attribute") return a.assetId == r.assetId;
         if (a.op == "run_battle") return JsonUtility.ToJson(a.battleAction) == JsonUtility.ToJson(r.battleAction);
         return true;
     }
-    public void Dispose() { if (disposed) return; disposed = true; bridge?.Dispose(); bridge = null; ReleasePendingEventEncounter(); map?.Dispose(); map = null; }
+    public void Dispose() { if (disposed) return; disposed = true; bridge?.Dispose(); bridge = null; ReleasePendingEventEncounter(); map?.Dispose(); map = null; profile?.Dispose(); profile = null; }
 }

@@ -20,6 +20,15 @@ public static class RunSettlementFlowService
     public const string DefaultSettlementSceneName = "RunSettlementScene";
     public const string DefaultReturnSceneName = "Menu Selection";
 
+    public static void SyncResolvedPartyMembers(RunState state, BattleEncounterData encounter)
+    {
+        if (state == null || encounter?.resolvedPartyMembers == null || encounter.resolvedPartyMembers.Count == 0) return;
+        state.partyMembers = new System.Collections.Generic.List<RunPartyMemberState>();
+        foreach (RunPartyMemberState member in encounter.resolvedPartyMembers)
+            if (member != null && !member.isTemporaryBattleGuest) state.partyMembers.Add(member.Clone());
+        state.SyncLegacyPlayerFieldsFromParty();
+    }
+
     public static RunSettlementData ExecuteSettlement(RunSettlementFlowRequest request)
     {
         return ExecuteSettlement(request, RunSettlementRuntime.Context, true);
