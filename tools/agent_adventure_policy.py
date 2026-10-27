@@ -4,7 +4,7 @@ import re
 
 def skill_value(skill, enemy_count=1):
     """A preference score, not a damage or clash simulator."""
-    dice = skill.get("dice") or []
+    dice = skill.get("displayedDice") or skill.get("dice") or []
     attack = sum((d["min"] + d["max"]) / 2 for d in dice if d["category"] == "Attack")
     description = skill.get("description") or ""
     extra = re.findall(r"造成\s*(\d+)\s*(?:点)?(?:额外)?伤害", description)

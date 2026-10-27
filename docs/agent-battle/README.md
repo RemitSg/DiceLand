@@ -215,6 +215,10 @@ B006a 为同一个 `RunSettlementFlowService` 增加显式 `RunSettlementContext
 
 B006b2 进行中：演示客户端改为共用 `tools/agent_adventure_policy.py` 的可见状态策略。若当前技能不再出现在合法选择中，会切换到可支付技能；目标选择优先反制已指向本行动格的攻击，随后考虑可拦截的未覆盖威胁，且降低自伤技能偏好。6 项标准库测试来自真实正常 Boss 观察帧；独立 HTTP 复查确认所有决策都来自合法列表、能指定目标的行动格没有被漏掉。原三人 Boss 路线仍第 3 回合败北；另一条真实路线虽赢精英、购买图纸材料并锻造/装备掠风短匕，仍因准备期间的灾厄与构筑不足而失败，得到 653 分/0 能力点。只修改客户端策略，没有调整游戏难度或结算。正常胜利→赚点→付费升级→下一局依然未通过，记录见 `B006b2-progress.json`。
 
+B006b2 的装备可观察性已补齐：公开 `catalog` 保留原有列表，新增 `weaponDetails`、`characterDetails` 和 `blueprintDetails`。可以把商店图纸的 id 连到目标武器、材料、武器类型和技能；招募候选的初始武器也可查完整技能与基础行动格数量。技能说明直接调用正式界面的格式化方法，不维护第二份技能文案。`craftingCost` 在尚无图纸、尚未进入锻造格时也能读取当前灾厄修正后的费用。
+
+战斗中的 `skills/selectedSkill.displayedDice` 读取正式角色控制器的界面预览范围，原有 `dice` 保留资产基础范围。目录是静态定义，`displayedDice` 为空；状态、临时技能、能量、每个行动格的当前选择必须以本局观察和 `legalActions` 为准。预览没有预先掷骰，也不保证目标条件触发后的最终结果。目录查询使用独立预览场景中的非激活组件，不创建 UI，也不改当前场景、输入锁或随机数。正常获胜验收仍未完成；装备信息补齐只是该批的一部分。
+
 ## 后续迁移原则
 
 1. 用重放和正式游戏回归测试固定可观察行为。
@@ -236,3 +240,5 @@ B006b2 进行中：演示客户端改为共用 `tools/agent_adventure_policy.py`
 | 原代码 PlayMode 对照 | 也观察到同样的演出超时；运行在 7/12 后取消，完整基线未完成，不能据此确认所有 PlayMode 失败均为历史问题 |
 
 详细记录见 `outputs/agent-battle/verification-summary.json` 与 `http-verification.json`。示例策略的胜负仅验证接口流程，不用于评价流派强度。临时对照期间使用的源文件已逐字节恢复，测试临时修改的时间倍率与进入 Play Mode 设置也已恢复；当前用户场景的未保存变更保留原样。
+
+装备检查示例：`python -B tools/agent_adventure_client.py --url http://127.0.0.1:8091/v1/command inspect-equipment f3b07049a74cf51409a7e4127e06d57f`。返回该图纸的材料和目标武器完整技能，支持资产 id 或唯一精确名称。客户端管道输出固定 UTF-8。最终全量 948 项中 927 通过，21 项失败名称与原基线一致；6 项新增测试、47 项相关测试及 6 项 Python 回归通过。HTTP 正常路线的只读检查和实际费用观察记录见 `B006b2-equipment-validation.json`，并非正常通关证据。

@@ -91,6 +91,8 @@ def replay(client, path):
 
 
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--url", default="http://127.0.0.1:8091/v1/command")
     sub = parser.add_subparsers(dest="mode", required=True)

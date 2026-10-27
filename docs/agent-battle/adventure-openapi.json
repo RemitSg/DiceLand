@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "DiceLand Agent Adventure API (B006b1)",
-    "version": "0.8.0",
+    "version": "0.8.1",
     "description": "Shared-rule adventure with terminal settlement, isolated ability progression and next runs. Full normal victory/earned-upgrade audit and complete save/replay remain pending."
   },
   "servers": [
@@ -411,6 +411,11 @@
           },
           "startingRelic": {
             "$ref": "#/components/schemas/AgentAdventureStartingRelic"
+          },
+          "craftingCost": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Current formal forge money cost, including active calamities, available in all phases even with no owned blueprint. Catalog blueprintDetails gives unowned material requirements. This observation is not permission to craft; use current legalActions."
           }
         }
       },

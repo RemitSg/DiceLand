@@ -1600,3 +1600,12 @@ Shared treasure tile reward flow; money/blueprint/relic bags, one-time selection
 - Six Python regressions from real normal Boss frames pass. Live normal Boss probe used only offered actions and targeted all actionable slots; still defeated in round 3, so the victory gate is NOT complete.
 - Another actual seed-127 route won an outer elite, bought blueprint/materials, crafted/equipped Gale dagger, recovered the downed Molly through formal rest, collected two keys, then lost to Boss. Actual score 653, zero points, duration 652 seconds. No state/resources/outcome injection.
 - Evidence: docs/agent-battle/B006b2-progress.json. Continue preparation path/calamarity planning, equipment skill observability and real normal victory -> earned paid upgrade -> next run. B007/B008 remain. Goal stays active.
+
+
+## 2026-10-27 B006b2 in progress - equipment observability
+
+- Public catalog adds weapon/character/blueprint details: skills, conditions, base action slots, type, target weapon and shared aggregated requirements. Adventure exposes the actual forge fee before recipe ownership/location entry.
+- Catalog and live combat reuse one skill reader/formal formatter. Inactive preview-scene formatting creates no UI and preserves input locks, scene and RNG. Live displayedDice uses the same status-adjusted controller getters as UI; authored dice remains separate. No outcome prediction.
+- Added inspect-equipment public-catalog CLI and UTF-8 pipe output; policy prefers displayed ranges with old-observation fallback.
+- Final isolated headless EditMode: 948 total, 927 passed, same 21 failing names; all 6 new and 47 selected related cases pass. Python 6/6. Real HTTP read-only live battle/catalog, blueprint inspection and normal actual forge inflation (40 before owning recipe/entering forge) verified.
+- Evidence: docs/agent-battle/B006b2-equipment-validation.json. Normal victory/earned paid upgrade remains pending; B007 save/replay and B008 full audit remain. Goal stays active.

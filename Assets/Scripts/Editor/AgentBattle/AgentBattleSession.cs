@@ -323,20 +323,24 @@ public sealed class AgentBattleSession : IDisposable
             hp = isAlly ? ally.CurrentHP : enemy.CurrentHP, maxHp = isAlly ? ally.MaxHP : enemy.MaxHP,
             dead = isAlly ? ally.IsDead : enemy.IsDead, stage = isAlly ? 0 : enemy.CurrentStageIndex,
             statuses = statuses.Select(s => new AgentBattleStatus { id = s.Key, name = s.DisplayName, stacks = s.stacks }).ToArray(),
-            skills = skills.Select((s, i) => DescribeSkill(s, i, isAlly)).ToArray(),
+            skills = skills.Select((s, i) => DescribeSkill(s, i, isAlly, ally, enemy)).ToArray(),
             slots = buttons.Select((b, i) => new AgentBattleSlot { index = i, speed = b.Speed,
                 skillIndex = isAlly ? ally.GetSelectedSkillIndexForButton(b) : -1,
-                selectedSkill = DescribeSkill(isAlly ? ally.GetSelectedSkillForButton(b) : enemy.GetSelectedSkillForButton(b), -1, isAlly),
+                selectedSkill = DescribeSkill(isAlly ? ally.GetSelectedSkillForButton(b) : enemy.GetSelectedSkillForButton(b), -1, isAlly, ally, enemy),
                 targetId = FindActor(b.ConnectedTarget), targetButtonIndex = FindSlot(b.ConnectedTarget), contested = b.IsContestedConnection }).ToArray()
         };
     }
 
-    private AgentBattleSkill DescribeSkill(EnemySkill_SO skill, int index, bool isAlly)
+    private AgentBattleSkill DescribeSkill(EnemySkill_SO skill, int index, bool isAlly, BattleAllyController ally, BattleEnemyController enemy)
     {
-        if (skill == null) return null;
-        return new AgentBattleSkill { index = index, id = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(skill)), name = skill.skillName,
-            description = System.Text.RegularExpressions.Regex.Replace(skillFormatter.DescribeSkillRules(skill, isAlly), "<[^>]+>", ""), energyCost = skill.energyCost,
-            dice = Enumerable.Range(0, Mathf.Max(0, skill.diceCount)).Select(i => { var range = skill.GetDicePowerRange(i); return new AgentBattleDie { min = range.minPower, max = range.maxPower, category = skill.GetDiceSkillCategory(i).ToString() }; }).ToArray() };
+        AgentBattleSkill described = AgentBattleAssetReader.Skill(skill, index, isAlly, skillFormatter);
+        if (described == null) return null;
+        described.displayedDice = Enumerable.Range(0, Mathf.Max(0, skill.diceCount)).Select(i =>
+        {
+            var range = isAlly ? ally.GetDisplayedDicePowerRange(skill, i) : enemy.GetEffectiveDisplayedDicePowerRange(skill, i);
+            return new AgentBattleDie { min = range.minPower, max = range.maxPower, category = skill.GetDiceSkillCategory(i).ToString() };
+        }).ToArray();
+        return described;
     }
 
     private string FindActor(SpeedButton button)
@@ -413,13 +417,28 @@ public sealed class AgentBattleSession : IDisposable
         finally { while (stack.Count != 0) (stack.Pop() as IDisposable)?.Dispose(); }
     }
 
-    public static AgentBattleCatalogue Catalogue() => new AgentBattleCatalogue
+    public static AgentBattleCatalogue Catalogue()
     {
-        characters = Assets<CharacterData_SO>(x => x.characterName, x => x.basicDescription),
-        weapons = Assets<Weapon_SO>(x => x.weaponName, x => x.description),
-        enemies = Assets<EnemyData_SO>(x => x.enemyName, x => "HP " + x.baseHP),
-        relics = Assets<Relic_SO>(x => x.DisplayName, x => x.description).Select(x => { x.limitation = HasAcquisitionEffect(Load<Relic_SO>(x.id)) ? "acquisition_not_supported" : ""; return x; }).ToArray()
-    };
+        var catalogue = new AgentBattleCatalogue
+        {
+            characters = Assets<CharacterData_SO>(x => x.characterName, x => x.basicDescription),
+            weapons = Assets<Weapon_SO>(x => x.weaponName, x => x.description),
+            enemies = Assets<EnemyData_SO>(x => x.enemyName, x => "HP " + x.baseHP),
+            relics = Assets<Relic_SO>(x => x.DisplayName, x => x.description).Select(x => { x.limitation = HasAcquisitionEffect(Load<Relic_SO>(x.id)) ? "acquisition_not_supported" : ""; return x; }).ToArray()
+        };
+        using (var reader = new AgentBattleAssetReader())
+            catalogue.weaponDetails = catalogue.weapons.Select(w => reader.Weapon(Load<Weapon_SO>(w.id))).ToArray();
+        catalogue.characterDetails = catalogue.characters.Select(c =>
+        {
+            var data = Load<CharacterData_SO>(c.id);
+            return new AgentBattleCharacterDetails { id = c.id, name = c.name, weaponType = data.compatibleWeaponType.ToString(),
+                initialWeapon = data.initialWeaponData != null ? AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(data.initialWeaponData)) : "",
+                baseHp = data.baseHP, minSpeed = data.minSpeed, maxSpeed = data.maxSpeed };
+        }).ToArray();
+        catalogue.blueprintDetails = Assets<CraftingBlueprint_SO>(b => b.DisplayName, b => b.description)
+            .Select(b => AgentBattleAssetReader.Blueprint(Load<CraftingBlueprint_SO>(b.id))).ToArray();
+        return catalogue;
+    }
     private static bool HasAcquisitionEffect(Relic_SO relic) => relic.builtInEffects != null && relic.builtInEffects.Any(e => e != null && e.trigger == Relic_SO.RelicTrigger.OnRelicAcquired);
     private static AgentBattleAsset DescribeRelic(Relic_SO relic) => new AgentBattleAsset { id = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(relic)), name = relic.DisplayName, description = relic.description };
     private static AgentBattleAsset[] Assets<T>(Func<T, string> name, Func<T, string> description) where T : UnityEngine.Object

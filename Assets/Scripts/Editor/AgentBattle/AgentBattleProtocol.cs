@@ -73,6 +73,7 @@ using System;
     public string description;
     public int energyCost;
     public AgentBattleDie[] dice;
+    public AgentBattleDie[] displayedDice;
 }
 [Serializable] public sealed class AgentBattleDie { public int min; public int max; public string category; }
 [Serializable] public sealed class AgentBattleSlot
@@ -109,6 +110,29 @@ using System;
 [Serializable] public sealed class AgentBattleSettledMember { public string memberId; public int hp, maxHp, level, experience; }
 [Serializable] public sealed class AgentBattleRewardItem { public string id; public string name; public string description; public int amount; public int index; }
 [Serializable] public sealed class AgentBattleEvent { public int index; public int round; public string kind; public string actorId; public int amount; public string message; }
-[Serializable] public sealed class AgentBattleCatalogue { public AgentBattleAsset[] characters; public AgentBattleAsset[] weapons; public AgentBattleAsset[] enemies; public AgentBattleAsset[] relics; }
+[Serializable] public sealed class AgentBattleCatalogue
+{
+    public AgentBattleAsset[] characters, weapons, enemies, relics;
+    public AgentBattleWeaponDetails[] weaponDetails;
+    public AgentBattleCharacterDetails[] characterDetails;
+    public AgentBattleBlueprintDetails[] blueprintDetails;
+}
+[Serializable] public sealed class AgentBattleWeaponDetails
+{
+    public string id, name, description, weaponType, rarity;
+    public int speedButtonCount, fallbackMinPower, fallbackMaxPower;
+    public AgentBattleSkill[] skills;
+}
+[Serializable] public sealed class AgentBattleCharacterDetails
+{
+    public string id, name, weaponType, initialWeapon;
+    public int baseHp, minSpeed, maxSpeed;
+}
+[Serializable] public sealed class AgentBattleBlueprintDetails
+{
+    public string id, name, description, rarity, weapon;
+    public AgentBattleIngredient[] materials;
+}
+[Serializable] public sealed class AgentBattleIngredient { public string id, name; public int amount; }
 [Serializable] public sealed class AgentBattleAsset { public string id; public string name; public string description; public string limitation; }
 [Serializable] public sealed class AgentBattleReplay { public string engineVersion; public string contentHash; public AgentBattleRequest create; public AgentBattleRequest[] commands; }

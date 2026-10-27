@@ -31,7 +31,7 @@ using System;
     public AgentBattleObservation battle;
     public AgentAdventureAction[] legalActions;
     public AgentAdventureMerchantOffer[] merchantOffers;
-    public int merchantRefreshCost;
+    public int merchantRefreshCost, craftingCost;
     public AgentAdventureRecipe[] recipes;
     public AgentAdventureRest rest;
     public AgentAdventureReforge reforge;

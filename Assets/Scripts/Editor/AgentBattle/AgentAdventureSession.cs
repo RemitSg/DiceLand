@@ -64,7 +64,7 @@ public sealed partial class AgentAdventureSession : IDisposable
             activeCalamities = state.activeCalamities.Where(c => c?.calamityData != null).Select(c => new AgentBattleAsset { id = AssetId(c.calamityData), name = c.calamityData.DisplayName, description = c.calamityData.description }).ToArray(),
             battle = bridge != null ? bridge.Battle.Observe() : null, legalActions = LegalActions().ToArray(),
             merchantOffers = DescribeMerchant(), merchantRefreshCost = phase == "merchant" ? MerchantStockService.RefreshCost(state, CurrentTile, map.Configuration.starting.difficulty) : 0,
-            recipes = DescribeRecipes(), rest = DescribeRest(), reforge = DescribeReforge(), lastReforgeResult = lastReforgeResult, mapEvent = DescribeEvent(), treasure = DescribeTreasure(),
+            craftingCost = RunCraftingService.Cost(state), recipes = DescribeRecipes(), rest = DescribeRest(), reforge = DescribeReforge(), lastReforgeResult = lastReforgeResult, mapEvent = DescribeEvent(), treasure = DescribeTreasure(),
             dungeon = DescribeDungeon(), progress = state.settlementStats != null ? state.settlementStats.Clone() : new RunSettlementStats(),
             runIndex = runIndex, meta = profile.Describe(), settlement = DescribeSettlement(), startingRelic = DescribeStartingRelic()
         };

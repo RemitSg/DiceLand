@@ -11,6 +11,20 @@ from agent_battle_client import Client
 from agent_adventure_policy import choose_battle_action
 
 
+def inspect_equipment(client, item):
+    catalog = client.call(op="catalog")["catalogue"]
+    matches = [(kind, definition) for kind, key in (("weapon", "weaponDetails"), ("blueprint", "blueprintDetails"), ("character", "characterDetails"))
+               for definition in catalog[key] if item in (definition["id"], definition["name"])]
+    if len(matches) != 1:
+        raise ValueError(f"Expected one equipment/blueprint/character named or identified by {item!r}; found {len(matches)}. Use its catalog ID.")
+    kind, definition = matches[0]
+    result = {"kind": kind, "definition": definition}
+    weapon_id = definition.get("weapon") if kind == "blueprint" else definition.get("initialWeapon") if kind == "character" else None
+    if weapon_id:
+        result["weapon"] = next((w for w in catalog["weaponDetails"] if w["id"] == weapon_id), None)
+    return result
+
+
 def choose_reforge_action(state):
     actions = state["legalActions"]
     reforge = state["reforge"]
@@ -143,6 +157,8 @@ def demo(client, args):
 
 
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--url", default="http://127.0.0.1:8091/v1/command")
     commands = parser.add_subparsers(dest="mode", required=True)
@@ -156,9 +172,16 @@ def main():
     play.add_argument("--profile", help="Explicit isolated persistent agent profile; omitted profiles are discarded on close")
     raw = commands.add_parser("command")
     raw.add_argument("json", help="JSON command, or - to read stdin")
+    inspect = commands.add_parser("inspect-equipment", help="Read authored item skills and blueprint materials through the public catalog")
+    inspect.add_argument("item", help="Catalog asset ID or exact equipment/blueprint/character name")
     args = parser.parse_args()
     client = Client(args.url)
-    result = demo(client, args) if args.mode == "demo" else client.call(**json.loads(sys.stdin.read() if args.json == "-" else args.json))
+    if args.mode == "demo":
+        result = demo(client, args)
+    elif args.mode == "inspect-equipment":
+        result = inspect_equipment(client, args.item)
+    else:
+        result = client.call(**json.loads(sys.stdin.read() if args.json == "-" else args.json))
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
 

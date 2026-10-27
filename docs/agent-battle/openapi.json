@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "DiceLand Agent Battle API",
-    "version": "1.3.0",
+    "version": "0.8.1",
     "description": "Shared-rule, editor-backed single battles. The separate adventure-openapi.json documents the in-progress normal adventure operations on this endpoint."
   },
   "servers": [
@@ -351,6 +351,13 @@
             "items": {
               "$ref": "#/components/schemas/AgentBattleDie"
             }
+          },
+          "displayedDice": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleDie"
+            },
+            "description": "Present for live battle actors/selected skills: reads the same status-adjusted displayed range as the formal ally/enemy controller tooltip, including the enemy queued attack bonus. Not a roll or outcome prediction; per-target conditional effects can still change execution. Empty for authored catalog definitions. Original dice remains authored base ranges."
           }
         }
       },
@@ -482,6 +489,24 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AgentBattleAsset"
+            }
+          },
+          "weaponDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleWeaponDetails"
+            }
+          },
+          "characterDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleCharacterDetails"
+            }
+          },
+          "blueprintDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleBlueprintDetails"
             }
           }
         }
@@ -619,6 +644,118 @@
             "format": "int32"
           },
           "experience": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AgentBattleWeaponDetails": {
+        "type": "object",
+        "description": "Authored weapon definition available before owning or purchasing. Skill descriptions reuse the formal overlay formatter. Pool indices are static authored indices; only current legalActions authorizes actual skill selection. Fallback powers apply to legacy weapons without skills. Base speedButtonCount can change during battle due to statuses/relics.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "weaponType": {
+            "type": "string"
+          },
+          "rarity": {
+            "type": "string"
+          },
+          "speedButtonCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fallbackMinPower": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fallbackMaxPower": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleSkill"
+            }
+          }
+        }
+      },
+      "AgentBattleCharacterDetails": {
+        "type": "object",
+        "description": "Authored starting character statistics and weapon compatibility type. Join initialWeapon to weaponDetails; actual recruited/carried HP and equipment come from adventure observations.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "weaponType": {
+            "type": "string"
+          },
+          "initialWeapon": {
+            "type": "string"
+          },
+          "baseHp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minSpeed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxSpeed": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AgentBattleBlueprintDetails": {
+        "type": "object",
+        "description": "Blueprint -> target weapon -> authored skills; materials are aggregated by the same RunCraftingService used for execution. An unconfigured target is an empty id. Current forge money cost is adventure.craftingCost, and required ownership/materials are still enforced by legalActions.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "rarity": {
+            "type": "string"
+          },
+          "weapon": {
+            "type": "string"
+          },
+          "materials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleIngredient"
+            }
+          }
+        }
+      },
+      "AgentBattleIngredient": {
+        "type": "object",
+        "description": "A configured crafting material and required amount.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "amount": {
             "type": "integer",
             "format": "int32"
           }
