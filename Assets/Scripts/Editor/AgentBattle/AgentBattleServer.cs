@@ -16,6 +16,7 @@ public static class AgentBattleServer
     private static HttpListener listener;
     private static Thread worker;
     private static AgentBattleSession session;
+    private static AgentAdventureSession adventure;
     private static int pendingCount;
     public static bool IsRunning => listener != null && listener.IsListening;
 
@@ -69,6 +70,7 @@ public static class AgentBattleServer
             Write(pending.context, 503, "{\"success\":false,\"error\":\"server_stopped\"}");
         }
         session?.Dispose(); session = null;
+        adventure?.Dispose(); adventure = null;
     }
 
     public static string Dispatch(string json)
@@ -77,15 +79,17 @@ public static class AgentBattleServer
         try
         {
             JsonUtility.FromJsonOverwrite(json, request);
+            if (request.op == "create_run" || request.op == "observe_run" || (request.op != null && request.op.StartsWith("run_", StringComparison.Ordinal)))
+                return DispatchAdventure(json);
             AgentBattleResponse response;
             switch (request.op)
             {
                 case "health":
-                    response = new AgentBattleResponse { success = true, message = "editor-backed single-session battle API; no graphics; engine required; snapshot/restore and map simulation not yet supported" }; break;
+                    response = new AgentBattleResponse { success = true, message = "editor-backed shared-rule API; one battle or adventure session; create_run supports normal map, movement, calamities and battles; location features and final settlement still in progress; engine required" }; break;
                 case "catalog":
                     response = new AgentBattleResponse { success = true, catalogue = AgentBattleSession.Catalogue() }; break;
                 case "create":
-                    if (session != null) throw new ArgumentException("Close the existing session before creating another.");
+                    if (session != null || adventure != null) throw new ArgumentException("Close the existing session before creating another.");
                     session = new AgentBattleSession(request);
                     response = new AgentBattleResponse { success = true, state = session.Observe() }; break;
                 case "observe":
@@ -108,6 +112,26 @@ public static class AgentBattleServer
         {
             return JsonUtility.ToJson(new AgentBattleResponse { success = false, error = "execution_error", message = exception.Message });
         }
+    }
+
+    private static string DispatchAdventure(string json)
+    {
+        var request = new AgentAdventureRequest(); JsonUtility.FromJsonOverwrite(json, request);
+        if (request.op == "create_run")
+        {
+            if (adventure != null || session != null) throw new ArgumentException("Close the existing session before creating another.");
+            adventure = new AgentAdventureSession(request);
+            return JsonUtility.ToJson(new AgentAdventureResponse { success = true, state = adventure.Observe() });
+        }
+        if (adventure == null || request.sessionId != adventure.Id) throw new ArgumentException("Unknown adventure sessionId.");
+        if (request.op == "run_close")
+        {
+            adventure.Dispose(); adventure = null;
+            return JsonUtility.ToJson(new AgentAdventureResponse { success = true });
+        }
+        return JsonUtility.ToJson(request.op == "observe_run"
+            ? new AgentAdventureResponse { success = true, state = adventure.Observe() }
+            : adventure.Act(request));
     }
 
     private static void RequireSession(string id)

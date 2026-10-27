@@ -1,0 +1,362 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "DiceLand Agent Adventure API (B003b)",
+    "version": "0.1.0",
+    "description": "In-progress normal adventure loop using formal game rules. Map movement, calamities and battles work; location features and final settlement are upcoming batches. Always select legalActions. Event/rest/treasure phases may currently require run_close; no placeholder rewards or full-run completion is implied."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8091"
+    }
+  ],
+  "paths": {
+    "/v1/command": {
+      "post": {
+        "operationId": "adventureCommand",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentAdventureRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command result; check success before reading state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentAdventureResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid command, stale revision or illegal action."
+          },
+          "500": {
+            "description": "Execution error; observe or close the faulted session."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgentAdventureRequest": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "choiceIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "create_run",
+              "observe_run",
+              "run_move",
+              "run_interact",
+              "run_battle",
+              "run_return",
+              "run_choose_calamity",
+              "run_leave_location",
+              "run_close"
+            ]
+          },
+          "battleAction": {
+            "$ref": "./openapi.json#/components/schemas/AgentBattleLegalAction"
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "Required for mutations; retries must preserve the entire command."
+          },
+          "revision": {
+            "type": "integer",
+            "default": -1,
+            "description": "Latest outer adventure revision, required for mutations."
+          },
+          "seed": {
+            "type": "integer",
+            "default": 1
+          },
+          "maxRounds": {
+            "type": "integer",
+            "default": 1000,
+            "minimum": 1,
+            "maximum": 1000
+          }
+        }
+      },
+      "AgentAdventureAction": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "choiceIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "create_run",
+              "observe_run",
+              "run_move",
+              "run_interact",
+              "run_battle",
+              "run_return",
+              "run_choose_calamity",
+              "run_leave_location",
+              "run_close"
+            ]
+          },
+          "battleAction": {
+            "$ref": "./openapi.json#/components/schemas/AgentBattleLegalAction"
+          }
+        }
+      },
+      "AgentAdventureResponse": {
+        "type": "object",
+        "properties": {
+          "apiVersion": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/AgentAdventureObservation"
+          }
+        }
+      },
+      "AgentAdventureObservation": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          },
+          "phase": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "difficulty": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "seed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "boardSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actionPoints": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxActionPoints": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cycle": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "calamityTier": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keys": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requiredKeys": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "money": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "configurationIssues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tiles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureTile"
+            }
+          },
+          "party": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventurePartyMember"
+            }
+          },
+          "loot": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "relics": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "weapons": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "blueprints": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "calamityChoices": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleAsset"
+            }
+          },
+          "activeCalamities": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleAsset"
+            }
+          },
+          "battle": {
+            "$ref": "./openapi.json#/components/schemas/AgentBattleObservation"
+          },
+          "legalActions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureAction"
+            }
+          }
+        }
+      },
+      "AgentAdventureTile": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "danger": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "moveCost": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          },
+          "dangerBand": {
+            "type": "string"
+          },
+          "visited": {
+            "type": "boolean"
+          },
+          "resolved": {
+            "type": "boolean"
+          },
+          "encounterAvailable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AgentAdventurePartyMember": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "character": {
+            "type": "string"
+          },
+          "weapon": {
+            "type": "string"
+          },
+          "hp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxHp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "level": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "experience": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    }
+  }
+}

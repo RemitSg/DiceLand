@@ -103,7 +103,9 @@ using System;
     public AgentBattleRewardItem[] loot;
     public AgentBattleRewardItem[] relics;
     public AgentBattleRewardItem[] choices;
+    public AgentBattleSettledMember[] party;
 }
+[Serializable] public sealed class AgentBattleSettledMember { public string memberId; public int hp, maxHp, level, experience; }
 [Serializable] public sealed class AgentBattleRewardItem { public string id; public string name; public string description; public int amount; public int index; }
 [Serializable] public sealed class AgentBattleEvent { public int index; public int round; public string kind; public string actorId; public int amount; public string message; }
 [Serializable] public sealed class AgentBattleCatalogue { public AgentBattleAsset[] characters; public AgentBattleAsset[] weapons; public AgentBattleAsset[] enemies; public AgentBattleAsset[] relics; }

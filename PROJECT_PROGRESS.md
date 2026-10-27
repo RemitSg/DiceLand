@@ -1527,3 +1527,10 @@
 - Added saved-config reader and isolated map runtime; existing BoardManager and PlayerMapController skip visuals/animation only. No duplicate map generator or AP rules.
 - Validation: 7 new map tests; related targeted EditMode 40/40 passed (be0938a0ccd1425399f6800b78589347). Real NormalConfig/Medium generated 81 tiles and 3 keys; one-point overflow, key idempotency, seeded maps, rejected moves, carried battle state and starting bonuses covered.
 - Shipped Inner/Core enemy pools are empty; ConfigurationIssues reports missing groups instead of synthesizing content. B003b still needs HTTP adventure decisions and calamity handling.
+
+## 2026-10-27 - Agent adventure B003b: HTTP map/battle/calamity loop
+
+- Added create_run/observe_run/run_* commands and a stdlib client with legal-action-driven map and battle decisions. Single battle and adventure sessions are mutually exclusive.
+- Shared calamity teleport/relic loss/rest conversion and visited-empty ambush implementations with RunGameManager. Deferred headless arrival until AP/relic cost callbacks finish, including overflow. Settlement response now exposes actual post-level-up party state.
+- Validation: targeted EditMode 60/60 passed (09e548a4de3e4cd8a1ccaf100f3568b9). Public HTTP normal map route won a battle, returned with level 2 and HP 18/19, then exhausted AP and selected an actual calamity in cycle 2. Four invalid requests rejected; duplicate move returned cached result. Python syntax and OpenAPI references validated.
+- Incomplete: location decisions/transactions, final settlement, isolated meta progression, save/restore and full replay. No placeholder rewards. Full-suite/PlayMode limitations remain as recorded in B002-validation.json. See docs/agent-battle/PLAN.md and B003b-validation.json.

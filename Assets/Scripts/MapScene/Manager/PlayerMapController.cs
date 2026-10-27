@@ -39,7 +39,14 @@ public class PlayerMapController : MonoBehaviour
     private Transform visualRoot;
     private bool isMoving;
     private bool headlessExecution;
+    private BoardTileData pendingHeadlessArrival;
     public void ConfigureHeadlessExecution() { headlessExecution = true; }
+    public void FlushHeadlessArrival()
+    {
+        if (!headlessExecution || pendingHeadlessArrival == null) return;
+        BoardTileData tile = pendingHeadlessArrival; pendingHeadlessArrival = null;
+        CompleteArrival(tile);
+    }
 
     public event Action<BoardTileData, string> PlayerMovedToTile;
 
@@ -121,7 +128,8 @@ public class PlayerMapController : MonoBehaviour
         if (headlessExecution)
         {
             playerPawn.position = worldTarget;
-            CompleteArrival(targetTile);
+            isMoving = true;
+            pendingHeadlessArrival = targetTile;
             return true;
         }
 

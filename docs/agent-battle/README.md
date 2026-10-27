@@ -1,4 +1,4 @@
-# AI 战斗接口（第一阶段）
+# Agent 玩法接口（开发中）
 
 正式游戏和 AI 调用同一个 `BattleButton` 回合流程、技能、伤害、状态、遗物和结算实现。接口适配层只负责创建测试会话、验证命令、驱动回合和描述状态，不另写玩法公式。
 
@@ -36,6 +36,7 @@ Content-Type: application/json
 python tools/agent_battle_client.py health
 python tools/agent_battle_client.py demo --output outputs/agent-battle/slime-replay.json
 python tools/agent_battle_client.py replay outputs/agent-battle/slime-replay.json
+python tools/agent_adventure_client.py demo --max-moves 2 --output outputs/agent-battle/adventure-trace.json
 
 python tools/agent_battle_client.py demo --weapon '熔火铁剑' --enemy '浪灵' `
   --relic '女孩的火柴' --relic '液化燃料' --output outputs/agent-battle/burn-replay.json
@@ -43,7 +44,7 @@ python tools/agent_battle_client.py demo --weapon '熔火铁剑' --enemy '浪灵
 
 演示客户端仅使用“当前默认技能，按合法目标连接，再提交回合”的简单策略，用来验证接口，不代表高水平打法。任何能发 HTTP 请求的 agent 都可以实现自己的策略，无需使用该客户端。OpenAPI 说明见同目录 `openapi.json`。
 
-## 命令协议
+## 单场战斗命令协议
 
 | op | 必填参数 | 行为 |
 |---|---|---|
@@ -104,7 +105,7 @@ python tools/agent_battle_client.py demo --weapon '熔火铁剑' --enemy '浪灵
 
 ## 当前边界
 
-- 公开 HTTP 开局仍只提供单场战斗；完整冒险创建、地图探索、商店、锻造、局外成长和存档分支正在后续批次接入。
+- 公开 HTTP 已提供正常冒险开局、地图移动、钥匙、行动点/灾厄和战斗返回。商店/锻造交易、休息、事件、宝藏、局外成长、存档和最终结算仍在后续批次接入。
 - 遗物按已携带的战斗装备处理。具有 `OnRelicAcquired` 效果的遗物暂时明确拒绝，catalog 中标为 `acquisition_not_supported`，避免草莓等获得时效果被静默遗漏。地图或经济触发在单场战斗中不会发生。
 - 不支持任意局面 snapshot/restore。当前可导出并从开局重放行动；这与恢复任意中间状态不同。
 - 并非全部敌人、技能与遗物组合都已完成回归验证；它们会走正式实现，原有配置缺陷也会如实影响结果，不会被替换成简化效果。
@@ -116,13 +117,37 @@ python tools/agent_battle_client.py demo --weapon '熔火铁剑' --enemy '浪灵
 
 遗物选择和刷新已提取为正式结算面板与接口共同使用的服务。精英奖励需要选择后才可返回；草莓、礼包等获得效果在回写背包时执行一次。礼包抽取改用可捕获的随机种子。持久队员 ID 与结算显示名称分别保留，修正了原结算把 ID 替换成角色名的问题。
 
-本批尚未开放 HTTP 任意冒险状态注入。`create` 仍使用上文的单场配置，不会凭空生成奖励阶段；上述奖励命令供后续正式冒险入口复用。内部冒险战斗拒绝导出缺少携带状态的单场重放，完整重放由后续冒险协议负责。
+`create` 仍使用上文的单场配置，不会凭空生成奖励阶段；B003b 的 `create_run` 会从正常地图遭遇产生奖励。内部冒险战斗拒绝导出缺少携带状态的单场重放，完整冒险重放由后续批次负责。
 
 B002 相关定向测试 46/46 通过，覆盖连续两场战斗、等级与金币、失败、Boss 钥匙门槛、奖励选择/刷新、重复请求、礼包随机和全局快照隔离；新单场 HTTP 对战重放一致。全量 EditMode 为 828 项、804 通过、24 失败：原有 23 项之外，另观察到结算按钮测试的 EventSystem.current 日志错误，单独运行仍复现；未将全量称为通过，详情见 `B002-validation.json`。测试中的小型敌群不作为完整冒险通关证据。原有 PlayMode 限制继续保留。
 
-## 后续迁移原则
+## B003：正常冒险 HTTP 入口
 
-B003a 已提供内部 `AgentAdventureConfiguration` 与 `AgentAdventureMapRuntime`：读取保存的正式地图配置，调用共用开局构造器、地图生成器和移动服务，跳过格子显示、棋子动画和落地效果。相关定向测试 40/40 通过，其中新增 7 项地图测试。当前地图原语尚未接入 HTTP 决策入口，灾厄队列由后续 B003b 负责消费，不能据此宣称完整冒险已可游玩。`ConfigurationIssues` 会列出原敌人表中没有敌群的格子。配置读取使用当前引擎内部预览加载 API，版本不兼容时明确报错。
+B003a（`e515b6dd`）提供内部 `AgentAdventureConfiguration` 与 `AgentAdventureMapRuntime`：读取保存的正式地图配置，调用共用开局构造器、地图生成器和移动服务，跳过格子显示、棋子动画和落地效果。配置读取使用当前引擎内部预览加载 API，版本不兼容时明确报错。正常难度使用实际 `NormalConfig.asset`（显示名 Medium），而不是场景的 Easy 回退配置；局外加成从隔离的空白进度开始，不读取用户成长存档。
+
+B003b 在相同 HTTP 地址提供以下命令，协议见 `adventure-openapi.json`：
+
+| op | 行为 |
+|---|---|
+| `create_run` | 使用 `seed` 和可选 `maxRounds` 创建正常冒险 |
+| `observe_run` | 使用 `sessionId` 观察冒险，保留地图、队伍、物品、灾厄、内层战斗和合法动作 |
+| `run_move` | 使用合法动作中的 `x/y` 移动；未探索/已探索花费、溢出周期和遗物触发沿用正式移动服务 |
+| `run_interact` | 在当前位置重新交互，仍检查 Boss 钥匙门槛与敌群配置 |
+| `run_battle` | 原样复制合法动作中的 `battleAction`，执行对应战斗行动或奖励选择 |
+| `run_return` | 战斗和必选奖励完成后回写正式结算，并恢复地图或进入待结算终局 |
+| `run_choose_calamity` | 使用合法 `choiceIndex` 应用灾厄；地图内置效果与正式界面共用实现 |
+| `run_leave_location` | 关闭当前商店/锻造入口；交易功能将在 B004 接入 |
+| `run_close` | 任意阶段销毁临时冒险；目前不代表放弃结算、不发放局外奖励 |
+
+所有修改动作都需要外层冒险的 `sessionId`、最新 `revision` 和唯一 `requestId`。原样复制一个 `state.legalActions` 项，再添加这三个字段即可；嵌套战斗的版本和 ID 由适配层处理。重复、非法和过期请求不重复扣费。一场冒险和一场单独战斗不能同时创建。
+
+`state.party` 是地图携带状态；战斗中当前生命在 `state.battle.actors`，战斗结束并升级后的生命和经验在 `state.battle.rewards.party`，`run_return` 才将它写回地图队伍。灾厄、战斗和地图移动使用会话随机状态，执行后恢复编辑器的外部随机状态。
+
+**当前仍未完成整局闭环。** 事件、宝藏和休息会停在对应阶段，暂时需要 `run_close`；商店和锻造只有关闭动作。Boss 胜利或普通失败进入 `victory_pending_settlement` / `defeat_pending_settlement`，最终结算待 B006。地图原内容的 Inner/Core 敌群池为空，`configurationIssues` 列出相应格子；缺敌群的格子不会被假结算为胜利。演示客户端仅记录行动 trace，尚不提供完整冒险保存或重放保证。
+
+B003b 定向测试 60/60 通过。真实 HTTP 路线从正常地图进入战斗、胜利升级、携带 HP/金币返回，随后在已探索格移动耗尽行动点并完成一次实际灾厄选择，进入第 2 周期；未修改这条路线的资产或状态。详见 `B003b-validation.json`。原有全量回归失败记录继续保留。
+
+## 后续迁移原则
 
 1. 用重放和正式游戏回归测试固定可观察行为。
 2. 按完整领域模块提取规则，例如骰子、伤害、状态或回合调度，不为每个小条件新增服务。

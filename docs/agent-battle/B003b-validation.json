@@ -1,0 +1,42 @@
+{
+  "batch": "B003b",
+  "date": "2026-10-27",
+  "targetedJob": "09e548a4de3e4cd8a1ccaf100f3568b9",
+  "targeted": {
+    "total": 60,
+    "passed": 60,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 9.2505569,
+    "resultState": "Passed"
+  },
+  "http": {
+    "seed": 1234,
+    "difficulty": "Medium (NormalConfig)",
+    "board": "9x9",
+    "adventureDemo": {
+      "moves": 2,
+      "actions": 17,
+      "phase": "map",
+      "money": 24,
+      "level": 2,
+      "experience": 2,
+      "hp": 18,
+      "maxHp": 19
+    },
+    "calamityRoute": {
+      "actions": 21,
+      "cycle": 2,
+      "phase": "map",
+      "activeCalamity": "劲敌 · 血量强化 I",
+      "enemyBaseHpModifierPercent": 10
+    },
+    "invalidRequestsRejected": 4,
+    "retriedMoveMatched": true
+  },
+  "notes": [
+    "HTTP routes used only public commands and unmodified normal assets/state; trace files under outputs/agent-battle are inspection traces, not full adventure replay guarantees.",
+    "Inner/Core encounter pools in shipped content are empty; missing encounters are reported in configurationIssues.",
+    "Location features, final settlement, save/restore and full replay remain incomplete. Existing full-suite failures in B002-validation.json remain unresolved; no new full-suite or PlayMode green claim."
+  ]
+}

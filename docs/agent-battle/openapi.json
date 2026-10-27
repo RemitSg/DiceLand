@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "DiceLand Agent Battle API",
-    "version": "1.1.0",
-    "description": "Editor-backed, single-session, graphics-free access to the existing game battle rules. See README for per-operation required fields, replay guarantees and unsupported acquisition/map features."
+    "version": "1.2.0",
+    "description": "Shared-rule, editor-backed single battles. The separate adventure-openapi.json documents the in-progress normal adventure operations on this endpoint."
   },
   "servers": [
     {
@@ -577,6 +577,37 @@
             "items": {
               "$ref": "#/components/schemas/AgentBattleRewardItem"
             }
+          },
+          "party": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleSettledMember"
+            },
+            "description": "Formal settlement party state, including level-up healing; available after resolution."
+          }
+        }
+      },
+      "AgentBattleSettledMember": {
+        "type": "object",
+        "properties": {
+          "memberId": {
+            "type": "string"
+          },
+          "hp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxHp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "level": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "experience": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       }

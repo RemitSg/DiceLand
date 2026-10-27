@@ -16,6 +16,7 @@ public sealed class AgentAdventureMapRuntime : IDisposable
     private TileResolver resolver;
     private Random.State randomState;
     private bool disposed;
+    private bool movingToUnvisited;
     public AgentAdventureConfiguration Configuration { get; }
     public MapRunSnapshot Snapshot { get; private set; }
     public BoardManager Board { get; private set; }
@@ -92,6 +93,7 @@ public sealed class AgentAdventureMapRuntime : IDisposable
         try
         {
             Random.state = randomState;
+            movingToUnvisited = !tile.isVisited;
             bool moved = MapMovementService.TryExecuteMove(new MapMovementExecutionRequest
             {
                 runState = Snapshot.runState, tile = tile, moveCost = MapMovementService.GetMoveCost(Snapshot.runState, tile),
@@ -105,7 +107,17 @@ public sealed class AgentAdventureMapRuntime : IDisposable
 
     private void OnArrival(BoardTileData tile, string message)
     {
+        if (movingToUnvisited) MapMovementService.RecordUnexploredTileVisit(Snapshot.runState);
+        movingToUnvisited = false;
         Board.SetSelectedTile(tile.coord); LastMoveMessage = message;
+    }
+
+    public T WithRandom<T>(Func<T> action)
+    {
+        if (disposed) throw new ObjectDisposedException(nameof(AgentAdventureMapRuntime));
+        Random.State outside = Random.state;
+        try { Random.state = randomState; return action(); }
+        finally { randomState = Random.state; Random.state = outside; SynchronizeSnapshot(); }
     }
     private void OnExhausted() { MapMovementService.AdvanceExhaustedCycle(Snapshot.runState, Points, Configuration.starting.difficulty, PendingCalamities); }
     private void OnKey(BoardTileData tile) { MapMovementService.ApplyKeyCollected(Snapshot.runState, null, tile, Points); }
