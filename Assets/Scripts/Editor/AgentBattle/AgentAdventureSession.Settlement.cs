@@ -40,7 +40,7 @@ public sealed partial class AgentAdventureSession
     {
         RunSettlementFlowService.ExecuteSettlement(new RunSettlementFlowRequest
         {
-            runState = map.Snapshot.runState, runCleared = outcome == "victory", settlementUnixSeconds = utcNow(),
+            runState = map.Snapshot.runState, runCleared = outcome == "victory", settlementUnixSeconds = operationUtcSeconds,
             getAbilityPoints = profile.Wallet.GetCurrentPoints, addAbilityPoints = profile.AddPoints
         }, settlementContext);
         settlementPolicy = "shared_score";
@@ -82,7 +82,7 @@ public sealed partial class AgentAdventureSession
     {
         AgentAdventureConfiguration configuration = map.Configuration;
         map.Dispose(); map = null;
-        map = new AgentAdventureMapRuntime(configuration, nextSeed, profile.Progression.BuildRunBonus(), utcNow());
+        map = new AgentAdventureMapRuntime(configuration, nextSeed, profile.Progression.BuildRunBonus(), operationUtcSeconds);
         seed = nextSeed; runIndex++; outcome = message = settlementPolicy = null;
         settlementContext.Clear(); choices.Clear(); choiceTier = 0;
         ReleasePendingEventEncounter(); currentEvent = nextEvent = null; pendingEventDungeon = null;

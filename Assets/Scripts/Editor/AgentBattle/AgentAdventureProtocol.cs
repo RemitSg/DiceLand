@@ -2,7 +2,7 @@ using System;
 
 [Serializable] public sealed class AgentAdventureRequest
 {
-    public string op, sessionId, requestId, assetId, profileId;
+    public string op, sessionId, requestId, assetId, profileId, slotId;
     public int revision = -1, seed = 1, maxRounds = 1000, x, y, choiceIndex;
     public AgentBattleLegalAction battleAction;
 }
@@ -18,6 +18,8 @@ using System;
     public bool success;
     public string error, message;
     public AgentAdventureObservation state;
+    public AgentAdventureReplay replay;
+    public AgentAdventureReplayVerification verification;
 }
 [Serializable] public sealed class AgentAdventureObservation
 {

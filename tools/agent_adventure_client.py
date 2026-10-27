@@ -1,6 +1,7 @@
 """Standard-library client for the in-progress shared-rule adventure API.
 
-The demo records a trace; full adventure replay/save is a later batch.
+The demo can export a timestamped adventure journal and verify it after closing.
+Restoring a playable saved session is a later batch.
 """
 import argparse
 import json
@@ -149,9 +150,12 @@ def demo(client, args):
             path = Path(args.output)
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        if getattr(args, "replay_slot", None):
+            client.call(op="run_export", sessionId=session_id, slotId=args.replay_slot)
         return {"phase": state["phase"], "outcome": state.get("outcome"), "moves": moved, "actions": len(trace),
                 "cycle": state["cycle"], "money": state["money"], "keys": state["keys"], "party": state["party"],
-                "configurationIssues": state["configurationIssues"], "settlement": state["settlement"], "meta": state["meta"], "trace": args.output}
+                "configurationIssues": state["configurationIssues"], "settlement": state["settlement"], "meta": state["meta"],
+                "trace": args.output, "replaySlot": getattr(args, "replay_slot", None)}
     finally:
         client.call(op="run_close", sessionId=session_id)
 
@@ -170,16 +174,27 @@ def main():
     play.add_argument("--output")
     play.add_argument("--reforge", action="store_true", help="Try a legal reforge once per rest visit before other rest actions")
     play.add_argument("--profile", help="Explicit isolated persistent agent profile; omitted profiles are discarded on close")
+    play.add_argument("--replay-slot", help="Export the complete journal into a named slot on this host before closing")
+    play.add_argument("--verify-replay", action="store_true", help="After closing, verify --replay-slot with recorded timestamps and a temporary profile")
     raw = commands.add_parser("command")
     raw.add_argument("json", help="JSON command, or - to read stdin")
     inspect = commands.add_parser("inspect-equipment", help="Read authored item skills and blueprint materials through the public catalog")
     inspect.add_argument("item", help="Catalog asset ID or exact equipment/blueprint/character name")
+    verify = commands.add_parser("verify-replay", help="Verify a named journal on this host; all sessions must be closed")
+    verify.add_argument("slot")
     args = parser.parse_args()
     client = Client(args.url)
     if args.mode == "demo":
+        if args.verify_replay and not args.replay_slot:
+            parser.error("--verify-replay requires --replay-slot")
         result = demo(client, args)
+        if args.verify_replay:
+            verified = client.call(op="run_verify", slotId=args.replay_slot)["verification"]
+            result["replayVerification"] = {k: verified[k] for k in ("verified", "commandsChecked", "finalStateHash")}
     elif args.mode == "inspect-equipment":
         result = inspect_equipment(client, args.item)
+    elif args.mode == "verify-replay":
+        result = client.call(op="run_verify", slotId=args.slot)["verification"]
     else:
         result = client.call(**json.loads(sys.stdin.read() if args.json == "-" else args.json))
     print(json.dumps(result, ensure_ascii=False, indent=2))

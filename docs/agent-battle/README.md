@@ -176,7 +176,7 @@ B003b 在相同 HTTP 地址提供以下命令，协议见 `adventure-openapi.jso
 
 特殊副本通过事件的 `run_continue_event` 进入，普通 `run_move` 驱动其中的线性棋盘；检查 **`dungeon.active`**，不能用对象是否存在来判断，因为当前传输可能把空对象序列化成默认字段。副本内移动成本为 0，入口保存外层棋盘/AP 与延后的灾厄；左侧出口撤退，右侧出口将正式副本分数写入 `progress`，然后恢复外层棋盘与携带队伍、背包。固定商店不能刷新，宝藏与战斗继续使用同一组既有服务，事件遭遇也携带副本上下文。重复出口请求不重复计分；非法位置和嵌套副本入口不能替换外层上下文。`previewTag`、`sourceDungeon` 和 `dungeonEntryIndex` 标明格子来自哪个实际配置。
 
-**当前仍未完成整局闭环验收。**Boss 胜利或普通失败进入 `victory_pending_settlement` / `defeat_pending_settlement`，通过 `run_settle` 完成正式计分和隔离能力点写入。地图原内容的 Inner/Core 敌群池为空，`configurationIssues` 列出相应格子；缺敌群的格子不会被假结算为胜利。演示客户端会处理已支持的宝藏、事件、商店、锻造、营地和新装备，增加 `--reforge` 可优先尝试重铸；仍只记录行动 trace，尚不提供完整冒险保存或重放保证。
+**当前仍未完成整局闭环验收。**Boss 胜利或普通失败进入 `victory_pending_settlement` / `defeat_pending_settlement`，通过 `run_settle` 完成正式计分和隔离能力点写入。地图原内容的 Inner/Core 敌群池为空，`configurationIssues` 列出相应格子；缺敌群的格子不会被假结算为胜利。演示客户端会处理已支持的宝藏、事件、商店、锻造、营地和新装备，增加 `--reforge` 可优先尝试重铸；可记录行动 trace，并通过 --replay-slot 导出 B007a 日志、--verify-replay 在关闭后校验；可继续游玩的保存恢复仍待实现。
 
 B003b 定向测试 60/60 通过。真实 HTTP 路线从正常地图进入战斗、胜利升级、携带 HP/金币返回，随后在已探索格移动耗尽行动点并完成一次实际灾厄选择，进入第 2 周期；未修改这条路线的资产或状态。详见 `B003b-validation.json`。原有全量回归失败记录继续保留。
 
@@ -209,7 +209,7 @@ B006a 为同一个 `RunSettlementFlowService` 增加显式 `RunSettlementContext
 
 `settlement.completed` 表示本局已结束；`policy` 分别为 `shared_score` 或 `map_abandon_no_rewards`。空对象的默认字段不表示有结算奖励。观察不改变时间或发奖；计分使用真实创建/结算 UTC，沿用正式短局倍率。`runIndex` 随下一局递增，外层 revision 和 requestId 缓存跨局保留，重试旧请求不会再次放弃/开局/发奖。`run_close` 只清理会话，不代替正式结算。
 
-`create_run` 省略 `profileId` 时使用独立临时进度，关闭后清理；显式传入 1–64 位字母、数字、下划线或连字符可在同一项目/宿主重开档案，禁止路径与 Windows 设备名。文件位于 `Library/AgentAdventure/Profiles/<id>`，删除 Library 也会删除这些测试档案。默认临时档案位于该目录体系的 Sessions 下；两者均不使用玩家钱包/能力树存档。能力修改只在终局后允许，并于下一局生效。Python 演示客户端支持 `--profile`、开局选择和终局结算；完整保存/重放还未提供。
+`create_run` 省略 `profileId` 时使用独立临时进度，关闭后清理；显式传入 1–64 位字母、数字、下划线或连字符可在同一项目/宿主重开档案，禁止路径与 Windows 设备名。文件位于 `Library/AgentAdventure/Profiles/<id>`，删除 Library 也会删除这些测试档案。默认临时档案位于该目录体系的 Sessions 下；两者均不使用玩家钱包/能力树存档。能力修改只在终局后允许，并于下一局生效。Python 演示客户端支持 `--profile`、开局选择和终局结算。B007a 增加以下行动日志与重放校验；恢复可继续游玩的会话仍未提供。
 
 无图形全量 942 项、921 通过、21 失败，失败名称与 B006a 的 928 项/907 通过/21 失败一致。从最终全量中选出的 116 项相关测试全部通过。包含 14 项新增终局测试，通过定向状态验证胜利分支、能力点发放、付费解锁影响下一局、隔离与幂等；这些定向资源和合成敌群不是正常通关证据。公开 HTTP 正常路线已验证真实败北、两类放弃、免费节点解锁、下一局和显式档案重开。种子 46 的探索准备失败，种子 127 以 Chara/Jenny/Man 三人满血、两把钥匙进入正式雷寰霸主战，但第 2 回合战败。B006b2 继续验证正常胜利→赚点→付费升级→下一局，当前不宣称该门槛已通过。详见 `B006b1-validation.json`。
 
@@ -218,6 +218,27 @@ B006b2 进行中：演示客户端改为共用 `tools/agent_adventure_policy.py`
 B006b2 的装备可观察性已补齐：公开 `catalog` 保留原有列表，新增 `weaponDetails`、`characterDetails` 和 `blueprintDetails`。可以把商店图纸的 id 连到目标武器、材料、武器类型和技能；招募候选的初始武器也可查完整技能与基础行动格数量。技能说明直接调用正式界面的格式化方法，不维护第二份技能文案。`craftingCost` 在尚无图纸、尚未进入锻造格时也能读取当前灾厄修正后的费用。
 
 战斗中的 `skills/selectedSkill.displayedDice` 读取正式角色控制器的界面预览范围，原有 `dice` 保留资产基础范围。目录是静态定义，`displayedDice` 为空；状态、临时技能、能量、每个行动格的当前选择必须以本局观察和 `legalActions` 为准。预览没有预先掷骰，也不保证目标条件触发后的最终结果。目录查询使用独立预览场景中的非激活组件，不创建 UI，也不改当前场景、输入锁或随机数。正常获胜验收仍未完成；装备信息补齐只是该批的一部分。
+
+## 冒险日志与独立重放（B007a）
+
+| 命令 | 参数与行为 |
+|---|---|
+| `run_replay` | `sessionId`；只读导出完整会话的日志，包括多次 `run_next`，不增加 revision |
+| `run_export` | `sessionId`、`slotId`；导出相同日志，并原子替换宿主 `Library/AgentAdventure/Replays/<slotId>.json` |
+| `run_verify` | `slotId`；所有战斗和冒险会话关闭后，使用临时档案从开局重放；返回 `verification`，不会留下可操作会话 |
+
+`slotId` 使用与 `profileId` 相同的字符/设备名限制，不能为空，不接受客户端文件路径。文件上限 16 MiB，最多 10000 条成功行动。日志中记录开局种子、maxRounds、开局时隔离钱包/能力树、实际开局 UTC、每次行动的实际 UTC 和观察哈希。失败请求与已成功请求的重试不增加记录；只读查询也不增加记录。`run_settle` 与 `run_next` 使用各自行动开始时捕获的一次 UTC，重放注入所记录时间，不把当前重放速度用作正式计分时长。
+
+格式版本/API 版本、引擎版本和保存的规则内容哈希必须匹配，否则在创建临时运行状态之前拒绝。内容哈希涵盖 Data/Resources/Scripts 中的规则定义、代码、meta、配置场景和包清单；不包含图像、音频的二进制内容。导出时若内容版本与开局时不同会拒绝。重放逐条比较全部公开观察，包括合法动作、战斗日志、骰子、结算与下一局加成；仅忽略重新生成的内外层 sessionId 和档案存储身份。与原档案相同的开局进度会复制到新临时档案，重放中的奖励和消费只在临时目录执行，完成或失败均清理，不再向原档案发奖。
+
+```powershell
+python tools/agent_adventure_client.py demo --seed 1234 --max-moves 2 --replay-slot sample --verify-replay
+python tools/agent_adventure_client.py verify-replay sample
+```
+
+日志插槽位于执行 HTTP 服务的宿主项目；`run_replay` 返回的 JSON 可由客户端另行归档。目前没有任意路径导入接口。`run_verify` 返回的 finalState 仅用于检查，里面的临时 sessionId 已关闭，不能继续下指令。日志哈希用于版本匹配和结果比较，并非防篡改签名。当前尚无自动崩溃恢复、可继续游玩的恢复命令或跨进程结算事务；它们属于 B007b，不能把日志导出描述为完整存档恢复。
+
+B007a 验收：新增 16 项通过，全量 EditMode 964 项中 943 通过、21 既有失败，失败名称与上一批一致。正常 HTTP 副本路线及购买/锻造/装备/Boss 失败路线共 28 个检查点逐行动重放一致；重启隔离宿主后，磁盘中的 144 条行动仍校验通过。原档案重开后进度不变，CLI 导出并校验通过。重铸、开局遗物及胜利路径的完整日志 HTTP 覆盖仍待补齐，正常胜利与赚点升级门槛也未通过。详见 `B007a-validation.json`。
 
 ## 后续迁移原则
 

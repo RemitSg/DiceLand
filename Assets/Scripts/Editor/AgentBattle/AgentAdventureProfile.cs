@@ -38,6 +38,26 @@ public sealed class AgentAdventureProfile : IDisposable
         return result;
     }
 
+    internal AgentAdventureProfileSnapshot Capture() => new AgentAdventureProfileSnapshot
+    {
+        points = Wallet.GetCurrentPoints(),
+        progressionJson = File.Exists(Progression.FilePath) ? File.ReadAllText(Progression.FilePath) : null
+    };
+
+    internal void InitializeReplay(AgentAdventureProfileSnapshot snapshot)
+    {
+        if (Persistent) throw new InvalidOperationException("Replay initialization requires a temporary profile.");
+        if (snapshot == null || snapshot.points < 0 || (snapshot.progressionJson?.Length ?? 0) > 131072)
+            throw new ArgumentException("Invalid initial replay profile.");
+        Wallet.SetPoints(snapshot.points);
+        if (Wallet.GetCurrentPoints() != snapshot.points) throw new IOException("Replay wallet could not be initialized.");
+        if (!string.IsNullOrWhiteSpace(snapshot.progressionJson))
+        {
+            // Only the existing progression service interprets its saved data; replay hashes verify the result.
+            File.WriteAllText(Progression.FilePath, snapshot.progressionJson);
+        }
+    }
+
     public AgentAdventureMeta Describe()
     {
         return new AgentAdventureMeta

@@ -21,7 +21,9 @@ public sealed partial class AgentAdventureSession : IDisposable
     private bool disposed;
     public string Id => id;
 
-    public AgentAdventureSession(AgentAdventureRequest request, Func<long> utcNow = null)
+    public AgentAdventureSession(AgentAdventureRequest request, Func<long> utcNow = null) : this(request, utcNow, null, true) { }
+
+    internal AgentAdventureSession(AgentAdventureRequest request, Func<long> utcNow, AgentAdventureProfileSnapshot replayProfile, bool recordReplay)
     {
         if (request.maxRounds < 1 || request.maxRounds > 1000) throw new ArgumentException("maxRounds must be between 1 and 1000.");
         if (BattleEncounterRuntime.ActiveEncounter != null || BattleEncounterRuntime.CurrentEncounter != null || TutorialBattleRuntime.IsActive)
@@ -34,9 +36,15 @@ public sealed partial class AgentAdventureSession : IDisposable
         seed = request.seed; maxRounds = request.maxRounds;
         var configuration = AgentAdventureConfiguration.Load();
         profile = new AgentAdventureProfile(configuration.abilities, request.profileId);
-        try { map = new AgentAdventureMapRuntime(configuration, seed, profile.Progression.BuildRunBonus(), this.utcNow()); }
-        catch { profile.Dispose(); throw; }
-        if (StartingRelic != null) phase = "starting_relic";
+        try
+        {
+            if (replayProfile != null) profile.InitializeReplay(replayProfile);
+            operationUtcSeconds = this.utcNow();
+            map = new AgentAdventureMapRuntime(configuration, seed, profile.Progression.BuildRunBonus(), operationUtcSeconds);
+            if (StartingRelic != null) phase = "starting_relic";
+            if (recordReplay) InitializeReplayJournal(request);
+        }
+        catch { Dispose(); throw; }
     }
 
     public AgentAdventureObservation Observe()
@@ -84,6 +92,7 @@ public sealed partial class AgentAdventureSession : IDisposable
         if (request.revision != revision) throw new ArgumentException("Stale revision; observe the adventure.");
         if (bodies.Count >= 10000) throw new ArgumentException("Adventure command limit reached.");
         if (!LegalActions().Any(a => Matches(a, request))) throw new ArgumentException("Illegal action; select from legalActions.");
+        operationUtcSeconds = utcNow();
         try
         {
             switch (request.op)
@@ -131,6 +140,7 @@ public sealed partial class AgentAdventureSession : IDisposable
         }
         catch { phase = "faulted"; outcome = "execution_error"; throw; }
         var response = new AgentAdventureResponse { success = true, state = Observe() };
+        RecordReplayCommand(request, response.state);
         bodies.Add(request.requestId, body); responses.Add(request.requestId, JsonUtility.ToJson(response)); recent.Enqueue(request.requestId);
         while (recent.Count > 32) responses.Remove(recent.Dequeue());
         return response;

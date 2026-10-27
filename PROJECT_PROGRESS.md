@@ -1609,3 +1609,6 @@ Shared treasure tile reward flow; money/blueprint/relic bags, one-time selection
 - Added inspect-equipment public-catalog CLI and UTF-8 pipe output; policy prefers displayed ranges with old-observation fallback.
 - Final isolated headless EditMode: 948 total, 927 passed, same 21 failing names; all 6 new and 47 selected related cases pass. Python 6/6. Real HTTP read-only live battle/catalog, blueprint inspection and normal actual forge inflation (40 before owning recipe/entering forge) verified.
 - Evidence: docs/agent-battle/B006b2-equipment-validation.json. Normal victory/earned paid upgrade remains pending; B007 save/replay and B008 full audit remain. Goal stays active.
+
+
+[2026-10-27 B007a] Added timestamped full-session adventure journals, source/engine/API version guards, explicit replay slots and isolated replay verification. Public HTTP verified 28 normal-content checkpoints across dungeon and equipment/Boss-defeat routes; 144 commands verified again after validation-host restart. EditMode: 964 total, 943 passed, same 21 baseline failures; all 16 new tests passed. Python: 6/6. Evidence: docs/agent-battle/B007a-validation.json. Playable restore, cross-process settlement transactions and normal Boss victory remain pending; goal remains active.
