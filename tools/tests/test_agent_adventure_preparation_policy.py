@@ -6,7 +6,7 @@ import sys
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from agent_adventure_policy import choose_treasure_action, preparation_assessment, next_recruit_cost, clash_preference, skill_value
+from agent_adventure_policy import choose_treasure_action, preparation_assessment, next_recruit_cost, clash_preference, skill_value, choose_calamity_action, choose_battle_action, calamity_risk
 
 
 class PreparationPolicyTests(unittest.TestCase):
@@ -34,6 +34,13 @@ class PreparationPolicyTests(unittest.TestCase):
         state["money"] = 111
         self.assertFalse(state["loot"])
         self.assertNotEqual("Blueprint", self.kind(choose_treasure_action(state, self.f["catalogue"]), state))
+
+    def test_empty_authored_recipe_is_not_assumed_to_be_free_equipment(self):
+        state = copy.deepcopy(self.f["treasure"])
+        state["money"] = 111
+        catalogue = copy.deepcopy(self.f["catalogue"])
+        catalogue["blueprintDetails"][0]["materials"] = []
+        self.assertEqual("RelicBag", self.kind(choose_treasure_action(state, catalogue), state))
 
     def test_actual_two_starter_characters_are_not_ready_for_first_elite(self):
         result = preparation_assessment(self.f["underprepared"], "Elite", self.f["catalogue"])
@@ -72,6 +79,42 @@ class PreparationPolicyTests(unittest.TestCase):
                          choose_treasure_action(self.f["treasure"], self.f["catalogue"]))
         preparation_assessment(self.f["underprepared"], "Boss", self.f["catalogue"])
         self.assertEqual(before, json.dumps(self.f, sort_keys=True))
+
+    def test_real_delayed_death_state_does_not_add_enemy_regeneration(self):
+        state = self.f["regenChoice"]
+        self.assertTrue(any("不屈" in c["name"] for c in state["activeCalamities"]))
+        action = choose_calamity_action(state)
+        chosen = state["calamityChoices"][action["choiceIndex"]]
+        self.assertNotIn("回复机体", chosen["name"])
+
+    def test_inverse_regeneration_then_delayed_death_pair_is_also_penalized(self):
+        state = {"activeCalamities": [{"name": "回复机体", "description": "所有敌人额外恢复 2 点血量"}]}
+        self.assertGreater(calamity_risk({"name": "劲敌 · 不屈", "description": "承受致死伤害时不死亡"}, state), 1000)
+
+    def test_wounded_molly_defends_when_the_multi_hit_attack_targets_her(self):
+        state = copy.deepcopy(self.f["woundedMultiHit"])
+        # Counterfactual incoming intent, using the same real HP, skill offers
+        # and dice: direct attacks should be defended, redirects avoided below.
+        next(a for a in state["battle"]["actors"] if a["id"] == "enemy_0")["slots"][0]["targetId"] = "ally_1"
+        state["legalActions"] = [a for a in state["legalActions"] if a["op"] == "run_battle" and
+                                 a["battleAction"].get("actorId") == "ally_1"]
+        action = choose_battle_action(state)
+        self.assertIn(action, state["legalActions"])
+        self.assertEqual(("set_skill", "ally_1", 2), tuple(action["battleAction"][k] for k in ("op", "actorId", "skillIndex")))
+
+    def test_regenerating_adds_are_focused_without_losing_dangerous_counter(self):
+        state = copy.deepcopy(self.f["woundedMultiHit"])
+        enemies = [a for a in state["battle"]["actors"] if a["side"] == "enemy" and not a["dead"]]
+        focus = min(enemies, key=lambda a: (a["hp"], a["id"]))["id"]
+        state["legalActions"] = [a for a in state["legalActions"] if a["op"] == "run_battle" and
+                                 a["battleAction"]["op"] == "target" and a["battleAction"]["actorId"] == "ally_0"]
+        self.assertEqual(focus, choose_battle_action(state)["battleAction"]["targetId"])
+        state = copy.deepcopy(self.f["woundedMultiHit"])
+        state["legalActions"] = [a for a in state["legalActions"] if a["op"] == "run_battle" and
+                                 a["battleAction"]["op"] == "target" and a["battleAction"]["actorId"] == "ally_1"]
+        # In the real frame the giant targets Chara, not wounded Molly. She
+        # must not use her higher speed to steal that dangerous multi-hit clash.
+        self.assertNotEqual("enemy_0", choose_battle_action(state)["battleAction"]["targetId"])
 
 
 if __name__ == "__main__":

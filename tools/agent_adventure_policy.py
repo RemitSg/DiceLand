@@ -29,7 +29,9 @@ def choose_treasure_action(state, catalogue=None):
             return {"Common": 45, "Uncommon": 60, "Rare": 75, "Epic": 90, "Legendary": 115}.get(option.get("rarity"), 50)
         if option["kind"] == "Blueprint":
             recipe = next((b for b in (catalogue or {}).get("blueprintDetails", []) if b["id"] == option["blueprint"]), None)
-            ready = recipe and all(loot.get(m["id"], 0) >= m["amount"] for m in recipe["materials"])
+            # An empty authored material list can mean an invalid recipe, not
+            # free equipment. Actual forge canCraft remains authoritative.
+            ready = recipe and recipe["materials"] and all(loot.get(m["id"], 0) >= m["amount"] for m in recipe["materials"])
             return 70 if ready and state["money"] >= state.get("craftingCost", 0) else 10
         return 0
 
@@ -79,6 +81,11 @@ def clash_preference(skill, opposing_skill):
 def calamity_risk(choice, state):
     """Visible-text preference for preserving combat strength, not a rules simulator."""
     text = (choice.get("name") or "") + " " + (choice.get("description") or "")
+    active = " ".join((c.get("name", "") + " " + c.get("description", "")) for c in state.get("activeCalamities", []))
+    enemy_regen = "敌人" in text and any(w in text for w in ("恢复", "回复"))
+    existing_regen = "敌人" in active and any(w in active for w in ("额外恢复", "额外回复"))
+    if (enemy_regen and "不屈" in active) or ("不屈" in text and existing_regen):
+        return 1200  # Observed fatal hits followed by healing can undo delayed deaths.
     if "遗物" in text and "失去" in text:
         relics = state.get("relics") or []
         if relics and all(r.get("name") == "小猪储蓄罐" for r in relics) and state.get("money", 0) >= 100:
@@ -147,6 +154,10 @@ def skill_value(skill, enemy_count=1, actor=None, incoming=False, enemies=None, 
             setup = 2.5 + .7 * sum((d["min"] + d["max"]) / 2 for d in dice if d["category"] == "Defense")
         if charge_armor and incoming and actor.get("maxHp", 0) > 0 and actor.get("hp", 0) <= actor["maxHp"] * .3:
             setup = max(setup, 2.5 * sum((d["min"] + d["max"]) / 2 for d in dice if d["category"] == "Defense"))
+        multi_hit_incoming = incoming and any(len(s.get("selectedSkill", {}).get("dice", [])) > 1
+            and s.get("targetId") == actor.get("id") for enemy in (enemies or []) for s in enemy.get("slots", []))
+        if multi_hit_incoming and actor.get("hp", 0) <= actor.get("maxHp", 0) * .45 and not (charge_armor and charge >= 2):
+            setup = max(setup, 2.8 * sum((d["min"] + d["max"]) / 2 for d in dice if d["category"] == "Defense"))
     burst = 0
     if enemies and "电流 爆发" in description:
         charges = [sum(s["stacks"] for s in e.get("statuses", []) if s["id"] == "current") for e in enemies]
@@ -258,6 +269,9 @@ def choose_battle_action(state):
         power = (first["min"] + first["max"]) / 2 + .25 * (first["max"] - first["min"])
         return power * (.9 if first["category"] == "Defense" else 1)
 
+    regen_focus = len(enemies) > 1 and any("敌人" in c.get("description", "") and
+        any(w in c.get("description", "") for w in ("恢复", "回复")) for c in state.get("activeCalamities", []))
+    focus_target = min(enemies.values(), key=lambda e: (e["hp"], e["id"]))["id"] if regen_focus else None
     # A later fast attacker can take over a clash. Connect the weaker fronts
     # first so a fragile caster does not take it back from a stronger weapon.
     for actor, slot, _, _, _ in sorted(slots, key=clash_front):
@@ -284,7 +298,14 @@ def choose_battle_action(state):
                 focus = max(set(focused), key=lambda pair: (focused.count(pair), -pair[1]), default=None)
                 return ((enemy["id"], enemy_slot["index"]) == focus, -threat, incoming, can_intercept)
             matchup = clash_preference(slot.get("selectedSkill") or {}, enemy_slot.get("selectedSkill") or {})
-            return (unclaimed and incoming, unclaimed and can_intercept, unclaimed, matchup, threat, -enemy["hp"])
+            safe_redirect = not (not incoming and slot["speed"] > enemy_slot["speed"]
+                and len((enemy_slot.get("selectedSkill") or {}).get("dice", [])) > 1
+                and actor.get("hp", 0) <= actor.get("maxHp", 0) * .45)
+            if regen_focus:
+                dangerous_counter = incoming and (len((enemy_slot.get("selectedSkill") or {}).get("dice", [])) > 1
+                    or actor.get("hp", 0) <= actor.get("maxHp", 0) * .45)
+                return (safe_redirect, dangerous_counter, enemy["id"] == focus_target, unclaimed and can_intercept, incoming, matchup, -enemy["hp"])
+            return (safe_redirect, unclaimed and incoming, unclaimed and can_intercept, unclaimed, matchup, threat, -enemy["hp"])
 
         if targets:
             return max(targets, key=priority)
