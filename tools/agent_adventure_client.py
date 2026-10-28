@@ -9,7 +9,7 @@ from pathlib import Path
 import sys
 
 from agent_battle_client import Client
-from agent_adventure_policy import choose_battle_action, choose_calamity_action, choose_treasure_action, preparation_assessment
+from agent_adventure_policy import choose_battle_action, choose_calamity_action, choose_treasure_action, preparation_assessment, choose_relic_action, crafting_plan, choose_material_purchase, next_recruit_cost
 
 
 def resolve_difficulty(client, value):
@@ -86,7 +86,7 @@ def demo(client, args):
             elif state["phase"] == "finished":
                 break
             elif state["phase"] == "starting_relic":
-                action = next((a for a in actions if a["op"] == "run_choose_starting_relic"), None)
+                action = choose_relic_action(state)
             elif state["phase"] == "map":
                 equipment = next((a for a in actions if a["op"] == "run_equip" and a["assetId"] not in seen_equipment), None)
                 if equipment:
@@ -120,7 +120,7 @@ def demo(client, args):
             elif state["phase"] == "treasure":
                 action = choose_treasure_action(state, catalogue)
             elif state["phase"] == "treasure_relic":
-                action = next((a for a in actions if a["op"] == "run_choose_treasure_relic"), None)
+                action = choose_relic_action(state)
             elif state["phase"] == "treasure_result":
                 action = next((a for a in actions if a["op"] == "run_continue_treasure"), None)
             elif state["phase"] == "event":
@@ -136,11 +136,11 @@ def demo(client, args):
             elif state["phase"] == "battle":
                 action = choose_battle_action(state)
             elif state["phase"] == "merchant":
-                buyable = [a for a in actions if a["op"] == "run_buy"]
-                offers = {o["index"]: o for o in state["merchantOffers"]}
-                if buyable:
-                    action = min(buyable, key=lambda a: offers[a["choiceIndex"]]["price"])
-                else:
+                reserve = (next_recruit_cost(state, catalogue) or 0) if len(state["party"]) < 4 else 0
+                for blueprint in state.get("blueprints", []):
+                    action = choose_material_purchase(state, blueprint["id"], catalogue, reserve)
+                    if action: break
+                if action is None:
                     action = next((a for a in actions if a["op"] == "run_leave_location"), None)
             elif state["phase"] == "forge":
                 action = next((a for a in actions if a["op"] == "run_craft"), None)
@@ -204,6 +204,8 @@ def main():
     raw.add_argument("json", help="JSON command, or - to read stdin")
     inspect = commands.add_parser("inspect-equipment", help="Read authored item skills and blueprint materials through the public catalog")
     inspect.add_argument("item", help="Catalog asset ID or exact equipment/blueprint/character name")
+    plan = commands.add_parser("plan-equipment", help="Read a complete blueprint material checklist against the active adventure")
+    plan.add_argument("session_id"); plan.add_argument("blueprint")
     verify = commands.add_parser("verify-replay", help="Verify a named journal on this host; all sessions must be closed")
     verify.add_argument("slot")
     save = commands.add_parser("save-run", help="Save the active session to a named checkpoint")
@@ -230,6 +232,9 @@ def main():
             result["replayVerification"] = {k: verified[k] for k in ("verified", "commandsChecked", "finalStateHash")}
     elif args.mode == "inspect-equipment":
         result = inspect_equipment(client, args.item)
+    elif args.mode == "plan-equipment":
+        state = client.call(op="observe_run", sessionId=args.session_id)["state"]
+        result = crafting_plan(state, args.blueprint, client.call(op="catalog")["catalogue"])
     elif args.mode == "verify-replay":
         result = client.call(op="run_verify", slotId=args.slot)["verification"]
     elif args.mode == "save-run":

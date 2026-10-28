@@ -63,6 +63,7 @@ public class BattleEnemyController : MonoBehaviour
     private int pendingNextAttackSkillPowerBonus;
     private int activeAttackSkillPowerBonus;
     private bool pendingCalamityDelayedDeath;
+    public bool HasPendingCalamityDelayedDeath => pendingCalamityDelayedDeath && !IsDead;
 
     private void Awake()
     {

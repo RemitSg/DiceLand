@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "DiceLand Agent Adventure API",
-    "version": "0.8.4",
+    "version": "0.8.5",
     "description": "Shared-rule, editor-backed full adventure: menu difficulties, map/economy/events/dungeons, battles, terminal settlement, isolated earned progression and next runs; playable save/load, atomic profile recovery and timestamped isolated replay. One session per host; engine required. health/catalog and battle DTOs are documented in openapi.json. See AGENT_GUIDE.md for the command loop and retry rules."
   },
   "servers": [

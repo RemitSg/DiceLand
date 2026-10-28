@@ -1,0 +1,99 @@
+{
+  "date": "2026-10-28",
+  "beforeCommit": "378dcdf2",
+  "scope": "Complete the six requested policy/API follow-ups plus shared material planning before one new Easy playthrough.",
+  "changes": [
+    "Offer disconnect on connected living ally slots; dispatch through both battle HTTP and adventure wrapper; call shared SpeedButton.DisconnectLine. Retry/revision and adventure full replay remain supported.",
+    "Use >= for equal-speed interception and wounded multi-hit redirect safety, with reciprocal slower counters still allowed.",
+    "Remove obsolete unyielding+regeneration bug penalty; evaluate the fixed engine behavior.",
+    "Boss preparation requires four living members, average level3.5 and three upgraded weapons; persistent weakness requires further compensation. This is a visible heuristic, not a victory prediction.",
+    "Compare actual offered relic effects; downrank special-dungeon-only relics outside a dungeon instead of automatically taking the first battle reward.",
+    "Expose pendingDelayedDeath, current stageName and authored passives as read-only actor fields; preserve shared authoritative execution.",
+    "One crafting_plan reads every catalogue/forge ingredient, required/available/missing quantities, actual fee and canCraft. plan-equipment CLI and material purchases share it; preserve complete forge budget and recruitment reserve."
+  ],
+  "tests": {
+    "relatedEditMode": {
+      "total": 60,
+      "passed": 60,
+      "failed": 0,
+      "failures": []
+    },
+    "fullEditMode": {
+      "total": 1009,
+      "passed": 988,
+      "failed": 21,
+      "failures": [
+        "BattleButtonSkillSelectionTests.AllySpeedButtons_CanKeepIndependentSelectedSkills",
+        "BattleButtonSpriteStateSwitcherTests.OnEnable_AppliesUnpressedSprite",
+        "BattleGamblerPassiveServiceTests.TryApplyDebtInstantDeath_KillsAllyAtThreeDebtStacks",
+        "BattleImmediateEffectPlanServiceTests.ResolveAlly_UsesCurrentAllyImmediateOrder",
+        "BattleSkillInfoOverlayDescriptionTests.CompactSkillDetail_MergesMarkedDelayedStatusBranches",
+        "BattleStatusResolutionServiceTests.TryResolve_ReturnsFalseForUnsupportedLegacyStatus",
+        "BattleTargetingPhaseStartEffectServiceTests.ApplyPendingAllyStatusGrants_AppliesImmediateSpeedBonusForOpeningRoll",
+        "MainMenuSceneControllerTutorialTests.ResolveMenuAction_RecognizesTutorialIdentity",
+        "MapEventNestedFlowTests.SaveAssetCatalog_IncludesNestedFollowUpEvents",
+        "MapTutorialFlowServiceTests.TryConsumeArrivalGuide_ShowsMerchantForgeAndEliteFinalOnce",
+        "PuppetMasterEnemyAssetTests.PuppetMasterAndPuppet_HaveExpectedCoreStatsAndPassives",
+        "PuppetMasterEnemyAssetTests.PuppetMasterEncounter_HasExpectedEnemyGroupComposition",
+        "PuppetMasterEnemyAssetTests.PuppetSkills_HaveExpectedStatusAndRoundRules",
+        "RelicSystem079To094Tests.MerchantWhiteSlip_AllowsPurchaseWhenMoneyPositiveAndSpendsRemainingMoney",
+        "RestSceneReforgeInteractableRelicSelectionTests.HandleRelicSelection_ClickingOnlySelectedRelicAgainClearsSelection",
+        "RestSceneReforgeInteractableRelicSelectionTests.OnMouseUpAsButton_WhenMainPanelIsOpen_DoesNotReturnToOpenPrompt",
+        "TodoWeaponAssetTests.HotAnvilBoard_LoadsWithBurnSpreadAndSelfBurnSkills",
+        "TodoWeaponAssetTests.WeaponCatalog_ContainsTodoWeapons",
+        "TutorialBattleContentFactoryTests.CreateRuntimeDefinition_Battle03_AdvancesWhenAllySkillIsViewed",
+        "TutorialHighlightCoordinateUtilityTests.ConvertScreenRectToReferenceRect_UsesCanvasScalerMatchScale",
+        "WanderingShadowEnemyAssetTests.Echo_UsesConfiguredEffectsAndEventGroup"
+      ]
+    },
+    "newFailures": [],
+    "python": {
+      "total": 55,
+      "passed": 55,
+      "failed": 0
+    },
+    "contract": {
+      "specifications": 2,
+      "valid": true,
+      "schemas": 54,
+      "fields": 446,
+      "dtoFieldDrift": false,
+      "documentVersion": "0.8.5",
+      "wireApiVersion": "1"
+    },
+    "playMode": "Not rerun; earlier failures remain unresolved. No universal policy-win claim."
+  },
+  "sourceMatch": {
+    "filesCompared": 3199,
+    "allEqual": true,
+    "contentHash": "13dd1b641e0e746f949c6abba1d9ff878ff8bcc7693c826b9c0b6e8ce2dec2b2"
+  },
+  "policySha256": "21ee3dc6bcb8a2bdf9a60b0c42cd1be6978259b8065a6e9946997dcc8aa5bc28",
+  "clientSha256": "f72ba27a21f2a9b50d406db1f178265cbd096b091b3a06a5bd9872aae79e979b",
+  "evidence": {
+    "related.xml": "27119d4421fec6b38435860d232452a646498b6ab69ff21a6a9d252b3176a847",
+    "full.xml": "421f25de0ce16296cb042f980604771fd12f9ae406e740d87306adad48939aa8",
+    "python-tests.log": "1c89d38f644b8a140d5a4816ef07b665b03bf1003ac4749fac049d43250bf5d6",
+    "http-smoke.json": "647b3131023d41108cd442c7f513c9fc13830abb35815c73ce3fbe0d12da0fea"
+  },
+  "userEnvironment": {
+    "originalEditorPid": 21328,
+    "userEditorRestarted": false,
+    "userSceneSaved": false,
+    "unrelatedChangesExcluded": true
+  },
+  "upcomingRun": "Fresh zero-progress Easy seed2026102804, per user unique-seed preference; no reload, recovery, reroll or injected resources.",
+  "httpSmoke": {
+    "standaloneDisconnectDispatch": true,
+    "identicalRetryNoMutation": true,
+    "standaloneReplayMatched": true,
+    "newActorFieldsPresent": true,
+    "outerAdventureDisconnect": true,
+    "adventureSaveAndReplay": {
+      "verified": true,
+      "commandsChecked": 3,
+      "finalStateHash": "6fb7feabc56f6bc5e475525c1a284a2d08d9decc7893e34c51cab238f776c99e"
+    },
+    "scope": "Separate interface smoke, not the requested fresh Easy playthrough. No persistent progression profile."
+  }
+}

@@ -101,9 +101,9 @@ public static class AgentBattleServer
                 case "close":
                     RequireSession(request.sessionId); session.Dispose(); session = null;
                     response = new AgentBattleResponse { success = true }; break;
-                case "set_skill": case "target": case "commit": case "choose_relic": case "refresh_rewards":
+                case "set_skill": case "target": case "disconnect": case "commit": case "choose_relic": case "refresh_rewards":
                     RequireSession(request.sessionId); response = session.Act(request); break;
-                default: throw new ArgumentException("Unknown op. Use health, catalog, create, observe, set_skill, target, commit, choose_relic, refresh_rewards, replay or close.");
+                default: throw new ArgumentException("Unknown op. Use health, catalog, create, observe, set_skill, target, disconnect, commit, choose_relic, refresh_rewards, replay or close.");
             }
             return JsonUtility.ToJson(response);
         }

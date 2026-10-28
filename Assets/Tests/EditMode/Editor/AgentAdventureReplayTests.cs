@@ -81,6 +81,25 @@ public sealed class AgentAdventureReplayTests
         Assert.IsNull(BattleEncounterRuntime.ActiveEncounter);
     }
 
+    [Test] public void Disconnect_UsesOuterRevisionAndSurvivesFullAdventureReplay()
+    {
+        Open(); FirstBattle();
+        var state = session.Observe();
+        var target = Request("run_battle");
+        target.battleAction = state.legalActions.First(a => a.op == "run_battle" && a.battleAction.op == "target").battleAction;
+        state = session.Act(target).state;
+        var disconnect = Request("run_battle");
+        disconnect.battleAction = state.legalActions.First(a => a.op == "run_battle" && a.battleAction.op == "disconnect").battleAction;
+        int revision = state.revision;
+        state = session.Act(disconnect).state;
+        Assert.AreEqual(revision + 1, state.revision);
+        Assert.IsTrue(string.IsNullOrEmpty(state.battle.actors.Single(a => a.id == disconnect.battleAction.actorId).slots[disconnect.battleAction.buttonIndex].targetId));
+        var replay = CloseJournal();
+        var verification = AgentAdventureReplayService.Verify(replay);
+        Assert.IsTrue(verification.verified);
+        Assert.AreEqual(replay.commands.Length, verification.commandsChecked);
+    }
+
     [Test] public void PersistentInitialProfileIsReplayedInTemporaryStorageWithoutSpendingAgain()
     {
         string id = "replay-test-" + Guid.NewGuid().ToString("N"), wallet = null, progression = null;

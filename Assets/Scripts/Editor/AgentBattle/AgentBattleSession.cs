@@ -211,6 +211,11 @@ public sealed class AgentBattleSession : IDisposable
                 if (!ally.SpeedButtons[request.buttonIndex].TryAssignTarget(enemy.SpeedButtons[request.targetButtonIndex]))
                     throw new InvalidOperationException("The battle controller rejected the selected target.");
             }
+            else if (request.op == "disconnect")
+            {
+                BattleAllyController ally = (BattleAllyController)actors[request.actorId];
+                ally.SpeedButtons[request.buttonIndex].DisconnectLine();
+            }
             else if (request.op == "commit")
             {
                 Drain(flow.ExecuteHeadlessRound());
@@ -266,6 +271,8 @@ public sealed class AgentBattleSession : IDisposable
             {
                 SpeedButton button = ally.SpeedButtons[b];
                 if (button == null || !button.IsInteractable) continue;
+                if (button.ConnectedTarget != null)
+                    yield return new AgentBattleLegalAction { op = "disconnect", actorId = pair.Key, buttonIndex = b };
                 for (int k = 0; k < skills.Length; k++)
                     if (flow.CanSelectSkillForAllyButton(ally, button, skills[k]))
                         yield return new AgentBattleLegalAction { op = "set_skill", actorId = pair.Key, buttonIndex = b, skillIndex = k };
@@ -287,6 +294,7 @@ public sealed class AgentBattleSession : IDisposable
         if (action.op == "commit" || action.op == "refresh_rewards") return true;
         if (action.op == "choose_relic") return action.choiceIndex == request.choiceIndex;
         if (action.actorId != request.actorId || action.buttonIndex != request.buttonIndex) return false;
+        if (action.op == "disconnect") return true;
         return action.op == "set_skill" ? action.skillIndex == request.skillIndex
             : action.targetId == request.targetId && action.targetButtonIndex == request.targetButtonIndex;
     }
@@ -322,6 +330,12 @@ public sealed class AgentBattleSession : IDisposable
             id = actorId, side = isAlly ? "ally" : "enemy", name = isAlly ? ally.GetDebugDisplayName() : enemy.GetDebugDisplayName(),
             hp = isAlly ? ally.CurrentHP : enemy.CurrentHP, maxHp = isAlly ? ally.MaxHP : enemy.MaxHP,
             dead = isAlly ? ally.IsDead : enemy.IsDead, stage = isAlly ? 0 : enemy.CurrentStageIndex,
+            pendingDelayedDeath = !isAlly && enemy.HasPendingCalamityDelayedDeath,
+            stageName = !isAlly && enemy.enemyData != null && enemy.enemyData.stageSprites != null
+                && enemy.CurrentStageIndex < enemy.enemyData.stageSprites.Count
+                ? enemy.enemyData.stageSprites[enemy.CurrentStageIndex].stageName : "",
+            passives = !isAlly && enemy.enemyData != null && enemy.enemyData.passiveDescriptions != null
+                ? enemy.enemyData.passiveDescriptions.Select(p => p.passiveName + "：" + p.description).ToArray() : Array.Empty<string>(),
             statuses = statuses.Select(s => new AgentBattleStatus { id = s.Key, name = s.DisplayName, stacks = s.stacks }).ToArray(),
             skills = skills.Select((s, i) => DescribeSkill(s, i, isAlly, ally, enemy)).ToArray(),
             slots = buttons.Select((b, i) => new AgentBattleSlot { index = i, speed = b.Speed,

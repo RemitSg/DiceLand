@@ -134,4 +134,53 @@ public sealed class BattleReportedBugRegressionTests
         };
         session.Encounter.activeCalamities.Add(new RunCalamityState { calamityData = calamity, acquiredAtTier = 1 });
     }
+
+    [Test]
+    public void Disconnect_ReleasesReservationRestoresEnemyIntentAndRetriesWithoutMutation()
+    {
+        Open(3, false, 1, false);
+        var ally = Object.FindObjectOfType<BattleAllyController>();
+        ally.SelectedSkill.energyCost = 2;
+        Act("target", session.Observe().legalActions.First(a => a.op == "target"));
+        var before = session.Observe();
+        Assert.AreEqual(2, before.reservedEnergy);
+        var offered = before.legalActions.Single(a => a.op == "disconnect");
+        var request = new AgentBattleRequest { op = "disconnect", sessionId = before.sessionId, revision = before.revision,
+            requestId = Guid.NewGuid().ToString("N"), actorId = offered.actorId, buttonIndex = offered.buttonIndex };
+        var response = session.Act(request);
+        Assert.IsTrue(string.IsNullOrEmpty(response.state.actors.Single(a => a.id == "ally_0").slots[0].targetId));
+        Assert.AreEqual("ally_0", response.state.actors.Single(a => a.id == "enemy_0").slots[0].targetId);
+        Assert.AreEqual(0, response.state.reservedEnergy);
+        Assert.AreEqual(JsonUtility.ToJson(response), JsonUtility.ToJson(session.Act(request)));
+        Assert.IsFalse(response.state.legalActions.Any(a => a.op == "disconnect"));
+        Assert.Throws<ArgumentException>(() => Act("disconnect", offered));
+    }
+
+    [Test]
+    public void Observe_ExposesActualPendingDeathWithoutClearingIt()
+    {
+        Open(3, false, 1, false);
+        AddCalamity(CalamityBuiltInEffectType.EnemyDelayDeathUntilNextRoundStart, 1);
+        var enemy = Object.FindObjectOfType<BattleEnemyController>();
+        enemy.TakeDamage(99); enemy.Heal(2);
+        Assert.IsTrue(session.Observe().actors.Single(a => a.id == "enemy_0").pendingDelayedDeath);
+        Assert.IsTrue(session.Observe().actors.Single(a => a.id == "enemy_0").pendingDelayedDeath);
+        Assert.IsTrue(enemy.TryApplyPendingCalamityDelayedDeath());
+        Assert.IsFalse(session.Observe().actors.Single(a => a.id == "enemy_0").pendingDelayedDeath);
+    }
+
+    [Test]
+    public void Observe_ReportsCurrentStageAndAuthoredPassives()
+    {
+        Open(3, false, 1, false);
+        var enemy = Object.FindObjectOfType<BattleEnemyController>();
+        var data = Create<EnemyData_SO>();
+        data.enemyName = "Stage test"; data.baseHP = 10;
+        data.stageSprites = new List<EnemyData_SO.EnemyStageEntry> { new EnemyData_SO.EnemyStageEntry { stageName = "Opening" }, new EnemyData_SO.EnemyStageEntry { stageName = "Enraged" } };
+        data.passiveDescriptions = new List<EnemyData_SO.PassiveDescriptionEntry> { new EnemyData_SO.PassiveDescriptionEntry { passiveName = "Visible passive", description = "Actual configured text" } };
+        enemy.ApplyEnemyData(data); enemy.TryTransitionToStage(1);
+        var actor = session.Observe().actors.Single(a => a.id == "enemy_0");
+        Assert.AreEqual("Enraged", actor.stageName);
+        CollectionAssert.AreEqual(new[] { "Visible passive：Actual configured text" }, actor.passives);
+    }
 }

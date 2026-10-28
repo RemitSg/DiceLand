@@ -80,16 +80,16 @@ class PreparationPolicyTests(unittest.TestCase):
         preparation_assessment(self.f["underprepared"], "Boss", self.f["catalogue"])
         self.assertEqual(before, json.dumps(self.f, sort_keys=True))
 
-    def test_real_delayed_death_state_does_not_add_enemy_regeneration(self):
+    def test_fixed_delayed_death_allows_regeneration_instead_of_more_enemy_hp(self):
         state = self.f["regenChoice"]
         self.assertTrue(any("不屈" in c["name"] for c in state["activeCalamities"]))
         action = choose_calamity_action(state)
         chosen = state["calamityChoices"][action["choiceIndex"]]
-        self.assertNotIn("回复机体", chosen["name"])
+        self.assertIn("回复机体", chosen["name"])
 
-    def test_inverse_regeneration_then_delayed_death_pair_is_also_penalized(self):
+    def test_fixed_regeneration_does_not_add_a_bug_specific_delayed_death_penalty(self):
         state = {"activeCalamities": [{"name": "回复机体", "description": "所有敌人额外恢复 2 点血量"}]}
-        self.assertGreater(calamity_risk({"name": "劲敌 · 不屈", "description": "承受致死伤害时不死亡"}, state), 1000)
+        self.assertEqual(100, calamity_risk({"name": "劲敌 · 不屈", "description": "承受致死伤害时不死亡"}, state))
 
     def test_wounded_molly_defends_when_the_multi_hit_attack_targets_her(self):
         state = copy.deepcopy(self.f["woundedMultiHit"])

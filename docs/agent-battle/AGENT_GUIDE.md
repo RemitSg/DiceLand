@@ -79,6 +79,12 @@
 
 之后通过同样方式选择 `battleAction.op: target`，最后选择 `commit`。每条选招/连线也递增外层版本。技能共用队伍能量；单个技能分别合法不代表所有行动槽合计可支付。`commit` 已执行回合结束和下回合开始结算，响应就是下一个决策点。
 
+已有连线可以使用提供的 `battleAction.op: disconnect`，携带 `actorId` 和 `buttonIndex` 取消。它调用正式界面的断线方法，释放对应能量预留并恢复被接管的敌方连线；同样支持外层版本检查、相同请求重试、保存恢复与原生重放。重新连线后请读取实际 `targetId` / `contested`；同速（我方速度 ≥ 敌方）也可能接管拼点。
+
+战斗单位新增只读字段：`pendingDelayedDeath` 表示已触发“不屈”、下回合开始仍会死亡，治疗不取消该标记；`stageName` 为当前阶段名，`passives` 为正式资产中的被动说明。这些说明不代替实际状态与结算。协议文档版本为 0.8.5，线上 `apiVersion` 仍为 1。
+
+材料计划示例：`python tools/agent_adventure_client.py plan-equipment SESSION_ID 图纸ID`。它逐项比较公开配方与持有材料，并输出完整缺料、金币缺口；到铁匠后以实际 `canCraft` 和费用为准。空配方不视为免费制作。
+
 `battle.outcome: victory` 可能仍在遗物奖励阶段，先完成合法的选择/刷新，再 `run_return`。普通战斗胜利返回地图；正式 Boss 胜利返回 `victory_pending_settlement`。回合上限、撤退及配置错误都不能当作通关。
 
 ## 结算、能力和下一局

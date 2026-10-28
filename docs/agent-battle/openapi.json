@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "DiceLand Agent Battle API",
-    "version": "0.8.4",
+    "version": "0.8.5",
     "description": "Shared-rule editor-backed single battles and shared health/catalog discovery. adventure-openapi.json documents complete adventure, persistence and progression on the same endpoint. One battle or adventure session per host; engine required."
   },
   "servers": [
@@ -97,7 +97,8 @@
               "replay",
               "close",
               "choose_relic",
-              "refresh_rewards"
+              "refresh_rewards",
+              "disconnect"
             ]
           },
           "sessionId": {
@@ -105,12 +106,12 @@
           },
           "requestId": {
             "type": "string",
-            "description": "Required unique ID for set_skill, target and commit; retries must preserve every parameter. Also required for choose_relic and refresh_rewards."
+            "description": "Required unique ID for set_skill, target and commit; retries must preserve every parameter. Also required for choose_relic and refresh_rewards. Required for disconnect too."
           },
           "revision": {
             "type": "integer",
             "format": "int32",
-            "description": "Required for set_skill, target and commit; must match the latest state revision. Also required for choose_relic and refresh_rewards."
+            "description": "Required for set_skill, target and commit; must match the latest state revision. Also required for choose_relic and refresh_rewards. Required for disconnect too."
           },
           "seed": {
             "type": "integer",
@@ -333,6 +334,21 @@
             "items": {
               "$ref": "#/components/schemas/AgentBattleSlot"
             }
+          },
+          "pendingDelayedDeath": {
+            "type": "boolean",
+            "description": "Unyielding lethal protection already triggered; dies at next round start even if subsequently healed. Observing does not consume it."
+          },
+          "stageName": {
+            "type": "string",
+            "description": "Current authored stage name, zero-based stage index remains in stage."
+          },
+          "passives": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Authored passive descriptions shown by the formal game; not a guarantee every description is correctly configured."
           }
         }
       },
@@ -464,7 +480,8 @@
         },
         "required": [
           "op"
-        ]
+        ],
+        "description": "Choose an offered action. disconnect uses actorId and buttonIndex, calls the shared UI disconnect operation, releases reservations and restores absorbed enemy intent. No target is required."
       },
       "AgentBattleEvent": {
         "type": "object",

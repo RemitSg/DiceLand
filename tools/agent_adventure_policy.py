@@ -2,6 +2,81 @@
 import re
 
 
+def crafting_plan(state, blueprint, catalogue=None):
+    """Read every public ingredient; the forge's canCraft is authoritative."""
+    matches = [b for b in (catalogue or {}).get("blueprintDetails", []) if blueprint in (b["id"], b["name"])]
+    if len(matches) != 1:
+        raise ValueError("Expected one blueprint ID or exact name")
+    recipe = matches[0]
+    actual = next((r for r in state.get("recipes", []) if r["id"] == recipe["id"]), None)
+    owned = {m["id"]: m["amount"] for m in state.get("loot", [])}
+    materials = actual["materials"] if actual else [dict(m, required=m["amount"], available=owned.get(m["id"], 0)) for m in recipe["materials"]]
+    materials = [dict(m, missing=max(0, m["required"] - m["available"])) for m in materials]
+    cost = actual["cost"] if actual else state.get("craftingCost", 0)
+    valid = bool(materials) and bool(recipe.get("weapon"))
+    return {"blueprint": recipe["id"], "weapon": recipe.get("weapon"), "materials": materials,
+            "missingMaterials": [m for m in materials if m["missing"]], "cost": cost,
+            "moneyShortfall": max(0, cost - state.get("money", 0)), "validRecipe": valid,
+            "canCraft": actual["canCraft"] if actual else None,
+            "materialsReady": valid and not any(m["missing"] for m in materials),
+            "authority": "forge" if actual else "catalogue estimate; inspect forge before crafting"}
+
+
+def relic_value(item, state):
+    text = (item.get("name") or "") + " " + (item.get("description") or "")
+    dungeon = bool((state.get("dungeon") or {}).get("active"))
+    if any(w in text for w in ("特殊副本", "特殊地牢")) and not dungeon:
+        return 5
+    score = {"Common": 30, "Uncommon": 40, "Rare": 50, "Epic": 60, "Legendary": 70}.get(item.get("rarity"), 35)
+    if "燃烧" in text and any(w in text for w in ("战斗开始", "回合开始", "回合结束", "每回合")):
+        score += 35
+    if any(w in text for w in ("减免", "减少", "护盾", "恢复", "回复", "最大生命")):
+        score += 18
+    if "龙鳞甲" in text:
+        score += 25 if any(p.get("name") == "Jenny" for p in state.get("party", [])) else 0
+    if "电流" in text and any("电磁" in p.get("weaponName", "") for p in state.get("party", [])):
+        score += 15
+    return score
+
+
+def choose_material_purchase(state, blueprint, catalogue=None, reserve=0):
+    """Buy a missing ingredient only when this shop can fund the complete plan."""
+    plan = crafting_plan(state, blueprint, catalogue)
+    if not plan["validRecipe"] or not plan["missingMaterials"]:
+        return None
+    offers = [o for o in state.get("merchantOffers", []) if o.get("canPurchase") and not o.get("soldOut") and o.get("kind") == "Loot"]
+    needed = []
+    for material in plan["missingMaterials"]:
+        candidates = sorted((o for o in offers if o["id"] == material["id"]), key=lambda o: o["price"])
+        if len(candidates) < material["missing"]:
+            return None
+        needed.extend(candidates[:material["missing"]])
+    if state.get("money", 0) < reserve + plan["cost"] + sum(o["price"] for o in needed):
+        return None
+    indexes = {o["index"] for o in needed}
+    return next((a for a in state["legalActions"] if a["op"] == "run_buy" and a["choiceIndex"] in indexes), None)
+
+
+def choose_relic_action(state):
+    phase = state.get("phase")
+    if phase == "battle" or (state.get("battle") or {}).get("phase") == "reward":
+        choices = state["battle"].get("rewards", {}).get("choices", [])
+        actions = [a for a in state["legalActions"] if a["op"] == "run_battle" and a["battleAction"]["op"] == "choose_relic"]
+        index = lambda a: a["battleAction"]["choiceIndex"]
+    else:
+        starting = phase == "starting_relic"
+        choices = state["startingRelic"]["choices"] if starting else state["treasure"]["relicChoices"]
+        op = "run_choose_starting_relic" if starting else "run_choose_treasure_relic"
+        actions = [a for a in state["legalActions"] if a["op"] == op]
+        index = lambda a: a["choiceIndex"]
+    offered = {c.get("index", i): c for i, c in enumerate(choices)}
+    return max(actions, key=lambda a: relic_value(offered.get(index(a), {}), state), default=None)
+
+
+def can_intercept(slot, hostile, actor_id):
+    return (hostile.get("targetId") == actor_id and hostile.get("targetButtonIndex") == slot["index"]) or slot["speed"] >= hostile["speed"]
+
+
 def next_recruit_cost(state, catalogue=None):
     if state.get("phase") == "rest":
         return state["rest"]["recruitCost"]
@@ -18,7 +93,6 @@ def choose_treasure_action(state, catalogue=None):
     cost = next_recruit_cost(state, catalogue)
     can_visit_rest = any(t["type"] == "Rest" and not t["resolved"] for t in state.get("tiles", []))
     recruit_goal = cost if can_visit_rest and len(state.get("party", [])) < 4 else None
-    loot = {item["id"]: item["amount"] for item in state.get("loot", [])}
 
     def value(action):
         option = options[action["choiceIndex"]]
@@ -26,12 +100,15 @@ def choose_treasure_action(state, catalogue=None):
             closes_gap = recruit_goal is not None and state["money"] < recruit_goal <= state["money"] + option["money"]
             return 105 if closes_gap else (65 if state["money"] < 30 else 25)
         if option["kind"] in ("RelicBag", "Relic"):
+            if option["kind"] == "Relic":
+                item = next((r for r in (catalogue or {}).get("relics", []) if r["id"] == option.get("relic")), option)
+                return relic_value(item, state)
             return {"Common": 45, "Uncommon": 60, "Rare": 75, "Epic": 90, "Legendary": 115}.get(option.get("rarity"), 50)
         if option["kind"] == "Blueprint":
             recipe = next((b for b in (catalogue or {}).get("blueprintDetails", []) if b["id"] == option["blueprint"]), None)
             # An empty authored material list can mean an invalid recipe, not
             # free equipment. Actual forge canCraft remains authoritative.
-            ready = recipe and recipe["materials"] and all(loot.get(m["id"], 0) >= m["amount"] for m in recipe["materials"])
+            ready = recipe and crafting_plan(state, recipe["id"], catalogue)["materialsReady"]
             return 70 if ready and state["money"] >= state.get("craftingCost", 0) else 10
         return 0
 
@@ -56,6 +133,14 @@ def preparation_assessment(state, encounter_type, catalogue=None):
             reasons.append("先通过普通遭遇积累等级")
         if upgraded < (2 if encounter_type == "Boss" else 1) and relics < (3 if encounter_type == "Boss" else 2):
             reasons.append("装备或遗物成长不足，不能把钥匙齐全当作战力齐备")
+        if encounter_type == "Boss":
+            if len(party) < 4 or levels < 3.5:
+                reasons.append("Boss前准备四名存活队员并达到平均3.5级")
+            if upgraded < 3:
+                reasons.append("Boss前至少三人更换初始武器，不能用无关遗物数量代替输出成长")
+            weakness = sum("虚弱" in c.get("description", "") and any(w in c.get("description", "") for w in ("友方", "我方")) for c in state.get("activeCalamities", []))
+            if weakness and (levels < 4.5 or upgraded < len(party)):
+                reasons.append("持续虚弱降低实际骰面，需要全员升级装备与更高等级补偿")
     elif encounter_type == "Battle":
         if len(party) < 2:
             reasons.append("先招募第二名队员")
@@ -81,11 +166,8 @@ def clash_preference(skill, opposing_skill):
 def calamity_risk(choice, state):
     """Visible-text preference for preserving combat strength, not a rules simulator."""
     text = (choice.get("name") or "") + " " + (choice.get("description") or "")
-    active = " ".join((c.get("name", "") + " " + c.get("description", "")) for c in state.get("activeCalamities", []))
-    enemy_regen = "敌人" in text and any(w in text for w in ("恢复", "回复"))
-    existing_regen = "敌人" in active and any(w in active for w in ("额外恢复", "额外回复"))
-    if (enemy_regen and "不屈" in active) or ("不屈" in text and existing_regen):
-        return 1200  # Observed fatal hits followed by healing can undo delayed deaths.
+    # The engine now preserves the death deadline through healing. Evaluate
+    # each calamity normally; do not retain the old bug-specific prohibition.
     if "遗物" in text and "失去" in text:
         relics = state.get("relics") or []
         if relics and all(r.get("name") == "小猪储蓄罐" for r in relics) and state.get("money", 0) >= 100:
@@ -116,10 +198,10 @@ def calamity_risk(choice, state):
     if "血量" in text or "生命" in text:
         percent = re.search(r"(\d+)\s*%", text)
         return 50 + (int(percent.group(1)) * 4 if percent else 100)
-    if "伤害" in text:
-        return 220
     if "不屈" in text:
         return 100
+    if "伤害" in text:
+        return 220
     if "速度" in text:
         return 60
     if "能量" in text:
@@ -178,7 +260,7 @@ def choose_battle_action(state):
         return returned
     inner = [a for a in actions if a["op"] == "run_battle"]
     if battle["phase"] == "reward":
-        return next((a for a in inner if a["battleAction"]["op"] == "choose_relic"), None)
+        return choose_relic_action(state)
     if battle["phase"] != "targeting":
         return None
     enemies = {a["id"]: a for a in battle["actors"] if a["side"] == "enemy" and not a["dead"]}
@@ -280,7 +362,7 @@ def choose_battle_action(state):
         targets = [a for a in inner if a["battleAction"]["op"] == "target"
                    and a["battleAction"]["actorId"] == actor["id"] and a["battleAction"]["buttonIndex"] == slot["index"]
                    and a["battleAction"]["targetId"] in enemies]
-        can_redirect_all = all(slot["speed"] > hostile["speed"] for enemy in enemies.values() for hostile in enemy["slots"])
+        can_redirect_all = all(slot["speed"] >= hostile["speed"] for enemy in enemies.values() for hostile in enemy["slots"])
 
         def priority(action):
             target = action["battleAction"]
@@ -289,23 +371,23 @@ def choose_battle_action(state):
             unclaimed = (enemy["id"], enemy_slot["index"]) not in claimed
             incoming = enemy_slot.get("targetId") == actor["id"] and enemy_slot.get("targetButtonIndex") == slot["index"]
             # Preserve reciprocal counters before redirecting another ally's incoming attack.
-            can_intercept = incoming or slot["speed"] > enemy_slot["speed"]
+            intercepts = can_intercept(slot, enemy_slot, actor["id"])
             threat = skill_value(enemy_slot.get("selectedSkill") or {}, len(allies))
             if len(enemies) == 1 and len(actor["slots"]) > 1 and can_redirect_all:
                 # Inherited actions belong to one health pool. Spread damage into
                 # one opponent without making that unit clash every hostile slot.
                 focused = [(s["targetId"], s["targetButtonIndex"]) for s in actor["slots"] if s.get("targetId")]
                 focus = max(set(focused), key=lambda pair: (focused.count(pair), -pair[1]), default=None)
-                return ((enemy["id"], enemy_slot["index"]) == focus, -threat, incoming, can_intercept)
+                return (not enemy.get("pendingDelayedDeath", False), (enemy["id"], enemy_slot["index"]) == focus, -threat, incoming, intercepts)
             matchup = clash_preference(slot.get("selectedSkill") or {}, enemy_slot.get("selectedSkill") or {})
-            safe_redirect = not (not incoming and slot["speed"] > enemy_slot["speed"]
+            safe_redirect = not (not incoming and slot["speed"] >= enemy_slot["speed"]
                 and len((enemy_slot.get("selectedSkill") or {}).get("dice", [])) > 1
                 and actor.get("hp", 0) <= actor.get("maxHp", 0) * .45)
             if regen_focus:
                 dangerous_counter = incoming and (len((enemy_slot.get("selectedSkill") or {}).get("dice", [])) > 1
                     or actor.get("hp", 0) <= actor.get("maxHp", 0) * .45)
-                return (safe_redirect, dangerous_counter, enemy["id"] == focus_target, unclaimed and can_intercept, incoming, matchup, -enemy["hp"])
-            return (safe_redirect, unclaimed and incoming, unclaimed and can_intercept, unclaimed, matchup, threat, -enemy["hp"])
+                return (safe_redirect, dangerous_counter, not enemy.get("pendingDelayedDeath", False), enemy["id"] == focus_target, unclaimed and intercepts, incoming, matchup, -enemy["hp"])
+            return (safe_redirect, unclaimed and incoming, not enemy.get("pendingDelayedDeath", False), unclaimed and intercepts, unclaimed, matchup, threat, -enemy["hp"])
 
         if targets:
             return max(targets, key=priority)
