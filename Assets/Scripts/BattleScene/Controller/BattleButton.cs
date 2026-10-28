@@ -3255,20 +3255,6 @@ public partial class BattleButton : MonoBehaviour
             };
             BattleClashPresentationPlan presentationPlan = BattleClashPresentationPlanService.Resolve(clashResult);
             hitFx = presentationPlan.HitFxSource == BattleClashHitFxSource.Enemy ? enemyFx : allyFx;
-            string postClashLog = BuildClashPostLog(
-                presentationPlan,
-                ally,
-                enemy,
-                allyFollowUpBasePower,
-                enemyFollowUpBasePower,
-                allyWinAttackBonus,
-                enemyWinAttackBonus,
-                allyHitPower,
-                enemyHitPower,
-                allyPower,
-                enemyPower,
-                restoredDefenseEnergy);
-
             bool moveIntoPosition = i == 0;
             bool returnToOrigin = i == clashCount - 1;
             yield return PlayClashPresentation(
@@ -3294,7 +3280,20 @@ public partial class BattleButton : MonoBehaviour
                 returnToOrigin);
 
             BattleLog(BattleClashLogService.FormatClashDice(i, ally.GetDebugDisplayName(), allyBasePower, allyBonusPower, enemy.GetDebugDisplayName(), enemyBasePower, enemyBonusPower));
-            BattleLog(postClashLog);
+            // The presentation invokes the real impact callback. Read HP only after it has resolved.
+            BattleLog(BuildClashPostLog(
+                presentationPlan,
+                ally,
+                enemy,
+                allyFollowUpBasePower,
+                enemyFollowUpBasePower,
+                allyWinAttackBonus,
+                enemyWinAttackBonus,
+                allyHitPower,
+                enemyHitPower,
+                allyPower,
+                enemyPower,
+                restoredDefenseEnergy));
         }
 
         bool allyRemainingFirst = ally.Speed >= enemy.Speed;

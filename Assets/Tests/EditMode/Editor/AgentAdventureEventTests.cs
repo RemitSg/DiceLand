@@ -124,6 +124,34 @@ public sealed class AgentAdventureEventTests
         Assert.AreEqual("event", Act("run_interact").phase); Assert.AreEqual(3, session.Observe().money);
     }
 
+    [Test] public void OldGamblingTable_DeclineThenLeaveCompletesTileAndDoesNotReopenOnReturn()
+    {
+        Open();
+        var root = AssetDatabase.LoadAssetAtPath<MapEvent_SO>("Assets/Data/Events/025 旧赌桌/025 旧赌桌.asset");
+        Assert.IsNotNull(root);
+        var state = Enter(root);
+        BoardTileData origin = Tile;
+        int moneyBefore = state.money;
+        Act("run_choose_event", state.mapEvent.options.Single(o => o.label == "不上桌").index);
+        Assert.IsFalse(origin.isResolved, "The follow-up choice must still be available.");
+        state = Act("run_continue_event");
+        Assert.AreEqual("025-1", origin.assignedEvent.options.Single(o => o.optionLabel == "不上桌").nextEvent.eventId);
+        state = Act("run_choose_event", state.mapEvent.options.Single(o => o.label == "离开").index);
+        Assert.IsTrue(origin.isResolved, "Leaving the actual follow-up event must complete the tile.");
+        Assert.IsNull(origin.assignedEvent);
+        Assert.AreEqual(1, Map.Snapshot.runState.settlementStats.eventTilesCompleted);
+        Assert.AreEqual(moneyBefore, state.money);
+        Assert.AreEqual("map", Act("run_continue_event").phase);
+        Assert.IsFalse(session.Observe().legalActions.Any(a => a.op == "run_interact"));
+
+        BoardTileData away = Map.LegalDestinations().First();
+        away.tileType = MapTileType.Empty; away.isResolved = true; away.isVisited = true;
+        session.Act(Command(new AgentAdventureAction { op = "run_move", x = away.coord.x, y = away.coord.y }));
+        state = session.Act(Command(new AgentAdventureAction { op = "run_move", x = origin.coord.x, y = origin.coord.y })).state;
+        Assert.AreEqual("map", state.phase, "Re-entering the completed gambling tile must not reopen its event.");
+        Assert.AreEqual(1, Map.Snapshot.runState.settlementStats.eventTilesCompleted);
+    }
+
     [TestCase(false)] [TestCase(true)] public void EventEncounterUsesActualBattleAndGrantsQueuedLootOnlyOnVictory(bool defeat)
     {
         Open(); var state = Map.Snapshot.runState;

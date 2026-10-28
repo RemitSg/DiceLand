@@ -49,7 +49,7 @@ MonoBehaviour:
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
     nextEvent: {fileID: 0}
-    resolveEvent: 0
+    resolveEvent: 1
     customHandler: {fileID: 0}
   - optionId: 2
     optionLabel: "\u6380\u7FFB\u8D4C\u684C"

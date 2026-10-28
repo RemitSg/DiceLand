@@ -164,7 +164,7 @@ public class EnemyTodoTests
     }
 
     [Test]
-    public void UnyieldingCalamity_HealingAboveOneCancelsPendingRoundStartDeath()
+    public void UnyieldingCalamity_HealingAboveOnePreservesPendingRoundStartDeath()
     {
         BattleEncounterRuntime.SetEncounter(new BattleEncounterData
         {
@@ -185,9 +185,10 @@ public class EnemyTodoTests
         Assert.AreEqual(3, enemy.Heal(3));
         Assert.AreEqual(4, enemy.CurrentHP);
 
-        Assert.IsFalse(enemy.TryApplyPendingCalamityDelayedDeath());
-        Assert.AreEqual(4, enemy.CurrentHP);
-        Assert.IsFalse(enemy.IsDead);
+        Assert.IsTrue(enemy.TryApplyPendingCalamityDelayedDeath());
+        Assert.AreEqual(0, enemy.CurrentHP);
+        Assert.IsTrue(enemy.IsDead);
+        Assert.IsFalse(enemy.TryApplyPendingCalamityDelayedDeath(), "The pending death must only fire once.");
     }
 
     [Test]
