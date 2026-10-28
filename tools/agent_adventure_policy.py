@@ -2,6 +2,80 @@
 import re
 
 
+def next_recruit_cost(state, catalogue=None):
+    if state.get("phase") == "rest":
+        return state["rest"]["recruitCost"]
+    difficulty = next((d for d in (catalogue or {}).get("difficulties", [])
+                       if d["id"] == state.get("difficultyId")), None)
+    costs = difficulty.get("recruitCosts", []) if difficulty else []
+    index = max(0, len(state.get("party", [])) - 1)
+    return costs[index] if index < len(costs) else None
+
+
+def choose_treasure_action(state, catalogue=None):
+    """Value the offered reward against the next affordable preparation step."""
+    options = {o["index"]: o for o in state["treasure"]["options"]}
+    cost = next_recruit_cost(state, catalogue)
+    can_visit_rest = any(t["type"] == "Rest" and not t["resolved"] for t in state.get("tiles", []))
+    recruit_goal = cost if can_visit_rest and len(state.get("party", [])) < 4 else None
+    loot = {item["id"]: item["amount"] for item in state.get("loot", [])}
+
+    def value(action):
+        option = options[action["choiceIndex"]]
+        if option["kind"] == "Money":
+            closes_gap = recruit_goal is not None and state["money"] < recruit_goal <= state["money"] + option["money"]
+            return 105 if closes_gap else (65 if state["money"] < 30 else 25)
+        if option["kind"] in ("RelicBag", "Relic"):
+            return {"Common": 45, "Uncommon": 60, "Rare": 75, "Epic": 90, "Legendary": 115}.get(option.get("rarity"), 50)
+        if option["kind"] == "Blueprint":
+            recipe = next((b for b in (catalogue or {}).get("blueprintDetails", []) if b["id"] == option["blueprint"]), None)
+            ready = recipe and all(loot.get(m["id"], 0) >= m["amount"] for m in recipe["materials"])
+            return 70 if ready and state["money"] >= state.get("craftingCost", 0) else 10
+        return 0
+
+    return max((a for a in state["legalActions"] if a["op"] == "run_choose_treasure"), key=value, default=None)
+
+
+def preparation_assessment(state, encounter_type, catalogue=None):
+    """Conservative encounter gate from visible preparation, never a win prediction."""
+    party = [p for p in state.get("party", []) if p["hp"] > 0]
+    initial = {c["id"]: c["initialWeapon"] for c in (catalogue or {}).get("characterDetails", [])}
+    upgraded = sum(bool(initial.get(p["character"])) and p["weapon"] != initial[p["character"]] for p in party)
+    health = sum(p["hp"] for p in party) / max(1, sum(p["maxHp"] for p in party))
+    levels = sum(p["level"] for p in party) / max(1, len(party))
+    relics = sum(r.get("amount", 1) for r in state.get("relics", []))
+    reasons = []
+    if encounter_type in ("Elite", "Boss"):
+        if len(party) < 3:
+            reasons.append("高风险遭遇前至少准备三名存活队员")
+        if health < .75:
+            reasons.append("全队生命不足75%，先安排营地恢复")
+        if levels < 1.7:
+            reasons.append("先通过普通遭遇积累等级")
+        if upgraded < (2 if encounter_type == "Boss" else 1) and relics < (3 if encounter_type == "Boss" else 2):
+            reasons.append("装备或遗物成长不足，不能把钥匙齐全当作战力齐备")
+    elif encounter_type == "Battle":
+        if len(party) < 2:
+            reasons.append("先招募第二名队员")
+        if health < .5:
+            reasons.append("全队生命不足50%，先恢复")
+    return {"ready": not reasons, "reasons": reasons, "livingParty": len(party), "healthRatio": health,
+            "averageLevel": levels, "upgradedWeapons": upgraded, "relicCount": relics}
+
+
+def clash_preference(skill, opposing_skill):
+    """Rank visible first-die matchups; the server still rolls and resolves rules."""
+    own = skill.get("displayedDice") or skill.get("dice") or []
+    enemy = opposing_skill.get("displayedDice") or opposing_skill.get("dice") or []
+    if not own or not enemy:
+        return 0
+    a, b = own[0], enemy[0]
+    margin = (a["min"] + a["max"] - b["min"] - b["max"]) / 2
+    # A losing attack into a shield offers little pressure. Do not prefer it
+    # merely because the defensive skill has many textual damage triggers.
+    return margin - (1.5 if a["category"] == "Attack" and b["category"] == "Defense" and margin <= 0 else 0)
+
+
 def calamity_risk(choice, state):
     """Visible-text preference for preserving combat strength, not a rules simulator."""
     text = (choice.get("name") or "") + " " + (choice.get("description") or "")
@@ -79,7 +153,10 @@ def skill_value(skill, enemy_count=1, actor=None, incoming=False, enemies=None, 
         # Prefer an explicitly described burst when observable stacks have built up.
         # This is a bounded policy preference; the shared engine resolves the effect.
         burst = 2 * min(12, sum(charges) if "所有目标" in description else max(charges, default=0))
-    return attack + bonus + setup + burst - sum(int(n) for n in self_harm) * 1.5 - skill.get("energyCost", 0) * .12
+    front = .8 * (dice[0]["min"] + dice[0]["max"]) / 2 if incoming and dice else 0
+    if charge_armor and actor is not None and actor.get("hp", 0) <= actor.get("maxHp", 0) * .3 and dice and dice[0]["category"] == "Attack":
+        front = 0  # Preserve the existing emergency-defense preference.
+    return attack + bonus + setup + burst + front - sum(int(n) for n in self_harm) * 1.5 - skill.get("energyCost", 0) * .12
 
 
 def choose_battle_action(state):
@@ -206,7 +283,8 @@ def choose_battle_action(state):
                 focused = [(s["targetId"], s["targetButtonIndex"]) for s in actor["slots"] if s.get("targetId")]
                 focus = max(set(focused), key=lambda pair: (focused.count(pair), -pair[1]), default=None)
                 return ((enemy["id"], enemy_slot["index"]) == focus, -threat, incoming, can_intercept)
-            return (unclaimed and incoming, unclaimed and can_intercept, unclaimed, threat, -enemy["hp"])
+            matchup = clash_preference(slot.get("selectedSkill") or {}, enemy_slot.get("selectedSkill") or {})
+            return (unclaimed and incoming, unclaimed and can_intercept, unclaimed, matchup, threat, -enemy["hp"])
 
         if targets:
             return max(targets, key=priority)

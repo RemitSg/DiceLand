@@ -9,7 +9,7 @@ from pathlib import Path
 import sys
 
 from agent_battle_client import Client
-from agent_adventure_policy import choose_battle_action, choose_calamity_action
+from agent_adventure_policy import choose_battle_action, choose_calamity_action, choose_treasure_action, preparation_assessment
 
 
 def resolve_difficulty(client, value):
@@ -60,6 +60,7 @@ def choose_reforge_action(state):
 
 
 def demo(client, args):
+    catalogue = client.call(op="catalog")["catalogue"]
     create = dict(op="create_run", seed=args.seed, maxRounds=args.max_rounds)
     if getattr(args, "difficulty", None):
         create["difficultyId"] = resolve_difficulty(client, args.difficulty)
@@ -109,15 +110,15 @@ def demo(client, args):
                     if move["op"] != "run_move":
                         continue
                     tile = tiles[(move["x"], move["y"])]
-                    if tile["type"] in ("Empty", "Key", "Merchant", "Forge") or (tile["type"] in ("Event", "Treasure") and not tile["resolved"]) or (tile["type"] == "Rest" and not tile["resolved"]) or (tile["type"] in ("Battle", "Elite") and tile["encounterAvailable"]):
+                    hostile_ready = tile["type"] in ("Battle", "Elite") and tile["encounterAvailable"] and preparation_assessment(state, tile["type"], catalogue)["ready"]
+                    if tile["type"] in ("Empty", "Key", "Merchant", "Forge") or (tile["type"] in ("Event", "Treasure") and not tile["resolved"]) or (tile["type"] == "Rest" and not tile["resolved"]) or hostile_ready:
                         candidates.append((tile, move))
                 candidates.sort(key=lambda pair: (pair[0]["visited"], pair[0]["type"] != "Key", pair[0]["danger"], pair[0]["x"], pair[0]["y"]))
                 if candidates:
                     action = candidates[0][1]
                     moved += 1
             elif state["phase"] == "treasure":
-                # Wealth is the baseline; other agents can value the displayed blueprint and bag.
-                action = next((a for a in actions if a["op"] == "run_choose_treasure"), None)
+                action = choose_treasure_action(state, catalogue)
             elif state["phase"] == "treasure_relic":
                 action = next((a for a in actions if a["op"] == "run_choose_treasure_relic"), None)
             elif state["phase"] == "treasure_result":
@@ -150,7 +151,8 @@ def demo(client, args):
                 if getattr(args, "reforge", False) and location not in considered_reforges:
                     considered_reforges.add(location)
                     action = next((a for a in actions if a["op"] == "run_open_reforge"), None)
-                if action is None and len(state["party"]) < 2:
+                health = sum(p["hp"] for p in state["party"]) / max(1, sum(p["maxHp"] for p in state["party"]))
+                if action is None and len(state["party"]) < 4 and health >= .7:
                     action = next((a for a in actions if a["op"] == "run_recruit"), None)
                 if action is None:
                     op = "run_rest_heal" if any(p["hp"] < p["maxHp"] for p in state["party"]) else "run_rest_restore_ap"
