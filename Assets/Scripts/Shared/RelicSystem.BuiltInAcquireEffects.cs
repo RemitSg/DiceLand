@@ -42,6 +42,24 @@ public static partial class RelicSystem
         }
     }
 
+    private static void HandleQueueNextBattleAllyStatusOnAcquire(
+        Relic_SO relicData,
+        RunRelicState relicState,
+        RelicExecutionContext context,
+        Relic_SO.RelicBuiltInEffectEntry effect)
+    {
+        if (!IsAcquiredRelicEffectActive(relicData, context))
+            return;
+        if (effect.statusData == null)
+            return;
+
+        int stacks = Mathf.Max(0, effect.amount * Mathf.Max(1, context.acquiredRelicAmount));
+        if (stacks <= 0)
+            return;
+
+        context.runState.QueueNextBattleAllyStatusGrant(effect.statusData, stacks);
+    }
+
     private static void HandleGrantRandomRelicsOnAcquire(
         Relic_SO relicData,
         RunRelicState relicState,

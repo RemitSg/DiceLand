@@ -21,8 +21,8 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 2645c8b2415fd6249b0e700944e71189, type: 3}
   builtInEffects:
   - effectName: Battle start shield all allies
-    trigger: 25
-    effectType: 119
+    trigger: 26
+    effectType: 136
     chance: 1
     requireUnvisitedTile: 1
     statusData: {fileID: 11400000, guid: d9960fbafac14cf6b9c6bd093fd9293f, type: 2}

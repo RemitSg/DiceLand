@@ -19,6 +19,6 @@ MonoBehaviour:
   maxSpeed: 5
   compatibleWeaponType: 1
   initialWeaponData: {fileID: 11400000, guid: 66e425e32f62902418159abffd6dedc5, type: 2}
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 00ee41d89ef702446b9233c07ce30e29, type: 3}
   battleSprite: {fileID: 21300000, guid: a601225b1e7d802479f0f1cb53897183, type: 3}
   characterPrefab: {fileID: 337647126021373419, guid: 9e8c534556d34d84285bfb629d103936, type: 3}

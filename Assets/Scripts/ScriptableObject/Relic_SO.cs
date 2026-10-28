@@ -192,7 +192,8 @@ public class Relic_SO : ScriptableObject
         ChanceApplyStatusToAllAlliesOnBattleRoundStart = 132,
         DoubleFirstEnemyDamageEachBattle = 133,
         ResetKeysAndRegenerateMapOnAcquire = 134,
-        ConfigureFixedRelicReforgePair = 135
+        ConfigureFixedRelicReforgePair = 135,
+        QueueNextBattleAllyStatusOnAcquire = 136
     }
 
     [Serializable]

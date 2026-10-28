@@ -50,6 +50,20 @@ public class BattleStatusDrivenStageTransitionDispatcherTests
         Assert.AreEqual(1, broodmother.CurrentStageIndex);
     }
 
+    [Test]
+    public void BattleButtonStatusChanged_WhenAnyAllyMeetsStatusRule_TransitionsEnemy()
+    {
+        BattleStatus_SO bleed = CreateStatus("bleed", "Bleed");
+        BattleAllyController ally = CreateAlly("Bleeding Ally", 12);
+        BattleEnemyController broodmother = CreateBroodmother(bleed);
+        BattleButton battleButton = CreateBattleButton(new[] { ally }, new[] { broodmother });
+        ally.AddStatus(bleed, bleed.StatusId, bleed.DisplayName, 3);
+
+        InvokePrivateMethod(battleButton, "HandleAllyStatusChanged", ally);
+
+        Assert.AreEqual(1, broodmother.CurrentStageIndex);
+    }
+
     private BattleAllyController CreateAlly(string name, int maxHp)
     {
         GameObject go = new GameObject(name);
@@ -115,6 +129,16 @@ public class BattleStatusDrivenStageTransitionDispatcherTests
         return enemy;
     }
 
+    private BattleButton CreateBattleButton(BattleAllyController[] allies, BattleEnemyController[] enemies)
+    {
+        GameObject go = new GameObject("BattleButton");
+        createdObjects.Add(go);
+        BattleButton battleButton = go.AddComponent<BattleButton>();
+        SetPrivateField(battleButton, "activeRoundAllies", allies);
+        SetPrivateField(battleButton, "activeRoundEnemies", enemies);
+        return battleButton;
+    }
+
     private CharacterData_SO CreateCharacter(string name, int baseHp)
     {
         CharacterData_SO character = ScriptableObject.CreateInstance<CharacterData_SO>();
@@ -140,5 +164,12 @@ public class BattleStatusDrivenStageTransitionDispatcherTests
         FieldInfo field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.IsNotNull(field, $"Field {fieldName} was not found on {target.GetType().Name}.");
         field.SetValue(target, value);
+    }
+
+    private static void InvokePrivateMethod(object target, string methodName, params object[] args)
+    {
+        MethodInfo method = target.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(method, $"Method {methodName} was not found on {target.GetType().Name}.");
+        method.Invoke(target, args);
     }
 }

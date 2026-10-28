@@ -170,30 +170,31 @@ public class RelicSystem127To142Tests
     }
 
     [Test]
-    public void HeartShield_AppliesShieldOnlyOnceAtBattleSetup()
+    public void HeartShield_QueuesShieldForNextBattleOnlyOnAcquire()
     {
-        BattleAllyController ally = CreateAlly("Ally", 20, 20);
         BattleStatus_SO shield = CreateStatus("shield", "Shield", BattleStatus_SO.StatusBehaviorType.Shield);
         Relic_SO relic = CreateRelic(
             "heart-shield",
-            Relic_SO.RelicTrigger.OnBattleSetup,
-            Relic_SO.RelicBuiltInEffectType.ApplyStatusToAllAlliesAtBattleSetup,
+            Relic_SO.RelicTrigger.OnRelicAcquired,
+            Relic_SO.RelicBuiltInEffectType.QueueNextBattleAllyStatusOnAcquire,
             effect =>
             {
                 effect.statusData = shield;
                 effect.amount = 10;
             });
-        BattleEncounterData encounter = CreateEncounter(relic);
-        ActivateEncounter(encounter);
+        RunState runState = new RunState();
+        runState.relicInventory = CreateInventory(relic);
 
-        RelicExecutionContext firstSetup = RelicExecutionContext.CreateBattleSetup(null, 1, new[] { ally }, null);
-        RelicSystem.Process(encounter.relicInventory, firstSetup);
-        RelicExecutionContext repeatedSetup = RelicExecutionContext.CreateBattleSetup(null, 1, new[] { ally }, null);
-        RelicSystem.Process(encounter.relicInventory, repeatedSetup);
-        RelicExecutionContext secondRoundSetup = RelicExecutionContext.CreateBattleSetup(null, 2, new[] { ally }, null);
-        RelicSystem.Process(encounter.relicInventory, secondRoundSetup);
+        RelicExecutionContext acquireContext = RelicExecutionContext.CreateRelicAcquired(runState, relic, 1);
+        RelicSystem.Process(runState.relicInventory, acquireContext);
 
-        Assert.AreEqual(10, ally.GetStatusStacks(shield));
+        List<PendingBattleStatusGrant> firstBattleGrants = runState.ConsumePendingNextBattleAllyStatusGrants();
+        List<PendingBattleStatusGrant> secondBattleGrants = runState.ConsumePendingNextBattleAllyStatusGrants();
+
+        Assert.AreEqual(1, firstBattleGrants.Count);
+        Assert.AreEqual(shield, firstBattleGrants[0].statusData);
+        Assert.AreEqual(10, firstBattleGrants[0].stacks);
+        Assert.AreEqual(0, secondBattleGrants.Count);
     }
 
     [Test]

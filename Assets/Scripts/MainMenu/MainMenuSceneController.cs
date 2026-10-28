@@ -82,6 +82,10 @@ public class MainMenuSceneController : MonoBehaviour
     [SerializeField] private Font contributorsTitleFont;
     [SerializeField] private Font contributorsBodyFont;
 
+    [Header("Background")]
+    [SerializeField] private bool ensureOpaqueMenuBackground = true;
+    [SerializeField] private Color opaqueMenuBackgroundColor = new Color(0.129f, 0.149f, 0.196f, 1f);
+
     private GalleryLevelSelectionManager mainMenuGallery;
     private GalleryLevelSelectionManager difficultyGallery;
     private MainMenuTutorialOverlay tutorialOverlay;
@@ -138,6 +142,7 @@ public class MainMenuSceneController : MonoBehaviour
             settingsButtonFont);
 
         NormalizeLegacyDefaultLabels();
+        EnsureOpaqueMenuBackground();
         ApplyMainMenuSettings();
         ConfigureMainMenuItems();
         ConfigureDifficultyMenu();
@@ -161,6 +166,44 @@ public class MainMenuSceneController : MonoBehaviour
             mainMenuGallery.OnItemsClickedEvent -= HandleMainMenuItemClicked;
         if (difficultyGallery != null)
             difficultyGallery.OnItemsClickedEvent -= HandleDifficultyItemClicked;
+    }
+
+    private void EnsureOpaqueMenuBackground()
+    {
+        if (!ensureOpaqueMenuBackground || mainMenuGallery == null)
+            return;
+
+        Canvas canvas = mainMenuGallery.GetComponentInParent<Canvas>();
+        if (canvas == null)
+            return;
+
+        const string backgroundName = "RuntimeOpaqueMenuBackground";
+        Transform existing = canvas.transform.Find(backgroundName);
+        GameObject backgroundObject = existing != null
+            ? existing.gameObject
+            : new GameObject(backgroundName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+
+        RectTransform rect = backgroundObject.GetComponent<RectTransform>();
+        if (rect == null)
+            rect = backgroundObject.AddComponent<RectTransform>();
+
+        if (backgroundObject.transform.parent != canvas.transform)
+            backgroundObject.transform.SetParent(canvas.transform, false);
+
+        backgroundObject.transform.SetAsFirstSibling();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = Vector2.zero;
+        rect.sizeDelta = Vector2.zero;
+        rect.localScale = Vector3.one;
+
+        Image image = backgroundObject.GetComponent<Image>();
+        if (image == null)
+            image = backgroundObject.AddComponent<Image>();
+
+        image.color = opaqueMenuBackgroundColor;
+        image.raycastTarget = false;
     }
 
     private void Update()

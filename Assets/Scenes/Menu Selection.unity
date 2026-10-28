@@ -4852,7 +4852,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -8.888889, y: 0}
+  m_AnchoredPosition: {x: -8.4375, y: 0}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &771636658
@@ -11406,6 +11406,8 @@ MonoBehaviour:
   tutorialStartPopupBodyFont: {fileID: 12800000, guid: 484ab9585f5e809499172abd408d9db2, type: 3}
   contributorsTitleFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
   contributorsBodyFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
+  ensureOpaqueMenuBackground: 1
+  opaqueMenuBackgroundColor: {r: 0.129, g: 0.149, b: 0.196, a: 1}
 --- !u!1 &1612790337
 GameObject:
   m_ObjectHideFlags: 0

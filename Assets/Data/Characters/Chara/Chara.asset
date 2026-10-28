@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: Chara
   m_EditorClassIdentifier: 
   characterName: Chara
+  basicDescription: 
   baseHP: 24
   minSpeed: 2
   maxSpeed: 5
-  icon: {fileID: 21300000, guid: 7278200b9c886ef499ac32e36ebac9bb, type: 3}
+  compatibleWeaponType: 0
+  initialWeaponData: {fileID: 0}
+  icon: {fileID: 21300000, guid: 22e4dec0de7670349a8020f180ccb2c1, type: 3}
   battleSprite: {fileID: 0}
   characterPrefab: {fileID: 5559546373662577273, guid: 985d7bd4f14448e48a6beeb25a636bd5, type: 3}

@@ -800,6 +800,7 @@ public class BattleButton : MonoBehaviour
             return;
 
         HandleTutorialProgress(TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.StatusApplied), false);
+        TryLogAllEnemyStatusDrivenStageTransitions();
     }
 
     private void HandleEnemyStatusChanged(BattleEnemyController enemy)
@@ -808,6 +809,7 @@ public class BattleButton : MonoBehaviour
             return;
 
         HandleTutorialProgress(TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.StatusApplied), false);
+        TryLogAllEnemyStatusDrivenStageTransitions();
     }
 
     private int GetReservedEnergyCostForAlly(BattleAllyController ally)

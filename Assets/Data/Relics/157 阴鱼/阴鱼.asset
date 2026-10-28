@@ -15,9 +15,9 @@ MonoBehaviour:
   relicId: 157
   relicName: "\u9634\u9C7C"
   description: "\u65E0\u6218\u6597\u6548\u679C\u3002\u82E5\u5728\u4F11\u606F\u683C\u4E2D\u4E0E\u9633\u9C7C\u5408\u5E76\u91CD\u94F8\uFF0C\u4F1A\u56FA\u5B9A\u83B7\u5F97\u9634\u9633\u9C7C\u3002"
-  additionalDescription: 
+  additionalDescription: "\u98D8~\u6765~\u98D8~\u53BB~"
   rarity: 1
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: b84bb4abf90648749837cc089913219d, type: 3}
   builtInEffects:
   - effectName: 
     trigger: 26
