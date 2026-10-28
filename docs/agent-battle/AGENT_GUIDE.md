@@ -85,6 +85,10 @@
 
 材料计划示例：`python tools/agent_adventure_client.py plan-equipment SESSION_ID 图纸ID`。它逐项比较公开配方与持有材料，并输出完整缺料、金币缺口；到铁匠后以实际 `canCraft` 和费用为准。空配方不视为免费制作。
 
+准备评分 `preparation_assessment(state, encounter_type, catalogue, starting_loadout)` 的最后一项为可选的「角色ID → 实际起始武器ID」映射。请在新建会话的第一份状态中记录；目录初始武器可能为空，而正式开局会使用兜底武器。恢复/读档时不可把当前装备当作初始装备；没有可信记录时省略，返回的 `unknownWeaponBaselines` 会明确指出未知基线。评分是准备提醒，不预测胜利，不能绕过低血量提醒就声称准备充分。
+
+自主整局试玩的持久偏好：每次从头新开使用不同种子，先查阅并更新 `PLAYTEST_SEEDS.json`，完整日志记录实际种子。原生回放、明确的定向复现与单元测试保留其记录种子，另行标记，不能计作新开一局。
+
 `battle.outcome: victory` 可能仍在遗物奖励阶段，先完成合法的选择/刷新，再 `run_return`。普通战斗胜利返回地图；正式 Boss 胜利返回 `victory_pending_settlement`。回合上限、撤退及配置错误都不能当作通关。
 
 ## 结算、能力和下一局

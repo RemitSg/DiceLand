@@ -2,9 +2,31 @@
   "preferenceSince": "2026-10-28",
   "policy": "Every fresh autonomous playtest must use a seed not previously used by a fresh playtest. Preserve the seed and outcome in the full log. Explicit replay, directed reproduction and unit tests are separate.",
   "runs": [
-    {"run": "easy-20261028", "seed": 20261028, "outcome": "defeat", "scope": "Before unique-seed preference"},
-    {"run": "easy-20261028-retry", "seed": 20261028, "outcome": "defeat", "scope": "Before unique-seed preference"},
-    {"run": "easy-20261028-run3", "seed": 20261028, "outcome": "defeat", "scope": "Before unique-seed preference"},
-    {"run": "easy-20261028-run4", "seed": 2026102804, "outcome": "reserved", "scope": "Fresh zero-progress Easy; not created yet"}
+    {
+      "run": "easy-20261028",
+      "seed": 20261028,
+      "outcome": "defeat",
+      "scope": "Before unique-seed preference"
+    },
+    {
+      "run": "easy-20261028-retry",
+      "seed": 20261028,
+      "outcome": "defeat",
+      "scope": "Before unique-seed preference"
+    },
+    {
+      "run": "easy-20261028-run3",
+      "seed": 20261028,
+      "outcome": "defeat",
+      "scope": "Before unique-seed preference"
+    },
+    {
+      "run": "easy-20261028-run4",
+      "seed": 2026102804,
+      "outcome": "defeat",
+      "scope": "Fresh zero-progress Easy,418 native actions verified;14 wins then Boss34/75HP round5 defeat.",
+      "profile": "easy-run4-20261028-9a3add936f",
+      "score": 1521
+    }
   ]
 }

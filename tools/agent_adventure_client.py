@@ -61,6 +61,7 @@ def choose_reforge_action(state):
 
 def demo(client, args):
     catalogue = client.call(op="catalog")["catalogue"]
+    starting_loadout = {}
     create = dict(op="create_run", seed=args.seed, maxRounds=args.max_rounds)
     if getattr(args, "difficulty", None):
         create["difficultyId"] = resolve_difficulty(client, args.difficulty)
@@ -72,6 +73,7 @@ def demo(client, args):
         state = client.call(op="run_recover", profileId=args.recover_profile)["state"]
     else:
         state = client.call(**create)["state"]
+        starting_loadout = {p["character"]: p["weapon"] for p in state["party"]}
     session_id = state["sessionId"]
     trace = []
     moved = 0
@@ -110,7 +112,7 @@ def demo(client, args):
                     if move["op"] != "run_move":
                         continue
                     tile = tiles[(move["x"], move["y"])]
-                    hostile_ready = tile["type"] in ("Battle", "Elite") and tile["encounterAvailable"] and preparation_assessment(state, tile["type"], catalogue)["ready"]
+                    hostile_ready = tile["type"] in ("Battle", "Elite") and tile["encounterAvailable"] and preparation_assessment(state, tile["type"], catalogue, starting_loadout)["ready"]
                     if tile["type"] in ("Empty", "Key", "Merchant", "Forge") or (tile["type"] in ("Event", "Treasure") and not tile["resolved"]) or (tile["type"] == "Rest" and not tile["resolved"]) or hostile_ready:
                         candidates.append((tile, move))
                 candidates.sort(key=lambda pair: (pair[0]["visited"], pair[0]["type"] != "Key", pair[0]["danger"], pair[0]["x"], pair[0]["y"]))

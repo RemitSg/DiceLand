@@ -8,6 +8,26 @@ from agent_adventure_policy import can_intercept, crafting_plan, preparation_ass
 
 
 class Run4PolicyTests(unittest.TestCase):
+    def preparation_fixture(self):
+        return json.loads((Path(__file__).parent / "fixtures/easy_run4_boss_preparation.json").read_text(encoding="utf-8"))
+
+    def test_recorded_opening_counts_runtime_fallback_weapon_upgrade(self):
+        f = self.preparation_fixture()
+        before = copy.deepcopy(f)
+        result = preparation_assessment(f["state"], "Boss", f["catalogue"], f["startingLoadout"])
+        self.assertEqual(3, result["upgradedWeapons"])
+        self.assertEqual([], result["unknownWeaponBaselines"])
+        self.assertFalse(result["ready"])
+        self.assertEqual(["全队生命不足75%，先安排营地恢复"], result["reasons"])
+        self.assertEqual(before, f)
+
+    def test_resume_without_opening_reports_unknown_baseline(self):
+        f = self.preparation_fixture()
+        result = preparation_assessment(f["state"], "Boss", f["catalogue"])
+        self.assertEqual(2, result["upgradedWeapons"])
+        self.assertEqual(list(f["startingLoadout"]), result["unknownWeaponBaselines"])
+        self.assertFalse(result["ready"])
+
     def test_equal_speed_can_intercept_and_slower_reciprocal_can_counter(self):
         own = dict(index=0, speed=3)
         self.assertTrue(can_intercept(own, dict(speed=3, targetId="other", targetButtonIndex=0), "a"))

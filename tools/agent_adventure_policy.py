@@ -115,10 +115,15 @@ def choose_treasure_action(state, catalogue=None):
     return max((a for a in state["legalActions"] if a["op"] == "run_choose_treasure"), key=value, default=None)
 
 
-def preparation_assessment(state, encounter_type, catalogue=None):
+def preparation_assessment(state, encounter_type, catalogue=None, starting_loadout=None):
     """Conservative encounter gate from visible preparation, never a win prediction."""
     party = [p for p in state.get("party", []) if p["hp"] > 0]
     initial = {c["id"]: c["initialWeapon"] for c in (catalogue or {}).get("characterDetails", [])}
+    # A character can use a runtime fallback weapon absent from the catalogue.
+    # Only a recorded fresh opening is a trustworthy baseline; a resumed party
+    # may already be equipped and must not be treated as its own starting gear.
+    initial.update({key: value for key, value in (starting_loadout or {}).items() if value})
+    unknown = [p["character"] for p in party if not initial.get(p["character"])]
     upgraded = sum(bool(initial.get(p["character"])) and p["weapon"] != initial[p["character"]] for p in party)
     health = sum(p["hp"] for p in party) / max(1, sum(p["maxHp"] for p in party))
     levels = sum(p["level"] for p in party) / max(1, len(party))
@@ -137,7 +142,7 @@ def preparation_assessment(state, encounter_type, catalogue=None):
             if len(party) < 4 or levels < 3.5:
                 reasons.append("Boss前准备四名存活队员并达到平均3.5级")
             if upgraded < 3:
-                reasons.append("Boss前至少三人更换初始武器，不能用无关遗物数量代替输出成长")
+                reasons.append("Boss前需确认至少三人更换初始武器，不能用无关遗物数量代替输出成长")
             weakness = sum("虚弱" in c.get("description", "") and any(w in c.get("description", "") for w in ("友方", "我方")) for c in state.get("activeCalamities", []))
             if weakness and (levels < 4.5 or upgraded < len(party)):
                 reasons.append("持续虚弱降低实际骰面，需要全员升级装备与更高等级补偿")
@@ -147,7 +152,8 @@ def preparation_assessment(state, encounter_type, catalogue=None):
         if health < .5:
             reasons.append("全队生命不足50%，先恢复")
     return {"ready": not reasons, "reasons": reasons, "livingParty": len(party), "healthRatio": health,
-            "averageLevel": levels, "upgradedWeapons": upgraded, "relicCount": relics}
+            "averageLevel": levels, "upgradedWeapons": upgraded, "relicCount": relics,
+            "unknownWeaponBaselines": unknown}
 
 
 def clash_preference(skill, opposing_skill):
