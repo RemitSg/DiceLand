@@ -79,6 +79,7 @@ public static partial class RelicSystem
             { Relic_SO.RelicBuiltInEffectType.ReflectSingleAttackDamageToAttackerPercent, HandleReflectSingleAttackDamageToAttackerPercent },
             { Relic_SO.RelicBuiltInEffectType.ChanceToQueueStatusOnHitWhenSlowerOncePerSkillUse, HandleChanceToQueueStatusOnHitWhenSlowerOncePerSkillUse },
             { Relic_SO.RelicBuiltInEffectType.ApplyStatusToSelfOnDefenseClashWin, HandleApplyStatusToSelfOnDefenseClashWin },
+            { Relic_SO.RelicBuiltInEffectType.ApplyStatusToSelfOnDefenseClashWinOncePerActorPerRound, HandleApplyStatusToSelfOnDefenseClashWin },
             { Relic_SO.RelicBuiltInEffectType.ApplyStatusToSelfOnEnemyKilledByPlayer, HandleApplyStatusToSelfOnEnemyKilledByPlayer },
             { Relic_SO.RelicBuiltInEffectType.GrantExtraRandomLootOfSameRarityAfterBattle, HandleGrantExtraRandomLootOfSameRarityAfterBattle },
             { Relic_SO.RelicBuiltInEffectType.QueueNextBattleAllyStatusOnCalamity, HandleQueueNextBattleAllyStatusOnCalamity },
@@ -192,7 +193,9 @@ public static partial class RelicSystem
             if (effect == null || effect.trigger != context.trigger)
                 continue;
 
-            if (effect.chance < 1f && Random.value > Mathf.Clamp01(effect.chance))
+            // This effect rolls separately for each living ally in its handler.
+            bool rollsChancePerAlly = effect.effectType == Relic_SO.RelicBuiltInEffectType.ChanceApplyStatusToAllAlliesOnBattleRoundStart;
+            if (!rollsChancePerAlly && effect.chance < 1f && Random.value > Mathf.Clamp01(effect.chance))
                 continue;
 
             if (!BuiltInEffectApplicators.TryGetValue(effect.effectType, out BuiltInEffectApplicator applicator))

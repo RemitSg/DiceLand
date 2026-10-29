@@ -233,6 +233,10 @@ public static partial class RelicSystem
             if (ally == null || ally.IsDead)
                 continue;
 
+            float chance = Mathf.Clamp01(effect.chance);
+            if (chance <= 0f || (chance < 1f && Random.value >= chance))
+                continue;
+
             if (TryApplyStatus(ally, effect, stacks))
                 affected++;
         }

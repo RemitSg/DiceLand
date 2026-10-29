@@ -193,7 +193,8 @@ public class Relic_SO : ScriptableObject
         DoubleFirstEnemyDamageEachBattle = 133,
         ResetKeysAndRegenerateMapOnAcquire = 134,
         ConfigureFixedRelicReforgePair = 135,
-        QueueNextBattleAllyStatusOnAcquire = 136
+        QueueNextBattleAllyStatusOnAcquire = 136,
+        ApplyStatusToSelfOnDefenseClashWinOncePerActorPerRound = 137
     }
 
     [Serializable]

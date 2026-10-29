@@ -23,7 +23,7 @@ MonoBehaviour:
   builtInEffects:
   - effectName: 
     trigger: 22
-    effectType: 38
+    effectType: 137
     chance: 1
     requireUnvisitedTile: 1
     statusData: {fileID: 11400000, guid: d7f98e43df6b46d7a67f2b97cb5d7ed2, type: 2}

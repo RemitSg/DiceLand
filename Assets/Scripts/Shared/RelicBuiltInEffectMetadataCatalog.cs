@@ -126,6 +126,7 @@ public static class RelicBuiltInEffectMetadataCatalog
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ReflectSingleAttackDamageToAttackerPercent);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ChanceToQueueStatusOnHitWhenSlowerOncePerSkillUse, requiresStatusData: true);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToSelfOnDefenseClashWin, requiresStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToSelfOnDefenseClashWinOncePerActorPerRound, requiresStatusData: true);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ApplyStatusToSelfOnEnemyKilledByPlayer, requiresStatusData: true);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.GrantExtraRandomLootOfSameRarityAfterBattle, numericRequirement: RelicBuiltInNumericRequirement.None);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.QueueNextBattleAllyStatusOnCalamity, requiresStatusData: true);

@@ -471,26 +471,12 @@ public static partial class RelicSystem
         if (context.trigger != Relic_SO.RelicTrigger.OnPlayerAboutToTakeLethalDamage || effect.conditionStatusData == null)
             return;
 
-        BattleEncounterData encounter = BattleEncounterRuntime.ActiveEncounter;
         BattleEnemyController[] enemies = Object.FindObjectsOfType<BattleEnemyController>(false);
         int totalStacks = CountEnemyStatusStacks(enemies, effect.conditionStatusData);
         if (totalStacks <= Mathf.Max(0, effect.requiredStatusStacks))
             return;
 
-        string relicId = relicData != null && !string.IsNullOrWhiteSpace(relicData.relicId) ? relicData.relicId : relicData.name;
-        BattleAllyController target = context.target as BattleAllyController;
-        if (target != null)
-        {
-            if (target.HasConsumedLethalProtection(relicId))
-                return;
-            if (!target.TryConsumeLethalProtection(relicId))
-                return;
-        }
-        else if (encounter != null && !encounter.TryRegisterBattleRelicProc(BuildRelicProcKey(relicData, "lethal-prevent")))
-        {
-            return;
-        }
-
+        // Fuel is the only limit: every lethal hit rechecks and consumes stacks.
         ConsumeEnemyStatusStacks(enemies, effect.conditionStatusData, Mathf.Min(totalStacks, Mathf.Max(1, context.incomingDamage)));
         context.preventLethalDamage = true;
         context.minimumSurvivingHp = Mathf.Max(1, context.minimumSurvivingHp);

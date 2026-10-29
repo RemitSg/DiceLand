@@ -132,6 +132,52 @@ public static class MapRunRuntime
         ApplyEncounterResult(currentSnapshot, encounter);
     }
 
+    private static List<RunPartyMemberState> MergeResolvedPartyMembers(
+        List<RunPartyMemberState> originalParty, List<RunPartyMemberState> resolvedParty)
+    {
+        List<RunPartyMemberState> merged = new List<RunPartyMemberState>();
+        bool[] consumed = new bool[resolvedParty.Count];
+        // Only living members enter battle. Settlement is a partial update to
+        // the roster, so absent members (including the dead leader) keep order.
+        if (originalParty != null)
+        {
+            foreach (RunPartyMemberState original in originalParty)
+            {
+                if (original == null || original.isTemporaryBattleGuest)
+                    continue;
+
+                RunPartyMemberState result = original;
+                for (int i = 0; i < resolvedParty.Count; i++)
+                {
+                    RunPartyMemberState candidate = resolvedParty[i];
+                    if (consumed[i] || candidate == null || candidate.isTemporaryBattleGuest)
+                        continue;
+
+                    bool sameMember = !string.IsNullOrWhiteSpace(original.memberId)
+                        ? string.Equals(original.memberId, candidate.memberId, System.StringComparison.Ordinal)
+                        : original.characterData == candidate.characterData && original.weaponData == candidate.weaponData;
+                    if (!sameMember)
+                        continue;
+
+                    result = candidate;
+                    consumed[i] = true;
+                    break;
+                }
+
+                merged.Add(result.Clone());
+            }
+        }
+
+        for (int i = 0; i < resolvedParty.Count; i++)
+        {
+            RunPartyMemberState member = resolvedParty[i];
+            if (!consumed[i] && member != null && !member.isTemporaryBattleGuest)
+                merged.Add(member.Clone());
+        }
+
+        return merged;
+    }
+
     public static void ApplyEncounterResult(MapRunSnapshot snapshot, BattleEncounterData encounter)
     {
         if (snapshot == null || encounter == null)
@@ -139,13 +185,8 @@ public static class MapRunRuntime
 
         if (encounter.resolvedPartyMembers != null && encounter.resolvedPartyMembers.Count > 0)
         {
-            snapshot.runState.partyMembers = new List<RunPartyMemberState>(encounter.resolvedPartyMembers.Count);
-            for (int i = 0; i < encounter.resolvedPartyMembers.Count; i++)
-            {
-                RunPartyMemberState member = encounter.resolvedPartyMembers[i];
-                if (member != null && !member.isTemporaryBattleGuest)
-                    snapshot.runState.partyMembers.Add(member.Clone());
-            }
+            snapshot.runState.partyMembers = MergeResolvedPartyMembers(
+                snapshot.runState.partyMembers, encounter.resolvedPartyMembers);
 
             if (encounter.wasVictory && encounter.isTutorialEncounter)
             {

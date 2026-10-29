@@ -83,6 +83,12 @@ public static partial class RelicSystem
         if (defenseWinStacks <= 0)
             return;
 
+        if (effect.effectType == Relic_SO.RelicBuiltInEffectType.ApplyStatusToSelfOnDefenseClashWinOncePerActorPerRound
+            && !TryRegisterRoundScopedProc(relicData, $"defense-win:{context.currentRound}:{GetObjectKey(defenseWinSource)}"))
+        {
+            return;
+        }
+
         bool defenseWinApplied = TryApplyStatus(defenseWinSource, effect, defenseWinStacks);
         if (defenseWinApplied)
             AddRelicFeedback(context, relicData, $"{defenseWinSource.GetDebugDisplayName()} 获得 {defenseWinStacks} 层 {GetStatusDisplayName(effect.statusData)}。");
