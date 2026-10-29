@@ -1,8 +1,8 @@
 {
   "date": "2026-10-29",
-  "count": 160,
-  "coverage": "160 件当前资产配置由团结编辑器导出；新增目录序号 143–160，以及历史序号 12、19、30、59、79、112、134、138 的主要机制已核对。已按设计反馈修订凰的反复保命、反击刺刃限次、福灵剂逐角色概率与当头棒文案，并修复阵亡队员在后续战斗结算后丢失的问题。本次屏蔽笼、寒霜护符、疾病减伤为 10%，幽影斗篷、驰隙时序环为 20%，并修正屏蔽笼触发时机。其余历史 134 件保留原机制备注，未重新逐项审计全部历史实现；新增稀有遗物 160 碎潮盐瓶（每次敌方水蚀施加改为基础 15 层易伤），浪鸣调整为每层水蚀视为额外 5 层易伤；验证范围见维护说明，未做完整试玩。",
-  "exportedAt": "2026-10-29T16:13:16.3837123+08:00",
+  "count": 161,
+  "coverage": "161 件当前资产配置由团结编辑器导出；新增目录序号 143–161，以及历史序号 12、19、30、59、79、112、134、138 的主要机制已核对。已按设计反馈修订凰的反复保命、反击刺刃限次、福灵剂逐角色概率与当头棒文案，并修复阵亡队员在后续战斗结算后丢失的问题。本次屏蔽笼、寒霜护符、疾病减伤为 10%，幽影斗篷、驰隙时序环为 20%，并修正屏蔽笼触发时机。其余历史 134 件保留原机制备注，未重新逐项审计全部历史实现；新增罕见遗物 161 暗礁（水蚀目标每回合获得缓慢），以及稀有遗物 160 碎潮盐瓶（每次敌方水蚀施加改为基础 15 层易伤），浪鸣调整为每层水蚀视为额外 5 层易伤；验证范围见维护说明，未做完整试玩。",
+  "exportedAt": "2026-10-29T17:01:11.0246910+08:00",
   "newIds": [
     143,
     144,
@@ -21,7 +21,8 @@
     157,
     158,
     159,
-    160
+    160,
+    161
   ],
   "groups": [
     {
@@ -40,10 +41,10 @@
     },
     {
       "name": "水蚀",
-      "count": 7,
-      "summary": "水蚀条件增益与即时易伤转换。",
-      "examples": "钟乳石、浪鸣、碎潮盐瓶、涌潮加速器",
-      "play": "保留水蚀可驱动条件增伤、减伤与急速；碎潮盐瓶将每次新施加的水蚀改为基础 15 层即时易伤，放弃该次水蚀层数。浪鸣现为每层水蚀额外 5 层易伤的伤害修正。"
+      "count": 8,
+      "summary": "水蚀条件增益、缓慢控制与即时易伤转换。",
+      "examples": "钟乳石、浪鸣、暗礁、碎潮盐瓶",
+      "play": "保留水蚀可驱动条件增伤、减伤与急速，暗礁在回合开始对水蚀目标施加缓慢；碎潮盐瓶将每次新施加的水蚀改为基础 15 层即时易伤，放弃该次水蚀层数。浪鸣现为每层水蚀额外 5 层易伤的伤害修正。"
     },
     {
       "name": "中毒",
@@ -39348,6 +39349,229 @@
       "triggerNames": "状态施加时",
       "effectNames": [
         "ReplaceEnemyStatusApplication"
+      ],
+      "isNew": true,
+      "configVerifiedAt": "2026-10-29"
+    },
+    {
+      "category": "水蚀",
+      "role": "水蚀转缓慢",
+      "tags": "水蚀、缓慢、回合开始、控制",
+      "codeReviewedAt": "2026-10-29",
+      "note": "罕见遗物。每回合开始逐个检查存活敌人；仅对自身至少有 1 层水蚀的目标施加 1×持有数量层缓慢。水蚀层数更多不会提高单次缓慢层数，不消耗水蚀；每个符合条件的目标每次回合开始结算一次，遵循缓慢的免疫与抵抗规则。可与不融冰、逆浪之帆联动；碎潮盐瓶会阻止新水蚀附着，因此通常无法再为暗礁建立水蚀条件。已加入 OuterEliteRelicLoot，按罕见权重进入原有遗物抽取流程。",
+      "mechanics": {
+        "target": "每个自身具有水蚀的存活敌方目标",
+        "condition": "战斗回合开始，目标水蚀≥1层",
+        "limit": "每个符合条件的目标每次回合开始结算一次，无每场次数上限",
+        "stacking": "缓慢 1×持有数量层，不乘水蚀层数、不消耗水蚀；按缓慢免疫与抵抗处理"
+      },
+      "relatedIds": [
+        18,
+        39,
+        77,
+        160
+      ],
+      "id": 161,
+      "relicId": 161,
+      "relicName": "暗礁",
+      "path": "Assets/Data/Relics/161 暗礁/暗礁.asset",
+      "guid": "22b29826d454e3345be10822eaa0ea0e",
+      "description": "回合开始时，对每个具有水蚀状态的敌方目标施加 1 层缓慢。",
+      "additionalDescription": "水面平静，脚下却寸步难行。",
+      "rarity": 1,
+      "rarityName": "罕见",
+      "icon": {
+        "fileID": 21300000,
+        "guid": "38d5a98db7c7e0e47958c937a011a30a",
+        "type": 3
+      },
+      "iconPath": "Assets/Data/Relics/161 暗礁/161_HiddenReef_Uncommon.png",
+      "iconGuid": "38d5a98db7c7e0e47958c937a011a30a",
+      "iconRect": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "iconTextureSize": [
+        512,
+        512
+      ],
+      "builtInEffects": [
+        {
+          "effectName": "水蚀目标施加缓慢",
+          "trigger": 6,
+          "effectType": 64,
+          "chance": 1,
+          "requireUnvisitedTile": false,
+          "statusData": {
+            "fileID": 11400000,
+            "guid": "a90cdb8e1a1943f99f9d973299e6d173",
+            "type": 2
+          },
+          "amount": 1,
+          "conditionStatusData": {
+            "fileID": 11400000,
+            "guid": "2b1de364dbf64720becc8b60618c3be3",
+            "type": 2
+          },
+          "requiredStatusStacks": 1,
+          "requiredSpeed": 1,
+          "requiredSpeedMin": 1,
+          "requiredSpeedMax": 1,
+          "statusApplyTiming": 0,
+          "applyAfterRoundStarts": 1,
+          "requiredRound": 1,
+          "requiredRoundMin": 1,
+          "requiredRoundMax": 1,
+          "powerAmount": 0,
+          "minPowerAmount": 0,
+          "maxPowerAmount": 0,
+          "maxStacks": 1,
+          "requiredDistinctStatusCount": 1,
+          "requiredConsecutiveSkillUses": 1,
+          "relicTable": {
+            "fileID": 0
+          },
+          "blueprintTable": {
+            "fileID": 0
+          },
+          "blueprintRarityWeightTable": {
+            "fileID": 0
+          },
+          "relicData": {
+            "fileID": 0
+          },
+          "enemyData": {
+            "fileID": 0
+          }
+        }
+      ],
+      "customEffectHandler": {
+        "fileID": 0
+      },
+      "resolvedEffects": [
+        {
+          "trigger": "OnBattleRoundStart",
+          "effect": "ApplyStatusToEnemiesWhenConditionStacksAtLeastOnBattleRoundStart",
+          "data": {
+            "effectName": "水蚀目标施加缓慢",
+            "trigger": 6,
+            "effectType": 64,
+            "chance": 1,
+            "requireUnvisitedTile": false,
+            "statusData": {
+              "name": "Slowness",
+              "path": "Assets/Data/Battle/Slowness/Slowness.asset",
+              "guid": "a90cdb8e1a1943f99f9d973299e6d173",
+              "valid": true
+            },
+            "amount": 1,
+            "conditionStatusData": {
+              "name": "Erode",
+              "path": "Assets/Data/Battle/Erode/Erode.asset",
+              "guid": "2b1de364dbf64720becc8b60618c3be3",
+              "valid": true
+            },
+            "requiredStatusStacks": 1,
+            "requiredSpeed": 1,
+            "requiredSpeedMin": 1,
+            "requiredSpeedMax": 1,
+            "statusApplyTiming": 0,
+            "applyAfterRoundStarts": 1,
+            "requiredRound": 1,
+            "requiredRoundMin": 1,
+            "requiredRoundMax": 1,
+            "powerAmount": 0,
+            "minPowerAmount": 0,
+            "maxPowerAmount": 0,
+            "maxStacks": 1,
+            "requiredDistinctStatusCount": 1,
+            "requiredConsecutiveSkillUses": 1,
+            "relicTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "blueprintTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "blueprintRarityWeightTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "relicData": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "enemyData": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            }
+          },
+          "references": {
+            "statusData": {
+              "name": "Slowness",
+              "path": "Assets/Data/Battle/Slowness/Slowness.asset",
+              "guid": "a90cdb8e1a1943f99f9d973299e6d173",
+              "valid": true
+            },
+            "conditionStatusData": {
+              "name": "Erode",
+              "path": "Assets/Data/Battle/Erode/Erode.asset",
+              "guid": "2b1de364dbf64720becc8b60618c3be3",
+              "valid": true
+            },
+            "relicTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "blueprintTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "blueprintRarityWeightTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "relicData": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "enemyData": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            }
+          }
+        }
+      ],
+      "referencedByRelicTables": [
+        "Assets/Data/Relics/OuterEliteRelicLoot.asset"
+      ],
+      "source": "暗礁.asset",
+      "triggerNames": "战斗回合开始",
+      "effectNames": [
+        "ApplyStatusToEnemiesWhenConditionStacksAtLeastOnBattleRoundStart"
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29"

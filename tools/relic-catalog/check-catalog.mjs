@@ -25,6 +25,10 @@ try{
   await page.locator('[data-id="160"]').screenshot({path:`${dir}/salt-card-preview.png`});
   await page.locator('[data-open="160"]').click();equal(await page.locator('#detail-name').textContent(),'碎潮盐瓶');equal(await page.locator('#detail-content .rarity').textContent(),'稀有');await screenshot('salt-detail');await page.locator('#close').click();
  }
+ if(data.relics.some(r=>r.id===161)){
+  await page.locator('[data-id="161"]').screenshot({path:`${dir}/reef-card-preview.png`});
+  await page.locator('[data-open="161"]').click();equal(await page.locator('#detail-name').textContent(),'暗礁');equal(await page.locator('#detail-content .rarity').textContent(),'罕见');assert.match(await page.locator('#detail-content').textContent(),/每个具有水蚀状态/);checks++;await screenshot('reef-detail');await page.locator('#close').click();
+ }
  const downloadPromise=page.waitForEvent('download');await page.locator('#export').click();const download=await downloadPromise;await download.saveAs(`${qa}/new-relics.csv`);
  await page.locator('[data-open="159"]').click();equal(await page.locator('#detail').evaluate(d=>d.open),true);assert.match(await page.locator('#detail-content').textContent(),/yin_yang_fish/);checks++;
  await page.reload();equal(await page.locator('#detail').evaluate(d=>d.open),true);equal(await page.locator('#detail-name').textContent(),'阴阳鱼');

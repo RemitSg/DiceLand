@@ -1,0 +1,7 @@
+Relic: 161 暗礁
+Rarity: Uncommon（罕见）
+Tool: built-in ImageGen, transparent_background=true
+Workspace asset: Assets/Data/Relics/161 暗礁/161_HiddenReef_Uncommon.png
+
+Final generation prompt:
+Use case: stylized-concept. Asset type: a single transparent inventory relic icon for DiceLand, matching its hand-painted fantasy item illustrations. Subject: Hidden Reef (暗礁), an uncommon relic that slows enemies already affected by watery erosion. A single compact cluster of jagged dark charcoal basalt reef spikes, weathered and chipped, with a few small ivory barnacles attached and a shallow turquoise tide pool in a crevice. A narrow curling teal wave clings around the base of the rock, visually caught and slowed by the rough stone. Confident warm dark contours, watercolor/gouache texture, chunky readable silhouette and softly faceted highlights, restrained detail readable at 64–96px. Palette: charcoal and muted warm gray stone, desaturated blue-green water, small ivory accents. Three-quarter item view, centered square composition, about 12% clear padding around the entire object. Actual transparent alpha background. Exactly one standalone relic, no scenery, no horizon, no frame, no card, no writing, no numbers, no symbols, no watermark. Avoid a photorealistic landscape or a pile of gemstones.

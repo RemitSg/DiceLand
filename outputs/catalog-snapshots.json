@@ -15,10 +15,10 @@
   "relicCatalog": {
     "directory": "outputs/relic-catalog",
     "snapshotDate": "2026-10-29",
-    "relicCount": 160,
+    "relicCount": 161,
     "categoryCount": 17,
-    "newCatalogNumbers": "143–160 (159 is the fixed reforge result with actual relicId yin_yang_fish)",
-    "coverage": "All 160 current asset configurations exported from the editor. Main mechanics for 18 additions (143-160) and historical relics 12/19/30/59/79/112/134/138 reviewed; the other 134 historical mechanism notes retained. Added rare Tidebreaker Salt Flask 160: each positive enemy Erode application becomes base 15 Vulnerable, including queued effects; Wave Cry 79 now contributes 5 per Erode stack. Regression validation covers direct/queued/skill applications, immunity/resistance, ownership and Wave Cry interaction. No full playthrough.",
+    "newCatalogNumbers": "143–161 (159 is the fixed reforge result with actual relicId yin_yang_fish)",
+    "coverage": "All 161 current asset configurations exported from the editor. Main mechanics for 19 additions (143-161) and historical relics 12/19/30/59/79/112/134/138 reviewed; the other 134 historical mechanism notes retained. Added uncommon Hidden Reef 161: on each battle round start, each living enemy with Erode receives 1 Slowness per owned copy without consuming Erode. Added rare Tidebreaker Salt Flask 160: each positive enemy Erode application becomes base 15 Vulnerable, including queued effects; Wave Cry 79 now contributes 5 per Erode stack. Regression validation covers direct/queued/skill applications, immunity/resistance, ownership and Wave Cry interaction. No full playthrough.",
     "deliverables": [
       "遗物完整图鉴.html",
       "遗物体系完整表.md",
@@ -36,6 +36,17 @@
       138
     ],
     "latestValidation": {
+      "hiddenReefEditorChecks": {
+        "relicId": "161",
+        "total": 14,
+        "passed": 14,
+        "scope": "Actual asset with temporary editor objects; targeting, round repetition, owned copies, immunity/resistance and Salt Flask interaction. Original encounter context restored."
+      },
+      "offlineHtml": {
+        "total": 61,
+        "passed": 61,
+        "remoteRequests": 0
+      },
       "focusedEditMode": {
         "total": 27,
         "passed": 27,
