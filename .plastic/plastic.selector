@@ -1,4 +1,0 @@
-repository "MobileGame@tj_wechat_os_qy064afo1v8ghu7wbo9oceify@cloud.cn"
-  path "/"
-    br "/main"
-    co "/main"

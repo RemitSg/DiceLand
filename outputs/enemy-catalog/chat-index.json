@@ -1,0 +1,1227 @@
+[
+  {
+    "number": 1,
+    "id": 1,
+    "name": "绿色史莱姆",
+    "hp": 5,
+    "speed": "1–2",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "1–2",
+        "slots": 1
+      }
+    ],
+    "placement": [
+      "外圈普通"
+    ],
+    "skills": [
+      "冲撞"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 2,
+    "id": 2,
+    "name": "焰蛾",
+    "hp": 12,
+    "speed": "1–5",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "1–5",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "外圈普通"
+    ],
+    "skills": [
+      "挥翅",
+      "点燃"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 3,
+    "id": 3,
+    "name": "水雪人",
+    "hp": 10,
+    "speed": "2–4",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–4",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "外圈普通"
+    ],
+    "skills": [
+      "飞踢"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 4,
+    "id": 4,
+    "name": "旋速螺",
+    "hp": 5,
+    "speed": "3–5",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "3–5",
+        "slots": 1
+      }
+    ],
+    "placement": [
+      "外圈普通"
+    ],
+    "skills": [
+      "加速",
+      "高速旋转"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 5,
+    "id": 5,
+    "name": "磁电质",
+    "hp": 6,
+    "speed": "1–4",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "1–4",
+        "slots": 1
+      }
+    ],
+    "placement": [
+      "外圈普通"
+    ],
+    "skills": [
+      "爆发",
+      "导电"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 6,
+    "id": 6,
+    "name": "血孢子",
+    "hp": 14,
+    "speed": "2–4",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–4",
+        "slots": 1
+      }
+    ],
+    "placement": [
+      "外圈普通"
+    ],
+    "skills": [
+      "血刺",
+      "吸血"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 7,
+    "id": 7,
+    "name": "浪灵",
+    "hp": 30,
+    "speed": "2–5",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–5",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "外圈精英"
+    ],
+    "skills": [
+      "漩流牵引",
+      "巨浪拍击",
+      "碎浪重组〔条件〕",
+      "瀑破〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 8,
+    "id": 8,
+    "name": "红灯笼",
+    "hp": 40,
+    "speed": "1–1",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "灭",
+        "speed": "1–1",
+        "slots": 1
+      },
+      {
+        "number": 2,
+        "name": "燃",
+        "speed": "3–5",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "外圈精英"
+    ],
+    "skills": [
+      "灯烬弹",
+      "灯芯火",
+      "灯罩笼",
+      "复燃〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 9,
+    "id": 9,
+    "name": "迫近的黑暗",
+    "hp": 99,
+    "speed": "4–4",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "4–4",
+        "slots": 2
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "蔓延",
+      "暗影穿刺〔条件〕",
+      "到来〔条件〕"
+    ],
+    "granted_to_player": [
+      "希望"
+    ]
+  },
+  {
+    "number": 10,
+    "id": 10,
+    "name": "小猫咪",
+    "hp": 5,
+    "speed": "2–6",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–6",
+        "slots": 1
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "抓挠"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 11,
+    "id": 11,
+    "name": "雷寰霸主",
+    "hp": 54,
+    "speed": "2–6",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–6",
+        "slots": 2
+      },
+      {
+        "number": 2,
+        "name": "阶段 2",
+        "speed": "2–6",
+        "slots": 3
+      }
+    ],
+    "placement": [
+      "Boss池"
+    ],
+    "skills": [
+      "雷罚突刺",
+      "一枪贯世",
+      "磁暴雷锁",
+      "穹雷击灭",
+      "一枪碎穹",
+      "雷狱天罚",
+      "万雷归墟〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 12,
+    "id": 12,
+    "name": "耀光骑士",
+    "hp": 20,
+    "speed": "3–6",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "3–6",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "外圈精英"
+    ],
+    "skills": [
+      "光刃直劈",
+      "圣光锁狱",
+      "裁决之盾",
+      "耀光突进"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 13,
+    "id": 13,
+    "name": "坏皇后的猎人",
+    "hp": 15,
+    "speed": "3–6",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "3–6",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "外圈精英"
+    ],
+    "skills": [
+      "瞄准射击",
+      "指定目标〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 13,
+    "id": 1301,
+    "name": "猎人的忠犬",
+    "hp": 25,
+    "speed": "5–6",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "5–6",
+        "slots": 1
+      }
+    ],
+    "placement": [
+      "外圈精英"
+    ],
+    "skills": [
+      "撕咬"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 14,
+    "id": 14,
+    "name": "嗜血啮鼠",
+    "hp": 4,
+    "speed": "3–6",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "3–6",
+        "slots": 1
+      }
+    ],
+    "placement": [
+      "外圈普通"
+    ],
+    "skills": [
+      "腐齿啃咬"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 15,
+    "id": 15,
+    "name": "自彼岸的呼唤",
+    "hp": 23,
+    "speed": "2–6",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–6",
+        "slots": 2
+      },
+      {
+        "number": 2,
+        "name": "阶段 2",
+        "speed": "2–6",
+        "slots": 2
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "呼唤",
+      "休眠"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 15,
+    "id": 15,
+    "name": "自彼岸的呼唤",
+    "hp": 23,
+    "speed": "2–6",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–6",
+        "slots": 2
+      },
+      {
+        "number": 2,
+        "name": "阶段 2",
+        "speed": "2–6",
+        "slots": 2
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "呼唤",
+      "休眠"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 16,
+    "id": 16,
+    "name": "绯脉巢母",
+    "hp": 28,
+    "speed": "2–5",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "潜血",
+        "speed": "2–5",
+        "slots": 1
+      },
+      {
+        "number": 2,
+        "name": "狂宴",
+        "speed": "3–6",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "外圈精英"
+    ],
+    "skills": [
+      "血丝穿刺",
+      "回流虹吸",
+      "裂脉扑食",
+      "凝脉处刑〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 17,
+    "id": 17,
+    "name": "巨型绿色史莱姆",
+    "hp": 30,
+    "speed": "3–6",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "3–6",
+        "slots": 1
+      }
+    ],
+    "placement": [
+      "中圈普通"
+    ],
+    "skills": [
+      "舍身冲撞",
+      "同化",
+      "分裂〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 18,
+    "id": 18,
+    "name": "红色史莱姆",
+    "hp": 30,
+    "speed": "3–7",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "3–7",
+        "slots": 2
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "腐蚀",
+      "群体腐烂",
+      "异化"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 19,
+    "id": 19,
+    "name": "冻烬蛾",
+    "hp": 24,
+    "speed": "2–7",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–7",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "中圈普通"
+    ],
+    "skills": [
+      "冷翼扑翅",
+      "熄光鳞粉",
+      "烬灭"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 20,
+    "id": 20,
+    "name": "铁线傀儡",
+    "hp": 32,
+    "speed": "1–5",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "1–5",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "中圈普通"
+    ],
+    "skills": [
+      "电流环绕",
+      "接地",
+      "过载"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 21,
+    "id": 21,
+    "name": "溺潮拾骨者",
+    "hp": 14,
+    "speed": "2–7",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–7",
+        "slots": 1
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "沉潮拖拽",
+      "拾骨回潮",
+      "沉底祷声"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 22,
+    "id": 22,
+    "name": "腐花",
+    "hp": 26,
+    "speed": "1–1",
+    "slots": 3,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "1–1",
+        "slots": 3
+      }
+    ],
+    "placement": [
+      "中圈普通"
+    ],
+    "skills": [
+      "腐香吐息",
+      "香甜陷落",
+      "孢群绽放〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 23,
+    "id": 23,
+    "name": "裂肤信徒",
+    "hp": 30,
+    "speed": "2–6",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–6",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "中圈普通"
+    ],
+    "skills": [
+      "裂肤礼拜",
+      "血债回收"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 24,
+    "id": 24,
+    "name": "逆风游侠",
+    "hp": 22,
+    "speed": "3–7",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "3–7",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "中圈普通"
+    ],
+    "skills": [
+      "逆风箭",
+      "侧步",
+      "断线射击"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 25,
+    "id": 30,
+    "name": "灰祭司",
+    "hp": 20,
+    "speed": "1–5",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "1–5",
+        "slots": 2
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "招灾",
+      "赦罪转嫁"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 26,
+    "id": 26,
+    "name": "断角守门人",
+    "hp": 44,
+    "speed": "1–6",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "坚守",
+        "speed": "1–6",
+        "slots": 2
+      },
+      {
+        "number": 2,
+        "name": "断角",
+        "speed": "2–7",
+        "slots": 3
+      }
+    ],
+    "placement": [
+      "中圈精英"
+    ],
+    "skills": [
+      "门槛重击",
+      "盾角横拦",
+      "震地警告",
+      "断角冲锋"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 27,
+    "id": 27,
+    "name": "电线杆",
+    "hp": 40,
+    "speed": "2–6",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–6",
+        "slots": 2
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "变压",
+      "高压电",
+      "超导"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 28,
+    "id": 28,
+    "name": "持镜人",
+    "hp": 27,
+    "speed": "2–6",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–6",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "中圈普通"
+    ],
+    "skills": [
+      "镜棱刺",
+      "白镜回廊",
+      "照罪祷文"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 29,
+    "id": 29,
+    "name": "焰纹蜥",
+    "hp": 25,
+    "speed": "2–7",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–7",
+        "slots": 2
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "炙烤",
+      "蜷缩反击",
+      "焰涌"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 30,
+    "id": 30,
+    "name": "血噬蛛",
+    "hp": 19,
+    "speed": "4–7",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "4–7",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "中圈精英"
+    ],
+    "skills": [
+      "血丝缠结",
+      "蛛孕〔条件〕",
+      "噬亲〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 30,
+    "id": 3001,
+    "name": "血蛛卵",
+    "hp": 6,
+    "speed": "1–1",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "1–1",
+        "slots": 1
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "孵化"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 30,
+    "id": 3002,
+    "name": "小血蛛",
+    "hp": 12,
+    "speed": "2–6",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–6",
+        "slots": 1
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "噬咬"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 31,
+    "id": 31,
+    "name": "倒影",
+    "hp": 15,
+    "speed": "1–6",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "1–6",
+        "slots": 1
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "抛弃我"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 32,
+    "id": 32,
+    "name": "陌路残影",
+    "hp": 3,
+    "speed": "3–5",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "3–5",
+        "slots": 1
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "暗影"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 33,
+    "id": 33,
+    "name": "陌路幻影",
+    "hp": 10,
+    "speed": "3–5",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "3–5",
+        "slots": 1
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "暗影〔条件〕",
+      "幻化〔条件〕",
+      "融入暗影〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 34,
+    "id": 34,
+    "name": "回响",
+    "hp": 20,
+    "speed": "1–5",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "1–5",
+        "slots": 2
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "静默",
+      "幻化〔条件〕",
+      "模糊〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 35,
+    "id": 35,
+    "name": "牵丝傀儡师",
+    "hp": 35,
+    "speed": "1–5",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "1–5",
+        "slots": 2
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "奉献指示",
+      "操纵〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 35,
+    "id": 3501,
+    "name": "无神傀儡",
+    "hp": 20,
+    "speed": "3–6",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "3–6",
+        "slots": 1
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "遵从",
+      "牺牲〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 36,
+    "id": 36,
+    "name": "贝者",
+    "hp": 6,
+    "speed": "1–1",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "1–1",
+        "slots": 1
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "赌博"
+    ],
+    "granted_to_player": [
+      "赌博",
+      "千术"
+    ]
+  },
+  {
+    "number": 37,
+    "id": 37,
+    "name": "黑棺",
+    "hp": 26,
+    "speed": "2–4",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–4",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "中圈普通"
+    ],
+    "skills": [
+      "棺钉",
+      "合棺〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 38,
+    "id": 38,
+    "name": "洋流",
+    "hp": 26,
+    "speed": "1–4",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "1–4",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "中圈普通"
+    ],
+    "skills": [
+      "涌动",
+      "浅潮"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 39,
+    "id": 39,
+    "name": "电鸣狼",
+    "hp": 19,
+    "speed": "3–7",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "3–7",
+        "slots": 1
+      }
+    ],
+    "placement": [
+      "中圈普通"
+    ],
+    "skills": [
+      "磁爪",
+      "错相步",
+      "鸣"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 40,
+    "id": 4001,
+    "name": "曜面棱侍",
+    "hp": 24,
+    "speed": "3–6",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "3–6",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "中圈精英"
+    ],
+    "skills": [
+      "折辉刺",
+      "棱返映射",
+      "照面切落〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 40,
+    "id": 4002,
+    "name": "晦面棱侍",
+    "hp": 24,
+    "speed": "3–6",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "3–6",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "中圈精英"
+    ],
+    "skills": [
+      "背辉格挡",
+      "折射偏转",
+      "晦面折返〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 41,
+    "id": 41,
+    "name": "血骸王储",
+    "hp": 999,
+    "speed": "2–6",
+    "slots": 3,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–6",
+        "slots": 3
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "血蚀重斩",
+      "古战血沼",
+      "千丝血缚",
+      "血骸冲击",
+      "绝境千血葬"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 42,
+    "id": 42,
+    "name": "叛变的新王",
+    "hp": 40,
+    "speed": "3–6",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "3–6",
+        "slots": 2
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "烬刺",
+      "焰影囚笼",
+      "堕王烬世"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 43,
+    "id": 43,
+    "name": "复生贵族",
+    "hp": 60,
+    "speed": "4–6",
+    "slots": 3,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "4–6",
+        "slots": 3
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "澜纹蚀刺",
+      "幽渊锁脉",
+      "虚澜诡影",
+      "寒汐水幕",
+      "沧澜伪朝寂"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 9000,
+    "id": 9000,
+    "name": "断线傀儡",
+    "hp": 15,
+    "speed": "2–6",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–6",
+        "slots": 1
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "替罪"
+    ],
+    "granted_to_player": []
+  }
+]

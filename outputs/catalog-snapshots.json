@@ -1,0 +1,17 @@
+{
+  "purpose": "Versioned reference catalogs; each is a dated snapshot rather than a live export.",
+  "enemyCatalog": {
+    "directory": "outputs/enemy-catalog",
+    "snapshotDate": "2026-10-26",
+    "enemyAssets": 50,
+    "relatedUniqueSkills": 129,
+    "deliverables": ["敌人与技能完整图鉴.html", "敌人与技能完整清单.txt", "catalog.json", "chat-index.json"]
+  },
+  "relicCatalog": {
+    "directory": "outputs/relic-catalog",
+    "snapshotDate": "2026-10-27",
+    "relicCount": 142,
+    "deliverables": ["遗物体系完整表.md", "DiceLand遗物体系表.xlsx", "catalog.json"]
+  },
+  "note": "The snapshots predate the 2026-10-29 dev integration, including relics 143-158 and the updated Blood Spore stats. Use Assets/Data for current gameplay values."
+}

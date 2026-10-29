@@ -1,0 +1,1308 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DiceLand 全部敌人与技能</title><style>body{margin:0;background:#f3f5f7;color:#17212c;font:16px/1.7 system-ui,"Microsoft YaHei",sans-serif}main{max-width:1120px;margin:32px auto;padding:0 20px}h1{font-size:30px}h2{font-size:23px;color:#11485f;margin:0 0 12px}h3{font-size:17px;margin:18px 0 6px}.enemy{background:white;padding:26px;margin:22px 0;border:1px solid #dbe4e8;border-radius:12px}.facts{background:#eaf4f8;padding:12px;border-radius:6px}.source,.muted{font-size:12px;color:#677480;overflow-wrap:anywhere}.skill{border-left:3px solid #62a3b8;padding:0 0 0 16px;margin:20px 0}.role{color:#586879;font-size:14px}pre{white-space:pre-wrap;font:15px/1.7 system-ui,"Microsoft YaHei",sans-serif;margin:8px 0}input{box-sizing:border-box;width:100%;padding:13px;font:inherit;border:1px solid #a9bbc5;border-radius:6px}.controls{position:sticky;top:0;background:#f3f5f7f2;padding:12px 0;z-index:1}button{margin:10px 8px 0 0;padding:7px 14px;cursor:pointer;border:1px solid #a9bbc5;background:white;border-radius:5px}a{color:#126987}ul{padding-left:22px}@media print{body{background:white}main{max-width:none;margin:0}.controls{display:none}.enemy{break-before:page;border:0;padding:0}.skill{break-inside:avoid}.source{font-size:10px}}</style><main><h1>DiceLand 全部敌人与技能</h1><p>导出时间：2026-10-26T18:45:03.180361+08:00</p><p>敌人配置 50 个，名称去重 49 种，相关技能资产 129 个。</p><p>口径：以当前项目实际资产为准；技能词条由项目现有技能详情生成逻辑导出，展示配置基础值，不包含战斗中临时加成。</p><p>速度槽按运行时至少 1 个的规则显示。阶段技能限制已单列。敌人自身忽略技能能耗，授予玩家的技能保留能耗。</p><p>被动文案与实际配置分别列出，文案不一致时请以配置和运行代码为准。</p><p>50 个配置中，自彼岸的呼唤有两个同名资产（普通命名 / Sleep 命名）；当前除资产名外数据相同。另包含召唤物及遗物生成单位。</p><p>下列投放标签只表示 EnemyRoster 的直接配置；事件、副本、召唤、遗物生成不要求进入主地图随机池。</p><p>数据备注：025 灰祭司的 enemyID 实际为 30，与血噬蛛重复；耀光骑士已有四个技能且已进入外圈精英池；血骸王储的基础 HP 当前确实为 999。</p><p>已在编辑器确认两处状态引用为 null：雷寰霸主的状态免疫项、绯脉巢母的状态阶段切换项。以下保留原 GUID 并明确标为失效引用，不将被动描述视为已正常生效。</p><p></p><div class="controls"><input aria-label="搜索敌人技能" placeholder="搜索敌人、技能、状态或投放区域…"><button id="reset">清空搜索</button><button id="print">打印 / 保存为 PDF</button><span id="count"></span></div><article class="enemy" id="enemy-0"><h2>001｜绿色史莱姆（enemyID=1）</h2><div class="facts">生命 5　｜　阶段 1：1–2 / 1 槽　｜　投放：外圈普通　｜　敌群属性：无、毒</div><div class="source">Assets/Data/Enemies/Enemies/001 GreenSlime/GreenSlime.asset</div><h3>被动文案</h3><p class="muted">无</p><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>小型怪物组 1：Assets/Data/Enemies/EnemyGroup/Events/1001 小型怪物组 1.asset</li><li>GreenSlime x2：Assets/Data/Enemies/EnemyGroup/Outer/Danger1/GreenSlime x2.asset</li><li>GreenSlime x2：Assets/Data/Enemies/EnemyGroup/Outer/Danger1/GreenSlime x2.asset</li><li>反复出现的门（Assets/Data/Events/026 反复出现的门/026 反复出现的门_特殊副本.asset）</li></ul><section class="skill"><h3>冲撞</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>冲撞
+技能：冲撞
+骰子数：1
+第 1 攻击骰：1 ~ 2
+
+描述：
+暂无描述。</pre><div class="source">Assets/Data/Enemies/Enemies/001 GreenSlime/Crash.asset</div></section></article><article class="enemy" id="enemy-1"><h2>002｜焰蛾（enemyID=2）</h2><div class="facts">生命 12　｜　阶段 1：1–5 / 2 槽　｜　投放：外圈普通　｜　敌群属性：无、炎</div><div class="source">Assets/Data/Enemies/Enemies/002 FlameMoth/FlameMoth_Data.asset</div><h3>被动文案</h3><p class="muted">无</p><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>小型怪物组 1：Assets/Data/Enemies/EnemyGroup/Events/1001 小型怪物组 1.asset</li><li>FlameMoth x1：Assets/Data/Enemies/EnemyGroup/Outer/Danger1/FlameMoth x1.asset</li><li>反复出现的门（Assets/Data/Events/026 反复出现的门/026 反复出现的门_特殊副本.asset）</li></ul><section class="skill"><h3>挥翅</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>挥翅
+技能：挥翅
+骰子数：1
+第 1 攻击骰：1 ~ 3
+
+描述：
+暂无描述。</pre><div class="source">Assets/Data/Enemies/Enemies/002 FlameMoth/FlameMoth_Swing.asset</div></section><section class="skill"><h3>点燃</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>点燃
+技能：点燃
+骰子数：1
+第 1 攻击骰：2 ~ 2
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 燃烧
+
+描述：
+暂无描述。</pre><div class="source">Assets/Data/Enemies/Enemies/002 FlameMoth/FlameMoth_Ignite.asset</div></section></article><article class="enemy" id="enemy-2"><h2>003｜水雪人（enemyID=3）</h2><div class="facts">生命 10　｜　阶段 1：2–4 / 2 槽　｜　投放：外圈普通　｜　敌群属性：无、水</div><div class="source">Assets/Data/Enemies/Enemies/003 WaterMan/WaterMan_Data.asset</div><h3>被动文案</h3><p class="muted">无</p><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>小型怪物组 2：Assets/Data/Enemies/EnemyGroup/Events/1001 小型怪物组 2.asset</li><li>WaterManx1：Assets/Data/Enemies/EnemyGroup/Outer/Danger1/WaterMan x1.asset</li><li>反复出现的门（Assets/Data/Events/026 反复出现的门/026 反复出现的门_特殊副本.asset）</li></ul><section class="skill"><h3>飞踢</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>飞踢
+技能：飞踢
+骰子数：1
+第 1 攻击骰：1 ~ 3
+
+描述：
+它是怎么做到的？</pre><div class="source">Assets/Data/Enemies/Enemies/003 WaterMan/Flying Kick.asset</div></section></article><article class="enemy" id="enemy-3"><h2>004｜旋速螺（enemyID=4）</h2><div class="facts">生命 5　｜　阶段 1：3–5 / 1 槽　｜　投放：外圈普通　｜　敌群属性：无、速</div><div class="source">Assets/Data/Enemies/Enemies/004 SSSnail/SSSnail_Data.asset</div><h3>被动文案</h3><p class="muted">无</p><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>小型怪物组 1：Assets/Data/Enemies/EnemyGroup/Events/1001 小型怪物组 1.asset</li><li>SSSnail x2：Assets/Data/Enemies/EnemyGroup/Outer/Danger1/SSSnail x2.asset</li><li>SSSnail x2：Assets/Data/Enemies/EnemyGroup/Outer/Danger1/SSSnail x2.asset</li><li>反复出现的门（Assets/Data/Events/026 反复出现的门/026 反复出现的门_特殊副本.asset）</li></ul><section class="skill"><h3>加速</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>加速
+技能：加速
+骰子数：1
+第 1 攻击骰：1 ~ 1
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 使 自己 于 接下来 2 个回合开始时 获得 2 层 急速
+
+描述：
+看起来在蓄力...</pre><div class="source">Assets/Data/Enemies/Enemies/004 SSSnail/SpeedUp.asset</div></section><section class="skill"><h3>高速旋转</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>高速旋转
+技能：高速旋转
+骰子数：1
+第 1 攻击骰：1 ~ 2
+
+词条：
+第 1 攻击骰词条：[ 拼点时 ] 若 自身速度 高出 目标单位速度 1 点（含） ，则 每高出 1 点速度，威力 +1，最多 +2
+
+描述：
+把自己旋转成一个球冲向敌人。</pre><div class="source">Assets/Data/Enemies/Enemies/004 SSSnail/Swirl.asset</div></section></article><article class="enemy" id="enemy-4"><h2>005｜磁电质（enemyID=5）</h2><div class="facts">生命 6　｜　阶段 1：1–4 / 1 槽　｜　投放：外圈普通　｜　敌群属性：无、电</div><div class="source">Assets/Data/Enemies/Enemies/005 Magtronic/Magtronic_Data.asset</div><h3>被动文案</h3><p class="muted">无</p><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>小型怪物组 2：Assets/Data/Enemies/EnemyGroup/Events/1001 小型怪物组 2.asset</li><li>Magtronic x2：Assets/Data/Enemies/EnemyGroup/Outer/Danger1/Magtronic x2.asset</li><li>Magtronic x2：Assets/Data/Enemies/EnemyGroup/Outer/Danger1/Magtronic x2.asset</li><li>反复出现的门（Assets/Data/Events/026 反复出现的门/026 反复出现的门_特殊副本.asset）</li></ul><section class="skill"><h3>爆发</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>爆发
+技能：爆发
+骰子数：1
+第 1 攻击骰：1 ~ 3
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 对 当前目标 引发 1 重 电流 爆发，造成 1 x 层数 的额外伤害，并清空 电流
+
+描述：
+不祥的电流萦绕在周围......</pre><div class="source">Assets/Data/Enemies/Enemies/005 Magtronic/Magtronic_Burst.asset</div></section><section class="skill"><h3>导电</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>导电
+技能：导电
+骰子数：1
+第 1 攻击骰：1 ~ 2
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流
+
+描述：
+酥酥麻麻的感觉，似乎也没有很难受</pre><div class="source">Assets/Data/Enemies/Enemies/005 Magtronic/Magtronic_Conduct.asset</div></section></article><article class="enemy" id="enemy-5"><h2>006｜血孢子（enemyID=6）</h2><div class="facts">生命 14　｜　阶段 1：2–4 / 1 槽　｜　投放：外圈普通　｜　敌群属性：无、血</div><div class="source">Assets/Data/Enemies/Enemies/006 BloodPearl/BloodPearl_Data.asset</div><h3>被动文案</h3><p class="muted">无</p><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>小型怪物组 2：Assets/Data/Enemies/EnemyGroup/Events/1001 小型怪物组 2.asset</li><li>bloodpearl x1：Assets/Data/Enemies/EnemyGroup/Outer/Danger1/BloodPearl x1.asset</li><li>反复出现的门（Assets/Data/Events/026 反复出现的门/026 反复出现的门_特殊副本.asset）</li></ul><section class="skill"><h3>血刺</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>血刺
+技能：血刺
+骰子数：2
+第 1 攻击骰：1 ~ 3
+第 2 攻击骰：1 ~ 3
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 流血
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 流血
+
+描述：
+最好别被它的血刺扎到</pre><div class="source">Assets/Data/Enemies/Enemies/006 BloodPearl/BloodThrust_Skill.asset</div></section><section class="skill"><h3>吸血</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>吸血
+技能：吸血
+骰子数：1
+第 1 攻击骰：1 ~ 3
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 若 自身 流血 层数 至少为 1 ，则 使 自己 根据 当前目标 的 流血 层数，每层 恢复 1 点生命
+第 1 攻击骰词条：[ 拼点时 ] 若 目标拥有 流血 ，则 威力 +1
+
+描述：
+它张开了触手......</pre><div class="source">Assets/Data/Enemies/Enemies/006 BloodPearl/Suck_Skill.asset</div></section></article><article class="enemy" id="enemy-6"><h2>007｜浪灵（enemyID=7）</h2><div class="facts">生命 30　｜　阶段 1：2–5 / 2 槽　｜　投放：外圈精英　｜　敌群属性：水</div><div class="source">Assets/Data/Enemies/Enemies/007 Waveling/Waveling_Data.asset</div><h3>被动文案</h3><ul><li>浪怒：从第三回合开始，每三个回合使用强力技能 “瀑破”</li><li>碎潮重组：当血量首次降至自身最大生命20%以下时，尝试使用特殊技能</li></ul><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>Waveling：Assets/Data/Enemies/EnemyGroup/Outer/Elite/Waveling.asset</li><li>倾斜的钟楼（Assets/Data/Events/020 倾斜的钟楼/020 倾斜的钟楼.asset）</li></ul><section class="skill"><h3>漩流牵引</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>漩流牵引
+技能：漩流牵引
+骰子数：3
+第 1 攻击骰：1 ~ 1
+第 2 攻击骰：1 ~ 1
+第 3 攻击骰：1 ~ 1
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 水蚀
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 水蚀
+第 3 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 水蚀
+
+描述：
+它要生成一个旋涡，不要被吸进去！</pre><div class="source">Assets/Data/Enemies/Enemies/007 Waveling/VortexPull.asset</div></section><section class="skill"><h3>巨浪拍击</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>巨浪拍击
+技能：巨浪拍击
+骰子数：1
+第 1 攻击骰：2 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 水蚀
+
+描述：
+牵引出一排巨浪攻击，气势很强大</pre><div class="source">Assets/Data/Enemies/Enemies/007 Waveling/WaveSplash.asset</div></section><section class="skill"><h3>碎浪重组</h3><div class="role">条件技能：生命不高于 20.0%；每场战斗一次；优先级 1；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>碎浪重组
+技能：碎浪重组
+骰子数：1
+第 1 攻击骰：1 ~ 1
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 清空 当前目标 的 水蚀
+第 1 攻击骰词条：[ 命中时 ] 若 目标拥有 水蚀 ，则 使 自己 根据 当前目标 的 水蚀 层数，每层 恢复 1 点生命
+第 1 攻击骰词条：[ 使用该技能时 ] 若 目标每拥有 3 层 水蚀 ，则 每达成一次条件，威力 +1
+
+描述：
+它在尝试重组自己，阻止它</pre><div class="source">Assets/Data/Enemies/Enemies/007 Waveling/WaveReconstruct.asset</div></section><section class="skill"><h3>瀑破</h3><div class="role">条件技能：从第 3 回合开始，每 3 回合触发；优先级 1；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>瀑破
+技能：瀑破
+骰子数：1
+第 1 攻击骰：2 ~ 3
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 5 层 水蚀
+第 1 攻击骰词条：[ 拼点时 ] 若 目标每拥有 5 层 水蚀 ，则 每达成一次条件，威力 +1
+
+描述：
+那是......巨大的瀑布？</pre><div class="source">Assets/Data/Enemies/Enemies/007 Waveling/TorrentBreak.asset</div></section></article><article class="enemy" id="enemy-7"><h2>008｜红灯笼（enemyID=8）</h2><div class="facts">生命 40　｜　灭：1–1 / 1 槽；燃：3–5 / 2 槽　｜　投放：外圈精英　｜　敌群属性：炎</div><div class="source">Assets/Data/Enemies/Enemies/008 RedLamp/RedLamp_Data.asset</div><h3>被动文案</h3><ul><li>燃尽：一定回合后使用特殊技能</li><li>点灯：当自身燃烧层数达到 3 层，转换形态</li><li>火灯笼：免疫 &quot; 燃烧 &quot; 效果</li></ul><h3>实际机制配置</h3><ul><li>自身的「燃烧」层数 &gt; 3 时进入阶段 3</li><li>免疫「燃烧」（仍可叠加，效果无效）</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>RedLamp：Assets/Data/Enemies/EnemyGroup/Outer/Elite/RedLamp.asset</li><li>倾斜的钟楼（Assets/Data/Events/020 倾斜的钟楼/020 倾斜的钟楼.asset）</li></ul><section class="skill"><h3>灯烬弹</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>灯烬弹
+技能：灯烬弹
+骰子数：1
+第 1 攻击骰：2 ~ 3
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 使 自己 获得 1 层 燃烧
+第 1 攻击骰词条：[ 命中时 ] 使 自己 获得 1 层 燃烧
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧
+
+描述：
+灯身周围显现了一些黑色的物质</pre><div class="source">Assets/Data/Enemies/Enemies/008 RedLamp/DuskDart.asset</div></section><section class="skill"><h3>灯芯火</h3><div class="role">普通技能池<br>适用阶段：2</div><pre>灯芯火
+技能：灯芯火
+骰子数：1
+第 1 攻击骰：3 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 燃烧
+第 1 攻击骰词条：[ 命中时 ] 使 自己 获得 2 层 燃烧
+
+描述：
+它的灯芯正凝结着烈火</pre><div class="source">Assets/Data/Enemies/Enemies/008 RedLamp/Fireball.asset</div></section><section class="skill"><h3>灯罩笼</h3><div class="role">普通技能池<br>适用阶段：2</div><pre>灯罩笼
+技能：灯罩笼
+骰子数：1
+第 1 攻击骰：2 ~ 3
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 使 当前目标 于 下 1 个回合开始时 获得 2 层 缓慢
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 2 层 燃烧
+第 1 攻击骰词条：[ 命中时 ] 使 自己 于 下 1 个回合开始时 获得 2 层 燃烧
+
+描述：
+火红的牢笼正在张开</pre><div class="source">Assets/Data/Enemies/Enemies/008 RedLamp/LampPrison.asset</div></section><section class="skill"><h3>复燃</h3><div class="role">条件技能：从第 6 回合开始，每 6 回合触发；优先级 1；每回合最多占用 1 个速度槽<br>适用阶段：2</div><pre>复燃
+技能：复燃
+骰子数：1
+第 1 攻击骰：1 ~ 3
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 清空 自己 的 燃烧
+第 1 攻击骰词条：[ 未击中时 ] 于 下个回合开始时 切换至 第 1 阶段
+第 1 攻击骰词条：[ 拼点时 ] 若 自身 燃烧 层数 高于 10 ，则 威力 +10
+
+描述：
+看起来它的灯火要燃尽了？阻止它的复燃。</pre><div class="source">Assets/Data/Enemies/Enemies/008 RedLamp/Douse.asset</div></section></article><article class="enemy" id="enemy-8"><h2>009｜迫近的黑暗（enemyID=9）</h2><div class="facts">生命 99　｜　阶段 1：4–4 / 2 槽　｜　投放：未直接加入主地图池　｜　敌群属性：暗</div><div class="source">Assets/Data/Enemies/Enemies/009 LoomingDark/LoomingDark_Data.asset</div><h3>被动文案</h3><ul><li>迫近的黑暗：第九回合起，黑暗降临</li><li>不再希望：为所有角色添加技能 「希望」
+自身部分技能与 「希望」 拼点时骰子威力 -5</li><li>不再痛苦：自身受到伤害 -90%</li><li>不再匆忙：速度固定为 4</li></ul><h3>实际机制配置</h3><ul><li>固定减伤 90%</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>LoomingDark：Assets/Data/Enemies/EnemyGroup/Events/LoomingDark.asset</li><li>LoomingDark：Assets/Data/Enemies/EnemyGroup/Outer/Events/LoomingDark.asset</li><li>废弃矿井（Assets/Data/Events/003 矿井/废弃矿井.asset）</li></ul><section class="skill"><h3>蔓延</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>蔓延
+技能：蔓延
+骰子数：1
+第 1 攻击骰：2 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 黑暗
+第 1 攻击骰词条：[ 拼点时 ] 若 目标拥有至少 5 层 黑暗 ，则 威力 +2
+
+描述：
+黑暗在蔓延。</pre><div class="source">Assets/Data/Enemies/Enemies/009 LoomingDark/Creep.asset</div></section><section class="skill"><h3>暗影穿刺</h3><div class="role">条件技能：从第 1 回合开始，每 1 回合触发；优先级 1；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>暗影穿刺
+技能：暗影穿刺
+骰子数：1
+第 1 攻击骰：5 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 黑暗
+第 1 攻击骰词条：[ 拼点时 ] 若 与技能 希望 拼点 ，则 威力 -5
+
+描述：
+黑暗在它手中凝结成了利刃，不要被贯穿。</pre><div class="source">Assets/Data/Enemies/Enemies/009 LoomingDark/ShadowPierce.asset</div></section><section class="skill"><h3>到来</h3><div class="role">条件技能：从第 9 回合开始，每 1 回合触发；优先级 100；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>到来
+技能：到来
+骰子数：1
+第 1 攻击骰：1 ~ 1
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 44444 点伤害
+第 1 攻击骰词条：[ 未击中时 ] 对 自己 造成 44444 点伤害
+第 1 攻击骰词条：[ 使用该技能时 ] 若 目标拥有至少 10 层 黑暗 ，则 威力 +444
+
+描述：
+黑暗到来。</pre><div class="source">Assets/Data/Enemies/Enemies/009 LoomingDark/End.asset</div></section><section class="skill"><h3>希望</h3><div class="role">授予玩家：加入角色临时技能池<br>玩家临时技能</div><pre>希望
+技能：希望
+能耗：3
+骰子数：1
+第 1 攻击骰：5 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 使 自己 的 黑暗 减少 1 层
+
+描述：
+心底总有一份希望。</pre><div class="source">Assets/Data/Enemies/Enemies/009 LoomingDark/Hope.asset</div></section></article><article class="enemy" id="enemy-9"><h2>010｜小猫咪（enemyID=10）</h2><div class="facts">生命 5　｜　阶段 1：2–6 / 1 槽　｜　投放：未直接加入主地图池　｜　敌群属性：无</div><div class="source">Assets/Data/Enemies/Enemies/010 Kitty/Kitty.asset</div><h3>被动文案</h3><ul><li>善良：第三回合开始时，原谅你</li></ul><h3>实际机制配置</h3><ul><li>第 3 回合开始撤退并结算</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>Kitty：Assets/Data/Enemies/EnemyGroup/Events/Kitty.asset</li><li>小猫咪（Assets/Data/Events/007 小猫咪/小猫咪.asset）</li></ul><section class="skill"><h3>抓挠</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>抓挠
+技能：抓挠
+骰子数：1
+第 1 攻击骰：1 ~ 2
+
+描述：
+小猫咪冲你伸出了爪子</pre><div class="source">Assets/Data/Enemies/Enemies/010 Kitty/Scratch.asset</div></section></article><article class="enemy" id="enemy-10"><h2>011｜雷寰霸主（enemyID=11）</h2><div class="facts">生命 54　｜　阶段 1：2–6 / 2 槽；阶段 2：2–6 / 3 槽　｜　投放：Boss池　｜　敌群属性：电</div><div class="source">Assets/Data/Enemies/Enemies/011 ThunderLord/ThunderLord.asset</div><h3>被动文案</h3><ul><li>电质体：免疫雷属性状态</li></ul><h3>实际机制配置</h3><ul><li>免疫「失效引用 GUID=504abc372b3b3644bae0ccb7da7e9ce1」（仍可叠加，效果无效）</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>ThunderLord：Assets/Data/Enemies/EnemyGroup/Boss/ThunderLord.asset</li></ul><section class="skill"><h3>雷罚突刺</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>雷罚突刺
+技能：雷罚突刺
+骰子数：2
+第 1 攻击骰：3 ~ 5
+第 2 攻击骰：2 ~ 2
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流
+
+描述：
+它刺出了雷枪，枪尖的电流噼啪作响</pre><div class="source">Assets/Data/Enemies/Enemies/011 ThunderLord/雷罚突刺.asset</div></section><section class="skill"><h3>一枪贯世</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>一枪贯世
+技能：一枪贯世
+骰子数：2
+第 1 攻击骰：4 ~ 5
+第 2 攻击骰：2 ~ 2
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 2 点伤害
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流
+第 2 攻击骰词条：[ 命中时 ] 对 所有目标 造成 2 点伤害
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流
+
+描述：
+你可知道被雷劈的感觉？</pre><div class="source">Assets/Data/Enemies/Enemies/011 ThunderLord/一枪贯世.asset</div></section><section class="skill"><h3>磁暴雷锁</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>磁暴雷锁
+技能：磁暴雷锁
+骰子数：1
+第 1 攻击骰：3 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流
+
+描述：
+落雷攻击，小子！</pre><div class="source">Assets/Data/Enemies/Enemies/011 ThunderLord/磁暴雷锁.asset</div></section><section class="skill"><h3>穹雷击灭</h3><div class="role">普通技能池<br>适用阶段：2</div><pre>穹雷击灭
+技能：穹雷击灭
+骰子数：2
+第 1 攻击骰：3 ~ 5
+第 2 攻击骰：2 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流
+
+描述：
+它刺出了雷枪，枪尖的电流噼啪作响又噼啪作响</pre><div class="source">Assets/Data/Enemies/Enemies/011 ThunderLord/穹雷击灭.asset</div></section><section class="skill"><h3>一枪碎穹</h3><div class="role">普通技能池<br>适用阶段：2</div><pre>一枪碎穹
+技能：一枪碎穹
+骰子数：2
+第 1 攻击骰：3 ~ 5
+第 2 攻击骰：2 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流
+
+描述：
+刺破天穹的一枪，你接得住吗？</pre><div class="source">Assets/Data/Enemies/Enemies/011 ThunderLord/一枪碎穹.asset</div></section><section class="skill"><h3>雷狱天罚</h3><div class="role">普通技能池<br>适用阶段：2</div><pre>雷狱天罚
+技能：雷狱天罚
+骰子数：1
+第 1 攻击骰：4 ~ 6
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 3 层 电流
+
+描述：
+终结技，小子！</pre><div class="source">Assets/Data/Enemies/Enemies/011 ThunderLord/雷狱天罚.asset</div></section><section class="skill"><h3>万雷归墟</h3><div class="role">条件技能：从第 4 回合开始，每 1 回合触发；每场战斗一次；优先级 1；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>万雷归墟
+技能：万雷归墟
+骰子数：1
+第 1 攻击骰：1 ~ 1
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 切换至 第 2 阶段
+
+描述：
+不好意思，它生气了！</pre><div class="source">Assets/Data/Enemies/Enemies/011 ThunderLord/万雷归墟.asset</div></section></article><article class="enemy" id="enemy-11"><h2>012｜耀光骑士（enemyID=12）</h2><div class="facts">生命 20　｜　阶段 1：3–6 / 2 槽　｜　投放：外圈精英　｜　敌群属性：光</div><div class="source">Assets/Data/Enemies/Enemies/012 LightKnight/LightKnight.asset</div><h3>被动文案</h3><ul><li>审判锁定：耀光突进会优先指定拥有两种及以上负面状态的目标。</li><li>裁决回光：若任意目标拥有负面状态，裁决之盾会为自身获得护盾。</li></ul><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>LightKnight：Assets/Data/Enemies/EnemyGroup/Outer/Elite/LightKnight.asset</li><li>贵族的遗产（Assets/Data/Events/030 贵族的遗产/030 贵族的遗产_继承.asset）</li></ul><section class="skill"><h3>光刃直劈</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>光刃直劈
+技能：光刃直劈
+骰子数：1
+第 1 攻击骰：2 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 流血
+
+描述：
+圣光压进剑锋，在伤口里留下一道迟来的裁罚。</pre><div class="source">Assets/Data/Enemies/Enemies/012 LightKnight/光刃直劈.asset</div></section><section class="skill"><h3>圣光锁狱</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>圣光锁狱
+技能：圣光锁狱
+骰子数：1
+第 1 攻击骰：1 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 使 所有目标 于 下 1 个回合开始时 获得 1 层 缓慢
+
+描述：
+光锁从地面合拢，把逃离的脚步一寸寸拖慢。</pre><div class="source">Assets/Data/Enemies/Enemies/012 LightKnight/圣光锁狱.asset</div></section><section class="skill"><h3>裁决之盾</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>裁决之盾
+技能：裁决之盾
+骰子数：1
+第 1 防御骰：3 ~ 4
+
+词条：
+第 1 防御骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧
+第 1 防御骰词条：[ 使用时 ] 若 任意敌方目标拥有至少 1 种负面状态 ，则 使自己获得 3 层护盾
+
+描述：
+骑士举起盾面，光辉从被审判者身上折返回来。</pre><div class="source">Assets/Data/Enemies/Enemies/012 LightKnight/裁决之盾.asset</div></section><section class="skill"><h3>耀光突进</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>耀光突进
+技能：耀光突进
+骰子数：1
+第 1 攻击骰：3 ~ 4
+目标偏好：优先攻击拥有至少 2 种负面状态的目标
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 若 目标拥有至少 1 种负面状态 ，则 使 当前目标 于 下 1 个回合开始时 获得 1 层 眩晕
+
+描述：
+金白的轨迹穿过战场，只奔向已经露出裂缝的人。</pre><div class="source">Assets/Data/Enemies/Enemies/012 LightKnight/耀光突进.asset</div></section></article><article class="enemy" id="enemy-12"><h2>013｜坏皇后的猎人（enemyID=13）</h2><div class="facts">生命 15　｜　阶段 1：3–6 / 2 槽　｜　投放：外圈精英　｜　敌群属性：速</div><div class="source">Assets/Data/Enemies/Enemies/013 BadQueen&#x27;sHunter/BadQueen&#x27;s Hunter.asset</div><h3>被动文案</h3><ul><li>目标明确：周期性使用技能 【指定目标】 ，优先攻击被标记的目标</li></ul><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>BadQueen&#x27;sHunter：Assets/Data/Enemies/EnemyGroup/Outer/Elite/BadQueen&#x27;sHunter.asset</li><li>倾斜的钟楼（Assets/Data/Events/020 倾斜的钟楼/020 倾斜的钟楼.asset）</li></ul><section class="skill"><h3>瞄准射击</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>瞄准射击
+技能：瞄准射击
+骰子数：1
+第 1 攻击骰：2 ~ 5
+目标偏好：优先攻击具有 1 层 标记 的目标
+
+描述：
+她静静的等待着，直到猎物的破绽暴露
+她知道是时候了</pre><div class="source">Assets/Data/Enemies/Enemies/013 BadQueen&#x27;sHunter/瞄准射击.asset</div></section><section class="skill"><h3>指定目标</h3><div class="role">条件技能：从第 1 回合开始，每 2 回合触发；优先级 1；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>指定目标
+技能：指定目标
+骰子数：1
+第 1 防御骰：5 ~ 5
+
+词条：
+第 1 防御骰词条：[ 使用时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 标记
+
+描述：
+一道阴冷的目光扫视着你，她在寻找猎物的弱点</pre><div class="source">Assets/Data/Enemies/Enemies/013 BadQueen&#x27;sHunter/指定目标.asset</div></section></article><article class="enemy" id="enemy-13"><h2>013｜猎人的忠犬（enemyID=1301）</h2><div class="facts">生命 25　｜　阶段 1：5–6 / 1 槽　｜　投放：外圈精英　｜　敌群属性：速</div><div class="source">Assets/Data/Enemies/Enemies/013 BadQueen&#x27;sHunter/HuntersDog/HuntersDog.asset</div><h3>被动文案</h3><ul><li>忠犬：当 【坏皇后的猎人】 死亡后，自身速度 -5</li><li>紧跟目标：当场上存在被标记的目标时，始终攻击被标记的目标</li></ul><h3>实际机制配置</h3><ul><li>「坏皇后的猎人」死亡时获得 5 层「缓慢」，未来 99 个回合开始时再次获得</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>BadQueen&#x27;sHunter：Assets/Data/Enemies/EnemyGroup/Outer/Elite/BadQueen&#x27;sHunter.asset</li><li>倾斜的钟楼（Assets/Data/Events/020 倾斜的钟楼/020 倾斜的钟楼.asset）</li></ul><section class="skill"><h3>撕咬</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>撕咬
+技能：撕咬
+骰子数：1
+第 1 攻击骰：2 ~ 3
+目标偏好：优先攻击具有 1 层 标记 的目标
+
+词条：
+第 1 攻击骰词条：[ 拼点时 ] 若 自身速度 高出 目标单位速度 1 点（含） ，则 威力 +2
+第 1 攻击骰词条：[ 拼点时 ] 若 自身速度 低于 目标单位速度 1 点（含） ，则 威力 -2
+
+描述：
+猎犬张牙舞爪地上前尝试撕扯你的身体</pre><div class="source">Assets/Data/Enemies/Enemies/013 BadQueen&#x27;sHunter/HuntersDog/撕咬.asset</div></section></article><article class="enemy" id="enemy-14"><h2>014｜嗜血啮鼠（enemyID=14）</h2><div class="facts">生命 4　｜　阶段 1：3–6 / 1 槽　｜　投放：外圈普通　｜　敌群属性：血</div><div class="source">Assets/Data/Enemies/Enemies/014 BloodRat/BloodRat.asset</div><h3>被动文案</h3><ul><li>啮齿群：当自身以外的 【嗜血啮鼠】 死亡时，给予自身 1 层虚弱</li></ul><h3>实际机制配置</h3><ul><li>「未配置」死亡时获得 1 层「虚弱」</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>BloodRatx3：Assets/Data/Enemies/EnemyGroup/Outer/Danger1/BloodRat x3.asset</li><li>BloodRatx3：Assets/Data/Enemies/EnemyGroup/Outer/Danger1/BloodRat x3.asset</li><li>BloodRatx3：Assets/Data/Enemies/EnemyGroup/Outer/Danger1/BloodRat x3.asset</li><li>发狂啮群（Assets/Data/Events/008 发狂啮齿动物群/发狂啮齿动物群.asset）</li></ul><section class="skill"><h3>腐齿啃咬</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>腐齿啃咬
+技能：腐齿啃咬
+骰子数：1
+第 1 攻击骰：1 ~ 3
+
+描述：
+它的尖嘴中还带有模糊的血污与腐肉，最好别被碰到</pre><div class="source">Assets/Data/Enemies/Enemies/014 BloodRat/RotfangBite.asset</div></section></article><article class="enemy" id="enemy-15"><h2>015｜自彼岸的呼唤（enemyID=15）</h2><div class="facts">生命 23　｜　阶段 1：2–6 / 2 槽；阶段 2：2–6 / 2 槽　｜　投放：未直接加入主地图池　｜　敌群属性：血</div><div class="source">Assets/Data/Enemies/Enemies/015 CallFromBeyond/CallFromBeyond_Data.asset</div><h3>被动文案</h3><ul><li>此非彼岸：周期性陷入休眠一定回合</li></ul><h3>实际机制配置</h3><ul><li>自身的「蓄能」层数 &gt; 3 时进入阶段 2</li><li>自身的「蓄能」层数 &lt; 1 时进入阶段 1</li><li>战斗开始获得 4 层「蓄能」</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>CallOfBeyond：Assets/Data/Enemies/EnemyGroup/Outer/Elite/CallOfBeyond.asset</li><li>CallOfBeyond：Assets/Data/Enemies/EnemyGroup/Outer/Elite/CallOfBeyond.asset</li><li>倾斜的钟楼（Assets/Data/Events/020 倾斜的钟楼/020 倾斜的钟楼.asset）</li></ul><section class="skill"><h3>呼唤</h3><div class="role">普通技能池<br>适用阶段：2</div><pre>呼唤
+技能：呼唤
+骰子数：1
+第 1 攻击骰：2 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 燃烧
+第 1 攻击骰词条：[ 使用时 ] 使 自己 的 蓄能 减少 1 层
+
+描述：
+你听到了远方的恸哭</pre><div class="source">Assets/Data/Enemies/Enemies/015 CallFromBeyond/Call.asset</div></section><section class="skill"><h3>休眠</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>休眠
+技能：休眠
+骰子数：1
+第 1 防御骰：2 ~ 2
+
+词条：
+第 1 防御骰词条：[ 使用时 ] 使 自己 获得 1 层 蓄能
+
+描述：
+呼唤停止了……暂时。</pre><div class="source">Assets/Data/Enemies/Enemies/015 CallFromBeyond/Sleep.asset</div></section></article><article class="enemy" id="enemy-16"><h2>015｜自彼岸的呼唤（enemyID=15）</h2><div class="facts">生命 23　｜　阶段 1：2–6 / 2 槽；阶段 2：2–6 / 2 槽　｜　投放：未直接加入主地图池　｜　敌群属性：未配置</div><div class="source">Assets/Data/Enemies/Enemies/015 CallFromBeyond/CallFromBeyond_Data_Sleep.asset</div><h3>被动文案</h3><ul><li>此非彼岸：周期性陷入休眠一定回合</li></ul><h3>实际机制配置</h3><ul><li>自身的「蓄能」层数 &gt; 3 时进入阶段 2</li><li>自身的「蓄能」层数 &lt; 1 时进入阶段 1</li><li>战斗开始获得 4 层「蓄能」</li></ul><section class="skill"><h3>呼唤</h3><div class="role">普通技能池<br>适用阶段：2</div><pre>呼唤
+技能：呼唤
+骰子数：1
+第 1 攻击骰：2 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 燃烧
+第 1 攻击骰词条：[ 使用时 ] 使 自己 的 蓄能 减少 1 层
+
+描述：
+你听到了远方的恸哭</pre><div class="source">Assets/Data/Enemies/Enemies/015 CallFromBeyond/Call.asset</div></section><section class="skill"><h3>休眠</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>休眠
+技能：休眠
+骰子数：1
+第 1 防御骰：2 ~ 2
+
+词条：
+第 1 防御骰词条：[ 使用时 ] 使 自己 获得 1 层 蓄能
+
+描述：
+呼唤停止了……暂时。</pre><div class="source">Assets/Data/Enemies/Enemies/015 CallFromBeyond/Sleep.asset</div></section></article><article class="enemy" id="enemy-17"><h2>016｜绯脉巢母（enemyID=16）</h2><div class="facts">生命 28　｜　潜血：2–5 / 1 槽；狂宴：3–6 / 2 槽　｜　投放：外圈精英　｜　敌群属性：血</div><div class="source">Assets/Data/Enemies/Enemies/016 CrimsonBroodmother/CrimsonBroodmother_Data.asset</div><h3>被动文案</h3><ul><li>凝血异常：在场时，友方角色受到攻击不再损失流血层数</li><li>闻血觉醒：场上任意单位的流血层数达到 3 层时，转入第 2 阶段</li><li>凝脉处刑：进入第 2 阶段后，每 3 回合使用一次强力处刑技</li></ul><h3>实际机制配置</h3><ul><li>场上任意单位的「失效引用 GUID=c8249c4cafb55cd4f8587aa0410e54d3」层数 ≥ 3 时进入阶段 2</li><li>在场时使玩家角色受击不消耗流血层数</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>CrimsonBroodmother：Assets/Data/Enemies/EnemyGroup/Outer/Elite/CrimsonBroodmother.asset</li><li>倾斜的钟楼（Assets/Data/Events/020 倾斜的钟楼/020 倾斜的钟楼.asset）</li></ul><section class="skill"><h3>血丝穿刺</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>血丝穿刺
+技能：血丝穿刺
+骰子数：2
+第 1 攻击骰：1 ~ 4
+第 2 攻击骰：1 ~ 3
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 流血
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 流血
+
+描述：
+尖锐的血丝从它体内暴射而出</pre><div class="source">Assets/Data/Enemies/Enemies/016 CrimsonBroodmother/VeinPierce.asset</div></section><section class="skill"><h3>回流虹吸</h3><div class="role">普通技能池<br>适用阶段：2</div><pre>回流虹吸
+技能：回流虹吸
+骰子数：1
+第 1 攻击骰：2 ~ 4
+目标偏好：优先攻击具有 1 层 流血 的目标
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 清空 当前目标 的 流血
+第 1 攻击骰词条：[ 命中时 ] 若 目标每拥有 1 层 流血 ，则 使 自己 根据 当前目标 的 流血 层数，每层 恢复 1 点生命
+
+描述：
+它正在收回洒出的血</pre><div class="source">Assets/Data/Enemies/Enemies/016 CrimsonBroodmother/Siphon.asset</div></section><section class="skill"><h3>裂脉扑食</h3><div class="role">普通技能池<br>适用阶段：2</div><pre>裂脉扑食
+技能：裂脉扑食
+骰子数：2
+第 1 攻击骰：1 ~ 4
+第 2 攻击骰：1 ~ 2
+目标偏好：优先攻击具有 1 层 流血 的目标
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 流血
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 流血
+第 2 攻击骰词条：[ 拼点时 ] 若 目标拥有至少 3 层 燃烧 ，则 威力 +2
+第 2 攻击骰词条：[ 单方面攻击时 ] 若 目标拥有至少 3 层 燃烧 ，则 威力 +2
+
+描述：
+看着你的伤口逐渐加深，它愈加兴奋</pre><div class="source">Assets/Data/Enemies/Enemies/016 CrimsonBroodmother/RendFeast.asset</div></section><section class="skill"><h3>凝脉处刑</h3><div class="role">条件技能：从第 3 回合开始，每 3 回合触发；优先级 2；每回合最多占用 1 个速度槽<br>适用阶段：2</div><pre>凝脉处刑
+技能：凝脉处刑
+骰子数：1
+第 1 攻击骰：3 ~ 6
+目标偏好：优先攻击具有 3 层 流血 的目标
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 对 当前目标 引发 2 重 流血 爆发，造成 2 x 层数 的额外伤害，并清空 流血
+
+描述：
+所有流出的血，都会成为它处刑的刀刃</pre><div class="source">Assets/Data/Enemies/Enemies/016 CrimsonBroodmother/Execute.asset</div></section></article><article class="enemy" id="enemy-18"><h2>017｜巨型绿色史莱姆（enemyID=17）</h2><div class="facts">生命 30　｜　阶段 1：3–6 / 1 槽　｜　投放：中圈普通　｜　敌群属性：未配置</div><div class="source">Assets/Data/Enemies/Enemies/017 GiantGreenSlime/GiantGreenSlime.asset</div><h3>被动文案</h3><ul><li>毒液核：免疫 &quot; 中毒 &quot; 效果</li><li>分裂本能：当场上只剩自身时，会优先使用 &quot; 分裂 &quot;</li></ul><h3>实际机制配置</h3><ul><li>免疫「中毒」（仍可叠加，效果无效）</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>GiantGreenSlime：Assets/Data/Enemies/EnemyGroup/Mid/Standard/GiantGreenSlime.asset</li></ul><section class="skill"><h3>舍身冲撞</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>舍身冲撞
+技能：舍身冲撞
+骰子数：2
+第 1 攻击骰：2 ~ 5
+第 2 攻击骰：1 ~ 3
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 对 自己 造成 2 点伤害
+第 1 攻击骰词条：[ 单方面攻击时 ] 对 当前目标 造成 2 点伤害
+第 2 攻击骰词条：[ 单方面攻击时 ] 对 当前目标 造成 2 点伤害
+
+描述：
+使用时对自己造成 2 伤害。单方面攻击时，每枚骰子额外造成 2 伤害</pre><div class="source">Assets/Data/Enemies/Enemies/017 GiantGreenSlime/SacrificialCharge.asset</div></section><section class="skill"><h3>同化</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>同化
+技能：同化
+骰子数：1
+第 1 攻击骰：2 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 使 当前目标 于 下 1 个回合开始时 获得 2 层 中毒
+
+描述：
+使目标在下回合开始时获得 2 层中毒</pre><div class="source">Assets/Data/Enemies/Enemies/017 GiantGreenSlime/Assimilate.asset</div></section><section class="skill"><h3>分裂</h3><div class="role">条件技能：场上存活敌人数不超过 1（含自身）；优先级 10；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>分裂
+技能：分裂
+骰子数：1
+第 1 防御骰：3 ~ 5
+
+词条：
+第 1 防御骰词条：[ 使用时 ] 对 自己 造成 3 点伤害
+第 1 防御骰词条：[ 使用时 ] 召唤 2 个 绿色史莱姆
+
+描述：
+使用时召唤 2 只绿色史莱姆，并对自己造成 3 伤害</pre><div class="source">Assets/Data/Enemies/Enemies/017 GiantGreenSlime/Split.asset</div></section></article><article class="enemy" id="enemy-19"><h2>018｜红色史莱姆（enemyID=18）</h2><div class="facts">生命 30　｜　阶段 1：3–7 / 2 槽　｜　投放：未直接加入主地图池　｜　敌群属性：未配置</div><div class="source">Assets/Data/Enemies/Enemies/018 RedSlime/RedSlime.asset</div><h3>被动文案</h3><ul><li>红液免疫：免疫 &quot; 中毒 &quot; 效果</li></ul><h3>实际机制配置</h3><ul><li>免疫「中毒」（仍可叠加，效果无效）</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>RedSlime：Assets/Data/Enemies/EnemyGroup/Events/RedSlime.asset</li></ul><section class="skill"><h3>腐蚀</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>腐蚀
+技能：腐蚀
+骰子数：1
+第 1 攻击骰：2 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 使 当前目标 于 下 1 个回合开始时 获得 2 层 中毒
+
+描述：
+命中时使目标在下回合开始时获得 2 层中毒</pre><div class="source">Assets/Data/Enemies/Enemies/018 RedSlime/Corrode.asset</div></section><section class="skill"><h3>群体腐烂</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>群体腐烂
+技能：群体腐烂
+骰子数：2
+第 1 攻击骰：1 ~ 3
+第 2 攻击骰：1 ~ 2
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 所有目标 于 下 1 个回合开始时 获得 1 层 中毒
+第 2 攻击骰词条：[ 命中时 ] 使 所有目标 于 下 1 个回合开始时 获得 1 层 中毒
+
+描述：
+每枚骰子命中时，使全体目标在下回合开始时获得 1 层中毒</pre><div class="source">Assets/Data/Enemies/Enemies/018 RedSlime/MassDecay.asset</div></section><section class="skill"><h3>异化</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>异化
+技能：异化
+骰子数：1
+第 1 攻击骰：2 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 使 自己 获得 1 层 临时强壮
+
+描述：
+使用时获得 1 层临时强壮</pre><div class="source">Assets/Data/Enemies/Enemies/018 RedSlime/Mutate.asset</div></section></article><article class="enemy" id="enemy-20"><h2>019｜冻烬蛾（enemyID=19）</h2><div class="facts">生命 24　｜　阶段 1：2–7 / 2 槽　｜　投放：中圈普通　｜　敌群属性：水</div><div class="source">Assets/Data/Enemies/Enemies/019 FrozenAshMoth/FrozenAshMoth_Data.asset</div><h3>被动文案</h3><ul><li>生于寒冬：免疫「寒冷」</li></ul><h3>实际机制配置</h3><ul><li>免疫「寒冷」</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>FrozenAshMoth：Assets/Data/Enemies/EnemyGroup/Mid/Standard/FrozenAshMoth.asset</li></ul><section class="skill"><h3>冷翼扑翅</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>冷翼扑翅
+技能：冷翼扑翅
+骰子数：1
+第 1 攻击骰：2 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 寒冷
+
+描述：
+命中后，目标在下回合开始时获得 1 层寒冷</pre><div class="source">Assets/Data/Enemies/Enemies/019 FrozenAshMoth/ColdEmberFlutter.asset</div></section><section class="skill"><h3>熄光鳞粉</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>熄光鳞粉
+技能：熄光鳞粉
+骰子数：2
+第 1 攻击骰：1 ~ 3
+第 2 攻击骰：1 ~ 2
+
+词条：
+第 1 攻击骰词条：[ 拼点时 ] 若 目标拥有 寒冷 ，则 威力 +1
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 寒冷
+
+描述：
+第 1 骠拼点时若目标带有寒冷则威力 +1；第 2 骠命中后，目标下回合开始时获得 1 层寒冷</pre><div class="source">Assets/Data/Enemies/Enemies/019 FrozenAshMoth/DimmingScaleDust.asset</div></section><section class="skill"><h3>烬灭</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>烬灭
+技能：烬灭
+骰子数：1
+第 1 攻击骰：2 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 清空 当前目标 的 寒冷
+第 1 攻击骰词条：[ 使用该技能时 ] 若 目标每拥有 1 层 寒冷 ，则 每达成一次条件，威力 +1
+
+描述：
+使用时清除目标的所有寒冷，并依此获得等量的威力提升</pre><div class="source">Assets/Data/Enemies/Enemies/019 FrozenAshMoth/EmberHuddle.asset</div></section></article><article class="enemy" id="enemy-21"><h2>020｜铁线傀儡（enemyID=20）</h2><div class="facts">生命 32　｜　阶段 1：1–5 / 2 槽　｜　投放：中圈普通　｜　敌群属性：电</div><div class="source">Assets/Data/Enemies/Enemies/020 IronThreadPuppet/IronThreadPuppet_Data.asset</div><h3>被动文案</h3><p class="muted">无</p><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>IronThreadPuppet：Assets/Data/Enemies/EnemyGroup/Mid/Standard/IronThreadPuppet.asset</li></ul><section class="skill"><h3>电流环绕</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>电流环绕
+技能：电流环绕
+骰子数：1
+第 1 攻击骰：2 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流
+第 1 攻击骰词条：[ 单方面攻击时 ] 使 当前目标 获得 1 层 缓慢
+
+描述：
+命中后使目标获得 2 层电流；若为单方面攻击，另使目标获得 1 层缓慢</pre><div class="source">Assets/Data/Enemies/Enemies/020 IronThreadPuppet/CurrentHalo.asset</div></section><section class="skill"><h3>接地</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>接地
+技能：接地
+骰子数：1
+第 1 防御骰：3 ~ 6
+
+词条：
+第 1 防御骰词条：[ 使用时 ] 使 自己 获得 3 层 电流
+
+描述：
+使用时为自身施加 3 层电流</pre><div class="source">Assets/Data/Enemies/Enemies/020 IronThreadPuppet/Grounding.asset</div></section><section class="skill"><h3>过载</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>过载
+技能：过载
+骰子数：1
+第 1 攻击骰：1 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 对 当前目标 引发 1 重 电流 爆发，造成 1 x 层数 的额外伤害，并清空 电流
+第 1 攻击骰词条：[ 未击中时 ] 对 自己 引发 1 重 电流 爆发，造成 1 x 层数 的额外伤害，并清空 电流
+第 1 攻击骰词条：[ 拼点时 ] 若 目标拥有 电流 ，则 威力 +1
+
+描述：
+拼点时若目标带有电流则威力 +1；命中或未命中时都会触发 1 次电流爆发</pre><div class="source">Assets/Data/Enemies/Enemies/020 IronThreadPuppet/Overload.asset</div></section></article><article class="enemy" id="enemy-22"><h2>021｜溺潮拾骨者（enemyID=21）</h2><div class="facts">生命 14　｜　阶段 1：2–7 / 1 槽　｜　投放：未直接加入主地图池　｜　敌群属性：水</div><div class="source">Assets/Data/Enemies/Enemies/021 DrownedBoneCollector/DrownedBoneCollector_Data.asset</div><h3>被动文案</h3><ul><li>涨潮：每两个回合开始时，所有存活的敌方获得 1 层水蚀</li><li>拾骨：致命伤害会使自身暂时留在 1 点生命，直到其他活着的友方都只剩 1 点或更低生命</li></ul><h3>实际机制配置</h3><ul><li>受到致命伤保留 1 HP，直到其它存活同阵营单位也均不高于 1 HP</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>DrownedBoneCollector：Assets/Data/Enemies/EnemyGroup/Events/021 DrownedBoneCollector.asset</li><li>DrownedBoneCollector：Assets/Data/Enemies/EnemyGroup/Events/021 DrownedBoneCollector.asset</li><li>DrownedBoneCollector：Assets/Data/Enemies/EnemyGroup/Events/021 DrownedBoneCollector.asset</li><li>海边的指路牌（Assets/Data/Events/011 海边的指路牌/011 海边的指路牌.asset）</li></ul><section class="skill"><h3>沉潮拖拽</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>沉潮拖拽
+技能：沉潮拖拽
+骰子数：1
+第 1 攻击骰：2 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 单方面攻击时 ] 使 当前目标 获得 2 层 水蚀
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 水蚀
+
+描述：
+单方面攻击时使目标获得 2 层水蚀；命中后另使目标获得 1 层水蚀</pre><div class="source">Assets/Data/Enemies/Enemies/021 DrownedBoneCollector/UndertowDrag.asset</div></section><section class="skill"><h3>拾骨回潮</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>拾骨回潮
+技能：拾骨回潮
+骰子数：1
+第 1 攻击骰：1 ~ 4
+目标偏好：优先攻击具有 1 层 水蚀 的目标
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 若 任意目标拥有至少 1 层 水蚀 ，则 使自己恢复 2 点生命
+第 1 攻击骰词条：[ 命中时 ] 若 目标拥有至少 1 层 水蚀 ，则 对目标额外造成 1 点伤害
+
+描述：
+使用时，若任意目标拥有水蚀，则自身回复 2 点生命；命中时，若目标拥有水蚀，额外造成 1 伤害</pre><div class="source">Assets/Data/Enemies/Enemies/021 DrownedBoneCollector/BoneTideReclaim.asset</div></section><section class="skill"><h3>沉底祷声</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>沉底祷声
+技能：沉底祷声
+骰子数：1
+第 1 防御骰：2 ~ 6
+
+词条：
+第 1 防御骰词条：[ 拼点胜利时 ] 使 所有目标 于 下 1 个回合开始时 获得 1 层 水蚀
+
+描述：
+拼点胜利后，所有目标在下回合开始时获得 1 层水蚀</pre><div class="source">Assets/Data/Enemies/Enemies/021 DrownedBoneCollector/SunkenPrayer.asset</div></section></article><article class="enemy" id="enemy-23"><h2>022｜腐花（enemyID=22）</h2><div class="facts">生命 26　｜　阶段 1：1–1 / 3 槽　｜　投放：中圈普通　｜　敌群属性：毒</div><div class="source">Assets/Data/Enemies/Enemies/022 Rotblossom/Rotblossom_Data.asset</div><h3>被动文案</h3><ul><li>柔韧：每回合开始时，获得等同于场上所有活着友方中最高中毒层数的临时重防</li></ul><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>Rotblossom：Assets/Data/Enemies/EnemyGroup/Mid/Standard/Rotblossom.asset</li></ul><section class="skill"><h3>腐香吐息</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>腐香吐息
+技能：腐香吐息
+骰子数：1
+第 1 攻击骰：2 ~ 3
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 使 当前目标 于 下 1 个回合开始时 获得 2 层 中毒
+
+描述：
+它分泌的液体虽然闻起来香甜，但你知道那只是错觉。</pre><div class="source">Assets/Data/Enemies/Enemies/022 Rotblossom/RotFragranceBreath.asset</div></section><section class="skill"><h3>香甜陷落</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>香甜陷落
+技能：香甜陷落
+骰子数：2
+第 1 防御骰：1 ~ 4
+第 2 攻击骰：1 ~ 4
+
+词条：
+第 1 防御骰词条：[ 拼点胜利时 ] 使目标获得 1 层厄运
+第 2 攻击骰词条：[ 拼点胜利时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 中毒
+
+描述：
+不陷落、不沉沦。时刻谨记你仍然在战斗。</pre><div class="source">Assets/Data/Enemies/Enemies/022 Rotblossom/SweetCollapse.asset</div></section><section class="skill"><h3>孢群绽放</h3><div class="role">条件技能：场上存活敌人数不超过 2（含自身）；优先级 10；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>孢群绽放
+技能：孢群绽放
+骰子数：1
+第 1 防御骰：3 ~ 5
+
+词条：
+第 1 防御骰词条：[ 使用时 ] 召唤 1 个 绿色史莱姆
+
+描述：
+被它吃掉的生物会以另一种方式复活。</pre><div class="source">Assets/Data/Enemies/Enemies/022 Rotblossom/SporeBloom.asset</div></section></article><article class="enemy" id="enemy-24"><h2>023｜裂肤信徒（enemyID=23）</h2><div class="facts">生命 30　｜　阶段 1：2–6 / 2 槽　｜　投放：中圈普通　｜　敌群属性：血</div><div class="source">Assets/Data/Enemies/Enemies/023 SkinRivenDisciple/SkinRivenDisciple_Data.asset</div><h3>被动文案</h3><ul><li>献祭：因自身技能受到伤害时，下回合开始时获得 1 层临时强壮</li></ul><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>SkinRivenDisciple：Assets/Data/Enemies/EnemyGroup/Mid/Standard/SkinRivenDisciple.asset</li></ul><section class="skill"><h3>裂肤礼拜</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>裂肤礼拜
+技能：裂肤礼拜
+骰子数：2
+第 1 攻击骰：2 ~ 3
+第 2 攻击骰：1 ~ 3
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 对 自己 造成 1 点伤害
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 流血
+第 2 攻击骰词条：[ 单方面攻击时 ] 对 当前目标 造成 2 点伤害
+第 2 攻击骰词条：[ 命中时 ] 对 自己 造成 1 点伤害
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 流血
+
+描述：
+无所谓龟裂的皮肤，无所谓涌出的鲜血，在这一刻，它只有信仰。</pre><div class="source">Assets/Data/Enemies/Enemies/023 SkinRivenDisciple/SkinRivenLiturgy.asset</div></section><section class="skill"><h3>血债回收</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>血债回收
+技能：血债回收
+骰子数：1
+第 1 攻击骰：2 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 自己 根据 当前目标 的 流血 层数，每层 恢复 1 点生命
+第 1 攻击骰词条：[ 拼点时 ] 若 目标拥有 流血 ，则 威力 +1
+
+描述：
+先前的血债总会一一偿还。</pre><div class="source">Assets/Data/Enemies/Enemies/023 SkinRivenDisciple/BloodDebtRecovery.asset</div></section></article><article class="enemy" id="enemy-25"><h2>024｜逆风游侠（enemyID=24）</h2><div class="facts">生命 22　｜　阶段 1：3–7 / 2 槽　｜　投放：中圈普通　｜　敌群属性：速</div><div class="source">Assets/Data/Enemies/Enemies/024 HeadwindRanger/HeadwindRanger_Data.asset</div><h3>被动文案</h3><ul><li>抢风：当自身速度高于目标时，拼点威力 +1</li></ul><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>HeadwindRanger：Assets/Data/Enemies/EnemyGroup/Mid/Standard/HeadwindRanger.asset</li></ul><section class="skill"><h3>逆风箭</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>逆风箭
+技能：逆风箭
+骰子数：1
+第 1 攻击骰：2 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 缓慢
+
+描述：
+射出的箭并非逆风飞行，而是切开了风。</pre><div class="source">Assets/Data/Enemies/Enemies/024 HeadwindRanger/ReverseWindArrow.asset</div></section><section class="skill"><h3>侧步</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>侧步
+技能：侧步
+骰子数：1
+第 1 攻击骰：2 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 拼点胜利时 ] 使 自己 于 下 1 个回合开始时 获得 1 层 急速
+第 1 攻击骰词条：[ 拼点胜利时 ] 若 自身速度 低于 目标单位速度 1 点（含） ，则 使自己于 下 1 个回合开始时 获得 1 层急速
+第 1 攻击骰词条：若 自身速度 高出 目标单位速度 1 点（含） ，则 威力范围最大值 +2
+
+描述：
+他步履轻盈地微微一闪。</pre><div class="source">Assets/Data/Enemies/Enemies/024 HeadwindRanger/SideStep.asset</div></section><section class="skill"><h3>断线射击</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>断线射击
+技能：断线射击
+骰子数：1
+第 1 攻击骰：1 ~ 4
+目标偏好：优先攻击速度最低的目标
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 缓慢
+
+描述：
+被击中的猎物如同断了线的风筝。</pre><div class="source">Assets/Data/Enemies/Enemies/024 HeadwindRanger/SeveringShot.asset</div></section></article><article class="enemy" id="enemy-26"><h2>025｜灰祭司（enemyID=30）</h2><div class="facts">生命 20　｜　阶段 1：1–5 / 2 槽　｜　投放：未直接加入主地图池　｜　敌群属性：暗</div><div class="source">Assets/Data/Enemies/Enemies/025 AshPriest/AshPriest_Data.asset</div><h3>被动文案</h3><p class="muted">无</p><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>AshPriest：Assets/Data/Enemies/EnemyGroup/Events/025 AshPriest.asset</li><li>残破车厢（Assets/Data/Events/015 残破车厢/015 残破车厢.asset）</li></ul><section class="skill"><h3>招灾</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>招灾
+技能：招灾
+骰子数：1
+第 1 攻击骰：2 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 厄运
+第 1 攻击骰词条：[ 命中时 ] 若 目标拥有 厄运 ，则 使目标于 下 1 个回合开始时 获得 1 层临时虚弱
+
+描述：
+灾厄的声音不绝于耳，你汗毛直立。</pre><div class="source">Assets/Data/Enemies/Enemies/025 AshPriest/CalamityInvocation.asset</div></section><section class="skill"><h3>赦罪转嫁</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>赦罪转嫁
+技能：赦罪转嫁
+骰子数：1
+第 1 防御骰：3 ~ 5
+
+词条：
+第 1 防御骰词条：[ 使用时 ] 将自身 1 层随机负面状态转移给 目标；若未找到可转移的负面状态，则使自己 于 下 1 个回合开始时 获得 1 层 虚弱
+
+描述：
+一种邪恶的暗魔法，将自身的痛苦转嫁到别人身上。</pre><div class="source">Assets/Data/Enemies/Enemies/025 AshPriest/AtonementTransfer.asset</div></section></article><article class="enemy" id="enemy-27"><h2>026｜断角守门人（enemyID=26）</h2><div class="facts">生命 44　｜　坚守：1–6 / 2 槽；断角：2–7 / 3 槽　｜　投放：中圈精英　｜　敌群属性：速</div><div class="source">Assets/Data/Enemies/Enemies/026 HornedGatekeeper/HornedGatekeeper_Data.asset</div><h3>被动文案</h3><ul><li>守门：第 1 阶段时，防御骰子拼点胜利后对目标造成等同于拼点差值的反震伤害</li><li>断角：第 2 阶段时，取消「守门」，改为在拼点胜利后使下一个攻击技能威力 +1</li></ul><h3>实际机制配置</h3><ul><li>生命不高于 50% 时进入阶段 2</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>HornedGatekeeper：Assets/Data/Enemies/EnemyGroup/Mid/Elite/HornedGatekeeper.asset</li></ul><section class="skill"><h3>门槛重击</h3><div class="role">普通技能池<br>适用阶段：1,2</div><pre>门槛重击
+技能：门槛重击
+骰子数：1
+第 1 防御骰：3 ~ 5
+
+词条：
+第 1 防御骰词条：[ 拼点胜利时 ] 使 自己 于 下 1 个回合开始时 获得 1 层 临时重防
+
+描述：
+它举起盾牌重砸，能接住的人寥寥无几</pre><div class="source">Assets/Data/Enemies/Enemies/026 HornedGatekeeper/ThresholdSmash.asset</div></section><section class="skill"><h3>盾角横拦</h3><div class="role">普通技能池<br>适用阶段：1,2</div><pre>盾角横拦
+技能：盾角横拦
+骰子数：1
+第 1 防御骰：3 ~ 6
+
+词条：
+第 1 防御骰词条：[ 拼点胜利时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 缓慢
+
+描述：
+重盾挡住了你的退路</pre><div class="source">Assets/Data/Enemies/Enemies/026 HornedGatekeeper/ShieldHornIntercept.asset</div></section><section class="skill"><h3>震地警告</h3><div class="role">普通技能池<br>适用阶段：1,2</div><pre>震地警告
+技能：震地警告
+骰子数：2
+第 1 防御骰：2 ~ 4
+第 2 防御骰：1 ~ 3
+
+词条：
+第 1 防御骰词条：[ 使用时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 缓慢
+第 2 防御骰词条：[ 拼点胜利时 ] 使 当前目标 获得 10 层 易伤
+
+描述：
+它大踏步地震地，似乎是在警告你们</pre><div class="source">Assets/Data/Enemies/Enemies/026 HornedGatekeeper/QuakeWarning.asset</div></section><section class="skill"><h3>断角冲锋</h3><div class="role">普通技能池<br>适用阶段：2</div><pre>断角冲锋
+技能：断角冲锋
+骰子数：2
+第 1 攻击骰：2 ~ 3
+第 2 攻击骰：2 ~ 3
+
+词条：
+第 1 攻击骰词条：[ 单方面攻击时 ] 对 当前目标 造成 3 点伤害
+第 2 攻击骰词条：[ 单方面攻击时 ] 对 当前目标 造成 3 点伤害
+
+描述：
+这是它唯一的进攻招式，尝试化解它的攻击</pre><div class="source">Assets/Data/Enemies/Enemies/026 HornedGatekeeper/BrokenHornCharge.asset</div></section></article><article class="enemy" id="enemy-28"><h2>027｜电线杆（enemyID=27）</h2><div class="facts">生命 40　｜　阶段 1：2–6 / 2 槽　｜　投放：未直接加入主地图池　｜　敌群属性：未配置</div><div class="source">Assets/Data/Enemies/Enemies/027 UtilityPole/UtilityPole_Data.asset</div><h3>被动文案</h3><ul><li>引雷：从第 3 回合开始，每 3 回合对全场角色（包括自身）引发 1 重电磁爆发，并清空电流层数。</li><li>电能转移：全场角色造成伤害后，若其拥有至少 1 层电流，则将自身 1 层电流转移给受伤目标。</li></ul><h3>实际机制配置</h3><p class="muted">无</p><section class="skill"><h3>变压</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>变压
+技能：变压
+骰子数：1
+第 1 攻击骰：3 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流
+
+描述：
+不知哪里传来低沉嗡鸣……</pre><div class="source">Assets/Data/Enemies/Enemies/027 UtilityPole/Transformer.asset</div></section><section class="skill"><h3>高压电</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>高压电
+技能：高压电
+骰子数：3
+第 1 攻击骰：1 ~ 3
+第 2 攻击骰：1 ~ 2
+第 3 攻击骰：1 ~ 1
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 电流
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 电流
+第 3 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 电流
+
+描述：
+三段刺目的白蓝电光从绝缘子间跳落，像失控的线路连续抽击。</pre><div class="source">Assets/Data/Enemies/Enemies/027 UtilityPole/HighVoltage.asset</div></section><section class="skill"><h3>超导</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>超导
+技能：超导
+骰子数：1
+第 1 攻击骰：1 ~ 6
+目标偏好：优先攻击具有 1 层 电流 的目标
+
+词条：
+第 1 攻击骰词条：若 目标每拥有 1 层 电流 ，则 每达成一次条件，威力范围最小值 +1，最多 +5
+
+描述：
+周围残留的电荷被一并牵引，顺着杆身汇成一束刺眼的贯通电流。</pre><div class="source">Assets/Data/Enemies/Enemies/027 UtilityPole/Superconduct.asset</div></section></article><article class="enemy" id="enemy-29"><h2>028｜持镜人（enemyID=28）</h2><div class="facts">生命 27　｜　阶段 1：2–6 / 2 槽　｜　投放：中圈普通　｜　敌群属性：光</div><div class="source">Assets/Data/Enemies/Enemies/028 MirrorBearer/MirrorBearer_Data.asset</div><h3>被动文案</h3><ul><li>净镜：自身攻击命中带有负面状态的目标时，获得 2 层护盾</li></ul><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>MirrorBearer：Assets/Data/Enemies/EnemyGroup/Mid/Standard/MirrorBearer.asset</li></ul><section class="skill"><h3>镜棱刺</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>镜棱刺
+技能：镜棱刺
+骰子数：1
+第 1 攻击骰：2 ~ 4
+目标偏好：优先攻击拥有至少 1 种负面状态的目标
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 若 目标拥有至少 1 种负面状态 ，则 使 当前目标 于 下 1 个回合开始时 获得 1 层 临时虚弱
+第 1 攻击骰词条：[ 命中时 ] 若 目标拥有至少 1 种负面状态 ，则 使自己获得 2 层护盾
+
+描述：
+破裂的镜棱从袖下突出，只刺向已经有裂痕的影子。</pre><div class="source">Assets/Data/Enemies/Enemies/028 MirrorBearer/MirrorShardThrust.asset</div></section><section class="skill"><h3>白镜回廊</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>白镜回廊
+技能：白镜回廊
+骰子数：1
+第 1 攻击骰：3 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 缓慢
+第 1 攻击骰词条：[ 命中时 ] 若 目标拥有至少 1 种负面状态 ，则 使自己获得 2 层护盾
+
+描述：
+战场被白色镜面拉长，脚步沿着镜面无限延伸。</pre><div class="source">Assets/Data/Enemies/Enemies/028 MirrorBearer/WhiteMirrorCorridor.asset</div></section><section class="skill"><h3>照罪祷文</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>照罪祷文
+技能：照罪祷文
+骰子数：2
+第 1 攻击骰：2 ~ 4
+第 2 攻击骰：2 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 厄运
+第 1 攻击骰词条：[ 命中时 ] 若 目标拥有至少 1 种负面状态 ，则 使自己获得 2 层护盾
+第 2 攻击骰词条：[ 命中时 ] 若 目标拥有至少 1 种负面状态 ，则 对目标额外造成 3 点伤害
+第 2 攻击骰词条：[ 命中时 ] 若 目标拥有至少 1 种负面状态 ，则 使自己获得 2 层护盾
+
+描述：
+它念出一段没有声音的祷文，镜里的人先一步低下头。</pre><div class="source">Assets/Data/Enemies/Enemies/028 MirrorBearer/SinLitany.asset</div></section></article><article class="enemy" id="enemy-30"><h2>029｜焰纹蜥（enemyID=29）</h2><div class="facts">生命 25　｜　阶段 1：2–7 / 2 槽　｜　投放：未直接加入主地图池　｜　敌群属性：炎</div><div class="source">Assets/Data/Enemies/Enemies/029 EmberScaleLizard/EmberScaleLizard_Data.asset</div><h3>被动文案</h3><ul><li>熔愈鳞甲：战场上任意角色受到燃烧伤害时，自身恢复等量生命</li></ul><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>EmberScaleLizard：Assets/Data/Enemies/EnemyGroup/Mid/Standard/EmberLizard.asset</li></ul><section class="skill"><h3>炙烤</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>炙烤
+技能：炙烤
+骰子数：1
+第 1 攻击骰：3 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 燃烧
+
+描述：
+它伏低身体，背上的焰纹像被吹亮的炉缝。</pre><div class="source">Assets/Data/Enemies/Enemies/029 EmberScaleLizard/Roast.asset</div></section><section class="skill"><h3>蜷缩反击</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>蜷缩反击
+技能：蜷缩反击
+骰子数：2
+第 1 防御骰：2 ~ 4
+第 2 攻击骰：2 ~ 3
+
+词条：
+第 1 防御骰词条：[ 拼点胜利时 ] 使该技能的下一个骰子威力 +2
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 燃烧
+
+描述：
+鳞片先合拢成一面热盾，随后从缝隙里弹出一道火舌。</pre><div class="source">Assets/Data/Enemies/Enemies/029 EmberScaleLizard/CurlCounter.asset</div></section><section class="skill"><h3>焰涌</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>焰涌
+技能：焰涌
+骰子数：1
+第 1 攻击骰：3 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 使 血量最低的目标 获得 2 层 燃烧
+
+描述：
+火流贴地滚过，把伤口烧得更深。</pre><div class="source">Assets/Data/Enemies/Enemies/029 EmberScaleLizard/FlameSurge.asset</div></section></article><article class="enemy" id="enemy-31"><h2>030｜血噬蛛（enemyID=30）</h2><div class="facts">生命 19　｜　阶段 1：4–7 / 2 槽　｜　投放：中圈精英　｜　敌群属性：血</div><div class="source">Assets/Data/Enemies/Enemies/030 BloodfeastSpider/BloodfeastSpider_Data.asset</div><h3>被动文案</h3><ul><li>饥饿：每 5 回合优先使用「噬亲」；若吞噬小血蛛，按其剩余生命恢复自身并获得临时强壮，并使所有目标获得 1 层流血</li><li>血孕：若战场上没有其他友方单位，优先使用「蛛孕」，下个回合开始时召唤 2 个「血蛛卵」，若「蛛孕」拼点失败，则召唤的「血蛛卵」失去 50% 的血量</li></ul><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>BloodSpider：Assets/Data/Enemies/EnemyGroup/Mid/Elite/BloodSpider.asset</li></ul><section class="skill"><h3>血丝缠结</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>血丝缠结
+技能：血丝缠结
+骰子数：2
+第 1 攻击骰：2 ~ 6
+第 2 攻击骰：2 ~ 6
+目标偏好：优先攻击流血层数最低的目标
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 流血
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 缓慢
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 流血
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 缓慢
+
+描述：
+红丝贴着地面游走，寻向还没被血味标记的人。</pre><div class="source">Assets/Data/Enemies/Enemies/030 BloodfeastSpider/BloodThreadSnare.asset</div></section><section class="skill"><h3>蛛孕</h3><div class="role">条件技能：场上存活敌人数不超过 1（含自身）；优先级 200；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>蛛孕
+技能：蛛孕
+骰子数：1
+第 1 防御骰：3 ~ 6
+
+词条：
+第 1 防御骰词条：[ 使用时 ] 召唤 2 个 血蛛卵
+
+描述：
+它把腹部贴向地面，血色的卵囊从阴影里一枚枚滚出。</pre><div class="source">Assets/Data/Enemies/Enemies/030 BloodfeastSpider/SpiderPregnancy.asset</div></section><section class="skill"><h3>噬亲</h3><div class="role">条件技能：从第 5 回合开始，每 5 回合触发；优先级 120；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>噬亲
+技能：噬亲
+骰子数：1
+第 1 攻击骰：3 ~ 4
+
+描述：
+饿意压过母性的一瞬间，它回身咬向自己结出的子嗣。</pre><div class="source">Assets/Data/Enemies/Enemies/030 BloodfeastSpider/KinFeast.asset</div></section></article><article class="enemy" id="enemy-32"><h2>030｜血蛛卵（enemyID=3001）</h2><div class="facts">生命 6　｜　阶段 1：1–1 / 1 槽　｜　投放：未直接加入主地图池　｜　敌群属性：未配置</div><div class="source">Assets/Data/Enemies/Enemies/030 BloodfeastSpider/3001 BloodSpiderEgg/BloodSpiderEgg_Data.asset</div><h3>被动文案</h3><ul><li>破卵：回合开始时，若自身没有孵化，转化为小血蛛</li></ul><h3>实际机制配置</h3><ul><li>战斗开始获得 1 层「孵化」</li><li>回合开始时若缺少「孵化」，转化为「小血蛛」</li></ul><section class="skill"><h3>孵化</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>孵化
+技能：孵化
+骰子数：1
+第 1 防御骰：3 ~ 3
+
+词条：
+第 1 防御骰词条：[ 使用时 ] 使 自己 的 孵化 减少 1 层
+
+描述：
+薄膜在血红的脉动里缩放，里面的东西正试着学会呼吸。</pre><div class="source">Assets/Data/Enemies/Enemies/030 BloodfeastSpider/3001 BloodSpiderEgg/Hatch.asset</div></section></article><article class="enemy" id="enemy-33"><h2>030｜小血蛛（enemyID=3002）</h2><div class="facts">生命 12　｜　阶段 1：2–6 / 1 槽　｜　投放：未直接加入主地图池　｜　敌群属性：未配置</div><div class="source">Assets/Data/Enemies/Enemies/030 BloodfeastSpider/3002 SmallBloodSpider/SmallBloodSpider_Data.asset</div><h3>被动文案</h3><p class="muted">无</p><h3>实际机制配置</h3><p class="muted">无</p><section class="skill"><h3>噬咬</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>噬咬
+技能：噬咬
+骰子数：1
+第 1 攻击骰：2 ~ 4
+目标偏好：优先攻击流血层数最高的目标
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 流血
+
+描述：
+它不辨认肌肉，只辨认血味最浓的地方。</pre><div class="source">Assets/Data/Enemies/Enemies/030 BloodfeastSpider/3002 SmallBloodSpider/Bite.asset</div></section></article><article class="enemy" id="enemy-34"><h2>031｜倒影（enemyID=31）</h2><div class="facts">生命 15　｜　阶段 1：1–6 / 1 槽　｜　投放：未直接加入主地图池　｜　敌群属性：暗</div><div class="source">Assets/Data/Enemies/Enemies/031 Reflection/Reflection_Data.asset</div><h3>被动文案</h3><ul><li>无我：速度按钮数量为上一个回合全体目标速度骰子数量的总和</li><li>如你：使用的技能为上一个回合敌对阵营使用的技能。它会将目标技能的骰子与词条复制到「抛弃我」模板中</li><li>暗化：战斗开始时，获得 1 层强壮、1 层重防、10 层急速</li></ul><h3>实际机制配置</h3><ul><li>战斗开始获得 1 层「强壮」</li><li>战斗开始获得 1 层「重防」</li><li>战斗开始获得 10 层「急速」</li><li>速度槽数量复制上一回合对方速度骰总数</li><li>复制上一回合对方所用技能的骰子与词条</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>Reflection：Assets/Data/Enemies/EnemyGroup/Events/Reflection.asset</li><li>倒影（Assets/Data/Events/017 倒影/017 倒影.asset）</li></ul><section class="skill"><h3>抛弃我</h3><div class="role">普通技能池；复制技能模板<br>适用阶段：1</div><pre>抛弃我
+技能：抛弃我
+骰子数：1
+第 1 防御骰：10 ~ 10
+
+词条：
+第 1 防御骰词条：[ 使用时 ] 使 自己 获得 1 层 免疫
+
+描述：
+它把自己折进无光的平面里，像一个被故意留下的空位。</pre><div class="source">Assets/Data/Enemies/Enemies/031 Reflection/AbandonMe.asset</div></section></article><article class="enemy" id="enemy-35"><h2>032｜陌路残影（enemyID=32）</h2><div class="facts">生命 3　｜　阶段 1：3–5 / 1 槽　｜　投放：未直接加入主地图池　｜　敌群属性：暗</div><div class="source">Assets/Data/Enemies/Enemies/032 WanderingRemnant/WanderingRemnant_Data.asset</div><h3>被动文案</h3><ul><li>隐匿：第一回合开始时，获得 1 层免疫</li></ul><h3>实际机制配置</h3><ul><li>战斗开始获得 1 层「免疫」</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>032 陌路残影：Assets/Data/Enemies/EnemyGroup/Events/032 陌路残影.asset</li><li>032 陌路残影：Assets/Data/Enemies/EnemyGroup/Events/032 陌路残影.asset</li><li>032 陌路残影：Assets/Data/Enemies/EnemyGroup/Events/032 陌路残影.asset</li><li>低语井（Assets/Data/Events/014 低语井/014 低语井特殊副本.asset）</li></ul><section class="skill"><h3>暗影</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>暗影
+技能：暗影
+骰子数：1
+第 1 攻击骰：1 ~ 2
+
+词条：
+第 1 攻击骰词条：[ 单方面攻击时 ] 威力 +1
+
+描述：
+一道被遗落在路口的黑色切痕，在无人阻挡时会变得更深。</pre><div class="source">Assets/Data/Enemies/Enemies/032 WanderingRemnant/DarkShadow.asset</div></section></article><article class="enemy" id="enemy-36"><h2>033｜陌路幻影（enemyID=33）</h2><div class="facts">生命 10　｜　阶段 1：3–5 / 1 槽　｜　投放：未直接加入主地图池　｜　敌群属性：暗</div><div class="source">Assets/Data/Enemies/Enemies/033 WanderingPhantom/WanderingPhantom_Data.asset</div><h3>被动文案</h3><ul><li>隐匿：第一回合开始时，获得 1 层免疫</li></ul><h3>实际机制配置</h3><ul><li>战斗开始获得 1 层「免疫」</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>033 陌路幻影：Assets/Data/Enemies/EnemyGroup/Events/033 陌路幻影.asset</li><li>低语井（Assets/Data/Events/014 低语井/014 低语井特殊副本.asset）</li></ul><section class="skill"><h3>暗影</h3><div class="role">普通技能池；条件技能：从第 3 回合开始，每 3 回合触发；优先级 130；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>暗影
+技能：暗影
+骰子数：1
+第 1 攻击骰：1 ~ 3
+
+词条：
+第 1 攻击骰词条：[ 单方面攻击时 ] 威力 +1
+
+描述：
+幻影的刃很轻，却会在落空的地方留下第二道痕迹。</pre><div class="source">Assets/Data/Enemies/Enemies/033 WanderingPhantom/DarkShadow.asset</div></section><section class="skill"><h3>幻化</h3><div class="role">条件技能：从第 1 回合开始，每 3 回合触发；优先级 130；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>幻化
+技能：幻化
+骰子数：1
+第 1 攻击骰：1 ~ 1
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 召唤 2 个 陌路残影
+
+描述：
+它向后退入黑暗，把自己的轮廓撕成数道更薄的影子。</pre><div class="source">Assets/Data/Enemies/Enemies/033 WanderingPhantom/Morph.asset</div></section><section class="skill"><h3>融入暗影</h3><div class="role">条件技能：从第 2 回合开始，每 3 回合触发；优先级 130；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>融入暗影
+技能：融入暗影
+骰子数：1
+第 1 防御骰：3 ~ 3
+
+描述：
+它把周围的残影收回身侧，像把零散的夜色缝成一件外衣。</pre><div class="source">Assets/Data/Enemies/Enemies/033 WanderingPhantom/BlendIntoShadow.asset</div></section></article><article class="enemy" id="enemy-37"><h2>034｜回响（enemyID=34）</h2><div class="facts">生命 20　｜　阶段 1：1–5 / 2 槽　｜　投放：未直接加入主地图池　｜　敌群属性：暗</div><div class="source">Assets/Data/Enemies/Enemies/034 Echo/Echo_Data.asset</div><h3>被动文案</h3><ul><li>虚无：第一回合开始时，获得 3 层免疫</li></ul><h3>实际机制配置</h3><ul><li>战斗开始获得 3 层「免疫」</li></ul><h3>所属敌群 / 事件引用</h3><ul><li>Echo：Assets/Data/Enemies/EnemyGroup/Events/034 Echo.asset</li><li>低语井（Assets/Data/Events/014 低语井/014 低语井特殊副本.asset）</li></ul><section class="skill"><h3>静默</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>静默
+技能：静默
+骰子数：1
+第 1 攻击骰：2 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使目标于 下 1 个回合开始时 获得 1 层眩晕
+
+描述：
+声音被它压进阴影里，连呼吸都会慢上一拍。</pre><div class="source">Assets/Data/Enemies/Enemies/034 Echo/Silence.asset</div></section><section class="skill"><h3>幻化</h3><div class="role">条件技能：从第 1 回合开始，每 3 回合触发；优先级 130；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>幻化
+技能：幻化
+骰子数：1
+第 1 攻击骰：1 ~ 2
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 召唤 2 个 陌路残影
+
+描述：
+回响散开时，地面上会多出几个不属于任何人的影子。</pre><div class="source">Assets/Data/Enemies/Enemies/034 Echo/Morph.asset</div></section><section class="skill"><h3>模糊</h3><div class="role">条件技能：从第 3 回合开始，每 3 回合触发；优先级 130；每回合最多占用 2 个速度槽<br>适用阶段：1</div><pre>模糊
+技能：模糊
+骰子数：1
+第 1 防御骰：1 ~ 1
+
+词条：
+第 1 防御骰词条：[ 使用时 ] 使除自身以外的友方获得 1 层强壮
+
+描述：
+它不再保持边界，于是身侧的暗影都被抬高了一寸。</pre><div class="source">Assets/Data/Enemies/Enemies/034 Echo/Blur.asset</div></section></article><article class="enemy" id="enemy-38"><h2>035｜牵丝傀儡师（enemyID=35）</h2><div class="facts">生命 35　｜　阶段 1：1–5 / 2 槽　｜　投放：未直接加入主地图池　｜　敌群属性：暗</div><div class="source">Assets/Data/Enemies/Enemies/035 PuppetMaster/PuppetMaster_Data.asset</div><h3>被动文案</h3><ul><li>牵丝：无神傀儡在场时，自身受到的所有伤害转移给随机的无神傀儡</li></ul><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>PuppetMaster：Assets/Data/Enemies/EnemyGroup/Events/PuppetMaster.asset</li></ul><section class="skill"><h3>奉献指示</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>奉献指示
+技能：奉献指示
+骰子数：2
+第 1 攻击骰：3 ~ 5
+第 2 攻击骰：3 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 拼点胜利时 ] 对 自己 造成 3 点伤害
+第 1 攻击骰词条：[ 拼点胜利时 ] 使 自己 于 下 1 个回合开始时 获得 1 层 临时强壮
+第 2 攻击骰词条：[ 拼点胜利时 ] 对 自己 造成 3 点伤害
+第 2 攻击骰词条：[ 拼点胜利时 ] 使 自己 于 下 1 个回合开始时 获得 1 层 临时强壮
+
+描述：
+傀儡师把线收紧，命令像钉子一样钉回自己的掌心。</pre><div class="source">Assets/Data/Enemies/Enemies/035 PuppetMaster/OfferingOrder.asset</div></section><section class="skill"><h3>操纵</h3><div class="role">条件技能：从第 1 回合开始，每 1 回合触发；优先级 140；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>操纵
+技能：操纵
+骰子数：2
+第 1 攻击骰：3 ~ 6
+第 2 攻击骰：3 ~ 4
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 临时破防
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 临时虚弱
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 缓慢
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 标记
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 临时破防
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 临时虚弱
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 缓慢
+
+描述：
+细线从指间落下，先勾住关节，再把命令缝进皮肤里。</pre><div class="source">Assets/Data/Enemies/Enemies/035 PuppetMaster/Manipulate.asset</div></section></article><article class="enemy" id="enemy-39"><h2>035｜无神傀儡（enemyID=3501）</h2><div class="facts">生命 20　｜　阶段 1：3–6 / 1 槽　｜　投放：未直接加入主地图池　｜　敌群属性：暗</div><div class="source">Assets/Data/Enemies/Enemies/035 PuppetMaster/3501 SoullessPuppet/SoullessPuppet_Data.asset</div><h3>被动文案</h3><ul><li>无神：自身攻击没有标记状态的敌人时，技能威力 -1</li></ul><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>PuppetMaster：Assets/Data/Enemies/EnemyGroup/Events/PuppetMaster.asset</li><li>PuppetMaster：Assets/Data/Enemies/EnemyGroup/Events/PuppetMaster.asset</li></ul><section class="skill"><h3>遵从</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>遵从
+技能：遵从
+骰子数：1
+第 1 攻击骰：3 ~ 5
+目标偏好：优先攻击具有 1 层 标记 的目标
+
+词条：
+第 1 攻击骰词条：[ 单方面攻击时 ] 威力 +2
+
+描述：
+木质关节咯咯作响，它没有想法，只有被拉直的方向。</pre><div class="source">Assets/Data/Enemies/Enemies/035 PuppetMaster/3501 SoullessPuppet/Obey.asset</div></section><section class="skill"><h3>牺牲</h3><div class="role">条件技能：从第 3 回合开始，每 2 回合触发；优先级 120；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>牺牲
+技能：牺牲
+骰子数：3
+第 1 攻击骰：4 ~ 6
+第 2 攻击骰：2 ~ 4
+第 3 攻击骰：2 ~ 3
+目标偏好：优先攻击具有 1 层 标记 的目标
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 对 自己 造成 5 点伤害
+
+描述：
+线被猛地拉紧，傀儡把自己挤成一把不会疼的刃。</pre><div class="source">Assets/Data/Enemies/Enemies/035 PuppetMaster/3501 SoullessPuppet/Sacrifice.asset</div></section></article><article class="enemy" id="enemy-40"><h2>036｜贝者（enemyID=36）</h2><div class="facts">生命 6　｜　阶段 1：1–1 / 1 槽　｜　投放：未直接加入主地图池　｜　敌群属性：暗</div><div class="source">Assets/Data/Enemies/Enemies/036 Gambler/Gambler_Data.asset</div><h3>被动文案</h3><ul><li>偿还：负债到达 3 的角色立即死亡</li><li>执念成型：免疫除自身被动【愿赌服输】外的所有伤害</li><li>愿赌服输：与技能【赌博】拼点失败时，对自身造成 1 点伤害</li><li>上桌：战斗开始时，为所有目标添加技能【赌博】与【千术】</li></ul><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>Gambler：Assets/Data/Enemies/EnemyGroup/Events/Gambler.asset</li><li>旧赌桌（Assets/Data/Events/025 旧赌桌/025-1 大赌之后.asset）</li></ul><section class="skill"><h3>赌博</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>赌博
+技能：赌博
+骰子数：1
+第 1 攻击骰：1 ~ 6
+
+词条：
+第 1 攻击骰词条：[ 拼点胜利时 ] 使 当前目标 获得 1 层 负债
+
+描述：
+骰子在黑暗里滚动，停下前谁也不知道自己押上的是什么。</pre><div class="source">Assets/Data/Enemies/Enemies/036 Gambler/Gamble.asset</div></section><section class="skill"><h3>赌博</h3><div class="role">授予玩家：加入角色临时技能池<br>玩家临时技能</div><pre>赌博
+技能：赌博
+能耗：0
+骰子数：1
+第 1 攻击骰：1 ~ 6
+
+描述：
+桌面很安静，只有一枚骰子替你说话。</pre><div class="source">Assets/Data/Enemies/Enemies/036 Gambler/GrantedGamble.asset</div></section><section class="skill"><h3>千术</h3><div class="role">授予玩家：加入角色临时技能池<br>玩家临时技能</div><pre>千术
+技能：千术
+能耗：5
+骰子数：1
+第 1 攻击骰：7 ~ 7
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 临时虚弱
+第 1 攻击骰词条：[ 使用时 ] 使 自己 的 负债 减少 1 层
+
+描述：
+从袖口里换出什么，然后把账本的一页悄悄撕掉。</pre><div class="source">Assets/Data/Enemies/Enemies/036 Gambler/Cheat.asset</div></section></article><article class="enemy" id="enemy-41"><h2>037｜黑棺（enemyID=37）</h2><div class="facts">生命 26　｜　阶段 1：2–4 / 2 槽　｜　投放：中圈普通　｜　敌群属性：暗</div><div class="source">Assets/Data/Enemies/Enemies/037 BlackCoffin/BlackCoffin_Data.asset</div><h3>被动文案</h3><p class="muted">无</p><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>BlackCoffin：Assets/Data/Enemies/EnemyGroup/Mid/Standard/037 BlackCoffin.asset</li></ul><section class="skill"><h3>棺钉</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>棺钉
+技能：棺钉
+骰子数：1
+第 1 攻击骰：3 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 若 目标 标记 层数 至多为 1 ，则 使 当前目标 于 下 1 个回合开始时 获得 1 层 标记
+第 1 攻击骰词条：[ 命中时 ] 若 目标拥有至少 1 层 标记 ，则 使 当前目标 于 下 1 个回合开始时 获得 1 层 黑暗
+
+描述：
+通、通、通。
+它一点一点将钉子砸入自己，每砸下去一点，你都感觉自己冰冷一分。</pre><div class="source">Assets/Data/Enemies/Enemies/037 BlackCoffin/CoffinNail.asset</div></section><section class="skill"><h3>合棺</h3><div class="role">条件技能：从第 3 回合开始，每 3 回合触发；优先级 10；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>合棺
+技能：合棺
+骰子数：2
+第 1 攻击骰：4 ~ 6
+第 2 攻击骰：3 ~ 5
+目标偏好：优先攻击具有 1 层 黑暗 的目标
+
+词条：
+第 1 攻击骰词条：[ 未击中时 ] 对 自己 造成 5 点伤害
+第 1 攻击骰词条：[ 使用该技能时 ] 若 目标 黑暗 层数 至多为 1 ，则 威力 -3
+第 2 攻击骰词条：[ 未击中时 ] 对 自己 造成 5 点伤害
+第 2 攻击骰词条：[ 使用该技能时 ] 若 目标 黑暗 层数 至多为 1 ，则 威力 -3
+
+描述：
+咔嚓一声，里面的人永远隔绝了人世。</pre><div class="source">Assets/Data/Enemies/Enemies/037 BlackCoffin/CloseCoffin.asset</div></section></article><article class="enemy" id="enemy-42"><h2>038｜洋流（enemyID=38）</h2><div class="facts">生命 26　｜　阶段 1：1–4 / 2 槽　｜　投放：中圈普通　｜　敌群属性：水</div><div class="source">Assets/Data/Enemies/Enemies/038 Tide/Tide_Data.asset</div><h3>被动文案</h3><ul><li>暗流：回合开始时，所有目标有 50% 概率获得 1 层水蚀</li></ul><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>TideAnchorGuard：Assets/Data/Enemies/EnemyGroup/Mid/Standard/038 TideAnchorGuard.asset</li></ul><section class="skill"><h3>涌动</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>涌动
+技能：涌动
+骰子数：2
+第 1 攻击骰：2 ~ 4
+第 2 攻击骰：2 ~ 3
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 水蚀
+第 2 攻击骰词条：[ 命中时 ] 结算目标的 水蚀 状态
+
+描述：
+水势两段拍击。骰子 1 命中时对目标施加 1 层水蚀；骰子 2 命中时结算一次目标的水蚀状态。</pre><div class="source">Assets/Data/Enemies/Enemies/038 Tide/Surge.asset</div></section><section class="skill"><h3>浅潮</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>浅潮
+技能：浅潮
+骰子数：2
+第 1 攻击骰：2 ~ 4
+第 2 攻击骰：2 ~ 3
+目标偏好：优先攻击水蚀层数最高的目标
+
+词条：
+第 1 攻击骰词条：[ 使用该技能时 ] 若 目标拥有至少 10 层 易伤 ，则 威力 +1
+第 2 攻击骰词条：[ 使用该技能时 ] 若 目标拥有至少 10 层 易伤 ，则 威力 +1
+
+描述：
+优先攻击水蚀层数最高的目标。使用时，若目标拥有 10 层及以上易伤，每个骰子威力 +1。</pre><div class="source">Assets/Data/Enemies/Enemies/038 Tide/ShallowTide.asset</div></section></article><article class="enemy" id="enemy-43"><h2>039｜电鸣狼（enemyID=39）</h2><div class="facts">生命 19　｜　阶段 1：3–7 / 1 槽　｜　投放：中圈普通　｜　敌群属性：电</div><div class="source">Assets/Data/Enemies/Enemies/039 ThunderWolf/ThunderWolf_Data.asset</div><h3>被动文案</h3><ul><li>亲电：回合开始时，若自身拥有 10 层电流，获得 1 层临时强壮</li></ul><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>ThunderWolf：Assets/Data/Enemies/EnemyGroup/Mid/Standard/039 ThunderWolf.asset</li><li>ThunderWolf：Assets/Data/Enemies/EnemyGroup/Mid/Standard/039 ThunderWolf.asset</li></ul><section class="skill"><h3>磁爪</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>磁爪
+技能：磁爪
+骰子数：1
+第 1 攻击骰：2 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流
+第 1 攻击骰词条：[ 命中时 ] 使 自己 获得 2 层 电流
+
+描述：
+带电的爪击命中时，对自身与目标各施加 2 层电流。</pre><div class="source">Assets/Data/Enemies/Enemies/039 ThunderWolf/MagneticClaw.asset</div></section><section class="skill"><h3>错相步</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>错相步
+技能：错相步
+骰子数：2
+第 1 防御骰：3 ~ 4
+第 2 防御骰：1 ~ 3
+
+词条：
+第 1 防御骰词条：[ 拼点胜利时 ] 使 当前目标 获得 2 层 电流
+第 1 防御骰词条：[ 拼点胜利时 ] 使 自己 获得 2 层 电流
+第 2 防御骰词条：[ 拼点时 ] 若 自身拥有 电流 ，则 威力 +1
+
+描述：
+防御技能。骰子 1 命中时，对自身与目标各施加 2 层电流；骰子 2 拼点时，若自身拥有电流，威力 +1。</pre><div class="source">Assets/Data/Enemies/Enemies/039 ThunderWolf/PhaseStep.asset</div></section><section class="skill"><h3>鸣</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>鸣
+技能：鸣
+骰子数：2
+第 1 攻击骰：3 ~ 3
+第 2 攻击骰：2 ~ 3
+目标偏好：优先攻击电流层数最高的目标
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 对 当前目标 引发 1 重 电流 爆发，造成 1 x 层数 的额外伤害
+第 2 攻击骰词条：[ 命中时 ] 对 当前目标 引发 1 重 电流 爆发，造成 1 x 层数 的额外伤害，并清空 电流
+
+描述：
+目标偏好场上电流层数最高的目标。骰子 1 命中时触发一重电流爆发，不消耗目标电流层数；骰子 2 命中时触发一重电流爆发。</pre><div class="source">Assets/Data/Enemies/Enemies/039 ThunderWolf/Howl.asset</div></section></article><article class="enemy" id="enemy-44"><h2>040｜曜面棱侍（enemyID=4001）</h2><div class="facts">生命 24　｜　阶段 1：3–6 / 2 槽　｜　投放：中圈精英　｜　敌群属性：光</div><div class="source">Assets/Data/Enemies/Enemies/040 InterlockingPrismServants/DawnPrismServant_Data.asset</div><h3>被动文案</h3><ul><li>交辉轮转：战斗开始时获得照面；回合结束时与晦面棱侍交换照面与背面。</li><li>照面增辉：自身拥有照面时，攻击技能的威力最大值 +1。</li><li>独照：晦面棱侍死亡后，交辉轮转失效，改为自身始终拥有照面。</li></ul><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>InterlockingPrismServants：Assets/Data/Enemies/EnemyGroup/Mid/Elite/040 交辉双棱.asset</li></ul><section class="skill"><h3>折辉刺</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>折辉刺
+技能：折辉刺
+骰子数：1
+第 1 攻击骰：4 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 折光印
+第 1 攻击骰词条：若 自身拥有 照面 ，则 威力范围最大值 +1
+
+描述：
+棱线沿着光面斜斜刺出，命中的位置浮起细小的白色刻痕。</pre><div class="source">Assets/Data/Enemies/Enemies/040 InterlockingPrismServants/RefractedThrust.asset</div></section><section class="skill"><h3>棱返映射</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>棱返映射
+技能：棱返映射
+骰子数：1
+第 1 攻击骰：1 ~ 2
+目标偏好：优先攻击具有 1 层 折光印 的目标
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 消耗 当前目标 1 层 折光印，来使 全体友方获得 2 层 护盾
+第 1 攻击骰词条：[ 使用时 ] 若 自身拥有 背面 ，则 使全体友方恢复 1 点生命
+第 1 攻击骰词条：若 自身拥有 照面 ，则 威力范围最大值 +1
+
+描述：
+光从另一面折回，像把同一条轨迹在战场上重新描了一遍。</pre><div class="source">Assets/Data/Enemies/Enemies/040 InterlockingPrismServants/PrismReturnMapping.asset</div></section><section class="skill"><h3>照面切落</h3><div class="role">条件技能：自身拥有「照面」；优先级 10；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>照面切落
+技能：照面切落
+骰子数：2
+第 1 攻击骰：4 ~ 6
+第 2 攻击骰：2 ~ 4
+目标偏好：优先攻击具有 1 层 折光印 的目标
+
+词条：
+第 1 攻击骰词条：[ 使用时 ] 消耗 当前目标 1 层 折光印，来使 本骰子威力 +1
+第 1 攻击骰词条：若 自身拥有 照面 ，则 威力范围最大值 +1
+第 2 攻击骰词条：[ 命中时 ] 消耗 当前目标 1 层 折光印，来使 对目标额外造成 2 点伤害
+第 2 攻击骰词条：若 自身拥有 照面 ，则 威力范围最大值 +1
+
+描述：
+主动面骤然转亮，棱刃顺着旧有印记把光压成一道薄线。</pre><div class="source">Assets/Data/Enemies/Enemies/040 InterlockingPrismServants/FrontFaceCleave.asset</div></section></article><article class="enemy" id="enemy-45"><h2>040｜晦面棱侍（enemyID=4002）</h2><div class="facts">生命 24　｜　阶段 1：3–6 / 2 槽　｜　投放：中圈精英　｜　敌群属性：光</div><div class="source">Assets/Data/Enemies/Enemies/040 InterlockingPrismServants/DuskPrismServant_Data.asset</div><h3>被动文案</h3><ul><li>交辉轮转：战斗开始时获得背面；回合结束时与曜面棱侍交换照面与背面。</li><li>背面承辉：自身拥有背面时，防御技能的所有骰子威力最大值 +1。</li><li>独照：曜面棱侍死亡后，交辉轮转失效，改为自身始终拥有背面。</li></ul><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>InterlockingPrismServants：Assets/Data/Enemies/EnemyGroup/Mid/Elite/040 交辉双棱.asset</li></ul><section class="skill"><h3>背辉格挡</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>背辉格挡
+技能：背辉格挡
+骰子数：1
+第 1 防御骰：3 ~ 7
+
+词条：
+第 1 防御骰词条：[ 拼点胜利时 ] 使自己获得 2 层护盾
+第 1 防御骰词条：[ 拼点胜利时 ] 若 自身拥有 背面 ，则 使除自身以外的友方获得 2 层护盾
+第 1 防御骰词条：若 自身拥有 背面 ，则 威力范围最大值 +1
+
+描述：
+暗下来的棱面横在前方，把袭来的力量压进一圈冷亮的边框。</pre><div class="source">Assets/Data/Enemies/Enemies/040 InterlockingPrismServants/BacklightGuard.asset</div></section><section class="skill"><h3>折射偏转</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>折射偏转
+技能：折射偏转
+骰子数：1
+第 1 防御骰：2 ~ 6
+目标偏好：优先攻击速度最低的目标
+
+词条：
+第 1 防御骰词条：[ 拼点胜利时 ] 使 当前目标 获得 2 层 折光印
+第 1 防御骰词条：若 自身拥有 背面 ，则 威力范围最大值 +1
+
+描述：
+棱面轻轻一侧，原本笔直的攻击被引向速度最慢的影子。</pre><div class="source">Assets/Data/Enemies/Enemies/040 InterlockingPrismServants/RefractedDeflection.asset</div></section><section class="skill"><h3>晦面折返</h3><div class="role">条件技能：自身拥有「照面」；优先级 10；每回合最多占用 1 个速度槽<br>适用阶段：1</div><pre>晦面折返
+技能：晦面折返
+骰子数：2
+第 1 攻击骰：2 ~ 5
+第 2 攻击骰：2 ~ 3
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 折光印
+第 2 攻击骰词条：[ 命中时 ] 消耗 当前目标 1 层 折光印，来使 重复使用该骰子
+
+描述：
+暗面的棱光并不熄灭，它只是在等待折返到同一个伤口上。</pre><div class="source">Assets/Data/Enemies/Enemies/040 InterlockingPrismServants/DuskFaceReturn.asset</div></section></article><article class="enemy" id="enemy-46"><h2>041｜血骸王储（enemyID=41）</h2><div class="facts">生命 999　｜　阶段 1：2–6 / 3 槽　｜　投放：未直接加入主地图池　｜　敌群属性：未配置</div><div class="source">Assets/Data/Enemies/Enemies/041 GhostofPrince/GhostOfPrince.asset</div><h3>被动文案</h3><p class="muted">无</p><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>血骸王储：Assets/Data/Enemies/EnemyGroup/Events/GhostOfPrince.asset</li><li>王子的背叛（Assets/Data/Events/031 王储的遗产/031_B_02 王子的背叛.asset）</li></ul><section class="skill"><h3>血蚀重斩</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>血蚀重斩
+技能：血蚀重斩
+骰子数：1
+第 1 攻击骰：5 ~ 6
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 流血
+
+描述：
+王储挥剑怒斩，势大力沉</pre><div class="source">Assets/Data/Enemies/Enemies/041 GhostofPrince/血蚀重斩.asset</div></section><section class="skill"><h3>古战血沼</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>古战血沼
+技能：古战血沼
+骰子数：2
+第 1 攻击骰：5 ~ 7
+第 2 攻击骰：5 ~ 6
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 流血
+
+描述：
+暂无描述。</pre><div class="source">Assets/Data/Enemies/Enemies/041 GhostofPrince/古战血沼.asset</div></section><section class="skill"><h3>千丝血缚</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>千丝血缚
+技能：千丝血缚
+骰子数：1
+第 1 攻击骰：5 ~ 6
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 眩晕
+
+描述：
+以战场残留的血色执念化为血丝，束缚生者、掠夺鲜活血气</pre><div class="source">Assets/Data/Enemies/Enemies/041 GhostofPrince/千丝血缚.asset</div></section><section class="skill"><h3>血骸冲击</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>血骸冲击
+技能：血骸冲击
+骰子数：2
+第 1 攻击骰：6 ~ 8
+第 2 攻击骰：5 ~ 7
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 流血
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 流血
+
+描述：
+暂无描述。</pre><div class="source">Assets/Data/Enemies/Enemies/041 GhostofPrince/血骸冲击.asset</div></section><section class="skill"><h3>绝境千血葬</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>绝境千血葬
+技能：绝境千血葬
+骰子数：2
+第 1 攻击骰：7 ~ 8
+第 2 攻击骰：7 ~ 9
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 流血
+
+描述：
+暂无描述。</pre><div class="source">Assets/Data/Enemies/Enemies/041 GhostofPrince/绝境千血葬.asset</div></section></article><article class="enemy" id="enemy-47"><h2>042｜叛变的新王（enemyID=42）</h2><div class="facts">生命 40　｜　阶段 1：3–6 / 2 槽　｜　投放：未直接加入主地图池　｜　敌群属性：未配置</div><div class="source">Assets/Data/Enemies/Enemies/042 TheSecondPrince/TheSecondPrince.asset</div><h3>被动文案</h3><p class="muted">无</p><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>叛变的新王：Assets/Data/Enemies/EnemyGroup/Events/TheSecondPrince.asset</li><li>完成遗愿？（Assets/Data/Events/031 王储的遗产/031_D_01 完成遗愿.asset）</li></ul><section class="skill"><h3>烬刺</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>烬刺
+技能：烬刺
+骰子数：1
+第 1 攻击骰：3 ~ 5
+
+描述：
+暂无描述。</pre><div class="source">Assets/Data/Enemies/Enemies/042 TheSecondPrince/烬刺.asset</div></section><section class="skill"><h3>焰影囚笼</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>焰影囚笼
+技能：焰影囚笼
+骰子数：1
+第 1 攻击骰：4 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧
+
+描述：
+暂无描述。</pre><div class="source">Assets/Data/Enemies/Enemies/042 TheSecondPrince/焰影囚笼.asset</div></section><section class="skill"><h3>堕王烬世</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>堕王烬世
+技能：堕王烬世
+骰子数：2
+第 1 攻击骰：4 ~ 6
+第 2 攻击骰：4 ~ 6
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧
+
+描述：
+暂无描述。</pre><div class="source">Assets/Data/Enemies/Enemies/042 TheSecondPrince/堕王烬世.asset</div></section></article><article class="enemy" id="enemy-48"><h2>043｜复生贵族（enemyID=43）</h2><div class="facts">生命 60　｜　阶段 1：4–6 / 3 槽　｜　投放：未直接加入主地图池　｜　敌群属性：未配置</div><div class="source">Assets/Data/Enemies/Enemies/043 ResurrectedNobility/ResurrectedNobility.asset</div><h3>被动文案</h3><p class="muted">无</p><h3>实际机制配置</h3><p class="muted">无</p><h3>所属敌群 / 事件引用</h3><ul><li>复生贵族：Assets/Data/Enemies/EnemyGroup/Events/ResurrectedNobility.asset</li></ul><section class="skill"><h3>澜纹蚀刺</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>澜纹蚀刺
+技能：澜纹蚀刺
+骰子数：1
+第 1 攻击骰：3 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧
+
+描述：
+暂无描述。</pre><div class="source">Assets/Data/Enemies/Enemies/043 ResurrectedNobility/澜纹蚀刺.asset</div></section><section class="skill"><h3>幽渊锁脉</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>幽渊锁脉
+技能：幽渊锁脉
+骰子数：1
+第 1 攻击骰：3 ~ 5
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧
+
+描述：
+暂无描述。</pre><div class="source">Assets/Data/Enemies/Enemies/043 ResurrectedNobility/幽渊锁脉.asset</div></section><section class="skill"><h3>虚澜诡影</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>虚澜诡影
+技能：虚澜诡影
+骰子数：1
+第 1 攻击骰：5 ~ 6
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧
+
+描述：
+暂无描述。</pre><div class="source">Assets/Data/Enemies/Enemies/043 ResurrectedNobility/虚澜诡影.asset</div></section><section class="skill"><h3>寒汐水幕</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>寒汐水幕
+技能：寒汐水幕
+骰子数：1
+第 1 攻击骰：5 ~ 6
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 水蚀
+
+描述：
+暂无描述。</pre><div class="source">Assets/Data/Enemies/Enemies/043 ResurrectedNobility/寒汐水幕.asset</div></section><section class="skill"><h3>沧澜伪朝寂</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>沧澜伪朝寂
+技能：沧澜伪朝寂
+骰子数：2
+第 1 攻击骰：6 ~ 7
+第 2 攻击骰：5 ~ 7
+
+词条：
+第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧
+第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧
+
+描述：
+暂无描述。</pre><div class="source">Assets/Data/Enemies/Enemies/043 ResurrectedNobility/沧澜伪朝寂.asset</div></section></article><article class="enemy" id="enemy-49"><h2>9000｜断线傀儡（enemyID=9000）</h2><div class="facts">生命 15　｜　阶段 1：2–6 / 1 槽　｜　投放：未直接加入主地图池　｜　敌群属性：未配置</div><div class="source">Assets/Data/Relics/106 断线傀儡/9000 断线傀儡/9000 断线傀儡.asset</div><h3>被动文案</h3><p class="muted">无</p><h3>实际机制配置</h3><p class="muted">无</p><section class="skill"><h3>替罪</h3><div class="role">普通技能池<br>适用阶段：1</div><pre>替罪
+技能：替罪
+骰子数：1
+第 1 防御骰：2 ~ 3
+
+描述：
+它不知道什么是疼痛，只知道不能让敌人靠近你。</pre><div class="source">Assets/Data/Relics/106 断线傀儡/9000 断线傀儡/替罪.asset</div></section></article></main><script>const q=document.querySelector('input'), cards=[...document.querySelectorAll('.enemy')];function filter(){let n=0;for(const c of cards){const show=c.textContent.toLowerCase().includes(q.value.trim().toLowerCase());c.hidden=!show;if(show)n++;}document.querySelector('#count').textContent=n+' / '+cards.length+' 个敌人配置';}q.addEventListener('input',filter);document.querySelector('#reset').onclick=()=>{q.value='';filter();};document.querySelector('#print').onclick=()=>window.print();filter();</script></html>
