@@ -1,8 +1,8 @@
 {
   "date": "2026-10-29",
   "count": 159,
-  "coverage": "159 件当前资产配置由团结编辑器导出；新增目录序号 143–159，以及 59 凰、138 护心盾的主要机制已核对。已按设计反馈修订凰的反复保命、反击刺刃限次、福灵剂逐角色概率与当头棒文案，并修复阵亡队员在后续战斗结算后丢失的问题。其余历史 140 件保留原机制备注，未重新逐项审计全部历史实现；验证范围为针对性 EditMode 回归，未做完整试玩。",
-  "exportedAt": "2026-10-29T14:37:33.7604173+08:00",
+  "coverage": "159 件当前资产配置由团结编辑器导出；新增目录序号 143–159，以及历史序号 12、19、30、59、112、134、138 的主要机制已核对。已按设计反馈修订凰的反复保命、反击刺刃限次、福灵剂逐角色概率与当头棒文案，并修复阵亡队员在后续战斗结算后丢失的问题。本次屏蔽笼、寒霜护符、疾病减伤为 10%，幽影斗篷、驰隙时序环为 20%，并修正屏蔽笼触发时机。其余历史 135 件保留原机制备注，未重新逐项审计全部历史实现；验证包括此前针对性 EditMode 回归及本次 10 个减伤条件满足／不满足的编辑器运行检查，未做完整试玩。",
+  "exportedAt": "2026-10-29T15:30:52.8241700+08:00",
   "newIds": [
     143,
     144,
@@ -2653,7 +2653,7 @@
       "m_EditorClassIdentifier": null,
       "relicId": 12,
       "relicName": "驰隙时序环",
-      "description": "若即将对友方角色造成伤害的敌人速度低于友方角色，则使即将到来的伤害 -30%",
+      "description": "若即将对友方角色造成伤害的敌人速度低于友方角色，则使即将到来的伤害 -20%",
       "additionalDescription": "它不追逐时间，只在缝隙里轻轻拨动结局",
       "rarity": 2,
       "icon": {
@@ -2671,7 +2671,7 @@
           "statusData": {
             "fileID": 0
           },
-          "amount": 30,
+          "amount": 20,
           "conditionStatusData": {
             "fileID": 0
           },
@@ -2715,7 +2715,7 @@
       "role": "高速减伤",
       "rarityName": "稀有",
       "tags": "速度与行动、高速减伤",
-      "note": "",
+      "note": "攻击伤害结算前，来袭敌人的速度严格低于受击友方时，伤害减免为 20%×持有数量；速度相等时不触发。同一结算阶段的百分比减伤相加，合计最多将伤害减至 0。",
       "triggerNames": "即将受到攻击伤害",
       "effectNames": [
         "ReduceIncomingAttackDamagePercentWhenAttackerSlowerThanTarget"
@@ -2746,7 +2746,7 @@
               "guid": "",
               "valid": false
             },
-            "amount": 30,
+            "amount": 20,
             "conditionStatusData": {
               "name": "",
               "path": "",
@@ -2850,7 +2850,13 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-29",
+      "mechanics": {
+        "target": "受到攻击的友方角色",
+        "condition": "来袭敌人速度<受击友方速度",
+        "limit": "每次符合条件的攻击均生效，无回合或每场次数上限",
+        "stacking": "减伤 20%×持有数量；同阶段百分比减伤相加"
+      }
     },
     {
       "path": "Assets/Data/Relics/013 流云翎/流云翎.asset",
@@ -4230,7 +4236,7 @@
       "m_EditorClassIdentifier": null,
       "relicId": 19,
       "relicName": "幽影斗篷",
-      "description": "友方角色速度大于 5 时，所受伤害 -30%",
+      "description": "友方角色速度大于 5 时，所受伤害 -20%",
       "additionalDescription": "当步伐快到足以融入阴影，再精准的刀锋也会失去准头。",
       "rarity": 2,
       "icon": {
@@ -4248,7 +4254,7 @@
           "statusData": {
             "fileID": 0
           },
-          "amount": 30,
+          "amount": 20,
           "conditionStatusData": {
             "fileID": 0
           },
@@ -4292,7 +4298,7 @@
       "role": "高速减伤",
       "rarityName": "稀有",
       "tags": "速度与行动、高速减伤",
-      "note": "",
+      "note": "进入通用受伤结算时，受击角色速度严格大于 5 才生效，减伤为 20%×持有数量；速度等于 5 时不触发。同一结算阶段的百分比减伤相加。",
       "triggerNames": "即将受到伤害",
       "effectNames": [
         "ReduceIncomingDamagePercentWhenSpeedGreaterThan"
@@ -4323,7 +4329,7 @@
               "guid": "",
               "valid": false
             },
-            "amount": 30,
+            "amount": 20,
             "conditionStatusData": {
               "name": "",
               "path": "",
@@ -4427,7 +4433,13 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-29",
+      "mechanics": {
+        "target": "进入通用受伤结算的友方角色",
+        "condition": "受击角色当前速度>5",
+        "limit": "每次符合条件的受伤结算均可生效，无回合或每场次数上限",
+        "stacking": "减伤 20%×持有数量；同阶段百分比减伤相加"
+      }
     },
     {
       "path": "Assets/Data/Relics/020 优惠券/优惠券.asset",
@@ -7033,7 +7045,7 @@
       "m_EditorClassIdentifier": null,
       "relicId": 30,
       "relicName": "寒霜护符",
-      "description": "友方角色受到攻击时，若敌人拥有寒冷状态，伤害 -20%",
+      "description": "友方角色受到攻击时，若敌人拥有寒冷状态，伤害 -10%",
       "additionalDescription": "护符贴近胸口时仍像雪一样冷，替佩戴者听见冰层下的脚步。",
       "rarity": 0,
       "icon": {
@@ -7051,7 +7063,7 @@
           "statusData": {
             "fileID": 0
           },
-          "amount": 20,
+          "amount": 10,
           "conditionStatusData": {
             "fileID": 11400000,
             "guid": "31bf17620ef7438984f2e0b6eea03a6f",
@@ -7097,7 +7109,7 @@
       "role": "寒冷减伤",
       "rarityName": "普通",
       "tags": "寒冷、寒冷减伤",
-      "note": "",
+      "note": "攻击伤害结算前，攻击者具有至少 1 层寒冷时，伤害减免为 10%×持有数量；只读取攻击者自身的寒冷状态。与同阶段其他百分比减伤相加。",
       "triggerNames": "即将受到攻击伤害",
       "effectNames": [
         "ReduceIncomingAttackDamagePercentWhenAttackerHasStatus"
@@ -7128,7 +7140,7 @@
               "guid": "",
               "valid": false
             },
-            "amount": 20,
+            "amount": 10,
             "conditionStatusData": {
               "name": "Chill",
               "path": "Assets/Data/Battle/Chill/Chill.asset",
@@ -7232,7 +7244,13 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-29",
+      "mechanics": {
+        "target": "受到攻击的友方角色",
+        "condition": "攻击者寒冷状态≥1层",
+        "limit": "每次符合条件的攻击均生效，无回合或每场次数上限",
+        "stacking": "减伤 10%×持有数量；同阶段百分比减伤相加"
+      }
     },
     {
       "path": "Assets/Data/Relics/031 蓄能线圈/蓄能线圈.asset",
@@ -26886,7 +26904,7 @@
       "m_EditorClassIdentifier": null,
       "relicId": 112,
       "relicName": "“疾病”",
-      "description": "中毒的目标造成伤害 -15%",
+      "description": "中毒的目标造成伤害 -10%",
       "additionalDescription": "病了，就会没力气，而这份档案的内容足以致人虚脱。",
       "rarity": 0,
       "icon": {
@@ -26904,7 +26922,7 @@
           "statusData": {
             "fileID": 0
           },
-          "amount": 15,
+          "amount": 10,
           "conditionStatusData": {
             "fileID": 11400000,
             "guid": "5c2d83ddce914792abd7211bb94635f6",
@@ -26950,7 +26968,7 @@
       "role": "中毒减伤",
       "rarityName": "普通",
       "tags": "中毒、中毒减伤",
-      "note": "",
+      "note": "攻击伤害结算前，攻击者具有至少 1 层中毒时，伤害减免为 10%×持有数量；只读取攻击者自身的中毒状态。与同阶段其他百分比减伤相加。",
       "triggerNames": "即将受到攻击伤害",
       "effectNames": [
         "ReduceIncomingAttackDamagePercentWhenAttackerHasStatus"
@@ -26981,7 +26999,7 @@
               "guid": "",
               "valid": false
             },
-            "amount": 15,
+            "amount": 10,
             "conditionStatusData": {
               "name": "Poison",
               "path": "Assets/Data/Battle/Poison/Poison.asset",
@@ -27085,7 +27103,13 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-29",
+      "mechanics": {
+        "target": "受到中毒敌人攻击的友方角色",
+        "condition": "攻击者中毒状态≥1层",
+        "limit": "每次符合条件的攻击均生效，无回合或每场次数上限",
+        "stacking": "减伤 10%×持有数量；同阶段百分比减伤相加"
+      }
     },
     {
       "path": "Assets/Data/Relics/113 “瘟疫”/“瘟疫”.asset",
@@ -32368,7 +32392,7 @@
       "m_EditorClassIdentifier": null,
       "relicId": 134,
       "relicName": "屏蔽笼",
-      "description": "友方角色受到具有电流状态的目标攻击时，受到伤害 -20%",
+      "description": "友方角色受到具有电流状态的目标攻击时，受到伤害 -10%",
       "additionalDescription": "在里面时感觉格外的安全。",
       "rarity": 0,
       "icon": {
@@ -32379,14 +32403,14 @@
       "builtInEffects": [
         {
           "effectName": "Reduce damage from current attacker",
-          "trigger": 13,
+          "trigger": 9,
           "effectType": 31,
           "chance": 1,
           "requireUnvisitedTile": true,
           "statusData": {
             "fileID": 0
           },
-          "amount": 20,
+          "amount": 10,
           "conditionStatusData": {
             "fileID": 11400000,
             "guid": "b137dabbfd68440d8ab3ca76492a4240",
@@ -32432,8 +32456,8 @@
       "role": "电流减伤",
       "rarityName": "普通",
       "tags": "电流、电流减伤",
-      "note": "",
-      "triggerNames": "即将受到伤害",
+      "note": "攻击伤害结算前，攻击者具有至少 1 层电流时，伤害减免为 10%×持有数量，与同阶段其他百分比减伤相加。已将原本与处理器不匹配的通用受伤触发改为攻击伤害触发，使配置效果实际生效。",
+      "triggerNames": "即将受到攻击伤害",
       "effectNames": [
         "ReduceIncomingAttackDamagePercentWhenAttackerHasStatus"
       ],
@@ -32449,11 +32473,11 @@
       ],
       "resolvedEffects": [
         {
-          "trigger": "OnPlayerAboutToTakeDamage",
+          "trigger": "OnPlayerAboutToTakeAttackDamage",
           "effect": "ReduceIncomingAttackDamagePercentWhenAttackerHasStatus",
           "data": {
             "effectName": "Reduce damage from current attacker",
-            "trigger": 13,
+            "trigger": 9,
             "effectType": 31,
             "chance": 1,
             "requireUnvisitedTile": true,
@@ -32463,7 +32487,7 @@
               "guid": "",
               "valid": false
             },
-            "amount": 20,
+            "amount": 10,
             "conditionStatusData": {
               "name": "Current",
               "path": "Assets/Data/Battle/Current/Current.asset",
@@ -32567,7 +32591,13 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-29",
+      "mechanics": {
+        "target": "受到带电流敌人攻击的友方角色",
+        "condition": "攻击者电流状态≥1层",
+        "limit": "每次符合条件的攻击均生效，无回合或每场次数上限",
+        "stacking": "减伤 10%×持有数量；同阶段百分比减伤相加"
+      }
     },
     {
       "path": "Assets/Data/Relics/135 高压电刺/高压电刺.asset",

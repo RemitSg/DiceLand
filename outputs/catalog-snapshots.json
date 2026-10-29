@@ -5,7 +5,12 @@
     "snapshotDate": "2026-10-26",
     "enemyAssets": 50,
     "relatedUniqueSkills": 129,
-    "deliverables": ["敌人与技能完整图鉴.html", "敌人与技能完整清单.txt", "catalog.json", "chat-index.json"]
+    "deliverables": [
+      "敌人与技能完整图鉴.html",
+      "敌人与技能完整清单.txt",
+      "catalog.json",
+      "chat-index.json"
+    ]
   },
   "relicCatalog": {
     "directory": "outputs/relic-catalog",
@@ -13,8 +18,22 @@
     "relicCount": 159,
     "categoryCount": 17,
     "newCatalogNumbers": "143–159 (159 is the fixed reforge result with actual relicId yin_yang_fish)",
-    "coverage": "All 159 current asset configurations exported from the editor. Main mechanics for 17 additions plus relics 59 and 138 reviewed; the other 140 historical mechanism notes retained. Applied design feedback for repeatable Phoenix protection, actor-scoped Counterattack Blade, independent Fortune Potion rolls, +100% club wording, and persistent dead party members. Verified with 9 new and 27 related existing EditMode tests; no full playthrough.",
-    "deliverables": ["遗物完整图鉴.html", "遗物体系完整表.md", "DiceLand遗物体系表.xlsx", "catalog.json"]
+    "coverage": "All 159 current asset configurations exported from the editor. Main mechanics for 17 additions and historical relics 12/19/30/59/112/134/138 reviewed; the other 135 historical mechanism notes retained. Latest damage reductions: 30/112/134=10%, 12/19=20%; fixed relic 134 attack trigger. Verified 10 editor runtime condition/met-unmet cases, in addition to the prior 9 new and 27 related EditMode tests. No full playthrough.",
+    "deliverables": [
+      "遗物完整图鉴.html",
+      "遗物体系完整表.md",
+      "DiceLand遗物体系表.xlsx",
+      "catalog.json"
+    ],
+    "reviewedHistoricalCatalogNumbers": [
+      12,
+      19,
+      30,
+      59,
+      112,
+      134,
+      138
+    ]
   },
   "note": "The enemy catalog remains the 2026-10-26 historical snapshot and does not include the merged Blood Spore stat update. The relic catalog was refreshed on 2026-10-29; consult its coverage note and Assets/Data for current gameplay values."
 }

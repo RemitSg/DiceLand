@@ -15,7 +15,7 @@ MonoBehaviour:
   relicId: 12
   relicName: "\u9A70\u9699\u65F6\u5E8F\u73AF"
   description: "\u82E5\u5373\u5C06\u5BF9\u53CB\u65B9\u89D2\u8272\u9020\u6210\u4F24\u5BB3\u7684\u654C\u4EBA\u901F\u5EA6\u4F4E\u4E8E\u53CB\u65B9\u89D2\u8272\uFF0C\u5219\u4F7F\u5373\u5C06\u5230\u6765\u7684\u4F24\u5BB3
-    -30%"
+    -20%"
   additionalDescription: "\u5B83\u4E0D\u8FFD\u9010\u65F6\u95F4\uFF0C\u53EA\u5728\u7F1D\u9699\u91CC\u8F7B\u8F7B\u62E8\u52A8\u7ED3\u5C40"
   rarity: 2
   icon: {fileID: 21300000, guid: efc58f0853d31de46ab13067d0fd2558, type: 3}
@@ -26,7 +26,7 @@ MonoBehaviour:
     chance: 1
     requireUnvisitedTile: 0
     statusData: {fileID: 0}
-    amount: 30
+    amount: 20
     conditionStatusData: {fileID: 0}
     requiredStatusStacks: 1
     requiredSpeed: 1
@@ -40,4 +40,12 @@ MonoBehaviour:
     powerAmount: 0
     minPowerAmount: 0
     maxPowerAmount: 0
+    maxStacks: 1
+    requiredDistinctStatusCount: 1
+    requiredConsecutiveSkillUses: 1
+    relicTable: {fileID: 0}
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    relicData: {fileID: 0}
+    enemyData: {fileID: 0}
   customEffectHandler: {fileID: 0}

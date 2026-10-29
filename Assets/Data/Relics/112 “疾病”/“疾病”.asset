@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicId: 112
   relicName: "\u201C\u75BE\u75C5\u201D"
-  description: "\u4E2D\u6BD2\u7684\u76EE\u6807\u9020\u6210\u4F24\u5BB3 -15%"
+  description: "\u4E2D\u6BD2\u7684\u76EE\u6807\u9020\u6210\u4F24\u5BB3 -10%"
   additionalDescription: "\u75C5\u4E86\uFF0C\u5C31\u4F1A\u6CA1\u529B\u6C14\uFF0C\u800C\u8FD9\u4EFD\u6863\u6848\u7684\u5185\u5BB9\u8DB3\u4EE5\u81F4\u4EBA\u865A\u8131\u3002"
   rarity: 0
   icon: {fileID: 21300000, guid: 2f59cf482dcf88f41b4938c9aeb6f49a, type: 3}
@@ -25,7 +25,7 @@ MonoBehaviour:
     chance: 1
     requireUnvisitedTile: 1
     statusData: {fileID: 0}
-    amount: 15
+    amount: 10
     conditionStatusData: {fileID: 11400000, guid: 5c2d83ddce914792abd7211bb94635f6, type: 2}
     requiredStatusStacks: 1
     requiredSpeed: 1
@@ -43,5 +43,8 @@ MonoBehaviour:
     requiredDistinctStatusCount: 1
     requiredConsecutiveSkillUses: 1
     relicTable: {fileID: 0}
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    relicData: {fileID: 0}
     enemyData: {fileID: 0}
   customEffectHandler: {fileID: 0}

@@ -5,10 +5,10 @@ const data=JSON.parse(await fs.readFile(`${dir}/catalog.json`,'utf8'));
 const wb=await SpreadsheetFile.importXlsx(await FileBlob.load(file));
 const summary=wb.worksheets.getItem('体系总览'),detail=wb.worksheets.getItem('遗物完整表');
 summary.getRange('A4').values=[[`${data.count} 件遗物，${data.groups.length} 个主体系。每件只计一次，跨体系效果见联动标签。`]];
-summary.getRange('A5').values=[['2026-10-29。159 件当前配置；新增 17 件及 59、138 已核对主要机制，含设计反馈修订。其余历史备注沿用；针对性 EditMode 回归，未完整试玩。']];
+summary.getRange('A5').values=[['2026-10-29。159 件当前配置；新增 17 件及 7 件历史遗物已核对主要机制，含本次五件减伤调整。其余历史备注沿用；编辑器验证，未完整试玩。']];
 summary.getRange('A8:E24').values=data.groups.map(g=>[g.name,g.count,g.summary,g.examples,g.play]);
 summary.getRange('B25').values=[[data.count]];
-detail.getRange('A5').values=[['2026-10-29：159 件当前配置；143–159、59、138 已核对主要机制并同步设计反馈。阴阳鱼实际 ID 为 yin_yang_fish；验证为针对性 EditMode 回归。']];
+detail.getRange('A5').values=[['2026-10-29：159 件当前配置；143–159 及 12、19、30、59、112、134、138 已核对主要机制并同步调整。阴阳鱼实际 ID 为 yin_yang_fish；验证为针对性 EditMode 回归。']];
 const order=new Map(data.groups.map((g,i)=>[g.name,i]));
 const sorted=[...data.relics].sort((a,b)=>order.get(a.category)-order.get(b.category)||a.id-b.id);
 const table=detail.tables.items[0];
@@ -27,7 +27,12 @@ if(summary.getRange('B25').values[0][0]!==data.count)throw Error('Summary count 
 const values=detail.getRange(`A8:J${7+data.count}`).values;
 if(values.length!==data.count||new Set(values.map(r=>r[0])).size!==data.count)throw Error('Workbook identity mismatch');
 for(let i=0;i<sorted.length;i++)if(values[i][1]!==sorted[i].relicName||values[i][8]!==String(sorted[i].note||''))throw Error(`Workbook row mismatch ${i}`);
-for(const [sheetName,range,name]of[['体系总览','A2:E15','summary'],['遗物完整表',`H${8+sorted.findIndex(r=>r.id===146)}:J${10+sorted.findIndex(r=>r.id===146)}`,'new-detail']]){
+const previewIds=process.argv.slice(2).map(Number);
+const detailPreviews=(previewIds.length?previewIds:[146]).map(id=>{
+ const row=8+sorted.findIndex(r=>r.id===id);
+ return ['遗物完整表',`F${row}:J${row}`,`relic-${id}`];
+});
+for(const [sheetName,range,name]of[['体系总览','A2:E15','summary'],...detailPreviews]){
  const blob=await wb.render({sheetName,range,scale:1,format:'png'});
  await fs.writeFile(`${dir}/${name}-preview.png`,new Uint8Array(await blob.arrayBuffer()));
 }

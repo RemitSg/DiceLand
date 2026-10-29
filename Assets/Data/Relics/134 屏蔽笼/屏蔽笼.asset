@@ -15,18 +15,18 @@ MonoBehaviour:
   relicId: 134
   relicName: "\u5C4F\u853D\u7B3C"
   description: "\u53CB\u65B9\u89D2\u8272\u53D7\u5230\u5177\u6709\u7535\u6D41\u72B6\u6001\u7684\u76EE\u6807\u653B\u51FB\u65F6\uFF0C\u53D7\u5230\u4F24\u5BB3
-    -20%"
+    -10%"
   additionalDescription: "\u5728\u91CC\u9762\u65F6\u611F\u89C9\u683C\u5916\u7684\u5B89\u5168\u3002"
   rarity: 0
   icon: {fileID: 21300000, guid: 9145ebb90ce6147439e0991347b84fb7, type: 3}
   builtInEffects:
   - effectName: Reduce damage from current attacker
-    trigger: 13
+    trigger: 9
     effectType: 31
     chance: 1
     requireUnvisitedTile: 1
     statusData: {fileID: 0}
-    amount: 20
+    amount: 10
     conditionStatusData: {fileID: 11400000, guid: b137dabbfd68440d8ab3ca76492a4240, type: 2}
     requiredStatusStacks: 1
     requiredSpeed: 1
@@ -44,5 +44,8 @@ MonoBehaviour:
     requiredDistinctStatusCount: 1
     requiredConsecutiveSkillUses: 1
     relicTable: {fileID: 0}
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    relicData: {fileID: 0}
     enemyData: {fileID: 0}
   customEffectHandler: {fileID: 0}
