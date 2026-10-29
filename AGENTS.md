@@ -18,6 +18,7 @@
 | 敌人与技能图鉴 | `outputs/enemy-catalog/敌人与技能完整图鉴.html` |
 | 敌人完整结构化数据与摘要索引 | `outputs/enemy-catalog/catalog.json`、`outputs/enemy-catalog/chat-index.json` |
 | 遗物分类、详细效果与联动说明 | `outputs/relic-catalog/遗物体系完整表.md` |
+| 遗物离线交互图鉴（分类、搜索与排序） | `outputs/relic-catalog/遗物完整图鉴.html` |
 | 遗物表格 | `outputs/relic-catalog/DiceLand遗物体系表.xlsx` |
 | 遗物结构化数据 | `outputs/relic-catalog/catalog.json` |
 | 目录覆盖范围、日期与数量说明 | `outputs/catalog-snapshots.json` |
@@ -47,6 +48,8 @@
 - 实际存在的获取限制、固定配对重铸、关联资产及特殊事件用途。
 
 新增条目放入正确分类，并同步更新分类数量、总数、索引和各展示文件。保持已有表格的列结构、样式和中文术语，不擅自删减已有详细字段。
+
+遗物 HTML 必须与同目录 JSON、Markdown、Excel 使用同一批记录，支持分类、名称／效果／标签与序号范围检索、多字段正逆序、详情查看。优先复用 `tools/relic-catalog/` 的导出与生成流程；新增分类、真实 ID 与目录序号不同时，必须明确记录，不能虚构资产 ID。HTML 内嵌数据和图标，保持双击即可离线使用，正式页面不依赖本地临时导出或联网服务。操作说明见 `tools/relic-catalog/README.md`。
 
 ### 真实性与快照说明
 
