@@ -12,6 +12,11 @@ It focuses on:
 
 This is not a full API reference. It is a practical "where should I look first?" guide.
 
+## Agent Project Conventions
+
+All agents working in this repository must follow [AGENTS.md](AGENTS.md).
+Adding enemies or relics, or changing their documented skills, stats or effects, requires matching detailed catalog updates under `outputs/enemy-catalog` or `outputs/relic-catalog` in the same task. Preserve the established formats and keep the text, visual documents, JSON indexes and snapshot metadata consistent; see `AGENTS.md` for the required fields and completion criteria.
+
 ## High-Level Structure
 
 Main code and data are split into these areas:
