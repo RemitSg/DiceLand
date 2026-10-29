@@ -194,7 +194,8 @@ public class Relic_SO : ScriptableObject
         ResetKeysAndRegenerateMapOnAcquire = 134,
         ConfigureFixedRelicReforgePair = 135,
         QueueNextBattleAllyStatusOnAcquire = 136,
-        ApplyStatusToSelfOnDefenseClashWinOncePerActorPerRound = 137
+        ApplyStatusToSelfOnDefenseClashWinOncePerActorPerRound = 137,
+        ReplaceEnemyStatusApplication = 138
     }
 
     [Serializable]

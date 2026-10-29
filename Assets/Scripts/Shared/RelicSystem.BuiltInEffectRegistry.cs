@@ -177,6 +177,7 @@ public static partial class RelicSystem
             { Relic_SO.RelicBuiltInEffectType.DoubleFirstEnemyDamageEachBattle, HandleDoubleFirstEnemyDamageEachBattle },
             { Relic_SO.RelicBuiltInEffectType.ResetKeysAndRegenerateMapOnAcquire, HandleResetKeysAndRegenerateMapOnAcquire },
             { Relic_SO.RelicBuiltInEffectType.ConfigureFixedRelicReforgePair, HandleConfigureFixedRelicReforgePair },
+            { Relic_SO.RelicBuiltInEffectType.ReplaceEnemyStatusApplication, HandlePassiveMarker },
             { Relic_SO.RelicBuiltInEffectType.QueueNextBattleAllyStatusOnAcquire, HandleQueueNextBattleAllyStatusOnAcquire },
         };
     }

@@ -1,0 +1,7 @@
+Relic: 160 碎潮盐瓶
+Rarity: Rare（稀有）
+Tool: built-in ImageGen, transparent_background=true
+Workspace asset: Assets/Data/Relics/160 碎潮盐瓶/160_TidebreakerSaltFlask_Rare.png
+
+Final generation prompt:
+Use case: stylized-concept. Asset type: one transparent inventory relic icon for the existing DiceLand fantasy roguelite game. Primary request: design a new relic called Tidebreaker Salt Flask (碎潮盐瓶), a magical flask that converts watery erosion into armor vulnerability. Single centered isolated object, a squat slightly tilted sea-green translucent glass flask, filled with large ivory coral-like jagged salt crystals. Aged bronze neck ring and cork stopper, a small visibly cracked dark iron armor plate charm hanging from a short cord. Salt crystals crust the lower glass and a thin warm pale-gold light shines through the fractures. Style: hand-painted fantasy item illustration, restrained watercolor and gouache texture, confident dark warm contours, chunky readable shapes and softly faceted shading, tasteful worn material detail, matching a Chinese fantasy roguelite item catalog. Clear silhouette readable at 64–96 pixels, roughly square composition with 12% empty padding around the entire object. Palette: desaturated jade/teal glass, ivory salt, weathered bronze, charcoal iron. Actual transparent alpha background, no ground plane, no scene, no cast shadow extending beyond object, no UI frame, no card, no lettering, no numbers, no watermark. Exactly one finished icon, not a sheet or collection.

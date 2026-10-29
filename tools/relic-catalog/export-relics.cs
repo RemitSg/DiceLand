@@ -33,6 +33,7 @@ foreach (var guid in paths)
         rarity = (int)relic.rarity, rarityName = relic.rarity.ToString(),
         iconPath = iconPath, iconGuid = string.IsNullOrEmpty(iconPath) ? "" : UnityEditor.AssetDatabase.AssetPathToGUID(iconPath),
         iconRect = relic.icon != null ? new[] { relic.icon.rect.x, relic.icon.rect.y, relic.icon.rect.width, relic.icon.rect.height } : new float[0],
+        iconTextureSize = relic.icon != null ? new[] { relic.icon.texture.width, relic.icon.texture.height } : new int[0],
         effects = effects, referencedByRelicTables = tables,
         customEffectHandler = relic.customEffectHandler != null ? UnityEditor.AssetDatabase.GetAssetPath(relic.customEffectHandler) : ""
     });

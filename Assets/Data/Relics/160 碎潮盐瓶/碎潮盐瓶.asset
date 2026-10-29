@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92a6c8410a56dcb4db5bca4c318c5c64, type: 3}
+  m_Name: "\u788E\u6F6E\u76D0\u74F6"
+  m_EditorClassIdentifier:
+  relicId: 160
+  relicName: "\u788E\u6F6E\u76D0\u74F6"
+  description: "\u654C\u65B9\u4E0D\u518D\u53D7\u5230\u6C34\u8680\u6548\u679C\uFF1B\u6BCF\u6B21\u65BD\u52A0\u6C34\u8680\u65F6\uFF0C\u6539\u4E3A\u65BD\u52A0
+    15 \u5C42\u6613\u4F24\u3002"
+  additionalDescription: "\u6F6E\u6C34\u6CA1\u80FD\u7559\u4E0B\u75D5\u8FF9\uFF0C\u76D0\u5374\u8BA9\u76D4\u7532\u88C2\u5F00\u4E86\u3002"
+  rarity: 2
+  icon: {fileID: 21300000, guid: 01a7de04634b81246af518947d6fd613, type: 3}
+  builtInEffects:
+  - effectName: "\u6C34\u8680\u8F6C\u6613\u4F24"
+    trigger: 1
+    effectType: 138
+    chance: 1
+    requireUnvisitedTile: 0
+    statusData: {fileID: 11400000, guid: 2c61804cb51b40ceb349418fab5290ba, type: 2}
+    amount: 15
+    conditionStatusData: {fileID: 11400000, guid: 2b1de364dbf64720becc8b60618c3be3, type: 2}
+    requiredStatusStacks: 1
+    requiredSpeed: 1
+    requiredSpeedMin: 1
+    requiredSpeedMax: 1
+    statusApplyTiming: 0
+    applyAfterRoundStarts: 1
+    requiredRound: 1
+    requiredRoundMin: 1
+    requiredRoundMax: 1
+    powerAmount: 0
+    minPowerAmount: 0
+    maxPowerAmount: 0
+    maxStacks: 1
+    requiredDistinctStatusCount: 1
+    requiredConsecutiveSkillUses: 1
+    relicTable: {fileID: 0}
+    blueprintTable: {fileID: 0}
+    blueprintRarityWeightTable: {fileID: 0}
+    relicData: {fileID: 0}
+    enemyData: {fileID: 0}
+  customEffectHandler: {fileID: 0}

@@ -1,8 +1,8 @@
 {
   "date": "2026-10-29",
-  "count": 159,
-  "coverage": "159 件当前资产配置由团结编辑器导出；新增目录序号 143–159，以及历史序号 12、19、30、59、112、134、138 的主要机制已核对。已按设计反馈修订凰的反复保命、反击刺刃限次、福灵剂逐角色概率与当头棒文案，并修复阵亡队员在后续战斗结算后丢失的问题。本次屏蔽笼、寒霜护符、疾病减伤为 10%，幽影斗篷、驰隙时序环为 20%，并修正屏蔽笼触发时机。其余历史 135 件保留原机制备注，未重新逐项审计全部历史实现；验证包括此前针对性 EditMode 回归及本次 10 个减伤条件满足／不满足的编辑器运行检查，未做完整试玩。",
-  "exportedAt": "2026-10-29T15:30:52.8241700+08:00",
+  "count": 160,
+  "coverage": "160 件当前资产配置由团结编辑器导出；新增目录序号 143–160，以及历史序号 12、19、30、59、79、112、134、138 的主要机制已核对。已按设计反馈修订凰的反复保命、反击刺刃限次、福灵剂逐角色概率与当头棒文案，并修复阵亡队员在后续战斗结算后丢失的问题。本次屏蔽笼、寒霜护符、疾病减伤为 10%，幽影斗篷、驰隙时序环为 20%，并修正屏蔽笼触发时机。其余历史 134 件保留原机制备注，未重新逐项审计全部历史实现；新增稀有遗物 160 碎潮盐瓶（每次敌方水蚀施加改为基础 15 层易伤），浪鸣调整为每层水蚀视为额外 5 层易伤；验证范围见维护说明，未做完整试玩。",
+  "exportedAt": "2026-10-29T16:13:16.3837123+08:00",
   "newIds": [
     143,
     144,
@@ -20,7 +20,8 @@
     156,
     157,
     158,
-    159
+    159,
+    160
   ],
   "groups": [
     {
@@ -39,10 +40,10 @@
     },
     {
       "name": "水蚀",
-      "count": 6,
-      "summary": "用水蚀驱动增伤、易伤、减伤和急速。",
-      "examples": "钟乳石、酸化剂、浪鸣、涌潮加速器",
-      "play": "先挂水蚀，靠层数条件获取收益，可与寒冷组合。"
+      "count": 7,
+      "summary": "水蚀条件增益与即时易伤转换。",
+      "examples": "钟乳石、浪鸣、碎潮盐瓶、涌潮加速器",
+      "play": "保留水蚀可驱动条件增伤、减伤与急速；碎潮盐瓶将每次新施加的水蚀改为基础 15 层即时易伤，放弃该次水蚀层数。浪鸣现为每层水蚀额外 5 层易伤的伤害修正。"
     },
     {
       "name": "中毒",
@@ -367,7 +368,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/002 迫近的黑暗/LoomingDark.asset",
@@ -594,7 +599,11 @@
       "referencedByRelicTables": [],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/003 猫咪的原谅/Kiity's Pardon.asset",
@@ -819,7 +828,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/004 不合/Unbind.asset",
@@ -1044,7 +1057,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/005 会员卡/MemberCard.asset",
@@ -1269,7 +1286,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/006 贰负锁/ErFusLock.asset",
@@ -1496,7 +1517,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/007 弹簧靴/SpringBoots.asset",
@@ -1723,7 +1748,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/008 颓雾绒囊/DrearmistPouch.asset",
@@ -1950,7 +1979,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/009 疾时纺梭/疾时纺梭.asset",
@@ -2175,7 +2208,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/010 告别/告别.asset",
@@ -2400,7 +2437,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/011 晨露琥珀/晨露琥珀.asset",
@@ -2625,7 +2666,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/012 驰隙时序环/驰隙时序环.asset",
@@ -2856,7 +2901,11 @@
         "condition": "来袭敌人速度<受击友方速度",
         "limit": "每次符合条件的攻击均生效，无回合或每场次数上限",
         "stacking": "减伤 20%×持有数量；同阶段百分比减伤相加"
-      }
+      },
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/013 流云翎/流云翎.asset",
@@ -3081,7 +3130,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/014 锻灵石/锻灵石.asset",
@@ -3306,7 +3359,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/015 繁生核/繁生核.asset",
@@ -3531,7 +3588,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/016 矮人腕环/矮人腕环.asset",
@@ -3756,7 +3817,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/017 归星/归星.asset",
@@ -3981,7 +4046,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/018 不融冰/不融冰.asset",
@@ -4208,7 +4277,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/019 幽影斗篷/幽影斗篷.asset",
@@ -4439,7 +4512,11 @@
         "condition": "受击角色当前速度>5",
         "limit": "每次符合条件的受伤结算均可生效，无回合或每场次数上限",
         "stacking": "减伤 20%×持有数量；同阶段百分比减伤相加"
-      }
+      },
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/020 优惠券/优惠券.asset",
@@ -4822,7 +4899,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/021 落红/落红.asset",
@@ -5047,7 +5128,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/022 初序木片/初序木片.asset",
@@ -5274,7 +5359,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/023 狂乱的鸡尾酒/狂乱的鸡尾酒.asset",
@@ -5499,7 +5588,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/024 猎手印记/猎手印记.asset",
@@ -5886,7 +5979,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/025 不死心/不死心.asset",
@@ -6113,7 +6210,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/026 刃石/刃石.asset",
@@ -6338,7 +6439,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/027 锈蚀钉靴/锈蚀钉靴.asset",
@@ -6565,7 +6670,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/028 碎镜片/碎镜片.asset",
@@ -6792,7 +6901,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/029 旅人的水壶/旅人的水壶.asset",
@@ -7017,7 +7130,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/030 寒霜护符/寒霜护符.asset",
@@ -7250,7 +7367,11 @@
         "condition": "攻击者寒冷状态≥1层",
         "limit": "每次符合条件的攻击均生效，无回合或每场次数上限",
         "stacking": "减伤 10%×持有数量；同阶段百分比减伤相加"
-      }
+      },
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/031 蓄能线圈/蓄能线圈.asset",
@@ -7477,7 +7598,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/032 四叶草/四叶草.asset",
@@ -7702,7 +7827,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/033 殉道者/殉道者.asset",
@@ -7927,7 +8056,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/034 潮汐/潮汐.asset",
@@ -8154,7 +8287,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/035 饥饿之核/饥饿之核.asset",
@@ -8381,7 +8518,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/036 铁壁徽章/铁壁徽章.asset",
@@ -8606,7 +8747,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/037 导电丝线/导电丝线.asset",
@@ -8833,7 +8978,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/038 探路者手册/探路者手册.asset",
@@ -9058,7 +9207,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/039 钟乳石/钟乳石.asset",
@@ -9285,7 +9438,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/040 冥龟甲/冥龟甲.asset",
@@ -9512,7 +9669,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/041 龙鳞甲/龙鳞甲.asset",
@@ -9739,7 +9900,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/042 自适应背心/自适应背心.asset",
@@ -10126,7 +10291,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/043 镜像棱镜/镜像棱镜.asset",
@@ -10351,7 +10520,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/044 灾厄旗帜/灾厄旗帜.asset",
@@ -10576,7 +10749,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/045 共生菌落/共生菌落.asset",
@@ -11123,7 +11300,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/046 风云珏/风云珏.asset",
@@ -11348,7 +11529,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        2048,
+        2048
+      ]
     },
     {
       "path": "Assets/Data/Relics/047 能晶/能晶.asset",
@@ -11573,7 +11758,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1207,
+        1207
+      ]
     },
     {
       "path": "Assets/Data/Relics/048 液化燃料/液化燃料.asset",
@@ -11798,7 +11987,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/049 打火石/打火石.asset",
@@ -12025,7 +12218,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/050 余烬炉灰/余烬炉灰.asset",
@@ -12252,7 +12449,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/051 易爆罐/易爆罐.asset",
@@ -12479,7 +12680,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/052 焦火绒/焦火绒.asset",
@@ -12708,7 +12913,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/053 烈焰斗篷/烈焰斗篷.asset",
@@ -12935,7 +13144,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/054 淬火剑鞘/淬火剑鞘.asset",
@@ -13162,7 +13375,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/055 蜡心/蜡心.asset",
@@ -13389,7 +13606,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/056 焰靴/焰靴.asset",
@@ -13618,7 +13839,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/057 红莲契约/红莲契约.asset",
@@ -13845,7 +14070,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/058 炙焰圣杯/炙焰圣杯.asset",
@@ -14072,7 +14301,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/059 凰/凰.asset",
@@ -14305,7 +14538,11 @@
         "condition": "即将受到致命伤害，且敌方燃烧总层数>5",
         "limit": "无次数上限；每次重新检查燃烧条件",
         "stacking": "每次消耗 min(来袭伤害,敌方燃烧总层数)，不按持有数量放大"
-      }
+      },
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/060 不灭焰/不灭焰.asset",
@@ -14532,7 +14769,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/061 女孩的火柴/女孩的火柴.asset",
@@ -14759,7 +15000,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/062 炭粉袋/炭粉袋.asset",
@@ -14986,7 +15231,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/063 干薪/干薪.asset",
@@ -15213,7 +15462,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/064 冻潮石/冻潮石.asset",
@@ -15442,7 +15695,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1207
+      ]
     },
     {
       "path": "Assets/Data/Relics/065 雪铃/雪铃.asset",
@@ -15669,7 +15926,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1207
+      ]
     },
     {
       "path": "Assets/Data/Relics/066 凝冻液/凝冻液.asset",
@@ -15898,7 +16159,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1206,
+        1207
+      ]
     },
     {
       "path": "Assets/Data/Relics/067 冻伤/冻伤.asset",
@@ -16125,7 +16390,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1207,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/068 梦中的冬天/梦中的冬天.asset",
@@ -16352,7 +16621,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/069 冰河契书/冰河契书.asset",
@@ -16579,7 +16852,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/070 -67°C 的水/-67°C 的水.asset",
@@ -16808,7 +17085,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1206,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/071 冰刀/冰刀.asset",
@@ -17037,7 +17318,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1207,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/072 涌潮加速器/涌潮加速器.asset",
@@ -17266,7 +17551,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/073 冰中火/冰中火.asset",
@@ -17495,7 +17784,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/074 碎冰钳/碎冰钳.asset",
@@ -17722,7 +18015,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1206,
+        1215
+      ]
     },
     {
       "path": "Assets/Data/Relics/075 酸化剂/酸化剂.asset",
@@ -17949,7 +18246,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1207,
+        1206
+      ]
     },
     {
       "path": "Assets/Data/Relics/076 恒温服/恒温服.asset",
@@ -18176,7 +18477,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1206
+      ]
     },
     {
       "path": "Assets/Data/Relics/077 逆浪之帆/逆浪之帆.asset",
@@ -18405,7 +18710,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1215,
+        1206
+      ]
     },
     {
       "path": "Assets/Data/Relics/078 落潮护符/落潮护符.asset",
@@ -18632,7 +18941,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1206,
+        1206
+      ]
     },
     {
       "path": "Assets/Data/Relics/079 浪鸣/浪鸣.asset",
@@ -18660,7 +18973,7 @@
       "m_EditorClassIdentifier": null,
       "relicId": 79,
       "relicName": "浪鸣",
-      "description": "敌方目标每层水蚀视为额外拥有 10 层易伤。",
+      "description": "敌方目标每层水蚀视为额外拥有 5 层易伤。",
       "additionalDescription": "潮声被封在一枚薄薄的贝片中，敌人的裂隙会在浪声里被放大。",
       "rarity": 1,
       "icon": {
@@ -18678,7 +18991,7 @@
           "statusData": {
             "fileID": 0
           },
-          "amount": 10,
+          "amount": 5,
           "conditionStatusData": {
             "fileID": 11400000,
             "guid": "2b1de364dbf64720becc8b60618c3be3",
@@ -18724,7 +19037,7 @@
       "role": "水蚀转易伤",
       "rarityName": "罕见",
       "tags": "水蚀、水蚀转易伤、易伤",
-      "note": "",
+      "note": "敌方每层实际持有的水蚀提供 5% 对其伤害的遗物百分比修正，按水蚀层数×5×持有数量计算，并非真的附加易伤状态。碎潮盐瓶把新施加水蚀改为易伤，不为浪鸣新增水蚀层数。",
       "triggerNames": "即将造成伤害",
       "effectNames": [
         "ModifyOutgoingDamagePercentByTargetStatusStacks"
@@ -18755,7 +19068,7 @@
               "guid": "",
               "valid": false
             },
-            "amount": 10,
+            "amount": 5,
             "conditionStatusData": {
               "name": "Erode",
               "path": "Assets/Data/Battle/Erode/Erode.asset",
@@ -18859,7 +19172,17 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-29",
+      "mechanics": {
+        "target": "受到友方伤害且实际拥有水蚀的敌方目标",
+        "condition": "即将造成正数伤害，目标水蚀至少 1 层",
+        "limit": "每次符合条件的伤害结算均可生效，无回合或每场次数上限",
+        "stacking": "遗物百分比增伤=水蚀层数×5%×持有数量；不增加真实易伤层数"
+      },
+      "iconTextureSize": [
+        980,
+        980
+      ]
     },
     {
       "path": "Assets/Data/Relics/080 古钱币/古钱币.asset",
@@ -19084,7 +19407,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        980,
+        980
+      ]
     },
     {
       "path": "Assets/Data/Relics/081 蓝牛/蓝牛.asset",
@@ -19309,7 +19636,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        980,
+        980
+      ]
     },
     {
       "path": "Assets/Data/Relics/082 草莓/草莓.asset",
@@ -19534,7 +19865,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        980,
+        980
+      ]
     },
     {
       "path": "Assets/Data/Relics/083 马蹄铁/马蹄铁.asset",
@@ -19759,7 +20094,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        980,
+        980
+      ]
     },
     {
       "path": "Assets/Data/Relics/084 囤积许可/囤积许可.asset",
@@ -19984,7 +20323,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        980,
+        980
+      ]
     },
     {
       "path": "Assets/Data/Relics/085 再来一次/“再来一次！”.asset",
@@ -20209,7 +20552,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        980,
+        980
+      ]
     },
     {
       "path": "Assets/Data/Relics/086 小猪储蓄罐/小猪储蓄罐.asset",
@@ -20434,7 +20781,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        980,
+        980
+      ]
     },
     {
       "path": "Assets/Data/Relics/087 白条/白条.asset",
@@ -20659,7 +21010,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        980,
+        980
+      ]
     },
     {
       "path": "Assets/Data/Relics/088 自负雕像/自负雕像.asset",
@@ -21046,7 +21401,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        980,
+        980
+      ]
     },
     {
       "path": "Assets/Data/Relics/089 自卑雕像/自卑雕像.asset",
@@ -21433,7 +21792,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        980,
+        980
+      ]
     },
     {
       "path": "Assets/Data/Relics/090 幸运号角/幸运号角.asset",
@@ -21660,7 +22023,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        980,
+        980
+      ]
     },
     {
       "path": "Assets/Data/Relics/091 坍缩/“坍缩”.asset",
@@ -21887,7 +22254,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        980,
+        980
+      ]
     },
     {
       "path": "Assets/Data/Relics/092 中包裹/中包裹.asset",
@@ -22114,7 +22485,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        980,
+        980
+      ]
     },
     {
       "path": "Assets/Data/Relics/093 大包裹/大包裹.asset",
@@ -22341,7 +22716,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        980,
+        980
+      ]
     },
     {
       "path": "Assets/Data/Relics/094 超大包裹/超大包裹.asset",
@@ -22568,7 +22947,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        980,
+        980
+      ]
     },
     {
       "path": "Assets/Data/Relics/095 噬毒盾/噬毒盾.asset",
@@ -22797,7 +23180,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1199,
+        1063
+      ]
     },
     {
       "path": "Assets/Data/Relics/096 能量睡袋/能量睡袋.asset",
@@ -23022,7 +23409,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1173,
+        1163
+      ]
     },
     {
       "path": "Assets/Data/Relics/097 希望银币/希望银币.asset",
@@ -23247,7 +23638,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1048,
+        1066
+      ]
     },
     {
       "path": "Assets/Data/Relics/098 探索银币/探索银币.asset",
@@ -23472,7 +23867,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1043,
+        1064
+      ]
     },
     {
       "path": "Assets/Data/Relics/099 安宁银币/安宁银币.asset",
@@ -23697,7 +24096,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1007,
+        1021
+      ]
     },
     {
       "path": "Assets/Data/Relics/100 指路牌/指路牌.asset",
@@ -23922,7 +24325,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        952,
+        631
+      ]
     },
     {
       "path": "Assets/Data/Relics/101 水中月/水中月.asset",
@@ -24145,7 +24552,11 @@
       "referencedByRelicTables": [],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1181,
+        1151
+      ]
     },
     {
       "path": "Assets/Data/Relics/102 镜中花/镜中花.asset",
@@ -24368,7 +24779,11 @@
       "referencedByRelicTables": [],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1186,
+        1152
+      ]
     },
     {
       "path": "Assets/Data/Relics/103 无我/无我.asset",
@@ -24593,7 +25008,11 @@
       "referencedByRelicTables": [],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        981,
+        1094
+      ]
     },
     {
       "path": "Assets/Data/Relics/104 重生/重生.asset",
@@ -24818,7 +25237,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1200,
+        1208
+      ]
     },
     {
       "path": "Assets/Data/Relics/105 禁忌知识/禁忌知识.asset",
@@ -25043,7 +25466,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1136,
+        1026
+      ]
     },
     {
       "path": "Assets/Data/Relics/106 断线傀儡/断线傀儡.asset",
@@ -25268,7 +25695,11 @@
       "referencedByRelicTables": [],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        834,
+        1161
+      ]
     },
     {
       "path": "Assets/Data/Relics/107 千术骰子/千术骰子.asset",
@@ -25493,7 +25924,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1196,
+        1142
+      ]
     },
     {
       "path": "Assets/Data/Relics/108 垃圾袋/垃圾袋.asset",
@@ -25557,7 +25992,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1098,
+        1159
+      ]
     },
     {
       "path": "Assets/Data/Relics/109 金垃圾袋/金垃圾袋.asset",
@@ -26422,7 +26861,11 @@
       "referencedByRelicTables": [],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        1179,
+        1204
+      ]
     },
     {
       "path": "Assets/Data/Relics/110 次元治愈瓶/次元治愈瓶.asset",
@@ -26647,7 +27090,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        921,
+        1063
+      ]
     },
     {
       "path": "Assets/Data/Relics/111 剧毒补剂/剧毒补剂.asset",
@@ -26876,7 +27323,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        626,
+        624
+      ]
     },
     {
       "path": "Assets/Data/Relics/112 “疾病”/“疾病”.asset",
@@ -27109,7 +27560,11 @@
         "condition": "攻击者中毒状态≥1层",
         "limit": "每次符合条件的攻击均生效，无回合或每场次数上限",
         "stacking": "减伤 10%×持有数量；同阶段百分比减伤相加"
-      }
+      },
+      "iconTextureSize": [
+        614,
+        624
+      ]
     },
     {
       "path": "Assets/Data/Relics/113 “瘟疫”/“瘟疫”.asset",
@@ -27336,7 +27791,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        616,
+        624
+      ]
     },
     {
       "path": "Assets/Data/Relics/114 精炼毒药/精炼毒药.asset",
@@ -27563,7 +28022,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        622,
+        624
+      ]
     },
     {
       "path": "Assets/Data/Relics/115 先导药/先导药.asset",
@@ -27790,7 +28253,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        626,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/116 慢性中毒/慢性中毒.asset",
@@ -28017,7 +28484,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        614,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/117 毒针封蜡/毒针封蜡.asset",
@@ -28244,7 +28715,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        616,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/118 苦根药袋/苦根药袋.asset",
@@ -28471,7 +28946,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        622,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/119 粗药渣/粗药渣.asset",
@@ -28698,7 +29177,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        626,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/120 毒囊护符/毒囊护符.asset",
@@ -28925,7 +29408,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        614,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/121 青蚀刻刀/青蚀刻刀.asset",
@@ -29152,7 +29639,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        616,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/122 病理手札/病理手札.asset",
@@ -29539,7 +30030,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        622,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/123 蔓延/蔓延.asset",
@@ -29768,7 +30263,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        626,
+        626
+      ]
     },
     {
       "path": "Assets/Data/Relics/124 荼蘼花床/荼蘼花床.asset",
@@ -29995,7 +30494,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        614,
+        626
+      ]
     },
     {
       "path": "Assets/Data/Relics/125 无药可救/无药可救.asset",
@@ -30222,7 +30725,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        616,
+        626
+      ]
     },
     {
       "path": "Assets/Data/Relics/126 回魂丹/回魂丹.asset",
@@ -30613,7 +31120,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        622,
+        626
+      ]
     },
     {
       "path": "Assets/Data/Relics/127 继电器/继电器.asset",
@@ -30840,7 +31351,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        612,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/128 螺线管/螺线管.asset",
@@ -31227,7 +31742,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        612,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/129 引电刃/引电刃.asset",
@@ -31454,7 +31973,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        612,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/130 电磁加速器/电磁加速器.asset",
@@ -31681,7 +32204,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        612,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/131 “震荡回路”/“震荡回路”.asset",
@@ -31908,7 +32435,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        612,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/132 导电短线/导电短线.asset",
@@ -32137,7 +32668,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        612,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/133 “隐雷”/“隐雷”.asset",
@@ -32364,7 +32899,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        612,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/134 屏蔽笼/屏蔽笼.asset",
@@ -32597,7 +33136,11 @@
         "condition": "攻击者电流状态≥1层",
         "limit": "每次符合条件的攻击均生效，无回合或每场次数上限",
         "stacking": "减伤 10%×持有数量；同阶段百分比减伤相加"
-      }
+      },
+      "iconTextureSize": [
+        612,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/135 高压电刺/高压电刺.asset",
@@ -32824,7 +33367,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        612,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/136 “雷击”/“雷击”.asset",
@@ -33051,7 +33598,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        612,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/137 阈/阈.asset",
@@ -33442,7 +33993,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        612,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/138 护心盾/护心盾.asset",
@@ -33675,7 +34230,11 @@
         "condition": "获得遗物时登记，下一场战斗开始时使用",
         "limit": "待发放状态使用后清空；重复获得可再次登记下一战奖励",
         "stacking": "护盾 10×本次获得数量层；多次登记累加"
-      }
+      },
+      "iconTextureSize": [
+        612,
+        612
+      ]
     },
     {
       "path": "Assets/Data/Relics/139 心电感应/心电感应.asset",
@@ -33904,7 +34463,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        612,
+        614
+      ]
     },
     {
       "path": "Assets/Data/Relics/140 电爆盾/电爆盾.asset",
@@ -34133,7 +34696,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        612,
+        614
+      ]
     },
     {
       "path": "Assets/Data/Relics/141 “小心火烛”/“小心火烛”.asset",
@@ -34362,7 +34929,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        612,
+        614
+      ]
     },
     {
       "path": "Assets/Data/Relics/142 心脏起搏器/心脏起搏器.asset",
@@ -34591,7 +35162,11 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27"
+      "codeReviewedAt": "2026-10-27",
+      "iconTextureSize": [
+        612,
+        614
+      ]
     },
     {
       "category": "经济与商店",
@@ -34800,7 +35375,11 @@
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": [
+        612,
+        614
+      ]
     },
     {
       "category": "能量与蓄能",
@@ -35009,7 +35588,11 @@
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": [
+        616,
+        614
+      ]
     },
     {
       "category": "速度与行动",
@@ -35218,7 +35801,11 @@
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": [
+        614,
+        614
+      ]
     },
     {
       "category": "防御与反击",
@@ -35430,7 +36017,11 @@
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": [
+        614,
+        614
+      ]
     },
     {
       "category": "防御与反击",
@@ -35641,7 +36232,11 @@
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": [
+        612,
+        614
+      ]
     },
     {
       "category": "防御与反击",
@@ -35850,7 +36445,11 @@
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": [
+        616,
+        614
+      ]
     },
     {
       "category": "防御与反击",
@@ -36061,7 +36660,11 @@
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": [
+        614,
+        614
+      ]
     },
     {
       "category": "防御与反击",
@@ -36272,7 +36875,11 @@
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": [
+        614,
+        614
+      ]
     },
     {
       "category": "掉落与遗物获取",
@@ -36645,7 +37252,11 @@
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": [
+        612,
+        612
+      ]
     },
     {
       "category": "探索与行动点",
@@ -36854,7 +37465,11 @@
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": [
+        616,
+        612
+      ]
     },
     {
       "category": "治疗与生存",
@@ -37383,7 +37998,11 @@
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": [
+        614,
+        612
+      ]
     },
     {
       "category": "通用战斗与状态",
@@ -37594,7 +38213,11 @@
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": [
+        614,
+        612
+      ]
     },
     {
       "category": "通用战斗与状态",
@@ -37803,7 +38426,11 @@
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": [
+        612,
+        614
+      ]
     },
     {
       "category": "探索与行动点",
@@ -38012,7 +38639,11 @@
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": [
+        616,
+        614
+      ]
     },
     {
       "category": "锻造与重铸",
@@ -38227,7 +38858,11 @@
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": [
+        614,
+        614
+      ]
     },
     {
       "category": "锻造与重铸",
@@ -38442,7 +39077,11 @@
       ],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": [
+        614,
+        614
+      ]
     },
     {
       "category": "锻造与重铸",
@@ -38485,7 +39124,233 @@
       "effectNames": [],
       "isNew": true,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-29"
+      "codeReviewedAt": "2026-10-29",
+      "iconTextureSize": []
+    },
+    {
+      "category": "水蚀",
+      "role": "水蚀转易伤",
+      "tags": "水蚀、易伤、状态转换、即时易伤",
+      "codeReviewedAt": "2026-10-29",
+      "note": "稀有遗物。对敌方每次有效的正数水蚀施加，改为基础 15 层易伤；与原水蚀层数无关，重复持有不重复转换或放大基础层数。覆盖技能、遗物直接施加及延迟施加；延迟效果在排队时转换并保留延迟与重复次数。友方水蚀和其他状态不变；替换后按易伤本身的免疫与抵抗规则处理，技能中的适用状态增益沿用原流程。转换不会新留水蚀供给浪鸣、酸化剂等水蚀条件；不追溯转换此前已存在的水蚀。已加入 OuterEliteRelicLoot，可按原有稀有度与获取流程抽取。",
+      "mechanics": {
+        "target": "所有敌方目标的新水蚀施加",
+        "condition": "持有本遗物，尝试向存活敌方施加正数水蚀",
+        "limit": "每次施加均转换，无每回合或每场次数上限；延迟与重复施加保留原时机",
+        "stacking": "每次基础 15 层易伤，不乘原水蚀层数或持有数量；按易伤的免疫、抵抗处理"
+      },
+      "relatedIds": [
+        39,
+        72,
+        75,
+        77,
+        78,
+        79
+      ],
+      "id": 160,
+      "relicId": 160,
+      "relicName": "碎潮盐瓶",
+      "path": "Assets/Data/Relics/160 碎潮盐瓶/碎潮盐瓶.asset",
+      "guid": "cbaacf5dc89d6e64794e3774a2d7d15d",
+      "description": "敌方不再受到水蚀效果；每次施加水蚀时，改为施加 15 层易伤。",
+      "additionalDescription": "潮水没能留下痕迹，盐却让盔甲裂开了。",
+      "rarity": 2,
+      "rarityName": "稀有",
+      "icon": {
+        "fileID": 21300000,
+        "guid": "01a7de04634b81246af518947d6fd613",
+        "type": 3
+      },
+      "iconPath": "Assets/Data/Relics/160 碎潮盐瓶/160_TidebreakerSaltFlask_Rare.png",
+      "iconGuid": "01a7de04634b81246af518947d6fd613",
+      "iconRect": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "iconTextureSize": [
+        512,
+        512
+      ],
+      "builtInEffects": [
+        {
+          "effectName": "水蚀转易伤",
+          "trigger": 1,
+          "effectType": 138,
+          "chance": 1,
+          "requireUnvisitedTile": false,
+          "statusData": {
+            "fileID": 11400000,
+            "guid": "2c61804cb51b40ceb349418fab5290ba",
+            "type": 2
+          },
+          "amount": 15,
+          "conditionStatusData": {
+            "fileID": 11400000,
+            "guid": "2b1de364dbf64720becc8b60618c3be3",
+            "type": 2
+          },
+          "requiredStatusStacks": 1,
+          "requiredSpeed": 1,
+          "requiredSpeedMin": 1,
+          "requiredSpeedMax": 1,
+          "statusApplyTiming": 0,
+          "applyAfterRoundStarts": 1,
+          "requiredRound": 1,
+          "requiredRoundMin": 1,
+          "requiredRoundMax": 1,
+          "powerAmount": 0,
+          "minPowerAmount": 0,
+          "maxPowerAmount": 0,
+          "maxStacks": 1,
+          "requiredDistinctStatusCount": 1,
+          "requiredConsecutiveSkillUses": 1,
+          "relicTable": {
+            "fileID": 0
+          },
+          "blueprintTable": {
+            "fileID": 0
+          },
+          "blueprintRarityWeightTable": {
+            "fileID": 0
+          },
+          "relicData": {
+            "fileID": 0
+          },
+          "enemyData": {
+            "fileID": 0
+          }
+        }
+      ],
+      "customEffectHandler": {
+        "fileID": 0
+      },
+      "resolvedEffects": [
+        {
+          "trigger": "OnStatusApplied",
+          "effect": "ReplaceEnemyStatusApplication",
+          "data": {
+            "effectName": "水蚀转易伤",
+            "trigger": 1,
+            "effectType": 138,
+            "chance": 1,
+            "requireUnvisitedTile": false,
+            "statusData": {
+              "name": "Vulnerable",
+              "path": "Assets/Data/Battle/Vulnerable/Vulnerable.asset",
+              "guid": "2c61804cb51b40ceb349418fab5290ba",
+              "valid": true
+            },
+            "amount": 15,
+            "conditionStatusData": {
+              "name": "Erode",
+              "path": "Assets/Data/Battle/Erode/Erode.asset",
+              "guid": "2b1de364dbf64720becc8b60618c3be3",
+              "valid": true
+            },
+            "requiredStatusStacks": 1,
+            "requiredSpeed": 1,
+            "requiredSpeedMin": 1,
+            "requiredSpeedMax": 1,
+            "statusApplyTiming": 0,
+            "applyAfterRoundStarts": 1,
+            "requiredRound": 1,
+            "requiredRoundMin": 1,
+            "requiredRoundMax": 1,
+            "powerAmount": 0,
+            "minPowerAmount": 0,
+            "maxPowerAmount": 0,
+            "maxStacks": 1,
+            "requiredDistinctStatusCount": 1,
+            "requiredConsecutiveSkillUses": 1,
+            "relicTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "blueprintTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "blueprintRarityWeightTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "relicData": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "enemyData": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            }
+          },
+          "references": {
+            "statusData": {
+              "name": "Vulnerable",
+              "path": "Assets/Data/Battle/Vulnerable/Vulnerable.asset",
+              "guid": "2c61804cb51b40ceb349418fab5290ba",
+              "valid": true
+            },
+            "conditionStatusData": {
+              "name": "Erode",
+              "path": "Assets/Data/Battle/Erode/Erode.asset",
+              "guid": "2b1de364dbf64720becc8b60618c3be3",
+              "valid": true
+            },
+            "relicTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "blueprintTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "blueprintRarityWeightTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "relicData": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "enemyData": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            }
+          }
+        }
+      ],
+      "referencedByRelicTables": [
+        "Assets/Data/Relics/OuterEliteRelicLoot.asset"
+      ],
+      "source": "碎潮盐瓶.asset",
+      "triggerNames": "状态施加时",
+      "effectNames": [
+        "ReplaceEnemyStatusApplication"
+      ],
+      "isNew": true,
+      "configVerifiedAt": "2026-10-29"
     }
   ]
 }

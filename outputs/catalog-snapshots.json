@@ -15,10 +15,10 @@
   "relicCatalog": {
     "directory": "outputs/relic-catalog",
     "snapshotDate": "2026-10-29",
-    "relicCount": 159,
+    "relicCount": 160,
     "categoryCount": 17,
-    "newCatalogNumbers": "143–159 (159 is the fixed reforge result with actual relicId yin_yang_fish)",
-    "coverage": "All 159 current asset configurations exported from the editor. Main mechanics for 17 additions and historical relics 12/19/30/59/112/134/138 reviewed; the other 135 historical mechanism notes retained. Latest damage reductions: 30/112/134=10%, 12/19=20%; fixed relic 134 attack trigger. Verified 10 editor runtime condition/met-unmet cases, in addition to the prior 9 new and 27 related EditMode tests. No full playthrough.",
+    "newCatalogNumbers": "143–160 (159 is the fixed reforge result with actual relicId yin_yang_fish)",
+    "coverage": "All 160 current asset configurations exported from the editor. Main mechanics for 18 additions (143-160) and historical relics 12/19/30/59/79/112/134/138 reviewed; the other 134 historical mechanism notes retained. Added rare Tidebreaker Salt Flask 160: each positive enemy Erode application becomes base 15 Vulnerable, including queued effects; Wave Cry 79 now contributes 5 per Erode stack. Regression validation covers direct/queued/skill applications, immunity/resistance, ownership and Wave Cry interaction. No full playthrough.",
     "deliverables": [
       "遗物完整图鉴.html",
       "遗物体系完整表.md",
@@ -30,10 +30,24 @@
       19,
       30,
       59,
+      79,
       112,
       134,
       138
-    ]
+    ],
+    "latestValidation": {
+      "focusedEditMode": {
+        "total": 27,
+        "passed": 27,
+        "newConversionCases": 12
+      },
+      "extendedEditMode": {
+        "total": 35,
+        "passed": 34,
+        "failed": 1,
+        "unrelatedFailure": "MerchantWhiteSlip expects money=0; unchanged debt purchase logic returns -98."
+      }
+    }
   },
   "note": "The enemy catalog remains the 2026-10-26 historical snapshot and does not include the merged Blood Spore stat update. The relic catalog was refreshed on 2026-10-29; consult its coverage note and Assets/Data for current gameplay values."
 }

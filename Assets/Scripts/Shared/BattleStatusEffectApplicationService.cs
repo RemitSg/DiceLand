@@ -17,6 +17,14 @@ public static class BattleStatusEffectApplicationService
         if (!BattleStatusResolutionService.TryResolve(effect.statusData, effect.statusType, out BattleResolvedStatus resolvedStatus))
             return false;
 
+        return TryBuildPlan(effect, adjustedStacks, resolvedStatus, out result);
+    }
+
+    public static bool TryBuildPlan(
+        EnemySkill_SO.StatusEffectEntry effect, int adjustedStacks,
+        BattleResolvedStatus resolvedStatus, out BattleStatusEffectApplicationPlan result)
+    {
+        result = default;
         result.StatusData = resolvedStatus.StatusData;
         result.StatusId = resolvedStatus.StatusId;
         result.StatusName = resolvedStatus.StatusName;

@@ -4564,7 +4564,16 @@ public partial class BattleButton : MonoBehaviour
             {
                 if (!IsEnemyStatusEffectConditionMet(attacker, attacker, effect))
                     continue;
-                if (!BattleStatusEffectApplicationService.TryBuildPlan(effect, effect.stackAmount, out BattleStatusEffectApplicationPlan statusPlan))
+                if (!BattleStatusResolutionService.TryResolve(effect.statusData, effect.statusType, out BattleResolvedStatus resolvedStatus))
+                    continue;
+                int stacksToApply = effect.stackAmount;
+                if (RelicSystem.TryResolveEnemyStatusReplacement(resolvedStatus.StatusData, resolvedStatus.StatusId, stacksToApply,
+                    out BattleResolvedStatus replacement, out int replacementStacks))
+                {
+                    resolvedStatus = replacement;
+                    stacksToApply = replacementStacks;
+                }
+                if (!BattleStatusEffectApplicationService.TryBuildPlan(effect, stacksToApply, resolvedStatus, out BattleStatusEffectApplicationPlan statusPlan))
                     continue;
                 BattleStatusApplicationPlan plan = statusPlan.ApplicationPlan;
                 if (plan.IsDelayed)
@@ -4672,8 +4681,15 @@ public partial class BattleButton : MonoBehaviour
     {
         if (!BattleStatusResolutionService.TryResolve(effect.statusData, effect.statusType, out BattleResolvedStatus resolvedStatus))
             return;
-        int adjustedStacks = ResolvePlayerRelicAdjustedStatusStacks(resolvedStatus.StatusData, resolvedStatus.StatusId, resolvedStatus.StatusName, effect.stackAmount, attacker, target);
-        if (!BattleStatusEffectApplicationService.TryBuildPlan(effect, adjustedStacks, out BattleStatusEffectApplicationPlan statusPlan))
+        int baseStacks = effect.stackAmount;
+        if (RelicSystem.TryResolveEnemyStatusReplacement(resolvedStatus.StatusData, resolvedStatus.StatusId, baseStacks,
+            out BattleResolvedStatus replacement, out int replacementStacks))
+        {
+            resolvedStatus = replacement;
+            baseStacks = replacementStacks;
+        }
+        int adjustedStacks = ResolvePlayerRelicAdjustedStatusStacks(resolvedStatus.StatusData, resolvedStatus.StatusId, resolvedStatus.StatusName, baseStacks, attacker, target);
+        if (!BattleStatusEffectApplicationService.TryBuildPlan(effect, adjustedStacks, resolvedStatus, out BattleStatusEffectApplicationPlan statusPlan))
             return;
         BattleStatusApplicationPlan plan = statusPlan.ApplicationPlan;
         BattleStatusApplicationDispatcher.Execute(

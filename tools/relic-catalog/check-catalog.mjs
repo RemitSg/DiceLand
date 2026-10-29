@@ -15,18 +15,22 @@ const screenshot=async name=>page.screenshot({path:`${dir}/${name}-preview.png`}
 let checks=0;function equal(a,b){assert.deepEqual(a,b);checks++;}
 try{
  await page.goto(pathToFileURL(path.resolve(`${dir}/遗物完整图鉴.html`)).href);
- equal((await ids()).length,159);equal((await ids())[0],1);equal((await ids()).at(-1),159);
+ equal((await ids()).length,data.count);equal((await ids())[0],1);equal((await ids()).at(-1),data.relics.at(-1).id);
  await page.locator('#results img').evaluateAll(nodes=>Promise.all(nodes.map(n=>{n.loading='eager';return n.decode();})));
  equal(await page.locator('#results img').evaluateAll(ns=>ns.every(n=>n.complete&&n.naturalWidth>0)),true);
  await screenshot('desktop');
  for(const group of data.groups){await page.locator(`[data-category="${group.name}"]`).click();equal(await ids(),data.relics.filter(r=>r.category===group.name).map(r=>r.id));}
  await reset();await page.locator('#new-only').click();equal(await ids(),data.newIds);await page.locator('#direction').click();equal(await ids(),[...data.newIds].reverse());await screenshot('new-relics');
+ if(data.relics.some(r=>r.id===160)){
+  await page.locator('[data-id="160"]').screenshot({path:`${dir}/salt-card-preview.png`});
+  await page.locator('[data-open="160"]').click();equal(await page.locator('#detail-name').textContent(),'碎潮盐瓶');equal(await page.locator('#detail-content .rarity').textContent(),'稀有');await screenshot('salt-detail');await page.locator('#close').click();
+ }
  const downloadPromise=page.waitForEvent('download');await page.locator('#export').click();const download=await downloadPromise;await download.saveAs(`${qa}/new-relics.csv`);
  await page.locator('[data-open="159"]').click();equal(await page.locator('#detail').evaluate(d=>d.open),true);assert.match(await page.locator('#detail-content').textContent(),/yin_yang_fish/);checks++;
  await page.reload();equal(await page.locator('#detail').evaluate(d=>d.open),true);equal(await page.locator('#detail-name').textContent(),'阴阳鱼');
  await page.locator('[data-related="157"]').click();equal(await page.locator('#detail-name').textContent(),'阴鱼');await page.keyboard.press('Escape');equal(await page.locator('#detail').evaluate(d=>d.open),false);
  await reset();await page.locator('#rarity').selectOption('5');equal(await ids(),data.relics.filter(r=>r.rarity===5).map(r=>r.id));
- await reset();await page.locator('#query').fill('１４３–１５９');equal(await ids(),data.newIds);
+ await reset();await page.locator('#query').fill('１４３–１５９');equal(await ids(),data.newIds.filter(id=>id<=159));
  await page.locator('#query').fill('#159');equal(await ids(),[159]);
  await page.locator('#query').fill('护盾');const shield=data.relics.filter(r=>[r.id,r.relicId,r.relicName,r.description,r.category,r.role,r.tags,r.note,r.triggerNames].join(' ').includes('护盾'));equal(await ids(),shield.map(r=>r.id));
  await page.locator('#rarity').selectOption('2');equal(await ids(),shield.filter(r=>r.rarity===2).map(r=>r.id));
@@ -34,7 +38,7 @@ try{
  await reset();await page.locator('#sort').selectOption('rarity');equal(await ids(),[...data.relics].sort((a,b)=>a.rarity-b.rarity||a.id-b.id).map(r=>r.id));
  await reset();await page.locator('#sort').selectOption('category');const groupOrder=new Map(data.groups.map((g,i)=>[g.name,i]));equal(await ids(),[...data.relics].sort((a,b)=>groupOrder.get(a.category)-groupOrder.get(b.category)||a.id-b.id).map(r=>r.id));
  await reset();await page.locator('#issues-only').check();equal(await ids(),data.relics.filter(r=>r.discrepancy).map(r=>r.id));await reset();await page.locator('[data-open="146"]').click();assert.match(await page.locator('.note').textContent(),/每名角色每回合仅首次防御骰拼点胜利/);checks++;await screenshot('detail');await page.locator('#close').click();
- await reset();await page.locator('[data-fav="144"]').click();await page.locator('#favorites-only').check();equal(await ids(),[144]);await page.reload();equal(await ids(),[144]);await page.locator('[data-fav="144"]').click();equal((await ids()).length,0);await page.locator('#empty-reset').click();equal((await ids()).length,159);
+ await reset();await page.locator('[data-fav="144"]').click();await page.locator('#favorites-only').check();equal(await ids(),[144]);await page.reload();equal(await ids(),[144]);await page.locator('[data-fav="144"]').click();equal((await ids()).length,0);await page.locator('#empty-reset').click();equal((await ids()).length,data.count);
  await page.locator('#query').fill('不存在的遗物zz');equal((await ids()).length,0);equal(await page.locator('#export').isDisabled(),true);await page.locator('#empty-reset').click();
  await page.locator('#query').fill('143');await page.locator('[data-open="143"]').click();await page.locator('[data-tag="商店"]').click();equal(await page.locator('#query').inputValue(),'商店');assert.ok((await ids()).length>0);checks++;
  await reset();await page.locator('#new-only').click();await page.locator('#view-list').click();await screenshot('list');

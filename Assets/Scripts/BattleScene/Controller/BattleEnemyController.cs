@@ -766,6 +766,7 @@ public class BattleEnemyController : MonoBehaviour
     {
         if (IsDead || stackAmount <= 0)
             return false;
+        ResolveRelicStatusReplacement(ref statusData, ref fallbackStatusId, ref fallbackDisplayName, ref stackAmount);
         if (!CanReceiveStatusApplication(statusData, fallbackStatusId))
             return false;
         if (TryConsumeResistanceAgainstIncomingStatus(statusData, fallbackStatusId))
@@ -812,6 +813,7 @@ public class BattleEnemyController : MonoBehaviour
     {
         if (IsDead || stackAmount <= 0)
             return false;
+        ResolveRelicStatusReplacement(ref statusData, ref fallbackStatusId, ref fallbackDisplayName, ref stackAmount);
         if (!CanReceiveStatusApplication(statusData, fallbackStatusId))
             return false;
 
@@ -2232,6 +2234,19 @@ public class BattleEnemyController : MonoBehaviour
         if (!string.IsNullOrWhiteSpace(fallbackStatusId))
             return fallbackStatusId;
         return fallbackDisplayName ?? string.Empty;
+    }
+
+    private static void ResolveRelicStatusReplacement(
+        ref BattleStatus_SO statusData, ref string fallbackStatusId, ref string fallbackDisplayName, ref int stackAmount)
+    {
+        if (!RelicSystem.TryResolveEnemyStatusReplacement(statusData, fallbackStatusId, stackAmount,
+            out BattleResolvedStatus replacement, out int replacementStacks))
+            return;
+
+        statusData = replacement.StatusData;
+        fallbackStatusId = replacement.StatusId;
+        fallbackDisplayName = replacement.StatusName;
+        stackAmount = replacementStacks;
     }
 
     private bool CanReceiveStatusApplication(BattleStatus_SO statusData, string fallbackStatusId)
