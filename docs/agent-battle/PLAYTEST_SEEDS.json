@@ -27,6 +27,15 @@
       "scope": "Fresh zero-progress Easy,418 native actions verified;14 wins then Boss34/75HP round5 defeat.",
       "profile": "easy-run4-20261028-9a3add936f",
       "score": 1521
+    },
+    {
+      "run": "easy-20261029-run5",
+      "seed": 2026102905,
+      "outcome": "victory",
+      "scope": "All decisions by model;301 public actions verified,12/12 victories,26 rounds,Boss54HP killed round5,four survivors.",
+      "profile": "easy-run5-20261029-85542ae989",
+      "score": 4560,
+      "abilityPoints": 4
     }
   ]
 }

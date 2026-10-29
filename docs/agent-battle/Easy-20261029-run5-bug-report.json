@@ -1,0 +1,120 @@
+{
+  "run": "easy-20261029-run5",
+  "seed": 2026102905,
+  "outcome": "victory",
+  "currentRunCandidates": [
+    {
+      "id": "EMPTY_RECIPE_REWARD",
+      "title": "宝藏仍投放空配方图纸",
+      "category": "配置 / 奖励目录",
+      "confidence": "本局观察到投放；不可制作结论来自第二局，未在本局重试",
+      "expected": "可选图纸应有可用制作配方，或明确标出不可制作的原因。",
+      "observed": "宝藏候选selectable=true，但公开目录的材料列表为空；第二局曾持有同图纸且铁匠canCraft=false。",
+      "firstStep": 15,
+      "occurrences": 1,
+      "evidence": [
+        {
+          "step": 15,
+          "position": [
+            1,
+            5
+          ],
+          "blueprint": {
+            "id": "cdb2bfefecf4f254591220820465be9d",
+            "name": "曦誓之卷",
+            "description": "记载着如何打造 【曦誓剑】 的卷轴",
+            "rarity": "Rare",
+            "weapon": "60f938b00f1b42e19b517f1e12b86d06",
+            "materials": []
+          },
+          "offeredOption": {
+            "index": 1,
+            "money": 0,
+            "kind": "Blueprint",
+            "title": "知识",
+            "description": "获得 1 张图纸：曦誓之卷",
+            "unavailableReason": "",
+            "blueprint": "cdb2bfefecf4f254591220820465be9d",
+            "relic": "",
+            "rarity": "Rare",
+            "selectable": true
+          },
+          "historicalEvidence": "../easy-20261028-retry/play-log.html#step-39",
+          "selected": false
+        }
+      ],
+      "gameplayModifiedForInvestigation": false
+    },
+    {
+      "id": "BLUEPRINT_LABEL_DRIFT",
+      "title": "同一图纸目录中文名与库存名称不一致",
+      "category": "P3 / 接口显示一致性",
+      "confidence": "本局两张图纸的GUID与中文目录名、英文库存名可直接对照；是否统一显示名待确认。",
+      "firstStep": 173,
+      "occurrences": 2,
+      "observed": "寒芒之卷在库存显示FrostGleam，掠风之卷显示GaleDagger。ID相同，实际制作成功；不影响用ID操作，但按名称查找可能混淆。",
+      "evidence": [
+        {
+          "step": 173,
+          "id": "ed9fa5d7fef47e6469b8d7d90ee09e85",
+          "catalogueName": "寒芒之卷",
+          "inventoryName": "FrostGleam"
+        },
+        {
+          "step": 196,
+          "id": "92acecee0fb6482439cf2377650ec517",
+          "catalogueName": "掠风之卷",
+          "inventoryName": "GaleDagger"
+        }
+      ],
+      "gameplayModifiedForInvestigation": false
+    }
+  ],
+  "historicalOrMetadataIssues": [
+    {
+      "id": "HISTORICAL_BOSS_IMMUNITY",
+      "title": "Boss免疫引用缺失：历史问题，本局未作运行复现",
+      "confidence": "本局固定克隆资产仍含相同缺失GUID；本局未给Boss施加电流，不把历史爆发伤害算作本局证据。",
+      "guid": "504abc372b3b3644bae0ccb7da7e9ce1",
+      "asset": "Assets/Data/Enemies/Enemies/011 ThunderLord/ThunderLord.asset"
+    },
+    {
+      "id": "CHARA_STARTING_WEAPON_METADATA",
+      "title": "Chara目录初始武器仍为空",
+      "confidence": "本局目录为空、实际开局为新手木剑；模型参考实际开局状态，未调用准备评分。属于已知元数据缺项，未影响本局换装识别。"
+    }
+  ],
+  "agentMistakesOrUncertainty": [
+    {
+      "step": 83,
+      "detail": "第二场副本战把Jenny命中和Chara横砍溅射当作残血兜底，但两条路径都依赖拼点成功，实际一败一平使水雪人仍有1HP。下一轮改用Molly低速无阻攻击，才有不依赖拼点胜利的补刀。"
+    },
+    {
+      "step": 228,
+      "detail": "小猫三项后果均为？？？，选择喂食后全队各损失1HP，关闭满血遗物条件。公开信息不足，不能事后声称当时知道正确选项；随后断桥绕路治疗补回损失。"
+    },
+    {
+      "step": 240,
+      "detail": "初序木片购买时是首轮增益计划，随后看到实际同阶重铸预览才与雕像换龙鳞甲；不能把最终有利结果改写成事先预知。"
+    },
+    {
+      "step": 45,
+      "detail": "早期对中毒的减骰作用估计不够明确；后续实际观察显示它降低骰子上限，本局不把未发生的毒伤计为输出。"
+    }
+  ],
+  "notReproduced": [
+    "此前剩余HP日志症状：当前检测器在26轮内未报告。",
+    "低语井入场未扣AP：本局选择拒绝进入，没有重现入口扣费。",
+    "旧赌桌重开：本局未遇到。",
+    "不屈＋回血：本局选敌人每轮回复2，但未选不屈，不宣称组合已在自然对局覆盖。"
+  ],
+  "successfulCoverage": [
+    "12场自然战斗全部胜利，Boss完整转第二阶段后死亡。",
+    "反复出现的门两场战斗、宝藏和右出口完成。",
+    "三次招募、三件武器制作并装备、两次付费商店刷新、战利品/遗物各一次重铸。",
+    "Boss第三轮用寒冷强化星芒两段赢一枪贯世，未触发全队伤害。",
+    "龙鳞甲与免费充能实际承接第一轮雷罚，Jenny29→29。",
+    "301条原生回放一致，正式获得4点未花能力点。"
+  ],
+  "scope": "只读核对自然游玩观察；未注入资源、改配置、加载回滚或额外开局来造复现。本局新增/残留疑点不等于已修复。"
+}
