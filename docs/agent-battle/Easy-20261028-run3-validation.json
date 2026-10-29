@@ -1,0 +1,793 @@
+{
+  "date": "2026-10-28",
+  "task": "Play one fresh autonomous Easy run using the repaired policy; preserve every decision and round and record possible game bugs",
+  "status": "Third genuine run completed and settled in defeat after nine victories. Boss second phase reached; 23/75HP left. No victory claim.",
+  "policyVersion": {
+    "commit": "6ec5411d34305bfeaa8d5ace3f2af861a9146a6a",
+    "sha256": "046b63e07aac1e765d45e097caf04180f352e7654b7b6765afdb56fd7b2adaba",
+    "seed": 20261028,
+    "newZeroProgressProfile": true,
+    "noReload": true,
+    "engineOrBalanceEdits": false
+  },
+  "policyUnchangedThroughoutRun": true,
+  "policyTests": {
+    "passed": 47,
+    "failed": 0
+  },
+  "actualRun": {
+    "seed": 20261028,
+    "sameSeedForComparison": true,
+    "newProfile": "easy-run3-20261028-3b4ba2e772",
+    "initialPoints": 0,
+    "initialUnlockedNodes": 0,
+    "actions": 434,
+    "battles": 10,
+    "wins": 9,
+    "rounds": 44,
+    "clashDiceMessages": 72,
+    "outcome": "defeat",
+    "score": 1091,
+    "baseScore": 1091,
+    "abilityPointsGained": 1,
+    "durationSeconds": 2344,
+    "noReloadOrReroll": true,
+    "noResourceOrOutcomeInjection": true,
+    "onlyPublicCommands": true,
+    "battleResults": [
+      {
+        "battle": 1,
+        "position": [
+          6,
+          5
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "焰蛾(ID:2)"
+        ],
+        "rounds": 2,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[新手木剑]",
+            "hp": 16,
+            "maxHp": 16,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Molly[破旧匕首]",
+            "hp": 14,
+            "maxHp": 14,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Jenny[老旧法杖]",
+            "hp": 15,
+            "maxHp": 15,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "焰蛾(ID:2)",
+            "hp": 0,
+            "maxHp": 12,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 2,
+        "position": [
+          6,
+          4
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "磁电质(ID:5)",
+          "磁电质(ID:5)"
+        ],
+        "rounds": 3,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[新手木剑]",
+            "hp": 16,
+            "maxHp": 16,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Molly[破旧匕首]",
+            "hp": 14,
+            "maxHp": 14,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Jenny[老旧法杖]",
+            "hp": 15,
+            "maxHp": 15,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "磁电质(ID:5)",
+            "hp": 0,
+            "maxHp": 6,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_1",
+            "name": "磁电质(ID:5)",
+            "hp": 0,
+            "maxHp": 6,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 3,
+        "position": [
+          6,
+          3
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "旋速螺(ID:4)",
+          "旋速螺(ID:4)"
+        ],
+        "rounds": 2,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[新手木剑]",
+            "hp": 19,
+            "maxHp": 19,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Molly[破旧匕首]",
+            "hp": 16,
+            "maxHp": 17,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Jenny[老旧法杖]",
+            "hp": 18,
+            "maxHp": 18,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "旋速螺(ID:4)",
+            "hp": 0,
+            "maxHp": 5,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_1",
+            "name": "旋速螺(ID:4)",
+            "hp": 0,
+            "maxHp": 5,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 4,
+        "position": [
+          6,
+          2
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "绿色史莱姆(ID:1)",
+          "绿色史莱姆(ID:1)"
+        ],
+        "rounds": 3,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[新手木剑]",
+            "hp": 19,
+            "maxHp": 19,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Molly[破旧匕首]",
+            "hp": 16,
+            "maxHp": 17,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Jenny[老旧法杖]",
+            "hp": 18,
+            "maxHp": 18,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "绿色史莱姆(ID:1)",
+            "hp": 0,
+            "maxHp": 5,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_1",
+            "name": "绿色史莱姆(ID:1)",
+            "hp": 0,
+            "maxHp": 5,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 5,
+        "position": [
+          5,
+          0
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "水雪人(ID:3)"
+        ],
+        "rounds": 2,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[新手木剑]",
+            "hp": 19,
+            "maxHp": 19,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Molly[破旧匕首]",
+            "hp": 13,
+            "maxHp": 17,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Jenny[老旧法杖]",
+            "hp": 18,
+            "maxHp": 18,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "水雪人(ID:3)",
+            "hp": 0,
+            "maxHp": 10,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 6,
+        "position": [
+          4,
+          0
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "磁电质(ID:5)",
+          "磁电质(ID:5)"
+        ],
+        "rounds": 3,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[新手木剑]",
+            "hp": 22,
+            "maxHp": 22,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Molly[掠风短匕]",
+            "hp": 23,
+            "maxHp": 23,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Jenny[老旧法杖]",
+            "hp": 24,
+            "maxHp": 24,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_3",
+            "name": "Man[“无敌”]",
+            "hp": 18,
+            "maxHp": 20,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "磁电质(ID:5)",
+            "hp": 0,
+            "maxHp": 8,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_1",
+            "name": "磁电质(ID:5)",
+            "hp": 0,
+            "maxHp": 8,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 7,
+        "position": [
+          3,
+          0
+        ],
+        "tile": "Elite",
+        "enemies": [
+          "浪灵(ID:7)"
+        ],
+        "rounds": 5,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[新手木剑]",
+            "hp": 19,
+            "maxHp": 22,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Molly[掠风短匕]",
+            "hp": 23,
+            "maxHp": 23,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Jenny[老旧法杖]",
+            "hp": 23,
+            "maxHp": 24,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_3",
+            "name": "Man[“无敌”]",
+            "hp": 7,
+            "maxHp": 20,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "浪灵(ID:7)",
+            "hp": 0,
+            "maxHp": 42,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 8,
+        "position": [
+          2,
+          0
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "磁电质(ID:5)",
+          "磁电质(ID:5)"
+        ],
+        "rounds": 2,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[新手木剑]",
+            "hp": 19,
+            "maxHp": 22,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Molly[掠风短匕]",
+            "hp": 23,
+            "maxHp": 23,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Jenny[老旧法杖]",
+            "hp": 23,
+            "maxHp": 24,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_3",
+            "name": "Man[“无敌”]",
+            "hp": 19,
+            "maxHp": 23,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "磁电质(ID:5)",
+            "hp": 0,
+            "maxHp": 8,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_1",
+            "name": "磁电质(ID:5)",
+            "hp": 0,
+            "maxHp": 8,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 9,
+        "position": [
+          2,
+          2
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "巨型绿色史莱姆(ID:17)"
+        ],
+        "rounds": 11,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[新手木剑]",
+            "hp": 13,
+            "maxHp": 22,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Molly[掠风短匕]",
+            "hp": 21,
+            "maxHp": 23,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Jenny[老旧法杖]",
+            "hp": 12,
+            "maxHp": 24,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_3",
+            "name": "Man[电磁断斧]",
+            "hp": 13,
+            "maxHp": 23,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "巨型绿色史莱姆(ID:17)",
+            "hp": 0,
+            "maxHp": 42,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_5",
+            "name": "绿色史莱姆(ID:1)",
+            "hp": 0,
+            "maxHp": 7,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_6",
+            "name": "绿色史莱姆(ID:1)",
+            "hp": 0,
+            "maxHp": 7,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_7",
+            "name": "绿色史莱姆(ID:1)",
+            "hp": 0,
+            "maxHp": 7,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_8",
+            "name": "绿色史莱姆(ID:1)",
+            "hp": 0,
+            "maxHp": 7,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_9",
+            "name": "绿色史莱姆(ID:1)",
+            "hp": 0,
+            "maxHp": 7,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_10",
+            "name": "绿色史莱姆(ID:1)",
+            "hp": 0,
+            "maxHp": 7,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 10,
+        "position": [
+          3,
+          3
+        ],
+        "tile": "Boss",
+        "enemies": [
+          "雷寰霸主(ID:11)"
+        ],
+        "rounds": 11,
+        "outcome": "defeat",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[新手木剑]",
+            "hp": 0,
+            "maxHp": 25,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Molly[掠风短匕]",
+            "hp": 0,
+            "maxHp": 26,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Jenny[老旧法杖]",
+            "hp": 0,
+            "maxHp": 27,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "ally_3",
+            "name": "Man[电磁断斧]",
+            "hp": 0,
+            "maxHp": 29,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "雷寰霸主(ID:11)",
+            "hp": 23,
+            "maxHp": 75,
+            "dead": false,
+            "stage": 1
+          }
+        ]
+      }
+    ],
+    "bossInitialHp": 75,
+    "bossRemainingHp": 23,
+    "bossRounds": 11,
+    "verification": {
+      "verified": true,
+      "commandsChecked": 434,
+      "finalStateHash": "7a1bff1e5498690d470b97c1a609d610ed0c93803597bf2835f6c0fbb39ddcf3"
+    },
+    "verificationDidNotChangeProfile": true,
+    "contentHash": "46431b698bb54ad61c8d97e8225052af179160f066d675f735aad1620c6e72f8"
+  },
+  "autonomyScope": "Agent chose route and made legal tactical Boss overrides from actual observations. The generic heuristic alone is not claimed to beat Easy. No policy changes during play.",
+  "comparisonScope": "Same seed and zero initial progress; different choices change later RNG, so this is not a controlled proof of individual policy improvements.",
+  "bugs": {
+    "report": "docs/agent-battle/Easy-20261028-run3-bug-report.json",
+    "counts": {
+      "currentCandidates": 3,
+      "currentHighConfidenceDisplaySymptoms": 1,
+      "historicalNotReproduced": 1,
+      "agentIssues": 2
+    },
+    "notAllConfirmed": true,
+    "noGameplayModifiedForBugReproduction": true,
+    "agentMistakesSeparate": true,
+    "historicalNotReproducedSeparate": true
+  },
+  "noEngineOrBalanceChanges": true,
+  "sourceMatch": {
+    "filesCompared": 3199,
+    "contentHash": "46431b698bb54ad61c8d97e8225052af179160f066d675f735aad1620c6e72f8",
+    "allEqual": true
+  },
+  "unity": {
+    "rerun": false,
+    "reason": "Recorded one actual run using the unchanged validated host; only evidence and documentation added.",
+    "previousBaseline": {
+      "total": 996,
+      "passed": 975,
+      "failed": 21
+    },
+    "playMode": "Known earlier failures remain unresolved; not rerun or claimed green"
+  },
+  "environment": {
+    "testHostPid": 57284,
+    "testHostStopped": true,
+    "originalEditorPid": 21328,
+    "originalEditorRestarted": false,
+    "userSceneSaved": false
+  },
+  "artifacts": {
+    "outputs/agent-battle/easy-20261028-run3/play-log.html": {
+      "bytes": 2647113,
+      "sha256": "1c27e4f406f5c47c79494642093287ca5bbb77718e5a6b7a7ea72ded654d29e7"
+    },
+    "outputs/agent-battle/easy-20261028-run3/play-log.txt": {
+      "bytes": 4697068,
+      "sha256": "64edc7286b3f6f882a9e8ca49b1d409453f354866a8fe43f97e52e206137eeff"
+    },
+    "outputs/agent-battle/easy-20261028-run3/bug-report.html": {
+      "bytes": 22972,
+      "sha256": "22943dad9b037f2a285cea81f0368e6bf8400b4ffe2fba01f8034308ce487800"
+    },
+    "outputs/agent-battle/easy-20261028-run3/bug-report.json": {
+      "bytes": 14534,
+      "sha256": "42851803d84a3fd81057263eb1e69ecbbd3b29c6224d241273ac2e483e3f9e57"
+    },
+    "outputs/agent-battle/easy-20261028-run3/summary.json": {
+      "bytes": 30623,
+      "sha256": "16f212d88acc62338f578f72c81c0f616bf7070b001db2cf344c387e16fa3f65"
+    },
+    "outputs/agent-battle/easy-20261028-run3/decisions.jsonl": {
+      "bytes": 897842,
+      "sha256": "15c6fbbdd99e9d655ecb792cdf97f3c71d5240d7af1fcbed16d7a9d53e91c5f8"
+    },
+    "outputs/agent-battle/easy-20261028-run3/requests.jsonl": {
+      "bytes": 333456,
+      "sha256": "51b68d4920c5ff33ac37fb6cf23540a6e865d5eebd6ea9141f657b013ca7abc4"
+    },
+    "outputs/agent-battle/easy-20261028-run3/rounds.jsonl": {
+      "bytes": 3748289,
+      "sha256": "a526515aee4bacc386931f1a249772d111e4c618d37a0ed7f979de1fe7244b22"
+    },
+    "outputs/agent-battle/easy-20261028-run3/battles.jsonl": {
+      "bytes": 133919,
+      "sha256": "b885da0be8492d9913af7ee38439f26c7e531ae7c03c9ca94bda56088b50492e"
+    },
+    "outputs/agent-battle/easy-20261028-run3/observations.jsonl.gz": {
+      "bytes": 5587912,
+      "sha256": "9ea33d216c06f7d87887f0a6206611f908dcc6fb84d554ded2b4531ce0318567"
+    },
+    "outputs/agent-battle/easy-20261028-run3/replay.json": {
+      "bytes": 329853,
+      "sha256": "4278d7ce9f188909f2b227cd88c6eebc912e92c70a95bbb2659bd6006c6bac03"
+    },
+    "outputs/agent-battle/easy-20261028-run3/verification.json": {
+      "bytes": 42969,
+      "sha256": "df44241d2d0ac0edbe5fe82476e2995eabd4595324e6e95a8f47110e95096aea"
+    },
+    "outputs/agent-battle/easy-20261028-run3/initial.json": {
+      "bytes": 33876,
+      "sha256": "edb2e3514017984b943f147f86f97de1ecbc4ad9ced6adeca9cf8e4905ae0dcf"
+    },
+    "outputs/agent-battle/easy-20261028-run3/live.json": {
+      "bytes": 39604,
+      "sha256": "66a2330a43d672245e0a61996a168f070ee0c6322a5a2b3954f3c0478f14d012"
+    },
+    "outputs/agent-battle/easy-20261028-run3/catalog.json": {
+      "bytes": 138394,
+      "sha256": "d12f8111252079e7f89687614f1d8864b85b4fb50d0c44a26583d27349b73b3e"
+    },
+    "outputs/agent-battle/easy-20261028-run3/meta.json": {
+      "bytes": 795,
+      "sha256": "27043cafb333aa6b088f69aee30bf37c64959b65471768a65e826692dd3f1cbc"
+    },
+    "outputs/agent-battle/easy-20261028-run3/policy-tests.log": {
+      "bytes": 151,
+      "sha256": "a46102e861c36b86b14428ffd4c38c1b2c816c54dd4f4056b74e8283b1e1cda2"
+    },
+    "outputs/agent-battle/easy-20261028-run3/policy-snapshot.py": {
+      "bytes": 19109,
+      "sha256": "046b63e07aac1e765d45e097caf04180f352e7654b7b6765afdb56fd7b2adaba"
+    },
+    "outputs/agent-battle/easy-20261028-run3/policy-version.json": {
+      "bytes": 252,
+      "sha256": "ee7e16bfd721b1535aab79a32a44922055e157739911f292e78732bf42d4bea0"
+    },
+    "outputs/agent-battle/easy-20261028-run3/bug-candidates.json": {
+      "bytes": 9844,
+      "sha256": "54ba38497af244382429c7470b018631288b8bfe1822084eb50351c2e42f53a0"
+    },
+    "outputs/agent-battle/easy-20261028-run3/agent-mistakes.json": {
+      "bytes": 671,
+      "sha256": "6fcde56d43cefdd038a04d65b44a97dbf859a5321a094cd04409e93a8ad450fa"
+    },
+    "outputs/agent-battle/easy-20261028-run3/historical-undying-regen-evidence.json": {
+      "bytes": 9289,
+      "sha256": "09978575f28d2bab685284a6da08b562f769f0881607506a7e17185893fcd263"
+    },
+    "outputs/agent-battle/easy-20261028-run3/content-audit.json": {
+      "bytes": 9306,
+      "sha256": "b3cb1175ec6aa97ad3f5d6032574b51a1e481c0dad05b372e02480c49676f37f"
+    },
+    "outputs/agent-battle/easy-20261028-run3/manifest.json": {
+      "bytes": 3968,
+      "sha256": "a4f26d4219c69edff0e46534105296cc015c59139d9e15e19314f555c54e981e"
+    },
+    "outputs/agent-battle/easy-20261028-run3/Easy第三局完整日志.zip": {
+      "bytes": 5868896,
+      "sha256": "0f69cdd0959836e58411a50684859e2cb1943f645267984607a53bbc7c9e21f5"
+    }
+  }
+}

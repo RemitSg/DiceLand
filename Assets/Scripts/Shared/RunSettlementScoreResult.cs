@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 
+[System.Serializable]
 public sealed class RunSettlementScoreResult
 {
     public int baseScore;

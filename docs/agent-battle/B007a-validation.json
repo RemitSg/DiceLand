@@ -1,0 +1,464 @@
+{
+  "batch": "B007a",
+  "date": "2026-10-27",
+  "status": "implemented and verified; full goal remains active",
+  "scope": "timestamped complete-session journal export and isolated verification; playable restore not implemented",
+  "sourceParent": "c6fabdb6",
+  "environment": {
+    "engine": "Tuanjie Editor 1.8.4 / 2022.3.62t6",
+    "mode": "batchmode -nographics",
+    "validationProject": "outputs\\agent-battle\\b005b-validation-project",
+    "originalEditorRestarted": false,
+    "csharpAndNewMetaFilesMatched": 11,
+    "replayEngineVersion": "2022.3.62t6"
+  },
+  "editMode": {
+    "evidence": "outputs\\agent-battle\\b007a-full.xml",
+    "total": 964,
+    "passed": 943,
+    "failed": 21,
+    "durationSeconds": 185.2060232,
+    "newTests": 16,
+    "newTestsPassed": 16,
+    "baseline": "outputs\\agent-battle\\b006b2-equipment-final.xml",
+    "failureNamesUnchanged": true,
+    "failedTests": [
+      "BattleButtonSkillSelectionTests.AllySpeedButtons_CanKeepIndependentSelectedSkills",
+      "BattleButtonSpriteStateSwitcherTests.OnEnable_AppliesUnpressedSprite",
+      "BattleGamblerPassiveServiceTests.TryApplyDebtInstantDeath_KillsAllyAtThreeDebtStacks",
+      "BattleImmediateEffectPlanServiceTests.ResolveAlly_UsesCurrentAllyImmediateOrder",
+      "BattleSkillInfoOverlayDescriptionTests.CompactSkillDetail_MergesMarkedDelayedStatusBranches",
+      "BattleStatusResolutionServiceTests.TryResolve_ReturnsFalseForUnsupportedLegacyStatus",
+      "BattleTargetingPhaseStartEffectServiceTests.ApplyPendingAllyStatusGrants_AppliesImmediateSpeedBonusForOpeningRoll",
+      "MainMenuSceneControllerTutorialTests.ResolveMenuAction_RecognizesTutorialIdentity",
+      "MapEventNestedFlowTests.SaveAssetCatalog_IncludesNestedFollowUpEvents",
+      "MapTutorialFlowServiceTests.TryConsumeArrivalGuide_ShowsMerchantForgeAndEliteFinalOnce",
+      "PuppetMasterEnemyAssetTests.PuppetMasterAndPuppet_HaveExpectedCoreStatsAndPassives",
+      "PuppetMasterEnemyAssetTests.PuppetMasterEncounter_HasExpectedEnemyGroupComposition",
+      "PuppetMasterEnemyAssetTests.PuppetSkills_HaveExpectedStatusAndRoundRules",
+      "RelicSystem079To094Tests.MerchantWhiteSlip_AllowsPurchaseWhenMoneyPositiveAndSpendsRemainingMoney",
+      "RestSceneReforgeInteractableRelicSelectionTests.HandleRelicSelection_ClickingOnlySelectedRelicAgainClearsSelection",
+      "RestSceneReforgeInteractableRelicSelectionTests.OnMouseUpAsButton_WhenMainPanelIsOpen_DoesNotReturnToOpenPrompt",
+      "TodoWeaponAssetTests.HotAnvilBoard_LoadsWithBurnSpreadAndSelfBurnSkills",
+      "TodoWeaponAssetTests.WeaponCatalog_ContainsTodoWeapons",
+      "TutorialBattleContentFactoryTests.CreateRuntimeDefinition_Battle03_AdvancesWhenAllySkillIsViewed",
+      "TutorialHighlightCoordinateUtilityTests.ConvertScreenRectToReferenceRect_UsesCanvasScalerMatchScale",
+      "WanderingShadowEnemyAssetTests.Echo_UsesConfiguredEffectsAndEventGroup"
+    ]
+  },
+  "python": {
+    "command": "python -B -m unittest discover -s tools/tests -p test_agent_adventure_policy.py -v",
+    "passed": 6,
+    "failed": 0
+  },
+  "http": {
+    "evidence": "outputs\\agent-battle\\b007a-http-proof.json",
+    "hostPid": 62144,
+    "log": "outputs/agent-battle/b007a-http-final.log",
+    "transport": "http://127.0.0.1:8092/v1/command",
+    "checkpointsVerified": 28,
+    "routes": [
+      {
+        "label": "dungeon",
+        "profileId": "b007a-dungeon-57ec27e1",
+        "checkpoints": [
+          {
+            "slot": "b007a-dungeon-1",
+            "revision": 1,
+            "phase": "treasure",
+            "hash": "ca311c38c42da694ff3aa4ab7e52296b3be77a4c067f0b3cb50b5299588468d3",
+            "commands": 1
+          },
+          {
+            "slot": "b007a-dungeon-2",
+            "revision": 2,
+            "phase": "treasure_result",
+            "hash": "e5307811b452a80cd5c78d999274a50f62e5925c7d1270aa43c801af4efaacdf",
+            "commands": 2
+          },
+          {
+            "slot": "b007a-dungeon-3",
+            "revision": 3,
+            "phase": "map",
+            "hash": "235efaff2732a76d9b69de74776b86446756b8c89c42f73eaa872758b2dd1998",
+            "commands": 3
+          },
+          {
+            "slot": "b007a-dungeon-8",
+            "revision": 8,
+            "phase": "rest",
+            "hash": "cc6ddaac80b33a64d4b1ce4b5349d79207b50844a651f1fd286bc64c422518c1",
+            "commands": 8
+          },
+          {
+            "slot": "b007a-dungeon-9",
+            "revision": 9,
+            "phase": "calamity",
+            "hash": "1d42b35707305b1699283515803843dc5ebaad49db3d30fd7fd92a877f0a157b",
+            "commands": 9
+          },
+          {
+            "slot": "b007a-dungeon-13",
+            "revision": 13,
+            "phase": "event",
+            "hash": "da9db5f093152ad10aaf05ff10039fb1bcc30025d59a39e5fcde1cd4f5c62282",
+            "commands": 13
+          },
+          {
+            "slot": "b007a-dungeon-14",
+            "revision": 14,
+            "phase": "event_result",
+            "hash": "e78cfe248b9450d745582fe02257d92084eff99885461fe40e583b12fe4d7ead",
+            "commands": 14
+          },
+          {
+            "slot": "b007a-dungeon-dungeon",
+            "revision": 15,
+            "phase": "map",
+            "hash": "c6ee43d1c8467a47951a38df3fd7d9bf2889db473e869b07e8bc69bbf85498e3",
+            "commands": 15
+          },
+          {
+            "slot": "b007a-dungeon-16",
+            "revision": 16,
+            "phase": "battle",
+            "hash": "4c7483f214cba331230d963296e2fcae31cf840574ca58205572e6c7036c10ed",
+            "commands": 16
+          },
+          {
+            "slot": "b007a-dungeon-49",
+            "revision": 49,
+            "phase": "treasure_relic",
+            "hash": "add2f922a749646600d52d0c981f02abb371af77bcde5a0c06a31deb5370e4b5",
+            "commands": 49
+          },
+          {
+            "slot": "b007a-dungeon-settled",
+            "revision": 53,
+            "phase": "finished",
+            "hash": "022afa505c1c52870cb80241b58cb08a17fa4abb7ab2e75d6b9915986fc24c2a",
+            "commands": 53
+          },
+          {
+            "slot": "b007a-dungeon-next",
+            "revision": 55,
+            "phase": "map",
+            "hash": "71f883cbb16c053120ff43939e89e15aaa003082024967c73bf1415252a4bac0",
+            "commands": 55
+          }
+        ],
+        "verification": [
+          {
+            "verified": true,
+            "commandsChecked": 1,
+            "finalStateHash": "ca311c38c42da694ff3aa4ab7e52296b3be77a4c067f0b3cb50b5299588468d3"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 2,
+            "finalStateHash": "e5307811b452a80cd5c78d999274a50f62e5925c7d1270aa43c801af4efaacdf"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 3,
+            "finalStateHash": "235efaff2732a76d9b69de74776b86446756b8c89c42f73eaa872758b2dd1998"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 8,
+            "finalStateHash": "cc6ddaac80b33a64d4b1ce4b5349d79207b50844a651f1fd286bc64c422518c1"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 9,
+            "finalStateHash": "1d42b35707305b1699283515803843dc5ebaad49db3d30fd7fd92a877f0a157b"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 13,
+            "finalStateHash": "da9db5f093152ad10aaf05ff10039fb1bcc30025d59a39e5fcde1cd4f5c62282"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 14,
+            "finalStateHash": "e78cfe248b9450d745582fe02257d92084eff99885461fe40e583b12fe4d7ead"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 15,
+            "finalStateHash": "c6ee43d1c8467a47951a38df3fd7d9bf2889db473e869b07e8bc69bbf85498e3"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 16,
+            "finalStateHash": "4c7483f214cba331230d963296e2fcae31cf840574ca58205572e6c7036c10ed"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 49,
+            "finalStateHash": "add2f922a749646600d52d0c981f02abb371af77bcde5a0c06a31deb5370e4b5"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 53,
+            "finalStateHash": "022afa505c1c52870cb80241b58cb08a17fa4abb7ab2e75d6b9915986fc24c2a"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 55,
+            "finalStateHash": "71f883cbb16c053120ff43939e89e15aaa003082024967c73bf1415252a4bac0"
+          }
+        ],
+        "profileUnchangedByVerification": true,
+        "activeVerifyRejected": "invalid_request: Close the existing session before verifying a replay."
+      },
+      {
+        "label": "gear",
+        "profileId": "b007a-gear-729f3ce3",
+        "checkpoints": [
+          {
+            "slot": "b007a-gear-1",
+            "revision": 1,
+            "phase": "treasure",
+            "hash": "21852099046bd50991b7cb8c1851ff3babae6329c00fd5ed6a974bccc2e2ea19",
+            "commands": 1
+          },
+          {
+            "slot": "b007a-gear-2",
+            "revision": 2,
+            "phase": "treasure_result",
+            "hash": "274fb785ae88e572073cddd18d215e29c0f08e1c3716beb8a2ba31ea700d40da",
+            "commands": 2
+          },
+          {
+            "slot": "b007a-gear-3",
+            "revision": 3,
+            "phase": "map",
+            "hash": "4217306b5a4165b3f86119c5d1438c3ee281f25841873cbde7fab3baea4499d5",
+            "commands": 3
+          },
+          {
+            "slot": "b007a-gear-8",
+            "revision": 8,
+            "phase": "rest",
+            "hash": "1f584748ade5d476aa3452af54d6dc055bfa33764f24414e9bd5e6e4747c2ad9",
+            "commands": 8
+          },
+          {
+            "slot": "b007a-gear-9",
+            "revision": 9,
+            "phase": "calamity",
+            "hash": "d6c9789cf96ac17632b5633a7b2b1471eeba701f8e72091bb3c89c2542da220c",
+            "commands": 9
+          },
+          {
+            "slot": "b007a-gear-13",
+            "revision": 13,
+            "phase": "event",
+            "hash": "66619a11d4bbe15b90f5a85ae39c47a32bddf0a5afb02e20fd4402a9fab03698",
+            "commands": 13
+          },
+          {
+            "slot": "b007a-gear-14",
+            "revision": 14,
+            "phase": "event_result",
+            "hash": "9035e1284a7419c7d02abdf4b700b6066ab672c0bcc568c59f356507d37c63a2",
+            "commands": 14
+          },
+          {
+            "slot": "b007a-gear-16",
+            "revision": 16,
+            "phase": "battle",
+            "hash": "385c768d86e5af73796731d99c3a0a032ae6b7cb393a90edcc268ca555c83d42",
+            "commands": 16
+          },
+          {
+            "slot": "b007a-gear-49",
+            "revision": 49,
+            "phase": "merchant",
+            "hash": "4abbfc51157c60e70a4a8e07c03b51ac9987e4924b3ecb7dd4080e4ad498a32d",
+            "commands": 49
+          },
+          {
+            "slot": "b007a-gear-56",
+            "revision": 56,
+            "phase": "treasure_relic",
+            "hash": "3982c9e1f0416992d0bb91f258fa9625ce8a9ed43dc24abccff9f4eb4759892a",
+            "commands": 56
+          },
+          {
+            "slot": "b007a-gear-99",
+            "revision": 99,
+            "phase": "forge",
+            "hash": "a6dc6904e55c1bead25d995d583ec37e744043363e320d984dac6a52e9507c16",
+            "commands": 99
+          },
+          {
+            "slot": "b007a-gear-run_craft-99",
+            "revision": 100,
+            "phase": "forge",
+            "hash": "c5240b86a923f0f2009fb77b078f161050f64014d6b0ad7388ce0a1e7c37c41c",
+            "commands": 100
+          },
+          {
+            "slot": "b007a-gear-run_equip-101",
+            "revision": 102,
+            "phase": "map",
+            "hash": "2594d9c53030ff881feae8bfb27b96baffb32ee744346e14cb4c1457c2c4cc24",
+            "commands": 102
+          },
+          {
+            "slot": "b007a-gear-141",
+            "revision": 141,
+            "phase": "defeat_pending_settlement",
+            "hash": "6413d003a019e5b9f8b1c7d14a883bbcb84611403ff2d3cb649d67228c831e52",
+            "commands": 141
+          },
+          {
+            "slot": "b007a-gear-settled",
+            "revision": 142,
+            "phase": "finished",
+            "hash": "e6457f7ca5f72c35ef010726eff2c63ce3d72d5c68e26f911a9f4a83039397b9",
+            "commands": 142
+          },
+          {
+            "slot": "b007a-gear-next",
+            "revision": 144,
+            "phase": "map",
+            "hash": "c18ef2c6ada70936a8fbddbcf2f6fb769e90e7d85a3b440f4b99528042cca2d7",
+            "commands": 144
+          }
+        ],
+        "verification": [
+          {
+            "verified": true,
+            "commandsChecked": 1,
+            "finalStateHash": "21852099046bd50991b7cb8c1851ff3babae6329c00fd5ed6a974bccc2e2ea19"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 2,
+            "finalStateHash": "274fb785ae88e572073cddd18d215e29c0f08e1c3716beb8a2ba31ea700d40da"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 3,
+            "finalStateHash": "4217306b5a4165b3f86119c5d1438c3ee281f25841873cbde7fab3baea4499d5"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 8,
+            "finalStateHash": "1f584748ade5d476aa3452af54d6dc055bfa33764f24414e9bd5e6e4747c2ad9"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 9,
+            "finalStateHash": "d6c9789cf96ac17632b5633a7b2b1471eeba701f8e72091bb3c89c2542da220c"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 13,
+            "finalStateHash": "66619a11d4bbe15b90f5a85ae39c47a32bddf0a5afb02e20fd4402a9fab03698"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 14,
+            "finalStateHash": "9035e1284a7419c7d02abdf4b700b6066ab672c0bcc568c59f356507d37c63a2"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 16,
+            "finalStateHash": "385c768d86e5af73796731d99c3a0a032ae6b7cb393a90edcc268ca555c83d42"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 49,
+            "finalStateHash": "4abbfc51157c60e70a4a8e07c03b51ac9987e4924b3ecb7dd4080e4ad498a32d"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 56,
+            "finalStateHash": "3982c9e1f0416992d0bb91f258fa9625ce8a9ed43dc24abccff9f4eb4759892a"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 99,
+            "finalStateHash": "a6dc6904e55c1bead25d995d583ec37e744043363e320d984dac6a52e9507c16"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 100,
+            "finalStateHash": "c5240b86a923f0f2009fb77b078f161050f64014d6b0ad7388ce0a1e7c37c41c"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 102,
+            "finalStateHash": "2594d9c53030ff881feae8bfb27b96baffb32ee744346e14cb4c1457c2c4cc24"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 141,
+            "finalStateHash": "6413d003a019e5b9f8b1c7d14a883bbcb84611403ff2d3cb649d67228c831e52"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 142,
+            "finalStateHash": "e6457f7ca5f72c35ef010726eff2c63ce3d72d5c68e26f911a9f4a83039397b9"
+          },
+          {
+            "verified": true,
+            "commandsChecked": 144,
+            "finalStateHash": "c18ef2c6ada70936a8fbddbcf2f6fb769e90e7d85a3b440f4b99528042cca2d7"
+          }
+        ],
+        "profileUnchangedByVerification": true,
+        "activeVerifyRejected": "invalid_request: Close the existing session before verifying a replay."
+      }
+    ],
+    "normalContentOnly": true,
+    "gameplayStateInjection": false,
+    "dungeonCompletions": 1,
+    "gearRouteCraftedWeapons": 1,
+    "gearRouteOutcome": "defeat",
+    "crossProcess": {
+      "firstHostPid": 62144,
+      "restartedHostPid": 59460,
+      "evidence": "outputs/agent-battle/b007a-restart-proof.json",
+      "log": "outputs/agent-battle/b007a-http-final-restart.log",
+      "verified": true,
+      "commandsChecked": 144,
+      "finalStateHash": "c18ef2c6ada70936a8fbddbcf2f6fb769e90e7d85a3b440f4b99528042cca2d7"
+    }
+  },
+  "cli": {
+    "evidence": "outputs\\agent-battle\\b007a-cli-proof.json",
+    "demoExportAndVerify": {
+      "verified": true,
+      "commandsChecked": 3,
+      "finalStateHash": "83777927df2348e74845cce42bd331afdb378963ba8b0b19d2719db4c18e5f88"
+    }
+  },
+  "limitations": [
+    "B006b2 normal Boss victory / earned paid upgrade / next run still unproved",
+    "Playable save restoration and cross-process settlement transactions deferred to B007b",
+    "Reforge/starting relic and victory-path full-journal HTTP coverage still pending; existing shared-rule directed tests remain separate",
+    "Existing 21 EditMode failures retained; no new PlayMode claim",
+    "Same saved content/API/engine version required; journal hashes are comparison data, not signatures",
+    "Journal must be explicitly exported before process exit; no automatic crash recovery"
+  ],
+  "sha256": {
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureProfile.cs": "9648c2e68729e7857ec4e6acde3b78f2b46a1b5f262784b7202514c36d72b88b",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureProtocol.cs": "5bb389f6981ee01370940b77e9fa86f2789d76278f62de788ddd3e7da5ca9449",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.cs": "2eca2ca90c432ad26992f78c439bd717f7610dde2ce2deba07ede63f8049a170",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.Settlement.cs": "7c9cba55088f7e3fe6cfb03e1a5852593ac60005ce02512b98e8e7baf28ca913",
+    "Assets/Scripts/Editor/AgentBattle/AgentBattleServer.cs": "b84d6b47c442227ed55f9292385fcb6fe210b95d168798b93d56247c1c166a54",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureReplay.cs": "586558c7d37634d7e4fe0abc02411ea275fdf6a73566747896f2b720cb49fdd9",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.Replay.cs": "5377991531a767a375bbe9c1b1e3c8d30c8854efce24f3e7882189429e3fa679",
+    "Assets/Tests/EditMode/Editor/AgentAdventureReplayTests.cs": "4d156c1ff0323f8e43373b440d360618ea320ce2ca550ea2885867da39d939eb",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureReplay.cs.meta": "cf4550121a97dfdd8c3ac26d79a1161a06e11a89b1741567c6cc74e4f7d750c2",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.Replay.cs.meta": "2d0a6ee9c4376b4cad9b700fd9a176abe9ee8ffc80f6dcc09e59e860f1fcb673",
+    "Assets/Tests/EditMode/Editor/AgentAdventureReplayTests.cs.meta": "e9d2c8513728a3cce2dd3009c93146168fed5d81b4813142bbef7bbd2c00871b",
+    "tools/agent_adventure_client.py": "562f461b678208518c4b7f360c18ca481217583a2298fb3456c64730a36df8a9"
+  },
+  "verificationNote": "After the full EditMode run, trailing whitespace was removed from three new .meta files only. GUIDs and importer settings and all eight C# source files are unchanged. Both HTTP routes and CLI smoke were rerun against the final metadata bytes; final cross-process evidence is recorded below."
+}

@@ -55,6 +55,15 @@ public class PlayerMapController : MonoBehaviour
     private RunState previewCommittedRunState;
     private TileResolver previewCommittedResolver;
     private Vector2Int previewCommittedCoordinate;
+    private bool headlessExecution;
+    private BoardTileData pendingHeadlessArrival;
+    public void ConfigureHeadlessExecution() { headlessExecution = true; }
+    public void FlushHeadlessArrival()
+    {
+        if (!headlessExecution || pendingHeadlessArrival == null) return;
+        BoardTileData tile = pendingHeadlessArrival; pendingHeadlessArrival = null;
+        CompleteArrival(tile);
+    }
 
     public event Action<BoardTileData, string> PlayerMovedToTile;
 
@@ -150,6 +159,14 @@ public class PlayerMapController : MonoBehaviour
 
         runState.playerGridPosition = targetTile.coord;
         Vector3 worldTarget = boardManager.GridToWorld(targetTile.coord) + new Vector3(0f, 0f, -0.2f);
+
+        if (headlessExecution)
+        {
+            playerPawn.position = worldTarget;
+            isMoving = true;
+            pendingHeadlessArrival = targetTile;
+            return true;
+        }
 
         if (commitsBattlePreview)
         {
@@ -553,6 +570,11 @@ public class PlayerMapController : MonoBehaviour
         }
 
         PlayLandingEffect(target);
+        CompleteArrival(targetTile);
+    }
+
+    private void CompleteArrival(BoardTileData targetTile)
+    {
         string resultMessage = (tileResolver != null && ShouldResolveImmediately(targetTile))
             ? tileResolver.ResolveTile(targetTile, runState)
             : string.Empty;
@@ -563,6 +585,15 @@ public class PlayerMapController : MonoBehaviour
 
     private void EnsurePawn()
     {
+        if (headlessExecution)
+        {
+            if (playerPawn == null)
+            {
+                playerPawn = new GameObject("PlayerMapPawn").transform;
+                playerPawn.SetParent(unitsRoot, false);
+            }
+            return;
+        }
         EnsureWhiteSprite();
         if (playerPawn != null)
         {
@@ -659,6 +690,7 @@ public class PlayerMapController : MonoBehaviour
 
     private void PlayLandingEffect(Vector3 playerWorldPosition)
     {
+        if (headlessExecution) return;
         if (landingEffectPrefab == null)
             return;
 

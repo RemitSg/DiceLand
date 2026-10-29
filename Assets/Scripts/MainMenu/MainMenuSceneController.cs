@@ -436,6 +436,8 @@ public class MainMenuSceneController : MonoBehaviour
         difficultyGallery.items = filteredItems.ToArray();
     }
 
+    public DifficultyConfig_SO[] GetDifficultyConfigurations() => BuildDifficultyList().ToArray();
+
     private List<DifficultyConfig_SO> BuildDifficultyList()
     {
         List<DifficultyConfig_SO> validConfigs = new List<DifficultyConfig_SO>();

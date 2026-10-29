@@ -1,0 +1,99 @@
+{
+  "run": "easy-20261028-run4",
+  "seed": 2026102804,
+  "currentRunCandidates": [
+    {
+      "id": "G1",
+      "title": "低语井入口说明失去5AP，实际没有扣除",
+      "category": "P2 / 内容配置与效果不一致",
+      "confidence": "文本、实际响应和配置相互印证；应扣费还是改文案仍需设计决定。",
+      "firstStep": 366,
+      "occurrences": 1,
+      "observed": "选择「答应同行」前后AP均为14，确认进入副本后仍为14；正式左撤返回主地图后仍为14。未重复领取或重入。",
+      "source": "014 低语井.asset 主效果为StartSpecialDungeon(17)，effectAmount=0，additionalBuiltInEffects为空；执行器只设置pendingSpecialDungeon。",
+      "reproduce": [
+        "用本局418步原生回放核对步骤365–367。",
+        "读取选项说明及选择前后actionPoints：14→14→14。",
+        "核对资产与共用事件执行器，确认缺少单独扣AP效果。"
+      ],
+      "impact": "入口费用低于说明，影响探索资源与灾厄推进；不是此次Boss战败的原因。"
+    },
+    {
+      "id": "G2",
+      "title": "雷寰霸主的免疫状态引用缺失，电流爆发仍造成伤害",
+      "category": "P2 / 敌人配置疑点",
+      "confidence": "缺失GUID与本局状态爆发实录均已确认；预期免疫范围仍需核对设计。",
+      "firstStep": 408,
+      "occurrences": 1,
+      "observed": "公开被动为「电质体：免疫雷属性状态」。Boss第二轮前有电流2，第三轮前有电流4；第411步电流爆发实际产生4额外伤害并消耗电流。",
+      "source": "ThunderLord.asset的statusImmunityRules引用GUID 504abc372b3b3644bae0ccb7da7e9ce1，Assets中没有对应.meta。allowApplicationWhileImmune=1意味着仅看到层数不能证明失效，因此同时保留实际爆发证据。",
+      "reproduce": [
+        "核对Boss初始被动与第408、411步完整战斗观察。",
+        "核对第411步引擎事件133：电流爆发4额外伤害。",
+        "核对免疫规则引用与Assets内全部.meta搜索。"
+      ],
+      "impact": "可能使Boss少于设计中的免疫能力，反而有利玩家；不能归因于此次失败。"
+    }
+  ],
+  "clientPolicyIssues": [
+    {
+      "title": "Chara目录初始武器为空，准备评分少算升级",
+      "firstStep": 397,
+      "confidence": "已复核并在本局结束后修正客户端评分；本局冻结快照不改写。",
+      "observed": "开局实际木剑→铁剑，Jenny/Man也已换装，共3人。目录Chara.initialWeapon为空导致原评分仅计2人。",
+      "fix": "fresh create记下真实starting_loadout，preparation_assessment以实际起始武器覆盖目录空值；恢复会话没有可信开局记录时明确返回unknownWeaponBaselines。仍保留75%生命门槛。",
+      "tests": "57项Python通过，包含本局真实开局/进Boss状态回归与恢复会话缺少基线的回归；未声称新评分经过新一局实玩。"
+    }
+  ],
+  "agentMistakes": [
+    {
+      "step": 17,
+      "detail": "零金币进入营地后无直接离开动作，选择恢复AP消耗了营地。路线规划没有为后期治疗保留营地；营地规则限制本身不确认为接口bug。"
+    },
+    {
+      "step": 41,
+      "detail": "遗物袋评分高于不能立即补足招募门槛的金币，忽视了部分资金对后续招募仍有价值。属于收益估值不足。"
+    },
+    {
+      "step": 287,
+      "detail": "发送前曾误填choiceIndex=2，把它当队员索引；客户端合法动作检查拦截，没有发出HTTP或推进状态。随后原样复制合法的choiceIndex=0。现有OpenAPI已正确说明由正式服务自动选择兼容队员，无需再改文档。"
+    },
+    {
+      "step": 341,
+      "detail": "希望寻找治疗而进入贵族的遗产；后续选项均要求战斗，没有治疗。没有提前为不可退出的事件链预留承伤余量。"
+    },
+    {
+      "step": 397,
+      "detail": "全队59/107HP时明确越过健康准备提醒进Boss。虽然已无未用营地，但Chara/Jenny经验52，距5级55仅差3，未充分评估再打一场以升级恢复的风险收益。不能宣称另一选择必能通关。"
+    },
+    {
+      "step": 404,
+      "detail": "漏看「一枪贯世」命中触发的全队2点伤害；两段命中累计全队4点，Jenny当时仅4HP而阵亡。完整技能文本已在公开观察里，是Agent漏算，不是接口缺信息。"
+    }
+  ],
+  "designQuestions": [
+    {
+      "title": "营地不能直接退出",
+      "steps": [
+        16,
+        17
+      ],
+      "detail": "当前legalActions只提供治疗、恢复AP、重铸等营地行动；尚未证明正式界面有无损退出，因此记录为规则/体验待确认，不算已确认API缺陷。"
+    },
+    {
+      "title": "贵族的遗产后续不可避免的战斗提示",
+      "steps": [
+        341,
+        342,
+        343
+      ],
+      "detail": "入口只显示进入代价，后续接受和拒绝均进入战斗。可能是有意事件陷阱；建议核对预告程度，不直接判为bug。"
+    }
+  ],
+  "fixedSymptomsCoverage": {
+    "damageHpMismatch": "本局检测器未再次报告，35轮内0条候选；不是所有伤害路径已被穷尽证明。",
+    "oldGamblingTable": "本局未遇到旧赌桌，不宣称新局覆盖该修复。",
+    "unyieldingPlusRegeneration": "本局有不屈，无敌方回合结束回血组合，未重现该组合；定向回归见Bugfix验证记录。"
+  },
+  "scope": "仅记录自然游玩与结束后的只读源配置核对；未通过状态修改、重入或资源注入来制造复现。"
+}

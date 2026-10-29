@@ -1,0 +1,252 @@
+{
+  "date": "2026-10-28",
+  "request": "Fix stale remaining-HP clash logs and unyielding death canceled by healing; identify gambling event; follow-up user request makes Leave resolve the event",
+  "beforeFixCommit": "8f6aa925",
+  "fixes": [
+    {
+      "id": "STALE_HP_LOG",
+      "rootCause": "BuildClashPostLog captured current HP before PlayClashPresentation invoked the real impact callback.",
+      "change": "Format the result only after presentation/impact returns, for ally/enemy attack wins and attack-vs-defense results. Shared normal and headless combat use this code.",
+      "proof": "All four before-fix cases failed with the pre-hit HP; they pass after the ordering change."
+    },
+    {
+      "id": "HISTORICAL_DELAYED_DEATH_REGEN",
+      "rootCause": "Heal cleared pendingCalamityDelayedDeath above 1HP, and round-start death also canceled itself when HP exceeded 1.",
+      "change": "Once lethal protection triggers, keep the pending death regardless of subsequent healing; consume it once at next round start. Nonlethal healing is unchanged.",
+      "proof": "Actual round-end healing by 2 and by 20 used to leave the enemy alive at 3HP or full HP; both now die at next round start. Zero-heal and nonlethal controls also pass."
+    },
+    {
+      "id": "EVENT_REENTRY",
+      "event": "旧赌桌",
+      "eventId": "025",
+      "coordinateInThirdRun": [
+        5,
+        6
+      ],
+      "rootEvent": "Assets/Data/Events/025 旧赌桌/025 旧赌桌.asset",
+      "followUpEventId": "025-1",
+      "followUpAsset": "Assets/Data/Events/025 旧赌桌/025-1 大赌之后.asset",
+      "actualChoiceChain": [
+        "不上桌",
+        "离开"
+      ],
+      "rootCause": "Follow-up Leave has no nextEvent but resolveEvent=false; shared MapEventOptionService therefore retains the unresolved tile and original event.",
+      "change": "Set only follow-up Leave option (optionId=1) resolveEvent to true. Mark tile resolved, clear assignedEvent, count completion once; returning to the tile no longer opens the event.",
+      "proof": "New actual-asset integration test failed on unresolved tile before the configuration change, then passed including leave-and-return movement."
+    }
+  ],
+  "tests": {
+    "beforeFix": {
+      "file": "outputs/agent-battle/bugfix-20261028/red.xml",
+      "total": 9,
+      "passed": 2,
+      "failed": 7,
+      "failures": [
+        {
+          "test": "BattleReportedBugRegressionTests.ClashDamageLog_ReportsHpAfterTheRealImpact(3,False,1,False,\"enemy_0\",\"友方胜\")",
+          "message": "  Expected: String containing \"剩余HP 2/5\"\n  But was:  \"-> 友方胜！追击威力 3 ，对 绿色史莱姆(ID:1) 造成 3 伤害，剩余HP 5/5\"\n"
+        },
+        {
+          "test": "BattleReportedBugRegressionTests.ClashDamageLog_ReportsHpAfterTheRealImpact(1,False,3,False,\"ally_0\",\"敌方胜\")",
+          "message": "  Expected: String containing \"剩余HP 21/24\"\n  But was:  \"-> 敌方胜！追击威力 3 ，绿色史莱姆(ID:1) 对 ally_0[新手木剑] 造成 3 伤害，剩余HP 24/24\"\n"
+        },
+        {
+          "test": "BattleReportedBugRegressionTests.ClashDamageLog_ReportsHpAfterTheRealImpact(3,False,1,True,\"enemy_0\",\"敌方防御骰拼点落败\")",
+          "message": "  Expected: String containing \"剩余HP 3/5\"\n  But was:  \"-> 敌方防御骰拼点落败，ally_0[新手木剑] 在还原拼点修正后造成 2 伤害，绿色史莱姆(ID:1) 剩余HP 5/5\"\n"
+        },
+        {
+          "test": "BattleReportedBugRegressionTests.ClashDamageLog_ReportsHpAfterTheRealImpact(1,True,3,False,\"ally_0\",\"友方防御骰拼点落败\")",
+          "message": "  Expected: String containing \"剩余HP 22/24\"\n  But was:  \"-> 友方防御骰拼点落败，绿色史莱姆(ID:1) 在还原拼点修正后造成 2 伤害，ally_0[新手木剑] 剩余HP 24/24\"\n"
+        },
+        {
+          "test": "BattleReportedBugRegressionTests.Unyielding_LethalHitDiesNextRoundEvenAfterRoundEndHealing(2)",
+          "message": "  Expected: 0\n  But was:  3\n"
+        },
+        {
+          "test": "BattleReportedBugRegressionTests.Unyielding_LethalHitDiesNextRoundEvenAfterRoundEndHealing(20)",
+          "message": "  Expected: 0\n  But was:  5\n"
+        },
+        {
+          "test": "EnemyTodoTests.UnyieldingCalamity_HealingAboveOnePreservesPendingRoundStartDeath",
+          "message": "  Expected: True\n  But was:  False\n"
+        }
+      ]
+    },
+    "relatedAfterTwoFixes": {
+      "file": "outputs/agent-battle/bugfix-20261028/related.xml",
+      "total": 49,
+      "passed": 49,
+      "failed": 0,
+      "failures": []
+    },
+    "eventBeforeFix": {
+      "file": "outputs/agent-battle/bugfix-20261028/event-red.xml",
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "failures": [
+        {
+          "test": "AgentAdventureEventTests.OldGamblingTable_DeclineThenLeaveCompletesTileAndDoesNotReopenOnReturn",
+          "message": "  Leaving the actual follow-up event must complete the tile.\n  Expected: True\n  But was:  False\n"
+        }
+      ]
+    },
+    "fullEditModeAfterEngineFixes": {
+      "file": "outputs/agent-battle/bugfix-20261028/full.xml",
+      "total": 1004,
+      "passed": 983,
+      "failed": 21,
+      "failures": [
+        {
+          "test": "BattleButtonSkillSelectionTests.AllySpeedButtons_CanKeepIndependentSelectedSkills",
+          "message": "  Expected: same as < (EnemySkill_SO)>\n  But was:  < (EnemySkill_SO)>\n"
+        },
+        {
+          "test": "BattleButtonSpriteStateSwitcherTests.OnEnable_AppliesUnpressedSprite",
+          "message": "  Expected: same as < (UnityEngine.Sprite)>\n  But was:  < (UnityEngine.Sprite)>\n"
+        },
+        {
+          "test": "BattleGamblerPassiveServiceTests.TryApplyDebtInstantDeath_KillsAllyAtThreeDebtStacks",
+          "message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "test": "BattleImmediateEffectPlanServiceTests.ResolveAlly_UsesCurrentAllyImmediateOrder",
+          "message": "  Expected is <BattleImmediateEffectStep[5]>, actual is <BattleImmediateEffectStep[6]>\n  Values differ at index [3]\n  Expected: ConditionalStatus\n  But was:  BuiltIn\n"
+        },
+        {
+          "test": "BattleSkillInfoOverlayDescriptionTests.CompactSkillDetail_MergesMarkedDelayedStatusBranches",
+          "message": "  Expected: String containing \"施加\"\n  But was:  \"第 1 攻击骰：<color=#FF5252>3</color> ~ <color=#FF5252>5</color>\n\n词条：\n第 1 攻击骰词条：<color=#FFC74C>[ 命中时 ]</color> 若 <color=#7AE6FF>目标 标记 层数 至多为 1</color> ，则 使 <color=#7AE6FF>当前目标</color> 于 <color=#FFC74C>下 1 个回合开始时</color> 获得 <color=#FF7373>1</color> 层 <color=#FF7373>标记</color>\n第 1 攻击骰词条：<color=#FFC74C>[ 命中时 ]</color> 若 <color=#7AE6FF>目标拥有至少 1 层 标记</color> ，则 使 <color=#7AE6FF>当前目标</color> 于 <color=#FFC74C>下 1 个回合开始时</color> 获得 <color=#FF7373>1</color> 层 <color=#FF7373>黑暗</color>\"\n"
+        },
+        {
+          "test": "BattleStatusResolutionServiceTests.TryResolve_ReturnsFalseForUnsupportedLegacyStatus",
+          "message": "  Expected: False\n  But was:  True\n"
+        },
+        {
+          "test": "BattleTargetingPhaseStartEffectServiceTests.ApplyPendingAllyStatusGrants_AppliesImmediateSpeedBonusForOpeningRoll",
+          "message": "  Expected: 6\n  But was:  4\n"
+        },
+        {
+          "test": "MainMenuSceneControllerTutorialTests.ResolveMenuAction_RecognizesTutorialIdentity",
+          "message": "System.Reflection.AmbiguousMatchException : Ambiguous match found."
+        },
+        {
+          "test": "MapEventNestedFlowTests.SaveAssetCatalog_IncludesNestedFollowUpEvents",
+          "message": "  Expected: same as < (MapEvent_SO)>\n  But was:  null\n"
+        },
+        {
+          "test": "MapTutorialFlowServiceTests.TryConsumeArrivalGuide_ShowsMerchantForgeAndEliteFinalOnce",
+          "message": "  Expected: String containing \"精英\"\n  But was:  \"最后一场教程战斗来了。这里会综合考验速度、拼点、单方面攻击、技能切换、能量和状态效果。\n\n先看敌人要做什么，再决定哪条线必须接、哪条线可以放、哪一招值得消耗能量。\"\n"
+        },
+        {
+          "test": "PuppetMasterEnemyAssetTests.PuppetMasterAndPuppet_HaveExpectedCoreStatsAndPassives",
+          "message": "  Assets/Data/Enemies/Enemies/3501 SoullessPuppet/SoullessPuppet_Data.asset\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "test": "PuppetMasterEnemyAssetTests.PuppetMasterEncounter_HasExpectedEnemyGroupComposition",
+          "message": "  Assets/Data/Enemies/Enemies/3501 SoullessPuppet/SoullessPuppet_Data.asset\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "test": "PuppetMasterEnemyAssetTests.PuppetSkills_HaveExpectedStatusAndRoundRules",
+          "message": "  Assets/Data/Enemies/Enemies/3501 SoullessPuppet/SoullessPuppet_Data.asset\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "test": "RelicSystem079To094Tests.MerchantWhiteSlip_AllowsPurchaseWhenMoneyPositiveAndSpendsRemainingMoney",
+          "message": "  Expected: 0\n  But was:  -98\n"
+        },
+        {
+          "test": "RestSceneReforgeInteractableRelicSelectionTests.HandleRelicSelection_ClickingOnlySelectedRelicAgainClearsSelection",
+          "message": "Unhandled log message: '[Error] Failed setting EventSystem.current to unknown EventSystem <b>Selected:</b>\n\n\nNo module\n'. Use UnityEngine.TestTools.LogAssert.Expect"
+        },
+        {
+          "test": "RestSceneReforgeInteractableRelicSelectionTests.OnMouseUpAsButton_WhenMainPanelIsOpen_DoesNotReturnToOpenPrompt",
+          "message": "Unhandled log message: '[Error] Failed setting EventSystem.current to unknown EventSystem <b>Selected:</b>\n\n\nNo module\n'. Use UnityEngine.TestTools.LogAssert.Expect"
+        },
+        {
+          "test": "TodoWeaponAssetTests.HotAnvilBoard_LoadsWithBurnSpreadAndSelfBurnSkills",
+          "message": "  Assets/Data/Weapons/203 热砧板/203 热砧板.asset\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "test": "TodoWeaponAssetTests.WeaponCatalog_ContainsTodoWeapons",
+          "message": "  Assets/Data/Weapons/203 热砧板/203 热砧板.asset\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "test": "TutorialBattleContentFactoryTests.CreateRuntimeDefinition_Battle03_AdvancesWhenAllySkillIsViewed",
+          "message": "  Expected: AllySkillViewed\n  But was:  CombatExecutePressed\n"
+        },
+        {
+          "test": "TutorialHighlightCoordinateUtilityTests.ConvertScreenRectToReferenceRect_UsesCanvasScalerMatchScale",
+          "message": "  Expected: 966.46099853515625d +/- 0.0099999997764825821d\n  But was:  965.9813232421875d\n"
+        },
+        {
+          "test": "WanderingShadowEnemyAssetTests.Echo_UsesConfiguredEffectsAndEventGroup",
+          "message": "  Assets/Data/Enemies/EnemyGroup/Events/Echo.asset\n  Expected: not null\n  But was:  null\n"
+        }
+      ]
+    },
+    "finalRelatedAfterEventConfigurationChange": {
+      "file": "outputs/agent-battle/bugfix-20261028/final.xml",
+      "total": 67,
+      "passed": 67,
+      "failed": 0,
+      "failures": []
+    },
+    "verificationSequence": "Full suite covers both final engine changes; the user requested one event asset flag while it was running. After the full run, the actual-asset event regression was observed failing, the flag changed, and the complete related battle/event suites rerun against final sources.",
+    "newCases": 9,
+    "updatedExistingRuleExpectation": 1,
+    "newFailuresComparedToBaseline": [],
+    "baselineReference": "outputs/agent-battle/b008a-full.xml",
+    "knownFailuresReportedByName": true,
+    "playMode": {
+      "rerun": false,
+      "limitation": "Existing PlayMode failures remain unresolved. Verification here uses the shared real battle flow in EditMode; graphical presentation was not revalidated."
+    }
+  },
+  "sourceMatch": {
+    "filesCompared": 3199,
+    "allEqual": true,
+    "contentHash": "e642dc897867425a72e66d4dd2b636403d81e279aefd6ca507480c2b8cefd759"
+  },
+  "changedFiles": {
+    "Assets/Scripts/BattleScene/Controller/BattleButton.cs": "7e25f214264b301ae8d168e60876af457a16bcbd73958d0bb85a0ddf5795705f",
+    "Assets/Scripts/BattleScene/Controller/BattleEnemyController.cs": "859e591f9d778f72c253f8a6f47f562f72f8ba207d9dc0739b46cf76b5fb83b7",
+    "Assets/Data/Events/025 旧赌桌/025-1 大赌之后.asset": "69c8f0e2713b89068e83e2b02642ffe9210ea22b25e18fbf77cc928e39e71ae3",
+    "Assets/Tests/EditMode/Editor/BattleReportedBugRegressionTests.cs": "d3a20d79b005cfcb2f86e15f72aa183f69724fbdcfb9ecb0f4dce0407d974170",
+    "Assets/Tests/EditMode/Editor/BattleReportedBugRegressionTests.cs.meta": "97e1a8de9443d774d1803b7b389dd7d756bdca6065a1453998a21c553b1c16c9",
+    "Assets/Tests/EditMode/Editor/EnemyTodoTests.cs": "f52af65074c606f97c932c73a6d2ae407834a3f844519a6ef5ed22b019745c70",
+    "Assets/Tests/EditMode/Editor/AgentAdventureEventTests.cs": "561360522110a0b76307c0a96510fc4c029ef47d42662fcaba0be964774e416d"
+  },
+  "historicalLogsUnchanged": {
+    "archive": "outputs/agent-battle/easy-20261028-run3/Easy第三局完整日志.zip",
+    "sha256": "0f69cdd0959836e58411a50684859e2cb1943f645267984607a53bbc7c9e21f5",
+    "scope": "Recorded runs retain old engine behavior and hashes. No claim that an old replay matches this changed engine version."
+  },
+  "scope": "No other event choices, balance values, agent policy, or historical run results changed.",
+  "environment": {
+    "validationProject": "C:\\DiceLand\\outputs\\agent-battle\\b005b-validation-project",
+    "userEditorPid": 21328,
+    "userSceneSaved": false,
+    "userEditorRestarted": false
+  },
+  "evidence": {
+    "red.xml": {
+      "sha256": "f58c5aede0cbc85ab6834fb82c77a2ded80364505e78102d78d872537c360fcc",
+      "bytes": 34903
+    },
+    "related.xml": {
+      "sha256": "b4dcd3fae3de2d876a37c688d7faba4a54008416d6b6b7fb85bcc44f722a1a50",
+      "bytes": 110455
+    },
+    "full.xml": {
+      "sha256": "6af2521b9421ee285fdbd6e1b025149d3bf350a4faa4337293e5c4da030931b7",
+      "bytes": 860006
+    },
+    "event-red.xml": {
+      "sha256": "f6a2ece673874b6091103cfd5463e73f42312665a073383f0ee13f81a2e1524c",
+      "bytes": 3100
+    },
+    "final.xml": {
+      "sha256": "a0994adb54af1451a77036894371e1fe0bd8027ed696e6ff9fe71dd30adf9a7e",
+      "bytes": 125094
+    }
+  }
+}

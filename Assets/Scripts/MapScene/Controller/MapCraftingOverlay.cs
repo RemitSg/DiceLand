@@ -246,11 +246,12 @@ public class MapCraftingOverlay : MonoBehaviour
 
     private string BuildMaterialDescription(CraftingBlueprint_SO blueprint)
     {
-        if (blueprint == null || blueprint.materialRequirements == null || blueprint.materialRequirements.Count == 0)
+        List<CraftingMaterialRequirement> requirements = RunCraftingService.GetRequirements(blueprint);
+        if (requirements.Count == 0)
             return "未配置材料需求。";
 
         StringBuilder builder = new StringBuilder();
-        int forgeCost = CalamitySystem.ApplyForgeCostModifiers(0, currentRunState != null ? currentRunState.activeCalamities : null);
+        int forgeCost = RunCraftingService.Cost(currentRunState);
         if (forgeCost > 0)
         {
             Color moneyColor = currentRunState != null && currentRunState.money >= forgeCost ? enoughMaterialColor : lackingMaterialColor;
@@ -263,9 +264,9 @@ public class MapCraftingOverlay : MonoBehaviour
 
         builder.AppendLine("所需材料：");
 
-        for (int i = 0; i < blueprint.materialRequirements.Count; i++)
+        for (int i = 0; i < requirements.Count; i++)
         {
-            CraftingMaterialRequirement requirement = blueprint.materialRequirements[i];
+            CraftingMaterialRequirement requirement = requirements[i];
             if (requirement == null || requirement.lootItem == null)
                 continue;
 
@@ -287,24 +288,7 @@ public class MapCraftingOverlay : MonoBehaviour
 
     private bool CanCraft(CraftingBlueprint_SO blueprint)
     {
-        if (blueprint == null || currentRunState == null || blueprint.targetWeapon == null || blueprint.materialRequirements == null)
-            return false;
-
-        int forgeCost = CalamitySystem.ApplyForgeCostModifiers(0, currentRunState.activeCalamities);
-        if (currentRunState.money < forgeCost)
-            return false;
-
-        for (int i = 0; i < blueprint.materialRequirements.Count; i++)
-        {
-            CraftingMaterialRequirement requirement = blueprint.materialRequirements[i];
-            if (requirement == null || requirement.lootItem == null)
-                continue;
-
-            if (currentRunState.GetLootAmount(requirement.lootItem) < requirement.amount)
-                return false;
-        }
-
-        return blueprint.materialRequirements.Count > 0;
+        return RunCraftingService.CanCraft(currentRunState, blueprint, out _);
     }
 
     private void OnCraftClicked()

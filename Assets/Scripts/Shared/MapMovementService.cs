@@ -40,8 +40,61 @@ public sealed class MapMovementExecutionResult
 
 public static class MapMovementService
 {
-    public static int GetMoveCost(RunState runState, BoardTileData tile)
+    public static void RecordUnexploredTileVisit(RunState state)
     {
+        if (state.settlementStats == null) state.settlementStats = new RunSettlementStats();
+        state.settlementStats.unexploredTilesVisited++;
+    }
+
+    public static bool TryTriggerVisitedEmptyTileAmbush(RunState runState, BoardManager boardManager, EnemyRoster_SO enemyRoster, BoardTileData tile)
+    {
+        if (runState == null
+            || boardManager == null
+            || enemyRoster == null
+            || tile == null
+            || tile.tileType != MapTileType.Empty
+            || !tile.isVisited
+            || !tile.isResolved)
+        {
+            return false;
+        }
+
+        int ambushChance = CalamitySystem.ResolveVisitedEmptyTileAmbushChance(runState.activeCalamities);
+        if (ambushChance <= 0 || UnityEngine.Random.Range(0, 100) >= ambushChance)
+            return false;
+
+        tile.tileType = MapTileType.Battle;
+        tile.isResolved = false;
+        tile.assignedEnemyGroup = null;
+        tile.assignedEvent = null;
+        tile.previewTag = string.Empty;
+        tile.encounterSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        MapBattleEncounterService.EnsureTileAssignedEnemyGroup(enemyRoster, tile);
+        tile.previewDangerRating = MapDangerRatingService.ResolveRating(tile.tileType, tile.dangerBand, tile.assignedEnemyGroup);
+
+        return true;
+    }
+
+    public static void AdvanceExhaustedCycle(RunState state, ActionPointSystem points, DifficultyConfig_SO config, Queue<int> pendingTiers)
+    {
+        if (state == null || points == null) return;
+        state.calamityTier++;
+        state.currentCycle++;
+        points.SetBasePoints(RunBootstrapService.ResolveActionPointLimitForTier(config, state.calamityTier));
+        points.AdvanceCycle(0);
+        pendingTiers.Enqueue(Mathf.Max(1, state.calamityTier));
+    }
+
+    public static RelicExecutionContext ApplyKeyCollected(RunState state, RunGameManager manager, BoardTileData tile, ActionPointSystem points)
+    {
+        if (state.settlementStats == null) state.settlementStats = new RunSettlementStats();
+        state.settlementStats.keysCollected++;
+        return RelicTriggerDispatcher.ProcessKeyCollected(state, manager, tile, points);
+    }
+
+    public static int GetMoveCost(RunState runState, BoardTileData tile, bool isInSpecialDungeon = false)
+    {
+        if (isInSpecialDungeon) return 0;
         if (tile == null || runState == null)
             return 0;
 
@@ -178,6 +231,17 @@ public static class MapMovementService
     }
 
     public static bool TryExecuteMove(
+        MapMovementExecutionRequest request,
+        out MapMovementExecutionResult result)
+    {
+        bool moved = TryExecuteMoveCore(request, out result);
+        // Formal arrival occurs after cost/relic callbacks, when the animation ends.
+        // Keep that order when the driver skips the animation.
+        if (moved) request.playerMapController.FlushHeadlessArrival();
+        return moved;
+    }
+
+    private static bool TryExecuteMoveCore(
         MapMovementExecutionRequest request,
         out MapMovementExecutionResult result)
     {

@@ -1,0 +1,2764 @@
+{
+  "source": "Selected actual public observations from failed Easy seed20261028: pre-action18 treasure and pre-action22 first elite. Later counterfactual test changes are explicit test inputs, not gameplay proof.",
+  "treasure": {
+    "phase": "treasure",
+    "money": 61,
+    "party": [
+      {
+        "id": "0",
+        "name": "Chara",
+        "character": "27e817266af382946804dea6afd2e374",
+        "weapon": "9b8c5d177c240334a9734636830a139f",
+        "hp": 16,
+        "maxHp": 16,
+        "level": 1,
+        "experience": 0
+      },
+      {
+        "id": "Man",
+        "name": "Man",
+        "character": "fce426096f554744093a4718f5aa0f45",
+        "weapon": "66e425e32f62902418159abffd6dedc5",
+        "hp": 20,
+        "maxHp": 20,
+        "level": 1,
+        "experience": 0
+      }
+    ],
+    "tiles": [
+      {
+        "x": 0,
+        "y": 0,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Treasure",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 0,
+        "y": 1,
+        "danger": 2,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Elite",
+        "dangerBand": "Outer",
+        "previewTag": "Elite Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 0,
+        "y": 2,
+        "danger": 2,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Elite",
+        "dangerBand": "Outer",
+        "previewTag": "Elite Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 0,
+        "y": 3,
+        "danger": 0,
+        "moveCost": 1,
+        "dungeonEntryIndex": -1,
+        "type": "Treasure",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": true,
+        "encounterAvailable": false
+      },
+      {
+        "x": 0,
+        "y": 4,
+        "danger": 0,
+        "moveCost": 1,
+        "dungeonEntryIndex": -1,
+        "type": "Merchant",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 0,
+        "y": 5,
+        "danger": 0,
+        "moveCost": 1,
+        "dungeonEntryIndex": -1,
+        "type": "Rest",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": true,
+        "encounterAvailable": false
+      },
+      {
+        "x": 0,
+        "y": 6,
+        "danger": 0,
+        "moveCost": 1,
+        "dungeonEntryIndex": -1,
+        "type": "Treasure",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": true,
+        "encounterAvailable": false
+      },
+      {
+        "x": 1,
+        "y": 0,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Rest",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 1,
+        "y": 1,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 1,
+        "y": 2,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 1,
+        "y": 3,
+        "danger": 0,
+        "moveCost": 1,
+        "dungeonEntryIndex": -1,
+        "type": "Key",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": true,
+        "encounterAvailable": false
+      },
+      {
+        "x": 1,
+        "y": 4,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 1,
+        "y": 5,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Rest",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 1,
+        "y": 6,
+        "danger": 0,
+        "moveCost": 1,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": true,
+        "encounterAvailable": false
+      },
+      {
+        "x": 2,
+        "y": 0,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 2,
+        "y": 1,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 2,
+        "y": 2,
+        "danger": 2,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Mid",
+        "previewTag": "Mid",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 2,
+        "y": 3,
+        "danger": 0,
+        "moveCost": 0,
+        "dungeonEntryIndex": -1,
+        "type": "Treasure",
+        "dangerBand": "Mid",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 2,
+        "y": 4,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Mid",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 2,
+        "y": 5,
+        "danger": 0,
+        "moveCost": 1,
+        "dungeonEntryIndex": -1,
+        "type": "Empty",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": true,
+        "encounterAvailable": false
+      },
+      {
+        "x": 2,
+        "y": 6,
+        "danger": 0,
+        "moveCost": 1,
+        "dungeonEntryIndex": -1,
+        "type": "Key",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": true,
+        "encounterAvailable": false
+      },
+      {
+        "x": 3,
+        "y": 0,
+        "danger": 2,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Elite",
+        "dangerBand": "Outer",
+        "previewTag": "Elite Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 3,
+        "y": 1,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 3,
+        "y": 2,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Merchant",
+        "dangerBand": "Mid",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 3,
+        "y": 3,
+        "danger": 7,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Boss",
+        "dangerBand": "Core",
+        "previewTag": "Boss",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 3,
+        "y": 4,
+        "danger": 2,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Mid",
+        "previewTag": "Mid",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 3,
+        "y": 5,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 3,
+        "y": 6,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 4,
+        "y": 0,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 4,
+        "y": 1,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Forge",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 4,
+        "y": 2,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Mid",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 4,
+        "y": 3,
+        "danger": 2,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Mid",
+        "previewTag": "Mid",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 4,
+        "y": 4,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Key",
+        "dangerBand": "Mid",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 4,
+        "y": 5,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Rest",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 4,
+        "y": 6,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Merchant",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 5,
+        "y": 0,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 5,
+        "y": 1,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 5,
+        "y": 2,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 5,
+        "y": 3,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 5,
+        "y": 4,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 5,
+        "y": 5,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Forge",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 5,
+        "y": 6,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 6,
+        "y": 0,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Treasure",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 6,
+        "y": 1,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Treasure",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 6,
+        "y": 2,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 6,
+        "y": 3,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 6,
+        "y": 4,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 6,
+        "y": 5,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 6,
+        "y": 6,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Treasure",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      }
+    ],
+    "difficultyId": "4f6f34f8c8bf4cc0b5d8d5d65d4790e1",
+    "loot": [],
+    "relics": [],
+    "craftingCost": 0,
+    "legalActions": [
+      {
+        "op": "run_choose_treasure",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_choose_treasure",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 1,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_choose_treasure",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 2,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      }
+    ],
+    "treasure": {
+      "selectedOptionIndex": -1,
+      "refreshesRemaining": 0,
+      "canRefresh": false,
+      "options": [
+        {
+          "index": 0,
+          "money": 50,
+          "kind": "Money",
+          "title": "财富",
+          "description": "获得 50 金钱",
+          "unavailableReason": "",
+          "blueprint": "",
+          "relic": "",
+          "rarity": "",
+          "selectable": true
+        },
+        {
+          "index": 1,
+          "money": 0,
+          "kind": "Blueprint",
+          "title": "知识",
+          "description": "获得 1 张图纸：渴血之卷",
+          "unavailableReason": "",
+          "blueprint": "17799684082ecc54fa14f94058c3412d",
+          "relic": "",
+          "rarity": "Rare",
+          "selectable": true
+        },
+        {
+          "index": 2,
+          "money": 0,
+          "kind": "RelicBag",
+          "title": "力量",
+          "description": "获得 1 个常见遗物袋",
+          "unavailableReason": "",
+          "blueprint": "",
+          "relic": "",
+          "rarity": "Common",
+          "selectable": true
+        }
+      ],
+      "relicChoices": [],
+      "result": {
+        "message": "",
+        "money": 0,
+        "blueprint": {
+          "id": "",
+          "name": "",
+          "description": "",
+          "amount": 0,
+          "index": 0
+        },
+        "relic": {
+          "id": "",
+          "name": "",
+          "description": "",
+          "amount": 0,
+          "index": 0
+        }
+      }
+    }
+  },
+  "underprepared": {
+    "phase": "map",
+    "money": 61,
+    "party": [
+      {
+        "id": "0",
+        "name": "Chara",
+        "character": "27e817266af382946804dea6afd2e374",
+        "weapon": "9b8c5d177c240334a9734636830a139f",
+        "hp": 16,
+        "maxHp": 16,
+        "level": 1,
+        "experience": 0
+      },
+      {
+        "id": "Man",
+        "name": "Man",
+        "character": "fce426096f554744093a4718f5aa0f45",
+        "weapon": "66e425e32f62902418159abffd6dedc5",
+        "hp": 20,
+        "maxHp": 20,
+        "level": 1,
+        "experience": 0
+      }
+    ],
+    "tiles": [
+      {
+        "x": 0,
+        "y": 0,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Treasure",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 0,
+        "y": 1,
+        "danger": 2,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Elite",
+        "dangerBand": "Outer",
+        "previewTag": "Elite Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 0,
+        "y": 2,
+        "danger": 2,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Elite",
+        "dangerBand": "Outer",
+        "previewTag": "Elite Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 0,
+        "y": 3,
+        "danger": 0,
+        "moveCost": 0,
+        "dungeonEntryIndex": -1,
+        "type": "Treasure",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": true,
+        "encounterAvailable": false
+      },
+      {
+        "x": 0,
+        "y": 4,
+        "danger": 0,
+        "moveCost": 1,
+        "dungeonEntryIndex": -1,
+        "type": "Merchant",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 0,
+        "y": 5,
+        "danger": 0,
+        "moveCost": 1,
+        "dungeonEntryIndex": -1,
+        "type": "Rest",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": true,
+        "encounterAvailable": false
+      },
+      {
+        "x": 0,
+        "y": 6,
+        "danger": 0,
+        "moveCost": 1,
+        "dungeonEntryIndex": -1,
+        "type": "Treasure",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": true,
+        "encounterAvailable": false
+      },
+      {
+        "x": 1,
+        "y": 0,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Rest",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 1,
+        "y": 1,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 1,
+        "y": 2,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 1,
+        "y": 3,
+        "danger": 0,
+        "moveCost": 1,
+        "dungeonEntryIndex": -1,
+        "type": "Key",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": true,
+        "encounterAvailable": false
+      },
+      {
+        "x": 1,
+        "y": 4,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 1,
+        "y": 5,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Rest",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 1,
+        "y": 6,
+        "danger": 0,
+        "moveCost": 1,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": true,
+        "encounterAvailable": false
+      },
+      {
+        "x": 2,
+        "y": 0,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 2,
+        "y": 1,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 2,
+        "y": 2,
+        "danger": 2,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Mid",
+        "previewTag": "Mid",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 2,
+        "y": 3,
+        "danger": 0,
+        "moveCost": 1,
+        "dungeonEntryIndex": -1,
+        "type": "Treasure",
+        "dangerBand": "Mid",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": true,
+        "encounterAvailable": false
+      },
+      {
+        "x": 2,
+        "y": 4,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Mid",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 2,
+        "y": 5,
+        "danger": 0,
+        "moveCost": 1,
+        "dungeonEntryIndex": -1,
+        "type": "Empty",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": true,
+        "encounterAvailable": false
+      },
+      {
+        "x": 2,
+        "y": 6,
+        "danger": 0,
+        "moveCost": 1,
+        "dungeonEntryIndex": -1,
+        "type": "Key",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": true,
+        "resolved": true,
+        "encounterAvailable": false
+      },
+      {
+        "x": 3,
+        "y": 0,
+        "danger": 2,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Elite",
+        "dangerBand": "Outer",
+        "previewTag": "Elite Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 3,
+        "y": 1,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 3,
+        "y": 2,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Merchant",
+        "dangerBand": "Mid",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 3,
+        "y": 3,
+        "danger": 7,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Boss",
+        "dangerBand": "Core",
+        "previewTag": "Boss",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 3,
+        "y": 4,
+        "danger": 2,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Mid",
+        "previewTag": "Mid",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 3,
+        "y": 5,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 3,
+        "y": 6,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 4,
+        "y": 0,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 4,
+        "y": 1,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Forge",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 4,
+        "y": 2,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Mid",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 4,
+        "y": 3,
+        "danger": 2,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Mid",
+        "previewTag": "Mid",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 4,
+        "y": 4,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Key",
+        "dangerBand": "Mid",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 4,
+        "y": 5,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Rest",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 4,
+        "y": 6,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Merchant",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 5,
+        "y": 0,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 5,
+        "y": 1,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 5,
+        "y": 2,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 5,
+        "y": 3,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 5,
+        "y": 4,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 5,
+        "y": 5,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Forge",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 5,
+        "y": 6,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Event",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 6,
+        "y": 0,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Treasure",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 6,
+        "y": 1,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Treasure",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      },
+      {
+        "x": 6,
+        "y": 2,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 6,
+        "y": 3,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 6,
+        "y": 4,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 6,
+        "y": 5,
+        "danger": 1,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Battle",
+        "dangerBand": "Outer",
+        "previewTag": "Outer",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": true
+      },
+      {
+        "x": 6,
+        "y": 6,
+        "danger": 0,
+        "moveCost": 2,
+        "dungeonEntryIndex": -1,
+        "type": "Treasure",
+        "dangerBand": "Outer",
+        "previewTag": "",
+        "sourceDungeon": "",
+        "visited": false,
+        "resolved": false,
+        "encounterAvailable": false
+      }
+    ],
+    "difficultyId": "4f6f34f8c8bf4cc0b5d8d5d65d4790e1",
+    "loot": [],
+    "relics": [],
+    "craftingCost": 0,
+    "legalActions": [
+      {
+        "op": "run_abandon",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_move",
+        "assetId": "",
+        "x": 0,
+        "y": 2,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_move",
+        "assetId": "",
+        "x": 0,
+        "y": 4,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_move",
+        "assetId": "",
+        "x": 1,
+        "y": 3,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      }
+    ],
+    "treasure": {
+      "selectedOptionIndex": 0,
+      "refreshesRemaining": 0,
+      "canRefresh": false,
+      "options": [],
+      "relicChoices": [],
+      "result": {
+        "message": "",
+        "money": 0,
+        "blueprint": {
+          "id": "",
+          "name": "",
+          "description": "",
+          "amount": 0,
+          "index": 0
+        },
+        "relic": {
+          "id": "",
+          "name": "",
+          "description": "",
+          "amount": 0,
+          "index": 0
+        }
+      }
+    }
+  },
+  "catalogue": {
+    "difficulties": [
+      {
+        "id": "4f6f34f8c8bf4cc0b5d8d5d65d4790e1",
+        "name": "Easy",
+        "isDefault": false,
+        "boardSize": 7,
+        "requiredKeys": 2,
+        "startingActionPoints": 5,
+        "maxRecruitCount": 4,
+        "actionPointLimits": [
+          5,
+          15,
+          20,
+          20,
+          20,
+          20,
+          20,
+          20,
+          20,
+          20,
+          20
+        ],
+        "recruitCosts": [
+          50,
+          90,
+          140,
+          200
+        ]
+      }
+    ],
+    "characterDetails": [
+      {
+        "id": "27e817266af382946804dea6afd2e374",
+        "name": "Chara",
+        "weaponType": "Sword",
+        "initialWeapon": "",
+        "baseHp": 24,
+        "minSpeed": 2,
+        "maxSpeed": 5
+      },
+      {
+        "id": "658e22cc7dec223479091c6817751025",
+        "name": "Jenny",
+        "weaponType": "Wand",
+        "initialWeapon": "6c1aed0bff9b3a74ba193a8ff2895f74",
+        "baseHp": 15,
+        "minSpeed": 2,
+        "maxSpeed": 6
+      },
+      {
+        "id": "fce426096f554744093a4718f5aa0f45",
+        "name": "Man",
+        "weaponType": "Axe",
+        "initialWeapon": "66e425e32f62902418159abffd6dedc5",
+        "baseHp": 20,
+        "minSpeed": 1,
+        "maxSpeed": 5
+      },
+      {
+        "id": "5121d91a4381d6748a08ee2236cc03fd",
+        "name": "Molly",
+        "weaponType": "Dagger",
+        "initialWeapon": "ab25e1c01dd01ad4c8eac113e9dc47c7",
+        "baseHp": 14,
+        "minSpeed": 3,
+        "maxSpeed": 6
+      }
+    ],
+    "blueprintDetails": [
+      {
+        "id": "17799684082ecc54fa14f94058c3412d",
+        "name": "渴血之卷",
+        "description": "记载着如何打造 【渴血剑】 的卷轴",
+        "rarity": "Rare",
+        "weapon": "48efe15157bc89a499885751e6498ed7",
+        "materials": [
+          {
+            "id": "d1eb5424360bc9f40a2b6a89faa718cb",
+            "name": "秽蚀尖牙",
+            "amount": 2
+          },
+          {
+            "id": "2a5a440bab2e42f499a7fabcd4b29ead",
+            "name": "凝血孢",
+            "amount": 2
+          },
+          {
+            "id": "86cf119c5ff77594f96939517d1506a7",
+            "name": "血肉轴承",
+            "amount": 1
+          },
+          {
+            "id": "6e1752dc4702a1c44905a3559cb5f924",
+            "name": "铁矿",
+            "amount": 1
+          }
+        ]
+      }
+    ]
+  },
+  "regenChoice": {
+    "phase": "calamity",
+    "money": 150,
+    "party": [
+      {
+        "id": "0",
+        "name": "Chara",
+        "character": "27e817266af382946804dea6afd2e374",
+        "weapon": "9b8c5d177c240334a9734636830a139f",
+        "hp": 19,
+        "maxHp": 22,
+        "level": 3,
+        "experience": 15
+      },
+      {
+        "id": "Molly",
+        "name": "Molly",
+        "character": "5121d91a4381d6748a08ee2236cc03fd",
+        "weapon": "ab25e1c01dd01ad4c8eac113e9dc47c7",
+        "hp": 20,
+        "maxHp": 23,
+        "level": 3,
+        "experience": 15
+      },
+      {
+        "id": "Jenny",
+        "name": "Jenny",
+        "character": "658e22cc7dec223479091c6817751025",
+        "weapon": "6c1aed0bff9b3a74ba193a8ff2895f74",
+        "hp": 18,
+        "maxHp": 24,
+        "level": 3,
+        "experience": 15
+      }
+    ],
+    "activeCalamities": [
+      {
+        "id": "ba3c1684486a07b4c93f8b7a576001ad",
+        "name": "探索 · 丢三落四",
+        "description": "随机失去 1 个遗物。",
+        "limitation": ""
+      },
+      {
+        "id": "842d4ae135b740afbf11cdbc7fa7123f",
+        "name": "弱化 · 回复无力",
+        "description": "在休息格恢复血量时，效果变为恢复友方角色最大生命值的 70%",
+        "limitation": ""
+      },
+      {
+        "id": "c8a0876e3edee394a955c7c01d651caa",
+        "name": "劲敌 · 不屈",
+        "description": "所有敌人承受致死伤害时不死亡，改为下回合开始时死亡。",
+        "limitation": ""
+      }
+    ],
+    "calamityChoices": [
+      {
+        "id": "2756a600016dcb940a1894364bd20319",
+        "name": "劲敌 · 血量强化 IV",
+        "description": "所有敌人基础血量额外增加 40%。",
+        "limitation": ""
+      },
+      {
+        "id": "81f9d2b8c9a5abd4e99a46ad016b1891",
+        "name": "劲敌 · 回复机体 II",
+        "description": "回合结束时，所有敌人额外恢复 2 点血量。",
+        "limitation": ""
+      }
+    ],
+    "legalActions": [
+      {
+        "op": "run_choose_calamity",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_choose_calamity",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 1,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      }
+    ]
+  },
+  "woundedMultiHit": {
+    "phase": "battle",
+    "money": 118,
+    "party": [
+      {
+        "id": "0",
+        "name": "Chara",
+        "character": "27e817266af382946804dea6afd2e374",
+        "weapon": "9b8c5d177c240334a9734636830a139f",
+        "hp": 19,
+        "maxHp": 22,
+        "level": 3,
+        "experience": 15
+      },
+      {
+        "id": "Molly",
+        "name": "Molly",
+        "character": "5121d91a4381d6748a08ee2236cc03fd",
+        "weapon": "642840a5e0c7c6c4d8a869204625c9d1",
+        "hp": 20,
+        "maxHp": 23,
+        "level": 3,
+        "experience": 15
+      },
+      {
+        "id": "Jenny",
+        "name": "Jenny",
+        "character": "658e22cc7dec223479091c6817751025",
+        "weapon": "6c1aed0bff9b3a74ba193a8ff2895f74",
+        "hp": 18,
+        "maxHp": 24,
+        "level": 3,
+        "experience": 15
+      }
+    ],
+    "activeCalamities": [
+      {
+        "id": "ba3c1684486a07b4c93f8b7a576001ad",
+        "name": "探索 · 丢三落四",
+        "description": "随机失去 1 个遗物。",
+        "limitation": ""
+      },
+      {
+        "id": "842d4ae135b740afbf11cdbc7fa7123f",
+        "name": "弱化 · 回复无力",
+        "description": "在休息格恢复血量时，效果变为恢复友方角色最大生命值的 70%",
+        "limitation": ""
+      },
+      {
+        "id": "c8a0876e3edee394a955c7c01d651caa",
+        "name": "劲敌 · 不屈",
+        "description": "所有敌人承受致死伤害时不死亡，改为下回合开始时死亡。",
+        "limitation": ""
+      },
+      {
+        "id": "81f9d2b8c9a5abd4e99a46ad016b1891",
+        "name": "劲敌 · 回复机体 II",
+        "description": "回合结束时，所有敌人额外恢复 2 点血量。",
+        "limitation": ""
+      },
+      {
+        "id": "0b941cb7ff5da244a8a19e6cecefe266",
+        "name": "弱化 · 震慑",
+        "description": "战斗开始时，所有友方角色损失 2 生命值。",
+        "limitation": ""
+      }
+    ],
+    "calamityChoices": [],
+    "legalActions": [
+      {
+        "op": "run_abandon",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "commit",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "set_skill",
+          "actorId": "ally_0",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "set_skill",
+          "actorId": "ally_0",
+          "buttonIndex": 0,
+          "skillIndex": 1,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "set_skill",
+          "actorId": "ally_0",
+          "buttonIndex": 0,
+          "skillIndex": 2,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "target",
+          "actorId": "ally_0",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "enemy_0",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "target",
+          "actorId": "ally_0",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "enemy_4",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "target",
+          "actorId": "ally_0",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "enemy_5",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "set_skill",
+          "actorId": "ally_1",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "set_skill",
+          "actorId": "ally_1",
+          "buttonIndex": 0,
+          "skillIndex": 1,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "set_skill",
+          "actorId": "ally_1",
+          "buttonIndex": 0,
+          "skillIndex": 2,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "target",
+          "actorId": "ally_1",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "enemy_0",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "target",
+          "actorId": "ally_1",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "enemy_4",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "target",
+          "actorId": "ally_1",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "enemy_5",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "set_skill",
+          "actorId": "ally_2",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "set_skill",
+          "actorId": "ally_2",
+          "buttonIndex": 0,
+          "skillIndex": 1,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "set_skill",
+          "actorId": "ally_2",
+          "buttonIndex": 0,
+          "skillIndex": 2,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "target",
+          "actorId": "ally_2",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "enemy_0",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "target",
+          "actorId": "ally_2",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "enemy_4",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      },
+      {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "target",
+          "actorId": "ally_2",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "enemy_5",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        }
+      }
+    ],
+    "battle": {
+      "phase": "targeting",
+      "round": 4,
+      "energy": 3,
+      "temporaryEnergy": 0,
+      "actors": [
+        {
+          "id": "ally_0",
+          "side": "ally",
+          "name": "0[新手木剑]",
+          "hp": 17,
+          "maxHp": 22,
+          "stage": 0,
+          "dead": false,
+          "statuses": [
+            {
+              "id": "poison",
+              "name": "中毒",
+              "stacks": 0
+            }
+          ],
+          "skills": [
+            {
+              "index": 0,
+              "id": "3672ea937dbc5e64bb1187640f7a9370",
+              "name": "挥砍",
+              "description": "挥砍\n技能：挥砍\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n描述：\n借力挥砍，简单的招式",
+              "energyCost": 0,
+              "dice": [
+                {
+                  "min": 2,
+                  "max": 3,
+                  "category": "Attack"
+                }
+              ],
+              "displayedDice": [
+                {
+                  "min": 2,
+                  "max": 3,
+                  "category": "Attack"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "id": "f3931f99f39b4a248a779ab007733565",
+              "name": "横砍",
+              "description": "横砍\n技能：横砍\n能耗：3\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 1 点伤害\n\n描述：\n暂无描述。",
+              "energyCost": 3,
+              "dice": [
+                {
+                  "min": 2,
+                  "max": 4,
+                  "category": "Attack"
+                }
+              ],
+              "displayedDice": [
+                {
+                  "min": 2,
+                  "max": 4,
+                  "category": "Attack"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "id": "acb988a65745364459695da95e246fad",
+              "name": "格挡",
+              "description": "格挡\n技能：格挡\n能耗：0\n骰子数：1\n第 1 防御骰：1 ~ 2\n\n描述：\n简单的剑技，用于减少即将到来的伤害",
+              "energyCost": 0,
+              "dice": [
+                {
+                  "min": 1,
+                  "max": 2,
+                  "category": "Defense"
+                }
+              ],
+              "displayedDice": [
+                {
+                  "min": 1,
+                  "max": 2,
+                  "category": "Defense"
+                }
+              ]
+            }
+          ],
+          "slots": [
+            {
+              "index": 0,
+              "speed": 3,
+              "skillIndex": 0,
+              "selectedSkill": {
+                "index": -1,
+                "id": "3672ea937dbc5e64bb1187640f7a9370",
+                "name": "挥砍",
+                "description": "挥砍\n技能：挥砍\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n描述：\n借力挥砍，简单的招式",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "",
+              "targetButtonIndex": -1,
+              "contested": false
+            }
+          ]
+        },
+        {
+          "id": "ally_1",
+          "side": "ally",
+          "name": "Molly[掠风短匕]",
+          "hp": 9,
+          "maxHp": 23,
+          "stage": 0,
+          "dead": false,
+          "statuses": [],
+          "skills": [
+            {
+              "index": 0,
+              "id": "4f46e0545514a794e946ceb2f8f9c3cb",
+              "name": "速切",
+              "description": "速切\n技能：速切\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 使用该技能时 ] 若 自身速度 高出 目标单位速度 2 点（含） ，则 威力 +1\n\n描述：\n以迅雷不及掩耳盗铃之势捅刀子",
+              "energyCost": 0,
+              "dice": [
+                {
+                  "min": 2,
+                  "max": 4,
+                  "category": "Attack"
+                }
+              ],
+              "displayedDice": [
+                {
+                  "min": 2,
+                  "max": 4,
+                  "category": "Attack"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "id": "52be59ce67e18e442928e076efe6df69",
+              "name": "花切",
+              "description": "花切\n技能：花切\n能耗：3\n骰子数：2\n第 1 攻击骰：2 ~ 3\n第 2 攻击骰：2 ~ 2\n\n词条：\n第 1 攻击骰词条：[ 使用该技能时 ] 若 自身速度 高出 目标单位速度 1 点（含） ，则 威力 +1\n第 2 攻击骰词条：[ 拼点胜利时 ] 若 自身速度 高出 目标单位速度 1 点（含） ，则 威力 +1\n\n描述：\n精准而华丽的杀招",
+              "energyCost": 3,
+              "dice": [
+                {
+                  "min": 2,
+                  "max": 3,
+                  "category": "Attack"
+                },
+                {
+                  "min": 2,
+                  "max": 2,
+                  "category": "Attack"
+                }
+              ],
+              "displayedDice": [
+                {
+                  "min": 2,
+                  "max": 3,
+                  "category": "Attack"
+                },
+                {
+                  "min": 2,
+                  "max": 2,
+                  "category": "Attack"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "id": "0e56f4866db35f2428568776fad92119",
+              "name": "刀舞",
+              "description": "刀舞\n技能：刀舞\n能耗：1\n骰子数：1\n第 1 防御骰：2 ~ 3\n\n词条：\n第 1 防御骰词条：[ 使用时 ] 使 自己 于 下 1 个回合开始时 获得 2 层 急速\n\n描述：\n展示刀舞可以有效舒减压力，前提是不失败",
+              "energyCost": 1,
+              "dice": [
+                {
+                  "min": 2,
+                  "max": 3,
+                  "category": "Defense"
+                }
+              ],
+              "displayedDice": [
+                {
+                  "min": 2,
+                  "max": 3,
+                  "category": "Defense"
+                }
+              ]
+            }
+          ],
+          "slots": [
+            {
+              "index": 0,
+              "speed": 5,
+              "skillIndex": 0,
+              "selectedSkill": {
+                "index": -1,
+                "id": "4f46e0545514a794e946ceb2f8f9c3cb",
+                "name": "速切",
+                "description": "速切\n技能：速切\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 使用该技能时 ] 若 自身速度 高出 目标单位速度 2 点（含） ，则 威力 +1\n\n描述：\n以迅雷不及掩耳盗铃之势捅刀子",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "",
+              "targetButtonIndex": -1,
+              "contested": false
+            }
+          ]
+        },
+        {
+          "id": "ally_2",
+          "side": "ally",
+          "name": "Jenny[老旧法杖]",
+          "hp": 16,
+          "maxHp": 24,
+          "stage": 0,
+          "dead": false,
+          "statuses": [
+            {
+              "id": "energy",
+              "name": "蓄能",
+              "stacks": 3
+            }
+          ],
+          "skills": [
+            {
+              "index": 0,
+              "id": "b60e3e1c70b6afe4a9016d18febc5b6a",
+              "name": "随意施法",
+              "description": "随意施法\n技能：随意施法\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 自己 获得 1 层 蓄能\n\n描述：\n简单而实用的法术，可以为随后的技能积攒力气",
+              "energyCost": 0,
+              "dice": [
+                {
+                  "min": 2,
+                  "max": 3,
+                  "category": "Attack"
+                }
+              ],
+              "displayedDice": [
+                {
+                  "min": 2,
+                  "max": 3,
+                  "category": "Attack"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "id": "9afa03908bac668459f24e4ea4b53341",
+              "name": "随意防御",
+              "description": "随意防御\n技能：随意防御\n能耗：1\n骰子数：1\n第 1 防御骰：2 ~ 3\n\n词条：\n第 1 防御骰词条：[ 使用时 ] 使 自己 获得 1 层 蓄能\n\n描述：\n简单而实用的法术，可以为自身施加防御法术来抵挡攻击",
+              "energyCost": 1,
+              "dice": [
+                {
+                  "min": 2,
+                  "max": 3,
+                  "category": "Defense"
+                }
+              ],
+              "displayedDice": [
+                {
+                  "min": 2,
+                  "max": 3,
+                  "category": "Defense"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "id": "6f323dbfc6080254aa17d3baedb126ba",
+              "name": "星辰冲击",
+              "description": "星辰冲击\n技能：星辰冲击\n能耗：1\n施放条件：自身至少拥有 2 层 蓄能，施放后消耗\n骰子数：2\n第 1 攻击骰：2 ~ 5\n第 2 攻击骰：1 ~ 3\n\n描述：\nJenny 的拿手技能，她年复一年的训练就是为了现在。",
+              "energyCost": 1,
+              "dice": [
+                {
+                  "min": 2,
+                  "max": 5,
+                  "category": "Attack"
+                },
+                {
+                  "min": 1,
+                  "max": 3,
+                  "category": "Attack"
+                }
+              ],
+              "displayedDice": [
+                {
+                  "min": 2,
+                  "max": 5,
+                  "category": "Attack"
+                },
+                {
+                  "min": 1,
+                  "max": 3,
+                  "category": "Attack"
+                }
+              ]
+            }
+          ],
+          "slots": [
+            {
+              "index": 0,
+              "speed": 6,
+              "skillIndex": 0,
+              "selectedSkill": {
+                "index": -1,
+                "id": "b60e3e1c70b6afe4a9016d18febc5b6a",
+                "name": "随意施法",
+                "description": "随意施法\n技能：随意施法\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 自己 获得 1 层 蓄能\n\n描述：\n简单而实用的法术，可以为随后的技能积攒力气",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "",
+              "targetButtonIndex": -1,
+              "contested": false
+            }
+          ]
+        },
+        {
+          "id": "enemy_0",
+          "side": "enemy",
+          "name": "巨型绿色史莱姆(ID:17)",
+          "hp": 21,
+          "maxHp": 30,
+          "stage": 0,
+          "dead": false,
+          "statuses": [
+            {
+              "id": "chill",
+              "name": "寒冷",
+              "stacks": 0
+            }
+          ],
+          "skills": [],
+          "slots": [
+            {
+              "index": 0,
+              "speed": 5,
+              "skillIndex": -1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "98ea46dc0fe048dbb02d089aa6e549a7",
+                "name": "舍身冲撞",
+                "description": "舍身冲撞\n技能：舍身冲撞\n能耗：0\n骰子数：2\n第 1 攻击骰：2 ~ 5\n第 2 攻击骰：1 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 使用时 ] 对 自己 造成 2 点伤害\n第 1 攻击骰词条：[ 单方面攻击时 ] 对 当前目标 造成 2 点伤害\n第 2 攻击骰词条：[ 单方面攻击时 ] 对 当前目标 造成 2 点伤害\n\n描述：\n使用时对自己造成 2 伤害。单方面攻击时，每枚骰子额外造成 2 伤害",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 5,
+                    "category": "Attack"
+                  },
+                  {
+                    "min": 1,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 5,
+                    "category": "Attack"
+                  },
+                  {
+                    "min": 1,
+                    "max": 3,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "ally_1",
+              "targetButtonIndex": 0,
+              "contested": false
+            }
+          ]
+        },
+        {
+          "id": "enemy_4",
+          "side": "enemy",
+          "name": "绿色史莱姆(ID:1)",
+          "hp": 4,
+          "maxHp": 5,
+          "stage": 0,
+          "dead": false,
+          "statuses": [],
+          "skills": [],
+          "slots": [
+            {
+              "index": 0,
+              "speed": 2,
+              "skillIndex": -1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "3d1ec2b5df59ece4592d58d8cd4179f1",
+                "name": "冲撞",
+                "description": "冲撞\n技能：冲撞\n能耗：0\n骰子数：1\n第 1 攻击骰：1 ~ 2\n\n描述：\n暂无描述。",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 1,
+                    "max": 2,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 1,
+                    "max": 2,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "ally_1",
+              "targetButtonIndex": 0,
+              "contested": false
+            }
+          ]
+        },
+        {
+          "id": "enemy_5",
+          "side": "enemy",
+          "name": "绿色史莱姆(ID:1)",
+          "hp": 5,
+          "maxHp": 5,
+          "stage": 0,
+          "dead": false,
+          "statuses": [],
+          "skills": [],
+          "slots": [
+            {
+              "index": 0,
+              "speed": 2,
+              "skillIndex": -1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "3d1ec2b5df59ece4592d58d8cd4179f1",
+                "name": "冲撞",
+                "description": "冲撞\n技能：冲撞\n能耗：0\n骰子数：1\n第 1 攻击骰：1 ~ 2\n\n描述：\n暂无描述。",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 1,
+                    "max": 2,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 1,
+                    "max": 2,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "ally_0",
+              "targetButtonIndex": 0,
+              "contested": false
+            }
+          ]
+        }
+      ],
+      "relics": [
+        {
+          "id": "28e4f0e07cda48cebe2ac0ec65c9f0ec",
+          "name": "青蚀刻刀",
+          "description": "友方角色对具有不少于 2 层中毒的目标造成伤害时，额外造成 1 点伤害",
+          "limitation": ""
+        },
+        {
+          "id": "9f57fb2a2a384dbf9942933fe9fd415b",
+          "name": "“疾病”",
+          "description": "中毒的目标造成伤害 -15%",
+          "limitation": ""
+        },
+        {
+          "id": "3fd73e7983543604f90cf0de75d0b546",
+          "name": "雪铃",
+          "description": "战斗开始时，为随机 1 个敌方目标施加 2 层寒冷。",
+          "limitation": ""
+        },
+        {
+          "id": "ad7aa4b35dc541a590524eb94362464f",
+          "name": "龙鳞甲",
+          "description": "友方角色存在蓄能状态时，每层蓄能使受到的伤害 -1（最多 -2）",
+          "limitation": ""
+        }
+      ]
+    }
+  }
+}

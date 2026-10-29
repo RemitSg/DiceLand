@@ -1,0 +1,1041 @@
+{
+  "date": "2026-10-28",
+  "task": "Complete requested policy and API corrections, then play one fresh autonomous Easy run with a new seed and complete decision/round/bug logs.",
+  "status": "Finished and settled in actual defeat after14 victories. Boss34/75HP at round5. Not a victory claim.",
+  "uniqueSeedPreference": "Use a different recorded seed for every future fresh autonomous game; deterministic replay and directed tests are separate.",
+  "policyVersion": {
+    "commit": "217d7d05e223c7f1cc28ad90ec1dc7ed36531d49",
+    "sha256": "21ee3dc6bcb8a2bdf9a60b0c42cd1be6978259b8065a6e9946997dcc8aa5bc28",
+    "seed": 2026102804,
+    "newZeroProgressProfile": true,
+    "noReload": true,
+    "engineOrBalanceEditsDuringRun": false,
+    "uniqueSeedPerFreshRun": true
+  },
+  "policyUnchangedThroughoutRun": true,
+  "postRunPolicyCorrection": {
+    "scope": "Post-run client-only readiness correction. Run4 stayed frozen at217d7d05; no new playthrough performed.",
+    "changes": [
+      "Record actual fresh opening loadout to handle Chara runtime fallback weapon omitted from catalogue.",
+      "Count three actual upgrades in recorded run4 Boss preparation; retain health refusal.",
+      "Resumed sessions without trusted opening return explicit unknownWeaponBaselines instead of assuming current equipment is starting equipment."
+    ],
+    "python": {
+      "total": 57,
+      "passed": 57,
+      "failed": 0
+    },
+    "contract": {
+      "schemas": 54,
+      "fields": 446,
+      "valid": true,
+      "dtoDrift": false
+    },
+    "frozenRunPolicySha256": "21ee3dc6bcb8a2bdf9a60b0c42cd1be6978259b8065a6e9946997dcc8aa5bc28",
+    "postRunPolicySha256": "725e901e77d99c9965b50b3609ae3adfe61689bac8657a9a5259d9ac43b86922",
+    "postRunClientSha256": "b6d1e70bff133fdb3f9b0d64faf51a86e3a2e9f80662e10aa1e1856d38ffb292",
+    "fixtureSha256": "d442e25f5e74eb92b7d9fddc892cab4292d856b2155156527ddf3354c9d728fb",
+    "noUnityChangeAfterRun": true,
+    "noNewVictoryClaim": true,
+    "equipmentDocs": "Already correctly document run_equip assetId and automatic compatible owner; no documentation change needed."
+  },
+  "actualRun": {
+    "seed": 2026102804,
+    "sameSeedForComparison": false,
+    "newProfile": "easy-run4-20261028-9a3add936f",
+    "initialPoints": 0,
+    "initialUnlockedNodes": 0,
+    "actions": 418,
+    "battles": 15,
+    "wins": 14,
+    "rounds": 35,
+    "clashDiceMessages": 55,
+    "outcome": "defeat",
+    "score": 1521,
+    "baseScore": 1521,
+    "abilityPointsGained": 1,
+    "durationSeconds": 3303,
+    "noReloadOrReroll": true,
+    "noResourceOrOutcomeInjection": true,
+    "onlyPublicCommands": true,
+    "battleResults": [
+      {
+        "battle": 1,
+        "position": [
+          6,
+          1
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "水雪人(ID:3)"
+        ],
+        "rounds": 2,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[新手木剑]",
+            "hp": 16,
+            "maxHp": 16,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Jenny[老旧法杖]",
+            "hp": 14,
+            "maxHp": 15,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "水雪人(ID:3)",
+            "hp": 0,
+            "maxHp": 10,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 2,
+        "position": [
+          5,
+          1
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "磁电质(ID:5)",
+          "磁电质(ID:5)"
+        ],
+        "rounds": 3,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[新手木剑]",
+            "hp": 14,
+            "maxHp": 16,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Jenny[老旧法杖]",
+            "hp": 14,
+            "maxHp": 15,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "磁电质(ID:5)",
+            "hp": 0,
+            "maxHp": 6,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_1",
+            "name": "磁电质(ID:5)",
+            "hp": 0,
+            "maxHp": 6,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 3,
+        "position": [
+          6,
+          5
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "血孢子(ID:6)"
+        ],
+        "rounds": 3,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[新手木剑]",
+            "hp": 16,
+            "maxHp": 19,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Jenny[老旧法杖]",
+            "hp": 18,
+            "maxHp": 18,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "血孢子(ID:6)",
+            "hp": 0,
+            "maxHp": 14,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 4,
+        "position": [
+          5,
+          6
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "焰蛾(ID:2)"
+        ],
+        "rounds": 2,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[新手木剑]",
+            "hp": 14,
+            "maxHp": 19,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Jenny[老旧法杖]",
+            "hp": 18,
+            "maxHp": 18,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Man[“无敌”]",
+            "hp": 20,
+            "maxHp": 20,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "焰蛾(ID:2)",
+            "hp": 0,
+            "maxHp": 12,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 5,
+        "position": [
+          4,
+          6
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "水雪人(ID:3)"
+        ],
+        "rounds": 2,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[新手木剑]",
+            "hp": 14,
+            "maxHp": 19,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Jenny[老旧法杖]",
+            "hp": 18,
+            "maxHp": 18,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Man[“无敌”]",
+            "hp": 20,
+            "maxHp": 20,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "水雪人(ID:3)",
+            "hp": 0,
+            "maxHp": 10,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 6,
+        "position": [
+          3,
+          1
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "嗜血啮鼠(ID:14)",
+          "嗜血啮鼠(ID:14)",
+          "嗜血啮鼠(ID:14)"
+        ],
+        "rounds": 2,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[铁剑]",
+            "hp": 19,
+            "maxHp": 22,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Jenny[老旧法杖]",
+            "hp": 21,
+            "maxHp": 24,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Man[“无敌”]",
+            "hp": 23,
+            "maxHp": 23,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "嗜血啮鼠(ID:14)",
+            "hp": 0,
+            "maxHp": 4,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_1",
+            "name": "嗜血啮鼠(ID:14)",
+            "hp": 0,
+            "maxHp": 4,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_2",
+            "name": "嗜血啮鼠(ID:14)",
+            "hp": 0,
+            "maxHp": 4,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 7,
+        "position": [
+          0,
+          0
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "旋速螺(ID:4)",
+          "旋速螺(ID:4)"
+        ],
+        "rounds": 2,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[铁剑]",
+            "hp": 17,
+            "maxHp": 22,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Jenny[老旧法杖]",
+            "hp": 19,
+            "maxHp": 24,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Man[“无敌”]",
+            "hp": 19,
+            "maxHp": 23,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "旋速螺(ID:4)",
+            "hp": 0,
+            "maxHp": 5,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_1",
+            "name": "旋速螺(ID:4)",
+            "hp": 0,
+            "maxHp": 5,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 8,
+        "position": [
+          0,
+          1
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "嗜血啮鼠(ID:14)",
+          "嗜血啮鼠(ID:14)",
+          "嗜血啮鼠(ID:14)"
+        ],
+        "rounds": 2,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[铁剑]",
+            "hp": 14,
+            "maxHp": 22,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Jenny[老旧法杖]",
+            "hp": 17,
+            "maxHp": 24,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Man[“无敌”]",
+            "hp": 14,
+            "maxHp": 23,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "嗜血啮鼠(ID:14)",
+            "hp": 0,
+            "maxHp": 4,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_1",
+            "name": "嗜血啮鼠(ID:14)",
+            "hp": 0,
+            "maxHp": 4,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_2",
+            "name": "嗜血啮鼠(ID:14)",
+            "hp": 0,
+            "maxHp": 4,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 9,
+        "position": [
+          3,
+          2
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "铁线傀儡(ID:20)"
+        ],
+        "rounds": 3,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[铁剑]",
+            "hp": 10,
+            "maxHp": 22,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Jenny[老旧法杖]",
+            "hp": 15,
+            "maxHp": 24,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Man[“无敌”]",
+            "hp": 24,
+            "maxHp": 29,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "铁线傀儡(ID:20)",
+            "hp": 0,
+            "maxHp": 32,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 10,
+        "position": [
+          0,
+          3
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "血孢子(ID:6)"
+        ],
+        "rounds": 1,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[铁剑]",
+            "hp": 21,
+            "maxHp": 25,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Jenny[老旧法杖]",
+            "hp": 25,
+            "maxHp": 27,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Man[“无敌”]",
+            "hp": 22,
+            "maxHp": 29,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_3",
+            "name": "Molly[破旧匕首]",
+            "hp": 12,
+            "maxHp": 14,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "血孢子(ID:6)",
+            "hp": 0,
+            "maxHp": 14,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 11,
+        "position": [
+          1,
+          6
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "水雪人(ID:3)"
+        ],
+        "rounds": 1,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[铁剑]",
+            "hp": 19,
+            "maxHp": 25,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Jenny[老旧法杖]",
+            "hp": 23,
+            "maxHp": 27,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Man[“无敌”]",
+            "hp": 20,
+            "maxHp": 29,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_3",
+            "name": "Molly[破旧匕首]",
+            "hp": 10,
+            "maxHp": 14,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "水雪人(ID:3)",
+            "hp": 0,
+            "maxHp": 10,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 12,
+        "position": [
+          0,
+          6
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "旋速螺(ID:4)",
+          "旋速螺(ID:4)"
+        ],
+        "rounds": 2,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[铁剑]",
+            "hp": 17,
+            "maxHp": 25,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Jenny[老旧法杖]",
+            "hp": 20,
+            "maxHp": 27,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Man[“无敌”]",
+            "hp": 18,
+            "maxHp": 29,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_3",
+            "name": "Molly[破旧匕首]",
+            "hp": 15,
+            "maxHp": 17,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "旋速螺(ID:4)",
+            "hp": 0,
+            "maxHp": 5,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_1",
+            "name": "旋速螺(ID:4)",
+            "hp": 0,
+            "maxHp": 5,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 13,
+        "position": [
+          3,
+          4
+        ],
+        "tile": "Battle",
+        "enemies": [
+          "洋流(ID:38)"
+        ],
+        "rounds": 3,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[铁剑]",
+            "hp": 11,
+            "maxHp": 25,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Jenny[老旧法杖]",
+            "hp": 8,
+            "maxHp": 27,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Man[电磁断斧]",
+            "hp": 30,
+            "maxHp": 32,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_3",
+            "name": "Molly[破旧匕首]",
+            "hp": 13,
+            "maxHp": 17,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "洋流(ID:38)",
+            "hp": 0,
+            "maxHp": 26,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 14,
+        "position": [
+          6,
+          4
+        ],
+        "tile": "Event",
+        "enemies": [
+          "耀光骑士(ID:12)"
+        ],
+        "rounds": 2,
+        "outcome": "victory",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[铁剑]",
+            "hp": 9,
+            "maxHp": 25,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Jenny[寒芒杖]",
+            "hp": 6,
+            "maxHp": 27,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Man[电磁断斧]",
+            "hp": 28,
+            "maxHp": 32,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "ally_3",
+            "name": "Molly[破旧匕首]",
+            "hp": 16,
+            "maxHp": 23,
+            "dead": false,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "耀光骑士(ID:12)",
+            "hp": 0,
+            "maxHp": 28,
+            "dead": true,
+            "stage": 0
+          }
+        ]
+      },
+      {
+        "battle": 15,
+        "position": [
+          3,
+          3
+        ],
+        "tile": "Boss",
+        "enemies": [
+          "雷寰霸主(ID:11)"
+        ],
+        "rounds": 5,
+        "outcome": "defeat",
+        "finalActors": [
+          {
+            "id": "ally_0",
+            "name": "0[铁剑]",
+            "hp": 0,
+            "maxHp": 25,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "ally_1",
+            "name": "Jenny[寒芒杖]",
+            "hp": 0,
+            "maxHp": 27,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "ally_2",
+            "name": "Man[电磁断斧]",
+            "hp": 0,
+            "maxHp": 32,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "ally_3",
+            "name": "Molly[破旧匕首]",
+            "hp": 0,
+            "maxHp": 23,
+            "dead": true,
+            "stage": 0
+          },
+          {
+            "id": "enemy_0",
+            "name": "雷寰霸主(ID:11)",
+            "hp": 34,
+            "maxHp": 75,
+            "dead": false,
+            "stage": 1
+          }
+        ]
+      }
+    ],
+    "bossInitialHp": 75,
+    "bossRemainingHp": 34,
+    "bossRounds": 5,
+    "verification": {
+      "verified": true,
+      "commandsChecked": 418,
+      "finalStateHash": "006fd06a1a6a182bad229fbd5c0e83572f218c652d2749b8be0103eca48a86c6"
+    },
+    "verificationDidNotChangeProfile": true,
+    "contentHash": "13dd1b641e0e746f949c6abba1d9ff878ff8bcc7693c826b9c0b6e8ce2dec2b2",
+    "manualPreparationRiskOverrides": [
+      {
+        "step": 397,
+        "reportedAssessment": {
+          "ready": false,
+          "reasons": [
+            "全队生命不足75%，先安排营地恢复",
+            "Boss前至少三人更换初始武器，不能用无关遗物数量代替输出成长"
+          ],
+          "livingParty": 4,
+          "healthRatio": 0.5514018691588785,
+          "averageLevel": 3.75,
+          "upgradedWeapons": 2,
+          "relicCount": 5
+        },
+        "actualThreeUpgrades": [
+          "Chara: starting wooden sword -> iron sword",
+          "Jenny: old staff -> frost staff",
+          "Man: starting axe -> electromagnetic cleaver"
+        ],
+        "reason": "No unused camp or safe recovery remains. Existing enemies are higher-risk elites; further travel increases calamity. Attempt the legal Boss once using cold/burn/energy relics, acknowledging59/107HP and the empty Chara initialWeapon metadata."
+      }
+    ]
+  },
+  "scope": "Actual agent route and tactical overrides, including explicit low-health Boss risk. A generic heuristic victory is not claimed. Different seed is coverage, not controlled strategy comparison.",
+  "bugCounts": {
+    "currentGameCandidates": 2,
+    "postRunClientFixes": 1,
+    "agentMistakes": 6,
+    "designQuestions": 2
+  },
+  "sourceMatch": {
+    "filesCompared": 3199,
+    "contentHash": "13dd1b641e0e746f949c6abba1d9ff878ff8bcc7693c826b9c0b6e8ce2dec2b2",
+    "allEqual": true
+  },
+  "tests": {
+    "preRunPython": 55,
+    "postRunPython": 57,
+    "relatedEditMode": {
+      "total": 60,
+      "passed": 60,
+      "failed": 0
+    },
+    "fullEditMode": {
+      "total": 1009,
+      "passed": 988,
+      "failed": 21,
+      "newFailures": 0
+    },
+    "playMode": "Earlier known failures remain unresolved; not rerun.",
+    "nativeReplayCommands": 418,
+    "contractSchemas": 54,
+    "contractFields": 446
+  },
+  "environment": {
+    "testHostPid": 47344,
+    "testHostStopped": true,
+    "originalEditorPid": 21328,
+    "originalEditorRestarted": false,
+    "userSceneSaved": false
+  },
+  "artifacts": {
+    "outputs/agent-battle/easy-20261028-run4/play-log.html": {
+      "bytes": 2168583,
+      "sha256": "b797b442d0a2a4ecb863e3856899c5e4dfc226dc23721211fcd6d9422718c3f2"
+    },
+    "outputs/agent-battle/easy-20261028-run4/play-log.txt": {
+      "bytes": 2410373,
+      "sha256": "888590bc95d8642506ba6ae538db9825bf3b24b3925b5e9a2a5543f36716eb9a"
+    },
+    "outputs/agent-battle/easy-20261028-run4/bug-report.html": {
+      "bytes": 8991,
+      "sha256": "f842ab309a00a1189f7989cfce472c35851bb83eecd001eb4c646cbe374a5747"
+    },
+    "outputs/agent-battle/easy-20261028-run4/bug-report.json": {
+      "bytes": 5785,
+      "sha256": "049fcdc1c48a97bea28604f007ae725b93a003f3e63748fc1f6dcd307938b963"
+    },
+    "outputs/agent-battle/easy-20261028-run4/bug-evidence.json": {
+      "bytes": 1448043,
+      "sha256": "e4af5dff017be64538f24dde7e0d16c7b8081402f4ad0b35c28456caf1138571"
+    },
+    "outputs/agent-battle/easy-20261028-run4/summary.json": {
+      "bytes": 28970,
+      "sha256": "771ffba496d599c47266d4788856352f27fd2534faeccb2098f9c5b5db5ce965"
+    },
+    "outputs/agent-battle/easy-20261028-run4/decisions.jsonl": {
+      "bytes": 788025,
+      "sha256": "76c1d03651bded88d4a4f662c79d12958fd72c2ad638a98f9f423c3141db7cb6"
+    },
+    "outputs/agent-battle/easy-20261028-run4/requests.jsonl": {
+      "bytes": 292335,
+      "sha256": "addc2808950611a5995216f233172760cfc0f7e10ee88e880e27e0f8fce0f934"
+    },
+    "outputs/agent-battle/easy-20261028-run4/rounds.jsonl": {
+      "bytes": 1494631,
+      "sha256": "7a804d6da8c21df2801101a310a41e12c5d45bd2081ed015f59f59e2e0816f56"
+    },
+    "outputs/agent-battle/easy-20261028-run4/battles.jsonl": {
+      "bytes": 191818,
+      "sha256": "e71c172bb78811006c6ccd62701847c6929cc06f074ed1d82b69c47bf0a6286a"
+    },
+    "outputs/agent-battle/easy-20261028-run4/observations.jsonl.gz": {
+      "bytes": 3868829,
+      "sha256": "5de471d4275731c01cdaf31518c790c097a429428dc7c09c4e888822a9a8cd24"
+    },
+    "outputs/agent-battle/easy-20261028-run4/replay.json": {
+      "bytes": 316631,
+      "sha256": "9c88f9ec158b0087cb044b3c2a316f88f0abfae10bfb4859491e939569256b2f"
+    },
+    "outputs/agent-battle/easy-20261028-run4/verification.json": {
+      "bytes": 45660,
+      "sha256": "f3afefcfeda114cca4a85f510211e959e351730c7d7ea4546c7b3cb19879a673"
+    },
+    "outputs/agent-battle/easy-20261028-run4/initial.json": {
+      "bytes": 33545,
+      "sha256": "88914f610e32012515f6484e37ac6801c71d216348c0363de4e554241def5eda"
+    },
+    "outputs/agent-battle/easy-20261028-run4/live.json": {
+      "bytes": 42099,
+      "sha256": "93dfa5947a77696675239f94b17ea6dbb61f0468b1dac49bf544639b61d6f933"
+    },
+    "outputs/agent-battle/easy-20261028-run4/catalog.json": {
+      "bytes": 138394,
+      "sha256": "d12f8111252079e7f89687614f1d8864b85b4fb50d0c44a26583d27349b73b3e"
+    },
+    "outputs/agent-battle/easy-20261028-run4/meta.json": {
+      "bytes": 1753,
+      "sha256": "1202ffac08ef9b09f3d9b56ecd9d8296c26f040fd40f6b4affaaf1366db4f429"
+    },
+    "outputs/agent-battle/easy-20261028-run4/policy-tests.log": {
+      "bytes": 159,
+      "sha256": "1c89d38f644b8a140d5a4816ef07b665b03bf1003ac4749fac049d43250bf5d6"
+    },
+    "outputs/agent-battle/easy-20261028-run4/policy-snapshot.py": {
+      "bytes": 24047,
+      "sha256": "21ee3dc6bcb8a2bdf9a60b0c42cd1be6978259b8065a6e9946997dcc8aa5bc28"
+    },
+    "outputs/agent-battle/easy-20261028-run4/client-snapshot.py": {
+      "bytes": 15951,
+      "sha256": "f72ba27a21f2a9b50d406db1f178265cbd096b091b3a06a5bd9872aae79e979b"
+    },
+    "outputs/agent-battle/easy-20261028-run4/policy-version.json": {
+      "bytes": 297,
+      "sha256": "44f644440c05b8a54e9d6c3272204895190c11dbb8b552f3bd2bcb238b12fef5"
+    },
+    "outputs/agent-battle/easy-20261028-run4/bug-candidates.json": {
+      "bytes": 2124,
+      "sha256": "78a5ae376609e547b58690beafcb414dde88c4a1a647524b51da3c57c2857989"
+    },
+    "outputs/agent-battle/easy-20261028-run4/agent-mistakes.json": {
+      "bytes": 1442,
+      "sha256": "0f050f87fc63fb30bf38812983abca96384445c1f1aa4880fce96e14a154a86c"
+    },
+    "outputs/agent-battle/easy-20261028-run4/content-audit.json": {
+      "bytes": 9306,
+      "sha256": "b3cb1175ec6aa97ad3f5d6032574b51a1e481c0dad05b372e02480c49676f37f"
+    },
+    "outputs/agent-battle/easy-20261028-run4/post-run-policy-tests.log": {
+      "bytes": 161,
+      "sha256": "ea35bf198fca6e512bd81798f08892030c2b82a4858de8805d10d03ecab90e25"
+    },
+    "outputs/agent-battle/easy-20261028-run4/post-run-policy-validation.json": {
+      "bytes": 1245,
+      "sha256": "10e4a5e306b6eef91e5b2c5c54b11ccfdcc35a896ddb955ce0cfd9574c39a969"
+    },
+    "outputs/agent-battle/easy-20261028-run4/manifest.json": {
+      "bytes": 4325,
+      "sha256": "f84b9f53795463db3a70d1e85305a95346d16415c65e7b0560123b52451207b7"
+    },
+    "outputs/agent-battle/easy-20261028-run4/Easy第四局完整日志.zip": {
+      "bytes": 4257226,
+      "sha256": "0224feaec5294e6ac3e3dfe362ff78fe5a0360299140a487d97166b1ea3bfff0"
+    }
+  }
+}

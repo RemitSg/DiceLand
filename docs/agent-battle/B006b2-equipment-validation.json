@@ -1,0 +1,158 @@
+{
+  "batch": "B006b2 equipment observability",
+  "goalStatus": "in_progress_not_complete",
+  "date": "2026-10-27",
+  "baseCommit": "01dd98ad",
+  "scope": "Public authored weapon/character/blueprint details and current forge fee; live status-adjusted UI dice previews. This is a prerequisite improvement, not a passing normal victory gate.",
+  "changes": [
+    "catalog retains the four existing asset lists and adds 26 weaponDetails, 4 characterDetails and 20 blueprintDetails with native canonical asset IDs.",
+    "Blueprint requirements are aggregated by formal RunCraftingService. Target weapon, rarity, type, base speed-button count, fallback power and skill definitions can be read before purchase/ownership.",
+    "Catalog and live battle share the same skill DTO reader and formal BattleSkillInfoOverlay formatter. The catalog formatter stays inactive in a disposable preview scene, constructs no UI and restores caller input locks and random state.",
+    "Live skill displayedDice reads ally.GetDisplayedDicePowerRange or enemy.GetEffectiveDisplayedDicePowerRange; original dice stays authored data. This is the formal UI preview, not a roll or final per-target outcome forecast. Static catalog displayedDice is empty.",
+    "Adventure craftingCost reads the formal service in every phase, including when no blueprint is owned. Legal actions still govern ownership, materials, affordability and location.",
+    "Python inspect-equipment follows a public catalog item ID/name to its definition and associated weapon. Both CLI clients write UTF-8 JSON, including under Windows pipe capture. Policy prefers displayedDice when offered and retains authored fallback for older observations."
+  ],
+  "execution": {
+    "engine": "2022.3.62t6 (Tuanjie 1.8.4), -batchmode -nographics, NullGfxDevice",
+    "isolatedProject": "outputs/agent-battle/b005b-validation-project",
+    "companyName": "DiceLandAgentValidation",
+    "relatedProcessId": 52212,
+    "initialFullProcessId": 41540,
+    "finalFullProcessId": 59868,
+    "initialHttpProcessId": 7948,
+    "finalHttpProcessId": 49068,
+    "relatedResult": "outputs/agent-battle/b006b2-equipment-related.xml",
+    "finalResult": "outputs/agent-battle/b006b2-equipment-final.xml",
+    "finalLog": "outputs/agent-battle/b006b2-equipment-final.log",
+    "httpLog": "outputs/agent-battle/b006b2-equipment-http-final.log",
+    "baselineResult": "outputs/agent-battle/b006b-final-tests.xml",
+    "isolation": "Eight owned source/test/meta files hash-match between workspace and isolated validation copy; three Python client files run from original tools. No difficulty/enemy/reward/scene asset edits. Original editor and player persistence were not saved, restarted or changed by validation."
+  },
+  "baseline": {
+    "total": 942,
+    "passed": 921,
+    "failed": 21,
+    "skipped": 0,
+    "durationSeconds": 11.5862732
+  },
+  "current": {
+    "total": 948,
+    "passed": 927,
+    "failed": 21,
+    "skipped": 0,
+    "durationSeconds": 12.323686
+  },
+  "newTests": [
+    "AgentEquipmentCatalogTests.BattleShowsFormalStatusAdjustedRangesAndKeepsAuthoredDiceSeparate",
+    "AgentEquipmentCatalogTests.BrowsingCatalogDoesNotCreateUiOrDirtyTheCallerSceneOrAdvanceRandom",
+    "AgentEquipmentCatalogTests.CatalogDuringBattleCannotChangeDecisionsRuntimeOrInputLocks",
+    "AgentEquipmentCatalogTests.CatalogLinksUnownedBlueprintToWeaponSkillsSlotsAndCompatibleCharacter",
+    "AgentEquipmentCatalogTests.CatalogPreservesConditionalSkillTextAndAuthoredDiceWithoutRichText",
+    "AgentEquipmentCatalogTests.CurrentForgeCostIsObservableBeforeOwningAnyBlueprintOrEnteringForge"
+  ],
+  "related": {
+    "total": 47,
+    "passed": 47,
+    "failed": 0,
+    "selection": "Selected matching related classes from final full-suite XML, not a separate final targeted job."
+  },
+  "sameFailingNames": true,
+  "newFailures": [],
+  "existingFailures": [
+    "BattleButtonSkillSelectionTests.AllySpeedButtons_CanKeepIndependentSelectedSkills",
+    "BattleButtonSpriteStateSwitcherTests.OnEnable_AppliesUnpressedSprite",
+    "BattleGamblerPassiveServiceTests.TryApplyDebtInstantDeath_KillsAllyAtThreeDebtStacks",
+    "BattleImmediateEffectPlanServiceTests.ResolveAlly_UsesCurrentAllyImmediateOrder",
+    "BattleSkillInfoOverlayDescriptionTests.CompactSkillDetail_MergesMarkedDelayedStatusBranches",
+    "BattleStatusResolutionServiceTests.TryResolve_ReturnsFalseForUnsupportedLegacyStatus",
+    "BattleTargetingPhaseStartEffectServiceTests.ApplyPendingAllyStatusGrants_AppliesImmediateSpeedBonusForOpeningRoll",
+    "MainMenuSceneControllerTutorialTests.ResolveMenuAction_RecognizesTutorialIdentity",
+    "MapEventNestedFlowTests.SaveAssetCatalog_IncludesNestedFollowUpEvents",
+    "MapTutorialFlowServiceTests.TryConsumeArrivalGuide_ShowsMerchantForgeAndEliteFinalOnce",
+    "PuppetMasterEnemyAssetTests.PuppetMasterAndPuppet_HaveExpectedCoreStatsAndPassives",
+    "PuppetMasterEnemyAssetTests.PuppetMasterEncounter_HasExpectedEnemyGroupComposition",
+    "PuppetMasterEnemyAssetTests.PuppetSkills_HaveExpectedStatusAndRoundRules",
+    "RelicSystem079To094Tests.MerchantWhiteSlip_AllowsPurchaseWhenMoneyPositiveAndSpendsRemainingMoney",
+    "RestSceneReforgeInteractableRelicSelectionTests.HandleRelicSelection_ClickingOnlySelectedRelicAgainClearsSelection",
+    "RestSceneReforgeInteractableRelicSelectionTests.OnMouseUpAsButton_WhenMainPanelIsOpen_DoesNotReturnToOpenPrompt",
+    "TodoWeaponAssetTests.HotAnvilBoard_LoadsWithBurnSpreadAndSelfBurnSkills",
+    "TodoWeaponAssetTests.WeaponCatalog_ContainsTodoWeapons",
+    "TutorialBattleContentFactoryTests.CreateRuntimeDefinition_Battle03_AdvancesWhenAllySkillIsViewed",
+    "TutorialHighlightCoordinateUtilityTests.ConvertScreenRectToReferenceRect_UsesCanvasScalerMatchScale",
+    "WanderingShadowEnemyAssetTests.Echo_UsesConfiguredEffectsAndEventGroup"
+  ],
+  "pythonTests": {
+    "total": 6,
+    "passed": 6,
+    "command": "python -B -m unittest discover -s tools/tests -p test_agent_adventure_policy.py -v",
+    "note": "Real-frame policy regressions still pass with displayedDice fallback."
+  },
+  "http": {
+    "proof": "outputs/agent-battle/b006b2-equipment-http-proof-final.json",
+    "catalog": "outputs/agent-battle/b006b2-equipment-catalog-final.json",
+    "counts": {
+      "weaponDetails": 26,
+      "characterDetails": 4,
+      "blueprintDetails": 20
+    },
+    "readOnlyDuringLiveNormalBattle": true,
+    "authoredSkillDtoMatchesEquippedBattleSkill": true,
+    "liveDisplayedDicePopulated": true,
+    "normalForgeFeeBeforeOwningBlueprint": "Normal seed 127 actual preparation through public commands; accepted real forge-inflation calamity and observed craftingCost=40 on map with zero owned recipes.",
+    "inspectCommand": "python -B tools/agent_adventure_client.py --url http://127.0.0.1:8092/v1/command inspect-equipment f3b07049a74cf51409a7e4127e06d57f",
+    "inspectOutput": "outputs/agent-battle/b006b2-inspect-equipment.json",
+    "cliEncodingRepair": "First Windows pipe read exposed code-page output; both client mains now configure UTF-8. Subsequent stdout bytes decode as UTF-8, resolve blueprint to Poison Sword skills/materials, and leave the live observation unchanged."
+  },
+  "remaining": [
+    "Normal Boss win -> earned ability points -> paid upgrade -> next run remains unproved. No new normal victory claimed in this metadata/read-only validation.",
+    "B007 full save/restore, version checks, recorded settlement time and deterministic full-adventure replay remain required.",
+    "B008 complete external-agent multi-route audit and stronger build/status/defense strategy remain required.",
+    "21 pre-existing EditMode failures remain; no new PlayMode run. Existing roster and authored content gaps remain documented."
+  ],
+  "sourceHashes": [
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentBattleAssetReader.cs",
+      "sha256": "2df07d9ca56d49d6eca077d61e70eb9e6c923d3180baa52fd70e67d413a5f631"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentBattleProtocol.cs",
+      "sha256": "50d3b4ee87d5fb291e46f9f1bfa74b5e0f0b378f39b1be24a31986a80e3ab4b6"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentBattleSession.cs",
+      "sha256": "a06de8fcb205f5ff792953a5d358d8e932c206b063ae3a41d72425ee9be57546"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureProtocol.cs",
+      "sha256": "a1f7db8acc1482e9d6757b9676315e229123fbde1af08431e8ebd6c55195c83b"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.cs",
+      "sha256": "8791e3c5d3141efac7ad0b29c0cbdc9cb55d4016cb8b1fda7ae5d13f099c4e85"
+    },
+    {
+      "path": "Assets/Tests/EditMode/Editor/AgentEquipmentCatalogTests.cs",
+      "sha256": "0f9fb4a53399063de45a01eb11dd96248a04a9afd9a9b63ccc3e8cdb7fcad76c"
+    },
+    {
+      "path": "Assets/Scripts/Editor/AgentBattle/AgentBattleAssetReader.cs.meta",
+      "sha256": "3d30dd59678689eaaa3b1f6bcfabf70149f83c02da7806ea827885b7e36b7db7"
+    },
+    {
+      "path": "Assets/Tests/EditMode/Editor/AgentEquipmentCatalogTests.cs.meta",
+      "sha256": "e73d68914a5ee44754b3a6f529f6953d606b9cf810d5c1b20cb83472d3ca2bd7"
+    },
+    {
+      "path": "tools/agent_adventure_policy.py",
+      "sha256": "db5260ebe680f3f108e9f580769f0ed7e5b00e80e9ecacb983349dbed91ba934"
+    },
+    {
+      "path": "tools/agent_adventure_client.py",
+      "sha256": "b7683d022d3a78fc5f618eb38d8a8fe4fa2312f22d0e51c5b4abc04b3f0a1608"
+    },
+    {
+      "path": "tools/agent_battle_client.py",
+      "sha256": "0d20036d7d4c2166df2095ff1932464f15070f24a108a85906fc1ecae9b425c7"
+    }
+  ]
+}

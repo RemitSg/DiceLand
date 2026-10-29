@@ -1,0 +1,349 @@
+{
+  "batch": "B008a",
+  "date": "2026-10-27",
+  "sourceParent": "544ed7507bdb25daa561a5424fde6fe1f8d58399",
+  "status": "Menu-backed difficulty selection implemented; complete game-loop acceptance remains pending",
+  "scope": [
+    "Read the saved formal menu configuration through its existing filtering and ordering method",
+    "Create and next-run difficulty choices reuse the existing shared bootstrap, AP and recruitment rules",
+    "Stable difficulty GUIDs in observations and journals; retain mode through save, recovery and replay",
+    "CLI lists server modes and selects by exact name or canonical ID; invalid choices reject before mutation"
+  ],
+  "environment": {
+    "engine": "Tuanjie 1.8.4 / 2022.3.62t6",
+    "mode": "batchmode -nographics",
+    "validationProject": "outputs/agent-battle/b005b-validation-project",
+    "httpHostPid": 44452,
+    "originalEditorRestarted": false,
+    "userSceneSaved": false,
+    "savedMenuSceneCopiedOneWayForReadOnlyValidation": true,
+    "sourceMatch": {
+      "filesCompared": 3199,
+      "differences": [],
+      "extraValidationRuleFiles": [],
+      "missingValidationRuleFiles": [],
+      "contentHash": "46431b698bb54ad61c8d97e8225052af179160f066d675f735aad1620c6e72f8",
+      "matchesRuntimeJournal": true,
+      "newTestAndMetaMatch": true
+    }
+  },
+  "editMode": {
+    "evidence": "outputs/agent-battle/b008a-full.xml",
+    "total": 996,
+    "passed": 975,
+    "failed": 21,
+    "durationSeconds": 255.2155699,
+    "newTests": 10,
+    "newTestsPassed": 10,
+    "baseline": "outputs/agent-battle/b007b-final.xml",
+    "failureNamesUnchanged": true,
+    "failedTests": [
+      "BattleButtonSkillSelectionTests.AllySpeedButtons_CanKeepIndependentSelectedSkills",
+      "BattleButtonSpriteStateSwitcherTests.OnEnable_AppliesUnpressedSprite",
+      "BattleGamblerPassiveServiceTests.TryApplyDebtInstantDeath_KillsAllyAtThreeDebtStacks",
+      "BattleImmediateEffectPlanServiceTests.ResolveAlly_UsesCurrentAllyImmediateOrder",
+      "BattleSkillInfoOverlayDescriptionTests.CompactSkillDetail_MergesMarkedDelayedStatusBranches",
+      "BattleStatusResolutionServiceTests.TryResolve_ReturnsFalseForUnsupportedLegacyStatus",
+      "BattleTargetingPhaseStartEffectServiceTests.ApplyPendingAllyStatusGrants_AppliesImmediateSpeedBonusForOpeningRoll",
+      "MainMenuSceneControllerTutorialTests.ResolveMenuAction_RecognizesTutorialIdentity",
+      "MapEventNestedFlowTests.SaveAssetCatalog_IncludesNestedFollowUpEvents",
+      "MapTutorialFlowServiceTests.TryConsumeArrivalGuide_ShowsMerchantForgeAndEliteFinalOnce",
+      "PuppetMasterEnemyAssetTests.PuppetMasterAndPuppet_HaveExpectedCoreStatsAndPassives",
+      "PuppetMasterEnemyAssetTests.PuppetMasterEncounter_HasExpectedEnemyGroupComposition",
+      "PuppetMasterEnemyAssetTests.PuppetSkills_HaveExpectedStatusAndRoundRules",
+      "RelicSystem079To094Tests.MerchantWhiteSlip_AllowsPurchaseWhenMoneyPositiveAndSpendsRemainingMoney",
+      "RestSceneReforgeInteractableRelicSelectionTests.HandleRelicSelection_ClickingOnlySelectedRelicAgainClearsSelection",
+      "RestSceneReforgeInteractableRelicSelectionTests.OnMouseUpAsButton_WhenMainPanelIsOpen_DoesNotReturnToOpenPrompt",
+      "TodoWeaponAssetTests.HotAnvilBoard_LoadsWithBurnSpreadAndSelfBurnSkills",
+      "TodoWeaponAssetTests.WeaponCatalog_ContainsTodoWeapons",
+      "TutorialBattleContentFactoryTests.CreateRuntimeDefinition_Battle03_AdvancesWhenAllySkillIsViewed",
+      "TutorialHighlightCoordinateUtilityTests.ConvertScreenRectToReferenceRect_UsesCanvasScalerMatchScale",
+      "WanderingShadowEnemyAssetTests.Echo_UsesConfiguredEffectsAndEventGroup"
+    ]
+  },
+  "python": {
+    "evidence": "outputs/agent-battle/b008a-python-tests.log",
+    "testsPassed": 18,
+    "testsFailed": 0,
+    "newDifficultyLookupTests": 4
+  },
+  "http": {
+    "evidence": "outputs/agent-battle/b008a-http-proof.json",
+    "allFourModesPassed": true,
+    "gameplayStateInjection": false,
+    "modeCatalogue": [
+      {
+        "id": "4f6f34f8c8bf4cc0b5d8d5d65d4790e1",
+        "name": "Easy",
+        "isDefault": false,
+        "boardSize": 7,
+        "requiredKeys": 2,
+        "startingActionPoints": 5,
+        "maxRecruitCount": 4,
+        "actionPointLimits": [
+          5,
+          15,
+          20,
+          20,
+          20,
+          20,
+          20,
+          20,
+          20,
+          20,
+          20
+        ],
+        "recruitCosts": [
+          50,
+          90,
+          140,
+          200
+        ]
+      },
+      {
+        "id": "4b3b562e7294435da90610ef6c5b2db0",
+        "name": "Hard",
+        "isDefault": false,
+        "boardSize": 11,
+        "requiredKeys": 2,
+        "startingActionPoints": 6,
+        "maxRecruitCount": 4,
+        "actionPointLimits": [
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "recruitCosts": [
+          50,
+          80,
+          120,
+          180
+        ]
+      },
+      {
+        "id": "6502ae0bfb8d48a9b19a66e3b7300389",
+        "name": "Extreme",
+        "isDefault": false,
+        "boardSize": 13,
+        "requiredKeys": 3,
+        "startingActionPoints": 6,
+        "maxRecruitCount": 4,
+        "actionPointLimits": [
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "recruitCosts": [
+          50,
+          80,
+          120,
+          180
+        ]
+      },
+      {
+        "id": "a6f4f93e54074516a032e45ec4d7cf0e",
+        "name": "Medium",
+        "isDefault": true,
+        "boardSize": 9,
+        "requiredKeys": 2,
+        "startingActionPoints": 6,
+        "maxRecruitCount": 4,
+        "actionPointLimits": [
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "recruitCosts": [
+          50,
+          80,
+          120,
+          180
+        ]
+      }
+    ],
+    "cases": [
+      {
+        "name": "Easy",
+        "id": "4f6f34f8c8bf4cc0b5d8d5d65d4790e1",
+        "profileId": "b008a-mode-4ed6260a961f",
+        "saveLoadInitialStateMatched": true,
+        "catalogueReadDidNotMutateObservation": true,
+        "omittedNextModeRetained": true,
+        "invalidModeRejectedWithoutMutation": true,
+        "correctedSameRequestIdAccepted": true,
+        "switchedTo": "Medium",
+        "switchedModeRecoveryMatched": true,
+        "fullReplay": {
+          "verified": true,
+          "commandsChecked": 4,
+          "finalStateHash": "754e7def35605b8a711a3803596802cef87bb22d2403c665a24932086997d743"
+        }
+      },
+      {
+        "name": "Hard",
+        "id": "4b3b562e7294435da90610ef6c5b2db0",
+        "profileId": "b008a-mode-7b45ebb5383d",
+        "saveLoadInitialStateMatched": true,
+        "catalogueReadDidNotMutateObservation": true,
+        "omittedNextModeRetained": true,
+        "invalidModeRejectedWithoutMutation": true,
+        "correctedSameRequestIdAccepted": true,
+        "switchedTo": "Medium",
+        "switchedModeRecoveryMatched": true,
+        "fullReplay": {
+          "verified": true,
+          "commandsChecked": 4,
+          "finalStateHash": "057508391214f7e1ccadd569db1625ed7ec1a520ebba86038c1bae3d75cfe162"
+        }
+      },
+      {
+        "name": "Extreme",
+        "id": "6502ae0bfb8d48a9b19a66e3b7300389",
+        "profileId": "b008a-mode-f541d7e27a0b",
+        "saveLoadInitialStateMatched": true,
+        "catalogueReadDidNotMutateObservation": true,
+        "omittedNextModeRetained": true,
+        "invalidModeRejectedWithoutMutation": true,
+        "correctedSameRequestIdAccepted": true,
+        "switchedTo": "Medium",
+        "switchedModeRecoveryMatched": true,
+        "fullReplay": {
+          "verified": true,
+          "commandsChecked": 4,
+          "finalStateHash": "ebe67b40ae8138bbed39a7ac31f484c6f7fdf9e2bde667435aaf8d3b63c24146"
+        }
+      },
+      {
+        "name": "Medium",
+        "id": "a6f4f93e54074516a032e45ec4d7cf0e",
+        "profileId": "b008a-mode-ce12f5dd8446",
+        "saveLoadInitialStateMatched": true,
+        "catalogueReadDidNotMutateObservation": true,
+        "omittedNextModeRetained": true,
+        "invalidModeRejectedWithoutMutation": true,
+        "correctedSameRequestIdAccepted": true,
+        "switchedTo": "Easy",
+        "switchedModeRecoveryMatched": true,
+        "fullReplay": {
+          "verified": true,
+          "commandsChecked": 4,
+          "finalStateHash": "bbd3356850c66b1a3a08c3f37193638d05bcb17702da0056b7443c048bd3abeb"
+        }
+      }
+    ],
+    "omittedCreateModeDefault": {
+      "name": "Medium",
+      "id": "a6f4f93e54074516a032e45ec4d7cf0e",
+      "boardSize": 9
+    }
+  },
+  "cli": {
+    "evidence": "outputs/agent-battle/b008a-cli-proof.json",
+    "commands": [
+      {
+        "arguments": [
+          "difficulties"
+        ],
+        "exitCode": 0
+      },
+      {
+        "arguments": [
+          "demo",
+          "--difficulty",
+          "Easy",
+          "--profile",
+          "b008a-cli-42b83c863219",
+          "--seed",
+          "7",
+          "--max-moves",
+          "1",
+          "--max-actions",
+          "80",
+          "--save-slot",
+          "b008a-cli-42b83c863219-save",
+          "--replay-slot",
+          "b008a-cli-42b83c863219-replay",
+          "--verify-replay",
+          "--output",
+          "outputs/agent-battle/b008a-cli-demo-trace.json"
+        ],
+        "exitCode": 0
+      },
+      {
+        "arguments": [
+          "recover-run",
+          "b008a-cli-42b83c863219"
+        ],
+        "exitCode": 0
+      },
+      {
+        "arguments": [
+          "next-run",
+          "a44c3026606c47de95c01686a249d663",
+          "--difficulty",
+          "normal",
+          "--seed",
+          "7"
+        ],
+        "exitCode": 0
+      },
+      {
+        "arguments": [
+          "verify-replay",
+          "b008a-cli-42b83c863219-next-replay"
+        ],
+        "exitCode": 0
+      }
+    ],
+    "demoPhase": "map",
+    "demoActions": 3,
+    "demoReplay": {
+      "verified": true,
+      "commandsChecked": 3,
+      "finalStateHash": "fcea3f0615ad1dd14f9db5ebefe566f007c149108186eb1a5bd57c68c3cbf8cb"
+    },
+    "switchedTo": "Medium",
+    "nextRunReplay": {
+      "verified": true,
+      "commandsChecked": 5,
+      "finalStateHash": "a7aafcb8e3b05f7543e2a25a1c7bb5f741d8fa0604ee467f80f42915e74b603f"
+    },
+    "harnessAttempts": [
+      "Initial max-actions=1 stopped at a pending location choice: abandoning there was correctly rejected; allow the demo to finish the choice before abandoning.",
+      "Second harness expected next-run to return a response envelope; the CLI correctly returns its state directly. Corrected the harness."
+    ]
+  },
+  "remainingGates": [
+    "Normal/Medium Boss victory through legal public commands",
+    "Actual earned points and paid ability upgrade followed by next-run effects",
+    "Victory-pending restore and positive real settlement crash recovery",
+    "B008 external-agent complete-loop audit"
+  ],
+  "lowerDifficultyVictoryDoesNotSatisfyNormalGate": true,
+  "playMode": "Not rerun; previously recorded failures remain unresolved",
+  "userChanges": "User scene, packages, editor/project settings and Plastic metadata excluded from this batch commit; no balance assets changed"
+}

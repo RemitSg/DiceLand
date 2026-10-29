@@ -1,0 +1,515 @@
+{
+  "batch": "B007b",
+  "date": "2026-10-27",
+  "sourceParent": "4e2b2e87",
+  "status": "implemented and verified for recorded cases; overall normal victory gate remains open",
+  "scope": [
+    "Playable named checkpoints reconstructed with the same gameplay services",
+    "Persistent profile head atomically commits progression and accepted journal together",
+    "Automatic last-command recovery, generation/owner stale-save guards, request cache reconstruction and profile lease"
+  ],
+  "environment": {
+    "engine": "Tuanjie 1.8.4 / 2022.3.62t6",
+    "mode": "batchmode -nographics",
+    "validationProject": "outputs\\agent-battle\\b005b-validation-project",
+    "originalEditorRestarted": false,
+    "userSceneSaved": false,
+    "sourceMatch": {
+      "filesCompared": 3197,
+      "differences": [],
+      "extraValidationRuleFiles": [],
+      "missingValidationRuleFiles": []
+    }
+  },
+  "editMode": {
+    "evidence": "outputs\\agent-battle\\b007b-final.xml",
+    "total": 986,
+    "passed": 965,
+    "failed": 21,
+    "durationSeconds": 237.274172,
+    "newSaveTests": 22,
+    "newSaveTestsPassed": 22,
+    "baseline": "outputs\\agent-battle\\b007a-full.xml",
+    "failureNamesUnchanged": true,
+    "failedTests": [
+      "BattleButtonSkillSelectionTests.AllySpeedButtons_CanKeepIndependentSelectedSkills",
+      "BattleButtonSpriteStateSwitcherTests.OnEnable_AppliesUnpressedSprite",
+      "BattleGamblerPassiveServiceTests.TryApplyDebtInstantDeath_KillsAllyAtThreeDebtStacks",
+      "BattleImmediateEffectPlanServiceTests.ResolveAlly_UsesCurrentAllyImmediateOrder",
+      "BattleSkillInfoOverlayDescriptionTests.CompactSkillDetail_MergesMarkedDelayedStatusBranches",
+      "BattleStatusResolutionServiceTests.TryResolve_ReturnsFalseForUnsupportedLegacyStatus",
+      "BattleTargetingPhaseStartEffectServiceTests.ApplyPendingAllyStatusGrants_AppliesImmediateSpeedBonusForOpeningRoll",
+      "MainMenuSceneControllerTutorialTests.ResolveMenuAction_RecognizesTutorialIdentity",
+      "MapEventNestedFlowTests.SaveAssetCatalog_IncludesNestedFollowUpEvents",
+      "MapTutorialFlowServiceTests.TryConsumeArrivalGuide_ShowsMerchantForgeAndEliteFinalOnce",
+      "PuppetMasterEnemyAssetTests.PuppetMasterAndPuppet_HaveExpectedCoreStatsAndPassives",
+      "PuppetMasterEnemyAssetTests.PuppetMasterEncounter_HasExpectedEnemyGroupComposition",
+      "PuppetMasterEnemyAssetTests.PuppetSkills_HaveExpectedStatusAndRoundRules",
+      "RelicSystem079To094Tests.MerchantWhiteSlip_AllowsPurchaseWhenMoneyPositiveAndSpendsRemainingMoney",
+      "RestSceneReforgeInteractableRelicSelectionTests.HandleRelicSelection_ClickingOnlySelectedRelicAgainClearsSelection",
+      "RestSceneReforgeInteractableRelicSelectionTests.OnMouseUpAsButton_WhenMainPanelIsOpen_DoesNotReturnToOpenPrompt",
+      "TodoWeaponAssetTests.HotAnvilBoard_LoadsWithBurnSpreadAndSelfBurnSkills",
+      "TodoWeaponAssetTests.WeaponCatalog_ContainsTodoWeapons",
+      "TutorialBattleContentFactoryTests.CreateRuntimeDefinition_Battle03_AdvancesWhenAllySkillIsViewed",
+      "TutorialHighlightCoordinateUtilityTests.ConvertScreenRectToReferenceRect_UsesCanvasScalerMatchScale",
+      "WanderingShadowEnemyAssetTests.Echo_UsesConfiguredEffectsAndEventGroup"
+    ],
+    "directedCoverage": [
+      "Before/after atomic replacement with positive wallet points",
+      "Before/after atomic replacement of a paid ability purchase and lost-response retries",
+      "Actual authored starting relic ability with directed initial meta points",
+      "Offline elapsed time and live next-run clock",
+      "Corrupt canonical JSON/checksum/legacy files",
+      "Windows sharing retry without deleting the committed destination"
+    ]
+  },
+  "intermediateIssue": {
+    "evidence": "outputs\\agent-battle\\b007b-full.xml",
+    "newFailure": "AgentAdventureSaveTests.PublicSaveLoadAndRecoveryRespectTheSingleSessionBoundary",
+    "message": "Windows could not remove the file being replaced",
+    "fix": "Bounded retry for sharing/replacement errors using the already flushed temporary file; destination is never deleted; final full suite passes this case"
+  },
+  "python": {
+    "policyRegressionPassed": 6,
+    "policyRegressionFailed": 0
+  },
+  "http": {
+    "evidence": "outputs\\agent-battle\\b007b-http-proof.json",
+    "log": "outputs\\agent-battle\\b007b-http.log",
+    "initialHostPid": 62252,
+    "normalContentOnly": true,
+    "gameplayStateInjection": false,
+    "checkpointsSavedLoadedAndContinued": 48,
+    "routes": [
+      {
+        "label": "dungeon",
+        "profileId": "b007b-dungeon-6b52ee44",
+        "checkpoints": [
+          {
+            "tag": "treasure",
+            "slotId": "b007b-dungeon-0",
+            "revision": 1,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "treasure_result",
+            "slotId": "b007b-dungeon-1",
+            "revision": 2,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "map",
+            "slotId": "b007b-dungeon-2",
+            "revision": 3,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "rest",
+            "slotId": "b007b-dungeon-3",
+            "revision": 8,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "calamity",
+            "slotId": "b007b-dungeon-4",
+            "revision": 9,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "event",
+            "slotId": "b007b-dungeon-5",
+            "revision": 13,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "event_result",
+            "slotId": "b007b-dungeon-6",
+            "revision": 14,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "map:dungeon",
+            "slotId": "b007b-dungeon-7",
+            "revision": 15,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "battle:targeting::dungeon",
+            "slotId": "b007b-dungeon-8",
+            "revision": 16,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "battle:terminal:victory:dungeon",
+            "slotId": "b007b-dungeon-9",
+            "revision": 26,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "treasure:dungeon",
+            "slotId": "b007b-dungeon-10",
+            "revision": 48,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "treasure_relic:dungeon",
+            "slotId": "b007b-dungeon-11",
+            "revision": 49,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "treasure_result:dungeon",
+            "slotId": "b007b-dungeon-12",
+            "revision": 50,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "finished",
+            "slotId": "b007b-dungeon-13",
+            "revision": 53,
+            "profileGeneration": 2,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "next",
+            "slotId": "b007b-dungeon-14",
+            "revision": 55,
+            "profileGeneration": 3,
+            "retryDidNotAdvance": true
+          }
+        ],
+        "oldSaveRejected": "invalid_request: Stale save: this profile has a newer adventure or committed progression. Use run_recover for its latest command.",
+        "automaticRecoveryMatched": true,
+        "fullReplay": {
+          "verified": true,
+          "commandsChecked": 55,
+          "finalStateHash": "afd02ca193da8aaccdd0729c42eca17cf385efadb366ac9696b62d3a1630cc75"
+        }
+      },
+      {
+        "label": "gear",
+        "profileId": "b007b-gear-9ba54ea4",
+        "checkpoints": [
+          {
+            "tag": "treasure",
+            "slotId": "b007b-gear-0",
+            "revision": 1,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "treasure_result",
+            "slotId": "b007b-gear-1",
+            "revision": 2,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "map",
+            "slotId": "b007b-gear-2",
+            "revision": 3,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "rest",
+            "slotId": "b007b-gear-3",
+            "revision": 8,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "calamity",
+            "slotId": "b007b-gear-4",
+            "revision": 9,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "event",
+            "slotId": "b007b-gear-5",
+            "revision": 13,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "event_result",
+            "slotId": "b007b-gear-6",
+            "revision": 14,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "battle:targeting:",
+            "slotId": "b007b-gear-7",
+            "revision": 16,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "battle:terminal:victory",
+            "slotId": "b007b-gear-8",
+            "revision": 26,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "merchant",
+            "slotId": "b007b-gear-9",
+            "revision": 49,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "treasure_relic",
+            "slotId": "b007b-gear-10",
+            "revision": 56,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "battle:reward:victory",
+            "slotId": "b007b-gear-11",
+            "revision": 80,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "forge",
+            "slotId": "b007b-gear-12",
+            "revision": 99,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "run_craft",
+            "slotId": "b007b-gear-13",
+            "revision": 100,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "run_equip",
+            "slotId": "b007b-gear-14",
+            "revision": 102,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "battle:terminal:defeat",
+            "slotId": "b007b-gear-15",
+            "revision": 140,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "defeat_pending_settlement",
+            "slotId": "b007b-gear-16",
+            "revision": 141,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "finished",
+            "slotId": "b007b-gear-17",
+            "revision": 142,
+            "profileGeneration": 2,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "next",
+            "slotId": "b007b-gear-18",
+            "revision": 144,
+            "profileGeneration": 3,
+            "retryDidNotAdvance": true
+          }
+        ],
+        "oldSaveRejected": "invalid_request: Stale save: this profile has a newer adventure or committed progression. Use run_recover for its latest command.",
+        "automaticRecoveryMatched": true,
+        "fullReplay": {
+          "verified": true,
+          "commandsChecked": 144,
+          "finalStateHash": "314dcf254afff3eacc05914363345eaa56b41e336b71a94d8b308ef343e868be"
+        }
+      },
+      {
+        "label": "reforge",
+        "profileId": "b007b-reforge-2c490308",
+        "checkpoints": [
+          {
+            "tag": "battle:targeting:",
+            "slotId": "b007b-reforge-0",
+            "revision": 1,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "battle:terminal:victory",
+            "slotId": "b007b-reforge-1",
+            "revision": 9,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "map",
+            "slotId": "b007b-reforge-2",
+            "revision": 10,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "merchant",
+            "slotId": "b007b-reforge-3",
+            "revision": 12,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "calamity",
+            "slotId": "b007b-reforge-4",
+            "revision": 15,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "rest",
+            "slotId": "b007b-reforge-5",
+            "revision": 19,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "reforge:first",
+            "slotId": "b007b-reforge-6",
+            "revision": 20,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "reforge:second",
+            "slotId": "b007b-reforge-7",
+            "revision": 21,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "reforge:attribute",
+            "slotId": "b007b-reforge-8",
+            "revision": 22,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "reforge:confirm",
+            "slotId": "b007b-reforge-9",
+            "revision": 23,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "run_reforge_confirm",
+            "slotId": "b007b-reforge-10",
+            "revision": 24,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "run_reforge_confirm",
+            "slotId": "b007b-reforge-11",
+            "revision": 28,
+            "profileGeneration": 1,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "finished",
+            "slotId": "b007b-reforge-12",
+            "revision": 29,
+            "profileGeneration": 2,
+            "retryDidNotAdvance": true
+          },
+          {
+            "tag": "next",
+            "slotId": "b007b-reforge-13",
+            "revision": 31,
+            "profileGeneration": 3,
+            "retryDidNotAdvance": true
+          }
+        ],
+        "oldSaveRejected": "invalid_request: Stale save: this profile has a newer adventure or committed progression. Use run_recover for its latest command.",
+        "automaticRecoveryMatched": true,
+        "fullReplay": {
+          "verified": true,
+          "commandsChecked": 31,
+          "finalStateHash": "c9a674ca5004b193e23c6065e4f17d80e15c01339ffb8b11e290c9dddbd5221d"
+        }
+      }
+    ]
+  },
+  "processCrash": {
+    "evidence": "outputs\\agent-battle\\b007b-crash-proof.json",
+    "terminatedOwnedPid": 62252,
+    "recoveredHostPid": 54500,
+    "recoveredLog": "outputs\\agent-battle\\b007b-http-recovered.log",
+    "liveBattleRevisionBeforeKill": 2,
+    "noExplicitSaveAfterAcceptedCommand": true,
+    "duplicateDidNotAdvance": true,
+    "settlementRetryDidNotAdvance": true,
+    "fullReplay": {
+      "verified": true,
+      "commandsChecked": 4,
+      "finalStateHash": "f76640cc22190da2f47291b4c285cd39bda36f2297f09eef8746500a6e08ead2"
+    }
+  },
+  "cli": {
+    "evidence": "outputs\\agent-battle\\b007b-cli-proof.json",
+    "createSaveResumeRecoverSaveRunLoadRunPassed": true,
+    "fullReplay": {
+      "verified": true,
+      "commandsChecked": 1,
+      "finalStateHash": "6082b56e6a05a5ae34c009c52ad7d9655acf03cefe757b0f7bf247a19ed25ee5"
+    }
+  },
+  "limitations": [
+    "Normal Boss victory -> earned points -> paid upgrade -> next run remains unproved (B006b2)",
+    "Positive-point crash boundary tests and funded starting-relic tests are directed tests, not normal earned-point gameplay proof",
+    "Victory-pending settlement restoration and positive earned settlement recovery await the normal-win route; common battle victories/reward choices are covered",
+    "Existing 21 EditMode failures retained; no new PlayMode claim",
+    "Same engine/API/saved-content version required; engine host remains necessary",
+    "Process interruption and filesystem replacement boundaries tested, not arbitrary hardware power loss",
+    "B008 full external-agent completion audit remains pending"
+  ],
+  "sha256": {
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureAtomicFile.cs": "6156f5241ab6667f348395694408b9d09723274ff407296a030cd4e25efd7855",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureAtomicFile.cs.meta": "e9c40962954835c957db1b0f9a99bad5698f4f24307e3fdb7b0ac8695af59ba0",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureProfile.cs": "fcb65182ab85b4cdd0b7a0fe9acea9934da70a92739f2e8000bb35367e6183d1",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureProfileStore.cs": "e29ebfae748fc5cf4e427a3707ddecaf110a68183dec21359d9618659d823f5e",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureProfileStore.cs.meta": "961e50bb0aa71f91aa815e452345e8291c2f0029fd9abab6955878f604c6b2f6",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureProtocol.cs": "d6237bdf6c0a5f502b3a52feb9fc2650eeaaecccfb8e701425710822a43b851d",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureReplay.cs": "86bc5d82f6f434c69527bf5e2d5ca9625529822705fbccd0000724efc0b2b2d6",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureSave.cs": "9908fc0b723747b4b96060a6f611672dfd22244b87de10ba6d2a2b714a84e5e0",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureSave.cs.meta": "f006cab8f22ae51c6fc2741364b5a2fa9ace736caff84419cd980dd20c08cbf5",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.Replay.cs": "4e462864e877435f5c1c1859111a7c80881fc79cee1878992ab962397559a714",
+    "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.cs": "5bb01b41df8b430ecbd351c43301c28ffd8d92d6d192ab95b7a948ae1d9a4ade",
+    "Assets/Scripts/Editor/AgentBattle/AgentBattleServer.cs": "c03f3cb48c0ff79eadbdb434662c195166126c161b4676e260ab4afc4a10d148",
+    "Assets/Scripts/Shared/AbilityPointWallet.cs": "53963efee0b30e59dc79b8c645810f9c4396fadf7c7cfb452be0cb30829facee",
+    "Assets/Scripts/Shared/AbilityProgressionService.cs": "618189a01526cdf84176aa52ad8bf3a04a9f1734582d736de85ce86d66436502",
+    "Assets/Tests/EditMode/Editor/AgentAdventureReplayTests.cs": "bacf81d266deae98fce05aa59e08588d03698602f7d5504cd5deb45a233e82e2",
+    "Assets/Tests/EditMode/Editor/AgentAdventureSaveTests.cs": "c2f64b5032388e437f8e7b570e8c1a4233e37d4cc90cb570886231722c20b978",
+    "Assets/Tests/EditMode/Editor/AgentAdventureSaveTests.cs.meta": "38794106fdf4a7c1a3db8e9ee3e9f37a563a385c2300817f107c7e9f6d2baee7",
+    "Assets/Tests/EditMode/Editor/AgentAdventureSettlementTests.cs": "a66d7cf03c1caa3d4f0b9fd7a6ec913f3b55473c61fa8135a9280a32612cd8e6",
+    "tools/agent_adventure_client.py": "ef380f1264ab4498cb89f07990fedd36c66402c9be76dcc9ac41c5b5f8d15cd4"
+  }
+}

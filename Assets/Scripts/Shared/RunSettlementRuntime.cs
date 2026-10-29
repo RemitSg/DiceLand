@@ -1,22 +1,21 @@
 public static class RunSettlementRuntime
 {
-    public static RunSettlementData Current { get; private set; }
+    internal static RunSettlementContext Context { get; } = new RunSettlementContext();
+    public static RunSettlementData Current => Context.Current;
     public static bool HasData => Current != null;
 
     public static void Set(RunSettlementData data)
     {
-        Current = data;
+        Context.Set(data);
     }
 
     public static RunSettlementData Consume()
     {
-        RunSettlementData data = Current;
-        Current = null;
-        return data;
+        return Context.Consume();
     }
 
     public static void Clear()
     {
-        Current = null;
+        Context.Clear();
     }
 }

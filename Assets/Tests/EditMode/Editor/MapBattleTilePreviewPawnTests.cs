@@ -55,6 +55,27 @@ public class MapBattleTilePreviewPawnTests
     }
 
     [Test]
+    public void HeadlessMoveKeepsDeferredArrivalWithoutRequiringThePreviewLifecycle()
+    {
+        int arrivals = 0;
+        controller.ConfigureHeadlessExecution();
+        controller.PlayerMovedToTile += (_, __) => arrivals++;
+
+        Assert.IsTrue(controller.TryMoveTo(target, 2));
+        Assert.AreEqual(target.coord, runState.playerGridPosition);
+        Assert.AreEqual(World(target), controller.PawnWorldPosition);
+        Assert.AreEqual(3, points.CurrentPoints);
+        Assert.AreEqual(0, arrivals);
+        Assert.IsFalse(controller.IsPreviewCommitPending);
+
+        controller.FlushHeadlessArrival();
+        controller.FlushHeadlessArrival();
+        Assert.AreEqual(1, arrivals);
+        Assert.AreEqual(3, points.CurrentPoints);
+        Assert.IsTrue(controller.CanMoveTo(origin));
+    }
+
+    [Test]
     public void Cancel_RestoresExactPawnAndVisualRootTransforms()
     {
         Vector3 pawnPosition = new Vector3(2.25f, -3.5f, -0.37f);

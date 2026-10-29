@@ -76,7 +76,7 @@ public static partial class RelicSystem
             return;
 
         HashSet<Relic_SO> excludedRelics = BuildOwnedRelicSet(context.runState);
-        System.Random rng = new System.Random();
+        System.Random rng = new System.Random(UnityEngine.Random.Range(int.MinValue, int.MaxValue));
         for (int i = 0; i < grantCount; i++)
         {
             Relic_SO selected = effect.relicTable.DrawRandomRelic(rng, excludedRelics);

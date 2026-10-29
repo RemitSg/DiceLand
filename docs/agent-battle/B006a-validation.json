@@ -1,0 +1,146 @@
+{
+  "batch": "B006a",
+  "date": "2026-10-27",
+  "engine": "2022.3.62t6 (Tuanjie 1.8.4)",
+  "scope": "Shared settlement context isolation primitive; no new public adventure commands in this sub-batch.",
+  "implementation": [
+    "RunSettlementContext owns current settlement for one lifetime; formal RunSettlementRuntime delegates to its own context.",
+    "Existing ExecuteSettlement(request) keeps formal player-wallet behavior. Explicit ExecuteSettlement(request, context) calls the same score/award implementation and requires BOTH wallet callbacks before any side effect, preventing accidental player-wallet fallback.",
+    "Repeated calls on the same context return the same result, do not re-award, re-delete saves or re-clear runtime. Separate contexts award separately.",
+    "Settlement data and score result are serializable for the upcoming adapter; formulas are unchanged."
+  ],
+  "execution": {
+    "mode": "EditMode -batchmode -nographics, isolated copied project, NullGfxDevice",
+    "isolatedProject": "outputs/agent-battle/b005b-validation-project",
+    "companyName": "DiceLandAgentValidation",
+    "relatedProcessId": 60492,
+    "fullProcessId": 58444,
+    "relatedResult": "outputs/agent-battle/b006a-headless-tests.xml",
+    "relatedLog": "outputs/agent-battle/b006a-headless-tests.log",
+    "fullResult": "outputs/agent-battle/b006a-full-tests.xml",
+    "fullLog": "outputs/agent-battle/b006a-full-tests.log",
+    "baselineCommit": "67d04523",
+    "baselineResult": "outputs/agent-battle/b005c-complete-all.xml",
+    "isolation": "All eight batch-owned source/test/meta files hash-match. Prior batch source hashes remain the baseline. Original editor, unsaved scene and user save paths untouched."
+  },
+  "related": {
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 0.5115018
+  },
+  "relatedCases": [
+    "BattleExitFlowServiceTests.BuildAbandonToMainMenuPlan_UsesConfiguredMainMenuScene",
+    "BattleExitFlowServiceTests.BuildAbandonToMainMenuPlan_UsesDefaultMainMenuForBlankSceneName",
+    "BattleExitFlowServiceTests.SettlementDefeatReturnDecision_WhenEncounterExplicitlyReturnsToMap_ReturnsToMap",
+    "BattleExitFlowServiceTests.SettlementDefeatReturnDecision_WhenNormalMapDefeatDoesNotRetry_DoesNotReturnToMap",
+    "BattleExitFlowServiceTests.SettlementVictoryButtons_PutsRetryBeforeReturn",
+    "RunScoreServiceTests.CalculateScore_AppliesShortRunMultiplierAtFiveMinutes",
+    "RunScoreServiceTests.CalculateScore_SkipsCalamityScoreWhenRunFailed",
+    "RunScoreServiceTests.CalculateScore_SumsConfiguredSettlementCategories",
+    "RunScoreServiceTests.CalculateScore_UsesIntegerAbilityPointDivision",
+    "RunSettlementContextTests.ConsumeAndClearOnlyAffectTheirOwningContext",
+    "RunSettlementContextTests.ExplicitContextRequiresBothWalletCallbacksBeforeAnySideEffect(False,False)",
+    "RunSettlementContextTests.ExplicitContextRequiresBothWalletCallbacksBeforeAnySideEffect(False,True)",
+    "RunSettlementContextTests.ExplicitContextRequiresBothWalletCallbacksBeforeAnySideEffect(True,False)",
+    "RunSettlementContextTests.ExplicitContextUsesExactlyTheFormalScoreAndSerializesTheResult",
+    "RunSettlementContextTests.IsolatedSettlementDoesNotReadOrReplaceThePlayerSettlement",
+    "RunSettlementContextTests.SeparateContextsAwardSeparatelyAndRetryDoesNotRepeatSideEffects",
+    "RunSettlementFlowServiceTests.ExecuteSettlement_AwardsAbilityPointsAndStoresRuntimeData",
+    "RunSettlementFlowServiceTests.ExecuteSettlement_DoesNotAwardTwiceForSameRuntimeData"
+  ],
+  "baseline": {
+    "total": 921,
+    "passed": 900,
+    "failed": 21,
+    "skipped": 0,
+    "durationSeconds": 8.4950294
+  },
+  "current": {
+    "total": 928,
+    "passed": 907,
+    "failed": 21,
+    "skipped": 0,
+    "durationSeconds": 8.6739937
+  },
+  "newTests": [
+    "RunSettlementContextTests.ConsumeAndClearOnlyAffectTheirOwningContext",
+    "RunSettlementContextTests.ExplicitContextRequiresBothWalletCallbacksBeforeAnySideEffect(False,False)",
+    "RunSettlementContextTests.ExplicitContextRequiresBothWalletCallbacksBeforeAnySideEffect(False,True)",
+    "RunSettlementContextTests.ExplicitContextRequiresBothWalletCallbacksBeforeAnySideEffect(True,False)",
+    "RunSettlementContextTests.ExplicitContextUsesExactlyTheFormalScoreAndSerializesTheResult",
+    "RunSettlementContextTests.IsolatedSettlementDoesNotReadOrReplaceThePlayerSettlement",
+    "RunSettlementContextTests.SeparateContextsAwardSeparatelyAndRetryDoesNotRepeatSideEffects"
+  ],
+  "sameFailingNames": true,
+  "existingFailures": [
+    "BattleButtonSkillSelectionTests.AllySpeedButtons_CanKeepIndependentSelectedSkills",
+    "BattleButtonSpriteStateSwitcherTests.OnEnable_AppliesUnpressedSprite",
+    "BattleGamblerPassiveServiceTests.TryApplyDebtInstantDeath_KillsAllyAtThreeDebtStacks",
+    "BattleImmediateEffectPlanServiceTests.ResolveAlly_UsesCurrentAllyImmediateOrder",
+    "BattleSkillInfoOverlayDescriptionTests.CompactSkillDetail_MergesMarkedDelayedStatusBranches",
+    "BattleStatusResolutionServiceTests.TryResolve_ReturnsFalseForUnsupportedLegacyStatus",
+    "BattleTargetingPhaseStartEffectServiceTests.ApplyPendingAllyStatusGrants_AppliesImmediateSpeedBonusForOpeningRoll",
+    "MainMenuSceneControllerTutorialTests.ResolveMenuAction_RecognizesTutorialIdentity",
+    "MapEventNestedFlowTests.SaveAssetCatalog_IncludesNestedFollowUpEvents",
+    "MapTutorialFlowServiceTests.TryConsumeArrivalGuide_ShowsMerchantForgeAndEliteFinalOnce",
+    "PuppetMasterEnemyAssetTests.PuppetMasterAndPuppet_HaveExpectedCoreStatsAndPassives",
+    "PuppetMasterEnemyAssetTests.PuppetMasterEncounter_HasExpectedEnemyGroupComposition",
+    "PuppetMasterEnemyAssetTests.PuppetSkills_HaveExpectedStatusAndRoundRules",
+    "RelicSystem079To094Tests.MerchantWhiteSlip_AllowsPurchaseWhenMoneyPositiveAndSpendsRemainingMoney",
+    "RestSceneReforgeInteractableRelicSelectionTests.HandleRelicSelection_ClickingOnlySelectedRelicAgainClearsSelection",
+    "RestSceneReforgeInteractableRelicSelectionTests.OnMouseUpAsButton_WhenMainPanelIsOpen_DoesNotReturnToOpenPrompt",
+    "TodoWeaponAssetTests.HotAnvilBoard_LoadsWithBurnSpreadAndSelfBurnSkills",
+    "TodoWeaponAssetTests.WeaponCatalog_ContainsTodoWeapons",
+    "TutorialBattleContentFactoryTests.CreateRuntimeDefinition_Battle03_AdvancesWhenAllySkillIsViewed",
+    "TutorialHighlightCoordinateUtilityTests.ConvertScreenRectToReferenceRect_UsesCanvasScalerMatchScale",
+    "WanderingShadowEnemyAssetTests.Echo_UsesConfiguredEffectsAndEventGroup"
+  ],
+  "newFailures": [],
+  "policyAudit": {
+    "mapAbandon": "RunGameManager.HandlePauseMenuAbandon deletes the active run and returns to menu without points.",
+    "battleAbandon": "BattlePauseMenuOverlay.TryExecuteRunSettlementForAbandon calls formal non-clear settlement.",
+    "nextAdapter": "Preserve these existing context-dependent rules; do not invent a second scoring system or silently grant map-abandon points."
+  },
+  "remaining": [
+    "B006b: public settlement/abandon/next-run commands, isolated meta and progression, normal HTTP terminal routes.",
+    "B007: save/restore/full replay and durable exactly-once behavior across process restarts.",
+    "B008: full external-agent normal-game audit. Seven targeted new tests are not a full game completion.",
+    "21 pre-existing EditMode failures remain; no new PlayMode run."
+  ],
+  "sourceHashes": [
+    {
+      "path": "Assets/Scripts/Shared/RunSettlementContext.cs",
+      "sha256": "49406943afb4990cd35727bc6b85d005961bd70b762ceb4c5048b4cb4a7120b1"
+    },
+    {
+      "path": "Assets/Scripts/Shared/RunSettlementRuntime.cs",
+      "sha256": "af6c671b7d6098bafe7d39668d83e5d71967bb48c54ec53986b87beb23083ea8"
+    },
+    {
+      "path": "Assets/Scripts/Shared/RunSettlementFlowService.cs",
+      "sha256": "7426cf80d42881f03da46107fc65303ff221e1e6b942b569335a9b55b6a7c709"
+    },
+    {
+      "path": "Assets/Scripts/Shared/RunSettlementData.cs",
+      "sha256": "cefd4aa128233b8989d67ef22096d695b45c7486f260cbc07c4dafe3ca0ee531"
+    },
+    {
+      "path": "Assets/Scripts/Shared/RunSettlementScoreResult.cs",
+      "sha256": "af1475250927a0e7a8f09f9b3503ae82c4985c53b298c3036461d41d45c26612"
+    },
+    {
+      "path": "Assets/Tests/EditMode/Editor/RunSettlementContextTests.cs",
+      "sha256": "c717173c0c134f3d06d0c2a984d2dad65f76210cf685aa441745b85630ea5738"
+    },
+    {
+      "path": "Assets/Scripts/Shared/RunSettlementContext.cs.meta",
+      "sha256": "c3fdd5ea0216ce4df1d5e951e67ed330202fb128c564d127cad05e2de5d32584"
+    },
+    {
+      "path": "Assets/Tests/EditMode/Editor/RunSettlementContextTests.cs.meta",
+      "sha256": "2852e84bfb7abcc457ea1901a8dbb9f7ae1fcd7288180fa6cb0e7417f384ce05"
+    }
+  ]
+}

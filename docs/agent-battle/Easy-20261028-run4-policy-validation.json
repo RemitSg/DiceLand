@@ -1,0 +1,26 @@
+{
+  "scope": "Post-run client-only readiness correction. Run4 stayed frozen at217d7d05; no new playthrough performed.",
+  "changes": [
+    "Record actual fresh opening loadout to handle Chara runtime fallback weapon omitted from catalogue.",
+    "Count three actual upgrades in recorded run4 Boss preparation; retain health refusal.",
+    "Resumed sessions without trusted opening return explicit unknownWeaponBaselines instead of assuming current equipment is starting equipment."
+  ],
+  "python": {
+    "total": 57,
+    "passed": 57,
+    "failed": 0
+  },
+  "contract": {
+    "schemas": 54,
+    "fields": 446,
+    "valid": true,
+    "dtoDrift": false
+  },
+  "frozenRunPolicySha256": "21ee3dc6bcb8a2bdf9a60b0c42cd1be6978259b8065a6e9946997dcc8aa5bc28",
+  "postRunPolicySha256": "725e901e77d99c9965b50b3609ae3adfe61689bac8657a9a5259d9ac43b86922",
+  "postRunClientSha256": "b6d1e70bff133fdb3f9b0d64faf51a86e3a2e9f80662e10aa1e1856d38ffb292",
+  "fixtureSha256": "d442e25f5e74eb92b7d9fddc892cab4292d856b2155156527ddf3354c9d728fb",
+  "noUnityChangeAfterRun": true,
+  "noNewVictoryClaim": true,
+  "equipmentDocs": "Already correctly document run_equip assetId and automatic compatible owner; no documentation change needed."
+}

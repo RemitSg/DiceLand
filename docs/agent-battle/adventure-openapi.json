@@ -1,0 +1,1821 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "DiceLand Agent Adventure API",
+    "version": "0.8.5",
+    "description": "Shared-rule, editor-backed full adventure: menu difficulties, map/economy/events/dungeons, battles, terminal settlement, isolated earned progression and next runs; playable save/load, atomic profile recovery and timestamped isolated replay. One session per host; engine required. health/catalog and battle DTOs are documented in openapi.json. See AGENT_GUIDE.md for the command loop and retry rules."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8091"
+    }
+  ],
+  "paths": {
+    "/v1/command": {
+      "post": {
+        "operationId": "adventureCommand",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentAdventureRequest"
+              },
+              "examples": {
+                "newRun": {
+                  "value": {
+                    "op": "create_run",
+                    "seed": 55,
+                    "profileId": "my-agent"
+                  }
+                },
+                "recover": {
+                  "value": {
+                    "op": "run_recover",
+                    "profileId": "my-agent"
+                  }
+                },
+                "save": {
+                  "value": {
+                    "op": "run_save",
+                    "sessionId": "FROM_RESPONSE",
+                    "slotId": "checkpoint"
+                  }
+                },
+                "verify": {
+                  "value": {
+                    "op": "run_verify",
+                    "slotId": "journal"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command result; check success before reading state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentAdventureResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid command or malformed HTTP input; check success, error and message when present.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/AgentAdventureResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "error": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "success",
+                        "error"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Execution/storage fault; observe/export/close, then recover the last committed state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentAdventureResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "HTTP request body exceeds 64 KiB or lacks Content-Length.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "At most 32 pending requests.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service stopped before processing the queued request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create, observe, play, settle, save, recover or verify an adventure",
+        "description": "One active battle or adventure per host. run_load/run_recover/run_verify require no active session. run_close releases the session/profile lease without abandoning or awarding points. Successful mutations atomically commit persistent progression plus journal before acknowledging."
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgentAdventureRequest": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "choiceIndex": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Copy the offered index; run_set_ability uses 0 (disable) or 1 (enable). run_equip needs only the offered weapon assetId; the formal service selects its compatible member."
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "create_run",
+              "observe_run",
+              "run_move",
+              "run_interact",
+              "run_battle",
+              "run_return",
+              "run_choose_calamity",
+              "run_leave_location",
+              "run_close",
+              "run_buy",
+              "run_refresh_shop",
+              "run_craft",
+              "run_rest_heal",
+              "run_rest_restore_ap",
+              "run_recruit",
+              "run_equip",
+              "run_open_reforge",
+              "run_reforge_loot",
+              "run_reforge_relic",
+              "run_reforge_first",
+              "run_reforge_second",
+              "run_reforge_attribute",
+              "run_reforge_reset",
+              "run_reforge_confirm",
+              "run_reforge_cancel",
+              "run_reforge_finish",
+              "run_choose_event",
+              "run_continue_event",
+              "run_choose_treasure",
+              "run_choose_treasure_relic",
+              "run_refresh_treasure_relics",
+              "run_continue_treasure",
+              "run_settle",
+              "run_abandon",
+              "run_next",
+              "run_unlock_ability",
+              "run_set_ability",
+              "run_choose_starting_relic",
+              "run_refresh_starting_relics",
+              "run_save",
+              "run_load",
+              "run_recover",
+              "run_replay",
+              "run_export",
+              "run_verify"
+            ],
+            "description": "Choose a legalActions entry for gameplay mutations. Lifecycle/storage commands are not listed in legalActions. run_next optionally accepts seed/difficultyId. All mutations use the outer adventure revision."
+          },
+          "battleAction": {
+            "$ref": "./openapi.json#/components/schemas/AgentBattleLegalAction",
+            "description": "Copy the nested battleAction exactly from an offered run_battle action. Do not attach an inner session/revision/requestId; the outer adventure owns sequencing."
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "Required unique ID for gameplay mutations. Persist the complete request before sending; a lost response must be retried with identical parameters. After load/recover only sessionId changes. Last 32 successful responses are cached; older duplicate IDs are rejected, never executed again. Lifecycle/storage calls do not consume revision/requestId."
+          },
+          "revision": {
+            "type": "integer",
+            "description": "Latest outer adventure revision, required for mutations.",
+            "minimum": -1,
+            "default": -1
+          },
+          "seed": {
+            "type": "integer",
+            "default": 1,
+            "description": "Signed 32-bit seed for create_run or run_next; next-run omission uses default 1. maxRounds is retained from the initial create_run.",
+            "format": "int32"
+          },
+          "maxRounds": {
+            "type": "integer",
+            "default": 1000,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "assetId": {
+            "type": "string",
+            "description": "Asset GUID from legalActions: blueprint for crafting, weapon for equipment, material for reforge_first/second, or attribute for reforge_attribute. Ability commands use the node id in meta.nodes, not an asset GUID."
+          },
+          "profileId": {
+            "type": "string",
+            "description": "create_run: omit/blank for disposable progression; explicit isolated project-local profile survives close and enables run_recover. run_recover: required existing profile. IDs: 1-64 ASCII letters/digits/underscore/hyphen, Windows device names rejected. Never reads the player wallet/save. Library deletion removes these test profiles. Creating a fresh run in an existing profile replaces its recoverable adventure."
+          },
+          "slotId": {
+            "type": "string",
+            "description": "Required for run_save/run_load/run_export/run_verify. Same restricted ID format as profileId. Host-local name, never an arbitrary path. Saves and exported replay journals use separate directories."
+          },
+          "difficultyId": {
+            "type": "string",
+            "description": "Optional saved-menu GUID from catalog.catalogue.difficulties for create_run or run_next only. Omitted create_run defaults to NormalConfig (display name Medium); omitted run_next retains the current mode. Restore retains recorded difficulty."
+          }
+        },
+        "required": [
+          "op"
+        ],
+        "oneOf": [
+          {
+            "properties": {
+              "op": {
+                "enum": [
+                  "create_run"
+                ]
+              }
+            }
+          },
+          {
+            "properties": {
+              "op": {
+                "enum": [
+                  "observe_run",
+                  "run_close",
+                  "run_replay"
+                ]
+              }
+            },
+            "required": [
+              "sessionId"
+            ]
+          },
+          {
+            "properties": {
+              "op": {
+                "enum": [
+                  "run_save",
+                  "run_export"
+                ]
+              }
+            },
+            "required": [
+              "sessionId",
+              "slotId"
+            ]
+          },
+          {
+            "properties": {
+              "op": {
+                "enum": [
+                  "run_load",
+                  "run_verify"
+                ]
+              }
+            },
+            "required": [
+              "slotId"
+            ]
+          },
+          {
+            "properties": {
+              "op": {
+                "enum": [
+                  "run_recover"
+                ]
+              }
+            },
+            "required": [
+              "profileId"
+            ]
+          },
+          {
+            "properties": {
+              "op": {
+                "enum": [
+                  "run_move",
+                  "run_interact",
+                  "run_battle",
+                  "run_return",
+                  "run_choose_calamity",
+                  "run_leave_location",
+                  "run_buy",
+                  "run_refresh_shop",
+                  "run_craft",
+                  "run_rest_heal",
+                  "run_rest_restore_ap",
+                  "run_recruit",
+                  "run_equip",
+                  "run_open_reforge",
+                  "run_reforge_loot",
+                  "run_reforge_relic",
+                  "run_reforge_first",
+                  "run_reforge_second",
+                  "run_reforge_attribute",
+                  "run_reforge_reset",
+                  "run_reforge_confirm",
+                  "run_reforge_cancel",
+                  "run_reforge_finish",
+                  "run_choose_event",
+                  "run_continue_event",
+                  "run_choose_treasure",
+                  "run_choose_treasure_relic",
+                  "run_refresh_treasure_relics",
+                  "run_continue_treasure",
+                  "run_settle",
+                  "run_abandon",
+                  "run_next",
+                  "run_unlock_ability",
+                  "run_set_ability",
+                  "run_choose_starting_relic",
+                  "run_refresh_starting_relics"
+                ]
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "sessionId",
+              "revision",
+              "requestId"
+            ],
+            "oneOf": [
+              {
+                "properties": {
+                  "op": {
+                    "enum": [
+                      "run_move"
+                    ]
+                  }
+                },
+                "required": [
+                  "x",
+                  "y"
+                ]
+              },
+              {
+                "properties": {
+                  "op": {
+                    "enum": [
+                      "run_battle"
+                    ]
+                  }
+                },
+                "required": [
+                  "battleAction"
+                ]
+              },
+              {
+                "properties": {
+                  "op": {
+                    "enum": [
+                      "run_choose_calamity",
+                      "run_buy",
+                      "run_recruit",
+                      "run_choose_event",
+                      "run_choose_treasure",
+                      "run_choose_treasure_relic",
+                      "run_choose_starting_relic"
+                    ]
+                  }
+                },
+                "required": [
+                  "choiceIndex"
+                ]
+              },
+              {
+                "properties": {
+                  "op": {
+                    "enum": [
+                      "run_craft",
+                      "run_reforge_first",
+                      "run_reforge_second",
+                      "run_reforge_attribute",
+                      "run_unlock_ability"
+                    ]
+                  }
+                },
+                "required": [
+                  "assetId"
+                ]
+              },
+              {
+                "properties": {
+                  "op": {
+                    "enum": [
+                      "run_set_ability"
+                    ]
+                  }
+                },
+                "required": [
+                  "assetId",
+                  "choiceIndex"
+                ]
+              },
+              {
+                "properties": {
+                  "op": {
+                    "enum": [
+                      "run_interact",
+                      "run_return",
+                      "run_leave_location",
+                      "run_refresh_shop",
+                      "run_rest_heal",
+                      "run_rest_restore_ap",
+                      "run_open_reforge",
+                      "run_reforge_loot",
+                      "run_reforge_relic",
+                      "run_reforge_reset",
+                      "run_reforge_confirm",
+                      "run_reforge_cancel",
+                      "run_reforge_finish",
+                      "run_continue_event",
+                      "run_refresh_treasure_relics",
+                      "run_continue_treasure",
+                      "run_settle",
+                      "run_abandon",
+                      "run_next",
+                      "run_refresh_starting_relics"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "op": {
+                    "enum": [
+                      "run_equip"
+                    ]
+                  }
+                },
+                "required": [
+                  "assetId"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "AgentAdventureAction": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "choiceIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "run_move",
+              "run_interact",
+              "run_battle",
+              "run_return",
+              "run_choose_calamity",
+              "run_leave_location",
+              "run_buy",
+              "run_refresh_shop",
+              "run_craft",
+              "run_rest_heal",
+              "run_rest_restore_ap",
+              "run_recruit",
+              "run_equip",
+              "run_open_reforge",
+              "run_reforge_loot",
+              "run_reforge_relic",
+              "run_reforge_first",
+              "run_reforge_second",
+              "run_reforge_attribute",
+              "run_reforge_reset",
+              "run_reforge_confirm",
+              "run_reforge_cancel",
+              "run_reforge_finish",
+              "run_choose_event",
+              "run_continue_event",
+              "run_choose_treasure",
+              "run_choose_treasure_relic",
+              "run_refresh_treasure_relics",
+              "run_continue_treasure",
+              "run_settle",
+              "run_abandon",
+              "run_next",
+              "run_unlock_ability",
+              "run_set_ability",
+              "run_choose_starting_relic",
+              "run_refresh_starting_relics"
+            ],
+            "description": "Gameplay mutation offered in the current state. Copy its full fields and add outer sessionId/revision/requestId. run_next may additionally select seed/difficultyId."
+          },
+          "battleAction": {
+            "$ref": "./openapi.json#/components/schemas/AgentBattleLegalAction"
+          },
+          "assetId": {
+            "type": "string",
+            "description": "Asset GUID from legalActions: blueprint for crafting, weapon for equipment, material for reforge_first/second, or attribute for reforge_attribute. Ability commands use the node id in meta.nodes, not an asset GUID."
+          }
+        },
+        "required": [
+          "op"
+        ]
+      },
+      "AgentAdventureResponse": {
+        "type": "object",
+        "properties": {
+          "apiVersion": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/AgentAdventureObservation"
+          },
+          "replay": {
+            "$ref": "#/components/schemas/AgentAdventureReplay"
+          },
+          "verification": {
+            "$ref": "#/components/schemas/AgentAdventureReplayVerification"
+          },
+          "save": {
+            "$ref": "#/components/schemas/AgentAdventureSaveInfo"
+          }
+        },
+        "required": [
+          "apiVersion",
+          "success"
+        ]
+      },
+      "AgentAdventureObservation": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          },
+          "phase": {
+            "type": "string",
+            "enum": [
+              "map",
+              "battle",
+              "calamity",
+              "merchant",
+              "forge",
+              "rest",
+              "reforge",
+              "event",
+              "event_result",
+              "treasure",
+              "treasure_relic",
+              "treasure_result",
+              "starting_relic",
+              "victory_pending_settlement",
+              "defeat_pending_settlement",
+              "finished",
+              "faulted",
+              ""
+            ],
+            "description": "Active phases as listed. Empty string is serialized for an inactive/default nested DTO; check the outer response and current adventure phase."
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "difficulty": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "seed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "boardSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actionPoints": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxActionPoints": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cycle": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "calamityTier": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keys": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requiredKeys": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "money": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "configurationIssues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Authored content errors reported without substituting encounters or inventing rewards."
+          },
+          "tiles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureTile"
+            }
+          },
+          "party": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventurePartyMember"
+            }
+          },
+          "loot": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "relics": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "weapons": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "blueprints": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "calamityChoices": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleAsset"
+            }
+          },
+          "activeCalamities": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleAsset"
+            }
+          },
+          "battle": {
+            "$ref": "./openapi.json#/components/schemas/AgentBattleObservation"
+          },
+          "legalActions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureAction"
+            }
+          },
+          "merchantOffers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureMerchantOffer"
+            }
+          },
+          "merchantRefreshCost": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recipes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureRecipe"
+            }
+          },
+          "rest": {
+            "$ref": "#/components/schemas/AgentAdventureRest"
+          },
+          "reforge": {
+            "$ref": "#/components/schemas/AgentAdventureReforge"
+          },
+          "lastReforgeResult": {
+            "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+          },
+          "mapEvent": {
+            "$ref": "#/components/schemas/AgentAdventureEvent"
+          },
+          "treasure": {
+            "$ref": "#/components/schemas/AgentAdventureTreasure"
+          },
+          "dungeon": {
+            "$ref": "#/components/schemas/AgentAdventureDungeon"
+          },
+          "progress": {
+            "$ref": "#/components/schemas/RunSettlementStats"
+          },
+          "runIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/AgentAdventureMeta"
+          },
+          "settlement": {
+            "$ref": "#/components/schemas/AgentAdventureSettlement"
+          },
+          "startingRelic": {
+            "$ref": "#/components/schemas/AgentAdventureStartingRelic"
+          },
+          "craftingCost": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Current formal forge money cost, including active calamities, available in all phases even with no owned blueprint. Catalog blueprintDetails gives unowned material requirements. This observation is not permission to craft; use current legalActions."
+          },
+          "difficultyId": {
+            "type": "string",
+            "description": "Actual selected saved-menu difficulty GUID; difficulty is its display name."
+          }
+        },
+        "description": "Observe without advancing rules or RNG. Optional nested DTOs may serialize with empty/default fields; use phase plus dungeon.active / settlement.completed, not object truthiness. configurationIssues exposes missing authored content; unavailable encounters are not auto-cleared."
+      },
+      "AgentAdventureTile": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "danger": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "moveCost": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          },
+          "dangerBand": {
+            "type": "string"
+          },
+          "visited": {
+            "type": "boolean"
+          },
+          "resolved": {
+            "type": "boolean"
+          },
+          "encounterAvailable": {
+            "type": "boolean"
+          },
+          "dungeonEntryIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sourceDungeon": {
+            "type": "string"
+          },
+          "previewTag": {
+            "type": "string"
+          }
+        }
+      },
+      "AgentAdventurePartyMember": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "character": {
+            "type": "string"
+          },
+          "weapon": {
+            "type": "string"
+          },
+          "hp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxHp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "level": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "experience": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AgentAdventureMerchantOffer": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "price": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "soldOut": {
+            "type": "boolean"
+          },
+          "canPurchase": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AgentAdventureMaterial": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "required": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "available": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AgentAdventureRecipe": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "weapon": {
+            "type": "string"
+          },
+          "cost": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "canCraft": {
+            "type": "boolean"
+          },
+          "materials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureMaterial"
+            }
+          }
+        }
+      },
+      "AgentAdventureRecruit": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "weapon": {
+            "type": "string"
+          },
+          "canRecruit": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AgentAdventureRest": {
+        "type": "object",
+        "properties": {
+          "healPercent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actionPointRestorePercent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recruitCost": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recruitedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxRecruitCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "candidates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureRecruit"
+            }
+          }
+        }
+      },
+      "AgentAdventureReforgeMaterial": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "rarity": {
+            "type": "string"
+          },
+          "attribute": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AgentAdventureReforge": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "first": {
+            "type": "string"
+          },
+          "second": {
+            "type": "string"
+          },
+          "attribute": {
+            "type": "string"
+          },
+          "completed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "remaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "committed": {
+            "type": "boolean"
+          },
+          "canConfirm": {
+            "type": "boolean"
+          },
+          "materials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureReforgeMaterial"
+            }
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleAsset"
+            }
+          },
+          "possibleResults": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "resultPreview": {
+            "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+          }
+        }
+      },
+      "AgentAdventureEvent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "resultContent": {
+            "type": "string"
+          },
+          "resultMessage": {
+            "type": "string"
+          },
+          "nextEvent": {
+            "type": "string"
+          },
+          "pendingDungeon": {
+            "type": "string"
+          },
+          "blockedReason": {
+            "type": "string"
+          },
+          "depth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasPendingBattle": {
+            "type": "boolean"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureEventOption"
+            }
+          }
+        },
+        "description": "Present during event and event_result. Options/discard previews are frozen at presentation. Continue enters a follow-up, actual event encounter, special dungeon or map. The recursion limit is shared with the overlay."
+      },
+      "AgentAdventureEventOption": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "consequence": {
+            "type": "string"
+          },
+          "additionalDetail": {
+            "type": "string"
+          },
+          "unavailableReason": {
+            "type": "string"
+          },
+          "nextEvent": {
+            "type": "string"
+          },
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requiredMoney": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "selectable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AgentAdventureTreasure": {
+        "type": "object",
+        "properties": {
+          "selectedOptionIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "refreshesRemaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "canRefresh": {
+            "type": "boolean"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureTreasureOption"
+            }
+          },
+          "relicChoices": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "result": {
+            "$ref": "#/components/schemas/AgentAdventureTreasureResult"
+          }
+        },
+        "description": "Present in treasure, treasure_relic and treasure_result. A relic bag is not granted until one of its revealed relics is chosen; continue is available only after the reward is applied. Options are frozen at entry; reading them never grants or rolls rewards."
+      },
+      "AgentAdventureTreasureOption": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "Money",
+              "Blueprint",
+              "Relic",
+              "RelicBag"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "unavailableReason": {
+            "type": "string"
+          },
+          "blueprint": {
+            "type": "string"
+          },
+          "relic": {
+            "type": "string"
+          },
+          "rarity": {
+            "type": "string"
+          },
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "money": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "selectable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AgentAdventureTreasureResult": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "money": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blueprint": {
+            "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+          },
+          "relic": {
+            "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+          }
+        }
+      },
+      "AgentAdventureDungeon": {
+        "type": "object",
+        "description": "Check active explicitly. Unity may serialize an absent optional object as a default object. Dungeon moves cost zero AP; the left exit retreats and the right exit records completion score. Entry and exit happen through ordinary event continuation and movement. Nested dungeon entry is rejected like the formal UI.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "returnX": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "returnY": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "leftExitX": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "leftExitY": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rightExitX": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rightExitY": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "scoreValue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "entriesTotal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "entriesResolved": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RunSettlementStats": {
+        "type": "object",
+        "description": "Cloned formal counters including dungeon score; runStartedUnixSeconds is actual server time for this run.",
+        "properties": {
+          "runStartedUnixSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "normalBattleOuterCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "normalBattleMidCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "normalBattleInnerCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "normalBattleCoreCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eliteBattleOuterCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eliteBattleMidCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eliteBattleInnerCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eliteBattleCoreCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "specialDungeonCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "specialDungeonScoreTotal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalMoneyGained": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "craftedWeaponCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eventTilesCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eventBattlesCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unexploredTilesVisited": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keysCollected": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bossesDefeated": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AgentAdventureMeta": {
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "type": "string"
+          },
+          "persistent": {
+            "type": "boolean"
+          },
+          "abilityPoints": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureAbility"
+            }
+          }
+        },
+        "description": "Formal ability tree read from the isolated wallet/progression services. Unlocks/toggles are legal only after the run finishes; applied by the shared bootstrap on the next run."
+      },
+      "AgentAdventureAbility": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "prerequisites": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cost": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "toggleable": {
+            "type": "boolean"
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "description": "state is Locked, Available or Unlocked. Enabled is the formal toggle preference; locked nodes do not grant bonuses."
+      },
+      "AgentAdventureSettlement": {
+        "type": "object",
+        "properties": {
+          "completed": {
+            "type": "boolean"
+          },
+          "policy": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/RunSettlementData"
+          }
+        },
+        "description": "completed indicates a finished run. shared_score uses the formal calculator/wallet service; map_abandon_no_rewards preserves formal map abandon and has no score data. Retrying a mutation does not award again. In-process guarantee; crash-safe persistence/replay is B007."
+      },
+      "RunSettlementData": {
+        "type": "object",
+        "properties": {
+          "runCleared": {
+            "type": "boolean"
+          },
+          "scoreResult": {
+            "$ref": "#/components/schemas/RunSettlementScoreResult"
+          },
+          "displayStats": {
+            "$ref": "#/components/schemas/RunSettlementDisplayStats"
+          },
+          "abilityPointsBefore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gainedAbilityPoints": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "abilityPointsAfter": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "returnSceneName": {
+            "type": "string"
+          }
+        }
+      },
+      "RunSettlementScoreResult": {
+        "type": "object",
+        "properties": {
+          "baseScore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "finalScore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gainedAbilityPoints": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "finalMultiplier": {
+            "type": "number",
+            "format": "float"
+          },
+          "displayStats": {
+            "$ref": "#/components/schemas/RunSettlementDisplayStats"
+          },
+          "debugLines": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "RunSettlementDisplayStats": {
+        "type": "object",
+        "properties": {
+          "durationSeconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "normalBattleOuterCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "normalBattleMidCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "normalBattleInnerCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "normalBattleCoreCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eliteBattleOuterCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eliteBattleMidCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eliteBattleInnerCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eliteBattleCoreCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "specialDungeonCleared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "partyMemberCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalMoneyGained": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "craftedWeaponCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eventTilesCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eventBattlesCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unexploredTilesVisited": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "relicCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keysCollected": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "calamityTier": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bossesDefeated": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "calamityScoreCounted": {
+            "type": "boolean"
+          }
+        },
+        "description": "Duration uses actual server UTC at create/settlement; formal short-run multiplier applies. Observe never advances the saved start time or awards points. Replay must record settlement time in B007."
+      },
+      "AgentAdventureStartingRelic": {
+        "type": "object",
+        "properties": {
+          "bagsRemaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "refreshesRemaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "canRefresh": {
+            "type": "boolean"
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "$ref": "./openapi.json#/components/schemas/AgentBattleRewardItem"
+            }
+          }
+        },
+        "description": "starting_relic blocks movement until shared acquisition of all ability-provided starting bags. Refresh/acquisition use formal services, including OnRelicAcquired effects."
+      },
+      "AgentAdventureSaveInfo": {
+        "type": "object",
+        "properties": {
+          "slotId": {
+            "type": "string"
+          },
+          "profileId": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "profileGeneration": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "persistent": {
+            "type": "boolean"
+          },
+          "replayBacked": {
+            "type": "boolean",
+            "description": "Restores a playable decision by replaying the journal; not a raw Unity scene snapshot."
+          }
+        }
+      },
+      "AgentAdventureProfileSnapshot": {
+        "type": "object",
+        "properties": {
+          "points": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "progressionJson": {
+            "type": "string",
+            "description": "Serialized isolated ability service progress, used only inside replay/save files."
+          }
+        }
+      },
+      "AgentAdventureReplayCommand": {
+        "type": "object",
+        "properties": {
+          "utcSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "request": {
+            "$ref": "#/components/schemas/AgentAdventureRequest"
+          },
+          "stateHash": {
+            "type": "string"
+          }
+        }
+      },
+      "AgentAdventureReplay": {
+        "type": "object",
+        "properties": {
+          "formatVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "apiVersion": {
+            "type": "string"
+          },
+          "engineVersion": {
+            "type": "string"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "initialStateHash": {
+            "type": "string"
+          },
+          "finalStateHash": {
+            "type": "string"
+          },
+          "startedUtcSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "create": {
+            "description": "Recorded create request. In inactive/default response DTOs Unity serializes an empty create object with op empty string; this is not an executable request.",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentAdventureRequest"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "enum": [
+                      ""
+                    ]
+                  }
+                },
+                "required": [
+                  "op"
+                ]
+              }
+            ]
+          },
+          "initialProfile": {
+            "$ref": "#/components/schemas/AgentAdventureProfileSnapshot"
+          },
+          "commands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureReplayCommand"
+            }
+          }
+        },
+        "description": "Complete accepted mutation journal, including actual operation UTC, initial isolated progress and every observation hash. Replays cannot select a persistent profile. Engine/API/content versions must match; verify after closing every active session."
+      },
+      "AgentAdventureReplayVerification": {
+        "type": "object",
+        "properties": {
+          "verified": {
+            "type": "boolean"
+          },
+          "commandsChecked": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "finalStateHash": {
+            "type": "string"
+          },
+          "finalState": {
+            "$ref": "#/components/schemas/AgentAdventureObservation"
+          }
+        }
+      }
+    }
+  }
+}

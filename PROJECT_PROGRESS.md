@@ -1499,3 +1499,151 @@
 - 回合结束与结算：扩展 `BattleCombatRoundEndDispatcher` 统一 round-end status 消耗过滤；扩展 `BattleSettlementPartyMemberFactory` 统一 party progression 构建，删除 `BattleButton` 中部分 legacy wrapper 和死代码。
 - 当前 `BattleButton.cs` 约 3773 行，`Assets/Scripts/Shared` 下 `Battle*.cs` 仍约 123 个，未新增生产 cs 文件。
 - 验证：本阶段提交前执行 dotnet build、目标 EditMode、Unity 全量 EditMode/PlayMode 和 Console 检查，结果记录在本轮对话结论中。
+
+
+## 2026-10-27 - 共用正式规则的无界面 Agent 战斗接口（第一阶段）
+
+- 新增编辑器后端 `AgentBattleServer`、`AgentBattleSession` 和 JSON 协议，通过 localhost HTTP 创建单场战斗、读取局面与合法行动、切换技能、连接目标、提交回合、导出重放和关闭会话。
+- `BattleButton.Headless` 直接驱动既有回合准备与结算协程；仅跳过演出、HUD 和音频，命中回调仍执行。正式界面保留原入口，不复制伤害、状态或遗物规则。
+- `SpeedButton.TryAssignTarget` 复用正式的速度与拼点连线判定；技能说明复用游戏内文案生成器。专用沙盒场景不保存会话对象，创建后恢复原活动场景。
+- 接入既有战斗生成器的敌方召唤和临时友方召唤，共用无视觉组件工厂；支持固定种子、请求版本、幂等重试、回合与事件上限，以及异常后的终止状态。
+- 增加 Python 标准库客户端、OpenAPI 和 `docs/agent-battle/README.md`。当前仍依赖团结/Unity 编辑器，可用 batchmode/nographics 托管；并非独立 .NET 内核。暂不提供完整冒险、任意状态快照或并行会话，获得时遗物效果明确拒绝。
+- 验证：新增 EditMode 14/14 通过。全量当前 817 项为 794 通过、23 失败；临时使用本次修改前源代码对照，基线 803 项为 780 通过、23 失败，失败项完全一致。所有修改均已逐字节恢复。
+- HTTP 端到端完成木剑、燃烧、中毒、电流和召唤 5 组对战，并全部从开局重放一致；巨型史莱姆的分裂与断线傀儡召唤进入真实运行时流程。
+- PlayMode 12 项为 3 通过、9 失败，主要为演出超时及教程断言；原代码对照也出现同样的演出超时，但在 7/12 后取消，未取得完整基线。保留此限制，不将图形化回归报告为通过。
+- 详细验证结果保存在 `outputs/agent-battle/verification-summary.json`。未保存或覆盖当前用户场景；后续按领域模块提取规则，正式界面和接口共同切换到提取后的实现。
+
+
+## 2026-10-27 - Agent adventure B002
+
+- Added isolated adventure encounter bridge, shared map settlement writer, reward choice and refresh service, and deterministic acquisition RNG. UI and agent use the same rules.
+- Fixed persistent party IDs being overwritten by display names during settlement.
+- Validation: 46/46 targeted EditMode tests passed; HTTP wood-sword battle won in 3 rounds, replay matched. Full EditMode: 828 total, 804 passed, 24 failed (23 prior failures plus an EventSystem.current error in BattleExitFlowServiceTests, reproduced alone). Full suite is not green; existing PlayMode limitations remain.
+- B001 checkpoint: 4186339. B002 bridge is internal; B003 will expose normal adventure creation and movement. Full completion remains governed by docs/agent-battle/PLAN.md. Evidence: docs/agent-battle/B002-validation.json.
+
+## 2026-10-27 - Agent adventure B003a: shared map primitives
+
+- Extracted normal run bootstrap, ability starting party/inventory, exhausted-cycle and key callbacks into shared services used by RunGameManager.
+- Added saved-config reader and isolated map runtime; existing BoardManager and PlayerMapController skip visuals/animation only. No duplicate map generator or AP rules.
+- Validation: 7 new map tests; related targeted EditMode 40/40 passed (be0938a0ccd1425399f6800b78589347). Real NormalConfig/Medium generated 81 tiles and 3 keys; one-point overflow, key idempotency, seeded maps, rejected moves, carried battle state and starting bonuses covered.
+- Shipped Inner/Core enemy pools are empty; ConfigurationIssues reports missing groups instead of synthesizing content. B003b still needs HTTP adventure decisions and calamity handling.
+
+## 2026-10-27 - Agent adventure B003b: HTTP map/battle/calamity loop
+
+- Added create_run/observe_run/run_* commands and a stdlib client with legal-action-driven map and battle decisions. Single battle and adventure sessions are mutually exclusive.
+- Shared calamity teleport/relic loss/rest conversion and visited-empty ambush implementations with RunGameManager. Deferred headless arrival until AP/relic cost callbacks finish, including overflow. Settlement response now exposes actual post-level-up party state.
+- Validation: targeted EditMode 60/60 passed (09e548a4de3e4cd8a1ccaf100f3568b9). Public HTTP normal map route won a battle, returned with level 2 and HP 18/19, then exhausted AP and selected an actual calamity in cycle 2. Four invalid requests rejected; duplicate move returned cached result. Python syntax and OpenAPI references validated.
+- Incomplete: location decisions/transactions, final settlement, isolated meta progression, save/restore and full replay. No placeholder rewards. Full-suite/PlayMode limitations remain as recorded in B002-validation.json. See docs/agent-battle/PLAN.md and B003b-validation.json.
+
+## 2026-10-27 - Agent adventure B004a: merchant and forge
+
+- Shared merchant price/affordability evaluation, stock/refresh orchestration, and forge validation/resource consumption with formal UI. Agent observations quote on cloned state without advancing RNG.
+- Added purchase/refresh/craft actions and offer/recipe/material observations. Duplicate ingredient rows are aggregated before checking and consuming materials; owned blueprint and calamity fee validation is shared.
+- Validation: 85/85 related EditMode tests plus 2/2 formal merchant UI tests passed. Public HTTP NormalConfig seed 46: battle income 21, iron ore purchase 6, remaining money 15, level 2 HP 19/19, returned to map in 14 actions. No normal-route resource injection.
+- B004b still needs rest, recruitment, reforge and equipment management. Full completion, full replay and final settlement remain incomplete. See B004a-validation.json and PLAN.md.
+
+## 2026-10-27 - Agent adventure B004b1: rest, recruits and equipment
+
+- Added explicit snapshot overloads for formal rest/AP/recruit/reforge writers; global UI wrappers delegate to the same bodies. Recruit candidate selection/cost is shared with the formal rest scene.
+- Added rest heal/AP/recruit actions and map equipment actions. Consumed rest sites cannot be reused; AP and deferred calamity queues restore to runtime components after snapshot writes. New party members and actual equipped skills reach the existing battle core.
+- Validation: targeted EditMode 68/68 passed (dacab3f483604defafe3aad18b18a8d9). Public HTTP normal seed 32: HP 16/19 to 19/19 after a battle with two legal untargeted rounds; separate AP route 1 to 6. Each used the rest site once and returned to map in 17 actions. No normal-route resource injection.
+- B004a committed b50b39d5. B004b2 still needs reforge selection/preview/limits and visit locking. Full adventure completion remains unproven; existing full-suite/PlayMode limitations remain. See B004b1-validation.json and PLAN.md.
+
+## 2026-10-27 - Agent adventure B004b2: staged rest reforge
+
+- Shared formal UI material validation, candidate filters, deterministic seeds/rolls and limit rules in RunRestService. Loaded actual reforge tables/attributes from the saved rest scene.
+- Added staged loot/relic reforge actions and formal preview information. Selection/observation is read-only; first success commits the visit, preventing other rest actions; limit exhaustion automatically consumes the rest site. Acquisition and reforge effects use the existing explicit snapshot writers.
+- Validation: related EditMode 90/90 passed (fb9a955a75d24a468d32c4120afb3fbf), including 13 new tests. Public HTTP normal seed 46: two slime mucus drops plus purchased iron ore, two reforges, one Corroded Fang result, automatic return to cycle 2 map in 28 actions; no normal-route state injection.
+- B004b1 committed 99302948. B005 events/treasure/subdungeons, final settlement and full save/replay remain incomplete. Existing full-suite/PlayMode limitations remain. See B004b2-validation.json and PLAN.md.
+
+
+## Agent adventure B005a - 2026-10-27
+
+Shared UI/agent event selection costs, effects and completion; frozen discard previews; result acknowledgment, weighted follow-ups and actual event encounters with deferred victory rewards. 12 new tests; related EditMode 100/100 passed (job f64daf9b12d3472291a51cf4b294c578). Normal HTTP seed 1234 verified all three Broken Bridge options and repeated repair yielding 31 gold. Known nested save-catalog failure remains recorded. Treasure, special dungeons, final settlement and full save/replay remain incomplete. See docs/agent-battle/B005a-validation.json.
+
+
+## Agent adventure B005b - 2026-10-27
+
+Shared treasure tile reward flow; money/blueprint/relic bags, one-time selection, result acknowledgment and deferred calamities. Shared bag refresh pool and formal UI refresh control; fixed EditMode card cleanup. 14 new tests; related EditMode 112/112 passed in an isolated -batchmode -nographics host with matching source hashes. Normal HTTP seed 32 verified 39 gold, a blueprint, and a chosen relic from treasure (8,3). Original editor remained in domain reload; no restart/save of user scenes. Dungeon traversal, final settlement/meta and full save/replay remain pending. See docs/agent-battle/B005b-validation.json.
+
+
+## 2026-10-27 B005c - shared special dungeon traversal
+
+- Shared UI/API dungeon context, zero-AP movement, validated left/right exits, score once, main board/AP/carry restoration and deferred calamities once.
+- Repaired three authored links: Door entry, Maze effect type, Door final bag relic pool (unchanged rarity/count). Shared direct-money event preflight prevents unaffordable partial HP effects.
+- Isolated Tuanjie batchmode/nographics: final EditMode 921 total, 900 passed, 21 failed; baseline HEAD 983d6816: 899 total, 878 passed, same 21 failing names. All 22 new tests and 142 selected related cases pass.
+- Normal HTTP seed 127: real treasure income 77, recruit Jenny for 50, two Door battle victories, relic reward, right exit score 200 and AP 1->1; fresh left retreat score 0. No resource/outcome injection.
+- Maze probe remains blocked by an authored missing relic reward at the rest room. Existing roster gaps and PlayMode limits remain.
+- Evidence: docs/agent-battle/B005c-validation.json. Next: B006 shared victory/defeat/abandon settlement, isolated meta and next run. Goal remains active; full save/replay and full external-agent audit are still pending.
+
+
+## 2026-10-27 B006a - shared isolated settlement context
+
+- Added RunSettlementContext and an explicit-context overload on the existing settlement service. Formal runtime delegates to its default context. Explicit callers must provide both wallet callbacks before side effects; no fallback to player settlement/wallet.
+- Same-context retry does not award/clean twice. Separate contexts remain independent; score formula unchanged. Settlement data is serializable.
+- Isolated headless EditMode: related 18/18, 7 new pass; full 928 total, 907 passed, same 21 failed names as B005c (921/900/21). Evidence: docs/agent-battle/B006a-validation.json.
+- This is a primitive-only batch; no public terminal command yet. Formal map abandon grants no points; battle abandon settles as not cleared. B006b must preserve these policies and implement isolated meta/next run, then B007 full saves/replays and B008 normal full-run audit. Goal remains active.
+
+
+## 2026-10-27 B006b1 - terminal API, isolated abilities and next run
+
+- Added run_settle/run_abandon/run_next, isolated profile unlock/toggle, and ability-provided starting relic choice/refresh. Reuses shared score, ability, bootstrap and acquisition services. Real UTC short-run scoring applies. Map abandon gives no points; battle abandon uses non-clear scoring.
+- Public HTTP normal seed 1234: real defeat -> return -> settlement, exact request retry unchanged, zero-cost root unlock -> next run. Both abandon policies verified, plus explicit isolated profile close/reopen. No player save/wallet access.
+- Isolated final full EditMode: 942 total, 921 passed, same 21 failing names as B006a. All 14 new tests and 116 selected related cases pass. Directed resources/Boss fixture are not normal-win evidence.
+- Normal seed 127: real treasure income/recruitment, two ordinary wins, third recruit and healing, two keys, full-health three-person party enters configured ThunderLord; actual defeat in Boss round 2. Seed 46 preparation also failed. Traces retained. No forced win/resource injection.
+- Evidence: docs/agent-battle/B006b1-validation.json. B006b2 still requires true normal Boss victory -> earned points -> paid upgrade -> next run, followed by B007 full save/replay and B008 external-agent audit. Goal remains active.
+
+
+## 2026-10-27 B006b2 in progress - real-frame client policy repairs
+
+- Added shared visible-state client policy: replace unaffordable persisted skills, prefer reciprocal counters before redirects, and discount self-harm without counting it as outgoing damage. Demo imports this policy; no game C#/data changes.
+- Six Python regressions from real normal Boss frames pass. Live normal Boss probe used only offered actions and targeted all actionable slots; still defeated in round 3, so the victory gate is NOT complete.
+- Another actual seed-127 route won an outer elite, bought blueprint/materials, crafted/equipped Gale dagger, recovered the downed Molly through formal rest, collected two keys, then lost to Boss. Actual score 653, zero points, duration 652 seconds. No state/resources/outcome injection.
+- Evidence: docs/agent-battle/B006b2-progress.json. Continue preparation path/calamarity planning, equipment skill observability and real normal victory -> earned paid upgrade -> next run. B007/B008 remain. Goal stays active.
+
+
+## 2026-10-27 B006b2 in progress - equipment observability
+
+- Public catalog adds weapon/character/blueprint details: skills, conditions, base action slots, type, target weapon and shared aggregated requirements. Adventure exposes the actual forge fee before recipe ownership/location entry.
+- Catalog and live combat reuse one skill reader/formal formatter. Inactive preview-scene formatting creates no UI and preserves input locks, scene and RNG. Live displayedDice uses the same status-adjusted controller getters as UI; authored dice remains separate. No outcome prediction.
+- Added inspect-equipment public-catalog CLI and UTF-8 pipe output; policy prefers displayed ranges with old-observation fallback.
+- Final isolated headless EditMode: 948 total, 927 passed, same 21 failing names; all 6 new and 47 selected related cases pass. Python 6/6. Real HTTP read-only live battle/catalog, blueprint inspection and normal actual forge inflation (40 before owning recipe/entering forge) verified.
+- Evidence: docs/agent-battle/B006b2-equipment-validation.json. Normal victory/earned paid upgrade remains pending; B007 save/replay and B008 full audit remain. Goal stays active.
+
+
+[2026-10-27 B007a] Added timestamped full-session adventure journals, source/engine/API version guards, explicit replay slots and isolated replay verification. Public HTTP verified 28 normal-content checkpoints across dungeon and equipment/Boss-defeat routes; 144 commands verified again after validation-host restart. EditMode: 964 total, 943 passed, same 21 baseline failures; all 16 new tests passed. Python: 6/6. Evidence: docs/agent-battle/B007a-validation.json. Playable restore, cross-process settlement transactions and normal Boss victory remain pending; goal remains active.
+
+
+[2026-10-27 B007b] Added playable named checkpoints and automatic persistent-profile recovery using the existing shared-rule replay. Progression and accepted commands commit in one atomic head; working wallet/ability files roll back to that head after interruption. Added owner/generation stale-save guards, profile leases, response-cache reconstruction, checksum/legacy validation and bounded Windows replacement retries. Final EditMode: 986 total, 965 passed, same 21 baseline failures; all 22 new tests passed. Public HTTP: 48 save/load/continue checkpoints across normal dungeon, equipment/Boss-defeat and reforge routes; actual forced validation-host termination recovered the last unsaved battle command and settlement retries did not reexecute. CLI smoke and 6 Python policy tests passed. Evidence: docs/agent-battle/B007b-validation.json. Normal Boss victory/earned paid upgrade and victory-settlement restore remain pending; next batch returns to B006b2 before B008 completion audit. Goal remains active.
+
+
+[2026-10-27 B006b2 strategy progress] Improved visible-text calamity choices and guaranteed-charge caster defenses; all 14 Python policy tests passed, including 8 new regressions from actual descriptions/frames. Surveyed 100 normal seeds via public HTTP (23 safe early relic bags). Normal seed 7 won one ordinary battle and recruited Jenny but lost a later event encounter: actual settlement 398 score / 0 ability points; full 138-command journal replay verified. Failed farming/weakness branches and directed probes retained separately. Engine and balance files are unchanged, so the prior 986-test Unity baseline was not rerun. Evidence: docs/agent-battle/B006b2-strategy-validation.json. Found a formal-entry gap: saved menu has four difficulty references while create_run hardcodes Normal. Next implement menu-backed difficulty selection and genuine progression, while keeping the Normal victory/earned-upgrade and positive recovery gates open. Goal remains active.
+
+
+[2026-10-27 B008a] Added formal-menu difficulty catalogue and create_run/run_next selection. UI and API share the existing bootstrap, action-point and recruitment services; no balance definitions changed. Actual menu modes: Easy 7x7, Medium/Normal 9x9, Hard 11x11, Extreme 13x13. Difficulty GUIDs survive named save/load, automatic profile recovery and cross-mode full replay. Invalid IDs and mid-run changes reject before mutation. All 10 new EditMode tests passed; full suite 996 total / 975 passed / same 21 baseline failures. All 18 Python tests passed. Public HTTP verified all four modes; CLI performed a real Easy move/choice, saved/recovered, abandoned, switched to Normal and replayed. 3199 rule/code/config files matched the validation project byte-for-byte and matched the runtime journal content hash. Evidence: docs/agent-battle/B008a-validation.json. User scene/settings/packages/Plastic changes excluded. Next: genuine low-difficulty progression and then Normal Boss victory, earned paid upgrade, positive settlement recovery and B008 final audit. Lower-difficulty victory cannot replace the Normal gate; goal remains active.
+
+
+[2026-10-27 B008b] Verified actual earned progression from a zero-resource Easy profile: twelve ordinary victories, four party members, three crafted/equipped weapons, then Boss defeat. Shared score 1265 awarded 1 actual ability point. Saved/restored defeat-pending settlement, sent run_settle without consuming its HTTP response, observed its positive atomic commit, verified the exact owned validation process and force terminated it. A fresh host recovered the finished settlement; the lost-response retry did not mutate state or award twice. Purchased action-limit-1 using that earned point, retried without double spending, and started Normal with AP 7 instead of base 6. All 505 accepted commands replayed identically. Improved party-wide energy budgeting, efficient skill upgrades, burst preference from actual enemy current stacks, and weak-front-first target ordering. Added 8 actual-frame regressions; all 26 Python tests passed. Engine/balance unchanged; all 3199 runtime/config files and runtime content hash match B008a, so Unity was not rerun (prior 996 total / 975 passed / same 21 baseline failures). Boss attempts and legitimate pre-settlement checkpoint branch are preserved. Evidence: docs/agent-battle/B008b-validation.json. Next: resume the earned AP profile, confirm Normal seed-55 legendary opening through public commands, prepare a stronger build and prove Normal victory plus victorious settlement restore before the final B008 audit. Neither Easy nor Normal victory is proven; goal remains active.
+
+
+[2026-10-27 B008c] Formal Normal seed55 Boss victory at round8, actual score11784/11 points. Victory-pending restart, post-commit lost-response crash/retry, seven earned paid unlocks and next-run AP9/money30/HP17 plus starting-relic save/load verified. Full739-command replay matched without changing persistent head. Python33 passed; engine/rules/config3199 files unchanged; Unity996/975/21 baseline retained. Final B008 contract/evidence audit remains. See docs/agent-battle/B008c-validation.json.
+
+
+[2026-10-27 B008 COMPLETE] Agreed editor-backed shared-rule full-game agent loop accepted. Added AGENT_GUIDE.md, ACCEPTANCE.md and final B008-validation.json; updated both OpenAPI documents to0.8.4 (wire API remains1). Two specifications validated;54 DTOs/443 fields and45 adventure operations including36 mutations matched source. Real739-command victory journal, native states and fresh HTTP retry/stale/save/load/replay smoke passed. Existing Unity996/975/21 and PlayMode limitations retained; Python33 passed from B008c. No rule/balance edits. Validation host63376 stopped gracefully; original editor21328 preserved. Independent .NET, concurrency, old-version migration and universal demo wins remain outside scope.
+
+
+[2026-10-28 Easy strategy follow-up] First fixes committed6248dc03: RelicBag/funding/material preparation, encounter gate and first-die/shield preferences. New zero-progress Easy seed20261028 played forward without reload:280 actions,7 battles/6 wins,31 rounds,50 clash segments,defeat814 score/0 points. Native280-command replay matched;3199 rule/code/config files unchanged. Added empty-recipe rejection, delayed-death/regeneration pair penalty, wounded interception avoidance, direct multi-hit defense and regeneration focus;47 Python cases pass. Last additions are regression-tested, not proved by another run. Full HTML/raw logs in outputs/agent-battle/easy-20261028-retry; structured report docs/agent-battle/Easy-20261028-strategy-validation.json. Test host65852 stopped; original editor21328 preserved.
+
+
+[2026-10-28 Easy third run] Frozen policy6ec5411d;47 preflight Python tests passed. Fresh zero-progress Easy seed20261028, no reload/recovery/reroll:434 actions,10 battles/9 wins,44 rounds,72 clash messages. Previous giant-slime encounter won with all four alive. Boss phase2 reached, defeated at round11 with Boss23/75HP; settled1091 score/1 real unspent point. Native434-command replay matched without profile mutation;3199 content files byte-equal to isolated host, no engine/balance/policy edits. Recorded3 current bug-candidate categories (empty recipe reward, event reentry,9 stale-HP log occurrences),1 historical not-reproduced interaction and2 separate agent/client issues. Not all candidates confirmed bugs. Full logs/ZIP: outputs/agent-battle/easy-20261028-run3. Reports: docs/agent-battle/Easy-20261028-run3-validation.json and Easy-20261028-run3-bug-report.json. Owned host57284 stopped gracefully; original editor21328 untouched. No Easy victory claim.
+
+
+[2026-10-28 reported game bug fixes] Fixed clash result HP logs by formatting after the real presentation impact callback. Unyielding lethal protection now keeps its pending next-round death through healing, including full healing; updated the prior contrary expectation. Identified run3(5,6) as Old Gambling Table event025, decline->025-1 follow-up->Leave. Per user follow-up, changed only follow-up Leave resolveEvent0->1 so the tile completes once and does not reopen on return. Added9 integration cases. Before-fix9 tests:7 expected failures/2 controls passed; event case failed before the asset change. Related49/49 passed; full EditMode1004/983/21 failures identical by name to baseline; after final event edit related67/67 passed. No new full-suite failures; existing PlayMode limitations retained (not rerun). All3199 runtime/content files and changed tests match isolated validation project. Historical run3 archive unchanged. Evidence: docs/agent-battle/Bugfix-20261028-validation.json. Owned test runners exited; original editor21328 and unrelated user changes preserved.
+
+
+[2026-10-28 policy/interface follow-up] Added shared disconnect including HTTP dispatch, outer adventure revision, retry and native replay. Exposed read-only pendingDelayedDeath/stageName/passives. Corrected equal-speed interception and obsolete delayed-death/regeneration prohibition; stronger Boss preparation, effect-based relic rewards and one complete recipe/shopping budget plan with plan-equipment CLI. Python55/55, related EditMode60/60; full1009/988/21 identical baseline failures. OpenAPI0.8.5:54 DTOs/446 fields match code; wireAPI1. Runtime/content3199 files match isolated host. Evidence: docs/agent-battle/Policy-interface-20261028-validation.json. Next play one fresh Easy run, no reload or injected resources. User now requires a different seed for every fresh autonomous run; registry docs/agent-battle/PLAYTEST_SEEDS.json. Run4 reserved2026102804 before creation; replay/reproduction remain explicitly separate.
+
+
+2026-10-28: Finished fresh Easy run4, seed2026102804 (unique seed preference now recorded). 418 public actions,15 battles/14 wins,35 rounds,55 clash messages; actual defeat at Boss round5,34/75HP;1521score/1 unspent ability point. Native418-command replay verified,3199 content files matched. Reports and full archive: outputs/agent-battle/easy-20261028-run4. Game candidates: Low Whisper Well AP-cost mismatch and Boss missing immunity reference/effective current burst. Agent mistakes and design questions recorded separately. After-run client readiness baseline correction recognizes Chara fallback starting weapon;57 Python tests pass. No new playthrough after that correction. Previous full EditMode1009/988/21 baseline failures unchanged; PlayMode known failures not resolved. Original editor21328 untouched; isolated host47344 stopped. Evidence: docs/agent-battle/Easy-20261028-run4-validation.json.
+
+[2026-10-29 dev integration] Fetched dev explicitly, completed the shallow history, configured dev tracking, and integrated the local main work with origin/dev 1750cf26. Preserved dev's battle-tile preview, relics143-158, balance and presentation changes alongside the shared-rule agent API, saves/replays and battle fixes. Resolved pawn presentation/headless movement and fixed-pair reforge conflicts; shared explicit snapshots now govern recruitment restrictions and fixed reforge in both UI and agent paths. Kept the working Lucky Game II dungeon entrance and aligned four event tests with dev's intentional clamp-to-zero money-loss rule. Three merge regressions pass. Isolated final EditMode1134/1115/19: no new failure names versus the prior21 baseline (two prior failures no longer reproduced); related61/61, Python57/57, preview PlayMode5/5. All3772 compared script/test/data/config files matched the validation project. Evidence: outputs/merge-dev-20261029. Restored and retained the existing unity-mcp v10.3.0 package dependency on dev after temporary stashing removed it; the user will verify editor loading. Existing local configuration edits and animation/playtest outputs are preserved. No push performed.

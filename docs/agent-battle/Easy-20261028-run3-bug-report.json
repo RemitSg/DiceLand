@@ -1,0 +1,415 @@
+{
+  "run": "Easy third run / seed20261028 / 2026-10-28",
+  "status": "候选与可观察症状记录，不等于所有条目已确认为游戏bug",
+  "currentRunCandidates": [
+    {
+      "id": "EMPTY_RECIPE_REWARD",
+      "title": "宝藏仍投放空配方图纸",
+      "category": "配置 / 奖励目录",
+      "confidence": "本局观察到投放；不可制作结论来自第二局，未在本局重试",
+      "expected": "可选图纸应有可用制作配方，或明确标出不可制作的原因。",
+      "observed": "宝藏候选selectable=true，但公开目录的材料列表为空；第二局曾持有同图纸且铁匠canCraft=false。",
+      "firstStep": 14,
+      "occurrences": 1,
+      "evidence": [
+        {
+          "step": 14,
+          "position": [
+            0,
+            3
+          ],
+          "blueprint": {
+            "id": "cdb2bfefecf4f254591220820465be9d",
+            "name": "曦誓之卷",
+            "description": "记载着如何打造 【曦誓剑】 的卷轴",
+            "rarity": "Rare",
+            "weapon": "60f938b00f1b42e19b517f1e12b86d06",
+            "materials": []
+          },
+          "offeredOption": {
+            "index": 1,
+            "money": 0,
+            "kind": "Blueprint",
+            "title": "知识",
+            "description": "获得 1 张图纸：曦誓之卷",
+            "unavailableReason": "",
+            "blueprint": "cdb2bfefecf4f254591220820465be9d",
+            "relic": "",
+            "rarity": "Rare",
+            "selectable": true
+          },
+          "historicalEvidence": "../easy-20261028-retry/play-log.html#step-39",
+          "selected": false
+        }
+      ],
+      "gameplayModifiedForInvestigation": false,
+      "scope": "本局公开接口观察",
+      "reproduction": [
+        "同一引擎/内容版本创建Easy种子20261028的新档案。",
+        "走到(0,3)宝藏，查看知识奖励的曦誓之卷候选。",
+        "调用catalog，按图纸GUID查看materials；列表为空。",
+        "本局选择金币，未为了测试故意领取；第二局第39步铁匠canCraft=false作为历史补充。"
+      ],
+      "priority": "P2"
+    },
+    {
+      "id": "EVENT_REENTRY",
+      "title": "已访问事件格再次开启交互",
+      "category": "交互 / 待确认设计",
+      "confidence": "仅疑点，不确认为bug",
+      "expected": "若事件设计为一次性，末级继续后应标记已完成；若允许重入，应有相应说明。",
+      "observed": "重新走进已访问、未解决的事件格会再次打开事件。重复交互可能是有意设计，尚未证明重复发奖。",
+      "firstStep": 43,
+      "occurrences": 2,
+      "evidence": [
+        {
+          "step": 43,
+          "position": [
+            5,
+            6
+          ],
+          "eventId": "0d4ac13b6280a95489e4847c135fecb7",
+          "eventName": "旧赌桌",
+          "destinationBeforeMove": {
+            "x": 5,
+            "y": 6,
+            "danger": 0,
+            "moveCost": 1,
+            "dungeonEntryIndex": -1,
+            "type": "Event",
+            "dangerBand": "Outer",
+            "previewTag": "",
+            "sourceDungeon": "",
+            "visited": true,
+            "resolved": false,
+            "encounterAvailable": false
+          }
+        },
+        {
+          "step": 51,
+          "position": [
+            5,
+            6
+          ],
+          "eventId": "0d4ac13b6280a95489e4847c135fecb7",
+          "eventName": "旧赌桌",
+          "destinationBeforeMove": {
+            "x": 5,
+            "y": 6,
+            "danger": 0,
+            "moveCost": 1,
+            "dungeonEntryIndex": -1,
+            "type": "Event",
+            "dangerBand": "Outer",
+            "previewTag": "",
+            "sourceDungeon": "",
+            "visited": true,
+            "resolved": false,
+            "encounterAvailable": false
+          }
+        }
+      ],
+      "gameplayModifiedForInvestigation": false,
+      "scope": "本局公开接口观察",
+      "reproduction": [
+        "走到(5,6)事件格，沿本局记录的选项和continue完成末级交互。",
+        "离开该格后再次走入。",
+        "观察事件重新打开，且格子visited=true、resolved=false。",
+        "本局没有证明重复获奖；需要确认这类事件是否设计为可重复。"
+      ],
+      "priority": "P3"
+    },
+    {
+      "id": "STALE_HP_LOG",
+      "title": "伤害日志的“剩余HP”与实际扣血不一致",
+      "category": "日志 / 展示",
+      "confidence": "本局单次伤害与前后观察互相印证",
+      "expected": "单次伤害后的“剩余HP”应反映扣血后的数值。",
+      "observed": "同一回合仅一次该单位实际伤害，前后观察差值等于伤害值，但日志显示另一剩余HP。没有据此推断实际战斗扣血错误。",
+      "firstStep": 143,
+      "occurrences": 9,
+      "evidence": [
+        {
+          "step": 143,
+          "round": 2,
+          "position": [
+            5,
+            0
+          ],
+          "actorId": "ally_1",
+          "name": "Molly[破旧匕首]",
+          "hpBefore": 16,
+          "hpAfter": 13,
+          "singleDamage": 3,
+          "damageEvent": {
+            "index": 41,
+            "round": 2,
+            "kind": "damage",
+            "actorId": "ally_1",
+            "amount": 3,
+            "message": ""
+          },
+          "logEvent": {
+            "index": 43,
+            "round": 2,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "-> 敌方胜！追击威力 3 ，水雪人(ID:3) 对 Molly[破旧匕首] 造成 3 伤害，剩余HP 16/17"
+          }
+        },
+        {
+          "step": 186,
+          "round": 1,
+          "position": [
+            4,
+            0
+          ],
+          "actorId": "ally_3",
+          "name": "Man[“无敌”]",
+          "hpBefore": 20,
+          "hpAfter": 18,
+          "singleDamage": 2,
+          "damageEvent": {
+            "index": 15,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_3",
+            "amount": 2,
+            "message": ""
+          },
+          "logEvent": {
+            "index": 19,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "-> 敌方胜！追击威力 2 ，磁电质(ID:5) 对 Man[“无敌”] 造成 2 伤害，剩余HP 20/20"
+          }
+        },
+        {
+          "step": 209,
+          "round": 1,
+          "position": [
+            3,
+            0
+          ],
+          "actorId": "ally_3",
+          "name": "Man[“无敌”]",
+          "hpBefore": 18,
+          "hpAfter": 14,
+          "singleDamage": 4,
+          "damageEvent": {
+            "index": 20,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_3",
+            "amount": 4,
+            "message": ""
+          },
+          "logEvent": {
+            "index": 24,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "-> 敌方胜！追击威力 4 ，浪灵(ID:7) 对 Man[“无敌”] 造成 4 伤害，剩余HP 18/20"
+          }
+        },
+        {
+          "step": 215,
+          "round": 2,
+          "position": [
+            3,
+            0
+          ],
+          "actorId": "ally_3",
+          "name": "Man[“无敌”]",
+          "hpBefore": 14,
+          "hpAfter": 10,
+          "singleDamage": 4,
+          "damageEvent": {
+            "index": 53,
+            "round": 2,
+            "kind": "damage",
+            "actorId": "ally_3",
+            "amount": 4,
+            "message": ""
+          },
+          "logEvent": {
+            "index": 57,
+            "round": 2,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "-> 敌方胜！追击威力 4 ，浪灵(ID:7) 对 Man[“无敌”] 造成 4 伤害，剩余HP 14/20"
+          }
+        },
+        {
+          "step": 222,
+          "round": 3,
+          "position": [
+            3,
+            0
+          ],
+          "actorId": "ally_3",
+          "name": "Man[“无敌”]",
+          "hpBefore": 10,
+          "hpAfter": 7,
+          "singleDamage": 3,
+          "damageEvent": {
+            "index": 94,
+            "round": 3,
+            "kind": "damage",
+            "actorId": "ally_3",
+            "amount": 3,
+            "message": ""
+          },
+          "logEvent": {
+            "index": 98,
+            "round": 3,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "-> 敌方胜！追击威力 3 ，浪灵(ID:7) 对 Man[“无敌”] 造成 3 伤害，剩余HP 10/20"
+          }
+        },
+        {
+          "step": 334,
+          "round": 6,
+          "position": [
+            2,
+            2
+          ],
+          "actorId": "enemy_8",
+          "name": "绿色史莱姆(ID:1)",
+          "hpBefore": 7,
+          "hpAfter": 5,
+          "singleDamage": 2,
+          "damageEvent": {
+            "index": 273,
+            "round": 6,
+            "kind": "damage",
+            "actorId": "enemy_8",
+            "amount": 2,
+            "message": ""
+          },
+          "logEvent": {
+            "index": 277,
+            "round": 6,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "-> 友方胜！追击威力 2 ，对 绿色史莱姆(ID:1) 造成 2 伤害，剩余HP 7/7"
+          }
+        },
+        {
+          "step": 340,
+          "round": 7,
+          "position": [
+            2,
+            2
+          ],
+          "actorId": "ally_0",
+          "name": "0[新手木剑]",
+          "hpBefore": 17,
+          "hpAfter": 13,
+          "singleDamage": 4,
+          "damageEvent": {
+            "index": 312,
+            "round": 7,
+            "kind": "damage",
+            "actorId": "ally_0",
+            "amount": 4,
+            "message": ""
+          },
+          "logEvent": {
+            "index": 314,
+            "round": 7,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "-> 敌方胜！追击威力 4 ，巨型绿色史莱姆(ID:17) 对 0[新手木剑] 造成 4 伤害，剩余HP 17/22"
+          }
+        },
+        {
+          "step": 359,
+          "round": 10,
+          "position": [
+            2,
+            2
+          ],
+          "actorId": "enemy_10",
+          "name": "绿色史莱姆(ID:1)",
+          "hpBefore": 7,
+          "hpAfter": 5,
+          "singleDamage": 2,
+          "damageEvent": {
+            "index": 467,
+            "round": 10,
+            "kind": "damage",
+            "actorId": "enemy_10",
+            "amount": 2,
+            "message": ""
+          },
+          "logEvent": {
+            "index": 471,
+            "round": 10,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "-> 友方胜！追击威力 2 ，对 绿色史莱姆(ID:1) 造成 2 伤害，剩余HP 7/7"
+          }
+        }
+      ],
+      "gameplayModifiedForInvestigation": false,
+      "scope": "本局公开接口观察",
+      "reproduction": [
+        "按本局原生434条日志进行独立重放。",
+        "定位记录所指的战斗回合，筛选该单位只有一次damage事件且生命差等于伤害的例子。",
+        "对照伤害文字中的剩余HP与damage事件及前后观察；具体数值见证据。",
+        "不将文字错误外推成战斗伤害数值计算错误。"
+      ],
+      "priority": "P2"
+    }
+  ],
+  "historicalNotReproduced": [
+    {
+      "id": "HISTORICAL_DELAYED_DEATH_REGEN",
+      "title": "不屈与回合结束回血可能取消延迟死亡",
+      "scope": "第二局历史线索；本局主动避免该组合，未重新复现",
+      "category": "规则交互 / 需要确认设计",
+      "confidence": "前局可观察到足量攻击后目标仍存活在3HP；是否应受治疗取消，需要确认规则意图与执行顺序",
+      "priority": "P2",
+      "expected": "描述写下一回合开始死亡；应确认死亡是否为不可取消的标记，或仅在仍处于濒死血量时生效。",
+      "observed": "第二局末战第10–12轮，小怪受到足量伤害后回到3HP并继续存活。第三局同样持有不屈但不选回血，小怪正常死亡，且该场最终胜利。对局条件有差异，不能仅凭比较确认因果。",
+      "reproduction": [
+        "使用第二局原生日志和历史证据定位不屈、敌方回2HP同时存在的战斗。",
+        "复核濒死保护、回合结束治疗、下回合死亡检查的先后及预期。",
+        "不要把第三局当作该组合的独立复现；本局没有为复测修改状态或回滚。"
+      ],
+      "evidenceFile": "historical-undying-regen-evidence.json",
+      "sourceLog": "../easy-20261028-retry/play-log.html#b7-r12",
+      "gameplayModifiedForInvestigation": false
+    }
+  ],
+  "notGameBugs_agentIssues": [
+    {
+      "step": 271,
+      "category": "agent planning mistake, not a game bug",
+      "detail": "Agent omitted the one Flame Wing requirement from the public electromagnetic axe recipe. Local offered-action guard stopped the attempted craft before sending any invalid HTTP request. Corrected by buying the missing material."
+    },
+    {
+      "step": 417,
+      "category": "client policy observation mismatch, not confirmed game bug",
+      "detail": "Equal-speed Jenny3 vs Boss3 successfully took over a target from faster Molly8. Current can_intercept heuristic uses >, underestimating equality. Actual returned target/contested state used for final decisions."
+    }
+  ],
+  "method": "只读检查本局公开请求/响应、每轮新增事件、资产目录；历史证据与本局证据分开。未更改规则、资产、玩家存档或对局结果。",
+  "counts": {
+    "currentCandidates": 3,
+    "currentHighConfidenceDisplaySymptoms": 1,
+    "historicalNotReproduced": 1,
+    "agentIssues": 2
+  }
+}

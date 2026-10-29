@@ -1,0 +1,140 @@
+{
+  "date": "2026-10-27",
+  "batch": "B002",
+  "targeted": {
+    "total": 46,
+    "passed": 46,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 2.1858604,
+    "resultState": "Passed"
+  },
+  "targetedJob": "ccd82a93e1784604850b1b88571e6960",
+  "fullEditMode": {
+    "total": 828,
+    "passed": 804,
+    "failed": 24,
+    "skipped": 0,
+    "durationSeconds": 20.2796594,
+    "resultState": "Failed(Child)"
+  },
+  "fullJob": "358a03c307b848b492cddb6764cf77fd",
+  "failures": [
+    {
+      "name": "BattleButtonSkillSelectionTests.AllySpeedButtons_CanKeepIndependentSelectedSkills",
+      "message": "  Expected: same as < (EnemySkill_SO)>\r\n  But was:  < (EnemySkill_SO)>\r\n"
+    },
+    {
+      "name": "BattleButtonSpriteStateSwitcherTests.OnEnable_AppliesUnpressedSprite",
+      "message": "  Expected: same as < (UnityEngine.Sprite)>\r\n  But was:  < (UnityEngine.Sprite)>\r\n"
+    },
+    {
+      "name": "BattleExitFlowServiceTests.SettlementVictoryButtons_PutsRetryBeforeReturn",
+      "message": "Unhandled log message: '[Error] Failed setting EventSystem.current to unknown EventSystem <b>Selected:</b>\r\n\r\n\r\nNo module\r\n'. Use UnityEngine.TestTools.LogAssert.Expect"
+    },
+    {
+      "name": "BattleGamblerPassiveServiceTests.TryApplyDebtInstantDeath_KillsAllyAtThreeDebtStacks",
+      "message": "  Expected: True\r\n  But was:  False\r\n"
+    },
+    {
+      "name": "BattleImmediateEffectPlanServiceTests.ResolveAlly_UsesCurrentAllyImmediateOrder",
+      "message": "  Expected is <BattleImmediateEffectStep[5]>, actual is <BattleImmediateEffectStep[6]>\r\n  Values differ at index [3]\r\n  Expected: ConditionalStatus\r\n  But was:  BuiltIn\r\n"
+    },
+    {
+      "name": "BattleSkillInfoOverlayDescriptionTests.CompactSkillDetail_MergesMarkedDelayedStatusBranches",
+      "message": "  Expected: String containing \"施加\"\r\n  But was:  \"第 1 攻击骰：<color=#FF5252>3</color> ~ <color=#FF5252>5</color>\n\n词条：\n第 1 攻击骰词条：<color=#FFC74C>[ 命中时 ]</color> 若 <color=#7AE6FF>目标 标记 层数 至多为 1</color> ，则 使 <color=#7AE6FF>当前目标</color> 于 <color=#FFC74C>下 1 个回合开始时</color> 获得 <color=#FF7373>1</color> 层 <color=#FF7373>标记</color>\n第 1 攻击骰词条：<color=#FFC74C>[ 命中时 ]</color> 若 <color=#7AE6FF>目标拥有至少 1 层 标记</color> ，则 使 <color=#7AE6FF>当前目标</color> 于 <color=#FFC74C>下 1 个回合开始时</color> 获得 <color=#FF7373>1</color> 层 <color=#FF7373>黑暗</color>\"\r\n"
+    },
+    {
+      "name": "BattleStatusResolutionServiceTests.TryResolve_ReturnsFalseForUnsupportedLegacyStatus",
+      "message": "  Expected: False\r\n  But was:  True\r\n"
+    },
+    {
+      "name": "BattleTargetingPhaseStartEffectServiceTests.ApplyPendingAllyStatusGrants_AppliesImmediateSpeedBonusForOpeningRoll",
+      "message": "  Expected: 6\r\n  But was:  4\r\n"
+    },
+    {
+      "name": "MainMenuSceneControllerTutorialTests.ResolveMenuAction_RecognizesTutorialIdentity",
+      "message": "System.Reflection.AmbiguousMatchException : Ambiguous match found."
+    },
+    {
+      "name": "MapEventNestedFlowTests.SaveAssetCatalog_IncludesNestedFollowUpEvents",
+      "message": "  Expected: same as < (MapEvent_SO)>\r\n  But was:  null\r\n"
+    },
+    {
+      "name": "MapTreasureOverlayVisualTests.Show_OpensRelicChoiceCardsAndConfirmsSelectedRelic",
+      "message": "Unhandled log message: '[Error] Destroy may not be called from edit mode! Use DestroyImmediate instead.\nDestroying an object in edit mode destroys it permanently.'. Use UnityEngine.TestTools.LogAssert.Expect"
+    },
+    {
+      "name": "MapTreasureOverlayVisualTests.Show_UsesRelicBagIconForChoiceRarity",
+      "message": "  Expected: same as <RareBagIcon (UnityEngine.Sprite)>\r\n  But was:  <CommonBagIcon (UnityEngine.Sprite)>\r\n"
+    },
+    {
+      "name": "MapTutorialFlowServiceTests.TryConsumeArrivalGuide_ShowsMerchantForgeAndEliteFinalOnce",
+      "message": "  Expected: String containing \"精英\"\r\n  But was:  \"最后一场教程战斗来了。这里会综合考验速度、拼点、单方面攻击、技能切换、能量和状态效果。\n\n先看敌人要做什么，再决定哪条线必须接、哪条线可以放、哪一招值得消耗能量。\"\r\n"
+    },
+    {
+      "name": "PuppetMasterEnemyAssetTests.PuppetMasterAndPuppet_HaveExpectedCoreStatsAndPassives",
+      "message": "  Assets/Data/Enemies/Enemies/3501 SoullessPuppet/SoullessPuppet_Data.asset\r\n  Expected: not null\r\n  But was:  null\r\n"
+    },
+    {
+      "name": "PuppetMasterEnemyAssetTests.PuppetMasterEncounter_HasExpectedEnemyGroupComposition",
+      "message": "  Assets/Data/Enemies/Enemies/3501 SoullessPuppet/SoullessPuppet_Data.asset\r\n  Expected: not null\r\n  But was:  null\r\n"
+    },
+    {
+      "name": "PuppetMasterEnemyAssetTests.PuppetSkills_HaveExpectedStatusAndRoundRules",
+      "message": "  Assets/Data/Enemies/Enemies/3501 SoullessPuppet/SoullessPuppet_Data.asset\r\n  Expected: not null\r\n  But was:  null\r\n"
+    },
+    {
+      "name": "RelicSystem079To094Tests.MerchantWhiteSlip_AllowsPurchaseWhenMoneyPositiveAndSpendsRemainingMoney",
+      "message": "  Expected: 0\r\n  But was:  -98\r\n"
+    },
+    {
+      "name": "RestSceneReforgeInteractableRelicSelectionTests.HandleRelicSelection_ClickingOnlySelectedRelicAgainClearsSelection",
+      "message": "Unhandled log message: '[Error] Failed setting EventSystem.current to unknown EventSystem <b>Selected:</b>\r\n\r\n\r\nNo module\r\n'. Use UnityEngine.TestTools.LogAssert.Expect"
+    },
+    {
+      "name": "RestSceneReforgeInteractableRelicSelectionTests.OnMouseUpAsButton_WhenMainPanelIsOpen_DoesNotReturnToOpenPrompt",
+      "message": "Unhandled log message: '[Error] Failed setting EventSystem.current to unknown EventSystem <b>Selected:</b>\r\n\r\n\r\nNo module\r\n'. Use UnityEngine.TestTools.LogAssert.Expect"
+    },
+    {
+      "name": "TodoWeaponAssetTests.HotAnvilBoard_LoadsWithBurnSpreadAndSelfBurnSkills",
+      "message": "  Assets/Data/Weapons/203 热砧板/203 热砧板.asset\r\n  Expected: not null\r\n  But was:  null\r\n"
+    },
+    {
+      "name": "TodoWeaponAssetTests.WeaponCatalog_ContainsTodoWeapons",
+      "message": "  Assets/Data/Weapons/203 热砧板/203 热砧板.asset\r\n  Expected: not null\r\n  But was:  null\r\n"
+    },
+    {
+      "name": "TutorialBattleContentFactoryTests.CreateRuntimeDefinition_Battle03_AdvancesWhenAllySkillIsViewed",
+      "message": "  Expected: AllySkillViewed\r\n  But was:  CombatExecutePressed\r\n"
+    },
+    {
+      "name": "TutorialHighlightCoordinateUtilityTests.ConvertScreenRectToReferenceRect_UsesCanvasScalerMatchScale",
+      "message": "  Expected: 966.46099853515625d +/- 0.0099999997764825821d\r\n  But was:  965.9813232421875d\r\n"
+    },
+    {
+      "name": "WanderingShadowEnemyAssetTests.Echo_UsesConfiguredEffectsAndEventGroup",
+      "message": "  Assets/Data/Enemies/EnemyGroup/Events/Echo.asset\r\n  Expected: not null\r\n  But was:  null\r\n"
+    }
+  ],
+  "uiFollowup": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "durationSeconds": 0.2559592,
+    "resultState": "Failed(Child)"
+  },
+  "http": {
+    "demo": "b002-wood-replay.json",
+    "outcome": "victory",
+    "round": 3,
+    "actions": 6,
+    "replayMatched": true
+  },
+  "notes": [
+    "Full suite retains 23 previously recorded failures and additionally reports BattleExitFlowServiceTests.SettlementVictoryButtons_PutsRetryBeforeReturn with an EventSystem.current error, also reproduced in isolation. This full suite is not green.",
+    "Adventure bridge tests use real assets plus a small test encounter; they are not evidence of complete normal adventure play.",
+    "No PlayMode rerun; previously recorded graphical regression limitations remain."
+  ]
+}

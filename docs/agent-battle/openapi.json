@@ -1,0 +1,882 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "DiceLand Agent Battle API",
+    "version": "0.8.5",
+    "description": "Shared-rule editor-backed single battles and shared health/catalog discovery. adventure-openapi.json documents complete adventure, persistence and progression on the same endpoint. One battle or adventure session per host; engine required."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8091"
+    }
+  ],
+  "paths": {
+    "/v1/command": {
+      "post": {
+        "operationId": "battleCommand",
+        "summary": "Inspect content or drive a battle decision",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentBattleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command succeeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentBattleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid command or malformed HTTP input; check success, error and message when present.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/AgentBattleResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "error": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "success",
+                        "error"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Execution error; observe or close the faulted session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentBattleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgentBattleRequest": {
+        "type": "object",
+        "properties": {
+          "op": {
+            "type": "string",
+            "enum": [
+              "health",
+              "catalog",
+              "create",
+              "observe",
+              "set_skill",
+              "target",
+              "commit",
+              "replay",
+              "close",
+              "choose_relic",
+              "refresh_rewards",
+              "disconnect"
+            ]
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "Required unique ID for set_skill, target and commit; retries must preserve every parameter. Also required for choose_relic and refresh_rewards. Required for disconnect too."
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Required for set_skill, target and commit; must match the latest state revision. Also required for choose_relic and refresh_rewards. Required for disconnect too."
+          },
+          "seed": {
+            "type": "integer",
+            "format": "int32",
+            "default": 1
+          },
+          "maxRounds": {
+            "type": "integer",
+            "format": "int32",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "party": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattlePartyMember"
+            },
+            "minItems": 1,
+            "maxItems": 4
+          },
+          "enemies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "maxItems": 8
+          },
+          "relics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 32
+          },
+          "actorId": {
+            "type": "string"
+          },
+          "buttonIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skillIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "targetButtonIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "choiceIndex": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Index from legalActions for choose_relic."
+          }
+        },
+        "required": [
+          "op"
+        ]
+      },
+      "AgentBattlePartyMember": {
+        "type": "object",
+        "properties": {
+          "character": {
+            "type": "string"
+          },
+          "weapon": {
+            "type": "string"
+          }
+        }
+      },
+      "AgentBattleResponse": {
+        "type": "object",
+        "properties": {
+          "apiVersion": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/AgentBattleObservation"
+          },
+          "catalogue": {
+            "$ref": "#/components/schemas/AgentBattleCatalogue"
+          },
+          "replay": {
+            "$ref": "#/components/schemas/AgentBattleReplay"
+          }
+        },
+        "required": [
+          "apiVersion",
+          "success"
+        ]
+      },
+      "AgentBattleObservation": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "seed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "round": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "phase": {
+            "type": "string",
+            "enum": [
+              "targeting",
+              "reward",
+              "terminal",
+              "faulted",
+              ""
+            ],
+            "description": "Active phases as listed. Empty string is serialized for an inactive/default nested DTO; check the outer response and current adventure phase."
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "energy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "temporaryEnergy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reservedEnergy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleActor"
+            }
+          },
+          "relics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleAsset"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleEvent"
+            }
+          },
+          "legalActions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleLegalAction"
+            }
+          },
+          "rewards": {
+            "$ref": "#/components/schemas/AgentBattleRewards"
+          }
+        }
+      },
+      "AgentBattleActor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "side": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "hp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxHp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dead": {
+            "type": "boolean"
+          },
+          "statuses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleStatus"
+            }
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleSkill"
+            }
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleSlot"
+            }
+          },
+          "pendingDelayedDeath": {
+            "type": "boolean",
+            "description": "Unyielding lethal protection already triggered; dies at next round start even if subsequently healed. Observing does not consume it."
+          },
+          "stageName": {
+            "type": "string",
+            "description": "Current authored stage name, zero-based stage index remains in stage."
+          },
+          "passives": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Authored passive descriptions shown by the formal game; not a guarantee every description is correctly configured."
+          }
+        }
+      },
+      "AgentBattleStatus": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "stacks": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AgentBattleSkill": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "energyCost": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dice": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleDie"
+            }
+          },
+          "displayedDice": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleDie"
+            },
+            "description": "Present for live battle actors/selected skills: reads the same status-adjusted displayed range as the formal ally/enemy controller tooltip, including the enemy queued attack bonus. Not a roll or outcome prediction; per-target conditional effects can still change execution. Empty for authored catalog definitions. Original dice remains authored base ranges."
+          }
+        }
+      },
+      "AgentBattleDie": {
+        "type": "object",
+        "properties": {
+          "min": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "max": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "category": {
+            "type": "string"
+          }
+        }
+      },
+      "AgentBattleSlot": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "speed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skillIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "selectedSkill": {
+            "$ref": "#/components/schemas/AgentBattleSkill"
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "targetButtonIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "contested": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AgentBattleLegalAction": {
+        "type": "object",
+        "properties": {
+          "op": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string"
+          },
+          "buttonIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skillIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "targetButtonIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "choiceIndex": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Index from legalActions for choose_relic."
+          }
+        },
+        "required": [
+          "op"
+        ],
+        "description": "Choose an offered action. disconnect uses actorId and buttonIndex, calls the shared UI disconnect operation, releases reservations and restores absorbed enemy intent. No target is required."
+      },
+      "AgentBattleEvent": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "round": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "AgentBattleCatalogue": {
+        "type": "object",
+        "properties": {
+          "characters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleAsset"
+            }
+          },
+          "weapons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleAsset"
+            }
+          },
+          "enemies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleAsset"
+            }
+          },
+          "relics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleAsset"
+            }
+          },
+          "weaponDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleWeaponDetails"
+            }
+          },
+          "characterDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleCharacterDetails"
+            }
+          },
+          "blueprintDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleBlueprintDetails"
+            }
+          },
+          "difficulties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAdventureDifficulty"
+            }
+          }
+        }
+      },
+      "AgentBattleAsset": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "limitation": {
+            "type": "string"
+          }
+        }
+      },
+      "AgentBattleReplay": {
+        "type": "object",
+        "properties": {
+          "engineVersion": {
+            "type": "string"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "create": {
+            "description": "Recorded create request. In inactive/default response DTOs Unity serializes an empty create object with op empty string; this is not an executable request.",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentBattleRequest"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "enum": [
+                      ""
+                    ]
+                  }
+                },
+                "required": [
+                  "op"
+                ]
+              }
+            ]
+          },
+          "commands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleRequest"
+            }
+          }
+        }
+      },
+      "AgentBattleRewardItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AgentBattleRewards": {
+        "type": "object",
+        "properties": {
+          "experience": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "money": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "refreshesRemaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "loot": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "relics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "party": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleSettledMember"
+            },
+            "description": "Formal settlement party state, including level-up healing; available after resolution."
+          },
+          "blueprints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleRewardItem"
+            }
+          },
+          "weapons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleRewardItem"
+            }
+          }
+        },
+        "description": "Formal battle rewards; on event victory includes queued loot/relic/blueprint/weapon rewards which are applied only when returning to the adventure. Defeat grants none of those queued rewards."
+      },
+      "AgentBattleSettledMember": {
+        "type": "object",
+        "properties": {
+          "memberId": {
+            "type": "string"
+          },
+          "hp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxHp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "level": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "experience": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AgentBattleWeaponDetails": {
+        "type": "object",
+        "description": "Authored weapon definition available before owning or purchasing. Skill descriptions reuse the formal overlay formatter. Pool indices are static authored indices; only current legalActions authorizes actual skill selection. Fallback powers apply to legacy weapons without skills. Base speedButtonCount can change during battle due to statuses/relics.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "weaponType": {
+            "type": "string"
+          },
+          "rarity": {
+            "type": "string"
+          },
+          "speedButtonCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fallbackMinPower": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fallbackMaxPower": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleSkill"
+            }
+          }
+        }
+      },
+      "AgentBattleCharacterDetails": {
+        "type": "object",
+        "description": "Authored starting character statistics and weapon compatibility type. Join initialWeapon to weaponDetails; actual recruited/carried HP and equipment come from adventure observations.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "weaponType": {
+            "type": "string"
+          },
+          "initialWeapon": {
+            "type": "string"
+          },
+          "baseHp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minSpeed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxSpeed": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AgentBattleBlueprintDetails": {
+        "type": "object",
+        "description": "Blueprint -> target weapon -> authored skills; materials are aggregated by the same RunCraftingService used for execution. An unconfigured target is an empty id. Current forge money cost is adventure.craftingCost, and required ownership/materials are still enforced by legalActions.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "rarity": {
+            "type": "string"
+          },
+          "weapon": {
+            "type": "string"
+          },
+          "materials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentBattleIngredient"
+            }
+          }
+        }
+      },
+      "AgentBattleIngredient": {
+        "type": "object",
+        "description": "A configured crafting material and required amount.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AgentAdventureDifficulty": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Saved-menu difficulty asset GUID."
+          },
+          "name": {
+            "type": "string"
+          },
+          "isDefault": {
+            "type": "boolean"
+          },
+          "boardSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requiredKeys": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startingActionPoints": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxRecruitCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actionPointLimits": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Base AP limits at calamity tiers 0..10, excluding ability bonuses."
+          },
+          "recruitCosts": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      }
+    }
+  }
+}

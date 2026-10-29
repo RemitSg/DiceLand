@@ -1,0 +1,170 @@
+{
+  "state": {
+    "party": [
+      {
+        "id": "0",
+        "name": "Chara",
+        "character": "27e817266af382946804dea6afd2e374",
+        "weapon": "cdf2798ce1fc9ed42954b0864d1ce01f",
+        "hp": 9,
+        "maxHp": 25,
+        "level": 4,
+        "experience": 52
+      },
+      {
+        "id": "Jenny",
+        "name": "Jenny",
+        "character": "658e22cc7dec223479091c6817751025",
+        "weapon": "f60b6206ee3430d4e94f6a8395de2b62",
+        "hp": 6,
+        "maxHp": 27,
+        "level": 4,
+        "experience": 52
+      },
+      {
+        "id": "Man",
+        "name": "Man",
+        "character": "fce426096f554744093a4718f5aa0f45",
+        "weapon": "420447e608e441348810e5e73127e855",
+        "hp": 28,
+        "maxHp": 32,
+        "level": 4,
+        "experience": 31
+      },
+      {
+        "id": "Molly",
+        "name": "Molly",
+        "character": "5121d91a4381d6748a08ee2236cc03fd",
+        "weapon": "ab25e1c01dd01ad4c8eac113e9dc47c7",
+        "hp": 16,
+        "maxHp": 23,
+        "level": 3,
+        "experience": 16
+      }
+    ],
+    "activeCalamities": [
+      {
+        "id": "8d5603aacfb9440891068fcab5132e53",
+        "name": "探索 · 价格提升 I",
+        "description": "商店中的商品价格额外提升 5%",
+        "limitation": ""
+      },
+      {
+        "id": "842d4ae135b740afbf11cdbc7fa7123f",
+        "name": "弱化 · 回复无力",
+        "description": "在休息格恢复血量时，效果变为恢复友方角色最大生命值的 70%",
+        "limitation": ""
+      },
+      {
+        "id": "84dd5d09ef98cf14e82eed227f5c370b",
+        "name": "劲敌 · 复仇",
+        "description": "敌人死亡时，剩余的敌人额外获得 1 层强壮。",
+        "limitation": ""
+      },
+      {
+        "id": "0b941cb7ff5da244a8a19e6cecefe266",
+        "name": "弱化 · 震慑",
+        "description": "战斗开始时，所有友方角色损失 2 生命值。",
+        "limitation": ""
+      },
+      {
+        "id": "f9774610a19e042489ab8a7cde9535ff",
+        "name": "劲敌 · 伤害强化 IV",
+        "description": "所有敌人造成伤害额外增加 40%。",
+        "limitation": ""
+      },
+      {
+        "id": "2756a600016dcb940a1894364bd20319",
+        "name": "劲敌 · 血量强化 IV",
+        "description": "所有敌人基础血量额外增加 40%。",
+        "limitation": ""
+      },
+      {
+        "id": "c8a0876e3edee394a955c7c01d651caa",
+        "name": "劲敌 · 不屈",
+        "description": "所有敌人承受致死伤害时不死亡，改为下回合开始时死亡。",
+        "limitation": ""
+      }
+    ],
+    "relics": [
+      {
+        "id": "e59d4d0952114d01986cc80ca48db38e",
+        "name": "蓝牛",
+        "description": "",
+        "amount": 1,
+        "index": 0
+      },
+      {
+        "id": "939d58a88c0d17b4e9c6ebbed030dd87",
+        "name": "希望银币",
+        "description": "",
+        "amount": 1,
+        "index": 0
+      },
+      {
+        "id": "3fd73e7983543604f90cf0de75d0b546",
+        "name": "雪铃",
+        "description": "",
+        "amount": 1,
+        "index": 0
+      },
+      {
+        "id": "c57fb39cad4e2604e92d0b69100198b6",
+        "name": "打火石",
+        "description": "",
+        "amount": 1,
+        "index": 0
+      },
+      {
+        "id": "94181ae7c3da67d4881980eab22e7235",
+        "name": "女孩的火柴",
+        "description": "",
+        "amount": 1,
+        "index": 0
+      }
+    ]
+  },
+  "catalogue": {
+    "characterDetails": [
+      {
+        "id": "27e817266af382946804dea6afd2e374",
+        "name": "Chara",
+        "weaponType": "Sword",
+        "initialWeapon": "",
+        "baseHp": 24,
+        "minSpeed": 2,
+        "maxSpeed": 5
+      },
+      {
+        "id": "658e22cc7dec223479091c6817751025",
+        "name": "Jenny",
+        "weaponType": "Wand",
+        "initialWeapon": "6c1aed0bff9b3a74ba193a8ff2895f74",
+        "baseHp": 15,
+        "minSpeed": 2,
+        "maxSpeed": 6
+      },
+      {
+        "id": "fce426096f554744093a4718f5aa0f45",
+        "name": "Man",
+        "weaponType": "Axe",
+        "initialWeapon": "66e425e32f62902418159abffd6dedc5",
+        "baseHp": 20,
+        "minSpeed": 1,
+        "maxSpeed": 5
+      },
+      {
+        "id": "5121d91a4381d6748a08ee2236cc03fd",
+        "name": "Molly",
+        "weaponType": "Dagger",
+        "initialWeapon": "ab25e1c01dd01ad4c8eac113e9dc47c7",
+        "baseHp": 14,
+        "minSpeed": 3,
+        "maxSpeed": 6
+      }
+    ]
+  },
+  "startingLoadout": {
+    "27e817266af382946804dea6afd2e374": "9b8c5d177c240334a9734636830a139f"
+  }
+}

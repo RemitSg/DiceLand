@@ -17,6 +17,7 @@ public class BattleAllyController : MonoBehaviour
     public int LastPowerModifierAmount { get; private set; }
     public int Level { get; private set; } = 1;
     public int Experience { get; private set; }
+    public string PersistentMemberId { get; private set; }
     public CharacterData_SO CharacterData => allyController != null ? allyController.characterData : null;
     public EnemySkill_SO SelectedSkill { get; private set; }
     public EnemySkill_SO CurrentRoundUsedSkill { get; private set; }
@@ -113,6 +114,7 @@ public class BattleAllyController : MonoBehaviour
         allyController.weapon.weaponData = partyMemberState.weaponData;
 
         hasRuntimeStateOverride = true;
+        PersistentMemberId = partyMemberState.memberId;
         Level = Mathf.Max(1, partyMemberState.level);
         Experience = Mathf.Max(0, partyMemberState.experience);
         IReadOnlyList<RunCalamityState> activeCalamities = BattleEncounterRuntime.ActiveEncounter != null

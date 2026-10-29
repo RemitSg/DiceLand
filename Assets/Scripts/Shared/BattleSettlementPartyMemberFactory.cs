@@ -4,6 +4,7 @@ using UnityEngine;
 
 public sealed class BattleSettlementPartyProgression
 {
+    public string MemberId;
     public CharacterData_SO CharacterData;
     public Weapon_SO WeaponData;
     public string DisplayName;
@@ -34,11 +35,13 @@ public static class BattleSettlementPartyMemberFactory
         int maxHP,
         int currentHP,
         int preCalamityMaxHP = 0,
-        int maxHPFlatBonus = 0)
+        int maxHPFlatBonus = 0,
+        string memberId = null)
     {
         return new RunPartyMemberState
         {
-            memberId = !string.IsNullOrWhiteSpace(displayName) ? displayName : fallbackName,
+            memberId = !string.IsNullOrWhiteSpace(memberId) ? memberId
+                : !string.IsNullOrWhiteSpace(displayName) ? displayName : fallbackName,
             characterData = characterData,
             weaponData = weaponData,
             level = level,
@@ -102,7 +105,8 @@ public static class BattleSettlementPartyMemberFactory
                 progression.FinalMaxHP,
                 progression.FinalCurrentHP,
                 progression.PreCalamityMaxHP,
-                progression.MaxHPFlatBonus));
+                progression.MaxHPFlatBonus,
+                progression.MemberId));
         }
 
         return result;
@@ -185,6 +189,7 @@ public static class BattleSettlementPartyMemberFactory
         int initialCurrentHP = ally != null ? Mathf.Max(0, ally.CurrentHP) : 0;
         BattleSettlementPartyProgression result = new BattleSettlementPartyProgression
         {
+            MemberId = ally != null ? ally.PersistentMemberId : null,
             CharacterData = characterData,
             WeaponData = weaponData,
             DisplayName = ally != null ? ally.GetSettlementDisplayName() : string.Empty,

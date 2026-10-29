@@ -61,6 +61,8 @@ public class BoardManager : MonoBehaviour
     private readonly Dictionary<Vector2Int, BoardTileData> tiles = new Dictionary<Vector2Int, BoardTileData>();
     private readonly Dictionary<Vector2Int, BoardTileView> views = new Dictionary<Vector2Int, BoardTileView>();
     private Sprite runtimeWhiteSprite;
+    private bool headlessExecution;
+    public void ConfigureHeadlessExecution() { headlessExecution = true; }
     private Sprite runtimeRadialSprite;
     private Vector2Int selectedCoord = new Vector2Int(int.MinValue, int.MinValue);
 
@@ -102,7 +104,7 @@ public class BoardManager : MonoBehaviour
             boardRoot = go.transform;
         }
 
-        EnsureDefaultSprite();
+        if (!headlessExecution) EnsureDefaultSprite();
     }
 
     public void GenerateBoard(DifficultyConfig_SO config, int seed)
@@ -638,6 +640,7 @@ public class BoardManager : MonoBehaviour
 
     private void CreateTileView(BoardTileData tile)
     {
+        if (headlessExecution) return;
         BoardTileView view;
         if (tileViewPrefab != null)
         {

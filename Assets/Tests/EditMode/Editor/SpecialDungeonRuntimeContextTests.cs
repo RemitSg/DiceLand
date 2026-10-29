@@ -75,5 +75,46 @@ public class SpecialDungeonRuntimeContextTests
         Assert.AreEqual(new Vector2Int(4, 4), restored.runState.playerGridPosition);
         Assert.IsTrue(restored.tiles[0].isResolved);
         Assert.IsNull(restored.tiles[0].assignedEvent);
+        Assert.AreEqual(6, restored.runState.boardSize);
+    }
+
+    [Test]
+    public void SharedEntryMovesPendingTiersToOneOwnedQueueWithoutMutatingTheCaller()
+    {
+        var dungeon = ScriptableObject.CreateInstance<SpecialDungeon_SO>();
+        try
+        {
+            var source = new MapRunSnapshot { runState = new RunState(), boardSize = 9 };
+            source.pendingCalamityTiers.Add(1);
+            var context = SpecialDungeonRuntimeContext.Create(dungeon, source, Vector2Int.one);
+            Assert.IsNotNull(context); CollectionAssert.AreEqual(new[] { 1 }, context.deferredCalamityTiers);
+            Assert.IsEmpty(context.mainMapSnapshot.pendingCalamityTiers); Assert.AreEqual(1, source.pendingCalamityTiers.Count);
+            source.specialDungeonContext = context;
+            Assert.IsNull(SpecialDungeonRuntimeContext.Create(dungeon, source, Vector2Int.zero));
+        }
+        finally { Object.DestroyImmediate(dungeon); }
+    }
+
+    [Test]
+    public void SharedExitRejectsForeignCoordinatesAndCannotScoreTwice()
+    {
+        var dungeon = ScriptableObject.CreateInstance<SpecialDungeon_SO>();
+        try
+        {
+            dungeon.settlementScoreValue = 90;
+            var source = new MapRunSnapshot { runState = new RunState { boardSize = 9 }, boardSize = 9 };
+            source.pendingCalamityTiers.Add(1);
+            var context = SpecialDungeonRuntimeContext.Create(dungeon, source, Vector2Int.one);
+            var state = new RunState { boardSize = 3, playerGridPosition = new Vector2Int(2, 1) };
+            var exit = new BoardTileData { tileType = MapTileType.SpecialDungeonExit, sourceSpecialDungeon = dungeon, coord = new Vector2Int(0, 1) };
+            Assert.IsFalse(SpecialDungeonExitService.TryCompleteExit(context, state, exit, null, out _, out _));
+            Assert.IsTrue(context.isActive); exit.coord = state.playerGridPosition;
+            Assert.IsTrue(SpecialDungeonExitService.TryCompleteExit(context, state, exit, new[] { 1, 2 }, out var restored, out _));
+            Assert.AreEqual(90, restored.runState.settlementStats.specialDungeonScoreTotal);
+            Assert.AreEqual(1, restored.runState.settlementStats.specialDungeonCleared); CollectionAssert.AreEqual(new[] { 1, 2 }, restored.pendingCalamityTiers);
+            Assert.IsFalse(SpecialDungeonExitService.TryCompleteExit(context, state, exit, null, out _, out _));
+            Assert.IsFalse(context.isActive);
+        }
+        finally { Object.DestroyImmediate(dungeon); }
     }
 }

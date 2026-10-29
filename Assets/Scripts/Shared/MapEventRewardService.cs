@@ -436,7 +436,7 @@ public static class MapEventRewardService
         }
 
         Relic_SO tableWeightedRelic = relicTable != null
-            ? relicTable.DrawRandomRelic(null, BuildExcludedRelics(relicTable, availableRewards))
+            ? relicTable.DrawRandomRelic(new System.Random(Random.Range(int.MinValue, int.MaxValue)), BuildExcludedRelics(relicTable, availableRewards))
             : null;
         if (tableWeightedRelic != null && availableRewards.Remove(tableWeightedRelic))
             return tableWeightedRelic;

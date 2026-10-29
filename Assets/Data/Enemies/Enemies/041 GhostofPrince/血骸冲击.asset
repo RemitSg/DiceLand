@@ -59,5 +59,33 @@ MonoBehaviour:
     skillSpriteSortingOrderOffset: 0
     overrideSkillSpriteDuration: 1
     skillSpriteDuration: 0.5
-  diceEffectSettings: []
-  diceSkillCategories: 
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects:
+    - effectName: 
+      trigger: 0
+      targetMode: 0
+      statusData: {fileID: 11400000, guid: f3d7f5c8ab6d4a7db9c2e4f1860a5b31, type: 2}
+      statusType: 0
+      applyTiming: 0
+      applyAfterRoundStarts: 0
+      applyRepeatCount: 0
+      stackAmount: 1
+      randomTargetCount: 1
+      useCondition: 0
+      condition: 0
+      conditionStatusData: {fileID: 0}
+      conditionTargetSkillData: {fileID: 0}
+      conditionStatusType: 0
+      requiredConditionStatusStacks: 1
+      requiredConditionSpeedValue: 0
+      requiredConditionSpeedDifference: 0
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 00000000

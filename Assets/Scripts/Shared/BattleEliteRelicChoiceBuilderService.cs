@@ -136,6 +136,11 @@ public static class BattleEliteRelicChoiceBuilderService
         }
 
         choiceData = BattleSettlementRelicChoiceBuilder.Build(choices);
+        if (choiceData != null)
+        {
+            choiceData.refreshPool = new List<Relic_SO>(selectedBucket);
+            choiceData.choiceCount = normalizedChoiceCount;
+        }
         return choiceData != null && choiceData.HasChoices;
     }
 

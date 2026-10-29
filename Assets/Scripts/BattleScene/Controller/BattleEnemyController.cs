@@ -63,6 +63,7 @@ public class BattleEnemyController : MonoBehaviour
     private int pendingNextAttackSkillPowerBonus;
     private int activeAttackSkillPowerBonus;
     private bool pendingCalamityDelayedDeath;
+    public bool HasPendingCalamityDelayedDeath => pendingCalamityDelayedDeath && !IsDead;
 
     private void Awake()
     {
@@ -469,12 +470,7 @@ public class BattleEnemyController : MonoBehaviour
         if (!pendingCalamityDelayedDeath || IsDead)
             return false;
 
-        if (CurrentHP > 1)
-        {
-            pendingCalamityDelayedDeath = false;
-            return false;
-        }
-
+        // Unyielding postpones an already-triggered death; healing cannot cancel that deadline.
         pendingCalamityDelayedDeath = false;
         CurrentHP = 0;
         HealthChanged?.Invoke(this);
@@ -731,7 +727,6 @@ public class BattleEnemyController : MonoBehaviour
         if (actualHeal <= 0)
             return 0;
 
-        CancelPendingCalamityDelayedDeathIfRecovered();
         HealthChanged?.Invoke(this);
         return actualHeal;
     }
@@ -1699,12 +1694,6 @@ public class BattleEnemyController : MonoBehaviour
 
         pendingCalamityDelayedDeath = true;
         return 1;
-    }
-
-    private void CancelPendingCalamityDelayedDeathIfRecovered()
-    {
-        if (pendingCalamityDelayedDeath && CurrentHP > 1)
-            pendingCalamityDelayedDeath = false;
     }
 
     private bool HasOtherLivingAllyAboveOneHp()

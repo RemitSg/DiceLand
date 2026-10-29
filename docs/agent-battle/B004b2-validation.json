@@ -1,0 +1,51 @@
+{
+  "batch": "B004b2",
+  "date": "2026-10-27",
+  "relatedJob": "fb9a955a75d24a468d32c4120afb3fbf",
+  "related": {
+    "total": 90,
+    "passed": 90,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 10.1790973,
+    "resultState": "Passed"
+  },
+  "newTests": 13,
+  "http": {
+    "seed": 46,
+    "difficulty": "Medium (NormalConfig)",
+    "beforeLoot": [
+      {
+        "name": "史莱姆粘液",
+        "amount": 2
+      },
+      {
+        "name": "铁矿",
+        "amount": 1
+      }
+    ],
+    "afterLoot": [
+      {
+        "name": "秽蚀尖牙",
+        "amount": 1
+      }
+    ],
+    "successfulReforges": 2,
+    "limit": 2,
+    "rest": [
+      7,
+      3
+    ],
+    "cycle": 2,
+    "remainingMoney": 15,
+    "actions": 28,
+    "returnedPhase": "map",
+    "automaticRestConsumption": true
+  },
+  "notes": [
+    "Normal HTTP route used battle loot and a real merchant purchase; no asset, location or resource injection. Trace: outputs/agent-battle/b004b2-normal-reforge-trace.json.",
+    "Loot exposes the formal UI's candidate list; relic exposes the same deterministic result preview. Both UI and agent call shared validation, candidate, seed, roll and limit implementations.",
+    "Directed tests inject locations/resources to cover relic upgrades, package acquisition, retry idempotency, extra limits, empty pools, invalid selections and UI snapshot isolation. These do not establish full-run completion.",
+    "Existing full-suite/PlayMode failures remain recorded; only this targeted suite is reported green. Events, treasure, subdungeons, final settlement and full save/replay remain incomplete."
+  ]
+}

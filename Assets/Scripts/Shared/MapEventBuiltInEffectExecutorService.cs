@@ -31,6 +31,56 @@ public sealed class MapEventBuiltInEffectExecutionResult
 
 public static class MapEventBuiltInEffectExecutorService
 {
+    // Check every possible branch without drawing the outcome or changing the live state.
+    // Check both income bounds, including losses above 100%, without spending the live wallet.
+    public static bool CanAffordMoneyEffects(RunState state, MapEventOptionData option, int selectionCost, out string message)
+    {
+        message = null;
+        if (state == null || option == null) return false;
+        var branches = new List<List<MapEventBuiltInEffectData>>();
+        if (option.possibleResults != null)
+            foreach (MapEventPossibleResultData branch in option.possibleResults)
+                if (branch != null && branch.weight > 0f) branches.Add(MapEventEffectSequenceBuilder.BuildAllEffects(branch));
+        if (branches.Count == 0) branches.Add(MapEventEffectSequenceBuilder.BuildAllEffects(option));
+        UnityEngine.Random.State outside = UnityEngine.Random.state;
+        try
+        {
+            foreach (var effects in branches)
+            foreach (bool maximum in new[] { false, true })
+            {
+                var copy = new RunState { money = state.money };
+                if (selectionCost > 0 && !copy.TrySpendMoney(selectionCost))
+                { message = $"金钱不足，需要 {selectionCost} 金钱。"; return false; }
+                var request = new MapEventBuiltInEffectExecutionRequest { runState = copy, moneyBeforeSelection = Mathf.Max(0, state.money) };
+                foreach (MapEventBuiltInEffectData effect in effects)
+                {
+                    bool success = true;
+                    switch (effect.effectType)
+                    {
+                        case MapEventOptionBuiltInEffectType.GainMoney: ExecuteGainMoney(copy, effect, out _); break;
+                        case MapEventOptionBuiltInEffectType.GainRandomMoney:
+                            var minimumMoney = MapEventEffectSequenceBuilder.CloneEffect(effect);
+                            if (maximum) minimumMoney.randomMoneyMin = Mathf.Max(minimumMoney.randomMoneyMin, minimumMoney.randomMoneyMax);
+                            minimumMoney.randomMoneyMax = minimumMoney.randomMoneyMin;
+                            ExecuteGainRandomMoney(copy, minimumMoney, out _); break;
+                        case MapEventOptionBuiltInEffectType.GainMoneyPercentOfPreSelectionMoney:
+                            ExecuteGainMoneyPercentOfPreSelectionMoney(request, effect, out _); break;
+                        case MapEventOptionBuiltInEffectType.RerollAllMoneyByPercentRange:
+                            var minimumPercent = MapEventEffectSequenceBuilder.CloneEffect(effect);
+                            if (maximum) minimumPercent.randomMoneyPercentMin = Mathf.Max(minimumPercent.randomMoneyPercentMin, minimumPercent.randomMoneyPercentMax);
+                            minimumPercent.randomMoneyPercentMax = minimumPercent.randomMoneyPercentMin;
+                            ExecuteRerollAllMoneyByPercentRange(copy, minimumPercent, out _); break;
+                        case MapEventOptionBuiltInEffectType.LoseMoney: success = ExecuteLoseMoney(copy, effect, out message); break;
+                        case MapEventOptionBuiltInEffectType.LoseMoneyPercent: success = ExecuteLoseMoneyPercent(copy, effect, out message); break;
+                    }
+                    if (!success) return false;
+                }
+            }
+            return true;
+        }
+        finally { UnityEngine.Random.state = outside; }
+    }
+
     public static bool TryExecute(
         MapEventBuiltInEffectExecutionRequest request,
         out MapEventBuiltInEffectExecutionResult result)
@@ -59,7 +109,10 @@ public static class MapEventBuiltInEffectExecutorService
         if (encounterEffectIndex >= 0)
         {
             if (!TryExecuteEffect(request, encounterEffectIndex, allEffects[encounterEffectIndex], result, out string encounterMessage))
+            {
+                result.message = encounterMessage;
                 return false;
+            }
 
             AddMessage(effectMessages, encounterMessage);
         }
@@ -83,7 +136,10 @@ public static class MapEventBuiltInEffectExecutorService
             }
 
             if (!TryExecuteEffect(request, i, effectData, result, out string effectMessage))
+            {
+                result.message = effectMessage;
                 return false;
+            }
 
             AddMessage(effectMessages, effectMessage);
         }

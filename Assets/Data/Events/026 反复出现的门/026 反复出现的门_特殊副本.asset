@@ -43,7 +43,7 @@ MonoBehaviour:
       moneyAmount: 0
       blueprintData: {fileID: 0}
       relicData: {fileID: 0}
-      relicTable: {fileID: 0}
+      relicTable: {fileID: 11400000, guid: 6650ae7fed330b7408b1cad987b54259, type: 2}
       relicBagRarity: 1
       relicBagChoiceCount: 1
     eventData: {fileID: 0}

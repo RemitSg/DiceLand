@@ -711,21 +711,7 @@ public class MapMerchantOverlay : MonoBehaviour
 
     private bool CanPurchaseSelectedOffer()
     {
-        if (selectedOffer == null || selectedOffer.isSoldOut || currentRunState == null)
-            return false;
-
-        if (currentRunState.money < 0)
-            return false;
-
-        int resolvedPrice = Mathf.Max(0, ResolveDisplayPrice(selectedOffer));
-        if (currentRunState.money >= resolvedPrice)
-            return true;
-
-        return RelicMerchantService.CanPurchaseWithPositiveMoneyOverride(
-            currentRunState,
-            currentTile,
-            selectedOffer,
-            resolvedPrice);
+        return MerchantPurchaseService.EvaluateOffer(currentRunState, currentTile, selectedOffer).success;
     }
 
     private static string BuildOfferButtonLabel(MerchantOfferState offer, int resolvedPrice)

@@ -3,6 +3,24 @@ using UnityEngine;
 
 public class SpecialDungeonEventEffectTests
 {
+    [TestCase(true)]
+    [TestCase(false)]
+    public void EventEncounterCarriesTheDungeonContext(bool inDungeon)
+    {
+        var dungeon = ScriptableObject.CreateInstance<SpecialDungeon_SO>();
+        var group = ScriptableObject.CreateInstance<EnemyGroup_SO>();
+        var enemy = ScriptableObject.CreateInstance<EnemyData_SO>();
+        try
+        {
+            group.enemies.Add(enemy);
+            var effect = new MapEventBuiltInEffectData(); effect.encounterEnemyGroups.Add(group);
+            var tile = new BoardTileData { tileType = MapTileType.Event, sourceSpecialDungeon = inDungeon ? dungeon : null };
+            Assert.IsTrue(MapEventEncounterService.TryPrepareEncounter(new RunState(), tile, effect, "Map", "Battle", 99, out var encounter, out _));
+            Assert.AreEqual(inDungeon, encounter.isSpecialDungeonEncounter);
+        }
+        finally { Object.DestroyImmediate(enemy); Object.DestroyImmediate(group); Object.DestroyImmediate(dungeon); }
+    }
+
     [Test]
     public void TryExecute_StartSpecialDungeonReturnsPendingDungeon()
     {

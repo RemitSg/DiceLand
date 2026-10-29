@@ -59,7 +59,7 @@ MonoBehaviour:
     requiredMoneyPercent: 0
     consequenceDescription: "\u8FDB\u5165\u7279\u6B8A\u526F\u672C\uFF1A\u5E78\u8FD0\u8FF7\u5BAB"
     resultContent: "\u4F60\u54AC\u7259\u7B54\u5E94\u4E86\u5973\u5DEB\uFF0C\u8DDF\u7740\u5979\u5FF5\u5B8C\u5492\u8BED\u3002\u7A81\u7136\uFF0C\u4F60\u5411\u4E0B\u6389\u843D\uFF0C\u6389\u8FDB\u4E86\u4E00\u5EA7\u8FF7\u5BAB\u3002"
-    builtInEffectType: 0
+    builtInEffectType: 17
     effectAmount: 0
     randomMoneyMin: 0
     randomMoneyMax: 0
@@ -83,9 +83,9 @@ MonoBehaviour:
     encounterEnemies: []
     encounterEnemyCountMin: 0
     encounterEnemyCountMax: 0
-    specialDungeon: {fileID: 0}
+    specialDungeon: {fileID: 11400000, guid: 310679e8f3b39b74082fe76548e0f65d, type: 2}
     additionalBuiltInEffects: []
     possibleResults: []
-    nextEvent: {fileID: 11400000, guid: 24065cf65e374984da865ab1c21058e6, type: 2}
-    resolveEvent: 1
+    nextEvent: {fileID: 0}
+    resolveEvent: 0
     customHandler: {fileID: 0}
