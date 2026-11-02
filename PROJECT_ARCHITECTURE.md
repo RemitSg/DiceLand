@@ -124,7 +124,10 @@ Important scripts:
 
 - `MapMerchantOverlay.cs`
   - merchant UI
-  - shows generated merchant stock and handles buying
+  - shows generated merchant stock and delegates buying / refresh to the existing callbacks and purchase service
+  - `MapMerchantOverlay.View.cs` builds the forest-green / brass modal, two-column stock cards, independent detail scrolling, fixed purchase summary, and safe-area layout
+  - `MapMerchantFrameGraphic.cs` and `MapMerchantCardGraphic.cs` draw icon wells, layered brass edges, badges, ornaments, textured surfaces, and selection states
+  - item names in cards and details retain their actual rarity colours across selection and sold-out states; visual handoff: `docs/visuals/merchant-panel-ui.md`
 
 - `MapViewController.cs`
   - map camera input

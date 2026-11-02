@@ -6,7 +6,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CanvasRenderer))]
 public sealed class MapHudGlyph : MaskableGraphic
 {
-    public enum Shape { Eye, Check, Book, Divider }
+    public enum Shape { Eye, Check, Book, Divider, Refresh }
     public Shape shape;
 
     protected override void OnPopulateMesh(VertexHelper vh)
@@ -15,7 +15,23 @@ public sealed class MapHudGlyph : MaskableGraphic
         Rect r = GetPixelAdjustedRect();
         Vector2 c = r.center;
         float s = Mathf.Min(r.width, r.height);
-        if (shape == Shape.Divider)
+        if (shape == Shape.Refresh)
+        {
+            const float start = 45f, sweep = 285f;
+            for (int i = 0; i < 32; i++)
+            {
+                float a = (start + sweep * i / 32f) * Mathf.Deg2Rad;
+                float b = (start + sweep * (i + 1) / 32f) * Mathf.Deg2Rad;
+                Stroke(vh, c + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * s * 0.32f,
+                    c + new Vector2(Mathf.Cos(b), Mathf.Sin(b)) * s * 0.32f, s * 0.075f);
+            }
+            float end = (start + sweep) * Mathf.Deg2Rad;
+            Vector2 point = c + new Vector2(Mathf.Cos(end), Mathf.Sin(end)) * s * 0.32f;
+            Vector2 tangent = new Vector2(-Mathf.Sin(end), Mathf.Cos(end)), normal = new Vector2(-tangent.y, tangent.x);
+            Stroke(vh, point, point - tangent * s * 0.19f + normal * s * 0.13f, s * 0.075f);
+            Stroke(vh, point, point - tangent * s * 0.19f - normal * s * 0.13f, s * 0.075f);
+        }
+        else if (shape == Shape.Divider)
         {
             Stroke(vh, new Vector2(r.xMin, c.y), new Vector2(c.x - 10f, c.y), 1f);
             Stroke(vh, new Vector2(c.x + 10f, c.y), new Vector2(r.xMax, c.y), 1f);
