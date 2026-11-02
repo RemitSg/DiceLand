@@ -7,6 +7,7 @@ using UnityEngine.Rendering;
 public class SpeedButton : MonoBehaviour
 {
     [SerializeField, HideInInspector] private bool headlessExecution;
+    public bool UsesHeadlessExecution => headlessExecution;
     public void ConfigureHeadlessExecution()
     {
         headlessExecution = true;
@@ -111,6 +112,11 @@ public class SpeedButton : MonoBehaviour
     private SpeedButton absorbedEnemyButton = null;
     // 敌方：当前被哪个友方占用为拼点目标
     private SpeedButton contestingAllyButton = null;
+    private Camera lastCurveCamera;
+    private Matrix4x4 lastCurveProjection;
+    private Vector3 lastCurveStart;
+    private Vector3 lastCurveEnd;
+    private bool hasCurveProjection;
 
     /// <summary>全局战斗锁 —— 战斗结算阶段禁止所有按钮交互与画线</summary>
     public static bool CombatLocked = false;
@@ -149,6 +155,8 @@ public class SpeedButton : MonoBehaviour
 
     /// <summary>敌方当前连线目标（友方可读当前被瞄准的友方按钮）</summary>
     public SpeedButton ConnectedTarget => connectedButton;
+    // The arrow stays outside character SortingGroups, but must share the world-UI camera layer.
+    public GameObject ArrowVisual => arrowObj;
 
     /// <summary>是否为拼点连线（黄色：友方吸收了敌方连线，双方直接对抗）</summary>
     public bool IsContestedConnection => isConnected && connectedButton != null && absorbedEnemyButton != null;
@@ -748,14 +756,42 @@ public class SpeedButton : MonoBehaviour
     private void DrawConnectedCurve(Color arrowColor)
     {
         if (headlessExecution) return;
+        DrawConnectedCurveForCamera(arrowColor, Camera.main);
+    }
+
+    /// <summary>Reframe visuals after a lens/aspect change without changing battle targets.</summary>
+    public void RefreshIntentForCamera(Camera camera)
+    {
+        if (headlessExecution || CombatLocked || !isConnected || connectedButton == null
+            || lineRenderer == null || !lineRenderer.enabled || camera == null)
+            return;
+        Matrix4x4 projection = camera.projectionMatrix * camera.worldToCameraMatrix;
+        if (hasCurveProjection && lastCurveCamera == camera && lastCurveProjection == projection
+            && lastCurveStart == transform.position && lastCurveEnd == connectedButton.transform.position)
+            return;
+        DrawConnectedCurveForCamera(lineRenderer.startColor, camera);
+    }
+
+    private void LateUpdate()
+    {
+        if (!headlessExecution && isConnected && lineRenderer != null && lineRenderer.enabled)
+            RefreshIntentForCamera(Camera.main);
+    }
+
+    private void DrawConnectedCurveForCamera(Color arrowColor, Camera camera)
+    {
+        if (headlessExecution) return;
         if (connectedButton == null) return;
 
         Vector3 startPos = transform.position;
         Vector3 endPos = connectedButton.transform.position;
 
-        // 控制点固定向世界上方偏移，确保曲线始终上凸
-        Vector3 mid = (startPos + endPos) * 0.5f;
-        Vector3 controlPoint = mid + Vector3.up * Mathf.Abs(controlPointOffset);
+        Vector3 controlPoint = VisibleControlPoint(camera, startPos, endPos);
+        lastCurveCamera = camera;
+        lastCurveProjection = camera != null ? camera.projectionMatrix * camera.worldToCameraMatrix : Matrix4x4.identity;
+        lastCurveStart = startPos;
+        lastCurveEnd = endPos;
+        hasCurveProjection = camera != null;
 
         for (int i = 0; i < curveResolution; i++)
         {
@@ -810,6 +846,11 @@ public class SpeedButton : MonoBehaviour
         }
         else
         {
+            if (curveRuntimeMaterial != null && solidTexture != null)
+            {
+                curveRuntimeMaterial.mainTexture = solidTexture;
+                ApplyDashMaterialST(1f, 0f);
+            }
             lineRenderer.textureMode = LineTextureMode.Stretch;
         }
         lineRenderer.startColor = unconnectedColor;
@@ -916,9 +957,7 @@ public class SpeedButton : MonoBehaviour
     /// <param name="snapTarget">吸附的目标按钮（如有），用于将箭头放在按钮边缘</param>
     private void DrawBezierCurve(Vector3 start, Vector3 end, SpeedButton snapTarget = null)
     {
-        // 控制点固定向世界上方偏移，确保曲线始终上凸
-        Vector3 mid = (start + end) * 0.5f;
-        Vector3 controlPoint = mid + Vector3.up * Mathf.Abs(controlPointOffset);
+        Vector3 controlPoint = VisibleControlPoint(Camera.main, start, end);
         float curveLength = 0f;
         Vector3 previous = start;
 
@@ -994,6 +1033,26 @@ public class SpeedButton : MonoBehaviour
     {
         float u = 1f - t;
         return u * u * p0 + 2f * u * t * p1 + t * t * p2;
+    }
+
+    private Vector3 VisibleControlPoint(Camera camera, Vector3 start, Vector3 end)
+    {
+        Vector3 control = (start + end) * 0.5f + Vector3.up * Mathf.Abs(controlPointOffset);
+        if (camera == null) return control;
+        Vector3 startView = camera.WorldToViewportPoint(start);
+        Vector3 endView = camera.WorldToViewportPoint(end);
+        Vector3 controlView = camera.WorldToViewportPoint(control);
+        if (startView.z <= camera.nearClipPlane || endView.z <= camera.nearClipPlane || controlView.z <= camera.nearClipPlane)
+            return control;
+        // A Bezier lies inside its control polygon. Keep the raised control below the header,
+        // but never move an endpoint or flatten below a button that already sits higher.
+        float ceiling = Mathf.Max(0.86f, Mathf.Max(startView.y, endView.y));
+        if (controlView.y > ceiling)
+        {
+            controlView.y = ceiling;
+            control = camera.ViewportToWorldPoint(controlView);
+        }
+        return control;
     }
 
     /// <summary>
@@ -1164,12 +1223,6 @@ public class SpeedButton : MonoBehaviour
     {
         if (lineRenderer == null) return;
 
-        if (!useDashedCurve)
-        {
-            lineRenderer.textureMode = LineTextureMode.Stretch;
-            return;
-        }
-
         if (curveRuntimeMaterial == null)
         {
             Shader shader = Shader.Find("Sprites/Default");
@@ -1201,9 +1254,13 @@ public class SpeedButton : MonoBehaviour
             solidTexture.Apply(false, false);
         }
 
-        lineRenderer.textureMode = LineTextureMode.Tile;
         lineRenderer.material = curveRuntimeMaterial;
-        curveRuntimeMaterial.mainTexture = dashTexture;
+        // Validation and hot reload may run after targeting. Rebuild resources without
+        // turning a committed red/yellow/blue connection back into a drag-preview dash.
+        if (isConnected && connectedButton != null && !isDragging)
+            UpdateConnectedCurveStyleWithColor(lineRenderer.startColor);
+        else
+            UpdateUnconnectedCurveStyle();
     }
 
     private void CreateDashTexture()
@@ -1297,6 +1354,7 @@ public class SpeedButton : MonoBehaviour
     private void UpdateArrow(Vector3 tipPos, Vector3 tangentDir, Color color)
     {
         if (arrowObj == null || arrowMesh == null) return;
+        arrowObj.layer = gameObject.layer;
 
         // 垂直于切线方向的向量（在 XY 平面内旋转 90°）
         Vector3 perp = new Vector3(-tangentDir.y, tangentDir.x, 0f);
