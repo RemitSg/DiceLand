@@ -6,6 +6,7 @@ Shader "DiceLand/Battle Forest Atmosphere"
         [Enum(Light shaft,0,Ground mist,1,Dust,2,Leaf,3)] _Mode ("Shape", Float) = 0
         _SoftDistance ("Soft intersection distance", Float) = 1.5
         _ShaftStriation ("Leaf-filtered shaft detail", Range(0,1)) = 0
+        _MistBreakup ("Ground mist breakup", Range(0,1)) = 0
     }
     SubShader
     {
@@ -23,7 +24,7 @@ Shader "DiceLand/Battle Forest Atmosphere"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
             CBUFFER_START(UnityPerMaterial)
             half4 _Color;
-            float _Mode, _SoftDistance, _ShaftStriation;
+            float _Mode, _SoftDistance, _ShaftStriation, _MistBreakup;
             CBUFFER_END
             struct Attributes { float4 positionOS : POSITION; float2 uv : TEXCOORD0; half4 color : COLOR; };
             struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; float eyeDepth : TEXCOORD1; half4 color : COLOR; };
@@ -60,8 +61,16 @@ Shader "DiceLand/Battle Forest Atmosphere"
                 else if (_Mode < 1.5)
                 {
                     float drift=sin(uv.x*17.0+_Time.y*0.07)*0.035+sin(uv.x*39.0-_Time.y*0.11)*0.018;
+                    // Offset the two banks without adding noise textures or repeated horizontal veils.
+                    float2 origin=TransformObjectToWorld(float3(0,0,0)).xz;
+                    float phase=frac(dot(origin,float2(0.1031,0.11369)))*TWO_PI;
+                    float billow=sin(uv.x*12.0+phase+_Time.y*0.035);
+                    float detail=sin(uv.x*27.0+phase*0.71-_Time.y*0.05);
+                    float breakup=saturate(_MistBreakup);
+                    drift+=breakup*(billow*0.065+detail*0.025);
                     mask=pow(saturate(1.0-abs(uv.y-0.45+drift)*2.3),2.0);
                     mask*=smoothstep(0.0,0.12,uv.x)*(1.0-smoothstep(0.88,1.0,uv.x));
+                    mask*=lerp(1.0,saturate(0.55+billow*0.30+detail*0.20),breakup);
                 }
                 else if (_Mode < 2.5)
                 {

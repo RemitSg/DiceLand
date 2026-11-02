@@ -304,8 +304,15 @@ public static class BattleLookPreviewTools
         lookSettings.FindProperty("midground").objectReferenceValue = midground;
         lookSettings.ApplyModifiedPropertiesWithoutUndo();
         Material nearMaterial = ForestMaterial("Near Forest Foliage", "DiceLand/Battle Forest Foliage");
-        nearMaterial.SetFloat("_DefocusTexels", 6f);
-        nearMaterial.SetColor("_Color", new Color(0.84f, 0.90f, 0.78f, 1f));
+        nearMaterial.SetFloat("_DefocusTexels", 10f);
+        nearMaterial.SetFloat("_SoftSilhouette", 1f);
+        nearMaterial.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+        nearMaterial.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+        nearMaterial.SetFloat("_ZWrite", 0f);
+        nearMaterial.SetShaderPassEnabled("DepthOnly", false);
+        nearMaterial.SetOverrideTag("RenderType", "Transparent");
+        nearMaterial.renderQueue = (int)RenderQueue.Transparent;
+        nearMaterial.SetColor("_Color", new Color(0.68f, 0.76f, 0.65f, 1f));
         nearMaterial.SetFloat("_SwayAmplitude", 0.025f);
         Sprite foreground = LoadForestSprite(ForegroundPath);
         AddTree(root.transform, foreground, nearMaterial, "Left foreground foliage", new Vector3(-8.3f, 2.7192f, -8.4f), 0.90f, new Color(0.67f, 0.78f, 0.86f), false);
@@ -381,6 +388,18 @@ public static class BattleLookPreviewTools
             treeImporter.maxTextureSize = 2048;
             treeImporter.SaveAndReimport();
         }
+        if (path == ForegroundPath)
+        {
+            // A tight leaf mesh would trim the blurred alpha at its original sharp contour.
+            TextureImporterSettings settings = new TextureImporterSettings();
+            treeImporter.ReadTextureSettings(settings);
+            if (settings.spriteMeshType != SpriteMeshType.FullRect)
+            {
+                settings.spriteMeshType = SpriteMeshType.FullRect;
+                treeImporter.SetTextureSettings(settings);
+                treeImporter.SaveAndReimport();
+            }
+        }
         return AssetDatabase.LoadAssetAtPath<Sprite>(path);
     }
 
@@ -417,7 +436,8 @@ public static class BattleLookPreviewTools
             shaft.transform.localScale = new Vector3(i % 2 == 0 ? 4.2f : 2.6f, (24f + i * 2f) / towardSun.y, 1f);
         }
         Material mist = ForestMaterial("Low Forest Mist", "DiceLand/Battle Forest Atmosphere");
-        mist.SetColor("_Color", new Color(0.98f, 0.91f, 0.75f, 0.23f));
+        mist.SetColor("_Color", new Color(0.98f, 0.91f, 0.75f, 0.28f));
+        mist.SetFloat("_MistBreakup", 0.65f);
         mist.SetFloat("_Mode", 1f);
         mist.SetFloat("_SoftDistance", 1.5f);
         for (int i = 0; i < 2; i++)
