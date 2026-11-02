@@ -262,7 +262,7 @@ Important scripts:
 - `Assets/Assets/Shaders/BattleForestSurface.hlsl`
   - stone terrace and woodland share world-space paving scale, earthen-island mask and lighting across their join
   - `ForestTerracePavingSoft.png` supplies quieter painted stone faces; the previous paving asset remains available
-  - both saved surface materials and `BattleLookPreviewTools` use paving scale 0.09 and growth 0.55; shader defaults 0.07/0 retain the earlier unbroken layout
+  - both saved surface materials and `BattleLookPreviewTools` use paving scale 0.12 and growth 0.62, reducing slab size and increasing local earth/moss openings; growth is a noise-mask parameter, not a coverage percentage. Shader defaults 0.07/0 retain the earlier unbroken layout
   - both use paving texture weight 0.8 and stone color (0.50, 0.47, 0.36), softening the painted paving contrast; keep all shared top-surface colors, textures and scalar values identical across the terrace/woodland join now that the fallback color contributes
   - the stone shader uses `_LowerStepGain` (default 1, saved terrace material 0.35) below the combat plane, blending across world heights -0.24 to 0.045; the combat-plane lighting remains unchanged
 

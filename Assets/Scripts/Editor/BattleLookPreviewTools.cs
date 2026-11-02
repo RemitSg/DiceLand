@@ -145,8 +145,8 @@ public static class BattleLookPreviewTools
         ground.SetFloat("_TextureWeight", 1f);
         ground.SetTexture("_StoneMap", AssetDatabase.LoadAssetAtPath<Texture2D>(StoneTexturePath));
         ground.SetFloat("_StoneTextureWeight", 0.8f);
-        ground.SetFloat("_PavingScale", 0.09f);
-        ground.SetFloat("_PavingGrowth", 0.55f);
+        ground.SetFloat("_PavingScale", 0.12f);
+        ground.SetFloat("_PavingGrowth", 0.62f);
         EditorUtility.SetDirty(ground);
         AssetDatabase.SaveAssetIfDirty(ground);
         MeshRenderer groundRenderer = roots.SelectMany(root => root.GetComponentsInChildren<MeshRenderer>(true)).First(renderer => renderer.name == "Plane");
@@ -313,8 +313,8 @@ public static class BattleLookPreviewTools
         stone.SetTexture("_StoneMap", paving);
         stone.SetFloat("_StoneTextureWeight", paving != null ? 0.8f : 0f);
         stone.SetFloat("_LowerStepGain", 0.35f);
-        stone.SetFloat("_PavingScale", 0.09f);
-        stone.SetFloat("_PavingGrowth", 0.55f);
+        stone.SetFloat("_PavingScale", 0.12f);
+        stone.SetFloat("_PavingGrowth", 0.62f);
         stone.SetTexture("_GroundMap", AssetDatabase.LoadAssetAtPath<Texture2D>(GroundTexturePath));
         stone.SetFloat("_TextureScale", 0.055f);
         stone.SetFloat("_TextureWeight", 1f);
