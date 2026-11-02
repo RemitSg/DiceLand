@@ -319,7 +319,10 @@ public class MapTreasureOverlay : MonoBehaviour
             detail.overflowMode = TextOverflowModes.Overflow;
             detail.alignment = TextAlignmentOptions.Center;
 
-            Button chooseButton = BuildButton(card, "ChooseButton", new Vector2(0f, 28f), chooseLabel, () => OnChoiceClicked(choice));
+            Button chooseButton = BuildButton(card, "ChooseButton", new Vector2(0f, 28f), chooseLabel, () =>
+            {
+                using (MapFeedbackOrigin.FromText(detail, card)) OnChoiceClicked(choice);
+            });
             RectTransform buttonRect = chooseButton.GetComponent<RectTransform>();
             buttonRect.anchorMin = new Vector2(0.5f, 0f);
             buttonRect.anchorMax = new Vector2(0.5f, 0f);

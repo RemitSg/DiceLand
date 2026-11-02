@@ -139,8 +139,8 @@ public partial class MapMerchantOverlay : MonoBehaviour
         handlingAction = true;
         try
         {
-            string result = buyHandler(currentTile, selectedOffer);
-            RefreshAfterAction(result);
+            using (MapFeedbackOrigin.FromText(priceText, buyButton.transform as RectTransform))
+                RefreshAfterAction(buyHandler(currentTile, selectedOffer));
         }
         finally { handlingAction = false; }
     }
@@ -149,7 +149,11 @@ public partial class MapMerchantOverlay : MonoBehaviour
     {
         if (handlingAction || refreshHandler == null || currentTile == null || !refreshButton.interactable) return;
         handlingAction = true;
-        try { RefreshAfterAction(refreshHandler(currentTile)); }
+        try
+        {
+            using (MapFeedbackOrigin.FromText(refreshButton.GetComponentInChildren<TMP_Text>(), refreshButton.transform as RectTransform))
+                RefreshAfterAction(refreshHandler(currentTile));
+        }
         finally { handlingAction = false; }
     }
 

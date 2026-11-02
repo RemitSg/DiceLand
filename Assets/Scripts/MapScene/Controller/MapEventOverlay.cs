@@ -172,12 +172,15 @@ public partial class MapEventOverlay : MonoBehaviour
             return;
         }
         if (selectedOption == null || selectionHandler == null || currentTile == null || currentEvent == null) return;
-        if (selectionHandler.Invoke(currentTile, currentEvent, selectedOption, out string message, out string resultContent, out MapEvent_SO nextEventOverride))
-            ShowResultStep(selectedOption, message, resultContent, nextEventOverride);
-        else
+        using (MapFeedbackOrigin.FromText(consequenceText, confirmButton.transform as RectTransform))
         {
-            statusText.text = string.IsNullOrWhiteSpace(message) ? "当前选项未能执行。" : message;
-            layoutDirty = true;
+            if (selectionHandler.Invoke(currentTile, currentEvent, selectedOption, out string message, out string resultContent, out MapEvent_SO nextEventOverride))
+                ShowResultStep(selectedOption, message, resultContent, nextEventOverride);
+            else
+            {
+                statusText.text = string.IsNullOrWhiteSpace(message) ? "当前选项未能执行。" : message;
+                layoutDirty = true;
+            }
         }
     }
 

@@ -1,0 +1,9 @@
+DiceLand map resource feedback coin
+Generated with built-in image_gen on 2026-11-02 (Asia/Singapore).
+Generated original copied unchanged to Assets/Resources/MapUI/FeedbackCoin.png.
+SHA-256: 49411DE271909E8097BA8420FFBCC0D48C8284FC04AEA2F16A50132AB5BB2225
+Import: single sprite, real alpha, no mipmaps, bilinear/clamp, maximum 256px for small UI particles.
+This sprite is used only for animated pickups. The existing MapAtlas coin stack remains the fixed currency icon.
+
+Actual generation prompt:
+Use case: stylized-concept. Asset type: a single 2D currency pickup sprite for DiceLand's hand-painted fantasy forest adventure game UI. Generate ONE SINGLE GOLD COIN centered on a genuinely transparent square background, with generous clear alpha margins (coin fills about 70–75% of canvas). It will be animated in small 28–48px UI particles flying toward a wallet. Match warm aged-gold and brass fantasy inventory artwork: warm honey gold #F0CC6B highlights, restrained ochre midtones, deeper brown metallic rim, painterly broad highlights, slightly irregular hand-worked edges. Near-front view with a very slight three-quarter tilt showing a thin beveled edge on the lower right, round silhouette and clean readable double rim. A simple, shallow four-point compass-star engraving in the center, subtle enough to read as ordinary currency. Controlled illustrated volume, clear contour and high readability at small size, neither photorealistic nor flat vector nor pixel art. Lighting comes from upper left. Self-shading stays entirely on the coin. Exactly one coin; no coin pile, no alternate views, no sprite sheet, no ground or cast shadow, no glow, no sparkle particles, no text, numerals, currency symbols, logo, watermark, border, background scene, or visible checkerboard. Preserve real transparency around every edge; do not bake a square plate behind the coin.

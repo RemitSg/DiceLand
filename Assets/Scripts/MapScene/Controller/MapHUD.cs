@@ -202,6 +202,7 @@ public partial class MapHUD : MonoBehaviour
     private RectTransform tilePanelRect;
     private TextMeshProUGUI actionPointText;
     private TextMeshProUGUI moneyText;
+    private MapResourceFeedback resourceFeedback;
     private TextMeshProUGUI keysText;
     private TextMeshProUGUI calamityText;
     private TextMeshProUGUI difficultyText;
@@ -255,6 +256,11 @@ public partial class MapHUD : MonoBehaviour
     public void Initialize()
     {
         EnsureUi();
+        if (Application.isPlaying)
+        {
+            if (resourceFeedback == null) resourceFeedback = GetComponent<MapResourceFeedback>() ?? gameObject.AddComponent<MapResourceFeedback>();
+            resourceFeedback.Bind(currentRunState, moneyText);
+        }
         ApplyViewport(new Vector2(Screen.width, Screen.height), Screen.safeArea);
         ApplyFonts();
         ApplyPartyPanelLayout();
@@ -308,7 +314,9 @@ public partial class MapHUD : MonoBehaviour
             actionPointText.text = $"{current}<size=66%><color=#{ColorUtility.ToHtmlStringRGB(new Color(0.62f, 0.95f, 0.82f, 1f))}>/{total}</color></size>";
         }
 
-        if (moneyText != null)
+        if (resourceFeedback != null && resourceFeedback.isActiveAndEnabled)
+            resourceFeedback.ObserveMoney(runState != null ? runState.money : 0);
+        else if (moneyText != null)
             moneyText.text = (runState != null ? runState.money : 0).ToString();
 
         if (keysText != null)
@@ -813,12 +821,16 @@ public partial class MapHUD : MonoBehaviour
 
         if (view.nameText != null)
             view.nameText.text = $"{memberName}  Lv.{level}";
-        if (view.hpText != null)
-            view.hpText.text = $"{currentHP}/{maxHP}";
+        if (resourceFeedback != null && resourceFeedback.isActiveAndEnabled)
+            resourceFeedback.PresentHealth(member, view.hpFillImage, view.hpText, currentHP, maxHP);
+        else
+        {
+            if (view.hpText != null) view.hpText.text = $"{currentHP}/{maxHP}";
+            SetBarFill(view.hpFillImage, hpRatio);
+        }
         if (view.expText != null)
             view.expText.text = expToNext > 0 ? $"{currentExp}/{expToNext}" : "满级";
 
-        SetBarFill(view.hpFillImage, hpRatio);
         SetBarFill(view.expFillImage, expRatio);
     }
 

@@ -113,6 +113,8 @@ Important scripts:
   - top-left player info, money, bottom-right tile detail, inventory tabs, bag UI
   - many UI hooks live here: sprites, fonts, offsets, colors
   - first place to inspect for map-side UI layout issues
+  - `MapResourceFeedback.cs` / `.View.cs` observe presented run values: coin flights credit the displayed wallet on arrival, spending counts down, and party HP animates with damage trails, healing, and screen-edge feedback
+  - `MapFeedbackOrigin.cs` captures visible reward-word positions around event, treasure, and merchant callbacks; feedback never changes resources or saves and uses unscaled time plus the existing SFX volume setting
 
 - `MapInventoryDetailView.cs`
   - runtime inventory item detail panel on the map
