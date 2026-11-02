@@ -85,6 +85,7 @@ public partial class BattleButton : MonoBehaviour
     private BattlePhase currentPhase = BattlePhase.Ready;
     private int currentRound = 1;
     private bool isResolvingCombat;
+    public bool IsResolvingCombat => isResolvingCombat;
     private bool enemyBattleStartEffectsApplied;
     private bool battleStartEnergyCalamityApplied;
     private bool allyBattleStartCalamityApplied;
@@ -1115,6 +1116,10 @@ public partial class BattleButton : MonoBehaviour
         roundLabelRect.anchorMax = Vector2.one;
         roundLabelRect.offsetMin = new Vector2(8f, 8f);
         roundLabelRect.offsetMax = new Vector2(-8f, -8f);
+
+        canvasGo.AddComponent<BattleHudLook>().Configure(this, sharedEnergyPanelRect, roundCounterPanelRect,
+            sharedEnergyText, roundCounterText, sharedEnergyBarFill, temporarySharedEnergyBarFill,
+            sharedEnergyPanelMargin, sharedEnergyPanelSize, roundCounterPanelSize);
     }
 
     private void RefreshSharedEnergyUi()
@@ -1162,6 +1167,12 @@ public partial class BattleButton : MonoBehaviour
 
     private void ApplyBattleHudLayout()
     {
+        BattleHudLook look = sharedEnergyCanvas != null ? sharedEnergyCanvas.GetComponent<BattleHudLook>() : null;
+        if (look != null)
+        {
+            look.RefreshLayout();
+            return;
+        }
         if (sharedEnergyPanelRect != null)
         {
             sharedEnergyPanelRect.anchorMin = new Vector2(0f, 1f);

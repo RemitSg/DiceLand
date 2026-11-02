@@ -148,8 +148,12 @@ public class BattlePresentationSystem : MonoBehaviour
     [SerializeField, Min(0f)] private float closeupRangePositionPulseAmplitude = 0.06f;
     [SerializeField, Min(0.01f)] private float closeupRangePulseFrequency = 2.1f;
     [SerializeField, Range(0f, 1f)] private float continuousRangePulseIntensity = 0.45f;
-    [SerializeField, Min(0f)] private float clashShakeAmplitude = 0.08f;
-    [SerializeField, Min(0f)] private float hitShakeAmplitude = 0.16f;
+    [SerializeField, Min(0f)] private float clashShakeAmplitude = 0.14f;
+    [SerializeField, Min(0f)] private float hitShakeAmplitude = 0.22f;
+    [SerializeField, Min(0.01f)] private float clashCameraImpactDuration = 0.20f;
+    [SerializeField, Min(0.01f)] private float hitCameraImpactDuration = 0.28f;
+    [SerializeField, Range(0f, 0.08f)] private float cameraImpactLensKick = 0.025f;
+    [SerializeField, Range(0f, 2f)] private float cameraImpactRoll = 0.65f;
     [SerializeField, Min(0f)] private float cameraPowerNormalization = 12f;
     [SerializeField, Range(0f, 1f)] private float minimumCameraIntensity = 0.18f;
     [SerializeField, Min(0.01f)] private float cameraShakeFrequency = 28f;
@@ -188,9 +192,14 @@ public class BattlePresentationSystem : MonoBehaviour
     private Sprite whiteSprite;
     private Texture2D whiteTexture;
     private Coroutine activeCameraBeatRoutine;
+    private Camera cameraBeatCamera;
+    private Vector3 cameraBeatBasePosition;
+    private Quaternion cameraBeatBaseRotation;
+    private float cameraBeatBaseLens;
     private Coroutine activeCloseupShotRoutine;
     private BattleFeedbackSystem battleFeedbackSystem;
     private int activeCloseupShotId;
+    private readonly BattleCloseupVisibility closeupVisibility = new BattleCloseupVisibility();
     private readonly System.Collections.Generic.Dictionary<SpriteRenderer, ActiveSpriteSwap> activeSpriteSwaps = new System.Collections.Generic.Dictionary<SpriteRenderer, ActiveSpriteSwap>();
     private bool closeupDefaultsCached;
     private Vector3 closeupDefaultPosition;
@@ -199,6 +208,7 @@ public class BattlePresentationSystem : MonoBehaviour
     private float closeupShakePulse;
     private float closeupShakeDuration;
     private float closeupShakeRemaining;
+    private bool closeupImpactIsHit;
     private float closeupRangePulseDuration;
     private float closeupRangePulseRemaining;
     private float closeupRangePulseStartTime;
@@ -209,6 +219,8 @@ public class BattlePresentationSystem : MonoBehaviour
         EnsureRuntimeResources();
         ResolveFeedbackSystem()?.SetPresentationCamera(ResolveBattleCamera(), 1f);
     }
+
+    public bool IsCombatantHiddenByCloseup(Transform actor) => closeupVisibility.IsSpectator(actor);
 
     public IEnumerator PlayClashSequence(
         Transform ally,
@@ -578,9 +590,13 @@ public class BattlePresentationSystem : MonoBehaviour
         GameObject root = CreateEffectRoot("ClashEffect", position, direction);
         ParticleSystem sparks = CreateBurst(root.transform, clashSparkColor, clashSparks, clashParticleFadeDuration);
         ParticleSystem ring = CreateRing(root.transform, clashPrimaryColor, clashRing, clashParticleFadeDuration);
-
-        if (clashEffectDuration > 0f)
-            yield return new WaitForSeconds(clashEffectDuration);
+        SpriteRenderer flash = CreateSprite(root.transform, "ClashFlash", flashColor, 0.20f);
+        LineRenderer primary = CreateLine(root.transform, "ClashStreak", clashPrimaryColor, 0.13f,
+            new Vector3(-0.9f, -0.4f, 0f), new Vector3(0.9f, 0.4f, 0f));
+        LineRenderer secondary = CreateLine(root.transform, "ClashCrossStreak", clashSecondaryColor, 0.09f,
+            new Vector3(-0.6f, 0.65f, 0f), new Vector3(0.6f, -0.65f, 0f));
+        yield return AnimateSlash(root, flash, primary, secondary, clashPrimaryColor, clashSecondaryColor,
+            Mathf.Max(0.05f, clashEffectDuration), 0.16f, 0.55f, 0.16f, 0.55f);
 
         StopParticles(sparks);
         StopParticles(ring);
@@ -1494,11 +1510,15 @@ public class BattlePresentationSystem : MonoBehaviour
         if (!enableCameraImpact)
             return;
 
+        ResolveFeedbackSystem()?.PlayImpactPulse(isHit ? flashColor : clashSparkColor,
+            Mathf.Lerp(0.45f, 1f, NormalizeCameraIntensity(power)));
+
         if (UseCloseupCutCamera())
         {
             float intensity = NormalizeCameraIntensity(power);
             closeupShakePulse = Mathf.Max(closeupShakePulse, intensity);
-            closeupShakeDuration = Mathf.Max(closeupShakeDuration, isHit ? hitCloseupHoldDuration : clashCloseupHoldDuration);
+            closeupImpactIsHit = isHit;
+            closeupShakeDuration = isHit ? hitCameraImpactDuration : clashCameraImpactDuration;
             closeupShakeRemaining = closeupShakeDuration;
             return;
         }
@@ -1507,8 +1527,7 @@ public class BattlePresentationSystem : MonoBehaviour
         if (cameraToUse == null)
             return;
 
-        if (activeCameraBeatRoutine != null)
-            StopCoroutine(activeCameraBeatRoutine);
+        StopCameraImpactImmediate();
 
         activeCameraBeatRoutine = StartCoroutine(PlayCameraImpactBeat(cameraToUse, focusPosition, power, isHit));
     }
@@ -1518,30 +1537,34 @@ public class BattlePresentationSystem : MonoBehaviour
         if (targetCamera == null)
             yield break;
 
-        Vector3 startPosition = targetCamera.transform.position;
+        cameraBeatCamera = targetCamera;
+        cameraBeatBasePosition = targetCamera.transform.position;
+        cameraBeatBaseRotation = targetCamera.transform.rotation;
+        cameraBeatBaseLens = targetCamera.orthographic ? targetCamera.orthographicSize : targetCamera.fieldOfView;
+        Vector3 startPosition = cameraBeatBasePosition;
         float startLensValue = targetCamera.orthographic ? targetCamera.orthographicSize : targetCamera.fieldOfView;
-        float duration = Mathf.Max(0.01f, isHit ? hitCloseupHoldDuration : clashCloseupHoldDuration);
+        float duration = Mathf.Max(0.01f, isHit ? hitCameraImpactDuration : clashCameraImpactDuration);
         float intensity = NormalizeCameraIntensity(power);
-        float amplitude = (isHit ? hitShakeAmplitude : clashShakeAmplitude) * intensity;
-        Vector3 desiredPosition = focusPosition + cameraFocusOffset;
-        desiredPosition.z = startPosition.z;
+        float amplitude = ResolveImpactWorldAmplitude(targetCamera, focusPosition, isHit) * intensity;
 
-        for (float time = 0f; time < duration; time += Time.deltaTime)
+        for (float time = 0f; time < duration; time += Time.unscaledDeltaTime)
         {
             if (targetCamera == null)
                 yield break;
 
             float normalized = Mathf.Clamp01(time / duration);
-            float envelope = Mathf.Sin(normalized * Mathf.PI);
+            float envelope = Mathf.Pow(1f - normalized, 2f);
             float decay = cameraShakeDecayCurve.Evaluate(normalized);
             float angle = time * cameraShakeFrequency * Mathf.PI * 2f;
             Vector2 shake = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle * 0.83f)) * (amplitude * decay);
 
-            targetCamera.transform.position = Vector3.Lerp(startPosition, desiredPosition, envelope * 0.28f) + new Vector3(shake.x, shake.y, 0f);
+            targetCamera.transform.position = startPosition + targetCamera.transform.right * shake.x + targetCamera.transform.up * shake.y;
+            targetCamera.transform.rotation = cameraBeatBaseRotation * Quaternion.Euler(0f, 0f,
+                Mathf.Sin(angle * 0.7f) * cameraImpactRoll * intensity * decay);
 
             float lensTarget = targetCamera.orthographic
-                ? Mathf.Max(0.2f, startLensValue - intensity * 0.45f)
-                : Mathf.Max(1f, startLensValue - intensity * 4f);
+                ? Mathf.Max(0.2f, startLensValue * (1f - intensity * cameraImpactLensKick))
+                : Mathf.Max(1f, startLensValue * (1f - intensity * cameraImpactLensKick));
             if (targetCamera.orthographic)
                 targetCamera.orthographicSize = Mathf.Lerp(startLensValue, lensTarget, envelope);
             else
@@ -1553,6 +1576,7 @@ public class BattlePresentationSystem : MonoBehaviour
         if (targetCamera != null)
         {
             targetCamera.transform.position = startPosition;
+            targetCamera.transform.rotation = cameraBeatBaseRotation;
             if (targetCamera.orthographic)
                 targetCamera.orthographicSize = startLensValue;
             else
@@ -1560,6 +1584,30 @@ public class BattlePresentationSystem : MonoBehaviour
         }
 
         activeCameraBeatRoutine = null;
+        cameraBeatCamera = null;
+    }
+
+    private float ResolveImpactWorldAmplitude(Camera camera, Vector3 focus, bool isHit)
+    {
+        float depth = Mathf.Max(0.1f, Vector3.Dot(focus - camera.transform.position, camera.transform.forward));
+        float height = camera.orthographic ? 2f * camera.orthographicSize
+            : 2f * depth * Mathf.Tan(camera.fieldOfView * Mathf.Deg2Rad * 0.5f);
+        return height * (isHit ? hitShakeAmplitude : clashShakeAmplitude) * 0.1f;
+    }
+
+    private void StopCameraImpactImmediate()
+    {
+        if (activeCameraBeatRoutine != null)
+            StopCoroutine(activeCameraBeatRoutine);
+        activeCameraBeatRoutine = null;
+        if (cameraBeatCamera == null)
+            return;
+        cameraBeatCamera.transform.SetPositionAndRotation(cameraBeatBasePosition, cameraBeatBaseRotation);
+        if (cameraBeatCamera.orthographic)
+            cameraBeatCamera.orthographicSize = cameraBeatBaseLens;
+        else
+            cameraBeatCamera.fieldOfView = cameraBeatBaseLens;
+        cameraBeatCamera = null;
     }
 
     private Camera ResolveBattleCamera()
@@ -1621,6 +1669,9 @@ public class BattlePresentationSystem : MonoBehaviour
         if (holdDuration > 0f)
             yield return new WaitForSeconds(holdDuration);
 
+        if (shotId != activeCloseupShotId)
+            yield break;
+
         StopActiveCloseupShotImmediate();
     }
 
@@ -1637,8 +1688,6 @@ public class BattlePresentationSystem : MonoBehaviour
         shotCamera.enabled = true;
         feedbackSystem?.SetPresentationCamera(shotCamera, closeupDamagePopupScale);
 
-        float baseIntensity = NormalizeCameraIntensity(power);
-        float baseShakeAmplitude = Mathf.Lerp(clashShakeAmplitude, hitShakeAmplitude, baseIntensity);
         float initialFrameSize = ResolveCloseupFrameSize(first, second);
         Vector3 initialFramingOffset = ResolveCloseupFramingOffset(initialFrameSize);
         Vector3 initialFocus = ResolveShotFocus(first, second, fallbackFocus) + cameraFocusOffset + new Vector3(0f, initialFramingOffset.y, 0f);
@@ -1656,8 +1705,14 @@ public class BattlePresentationSystem : MonoBehaviour
             shotCamera.transform.rotation = Quaternion.LookRotation((initialLookTarget - initialPosition).normalized, Vector3.up);
         }
 
+        // Follow an unshaken pose. Feeding last frame's displaced pose back into
+        // the follow filter accumulates drift and makes the shake frame-rate dependent.
+        Vector3 followedPosition = initialPosition;
+        Quaternion followedRotation = shotCamera.transform.rotation;
+        float followedLens = shotCamera.orthographic ? shotCamera.orthographicSize : shotCamera.fieldOfView;
         while (shotId == activeCloseupShotId)
         {
+            closeupVisibility.Update(gameObject.scene, first, second);
             float desiredFrameSize = ResolveCloseupFrameSize(first, second);
             Vector3 framingOffset = ResolveCloseupFramingOffset(desiredFrameSize);
             Vector3 focus = ResolveShotFocus(first, second, fallbackFocus) + cameraFocusOffset + new Vector3(0f, framingOffset.y, 0f);
@@ -1665,7 +1720,7 @@ public class BattlePresentationSystem : MonoBehaviour
             float followT = 1f - Mathf.Exp(-Mathf.Max(0.01f, closeupFollowSharpness) * Time.deltaTime);
 
             if (closeupShakeRemaining > 0f)
-                closeupShakeRemaining = Mathf.Max(0f, closeupShakeRemaining - Time.deltaTime);
+                closeupShakeRemaining = Mathf.Max(0f, closeupShakeRemaining - Time.unscaledDeltaTime);
             else
                 closeupShakePulse = 0f;
 
@@ -1677,8 +1732,10 @@ public class BattlePresentationSystem : MonoBehaviour
                 : 0f;
             float shakeDecay = cameraShakeDecayCurve.Evaluate(1f - shakeNormalized);
             float shakeStrength = closeupShakePulse * shakeDecay;
-            float angle = Time.time * cameraShakeFrequency * Mathf.PI * 2f;
-            Vector2 shake = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle * 0.83f)) * (baseShakeAmplitude * shakeStrength);
+            float impactTime = closeupShakeDuration - closeupShakeRemaining;
+            float angle = impactTime * cameraShakeFrequency * Mathf.PI * 2f;
+            float shakeAmplitude = ResolveImpactWorldAmplitude(shotCamera, focus, closeupImpactIsHit);
+            Vector2 shake = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle * 0.83f)) * (shakeAmplitude * shakeStrength);
 
             float rangePulse = EvaluateCloseupRangePulse();
             if (closeupRangePulseContinuous)
@@ -1688,30 +1745,42 @@ public class BattlePresentationSystem : MonoBehaviour
                 Mathf.Cos(Time.time * closeupRangePulseFrequency * Mathf.PI * 0.9f),
                 0f) * (closeupRangePositionPulseAmplitude * rangePulse);
 
-            Vector3 cameraPosition = Vector3.Lerp(shotCamera.transform.position, desiredPosition + pulsePositionOffset, followT);
-            cameraPosition += new Vector3(shake.x, shake.y, 0f);
-            shotCamera.transform.position = cameraPosition;
+            followedPosition = Vector3.Lerp(followedPosition, desiredPosition + pulsePositionOffset, followT);
+            shotCamera.transform.position = followedPosition;
 
             if (shotCamera.orthographic)
             {
                 float targetSize = Mathf.Max(0.2f, desiredFrameSize - closeupRangeLensPulseAmplitude * rangePulse);
-                shotCamera.orthographicSize = Mathf.Lerp(shotCamera.orthographicSize, targetSize, followT);
-                shotCamera.transform.rotation = closeupDefaultRotation;
+                followedLens = Mathf.Lerp(followedLens, targetSize, followT);
+                followedRotation = closeupDefaultRotation;
             }
             else
             {
                 float targetFov = Mathf.Max(1f, ResolveCloseupFieldOfView(desiredFrameSize) - closeupRangeLensPulseAmplitude * rangePulse * 2.2f);
-                shotCamera.fieldOfView = Mathf.Lerp(shotCamera.fieldOfView, targetFov, followT);
+                followedLens = Mathf.Lerp(followedLens, targetFov, followT);
                 Vector3 lookTarget = focus + closeupLookOffset;
-                shotCamera.transform.rotation = Quaternion.Slerp(
-                    shotCamera.transform.rotation,
-                    Quaternion.LookRotation((lookTarget - cameraPosition).normalized, Vector3.up),
+                followedRotation = Quaternion.Slerp(
+                    followedRotation,
+                    Quaternion.LookRotation((lookTarget - followedPosition).normalized, Vector3.up),
                     followT);
             }
+
+            // Apply displacement after aiming, otherwise LookRotation cancels the
+            // translation at the focal point. A small lens kick settles with the impact.
+            shotCamera.transform.rotation = followedRotation;
+            shotCamera.transform.position += shotCamera.transform.right * shake.x + shotCamera.transform.up * shake.y;
+            shotCamera.transform.rotation = followedRotation * Quaternion.Euler(0f, 0f,
+                Mathf.Sin(angle * 0.7f) * cameraImpactRoll * shakeStrength);
+            float impactLens = followedLens * (1f - cameraImpactLensKick * shakeStrength);
+            if (shotCamera.orthographic)
+                shotCamera.orthographicSize = Mathf.Max(0.2f, impactLens);
+            else
+                shotCamera.fieldOfView = Mathf.Max(1f, impactLens);
 
             yield return null;
         }
 
+        closeupVisibility.Restore();
         if (shotCamera != null)
         {
             RestoreCloseupDefaults();
@@ -1764,6 +1833,7 @@ public class BattlePresentationSystem : MonoBehaviour
         if (activeCloseupShotRoutine != null)
             StopCoroutine(activeCloseupShotRoutine);
 
+        closeupVisibility.Restore();
         activeCloseupShotRoutine = null;
         activeCloseupShotId++;
         closeupShakePulse = 0f;
@@ -1787,50 +1857,49 @@ public class BattlePresentationSystem : MonoBehaviour
 
     private static Vector3 ResolveShotFocus(Transform first, Transform second, Vector3 fallbackFocus)
     {
+        if (TryGetShotBounds(first, second, out Bounds bounds))
+            return bounds.center;
         if (first != null && second != null)
-            return (first.position + second.position) * 0.5f;
+            return (BattleActorVisualUtility.GetActorCenterWorld(first) + BattleActorVisualUtility.GetActorCenterWorld(second)) * 0.5f;
         if (first != null)
-            return first.position;
+            return BattleActorVisualUtility.GetActorCenterWorld(first);
         if (second != null)
-            return second.position;
+            return BattleActorVisualUtility.GetActorCenterWorld(second);
         return fallbackFocus;
     }
 
     private float ResolveCloseupFrameSize(Transform first, Transform second)
     {
-        Bounds combinedBounds;
-        bool hasBounds = false;
+        if (!TryGetShotBounds(first, second, out Bounds combinedBounds))
+            return closeupOrthographicSize;
 
-        if (BattleActorVisualUtility.TryGetActorSpriteBounds(first, out Bounds firstBounds))
-        {
-            combinedBounds = firstBounds;
-            hasBounds = true;
-        }
-        else
-        {
-            combinedBounds = default;
-        }
+        Vector3 forward = (closeupLookOffset - closeupCameraOffset).normalized;
+        Vector3 right = Vector3.Cross(Vector3.up, forward).normalized;
+        Vector3 up = Vector3.Cross(forward, right).normalized;
+        Vector3 extents = combinedBounds.extents;
+        float projectedHalfHeight = Mathf.Abs(up.x) * extents.x + Mathf.Abs(up.y) * extents.y + Mathf.Abs(up.z) * extents.z;
+        float projectedHalfWidth = Mathf.Abs(right.x) * extents.x + Mathf.Abs(right.y) * extents.y + Mathf.Abs(right.z) * extents.z;
+        float widthToHeightRatio = closeupCamera != null
+            ? 1f / Mathf.Max(0.1f, closeupCamera.aspect)
+            : Mathf.Max(0.1f, closeupWidthToHeightRatio);
+        // Reserve head/foot room for the HUD and camera pulses, using the same union center as the focus.
+        float paddedHalfHeight = (projectedHalfHeight + closeupBoundsPadding) / 0.78f;
+        float widthDrivenHalfHeight = (projectedHalfWidth * widthToHeightRatio + closeupBoundsPadding) / 0.88f;
+        return Mathf.Max(closeupOrthographicSize, paddedHalfHeight, widthDrivenHalfHeight);
+    }
 
+    private static bool TryGetShotBounds(Transform first, Transform second, out Bounds bounds)
+    {
+        bool hasBounds = BattleActorVisualUtility.TryGetActorSpriteBounds(first, out bounds);
         if (BattleActorVisualUtility.TryGetActorSpriteBounds(second, out Bounds secondBounds))
         {
             if (hasBounds)
-            {
-                combinedBounds.Encapsulate(secondBounds.min);
-                combinedBounds.Encapsulate(secondBounds.max);
-            }
+                bounds.Encapsulate(secondBounds);
             else
-            {
-                combinedBounds = secondBounds;
-                hasBounds = true;
-            }
+                bounds = secondBounds;
+            hasBounds = true;
         }
-
-        if (!hasBounds)
-            return closeupOrthographicSize;
-
-        float paddedHalfHeight = combinedBounds.extents.y + closeupBoundsPadding;
-        float widthDrivenHalfHeight = combinedBounds.extents.x * Mathf.Max(0.1f, closeupWidthToHeightRatio) + closeupBoundsPadding;
-        return Mathf.Max(closeupOrthographicSize, paddedHalfHeight, widthDrivenHalfHeight);
+        return hasBounds;
     }
 
     private float ResolveCloseupFieldOfView(float desiredFrameSize)
@@ -1956,6 +2025,7 @@ public class BattlePresentationSystem : MonoBehaviour
 
     private void OnDestroy()
     {
+        closeupVisibility.Restore();
         if (spriteMat != null)
             Destroy(spriteMat);
         if (particleMat != null)
@@ -1964,5 +2034,11 @@ public class BattlePresentationSystem : MonoBehaviour
             Destroy(whiteSprite);
         if (whiteTexture != null)
             Destroy(whiteTexture);
+    }
+
+    private void OnDisable()
+    {
+        StopCameraImpactImmediate();
+        StopActiveCloseupShotImmediate();
     }
 }

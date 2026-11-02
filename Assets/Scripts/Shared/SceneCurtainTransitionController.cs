@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Rendering.Universal;
 using System.Collections.Generic;
 
 [DisallowMultipleComponent]
@@ -62,6 +63,27 @@ public class SceneCurtainTransitionController : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         EnsureOverlay();
         SetOverlayVisible(false);
+    }
+
+    private void OnEnable()
+    {
+        // A script reload retains child UI objects but loses the nonserialized coroutine.
+        // Rebind and dismiss that orphaned blackout instead of leaving the Game view covered.
+        if (transitionRoutine == null)
+        {
+            isTransitioning = false;
+            SetOverlayVisible(false);
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (transitionRoutine != null)
+            StopCoroutine(transitionRoutine);
+        transitionRoutine = null;
+        isTransitioning = false;
+        if (canvas != null)
+            SetOverlayVisible(false);
     }
 
     public void TransitionToScene(string sceneName)
@@ -172,8 +194,15 @@ public class SceneCurtainTransitionController : MonoBehaviour
         }
 
         yield return null;
+#if UNITY_EDITOR
+        // WaitForEndOfFrame does not resume while the editor Game view is hidden.
+        // Player builds keep the render synchronization; editor previews stay bounded.
+        yield return null;
+        yield return null;
+#else
         yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();
+#endif
     }
 
     private void PrepareLoadedSceneForReveal()
@@ -187,6 +216,9 @@ public class SceneCurtainTransitionController : MonoBehaviour
         {
             Camera cam = sceneCameras[i];
             if (cam == null)
+                continue;
+            UniversalAdditionalCameraData data = cam.GetComponent<UniversalAdditionalCameraData>();
+            if (data != null && data.renderType == CameraRenderType.Overlay)
                 continue;
 
             cam.rect = new Rect(0f, 0f, 1f, 1f);
@@ -231,6 +263,9 @@ public class SceneCurtainTransitionController : MonoBehaviour
             Camera cam = cameras[i];
             if (cam == null || !cam.isActiveAndEnabled)
                 continue;
+            UniversalAdditionalCameraData data = cam.GetComponent<UniversalAdditionalCameraData>();
+            if (data != null && data.renderType == CameraRenderType.Overlay)
+                continue;
 
             if (cam.targetTexture != null)
                 continue;
@@ -274,6 +309,19 @@ public class SceneCurtainTransitionController : MonoBehaviour
     {
         if (canvas != null)
             return;
+
+        Transform existing = transform.Find("CurtainCanvas");
+        if (existing != null)
+        {
+            canvas = existing.GetComponent<Canvas>();
+            rootRect = existing.GetComponent<RectTransform>();
+            leftCurtain = existing.Find("LeftCurtain")?.GetComponent<Image>();
+            rightCurtain = existing.Find("RightCurtain")?.GetComponent<Image>();
+            blackout = existing.Find("Blackout")?.GetComponent<Image>();
+            loadingLabel = existing.Find("LoadingLabel")?.GetComponent<TextMeshProUGUI>();
+            if (canvas != null && rootRect != null && leftCurtain != null && rightCurtain != null && blackout != null && loadingLabel != null)
+                return;
+        }
 
         GameObject canvasGo = new GameObject("CurtainCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         canvasGo.transform.SetParent(transform, false);

@@ -1,7 +1,32 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public static class BattleActorVisualUtility
 {
+    /// <summary>Resolve units through spawn containers; editor-only scenic samples may be direct children.</summary>
+    public static void CollectActorRoots(Transform root, List<Transform> result)
+    {
+        if (root == null) return;
+        if (root.GetComponent<BattleAllyController>() != null || root.GetComponent<BattleEnemyController>() != null)
+        {
+            if (!result.Contains(root)) result.Add(root);
+            return;
+        }
+        foreach (BattleAllyController ally in root.GetComponentsInChildren<BattleAllyController>(true))
+            if (!result.Contains(ally.transform)) result.Add(ally.transform);
+        foreach (BattleEnemyController enemy in root.GetComponentsInChildren<BattleEnemyController>(true))
+            if (!result.Contains(enemy.transform)) result.Add(enemy.transform);
+        foreach (Transform child in root)
+        {
+            if (child.GetComponentInChildren<BattleAllyController>(true) != null
+                || child.GetComponentInChildren<BattleEnemyController>(true) != null)
+                continue;
+            if (child.GetComponentInChildren<SpriteRenderer>(true) != null && child.GetComponent<SpeedButton>() == null
+                && !result.Contains(child))
+                result.Add(child);
+        }
+    }
+
     public static Vector3 GetActorCenterWorld(Transform actor)
     {
         if (TryGetActorSpriteBounds(actor, out Bounds bounds))

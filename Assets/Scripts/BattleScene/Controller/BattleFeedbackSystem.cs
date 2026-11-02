@@ -116,8 +116,8 @@ public class BattleFeedbackSystem : MonoBehaviour
     [Header("Clash Dice UI")]
     [SerializeField] private TMP_FontAsset clashDiceValueFont;
     [SerializeField] private TMP_FontAsset clashDiceRangeFont;
-    [SerializeField] private float clashDiceValueFontSize = 38f;
-    [SerializeField] private float clashDiceRangeFontSize = 24f;
+    [SerializeField] private float clashDiceValueFontSize = 96f;
+    [SerializeField] private float clashDiceRangeFontSize = 64f;
     [SerializeField] private FontStyles clashDiceValueFontStyle = FontStyles.Bold;
     [SerializeField] private FontStyles clashDiceRangeFontStyle = FontStyles.Bold;
     [SerializeField] private Color allyClashDiceValueColor = new Color(0.72f, 1f, 0.95f, 1f);
@@ -126,10 +126,10 @@ public class BattleFeedbackSystem : MonoBehaviour
     [SerializeField] private Color enemyClashDiceRangeColor = new Color(1f, 0.92f, 0.7f, 0.95f);
     [SerializeField] private Color obsoleteClashDiceRangeColor = new Color(0.55f, 0.55f, 0.55f, 0.95f);
     [SerializeField] private TMP_FontAsset clashDiceModifierFont;
-    [SerializeField] private float clashDiceModifierFontSize = 20f;
+    [SerializeField] private float clashDiceModifierFontSize = 36f;
     [SerializeField] private FontStyles clashDiceModifierFontStyle = FontStyles.Bold;
     [SerializeField] private Color clashDiceModifierColor = new Color(1f, 1f, 1f, 0.96f);
-    [SerializeField] private Vector2 clashDiceModifierOffset = new Vector2(0f, -24f);
+    [SerializeField] private Vector2 clashDiceModifierOffset = new Vector2(0f, -64f);
     [SerializeField] private Color clashDiceOutlineColor = new Color(0f, 0f, 0f, 0.85f);
     [SerializeField, Range(0f, 1f)] private float clashDiceOutlineWidth = 0.22f;
     [SerializeField] private Vector3 allyClashDiceWorldOffset = new Vector3(-0.6f, 1.55f, 0f);
@@ -141,7 +141,6 @@ public class BattleFeedbackSystem : MonoBehaviour
     [SerializeField, Min(0.1f)] private float clashDiceRangeEndScale = 1f;
     [SerializeField, Min(0.1f)] private float clashDiceValueStartScale = 1.7f;
     [SerializeField, Min(0.1f)] private float clashDiceValueEndScale = 1f;
-    [SerializeField] private bool clashDiceScaleWithCamera = true;
 
     [Header("Audio")]
     [SerializeField] private BattleSfxPlayer battleSfxPlayer;
@@ -237,6 +236,7 @@ public class BattleFeedbackSystem : MonoBehaviour
     private Material particleMaterial;
     private Texture2D whiteTexture;
     private Camera presentationCameraOverride;
+    private BattlePresentationSystem presentationSystem;
     private float presentationDamageScaleOverride = 1f;
     private bool damageScaleBaselineCaptured;
     private float baseDamageOrthographicSize;
@@ -315,6 +315,7 @@ public class BattleFeedbackSystem : MonoBehaviour
     {
         presentationCameraOverride = cameraOverride;
         presentationDamageScaleOverride = Mathf.Max(0.1f, damageScaleOverride);
+        presentationSystem = FindObjectOfType<BattlePresentationSystem>();
     }
 
     public float GetClashDiceValueRevealDuration()
@@ -488,7 +489,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         GameObject rootGo = new GameObject($"{owner.gameObject.name}_HealthBar", typeof(RectTransform));
         RectTransform root = rootGo.GetComponent<RectTransform>();
         root.SetParent(overlayRoot, false);
-        root.sizeDelta = healthBarSize;
+        root.sizeDelta = BattleHealthBarLook.ReadableSize(healthBarSize);
         root.pivot = new Vector2(0.5f, 0.5f);
 
         Image border = CreateImage("Border", root, healthBarBorderColor);
@@ -504,7 +505,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         backgroundRect.anchorMax = new Vector2(0.5f, 0.5f);
         backgroundRect.pivot = new Vector2(0.5f, 0.5f);
         backgroundRect.anchoredPosition = Vector2.zero;
-        backgroundRect.sizeDelta = healthBarSize - Vector2.one * (healthBarInnerPadding * 2f);
+        backgroundRect.sizeDelta = root.sizeDelta - Vector2.one * (Mathf.Max(2.5f,healthBarInnerPadding) * 2f);
 
         Image buffer = CreateImage("DamageBuffer", background.rectTransform, healthBarDamageBufferColor);
         RectTransform bufferRect = buffer.rectTransform;
@@ -532,6 +533,7 @@ public class BattleFeedbackSystem : MonoBehaviour
 
         TextMeshProUGUI healthValueText = CreateHealthValueText(root);
         RectTransform statusRoot = CreateStatusRoot(root);
+        BattleHealthBarLook.Apply(root,border,background,buffer,fill,healthValueText);
 
         return new TrackedUnitUI
         {
@@ -947,7 +949,8 @@ public class BattleFeedbackSystem : MonoBehaviour
             if (ui == null || ui.root == null || ui.owner == null)
                 continue;
 
-            if (!ui.owner.gameObject.activeInHierarchy)
+            if (!ui.owner.gameObject.activeInHierarchy ||
+                (presentationSystem != null && presentationSystem.IsCombatantHiddenByCloseup(ui.owner.transform)))
             {
                 ui.root.gameObject.SetActive(false);
                 continue;
@@ -1367,7 +1370,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         float rangeIntroDuration = Mathf.Max(0.01f, clashDiceRangeFadeInDuration);
         for (float time = 0f; time < rangeIntroDuration && !handle.revealRequested && !handle.hideRequested; time += Time.deltaTime)
         {
-            if (!UpdateFloatingElementPosition(handle.root, handle.worldAnchor, handle.worldOffset, clashDiceScaleWithCamera))
+            if (!UpdateFloatingElementPosition(handle.root, handle.worldAnchor, handle.worldOffset))
                 yield break;
 
             float normalized = Mathf.Clamp01(time / rangeIntroDuration);
@@ -1388,7 +1391,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         SetTextGroupVisual(handle.rangeText, handle.rangeOutlines, handle.rangeColor, 1f, clashDiceRangeEndScale);
         while (!handle.revealRequested && !handle.hideRequested)
         {
-            if (!UpdateFloatingElementPosition(handle.root, handle.worldAnchor, handle.worldOffset, clashDiceScaleWithCamera))
+            if (!UpdateFloatingElementPosition(handle.root, handle.worldAnchor, handle.worldOffset))
                 yield break;
             yield return null;
         }
@@ -1409,7 +1412,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         float revealDuration = Mathf.Max(0.01f, clashDiceValueRevealDuration);
         for (float time = 0f; time < revealDuration && !handle.hideRequested; time += Time.deltaTime)
         {
-            if (!UpdateFloatingElementPosition(handle.root, handle.worldAnchor, handle.worldOffset, clashDiceScaleWithCamera))
+            if (!UpdateFloatingElementPosition(handle.root, handle.worldAnchor, handle.worldOffset))
                 yield break;
 
             float normalized = Mathf.Clamp01(time / revealDuration);
@@ -1428,7 +1431,7 @@ public class BattleFeedbackSystem : MonoBehaviour
 
         while (!handle.hideRequested)
         {
-            if (!UpdateFloatingElementPosition(handle.root, handle.worldAnchor, handle.worldOffset, clashDiceScaleWithCamera))
+            if (!UpdateFloatingElementPosition(handle.root, handle.worldAnchor, handle.worldOffset))
                 yield break;
             yield return null;
         }
@@ -1444,7 +1447,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         float duration = Mathf.Max(0.01f, clashDiceFadeOutDuration);
         for (float time = 0f; time < duration; time += Time.deltaTime)
         {
-            if (!UpdateFloatingElementPosition(handle.root, handle.worldAnchor, handle.worldOffset, clashDiceScaleWithCamera))
+            if (!UpdateFloatingElementPosition(handle.root, handle.worldAnchor, handle.worldOffset))
                 break;
 
             float normalized = Mathf.Clamp01(time / duration);
@@ -1517,6 +1520,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         if (font != null)
             text.font = font;
         text.fontSize = fontSize;
+        text.enableAutoSizing = false;
         text.fontStyle = fontStyle;
         text.alignment = TextAlignmentOptions.Center;
         text.color = color;
@@ -1570,7 +1574,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         }
     }
 
-    private bool UpdateFloatingElementPosition(RectTransform rect, Transform worldAnchor, Vector3 worldOffset, bool scaleWithCamera)
+    private bool UpdateFloatingElementPosition(RectTransform rect, Transform worldAnchor, Vector3 worldOffset)
     {
         if (rect == null || worldAnchor == null)
             return false;
@@ -1586,9 +1590,47 @@ public class BattleFeedbackSystem : MonoBehaviour
             return true;
 
         RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRoot, screenPosition, null, out Vector2 localPoint);
+        // Typography is a fraction of screen height, independent of lens, actor size,
+        // the damage popup's cached camera baseline, and the canvas's aspect matching.
+        float screenScale = Mathf.Max(0.01f, overlayRoot.rect.height / 1080f);
+        Vector2 inset = rect.sizeDelta * (screenScale * 0.5f) + Vector2.one * (20f * screenScale);
+        Rect bounds = overlayRoot.rect;
+        localPoint.x = Mathf.Clamp(localPoint.x, bounds.xMin + inset.x, bounds.xMax - inset.x);
+        localPoint.y = Mathf.Clamp(localPoint.y, bounds.yMin + inset.y, bounds.yMax - inset.y);
         rect.anchoredPosition = localPoint;
-        rect.localScale = Vector3.one * (scaleWithCamera ? ResolveDamagePopupCameraScale(cam) : 1f);
+        rect.localScale = Vector3.one * screenScale;
         return true;
+    }
+
+    public void PlayImpactPulse(Color tint, float strength)
+    {
+        if (!isActiveAndEnabled)
+            return;
+        EnsureCanvas();
+        StartCoroutine(AnimateImpactPulse(tint, Mathf.Clamp01(strength)));
+    }
+
+    private IEnumerator AnimateImpactPulse(Color tint, float strength)
+    {
+        GameObject pulse = new GameObject("BattleImpactPulse", typeof(RectTransform), typeof(Image));
+        RectTransform rect = pulse.GetComponent<RectTransform>();
+        rect.SetParent(overlayRoot, false);
+        rect.SetAsFirstSibling();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = rect.offsetMax = Vector2.zero;
+        Image image = pulse.GetComponent<Image>();
+        image.raycastTarget = false;
+        const float duration = 0.14f;
+        for (float time = 0f; time < duration; time += Time.unscaledDeltaTime)
+        {
+            if (image == null)
+                yield break;
+            tint.a = 0.07f * strength * Mathf.Pow(1f - time / duration, 2f);
+            image.color = tint;
+            yield return null;
+        }
+        Destroy(pulse);
     }
 
     private void PlayHealthBarHitFx(TrackedUnitUI ui)

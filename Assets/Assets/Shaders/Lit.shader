@@ -18,6 +18,11 @@ Shader "Assets/Shaders/Lit"
         _AmbientIntensity ("Ambient Intensity", Range(0, 1)) = 0.3
         _BackLightIntensity ("Back Light Intensity", Range(0, 1)) = 0.3
         _WrapAroundFactor ("Wrap Around Factor", Range(0, 1)) = 0.5
+        [HideInInspector] _ForestSpriteBounds ("Forest illustration bounds", Vector) = (0,0,0,0)
+        [HideInInspector] _ForestSurfaceWeight ("Forest surface shaping", Range(0,1)) = 0
+        [HideInInspector] _ForestIndirectStrength ("Forest indirect fill", Range(0,2)) = 1
+        [HideInInspector] _ForestPigmentStrength ("Forest pigment response", Range(0,1)) = 1
+        [HideInInspector] _ForestHighlightStrength ("Forest highlight shoulder", Range(0,1)) = 1
     }
 
     SubShader
@@ -47,12 +52,13 @@ Shader "Assets/Shaders/Lit"
             ZWrite On
             ZTest LEqual
             ColorMask 0
-            Cull Back  // ✅ 改为Back！避免背面污染深度缓冲
+            Cull Off // Match two-sided, flipped sprite geometry in the forward pass.
             
             HLSLPROGRAM
             #pragma vertex DepthOnlyVertex
             #pragma fragment DepthOnlyFragment
             #pragma multi_compile_instancing
+            #pragma multi_compile _ ETC1_EXTERNAL_ALPHA
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
@@ -71,10 +77,16 @@ Shader "Assets/Shaders/Lit"
             float _AmbientIntensity;
             float _BackLightIntensity;
             float _WrapAroundFactor;
+            float4 _ForestSpriteBounds;
+            float _ForestSurfaceWeight;
+            float _ForestIndirectStrength;
+            float _ForestPigmentStrength;
+            float _ForestHighlightStrength;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
             SAMPLER(sampler_MainTex);
+            TEXTURE2D(_AlphaTex); SAMPLER(sampler_AlphaTex);
 
             struct Attributes
             {
@@ -115,6 +127,9 @@ Shader "Assets/Shaders/Lit"
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
                 
                 float4 baseColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv) * input.color;
+                #if ETC1_EXTERNAL_ALPHA
+                baseColor.a = lerp(baseColor.a, SAMPLE_TEXTURE2D(_AlphaTex, sampler_AlphaTex, input.uv).r * input.color.a, _EnableExternalAlpha);
+                #endif
                 clip(baseColor.a - _Cutoff);
                 return 0;
             }
@@ -132,12 +147,13 @@ Shader "Assets/Shaders/Lit"
             ZWrite On
             ZTest LEqual
             ColorMask 0
-            Cull Back  // ✅ 改为Back！避免背面写入shadowmap产生错误阴影
+            Cull Off // Mirrored sprites must still cast alpha-clipped shadows.
 
             HLSLPROGRAM
             #pragma vertex ShadowPassVertex
             #pragma fragment ShadowPassFragment
             #pragma multi_compile_instancing
+            #pragma multi_compile _ ETC1_EXTERNAL_ALPHA
             // ✅ URP 12+ 需要这个来支持点光源阴影
             #pragma multi_compile _ _CASTING_PUNCTUAL_LIGHT_SHADOW
 
@@ -163,10 +179,16 @@ Shader "Assets/Shaders/Lit"
             float _AmbientIntensity;
             float _BackLightIntensity;
             float _WrapAroundFactor;
+            float4 _ForestSpriteBounds;
+            float _ForestSurfaceWeight;
+            float _ForestIndirectStrength;
+            float _ForestPigmentStrength;
+            float _ForestHighlightStrength;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
             SAMPLER(sampler_MainTex);
+            TEXTURE2D(_AlphaTex); SAMPLER(sampler_AlphaTex);
 
             struct Attributes
             {
@@ -197,18 +219,11 @@ Shader "Assets/Shaders/Lit"
                 float3 lightDirectionWS = _LightDirection;
                 #endif
 
-                // ✅ 先应用标准bias
+                // Cull Off renders either side of a flat sprite into the shadow map.
+                // Face its bias normal toward the light; a back-facing normal would
+                // move the caster toward the receiver and produce striped self-shadow.
+                normalWS = dot(normalWS, lightDirectionWS) < 0.0 ? -normalWS : normalWS;
                 float3 biasedPositionWS = ApplyShadowBias(positionWS, normalWS, lightDirectionWS);
-                
-                // ✅ 关键修复：对2D sprite额外沿光线方向推移，避免自阴影
-                // 将投影位置沿光线方向额外偏移，让shadowmap记录的深度比实际偏深
-                biasedPositionWS += lightDirectionWS * 0.05; // 可调节，0.01~0.1
-                
-                #if _CASTING_PUNCTUAL_LIGHT_SHADOW
-                biasedPositionWS -= lightDirectionWS * 0.05;
-                #else
-                biasedPositionWS -= lightDirectionWS * 0.04;
-                #endif
 
                 float4 positionCS = TransformWorldToHClip(biasedPositionWS);
 
@@ -242,6 +257,9 @@ Shader "Assets/Shaders/Lit"
                 
                 float4 baseColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv) * input.color;
                 // ✅ alpha裁剪确保阴影形状与sprite轮廓一致
+                #if ETC1_EXTERNAL_ALPHA
+                baseColor.a = lerp(baseColor.a, SAMPLE_TEXTURE2D(_AlphaTex, sampler_AlphaTex, input.uv).r * input.color.a, _EnableExternalAlpha);
+                #endif
                 clip(baseColor.a - _Cutoff);
                 return 0;
             }
@@ -264,6 +282,7 @@ Shader "Assets/Shaders/Lit"
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile _ PIXELSNAP_ON
+            #pragma multi_compile_fog
             #pragma multi_compile _ ETC1_EXTERNAL_ALPHA
             #pragma multi_compile_instancing
             
@@ -278,6 +297,8 @@ Shader "Assets/Shaders/Lit"
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            #include "Assets/Assets/Shaders/BattleForestLighting.hlsl"
+            #include "Assets/Assets/Shaders/BattleForestSpriteLighting.hlsl"
 
             CBUFFER_START(UnityPerMaterial)
             float4 _MainTex_ST;
@@ -293,6 +314,11 @@ Shader "Assets/Shaders/Lit"
             float _AmbientIntensity;
             float _BackLightIntensity;
             float _WrapAroundFactor;
+            float4 _ForestSpriteBounds;
+            float _ForestSurfaceWeight;
+            float _ForestIndirectStrength;
+            float _ForestPigmentStrength;
+            float _ForestHighlightStrength;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);       SAMPLER(sampler_MainTex);
@@ -318,6 +344,7 @@ Shader "Assets/Shaders/Lit"
                 float3 normalWS        : TEXCOORD2;
                 float3 tangentWS       : TEXCOORD3;
                 float3 bitangentWS     : TEXCOORD4;
+                half fogFactor         : TEXCOORD5;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
@@ -338,6 +365,7 @@ Shader "Assets/Shaders/Lit"
                 o.normalWS = TransformObjectToWorldNormal(v.normalOS);
                 o.tangentWS = TransformObjectToWorldDir(v.tangentOS.xyz);
                 o.bitangentWS = cross(o.normalWS, o.tangentWS) * v.tangentOS.w;
+                o.fogFactor = ComputeFogFactor(o.positionCS.z);
 
                 return o;
             }
@@ -371,8 +399,11 @@ Shader "Assets/Shaders/Lit"
             }
             
             float3 CalculateLighting(float3 albedo, float3 normalWS, float3 positionWS, 
-                                     float3 viewDirWS, float4 shadowCoord)
+                                     float3 viewDirWS, float4 shadowCoord, float surfaceWeight)
             {
+                float pigmentWeight = saturate(surfaceWeight * _ForestPigmentStrength);
+                if (pigmentWeight > 0.001)
+                    albedo = lerp(albedo, DiceLandForestPigmentAlbedo(albedo), pigmentWeight);
                 float3 lighting = albedo * _AmbientIntensity;
                 float3 totalDiffuse = float3(0, 0, 0);
                 float3 totalSpecular = float3(0, 0, 0);
@@ -380,8 +411,14 @@ Shader "Assets/Shaders/Lit"
                 // ✅ 使用传入的shadowCoord而不是在此处重新计算
                 Light mainLight = GetMainLight(shadowCoord);
                 
-                float NdotL_main = dot(normalWS, mainLight.direction);
-                float diffuseFactor = CalculateDiffuseFactor(NdotL_main, true);
+                float3 keyDirection = lerp(mainLight.direction, DiceLandForestPaintedKey(mainLight.direction), surfaceWeight);
+                float NdotL_main = dot(normalWS, keyDirection);
+                float diffuseFactor = lerp(CalculateDiffuseFactor(dot(normalWS, mainLight.direction), true),
+                    0.32 + 0.90 * saturate(NdotL_main), surfaceWeight);
+                // Glossiness zero previously made pow(NdotH, 0) a constant white wash.
+                // Preserve the historical material response outside this forest-only surface treatment.
+                float specularPower = lerp(_Glossiness * 128.0, max(12.0, _Glossiness * 128.0), surfaceWeight);
+                float specularWeight = lerp(1.0, 0.65, surfaceWeight);
                 // ✅ shadowAttenuation现在会正确响应其它sprite的投影
                 float3 diffuse = mainLight.color * diffuseFactor 
                                  * mainLight.shadowAttenuation 
@@ -390,9 +427,9 @@ Shader "Assets/Shaders/Lit"
                 
                 if (NdotL_main > 0)
                 {
-                    float3 halfDir = normalize(mainLight.direction + viewDirWS);
+                    float3 halfDir = normalize(keyDirection + viewDirWS);
                     float NdotH = saturate(dot(normalWS, halfDir));
-                    float specPow = pow(NdotH, _Glossiness * 128.0);
+                    float specPow = pow(NdotH, specularPower) * specularWeight;
                     totalSpecular += mainLight.color * specPow * _Specular.rgb 
                                      * mainLight.shadowAttenuation * mainLight.distanceAttenuation;
                 }
@@ -413,7 +450,7 @@ Shader "Assets/Shaders/Lit"
                     {
                         float3 halfDir = normalize(light.direction + viewDirWS);
                         float NdotH = saturate(dot(normalWS, halfDir));
-                        float specPow = pow(NdotH, _Glossiness * 128.0);
+                        float specPow = pow(NdotH, specularPower) * specularWeight;
                         totalSpecular += light.color * specPow * _Specular.rgb * lightAttenuation;
                     }
                 }
@@ -425,12 +462,19 @@ Shader "Assets/Shaders/Lit"
                 
                 lighting += albedo * totalDiffuse + totalSpecular + rimLight;
                 
-                float minBrightness = 0.1;
+                float minBrightness = lerp(0.1, 0.0, pigmentWeight);
                 float currentBrightness = length(lighting);
-                if (currentBrightness < minBrightness)
+                if (currentBrightness > 0.0 && currentBrightness < minBrightness)
                     lighting = normalize(lighting) * minBrightness;
                 
-                return lighting;
+                float paintedIncidence = saturate(dot(normalWS, DiceLandForestPaintedKey(mainLight.direction)));
+                float formGain = lerp(0.58, 1.22, smoothstep(0.08, 0.80, paintedIncidence));
+                lighting *= lerp(half3(1,1,1), DiceLandForestSurfaceTint(paintedIncidence) * formGain, surfaceWeight);
+                float3 indirectFill = 0;
+                if (surfaceWeight > 0.001)
+                    indirectFill = DiceLandForestIndirectFill(albedo, normalWS) * (surfaceWeight * _ForestIndirectStrength);
+                return lighting * DiceLandForestLightTint(positionWS)
+                    + indirectFill;
             }
 
             float4 frag(Varyings i) : SV_Target
@@ -443,6 +487,10 @@ Shader "Assets/Shaders/Lit"
                 
                 float3x3 TBN = float3x3(i.tangentWS, i.bitangentWS, i.normalWS);
                 float3 normalWS = normalize(mul(normalTS, TBN));
+                float surfaceWeight = saturate(_DiceLandForestLighting * _ForestSurfaceWeight)
+                    * step(0.001, min(_ForestSpriteBounds.z, _ForestSpriteBounds.w));
+                if (surfaceWeight > 0.001)
+                    normalWS = DiceLandForestSculptedNormal(i.positionWS, _ForestSpriteBounds, surfaceWeight);
                 
                 float3 viewDirWS = normalize(_WorldSpaceCameraPos.xyz - i.positionWS);
                 
@@ -455,10 +503,104 @@ Shader "Assets/Shaders/Lit"
                 
                 // ✅ 传递shadowCoord
                 float3 litColor = CalculateLighting(baseColor.rgb, normalWS, i.positionWS, 
-                                                    viewDirWS, shadowCoord);
+                                                    viewDirWS, shadowCoord, surfaceWeight);
+                float highlightWeight = saturate(surfaceWeight * _ForestHighlightStrength);
+                if (highlightWeight > 0.001)
+                    litColor = lerp(litColor, DiceLandForestHighlightShoulder(litColor), highlightWeight);
+                if (_DiceLandForestLighting > 0.001)
+                {
+                    // A narrow sun-facing alpha edge gives flat illustrated sprites a restrained rim.
+                    float3 sunOS = TransformWorldToObjectDir(GetMainLight().direction);
+                    float2 rimDirection = normalize(sunOS.xy * _Flip.xy + float2(0.0001, 0.0001));
+                    float2 rimStep = max(fwidth(i.uv), float2(0.0001, 0.0001)) * 1.5;
+                    float edgeAlpha = SampleSpriteTexture(i.uv + rimDirection * rimStep).a * i.color.a;
+                    float rim = saturate(baseColor.a - edgeAlpha);
+                    half3 edgeLight = lerp(GetMainLight().color, half3(1.20, 0.65, 0.16), surfaceWeight);
+                    litColor += edgeLight * rim * (0.55 * _DiceLandForestLighting);
+                }
                 litColor *= baseColor.a;
                 
-                return float4(litColor, baseColor.a);
+                return float4(MixFog(litColor, i.fogFactor), baseColor.a);
+            }
+            ENDHLSL
+        }
+
+        // Alpha-clipped object velocities for Tuanjie URP's camera-and-object blur.
+        Pass
+        {
+            Name "MotionVectors"
+            Tags { "LightMode"="MotionVectors" }
+            ColorMask RG
+            Cull Off
+            HLSLPROGRAM
+            #pragma target 3.5
+            #pragma vertex MotionVert
+            #pragma fragment MotionFrag
+            #pragma multi_compile_instancing
+            #pragma multi_compile _ ETC1_EXTERNAL_ALPHA
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/MotionVectorsCommon.hlsl"
+            CBUFFER_START(UnityPerMaterial)
+            float4 _MainTex_ST;
+            float4 _Color;
+            float4 _RendererColor;
+            float4 _Flip;
+            float _EnableExternalAlpha;
+            float _Cutoff;
+            float4 _Specular;
+            float _Glossiness;
+            float4 _RimColor;
+            float _RimPower;
+            float _AmbientIntensity;
+            float _BackLightIntensity;
+            float _WrapAroundFactor;
+            float4 _ForestSpriteBounds;
+            float _ForestSurfaceWeight;
+            float _ForestIndirectStrength;
+            float _ForestPigmentStrength;
+            float _ForestHighlightStrength;
+            CBUFFER_END
+            TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
+            TEXTURE2D(_AlphaTex); SAMPLER(sampler_AlphaTex);
+            struct MotionAttributes
+            {
+                float4 positionOS : POSITION;
+                float2 uv : TEXCOORD0;
+                float4 color : COLOR;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+            struct MotionVaryings
+            {
+                float4 positionCS : SV_POSITION;
+                float4 currentCS : TEXCOORD0;
+                float4 previousCS : TEXCOORD1;
+                float2 uv : TEXCOORD2;
+                half alpha : TEXCOORD3;
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+            MotionVaryings MotionVert(MotionAttributes input)
+            {
+                MotionVaryings output=(MotionVaryings)0;
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+                float4 position=input.positionOS;
+                position.xy*=_Flip.xy;
+                output.positionCS=TransformObjectToHClip(position.xyz);
+                output.currentCS=mul(_NonJitteredViewProjMatrix,mul(UNITY_MATRIX_M,position));
+                output.previousCS=mul(_PrevViewProjMatrix,mul(UNITY_PREV_MATRIX_M,position));
+                output.uv=TRANSFORM_TEX(input.uv,_MainTex);
+                output.alpha=input.color.a*_Color.a*_RendererColor.a;
+                return output;
+            }
+            half4 MotionFrag(MotionVaryings input) : SV_Target
+            {
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+                half alpha=SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex,input.uv).a;
+                #if ETC1_EXTERNAL_ALPHA
+                alpha=lerp(alpha,SAMPLE_TEXTURE2D(_AlphaTex,sampler_AlphaTex,input.uv).r,_EnableExternalAlpha);
+                #endif
+                clip(alpha*input.alpha-_Cutoff);
+                return half4(CalcNdcMotionVectorFromCsPositions(input.currentCS,input.previousCS),0,0);
             }
             ENDHLSL
         }

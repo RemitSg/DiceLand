@@ -724,8 +724,8 @@ MonoBehaviour:
   closeupRangeLensPulseAmplitude: 0.06
   closeupRangePositionPulseAmplitude: 0.16
   closeupRangePulseFrequency: 0.08
-  clashShakeAmplitude: 0.08
-  hitShakeAmplitude: 0.16
+  clashShakeAmplitude: 0.14
+  hitShakeAmplitude: 0.22
   cameraPowerNormalization: 12
   minimumCameraIntensity: 0.18
   cameraShakeFrequency: 28
@@ -1683,8 +1683,8 @@ MonoBehaviour:
   damageOutlineWidth: 0.104
   clashDiceValueFont: {fileID: 11400000, guid: 577b9b7bf24331943990399e812fa069, type: 2}
   clashDiceRangeFont: {fileID: 11400000, guid: 577b9b7bf24331943990399e812fa069, type: 2}
-  clashDiceValueFontSize: 38
-  clashDiceRangeFontSize: 24
+  clashDiceValueFontSize: 96
+  clashDiceRangeFontSize: 64
   clashDiceValueFontStyle: 1
   clashDiceRangeFontStyle: 1
   allyClashDiceValueColor: {r: 0.72, g: 1, b: 0.95, a: 1}
@@ -1702,7 +1702,6 @@ MonoBehaviour:
   clashDiceRangeEndScale: 1
   clashDiceValueStartScale: 1.7
   clashDiceValueEndScale: 1
-  clashDiceScaleWithCamera: 1
   healthBarSize: {x: 110, y: 14}
   healthBarWorldOffset: {x: 0, y: -0.3, z: 0}
   allyHealthFillColor: {r: 0.3, g: 1, b: 0.55, a: 1}
