@@ -8,6 +8,7 @@ public static class MapForestArt
     private static bool loaded;
 
     public static bool Available => Get("TileFace") != null;
+    public static Sprite Pawn => Resources.Load<Sprite>("MapUI/ChibiPawn");
 
     public static Sprite Get(string name)
     {

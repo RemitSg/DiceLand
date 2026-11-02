@@ -84,6 +84,14 @@ public static class MapVisualTools
             importer.textureCompression = TextureImporterCompression.CompressedHQ;
             importer.SaveAndReimport();
         }
+        const string pawnPath = "Assets/Resources/MapUI/ChibiPawn.png";
+        TextureImporter pawn = AssetImporter.GetAtPath(pawnPath) as TextureImporter;
+        if (pawn == null) throw new FileNotFoundException(pawnPath);
+        ConfigureSprite(pawn);
+        pawn.spriteImportMode = SpriteImportMode.Single;
+        pawn.textureCompression = TextureImporterCompression.Uncompressed;
+        pawn.maxTextureSize = 512;
+        pawn.SaveAndReimport();
         MapForestArt.Reload();
         if (Resources.LoadAll<Sprite>("MapUI/MapAtlas").Length != 16) throw new InvalidDataException("Expected sixteen imported map sprites.");
     }

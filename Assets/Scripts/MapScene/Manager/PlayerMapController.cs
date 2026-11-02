@@ -665,8 +665,9 @@ public class PlayerMapController : MonoBehaviour
     private void ApplyForestPawnLook()
     {
         if (!MapForestArt.Available || visualRoot == null) return;
-        Sprite portrait = null;
-        if (runState != null && runState.partyMembers != null)
+        Sprite portrait = MapForestArt.Pawn;
+        bool chibiPawn = portrait != null;
+        if (!chibiPawn && runState != null && runState.partyMembers != null)
             foreach (RunPartyMemberState member in runState.partyMembers)
             {
                 if (member == null || !member.IsAlive || member.characterData == null) continue;
@@ -687,7 +688,7 @@ public class PlayerMapController : MonoBehaviour
             renderer.sprite = portrait;
             renderer.color = Color.white;
             float extent = Mathf.Max(portrait.bounds.size.x, portrait.bounds.size.y);
-            body.localScale = Vector3.one * (0.87f / Mathf.Max(0.01f, extent));
+            body.localScale = Vector3.one * ((chibiPawn ? 1.03f : 0.87f) / Mathf.Max(0.01f, extent));
         }
         Transform outline = visualRoot.Find("Outline");
         SpriteRenderer frame = outline != null ? outline.GetComponent<SpriteRenderer>() : null;

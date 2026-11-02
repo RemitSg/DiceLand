@@ -1,0 +1,17 @@
+DiceLand 地图 Q 版冒险者棋子
+日期：2026-11-02（Asia/Singapore）
+方式：内置 image_gen，透明背景；未使用 CLI/API 密钥。
+参考图：docs/visuals/map-page-concept-20261102.png，仅参考地图角色的比例与画风。
+正式素材：Assets/Resources/MapUI/ChibiPawn.png，原样复制生成文件并保留透明通道。
+角色用途：整支队伍的通用地图棋子；队伍成员及战斗立绘继续使用原资产。
+
+Use case: stylized-concept.
+Asset type: ONE transparent production game sprite for the player's exploration-map pawn in DiceLand.
+
+INPUT ROLE: the supplied map screen is the approved ART-DIRECTION REFERENCE. Focus ONLY on the little brown-haired chibi adventurer standing on the selected tile (second row, fourth column). Use its friendly big-head / tiny-body proportions and painted forest-fantasy style. The output must be a standalone character sprite, not a game screen or UI mockup.
+
+PRIMARY REQUEST: redesign this map pawn as a polished, charming, immediately readable Q-version/chibi adventurer. Full body, about 2.3 heads tall, a large rounded head taking roughly 45% of the total height, a small sturdy torso, short legs and compact boots. Tousled medium-brown hair, a simple small face with two clear dark eyes, an ivory tunic, muted forest-green short waistcoat, a dark brown belt and tiny brown boots. Calm alert expression, relaxed standing exploration pose, arms held close enough for a compact silhouette, slight three-quarter view facing the viewer and a little to screen right. Clear separation between head, torso, hands and feet. This is the party's map marker, so legibility at only 70–90 pixels tall matters more than small costume details.
+
+STYLE: clean hand-painted 2D fantasy game illustration matching the reference's warm ivory / aged-brass / forest-green visual family. Confident soft dark-brown outline, simple large readable color shapes, gentle painted shading, modest highlights. A cute illustrated chibi icon with organic rounded proportions; no realistic anatomy, no long thin legs, no flat vector pictogram, no 3D render, no pixel-art or hard pixel grid.
+
+COMPOSITION: one character only, complete hair and both boots fully inside a centered square canvas, occupying about 80% of image height with clean transparent margins. Keep the character upright, centered, and visually balanced. No props extending sideways. Genuine transparent RGBA background with clean alpha silhouette; no baked checkerboard, scenery, floor, shadow disk, pedestal, tile, border, nameplate, UI, text, logo or watermark. Do not include any other part of the reference image.

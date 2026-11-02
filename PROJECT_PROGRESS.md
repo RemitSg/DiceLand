@@ -1729,3 +1729,11 @@ Root CLAUDE.md references the same AGENTS.md convention so Claude-based agents s
 - 正式打包四时段背景及 16 子精灵透明图集，保留前序 image_gen 原图与实际提示词；续作未重新生成位图。清晨 ≥60%、正午 ≥20%、其余傍晚，午夜继续仅供原灾厄界面使用；不改行动点阈值或灾厄流程。背景随缩放和横屏比例变化铺满。
 - 团结 2022.3.62t6 隔离验证：EditMode 167/167、PlayMode 9/9 通过。覆盖真实中文字体的可见性、装饰网格、棋子尺寸、多比例布局、选择刷新／长文本、原有移动／教程／战斗预览，以及原生菜单、暂停下的折叠滚动、行动点背景和午夜灾厄引用。实际检查四时段、2340×1080、1920×1080、1600×1200、2400×1080 安全边距共 8 张渲染。
 - 复现工具为 MapVisualTools，使用临时预览场景，不读取玩家存档。正式说明：docs/visuals/map-page-ui.md；本地证据：outputs/agent-battle/map-ui-20261102/。本批未改玩法数值、敌人／技能／遗物目录、存档格式或正式场景；未打 APK，真机触摸与 GPU 性能仍未验收。完成后按约定提交并推送当前 dev 分支。
+
+
+## 2026-11-02 地图 Q 版棋子
+
+- 按用户反馈，将地图上的队伍标识改为参考图风格的大头短身 Q 版冒险者：棕发、米白衣服、深绿背心和短靴。独立透明素材 Assets/Resources/MapUI/ChibiPawn.png 由内置 image_gen 生成，1254×1254 RGBA 原图原样入库；Unity 精灵最大尺寸 512，人物和选中外框均限制在单格内。
+- PlayerMapController 优先使用通用 Q 版队伍棋子；队伍头像、战斗立绘、位移、跳跃及战斗预览流程保持原实现。提示词：docs/visuals/map-chibi-pawn-20261102-prompt.txt，正式说明同步 docs/visuals/map-page-ui.md。
+- 团结 2022.3.62t6 隔离工程相关 EditMode 52/52 通过；实际重渲染四时段和多比例共 8 张，检查透明边缘、单格占比与选中效果。本地证据：outputs/agent-battle/map-ui-20261102/chibi-pawn/。按仓库约定单独提交并推送本次修改。
+- 本次 Q 版更新的 PlayMode 9/9 通过，覆盖原有战斗预览、菜单与背景交互；六项相关源码／素材与隔离验证工程逐字节一致。

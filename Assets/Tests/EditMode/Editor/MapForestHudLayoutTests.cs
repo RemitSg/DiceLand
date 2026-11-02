@@ -141,6 +141,7 @@ public sealed class MapForestHudLayoutTests
             Assert.IsNotNull(MapForestArt.Background(phase), phase.ToString());
         Assert.IsNotNull(MapForestArt.Get("PanelFrame"));
         Assert.IsNotNull(MapForestArt.Icon(MapTileType.Treasure));
+        Assert.IsNotNull(MapForestArt.Pawn);
     }
 
     [Test]
@@ -156,6 +157,10 @@ public sealed class MapForestHudLayoutTests
         SpriteRenderer frame = host.transform.Find("PlayerMapPawn/VisualRoot/Outline").GetComponent<SpriteRenderer>();
         Assert.LessOrEqual(frame.bounds.size.x, board.TileVisualSize.x);
         Assert.LessOrEqual(frame.bounds.size.y, board.TileVisualSize.y);
+        SpriteRenderer body = host.transform.Find("PlayerMapPawn/VisualRoot/Body").GetComponent<SpriteRenderer>();
+        Assert.AreSame(MapForestArt.Pawn, body.sprite);
+        Assert.LessOrEqual(body.bounds.size.x, board.TileVisualSize.x);
+        Assert.LessOrEqual(body.bounds.size.y, board.TileVisualSize.y);
     }
 
     [Test]
