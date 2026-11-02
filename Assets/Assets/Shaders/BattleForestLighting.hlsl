@@ -50,7 +50,7 @@ half3 DiceLandForestLightTint(float3 positionWS)
     float sunlight = saturate(openCanopy * (0.60 + leaves * 0.40) + (1.0 - openCanopy) * leaves * 0.13);
     if (_DiceLandForestOpenings.z > 0.001)
         sunlight *= lerp(1.0, DiceLandForestCanopyTransmission(p, breeze), saturate(_DiceLandForestOpenings.z));
-    half3 tint = lerp(half3(0.30, 0.43, 0.61), half3(1.65, 1.32, 0.86), sunlight);
+    half3 tint = lerp(half3(0.21, 0.32, 0.48), half3(1.65, 1.32, 0.86), sunlight);
     return lerp(half3(1, 1, 1), tint, saturate(_DiceLandForestLighting));
 }
 

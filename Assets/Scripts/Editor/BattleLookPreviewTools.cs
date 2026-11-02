@@ -290,7 +290,7 @@ public static class BattleLookPreviewTools
         material.shader = Shader.Find("DiceLand/Battle Forest Foliage");
         material.SetColor("_Color", Color.white);
         material.SetFloat("_HighlightGain", 1.18f);
-        material.SetColor("_PaintedFill", new Color(0.36f, 0.40f, 0.32f, 0.30f));
+        material.SetColor("_PaintedFill", new Color(0.36f, 0.40f, 0.32f, 0.12f));
         Sprite ancientTree = LoadForestSprite(MidgroundPath);
         float treeScale = 1.85f;
         AddTree(root.transform, ancientTree, material, "Ancient tree and ruined terrace",
