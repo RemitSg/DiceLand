@@ -1,0 +1,67 @@
+DiceLand 战斗结算奖励与统一资源关键词参考图
+日期：2026-11-02（Asia/Singapore）
+方式：内置 image_gen。
+用户优先要求：先重生成带金币的结算参考图，经验值与金币均有对应关键词图标，识别逻辑沿用地图界面的共享规则。
+正式图片：docs/visuals/battle-settlement-rewards-concept-20261102.png
+
+本图设计：
+- 金币沿用金色 #F0CC6B 与金币堆图标；新增经验／经验值／EXP 同义关键词拟用淡蓝紫 #B8C9F4 和同一个四芒星晶图标。该图仅规定显示方向，不代表新增经验关键词已在代码中生效。
+- 汇总为金币 +23、经验值 +13、战利品 ×6；顶部临时钱包示例持有金币 173，按 150+23 表示本次入账后的状态。它们是布局样例，不是核实的用户战局奖励或钱包。
+- 保留 Chara、Man 头像、等级及原截图 HP／经验数值；角色经验条同步改为淡蓝紫。
+- 以影爪碎片、铁矿、浪涌核心、焰翅、水球、磁电晶各 ×1 演示三列两行的多战利品布局，组合不代表实际掉落。名称与对象方向取既有资产；后续正式落地必须直接使用实际 Sprite 与实际稀有度，不能从参考图色彩推断品质。
+- 保留重试战斗、回到地图，保留森林战斗背景与能量 1/10。
+范围：本批仅生成和保存参考图，不改资源识别代码、战斗奖励、角色／敌人／技能／遗物资产、场景或存档；无内容目录增量，未运行游戏测试或打包。
+
+仍待实现的既有用户需求（本图不代表已完成）：
+1. 经验／经验值／EXP 接入 ResourceKeywordText 的同一套预处理、固定颜色和图标规则，兼容旧 Text、原始文本、富文本及已有资源词例外。
+2. 结算显示真实金币奖励；金币、经验值、战利品总数先同时从零增长。
+3. 统计增长完成后，经验按实际可获经验的角色同时分组飞入经验条；金币飞到屏幕顶部临时下拉的钱包，复用地图金币动效及音量规则，到账后再上拉消失。
+4. 上述资源飞行时逐项揭示实际战利品，支持多件及详情；保留失败、重试、返回地图、遗物选择和现有真实奖励／存档的唯一结算。
+
+输入图片（与实际提示词一致）：
+1. C:/DiceLand/docs/visuals/battle-settlement-concept-20261102.png
+2. C:/DiceLand/docs/visuals/merchant-panel-concept-20261102.png
+3. C:/DiceLand/Assets/Data/Loots/LootItems/009 影爪碎片/ShadowClaw.png
+4. C:/DiceLand/Assets/Data/Loots/LootItems/008 铁矿/Iron.png
+5. C:/DiceLand/Assets/Data/Loots/LootItems/006 浪涌核心/WaveCore.png
+补充造型依据：已查看既有 FlameWing.png、WaterBall.png、MagtronicOrb.png；因内置工具参考数量上限，三者造型通过文字描述输入，没有虚构为传入图片。
+选定原图：C:/Users/Karmas/.codex/generated_images/01a19bb1-03a3-7d22-91bb-dd9beec4e0c7/exec-db274606-86ae-4221-bcb9-ded6bc67b27e.png
+
+实际生成提示词：
+Use case: ui-mockup.
+Create ONE revised DiceLand post-battle settlement reference, a polished ultrawide landscape mobile-game screen about 2.17:1. This revision adds gold rewards, consistent inline resource keyword icons, a temporary wallet drawer and a multi-item loot grid.
+
+INPUT ROLES:
+Image 1 is the approved settlement design to revise. Preserve its forest-green/brass art direction, battle victory header, Chara and Man portraits/identities, forest battle background, energy 1 / 10, HP/level data and the two bottom actions.
+Image 2 is the established forest shop UI style and the actual gold coin-stack symbol reference. Use its readable dark inset resource panels and painted brass details; do not import its merchant content or map grid.
+Images 3–5 are existing loot-object references, respectively: 影爪碎片 (dark purple-edged claw shards), 铁矿 (gray iron ore), and 浪涌核心 (blue watery teardrop core with a thin water orbit). Extract the objects visually without their source-image backgrounds, white plates, stray marks or watermarks. The other three existing loot designs should be represented from these appearance descriptions: 焰翅 is a pair of orange flame-shaped wings; 水球 is a pale-blue translucent round water orb; 磁电晶 is a faceted pale-blue crystal. Match their simple painted fantasy-icon treatment to the provided loot references.
+
+SHARED RESOURCE KEYWORD RULES — IMPORTANT:
+Treat resource words as consistent inline icon + fixed-colour tokens, as in DiceLand's map UI, rather than isolated decorative headers.
+- Every occurrence of “金币” has the SAME small painted gold coin-stack icon immediately beside the word and uses warm gold #F0CC6B. Gold numbers next to it use the same colour. This applies both to the reward summary and to the wallet drawer.
+- “经验”, “经验值” and “EXP” all mean the SAME experience keyword. Use one consistent small BLUE-LAVENDER FOUR-POINT STAR-CRYSTAL icon and blue-lavender text #B8C9F4 wherever the experience keyword occurs. Show the Chinese word “经验值” in this image. The same icon design appears in the top summary and in both character experience rows. Do not use a coin, ordinary loot crystal, book, or differing icons for the same keyword.
+- Icons are baseline-aligned with nearby letters, scale with the text, and stay next to the word. No double icons on a single occurrence. Do not display labels such as “关键词” or implementation annotations.
+- Character XP bar fills echo the same pale blue-lavender experience colour, while HP bars stay red.
+
+LAYOUT AND CONTENT:
+Keep the refined layered aged-brass frame, subtle dark forest leather/paper texture, restrained corner leaves, ivory readable Chinese text and warm gold victory title of Image 1. Widen the modal moderately to about 80% of screen width to fit the richer rewards without shrinking typography or cluttering it. Keep forest battle context visible around the edges.
+1. Header remains “战斗胜利” with smaller “VICTORY” and “剩余可行动角色：2”.
+2. Replace the old single EXP capsule with a clean centered horizontal reward-summary strip of THREE balanced dark inset capsules:
+   gold coin-stack icon + exact “金币 +23” in gold;
+   the blue-lavender star-crystal icon + exact “经验值 +13” in blue-lavender;
+   a quiet loot/chest symbol + exact “战利品 ×6” in ivory/gold.
+Maintain comfortable spacing and avoid gold text on a gold surface.
+3. At the upper-right screen edge, show a compact temporary dark-green wallet drawer suspended from the top, in a location that does not cover the victory title or characters. Label it quietly “持有”, then the SAME gold coin-stack inline symbol with exact “金币 173”. The image depicts a late reward-settlement moment before this wallet retracts. Do not draw motion arrows, storyboard frames or explanatory labels. The +23 is this battle's reward; 173 is the displayed wallet balance, so keep the two clearly distinct.
+4. Main left section “队伍状态”: two generous portrait cards, retaining the recognizable actual portraits in Image 1.
+   Chara: “Lv.2”, “HP 1002 / 1002”, completely full red HP bar; experience icon + “经验值 3 / 20”, with pale blue-lavender XP bar filled to 15%.
+   Man: “Lv.1”, “HP 981 / 999”, nearly full red HP bar; experience icon + “经验值 1 / 10”, with pale blue-lavender XP bar filled to 10%.
+   Keep every portrait, name, level, bar and number readable and aligned. No invented level-up arrows or “升级”.
+5. Main right section “战利品”: replace the single giant item with a tidy THREE-COLUMN, TWO-ROW inventory grid, six distinct medium-size dark inset item tiles with fine brass edges and painted object icons. Each tile has its actual short name underneath and a separate legible “×1” count badge. Use exactly these objects in reading order:
+   “影爪碎片” ×1, “铁矿” ×1, “浪涌核心” ×1;
+   “焰翅” ×1, “水球” ×1, “磁电晶” ×1.
+   The 影爪碎片 and 浪涌核心 names use restrained uncommon green; the other names use readable warm gray. Do not label the purple claw as epic simply due to its icon colour. Let icon wells, names and quantity badges have their own breathing room.
+   A quiet footer hint reads “点击战利品查看详情”. The grid should feel like real UI capable of scrolling when there are more entries; do not add fake extra items or a large inspection tooltip in this screenshot.
+6. Footer retains exactly the secondary dark-brown/brass “重试战斗” and primary warm-gold “回到地图”, with the same restrained refresh/map glyphs and dark text on the gold button. No extra collect/claim, close X, sell, share, ad, score, rank, stars or statistics.
+
+QUALITY:
+One cohesive finished screen, sharp accurate simplified Chinese and numbers, no overlapping text or clipped controls, clear safe margins, restrained glows, reusable UI component styling rather than oversized illustration. No device mockup, watermark, source watermarks, annotations, code terms, before/after panels or variant sheets. Preserve the supplied numerical HP, XP and levels; the six loot entries and gold/wallet values are presentation samples for this design.
