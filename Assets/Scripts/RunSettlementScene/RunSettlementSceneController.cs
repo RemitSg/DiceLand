@@ -187,6 +187,8 @@ public class RunSettlementSceneController : MonoBehaviour
 
     private void AddStatListRow(RectTransform parent, string label, int targetValue, Sprite icon)
     {
+        Sprite resourceIcon = ResourceKeywordText.IconFor(label);
+        if (resourceIcon != null) icon = resourceIcon;
         RectTransform row = CreateTransparent($"{label}Row", parent);
         row.gameObject.AddComponent<LayoutElement>().preferredHeight = 50f;
 
@@ -200,6 +202,7 @@ public class RunSettlementSceneController : MonoBehaviour
             AddStatIcon(row, icon);
 
         TextMeshProUGUI labelText = AddText(row, label, 22, textColor, TextAlignmentOptions.Left, FontStyles.Bold, 50f, bodyFont);
+        if (icon != null) ResourceKeywordText.Attach(labelText, false);
         labelText.enableWordWrapping = false;
         LayoutElement labelLayout = labelText.GetComponent<LayoutElement>();
         labelLayout.preferredWidth = icon != null ? 226f : 272f;
@@ -218,6 +221,7 @@ public class RunSettlementSceneController : MonoBehaviour
         lineGo.GetComponent<Image>().color = new Color(goldColor.r, goldColor.g, goldColor.b, 0.38f);
 
         TextMeshProUGUI valueText = AddText(row, string.Empty, 28, new Color(1f, 0.9f, 0.66f, 1f), TextAlignmentOptions.Right, FontStyles.Bold, 50f, numberFont != null ? numberFont : bodyFont);
+        valueText.color = ResourceKeywordText.ColorFor(label, valueText.color);
         valueText.enableWordWrapping = false;
         valueText.overflowMode = TextOverflowModes.Overflow;
         LayoutElement valueLayout = valueText.GetComponent<LayoutElement>();
@@ -390,6 +394,7 @@ public class RunSettlementSceneController : MonoBehaviour
         label.enableWordWrapping = true;
         RectTransform rect = label.rectTransform;
         rect.gameObject.AddComponent<LayoutElement>().preferredHeight = height;
+        ResourceKeywordText.Attach(label);
         return label;
     }
 

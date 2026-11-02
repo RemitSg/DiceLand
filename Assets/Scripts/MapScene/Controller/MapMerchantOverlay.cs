@@ -32,9 +32,9 @@ public class MapMerchantOverlay : MonoBehaviour
     [SerializeField] private Sprite offerButtonSprite;
     [SerializeField] private Sprite selectedOfferButtonSprite;
     [SerializeField] private Color offerButtonColor = new Color(0.18f, 0.16f, 0.12f, 0.96f);
-    [SerializeField] private Color selectedOfferButtonColor = new Color(1f, 0.83f, 0.35f, 1f);
+    [SerializeField] private Color selectedOfferButtonColor = new Color(0.08f, 0.22f, 0.16f, 1f);
     [SerializeField] private Color offerButtonTextColor = Color.white;
-    [SerializeField] private Color selectedOfferButtonTextColor = Color.black;
+    [SerializeField] private Color selectedOfferButtonTextColor = new Color(0.96f, 0.93f, 0.81f, 1f);
     [SerializeField] private Color soldOutOfferButtonColor = new Color(0.36f, 0.36f, 0.36f, 0.88f);
     [SerializeField] private float offerListScrollbarWidth = 18f;
     [SerializeField] private Color offerListScrollbarTrackColor = new Color(0.15f, 0.15f, 0.18f, 0.85f);
@@ -436,7 +436,9 @@ public class MapMerchantOverlay : MonoBehaviour
         refreshButton.interactable = interactable;
         Image image = refreshButton.GetComponent<Image>();
         if (image != null)
-            image.color = interactable ? actionButtonColor : disabledButtonColor;
+            image.color = interactable ? (refreshCost > 0 ? selectedOfferButtonColor : actionButtonColor) : disabledButtonColor;
+        if (label != null)
+            label.color = interactable && refreshCost > 0 ? selectedOfferButtonTextColor : actionButtonTextColor;
     }
 
     private int ResolveRefreshCost()
@@ -682,6 +684,7 @@ public class MapMerchantOverlay : MonoBehaviour
         text.alignment = TextAlignmentOptions.TopLeft;
         text.enableWordWrapping = false;
         text.raycastTarget = false;
+        ResourceKeywordText.Attach(text);
         return text;
     }
 

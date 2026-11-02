@@ -215,7 +215,7 @@ public partial class MapEventOverlay
 
     private static float PreferredHeight(TMP_Text text, float width)
     {
-        return text.GetPreferredValues(text.text, Mathf.Max(40f, width), 0f).y;
+        return text.GetPreferredValues(Mathf.Max(40f, width), 0f).y;
     }
 
     private static void FitText(TextMeshProUGUI text, RectTransform content, RectTransform viewport)
@@ -299,6 +299,7 @@ public partial class MapEventOverlay
         text.overflowMode = TextOverflowModes.Overflow;
         text.richText = true;
         text.raycastTarget = false;
+        ResourceKeywordText.Attach(text);
         return text;
     }
 

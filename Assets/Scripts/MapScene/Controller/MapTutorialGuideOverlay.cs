@@ -393,7 +393,7 @@ public class MapTutorialGuideOverlay : MonoBehaviour
     private static Text CreateText(string name, Transform parent, Vector2 anchorPivot, Vector2 anchoredPosition, Vector2 size, Font font, int fontSize, TextAnchor alignment, Color color)
     {
         RectTransform rect = CreateRect(name, parent, anchorPivot, anchoredPosition, size);
-        Text text = rect.gameObject.AddComponent<Text>();
+        Text text = rect.gameObject.AddComponent<ResourceKeywordLegacyText>();
         text.font = font;
         text.fontSize = fontSize;
         text.alignment = alignment;

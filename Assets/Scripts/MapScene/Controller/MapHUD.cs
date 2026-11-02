@@ -1508,6 +1508,7 @@ public partial class MapHUD : MonoBehaviour
         tmp.enableWordWrapping = false;
         tmp.raycastTarget = false;
         ApplyFont(tmp, font);
+        ResourceKeywordText.Attach(tmp, name != "MoveCostUnit" && name != "TileTitle");
         return tmp;
     }
 
@@ -1523,6 +1524,7 @@ public partial class MapHUD : MonoBehaviour
         tmp.enableWordWrapping = false;
         tmp.raycastTarget = false;
         ApplyFont(tmp, font);
+        ResourceKeywordText.Attach(tmp, name != "MoveCostUnit" && name != "TileTitle");
         return tmp;
     }
 

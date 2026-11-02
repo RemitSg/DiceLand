@@ -581,6 +581,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         text.fontSize = healthValueFontSize;
         text.color = healthValueColor;
         text.alignment = TextAlignmentOptions.Center;
+        ResourceKeywordText.Attach(text);
         return text;
     }
 
@@ -1359,6 +1360,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         text.overflowMode = TextOverflowModes.Overflow;
         text.extraPadding = true;
         text.raycastTarget = false;
+        ResourceKeywordText.Attach(text);
         return text;
     }
 
@@ -1529,6 +1531,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         text.overflowMode = TextOverflowModes.Overflow;
         text.extraPadding = true;
         text.raycastTarget = false;
+        ResourceKeywordText.Attach(text);
         return text;
     }
 
@@ -1930,6 +1933,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         text.enableWordWrapping = false;
         text.overflowMode = TextOverflowModes.Ellipsis;
         text.raycastTarget = false;
+        ResourceKeywordText.Attach(text);
         return text;
     }
 

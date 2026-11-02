@@ -372,7 +372,11 @@ public class MapInventoryDetailView : MonoBehaviour
 
     private static void ApplyFont(TMP_Text text, TMP_FontAsset font)
     {
-        if (text == null || font == null)
+        if (text == null)
+            return;
+
+        ResourceKeywordText.Attach(text);
+        if (font == null)
             return;
 
         text.font = font;

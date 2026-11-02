@@ -218,7 +218,7 @@ public partial class MapHUD
         ApplyRect(tilePanelRect, new Vector2(1f, 0f), tilePanelOffset, new Vector2(tilePanelSize.x, height));
         float viewportHeight = Mathf.Max(64f, height - 272f);
         forestTileDescriptionViewport.sizeDelta = new Vector2(400f, viewportHeight);
-        float contentHeight = Mathf.Max(viewportHeight, tileBodyText.GetPreferredValues(tileBodyText.text, 398f, 0f).y + 8f);
+        float contentHeight = Mathf.Max(viewportHeight, tileBodyText.GetPreferredValues(398f, 0f).y + 8f);
         tileBodyText.rectTransform.sizeDelta = new Vector2(398f, contentHeight);
     }
 

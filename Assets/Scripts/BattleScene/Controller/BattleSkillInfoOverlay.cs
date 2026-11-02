@@ -710,6 +710,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         text.alignment = alignment;
         text.enableWordWrapping = false;
         ApplyFont(text, useKeywordFont ? GetKeywordFont() : GetBodyFont());
+        ResourceKeywordText.Attach(text);
     }
 
     private static string BuildWeaponSubtitle(BattleAllyController ally, SpeedButton sourceButton)

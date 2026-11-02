@@ -239,6 +239,7 @@ public class TutorialBattleGuideOverlay : MonoBehaviour
         text.color = color;
         text.alignment = alignment;
         ApplyFont(text, useKeywordFont ? keywordFont : bodyFont);
+        ResourceKeywordText.Attach(text);
         return text;
     }
 

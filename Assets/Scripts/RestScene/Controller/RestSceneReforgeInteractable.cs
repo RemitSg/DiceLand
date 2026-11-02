@@ -1426,6 +1426,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour
         text.color = color;
         text.alignment = alignment;
         text.raycastTarget = false;
+        ResourceKeywordText.Attach(text);
         return text;
     }
 

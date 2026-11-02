@@ -576,6 +576,7 @@ public class MapTreasureOverlay : MonoBehaviour
         text.overflowMode = TextOverflowModes.Ellipsis;
         text.raycastTarget = false;
         text.font = keyword && keywordFont != null ? keywordFont : (bodyFont != null ? bodyFont : keywordFont);
+        ResourceKeywordText.Attach(text);
         return text;
     }
 

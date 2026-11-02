@@ -1692,6 +1692,7 @@ public class BattleSettlementOverlay : MonoBehaviour
         rect.pivot = new Vector2(0f, 1f);
         rect.anchoredPosition = anchoredPosition;
         rect.sizeDelta = size;
+        ResourceKeywordText.Attach(text);
         return text;
     }
 
@@ -1775,6 +1776,7 @@ public class BattleSettlementOverlay : MonoBehaviour
         text.color = color;
         text.text = value;
         text.enableWordWrapping = false;
+        ResourceKeywordText.Attach(text);
         return text;
     }
 

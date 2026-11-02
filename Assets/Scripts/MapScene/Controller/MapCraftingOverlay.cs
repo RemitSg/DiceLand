@@ -508,6 +508,7 @@ public class MapCraftingOverlay : MonoBehaviour
         text.text = value;
         text.alignment = TextAlignmentOptions.TopLeft;
         text.enableWordWrapping = false;
+        ResourceKeywordText.Attach(text);
         return text;
     }
 

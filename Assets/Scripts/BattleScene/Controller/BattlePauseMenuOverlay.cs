@@ -401,7 +401,7 @@ public class BattlePauseMenuOverlay : MonoBehaviour
     private static Text CreateText(Transform parent, string name, string value, int fontSize, Font font, Color color, TextAnchor alignment)
     {
         RectTransform rect = CreateRect(name, parent, Vector2.zero);
-        Text text = rect.gameObject.AddComponent<Text>();
+        Text text = rect.gameObject.AddComponent<ResourceKeywordLegacyText>();
         text.font = font;
         text.fontSize = fontSize;
         text.alignment = alignment;

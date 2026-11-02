@@ -217,7 +217,7 @@ public class MainMenuContributorsOverlay : MonoBehaviour
 
     private static Text CreateText(string name, RectTransform parent, Font font, int fontSize, TextAnchor anchor)
     {
-        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Text));
+        GameObject go = new GameObject(name, typeof(RectTransform), typeof(ResourceKeywordLegacyText));
         go.transform.SetParent(parent, false);
         Text text = go.GetComponent<Text>();
         text.font = font;

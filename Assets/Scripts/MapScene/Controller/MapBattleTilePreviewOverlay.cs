@@ -452,6 +452,7 @@ public sealed class MapBattleTilePreviewOverlay : MonoBehaviour
         text.raycastTarget = false;
         text.enableWordWrapping = false;
         text.overflowMode = TextOverflowModes.Ellipsis;
+        ResourceKeywordText.Attach(text);
         return text;
     }
 

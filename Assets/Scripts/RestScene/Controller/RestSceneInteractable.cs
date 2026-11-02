@@ -452,6 +452,7 @@ public class RestSceneInteractable : MonoBehaviour
         text.fontSize = fontSize;
         text.color = color;
         text.alignment = alignment;
+        ResourceKeywordText.Attach(text);
         return text;
     }
 

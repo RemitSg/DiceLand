@@ -477,7 +477,7 @@ public sealed class MainMenuForestView : MonoBehaviour
 
     private Text Text(string name, Transform parent, Vector2 position, Vector2 size, string value, int fontSize, Color tint, TextAnchor align = TextAnchor.MiddleLeft)
     {
-        Text text = Rect(name, parent, position, size).gameObject.AddComponent<Text>();
+        Text text = Rect(name, parent, position, size).gameObject.AddComponent<ResourceKeywordLegacyText>();
         text.font = menuFont;
         text.fontSize = fontSize;
         text.text = value;

@@ -396,6 +396,7 @@ public class SceneCurtainTransitionController : MonoBehaviour
         if (loadingFont != null)
             text.font = loadingFont;
         text.enableWordWrapping = false;
+        ResourceKeywordText.Attach(text);
         return text;
     }
 }

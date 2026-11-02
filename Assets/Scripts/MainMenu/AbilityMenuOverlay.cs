@@ -740,7 +740,7 @@ public sealed class AbilityMenuOverlay : MonoBehaviour
     private static Text CreateText(string name, Transform parent, Vector2 anchoredPosition, Vector2 size, string value, int fontSize, Font font, TextAnchor anchor, Color color)
     {
         RectTransform rect = CreateRect(name, parent, anchoredPosition, size);
-        Text text = rect.gameObject.AddComponent<Text>();
+        Text text = rect.gameObject.AddComponent<ResourceKeywordLegacyText>();
         text.text = value;
         text.font = font;
         text.fontSize = fontSize;

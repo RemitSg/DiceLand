@@ -293,6 +293,7 @@ public class MapCalamityOverlay : MonoBehaviour
         text.overflowMode = TextOverflowModes.Ellipsis;
         text.richText = richText;
         text.alignment = TextAlignmentOptions.TopLeft;
+        ResourceKeywordText.Attach(text);
         return text;
     }
 
