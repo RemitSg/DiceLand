@@ -1,0 +1,54 @@
+DiceLand 商店面板重制参考图
+日期：2026-11-02（Asia/Singapore）
+方式：内置 image_gen；未使用 CLI/API 密钥。
+用户要求：根据现有项目美术风格生成一张商店页面优化重制参考图。
+方案：深绿底、黄铜细框、象牙色正文；左侧双列商品卡片，右侧完整物品详情与购买区，保留刷新、购买、关闭；使用既有物品图标方向，不增加商人立绘。选中项与售罄项分开表现，金币使用统一金色和硬币图标，避免金底金字。
+范围：仅视觉参考，未接入正式 UGUI，不修改商品配置、价格、遗物效果、玩法或存档。
+样例说明：六张商品卡、价格、50 金币钱包及售罄状态用于演示布局，不代表实际投放或新增商品；未作为真实资产目录记录。“旅人的水壶”的名称、普通稀有度、效果及附加文案已参考现有 Assets/Data/Relics/029 旅人的水壶/旅人的水壶.asset，其图标作为参考输入。
+正式参考图：docs/visuals/merchant-panel-concept-20261102.png
+选定原图：C:/Users/Karmas/.codex/generated_images/01a19ad1-f00b-7572-9c33-59ec99649089/exec-ab134d3a-db16-4473-a02e-2f3504a2f974.png
+
+输入参考（顺序与原始提示词对应）：
+1. C:/DiceLand/outputs/agent-battle/resource-keywords-20261102/merchant-keywords.png
+2. C:/DiceLand/docs/visuals/map-page-concept-20261102.png
+3. C:/DiceLand/docs/visuals/event-panel-reading-concept-20261102.png
+4. C:/DiceLand/Assets/Data/Relics/029 旅人的水壶/29 旅人的水壶.png
+
+原始提示词：
+Use case: ui-mockup.
+Create ONE polished, implementation-ready redesign reference for the DiceLand shop screen, in the same ultrawide landscape mobile-game aspect ratio as the references (about 2.17:1). Redesign the existing shop modal in Image 1 into a coherent premium fantasy game interface; this is an in-game UI screen, not a poster.
+
+INPUT ROLES:
+Image 1: edit target and current functional shop reference. Preserve the surrounding forest map, resource HUD, party card, map icons, top-right menu and their general placement.
+Image 2: visual style reference for the established forest map, hand-painted icons, brown-haired chibi pawn, aged brass trim and ornamental restraint.
+Image 3: visual style reference for the latest approved deep-green and brass event panel, clear Chinese typography and reusable UI construction.
+Image 4: actual existing selected relic icon, a worn gray metal water flask with cork, side handle and rope around the body. Reuse this design for “旅人的水壶”, rather than creating a new object.
+
+ART DIRECTION:
+Match the existing project's hand-painted fantasy adventure UI. Almost opaque matte forest-green panels, subtle leather/paper texture, warm ivory text, fine aged-brass borders with modest angular corners, quiet jade selected fill and a crisp golden selected outline. Warm daylight forest ruins remain visible around the modal but darkened behind it. Keep labels crisp and legible, with comfortable line height and strong hierarchy. Decorations stay near the outer corners and dividers; they must not compete with prices or descriptions. No heavy filigree, no neon glow, no flat modern web dashboard.
+
+COMPOSITION AND FUNCTION:
+Make the shop larger and more orderly than the current tiny dark rectangle. Place the large framed modal just to the right of the left-hand HUD, using roughly 73% of the screen width and 88% of its height, with comfortable edge margins. Preserve recognizable game context around it. Inside use one concise header, then two balanced columns, then a compact footer.
+1. Header: a small storefront emblem followed by large Chinese title “林间商店”, a thin brass divider, and at the upper right a dark inset wallet displaying a stack-of-coins icon and “50 金币”. A restrained close X in the top-right corner of the modal.
+2. Left column about 55% of content width: heading “在售商品” and a 2-column by 3-row grid of six generously sized product cards. Each card has an existing-style painted item icon, readable Chinese name, a small type/rarity label, and a separate bottom price line with a coin icon. No giant empty squares. The top-left card is selected: jade-green interior, thin gold outline and a small selection check in its corner. Other cards have quiet brass borders. Product cards should feel like framed inventory slots with room for words, not illustrated trading cards.
+Use these presentation-only samples:
+- “旅人的水壶” / “普通遗物” / coin icon “25 金币” — selected, use Image 4 flask
+- “铁矿石” / “材料” / coin icon “6 金币” — rough iron ore icon
+- “野兽毛皮” / “材料” / coin icon “10 金币” — rolled hide icon
+- “魔力结晶” / “材料” / coin icon “20 金币” — small muted-blue crystal icon
+- “旧布料” / “材料” / “已售罄” — folded cloth icon, subdued sold-out state and disabled price
+- “锻造图纸” / “图纸” / coin icon “18 金币” — rolled parchment icon
+3. Right column about 45%, separated by a fine vertical brass rule: a moderate framed flask icon beside the name “旅人的水壶”; beneath it a small “遗物 · 普通” metadata line. Then a clear “物品效果” section with ample space for a real multiline description in warm ivory:
+“进入一个未被探索的商店格时，队伍恢复 10% 生命。”
+Below a subtle divider, smaller muted-ivory flavor text:
+“壶身磕满旧路的凹痕，余下的水总够撑到下一盏灯。”
+The detail pane must have enough width and calm reading space for longer actual descriptions. Do not turn it into an oversized illustration.
+Near the bottom of this detail pane, make a dark inset purchase summary labelled “购买价格”, with a coin icon and large “25 金币”, followed by a clear moderate-size golden primary button labelled exactly “购买” in dark text. Keep gold resource text on a DARK surface, never gold-on-gold.
+4. Footer under the goods column: an outlined dark-green button with a refresh arrow icon, “刷新商品”, and a coin icon with “5 金币”. Show a quiet secondary “离开商店” button near the lower right without confusing it with the primary purchase button. Preserve current browsing, selection, refresh, purchase and close semantics. No shopping cart, sell mode, quantity stepper, search box, new categories, currencies, subscriptions or additional game systems.
+
+TEXT AND RESOURCE RULES:
+Use simplified Chinese, correct characters, clean readable type rather than calligraphy. All literal text above should be rendered accurately. Every “金币” in the shop uses gold #F0CC6B and its coin icon together. If any “行动点” appears outside the top-left HUD, use green #9EDBB8 with a footprint icon; any “钥匙” outside the top-left HUD uses pale blue #B8D9E6 with a key icon. Avoid duplicating inline icons in the already illustrated top-left HUD.
+Maintain surrounding HUD sample values: action resources 7/7, calamity 0, difficulty 简单, keys 0/2, Chara Lv.1 with HP 17/17 and XP 0/10. Align the top-left money value to 50 so it matches the shop wallet. Keep the left HUD visually secondary under the modal dimming.
+
+AVOID:
+No merchant character portrait, no bespoke shop-scene illustration, no large landscape art inside the panel. No device mockup, watermark, designer annotations, arrows pointing to features, English captions, fake tiny text, before/after comparison, multiple screens or alternative variants. This is ONE complete finished shop-screen reference with the central UI as the focal point.
