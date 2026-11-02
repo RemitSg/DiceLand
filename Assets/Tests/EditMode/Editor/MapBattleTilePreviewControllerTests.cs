@@ -272,15 +272,17 @@ public class MapBattleTilePreviewControllerTests
     }
 
     [Test]
-    public void EveryPreview_UsesUnifiedFastEntryDuration()
+    public void EveryPreview_UsesConfiguredViewDuration()
     {
+        SetPrivateField(view, "previewEnterDuration", 0.72f);
         controller.BeginPreview(Context(), true);
-        Assert.AreEqual(0.18f, GetPrivateField<float>(controller, "lastEnterDuration"), 0.001f);
+        Assert.AreEqual(0.72f, GetPrivateField<float>(controller, "lastEnterDuration"), 0.001f);
         controller.CancelImmediate();
 
+        SetPrivateField(view, "previewEnterDuration", 0.48f);
         controller.BeginPreview(Context(), true);
 
-        Assert.AreEqual(0.18f, GetPrivateField<float>(controller, "lastEnterDuration"), 0.001f);
+        Assert.AreEqual(0.48f, GetPrivateField<float>(controller, "lastEnterDuration"), 0.001f);
     }
 
     [Test]

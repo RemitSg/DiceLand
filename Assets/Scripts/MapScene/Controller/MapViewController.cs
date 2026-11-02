@@ -21,8 +21,8 @@ public class MapViewController : MonoBehaviour
     private const float DefaultPreviewBaseDistance = 7f;
     private const float DefaultPreviewApproachOffset = 1.2f;
     private const float DefaultPreviewFieldOfView = 34f;
-    private const float DefaultPreviewEnterDurationValue = 0.18f;
-    private const float DefaultPreviewExitDurationValue = 0.20f;
+    private const float DefaultPreviewEnterDurationValue = 0.60f;
+    private const float DefaultPreviewExitDurationValue = 0.46f;
 
     [Header("Zoom")]
     [SerializeField] private float minZoomSize = 3f;
@@ -51,8 +51,8 @@ public class MapViewController : MonoBehaviour
     [SerializeField] private float previewBaseDistance = 7f;
     [SerializeField] private float previewApproachOffset = 1.2f;
     [SerializeField] private float previewFieldOfView = 34f;
-    [SerializeField] private float previewEnterDuration = 0.18f;
-    [SerializeField] private float previewExitDuration = 0.20f;
+    [SerializeField] private float previewEnterDuration = DefaultPreviewEnterDurationValue;
+    [SerializeField] private float previewExitDuration = DefaultPreviewExitDurationValue;
 
     private Camera targetCamera;
     private BoardManager boardManager;
@@ -240,7 +240,7 @@ public class MapViewController : MonoBehaviour
                 yield break;
 
             float t = Mathf.Clamp01(elapsed / safeDuration);
-            ApplyInterpolatedCameraState(perspectiveStart, destination, MapBattleTilePreviewMotion.Evaluate(t), false);
+            ApplyCameraState(InterpolateBattlePreviewState(perspectiveStart, destination, MapBattleTilePreviewMotion.Evaluate(t)));
             yield return null;
             elapsed += Mathf.Max(MinimumTransitionDeltaTime, Time.unscaledDeltaTime);
         }
@@ -274,7 +274,7 @@ public class MapViewController : MonoBehaviour
                 yield break;
 
             float t = Mathf.Clamp01(elapsed / safeDuration);
-            ApplyInterpolatedCameraState(start, perspectiveDestination, MapBattleTilePreviewMotion.Evaluate(t), false);
+            ApplyCameraState(InterpolateBattlePreviewState(start, perspectiveDestination, MapBattleTilePreviewMotion.Evaluate(t)));
             yield return null;
             elapsed += Mathf.Max(MinimumTransitionDeltaTime, Time.unscaledDeltaTime);
         }
@@ -429,18 +429,63 @@ public class MapViewController : MonoBehaviour
         return operationGeneration == previewOperationGeneration;
     }
 
-    private void ApplyInterpolatedCameraState(
+    public static MapCameraPreviewState InterpolateBattlePreviewState(
         MapCameraPreviewState start,
         MapCameraPreviewState destination,
-        float t,
-        bool orthographic)
+        float progress)
     {
-        targetCamera.orthographic = orthographic;
-        targetCamera.transform.SetPositionAndRotation(
-            Vector3.LerpUnclamped(start.position, destination.position, t),
-            Quaternion.SlerpUnclamped(start.rotation, destination.rotation, t));
-        targetCamera.orthographicSize = Mathf.LerpUnclamped(start.orthographicSize, destination.orthographicSize, t);
-        targetCamera.fieldOfView = Mathf.LerpUnclamped(start.fieldOfView, destination.fieldOfView, t);
+        float t = Mathf.Clamp01(progress);
+        if (t <= 0f)
+            return start;
+        if (t >= 1f)
+            return destination;
+
+        MapCameraPreviewState state = new MapCameraPreviewState
+        {
+            position = Vector3.LerpUnclamped(start.position, destination.position, t),
+            rotation = Quaternion.SlerpUnclamped(start.rotation, destination.rotation, t),
+            orthographic = false,
+            orthographicSize = Mathf.LerpUnclamped(start.orthographicSize, destination.orthographicSize, t),
+            fieldOfView = Mathf.LerpUnclamped(start.fieldOfView, destination.fieldOfView, t)
+        };
+
+        if (!TryGetBoardFocus(start, out Vector3 startFocus, out float startDistance) ||
+            !TryGetBoardFocus(destination, out Vector3 endFocus, out float endDistance))
+        {
+            return state;
+        }
+
+        // Move the focus across the board while orbiting around it. Interpolating
+        // position and FOV independently makes the zoom surge and the subject drift.
+        float startLens = Mathf.Tan(Mathf.Clamp(start.fieldOfView, 1f, 179f) * Mathf.Deg2Rad * 0.5f);
+        float endLens = Mathf.Tan(Mathf.Clamp(destination.fieldOfView, 1f, 179f) * Mathf.Deg2Rad * 0.5f);
+        float lens = InterpolatePositiveScale(startLens, endLens, t);
+        float framing = InterpolatePositiveScale(startDistance * startLens, endDistance * endLens, t);
+        Vector3 focus = Vector3.LerpUnclamped(startFocus, endFocus, t);
+        state.position = focus - state.rotation * Vector3.forward * (framing / lens);
+        state.fieldOfView = 2f * Mathf.Atan(lens) * Mathf.Rad2Deg;
+        return state;
+    }
+
+    private static bool TryGetBoardFocus(MapCameraPreviewState state, out Vector3 focus, out float distance)
+    {
+        Vector3 forward = state.rotation * Vector3.forward;
+        focus = Vector3.zero;
+        distance = 0f;
+        if (!IsFinite(forward.z) || Mathf.Abs(forward.z) <= MinimumPlaneIntersectionDistance)
+            return false;
+
+        distance = -state.position.z / forward.z;
+        if (!IsFinite(distance) || distance <= MinimumPlaneIntersectionDistance)
+            return false;
+
+        focus = state.position + forward * distance;
+        return true;
+    }
+
+    private static float InterpolatePositiveScale(float start, float end, float t)
+    {
+        return Mathf.Exp(Mathf.LerpUnclamped(Mathf.Log(start), Mathf.Log(end), t));
     }
 
     private void ApplyCameraState(MapCameraPreviewState state)

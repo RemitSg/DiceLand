@@ -353,13 +353,13 @@ public class MapBattleTilePreviewCameraTests
 
         enterDuration.SetValue(view, float.NaN);
         exitDuration.SetValue(view, float.PositiveInfinity);
-        Assert.AreEqual(0.18f, view.DefaultPreviewEnterDuration);
-        Assert.AreEqual(0.20f, view.DefaultPreviewExitDuration);
+        Assert.AreEqual(0.60f, view.DefaultPreviewEnterDuration);
+        Assert.AreEqual(0.46f, view.DefaultPreviewExitDuration);
 
         enterDuration.SetValue(view, -1f);
         exitDuration.SetValue(view, float.NegativeInfinity);
-        Assert.AreEqual(0.18f, view.DefaultPreviewEnterDuration);
-        Assert.AreEqual(0.20f, view.DefaultPreviewExitDuration);
+        Assert.AreEqual(0.60f, view.DefaultPreviewEnterDuration);
+        Assert.AreEqual(0.46f, view.DefaultPreviewExitDuration);
     }
 
     [Test]
@@ -373,6 +373,44 @@ public class MapBattleTilePreviewCameraTests
 
         Assert.AreEqual(0f, view.DefaultPreviewEnterDuration);
         Assert.AreEqual(1.25f, view.DefaultPreviewExitDuration);
+    }
+
+    [Test]
+    public void PreviewTransition_KeepsFocusOnBoardAndChangesMagnificationEvenly()
+    {
+        MapCameraPreviewState start = view.CaptureCameraState();
+        start.orthographic = false;
+        start.fieldOfView = MapViewController.CalculateEquivalentPerspectiveFieldOfView(
+            start.position, start.rotation, start.orthographicSize, start.fieldOfView);
+        Vector3 target = new Vector3(2f, 3f, 0f);
+        view.ApplyBattlePreviewImmediate(Vector3.zero, target);
+        MapCameraPreviewState end = view.CaptureCameraState();
+        float startFraming = BoardFraming(start);
+        float endFraming = BoardFraming(end);
+        Vector3 startFocus = BoardFocus(start);
+
+        foreach (float progress in new[] { 0f, 0.1f, 0.25f, 0.5f, 0.75f, 0.9f, 1f })
+        {
+            MapCameraPreviewState sample = MapViewController.InterpolateBattlePreviewState(start, end, progress);
+            Assert.Less(Vector3.Distance(Vector3.Lerp(startFocus, target, progress), BoardFocus(sample)), 0.0001f);
+            float expectedFraming = Mathf.Exp(Mathf.Lerp(Mathf.Log(startFraming), Mathf.Log(endFraming), progress));
+            Assert.AreEqual(expectedFraming, BoardFraming(sample), 0.0001f);
+            Assert.IsFalse(sample.orthographic);
+        }
+        MapCameraPreviewState middle = MapViewController.InterpolateBattlePreviewState(start, end, 0.5f);
+        Assert.Less(Quaternion.Angle(Quaternion.Slerp(start.rotation, end.rotation, 0.5f), middle.rotation), 0.01f);
+    }
+
+    private static Vector3 BoardFocus(MapCameraPreviewState state)
+    {
+        Vector3 forward = state.rotation * Vector3.forward;
+        return state.position + forward * (-state.position.z / forward.z);
+    }
+
+    private static float BoardFraming(MapCameraPreviewState state)
+    {
+        float distance = Vector3.Distance(state.position, BoardFocus(state));
+        return distance * Mathf.Tan(state.fieldOfView * Mathf.Deg2Rad * 0.5f);
     }
 
     private void AssertCameraStateEquals(MapCameraPreviewState expected)

@@ -3,11 +3,11 @@ using NUnit.Framework;
 public class MapBattleTilePreviewMotionTests
 {
     [TestCase(0f, 0f)]
-    [TestCase(0.25f, 0.15625f)]
+    [TestCase(0.25f, 0.103515625f)]
     [TestCase(0.5f, 0.5f)]
-    [TestCase(0.75f, 0.84375f)]
+    [TestCase(0.75f, 0.896484375f)]
     [TestCase(1f, 1f)]
-    public void Evaluate_ReturnsCubicBezierProgress(float t, float expected)
+    public void Evaluate_ReturnsSmoothProgress(float t, float expected)
     {
         Assert.AreEqual(expected, MapBattleTilePreviewMotion.Evaluate(t), 0.000001f);
     }
@@ -28,5 +28,25 @@ public class MapBattleTilePreviewMotionTests
 
         Assert.Less(startStep, middleStep);
         Assert.Less(endStep, middleStep);
+    }
+
+    [Test]
+    public void Evaluate_EasesAccelerationAtBothEndsWithoutOvershoot()
+    {
+        const float step = 0.001f;
+        float startAcceleration = (MapBattleTilePreviewMotion.Evaluate(2f * step)
+            - 2f * MapBattleTilePreviewMotion.Evaluate(step)) / (step * step);
+        float endAcceleration = (MapBattleTilePreviewMotion.Evaluate(1f - 2f * step)
+            - 2f * MapBattleTilePreviewMotion.Evaluate(1f - step) + 1f) / (step * step);
+        Assert.Less(System.Math.Abs(startAcceleration), 0.2f);
+        Assert.Less(System.Math.Abs(endAcceleration), 3f); // Float precision near 1.
+
+        float previous = 0f;
+        for (int i = 1; i <= 100; i++)
+        {
+            float value = MapBattleTilePreviewMotion.Evaluate(i / 100f);
+            Assert.That(value, Is.InRange(previous, 1f));
+            previous = value;
+        }
     }
 }

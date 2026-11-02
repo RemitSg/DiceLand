@@ -67,6 +67,43 @@ public sealed class MapBattleTilePreviewPlayModeTests
     }
 
     [UnityTest]
+    public IEnumerator AnimatedPreview_UsesConfiguredTimingAndRestoresWhileTimeIsPaused()
+    {
+        float previousTimeScale = Time.timeScale;
+        Vector3 originalPosition = fixture.Camera.transform.position;
+        Quaternion originalRotation = fixture.Camera.transform.rotation;
+        fixture.ConfigureTransitionDurations(0.32f, 0.24f);
+        try
+        {
+            Time.timeScale = 0f;
+            float started = Time.realtimeSinceStartup;
+            Assert.IsTrue(fixture.BeginPreview(immediate: false));
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.AreEqual("Entering", fixture.StateName);
+            Assert.Greater(Vector3.Distance(originalPosition, fixture.Camera.transform.position), 0.001f);
+
+            yield return fixture.WaitForState("Ready", 2f);
+            Assert.GreaterOrEqual(Time.realtimeSinceStartup - started, 0.30f);
+
+            started = Time.realtimeSinceStartup;
+            fixture.Cancel(immediate: false);
+            yield return new WaitForSecondsRealtime(0.08f);
+            Assert.AreEqual("Exiting", fixture.StateName);
+            yield return fixture.WaitForState("Hidden", 1f);
+            Assert.GreaterOrEqual(Time.realtimeSinceStartup - started, 0.22f);
+            Assert.Less(Vector3.Distance(originalPosition, fixture.Camera.transform.position), 0.001f);
+            Assert.Less(Quaternion.Angle(originalRotation, fixture.Camera.transform.rotation), 0.01f);
+            Assert.IsTrue(fixture.Camera.orthographic);
+            Assert.AreEqual(5, fixture.CurrentActionPoints);
+            Assert.AreEqual(fixture.OriginCoordinate, fixture.PlayerCoordinate);
+        }
+        finally
+        {
+            Time.timeScale = previousTimeScale;
+        }
+    }
+
+    [UnityTest]
     public IEnumerator BattleHandoff_KeepsPreviewCameraUntilSceneTransitionTakesOver()
     {
         fixture.CommitResultName = "BattleHandoffStarted";
@@ -216,6 +253,12 @@ internal sealed class MapBattleTilePreviewPlayModeFixture
     public bool BeginPreview(bool immediate)
     {
         return (bool)Invoke(controller, "BeginPreview", currentContext, immediate);
+    }
+
+    public void ConfigureTransitionDurations(float enter, float exit)
+    {
+        SetField(view, "previewEnterDuration", enter);
+        SetField(view, "previewExitDuration", exit);
     }
 
     public void Confirm()

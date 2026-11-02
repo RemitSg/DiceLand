@@ -12,8 +12,6 @@ public enum MapBattleTilePreviewCommitResult
 [DisallowMultipleComponent]
 public sealed class MapBattleTilePreviewController : MonoBehaviour
 {
-    private const float PreviewEnterDuration = 0.18f;
-    private const float PreviewExitDuration = 0.20f;
     private const float PreviewZoom = 1.75f;
 
     private MapViewController mapViewController;
@@ -77,7 +75,7 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
         currentContext = context;
         commitInvoked = false;
         State = MapBattleTilePreviewState.Entering;
-        lastEnterDuration = PreviewEnterDuration;
+        lastEnterDuration = mapViewController.DefaultPreviewEnterDuration;
         overlay.Hide();
 
         Vector3 origin = playerMapController.PawnWorldPosition;
@@ -220,11 +218,12 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
 
     private IEnumerator PlayExitRoutine(int generation)
     {
+        float duration = mapViewController != null ? mapViewController.DefaultPreviewExitDuration : 0f;
         IEnumerator cameraRoutine = mapViewController != null
-            ? mapViewController.RestoreBattlePreviewRoutine(PreviewExitDuration)
+            ? mapViewController.RestoreBattlePreviewRoutine(duration)
             : null;
         IEnumerator pawnRoutine = playerMapController != null
-            ? playerMapController.RestoreBattleTilePreviewRoutine(PreviewExitDuration)
+            ? playerMapController.RestoreBattleTilePreviewRoutine(duration)
             : null;
 
         IEnumerator combined = RunFrameOnlyParallel(cameraRoutine, pawnRoutine);
