@@ -176,9 +176,28 @@ Important scripts:
   - camera closeups, movement, clash effects, hit effects, custom effect prefabs, status tick effects
   - edit this for combat presentation and cinematic timing
 
+- `BattleCloseupVisibility.cs`
+  - per-shot spectator renderer suppression, including weapons and newly spawned visuals; restores original culling flags on replacement, completion, disable and destruction
+  - presentation owns the lifetime; feedback hides spectator unit UI and contact shadows follow the same visual state without disabling combatants
+
 - `BattleFeedbackSystem.cs`
   - health bars, status icons, status tooltips, damage popups, heal popups, death feedback
   - edit this for in-battle UI feedback
+
+- `BattleHealthBarLook.cs`
+  - presentation of the existing health/bar-buffer rectangles and numeric text; retains configured team fill colors
+  - minimum readable dimensions, metal sockets and owned TMP outlines without changing HP or status input
+
+- `BattleHudLook.cs` / `BattleHudOrnament.cs`
+  - safe-area energy/round layout, sliced painted panel sprites and native UGUI glass/gem geometry
+  - Resources/BattleUI/ForestEnergyPlate and ForestRoundPlate are blank backgrounds; text and energy segments remain dynamic
+  - sliced-frame scaling accounts for Image.pixelsPerUnit as well as imported sprite height, preserving the caps after texture resizing
+  - shared energy services still own reservations and temporary/overflow segments; decorations do not block input
+
+- `BattleActionButtonLook.cs`
+  - applies the two Resources/BattleUI ready-button sprites through the existing sprite switcher; restores original art and rect when disabled
+  - proportional safe-area layout with bottom clearance; hides only the button's canvas group while BattleButton.IsResolvingCombat is true and restores its previous visibility/input flags afterward
+  - BattleButton exposes a read-only resolving flag; action execution and input handlers retain their existing owners
 
 - `BattleSettlementOverlay.cs`
   - victory/defeat settlement UI
@@ -207,6 +226,62 @@ Important scripts:
 - `BattleActorVisualUtility.cs`
   - utility for visual bounds and effect anchor calculations
   - used by closeup framing and effect positioning
+  - resolves actual actor roots through runtime spawn containers; also supports visual-only preview actors
+
+- `BattleActorLightingController.cs`
+  - forest illustration surface lighting based on current sprite world bounds
+  - owns temporary per-sprite materials, preserves external overrides and releases them on disable or preview cleanup
+  - changes visual shading only; see `docs/visuals/forest-battle-look.md`
+
+- `Assets/Assets/Shaders/BattleForestSpriteLighting.hlsl` / `Lit.shader`
+  - broad painted surface normals, warm key and cool/ground indirect fill for forest actor materials
+  - indirect fill uses a saturating luminance response gated by forest surface weight; no added texture samples or passes
+  - forest pigment response lifts low/mid albedo with hue-preserving gain and peak headroom, while reducing the legacy fixed dark floor to recover fold contrast
+  - `_ForestPigmentStrength` defaults to 1 but is gated by the forest/surface weight; 0 reproduces the prior response, with identical fields in all four material buffers
+  - `_ForestHighlightStrength` defaults to 1 and gates a hue-preserving HDR shoulder above peak 0.9 before scene tonemapping; dark lighting and the separate narrow alpha-edge light retain their existing response
+  - shared lighting guards zero brightness before normalization so pure black does not produce NaN
+  - the two-sided sprite ShadowCaster faces its bias normal toward the light before URP ApplyShadowBias, avoiding backlit self-shadow stripes while retaining alpha-clipped and mirrored cast silhouettes
+
+- `BattleLookController.cs`
+  - per-camera actor focus, aspect-aware overview framing and the sharp world-UI overlay camera
+  - mobile/Medium Gaussian radius differs for overview and closeup; desktop High uses Bokeh
+  - saved overview pitch is now 3 degrees; the authoring helper and foreground heights match this shallow battle-lane composition, while the distant painting retains its authored world pose
+
+- `BattleForestStageController.cs`
+  - owns decorative terrain and the forest lighting/opening shader globals, restoring earlier values on release
+  - shares projected canopy-opening coordinates with `BattleLookPreviewTools` so floor/actor light pools and authored shafts agree
+
+- `Assets/Assets/Shaders/BattleForestFoliage.shader`
+  - preserves the authored cutout/depth and breeze, with optional painted shadow fill; zero alpha keeps other foliage materials neutral
+  - the ancient-tree layer uses `SunlitCanopyTerracesComplete.png`, position (0.2, 6.0632496, 12), uniform scale 1.65 and bottom height -1.7
+  - keep its saved scene, Forest Foliage material and `BattleLookPreviewTools` composition/fill settings aligned; original art remains available
+  - the shared ancient-tree/outer-grove material uses highlight gain 1 and olive-grey painted shadow fill (0.36, 0.40, 0.32, 0.30); near and margin foliage retain their separate materials
+  - both near foreground clusters and both outer groves use `MossFernForegroundLow.png`, a low painted moss/fern/blue-mushroom cluster; `BattleLookPreviewTools.ForegroundPath` must match all four saved SpriteRenderer references
+  - this sibling retains the original 1536x1024 dimensions, PPU100, world bounds and import settings; near softness/cutout remain material values 4/0.5. Original `MossFernForeground.png` is preserved; built-in image edit inputs and exact prompt are in `docs/visuals/forest-low-foreground-prompt.txt`
+
+- `Assets/Assets/Shaders/BattleForestSurface.hlsl`
+  - stone terrace and woodland share world-space paving scale, earthen-island mask and lighting across their join
+  - `ForestTerracePavingSoft.png` supplies quieter painted stone faces; the previous paving asset remains available
+  - both saved surface materials and `BattleLookPreviewTools` use paving scale 0.09 and growth 0.55; shader defaults 0.07/0 retain the earlier unbroken layout
+  - both use paving texture weight 0.8 and stone color (0.50, 0.47, 0.36), softening the painted paving contrast; keep all shared top-surface colors, textures and scalar values identical across the terrace/woodland join now that the fallback color contributes
+  - the stone shader uses `_LowerStepGain` (default 1, saved terrace material 0.35) below the combat plane, blending across world heights -0.24 to 0.045; the combat-plane lighting remains unchanged
+
+- `Assets/Assets/Shaders/BattleForestBackdrop.shader`
+  - mirrored distant painting, local aerial perspective and feathered painted waterfall flow
+  - the saved backdrop is shifted 12 world units left at its original depth, rotation and scale, exposing a cascade through the twin-tree opening; keep that composition offset in `BattleLookPreviewTools`
+  - waterfall UV regions belong to the current painting; keep its material and `BattleLookPreviewTools` settings aligned when replacing it
+
+- `Assets/Assets/Shaders/BattleForestAtmosphere.shader`
+  - mode 0 adds optional `_ShaftStriation` (default 0): three unequal soft ribbons with spacing seeded from each shaft's object origin, retaining the existing longitudinal fade and depth intersection. Camera cuts do not reseed that spacing
+  - `Canopy Light Shafts.mat` and `BattleLookPreviewTools` use detail 0.6 and alpha 0.18; zero detail reproduces the old broad shape. The same four meshes, sun alignment and shared ground-opening coordinates are retained; extra ALU cost remains unmeasured on devices
+  - modes 0/1/2 retain shafts, low mist and dust; mode 3 draws a curved, feathered leaf silhouette with two lit facets and a vein, using existing depth softness
+  - leaf flutter phase uses stable particle vertex blue, so camera cuts do not reseed it; no leaf texture is required
+  - `BattleLookPreviewTools.AddFallingLeaves` authors the saved `Sunlit drifting leaves` system and `Sunlit Falling Leaves.mat`: world simulation, seed 20261101, prewarm, 0.75/s, lifetime 10–14s and a 12-particle cap
+  - this adds a particle renderer and leaf-branch work; device performance remains to be measured
+
+- `BattleContactShadowController.cs`
+  - independent soft ground ellipses for each actual combatant, including units inside spawn containers
+  - follows movement and visibility; releases runtime shadow geometry on disable or preview cleanup
 
 - `BattleEnemyDetailClickHandler.cs`
   - click-to-open enemy detail panel on battle sprites

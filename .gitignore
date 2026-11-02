@@ -105,3 +105,12 @@ InitTestScene*.unity*
 /.worktrees
 Packages/manifest.json
 Packages/packages-lock.json
+
+# Local playtests and validation evidence; formal catalogs remain versioned.
+/outputs/agent-battle/
+/outputs/merge-dev-*/
+__pycache__/
+/outputs/relic-catalog/*.inspect.ndjson
+/outputs/relic-catalog/*-preview.png
+/outputs/relic-catalog/relics-raw.json
+/tools/relic-catalog/node_modules/

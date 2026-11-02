@@ -1,0 +1,17 @@
+DiceLand — low moss, fern and blue mushroom foreground
+Date: 2026-11-01
+Mode: built-in image_gen image edit; transparent_background=true. One generated candidate.
+Edit target: Assets/Assets/Textures/Environments/Forest/MossFernForeground.png
+Style/layout reference: docs/visuals/forest-target-reference.png
+Selected production asset: Assets/Assets/Textures/Environments/Forest/MossFernForegroundLow.png
+Generated PNG copied byte-for-byte; alpha retained. Original asset preserved.
+Selected SHA256: C8BA7A4591523591CF66D00D9CB18748D5D48428F9AA2B83F6070B39FF731790
+
+Final prompt (verbatim):
+Use case: style-transfer.
+Asset type: production transparent foreground sprite for a painterly 2.5D side-view fantasy battle.
+Input images: Image 1 is the edit target, the existing moss/fern/blue-mushroom foreground asset. Image 2 is a style and layout reference ONLY; use its lower corner props, never its characters or interface.
+Primary request: repaint the target as a LOW WIDE foreground cluster, with simpler broad painted stone planes, a twisted root, restrained ferns and three luminous cyan-blue mushrooms. Preserve the same subjects and cool shadow palette, but reduce the towering fern-to-mushroom height difference. The mossy stones should form a shallow irregular arch across the bottom third, with readable rounded broken silhouettes instead of vertical wall faces. Moderate fern fronds at the left taper into low leaves at the right.
+Composition: one standalone cluster on a 3:2 landscape canvas. Keep all silhouettes inside generous transparent margins. Most of the upper half is empty transparent space. Place a clear small blue mushroom cap around 52% across and 52% down the canvas, perched close to the central stone top; another smaller blue cap around 65% across and 70% down, and a third near 82% across and 78% down. Keep the mushrooms readable among the fronds, with short stems. These placements let the game crop the outer edge while retaining blue fungi in the frame.
+Style and light: match the reference's broad confident painterly shapes, dark teal foliage, cool grey-violet stone shadows, muted olive moss, selective warm edge glints and vivid blue/cyan mushroom centers. A few small pale-blue cap highlights; no overall yellow haze. Clear larger shapes rather than photographic grit or dense tiny veins. Nearly eye-level view with a very shallow look down. Deliver unblurred art; the game handles depth softness.
+Constraints: genuinely transparent background around every silhouette and opening. No colored glow or mist outside the props, no opaque ground rectangle, no black matte, no checkerboard, no landscape, trees, sky, waterfalls, characters, monsters, interface, lettering, frame or watermark. Keep the original asset unchanged; this is a separate revised foreground.

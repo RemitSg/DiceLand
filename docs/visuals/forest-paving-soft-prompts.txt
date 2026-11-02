@@ -1,0 +1,19 @@
+Forest terrace paving — built-in image_gen prompt set, 2026-10-31
+
+Final workspace asset: Assets/Assets/Textures/Environments/Forest/ForestTerracePavingSoft.png
+Final source: exec-abbd26bd-ea36-4804-9b5c-d31984f12b9e.png
+Earlier source: exec-bab0d7bc-89b2-485e-89c9-4e5ef1c14d72.png (retained in the generated-image directory; not used by materials)
+No PNG pixel editing; final image copied byte-for-byte into the project. The original ForestTerracePaving.png is retained.
+
+Pass 1 — input 1: original paving; input 2: docs/visuals/forest-target-reference.png
+
+Use case: style-transfer.
+Asset type: production seamless square albedo texture for a flat horizontal forest-ruin battle terrace in a painterly fantasy game.
+Input images: Image 1 is the existing top-down paving texture to refine. Image 2 is ONLY a style/material reference: look at the worn stone-and-moss ground under the characters, ignore all characters, scenery and UI.
+Primary request: repaint image 1 into quieter, flatter, hand-painted worn flagstone paving. Keep the orthographic TOP-DOWN view and the irregular polygonal stone shapes and organic joints, but reduce the fine noisy mottling by about two thirds. Use confident broad gouache color planes and a few chipped painted edge accents. Stone faces are pale muted warm grey, dusty sandstone and occasional cool lavender-grey, with restrained olive moss and sparse short grass in irregular earth-filled seams. About 75 percent stone faces, 25 percent earthen and mossy joints. Avoid deep black grout and avoid sharp raised bevels. The stones sit flush in the earth. Even flat diffuse illumination, no sunbeams or cast shadows or vignette; the game supplies lighting. A varied natural rhythm of medium and small stones with occasional broader quiet areas, no conspicuous hero stone or repeated diagonal motif. All four edges must tile seamlessly with matching scale and brightness, no border. Opaque square image filled entirely by the top-down material, useful as a repeating ground texture. No perspective, horizon, plants above ankle height, flowers, characters, trees, props, UI, text, logo or watermark.
+
+Pass 2 (selected) — input 1: pass 1 output; input 2: same target reference
+
+Use case: style-transfer. Asset type: seamless square TOP-DOWN diffuse paving texture for the ground plane in a hand-painted fantasy game.
+Image 1 is the texture to revise. Image 2 is a style reference ONLY for the flat broken flagstones under the characters.
+Make one specific strong change to image 1: simplify its rendering into LARGE QUIET FLAT PAINTED SHAPES. Remove the dense small mottled chips, diagonal streaks, tiny flecks and raised white bevels covering the stone faces. Each stone face should have only 3 to 5 broad connected color planes with soft brush transitions and one or two thin hairline cracks. Retain varied irregular worn polygonal stone outlines, soft earthy olive joints and sparse low moss. Palette is light muted buff and warm grey with a few cool grey planes. The stones are FLAT and flush with the dirt, not raised cobblestones. No pronounced individual stone shadows. Stay stylized 2D gouache illustration with deliberate simplified brush shapes, not realistic material detail and not an oil impasto filter. Brightness and scale consistent across the canvas, perfectly overhead orthographic, tileable across all four edges, no border, fully opaque, no global illumination gradient, no cast shadows, no perspective, no scene, text, objects, characters, tall plants or UI.

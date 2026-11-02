@@ -1,0 +1,23 @@
+Painted ancient-tree midground — built-in image_gen prompt set, 2026-10-31 to 2026-11-01
+
+Final workspace asset: Assets/Assets/Textures/Environments/Forest/SunlitCanopyTerracesComplete.png
+Selected source: exec-4560f506-ce4c-45e8-adc3-d6393cc3cc3f.png
+Pass 1 source: exec-ab924a51-e3a9-44ab-8d94-98063c908965.png (rejected flat crown edge exposed at 4:3)
+Both calls used transparent_background: true. Final PNG copied byte-for-byte into the workspace; original source art and both generated outputs retained. First painting is also preserved in local review evidence, not referenced by the final project.
+
+Pass 1 — input 1: original SunlitCanopyTerraces.png; input 2: docs/visuals/forest-target-reference.png
+
+Use case: style-transfer.
+Asset type: production transparent 16:9 landscape midground sprite for a side-view painterly fantasy battle stage.
+Input images: Image 1 is the edit target, an isolated pair of ancient trees and ruined terrace. Image 2 is the exact style, light and composition reference; use its ancient trees, broken ruins and foliage only, exclude all characters and UI.
+Repaint image 1 with confident luminous storybook/gouache color shapes matching image 2. Preserve its recognizable two twisting ancient trunks, small golden spiral runes, hanging vines, worn low stone ruins and mossy roots, but simplify tiny stippled bark and leaf noise into connected broad painted planes. Keep crisp deliberately painted silhouettes and selective fine accents, not a blurry or defocused filter.
+Composition change: keep the left tree's trunk near 30 percent of canvas width. Bring the right tree's trunk inward to about 65 percent of canvas width instead of far out at 82 percent, matching image 2, with its roots extending naturally toward the right. Maintain an open, TRANSPARENT view between and around the trunks and beyond the low broken ruin wall; this is a cutout foreground/midground layer, not a complete background landscape. Canopy arch across the upper part, organic cropped foliage along top and side edges, low mossy ruin band along the bottom.
+Lighting: much broader sunlit yellow-green leaf clusters and golden bark planes illuminated from upper right, luminous restrained warm rim accents; soft muted olive and cool grey-green painted shadows with readable color, not near-black blue recesses. Warm limestone ruins with broad value groups and sparse cracks. Palette and light should harmonize with image 2. Preserve depth and warm/cool form, avoid neon yellow, photographic micro-detail, repeated noise or excessive tiny flowers.
+Strict invariants: one coherent isolated double-tree-and-ruin sprite filling a 16:9 canvas, roots along the lower edge, consistent frontal side-view perspective. Background genuinely TRANSPARENT, including large openings between branches and above low walls. No painted sky, distant mountains, waterfalls, fog, rays, sun disc, floor extending toward the camera, black or white matte, checkerboard, outline glow outside the shapes, characters, monsters, items, interface, text, border, logo or watermark.
+
+Pass 2 (selected) — input 1: pass 1 output; repair clipped silhouette
+
+Use case: precise-object-edit.
+Asset type: production 16:9 TRANSPARENT cutout midground sprite for a fantasy game.
+Image 1 is the edit target. Fix its clipped outer silhouette, especially the FLAT CUT at the very top of the left tree crown. Complete and reshape the uppermost foliage into natural rounded, irregular leafy tips fully contained inside the canvas. Leave a small clear transparent margin of at least 20 pixels on EVERY outer edge, including above the highest leaf. The entire two-tree-and-ruin silhouette must fit inside the image with NO flat rectangular crop line at the top, bottom, left or right. Slightly compress only the outermost foliage/root tips if needed to make room.
+Preserve the current two twisting trunks, their positions and relative size, the golden spiral runes, broad golden sunlit foliage, muted olive/grey painted shadows, vines, low warm stone ruins, colors, lighting, brushwork and large transparent central opening. Do not alter the scene composition or turn it into a full background. Preserve all genuinely transparent openings between branches and above the ruins. No sky, scenery behind the trees, fog, rays, floor, characters, interface, text, watermark, outlines, glow outside the silhouette, black/white matte or checkerboard. One isolated finished sprite on actual transparent background.
