@@ -1,0 +1,54 @@
+DiceLand 无插画通用事件面板参考图
+日期：2026-11-02（Asia/Singapore）
+方式：内置 image_gen；未使用 CLI/API 密钥。
+用户约束：事件面板不采用专属插画，避免为每个事件单独制作美术。
+范围：仅视觉参考，尚未接入正式 UGUI；不修改事件文案、效果、数值或流程。
+正式参考图：docs/visuals/event-panel-text-concept-20261102.png
+输入参考／编辑目标：docs/visuals/event-panel-concept-20261102.png，保留外围地图和界面风格，重新设计中央事件面板。
+布局：通用标题栏、全宽叙事、纵向文字选项、独立后果预览与确认；选项用序号及通用单选／勾选状态，不使用事件或选项专属图像。
+选定原图：C:/Users/Karmas/.codex/generated_images/01a19a5c-4817-72e0-bb88-e5e13db3fb84/exec-eb1c840f-0096-43ae-9550-a3eb7a8e88f2.png
+
+原始提示词：
+Use case: ui-mockup.
+Edit target: the supplied full DiceLand event-screen concept.
+User correction: event-specific pictures would require too much art production. Redesign the central event popup as an elegant REUSABLE TEXT-ONLY TEMPLATE. There must be NO event illustration or bespoke option artwork anywhere inside the modal.
+
+PRIMARY REQUEST:
+Create a genuinely new text-led composition, not an empty version of the old two-column illustration layout. The panel must work for every event by changing only the title, narrative, choice strings and consequence strings. Make it polished through typography, spacing, subtle material layers, alignment, reusable borders and selection states.
+
+PRESERVE:
+Keep the complete ultra-wide landscape framing, the forest-map art direction and the surrounding dimmed game UI from the input. Underlying HUD remains action points 6/8, calamity 0, gold 0, keys 0/2, difficulty 简单; one Chara Lv.1 party member with 17/17 HP and 0/10 XP. Keep the top-right menu and bottom-right [1,3] event detail. Only the central event-modal design is being reworked. Existing background scenery and existing party portrait outside the modal are allowed; do not add any new artwork or portrait.
+
+NEW MODAL COMPOSITION:
+- A centered, compact, carefully proportioned dark forest-green modal, about 60–64% of screen width and 62–70% of screen height. Reduce its height now that there is no illustration. It must have no conspicuous dead space, empty image slot, vacant left column or fake illustration placeholder.
+- One slim reusable header: large ivory event title “熄灭的营火” at the left; a small restrained text label “旅途事件” at the right; a very thin aged-brass divider below. No header book picture, campfire emblem, decorative event icon, banner illustration or close X.
+- Beneath the header, a full-width narrative area with generous readable line spacing and comfortable side padding, clearly separated from the decisions. Warm ivory Chinese text, quiet slightly inset dark surface, a short subtle gold vertical rule if helpful. Give the two-paragraph story enough room, but don't enlarge it into a giant empty box.
+- Below the story, a compact small label “选择行动” and TWO FULL-WIDTH STACKED CHOICE ROWS with identical geometry and a modest gap. This vertical list should be reusable for different choice counts.
+- Each choice row is text-led: a tiny generic “01” or “02” index at left, a clear medium-large title and the actual effect line underneath, with a generic radio/check circle at the far right. No tent, mug, backpack, relic, campfire, character, item, location or other pictorial icon on these choices.
+- Choice 1 is currently selected. Show that using a thin warm-brass outline, a restrained jade/green inner surface, a small jade check in the right-hand circle and perhaps one thin gold accent rule at the left. It should look tactile and unmistakably selected without glowing.
+- Choice 2 is unselected, with a neutral dark-green surface, a finer muted edge and an empty grey radio circle. Do not use a red danger color or imply an unrecorded cost.
+- At the bottom, an orderly footer clearly divided from the choices. LEFT: a small “后果预览” heading and a concise readable preview of the selected option, with its numeric benefits in muted jade: “恢复 3 行动点，恢复 10% 队伍生命”. This is passive information. Use typography for emphasis, no heart or footprint artwork needed. RIGHT: one moderately sized warm brass/gold button labeled “确定”, aligned with the footer and with enough padding.
+- The footer preview must stay separate from the selected option row; the selected effect is visible in both because this is the existing selection-then-confirm flow.
+
+EXACT TEXT:
+Header title: “熄灭的营火”
+Header meta: “旅途事件”
+Narrative, full and verbatim:
+“一堆刚刚才熄灭的营火在路边堆着，还冒着丝丝细烟。
+这里像是别人刚离开不久的临时营地，旁边还有一些不知是遗落的东西还是遗弃的东西。”
+Choice-list label: “选择行动”
+Choice 01: “稍作休息”
+Choice 01 effect: “恢复 3 行动点，恢复 10% 队伍生命”
+Choice 02: “拿点物资”
+Choice 02 effect: “获得 1 个随机遗物”
+Footer label: “后果预览”
+Footer preview: “恢复 3 行动点，恢复 10% 队伍生命”
+Confirm: “确定”
+
+STYLE:
+Match the supplied forest map's deep green/charcoal, warm ivory text and fine aged-brass edges. Subtle matte wood/leather/paper-grain texture and very restrained geometric corner notches; low visual noise. Clean phone-readable Chinese typography and crisp numerals. A finished fantasy game decision window, calm and inviting, with small material depth and controlled separation shadows. Strong spacing and information hierarchy do the design work. No ornate book/scroll metaphor that forces content-specific art.
+
+STRICT AVOID:
+No illustrations or pictorial icons inside the modal at all. No campfire scene, item thumbnails, characters, pictures, silhouettes of event objects, empty art frames or image placeholders. No new costs, risks, rewards, probability, rarity or gameplay systems. No cancel, skip, refresh or close buttons. No loud yellow/red paint-stroke blocks, glow, particle effects, magic circles, dense vines, giant gold filigree, oversized gold confirmation slab, extra windows, annotation, watermark, device frame or before/after comparison.
+
+Return ONE complete revised game-screen reference image at the original wide aspect ratio, not a cropped modal.
