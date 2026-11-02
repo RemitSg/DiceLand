@@ -1,0 +1,47 @@
+DiceLand 地图正式素材的原始生成提示词
+日期：2026-11-02（Asia/Singapore）
+来源：前序对话的内置 image_gen 调用；本次续作未重新生成图像。
+参考：map-page-concept-20261102.png
+背景以该参考图为输入；正午、傍晚与午夜以清晨背景为输入；图集使用透明背景。
+
+ForestMorning
+Use case: background-extraction. Asset type: a production ultra-wide 2.17:1 painterly fantasy forest background for the actual DiceLand exploration map. The input is the approved map UI reference. Reconstruct ONLY its underlying beautiful forest-and-ruins scenery, preserving its overall composition, brushwork, atmosphere and color balance. Remove EVERY interface element completely: the entire 7x7 tile grid and all icons, all left resource/party panels and portrait, bottom-right detail card, every word/number, bottom instruction text and top-right menu button. Naturally repaint all formerly hidden regions. Dark richly painted near foliage, mossy ruined steps and small white flowers along the left and bottom corners; soft cool teal forest depth through the center; graceful overgrown pale stone arches and waterfall scenery on the right; selective warm afternoon sunlight from the upper right. The central region formerly behind the grid stays calm and relatively low contrast for gameplay, but remains naturally painted scenery. No people, monsters, dice, pawns, tiles, cards, plaques, frames, symbols, interface, text, typography, logos, checkerboard or watermark. Wide landscape, fill the entire frame; opaque background. Do not crop into or magnify the scene.
+
+MapAtlas
+Use case: stylized-concept. Asset type: ONE production game UI SPRITE ATLAS for DiceLand, square canvas with a precisely aligned FOUR-COLUMN by FOUR-ROW grid of sixteen equal square cells. The input approved game screen is an ART STYLE REFERENCE only. Output a genuinely transparent RGBA background. There are no visible grid lines or labels. Each isolated asset is centered in its own cell with generous transparent margins of about 10% on all sides, no asset crosses between cells. All cells have identical dimensions. Consistent scale, polished painterly fantasy UI, simple readable silhouettes, hand-painted warm ivory metal and aged brass, dark forest-green shadows. Clean alpha silhouettes, no baked checkerboard. Match the reference's icon art, but treat each element as a separate reusable sprite.
+
+EXACT CELL ORDER, left to right, top to bottom:
+ROW 1:
+1. A single upright straight ivory-silver sword with a small aged-brass crossguard, pointing up.
+2. Two crossed ivory-silver swords with small brass hilts.
+3. A large ivory question mark in a compact circular aged-brass mystery seal, desaturated teal interior. No blue sci-fi mechanism.
+4. A tiny readable merchant stall with a subdued red-and-ivory striped awning and a few simple wares.
+
+ROW 2:
+5. A closed small wooden treasure chest with aged-brass bands.
+6. A compact dark anvil and hammer with one small warm orange forge flame.
+7. A comfortable simple brown wooden rest chair with a muted green cushion.
+8. A single ornate aged-brass key, diagonal, readable large circular bow.
+
+ROW 3:
+9. A dark iron horned boss crest, muted silver edge highlights and tiny dark burgundy accents.
+10. A single walking boot footprint symbol, warm ivory/brass, isolated directly on transparency, no tile or plaque around it.
+11. A restrained eight-point gold compass rose, isolated, no circular outside frame.
+12. A small stack of three or four gold coins, readable silhouettes.
+
+ROW 4 - these are reusable EMPTY UI SURFACES, no icons or text:
+13. ONE flat square blank map tile face: softly beveled worn neutral warm-grey stone, subtle broad stone color variation, very thin aged-brass rim, tiny chipped corners. Entire interior filled and opaque. No symbols. Almost square, front-on view. Restrained light neutral grey values so it can be tinted in game. Its entire outside is transparent.
+14. ONE square empty panel BORDER ONLY: thin straight double rails in aged brass, small simple notched metal details only at four corners, two tiny dark ivy leaves near one corner. ALL center/interior and all outside genuinely transparent. Rails between corners perfectly plain and uniform for 9-slice UI scaling. No gems, central ornaments, or solid panel fill.
+15. ONE square blank character-card surface: softly worn dark warm-brown leather/wood inset with a very thin bronze edge and gently rounded corners. Entire interior opaque, outside transparent. No figure, portrait, symbols, text or slots. Plain straight sides suitable for 9-slice stretching to a wide character row.
+16. ONE square blank small button surface: subdued golden parchment center with a neat narrow aged-brass bevel, small notched corners. Entire interior opaque, outside transparent. No glyph, icon or text. Straight simple edges suitable for 9-slice stretching.
+
+All sixteen assets must be present in this exact regular 4x4 arrangement, equal cells, separately centered with identical clear margins. No duplication, no perspective, no cast shadows outside cells. No scenery, words, numbers, letters, watermark, logo, interface screenshot, labels or dividing lines. This is a transparent sprite sheet, not a game screen.
+
+ForestNoon
+Use case: lighting-weather. Edit target: this production DiceLand forest-ruins scenery. Make its NOON version. Preserve the entire exact ultra-wide composition, every ruin, arch, waterfall, tree, foliage silhouette, bridge, flower, mountain and camera position. Change ONLY time-of-day lighting and atmosphere: clear neutral midday sky, high soft sunlight, brighter balanced greens and pale limestone, cool gentle shadows and blue-grey distant haze; shorten the feeling of low-angle gold illumination. Calm painterly fantasy illustration matching the input, not photorealistic. Keep the central backdrop relatively quiet and moderate in contrast for a mobile map overlay. No yellow wash, overexposure, dramatic shafts, flares or new objects. No people, monsters, UI, icons, grid, tiles, lettering, logos or watermark. Output the complete opaque scene at the same approximately 2.17:1 aspect ratio, no crop.
+
+ForestDusk
+Use case: lighting-weather. Edit target: the supplied production DiceLand forest-ruins background. Create its DUSK version. Preserve the exact ultra-wide composition, geometry, tree shapes, ruins, bridges, waterfalls, flowers and camera. Change ONLY the time-of-day lighting, sky and atmospheric colors: subdued apricot and lavender sunset sky, low warm light touching upper right stone edges and a few leaf tips, deep cool indigo-teal foreground shadows, soft violet distant haze and quiet waterfalls. Evening is clearly distinct from morning and noon, but retain readable broad painterly shapes rather than crush them into darkness. Keep the center relatively calm for gameplay overlay. Restrained, beautiful fantasy painting, same brushwork; no new objects, stars during bright dusk, huge sun disc, excessive beams, glare or particles. No people, monsters, UI, grid, icons, words, logos or watermark. Opaque complete landscape, same approximately 2.17:1 aspect ratio, no crop.
+
+ForestMidnight
+Use case: lighting-weather. Edit target: the supplied production DiceLand forest-ruins scenery. Create its MIDNIGHT version, used behind the existing calamity selection screen when action points run out. Preserve the entire exact ultra-wide composition, arches, ruins, waterfalls, foliage, bridges, flowers, mountains and camera. Change ONLY time-of-day lighting and atmosphere: deep navy-indigo night sky with a few very faint stars visible through existing canopy openings, cool silver-blue moonlight from the upper right, muted teal reflected light on leaves and pale stone, dark blue-violet distant mist. All sunlight, sunset orange and golden daylight are gone. The scene is unmistakably midnight, calm and mysterious, but keep broad silhouette layers legible and waterfalls softly visible; avoid pure black crushing and saturated neon. Same painterly fantasy materials and brushwork, restrained luminance appropriate behind UI. Do not add torches, buildings, objects or characters. No huge moon, magical glow, particles, fog wall, people, monsters, interface, grid, icons, lettering, logo or watermark. Full opaque scene, same approximately 2.17:1 landscape aspect ratio, no crop.

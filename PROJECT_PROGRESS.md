@@ -1707,9 +1707,25 @@ Root CLAUDE.md references the same AGENTS.md convention so Claude-based agents s
 
 [2026-11-02 visual work checkpoints] Grouped accumulated map-preview motion, forest main-menu/ability pages, speed-badge/intent rendering, forest battle visuals, and documentation/ignore rules into separate commits. Latest saved overview is 3 degrees with lowered foreground and terrace lower-step gain0.35; the authoring helper matches. Removed accidentally serialized menu curtains and legacy-carousel layout drift, retaining the actual forest-menu enable/font settings. Restored six unrelated ProjectSettings files (temporary play-mode options, generated quality fields and line-ending-only changes); local playtest/merge/catalog-render intermediates are ignored while formal catalogs remain versioned. Fresh batch EditMode241/241 and PlayMode17/17 passed; native AssetDatabase validation checked83 imported new assets/GUID roundtrips,40 references and9 shaders with0 failures, plus1615 dependency entries across four scenes (including duplicates). Validation helper removed; no engine source/art/import metadata or gameplay changes introduced by the checkpoint task. Prior lane-perspective High/Medium overviews and High clash captures retained; Medium clash, normal-click whole-round return, visual-acceptance closeout and device/performance/long-run GPU acceptance remain pending. Full target remains active; no APK build. User now requires agents to commit and push completed work; AGENTS.md records that policy, and these checkpoints will be pushed together. Evidence: outputs/agent-battle/commit-batches-20261102; handoff: docs/visuals/forest-battle-look.md.
 
+
 ## 2026-11-02 森林战斗铺地与镜头收尾
 
 - 在 3° 总览、降低的近景与低位台阶增益 0.35 基础上，正式地面和石台的铺石比例由 0.09 调至 0.12、苔土缺口参数由 0.55 调至 0.62；`BattleLookPreviewTools` 同步。没有改变纹理、Shader、几何或战斗场景布局；`PROJECT_ARCHITECTURE.md` 同步当前参数。
 - 承接已保存材质和正式 Demo 战局，补完 High／Medium 2960×1440、High 1600×1200 的 Molly／黑棺实际拼点复查；人物、骰子范围、血条和 HUD 可读，未见新接缝或露边。时间倍率 1、正常点击等待 true、战局生命 999／26 保留。此前用户手测反馈拼点与镜头切换“没问题”；本次 MCP 取景不计作新增物理点击整回合验收。
 - 本次相关 EditMode 17/17、PlayMode 4/4 通过，覆盖地形接缝、背景覆盖、取景、镜头与旁观者显示恢复；五个环境 Shader 消息为空，两个材质 GUID 往返正确。沿用本批前段的实际 GPU 顶面接缝对照，未重跑无关测试。正式详录见 `docs/visuals/forest-battle-look.md`；前段／收尾证据分别为 `outputs/agent-battle/battle-paving-20261102/` 和 `outputs/agent-battle/battle-paving-finish-20261102/`。
 - 本批铺地与镜头复查已收尾，按仓库约定提交并推送；地图 UI 的并行改动另行保留。没有玩法、内容目录或 APK 改动，真机效果、性能和长期稳定性仍待验收。
+
+## 2026-11-02 地图页面视觉参考图
+
+- 使用内置 image_gen，结合现有地图截图和已确认的主菜单美术方向，生成克制的森林遗迹地图页参考图。保留原有 7×7 格子排列、资源与难度、队伍、菜单和格子详情分区。
+- 按用户反馈重制右下角格子详情卡：加入格子类型图标、名称与坐标、探索／解决状态标签、独立移动消耗条和说明区，沿用深绿与暗金材质。
+- 选定参考图：`docs/visuals/map-page-concept-20261102.png`；完整生成与两次修改提示词：`docs/visuals/map-page-concept-20261102-prompt.txt`。选定 PNG 原样复制，原始生成文件保留；核对复制前后 SHA-256 一致并读取图片尺寸。
+- 本轮仅完成视觉参考，尚未接入正式地图 UI；未修改玩法、敌人、技能、遗物、存档或目录，未运行游戏测试、打包或提交。正式中文文本与交互仍以后续实际 UGUI 实现为准。
+
+
+## 2026-11-02 地图森林 UI 正式落地
+
+- 承接参考图实现资源独立分栏、队伍卡片与折叠／滚动、统一石质格底和图标、完整立绘棋子、分层格子详情及安全区域布局。难度与钥匙不再重叠；敌人属性、危险度、区域等原有详情保留，长说明可滚动。正式棋盘仍按难度生成 7／9／11／13 格，未固定参考图内容。
+- 正式打包四时段背景及 16 子精灵透明图集，保留前序 image_gen 原图与实际提示词；续作未重新生成位图。清晨 ≥60%、正午 ≥20%、其余傍晚，午夜继续仅供原灾厄界面使用；不改行动点阈值或灾厄流程。背景随缩放和横屏比例变化铺满。
+- 团结 2022.3.62t6 隔离验证：EditMode 167/167、PlayMode 9/9 通过。覆盖真实中文字体的可见性、装饰网格、棋子尺寸、多比例布局、选择刷新／长文本、原有移动／教程／战斗预览，以及原生菜单、暂停下的折叠滚动、行动点背景和午夜灾厄引用。实际检查四时段、2340×1080、1920×1080、1600×1200、2400×1080 安全边距共 8 张渲染。
+- 复现工具为 MapVisualTools，使用临时预览场景，不读取玩家存档。正式说明：docs/visuals/map-page-ui.md；本地证据：outputs/agent-battle/map-ui-20261102/。本批未改玩法数值、敌人／技能／遗物目录、存档格式或正式场景；未打 APK，真机触摸与 GPU 性能仍未验收。完成后按约定提交并推送当前 dev 分支。

@@ -61,6 +61,7 @@ public class MapViewController : MonoBehaviour
     private bool configured;
     private Vector3 targetCameraPosition;
     private float targetZoomSize;
+    private float overviewAspect;
     private Vector3 panSmoothVelocity;
     private float zoomSmoothVelocity;
 
@@ -120,7 +121,8 @@ public class MapViewController : MonoBehaviour
             return;
 
         float halfBoard = boardManager.BoardHalfExtentWorld;
-        float initialZoom = halfBoard + boardPadding;
+        overviewAspect = targetCamera.aspect;
+        float initialZoom = CalculateOverviewSize(halfBoard, boardPadding, overviewAspect);
         maxZoomSize = Mathf.Max(initialZoom * Mathf.Max(1f, maxZoomMultiplier), minZoomSize + 1f);
 
         targetCamera.orthographic = true;
@@ -135,6 +137,14 @@ public class MapViewController : MonoBehaviour
         if (spawnIntroCurve == null || spawnIntroCurve.length == 0)
             spawnIntroCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
         configured = true;
+    }
+
+    public static float CalculateOverviewSize(float halfBoard, float padding, float aspect)
+    {
+        // Keep the board between the fixed side panels, including narrow landscape/tablet windows.
+        float verticalFit = halfBoard + Mathf.Min(Mathf.Max(0f, padding), halfBoard * 0.11f);
+        float horizontalFit = halfBoard / (Mathf.Max(0.25f, aspect) * 0.42f);
+        return Mathf.Max(verticalFit, horizontalFit);
     }
 
     public void PlaySpawnIntro(Vector3 focusWorldPosition)
@@ -159,6 +169,16 @@ public class MapViewController : MonoBehaviour
 
         if (introRoutine != null)
             return;
+
+        if (Mathf.Abs(overviewAspect - targetCamera.aspect) > 0.001f)
+        {
+            float oldOverview = CalculateOverviewSize(boardManager.BoardHalfExtentWorld, boardPadding, overviewAspect);
+            float nextOverview = CalculateOverviewSize(boardManager.BoardHalfExtentWorld, boardPadding, targetCamera.aspect);
+            maxZoomSize = Mathf.Max(nextOverview * Mathf.Max(1f, maxZoomMultiplier), minZoomSize + 1f);
+            targetZoomSize = Mathf.Clamp(targetZoomSize * nextOverview / Mathf.Max(0.01f, oldOverview), minZoomSize, maxZoomSize);
+            overviewAspect = targetCamera.aspect;
+            ClampTargetCameraToBoard();
+        }
 
         if (IsInputBlocked())
         {

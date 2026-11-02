@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -8,13 +8,13 @@ using UnityEditor;
 #endif
 
 [DisallowMultipleComponent]
-public class MapHUD : MonoBehaviour
+public partial class MapHUD : MonoBehaviour
 {
     private const int DefaultCanvasSortingOrder = 8000;
     private const float TileDetailTutorialHighlightPadding = 12f;
     private const float PartyPanelTopGap = 24f;
-    private static readonly Vector2 TopLeftHudOffset = new Vector2(22f, -22f);
-    private static readonly Vector2 TopLeftHudSize = new Vector2(460f, 252f);
+    private static readonly Vector2 TopLeftHudOffset = new Vector2(26f, -26f);
+    private static readonly Vector2 TopLeftHudSize = new Vector2(580f, 276f);
     private static readonly Vector2 TutorialHighlightReferenceResolution = new Vector2(1920f, 1080f);
 
     private sealed class PartyMemberHudView
@@ -255,6 +255,7 @@ public class MapHUD : MonoBehaviour
     public void Initialize()
     {
         EnsureUi();
+        ApplyViewport(new Vector2(Screen.width, Screen.height), Screen.safeArea);
         ApplyFonts();
         ApplyPartyPanelLayout();
         ApplyTilePanelLayout();
@@ -333,9 +334,11 @@ public class MapHUD : MonoBehaviour
     public void ShowTile(BoardTileData tile, int moveCost = -1, bool detailed = false)
     {
         Initialize();
+        bool resetDescription = currentTile == null || tile == null || currentTile.coord != tile.coord || currentDetailed != detailed;
         currentTile = tile;
         currentMoveCost = moveCost;
         currentDetailed = detailed;
+        PresentForestTile(tile, moveCost);
 
         if (tile == null)
         {
@@ -347,17 +350,14 @@ public class MapHUD : MonoBehaviour
                 tileAttributeLabelText.gameObject.SetActive(false);
             if (tileAttributeValueText != null)
                 tileAttributeValueText.gameObject.SetActive(false);
+            ApplyTilePanelLayout();
             return;
         }
 
         if (tileTitleText != null)
-            tileTitleText.text = $"[{tile.coord.x},{tile.coord.y}] {GetTileTypeLabel(tile.tileType)}";
+            tileTitleText.text = GetTileTypeLabel(tile.tileType);
 
-        List<string> lines = new List<string>
-        {
-            $"{(tile.isVisited ? "已探索" : "未探索")} | {(tile.isResolved ? "已解决" : "未解决")}",
-            $"移动消耗 {Mathf.Max(0, moveCost)} 行动点"
-        };
+        List<string> lines = new List<string>();
 
         if (tile.IsHostileTile)
         {
@@ -383,6 +383,9 @@ public class MapHUD : MonoBehaviour
 
         if (tileBodyText != null)
             tileBodyText.text = string.Join("\n", lines);
+        ApplyTilePanelLayout();
+        if (resetDescription && forestDescriptionScroll != null)
+            forestDescriptionScroll.verticalNormalizedPosition = 1f;
 
         if (tileAttributeLabelText != null)
             tileAttributeLabelText.gameObject.SetActive(false);
@@ -443,16 +446,17 @@ public class MapHUD : MonoBehaviour
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = DefaultCanvasSortingOrder;
 
+        ConfigureForestStyle();
         CanvasScaler scaler = canvasGo.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1920f, 1080f);
-        scaler.matchWidthOrHeight = 0.5f;
+        scaler.referenceResolution = new Vector2(2340f, 1080f);
+        scaler.matchWidthOrHeight = 1f;
 
-        rootRect = canvasGo.GetComponent<RectTransform>();
-        rootRect.anchorMin = Vector2.zero;
-        rootRect.anchorMax = Vector2.one;
-        rootRect.offsetMin = Vector2.zero;
-        rootRect.offsetMax = Vector2.zero;
+        forestSafeArea = CreateRect("SafeArea", canvasGo.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+        forestSafeArea.anchorMin = Vector2.zero;
+        forestSafeArea.anchorMax = Vector2.one;
+        forestSafeArea.offsetMin = forestSafeArea.offsetMax = Vector2.zero;
+        rootRect = CreateRect("MapHudContent", forestSafeArea, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(2340f, 1080f));
 
         BuildTopLeftHud();
         BuildPartyPanel();
@@ -465,31 +469,7 @@ public class MapHUD : MonoBehaviour
 
     private void BuildTopLeftHud()
     {
-        Sprite mainColumnSprite = ResolveMainColumnBackgroundSprite();
-        RectTransform panel = CreateRect("TopLeftPanel", rootRect, new Vector2(0f, 1f), TopLeftHudOffset, TopLeftHudSize);
-        Image topPanelImage = panel.gameObject.AddComponent<Image>();
-        topPanelImage.sprite = mainColumnSprite;
-        topPanelImage.type = Image.Type.Simple;
-        topPanelImage.color = mainColumnSprite != null ? mainColumnBackgroundColor : new Color(0.11f, 0.12f, 0.17f, 0.96f);
-
-        // Offsets are converted from MainColumn.png slot centers into this 460x252 panel.
-        actionPointText = CreateCenteredText(panel, "ActionPoints", new Vector2(-106f, 44f), new Vector2(220f, 76f), titleFontSize + 18, titleColor, string.Empty, keywordFont);
-        actionPointText.alignment = TextAlignmentOptions.Center;
-
-        calamityText = CreateCenteredText(panel, "Calamity", new Vector2(51f, 44f), new Vector2(108f, 76f), titleFontSize + 14, new Color(1f, 0.49f, 0.42f, 1f), string.Empty, keywordFont);
-        calamityText.alignment = TextAlignmentOptions.Center;
-
-        moneyText = CreateCenteredText(panel, "Money", new Vector2(-130f, -71f), new Vector2(150f, 52f), bodyFontSize + 6, accentColor, string.Empty, keywordFont);
-        moneyText.alignment = TextAlignmentOptions.Center;
-
-        keysText = CreateCenteredText(panel, "Keys", new Vector2(27f, -71f), new Vector2(150f, 52f), bodyFontSize + 6, new Color(0.73f, 0.84f, 1f, 1f), string.Empty, keywordFont);
-        keysText.alignment = TextAlignmentOptions.Center;
-
-        difficultyText = CreateCenteredText(panel, "Difficulty", new Vector2(163f, -2f), new Vector2(112f, 64f), titleFontSize + 6, accentColor, string.Empty, keywordFont);
-        difficultyText.alignment = TextAlignmentOptions.Center;
-        difficultyText.enableAutoSizing = true;
-        difficultyText.fontSizeMin = bodyFontSize;
-        difficultyText.fontSizeMax = titleFontSize + 6;
+        BuildForestResources();
     }
 
     private Sprite ResolveMainColumnBackgroundSprite()
@@ -515,11 +495,12 @@ public class MapHUD : MonoBehaviour
         partyPanelTitleText = CreateText(partyPanelRect, "PartyTitle", partyPanelTitleOffset, partyPanelTitleSize, partyTitleFontSize, titleColor, "当前队伍", GetPartyTitleFont());
         partyToggleButton = BuildPartyToggleButton(partyPanelRect);
         partyToggleButtonText = partyToggleButton != null ? partyToggleButton.GetComponentInChildren<TextMeshProUGUI>(true) : null;
-        partyListViewport = CreateRect("PartyListViewport", partyPanelRect, new Vector2(0f, 1f), partyListOffset, new Vector2(partyPanelSize.x - 32f, partyPanelSize.y - 76f));
+        partyListViewport = CreateRect("PartyListViewport", partyPanelRect, new Vector2(0f, 1f), partyListOffset, new Vector2(partyPanelSize.x, partyPanelSize.y - 76f));
         partyListMask = partyListViewport.gameObject.AddComponent<RectMask2D>();
-        partyEmptyText = CreateText(partyListViewport, "PartyEmpty", Vector2.zero, new Vector2(partyPanelSize.x - 32f, 28f), partyStatFontSize, bodyColor, "当前没有队伍成员。", GetPartyStatFont());
-        partyListRoot = CreateRect("PartyList", partyListViewport, new Vector2(0f, 1f), Vector2.zero, new Vector2(partyPanelSize.x - 32f, partyPanelSize.y - 76f));
+        partyEmptyText = CreateText(partyListViewport, "PartyEmpty", Vector2.zero, new Vector2(partyPanelSize.x, 28f), partyStatFontSize, bodyColor, "当前没有队伍成员。", GetPartyStatFont());
+        partyListRoot = CreateRect("PartyList", partyListViewport, new Vector2(0f, 1f), Vector2.zero, new Vector2(partyPanelSize.x, partyPanelSize.y - 76f));
 
+        BuildForestPartyHeader();
         if (!partyCollapseStateInitialized)
         {
             isPartyPanelCollapsed = partyStartCollapsed;
@@ -530,29 +511,21 @@ public class MapHUD : MonoBehaviour
 
     private void BuildTilePanel()
     {
-        tilePanelRect = CreateRect("TilePanel", rootRect, new Vector2(1f, 0f), Vector2.zero, tilePanelSize);
-        tilePanelImage = tilePanelRect.gameObject.AddComponent<Image>();
-        tilePanelImage.type = Image.Type.Sliced;
-
-        tileTitleText = CreateText(tilePanelRect, "TileTitle", Vector2.zero, tileTitleSize, titleFontSize, titleColor, string.Empty, keywordFont);
-        tileBodyText = CreateText(tilePanelRect, "TileBody", Vector2.zero, tileBodySize, bodyFontSize, bodyColor, string.Empty, bodyFont);
-        tileBodyText.enableWordWrapping = true;
-        tileBodyText.overflowMode = TextOverflowModes.Overflow;
-        tileAttributeLabelText = CreateText(tilePanelRect, "TileAttributeLabel", Vector2.zero, tileAttributeLabelSize, bodyFontSize, bodyColor, string.Empty, bodyFont);
-        tileAttributeValueText = CreateText(tilePanelRect, "TileAttributeValue", Vector2.zero, tileAttributeValueSize, bodyFontSize, tileAttributeHighlightColor, string.Empty, attributeFont != null ? attributeFont : bodyFont);
-        tileAttributeValueText.enableWordWrapping = true;
-        tileAttributeValueText.overflowMode = TextOverflowModes.Overflow;
-        tileAttributeLabelText.gameObject.SetActive(false);
-        tileAttributeValueText.gameObject.SetActive(false);
+        BuildForestTilePanel();
     }
 
     private void BuildStatusText()
     {
-        statusText = CreateText(rootRect, "StatusText", new Vector2(22f, 22f), new Vector2(860f, 84f), bodyFontSize, accentColor, string.Empty, bodyFont);
+        statusText = CreateText(rootRect, "StatusText", new Vector2(26f, 66f), new Vector2(650f, 68f), 21, ForestIvory, string.Empty, bodyFont);
+        statusText.enableWordWrapping = true;
+        statusText.overflowMode = TextOverflowModes.Ellipsis;
         RectTransform rect = statusText.rectTransform;
         rect.anchorMin = new Vector2(0f, 0f);
         rect.anchorMax = new Vector2(0f, 0f);
         rect.pivot = new Vector2(0f, 0f);
+        TextMeshProUGUI hint = CreateText(rootRect, "MapInteractionHint", new Vector2(26f, 24f), new Vector2(1100f, 34f), 23, ForestIvory,
+            "点击格子查看详情 · 拖动地图 · 双指缩放", bodyFont);
+        hint.rectTransform.anchorMin = hint.rectTransform.anchorMax = hint.rectTransform.pivot = Vector2.zero;
     }
 
     private void BuildInventoryButton()
@@ -564,12 +537,13 @@ public class MapHUD : MonoBehaviour
         {
             image.sprite = inventoryButtonSprite;
             image.type = Image.Type.Sliced;
+            image.pixelsPerUnitMultiplier = 2f;
         }
         else
         {
             image.type = Image.Type.Simple;
-            BuildInventoryButtonFallbackGlyph(rect);
         }
+        BuildInventoryButtonFallbackGlyph(rect);
 
         inventoryButton = rect.gameObject.AddComponent<Button>();
         inventoryButton.transition = Selectable.Transition.ColorTint;
@@ -741,11 +715,9 @@ public class MapHUD : MonoBehaviour
     private Vector2 ResolvePartyPanelSize()
     {
         int memberCount = currentRunState != null && currentRunState.partyMembers != null ? currentRunState.partyMembers.Count : 0;
-        if (memberCount <= 0)
-            return partyPanelSize;
-
-        float requiredHeight = 76f + memberCount * partyMemberCardSize.y + Mathf.Max(0, memberCount - 1) * partyMemberCardSpacing + 16f;
-        return new Vector2(partyPanelSize.x, Mathf.Max(partyPanelSize.y, requiredHeight));
+        float required = 76f + Mathf.Max(1, memberCount) * partyMemberCardSize.y + Mathf.Max(0, memberCount - 1) * partyMemberCardSpacing;
+        float available = rootRect != null ? Mathf.Max(202f, rootRect.rect.height + ResolvePartyPanelOffset().y - 140f) : 614f;
+        return new Vector2(partyPanelSize.x, Mathf.Min(required, available));
     }
 
     private static Vector2 ResolvePartyPanelOffset()
@@ -769,6 +741,7 @@ public class MapHUD : MonoBehaviour
         view.backgroundImage.sprite = partyMemberCardSprite;
         view.backgroundImage.type = partyMemberCardSprite != null ? Image.Type.Sliced : Image.Type.Simple;
         view.backgroundImage.color = partyMemberCardSprite != null ? Color.white : partyMemberCardColor;
+        view.backgroundImage.pixelsPerUnitMultiplier = 1.5f;
 
         view.iconImage = CreateImage(view.root, "Icon", partyMemberIconOffset, partyMemberIconSize, GetFallbackSprite(), Color.white);
         view.iconImage.preserveAspect = true;
@@ -914,6 +887,7 @@ public class MapHUD : MonoBehaviour
         EnsureFontFallback(partyStatFont, bodyFont);
         EnsureFontFallback(partyStatFont, keywordFont);
 
+        ApplyForestFonts();
         ApplyFont(actionPointText, keywordFont);
         ApplyFont(moneyText, keywordFont);
         ApplyFont(keysText, keywordFont);
@@ -949,26 +923,7 @@ public class MapHUD : MonoBehaviour
 
     private void ApplyTilePanelLayout()
     {
-        if (tilePanelRect == null)
-            return;
-
-        tilePanelRect.anchorMin = new Vector2(1f, 0f);
-        tilePanelRect.anchorMax = new Vector2(1f, 0f);
-        tilePanelRect.pivot = new Vector2(1f, 0f);
-        tilePanelRect.anchoredPosition = new Vector2(tilePanelOffset.x, tilePanelOffset.y);
-        tilePanelRect.sizeDelta = tilePanelSize;
-
-        if (tilePanelImage != null)
-        {
-            tilePanelImage.sprite = tilePanelBackgroundSprite;
-            tilePanelImage.color = tilePanelBackgroundSprite != null ? Color.white : tilePanelBackgroundColor;
-            tilePanelImage.type = Image.Type.Sliced;
-        }
-
-        ApplyRect(tileTitleText.rectTransform, new Vector2(0f, 1f), tileTitleOffset, tileTitleSize);
-        ApplyRect(tileBodyText.rectTransform, new Vector2(0f, 1f), tileBodyOffset, tileBodySize);
-        ApplyRect(tileAttributeLabelText.rectTransform, new Vector2(0f, 1f), tileAttributeLabelOffset, tileAttributeLabelSize);
-        ApplyRect(tileAttributeValueText.rectTransform, new Vector2(0f, 1f), tileAttributeValueOffset, tileAttributeValueSize);
+        ApplyForestTilePanelLayout();
     }
 
     private void ApplyPartyPanelLayout()
@@ -980,16 +935,17 @@ public class MapHUD : MonoBehaviour
         Vector2 resolvedPanelSize = Vector2.Lerp(partyPanelCollapsedSize, expandedPanelSize, Mathf.Clamp01(partyPanelReveal));
         float titleAvailableWidth = Mathf.Max(140f, partyToggleButtonOffset.x - partyPanelTitleOffset.x - 12f);
         Vector2 resolvedTitleSize = new Vector2(Mathf.Min(partyPanelTitleSize.x, titleAvailableWidth), partyPanelTitleSize.y);
-        float fullListHeight = Mathf.Max(0f, expandedPanelSize.y - 76f);
-        float viewportHeight = Mathf.Max(0f, fullListHeight * Mathf.Clamp01(partyPanelReveal));
+        int layoutCount = currentRunState != null && currentRunState.partyMembers != null ? currentRunState.partyMembers.Count : 0;
+        float fullListHeight = Mathf.Max(expandedPanelSize.y - 76f, layoutCount * partyMemberCardSize.y + Mathf.Max(0, layoutCount - 1) * partyMemberCardSpacing);
+        float viewportHeight = Mathf.Max(0f, (expandedPanelSize.y - 76f) * Mathf.Clamp01(partyPanelReveal));
         int memberCount = currentRunState != null && currentRunState.partyMembers != null ? currentRunState.partyMembers.Count : 0;
         bool showPartyDetails = partyPanelReveal > 0.001f;
         ApplyRect(partyPanelRect, new Vector2(0f, 1f), ResolvePartyPanelOffset(), resolvedPanelSize);
         if (partyPanelImage != null)
         {
-            partyPanelImage.sprite = partyPanelBackgroundSprite;
-            partyPanelImage.color = partyPanelBackgroundSprite != null ? Color.white : partyPanelColor;
-            partyPanelImage.type = Image.Type.Sliced;
+            partyPanelImage.sprite = null;
+            partyPanelImage.color = Color.clear;
+            partyPanelImage.raycastTarget = false;
         }
 
         if (partyPanelTitleText != null)
@@ -1007,17 +963,17 @@ public class MapHUD : MonoBehaviour
         }
         if (partyListViewport != null)
         {
-            ApplyRect(partyListViewport, new Vector2(0f, 1f), partyListOffset, new Vector2(expandedPanelSize.x - 32f, viewportHeight));
+            ApplyRect(partyListViewport, new Vector2(0f, 1f), partyListOffset, new Vector2(expandedPanelSize.x, viewportHeight));
             partyListViewport.gameObject.SetActive(showPartyDetails);
         }
         if (partyEmptyText != null)
         {
-            ApplyRect(partyEmptyText.rectTransform, new Vector2(0f, 1f), Vector2.zero, new Vector2(expandedPanelSize.x - 32f, 28f));
+            ApplyRect(partyEmptyText.rectTransform, new Vector2(0f, 1f), Vector2.zero, new Vector2(expandedPanelSize.x, 28f));
             partyEmptyText.gameObject.SetActive(showPartyDetails && memberCount <= 0);
         }
         if (partyListRoot != null)
         {
-            ApplyRect(partyListRoot, new Vector2(0f, 1f), Vector2.zero, new Vector2(expandedPanelSize.x - 32f, fullListHeight));
+            ApplyRect(partyListRoot, new Vector2(0f, 1f), Vector2.zero, new Vector2(expandedPanelSize.x, fullListHeight));
             partyListRoot.gameObject.SetActive(showPartyDetails);
         }
 
@@ -1498,6 +1454,7 @@ public class MapHUD : MonoBehaviour
         Image image = rect.gameObject.AddComponent<Image>();
         image.sprite = partyToggleButtonSprite;
         image.type = partyToggleButtonSprite != null ? Image.Type.Sliced : Image.Type.Simple;
+        image.pixelsPerUnitMultiplier = 2.5f;
         image.color = partyToggleButtonSprite != null ? Color.white : partyToggleButtonColor;
 
         Button button = rect.gameObject.AddComponent<Button>();
@@ -1723,10 +1680,15 @@ public class MapHUD : MonoBehaviour
 
     private static string GetDisplayDifficultyName(string difficultyName)
     {
-        if (string.IsNullOrWhiteSpace(difficultyName))
-            return "普通";
-
-        return difficultyName;
+        if (string.IsNullOrWhiteSpace(difficultyName)) return "普通";
+        switch (difficultyName.Trim().ToLowerInvariant())
+        {
+            case "easy": return "简单";
+            case "normal": case "medium": return "普通";
+            case "hard": return "困难";
+            case "extreme": return "极难";
+            default: return difficultyName;
+        }
     }
 
     private static string GetTileTypeLabel(MapTileType tileType)

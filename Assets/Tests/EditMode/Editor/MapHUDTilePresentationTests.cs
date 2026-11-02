@@ -24,9 +24,11 @@ public class MapHUDTilePresentationTests
 
             TextMeshProUGUI title = FindText(go.transform, "TileTitle");
             TextMeshProUGUI body = FindText(go.transform, "TileBody");
-            Assert.AreEqual("[1,6] 宝藏", title.text);
-            Assert.That(body.text, Does.Contain("未探索 | 未解决"));
-            Assert.That(body.text, Does.Contain("移动消耗 2 行动点"));
+            Assert.AreEqual("宝藏", title.text);
+            Assert.AreEqual("[1,6]", FindText(go.transform, "TileCoordinates").text);
+            Assert.AreEqual("未探索", FindText(go.transform, "TileExplored").text);
+            Assert.AreEqual("未解决", FindText(go.transform, "TileResolved").text);
+            Assert.AreEqual("2", FindText(go.transform, "TileMoveCost").text);
             Assert.That(body.text, Does.Contain("宝藏格"));
         }
         finally
@@ -52,7 +54,8 @@ public class MapHUDTilePresentationTests
 
             TextMeshProUGUI title = FindText(go.transform, "TileTitle");
             TextMeshProUGUI body = FindText(go.transform, "TileBody");
-            Assert.AreEqual("[0,1] 副本出口", title.text);
+            Assert.AreEqual("副本出口", title.text);
+            Assert.AreEqual("[0,1]", FindText(go.transform, "TileCoordinates").text);
             Assert.That(body.text, Does.Contain("离开副本"));
         }
         finally

@@ -85,6 +85,7 @@ public class MapBackgroundController : MonoBehaviour
     private Coroutine backgroundTransitionRoutine;
     private Vector3 initialBackgroundRootScale = Vector3.one;
     private float initialCameraOrthographicSize = 1f;
+    private float backgroundAspect;
 
     public void Initialize(Transform root, Camera mapCamera, BoardManager board)
     {
@@ -101,6 +102,7 @@ public class MapBackgroundController : MonoBehaviour
 
         targetCamera = mapCamera;
         boardManager = board;
+        ApplyForestBackdrops();
         BindActionPointSystem(points);
         currentBackgroundPhase = ResolveCurrentActionPointPhase();
 
@@ -126,6 +128,21 @@ public class MapBackgroundController : MonoBehaviour
         EnsureRuntimeSprites();
         ClearExisting();
         BuildBackground();
+    }
+
+    private void ApplyForestBackdrops()
+    {
+        Sprite morning = MapForestArt.Background(MapBackgroundPhase.Morning);
+        if (morning == null) return;
+        morningBackgroundSprite = morning;
+        noonBackgroundSprite = MapForestArt.Background(MapBackgroundPhase.Noon) ?? noonBackgroundSprite;
+        duskBackgroundSprite = MapForestArt.Background(MapBackgroundPhase.Dusk) ?? duskBackgroundSprite;
+        midnightBackgroundSprite = MapForestArt.Background(MapBackgroundPhase.Midnight) ?? midnightBackgroundSprite;
+        backgroundImageGradientWashAlpha = 0.06f;
+        centerGlowColor.a = 0.025f;
+        sideGlowColor.a = 0.02f;
+        mistColor.a = 0.025f;
+        vignetteColor.a = 0.20f;
     }
 
     public static MapBackgroundPhase ResolveActionPointBackgroundPhase(int currentPoints, int maxPoints)
@@ -223,6 +240,17 @@ public class MapBackgroundController : MonoBehaviour
 
         float scaleRatio = CalculateViewLockedScaleRatio(initialCameraOrthographicSize, targetCamera.orthographicSize);
         backgroundRoot.localScale = initialBackgroundRootScale * scaleRatio;
+        if (MapForestArt.Available && Mathf.Abs(backgroundAspect - targetCamera.aspect) > 0.001f)
+        {
+            foreach (SpriteRenderer layer in backgroundRoot.GetComponentsInChildren<SpriteRenderer>())
+            {
+                if (layer.name != "ImageBackdrop" && layer.name != "BackdropGradientWash" && layer.name != "BackgroundTransitionBlackout")
+                    continue;
+                Vector2 cover = CalculateCoverScale(layer.sprite, 1f);
+                layer.transform.localScale = new Vector3(cover.x, cover.y, 1f);
+            }
+            backgroundAspect = targetCamera.aspect;
+        }
     }
 
     private void BuildBackground()
@@ -596,6 +624,13 @@ public class MapBackgroundController : MonoBehaviour
         if (sprite == null || sprite.bounds.size.x <= 0.0001f || sprite.bounds.size.y <= 0.0001f)
             return Vector2.one * targetWorldSize;
 
+        if (MapForestArt.Available && targetCamera != null && targetCamera.orthographic)
+        {
+            float height = 2f * initialCameraOrthographicSize;
+            float scale = Mathf.Max(height / sprite.bounds.size.y, height * targetCamera.aspect / sprite.bounds.size.x);
+            return Vector2.one * (scale * 1.015f);
+        }
+
         float targetWidth = targetWorldSize;
         float targetHeight = targetWorldSize;
         float spriteAspect = sprite.bounds.size.x / sprite.bounds.size.y;
@@ -622,6 +657,9 @@ public class MapBackgroundController : MonoBehaviour
     {
         if (source == null)
             return null;
+
+        if (MapForestArt.Available && source != midnightBackgroundSprite)
+            return source;
 
         if (backgroundImageBlurRadius <= 0 || backgroundImageBlurIterations <= 0)
             return source;

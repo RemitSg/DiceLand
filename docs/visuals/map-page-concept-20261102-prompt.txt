@@ -1,0 +1,94 @@
+DiceLand 地图页面重制参考图
+日期：2026-11-02（Asia/Singapore）
+方式：内置 image_gen；未使用 CLI 或 API 密钥。
+用途：视觉设计参考，尚未接入正式地图页面。
+选定版本：保留当前 7×7 布局，重制右下角格子详情卡。
+正式参考图：docs/visuals/map-page-concept-20261102.png
+
+输入 1（现有地图布局与功能）：
+C:/Users/Karmas/Documents/xwechat_files/wxid_rs05v648c5z332_ef93/temp/RWTemp/2026-11/9e20f478899dc29eb19741386f9343c8/924f89c09d059160227fefe624d3cbce.jpg
+输入 2（项目已有视觉方向，仅供风格参考）：
+C:/DiceLand/docs/visuals/main-menu-concept-20261030.png
+
+第一轮：地图整体重制
+Use case: ui-mockup.
+Asset type: one polished, implementation-minded game UI reference image for the existing DiceLand mobile roguelite exploration map, landscape ultra-wide approximately 2.17:1, matching the aspect ratio of Image 1. Fill the image with the game screen itself, no device, no poster, no explanatory callouts.
+
+INPUT ROLES:
+Image 1 is the CURRENT GAME SCREEN and the mandatory reference for gameplay layout, information, square grid, tile contents, and functional hierarchy.
+Image 2 is ONLY an art-direction reference for the project's painterly forest ruins, cool green shadows and selective warm light. Do NOT copy its title screen, giant dice, elaborate logo, navigation, wandering party, or cinematic clutter.
+
+PRIMARY REQUEST:
+Create a clearly more beautiful and coherent redesign of Image 1 while retaining its current gameplay and recognizable arrangement. The result should feel like a tasteful, finished indie fantasy game screen, quiet, legible and inviting on a phone. Restrained decoration and generous breathing room. Improve materials, composition, typography, icon consistency and visual hierarchy instead of adding flashy effects.
+
+COMPOSITION AND FUNCTION:
+- Preserve the same screen organization: compact resource panel at upper left; the party panel immediately below; an exact SEVEN-COLUMN by SEVEN-ROW map grid in the center, fully visible; a small hamburger menu button at top right; a selected tile information card at bottom right; a short interaction hint low on the left.
+- The map is an axis-aligned, flat, FRONT-ON square grid, not an isometric scene, branching route, hexagon map or perspective table. Exactly 49 individually clickable, equally sized square tiles with even narrow gaps. Keep the center grid large and unmistakably dominant, around 41 percent of the screen width and 85 percent of its height. UI panels do not overlap it. Every icon is large enough to recognize at phone scale.
+- The existing resource values must remain: action points 7/7, calamity 0, gold 0, keys 0/2, difficulty Easy. Render these with short Chinese labels: "行动资源", "灾厄", "金币", "钥匙", "简单". Make 7/7 the strongest number in the resource card, the others secondary but readable; only calamity uses a subdued red accent.
+- Party panel title "当前队伍", small button "折叠". Show only ONE existing party member, Chara, matching the brown-haired anime portrait in Image 1; label "Chara  Lv.1", HP "17/17", XP "0/10". One compact, elegant character row with a red HP bar and a thinner muted blue XP bar. Do not invent extra companions or stats. Avoid a giant empty opaque box under this row; leave calm darkened scenery there.
+- Bottom-right information card exact copy, crisp readable Chinese, natural line spacing:
+"[3,5] 空白"
+"已探索 · 已解决"
+"移动消耗 0 行动点"
+"空白格，无特殊效果"
+This card is modest in size, with a subtle hierarchy and a thin aged-brass border. No invented action buttons or reward claims.
+- Bottom-left hint in quiet small ivory text: "点击格子查看详情 · 拖动地图 · 双指缩放".
+- Preserve the hamburger menu as the existing additional-functions entry, not a new navigation dock.
+
+GRID CONTENTS:
+Keep the current 7x7 arrangement using the following rows from top to bottom. Each comma separates one tile.
+Row 1: normal sword, rest chair, treasure chest, mystery event, key, elite crossed swords, mystery event.
+Row 2: mystery event, forge anvil, elite crossed swords, current player / cleared blank tile, normal sword, normal sword, normal sword.
+Row 3: normal sword, normal sword, normal sword, normal sword, merchant stall, treasure chest, mystery event.
+Row 4: normal sword, elite crossed swords, mystery event, boss horned emblem, rest chair, mystery event, mystery event.
+Row 5: mystery event, mystery event, normal sword, merchant stall, mystery event, rest chair, normal sword.
+Row 6: mystery event, elite crossed swords, forge anvil, mystery event, normal sword, mystery event, treasure chest.
+Row 7: normal sword, normal sword, key, forge anvil, mystery event, rest chair, key.
+The current player on row 2 column 4 is a small readable adventurer/pawn marker replacing the developer-style gamepad symbol, on a quiet already explored tile with a restrained thin gold selection outline. No neon trail, no new movement-path lines, no extra tiles.
+All icon categories use ONE coherent painted/engraved style, small ivory and aged-brass relief forms with soft grounded shading: simple sword, crossed swords, chair, chest, question-mark seal, key, anvil, merchant stall, horned boss seal. Avoid the old mismatch of clip art, blue mechanical question-mark frames and bright cartoon stickers. Tile bases are subtly beveled worn stone/wood cards: muted warm grey or olive for ordinary encounters, desaturated teal for rest/events, a soft ochre for treasure, dark burgundy for the boss. Quiet color coding, never saturated rainbow checkerboard. Darkened explored tile reads distinctly. Tiny wear at corners only; no elaborate gold frame on every tile.
+
+ART DIRECTION:
+A painterly forest and ancient ruined arches recede gently behind the board, related to Image 2 but much calmer and lower in contrast. Cool misty sage/teal depth, warm grey stone, small touches of sunlit moss and a restrained golden afternoon highlight near the distant upper right. The background has real atmospheric depth and selective painted detail near the outside edges, yet stays soft and quiet behind all information. A faint, broad dark green vignette grounds the board without a thick enclosure or fog washing out the icons.
+UI materials: deep forest-green/blue charcoal panels with very fine warm brass edging, softly worn dark wood/stone, ivory typography, minimal corner detail. No heavy rococo ornaments. Gentle separation shadows and subtle surface texture, clean padding and aligned baselines. Chinese labels are clear and carefully typeset; numbers remain crisp. Overall bright enough to feel welcoming, with strong interface contrast, no muddy black crush and no blanket yellow filter.
+
+CONSTRAINTS / AVOID:
+One coherent screenshot only. No "before/after", no explanatory arrows, no concept sheet, no oversized DiceLand title, no additional resource systems, minimaps, quests or new menus. Do not turn the square map into a physical 3D environment or a decorative board with tiny cells. No dense vines over UI, excessive gold filigree, glowing runes, lens flares, magic circles, particle storms, shiny mobile casino aesthetic or garish gradients. Preserve existing data and gameplay; this is a visual redesign reference, not new functionality.
+
+第二轮：难度标题修正
+Use case: text-localization.
+Edit target: the supplied DiceLand map UI reference image.
+Make exactly ONE small text correction: in the upper-left resource panel, the RIGHTMOST narrow difficulty compartment currently has the small Chinese heading "简单" at its top and a large "简单" below the compass. Replace ONLY that small top heading with "难度". Preserve the large lower value "简单" exactly.
+Keep the complete image composition, ultra-wide aspect ratio, all 49 tiles in their exact 7x7 arrangement, every tile icon, all numbers, other Chinese text, party portrait, colors, lighting, panel borders, background and character marker unchanged. Do not redesign or add anything. Output the complete corrected image at the same aspect ratio, no crop, no captions or watermark.
+
+第三轮：按用户反馈重制右下角格子详情卡
+Use case: ui-mockup.
+Edit target: the supplied complete DiceLand map screen.
+User request: redesign the bottom-right selected-tile detail card so that its INFORMATION DESIGN feels considered and polished, while keeping the overall restrained forest-fantasy style.
+
+CHANGE ONLY THE BOTTOM-RIGHT DETAIL CARD. Preserve the entire remainder of the image: exact ultra-wide framing, background landscape, upper-left HUD and every number, party panel, menu button, footer, player marker, and all 49 tiles in the exact same 7x7 positions and sizes. Do not recolor or repaint the rest of the screen. Return the full screen, not a crop or multiple variants.
+
+REBUILD THE CONTENT OF THAT CARD:
+Maintain its bottom/right alignment and approximately the same footprint, with adequate padding and no overlap with the map.
+A polished compact fantasy inspection card, with these four clear visual zones:
+1. A real header composition: at left, a 48px inset square emblem depicting a quiet worn-stone blank map tile with a tiny footprint engraving; beside it the large ivory title "空白". At the far right a small subdued coordinate capsule "[3,5]". Header has a subtle warm metal edge highlight, not a giant illustration.
+2. Directly below, two small neatly spaced sage-green status chips, a tiny eye icon with "已探索" and a tiny checkmark with "已解决". They are quiet readable labels, not clickable buttons. Fine divider beneath.
+3. A distinctive horizontal cost strip, slightly inset and lighter than the main dark panel. A small walking-footprint icon and label "移动消耗" on the left, a prominent muted-jade "0" on the right with the smaller unit "行动点". Align label and value carefully. This is passive information, not a CTA. The zero should be easy to find immediately.
+4. A lower recessed description section, separated with a short fine gold rule and a tiny simple book/description glyph. The description reads verbatim "空白格，无特殊效果", in a comfortable smaller ivory font with clean margins.
+
+MATERIAL AND STYLE:
+Use the same deep forest-green and dark charcoal material family as the existing screen, with softly painted stone/wood depth, very thin aged-brass edges and just a few compact notched corner details. One clean outer silhouette, controlled highlights, gentle internal layer separation and aligned baselines. Keep corner foliage extremely sparse and away from content. The improvement comes from iconography, grouping, varied type scale, subtle inset surfaces and spacing. Maintain enough contrast for phone readability. The card should feel elegant and tactile without becoming ornate or busy.
+
+TEXT MUST BE EXACT:
+"空白"
+"[3,5]"
+"已探索"
+"已解决"
+"移动消耗"
+"0"
+"行动点"
+"空白格，无特殊效果"
+
+No duplicated copy, no extra stats, buttons, rewards, invented mechanics, badges with new meanings or explanatory annotations. No giant gold crest, scroll curls, dense vines, glowing runes, neon, particles or additional windows. Preserve everything outside this one panel.
+
+选定原图（保留在内置生成目录）：
+C:/Users/Karmas/.codex/generated_images/01a19a11-bc3b-77d3-8ad8-19d9ed211ecc/exec-5f6211a2-baf3-43c1-a1d8-0ea3771a80fc.png

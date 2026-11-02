@@ -75,7 +75,7 @@ public class BoardManager : MonoBehaviour
     public Vector2 TileVisualSize => tileVisualSize;
     public int TileSortingOrder => tileSortingOrder;
     public Vector2Int SelectedCoord => selectedCoord;
-    public Sprite DefaultTileSprite => runtimeWhiteSprite != null ? runtimeWhiteSprite : defaultTileSprite;
+    public Sprite DefaultTileSprite => MapForestArt.Get("TileFace") != null ? MapForestArt.Get("TileFace") : (runtimeWhiteSprite != null ? runtimeWhiteSprite : defaultTileSprite);
     public Sprite TileInnerGlowSprite => runtimeRadialSprite != null ? runtimeRadialSprite : DefaultTileSprite;
     public TMP_FontAsset WorldTextFont => worldTextFont;
     public Color IconTintColor => iconTintColor;
@@ -86,7 +86,7 @@ public class BoardManager : MonoBehaviour
     public Vector3 TileIconGlowLocalScale => tileIconGlowLocalScale;
     public Vector3 TileIconGlowMaskLocalOffset => tileIconGlowMaskLocalOffset;
     public Vector3 TileIconGlowMaskLocalScale => tileIconGlowMaskLocalScale;
-    public Sprite TileFrameSprite => tileFrameSprite;
+    public Sprite TileFrameSprite => MapForestArt.Available ? null : tileFrameSprite;
     public Sprite TileIconGlowMaskSprite => tileIconGlowMaskSprite != null ? tileIconGlowMaskSprite : DefaultTileSprite;
     public Vector3 TileFrameLocalOffset => tileFrameLocalOffset;
     public Vector3 TileFrameLocalScale => tileFrameLocalScale;
@@ -328,6 +328,8 @@ public class BoardManager : MonoBehaviour
 
     public Color GetTileBaseColor(BoardTileData tile)
     {
+        if (tile != null && MapForestArt.Available)
+            return MapForestArt.TileColor(tile, ShouldCollapseVisitedTile(tile));
         if (ShouldCollapseVisitedTile(tile))
             return Color.Lerp(visitedTileColor, Color.black, tileBackgroundDarkening * 0.65f);
 
@@ -509,6 +511,8 @@ public class BoardManager : MonoBehaviour
 
     public Color GetTileHighlightColor(BoardTileData tile)
     {
+        if (MapForestArt.Available)
+            return tile.coord == selectedCoord ? new Color(1f, 0.84f, 0.40f, 0.95f) : new Color(0.61f, 0.75f, 0.54f, 0.65f);
         if (tile.coord == selectedCoord)
             return selectedHighlightColor;
         if (tile.isSpawnTile)
@@ -526,6 +530,8 @@ public class BoardManager : MonoBehaviour
         if (tile == null || ShouldCollapseVisitedTile(tile) || tile.tileType == MapTileType.Empty)
             return null;
 
+        Sprite painted = MapForestArt.Icon(tile.tileType);
+        if (painted != null) return painted;
         switch (tile.tileType)
         {
             case MapTileType.Battle:

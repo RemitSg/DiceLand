@@ -93,6 +93,8 @@ public class BoardTileView : MonoBehaviour
         if (baseRenderer != null)
         {
             baseRenderer.sprite = owner.DefaultTileSprite;
+            baseRenderer.drawMode = MapForestArt.Available ? SpriteDrawMode.Sliced : SpriteDrawMode.Simple;
+            if (MapForestArt.Available) baseRenderer.size = Vector2.one;
             baseRenderer.color = owner.GetTileBaseColor(tileData);
             baseRenderer.sortingOrder = owner.TileSortingOrder;
         }
@@ -103,12 +105,14 @@ public class BoardTileView : MonoBehaviour
             innerGlowRenderer.color = owner.GetTileInnerGlowColor(tileData);
             innerGlowRenderer.sortingOrder = owner.TileSortingOrder + 1;
             innerGlowRenderer.transform.localScale = owner.TileInnerGlowLocalScale;
-            innerGlowRenderer.gameObject.SetActive(!tileData.isVisited || owner.ShouldKeepPersistentPresentation(tileData));
+            innerGlowRenderer.gameObject.SetActive(!MapForestArt.Available && (!tileData.isVisited || owner.ShouldKeepPersistentPresentation(tileData)));
         }
 
         if (highlightRenderer != null)
         {
             highlightRenderer.sprite = owner.DefaultTileSprite;
+            highlightRenderer.drawMode = MapForestArt.Available ? SpriteDrawMode.Sliced : SpriteDrawMode.Simple;
+            if (MapForestArt.Available) highlightRenderer.size = Vector2.one;
             highlightRenderer.color = owner.GetTileHighlightColor(tileData);
             highlightRenderer.sortingOrder = owner.TileSortingOrder - 2;
             highlightRenderer.gameObject.SetActive(owner.ShouldHighlightTile(tileData));
@@ -145,7 +149,7 @@ public class BoardTileView : MonoBehaviour
             iconGlowRenderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
             iconGlowRenderer.transform.localPosition = owner.TileIconGlowLocalOffset;
             iconGlowRenderer.transform.localScale = owner.TileIconGlowLocalScale;
-            iconGlowRenderer.gameObject.SetActive(iconSprite != null);
+            iconGlowRenderer.gameObject.SetActive(!MapForestArt.Available && iconSprite != null);
         }
 
         if (iconRenderer != null)
@@ -155,6 +159,11 @@ public class BoardTileView : MonoBehaviour
             iconRenderer.sortingOrder = owner.TileSortingOrder + 5;
             iconRenderer.transform.localPosition = owner.TileIconLocalOffset;
             iconRenderer.transform.localScale = owner.TileIconLocalScale;
+            if (MapForestArt.Available && iconSprite != null)
+            {
+                float extent = Mathf.Max(iconSprite.bounds.size.x, iconSprite.bounds.size.y);
+                iconRenderer.transform.localScale = Vector3.one * (0.80f / Mathf.Max(0.01f, extent));
+            }
             iconRenderer.gameObject.SetActive(iconSprite != null);
         }
 

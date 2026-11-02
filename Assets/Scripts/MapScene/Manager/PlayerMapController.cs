@@ -619,6 +619,7 @@ public class PlayerMapController : MonoBehaviour
                     }
                 }
             }
+            ApplyForestPawnLook();
             return;
         }
 
@@ -658,6 +659,48 @@ public class PlayerMapController : MonoBehaviour
         label.color = new Color(0.04f, 0.1f, 0.14f, 1f);
         label.sortingOrder = 102;
         label.rectTransform.sizeDelta = new Vector2(4f, 2f);
+        ApplyForestPawnLook();
+    }
+
+    private void ApplyForestPawnLook()
+    {
+        if (!MapForestArt.Available || visualRoot == null) return;
+        Sprite portrait = null;
+        if (runState != null && runState.partyMembers != null)
+            foreach (RunPartyMemberState member in runState.partyMembers)
+            {
+                if (member == null || !member.IsAlive || member.characterData == null) continue;
+                CharacterData_SO character = member.characterData;
+                portrait = character.battleSprite;
+                if (portrait == null && character.characterPrefab != null)
+                {
+                    SpriteRenderer prefabBody = character.characterPrefab.GetComponentInChildren<SpriteRenderer>(true);
+                    if (prefabBody != null) portrait = prefabBody.sprite;
+                }
+                if (portrait == null) portrait = character.icon;
+                if (portrait != null) break;
+            }
+        Transform body = visualRoot.Find("Body");
+        SpriteRenderer renderer = body != null ? body.GetComponent<SpriteRenderer>() : null;
+        if (renderer != null && portrait != null)
+        {
+            renderer.sprite = portrait;
+            renderer.color = Color.white;
+            float extent = Mathf.Max(portrait.bounds.size.x, portrait.bounds.size.y);
+            body.localScale = Vector3.one * (0.87f / Mathf.Max(0.01f, extent));
+        }
+        Transform outline = visualRoot.Find("Outline");
+        SpriteRenderer frame = outline != null ? outline.GetComponent<SpriteRenderer>() : null;
+        if (frame != null)
+        {
+            frame.sprite = MapForestArt.Get("TileFace");
+            frame.drawMode = SpriteDrawMode.Simple;
+            float extent = Mathf.Max(frame.sprite.bounds.size.x, frame.sprite.bounds.size.y);
+            outline.localScale = Vector3.one * (0.98f / Mathf.Max(0.01f, extent));
+            frame.color = new Color(0.50f, 0.57f, 0.39f);
+        }
+        Transform label = visualRoot.Find("Label");
+        if (label != null && portrait != null) label.gameObject.SetActive(false);
     }
 
     private static bool ShouldResolveImmediately(BoardTileData tile)
