@@ -1770,3 +1770,12 @@ Root CLAUDE.md references the same AGENTS.md convention so Claude-based agents s
 - Unity MCP 复查原生 High 1920×1080、High／Medium 2960×1440 总览，以及 Molly／黑棺的 High／Medium 2960×1440、High 1600×1200 实际拼点；保留时间倍率 1、正常点击等待和真实战局生命。另有 4:3 保存场景的样例构图预览，不计作正式战局或物理点击整回合验收。
 - 相关 EditMode 18/18、PlayMode 4/4 通过；新素材 GUID 往返、导入／平台设置核对通过，六个相关 Shader 消息为空。编辑器设置与菜单测试痕迹已恢复，继续存档未改。本地证据：outputs/agent-battle/forest-target-20261102/；正式详录：docs/visuals/forest-battle-look.md。
 - 画面的日光与前后层次已进一步接近参考图；角色局部材质和受光仍有差距，真机效果及性能仍待验收。没有敌人／技能／遗物目录或 APK 变更；按约定提交并推送本批视觉实现与记录。
+
+
+## 2026-11-02 事件面板大阅读区正式接入
+
+- 按最新 `event-panel-reading-concept-20261102.png` 落地无插画、深绿暗金通用模板：通栏大叙事区、序号／名称／完整效果同行选项、单选环与勾选、紧凑后果预览及确定／继续。短文不显示滚动条；长叙事、多行／多项选择、长后果可分别滚动，保留真实中文字体与易读字号；结果页扩大阅读空间。
+- 原 `MapEventOverlay` 继续由 `RunGameManager` 创建；表现拆到 `.View.cs`，切角框与选择状态由 UGUI 网格绘制，没有逐事件插画或新增位图需求。保留费用、不可选原因、执行失败、结果／连续事件、深度上限和原效果回调；未改事件配置、玩法数值、存档或敌人／技能／遗物目录。
+- 团结 2022.3.62t6 隔离工程最终相关 EditMode 73 项中 72 通过、1 项既有失败：`MapEventNestedFlowTests.SaveAssetCatalog_IncludesNestedFollowUpEvents`，与 `b005c-baseline-all.xml` 的后续事件索引为空问题一致，本次未改对应存档构造器。新增 15 项界面测试全部通过，不能把整批 EditMode 写成全绿。
+- 最终 PlayMode 12/12，包括新增 3 项原生射线点击／暗幕拦截、暂停下独立滚动、结果页继续关闭，以及原有地图 HUD／战斗预览 9 项回归。正式“熄灭的营火”、长文／多项、不可选、结果页及 2340×1080／1920×1080／1600×1200／2400×1080 非对称安全区域共七种预览由 `MapEventVisualTools` 复现。
+- 交接：`docs/visuals/event-panel-ui.md`；本地证据：`outputs/agent-battle/event-ui-20261102/`。预览使用临时场景及事件克隆，不读取玩家存档或执行奖励；未为本任务保存正式场景，未打包 APK，真机触摸／性能及整局冒险未验收。按仓库约定提交并推送本次 UI、元数据、工具、测试与文档，其他并行战斗美术改动保留。

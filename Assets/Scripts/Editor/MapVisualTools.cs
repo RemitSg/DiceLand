@@ -140,7 +140,7 @@ public static class MapVisualTools
         }
     }
 
-    public static string Capture(string fileName, int width, int height, MapBackgroundPhase phase, bool hostile, int partyCount, Rect? safeArea = null)
+    public static string Capture(string fileName, int width, int height, MapBackgroundPhase phase, bool hostile, int partyCount, Rect? safeArea = null, Action<GameObject, Camera> customize = null)
     {
         Scene original = SceneManager.GetActiveScene();
         Scene preview = EditorSceneManager.NewPreviewScene();
@@ -228,6 +228,7 @@ public static class MapVisualTools
             canvasRect.sizeDelta = new Vector2(1080f * width / height, 1080f);
             canvasRect.position = new Vector3(0f, 0f, -2f);
             canvasRect.localScale = Vector3.one * (camera.orthographicSize / 540f);
+            customize?.Invoke(host, camera);
             hud.ApplyViewport(new Vector2(width, height), safeArea ?? new Rect(0f, 0f, width, height));
             Canvas.ForceUpdateCanvases();
             foreach (TextMeshProUGUI text in canvas.GetComponentsInChildren<TextMeshProUGUI>())
