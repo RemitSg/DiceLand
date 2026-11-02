@@ -694,11 +694,8 @@ public class PlayerMapController : MonoBehaviour
         SpriteRenderer frame = outline != null ? outline.GetComponent<SpriteRenderer>() : null;
         if (frame != null)
         {
-            frame.sprite = MapForestArt.Get("TileFace");
-            frame.drawMode = SpriteDrawMode.Simple;
-            float extent = Mathf.Max(frame.sprite.bounds.size.x, frame.sprite.bounds.size.y);
-            outline.localScale = Vector3.one * (0.98f / Mathf.Max(0.01f, extent));
-            frame.color = new Color(0.50f, 0.57f, 0.39f);
+            // The board owns its stationary tile. Only the transparent character travels.
+            frame.enabled = portrait == null;
         }
         Transform label = visualRoot.Find("Label");
         if (label != null && portrait != null) label.gameObject.SetActive(false);
