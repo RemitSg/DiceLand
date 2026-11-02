@@ -244,20 +244,22 @@ Important scripts:
 
 - `BattleLookController.cs`
   - per-camera actor focus, aspect-aware overview framing and the sharp world-UI overlay camera
-  - mobile/Medium Gaussian radius differs for overview and closeup; desktop High uses Bokeh
+  - overview Gaussian focus includes the assigned midground tree/ruin renderer, then falls off over twice the actor-focus distance; distant scenery softens while the midground stays readable
+  - desktop High closeups retain actor-focused Bokeh; mobile/Medium closeups use Gaussian. Per-camera focus updates keep scenery out of closeup focus
   - saved overview pitch is now 3 degrees; the authoring helper and foreground heights match this shallow battle-lane composition, while the distant painting retains its authored world pose
 
 - `BattleForestStageController.cs`
   - owns decorative terrain and the forest lighting/opening shader globals, restoring earlier values on release
   - shares projected canopy-opening coordinates with `BattleLookPreviewTools` so floor/actor light pools and authored shafts agree
+  - saved/default forest-lighting strength 0.82 softens the warm/cool light-pool contrast; the cinematic profile uses exposure 0.18, contrast 9 and temperature 3
 
 - `Assets/Assets/Shaders/BattleForestFoliage.shader`
   - preserves the authored cutout/depth and breeze, with optional painted shadow fill; zero alpha keeps other foliage materials neutral
-  - the ancient-tree layer uses `SunlitCanopyTerracesComplete.png`, position (0.2, 6.0632496, 12), uniform scale 1.65 and bottom height -1.7
+  - the ancient-tree layer uses `SunlitCanopyTerracesDaylight.png`, position (0.2, 7.00425, 12), scale (1.65, 1.85, 1.65) and bottom height -1.7; broader daylight masses and subtler spiral marks replace the earlier orange-edged art
   - keep its saved scene, Forest Foliage material and `BattleLookPreviewTools` composition/fill settings aligned; original art remains available
   - the shared ancient-tree/outer-grove material uses highlight gain 1 and olive-grey painted shadow fill (0.36, 0.40, 0.32, 0.30); near and margin foliage retain their separate materials
   - both near foreground clusters and both outer groves use `MossFernForegroundLow.png`, a low painted moss/fern/blue-mushroom cluster; `BattleLookPreviewTools.ForegroundPath` must match all four saved SpriteRenderer references
-  - this sibling retains the original 1536x1024 dimensions, PPU100, world bounds and import settings; near softness/cutout remain material values 4/0.5. Original `MossFernForeground.png` is preserved; built-in image edit inputs and exact prompt are in `docs/visuals/forest-low-foreground-prompt.txt`
+  - this sibling retains the original 1536x1024 dimensions, PPU100, world bounds and import settings; near softness/cutout are 6/0.5 and near material tint is (0.84, 0.90, 0.78), reducing the blue mushrooms' visual weight. Original `MossFernForeground.png` is preserved; built-in image edit inputs and exact prompts are in `docs/visuals/forest-low-foreground-prompt.txt` and `docs/visuals/forest-canopy-daylight-prompt.txt`
 
 - `Assets/Assets/Shaders/BattleForestSurface.hlsl`
   - stone terrace and woodland share world-space paving scale, earthen-island mask and lighting across their join

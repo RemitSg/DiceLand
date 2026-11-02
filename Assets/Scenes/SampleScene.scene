@@ -917,6 +917,7 @@ MonoBehaviour:
   lookVolume: {fileID: 391799059}
   allies: {fileID: 1916402021}
   enemies: {fileID: 1378645307}
+  midground: {fileID: 1760378056}
   sharpDepthPadding: 2
   backgroundBlurDistance: 12
   motionBlurIntensity: 0.22
@@ -13487,7 +13488,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   originalGround: {fileID: 619310770}
   stoneMaterial: {fileID: 2100000, guid: 1d9d2bf62a52544eb529a11a85862661, type: 2}
-  forestLighting: 0.92
+  forestLighting: 0.82
 --- !u!114 &1603544717
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13671,8 +13672,8 @@ Transform:
   m_GameObject: {fileID: 1760378054}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.2, y: 6.0632496, z: 12}
-  m_LocalScale: {x: 1.65, y: 1.65, z: 1.65}
+  m_LocalPosition: {x: 0.2, y: 7.00425, z: 12}
+  m_LocalScale: {x: 1.65, y: 1.85, z: 1.65}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1603544718}
@@ -13721,7 +13722,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 04a4b7efbc70957439e881a4c54027c1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f5c09aa3151355748ba247d9f01316ed, type: 3}
   m_Color: {r: 0.95, g: 0.98, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

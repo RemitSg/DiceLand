@@ -10,7 +10,7 @@ public sealed class BattleForestStageController : MonoBehaviour
     public static readonly Vector2 CanopyOpenings = new Vector2(-9f, 5.5f);
     [SerializeField] private MeshRenderer originalGround;
     [SerializeField] private Material stoneMaterial;
-    [SerializeField, Range(0f, 1f)] private float forestLighting = 0.92f;
+    [SerializeField, Range(0f, 1f)] private float forestLighting = 0.82f;
 
     private static readonly int LightingId = Shader.PropertyToID("_DiceLandForestLighting");
     private static readonly int OpeningsId = Shader.PropertyToID("_DiceLandForestOpenings");

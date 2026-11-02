@@ -73,6 +73,32 @@ public sealed class BattleLookControllerTests
     }
 
     [Test]
+    public void OverviewKeepsMidgroundSharpWhileCloseupStillTracksCombatants()
+    {
+        GameObject scenery = new GameObject("Midground ruin");
+        scenery.transform.SetParent(root.transform);
+        scenery.transform.position = new Vector3(0f, 3f, 14f);
+        SpriteRenderer renderer = scenery.AddComponent<SpriteRenderer>();
+        renderer.sprite = sprite;
+        Set("midground", renderer);
+
+        look.PrepareCamera(overview);
+        Assert.IsTrue(volume.sharedProfile.TryGet(out DepthOfField depth));
+        Assert.AreEqual(DepthOfFieldMode.Gaussian, depth.mode.value);
+        Assert.GreaterOrEqual(depth.gaussianStart.value, 36f);
+        Assert.LessOrEqual(depth.gaussianStart.value, 37f);
+        Assert.AreEqual(24f, depth.gaussianEnd.value - depth.gaussianStart.value, 0.001f);
+
+        look.PrepareCamera(closeup);
+        Assert.Less(depth.gaussianStart.value, 14f, "Closeup focus must exclude the scenery layer.");
+        Assert.AreEqual(12f, depth.gaussianEnd.value - depth.gaussianStart.value, 0.001f);
+
+        scenery.SetActive(false);
+        look.PrepareCamera(overview);
+        Assert.Less(depth.gaussianStart.value, 30f, "Inactive scenery must not extend the sharp range.");
+    }
+
+    [Test]
     public void RuntimeFocusDoesNotModifyTheSharedAssetAndDisableRestoresIt()
     {
         Assert.AreNotSame(original, volume.sharedProfile);

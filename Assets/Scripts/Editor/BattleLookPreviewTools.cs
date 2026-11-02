@@ -18,7 +18,7 @@ public static class BattleLookPreviewTools
     public const string ForestAssets = "Assets/Scenes/SampleScene/Forest";
     public const string BackdropPath = "Assets/Assets/Textures/Environments/Forest/ForestRuinsBackdrop.png";
     public const string GroundTexturePath = "Assets/Assets/Textures/Environments/Forest/ForestFloorPainterly.png";
-    public const string MidgroundPath = "Assets/Assets/Textures/Environments/Forest/SunlitCanopyTerracesComplete.png";
+    public const string MidgroundPath = "Assets/Assets/Textures/Environments/Forest/SunlitCanopyTerracesDaylight.png";
     public const string ForegroundPath = "Assets/Assets/Textures/Environments/Forest/MossFernForegroundLow.png";
     public const string StoneTexturePath = "Assets/Assets/Textures/Environments/Forest/ForestTerracePavingSoft.png";
     public const string MarginTexturePath = "Assets/Assets/Textures/Environments/Forest/ForestMarginPlants.png";
@@ -174,11 +174,11 @@ public static class BattleLookPreviewTools
         bloom.scatter.Override(0.55f);
         bloom.highQualityFiltering.Override(false);
         ColorAdjustments color = GetOrAdd<ColorAdjustments>(profile);
-        color.postExposure.Override(0.05f);
-        color.contrast.Override(18f);
+        color.postExposure.Override(0.18f);
+        color.contrast.Override(9f);
         color.saturation.Override(-4f);
         WhiteBalance balance = GetOrAdd<WhiteBalance>(profile);
-        balance.temperature.Override(-3f);
+        balance.temperature.Override(3f);
         balance.tint.Override(2f);
         Tonemapping tone = GetOrAdd<Tonemapping>(profile);
         tone.mode.Override(TonemappingMode.ACES);
@@ -292,12 +292,20 @@ public static class BattleLookPreviewTools
         material.SetFloat("_HighlightGain", 1f);
         material.SetColor("_PaintedFill", new Color(0.36f, 0.40f, 0.32f, 0.30f));
         Sprite ancientTree = LoadForestSprite(MidgroundPath);
-        float treeScale = 1.65f;
+        float treeScale = 1.85f;
         AddTree(root.transform, ancientTree, material, "Ancient tree and ruined terrace",
             new Vector3(0.2f, -ancientTree.bounds.min.y * treeScale - 1.7f, 12f), treeScale,
             new Color(0.95f, 0.98f, 1f), false);
+        SpriteRenderer midground = root.transform.Find("Ancient tree and ruined terrace").GetComponent<SpriteRenderer>();
+        midground.transform.localScale = new Vector3(1.65f, treeScale, 1.65f);
+        BattleLookController look = scene.GetRootGameObjects()
+            .SelectMany(item => item.GetComponentsInChildren<BattleLookController>(true)).First();
+        SerializedObject lookSettings = new SerializedObject(look);
+        lookSettings.FindProperty("midground").objectReferenceValue = midground;
+        lookSettings.ApplyModifiedPropertiesWithoutUndo();
         Material nearMaterial = ForestMaterial("Near Forest Foliage", "DiceLand/Battle Forest Foliage");
-        nearMaterial.SetFloat("_DefocusTexels", 4f);
+        nearMaterial.SetFloat("_DefocusTexels", 6f);
+        nearMaterial.SetColor("_Color", new Color(0.84f, 0.90f, 0.78f, 1f));
         nearMaterial.SetFloat("_SwayAmplitude", 0.025f);
         Sprite foreground = LoadForestSprite(ForegroundPath);
         AddTree(root.transform, foreground, nearMaterial, "Left foreground foliage", new Vector3(-8.3f, 2.7192f, -8.4f), 0.90f, new Color(0.67f, 0.78f, 0.86f), false);

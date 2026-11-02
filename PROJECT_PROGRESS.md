@@ -1761,3 +1761,12 @@ Root CLAUDE.md references the same AGENTS.md convention so Claude-based agents s
 - 当前样例仍展示“熄灭的营火”的原有两段叙事、两项选择与实际效果，首项选中；没有新增事件专属美术、叙事内容或规则。
 - 新参考：docs/visuals/event-panel-reading-concept-20261102.png；实际提示词与输入说明：docs/visuals/event-panel-reading-concept-20261102-prompt.txt。内置 image_gen 生成，原图原样复制并核对 SHA-256 一致，尺寸 1847×851。此前两版保留用于对照。
 - 仅完成设计参考，未接入 UGUI、修改事件资产或运行游戏测试，未打包；按约定提交并推送。
+
+
+## 2026-11-02 森林战斗日光与中远景层次
+
+- 承接未完成的树冠候选，使用内置 image_gen 再编辑并选定 SunlitCanopyTerracesDaylight.png，原图原样复制、保留透明通道与原导入设置。树冠叶团与树干日光色面更连贯，螺旋标记更克制；中景垂直比例提高到 1.85，根部高度 -1.7 保留。完整提示词与旧候选取舍记录进入 docs/visuals。
+- 总览 Gaussian 清晰范围保护角色与中景树木／遗迹，再柔化远处景物；特写继续按角色对焦。森林光照强度 0.82，后处理曝光 0.18／对比度 9／色温 3，近景柔化 6 并压低蓝蘑菇色调；保存场景、材质、后处理与 BattleLookPreviewTools 同步。
+- Unity MCP 复查原生 High 1920×1080、High／Medium 2960×1440 总览，以及 Molly／黑棺的 High／Medium 2960×1440、High 1600×1200 实际拼点；保留时间倍率 1、正常点击等待和真实战局生命。另有 4:3 保存场景的样例构图预览，不计作正式战局或物理点击整回合验收。
+- 相关 EditMode 18/18、PlayMode 4/4 通过；新素材 GUID 往返、导入／平台设置核对通过，六个相关 Shader 消息为空。编辑器设置与菜单测试痕迹已恢复，继续存档未改。本地证据：outputs/agent-battle/forest-target-20261102/；正式详录：docs/visuals/forest-battle-look.md。
+- 画面的日光与前后层次已进一步接近参考图；角色局部材质和受光仍有差距，真机效果及性能仍待验收。没有敌人／技能／遗物目录或 APK 变更；按约定提交并推送本批视觉实现与记录。

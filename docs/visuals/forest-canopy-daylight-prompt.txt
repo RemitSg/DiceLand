@@ -1,0 +1,12 @@
+2026-11-02. Built-in image_gen edit; transparent background.
+Final workspace asset: Assets/Assets/Textures/Environments/Forest/SunlitCanopyTerracesDaylight.png
+Generated original: C:/Users/Karmas/.codex/generated_images/01a19a82-d97d-77f0-ae86-a73983d1fcbf/exec-fae4165a-caf1-4704-930a-e826cfe2a40b.png
+SHA256 (copied unchanged): FCAE672E9EA33EA9CDBC1E3342A002867469ED1FE427BA68CF10993E37E97D8B
+Edit target: the preceding Luminous candidate, recorded in forest-canopy-luminous-prompt.txt. That unused intermediate remains in local evidence and its original generated image remains at the path recorded there.
+Style reference: docs/visuals/forest-target-reference.png
+
+Use case: style-transfer.
+Asset type: transparent production midground sprite for a 2.5D painterly fantasy battle scene.
+Input image 1 is the EDIT TARGET: two ancient trees and stone ruins on transparency. Input image 2 is the TARGET STYLE AND LIGHTING REFERENCE only.
+Repaint image 1's lighting and painted forms to closely match the warm, airy sunlit environment in image 2. This must be a noticeable lighting correction. Replace the thin hot orange glowing cracks/edge stripes on the tree trunks with wide, softly lit golden-buff bark planes. Trunks are real brown wood catching sunlight, NOT lava, neon, glowing veins or emissive objects. Small spiral marks may stay but should be subtle. Shift the dominant foliage to broad luminous light yellow-green masses, with natural irregular painterly clusters and quiet grey-olive teal shadows. Reduce tiny equally crisp leaf details. Increase the daylight bounce light into shaded foliage and roots, with fewer black shadow pockets. Sunlight is pale golden daylight from upper right. Stone ruins have subdued pale warm-grey planes with moss, dappled daylight and softly grounded roots. Match the reference's broad light areas, rich atmosphere, elegant selective edges, and hand-painted JRPG finish.
+INVARIANTS: Keep image 1's existing two-trunk composition, all tree and branch positions, wide 16:9 canvas, silhouette, central transparent opening, ruined column and terrace positions, subject size and ground level. All tips inside frame. Transparent background and all original transparent holes must remain transparent, including between branches and roots. Do not add a sky, waterfall, haze rectangle, distant background, ground toward viewer, people, UI, lettering, watermark or border. This is ONLY one independent tree-and-ruins cutout. No outer glow or bloom painted into transparency.

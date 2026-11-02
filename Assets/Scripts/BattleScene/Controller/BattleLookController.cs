@@ -12,6 +12,7 @@ public sealed class BattleLookController : MonoBehaviour
     [SerializeField] private Volume lookVolume;
     [SerializeField] private Transform allies;
     [SerializeField] private Transform enemies;
+    [SerializeField] private Renderer midground;
     [SerializeField, Min(0f)] private float sharpDepthPadding = 2f;
     [SerializeField, Min(1f)] private float backgroundBlurDistance = 12f;
     [SerializeField, Range(0f, 1f)] private float motionBlurIntensity = 0.22f;
@@ -116,16 +117,28 @@ public sealed class BattleLookController : MonoBehaviour
                 Vector3.Dot(new Vector3(0f, 1.5f, 0f) - camera.transform.position, forward));
         }
 
-        Vector2 range = CalculateFocusRange(nearest, farthest, sharpDepthPadding, backgroundBlurDistance);
+        // The overview is an environmental composition: keep the authored tree/ruin layer
+        // readable and let only the distant landscape fall out of focus. Closeups follow actors.
+        float sharpEnd = farthest;
+        if (camera == overviewCamera && midground != null && midground.enabled && midground.gameObject.activeInHierarchy)
+        {
+            Bounds bounds = midground.bounds;
+            float depth = Vector3.Dot(bounds.center - camera.transform.position, forward);
+            float extent = Vector3.Dot(bounds.extents,
+                new Vector3(Mathf.Abs(forward.x), Mathf.Abs(forward.y), Mathf.Abs(forward.z)));
+            if (depth - extent > camera.nearClipPlane)
+                sharpEnd = Mathf.Max(sharpEnd, depth + extent);
+        }
+        Vector2 range = CalculateFocusRange(nearest, sharpEnd, sharpDepthPadding,
+            backgroundBlurDistance * (camera == overviewCamera ? 2f : 1f));
         bool cinematic = !Application.isMobilePlatform && QualitySettings.GetQualityLevel() >= 3;
-        depthOfField.mode.Override(cinematic ? DepthOfFieldMode.Bokeh : DepthOfFieldMode.Gaussian);
+        depthOfField.mode.Override(cinematic && camera != overviewCamera ? DepthOfFieldMode.Bokeh : DepthOfFieldMode.Gaussian);
         depthOfField.focusDistance.Override(Mathf.Max(camera.nearClipPlane + 0.1f, (nearest + farthest) * 0.5f));
         depthOfField.focalLength.Override(camera == overviewCamera ? 110f : 65f);
         depthOfField.aperture.Override(camera == overviewCamera ? 4.5f : 5.6f);
         depthOfField.gaussianStart.Override(range.x);
         depthOfField.gaussianEnd.Override(range.y);
-        // Preserve the painted ruin/canopy detail in mobile overviews; closeups keep a softer background.
-        depthOfField.gaussianMaxRadius.Override(camera == overviewCamera ? 0.65f : 0.85f);
+        depthOfField.gaussianMaxRadius.Override(camera == overviewCamera ? 1f : 0.85f);
         depthOfField.highQualitySampling.Override(!Application.isMobilePlatform && QualitySettings.GetQualityLevel() >= 3);
         // Tuanjie 14.1 adds object motion blur, but the low tier keeps the cheaper camera path.
         if (motionBlur != null)
