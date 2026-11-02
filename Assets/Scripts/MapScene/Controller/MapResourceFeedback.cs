@@ -42,6 +42,7 @@ public partial class MapResourceFeedback : MonoBehaviour
     private RunState boundRun;
     private bool hasSnapshot;
     private TMP_Text wallet;
+    private RectTransform walletIcon;
     private Color walletColor;
     private Vector3 walletScale;
     private int observedMoney;
@@ -63,6 +64,7 @@ public partial class MapResourceFeedback : MonoBehaviour
         {
             RestoreWallet();
             wallet = moneyLabel;
+            walletIcon = wallet != null && wallet.transform.parent != null ? wallet.transform.parent.Find("MoneyIcon") as RectTransform : null;
             hasWrittenMoney = false;
             if (wallet != null) { walletColor = wallet.color; walletScale = wallet.rectTransform.localScale; }
         }
@@ -214,8 +216,9 @@ public partial class MapResourceFeedback : MonoBehaviour
             writtenMoney = value;
             hasWrittenMoney = true;
         }
-        wallet.color = Color.Lerp(walletColor, Loss, Mathf.Clamp01(lossTint * 5f));
-        wallet.rectTransform.localScale = walletScale * (1f + Mathf.Sin(walletPulse * Mathf.PI) * 0.13f);
+        Color receiving = Color.Lerp(walletColor, new Color(1f, 0.93f, 0.7f), walletPulse * 0.28f);
+        wallet.color = Color.Lerp(receiving, Loss, Mathf.Clamp01(lossTint * 5f));
+        wallet.rectTransform.localScale = walletScale * (1f + Mathf.Sin(walletPulse * Mathf.PI) * 0.065f);
     }
 
     private void RenderHealth(HealthChange change, float progress)
