@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e69dd18fc072f8443bad700853394fe6, type: 3}
+  m_Name: Forest Actor Forms
+  m_EditorClassIdentifier:
+  entries:
+  - sprite: {fileID: 21300000, guid: a601225b1e7d802479f0f1cb53897183, type: 3}
+    formMap: {fileID: 2800000, guid: d96344661d406a14f83139ee6be44633, type: 2}
+  - sprite: {fileID: 21300000, guid: e82db6940ca08274ca713c600b1090a5, type: 3}
+    formMap: {fileID: 2800000, guid: 8cfa5a472ed13894a9b90d329e753c3b, type: 2}
+  - sprite: {fileID: 21300000, guid: 7278200b9c886ef499ac32e36ebac9bb, type: 3}
+    formMap: {fileID: 2800000, guid: a6caeb1d9be1baa45957c7c2b2a8dbf6, type: 2}
+  - sprite: {fileID: 21300000, guid: 228f0f2faa31282489ab4effce2e3006, type: 3}
+    formMap: {fileID: 2800000, guid: 6df0e1c97cabc674eb7f487c9579870b, type: 2}
+  - sprite: {fileID: 21300000, guid: 8064e01a6ecf1274a8163c07b55b555e, type: 3}
+    formMap: {fileID: 2800000, guid: 892f00049dfd9d14ea337286a0f94a04, type: 2}
+  - sprite: {fileID: 21300000, guid: 5e2a14b7cc943bc47bc36ea2ac51c703, type: 3}
+    formMap: {fileID: 2800000, guid: 0d4fc1ecbabc4b0409d8b6750af9e13b, type: 2}
+  - sprite: {fileID: 21300000, guid: 24914d1a8f8a574499327f63b5d059e8, type: 3}
+    formMap: {fileID: 2800000, guid: 2160e639c13e27d41aed70484079ba1c, type: 2}

@@ -23,6 +23,8 @@ Shader "Assets/Shaders/Lit"
         [HideInInspector] _ForestIndirectStrength ("Forest indirect fill", Range(0,2)) = 1
         [HideInInspector] _ForestPigmentStrength ("Forest pigment response", Range(0,1)) = 1
         [HideInInspector] _ForestHighlightStrength ("Forest highlight shoulder", Range(0,1)) = 1
+        [HideInInspector] _ForestFormMap ("Forest silhouette form", 2D) = "bump" {}
+        [HideInInspector] _ForestFormParams ("Form weight and sprite mirroring", Vector) = (0,1,1,0)
     }
 
     SubShader
@@ -82,6 +84,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestIndirectStrength;
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
+            float4 _ForestFormParams;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
@@ -184,6 +187,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestIndirectStrength;
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
+            float4 _ForestFormParams;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
@@ -319,11 +323,13 @@ Shader "Assets/Shaders/Lit"
             float _ForestIndirectStrength;
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
+            float4 _ForestFormParams;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);       SAMPLER(sampler_MainTex);
             TEXTURE2D(_AlphaTex);      SAMPLER(sampler_AlphaTex);
             TEXTURE2D(_NormalMap);     SAMPLER(sampler_NormalMap);
+            TEXTURE2D(_ForestFormMap); SAMPLER(sampler_ForestFormMap);
 
             struct Attributes
             {
@@ -490,7 +496,21 @@ Shader "Assets/Shaders/Lit"
                 float surfaceWeight = saturate(_DiceLandForestLighting * _ForestSurfaceWeight)
                     * step(0.001, min(_ForestSpriteBounds.z, _ForestSpriteBounds.w));
                 if (surfaceWeight > 0.001)
+                {
                     normalWS = DiceLandForestSculptedNormal(i.positionWS, _ForestSpriteBounds, surfaceWeight);
+                    if (_ForestFormParams.x > 0.001)
+                    {
+                        // RGB stores a linear, positive-Z normal derived only from source alpha.
+                        // Sprite mirroring is separate from Transform's rotation/negative scale.
+                        float3 form = SAMPLE_TEXTURE2D(_ForestFormMap, sampler_ForestFormMap, i.uv).rgb * 2.0 - 1.0;
+                        form = normalize(float3(form.xy * _ForestFormParams.yz, -max(0.1, form.z)));
+                        float3 formWS = TransformObjectToWorldNormal(form);
+                        // Two-sided illustration quads may also face left through a 180-degree Y turn.
+                        formWS.z = -max(0.1, abs(formWS.z));
+                        formWS = normalize(formWS);
+                        normalWS = normalize(lerp(normalWS, formWS, saturate(_ForestFormParams.x)));
+                    }
+                }
                 
                 float3 viewDirWS = normalize(_WorldSpaceCameraPos.xyz - i.positionWS);
                 
@@ -559,6 +579,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestIndirectStrength;
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
+            float4 _ForestFormParams;
             CBUFFER_END
             TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
             TEXTURE2D(_AlphaTex); SAMPLER(sampler_AlphaTex);

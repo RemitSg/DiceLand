@@ -289,7 +289,7 @@ public static class BattleLookPreviewTools
         Material material = ForestMaterial("Forest Foliage", "DiceLand/Battle Forest Foliage");
         material.shader = Shader.Find("DiceLand/Battle Forest Foliage");
         material.SetColor("_Color", Color.white);
-        material.SetFloat("_HighlightGain", 1f);
+        material.SetFloat("_HighlightGain", 1.18f);
         material.SetColor("_PaintedFill", new Color(0.36f, 0.40f, 0.32f, 0.30f));
         Sprite ancientTree = LoadForestSprite(MidgroundPath);
         float treeScale = 1.85f;
@@ -330,7 +330,8 @@ public static class BattleLookPreviewTools
         stone.SetColor("_MossColor", new Color(0.19f, 0.27f, 0.15f));
         root.AddComponent<BattleForestStageController>().Configure(
             scene.GetRootGameObjects().SelectMany(item => item.GetComponentsInChildren<MeshRenderer>(true)).First(item => item.name == "Plane"), stone);
-        root.AddComponent<BattleActorLightingController>().Configure(manager.alliesParent.transform, manager.enemiesParent.transform);
+        root.AddComponent<BattleActorLightingController>().Configure(manager.alliesParent.transform, manager.enemiesParent.transform,
+            AssetDatabase.LoadAssetAtPath<BattleActorFormLibrary>(BattleActorFormBakeTools.LibraryPath));
         foreach (Material generated in new[] { nearMaterial, stone })
         {
             EditorUtility.SetDirty(generated);
@@ -386,7 +387,7 @@ public static class BattleLookPreviewTools
     private static void AddAtmosphere(GameObject root, BattleManager manager, Material backdrop, Material material)
     {
         Material rays = ForestMaterial("Canopy Light Shafts", "DiceLand/Battle Forest Atmosphere");
-        rays.SetColor("_Color", new Color(1.65f, 1.34f, 0.79f, 0.18f));
+        rays.SetColor("_Color", new Color(1.90f, 1.54f, 0.86f, 0.26f));
         rays.SetFloat("_Mode", 0f);
         rays.SetFloat("_SoftDistance", 2f);
         rays.SetFloat("_ShaftStriation", 0.6f);
@@ -416,13 +417,13 @@ public static class BattleLookPreviewTools
             shaft.transform.localScale = new Vector3(i % 2 == 0 ? 4.2f : 2.6f, (24f + i * 2f) / towardSun.y, 1f);
         }
         Material mist = ForestMaterial("Low Forest Mist", "DiceLand/Battle Forest Atmosphere");
-        mist.SetColor("_Color", new Color(0.63f, 0.70f, 0.69f, 0.14f));
+        mist.SetColor("_Color", new Color(0.98f, 0.91f, 0.75f, 0.23f));
         mist.SetFloat("_Mode", 1f);
         mist.SetFloat("_SoftDistance", 1.5f);
         for (int i = 0; i < 2; i++)
         {
             GameObject bank = Quad("Drifting mist bank " + (i + 1), root.transform, mist);
-            bank.transform.localPosition = new Vector3(i == 0 ? -5f : 8f, 1.6f + i * 0.6f, 18f + i * 8f);
+            bank.transform.localPosition = new Vector3(i == 0 ? -5f : 8f, 1.6f + i * 0.6f, i == 0 ? 10f : 26f);
             bank.transform.localScale = new Vector3(65f, 8f, 1f);
         }
         AddDust(root.transform);

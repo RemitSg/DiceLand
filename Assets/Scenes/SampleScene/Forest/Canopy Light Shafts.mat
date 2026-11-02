@@ -29,5 +29,5 @@ Material:
     - _ShaftStriation: 0.6
     - _SoftDistance: 2
     m_Colors:
-    - _Color: {r: 1.65, g: 1.34, b: 0.79, a: 0.18}
+    - _Color: {r: 1.9, g: 1.54, b: 0.86, a: 0.26}
   m_BuildTextureStacks: []

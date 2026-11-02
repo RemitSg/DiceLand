@@ -142,6 +142,40 @@ public sealed class BattleActorLightingTests
     }
 
     [Test]
+    public void FormDataTracksSpriteMirroringAndReplacementWithoutTouchingSharedMaterials()
+    {
+        SpriteRenderer body = CreateActor("Form witness", allies, Vector3.up * 2f, false);
+        BattleActorFormLibrary library = ScriptableObject.CreateInstance<BattleActorFormLibrary>();
+        Texture2D map = new Texture2D(4, 8, TextureFormat.RGBA32, false, true);
+        resources.Add(library);
+        resources.Add(map);
+        typeof(BattleActorFormLibrary).GetField("entries", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+            .SetValue(library, new[] { new BattleActorFormLibrary.Entry { sprite = sprite, formMap = map } });
+        lighting.Configure(allies, enemies, library);
+        lighting.UpdateLighting();
+        Material runtime = body.sharedMaterial;
+        Assert.AreSame(map, runtime.GetTexture("_ForestFormMap"));
+        Assert.Greater(runtime.GetVector("_ForestFormParams").x, 0f);
+        Assert.AreEqual(0f, material.GetVector("_ForestFormParams").x);
+
+        body.flipX = true;
+        body.flipY = true;
+        lighting.UpdateLighting();
+        Assert.AreSame(runtime, body.sharedMaterial);
+        Assert.AreEqual(-1f, runtime.GetVector("_ForestFormParams").y);
+        Assert.AreEqual(-1f, runtime.GetVector("_ForestFormParams").z);
+
+        Sprite replacement = Sprite.Create(texture, new Rect(0, 0, 4, 8), Vector2.one * 0.5f, 2f);
+        resources.Add(replacement);
+        body.sprite = replacement; // Identical bounds must still invalidate the old form binding.
+        lighting.UpdateLighting();
+        Assert.AreEqual(0f, runtime.GetVector("_ForestFormParams").x);
+        Assert.IsNull(runtime.GetTexture("_ForestFormMap"));
+        lighting.ReleaseLighting();
+        Assert.AreSame(material, body.sharedMaterial);
+    }
+
+    [Test]
     public void AnExternalMaterialOverrideIsNeverReplacedByTheLightingController()
     {
         SpriteRenderer body = CreateActor("Replaced block", allies, Vector3.up * 2f, false);

@@ -13558,6 +13558,8 @@ MonoBehaviour:
   allies: {fileID: 1916402021}
   enemies: {fileID: 1378645307}
   surfaceWeight: 0.8
+  formLibrary: {fileID: 11400000, guid: 1a01b333a8b826a4aa3bf4f883816aee, type: 2}
+  formWeight: 0.7
 --- !u!1 &1717632942
 GameObject:
   m_ObjectHideFlags: 0
@@ -13586,7 +13588,7 @@ Transform:
   m_GameObject: {fileID: 1717632942}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5, y: 1.6, z: 18}
+  m_LocalPosition: {x: -5, y: 1.6, z: 10}
   m_LocalScale: {x: 65, y: 8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

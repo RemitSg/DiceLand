@@ -8,8 +8,12 @@ public sealed class BattleActorLightingController : MonoBehaviour
     [SerializeField] private Transform allies;
     [SerializeField] private Transform enemies;
     [SerializeField, Range(0f, 1f)] private float surfaceWeight = 0.8f;
+    [SerializeField] private BattleActorFormLibrary formLibrary;
+    [SerializeField, Range(0f, 1f)] private float formWeight = 0.7f;
     private static readonly int BoundsId = Shader.PropertyToID("_ForestSpriteBounds");
     private static readonly int WeightId = Shader.PropertyToID("_ForestSurfaceWeight");
+    private static readonly int FormMapId = Shader.PropertyToID("_ForestFormMap");
+    private static readonly int FormParamsId = Shader.PropertyToID("_ForestFormParams");
     private readonly List<Transform> actors = new List<Transform>();
     private readonly List<Entry> entries = new List<Entry>();
     private float nextRefresh;
@@ -21,13 +25,19 @@ public sealed class BattleActorLightingController : MonoBehaviour
         public Material runtimeMaterial;
         public Bounds lastBounds;
         public float lastWeight = -1f;
+        public float lastFormWeight = -1f;
+        public Sprite lastSprite;
+        public BattleActorFormLibrary lastLibrary;
+        public bool lastFlipX;
+        public bool lastFlipY;
     }
 
-    public void Configure(Transform allyRoot, Transform enemyRoot)
+    public void Configure(Transform allyRoot, Transform enemyRoot, BattleActorFormLibrary forms = null)
     {
         ReleaseLighting();
         allies = allyRoot;
         enemies = enemyRoot;
+        formLibrary = forms;
     }
 
     private void LateUpdate() => UpdateLighting();
@@ -68,11 +78,25 @@ public sealed class BattleActorLightingController : MonoBehaviour
             Bounds bounds = renderer.bounds;
             if (bounds.size.x < 0.001f || bounds.size.y < 0.001f) continue;
             Vector4 packedBounds = new Vector4(bounds.min.x, bounds.min.y, bounds.size.x, bounds.size.y);
-            if (entry.lastBounds == bounds && Mathf.Approximately(entry.lastWeight, surfaceWeight)) continue;
+            if (entry.lastBounds == bounds && Mathf.Approximately(entry.lastWeight, surfaceWeight)
+                && Mathf.Approximately(entry.lastFormWeight, formWeight) && entry.lastSprite == renderer.sprite
+                && entry.lastLibrary == formLibrary && entry.lastFlipX == renderer.flipX && entry.lastFlipY == renderer.flipY) continue;
             entry.runtimeMaterial.SetVector(BoundsId, packedBounds);
             entry.runtimeMaterial.SetFloat(WeightId, surfaceWeight);
+            if (entry.runtimeMaterial.HasProperty(FormParamsId))
+            {
+                Texture2D form = formLibrary != null ? formLibrary.Find(renderer.sprite) : null;
+                entry.runtimeMaterial.SetTexture(FormMapId, form);
+                entry.runtimeMaterial.SetVector(FormParamsId, new Vector4(form != null ? formWeight : 0f,
+                    renderer.flipX ? -1f : 1f, renderer.flipY ? -1f : 1f, 0f));
+            }
             entry.lastBounds = bounds;
             entry.lastWeight = surfaceWeight;
+            entry.lastFormWeight = formWeight;
+            entry.lastSprite = renderer.sprite;
+            entry.lastLibrary = formLibrary;
+            entry.lastFlipX = renderer.flipX;
+            entry.lastFlipY = renderer.flipY;
         }
     }
 
