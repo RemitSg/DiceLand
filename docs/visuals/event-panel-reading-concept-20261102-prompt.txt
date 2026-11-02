@@ -1,0 +1,56 @@
+DiceLand 事件面板大阅读区参考图
+日期：2026-11-02（Asia/Singapore）
+方式：内置 image_gen；未使用 CLI/API 密钥。
+用户反馈：此前纯文字版留给事件说明的显示空间过小。
+方案：保留无插画约束，扩大通栏事件说明区，压缩标题留白；选项以序号、名称、效果、选择状态同行排列，后果预览与确认保留在紧凑底栏。正文不缩小，长文后续可在说明区域内部滚动。
+范围：仅视觉参考，尚未接入正式 UGUI；不修改事件文案、效果、数值或流程。
+正式参考图：docs/visuals/event-panel-reading-concept-20261102.png
+输入参考／编辑目标：docs/visuals/event-panel-text-concept-20261102.png。
+选定原图：C:/Users/Karmas/.codex/generated_images/01a19a5c-4817-72e0-bb88-e5e13db3fb84/exec-ecdfdeb6-9904-43bb-b649-ce5b8481c6b6.png
+
+原始提示词：
+Use case: ui-mockup.
+Edit target: the supplied complete DiceLand text-only event-panel concept.
+User feedback: the narrative reading area is still far too small. Make the EVENT DESCRIPTION the dominant content region. Preserve the no-illustration, reusable-template direction.
+
+IMPORTANT DESIGN CHANGE:
+This must be a visible redistribution of space, not a cosmetic tweak.
+- Keep one FULL-WIDTH reading area above the decisions. Do not narrow the story into a side column.
+- Increase the narrative area's HEIGHT to about 50–55% of the ENTIRE modal height, roughly 2.5–3 times its current area. It should have capacity for around 9–12 comfortable Chinese text lines or several paragraphs, at the SAME legible font size.
+- Shrink the two choice cards into compact full-width rows, about 55–65 pixels high each in this reference image, by laying their contents OUT HORIZONTALLY instead of using title-above-effect blocks.
+- Reduce oversized header padding and use a compact footer so that the space is genuinely given to the story.
+- Do NOT shrink the Chinese body font, truncate the story, remove any real effect text, or merely enlarge the entire window while retaining the same proportions.
+
+PRESERVE THE SURROUNDINGS:
+Keep the original full ultra-wide screen, forest-map background, dimmed surrounding HUD, one Chara party member, top-right menu and bottom-right event tile information from the input. Keep the same deep green, ivory and aged-brass art direction.
+Underlying data remains action points 6/8, calamity 0, money 0, keys 0/2, difficulty 简单; Chara Lv.1, HP 17/17, XP 0/10. Only redesign the central modal interior and modestly refine its outer dimensions if needed.
+
+TARGET COMPOSITION:
+1. A slimmer header, around 10% of modal height. Large readable “熄灭的营火” on the left, small “旅途事件” on the right, thin brass divider. No giant title plaque.
+2. The dominant full-width narrative pane, about 50–55% of modal height. Comfortable side margins, warm ivory Chinese body text, natural paragraph spacing, top-left aligned. Deep matte forest-green / very subtle paper texture, a short thin gold accent rule at the left. The SAME exact two-paragraph sample remains visible toward the top, with calm continuous space beneath for longer events. That space is deliberately a reusable reading surface, not an empty image slot. Do not invent more prose to fill it.
+3. A very compact “选择行动” section label.
+4. Two compact stacked full-width decision rows, only about 8–9% modal height each. Within each row align: a small subdued index “01” / “02”; the option title in medium bold ivory; then the complete effect text on the SAME HORIZONTAL ROW at a slightly smaller comfortable size; a small generic selection circle at the far right. Separate title and effect with a little spacing or a fine vertical rule. No pictorial icon. The first row has a thin brass selected outline, quiet jade tint and a small checked circle. The second is neutral and unselected. Strongly reduce the large empty padding that the previous tall cards used.
+5. A compact bottom footer, about 10–12% of modal height: at the left a small “后果预览” label and one short line of the currently selected outcome; at the right a moderate “确定” button. Keep the preview separate from the choices, but don't spend a large panel on duplicate benefits.
+
+EXACT TEXT, DO NOT ADD OR REMOVE CONTENT:
+Title: “熄灭的营火”
+Meta: “旅途事件”
+Narrative:
+“一堆刚刚才熄灭的营火在路边堆着，还冒着丝丝细烟。
+这里像是别人刚离开不久的临时营地，旁边还有一些不知是遗落的东西还是遗弃的东西。”
+Section label: “选择行动”
+Choice 01 title: “稍作休息”
+Choice 01 effect: “恢复 3 行动点，恢复 10% 队伍生命”
+Choice 02 title: “拿点物资”
+Choice 02 effect: “获得 1 个随机遗物”
+Footer label: “后果预览”
+Footer preview: “恢复 3 行动点，恢复 10% 队伍生命”
+Button: “确定”
+
+FINISH:
+A polished implementation-minded game UI mockup: large calm reading area, efficient list controls, clear text hierarchy and precise alignments. Reusable thin brass edges, muted jade benefit numerals, matte green/charcoal materials, ivory typography. No new illustration, no bespoke asset requirement per event. The design should clearly look prepared for much longer narratives than this short sample. Long content could scroll inside this reserved reading area in implementation, but don't add explanatory UX annotations or fake text to the screenshot.
+
+STRICT AVOID:
+No pictures or pictorial icons inside the modal; no campfire image, book image, object drawings, item thumbnails, silhouettes, decorative art panel, empty art frame or placeholders. No added event prose, costs, risks, rewards, probabilities or mechanics. No new close/cancel/skip buttons. No tiny text, giant choice cards, excessive gold filigree, glow, particles, dense vines or busy decorations. No callouts, device frame, watermark, before/after or multiple variants.
+
+Return ONE complete revised screen at the same ultra-wide aspect ratio.

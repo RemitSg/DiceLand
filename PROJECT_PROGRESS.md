@@ -1753,3 +1753,11 @@ Root CLAUDE.md references the same AGENTS.md convention so Claude-based agents s
 - 保留“熄灭的营火”的完整叙事、两项实际效果及首项选中预览，没有增加事件规则或操作。此前插画版保留为历史备选，后续事件面板方案应遵守用户的新约束：不依赖专属插画。
 - 新参考图：docs/visuals/event-panel-text-concept-20261102.png；原始提示词与输入说明：docs/visuals/event-panel-text-concept-20261102-prompt.txt。内置 image_gen 生成，原样复制并核对 SHA-256 一致，尺寸 1847×851。
 - 本次仅生成设计参考，未接入 UGUI、修改事件资产或运行游戏测试，未打包；按约定提交并推送参考图和记录。
+
+
+## 2026-11-02 事件面板大阅读区参考版
+
+- 根据用户反馈继续扩大事件说明空间，保留无插画通用模板。采用大幅增高的通栏叙事区、紧凑的单行选项（序号／名称／完整效果／选择状态）和底部后果预览／确认，正文维持易读字号，不通过缩小或截断说明腾出空间。后续正式实现可为长文本设置说明区内部滚动。
+- 当前样例仍展示“熄灭的营火”的原有两段叙事、两项选择与实际效果，首项选中；没有新增事件专属美术、叙事内容或规则。
+- 新参考：docs/visuals/event-panel-reading-concept-20261102.png；实际提示词与输入说明：docs/visuals/event-panel-reading-concept-20261102-prompt.txt。内置 image_gen 生成，原图原样复制并核对 SHA-256 一致，尺寸 1847×851。此前两版保留用于对照。
+- 仅完成设计参考，未接入 UGUI、修改事件资产或运行游戏测试，未打包；按约定提交并推送。
