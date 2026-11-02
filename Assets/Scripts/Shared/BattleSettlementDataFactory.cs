@@ -16,7 +16,10 @@ public static class BattleSettlementDataFactory
             isVictory = true,
             title = "Victory",
             subtitle = subtitle,
-            experienceGained = experienceGained,
+            experienceGained = System.Math.Max(0, experienceGained),
+            moneyGained = System.Math.Max(0, encounter != null ? encounter.moneyGained : 0),
+            startingMoney = ResolveMoney(encounter, out bool hasMoney),
+            hasMoneyBalance = hasMoney,
             returnSceneName = encounter != null ? encounter.sourceSceneName : "MapScene",
             retrySceneName = retrySceneName,
             partyEntries = partyEntries,
@@ -40,13 +43,22 @@ public static class BattleSettlementDataFactory
             isVictory = victory,
             title = BuildTitle(victory, encounter),
             subtitle = BuildSubtitle(victory, encounter, livingAllies),
-            experienceGained = experienceGained,
+            experienceGained = victory ? System.Math.Max(0, experienceGained) : 0,
+            moneyGained = victory ? System.Math.Max(0, encounter != null ? encounter.moneyGained : 0) : 0,
+            startingMoney = ResolveMoney(encounter, out bool hasMoney),
+            hasMoneyBalance = hasMoney,
             returnSceneName = BuildReturnSceneName(victory, encounter),
             retrySceneName = retrySceneName,
             partyEntries = partyEntries,
             lootEntries = lootEntries,
             relicChoice = relicChoice
         };
+    }
+
+    private static int ResolveMoney(BattleEncounterData encounter, out bool available)
+    {
+        available = MapRunRuntime.TryGetMoney(encounter != null ? encounter.sourceSceneName : null, out int value);
+        return value;
     }
 
     private static string BuildTitle(bool victory, BattleEncounterData encounter)

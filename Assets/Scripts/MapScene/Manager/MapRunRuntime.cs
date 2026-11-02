@@ -69,6 +69,14 @@ public static class MapRunRuntime
 {
     private static MapRunSnapshot currentSnapshot;
 
+    public static bool TryGetMoney(string sceneName, out int money)
+    {
+        bool available = currentSnapshot?.runState != null && !string.IsNullOrWhiteSpace(sceneName) &&
+            string.Equals(currentSnapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase);
+        money = available ? currentSnapshot.runState.money : 0;
+        return available;
+    }
+
     public static bool TryGetSnapshot(string sceneName, out MapRunSnapshot snapshot)
     {
         if (currentSnapshot != null &&

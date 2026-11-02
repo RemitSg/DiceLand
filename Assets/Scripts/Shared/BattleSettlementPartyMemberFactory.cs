@@ -21,6 +21,8 @@ public sealed class BattleSettlementPartyProgression
     public int FinalMaxHP;
     public int FinalCurrentHP;
     public bool IsAlive;
+    public int FinalMaxExperience;
+    public List<int> ExperienceRequirements = new List<int>();
 }
 
 public static class BattleSettlementPartyMemberFactory
@@ -123,7 +125,7 @@ public static class BattleSettlementPartyMemberFactory
             if (progression == null)
                 continue;
 
-            result.Add(BuildSettlementEntry(
+            BattleSettlementEntry entry = BuildSettlementEntry(
                 progression.DisplayName,
                 progression.InitialCurrentHP,
                 progression.InitialMaxHP,
@@ -135,7 +137,11 @@ public static class BattleSettlementPartyMemberFactory
                 progression.FinalCurrentHP,
                 progression.FinalMaxHP,
                 progression.FinalLevel,
-                progression.FinalExperience));
+                progression.FinalExperience);
+            entry.portrait = progression.CharacterData != null ? progression.CharacterData.icon ?? progression.CharacterData.battleSprite : null;
+            entry.resultingMaxExperience = progression.FinalMaxExperience;
+            entry.experienceRequirements = new List<int>(progression.ExperienceRequirements);
+            result.Add(entry);
         }
 
         return result;
@@ -222,6 +228,9 @@ public static class BattleSettlementPartyMemberFactory
 
         result.FinalLevel = progression.FinalLevel;
         result.FinalExperience = progression.FinalExperience;
+        result.FinalMaxExperience = resolveExperienceToNextLevel != null ? resolveExperienceToNextLevel(result.FinalLevel) : 100;
+        for (int level = result.InitialLevel; level <= result.FinalLevel; level++)
+            result.ExperienceRequirements.Add(resolveExperienceToNextLevel != null ? resolveExperienceToNextLevel(level) : 100);
         result.PreCalamityMaxHP = progression.FinalMaxHP;
         result.MaxHPFlatBonus = persistentMaxHPFlatBonus;
         IReadOnlyList<RunCalamityState> activeCalamities = BattleEncounterRuntime.ActiveEncounter != null

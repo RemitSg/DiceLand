@@ -57,6 +57,14 @@ public partial class MapResourceFeedback : MonoBehaviour
 
     public int DisplayedMoney => (int)Math.Round(displayedMoney);
     public bool IsMoneyAnimating => activeMoney != null || moneyQueue.Count > 0;
+    public bool AutomaticUpdate { get; set; } = true;
+    private int feedbackSortingOrder = 9200;
+
+    public void SetCanvasSortingOrder(int value)
+    {
+        feedbackSortingOrder = value;
+        if (feedbackCanvas != null) feedbackCanvas.sortingOrder = value;
+    }
 
     public void Bind(RunState state, TMP_Text moneyLabel)
     {
@@ -162,7 +170,7 @@ public partial class MapResourceFeedback : MonoBehaviour
         }
     }
 
-    private void Update() => Advance(Time.unscaledDeltaTime);
+    private void Update() { if (AutomaticUpdate) Advance(Time.unscaledDeltaTime); }
 
     /// <summary>Also used by deterministic visual captures; time is always unscaled.</summary>
     public void Advance(float seconds)

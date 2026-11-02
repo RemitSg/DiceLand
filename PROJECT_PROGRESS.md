@@ -1836,3 +1836,14 @@ Root CLAUDE.md references the same AGENTS.md convention so Claude-based agents s
 - 右侧以六种既有战利品演示三列两行网格，逐格保留名称和 ×1 数量；本图奖励组合与钱包均为布局样例，不改投放或实际数值。正式图片为 docs/visuals/battle-settlement-rewards-concept-20261102.png，完整提示词与范围记录为同名 -prompt.txt，旧单战利品版保留。
 - 内置 image_gen 生成，原图原样复制并核对 SHA-256 一致，1848×851；目视核对金币／经验图标一致性、数值、头像、多件战利品与两个按钮。本批仅保存参考，没有接入新增经验关键词或结算动效，未运行游戏测试或打包，无内容目录增量。
 - 先前已授权的实现仍待继续：共享资源词识别中增加经验同义词；三类奖励同步从零统计；随后经验按角色同时分波飞行、金币飞入临时钱包并复用地图动效，以及战利品逐项揭示。实际奖励和存档结算规则须保持原样。
+
+
+## 2026-11-02 战斗结算 UI 重制与奖励分段反馈
+
+- 依据已确认的含金币参考图重制 BattleSettlementOverlay：森林绿／黄铜面板、角色头像与 HP／经验条、金币／经验／战利品摘要、三列物品网格及独立滚动，正式战斗结算字体与地图统一。
+- 奖励同时从零计数，再并行执行每角色经验星晶入条、地图原有金币动效进入顶部临时钱包、物品逐项揭示；钱包到账后自动收起。支持暂停、跨级／满级、倒下角色、空奖励、重复打开与提前结束，保留物品详情和必选遗物拦截。
+- 经验值／经验／EXP 进入地图共用 ResourceKeywordText，新增独立透明星晶及 TMP fallback；金币和经验的图标、关键词与飞行动效采用共享资源规则。原始生成 PNG 未改写，附提示词和 SHA-256。
+- 数据读取最终 encounter 金币、同源地图余额及原成长服务的最终等级／HP／经验阈值；动画仅改变显示，不新增奖励写入，不修改存档、战斗奖励或内容目录。
+- 最终相关 EditMode 264/264、PlayMode 24/24 通过。实际序列化 SampleScene 组件及字体接线检查通过；九种正式组件渲染已检查，包括小屏、安全区、多角色／多物品及失败空奖励。
+- 扩大筛选时复现此前已有的 MapEventNestedFlowTests.SaveAssetCatalog_IncludesNestedFollowUpEvents 失败（175/176），本次未修改该事件索引问题；最终明确 UI／奖励回归范围不包含该既有失败。
+- 交付说明：docs/visuals/battle-settlement-ui.md；经验图标出处：docs/visuals/experience-keyword-icon-20261102-prompt.txt；可复现渲染入口 BattleSettlementVisualTools.BatchPreview。临时 PNG、布局、测试日志与隔离工程仍在忽略输出目录；未打包 APK、未进行真机测试。

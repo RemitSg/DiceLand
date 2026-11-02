@@ -4,6 +4,24 @@ using UnityEngine;
 
 public class BattleSettlementPartyMemberFactoryTests
 {
+    [Test]
+    public void EntriesCarryTheActualPortraitAndIndependentLevelRequirements()
+    {
+        CharacterData_SO character = ScriptableObject.CreateInstance<CharacterData_SO>();
+        try
+        {
+            character.icon = ResourceKeywordText.ExperienceIcon;
+            var progression = new BattleSettlementPartyProgression { CharacterData = character, InitialLevel = 1,
+                FinalLevel = 3, MaxExperience = 10, FinalMaxExperience = 30, ExperienceRequirements = new List<int> { 10, 20, 30 } };
+            BattleSettlementEntry entry = BattleSettlementPartyMemberFactory.BuildSettlementEntries(new[] { progression }, 25)[0];
+            Assert.AreSame(character.icon, entry.portrait);
+            Assert.AreEqual(30, entry.resultingMaxExperience);
+            CollectionAssert.AreEqual(progression.ExperienceRequirements, entry.experienceRequirements);
+            Assert.AreNotSame(progression.ExperienceRequirements, entry.experienceRequirements);
+        }
+        finally { Object.DestroyImmediate(character); }
+    }
+
     private readonly List<GameObject> createdObjects = new List<GameObject>();
 
     [TearDown]

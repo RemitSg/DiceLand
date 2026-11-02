@@ -22,6 +22,9 @@ public sealed class BattleSettlementEntry
     public int resultingMaxHP;
     public int resultingLevel;
     public int resultingExperience;
+    public int resultingMaxExperience;
+    public Sprite portrait;
+    public List<int> experienceRequirements = new List<int>();
 }
 
 [Serializable]
@@ -81,6 +84,9 @@ public sealed class BattleSettlementData
     public string subtitle;
     public int experienceGained;
     public string returnSceneName;
+    public int moneyGained;
+    public int startingMoney;
+    public bool hasMoneyBalance;
     public string retrySceneName;
     public List<BattleSettlementEntry> partyEntries = new List<BattleSettlementEntry>();
     public List<BattleSettlementLootEntry> lootEntries = new List<BattleSettlementLootEntry>();
@@ -88,7 +94,7 @@ public sealed class BattleSettlementData
 }
 
 [DisallowMultipleComponent]
-public class BattleSettlementOverlay : MonoBehaviour
+public partial class BattleSettlementOverlay : MonoBehaviour
 {
     private enum SettlementImageScaleMode
     {
@@ -109,6 +115,10 @@ public class BattleSettlementOverlay : MonoBehaviour
         public float hpFillWidth;
         public RectTransform expFillRect;
         public float expFillWidth;
+        public float displayedCredit;
+        public int creditedExperience;
+        public int shownLevel, shownExperience, shownMaxExperience;
+        public RectTransform root;
     }
 
     [Serializable]
@@ -119,6 +129,9 @@ public class BattleSettlementOverlay : MonoBehaviour
         public Image slotImage;
         public Image iconImage;
         public TextMeshProUGUI countText;
+        public TextMeshProUGUI nameText;
+        public CanvasGroup revealGroup;
+        public GameObject sealedLabel;
     }
 
     [Header("Victory Intro")]
@@ -154,7 +167,6 @@ public class BattleSettlementOverlay : MonoBehaviour
     [SerializeField] private float titleFontSize = 44f;
     [SerializeField] private float subtitleFontSize = 24f;
     [SerializeField] private float bodyFontSize = 24f;
-    [SerializeField] private float rowFontSize = 22f;
     [SerializeField] private float buttonFontSize = 24f;
 
     [Header("Colors")]
@@ -163,7 +175,6 @@ public class BattleSettlementOverlay : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float titleOutlineWidth = 0.24f;
     [SerializeField] private Color subtitleColor = new Color(0.86f, 0.92f, 1f, 0.95f);
     [SerializeField] private Color expColor = new Color(1f, 0.86f, 0.32f, 1f);
-    [SerializeField] private Color rowColor = new Color(0.92f, 0.96f, 1f, 1f);
     [SerializeField] private Color deadRowColor = new Color(1f, 0.55f, 0.55f, 1f);
     [SerializeField] private Color hpTextColor = new Color(1f, 0.32f, 0.32f, 1f);
     [SerializeField] private Color buttonColor = new Color(0.18f, 0.24f, 0.34f, 1f);
@@ -172,8 +183,6 @@ public class BattleSettlementOverlay : MonoBehaviour
     [Header("Buttons")]
     [SerializeField] private Vector2 buttonSize = new Vector2(220f, 62f);
     [SerializeField] private float buttonSpacing = 24f;
-    [SerializeField] private Vector2 buttonRootOffset = Vector2.zero;
-    [SerializeField] private float buttonBottomInset = 26f;
     [SerializeField] private float buttonReservedHeight = 120f;
     [SerializeField] private Sprite buttonBackgroundSprite;
     [SerializeField] private bool showRetryButton = true;
@@ -182,32 +191,12 @@ public class BattleSettlementOverlay : MonoBehaviour
     [SerializeField] private string retryButtonLabel = "Retry Battle";
 
     [Header("Experience Rows")]
-    [SerializeField] private Vector2 expBarSize = new Vector2(420f, 14f);
-    [SerializeField] private Color expBarBackgroundColor = new Color(1f, 1f, 1f, 0.12f);
-    [SerializeField] private Color expBarFillColor = new Color(1f, 0.84f, 0.26f, 1f);
-    [SerializeField] private Color expBarBorderColor = new Color(1f, 1f, 1f, 0.4f);
-    [SerializeField] private float expFontSize = 20f;
     [SerializeField] private Color expTextColor = new Color(1f, 0.92f, 0.7f, 1f);
-    [SerializeField] private float expAnimationDurationPerFill = 0.45f;
-    [SerializeField] private float hpAnimationDuration = 0.42f;
-    [SerializeField] private float expLevelUpPauseDuration = 0.14f;
 
     [Header("Summary Row Layout")]
-    [SerializeField] private float summaryRowLeftIndent = 0f;
-    [SerializeField] private float summaryRowHeight = 40f;
-    [SerializeField] private float summaryNameWidth = 170f;
-    [SerializeField] private float summaryHpWidth = 112f;
-    [SerializeField] private float summaryHpBarWidth = 130f;
-    [SerializeField] private float summaryExpTextWidth = 112f;
-    [SerializeField] private float summaryExpBarWidth = 140f;
-    [SerializeField] private float summaryLevelWidth = 60f;
-    [SerializeField] private Color hpBarBackgroundColor = new Color(0.34f, 0.08f, 0.08f, 0.5f);
-    [SerializeField] private Color hpBarFillColor = new Color(1f, 0.28f, 0.28f, 1f);
-    [SerializeField] private Color hpBarBorderColor = new Color(1f, 0.38f, 0.38f, 0.55f);
 
     [Header("Loot Display")]
     [SerializeField] private Vector2 lootSlotSize = new Vector2(72f, 72f);
-    [SerializeField] private Vector2 lootIconSize = new Vector2(48f, 48f);
     [SerializeField] private Vector2 lootDetailIconSize = new Vector2(112f, 112f);
     [SerializeField] private Vector2 lootDetailPanelSize = new Vector2(640f, 360f);
     [SerializeField] private float lootGridSpacing = 12f;
@@ -216,11 +205,9 @@ public class BattleSettlementOverlay : MonoBehaviour
     [SerializeField] private float lootBodyFontSize = 20f;
     [SerializeField] private Color lootTitleColor = new Color(1f, 0.9f, 0.52f, 1f);
     [SerializeField] private Color lootTextColor = new Color(0.95f, 0.95f, 0.95f, 1f);
-    [SerializeField] private Color lootCountColor = Color.white;
     [SerializeField] private Color lootSlotColor = new Color(0.18f, 0.15f, 0.12f, 0.95f);
     [SerializeField] private Color lootSelectedSlotColor = new Color(0.42f, 0.32f, 0.16f, 1f);
     [SerializeField] private Color lootDetailPanelColor = new Color(0.12f, 0.09f, 0.07f, 0.95f);
-    [SerializeField] private Sprite lootSlotBackgroundSprite;
     [SerializeField] private Sprite lootDetailBackgroundSprite;
     [SerializeField] private Sprite lootFallbackSprite;
 
@@ -237,7 +224,6 @@ public class BattleSettlementOverlay : MonoBehaviour
     [SerializeField] private Color relicChoiceSlotColor = new Color(0.16f, 0.22f, 0.32f, 0.95f);
     [SerializeField] private Color relicChoiceSelectedSlotColor = new Color(0.36f, 0.52f, 0.86f, 1f);
     [SerializeField] private Color relicChoiceRequiredColor = new Color(1f, 0.45f, 0.38f, 1f);
-    [SerializeField] private Sprite relicChoiceSlotBackgroundSprite;
     [SerializeField] private Sprite relicChoiceCommonQuestionSprite;
     [SerializeField] private Sprite relicChoiceUncommonQuestionSprite;
     [SerializeField] private Sprite relicChoiceRareQuestionSprite;
@@ -254,7 +240,6 @@ public class BattleSettlementOverlay : MonoBehaviour
     [SerializeField] private SettlementImageScaleMode relicChoiceModalBackgroundScaleMode = SettlementImageScaleMode.PreserveAspect;
     [SerializeField] private SettlementImageScaleMode relicChoiceCardBackgroundScaleMode = SettlementImageScaleMode.PreserveAspect;
     [SerializeField] private SettlementImageScaleMode relicChoiceTooltipBackgroundScaleMode = SettlementImageScaleMode.Sliced;
-    [SerializeField] private SettlementImageScaleMode relicChoiceEntranceSlotBackgroundScaleMode = SettlementImageScaleMode.Sliced;
     [SerializeField] private Color relicChoiceModalBackdropColor = new Color(0f, 0f, 0f, 0.42f);
     [SerializeField] private Color relicChoiceModalPanelColor = new Color(0.08f, 0.1f, 0.14f, 0.98f);
     [SerializeField] private Color relicChoiceCardColor = new Color(0.14f, 0.16f, 0.2f, 0.96f);
@@ -329,52 +314,55 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (overlayCanvas != null)
-            Destroy(overlayCanvas.gameObject);
+        CancelPresentation();
+        if (overlayCanvas != null) DestroySettlementObject(overlayCanvas.gameObject);
+        if (runtimeFallbackLootSprite != null) DestroySettlementObject(runtimeFallbackLootSprite);
     }
 
     private void Update()
     {
         if (relicChoiceTooltipRoot != null && relicChoiceTooltipRoot.gameObject.activeSelf)
             PositionRelicChoiceTooltip(GetCurrentPointerScreenPosition());
+        if (!IsVisible) return;
+        if (settlementViewport != new Vector2(Screen.width, Screen.height) || settlementSafePixels != Screen.safeArea)
+            ApplyRuntimeLayoutAdjustments();
+        AdvancePresentation(Time.unscaledDeltaTime);
+    }
+
+    private void OnDisable()
+    {
+        if (showRoutine != null) { StopCoroutine(showRoutine); showRoutine = null; }
+        CancelPresentation();
+        SetVisible(false);
     }
 
     public void ShowResult(BattleSettlementData data)
     {
-        if (data == null)
-            return;
-
+        if (data == null) return;
+        if (showRoutine != null) { StopCoroutine(showRoutine); showRoutine = null; }
+        CancelPresentation();
         EnsureEventSystem();
         EnsureCanvas();
-        ClearRows();
-        ClearLootViews();
-        ClearRelicChoiceModalViews();
-        ClearButtons();
-        rowViews.Clear();
-        lootViews.Clear();
-        relicChoiceViews.Clear();
-        currentSelectedLootView = null;
-        hoveredRelicChoiceView = null;
-        selectedRelicChoiceView = null;
+        ClearRows(); ClearLootViews(); ClearRelicChoiceModalViews(); ClearButtons();
+        rowViews.Clear(); lootViews.Clear(); relicChoiceViews.Clear();
+        currentSelectedLootView = null; hoveredRelicChoiceView = null; selectedRelicChoiceView = null;
         activeRelicChoiceData = data.relicChoice;
         SetRelicChoiceModalVisible(false);
         HideLootDetailModal();
-
-        titleText.text = string.IsNullOrWhiteSpace(data.title)
-            ? (data.isVictory ? "Victory" : "Defeat")
-            : data.title;
+        titleText.text = string.IsNullOrWhiteSpace(data.title) || data.title == "Victory" || data.title == "Defeat"
+            ? (data.isVictory ? "战斗胜利" : "战斗失败") : data.title == "Tutorial Failed" ? "教学挑战失败" : data.title;
+        victoryEnglishText.text = data.isVictory ? "VICTORY" : "DEFEAT";
+        titleText.color = data.isVictory ? new Color32(241, 204, 111, 255) : new Color32(220, 148, 132, 255);
         subtitleText.text = data.subtitle ?? string.Empty;
-        expText.text = $"EXP +{Mathf.Max(0, data.experienceGained)}";
-
         BuildSummaryRows(data.partyEntries);
         BuildLootSection(data);
         BuildButtons(data);
+        StyleForestButtons();
         LayoutRebuilder.ForceRebuildLayoutImmediate(panelRoot);
         ApplyRuntimeLayoutAdjustments();
-
-        if (showRoutine != null)
-            StopCoroutine(showRoutine);
-        showRoutine = StartCoroutine(ShowResultRoutine(data));
+        PreparePresentation(data);
+        if (Application.isPlaying) showRoutine = StartCoroutine(ShowResultRoutine(data));
+        else { SetVisible(true); SetPanelVisible(true); BeginPresentation(); }
     }
 
     public void HideResult()
@@ -385,6 +373,7 @@ public class BattleSettlementOverlay : MonoBehaviour
             showRoutine = null;
         }
 
+        CancelPresentation();
         SetVictoryIntroVisible(false);
         SetPanelVisible(true);
         SetVisible(false);
@@ -408,117 +397,13 @@ public class BattleSettlementOverlay : MonoBehaviour
 
         SetVictoryIntroVisible(false);
         SetPanelVisible(true);
-        yield return AnimateSummaryRows();
+        BeginPresentation();
         showRoutine = null;
     }
 
     private void BuildSummaryRows(IReadOnlyList<BattleSettlementEntry> entries)
     {
-        if (entries == null)
-            return;
-
-        for (int i = 0; i < entries.Count; i++)
-        {
-            BattleSettlementEntry entry = entries[i];
-            if (entry == null)
-                continue;
-
-            GameObject rowGo = new GameObject($"SummaryRow_{i}", typeof(RectTransform), typeof(HorizontalLayoutGroup));
-            rowGo.transform.SetParent(summaryRoot, false);
-            spawnedRows.Add(rowGo);
-
-            HorizontalLayoutGroup layout = rowGo.GetComponent<HorizontalLayoutGroup>();
-            layout.childControlWidth = true;
-            layout.childForceExpandWidth = false;
-            layout.childControlHeight = true;
-            layout.childForceExpandHeight = false;
-            layout.spacing = 12f;
-            layout.childAlignment = TextAnchor.MiddleCenter;
-            AddLayoutElement(
-                rowGo.GetComponent<RectTransform>(),
-                panelSize.x - panelPadding.x * 2f,
-                panelSize.x - panelPadding.x * 2f,
-                0f,
-                summaryRowHeight,
-                summaryRowHeight);
-
-            CreateSpacer(rowGo.transform, summaryRowLeftIndent);
-
-            TextMeshProUGUI nameText = CreateLabel(
-                rowGo.transform,
-                "NameText",
-                rowFontSize,
-                entry.isAlive ? rowColor : deadRowColor,
-                BuildSettlementName(entry));
-            nameText.alignment = TextAlignmentOptions.MidlineRight;
-            nameText.enableWordWrapping = false;
-            nameText.overflowMode = TextOverflowModes.Ellipsis;
-            AddLayoutElement(nameText.rectTransform, summaryNameWidth, summaryNameWidth, 0f, summaryRowHeight, summaryRowHeight);
-
-            TextMeshProUGUI hpText = CreateLabel(
-                rowGo.transform,
-                "HpText",
-                rowFontSize - 2f,
-                entry.isAlive ? hpTextColor : deadRowColor,
-                entry.isAlive
-                    ? $"生命 {entry.currentHP} / {entry.maxHP}"
-                    : $"倒下 {entry.currentHP} / {entry.maxHP}");
-            hpText.alignment = TextAlignmentOptions.MidlineLeft;
-            hpText.text = entry.isAlive
-                ? $"HP {entry.currentHP} / {entry.maxHP}"
-                : $"倒下 {entry.currentHP} / {entry.maxHP}";
-            hpText.enableWordWrapping = false;
-            hpText.overflowMode = TextOverflowModes.Ellipsis;
-            AddLayoutElement(hpText.rectTransform, summaryHpWidth, summaryHpWidth, 0f, summaryRowHeight, summaryRowHeight);
-
-            RectTransform hpBarRoot = CreateStatusBar(
-                rowGo.transform,
-                "HpBar",
-                hpBarBorderColor,
-                hpBarBackgroundColor,
-                hpBarFillColor,
-                summaryHpBarWidth,
-                expBarSize.y,
-                out RectTransform hpFillRect,
-                out float hpFillWidth);
-            SetBarFill(hpFillRect, hpFillWidth, ResolveHpRatio(entry.currentHP, entry.maxHP));
-
-            TextMeshProUGUI expText = CreateLabel(
-                rowGo.transform,
-                "ExpText",
-                expFontSize,
-                expTextColor,
-                BuildExpLabel(entry.currentExperience, ResolveExpMax(entry.level, entry.maxExperience)));
-            expText.alignment = TextAlignmentOptions.MidlineLeft;
-            expText.enableWordWrapping = false;
-            expText.overflowMode = TextOverflowModes.Ellipsis;
-            AddLayoutElement(expText.rectTransform, summaryExpTextWidth, summaryExpTextWidth, 0f, summaryRowHeight, summaryRowHeight);
-
-            RectTransform expBarRoot = CreateExpBar(rowGo.transform, out RectTransform expFillRect, out float expFillWidth);
-            SetBarFill(expFillRect, expFillWidth, ResolveExpRatio(entry.currentExperience, ResolveExpMax(entry.level, entry.maxExperience)));
-
-            TextMeshProUGUI levelText = CreateLabel(
-                rowGo.transform,
-                "LevelText",
-                rowFontSize,
-                entry.isAlive ? rowColor : deadRowColor,
-                $"Lv.{Mathf.Max(1, entry.level)}");
-            levelText.alignment = TextAlignmentOptions.MidlineRight;
-            AddLayoutElement(levelText.rectTransform, summaryLevelWidth, summaryLevelWidth, 0f, summaryRowHeight, summaryRowHeight);
-
-            rowViews.Add(new SummaryRowView
-            {
-                entry = entry,
-                hpText = hpText,
-                nameText = nameText,
-                expText = expText,
-                levelText = levelText,
-                hpFillRect = hpFillRect,
-                hpFillWidth = hpFillWidth,
-                expFillRect = expFillRect,
-                expFillWidth = expFillWidth
-            });
-        }
+        BuildPortraitSummaryRows(entries);
     }
 
     private void BuildLootSection(BattleSettlementData data)
@@ -536,8 +421,8 @@ public class BattleSettlementOverlay : MonoBehaviour
         bool hasRelicChoice = choiceData != null && choiceData.HasChoices;
         int count = entries != null ? entries.Count : 0;
         int displayCount = count + (hasRelicChoice ? 1 : 0);
-        lootHeaderText.color = lootTitleColor;
-        lootHeaderText.text = BuildLootHeaderText(displayCount);
+        lootHeaderText.color = SettlementIvory;
+        lootHeaderText.text = "战利品";
         UpdateLootGridLayout(displayCount);
 
         if (displayCount <= 0)
@@ -564,13 +449,10 @@ public class BattleSettlementOverlay : MonoBehaviour
                 lootViews.Add(view);
         }
 
+        UpdateLootGridLayout(lootViews.Count);
         HideLootDetailModal();
     }
 
-    private string BuildLootHeaderText(int displayCount)
-    {
-        return displayCount > 0 ? $"战利品 x{displayCount}" : "战利品";
-    }
 
     private BattleSettlementLootEntry CreateRelicChoiceEntranceEntry(BattleSettlementRelicChoiceData choiceData)
     {
@@ -589,96 +471,12 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private void UpdateLootGridLayout(int itemCount)
     {
-        if (lootGridRoot == null)
-            return;
-
-        int safeItemCount = Mathf.Max(0, itemCount);
-        int maxColumns = Mathf.Max(1, lootGridColumnCount);
-        int columns = safeItemCount > 0 ? Mathf.Clamp(safeItemCount, 1, maxColumns) : 1;
-        int rows = safeItemCount > 0 ? Mathf.CeilToInt(safeItemCount / (float)columns) : 1;
-        float width = columns * lootSlotSize.x + Mathf.Max(0, columns - 1) * lootGridSpacing;
-        float height = rows * lootSlotSize.y + Mathf.Max(0, rows - 1) * lootGridSpacing;
-
-        GridLayoutGroup gridLayout = lootGridRoot.GetComponent<GridLayoutGroup>();
-        if (gridLayout != null)
-            gridLayout.constraintCount = columns;
-
-        AddLayoutElement(
-            lootGridRoot,
-            width,
-            width,
-            0f,
-            height,
-            height);
+        LayoutForestLoot(itemCount);
     }
 
     private LootItemView CreateLootItemView(BattleSettlementLootEntry entry)
     {
-        GameObject slotGo = new GameObject($"Loot_{entry.displayName}", typeof(RectTransform), typeof(Image), typeof(Button), typeof(EventTrigger));
-        slotGo.transform.SetParent(lootGridRoot, false);
-        spawnedLootObjects.Add(slotGo);
-
-        Image slotImage = slotGo.GetComponent<Image>();
-        slotImage.color = entry.isRelicChoiceEntrance ? relicChoiceSlotColor : lootSlotColor;
-        Sprite slotSprite = entry.isRelicChoiceEntrance && relicChoiceSlotBackgroundSprite != null
-            ? relicChoiceSlotBackgroundSprite
-            : lootSlotBackgroundSprite;
-        slotImage.sprite = slotSprite;
-        slotImage.type = slotSprite != null ? Image.Type.Sliced : Image.Type.Simple;
-        if (entry.isRelicChoiceEntrance)
-            ApplyImageScaleMode(slotImage, relicChoiceEntranceSlotBackgroundScaleMode);
-
-        RectTransform slotRect = slotGo.GetComponent<RectTransform>();
-        slotRect.sizeDelta = lootSlotSize;
-
-        Image iconImage = CreateIconImage(slotGo.transform, "Icon", entry.icon != null ? entry.icon : GetFallbackLootSprite());
-        RectTransform iconRect = iconImage.rectTransform;
-        iconRect.anchorMin = new Vector2(0.5f, 0.5f);
-        iconRect.anchorMax = new Vector2(0.5f, 0.5f);
-        iconRect.pivot = new Vector2(0.5f, 0.5f);
-        iconRect.sizeDelta = lootIconSize;
-        iconRect.anchoredPosition = Vector2.zero;
-
-        TextMeshProUGUI countText = CreateLabel(
-            slotGo.transform,
-            "Count",
-            lootBodyFontSize,
-            lootCountColor,
-            entry.isRelicChoiceEntrance ? relicChoiceEntranceLabel : $"x{Mathf.Max(1, entry.amount)}");
-        RectTransform countRect = countText.rectTransform;
-        countRect.anchorMin = new Vector2(1f, 0f);
-        countRect.anchorMax = new Vector2(1f, 0f);
-        countRect.pivot = new Vector2(1f, 0f);
-        countRect.anchoredPosition = new Vector2(-6f, 6f);
-        countText.alignment = TextAlignmentOptions.BottomRight;
-        countText.raycastTarget = false;
-
-        Button button = slotGo.GetComponent<Button>();
-        LootItemView view = new LootItemView
-        {
-            entry = entry,
-            button = button,
-            slotImage = slotImage,
-            iconImage = iconImage,
-            countText = countText
-        };
-
-        button.onClick.AddListener(() =>
-        {
-            if (entry.isRelicChoiceEntrance)
-            {
-                OpenRelicChoiceModal(entry.relicChoiceData);
-                return;
-            }
-
-            if (currentSelectedLootView == view)
-                HideLootDetailModal();
-            else
-                ShowLootDetailModal(entry, view);
-        });
-
-        RefreshLootItemViewPresentation(view);
-        return view;
+        return BuildForestLootItem(entry);
     }
 
     private void ShowLootDetailModal(BattleSettlementLootEntry entry, LootItemView selectedView)
@@ -765,12 +563,18 @@ public class BattleSettlementOverlay : MonoBehaviour
         if (view.iconImage != null)
             SetIconSprite(view.iconImage, presentationEntry != null && presentationEntry.icon != null ? presentationEntry.icon : GetFallbackLootSprite());
 
+        if (view.nameText != null && presentationEntry != null)
+        {
+            view.nameText.text = presentationEntry.displayName;
+            view.nameText.color = FSRarity(presentationEntry.rarity);
+        }
+
         if (view.countText != null)
         {
             if (view.entry.isRelicChoiceEntrance && view.entry.relicChoiceData != null && view.entry.relicChoiceData.selectedChoice == null)
                 view.countText.text = relicChoiceEntranceLabel;
             else
-                view.countText.text = $"x{Mathf.Max(1, presentationEntry != null ? presentationEntry.amount : view.entry.amount)}";
+                view.countText.text = $"×{Mathf.Max(1, presentationEntry != null ? presentationEntry.amount : view.entry.amount)}";
         }
     }
 
@@ -823,6 +627,7 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private void HandleReturnToMap(BattleSettlementData data)
     {
+        CompletePresentation();
         if (!TryApplyRequiredRelicChoice(data))
             return;
 
@@ -895,6 +700,7 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private void HandleRetryBattle(string sceneName)
     {
+        CompletePresentation();
         string targetScene = !string.IsNullOrWhiteSpace(sceneName)
             ? sceneName
             : SceneManager.GetActiveScene().name;
@@ -914,6 +720,7 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private void HandleAbandonToMainMenu()
     {
+        CompletePresentation();
         BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;
         RunState settlementRunState = null;
         if (activeEncounter != null && MapRunRuntime.TryGetSnapshot(activeEncounter.sourceSceneName, out MapRunSnapshot snapshot))
@@ -1063,6 +870,7 @@ public class BattleSettlementOverlay : MonoBehaviour
         victoryIntroRoot.sizeDelta = GetVictoryIntroSize();
         victoryIntroRoot.anchoredPosition = victoryIntroOffset;
         SetVictoryIntroVisible(false);
+        ConfigureForestView();
     }
 
     private RectTransform CreateVerticalRoot(Transform parent, string name, float spacing)
@@ -1629,58 +1437,6 @@ public class BattleSettlementOverlay : MonoBehaviour
         relicChoiceTooltipRoot.anchoredPosition = target;
     }
 
-    private RectTransform CreateExpBar(Transform parent, out RectTransform fillRect, out float fillWidth)
-    {
-        return CreateStatusBar(
-            parent,
-            "ExpBar",
-            expBarBorderColor,
-            expBarBackgroundColor,
-            expBarFillColor,
-            summaryExpBarWidth,
-            expBarSize.y,
-            out fillRect,
-            out fillWidth);
-    }
-
-    private RectTransform CreateStatusBar(
-        Transform parent,
-        string name,
-        Color borderColor,
-        Color backgroundColor,
-        Color fillColor,
-        float width,
-        float height,
-        out RectTransform fillRect,
-        out float fillWidth)
-    {
-        Image border = CreateImage(parent, $"{name}Border", borderColor, null);
-        RectTransform borderRect = border.rectTransform;
-        Vector2 effectiveBarSize = new Vector2(Mathf.Max(1f, width), Mathf.Max(1f, height));
-        borderRect.sizeDelta = effectiveBarSize;
-        AddLayoutElement(borderRect, effectiveBarSize.x, effectiveBarSize.x, 0f, effectiveBarSize.y, effectiveBarSize.y);
-
-        Image background = CreateImage(borderRect, $"{name}Background", backgroundColor, null);
-        RectTransform backgroundRect = background.rectTransform;
-        backgroundRect.anchorMin = Vector2.zero;
-        backgroundRect.anchorMax = Vector2.one;
-        backgroundRect.offsetMin = new Vector2(2f, 2f);
-        backgroundRect.offsetMax = new Vector2(-2f, -2f);
-
-        Image fill = CreateImage(backgroundRect, $"{name}Fill", fillColor, null);
-        fill.raycastTarget = false;
-        fillRect = fill.rectTransform;
-        fillRect.anchorMin = new Vector2(0f, 0f);
-        fillRect.anchorMax = new Vector2(0f, 1f);
-        fillRect.pivot = new Vector2(0f, 0.5f);
-        fillRect.anchoredPosition = Vector2.zero;
-        fillRect.offsetMin = Vector2.zero;
-        fillRect.offsetMax = Vector2.zero;
-        fillWidth = effectiveBarSize.x - 4f;
-        fillRect.sizeDelta = new Vector2(0f, 0f);
-        return borderRect;
-    }
-
     private TextMeshProUGUI CreateModalText(RectTransform parent, string name, Vector2 anchoredPosition, Vector2 size, float fontSize, Color color, string value, bool richText)
     {
         TextMeshProUGUI text = CreateLabel(parent, name, fontSize, color, value);
@@ -1880,7 +1636,7 @@ public class BattleSettlementOverlay : MonoBehaviour
         for (int i = 0; i < spawnedRows.Count; i++)
         {
             if (spawnedRows[i] != null)
-                Destroy(spawnedRows[i]);
+                DestroySettlementObject(spawnedRows[i]);
         }
 
         spawnedRows.Clear();
@@ -1891,7 +1647,7 @@ public class BattleSettlementOverlay : MonoBehaviour
         for (int i = 0; i < spawnedButtons.Count; i++)
         {
             if (spawnedButtons[i] != null)
-                Destroy(spawnedButtons[i].gameObject);
+                DestroySettlementObject(spawnedButtons[i].gameObject);
         }
 
         spawnedButtons.Clear();
@@ -1902,7 +1658,7 @@ public class BattleSettlementOverlay : MonoBehaviour
         for (int i = 0; i < spawnedLootObjects.Count; i++)
         {
             if (spawnedLootObjects[i] != null)
-                Destroy(spawnedLootObjects[i]);
+                DestroySettlementObject(spawnedLootObjects[i]);
         }
 
         spawnedLootObjects.Clear();
@@ -1913,7 +1669,7 @@ public class BattleSettlementOverlay : MonoBehaviour
         for (int i = 0; i < spawnedRelicChoiceObjects.Count; i++)
         {
             if (spawnedRelicChoiceObjects[i] != null)
-                Destroy(spawnedRelicChoiceObjects[i]);
+                DestroySettlementObject(spawnedRelicChoiceObjects[i]);
         }
 
         spawnedRelicChoiceObjects.Clear();
@@ -1933,26 +1689,7 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private void ApplyRuntimeLayoutAdjustments()
     {
-        if (buttonRoot != null)
-        {
-            buttonRoot.anchorMin = new Vector2(0.5f, 0f);
-            buttonRoot.anchorMax = new Vector2(0.5f, 0f);
-            buttonRoot.pivot = new Vector2(0.5f, 0f);
-            buttonRoot.anchoredPosition = new Vector2(buttonRootOffset.x, buttonBottomInset + buttonRootOffset.y);
-        }
-
-        if (buttonReserveRoot != null)
-            AddLayoutElement(buttonReserveRoot, panelSize.x - panelPadding.x * 2f, panelSize.x - panelPadding.x * 2f, 0f, buttonReservedHeight, buttonReservedHeight);
-
-        if (lootGridRoot != null)
-        {
-            GridLayoutGroup gridLayout = lootGridRoot.GetComponent<GridLayoutGroup>();
-            if (gridLayout != null)
-            {
-                gridLayout.cellSize = lootSlotSize;
-                gridLayout.spacing = new Vector2(lootGridSpacing, lootGridSpacing);
-            }
-        }
+        ApplyViewport(new Vector2(Screen.width, Screen.height), Screen.safeArea);
     }
 
     private void SetPanelVisible(bool visible)
@@ -2007,115 +1744,12 @@ public class BattleSettlementOverlay : MonoBehaviour
             yield return new WaitForSecondsRealtime(victoryIntroHoldDuration);
     }
 
-    private IEnumerator AnimateSummaryRows()
-    {
-        for (int i = 0; i < rowViews.Count; i++)
-        {
-            SummaryRowView row = rowViews[i];
-            if (row == null || row.entry == null)
-                continue;
-
-            yield return AnimateExperienceRow(row);
-        }
-    }
-
-    private IEnumerator AnimateExperienceRow(SummaryRowView row)
-    {
-        BattleSettlementEntry entry = row.entry;
-        int currentLevel = Mathf.Max(1, entry.level);
-        int currentExp = Mathf.Max(0, entry.currentExperience);
-        int remainingGain = Mathf.Max(0, entry.experienceGained);
-        int maxExp = ResolveExpMax(currentLevel, entry.maxExperience);
-
-        UpdateSummaryRow(row, currentLevel, currentExp, maxExp, entry.currentHP, entry.maxHP);
-
-        if (remainingGain <= 0 || maxExp <= 0)
-        {
-            ApplyResolvedSummaryState(row);
-            yield break;
-        }
-
-        while (remainingGain > 0 && maxExp > 0)
-        {
-            currentExp = Mathf.Clamp(currentExp, 0, maxExp);
-            int available = Mathf.Max(0, maxExp - currentExp);
-            if (available <= 0)
-            {
-                currentLevel += 1;
-                currentExp = 0;
-                maxExp = ResolveExpMax(currentLevel, 0);
-                UpdateSummaryRow(row, currentLevel, currentExp, maxExp, entry.currentHP, entry.maxHP);
-                if (expLevelUpPauseDuration > 0f)
-                    yield return new WaitForSecondsRealtime(expLevelUpPauseDuration);
-                continue;
-            }
-
-            int applied = Mathf.Min(remainingGain, available);
-            int startExp = currentExp;
-            int endExp = currentExp + applied;
-            float normalizedFill = maxExp > 0 ? applied / (float)maxExp : 0f;
-            float duration = Mathf.Max(0.01f, expAnimationDurationPerFill * Mathf.Max(0.18f, normalizedFill));
-
-            for (float time = 0f; time < duration; time += Time.unscaledDeltaTime)
-            {
-                float normalized = Mathf.Clamp01(time / duration);
-                float eased = EvaluateCubicBezierEase(normalized, 0.2f, 0.88f);
-                int displayExp = Mathf.RoundToInt(Mathf.Lerp(startExp, endExp, eased));
-                UpdateSummaryRow(row, currentLevel, displayExp, maxExp, entry.currentHP, entry.maxHP);
-                yield return null;
-            }
-
-            currentExp = endExp;
-            remainingGain -= applied;
-            UpdateSummaryRow(row, currentLevel, currentExp, maxExp, entry.currentHP, entry.maxHP);
-
-            if (currentExp >= maxExp && remainingGain > 0)
-            {
-                currentLevel += 1;
-                currentExp = 0;
-                maxExp = ResolveExpMax(currentLevel, 0);
-                UpdateSummaryRow(row, currentLevel, currentExp, maxExp, entry.currentHP, entry.maxHP);
-                if (expLevelUpPauseDuration > 0f)
-                    yield return new WaitForSecondsRealtime(expLevelUpPauseDuration);
-            }
-        }
-
-        yield return AnimateHpToResolvedState(row, currentLevel, currentExp, maxExp);
-        ApplyResolvedSummaryState(row);
-    }
-
-    private IEnumerator AnimateHpToResolvedState(SummaryRowView row, int level, int currentExp, int maxExp)
-    {
-        if (row == null || row.entry == null)
-            yield break;
-
-        BattleSettlementEntry entry = row.entry;
-        int startHP = entry.currentHP;
-        int startMaxHP = entry.maxHP;
-        int targetHP = entry.resultingHP > 0 || !entry.isAlive ? entry.resultingHP : entry.currentHP;
-        int targetMaxHP = entry.resultingMaxHP > 0 ? entry.resultingMaxHP : entry.maxHP;
-        if (startHP == targetHP && startMaxHP == targetMaxHP)
-            yield break;
-
-        float duration = Mathf.Max(0.01f, hpAnimationDuration);
-        for (float time = 0f; time < duration; time += Time.unscaledDeltaTime)
-        {
-            float eased = EvaluateCubicBezierEase(Mathf.Clamp01(time / duration), 0.22f, 0.86f);
-            int displayHP = Mathf.RoundToInt(Mathf.Lerp(startHP, targetHP, eased));
-            int displayMaxHP = Mathf.RoundToInt(Mathf.Lerp(startMaxHP, targetMaxHP, eased));
-            UpdateSummaryRow(row, level, currentExp, maxExp, displayHP, displayMaxHP);
-            yield return null;
-        }
-
-        UpdateSummaryRow(row, level, currentExp, maxExp, targetHP, targetMaxHP);
-    }
-
     private void ApplyResolvedSummaryState(SummaryRowView row)
     {
         BattleSettlementEntry entry = row.entry;
         int resolvedLevel = Mathf.Max(1, entry.resultingLevel > 0 ? entry.resultingLevel : entry.level);
-        int resolvedExp = Mathf.Max(0, entry.resultingExperience);
-        int resolvedMaxExp = ResolveExpMax(resolvedLevel, 0);
+        int resolvedExp = Mathf.Max(0, entry.resultingLevel > 0 ? entry.resultingExperience : entry.currentExperience);
+        int resolvedMaxExp = RequirementFor(row, resolvedLevel);
         int resolvedHP = entry.resultingHP > 0 || !entry.isAlive ? entry.resultingHP : entry.currentHP;
         int resolvedMaxHP = entry.resultingMaxHP > 0 ? entry.resultingMaxHP : entry.maxHP;
         UpdateSummaryRow(row, resolvedLevel, resolvedExp, resolvedMaxExp, resolvedHP, resolvedMaxHP);
@@ -2123,13 +1757,9 @@ public class BattleSettlementOverlay : MonoBehaviour
 
     private void UpdateSummaryRow(SummaryRowView row, int level, int currentExp, int maxExp, int displayedCurrentHP, int displayedMaxHP)
     {
-        if (row.hpText != null)
-        {
-            row.hpText.color = row.entry.isAlive ? hpTextColor : deadRowColor;
-            row.hpText.text = row.entry.isAlive
-                ? $"生命 {displayedCurrentHP} / {displayedMaxHP}"
-                : $"倒下 {displayedCurrentHP} / {displayedMaxHP}";
-        }
+        row.shownLevel = level;
+        row.shownExperience = currentExp;
+        row.shownMaxExperience = maxExp;
         if (row.hpText != null)
         {
             row.hpText.color = row.entry.isAlive ? hpTextColor : deadRowColor;
@@ -2155,29 +1785,11 @@ public class BattleSettlementOverlay : MonoBehaviour
         fillRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, fillWidth * Mathf.Clamp01(ratio));
     }
 
-    private static float EvaluateCubicBezierEase(float t, float controlY1, float controlY2)
-    {
-        float normalized = Mathf.Clamp01(t);
-        float inverse = 1f - normalized;
-        return (3f * inverse * inverse * normalized * Mathf.Clamp01(controlY1))
-            + (3f * inverse * normalized * normalized * Mathf.Clamp01(controlY2))
-            + (normalized * normalized * normalized);
-    }
-
     private static string BuildSettlementName(BattleSettlementEntry entry)
     {
         return entry != null && !string.IsNullOrWhiteSpace(entry.displayName)
             ? entry.displayName
             : "角色";
-    }
-
-    private string BuildHpLabel(BattleSettlementEntry entry, int currentHP, int maxHP)
-    {
-        string displayName = entry != null && !string.IsNullOrWhiteSpace(entry.displayName)
-            ? entry.displayName
-            : "角色";
-        string stateLabel = entry == null || entry.isAlive ? "生命" : "倒下";
-        return $"{displayName}  {stateLabel} {currentHP} / {maxHP}";
     }
 
     private float ResolveHpRatio(int currentHP, int maxHP)
@@ -2209,9 +1821,9 @@ public class BattleSettlementOverlay : MonoBehaviour
     private static string BuildExpLabel(int currentExp, int maxExp)
     {
         if (maxExp <= 0)
-            return $"EXP {Mathf.Max(0, currentExp)} / MAX";
+            return $"经验值 {Mathf.Max(0, currentExp)} / MAX";
 
-        return $"EXP {Mathf.Max(0, currentExp)} / {Mathf.Max(1, maxExp)}";
+        return $"经验值 {Mathf.Max(0, currentExp)} / {Mathf.Max(1, maxExp)}";
     }
 
     private static void AddLayoutElement(
@@ -2237,19 +1849,6 @@ public class BattleSettlementOverlay : MonoBehaviour
             layoutElement.preferredHeight = preferredHeight;
         if (minHeight >= 0f)
             layoutElement.minHeight = minHeight;
-    }
-
-    private static void CreateSpacer(Transform parent, float width)
-    {
-        if (parent == null || width <= 0f)
-            return;
-
-        GameObject spacerGo = new GameObject("Spacer", typeof(RectTransform), typeof(LayoutElement));
-        spacerGo.transform.SetParent(parent, false);
-        LayoutElement layoutElement = spacerGo.GetComponent<LayoutElement>();
-        layoutElement.preferredWidth = width;
-        layoutElement.minWidth = width;
-        layoutElement.flexibleWidth = 0f;
     }
 
     private static void ApplyTextOutline(TextMeshProUGUI text, Color outlineColor, float outlineWidth)

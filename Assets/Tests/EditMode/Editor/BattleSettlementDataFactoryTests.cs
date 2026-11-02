@@ -3,6 +3,40 @@ using NUnit.Framework;
 
 public class BattleSettlementDataFactoryTests
 {
+    [TestCase(true, 23, 23, 13)]
+    [TestCase(true, -5, 0, 13)]
+    [TestCase(false, 23, 0, 0)]
+    public void CompletionShowsFinalizedRewardsAndReadsBalanceWithoutCreditingTheRun(bool victory, int reward, int shownMoney, int shownExperience)
+    {
+        var field = typeof(MapRunRuntime).GetField("currentSnapshot", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+        object previous = field.GetValue(null);
+        try
+        {
+            MapRunRuntime.RestoreSnapshot(new MapRunSnapshot { sceneName = "SettlementTestMap", runState = new RunState { money = -8 } });
+            var encounter = new BattleEncounterData { sourceSceneName = "SettlementTestMap", moneyGained = reward };
+            BattleSettlementData data = BattleSettlementDataFactory.BuildCompletionData(victory, encounter, 2, 13, "BattleScene", null, null, null);
+            Assert.AreEqual(shownMoney, data.moneyGained);
+            Assert.AreEqual(shownExperience, data.experienceGained);
+            Assert.IsTrue(data.hasMoneyBalance);
+            Assert.AreEqual(-8, data.startingMoney);
+            Assert.IsTrue(MapRunRuntime.TryGetMoney("settlementtestmap", out int unchanged));
+            Assert.AreEqual(-8, unchanged);
+            Assert.IsFalse(MapRunRuntime.TryGetMoney("AnotherMap", out _));
+            BattleSettlementData retreat = BattleSettlementDataFactory.BuildForcedRetreatData(encounter, "脱离战斗", 13, "BattleScene", null, null, null);
+            Assert.AreEqual(System.Math.Max(0, reward), retreat.moneyGained);
+            Assert.AreEqual(-8, retreat.startingMoney);
+        }
+        finally { field.SetValue(null, previous); }
+    }
+
+    [Test]
+    public void MissingEncounterDoesNotInventAMapBalance()
+    {
+        BattleSettlementData data = BattleSettlementDataFactory.BuildCompletionData(true, null, 1, 7, "BattleScene", null, null, null);
+        Assert.AreEqual(0, data.moneyGained);
+        Assert.IsFalse(data.hasMoneyBalance);
+    }
+
     [Test]
     public void BuildCompletionData_UsesTutorialReturnSceneOnVictory()
     {

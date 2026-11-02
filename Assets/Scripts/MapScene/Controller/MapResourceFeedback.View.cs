@@ -46,7 +46,7 @@ public partial class MapResourceFeedback
         host.transform.SetParent(transform, false);
         feedbackCanvas = host.GetComponent<Canvas>();
         feedbackCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        feedbackCanvas.sortingOrder = 9200;
+        feedbackCanvas.sortingOrder = feedbackSortingOrder;
         feedbackRoot = (RectTransform)host.transform;
         CanvasScaler scaler = host.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;

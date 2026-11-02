@@ -204,9 +204,13 @@ Important scripts:
   - proportional safe-area layout with bottom clearance; hides only the button's canvas group while BattleButton.IsResolvingCombat is true and restores its previous visibility/input flags afterward
   - BattleButton exposes a read-only resolving flag; action execution and input handlers retain their existing owners
 
-- `BattleSettlementOverlay.cs`
-  - victory/defeat settlement UI
-  - EXP animation, loot list, party HP summary, retry/return buttons
+- `BattleSettlementOverlay.cs`, `.View.cs`, `.Motion.cs`
+  - forest/brass victory and defeat settlement; portrait cards, HP/XP, independently scrolling party and three-column loot grid
+  - gold, XP and loot counters rise together; then concurrent per-character XP flights, sequential item reveals and a temporary top wallet
+  - wallet reuses `MapResourceFeedback` (coins, arrival detail, sounds and amount updates); `ResourceKeywordText` shares gold/XP icon recognition with the map
+  - deterministic unscaled presentation, bounded reusable effects, safe-area layout, repeat/hide cleanup and early completion; existing loot details, required relic choice and exit flows retain their owners
+  - `BattleSettlementDataFactory` reads finalized encounter gold and the matching map balance; party factory captures portraits and actual level thresholds. Presentation never grants rewards or writes saves
+  - implementation and verification: `docs/visuals/battle-settlement-ui.md`; disposable production renders: `BattleSettlementVisualTools`
 
 - `BattleSkillInfoOverlay.cs`
   - reusable detail overlay

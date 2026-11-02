@@ -1,0 +1,11 @@
+Date: 2026-11-02 (Asia/Singapore)
+Tool: image_gen, transparent_background=true
+Reference: docs/visuals/battle-settlement-rewards-concept-20261102.png
+Output: Assets/Resources/MapUI/ExperienceStar.png
+Original generation: C:/Users/Karmas/.codex/generated_images/01a19bb1-03a3-7d22-91bb-dd9beec4e0c7/exec-be55fc0c-6e08-4b44-a632-3b2efe92f362.png
+Original PNG preserved unchanged: 1254 x 1254, RGBA, alpha 0..255.
+SHA-256: 9269e2fde8409670cfb14b43d1c24a910625cba1fa04e9bcde9ca7b22d80396f
+Unity import: single sprite, 128 px runtime limit, alpha transparency, no mipmaps, bilinear/clamp.
+
+Final prompt:
+Use case: precise-object-edit. Extract/recreate ONLY the small blue-lavender four-point experience star-crystal symbol visible immediately to the left of “经验值” in the supplied DiceLand settlement UI reference. Asset type: ONE standalone 2D UI resource icon, genuine transparent background, square canvas. Match that exact recognizable four-point silhouette: vertically elongated upper/lower tips, slightly shorter left/right tips, a small faceted diamond at the centre, four restrained painted triangular bevels, soft periwinkle blue and lavender #B8C9F4, pale cool highlights and deeper blue-violet shaded facets. Clean readable contour at 22–40px, same painterly fantasy UI finish, neither photorealistic nor flat clip-art. Keep a clear moderate alpha margin around the icon (object about 72% canvas width/height). One single centred icon, near front view, no drop shadow, no outer glow cloud, no extra sparkles, no text or numbers, no frame, no sheet, no UI screen or other objects, no white/background plate and no checkerboard baked in. Preserve real alpha around every edge.

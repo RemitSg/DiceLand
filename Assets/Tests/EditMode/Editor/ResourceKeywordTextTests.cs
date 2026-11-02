@@ -29,6 +29,10 @@ public sealed class ResourceKeywordTextTests
     [TestCase("金钱", "F0CC6B", "DL_Money")]
     [TestCase("行动点", "9EDBB8", "DL_ActionPoints")]
     [TestCase("钥匙", "B8D9E6", "DL_Keys")]
+    [TestCase("经验值", "B8C9F4", "DL_Experience")]
+    [TestCase("经验", "B8C9F4", "DL_Experience")]
+    [TestCase("EXP", "B8C9F4", "DL_Experience")]
+    [TestCase("exp", "B8C9F4", "DL_Experience")]
     public void TermsUseTheirOwnColourAndPackagedIcon(string word, string color, string icon)
     {
         string result = ResourceKeywordText.Format("获得 3 " + word);
@@ -201,6 +205,25 @@ public sealed class ResourceKeywordTextTests
         TextMeshProUGUI counter = host.GetComponentsInChildren<TextMeshProUGUI>().First(t => t != label);
         ColorUtility.TryParseHtmlString("#" + ResourceKeywordText.KeyColor, out Color expected);
         Assert.AreEqual(expected, counter.color);
+    }
+
+    [Test]
+    public void ExperienceAliasesShareOneFallbackIconAndPreserveLegacyIndexedSprites()
+    {
+        TextMeshProUGUI label = Label("Experience");
+        label.spriteAsset = TMP_Settings.defaultSpriteAsset;
+        const string raw = "<sprite index=0> 金币 经验值 经验 13EXP exp Expert DEXP EXPERT";
+        label.text = raw;
+        ResourceKeywordText.Attach(label);
+        label.ForceMeshUpdate(true, true);
+        Assert.AreEqual(raw, label.text);
+        Assert.AreEqual(6, SpriteCount(label));
+        Assert.AreEqual(3, ResourceKeywordText.Sprites.spriteGlyphTable.Count);
+        Assert.AreSame(ResourceKeywordText.ExperienceIcon.texture, ResourceKeywordText.Sprites.fallbackSpriteAssets[0].spriteSheet);
+        Assert.IsFalse(ResourceKeywordText.ContainsKeyword("Expert DEXP EXPERT"));
+        Assert.AreSame(ResourceKeywordText.ExperienceIcon, ResourceKeywordText.IconFor("经验值"));
+        Assert.AreEqual(1, Count(ResourceKeywordText.Format("经验值"), "<sprite "));
+        Assert.IsFalse(label.isTextTruncated);
     }
 
     private TextMeshProUGUI Label(string name, Transform parent = null)

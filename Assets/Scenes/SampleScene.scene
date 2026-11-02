@@ -1992,9 +1992,9 @@ MonoBehaviour:
   panelBackgroundSprite: {fileID: 21300000, guid: 7fc524753aa0d2848a535c76f98b25f0, type: 3}
   panelPadding: {x: 36, y: 32}
   rowSpacing: 14
-  titleFont: {fileID: 11400000, guid: a4d7145aab0403d4d9c90e8946f93d83, type: 2}
-  bodyFont: {fileID: 11400000, guid: a4d7145aab0403d4d9c90e8946f93d83, type: 2}
-  buttonFont: {fileID: 11400000, guid: a4d7145aab0403d4d9c90e8946f93d83, type: 2}
+  titleFont: {fileID: 11400000, guid: c6e7143cd2df45b45a784ef8c61a210f, type: 2}
+  bodyFont: {fileID: 11400000, guid: c6e7143cd2df45b45a784ef8c61a210f, type: 2}
+  buttonFont: {fileID: 11400000, guid: c6e7143cd2df45b45a784ef8c61a210f, type: 2}
   titleFontSize: 60
   subtitleFontSize: 40
   bodyFontSize: 30
