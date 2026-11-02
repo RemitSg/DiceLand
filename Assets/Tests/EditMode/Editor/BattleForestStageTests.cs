@@ -4,9 +4,11 @@ using UnityEngine;
 
 public sealed class BattleForestStageTests
 {
-    [TestCase(true)]
-    [TestCase(false)]
-    public void DecorativeStagePreservesCombatAndRandomStateAndReleasesEveryMesh(bool groundWasEnabled)
+    [TestCase(true, 0.65f)]
+    [TestCase(false, 0.65f)]
+    [TestCase(true, 0f)]
+    [TestCase(false, 1f)]
+    public void DecorativeStagePreservesCombatAndRandomStateAndReleasesEveryMesh(bool groundWasEnabled, float canopyOcclusion)
     {
         GameObject root = new GameObject("Forest stage lifecycle regression");
         GameObject groundObject = new GameObject("Original ground");
@@ -25,7 +27,7 @@ public sealed class BattleForestStageTests
         Shader.SetGlobalVector("_DiceLandForestOpenings", openingWitness);
         string randomState = JsonUtility.ToJson(Random.state);
         BattleForestStageController stage = root.AddComponent<BattleForestStageController>();
-        stage.Configure(ground, material);
+        stage.Configure(ground, material, canopyOcclusion);
         try
         {
             for (int cycle = 0; cycle < 2; cycle++)
@@ -37,7 +39,7 @@ public sealed class BattleForestStageTests
                 Mesh[] meshes = parts.Select(part => part.sharedMesh).ToArray();
                 Assert.IsFalse(ground.enabled);
                 Assert.AreEqual(new Vector4(BattleForestStageController.CanopyOpenings.x,
-                    BattleForestStageController.CanopyOpenings.y, 0f, 0f), Shader.GetGlobalVector("_DiceLandForestOpenings"));
+                    BattleForestStageController.CanopyOpenings.y, canopyOcclusion, 0f), Shader.GetGlobalVector("_DiceLandForestOpenings"));
                 Assert.AreSame(material, ground.sharedMaterial);
                 Assert.AreEqual(actorPosition, actor.transform.position);
                 Assert.IsEmpty(root.GetComponentsInChildren<Collider>());

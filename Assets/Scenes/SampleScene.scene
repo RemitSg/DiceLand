@@ -13489,6 +13489,7 @@ MonoBehaviour:
   originalGround: {fileID: 619310770}
   stoneMaterial: {fileID: 2100000, guid: 1d9d2bf62a52544eb529a11a85862661, type: 2}
   forestLighting: 0.82
+  canopyOcclusion: 0.65
 --- !u!114 &1603544717
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13724,7 +13725,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: f5c09aa3151355748ba247d9f01316ed, type: 3}
+  m_Sprite: {fileID: 21300000, guid: acfe14b9267388744b21789334be7026, type: 3}
   m_Color: {r: 0.95, g: 0.98, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

@@ -18,7 +18,7 @@ public static class BattleLookPreviewTools
     public const string ForestAssets = "Assets/Scenes/SampleScene/Forest";
     public const string BackdropPath = "Assets/Assets/Textures/Environments/Forest/ForestRuinsBackdrop.png";
     public const string GroundTexturePath = "Assets/Assets/Textures/Environments/Forest/ForestFloorPainterly.png";
-    public const string MidgroundPath = "Assets/Assets/Textures/Environments/Forest/SunlitCanopyTerracesDaylight.png";
+    public const string MidgroundPath = "Assets/Assets/Textures/Environments/Forest/SunlitCanopyTerracesPainted.png";
     public const string ForegroundPath = "Assets/Assets/Textures/Environments/Forest/MossFernForegroundLow.png";
     public const string StoneTexturePath = "Assets/Assets/Textures/Environments/Forest/ForestTerracePavingSoft.png";
     public const string MarginTexturePath = "Assets/Assets/Textures/Environments/Forest/ForestMarginPlants.png";
@@ -336,7 +336,7 @@ public static class BattleLookPreviewTools
         stone.SetColor("_SoilColor", new Color(0.39f, 0.34f, 0.23f));
         stone.SetColor("_MossColor", new Color(0.19f, 0.27f, 0.15f));
         root.AddComponent<BattleForestStageController>().Configure(
-            scene.GetRootGameObjects().SelectMany(item => item.GetComponentsInChildren<MeshRenderer>(true)).First(item => item.name == "Plane"), stone);
+            scene.GetRootGameObjects().SelectMany(item => item.GetComponentsInChildren<MeshRenderer>(true)).First(item => item.name == "Plane"), stone, 0.65f);
         root.AddComponent<BattleActorLightingController>().Configure(manager.alliesParent.transform, manager.enemiesParent.transform,
             AssetDatabase.LoadAssetAtPath<BattleActorFormLibrary>(BattleActorFormBakeTools.LibraryPath));
         foreach (Material generated in new[] { nearMaterial, stone })

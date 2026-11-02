@@ -1,0 +1,21 @@
+2026-11-02 — 森林中景宽受光面重绘
+
+模式：内置 image_gen 编辑，transparent_background=true；一次生成。
+编辑目标：Assets/Assets/Textures/Environments/Forest/SunlitCanopyTerracesDaylight.png
+光照与绘画风格参考：docs/visuals/forest-target-reference.png
+输出：Assets/Assets/Textures/Environments/Forest/SunlitCanopyTerracesPainted.png
+生成原图：C:/Users/Karmas/.codex/generated_images/01a19b5c-09fd-7b10-95a9-357bae592126/exec-64b2c0ad-6162-4eb2-98a4-1a79786e5783.png
+原始生成 PNG 逐字节复制；没有后期改色、抠图或重采样。旧图保留。
+输出 SHA256：e3bcc58375399d2375fe246a305f80ec1ad57ec6863ece18982edb151af3da26
+实际输出 1672×941 RGBA；提示词中的 2048×1152 是期望值，未据此宣称实际尺寸。
+新图与旧图布局接近但并非逐像素相同；alpha>=128 的轮廓交并比约 0.9509。
+
+完整提示词：
+Use case: lighting-weather.
+Asset type: a transparent 2.5D midground sprite for a Unity side-view forest battle.
+Input images: Image 1 (SunlitCanopyTerracesDaylight.png) is the EDIT TARGET. Image 2 (forest-target-reference.png) is ONLY the style and illumination reference; do not copy its UI, characters, monster, background or floor into the output.
+Edit ONLY the lighting and painted surface treatment of Image 1. Keep its exact wide composition and the same two ancient twisting trees, major branches, hanging vines, two spiral markings, exposed roots, stone pillars and ruined terraces in their existing positions and proportions. Preserve the large transparent openings between trees and all empty background around the isolated tree/ruin cluster. Output a true transparent RGBA sprite, landscape 16:9, preferably 2048x1152.
+Primary change: replace the narrow sparkling bark rim lights with broad, contiguous, honey-gold SUNLIT PLANES across the right/front turn of each twisting trunk, like the two luminous trees in Image 2. Strong warm sunlight from the upper right; the main sunlit planes should occupy about one third of the trunk width, transition through ochre and warm brown, and turn into deep cool olive/blue-green shadow on the left. Do not make self-emissive neon trees. Keep the spiral carvings subtly luminous but readable. Simplify tiny evenly noisy bark scales into larger flowing painted planes and a few crisp selected details; retain trunk volume and curving structure.
+Group canopy leaves into larger light and shadow masses: clear golden yellow-green sun-facing leaf clusters above, rich cool dark green canopy undersides; fewer uniformly sharp star-shaped leaf details. Preserve recognizable leaf silhouettes, vines and gaps.
+Keep the stone ruins and plants in place with their current texture and local colors, with restrained warm tops and cool shaded faces. Avoid making all masonry glow.
+Constraints: same scene geometry and transparent cutout layout, no added objects, no new terrain, no UI, no text, no characters, no sky or opaque backdrop, no black background, no border, no cast light rays outside the sprite, no artificial blur, no lens flare. Leave the silhouette detached from the canvas edges wherever it already is. This must still be a usable isolated parallax layer.
