@@ -23,11 +23,14 @@ public class MainMenuTutorialOverlay : MonoBehaviour
     private Text backButtonText;
     private Button startButton;
     private Button backButton;
+    private Action backHandler;
+    private bool startRequested;
     private ScrollRect sectionScrollRect;
     private RectTransform sectionContainer;
     private readonly List<GameObject> sectionViews = new List<GameObject>();
 
     public bool IsVisible => canvas != null && canvas.gameObject.activeSelf;
+    public Canvas PresentationCanvas => canvas;
     public Text DebugSummaryTitleText => summaryTitleText;
     public Text DebugSummaryBodyText => summaryBodyText;
     public Text DebugStartButtonText => startButtonText;
@@ -53,6 +56,9 @@ public class MainMenuTutorialOverlay : MonoBehaviour
         bool hideSections = false)
     {
         EnsureUi();
+        backHandler = onBack;
+        startRequested = false;
+        startButton.interactable = true;
 
         TutorialMenuCatalog_SO safeCatalog = catalog;
         summaryTitleText.text = !string.IsNullOrEmpty(titleOverride)
@@ -70,12 +76,14 @@ public class MainMenuTutorialOverlay : MonoBehaviour
 
         startButton.onClick.RemoveAllListeners();
         backButton.onClick.RemoveAllListeners();
-        startButton.onClick.AddListener(() => onStart?.Invoke());
-        backButton.onClick.AddListener(() =>
+        startButton.onClick.AddListener(() =>
         {
-            Hide();
-            onBack?.Invoke();
+            if (startRequested || !IsVisible || !startButton.IsInteractable()) return;
+            startRequested = true;
+            startButton.interactable = false;
+            onStart?.Invoke();
         });
+        backButton.onClick.AddListener(Hide);
 
         RebuildSections(safeCatalog);
         ApplyLayout(hideSections);
@@ -84,8 +92,23 @@ public class MainMenuTutorialOverlay : MonoBehaviour
 
     public void Hide()
     {
+        if (!MainMenuPageMotion.TryHide(canvas, HideImmediately)) HideImmediately();
+    }
+
+    private void HideImmediately()
+    {
         if (canvas != null)
             canvas.gameObject.SetActive(false);
+        Action callback = backHandler;
+        backHandler = null;
+        callback?.Invoke();
+    }
+
+    private void OnDestroy()
+    {
+        if (canvas == null) return;
+        if (Application.isPlaying) Destroy(canvas.gameObject);
+        else DestroyImmediate(canvas.gameObject);
     }
 
     private void EnsureUi()

@@ -139,6 +139,23 @@ public class MainMenuTutorialOverlayTests
         Assert.IsFalse(overlay.IsVisible);
     }
 
+    [Test]
+    public void StartButton_RejectsDuplicateLaunchAndResetsWhenReopened()
+    {
+        GameObject host = new GameObject("Host");
+        MainMenuTutorialOverlay overlay = host.AddComponent<MainMenuTutorialOverlay>();
+        int starts = 0;
+        overlay.Show(null, () => starts++, null);
+        Button start = overlay.DebugStartButtonText.GetComponentInParent<Button>();
+        start.onClick.Invoke();
+        start.onClick.Invoke();
+        Assert.AreEqual(1, starts);
+        overlay.Hide();
+        overlay.Show(null, () => starts++, null);
+        start.onClick.Invoke();
+        Assert.AreEqual(2, starts);
+    }
+
     private static List<Transform> GetSectionRows(MainMenuTutorialOverlay overlay)
     {
         Transform sectionsRoot = GetSectionsScrollRect(overlay).content;

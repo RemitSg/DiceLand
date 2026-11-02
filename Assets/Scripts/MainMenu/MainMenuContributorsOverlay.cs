@@ -34,6 +34,7 @@ public class MainMenuContributorsOverlay : MonoBehaviour
     private Font bodyFontOverride;
 
     public bool IsVisible => canvas != null && canvas.gameObject.activeSelf;
+    public Canvas PresentationCanvas => canvas;
 
     public void ConfigureFonts(Font titleFont, Font bodyFont)
     {
@@ -55,6 +56,11 @@ public class MainMenuContributorsOverlay : MonoBehaviour
 
     public void Hide()
     {
+        if (!MainMenuPageMotion.TryHide(canvas, HideImmediately)) HideImmediately();
+    }
+
+    private void HideImmediately()
+    {
         if (rollRoutine != null)
         {
             StopCoroutine(rollRoutine);
@@ -63,6 +69,13 @@ public class MainMenuContributorsOverlay : MonoBehaviour
 
         if (canvas != null)
             canvas.gameObject.SetActive(false);
+    }
+
+    private void OnDestroy()
+    {
+        if (canvas == null) return;
+        if (Application.isPlaying) Destroy(canvas.gameObject);
+        else DestroyImmediate(canvas.gameObject);
     }
 
     private void EnsureUi()

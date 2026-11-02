@@ -1,0 +1,20 @@
+DiceLand 主菜单重制设计参考
+日期：2026-10-30
+生成方式：内置 imagegen；未使用 CLI 或 API 密钥。
+性质：主菜单视觉参考图，尚未接入 Unity。
+图片：main-menu-concept-20261030.png
+
+最终生成提示词：
+
+Use case: ui-mockup.
+Asset type: one finished high-fidelity main-menu design reference image for the real landscape mobile game DiceLand. Create a complete full-screen game menu, edge-to-edge, wide landscape composition approximately 2.16:1, designed to read clearly on a phone. This is a single polished menu screenshot concept, not a device mockup, not a presentation board.
+
+Game identity: a painterly fantasy roguelite about exploring a branching square-tile board, rolling dice in tactical clashes, finding relics, building weapons, and growing a small adventuring party. The established world is a luminous ancient forest with monumental trees, moss-covered ruins, waterfalls, cool atmospheric distance and selective golden sun shafts. Make the menu feel like the threshold of this same world, with its own memorable dice-and-exploration identity.
+
+Composition: left 35% is a quiet, dark forest-shadow area carrying a beautifully typeset logo and a spacious vertical menu; right 65% is a richly composed illustrated world, with a path receding toward luminous ruins. The environment continues naturally behind the interface. A large sculpted six-sided ivory die with subtle gold inlay rests on a low mossy stone plinth in the lower center-right, integrated into the world. Beyond it, a partially revealed path of large square stone board tiles winds into the forest, including a branching route and a few restrained engraved chest, camp and key symbols. In the lower right, a small youthful brown-haired swordsman with a red scarf, a dagger-wielding companion and a robed staff user face into the adventure; keep them secondary, with readable painterly silhouettes, no giant character portraits. Frame the scene with softly defocused foreground leaves. Keep the environment luminous and inviting, with mystery and depth, not a flat illustration or a generic combat scene.
+
+Art direction: premium hand-painted 2.5D fantasy JRPG, mature storybook brushwork, rich but controlled detail, convincing stone and wood, sunlit yellow-green canopy, deep teal shadows, pale blue distant ruins and delicate floating motes. Clear foreground/midground/background separation and cinematic depth of field; the UI remains perfectly crisp. Fine weathered brass, carved dark wood, parchment and ivy details in the UI, restrained ornaments and consistent stroke weight. Avoid a full yellow filter or excessive bloom.
+
+Interface: title/logo in the upper left reads exactly "DiceLand", elegant custom fantasy serif lettering in warm ivory with a subtle antique-gold edge and a small integrated die emblem. Do not invent a Chinese title or tagline. Beneath it, five generous and clearly separated navigation rows, each comfortably thumb-sized. The primary selected row is a beautiful warm parchment-and-gold button with a small diamond selection mark, labeled exactly "新游戏". Next row exactly "继续游戏", visibly disabled in muted silver, with the smaller status exactly "暂无存档". Then three clearly legible rows exactly "能力", "教程", and "设置". Use a refined readable Chinese serif typeface, warm ivory on the dark menu backdrop, large text and strong contrast; avoid loose scratchy calligraphy. Secondary rows can use subtle fine brass separators instead of five heavy boxes. Put smaller but readable utility items exactly "制作人员" and "退出" along the bottom left. A very unobtrusive developer entry exactly "测试战斗" sits at the bottom right. Preserve generous safe-area margins on every edge. Make visual hierarchy extremely clear and the primary action immediately obvious. No other text.
+
+Constraints: polished, practical, coherent mobile-game menu design, not a web landing page. No HUD health bars, no energy meters, no combat interface, no currencies, no login, no shop promotions, no daily rewards, no fabricated live-service features, no watermark, no phone bezel, no annotations, no before-and-after panels. The artwork should support the large menu text without competing with it.

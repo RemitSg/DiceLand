@@ -11408,6 +11408,8 @@ MonoBehaviour:
   contributorsBodyFont: {fileID: 12800000, guid: 96475f955a3b2184a8aaf5a0d09b3392, type: 3}
   ensureOpaqueMenuBackground: 1
   opaqueMenuBackgroundColor: {r: 0.129, g: 0.149, b: 0.196, a: 1}
+  useForestMenu: 1
+  forestMenuFont: {fileID: 12800000, guid: 2b916d5636eb9db448ae5850c4aa26bd, type: 3}
 --- !u!1 &1612790337
 GameObject:
   m_ObjectHideFlags: 0

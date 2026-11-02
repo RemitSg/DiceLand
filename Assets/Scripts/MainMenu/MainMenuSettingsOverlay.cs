@@ -48,6 +48,7 @@ public class MainMenuSettingsOverlay : MonoBehaviour
     private Action<MainMenuSettingsData> saveHandler;
 
     public bool IsVisible => canvas != null && canvas.gameObject.activeSelf;
+    public Canvas PresentationCanvas => canvas;
 
     public void ConfigureFonts(
         Font titleFont,
@@ -91,8 +92,20 @@ public class MainMenuSettingsOverlay : MonoBehaviour
 
     public void Hide()
     {
+        if (!MainMenuPageMotion.TryHide(canvas, HideImmediately)) HideImmediately();
+    }
+
+    private void HideImmediately()
+    {
         if (canvas != null)
             canvas.gameObject.SetActive(false);
+    }
+
+    private void OnDestroy()
+    {
+        if (canvas == null) return;
+        if (Application.isPlaying) Destroy(canvas.gameObject);
+        else DestroyImmediate(canvas.gameObject);
     }
 
     private void EnsureUi()

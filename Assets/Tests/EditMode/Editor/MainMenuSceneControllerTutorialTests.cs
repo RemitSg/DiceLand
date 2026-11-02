@@ -17,7 +17,7 @@ public class MainMenuSceneControllerTutorialTests
     [Test]
     public void ResolveMenuAction_RecognizesTutorialIdentity()
     {
-        MethodInfo method = typeof(MainMenuSceneController).GetMethod("ResolveMenuAction", BindingFlags.Static | BindingFlags.NonPublic);
+        MethodInfo method = typeof(MainMenuSceneController).GetMethod("ResolveMenuAction", BindingFlags.Static | BindingFlags.NonPublic, null, new[] { typeof(string) }, null);
 
         object resolved = method.Invoke(null, new object[] { "Tutorial" });
 
@@ -112,6 +112,29 @@ public class MainMenuSceneControllerTutorialTests
         }
 
         Object.DestroyImmediate(itemFont);
+    }
+
+    [Test]
+    public void GetDifficultyConfigurations_OrdersMediumAsNormalDifficulty()
+    {
+        GameObject root = new GameObject("MainMenuRoot");
+        MainMenuSceneController controller = root.AddComponent<MainMenuSceneController>();
+        DifficultyConfig_SO easy = ScriptableObject.CreateInstance<DifficultyConfig_SO>();
+        DifficultyConfig_SO medium = ScriptableObject.CreateInstance<DifficultyConfig_SO>();
+        DifficultyConfig_SO hard = ScriptableObject.CreateInstance<DifficultyConfig_SO>();
+        DifficultyConfig_SO extreme = ScriptableObject.CreateInstance<DifficultyConfig_SO>();
+        try
+        {
+            easy.difficultyName="Easy"; medium.difficultyName="Medium";
+            hard.difficultyName="Hard"; extreme.difficultyName="Extreme";
+            SetPrivateField(controller, "difficultyConfigs", new[] { extreme, hard, medium, easy });
+            CollectionAssert.AreEqual(new[] { easy, medium, hard, extreme }, controller.GetDifficultyConfigurations());
+        }
+        finally
+        {
+            Object.DestroyImmediate(easy); Object.DestroyImmediate(medium);
+            Object.DestroyImmediate(hard); Object.DestroyImmediate(extreme);
+        }
     }
 
     [Test]

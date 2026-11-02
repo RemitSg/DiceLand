@@ -20,7 +20,7 @@ public class MainMenuSceneController : MonoBehaviour
         [Min(0)] public int startingCurrentHP;
     }
 
-    private enum MenuAction
+    public enum MenuAction
     {
         None = 0,
         NewGame = 1,
@@ -86,6 +86,12 @@ public class MainMenuSceneController : MonoBehaviour
     [SerializeField] private bool ensureOpaqueMenuBackground = true;
     [SerializeField] private Color opaqueMenuBackgroundColor = new Color(0.129f, 0.149f, 0.196f, 1f);
 
+    [Header("Forest Menu")]
+    [SerializeField] private bool useForestMenu = true;
+    [SerializeField] private Font forestMenuFont;
+
+    private MainMenuForestView forestMenu;
+
     private GalleryLevelSelectionManager mainMenuGallery;
     private GalleryLevelSelectionManager difficultyGallery;
     private MainMenuTutorialOverlay tutorialOverlay;
@@ -146,6 +152,7 @@ public class MainMenuSceneController : MonoBehaviour
         ApplyMainMenuSettings();
         ConfigureMainMenuItems();
         ConfigureDifficultyMenu();
+        ConfigureForestMenu();
     }
 
     private void Start()
@@ -218,7 +225,7 @@ public class MainMenuSceneController : MonoBehaviour
 
         SetGalleryInputEnabled(!(tutorialVisibleAtStart || abilityVisibleAtStart || contributorsVisibleAtStart || settingsVisibleAtStart));
 
-        if (!tutorialVisibleAtStart && !abilityVisibleAtStart && !contributorsVisibleAtStart && !settingsVisibleAtStart)
+        if (forestMenu == null && !tutorialVisibleAtStart && !abilityVisibleAtStart && !contributorsVisibleAtStart && !settingsVisibleAtStart)
             HandleFocusedMenuOverlayState();
 
         if (!Input.GetKeyDown(KeyCode.Escape))
@@ -256,6 +263,9 @@ public class MainMenuSceneController : MonoBehaviour
             TrackOverlayVisibilityState();
             return;
         }
+
+        if (forestMenu != null && forestMenu.IsDifficultyVisible)
+            forestMenu.HideDifficulty();
 
         TrackOverlayVisibilityState();
     }
@@ -465,7 +475,7 @@ public class MainMenuSceneController : MonoBehaviour
         string name = config.difficultyName ?? string.Empty;
         if (name.Equals("Easy", StringComparison.OrdinalIgnoreCase))
             return 0;
-        if (name.Equals("Normal", StringComparison.OrdinalIgnoreCase))
+        if (name.Equals("Normal", StringComparison.OrdinalIgnoreCase) || name.Equals("Medium", StringComparison.OrdinalIgnoreCase))
             return 1;
         if (name.Equals("Hard", StringComparison.OrdinalIgnoreCase))
             return 2;
@@ -477,11 +487,14 @@ public class MainMenuSceneController : MonoBehaviour
 
     private void RefreshContinueState()
     {
+        bool hasSave = MainMenuRunSaveSystem.HasSavedRun();
+        if (forestMenu != null)
+            forestMenu.SetContinueAvailable(hasSave);
+
         GalleryLevelView continueItem = FindItemByAction(MenuAction.Continue);
         if (continueItem == null)
             return;
 
-        bool hasSave = MainMenuRunSaveSystem.HasSavedRun();
         string label = continueLabel;
         if (!hasSave)
             label += noSaveSuffix;
@@ -508,11 +521,21 @@ public class MainMenuSceneController : MonoBehaviour
         if (item == null || !menuActions.TryGetValue(item, out MenuAction action))
             return;
 
+        HandleMenuAction(action);
+    }
+
+    private void HandleMenuAction(MenuAction action)
+    {
+        if (IsBlockingOverlayVisible())
+            return;
+
         switch (action)
         {
             case MenuAction.NewGame:
                 MainMenuRuntime.ClearContinueRequest();
                 MainMenuRuntime.ClearTutorialRequest();
+                if (forestMenu != null)
+                    forestMenu.ShowDifficulty();
                 break;
 
             case MenuAction.Continue:
@@ -531,6 +554,7 @@ public class MainMenuSceneController : MonoBehaviour
                 if (settingsOverlay != null && settingsOverlay.IsVisible)
                     settingsOverlay.Hide();
                 contributorsOverlay.Show(contributorsConfig);
+                AnimatePage(contributorsOverlay.PresentationCanvas);
                 SetGalleryInputEnabled(false);
                 break;
 
@@ -696,6 +720,7 @@ public class MainMenuSceneController : MonoBehaviour
 
         suppressSettingsAutoShowUntilFocusLeaves = false;
         settingsOverlay.Show(MainMenuSettingsPersistence.Current, HandleSettingsSaved);
+        AnimatePage(settingsOverlay.PresentationCanvas);
         SetGalleryInputEnabled(false);
     }
 
@@ -718,6 +743,7 @@ public class MainMenuSceneController : MonoBehaviour
             "即将开始教程，是否开始？",
             "进入教程会让你了解战斗规则、基本玩法、游戏系统等。教程会从地图推进开始，逐步带你熟悉移动、战斗、资源管理与成长流程。",
             true);
+        AnimatePage(tutorialOverlay.PresentationCanvas);
         SetGalleryInputEnabled(false);
     }
 
@@ -734,7 +760,18 @@ public class MainMenuSceneController : MonoBehaviour
             settingsOverlay.Hide();
 
         abilityOverlay.Show(abilityTreeConfig, new AbilityPointWallet(), TrackOverlayVisibilityState);
+        AnimatePage(abilityOverlay.PresentationCanvas);
         SetGalleryInputEnabled(false);
+    }
+
+    private void AnimatePage(Canvas page)
+    {
+        if (forestMenu == null || page == null) return;
+        forestMenu.SetExternalPageVisible(true);
+        MainMenuPageMotion.Show(page, () =>
+        {
+            if (forestMenu != null) forestMenu.SetExternalPageVisible(false);
+        });
     }
 
     private void StartTutorialFromMenu()
@@ -785,6 +822,16 @@ public class MainMenuSceneController : MonoBehaviour
 
     private void SetGalleryInputEnabled(bool enabled)
     {
+        if (forestMenu != null)
+        {
+            forestMenu.SetInputEnabled(enabled);
+            if (enabled) forestMenu.SetExternalPageVisible(false);
+            if (mainMenuGallery != null) mainMenuGallery.enabled = false;
+            if (difficultyGallery != null)
+                difficultyGallery.enabled = false;
+            return;
+        }
+
         if (galleryInputEnabled == enabled)
             return;
 
@@ -795,6 +842,35 @@ public class MainMenuSceneController : MonoBehaviour
 
         if (difficultyGallery != null)
             difficultyGallery.enabled = enabled;
+    }
+
+    private void ConfigureForestMenu()
+    {
+        if (!useForestMenu)
+            return;
+
+        // Keep the legacy scene/configuration available, but retire its carousel input.
+        Canvas legacyCanvas = mainMenuGallery.GetComponentInParent<Canvas>();
+        if (legacyCanvas != null)
+        {
+            CanvasGroup group = legacyCanvas.GetComponent<CanvasGroup>();
+            if (group == null)
+                group = legacyCanvas.gameObject.AddComponent<CanvasGroup>();
+            group.alpha = 0f;
+            group.interactable = false;
+            group.blocksRaycasts = false;
+            foreach (GalleryLevelSelectionManager gallery in legacyCanvas.GetComponentsInChildren<GalleryLevelSelectionManager>(true))
+                gallery.enabled = false;
+        }
+
+        forestMenu = gameObject.AddComponent<MainMenuForestView>();
+        var labels = new Dictionary<MenuAction, string>();
+        foreach (MenuAction action in Enum.GetValues(typeof(MenuAction)))
+            if (action != MenuAction.None)
+                labels[action] = GetDisplayLabel(action);
+        forestMenu.Build(forestMenuFont != null ? forestMenuFont : mainMenuItemFont,
+            labels, BuildDifficultyList(), HandleMenuAction, StartNewGame);
+        RefreshContinueState();
     }
 
     private static void HandleExitClicked()
