@@ -1,0 +1,49 @@
+DiceLand 战斗结算面板重制参考图
+日期：2026-11-02（Asia/Singapore）
+方式：内置 image_gen；未使用 CLI 或外部 API 密钥。
+用户要求：重制战斗结束后的结算面板，包含用户截图中的所有要素，并可添加角色头像。
+正式参考图：docs/visuals/battle-settlement-concept-20261102.png
+
+设计内容：
+- 深绿底、细黄铜框、象牙色文字，承接已确认商店面板；森林战斗背景、能量 1 / 10 和左侧战斗角色继续作为暗化背景。
+- 战斗胜利／VICTORY、剩余可行动角色 2、EXP +13；两张带头像的角色状态卡。
+- 第一行 HP 1002 / 1002、EXP 3 / 20、Lv.2；第二行 HP 981 / 999、EXP 1 / 10、Lv.1。数值沿用用户截图，仅用于本张布局展示，不写回游戏数据。
+- 头像选用项目既有 Chara、Man，姓名与头像为新增展示样例；没有据此声明截图的完整实际编队已核实，也未修改角色基础生命。
+- 单个紫色碎晶战利品、战利品 ×1、槽位 ×1；没有虚构资产 ID、具体物品名称、品质或效果。详情提示沿用现有可查看物品的交互方向。
+- 保留重试战斗、回到地图；没有新增领奖、评分、星级、回合数、金币奖励或升级结论。
+范围：仅视觉设计参考；未接入正式 UGUI，未改 BattleSettlementOverlay、角色／技能／遗物／物品资产、玩法、场景或存档。无需更新内容目录。本次验证为图像检查，未运行游戏测试或打包 APK。
+
+输入参考（与提示词顺序一致）：
+1. C:/Users/Karmas/Documents/xwechat_files/wxid_rs05v648c5z332_ef93/temp/RWTemp/2026-11/9e20f478899dc29eb19741386f9343c8/2e2594ba700b3b27b6d83aff9fceba73.jpg
+2. C:/DiceLand/docs/visuals/merchant-panel-concept-20261102.png
+3. C:/DiceLand/Assets/Data/Characters/Chara/Chara_Icon.png
+4. C:/DiceLand/Assets/Data/Characters/Man/Man_Icon.png
+选定原图：C:/Users/Karmas/.codex/generated_images/01a19bb1-03a3-7d22-91bb-dd9beec4e0c7/exec-d302131d-3e50-40f2-9543-09488e9ec29e.png
+
+实际生成提示词：
+Use case: ui-mockup.
+Asset type: ONE finished redesign reference for DiceLand's post-battle victory settlement overlay, ultrawide landscape mobile-game screen, approximately 2.17:1.
+
+INPUT ROLES:
+Image 1 is the functional/content reference and the battle-scene backdrop. Replace its plain beige settlement with the new interface. Retain recognizable forest ruins, warm forest lighting, stone battle floor, partly visible fighter at left, and dimmed battle HUD behind the modal. The top-left background HUD still reads energy 1 / 10. Do not turn this battle scene into a world map.
+Image 2 is ONLY the approved UI style reference: forest-green surfaces, aged brass, ivory typography, restrained leaf ornaments, inset icon wells, layered cut-corner frames, and the gold primary-button treatment. Do not copy its merchant content, map grid, shop icon, money wallet, or map-resource HUD.
+Image 3 is the actual existing Chara portrait: brown spiky hair, blue eyes, young male adventurer with tan/brown clothing.
+Image 4 is the actual existing Man portrait: strong adult male fighter, swept-back reddish-brown hair, angular face and brown armor. Use these two portrait designs inside the party cards; do not invent other heroes.
+
+ART DIRECTION:
+A polished, buildable fantasy RPG settlement UI matching DiceLand's painterly forest adventure art. Almost opaque deep forest-green leather/paper-like panels, very subtle texture, fine warm aged-brass double edges with cut corners and tasteful bevels, warm ivory text, muted jade accents, restrained outer-corner leaf details. Clear Chinese typography, strong hierarchy and comfortable spacing. Copper-red HP bars and warm gold EXP bars on dark recessed tracks. Layered portrait frames and dark inset loot-icon wells. No enormous blank parchment, no ornate clutter, no neon or exaggerated bloom, no flat modern web dashboard.
+
+COMPOSITION:
+Show one complete in-game screen. A centered, generous, neatly framed modal covering about 76% of screen width and 84% of height, with forest battle context visible around all edges. Make the content substantially larger and better organized than Image 1.
+1. A confident but restrained victory header: a small crossed-swords/laurel emblem, large gold Chinese “战斗胜利”, and smaller elegant English “VICTORY”. Beneath it preserve the complete status “剩余可行动角色：2”. A dark brass-edged summary capsule reads exactly “EXP +13”. Do not invent scores, ranks, stars, time, damage totals, extra rewards, or a level-up claim.
+2. Below a fine ornamental divider, split the main content into a wider left party column (about 62%) and a narrower right reward column (about 34%), with a quiet vertical brass rule.
+Left heading “队伍状态”. Two large horizontal character cards stacked vertically. Each has a clearly visible square head-and-shoulders avatar in a layered brass/brown frame on its left; character name and a readable level badge; then separate, aligned HP and EXP data with full-width progress tracks on the right. Portraits must be generously sized and recognizable, not tiny dots.
+FIRST CARD: portrait from Image 3, name “Chara”, badge “Lv.2”; exact text “HP 1002 / 1002” with a completely full red HP bar; exact text “EXP 3 / 20” with a gold experience fill at 15%.
+SECOND CARD: portrait from Image 4, name “Man”, badge “Lv.1”; exact text “HP 981 / 999” with a nearly full red HP bar, just below 100%; exact text “EXP 1 / 10” with a gold experience fill at 10%.
+Keep name, level, HP and EXP labels visually separated and easy to compare. Do not show old-to-new level arrows or “升级”, since prior levels are not provided.
+3. Right heading exactly “战利品 ×1”. Use a refined, dark recessed reward panel with a large inventory-style framed icon tile showing the same single jagged purple crystal/shard cluster seen in Image 1, with a readable count badge “×1”. Add a restrained purple rim-light from the crystal itself, and fine brass corner details. Preserve exactly ONE loot item, not a row of invented goods. Do not invent a specific item name, rarity or effect. Below the tile, a quiet readable hint “点击战利品查看详情” conveys the existing inspect action. Let the panel breathe without leaving most of the modal empty.
+4. A compact footer separated by a thin brass line. Two substantial, well-spaced buttons, aligned as a coherent action group: secondary dark-brown/brass button “重试战斗” on the left, primary warm-gold button “回到地图” on the right with dark legible lettering and a subtle map/return emblem. Preserve these exact actions; no claim/collect button, extra close X, skip, share, ads, shopping or new actions.
+
+TEXT AND QUALITY:
+Use simplified Chinese and exact legible text above, consistent English capitalization, all numbers correct. Keep all key content within comfortable mobile safe margins. Labels must not run into portraits, progress bars, borders or buttons. Use subtle shadows and restrained highlights to separate layers. Make this a premium production-minded UI reference, with coherent reusable cards, frames, bars and buttons, rather than a decorative illustration.
+Only one screen. No device mockup, watermark, annotations, explanatory callouts, before/after comparison, or variant sheet. Preserve every informational element from Image 1 while adding the two actual character portraits.
