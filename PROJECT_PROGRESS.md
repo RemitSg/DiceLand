@@ -1737,3 +1737,11 @@ Root CLAUDE.md references the same AGENTS.md convention so Claude-based agents s
 - PlayerMapController 优先使用通用 Q 版队伍棋子；队伍头像、战斗立绘、位移、跳跃及战斗预览流程保持原实现。提示词：docs/visuals/map-chibi-pawn-20261102-prompt.txt，正式说明同步 docs/visuals/map-page-ui.md。
 - 团结 2022.3.62t6 隔离工程相关 EditMode 52/52 通过；实际重渲染四时段和多比例共 8 张，检查透明边缘、单格占比与选中效果。本地证据：outputs/agent-battle/map-ui-20261102/chibi-pawn/。按仓库约定单独提交并推送本次修改。
 - 本次 Q 版更新的 PlayMode 9/9 通过，覆盖原有战斗预览、菜单与背景交互；六项相关源码／素材与隔离验证工程逐字节一致。
+
+
+## 2026-11-02 事件面板重制参考图
+
+- 使用内置 image_gen，结合用户提供的“熄灭的营火”事件截图与当前森林地图画面，生成事件弹窗重制参考。采用左侧营火插画／叙事、右侧选择卡／后果预览及底部确认的布局，沿用深绿暗金风格，明确首项选中状态。
+- 保留两项实际选择及效果：稍作休息恢复 3 行动点和 10% 队伍生命；拿点物资获得 1 个随机遗物。后果预览对应休息选项，未增加关闭、跳过、风险或资源消耗。
+- 正式参考图：docs/visuals/event-panel-concept-20261102.png；实际提示词与输入说明：docs/visuals/event-panel-concept-20261102-prompt.txt。原样复制生成图并核对 SHA-256 一致，尺寸 1847×851。
+- 本次仅完成设计参考，没有接入正式事件 UGUI，未改玩法、事件资产、内容目录、场景或存档；未运行游戏测试或打包。按仓库约定提交并推送参考图与记录。
