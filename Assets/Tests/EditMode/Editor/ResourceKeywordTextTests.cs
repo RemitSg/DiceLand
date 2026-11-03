@@ -33,6 +33,20 @@ public sealed class ResourceKeywordTextTests
     [TestCase("经验", "B8C9F4", "DL_Experience")]
     [TestCase("EXP", "B8C9F4", "DL_Experience")]
     [TestCase("exp", "B8C9F4", "DL_Experience")]
+    [TestCase("生命值", "F09BA5", "DL_Health")]
+    [TestCase("血量", "F09BA5", "DL_Health")]
+    [TestCase("最大生命值", "F09BA5", "DL_Health")]
+    [TestCase("生命", "F09BA5", "DL_Health")]
+    [TestCase("HP", "F09BA5", "DL_Health")]
+    [TestCase("炎", "F4A261", "DL_Attribute_Flame")]
+    [TestCase("水", "79BFF2", "DL_Attribute_Water")]
+    [TestCase("毒", "9BCB78", "DL_Attribute_Poison")]
+    [TestCase("血", "E98595", "DL_Attribute_Blood")]
+    [TestCase("暗", "C3A0E5", "DL_Attribute_Dark")]
+    [TestCase("电", "F3DA78", "DL_Attribute_Electricity")]
+    [TestCase("光", "F6EAC8", "DL_Attribute_Light")]
+    [TestCase("速", "E9C17B", "DL_Attribute_Speed")]
+    [TestCase("无", "C8CDD1", "DL_Attribute_Neutral")]
     public void TermsUseTheirOwnColourAndPackagedIcon(string word, string color, string icon)
     {
         string result = ResourceKeywordText.Format("获得 3 " + word);
@@ -56,7 +70,7 @@ public sealed class ResourceKeywordTextTests
     [Test]
     public void OrdinaryTextIsReturnedWithoutAllocatingDecoratedContent()
     {
-        string value = "获得遗物，恢复队伍生命。";
+        string value = "获得遗物，稍作歇息。";
         Assert.AreSame(value, ResourceKeywordText.Format(value));
         Assert.IsNull(ResourceKeywordText.Format(null));
     }
@@ -143,12 +157,12 @@ public sealed class ResourceKeywordTextTests
         Text label = go.AddComponent<ResourceKeywordLegacyText>();
         label.font = face;
         label.fontSize = 32;
-        label.text = "获得 25 金币，恢复 3 行动点，获得 1 钥匙。";
+        label.text = "获得 25 金币，恢复 3 行动点，获得 1 钥匙。恢复生命值，炎属性。";
         Canvas.ForceUpdateCanvases();
         TextMeshProUGUI displayed = go.GetComponentInChildren<TextMeshProUGUI>();
         Assert.IsNotNull(displayed);
         displayed.ForceMeshUpdate(true, true);
-        Assert.AreEqual(3, SpriteCount(displayed));
+        Assert.AreEqual(5, SpriteCount(displayed));
         Assert.AreEqual(label.text, displayed.text);
         Assert.AreSame(face, label.font);
         Assert.Greater(label.preferredHeight, 30f);
@@ -224,6 +238,101 @@ public sealed class ResourceKeywordTextTests
         Assert.AreSame(ResourceKeywordText.ExperienceIcon, ResourceKeywordText.IconFor("经验值"));
         Assert.AreEqual(1, Count(ResourceKeywordText.Format("经验值"), "<sprite "));
         Assert.IsFalse(label.isTextTruncated);
+    }
+
+    [Test]
+    public void EveryConfiguredAttributeRendersItsOwnSpriteAndReadableColour()
+    {
+        string[] paths = AssetDatabase.FindAssets("t:LootAttribute_SO", new[] { "Assets/Data/Loots/Attributes" });
+        Assert.AreEqual(9, paths.Length);
+        HashSet<Sprite> icons = new HashSet<Sprite>();
+        foreach (string guid in paths)
+        {
+            LootAttribute_SO attribute = AssetDatabase.LoadAssetAtPath<LootAttribute_SO>(AssetDatabase.GUIDToAssetPath(guid));
+            TextMeshProUGUI label = Label(attribute.attributeName);
+            label.text = attribute.attributeName;
+            ResourceKeywordText.Attach(label);
+            label.ForceMeshUpdate(true, true);
+            Sprite icon = ResourceKeywordText.IconFor(attribute.attributeName);
+            Assert.IsNotNull(icon, attribute.name);
+            Assert.IsTrue(icons.Add(icon), attribute.name + " must have a distinct symbol");
+            Assert.AreEqual(1, SpriteCount(label), attribute.name);
+            Color expected = ResourceKeywordText.ColorFor(attribute.attributeName, Color.clear);
+            TMP_CharacterInfo word = label.textInfo.characterInfo.Take(label.textInfo.characterCount)
+                .First(c => c.character == attribute.attributeName[0] && c.elementType == TMP_TextElementType.Character);
+            Assert.AreEqual((Color32)expected, word.color, attribute.name);
+            Assert.Greater(expected.maxColorComponent, 0.7f, "Dark attributes must remain readable on forest panels.");
+            Assert.IsFalse(label.isTextTruncated);
+        }
+        Assert.AreEqual(3, ResourceKeywordText.Sprites.spriteGlyphTable.Count);
+        Assert.AreEqual(10, ResourceKeywordText.Sprites.fallbackSpriteAssets[1].spriteGlyphTable.Count);
+        Assert.IsNotNull(ResourceKeywordText.HealthIcon);
+        Assert.IsFalse(icons.Contains(ResourceKeywordText.HealthIcon));
+    }
+
+    [Test]
+    public void AttributesUseTokenBoundariesAndExplicitPhrasesRatherThanOrdinaryChineseSubstrings()
+    {
+        const string ordinary = "无法移动，速度不足；流血与中毒，灯光照着水壶，黑暗里有电梯。";
+        Assert.IsFalse(ResourceKeywordText.ContainsKeyword(ordinary));
+        Assert.AreSame(ordinary, ResourceKeywordText.Format(ordinary));
+        const string mentions = "炎、水、毒、血、暗、电、光、速、无。受到炎属性伤害，获得水抗性。";
+        Assert.AreEqual(11, Count(ResourceKeywordText.Format(mentions), "<sprite "));
+        string rich = ResourceKeywordText.Format("敌人属性：<color=#000000><b>暗</b></color>；受到<color=red>炎</color>属性伤害。");
+        Assert.AreEqual(2, Count(rich, "<sprite "));
+        StringAssert.Contains(ResourceKeywordText.DarkColor, rich);
+        Assert.IsFalse(ResourceKeywordText.ContainsKeyword("无明显倾向 暂无描述"));
+    }
+
+    [Test]
+    public void HealthAliasesUseOneHeartAndNeverBecomeTheBloodAttribute()
+    {
+        const string raw = "最大生命值 生命值上限 当前生命值 血量 生命 HP 20hp 回血 满血 血属性 流血 中毒 水壶 无法 速度 灯光";
+        TextMeshProUGUI label = Label("Health and blood");
+        label.text = raw;
+        ResourceKeywordText.Attach(label);
+        label.ForceMeshUpdate(true, true);
+        Assert.AreEqual(raw, label.text);
+        Assert.AreEqual(10, SpriteCount(label));
+        string formatted = label.textPreprocessor.PreprocessText(raw);
+        Assert.AreEqual(9, Count(formatted, "<sprite name=\"DL_Health\""));
+        Assert.AreEqual(1, Count(formatted, "<sprite name=\"DL_Attribute_Blood\""));
+        Assert.AreNotSame(ResourceKeywordText.HealthIcon, ResourceKeywordText.IconFor("血"));
+        Assert.AreSame(ResourceKeywordText.HealthIcon, ResourceKeywordText.IconFor("血量"));
+        Assert.IsFalse(ResourceKeywordText.ContainsKeyword("HPool PHP maxHP"));
+        Assert.IsFalse(label.isTextTruncated);
+    }
+
+    [Test]
+    public void AttributeAndHealthFormattingPreservesTagsNoParseAndIdempotency()
+    {
+        const string raw = "<link=\"血量\"><s>炎属性</s></link>、水、生命值；<noparse>血量 炎 <color=red>水</color></noparse>";
+        string result = ResourceKeywordText.Format(raw);
+        Assert.AreEqual(3, Count(result, "<sprite "));
+        StringAssert.StartsWith("<link=\"血量\"><s>", result);
+        StringAssert.Contains("<noparse>血量 炎 <color=red>水</color></noparse>", result);
+        Assert.AreEqual(result, ResourceKeywordText.Format(result));
+    }
+
+    [Test]
+    public void ExistingBattlePreviewAttributeLabelsRenderIconsWithoutChangingTheContext()
+    {
+        MapBattleTilePreviewOverlay overlay = host.AddComponent<MapBattleTilePreviewOverlay>();
+        overlay.ConfigureFonts(font, font, font);
+        string[] names = { "炎", "水", "血" };
+        overlay.Show(new MapBattleTilePreviewContext
+        {
+            tile = new BoardTileData { tileType = MapTileType.Elite }, canPreview = true, canConfirm = true,
+            dangerRating = 2, attributeNames = names, confirmLabel = "进入战斗"
+        });
+        TextMeshProUGUI[] labels = (TextMeshProUGUI[])typeof(MapBattleTilePreviewOverlay).GetField("attributeTexts", Private).GetValue(overlay);
+        for (int i = 0; i < names.Length; i++)
+        {
+            labels[i].ForceMeshUpdate(true, true);
+            Assert.AreEqual(names[i], labels[i].text);
+            Assert.AreEqual(1, SpriteCount(labels[i]));
+            Assert.IsFalse(labels[i].isTextTruncated);
+        }
     }
 
     private TextMeshProUGUI Label(string name, Transform parent = null)

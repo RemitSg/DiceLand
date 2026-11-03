@@ -12,6 +12,7 @@ using UnityEngine.UI;
 public static class ResourceKeywordVisualTools
 {
     public const string OutputPath = "outputs/agent-battle/resource-keywords-20261102";
+    public const string AttributeHealthOutputPath = "outputs/agent-battle/attribute-health-keywords-20261103";
     private const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
     private const string Description = "获得 25 金币，恢复 3 行动点，并获得 1 把钥匙。\n金钱可用于购买补给；行动点用于探索；钥匙用于挑战首领。";
     private static TMP_FontAsset Font => AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(AssetDatabase.GUIDToAssetPath("c6e7143cd2df45b45a784ef8c61a210f"));
@@ -27,6 +28,95 @@ public static class ResourceKeywordVisualTools
         CaptureBattleLoot();
         CaptureLegacyTutorial();
         File.WriteAllText(Path.Combine(OutputPath, "preview-complete.json"), "{\"success\":true,\"images\":6,\"syntheticPresentationSamples\":true,\"playerSavesUsed\":false,\"rewardsExecuted\":false}");
+    }
+
+    [MenuItem("Tools/Map Visuals/Capture Attribute And Health Keywords")]
+    public static void CaptureAttributeAndHealthKeywords()
+    {
+        Directory.CreateDirectory(AttributeHealthOutputPath);
+        Capture("keyword-overview.png", 2340, 1080, (host, camera) =>
+        {
+            GameObject root = new GameObject("KeywordOverview", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
+            root.transform.SetParent(host.transform, false);
+            Canvas canvas = root.GetComponent<Canvas>();
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 8100;
+            PrepareCanvas(canvas, host, camera, 2340, 1080);
+            GameObject panelObject = new GameObject("Panel", typeof(RectTransform), typeof(Image));
+            panelObject.transform.SetParent(root.transform, false);
+            RectTransform panel = (RectTransform)panelObject.transform;
+            panel.anchoredPosition = new Vector2(130f, 0f);
+            panel.sizeDelta = new Vector2(1460f, 900f);
+            panelObject.GetComponent<Image>().color = new Color(0.025f, 0.065f, 0.045f, 0.98f);
+            OverviewLabel(panel, "Heading", "属性与生命关键词", 48, -36f, 1330f, 68f);
+            string[] attributes = { "炎", "水", "毒", "血", "暗", "电", "光", "速", "无" };
+            for (int i = 0; i < attributes.Length; i++)
+                OverviewLabel(panel, "Attribute" + i, attributes[i] + "属性", 42,
+                    -148f - i / 3 * 94f, 380f, 70f, 62f + i % 3 * 456f);
+            OverviewLabel(panel, "Health", "恢复 10% 最大生命值，当前血量 20/20。", 36, -468f, 1330f, 108f);
+            OverviewLabel(panel, "Aliases", "生命值 / 血量 / HP / 回血", 32, -588f, 1330f, 64f);
+            OverviewLabel(panel, "Resources", "获得 25 金币，恢复 3 行动点，获得 1 把钥匙和 13EXP。", 30, -688f, 1330f, 72f);
+            OverviewLabel(panel, "OrdinaryWords", "普通词保持原样：无法、速度、流血、中毒、水壶、灯光。", 27, -790f, 1330f, 66f);
+        }, AttributeHealthOutputPath);
+        CaptureHealthEvent("keyword-event-phone.png", 2340, 1080);
+        CaptureHealthEvent("keyword-event-tablet.png", 1600, 1200);
+        Capture("keyword-battle-preview.png", 2340, 1080, (host, camera) =>
+        {
+            MapBattleTilePreviewOverlay overlay = host.AddComponent<MapBattleTilePreviewOverlay>();
+            TMP_FontAsset attributeFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(AssetDatabase.GUIDToAssetPath("1927579a4b7620b428469b73f8d5046f"));
+            overlay.ConfigureFonts(Font, Font, attributeFont);
+            overlay.Show(new MapBattleTilePreviewContext
+            {
+                tile = new BoardTileData { tileType = MapTileType.Elite }, canPreview = true, canConfirm = true,
+                dangerRating = 2, attributeNames = new[] { "炎", "水", "血" }, confirmLabel = "进入战斗"
+            });
+            PrepareCanvas((Canvas)Get(overlay, "canvas"), host, camera, 2340, 1080);
+            overlay.ApplyResponsiveLayout(new Vector2(2340f, 1080f));
+        }, AttributeHealthOutputPath);
+        File.WriteAllText(Path.Combine(AttributeHealthOutputPath, "preview-complete.json"),
+            "{\"success\":true,\"images\":4,\"syntheticPresentationSamples\":true,\"playerSavesUsed\":false,\"rewardsExecuted\":false}");
+    }
+
+    private static void OverviewLabel(RectTransform panel, string name, string value, int size, float y, float width, float height, float x = 62f)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(panel, false);
+        TextMeshProUGUI text = go.AddComponent<TextMeshProUGUI>();
+        text.font = Font;
+        text.fontSize = size;
+        text.color = new Color(0.94f, 0.91f, 0.79f);
+        text.alignment = TextAlignmentOptions.MidlineLeft;
+        text.rectTransform.anchorMin = text.rectTransform.anchorMax = text.rectTransform.pivot = new Vector2(0f, 1f);
+        text.rectTransform.anchoredPosition = new Vector2(x, y);
+        text.rectTransform.sizeDelta = new Vector2(width, height);
+        text.text = value;
+        ResourceKeywordText.Attach(text);
+    }
+
+    private static void CaptureHealthEvent(string name, int width, int height)
+    {
+        MapEvent_SO sample = ScriptableObject.CreateInstance<MapEvent_SO>();
+        try
+        {
+            sample.eventName = "林间的补给";
+            sample.eventContent = "你在林间发现了一只旧木箱。\n\n石面刻着九种属性：炎、水、毒、血、暗、电、光、速、无。\n\n补给可以恢复生命值。生命上限与当前血量会分别显示；血属性使用血滴，血量使用心形。";
+            sample.options = new List<MapEventOptionData>
+            {
+                new MapEventOptionData { optionLabel = "治疗伤势", requiredMoney = 10, consequenceDescription = "恢复 10% 最大生命值。", resultContent = "恢复生命值，当前血量有所增加。" },
+                new MapEventOptionData { optionLabel = "检查符文", consequenceDescription = "查看炎属性与水属性。" },
+                new MapEventOptionData { optionLabel = "继续前进", consequenceDescription = "不消耗金币，返回地图。" }
+            };
+            Capture(name, width, height, (host, camera) =>
+            {
+                MapEventOverlay overlay = host.AddComponent<MapEventOverlay>();
+                MapEventVisualTools.CopyProductionSettings(overlay);
+                overlay.Show(new BoardTileData { tileType = MapTileType.Event, assignedEvent = sample }, sample, PreviewChoice);
+                PrepareCanvas((Canvas)Get(overlay, "canvas"), host, camera, width, height);
+                overlay.ApplyViewport(new Vector2(width, height), new Rect(0, 0, width, height));
+                Call(overlay, "RefreshLayout");
+            }, AttributeHealthOutputPath);
+        }
+        finally { UnityEngine.Object.DestroyImmediate(sample); }
     }
 
     private static void CaptureEvent(string name, int width, int height, bool result)
@@ -134,7 +224,7 @@ public static class ResourceKeywordVisualTools
         return item;
     }
 
-    private static void Capture(string name, int width, int height, Action<GameObject, Camera> build)
+    private static void Capture(string name, int width, int height, Action<GameObject, Camera> build, string outputPath = OutputPath)
     {
         string source = MapVisualTools.Capture(name, width, height, MapBackgroundPhase.Morning, false, 1, customize: (host, camera) =>
         {
@@ -144,7 +234,8 @@ public static class ResourceKeywordVisualTools
             foreach (Graphic graphic in host.GetComponentsInChildren<Graphic>()) graphic.Rebuild(CanvasUpdate.PreRender);
             Canvas.ForceUpdateCanvases();
         });
-        File.Copy(source, Path.Combine(OutputPath, name), true);
+        Directory.CreateDirectory(outputPath);
+        File.Copy(source, Path.Combine(outputPath, name), true);
     }
 
     private static void PrepareCanvas(Canvas canvas, GameObject host, Camera camera, int width, int height)

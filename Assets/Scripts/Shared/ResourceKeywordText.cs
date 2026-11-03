@@ -5,17 +5,13 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.TextCore;
 
-/// <summary>Presentation-only resource terms. Raw text, reward messages and save data stay unchanged.</summary>
-public static class ResourceKeywordText
+/// <summary>Presentation-only resource, attribute and health terms. Raw text and game data stay unchanged.</summary>
+public static partial class ResourceKeywordText
 {
     public const string MoneyColor = "F0CC6B";
     public const string ActionPointColor = "9EDBB8";
     public const string KeyColor = "B8D9E6";
     public const string ExperienceColor = "B8C9F4";
-    private static readonly string[] Words = { "金币", "金钱", "行动点", "钥匙", "经验值", "经验", "EXP" };
-    private static readonly string[] Colors = { MoneyColor, MoneyColor, ActionPointColor, KeyColor, ExperienceColor, ExperienceColor, ExperienceColor };
-    private static readonly string[] Icons = { "DL_Money", "DL_Money", "DL_ActionPoints", "DL_Keys", "DL_Experience", "DL_Experience", "DL_Experience" };
-    private static readonly string[] IconSources = { "Coins", "Coins", "Footprint", "Key", "ExperienceStar", "ExperienceStar", "ExperienceStar" };
     private static TMP_SpriteAsset spriteAsset;
     private static TMP_SpriteAsset experienceSprites;
     private static readonly Dictionary<TMP_SpriteAsset, TMP_SpriteAsset> spriteVariants = new Dictionary<TMP_SpriteAsset, TMP_SpriteAsset>();
@@ -23,23 +19,23 @@ public static class ResourceKeywordText
     public static bool ContainsKeyword(string source)
     {
         if (string.IsNullOrEmpty(source)) return false;
-        for (int i = 0; i < Words.Length; i++) if (FindWord(source, i) >= 0) return true;
+        for (int i = 0; i < Keywords.Length; i++) if (FindWord(source, i) >= 0) return true;
         return false;
     }
 
     public static Sprite IconFor(string source)
     {
         if (string.IsNullOrEmpty(source)) return null;
-        for (int i = 0; i < Words.Length; i++)
-            if (FindWord(source, i) >= 0) return i < 4 ? MapForestArt.Get(IconSources[i]) : ExperienceIcon;
+        for (int i = 0; i < Keywords.Length; i++)
+            if (FindWord(source, i) >= 0) return IconFor(Keywords[i]);
         return null;
     }
 
     public static Color ColorFor(string source, Color fallback)
     {
         if (string.IsNullOrEmpty(source)) return fallback;
-        for (int i = 0; i < Words.Length; i++)
-            if (FindWord(source, i) >= 0 && ColorUtility.TryParseHtmlString("#" + Colors[i], out Color color)) return color;
+        for (int i = 0; i < Keywords.Length; i++)
+            if (FindWord(source, i) >= 0 && ColorUtility.TryParseHtmlString("#" + Keywords[i].Color, out Color color)) return color;
         return fallback;
     }
 
@@ -82,12 +78,13 @@ public static class ResourceKeywordText
             }
             bool matched = false;
             if (noParseDepth == 0 && resourceLinkDepth == 0)
-                for (int word = 0; word < Words.Length; word++)
+                for (int word = 0; word < Keywords.Length; word++)
                 {
-                    string value = Words[word];
+                    Keyword keyword = Keywords[word];
+                    string value = keyword.Word;
                     if (!MatchesWord(source, i, word)) continue;
-                    output.Append("<nobr><link=\"dl-resource-").Append(Icons[word]).Append("\"><color=#").Append(Colors[word]).Append('>');
-                    if (includeIcons) output.Append("<sprite name=\"").Append(Icons[word]).Append("\" tint=0>");
+                    output.Append("<nobr><link=\"dl-resource-").Append(keyword.IconName).Append("\"><color=#").Append(keyword.Color).Append('>');
+                    if (includeIcons) output.Append("<sprite name=\"").Append(keyword.IconName).Append("\" tint=0>");
                     output.Append(source, i, value.Length).Append("</color></link></nobr>");
                     i += value.Length;
                     matched = true;
@@ -102,11 +99,14 @@ public static class ResourceKeywordText
 
     private static bool MatchesWord(string source, int at, int word)
     {
-        string value = Words[word];
+        Keyword keyword = Keywords[word];
+        string value = keyword.Word;
+        bool english = value == "EXP" || value == "HP";
         if (at + value.Length > source.Length || string.Compare(source, at, value, 0, value.Length,
-            word == 6 ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) != 0) return false;
-        if (word != 6) return true;
-        // Numeric forms such as 13EXP are valid; English identifiers such as Expert are not.
+            english ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) != 0) return false;
+        if (keyword.Attribute) return IsAttributeMention(source, at);
+        if (!english) return true;
+        // Numeric forms such as 13EXP / 20HP are valid; identifiers such as Expert / HPool are not.
         return (at == 0 || !IsEnglishLetter(source[at - 1])) &&
             (at + value.Length == source.Length || !IsEnglishLetter(source[at + value.Length]));
     }
@@ -167,7 +167,7 @@ public static class ResourceKeywordText
                 asset.spriteCharacterTable.Add(new TMP_SpriteCharacter((uint)(0xE100 + i), glyph) { name = names[i], scale = 1f });
             }
             asset.UpdateLookupTables();
-            asset.fallbackSpriteAssets = new List<TMP_SpriteAsset> { CreateExperienceSprites(shader) };
+            asset.fallbackSpriteAssets = new List<TMP_SpriteAsset> { CreateExperienceSprites(shader), CreateAttributeAndHealthSprites(shader) };
             spriteAsset = asset;
             return spriteAsset;
         }
@@ -219,6 +219,7 @@ public static class ResourceKeywordText
         if (experienceSprites != null) { DestroyOwned(experienceSprites.material); DestroyOwned(experienceSprites); }
         spriteAsset = null;
         experienceSprites = null;
+        ResetAttributeAndHealthSprites();
     }
 
     private static void DestroyOwned(UnityEngine.Object value)

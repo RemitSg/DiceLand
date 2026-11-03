@@ -1,0 +1,38 @@
+DiceLand 属性与生命关键词图标
+日期：2026-11-03（Asia/Singapore）
+方式：内置 image_gen，transparent_background=true；未使用 CLI/API 密钥。
+用户要求：所有属性与生命值／血量相关词像金币一样，使用固定颜色和特定图标。
+正式图集：Assets/Resources/MapUI/KeywordIcons.png
+原图：C:/Users/Karmas/.codex/generated_images/01a19b52-5ddb-7880-a1be-70f8b56a2036/exec-cbc36430-af01-465b-b15d-cc499a5aa65b.png
+风格输入：C:/DiceLand/Assets/Resources/MapUI/MapAtlas.png，作为既有手绘材质、轮廓和边沿高光参考。
+制作：保留生成图原始 RGBA 像素，使用 Unity Sprite Editor 数据提供器在 5×2 网格内按 alpha 范围设置十个裁切矩形，不进行绘图、背景替换或像素重采样。正式导入元数据与原图一起提交；KeywordIconImportTools.ConfigureImports 可复现裁切，并保留已有 sprite GUID／名称映射。
+上排从左到右：Flame 炎、Water 水、Poison 毒、Blood 血、Dark 暗。
+下排从左到右：Electricity 电、Light 光、Speed 速、Neutral 无、Health 生命值／血量。
+生命值使用心形，血属性使用血滴；中毒、流血等状态名称不作为单字属性处理。没有给现有属性 ScriptableObject 写入图标引用或改变效果／投放，关键词显示从共享注册表读取图标。
+透明度：原图为 1983×793 RGBA，alpha 范围 0～255，边角与行列间隙透明；实际 TMP 渲染另行核对。
+原图与正式图集 SHA-256：A74550026CDCE3046523436683ADA39B69C7C34C386E0A9ACD8598AC7EB6FE8C。
+此文件仅记录正式素材出处与完整提示词，临时渲染／测试证据位于已忽略的 outputs/agent-battle/attribute-health-keywords-20261103/。
+
+原始提示词：
+Use case: stylized-concept.
+Asset type: production sprite atlas of ten small inline keyword icons for DiceLand, a hand-painted fantasy adventure game.
+The supplied image is ONLY a style reference: match its polished painted silhouettes, warm aged brass edge highlights, rich interior colors and readability. Create ten NEW symbols. Do not copy the map tiles, frames or scenery.
+
+Create ONE transparent PNG sprite sheet, wide canvas with a 5:2 aspect ratio, arranged in an EXACT regular grid of FIVE equal columns and TWO equal rows. Exactly TEN isolated icons, one icon at the center of each cell. All cells have the same optical icon size and ample empty transparent gutters, at least 18% of cell width/height around each icon. Nothing crosses a cell boundary. No labels, no letters, no numbers, no panel, no circular badge background, no floor, no shadows outside each silhouette and no checkerboard painted into the image. The entire backdrop and gutters are genuinely alpha transparent.
+
+Icon order is mandatory, left to right:
+TOP ROW:
+1. Flame attribute: a compact sculpted ORANGE flame with a golden inner lick, clear flame silhouette.
+2. Water attribute: a single bright BLUE water drop with a subtle pale cyan highlight.
+3. Poison attribute: a green poisonous drop with a small ivory skull shape embedded inside, clean recognizable green poison symbol.
+4. Blood attribute: a single dark CRIMSON blood drop, with a small red highlight, visibly distinct from the heart icon.
+5. Dark attribute: a rich VIOLET crescent moon with a thin muted silver highlight; never solid black.
+
+BOTTOM ROW:
+6. Electricity attribute: one bold golden-yellow angular LIGHTNING BOLT, immediately distinct from fire and wind.
+7. Light attribute: a warm IVORY SUN with a round core and short evenly spaced rays, soft gold edges, no haze or bloom.
+8. Speed attribute: three elegant AMBER WIND STREAKS curling in the same direction, an aerodynamic speed symbol.
+9. Neutral attribute: a small pearl-GRAY faceted hexagonal crystal with a quiet silver edge, simple neutral jewel silhouette.
+10. Health / hit points: one full warm CORAL-RED HEART with clean twin lobes and a pointed bottom, a small pale highlight, clearly a heart rather than a blood drop.
+
+Cohesion: one tasteful icon family; front-facing, detailed enough to suit the supplied painted art but simplified to remain very clear at 24–36 pixels high beside Chinese text. Consistent edge weight and restrained bevel. No heavy gold circles framing every icon. No extra objects, decorative flourishes, spare stars, duplicated icons, sparks, trails beyond the speed silhouette, words or UI text. Retain clean alpha around all ten icons.
