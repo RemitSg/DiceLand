@@ -189,8 +189,13 @@ public class BattlePresentationSystem : MonoBehaviour
 
     private Material spriteMat;
     private Material particleMat;
-    private Sprite whiteSprite;
+    private Sprite flashSprite;
     private Texture2D whiteTexture;
+    private Texture2D softImpactTexture;
+    private Light impactLight;
+    private float impactLightDuration;
+    private float impactLightRemaining;
+    private int impactLightStartFrame;
     private Coroutine activeCameraBeatRoutine;
     private Camera cameraBeatCamera;
     private Vector3 cameraBeatBasePosition;
@@ -321,11 +326,12 @@ public class BattlePresentationSystem : MonoBehaviour
             onImpact?.Invoke();
         }
 
+        // Hold the impact in close-up, then return through the already-framed overview.
+        yield return EndCloseupShot(clashShotId, hasWinner ? hitCloseupHoldDuration : clashCloseupHoldDuration);
         if (returnToOrigin)
             yield return MovePair(ally, ally.position, plane.firstStart, enemy, enemy.position, plane.secondStart, returnDuration);
         feedbackSystem?.HideClashDiceDisplay(allyDiceDisplay);
         feedbackSystem?.HideClashDiceDisplay(enemyDiceDisplay);
-        yield return EndCloseupShot(clashShotId, hasWinner ? hitCloseupHoldDuration : clashCloseupHoldDuration);
     }
 
     public IEnumerator PlaySingleAttackSequence(
@@ -588,6 +594,7 @@ public class BattlePresentationSystem : MonoBehaviour
 
     private IEnumerator PlayBuiltInClashImpactFx(Vector3 position, Vector3 direction)
     {
+        PulseImpactLight(position, clashSparkColor, 0.12f);
         GameObject root = CreateEffectRoot("ClashEffect", position, direction);
         ParticleSystem sparks = CreateBurst(root.transform, clashSparkColor, clashSparks, clashParticleFadeDuration);
         ParticleSystem ring = CreateRing(root.transform, clashPrimaryColor, clashRing, clashParticleFadeDuration);
@@ -656,6 +663,8 @@ public class BattlePresentationSystem : MonoBehaviour
         {
             // Land the camera beat with damage and the defender's reaction, rather
             // than spending it during a custom effect's anticipation frames.
+            if (!useCustom)
+                PulseImpactLight(position, hitColor, 0.16f);
             TriggerCameraImpact(position, cameraImpactPower, true);
             onImpact?.Invoke();
             damageResolved = true;
@@ -802,13 +811,15 @@ public class BattlePresentationSystem : MonoBehaviour
             float normalized = Mathf.Clamp01(time / duration);
             if (flash != null)
             {
-                flash.color = WithAlpha(defenderFlashColor, Mathf.Lerp(0.95f, 0f, normalized));
+                flash.color = WithAlpha(defenderFlashColor, 0.95f * (1f - normalized) * (1f - normalized));
                 flash.transform.localScale = Vector3.one * Mathf.Lerp(defenderReactionScale, defenderReactionScale * 1.8f, normalized);
             }
 
             yield return null;
         }
 
+        if (flash != null)
+            flash.color = WithAlpha(flash.color, 0f);
         StopParticles(sparks);
         StopParticles(debris);
         StopParticles(ring);
@@ -855,7 +866,7 @@ public class BattlePresentationSystem : MonoBehaviour
 
             if (flash != null)
             {
-                flash.color = WithAlpha(flashColor, Mathf.Lerp(0.95f, 0f, normalized));
+                flash.color = WithAlpha(flashColor, 0.95f * alpha * alpha);
                 flash.transform.localScale = new Vector3(baseX + normalized * growX, baseY + normalized * growY, 1f);
             }
 
@@ -1268,7 +1279,7 @@ public class BattlePresentationSystem : MonoBehaviour
         go.transform.localScale = Vector3.one * scale;
 
         SpriteRenderer renderer = go.AddComponent<SpriteRenderer>();
-        renderer.sprite = whiteSprite;
+        renderer.sprite = flashSprite;
         renderer.color = color;
         renderer.material = spriteMat;
         renderer.sortingOrder = effectSortingOrder;
@@ -1977,8 +1988,48 @@ public class BattlePresentationSystem : MonoBehaviour
         return Mathf.Clamp01(Mathf.Max(minimumCameraIntensity, normalized));
     }
 
+    private void PulseImpactLight(Vector3 position, Color tint, float duration)
+    {
+        if (!Application.isPlaying || !isActiveAndEnabled)
+            return;
+        if (impactLight == null)
+        {
+            var item = new GameObject("Battle impact light");
+            item.hideFlags = HideFlags.HideAndDontSave;
+            item.transform.SetParent(transform, false);
+            impactLight = item.AddComponent<Light>();
+            impactLight.type = LightType.Point;
+            impactLight.shadows = LightShadows.None;
+            impactLight.renderMode = LightRenderMode.ForcePixel;
+            impactLight.range = 3.2f;
+        }
+        // One owned light also bounds simultaneous side flashes to a single lighting pulse.
+        impactLight.transform.position = position + Vector3.forward * (effectDepthOffset - 0.3f);
+        impactLight.color = Color.Lerp(WithAlpha(tint, 1f), Color.white, 0.35f);
+        impactLight.intensity = 1.4f;
+        impactLightDuration = impactLightRemaining = Mathf.Max(0.01f, duration);
+        impactLightStartFrame = Time.frameCount;
+        impactLight.enabled = true;
+    }
+
+    private void LateUpdate()
+    {
+        if (impactLight == null || impactLightRemaining <= 0f)
+            return;
+        // A long impact frame must still render the pulse before its decay starts.
+        if (Time.frameCount == impactLightStartFrame)
+            return;
+        impactLightRemaining = Mathf.Max(0f, impactLightRemaining - Time.deltaTime);
+        float weight = impactLightRemaining / impactLightDuration;
+        impactLight.intensity = 1.4f * weight * weight;
+        impactLight.enabled = impactLightRemaining > 0f;
+    }
+
     private void EnsureRuntimeResources()
     {
+        if (softImpactTexture == null)
+            softImpactTexture = BattleImpactLightTexture.Create("Battle presentation soft impact");
+
         if (whiteTexture == null)
         {
             whiteTexture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
@@ -2002,13 +2053,18 @@ public class BattlePresentationSystem : MonoBehaviour
             if (shader != null)
             {
                 particleMat = new Material(shader);
-                ApplyTexture(particleMat, whiteTexture);
+                ApplyTexture(particleMat, softImpactTexture);
                 ConfigureTransparentParticleMaterial(particleMat);
             }
         }
 
-        if (whiteSprite == null)
-            whiteSprite = Sprite.Create(whiteTexture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
+        if (flashSprite == null)
+        {
+            flashSprite = Sprite.Create(softImpactTexture,
+                new Rect(0f, 0f, softImpactTexture.width, softImpactTexture.height),
+                new Vector2(0.5f, 0.5f), softImpactTexture.width, 0, SpriteMeshType.FullRect);
+            flashSprite.name = "Battle soft impact flash";
+        }
     }
 
     private static void ApplyTexture(Material material, Texture texture)
@@ -2059,14 +2115,21 @@ public class BattlePresentationSystem : MonoBehaviour
             Destroy(spriteMat);
         if (particleMat != null)
             Destroy(particleMat);
-        if (whiteSprite != null)
-            Destroy(whiteSprite);
+        if (flashSprite != null)
+            Destroy(flashSprite);
         if (whiteTexture != null)
             Destroy(whiteTexture);
+        if (softImpactTexture != null)
+            Destroy(softImpactTexture);
+        if (impactLight != null)
+            Destroy(impactLight.gameObject);
     }
 
     private void OnDisable()
     {
+        impactLightRemaining = 0f;
+        if (impactLight != null)
+            impactLight.enabled = false;
         StopCameraImpactImmediate();
         StopActiveCloseupShotImmediate();
     }

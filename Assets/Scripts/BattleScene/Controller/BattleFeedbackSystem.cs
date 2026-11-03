@@ -234,7 +234,7 @@ public class BattleFeedbackSystem : MonoBehaviour
     private Canvas overlayCanvas;
     private RectTransform overlayRoot;
     private Material particleMaterial;
-    private Texture2D whiteTexture;
+    private Texture2D particleTexture;
     private Camera presentationCameraOverride;
     private BattlePresentationSystem presentationSystem;
     private float presentationDamageScaleOverride = 1f;
@@ -2076,12 +2076,8 @@ public class BattleFeedbackSystem : MonoBehaviour
 
     private void EnsureParticleResources()
     {
-        if (whiteTexture == null)
-        {
-            whiteTexture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
-            whiteTexture.SetPixel(0, 0, Color.white);
-            whiteTexture.Apply(false, false);
-        }
+        if (particleTexture == null)
+            particleTexture = BattleImpactLightTexture.Create("Battle feedback soft particles");
 
         if (particleMaterial == null)
         {
@@ -2093,9 +2089,9 @@ public class BattleFeedbackSystem : MonoBehaviour
             {
                 particleMaterial = new Material(shader);
                 if (particleMaterial.HasProperty("_MainTex"))
-                    particleMaterial.SetTexture("_MainTex", whiteTexture);
+                    particleMaterial.SetTexture("_MainTex", particleTexture);
                 if (particleMaterial.HasProperty("_BaseMap"))
-                    particleMaterial.SetTexture("_BaseMap", whiteTexture);
+                    particleMaterial.SetTexture("_BaseMap", particleTexture);
                 ConfigureTransparentParticleMaterial(particleMaterial);
             }
         }
@@ -2221,7 +2217,7 @@ public class BattleFeedbackSystem : MonoBehaviour
 
         if (particleMaterial != null)
             Destroy(particleMaterial);
-        if (whiteTexture != null)
-            Destroy(whiteTexture);
+        if (particleTexture != null)
+            Destroy(particleTexture);
     }
 }
