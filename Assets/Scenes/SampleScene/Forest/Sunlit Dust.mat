@@ -28,5 +28,5 @@ Material:
     - _Mode: 2
     - _SoftDistance: 0.5
     m_Colors:
-    - _Color: {r: 2, g: 1.25, b: 0.4, a: 0.55}
+    - _Color: {r: 6, g: 4.2, b: 1.8, a: 0.55}
   m_BuildTextureStacks: []

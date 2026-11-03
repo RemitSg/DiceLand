@@ -179,7 +179,7 @@ public static class BattleLookPreviewTools
             AssetDatabase.CreateAsset(profile, ProfilePath);
         Bloom bloom = GetOrAdd<Bloom>(profile);
         bloom.threshold.Override(1.05f);
-        bloom.intensity.Override(0.32f);
+        bloom.intensity.Override(0.55f);
         bloom.scatter.Override(0.55f);
         bloom.highQualityFiltering.Override(false);
         ColorAdjustments color = GetOrAdd<ColorAdjustments>(profile);
@@ -298,7 +298,7 @@ public static class BattleLookPreviewTools
         Material material = ForestMaterial("Forest Foliage", "DiceLand/Battle Forest Foliage");
         material.shader = Shader.Find("DiceLand/Battle Forest Foliage");
         material.SetColor("_Color", Color.white);
-        material.SetFloat("_HighlightGain", 1.18f);
+        material.SetFloat("_HighlightGain", 1.6f);
         material.SetColor("_PaintedFill", new Color(0.36f, 0.40f, 0.32f, 0.12f));
         material.SetFloat("_SceneLightingWeight", 0.22f);
         Sprite ancientTree = LoadForestSprite(MidgroundPath);
@@ -416,10 +416,10 @@ public static class BattleLookPreviewTools
     private static void AddAtmosphere(GameObject root, BattleManager manager, Material backdrop, Material material)
     {
         Material rays = ForestMaterial("Canopy Light Shafts", "DiceLand/Battle Forest Atmosphere");
-        rays.SetColor("_Color", new Color(1.90f, 1.54f, 0.86f, 0.26f));
+        rays.SetColor("_Color", new Color(2.8f, 2.25f, 1.4f, 0.24f));
         rays.SetFloat("_Mode", 0f);
         rays.SetFloat("_SoftDistance", 2f);
-        rays.SetFloat("_ShaftStriation", 0.6f);
+        rays.SetFloat("_ShaftStriation", 0.82f);
         rays.SetFloat("_ShaftMotion", 0.85f);
         string meshPath = ForestAssets + "/Canopy Light Shaft.asset";
         Mesh rayMesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
@@ -489,7 +489,7 @@ public static class BattleLookPreviewTools
     private static void AddDust(Transform parent)
     {
         Material material = ForestMaterial("Sunlit Dust", "DiceLand/Battle Forest Atmosphere");
-        material.SetColor("_Color", new Color(2f, 1.25f, 0.4f, 0.55f));
+        material.SetColor("_Color", new Color(6f, 4.2f, 1.8f, 0.55f));
         material.SetFloat("_Mode", 2f);
         material.SetFloat("_SoftDistance", 0.5f);
         EditorUtility.SetDirty(material);

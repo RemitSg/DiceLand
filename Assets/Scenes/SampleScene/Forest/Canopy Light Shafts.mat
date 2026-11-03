@@ -27,8 +27,8 @@ Material:
     m_Floats:
     - _Mode: 0
     - _ShaftMotion: 0.85
-    - _ShaftStriation: 0.6
+    - _ShaftStriation: 0.82
     - _SoftDistance: 2
     m_Colors:
-    - _Color: {r: 1.9, g: 1.54, b: 0.86, a: 0.26}
+    - _Color: {r: 2.8, g: 2.25, b: 1.4, a: 0.24}
   m_BuildTextureStacks: []
