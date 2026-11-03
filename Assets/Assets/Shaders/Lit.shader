@@ -29,6 +29,7 @@ Shader "Assets/Shaders/Lit"
         [HideInInspector] _ForestMaterialWeight ("Forest authored material response", Range(0,1)) = 0
         [HideInInspector] _ForestEmissionWeight ("Forest emissive material regions", Range(0,1)) = 0
         [HideInInspector] _ForestSheenStrength ("Forest fabric sheen", Range(0,1)) = 0
+        [HideInInspector] _ForestSkinScatterStrength ("Forest skin light transition", Range(0,1)) = 0
         [HideInInspector] _ForestSunEdgeStrength ("Forest sunlit silhouette", Range(0,1)) = 0
     }
 
@@ -91,6 +92,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
             float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength, _ForestSunEdgeStrength;
+            float _ForestSkinScatterStrength;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
@@ -195,6 +197,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
             float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength, _ForestSunEdgeStrength;
+            float _ForestSkinScatterStrength;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
@@ -335,6 +338,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
             float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength, _ForestSunEdgeStrength;
+            float _ForestSkinScatterStrength;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);       SAMPLER(sampler_MainTex);
@@ -425,6 +429,8 @@ Shader "Assets/Shaders/Lit"
                 float3 lighting = albedo * _AmbientIntensity;
                 float3 totalDiffuse = float3(0, 0, 0);
                 float3 totalSpecular = float3(0, 0, 0);
+                float skinScatterWeight = _ForestSkinScatterStrength * materialWeight * surfaceWeight
+                    * saturate(_DiceLandForestLighting);
                 
                 // ✅ 使用传入的shadowCoord而不是在此处重新计算
                 Light mainLight = GetMainLight(shadowCoord);
@@ -449,6 +455,10 @@ Shader "Assets/Shaders/Lit"
                                  * mainLight.shadowAttenuation 
                                  * mainLight.distanceAttenuation;
                 totalDiffuse += diffuse;
+                if (skinScatterWeight > 0.001)
+                    totalDiffuse += mainLight.color * DiceLandForestSkinScatter(albedo, material, NdotL_main)
+                        * (skinScatterWeight * DiceLandForestSunVisibility(positionWS)
+                            * mainLight.shadowAttenuation * mainLight.distanceAttenuation);
                 
                 if (NdotL_main > 0)
                 {
@@ -482,6 +492,9 @@ Shader "Assets/Shaders/Lit"
                     float NdotL = dot(normalWS, light.direction);
                     float df = CalculateDiffuseFactor(NdotL, false);
                     totalDiffuse += light.color * df * lightAttenuation;
+                    if (skinScatterWeight > 0.001)
+                        totalDiffuse += light.color * DiceLandForestSkinScatter(albedo, material, NdotL)
+                            * (skinScatterWeight * lightAttenuation);
                     
                     if (NdotL > 0)
                     {
@@ -664,6 +677,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
             float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength, _ForestSunEdgeStrength;
+            float _ForestSkinScatterStrength;
             CBUFFER_END
             TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
             TEXTURE2D(_AlphaTex); SAMPLER(sampler_AlphaTex);

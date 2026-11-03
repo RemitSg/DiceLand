@@ -86,6 +86,17 @@ float DiceLandForestMaterialDiffuse(half3 material, float incidence)
     return (0.30 + 0.96 * wrapped) * lerp(0.94, 0.83, material.g);
 }
 
+half3 DiceLandForestSkinScatter(half3 albedo, half3 material, float incidence)
+{
+    // A colored wrap near the terminator, not thickness-based subsurface transport.
+    // https://developer.nvidia.com/gpugems/gpugems/part-iii-materials/chapter-16-real-time-approximations-subsurface-scattering
+    float skin = saturate(material.r) * (1.0 - saturate(material.g));
+    float transition = smoothstep(-0.28, 0.12, incidence)
+        * (1.0 - smoothstep(0.30, 0.86, incidence));
+    float pigment = smoothstep(0.01, 0.09, dot(albedo, half3(0.2126, 0.7152, 0.0722)));
+    return half3(1.0, 0.28, 0.12) * (skin * transition * pigment * 0.55);
+}
+
 half3 DiceLandForestFabricSheen(half3 albedo, half3 material, float normalHalf, float normalView, float incidence)
 {
     // Charlie distribution and smooth cloth visibility, with a small artistic gain.
