@@ -8,6 +8,8 @@ Shader "DiceLand/Battle Forest Atmosphere"
         _ShaftStriation ("Leaf-filtered shaft detail", Range(0,1)) = 0
         _ShaftMotion ("Moving canopy-filtered sunlight", Range(0,1)) = 0
         _MistBreakup ("Ground mist breakup", Range(0,1)) = 0
+        _ParticleLighting ("Sunlight on dust and leaves", Range(0,1)) = 0
+        _LeafVolume ("Leaf mesh replaces billboard flutter", Range(0,1)) = 0
     }
     SubShader
     {
@@ -27,10 +29,10 @@ Shader "DiceLand/Battle Forest Atmosphere"
             #include "Assets/Assets/Shaders/BattleForestLighting.hlsl"
             CBUFFER_START(UnityPerMaterial)
             half4 _Color;
-            float _Mode, _SoftDistance, _ShaftStriation, _ShaftMotion, _MistBreakup;
+            float _Mode, _SoftDistance, _ShaftStriation, _ShaftMotion, _MistBreakup, _ParticleLighting, _LeafVolume;
             CBUFFER_END
-            struct Attributes { float4 positionOS : POSITION; float2 uv : TEXCOORD0; half4 color : COLOR; };
-            struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; float eyeDepth : TEXCOORD1; half4 color : COLOR; float3 world : TEXCOORD2; };
+            struct Attributes { float4 positionOS : POSITION; float3 normalOS : NORMAL; float2 uv : TEXCOORD0; half4 color : COLOR; };
+            struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; float eyeDepth : TEXCOORD1; half4 color : COLOR; float3 world : TEXCOORD2; float3 normal : TEXCOORD3; };
             Varyings Vert(Attributes input)
             {
                 Varyings output;
@@ -40,6 +42,7 @@ Shader "DiceLand/Battle Forest Atmosphere"
                 output.uv=input.uv;
                 output.color=input.color;
                 output.world=positionWS;
+                output.normal=TransformObjectToWorldNormal(input.normalOS,false);
                 return output;
             }
             half4 Frag(Varyings input) : SV_Target
@@ -102,18 +105,51 @@ Shader "DiceLand/Battle Forest Atmosphere"
                     // of camera cuts while the particle system supplies spin and world drift.
                     float arc=sin(saturate(uv.y)*PI);
                     float flutter=0.35+0.65*abs(sin(_Time.y*1.25+input.color.b*19.0));
+                    flutter=lerp(flutter,1.0,saturate(_LeafVolume));
                     float spine=0.5+0.08*arc;
                     float across=(uv.x-spine)/max(0.003,0.27*arc*flutter);
                     float feather=clamp(fwidth(across),0.04,0.5);
                     mask=1.0-smoothstep(1.0-feather,1.0+feather,abs(across));
                     mask*=smoothstep(0.0,0.04,uv.y)*(1.0-smoothstep(0.96,1.0,uv.y));
                     float vein=(1.0-smoothstep(0.02,0.09,abs(across)))*arc;
-                    input.color.rgb*=lerp(0.65,1.05,smoothstep(-0.7,0.6,across))+vein*0.3;
+                    float painted=lerp(0.65,1.05,smoothstep(-0.7,0.6,across))+vein*0.3;
+                    input.color.rgb*=lerp(painted,0.82+vein*0.18,saturate(_ParticleLighting*_DiceLandForestLighting));
+                }
+                half3 radiance=_Color.rgb*input.color.rgb;
+                float particleWeight=saturate(_ParticleLighting*_DiceLandForestLighting);
+                if (_Mode>1.5 && particleWeight>0.001)
+                {
+                    float sunlight=DiceLandForestSunVisibility(input.world);
+                    float3 view=normalize(GetWorldSpaceViewDir(input.world)+float3(0,0.0001,0));
+                    float3 sun=DiceLandForestSunDirection();
+                    half3 sunColor=DiceLandForestSunColor();
+                    half3 shade=half3(0.22,0.32,0.48)*0.55;
+                    half3 response=shade;
+                    if (_Mode<2.5)
+                    {
+                        float cosine=dot(-sun,view);
+                        float denominator=max(0.2,1.1225-0.7*cosine);
+                        float phase=0.8775*rsqrt(denominator)/denominator;
+                        response+=sunColor*sunlight*(0.55+0.45*min(2.2,phase));
+                        radiance*=lerp(half3(1,1,1),response,particleWeight);
+                    }
+                    else
+                    {
+                        float3 normal=dot(input.normal,input.normal)>0.0001?normalize(input.normal):view;
+                        float3 facing=normal*(dot(normal,view)>=0?1.0:-1.0);
+                        float incidence=dot(facing,sun);
+                        float front=0.25+0.85*saturate(incidence);
+                        float transmitted=0.8*saturate(-incidence)*(0.6+0.4*abs(dot(normal,view)));
+                        response+=sunColor*sunlight*(front+transmitted);
+                        float3 halfway=normalize(sun+view+float3(0,0.0001,0));
+                        float glint=pow(saturate(dot(facing,halfway)),40.0)*sunlight;
+                        radiance=lerp(radiance,radiance*response+sunColor*glint*0.85,particleWeight);
+                    }
                 }
                 float rawDepth=SampleSceneDepth(GetNormalizedScreenSpaceUV(input.positionCS));
                 float sceneDepth=unity_OrthoParams.w==0 ? LinearEyeDepth(rawDepth,_ZBufferParams) : LinearDepthToEyeDepth(rawDepth);
                 float intersection=saturate((sceneDepth-input.eyeDepth)/max(0.01,_SoftDistance));
-                return half4(_Color.rgb*input.color.rgb,_Color.a*input.color.a*mask*intersection);
+                return half4(radiance,_Color.a*input.color.a*mask*intersection);
             }
             ENDHLSL
         }

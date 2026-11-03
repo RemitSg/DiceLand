@@ -694,6 +694,7 @@ public static class BattleLookPreviewTools
         material.SetColor("_Color", new Color(6f, 4.2f, 1.8f, 0.55f));
         material.SetFloat("_Mode", 2f);
         material.SetFloat("_SoftDistance", 0.5f);
+        BattleForestParticleBakeTools.ConfigureMaterial(material, false);
         EditorUtility.SetDirty(material);
         AssetDatabase.SaveAssetIfDirty(material);
         GameObject dust = new GameObject("Sunlit drifting dust");
@@ -740,6 +741,7 @@ public static class BattleLookPreviewTools
         material.SetColor("_Color", new Color(1.9f, 1.35f, 0.55f, 0.85f));
         material.SetFloat("_Mode", 3f);
         material.SetFloat("_SoftDistance", 0.5f);
+        BattleForestParticleBakeTools.ConfigureMaterial(material, true);
         EditorUtility.SetDirty(material);
         AssetDatabase.SaveAssetIfDirty(material);
         GameObject leaves = new GameObject("Sunlit drifting leaves");
@@ -789,9 +791,9 @@ public static class BattleLookPreviewTools
         color.color = new ParticleSystem.MinMaxGradient(fade);
         ParticleSystemRenderer renderer = particles.GetComponent<ParticleSystemRenderer>();
         renderer.sharedMaterial = material;
-        renderer.renderMode = ParticleSystemRenderMode.Billboard;
         renderer.shadowCastingMode = ShadowCastingMode.Off;
         renderer.receiveShadows = false;
+        BattleForestParticleBakeTools.ConfigureLeaves(particles, BattleForestParticleBakeTools.BakeLeafMesh());
         particles.Play();
     }
 

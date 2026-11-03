@@ -25,7 +25,12 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
+    - _LeafVolume: 0
+    - _MistBreakup: 0
     - _Mode: 2
+    - _ParticleLighting: 1
+    - _ShaftMotion: 0
+    - _ShaftStriation: 0
     - _SoftDistance: 0.5
     m_Colors:
     - _Color: {r: 6, g: 4.2, b: 1.8, a: 0.55}
