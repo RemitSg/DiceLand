@@ -77,7 +77,8 @@ public static class BattleActorFormBakeTools
                 maps.Add(new BattleActorFormLibrary.Entry { sprite = sprite, formMap = existing,
                     materialMap = previousLibrary != null ? previousLibrary.FindMaterialMap(sprite) : null,
                     emissiveAlpha = previousLibrary != null && previousLibrary.UsesEmissiveAlpha(sprite),
-                    fabricSheen = previousLibrary != null && previousLibrary.UsesFabricSheen(sprite) });
+                    fabricSheen = previousLibrary != null && previousLibrary.UsesFabricSheen(sprite),
+                    emissionLights = previousLibrary != null ? previousLibrary.FindEmissionLights(sprite) : null });
             }
             finally
             {
@@ -103,10 +104,25 @@ public static class BattleActorFormBakeTools
             entries.GetArrayElementAtIndex(i).FindPropertyRelative("materialMap").objectReferenceValue = maps[i].materialMap;
             entries.GetArrayElementAtIndex(i).FindPropertyRelative("emissiveAlpha").boolValue = maps[i].emissiveAlpha;
             entries.GetArrayElementAtIndex(i).FindPropertyRelative("fabricSheen").boolValue = maps[i].fabricSheen;
+            WriteEmissionLights(entries.GetArrayElementAtIndex(i),maps[i].emissionLights);
         }
         serialized.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(library);
         AssetDatabase.SaveAssetIfDirty(library);
+    }
+
+    public static void WriteEmissionLights(SerializedProperty entry, BattleActorFormLibrary.EmissionLight[] profiles)
+    {
+        SerializedProperty lights = entry.FindPropertyRelative("emissionLights");
+        lights.arraySize = profiles != null ? profiles.Length : 0;
+        for(int i=0;i<lights.arraySize;i++)
+        {
+            SerializedProperty light = lights.GetArrayElementAtIndex(i);
+            light.FindPropertyRelative("uv").vector2Value = profiles[i].uv;
+            light.FindPropertyRelative("color").colorValue = profiles[i].color;
+            light.FindPropertyRelative("range").floatValue = profiles[i].range;
+            light.FindPropertyRelative("intensity").floatValue = profiles[i].intensity;
+        }
     }
 
     public static Color32[] BakeFormPixels(bool[] inside, int width, int height)

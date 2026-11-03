@@ -4,6 +4,7 @@
 // Both meshes sample the same world-space surface through the terrace/woodland margin.
 // A material change at the mesh boundary must not reveal a straight cut in the scenery.
 #include "Assets/Assets/Shaders/BattleForestLighting.hlsl"
+#include "Assets/Assets/Shaders/BattleForestLocalLights.hlsl"
 CBUFFER_START(UnityPerMaterial)
 half4 _SoilColor, _MossColor, _StoneColor;
 float _TextureScale, _TextureWeight, _StoneTextureWeight, _PavingScale, _PavingGrowth, _LowerStepGain;
@@ -63,6 +64,7 @@ half3 ForestSurfaceLighting(float3 world, half3 normal)
 
 half3 ForestSurfaceShading(float3 world, half3 geometricNormal, half3 albedo, float paving)
 {
+    half3 localNormal = geometricNormal;
     float top = saturate(geometricNormal.y);
     float surfaceWeight = saturate(_PavingReliefStrength) * top * saturate(_DiceLandForestLighting);
     float weight = surfaceWeight * paving * saturate(_StoneTextureWeight);
@@ -73,6 +75,7 @@ half3 ForestSurfaceShading(float3 world, half3 geometricNormal, half3 albedo, fl
         float2 xz = relief.rg * 2.0 - 1.0;
         float3 detailNormal = float3(xz.x, sqrt(max(0.02, 1.0 - dot(xz,xz))), xz.y);
         float3 normal = normalize(lerp(geometricNormal, detailNormal, weight));
+        localNormal = normal;
         float cavity = lerp(1.0, relief.b, weight);
         Light light = GetMainLight(TransformWorldToShadowCoord(world));
         // The lowest tiers disable URP's main light; the stage already supplies its
@@ -95,6 +98,21 @@ half3 ForestSurfaceShading(float3 world, half3 geometricNormal, half3 albedo, fl
     }
     else
         result = albedo * ForestSurfaceLighting(world, geometricNormal);
+    #if defined(_ADDITIONAL_LIGHTS) || defined(_ADDITIONAL_LIGHTS_VERTEX)
+        if (_DiceLandForestLighting > 0.001)
+        {
+            // Shade the local pools per pixel even on the vertex-light quality tiers:
+            // the terrace's large quads cannot represent a small light at their corners.
+            uint count = GetAdditionalLightsCount();
+            for (uint index=0u;index<count;index++)
+            {
+                if (!DiceLandForestIsPunctualLight(index)) continue;
+                Light localLight = GetAdditionalLight(index,world);
+                result += albedo * localLight.color * saturate(dot(localNormal,localLight.direction))
+                    * (localLight.distanceAttenuation * localLight.shadowAttenuation * saturate(_DiceLandForestLighting));
+            }
+        }
+    #endif
     return result;
 }
 #endif

@@ -36,6 +36,7 @@ public sealed class BattleActorLightingController : MonoBehaviour
         public BattleActorFormLibrary lastLibrary;
         public bool lastFlipX;
         public bool lastFlipY;
+        public readonly BattleActorEmissionLights emission = new BattleActorEmissionLights();
     }
 
     public void Configure(Transform allyRoot, Transform enemyRoot, BattleActorFormLibrary forms = null)
@@ -75,12 +76,19 @@ public sealed class BattleActorLightingController : MonoBehaviour
             SpriteRenderer renderer = entry.renderer;
             if (renderer == null)
             {
+                entry.emission.Release();
                 Release(entry.runtimeMaterial);
                 entries.RemoveAt(i);
                 continue;
             }
             // Temporary flash/override materials retain ownership until their original material returns.
-            if (renderer.sharedMaterial != entry.runtimeMaterial) continue;
+            bool ownsMaterial = renderer.sharedMaterial == entry.runtimeMaterial;
+            Bounds emissionBounds = renderer.bounds;
+            float pulse = 0.90f + 0.10f * Mathf.Sin(Time.time * 2.1f
+                + Vector2.Dot(new Vector2(emissionBounds.min.x,emissionBounds.min.y),new Vector2(0.07f,0.11f)));
+            entry.emission.Update(renderer,formLibrary,transform,ownsMaterial
+                ? surfaceWeight * materialWeight * Mathf.Clamp01(Shader.GetGlobalFloat("_DiceLandForestLighting")) : 0f,pulse);
+            if (!ownsMaterial) continue;
             Bounds bounds = renderer.bounds;
             if (bounds.size.x < 0.001f || bounds.size.y < 0.001f) continue;
             Vector4 packedBounds = new Vector4(bounds.min.x, bounds.min.y, bounds.size.x, bounds.size.y);
@@ -126,6 +134,7 @@ public sealed class BattleActorLightingController : MonoBehaviour
     {
         foreach (Entry entry in entries)
         {
+            entry.emission.Release();
             if (entry.renderer != null && entry.renderer.sharedMaterial == entry.runtimeMaterial)
                 entry.renderer.sharedMaterial = entry.originalMaterial;
             Release(entry.runtimeMaterial);

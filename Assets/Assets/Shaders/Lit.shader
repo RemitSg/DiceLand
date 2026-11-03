@@ -308,6 +308,7 @@ Shader "Assets/Shaders/Lit"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             #include "Assets/Assets/Shaders/BattleForestLighting.hlsl"
+            #include "Assets/Assets/Shaders/BattleForestLocalLights.hlsl"
             #include "Assets/Assets/Shaders/BattleForestSpriteLighting.hlsl"
 
             CBUFFER_START(UnityPerMaterial)
@@ -460,10 +461,17 @@ Shader "Assets/Shaders/Lit"
                                      * mainLight.shadowAttenuation * mainLight.distanceAttenuation;
                 }
                 
-                #ifdef _ADDITIONAL_LIGHTS
+                #if defined(_ADDITIONAL_LIGHTS) || defined(_ADDITIONAL_LIGHTS_VERTEX)
                 uint pixelLightCount = GetAdditionalLightsCount();
+                #if defined(_ADDITIONAL_LIGHTS_VERTEX)
+                    // Retain the old non-forest path; nearby emissive pools need fragment shading.
+                    if (_DiceLandForestLighting <= 0.001) pixelLightCount = 0u;
+                #endif
                 for (uint i = 0u; i < pixelLightCount; ++i)
                 {
+                    #if defined(_ADDITIONAL_LIGHTS_VERTEX)
+                        if (!DiceLandForestIsPunctualLight(i)) continue;
+                    #endif
                     Light light = GetAdditionalLight(i, positionWS);
                     float lightAttenuation = light.distanceAttenuation * light.shadowAttenuation;
                     if (lightAttenuation < 0.001) continue;

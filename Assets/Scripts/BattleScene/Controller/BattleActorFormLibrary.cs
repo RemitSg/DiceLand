@@ -5,6 +5,16 @@ using UnityEngine;
 public sealed class BattleActorFormLibrary : ScriptableObject
 {
     [Serializable]
+    public struct EmissionLight
+    {
+        public Vector2 uv;
+        public Color color;
+        // Range and intensity are normalized to the displayed sprite's height.
+        public float range;
+        public float intensity;
+    }
+
+    [Serializable]
     public struct Entry
     {
         public Sprite sprite;
@@ -13,12 +23,21 @@ public sealed class BattleActorFormLibrary : ScriptableObject
         // Legacy material maps have silhouette A; emission must be explicitly opted in.
         public bool emissiveAlpha;
         public bool fabricSheen;
+        public EmissionLight[] emissionLights;
     }
 
     [SerializeField] private Entry[] entries = Array.Empty<Entry>();
     [SerializeField] private bool silhouetteAlpha;
 
     public Texture2D FindShadowMask(Sprite sprite) => silhouetteAlpha ? Find(sprite) : null;
+
+    public EmissionLight[] FindEmissionLights(Sprite sprite)
+    {
+        if (sprite == null || sprite.packed) return Array.Empty<EmissionLight>();
+        foreach (Entry entry in entries)
+            if (entry.sprite == sprite) return entry.emissionLights ?? Array.Empty<EmissionLight>();
+        return Array.Empty<EmissionLight>();
+    }
 
     public Texture2D FindMaterialMap(Sprite sprite)
     {

@@ -94,6 +94,25 @@ public static class BattleActorSurfaceBakeTools
         }
         serialized.ApplyModifiedPropertiesWithoutUndo(); EditorUtility.SetDirty(library);
         AssetDatabase.SaveAssetIfDirty(library);
+        ConfigureEmissionLights(library);
+    }
+
+    public static void ConfigureEmissionLights(BattleActorFormLibrary library)
+    {
+        if(library==null)throw new ArgumentNullException(nameof(library));
+        SerializedObject serialized = new SerializedObject(library);
+        SerializedProperty entries = serialized.FindProperty("entries");
+        for(int i=0;i<entries.arraySize;i++)
+        {
+            SerializedProperty entry = entries.GetArrayElementAtIndex(i);
+            if(AssetDatabase.GetAssetPath(entry.FindPropertyRelative("sprite").objectReferenceValue)!=CoffinPath)continue;
+            BattleActorFormBakeTools.WriteEmissionLights(entry,new[]
+            {
+                new BattleActorFormLibrary.EmissionLight { uv=new Vector2(.404f,.655f),color=new Color(1f,.035f,.38f),range=.65f,intensity=.12f },
+                new BattleActorFormLibrary.EmissionLight { uv=new Vector2(.62f,.10f),color=new Color(.40f,.12f,1f),range=.42f,intensity=.035f }
+            });
+        }
+        serialized.ApplyModifiedPropertiesWithoutUndo();EditorUtility.SetDirty(library);AssetDatabase.SaveAssetIfDirty(library);
     }
 
     public static Color32[] BakePixels(string sourcePath, int width, int height)
