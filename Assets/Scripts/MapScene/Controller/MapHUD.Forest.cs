@@ -152,7 +152,13 @@ public partial class MapHUD
         tilePanelImage = tilePanelRect.GetComponent<Image>();
         Image iconBase = ForestIcon(tilePanelRect, "TileIconBase", new Vector2(22f, -22f), new Vector2(90f, 90f), MapForestArt.Get("TileFace"));
         iconBase.color = new Color(0.65f, 0.66f, 0.56f);
-        forestTileIcon = ForestIcon(tilePanelRect, "TileIcon", new Vector2(39f, -39f), new Vector2(56f, 56f), MapForestArt.Get("Footprint"));
+        iconBase.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        iconBase.rectTransform.anchoredPosition = new Vector2(67f, -67f);
+        forestTileIcon = ForestIcon(iconBase.rectTransform, "TileIcon", Vector2.zero, new Vector2(56f, 56f), MapForestArt.Get("Footprint"));
+        // Image.preserveAspect uses the pivot to align its letterbox space. Centre the
+        // symbol inside its badge so narrow sprites, such as the sword, cannot hug an edge.
+        forestTileIcon.rectTransform.anchorMin = forestTileIcon.rectTransform.anchorMax = forestTileIcon.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        forestTileIcon.rectTransform.anchoredPosition = Vector2.zero;
         tileTitleText = ForestLabel(tilePanelRect, "TileTitle", new Vector2(130f, -25f), new Vector2(242f, 48f), 39, "未选中格子", ForestIvory);
         RectTransform coordinate = ForestResourceCell("CoordinateBadge", tilePanelRect, new Vector2(390f, -24f), new Vector2(88f, 38f), new Color(0.12f, 0.14f, 0.10f, 0.9f));
         forestCoordinates = ForestLabel(coordinate, "TileCoordinates", new Vector2(4f, -2f), new Vector2(80f, 34f), 25, string.Empty, ForestIvory);
