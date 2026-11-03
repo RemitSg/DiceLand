@@ -69,11 +69,11 @@ public static class BattleActorVisualUtility
         if (actor == null || renderer == null)
             return true;
 
-        SpeedButton speedButtonAncestor = renderer.GetComponentInParent<SpeedButton>();
+        SpeedButton speedButtonAncestor = renderer.GetComponentInParent<SpeedButton>(true);
         if (speedButtonAncestor != null && speedButtonAncestor.transform != actor)
             return true;
 
-        Weapon weaponAncestor = renderer.GetComponentInParent<Weapon>();
+        Weapon weaponAncestor = renderer.GetComponentInParent<Weapon>(true);
         if (weaponAncestor != null && weaponAncestor.transform != actor)
             return true;
 

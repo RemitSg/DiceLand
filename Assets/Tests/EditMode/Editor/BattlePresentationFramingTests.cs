@@ -6,6 +6,40 @@ using UnityEngine;
 
 public sealed class BattlePresentationFramingTests
 {
+    [TestCase(true)]
+    [TestCase(false)]
+    public void BodyBoundsExcludeWeaponAndSpeedUiBeforeAndAfterDeactivation(bool initiallyActive)
+    {
+        var root = new GameObject("Body bounds fixture", typeof(Weapon));
+        var texture = new Texture2D(2, 2);
+        var sprite = Sprite.Create(texture, new Rect(0, 0, 2, 2), Vector2.one * .5f, 2f);
+        try
+        {
+            var body = new GameObject("Body").AddComponent<SpriteRenderer>();
+            body.transform.SetParent(root.transform, false); body.sprite = sprite;
+            body.transform.localPosition = new Vector3(.7f, 2f, 0f);
+            body.transform.localScale = new Vector3(3f, 4f, 1f);
+            var weapon = new GameObject("Weapon", typeof(Weapon), typeof(SpriteRenderer));
+            weapon.transform.SetParent(root.transform, false); weapon.GetComponent<SpriteRenderer>().sprite = sprite;
+            weapon.transform.localScale = Vector3.one * 40f;
+            var badge = new GameObject("Speed UI", typeof(SpeedButton), typeof(SpriteRenderer));
+            badge.transform.SetParent(root.transform, false); badge.GetComponent<SpriteRenderer>().sprite = sprite;
+            badge.transform.localScale = Vector3.one * 60f;
+            for (int i = 0; i < 2; i++)
+            {
+                weapon.SetActive(i == 0 ? initiallyActive : !initiallyActive);
+                badge.SetActive(i == 0 ? initiallyActive : !initiallyActive);
+                Assert.IsTrue(BattleActorVisualUtility.TryGetActorSpriteBounds(root.transform, out Bounds bounds));
+                Assert.That(Vector3.Distance(bounds.center, body.bounds.center), Is.LessThan(.0001f));
+                Assert.That(Vector3.Distance(bounds.size, body.bounds.size), Is.LessThan(.0001f));
+            }
+        }
+        finally
+        {
+            Object.DestroyImmediate(root); Object.DestroyImmediate(sprite); Object.DestroyImmediate(texture);
+        }
+    }
+
     [TestCase(1f, 2.27f)]
     [TestCase(-1f, 2.27f)]
     [TestCase(1f, 0.4f)]

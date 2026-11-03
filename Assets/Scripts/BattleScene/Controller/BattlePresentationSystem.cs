@@ -188,6 +188,7 @@ public class BattlePresentationSystem : MonoBehaviour
     [SerializeField] private BurstSettings hitDebris = new BurstSettings { burst = 18, speed = 1.9f, life = 0.32f, size = 0.11f, endSize = 0.32f, gravity = 0.95f, angle = 48f, radius = 0.04f, orderOffset = 1 };
 
     private Material spriteMat;
+    private Material streakMat;
     private Material particleMat;
     private Sprite flashSprite;
     private Texture2D whiteTexture;
@@ -547,11 +548,12 @@ public class BattlePresentationSystem : MonoBehaviour
     {
         TriggerCameraImpact(impactPosition, clashCameraPower, false);
         float waitDuration = Mathf.Max(0f, clashEffectDuration);
+        Vector3 contactPosition = ResolveClashContactPoint(ally, enemy, impactPosition, clashDirection, impactHeightOffset);
 
         PlaySideClashFx(ally, planeZ, allyFx, clashDirection, allyHitColor);
         PlaySideClashFx(enemy, planeZ, enemyFx, -clashDirection, enemyHitColor);
 
-        StartCoroutine(PlayBuiltInClashImpactFx(impactPosition, clashDirection));
+        StartCoroutine(PlayBuiltInClashImpactFx(contactPosition, clashDirection));
         if (waitDuration > 0f)
             yield return new WaitForSeconds(waitDuration);
     }
@@ -1031,6 +1033,79 @@ public class BattlePresentationSystem : MonoBehaviour
         return Mathf.Max(rootGap, Mathf.Max(0f, firstReach) + Mathf.Max(0f, secondReach) + Mathf.Max(0f, bodyClearance));
     }
 
+    public static Vector3 ResolveClashContactPoint(Transform first, Transform second, Vector3 fallback,
+        Vector3 direction, float heightOffset)
+    {
+        if (!BattleActorVisualUtility.TryGetActorSpriteBounds(first, out Bounds firstBody)
+            || !BattleActorVisualUtility.TryGetActorSpriteBounds(second, out Bounds secondBody)
+            || firstBody.size.y <= 0.0001f || secondBody.size.y <= 0.0001f)
+            return fallback;
+
+        direction.z = 0f;
+        direction = direction.sqrMagnitude > 0.000001f ? direction.normalized : Vector3.right;
+        float low = Mathf.Max(firstBody.min.y, secondBody.min.y);
+        float high = Mathf.Min(firstBody.max.y, secondBody.max.y);
+        float height = low <= high ? Mathf.Lerp(low, high, 0.6f)
+            : (firstBody.ClosestPoint(secondBody.center).y + secondBody.ClosestPoint(firstBody.center).y) * 0.5f;
+        bool firstHasWeapon = TryGetClashWeaponPoint(first, firstBody, direction, height, out Vector3 firstWeapon);
+        bool secondHasWeapon = TryGetClashWeaponPoint(second, secondBody, -direction, height, out Vector3 secondWeapon);
+        if (low <= high)
+        {
+            if (firstHasWeapon && secondHasWeapon) height = (firstWeapon.y + secondWeapon.y) * 0.5f;
+            else if (firstHasWeapon) height = firstWeapon.y;
+            else if (secondHasWeapon) height = secondWeapon.y;
+            height = Mathf.Clamp(height + heightOffset, low, high);
+        }
+        else height += heightOffset;
+
+        Vector3 firstFace = firstBody.ClosestPoint(new Vector3(secondBody.center.x, height, fallback.z));
+        Vector3 secondFace = secondBody.ClosestPoint(new Vector3(firstBody.center.x, height, fallback.z));
+        float left = Mathf.Min(firstFace.x, secondFace.x), right = Mathf.Max(firstFace.x, secondFace.x);
+        if (firstHasWeapon) firstFace.x = Mathf.Clamp(firstWeapon.x, left, right);
+        if (secondHasWeapon) secondFace.x = Mathf.Clamp(secondWeapon.x, left, right);
+        return new Vector3((firstFace.x + secondFace.x) * 0.5f, height, fallback.z);
+    }
+
+    private static bool TryGetClashWeaponPoint(Transform actor, Bounds body, Vector3 direction,
+        float preferredHeight, out Vector3 point)
+    {
+        point = Vector3.zero;
+        float best = Vector3.Dot(body.extents, new Vector3(Mathf.Abs(direction.x), Mathf.Abs(direction.y), 0f));
+        bool found = false;
+        foreach (Weapon weapon in actor.GetComponentsInChildren<Weapon>(true))
+        {
+            // A root Weapon can hold equipment data without a separate weapon illustration.
+            if (weapon.transform == actor) continue;
+            foreach (SpriteRenderer renderer in weapon.GetComponentsInChildren<SpriteRenderer>(true))
+            {
+                if (renderer.sprite == null || !renderer.enabled || renderer.forceRenderingOff
+                    || !renderer.gameObject.activeInHierarchy || renderer.color.a <= 0.001f
+                    || renderer.GetComponentInParent<SpeedButton>(true) != null) continue;
+                Vector2[] vertices = renderer.sprite.vertices;
+                if (renderer.drawMode != SpriteDrawMode.Simple || vertices.Length <= 4)
+                {
+                    Vector3 candidate = renderer.bounds.ClosestPoint(body.center + direction * 1000f
+                        + Vector3.up * (preferredHeight - body.center.y));
+                    float reach = Vector3.Dot(candidate - body.center, direction);
+                    if (reach > best + 0.0001f) { best = reach; point = candidate; found = true; }
+                    continue;
+                }
+                foreach (Vector2 vertex in vertices)
+                {
+                    Vector3 candidate = renderer.transform.TransformPoint(new Vector3(
+                        renderer.flipX ? -vertex.x : vertex.x, renderer.flipY ? -vertex.y : vertex.y, 0f));
+                    float reach = Vector3.Dot(candidate - body.center, direction);
+                    if (reach > best + 0.0001f || (found && Mathf.Abs(reach - best) <= 0.0001f
+                        && Mathf.Abs(candidate.y - preferredHeight) < Mathf.Abs(point.y - preferredHeight)))
+                    {
+                        best = reach; point = candidate; found = true;
+                    }
+                }
+            }
+        }
+        return found;
+    }
+
     private PlaneData BuildPlane(Transform first, Transform second, PlaneReference planeReference)
     {
         float planeZ = ResolvePlaneZ(first.position.z, second.position.z, planeReference);
@@ -1298,9 +1373,9 @@ public class BattlePresentationSystem : MonoBehaviour
         renderer.SetPosition(1, end);
         renderer.startWidth = width;
         renderer.endWidth = width;
-        renderer.numCapVertices = 6;
-        renderer.numCornerVertices = 4;
-        renderer.material = spriteMat;
+        renderer.numCapVertices = 0;
+        renderer.numCornerVertices = 0;
+        renderer.sharedMaterial = streakMat;
         renderer.textureMode = LineTextureMode.Stretch;
         renderer.sortingOrder = effectSortingOrder;
         renderer.alignment = LineAlignment.TransformZ;
@@ -2047,6 +2122,15 @@ public class BattlePresentationSystem : MonoBehaviour
             }
         }
 
+        if (streakMat == null && spriteMat != null)
+        {
+            streakMat = new Material(spriteMat) { name = "Battle soft impact streak" };
+            ApplyTexture(streakMat, softImpactTexture);
+            Color lightCore = new Color(1.8f, 1.8f, 1.8f, 1f);
+            if (streakMat.HasProperty("_Color")) streakMat.SetColor("_Color", lightCore);
+            if (streakMat.HasProperty("_BaseColor")) streakMat.SetColor("_BaseColor", lightCore);
+        }
+
         if (particleMat == null)
         {
             Shader shader = Shader.Find("Universal Render Pipeline/Particles/Unlit") ?? Shader.Find("Particles/Standard Unlit") ?? Shader.Find("Sprites/Default");
@@ -2113,6 +2197,8 @@ public class BattlePresentationSystem : MonoBehaviour
         closeupVisibility.Restore();
         if (spriteMat != null)
             Destroy(spriteMat);
+        if (streakMat != null)
+            Destroy(streakMat);
         if (particleMat != null)
             Destroy(particleMat);
         if (flashSprite != null)
