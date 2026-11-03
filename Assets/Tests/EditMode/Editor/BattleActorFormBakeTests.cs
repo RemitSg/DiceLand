@@ -4,6 +4,65 @@ using UnityEngine;
 public sealed class BattleActorFormBakeTests
 {
     [Test]
+    public void AuthoredMaterialsSeparateFacialSkinArmorAndClothAtEitherBakeResolution()
+    {
+        foreach (int size in new[] { 128, 256 })
+        {
+            Color32[] man = BattleActorSurfaceBakeTools.BakePixels(BattleActorSurfaceBakeTools.ManPath, size, size);
+            Color32[] molly = BattleActorSurfaceBakeTools.BakePixels(BattleActorSurfaceBakeTools.MollyPath, size, size);
+            AssertMaterial(man, size, 745f / 1230f, 210f / 1478f, true, false);
+            AssertMaterial(man, size, 850f / 1230f, 270f / 1478f, false, true);
+            AssertMaterial(man, size, 330f / 1230f, 400f / 1478f, true, false);
+            AssertMaterial(man, size, 500f / 1230f, 1000f / 1478f, false, false);
+            AssertMaterial(molly, size, 795f / 1280f, 300f / 1941f, true, false);
+            AssertMaterial(molly, size, 610f / 1280f, 500f / 1941f, false, true);
+            AssertMaterial(molly, size, 1000f / 1280f, 1100f / 1941f, false, false);
+        }
+    }
+
+    [Test]
+    public void MaterialDataIsDeterministicAndUnknownSpritesRequireTheirOwnAnnotations()
+    {
+        string random = JsonUtility.ToJson(Random.state);
+        Color32[] first = BattleActorSurfaceBakeTools.BakePixels(BattleActorSurfaceBakeTools.MollyPath, 80, 120);
+        CollectionAssert.AreEqual(first,
+            BattleActorSurfaceBakeTools.BakePixels(BattleActorSurfaceBakeTools.MollyPath, 80, 120));
+        Assert.Throws<System.ArgumentException>(() => BattleActorSurfaceBakeTools.BakePixels("Unknown.png", 80, 120));
+        Assert.AreEqual(random, JsonUtility.ToJson(Random.state));
+    }
+
+    private static void AssertMaterial(Color32[] pixels, int size, float x, float topY, bool skin, bool metal)
+    {
+        Color32 value = pixels[Mathf.FloorToInt((1f - topY) * size) * size + Mathf.FloorToInt(x * size)];
+        Assert.That(value.r, skin ? Is.GreaterThan(240) : Is.LessThan(15));
+        Assert.That(value.g, metal ? Is.GreaterThan(240) : Is.LessThan(15));
+        Assert.That(value.b, Is.InRange(50, 255));
+    }
+
+    [Test]
+    public void LocalCurvesKeepSilhouetteAlphaAndUnknownFormsIntact()
+    {
+        const int size = 128;
+        bool[] mask = new bool[size * size];
+        for (int y = 4; y < size - 4; y++)
+        for (int x = 4; x < size - 4; x++) mask[y * size + x] = true;
+        Color32[] before = BattleActorFormBakeTools.BakeFormPixels(mask,size,size);
+        Color32[] after = (Color32[])before.Clone();
+        BattleActorSurfaceBakeTools.RefineFormNormals("Unknown.png",after,size,size);
+        CollectionAssert.AreEqual(before,after);
+        BattleActorSurfaceBakeTools.RefineFormNormals(BattleActorSurfaceBakeTools.ManPath,after,size,size);
+        int changed = 0;
+        for (int i = 0; i < after.Length; i++)
+        {
+            Assert.AreEqual(before[i].a,after[i].a);
+            if (after[i].a == 0) Assert.AreEqual(before[i],after[i]);
+            if (!after[i].Equals(before[i])) changed++;
+            Assert.Greater(after[i].b,127,"Authored local normals stay on the front hemisphere.");
+        }
+        Assert.Greater(changed,1000,"Body volumes must affect internal painted surfaces, not just the alpha edge.");
+    }
+
+    [Test]
     public void ShadowSilhouetteUsesAlphaWithoutChangingAnyNormalChannel()
     {
         const int width = 32, height = 48;

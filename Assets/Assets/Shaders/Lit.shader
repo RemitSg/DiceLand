@@ -25,6 +25,8 @@ Shader "Assets/Shaders/Lit"
         [HideInInspector] _ForestHighlightStrength ("Forest highlight shoulder", Range(0,1)) = 1
         [HideInInspector] _ForestFormMap ("Forest silhouette form", 2D) = "bump" {}
         [HideInInspector] _ForestFormParams ("Form weight and sprite mirroring", Vector) = (0,1,1,0)
+        [HideInInspector] _ForestMaterialMap ("Forest skin, metal and roughness", 2D) = "black" {}
+        [HideInInspector] _ForestMaterialWeight ("Forest authored material response", Range(0,1)) = 0
     }
 
     SubShader
@@ -85,6 +87,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
+            float _ForestMaterialWeight;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
@@ -188,6 +191,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
+            float _ForestMaterialWeight;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
@@ -324,12 +328,14 @@ Shader "Assets/Shaders/Lit"
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
+            float _ForestMaterialWeight;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);       SAMPLER(sampler_MainTex);
             TEXTURE2D(_AlphaTex);      SAMPLER(sampler_AlphaTex);
             TEXTURE2D(_NormalMap);     SAMPLER(sampler_NormalMap);
             TEXTURE2D(_ForestFormMap); SAMPLER(sampler_ForestFormMap);
+            TEXTURE2D(_ForestMaterialMap); SAMPLER(sampler_ForestMaterialMap);
 
             struct Attributes
             {
@@ -405,7 +411,7 @@ Shader "Assets/Shaders/Lit"
             }
             
             float3 CalculateLighting(float3 albedo, float3 normalWS, float3 positionWS, 
-                                     float3 viewDirWS, float4 shadowCoord, float surfaceWeight)
+                                     float3 viewDirWS, float4 shadowCoord, float surfaceWeight, half3 material, float materialWeight)
             {
                 float pigmentWeight = saturate(surfaceWeight * _ForestPigmentStrength);
                 if (pigmentWeight > 0.001)
@@ -416,11 +422,18 @@ Shader "Assets/Shaders/Lit"
                 
                 // ✅ 使用传入的shadowCoord而不是在此处重新计算
                 Light mainLight = GetMainLight(shadowCoord);
+                float fallback = step(0.001, materialWeight)
+                    * (1.0 - step(0.0001, dot(mainLight.color, half3(1,1,1))));
+                mainLight.direction = lerp(mainLight.direction, DiceLandForestSunDirection(), fallback);
+                mainLight.color = lerp(mainLight.color, DiceLandForestSunColor(), fallback);
+                mainLight.distanceAttenuation = lerp(mainLight.distanceAttenuation, 1.0, fallback);
+                mainLight.shadowAttenuation = lerp(mainLight.shadowAttenuation, 1.0, fallback);
                 
                 float3 keyDirection = lerp(mainLight.direction, DiceLandForestPaintedKey(mainLight.direction), surfaceWeight);
                 float NdotL_main = dot(normalWS, keyDirection);
                 float diffuseFactor = lerp(CalculateDiffuseFactor(dot(normalWS, mainLight.direction), true),
                     0.32 + 0.90 * saturate(NdotL_main), surfaceWeight);
+                diffuseFactor = lerp(diffuseFactor, DiceLandForestMaterialDiffuse(material, NdotL_main), materialWeight);
                 // Glossiness zero previously made pow(NdotH, 0) a constant white wash.
                 // Preserve the historical material response outside this forest-only surface treatment.
                 float specularPower = lerp(_Glossiness * 128.0, max(12.0, _Glossiness * 128.0), surfaceWeight);
@@ -436,7 +449,9 @@ Shader "Assets/Shaders/Lit"
                     float3 halfDir = normalize(keyDirection + viewDirWS);
                     float NdotH = saturate(dot(normalWS, halfDir));
                     float specPow = pow(NdotH, specularPower) * specularWeight;
-                    totalSpecular += mainLight.color * specPow * _Specular.rgb 
+                    float3 reflected = lerp(specPow * _Specular.rgb,
+                        DiceLandForestMaterialSpecular(albedo, material, NdotH), materialWeight);
+                    totalSpecular += mainLight.color * reflected
                                      * mainLight.shadowAttenuation * mainLight.distanceAttenuation;
                 }
                 
@@ -457,7 +472,9 @@ Shader "Assets/Shaders/Lit"
                         float3 halfDir = normalize(light.direction + viewDirWS);
                         float NdotH = saturate(dot(normalWS, halfDir));
                         float specPow = pow(NdotH, specularPower) * specularWeight;
-                        totalSpecular += light.color * specPow * _Specular.rgb * lightAttenuation;
+                        float3 reflected = lerp(specPow * _Specular.rgb,
+                            DiceLandForestMaterialSpecular(albedo, material, NdotH), materialWeight);
+                        totalSpecular += light.color * reflected * lightAttenuation;
                     }
                 }
                 #endif
@@ -465,6 +482,7 @@ Shader "Assets/Shaders/Lit"
                 float rim = 1.0 - saturate(dot(viewDirWS, normalWS));
                 rim = pow(rim, _RimPower);
                 float3 rimLight = _RimColor.rgb * rim;
+                rimLight *= lerp(1.0, DiceLandForestMaterialRim(material), materialWeight);
                 
                 lighting += albedo * totalDiffuse + totalSpecular + rimLight;
                 
@@ -500,7 +518,7 @@ Shader "Assets/Shaders/Lit"
                     normalWS = DiceLandForestSculptedNormal(i.positionWS, _ForestSpriteBounds, surfaceWeight);
                     if (_ForestFormParams.x > 0.001)
                     {
-                        // RGB stores a linear, positive-Z normal derived only from source alpha.
+                        // RGB stores a linear positive-Z silhouette/local-form normal.
                         // Sprite mirroring is separate from Transform's rotation/negative scale.
                         float3 form = SAMPLE_TEXTURE2D(_ForestFormMap, sampler_ForestFormMap, i.uv).rgb * 2.0 - 1.0;
                         form = normalize(float3(form.xy * _ForestFormParams.yz, -max(0.1, form.z)));
@@ -521,22 +539,27 @@ Shader "Assets/Shaders/Lit"
                 float4 shadowCoord = TransformWorldToShadowCoord(i.positionWS);
                 #endif
                 
-                // ✅ 传递shadowCoord
-                float3 litColor = CalculateLighting(baseColor.rgb, normalWS, i.positionWS, 
-                                                    viewDirWS, shadowCoord, surfaceWeight);
+                float materialWeight = saturate(_ForestMaterialWeight) * surfaceWeight;
+                half3 material = half3(0,0,1);
+                if (materialWeight > 0.001)
+                    material = SAMPLE_TEXTURE2D(_ForestMaterialMap, sampler_ForestMaterialMap, i.uv).rgb;
+                float3 litColor = CalculateLighting(baseColor.rgb, normalWS, i.positionWS,
+                                                    viewDirWS, shadowCoord, surfaceWeight, material, materialWeight);
                 float highlightWeight = saturate(surfaceWeight * _ForestHighlightStrength);
                 if (highlightWeight > 0.001)
                     litColor = lerp(litColor, DiceLandForestHighlightShoulder(litColor), highlightWeight);
                 if (_DiceLandForestLighting > 0.001)
                 {
                     // A narrow sun-facing alpha edge gives flat illustrated sprites a restrained rim.
-                    float3 sunOS = TransformWorldToObjectDir(GetMainLight().direction);
+                    float3 rimSun = lerp(GetMainLight().direction, DiceLandForestSunDirection(), materialWeight);
+                    float3 sunOS = TransformWorldToObjectDir(rimSun);
                     float2 rimDirection = normalize(sunOS.xy * _Flip.xy + float2(0.0001, 0.0001));
                     float2 rimStep = max(fwidth(i.uv), float2(0.0001, 0.0001)) * 1.5;
                     float edgeAlpha = SampleSpriteTexture(i.uv + rimDirection * rimStep).a * i.color.a;
                     float rim = saturate(baseColor.a - edgeAlpha);
                     half3 edgeLight = lerp(GetMainLight().color, half3(1.20, 0.65, 0.16), surfaceWeight);
-                    litColor += edgeLight * rim * (0.55 * _DiceLandForestLighting);
+                    float edgeResponse = lerp(1.0, DiceLandForestMaterialRim(material), materialWeight);
+                    litColor += edgeLight * rim * (0.55 * _DiceLandForestLighting) * edgeResponse;
                 }
                 litColor *= baseColor.a;
                 
@@ -580,6 +603,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
+            float _ForestMaterialWeight;
             CBUFFER_END
             TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
             TEXTURE2D(_AlphaTex); SAMPLER(sampler_AlphaTex);

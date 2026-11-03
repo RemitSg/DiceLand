@@ -28,6 +28,7 @@ public static class BattleActorFormBakeTools
         if (!AssetDatabase.IsValidFolder(Folder))
             AssetDatabase.CreateFolder(BattleLookPreviewTools.ForestAssets, "Actor Forms");
         var maps = new List<BattleActorFormLibrary.Entry>();
+        BattleActorFormLibrary previousLibrary = AssetDatabase.LoadAssetAtPath<BattleActorFormLibrary>(LibraryPath);
         foreach (string sourcePath in Sources)
         {
             Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(sourcePath);
@@ -53,7 +54,9 @@ public static class BattleActorFormBakeTools
                     filterMode = FilterMode.Trilinear,
                     anisoLevel = 1
                 };
-                form.SetPixels32(BakeFormPixels(inside, width, height));
+                Color32[] pixels = BakeFormPixels(inside, width, height);
+                BattleActorSurfaceBakeTools.RefineFormNormals(sourcePath, pixels, width, height);
+                form.SetPixels32(pixels);
                 form.Apply(true, true);
                 string mapPath = Folder + "/" + sprite.name + " Form.asset";
                 Texture2D existing = AssetDatabase.LoadAssetAtPath<Texture2D>(mapPath);
@@ -69,7 +72,8 @@ public static class BattleActorFormBakeTools
                     EditorUtility.SetDirty(existing);
                     AssetDatabase.SaveAssetIfDirty(existing);
                 }
-                maps.Add(new BattleActorFormLibrary.Entry { sprite = sprite, formMap = existing });
+                maps.Add(new BattleActorFormLibrary.Entry { sprite = sprite, formMap = existing,
+                    materialMap = previousLibrary != null ? previousLibrary.FindMaterialMap(sprite) : null });
             }
             finally
             {
@@ -92,6 +96,7 @@ public static class BattleActorFormBakeTools
         {
             entries.GetArrayElementAtIndex(i).FindPropertyRelative("sprite").objectReferenceValue = maps[i].sprite;
             entries.GetArrayElementAtIndex(i).FindPropertyRelative("formMap").objectReferenceValue = maps[i].formMap;
+            entries.GetArrayElementAtIndex(i).FindPropertyRelative("materialMap").objectReferenceValue = maps[i].materialMap;
         }
         serialized.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(library);

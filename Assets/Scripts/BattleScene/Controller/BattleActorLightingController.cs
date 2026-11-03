@@ -10,10 +10,13 @@ public sealed class BattleActorLightingController : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float surfaceWeight = 0.8f;
     [SerializeField] private BattleActorFormLibrary formLibrary;
     [SerializeField, Range(0f, 1f)] private float formWeight = 0.7f;
+    [SerializeField, Range(0f, 1f)] private float materialWeight = 0.85f;
     private static readonly int BoundsId = Shader.PropertyToID("_ForestSpriteBounds");
     private static readonly int WeightId = Shader.PropertyToID("_ForestSurfaceWeight");
     private static readonly int FormMapId = Shader.PropertyToID("_ForestFormMap");
     private static readonly int FormParamsId = Shader.PropertyToID("_ForestFormParams");
+    private static readonly int MaterialMapId = Shader.PropertyToID("_ForestMaterialMap");
+    private static readonly int MaterialWeightId = Shader.PropertyToID("_ForestMaterialWeight");
     private readonly List<Transform> actors = new List<Transform>();
     private readonly List<Entry> entries = new List<Entry>();
     private float nextRefresh;
@@ -26,6 +29,7 @@ public sealed class BattleActorLightingController : MonoBehaviour
         public Bounds lastBounds;
         public float lastWeight = -1f;
         public float lastFormWeight = -1f;
+        public float lastMaterialWeight = -1f;
         public Sprite lastSprite;
         public BattleActorFormLibrary lastLibrary;
         public bool lastFlipX;
@@ -80,6 +84,7 @@ public sealed class BattleActorLightingController : MonoBehaviour
             Vector4 packedBounds = new Vector4(bounds.min.x, bounds.min.y, bounds.size.x, bounds.size.y);
             if (entry.lastBounds == bounds && Mathf.Approximately(entry.lastWeight, surfaceWeight)
                 && Mathf.Approximately(entry.lastFormWeight, formWeight) && entry.lastSprite == renderer.sprite
+                && Mathf.Approximately(entry.lastMaterialWeight, materialWeight)
                 && entry.lastLibrary == formLibrary && entry.lastFlipX == renderer.flipX && entry.lastFlipY == renderer.flipY) continue;
             entry.runtimeMaterial.SetVector(BoundsId, packedBounds);
             entry.runtimeMaterial.SetFloat(WeightId, surfaceWeight);
@@ -90,9 +95,16 @@ public sealed class BattleActorLightingController : MonoBehaviour
                 entry.runtimeMaterial.SetVector(FormParamsId, new Vector4(form != null ? formWeight : 0f,
                     renderer.flipX ? -1f : 1f, renderer.flipY ? -1f : 1f, 0f));
             }
+            if (entry.runtimeMaterial.HasProperty(MaterialWeightId))
+            {
+                Texture2D materialMap = formLibrary != null ? formLibrary.FindMaterialMap(renderer.sprite) : null;
+                entry.runtimeMaterial.SetTexture(MaterialMapId, materialMap);
+                entry.runtimeMaterial.SetFloat(MaterialWeightId, materialMap != null ? materialWeight : 0f);
+            }
             entry.lastBounds = bounds;
             entry.lastWeight = surfaceWeight;
             entry.lastFormWeight = formWeight;
+            entry.lastMaterialWeight = materialWeight;
             entry.lastSprite = renderer.sprite;
             entry.lastLibrary = formLibrary;
             entry.lastFlipX = renderer.flipX;

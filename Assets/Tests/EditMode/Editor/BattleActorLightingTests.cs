@@ -150,11 +150,14 @@ public sealed class BattleActorLightingTests
         resources.Add(library);
         resources.Add(map);
         typeof(BattleActorFormLibrary).GetField("entries", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-            .SetValue(library, new[] { new BattleActorFormLibrary.Entry { sprite = sprite, formMap = map } });
+            .SetValue(library, new[] { new BattleActorFormLibrary.Entry { sprite = sprite, formMap = map, materialMap = map } });
         lighting.Configure(allies, enemies, library);
         lighting.UpdateLighting();
         Material runtime = body.sharedMaterial;
         Assert.AreSame(map, runtime.GetTexture("_ForestFormMap"));
+        Assert.AreSame(map, runtime.GetTexture("_ForestMaterialMap"));
+        Assert.Greater(runtime.GetFloat("_ForestMaterialWeight"), 0f);
+        Assert.AreEqual(0f, material.GetFloat("_ForestMaterialWeight"));
         Assert.Greater(runtime.GetVector("_ForestFormParams").x, 0f);
         Assert.AreEqual(0f, material.GetVector("_ForestFormParams").x);
 
@@ -171,6 +174,8 @@ public sealed class BattleActorLightingTests
         lighting.UpdateLighting();
         Assert.AreEqual(0f, runtime.GetVector("_ForestFormParams").x);
         Assert.IsNull(runtime.GetTexture("_ForestFormMap"));
+        Assert.AreEqual(0f, runtime.GetFloat("_ForestMaterialWeight"));
+        Assert.IsNull(runtime.GetTexture("_ForestMaterialMap"));
         lighting.ReleaseLighting();
         Assert.AreSame(material, body.sharedMaterial);
     }
