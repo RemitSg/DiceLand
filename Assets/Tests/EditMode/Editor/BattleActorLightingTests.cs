@@ -219,6 +219,35 @@ public sealed class BattleActorLightingTests
     }
 
     [Test]
+    public void SunEdgeKeywordsStayOnOwnedMaterialsAndFollowSurfaceTreatment()
+    {
+        SpriteRenderer body = CreateActor("Sunlit actor", allies, Vector3.up * 2, false);
+        Material unrelated = new Material(material);
+        resources.Add(unrelated);
+        Assert.AreEqual(0f, material.GetFloat("_ForestSunEdgeStrength"));
+
+        lighting.UpdateLighting();
+        Material runtime = body.sharedMaterial;
+        Assert.AreEqual(1f, runtime.GetFloat("_ForestSunEdgeStrength"));
+        Assert.IsTrue(runtime.IsKeywordEnabled("_FOREST_SUN_EDGE"));
+        Assert.IsFalse(material.IsKeywordEnabled("_FOREST_SUN_EDGE"));
+        Assert.IsFalse(unrelated.IsKeywordEnabled("_FOREST_SUN_EDGE"));
+        Assert.IsFalse(Shader.IsKeywordEnabled("_FOREST_SUN_EDGE"));
+
+        typeof(BattleActorLightingController).GetField("surfaceWeight",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(lighting, 0f);
+        lighting.UpdateLighting();
+        Assert.AreEqual(0f, runtime.GetFloat("_ForestSunEdgeStrength"));
+        Assert.IsFalse(runtime.IsKeywordEnabled("_FOREST_SUN_EDGE"));
+
+        lighting.ReleaseLighting();
+        Assert.AreSame(material, body.sharedMaterial);
+        Assert.IsTrue(runtime == null);
+        Assert.AreEqual(0f, material.GetFloat("_ForestSunEdgeStrength"));
+        Assert.IsFalse(material.IsKeywordEnabled("_FOREST_SUN_EDGE"));
+    }
+
+    [Test]
     public void NonActorMaterialsRetainTheirOriginalPropertyBlocks()
     {
         SpriteRenderer body = CreateActor("Actor", allies, Vector3.up * 2f, false);

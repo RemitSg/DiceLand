@@ -29,6 +29,7 @@ Shader "Assets/Shaders/Lit"
         [HideInInspector] _ForestMaterialWeight ("Forest authored material response", Range(0,1)) = 0
         [HideInInspector] _ForestEmissionWeight ("Forest emissive material regions", Range(0,1)) = 0
         [HideInInspector] _ForestSheenStrength ("Forest fabric sheen", Range(0,1)) = 0
+        [HideInInspector] _ForestSunEdgeStrength ("Forest sunlit silhouette", Range(0,1)) = 0
     }
 
     SubShader
@@ -89,7 +90,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
-            float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength;
+            float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength, _ForestSunEdgeStrength;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
@@ -193,7 +194,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
-            float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength;
+            float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength, _ForestSunEdgeStrength;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
@@ -291,6 +292,8 @@ Shader "Assets/Shaders/Lit"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma target 3.0
+            #pragma multi_compile_local_fragment _ _FOREST_SUN_EDGE
             #pragma multi_compile _ PIXELSNAP_ON
             #pragma multi_compile_fog
             #pragma multi_compile _ ETC1_EXTERNAL_ALPHA
@@ -331,7 +334,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
-            float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength;
+            float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength, _ForestSunEdgeStrength;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);       SAMPLER(sampler_MainTex);
@@ -519,6 +522,11 @@ Shader "Assets/Shaders/Lit"
 
             float4 frag(Varyings i) : SV_Target
             {
+                #if defined(_FOREST_SUN_EDGE)
+                    // Capture derivatives before alpha clipping, including transparent holes.
+                    float2 edgeUvDx=ddx(i.uv),edgeUvDy=ddy(i.uv);
+                    float3 edgeWorldDx=ddx(i.positionWS),edgeWorldDy=ddy(i.positionWS);
+                #endif
                 float4 baseColor = SampleSpriteTexture(i.uv) * i.color;
                 clip(baseColor.a - _Cutoff);
                 
@@ -575,16 +583,43 @@ Shader "Assets/Shaders/Lit"
                 }
                 if (_DiceLandForestLighting > 0.001)
                 {
-                    // A narrow sun-facing alpha edge gives flat illustrated sprites a restrained rim.
-                    float3 rimSun = lerp(GetMainLight().direction, DiceLandForestSunDirection(), materialWeight);
-                    float3 sunOS = TransformWorldToObjectDir(rimSun);
-                    float2 rimDirection = normalize(sunOS.xy * _Flip.xy + float2(0.0001, 0.0001));
-                    float2 rimStep = max(fwidth(i.uv), float2(0.0001, 0.0001)) * 1.5;
-                    float edgeAlpha = SampleSpriteTexture(i.uv + rimDirection * rimStep).a * i.color.a;
-                    float rim = saturate(baseColor.a - edgeAlpha);
-                    half3 edgeLight = lerp(GetMainLight().color, half3(1.20, 0.65, 0.16), surfaceWeight);
-                    float edgeResponse = lerp(1.0, DiceLandForestMaterialRim(material), materialWeight);
-                    litColor += edgeLight * rim * (0.55 * _DiceLandForestLighting) * edgeResponse;
+                    #if defined(_FOREST_SUN_EDGE)
+                    if (_ForestSunEdgeStrength > 0.001)
+                    {
+                        float3 sun = DiceLandForestSunDirection();
+                        float pixels = clamp(2.2 * _ScaledScreenParams.y / 1080.0, 0.6, 6.0);
+                        float2 stepUV = DiceLandForestSunEdgeOffset(edgeWorldDx, edgeWorldDy, edgeUvDx, edgeUvDy, sun, pixels);
+                        float nearAlpha = SAMPLE_TEXTURE2D_GRAD(_MainTex, sampler_MainTex, i.uv + stepUV, edgeUvDx, edgeUvDy).a;
+                        float farAlpha = SAMPLE_TEXTURE2D_GRAD(_MainTex, sampler_MainTex, i.uv + stepUV * 2.0, edgeUvDx, edgeUvDy).a;
+                        #if ETC1_EXTERNAL_ALPHA
+                        if (_EnableExternalAlpha > 0.5)
+                        {
+                            nearAlpha = SAMPLE_TEXTURE2D_GRAD(_AlphaTex, sampler_AlphaTex, i.uv + stepUV, edgeUvDx, edgeUvDy).r;
+                            farAlpha = SAMPLE_TEXTURE2D_GRAD(_AlphaTex, sampler_AlphaTex, i.uv + stepUV * 2.0, edgeUvDx, edgeUvDy).r;
+                        }
+                        #endif
+                        float band = saturate(baseColor.a - nearAlpha * i.color.a) * 0.65
+                            + saturate(baseColor.a - farAlpha * i.color.a) * 0.35;
+                        float backlit = smoothstep(-0.3, 0.5, dot(viewDirWS, -sun));
+                        float response = lerp(1.0, DiceLandForestMaterialRim(material), materialWeight);
+                        litColor += DiceLandForestSunColor() * float3(1.0, 0.68, 0.30)
+                            * (band * backlit * response * DiceLandForestSunVisibility(i.positionWS)
+                                * saturate(_DiceLandForestLighting) * saturate(_ForestSunEdgeStrength) * 1.8);
+                    }
+                    else
+                    #endif
+                    {
+                        // Retain the original edge for shared and atlas-packed materials.
+                        float3 rimSun = lerp(GetMainLight().direction, DiceLandForestSunDirection(), materialWeight);
+                        float3 sunOS = TransformWorldToObjectDir(rimSun);
+                        float2 rimDirection = normalize(sunOS.xy * _Flip.xy + float2(0.0001, 0.0001));
+                        float2 rimStep = max(fwidth(i.uv), float2(0.0001, 0.0001)) * 1.5;
+                        float edgeAlpha = SampleSpriteTexture(i.uv + rimDirection * rimStep).a * i.color.a;
+                        float rim = saturate(baseColor.a - edgeAlpha);
+                        half3 edgeLight = lerp(GetMainLight().color, half3(1.20, 0.65, 0.16), surfaceWeight);
+                        float edgeResponse = lerp(1.0, DiceLandForestMaterialRim(material), materialWeight);
+                        litColor += edgeLight * rim * (0.55 * _DiceLandForestLighting) * edgeResponse;
+                    }
                 }
                 litColor *= baseColor.a;
                 
@@ -628,7 +663,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
-            float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength;
+            float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength, _ForestSunEdgeStrength;
             CBUFFER_END
             TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
             TEXTURE2D(_AlphaTex); SAMPLER(sampler_AlphaTex);

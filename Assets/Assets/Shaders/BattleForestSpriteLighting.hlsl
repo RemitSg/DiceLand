@@ -1,6 +1,14 @@
 #ifndef DICELAND_FOREST_SPRITE_LIGHTING_INCLUDED
 #define DICELAND_FOREST_SPRITE_LIGHTING_INCLUDED
 
+float2 DiceLandForestSunEdgeOffset(float3 worldDx, float3 worldDy, float2 uvDx, float2 uvDy, float3 sun, float pixels)
+{
+    // Derivatives follow the rendered silhouette, scale and render target orientation.
+    float2 direction = float2(dot(worldDx, sun), dot(worldDy, sun));
+    direction *= rsqrt(max(1e-20, dot(direction, direction)));
+    return (uvDx * direction.x + uvDy * direction.y) * pixels;
+}
+
 // A broad painted surface, not a reconstructed anatomical normal map.
 // World-space bounds keep lighting stable when the source sprite is mirrored or atlas packed.
 float3 DiceLandForestSculptedNormal(float3 positionWS, float4 bounds, float weight)

@@ -19,6 +19,7 @@ public sealed class BattleActorLightingController : MonoBehaviour
     private static readonly int MaterialWeightId = Shader.PropertyToID("_ForestMaterialWeight");
     private static readonly int EmissionWeightId = Shader.PropertyToID("_ForestEmissionWeight");
     private static readonly int SheenStrengthId = Shader.PropertyToID("_ForestSheenStrength");
+    private static readonly int SunEdgeStrengthId = Shader.PropertyToID("_ForestSunEdgeStrength");
     private readonly List<Transform> actors = new List<Transform>();
     private readonly List<Entry> entries = new List<Entry>();
     private float nextRefresh;
@@ -36,6 +37,7 @@ public sealed class BattleActorLightingController : MonoBehaviour
         public BattleActorFormLibrary lastLibrary;
         public bool lastFlipX;
         public bool lastFlipY;
+        public bool lastPacked;
         public readonly BattleActorEmissionLights emission = new BattleActorEmissionLights();
     }
 
@@ -92,12 +94,21 @@ public sealed class BattleActorLightingController : MonoBehaviour
             Bounds bounds = renderer.bounds;
             if (bounds.size.x < 0.001f || bounds.size.y < 0.001f) continue;
             Vector4 packedBounds = new Vector4(bounds.min.x, bounds.min.y, bounds.size.x, bounds.size.y);
+            bool packed = renderer.sprite != null && renderer.sprite.packed;
             if (entry.lastBounds == bounds && Mathf.Approximately(entry.lastWeight, surfaceWeight)
                 && Mathf.Approximately(entry.lastFormWeight, formWeight) && entry.lastSprite == renderer.sprite
                 && Mathf.Approximately(entry.lastMaterialWeight, materialWeight)
-                && entry.lastLibrary == formLibrary && entry.lastFlipX == renderer.flipX && entry.lastFlipY == renderer.flipY) continue;
+                && entry.lastLibrary == formLibrary && entry.lastFlipX == renderer.flipX && entry.lastFlipY == renderer.flipY
+                && entry.lastPacked == packed) continue;
             entry.runtimeMaterial.SetVector(BoundsId, packedBounds);
             entry.runtimeMaterial.SetFloat(WeightId, surfaceWeight);
+            if (entry.runtimeMaterial.HasProperty(SunEdgeStrengthId))
+            {
+                bool sunEdge = renderer.sprite != null && !packed && surfaceWeight > 0.001f;
+                entry.runtimeMaterial.SetFloat(SunEdgeStrengthId, sunEdge ? 1f : 0f);
+                if (sunEdge) entry.runtimeMaterial.EnableKeyword("_FOREST_SUN_EDGE");
+                else entry.runtimeMaterial.DisableKeyword("_FOREST_SUN_EDGE");
+            }
             if (entry.runtimeMaterial.HasProperty(FormParamsId))
             {
                 Texture2D form = formLibrary != null ? formLibrary.Find(renderer.sprite) : null;
@@ -125,6 +136,7 @@ public sealed class BattleActorLightingController : MonoBehaviour
             entry.lastLibrary = formLibrary;
             entry.lastFlipX = renderer.flipX;
             entry.lastFlipY = renderer.flipY;
+            entry.lastPacked = packed;
         }
     }
 
