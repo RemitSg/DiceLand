@@ -1,0 +1,68 @@
+DiceLand 战斗格子详情面板重制参考图 · 第二版
+日期：2026-11-03（Asia/Singapore）
+方式：内置 image_gen；未使用 CLI/API 密钥。
+用户最新反馈：上一版不够美观、设计感与重点不足；去掉行动点消耗，重新生成一版。
+方案：深绿盾形牌面、外伸交叉剑盾徽、酒红绶带和细黄铜轮廓；精英战斗标题为第一视觉中心，危险度“吃力 2/8”为第二层，属性与探索状态紧凑排布。进入战斗使用酒红珐琅按钮，返回地图改为较轻的文字操作；面板内移除行动点数字、足迹、消耗行及按钮费用。
+边界：这是第二版视觉参考，未接入正式 UGUI、未修改真实行动点消耗或其他玩法。左上资源 HUD 继续显示行动资源，用户去掉的是该详情面板内的消耗区。第一版原图和提示词保留，未覆盖。
+样例：精英战斗、外围、[3,5]、吃力 2/8、炎及探索状态仅作排版展示，不作为敌群、危险度、投放或资产配置变更；“炎”沿用实际 Flame_Attribute 的 attributeName。保留进入／返回既有语义，不增加敌人立绘、奖励、属性数值或新系统。
+正式参考：docs/visuals/battle-tile-detail-concept-v2-20261103.png
+选定原图：C:/Users/Karmas/.codex/generated_images/01a19b52-5ddb-7880-a1be-70f8b56a2036/exec-e5cacd64-7615-4084-bd5f-128bae4e2add.png
+
+输入参考（顺序与原始提示词一致）：
+1. 用户现状截图，作为地图语境与已有功能信息参考：
+C:/Users/Karmas/Documents/xwechat_files/wxid_rs05v648c5z332_ef93/temp/RWTemp/2026-11/9e20f478899dc29eb19741386f9343c8/accbbabef57a6b8c556988888889d53a.jpg
+2. 已确认的深绿黄铜事件面板，作为材质、颜色与制作精度参考：
+C:/DiceLand/docs/visuals/event-panel-reading-concept-20261102.png
+
+原始提示词：
+Use case: ui-mockup.
+Create ONE new, art-directed redesign reference for the DiceLand battle-tile details panel. A finished ultrawide mobile game screen, about 2.17:1. The user rejected the previous concept because it lacked visual design, hierarchy and a clear focal point. This new version must feel distinctly redesigned. Remove the entire action-point cost section.
+
+INPUT ROLES:
+Image 1: current game context and existing functional information. Use its forest map, left HUD, traveler and map tiles as the setting.
+Image 2: approved visual language: dark forest-green materials, warm ivory Chinese type, aged brass workmanship. Use its palette and craftsmanship without copying its rectangular reading-panel layout.
+
+CREATIVE DIRECTION:
+Design an elegant heraldic encounter placard floating on the RIGHT side of the map. Strong silhouette, one memorable central composition, generous intentional negative space and controlled detail. The panel is about 30% of screen width and 76% of screen height, with air around it. Deep blackened pine-green leather, delicate antique brass edge, gently clipped shoulders and a small pointed lower crest. A narrow worn oxblood velvet ribbon descends behind its upper-left shoulder. Restrained relief details at the top and bottom, not repeated floral flourishes. Its internal background has a nearly invisible large engraved crossed-swords watermark.
+The new focal point is a bespoke heraldic crossed-swords emblem integrated with the title. An aged brass shield medallion with crossed steel blades and subtle red enamel sits slightly off-center, partly breaking the upper frame. It should be handsome painted game UI ornament, not a creature illustration. Elegant overlapping depth between emblem, ribbon and frame.
+Keep the overall presentation practical and reusable as an actual game UI.
+
+TYPOGRAPHY AND VISUAL HIERARCHY:
+Give the title and danger assessment a deliberate clear relationship.
+- Large, beautifully spaced ivory “精英战斗” is the dominant text, directly beneath and slightly to the right of the crest. Refined, weighty Chinese serif display lettering with accurate readable characters. Do not use gigantic blunt block lettering.
+- A small warm-brass eyebrow “外围 · [3,5]” sits above the title.
+- Beneath the title, leave breathing room, then an asymmetrical danger composition: tiny muted “危险度” above a confident medium-large vermilion “吃力” at left, and a much quieter small “2/8” aligned to its baseline at right. The title must remain visually stronger than “吃力”. Use a slim interrupted brass rule or tiny subtle notches as ornament, not a row of large glowing diamonds or a dashboard meter.
+- The attribute is a quiet short line set lower and inset a little farther right: small “属性倾向”, followed by a fine flame glyph and “炎” in restrained amber. This is clearly secondary to battle type and danger.
+- Two small muted status words “未探索 · 未解决” sit on a single low-key line near the foot of the information area. They are not boxed pills.
+
+ACTIONS:
+One refined full-width primary button “进入战斗” near the bottom: dark oxblood enamel, thin brass edge, a small steel crossed-swords icon, warm ivory text, subtle highlight on the top bevel. Comfortable touch height without overwhelming the title.
+Below it, the secondary action “返回地图” is an understated ivory text action with a small return arrow and a short fine underline, not a second large competing rectangular button.
+The interior should feel composed around the heraldic identity, with asymmetric alignment and varied spacing. Do not partition every item into a separate full-width bordered row. No stacked dashboard cards. Avoid overfilling the surface with many rules and borders.
+
+REMOVE ACTION COST:
+Inside this battle details panel there must be NO action-point number, NO “行动点”, NO “预计消耗”, NO “AP”, NO footprint icon and NO cost label on the button. Keep the existing top-left resource HUD as game context; the user requested removal of the panel's cost section, not removal of that HUD.
+
+EXACT PANEL COPY:
+“外围 · [3,5]”
+“精英战斗”
+“危险度”
+“吃力”
+“2/8”
+“属性倾向”
+“炎”
+“未探索 · 未解决”
+“进入战斗”
+“返回地图”
+
+SURROUNDING SCREEN:
+Preserve the recognizable sunlit forest ruins, board icons, top-left HUD and party card, and top-right menu. The new panel replaces all previous overlapping right-side detail windows. The brown-haired chibi traveler is a transparent standalone character standing on the map, without a portable stone backplate behind his body. Slightly dim the map so the panel's refined title and emblem stand out.
+The sample left HUD remains 15/15 action resources, calamity 1, difficulty 简单, coins 58, keys 1/2, Chara Lv.2, HP 20/20, XP 0/20. Keep it secondary. This is still a living game screen, not a poster or a standalone web graphic.
+
+AVOID:
+No enormous danger numeral, no uniform rows, no huge yellow button, no bright mint-green cost strip. No thick rectangular ornamental cage or repeated border around every line. No new enemy portrait, rewards, enemy statistics, lore paragraph, invented mechanics or extra controls. No debug seed or English preview labels. No annotations, design callouts, arrows explaining features, comparison screens, device frame, watermark or extra versions. Deliver ONE coherent finished screen with a distinctive, well-crafted battle details panel.
+
+
+文件校验：
+SHA-256：1CE6C00C909A7C778B543AF82135B3B1F1FE96F89744471AFEC979E9FD36D15E。
+项目拷贝与生成原图字节一致，PNG 解码校验通过；已目视核对标题／危险度层级、属性“炎”、进入／返回，以及面板中无行动点消耗区。仅参考图任务，未运行游戏测试或打包。
