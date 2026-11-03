@@ -54,6 +54,7 @@ public class BattleEnemyController : MonoBehaviour
     private Vector2 speedButtonMultiGroupOffset = Vector2.zero;
     private float speedButtonHorizontalSpacing = 0.82f;
     private int temporarySpeedButtonCountOverride = -1;
+    private SpriteRenderer speedLayoutBodyRenderer;
 
     private const string BurnStatusId = "burn";
     private static int aliveBleedDecayPreventerCount;
@@ -103,6 +104,8 @@ public class BattleEnemyController : MonoBehaviour
         Vector2 min = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
         Vector2 max = new Vector2(float.NegativeInfinity, float.NegativeInfinity);
         bool found = false;
+        Vector3 anchor = Vector3.zero;
+        int visibleButtonCount = 0;
         for (int i = 0; i < activeSpeedButtons.Count; i++)
         {
             SpeedButton button = activeSpeedButtons[i];
@@ -124,6 +127,8 @@ public class BattleEnemyController : MonoBehaviour
                 max = Vector2.Max(max, screen);
             }
             found = true;
+            anchor += button.transform.position;
+            visibleButtonCount++;
         }
         if (!found)
             return;
@@ -132,17 +137,105 @@ public class BattleEnemyController : MonoBehaviour
                 : Mathf.Clamp(0f, visible.xMin - min.x, visible.xMax - max.x),
             max.y - min.y > visible.height ? visible.center.y - (min.y + max.y) * 0.5f
                 : Mathf.Clamp(0f, visible.yMin - min.y, visible.yMax - max.y));
+        if (max.x - min.x <= visible.width && max.y - min.y <= visible.height
+            && TryGetSpeedLayoutBodyBounds(out Bounds bodyBounds)
+            && TryProjectSpeedLayoutBounds(camera, bodyBounds, out Rect body))
+        {
+            // Configured offsets and floating visuals can put an otherwise on-screen
+            // badge over the actual body. Keep its entire halo outside that silhouette.
+            float gap = Mathf.Clamp((max.y - min.y) * 0.16f, 6f, padding);
+            float lift = Mathf.Max(shift.y, body.yMax + gap - min.y);
+            if (max.y + lift <= visible.yMax)
+                shift.y = lift;
+            else
+                shift = FindSpeedGroupClearance(visible, body, min, max, shift, gap);
+        }
         if (shift.sqrMagnitude < 0.001f)
             return;
+        anchor /= visibleButtonCount;
+        Vector3 screenAnchor = camera.WorldToScreenPoint(anchor);
+        screenAnchor.x += shift.x;
+        screenAnchor.y += shift.y;
+        // A single translation preserves spacing and authored depth. Unprojecting
+        // each badge separately changes spacing with perspective and drifts in Z.
+        Plane plane = new Plane(transform.forward, anchor);
+        Ray ray = camera.ScreenPointToRay(screenAnchor);
+        if (!plane.Raycast(ray, out float distance))
+            return;
+        Vector3 delta = ray.GetPoint(distance) - anchor;
         foreach (SpeedButton button in activeSpeedButtons)
         {
             if (button == null || button.UsesHeadlessExecution || !button.gameObject.activeInHierarchy)
                 continue;
-            Vector3 screen = camera.WorldToScreenPoint(button.transform.position);
-            screen.x += shift.x;
-            screen.y += shift.y;
-            button.transform.position = camera.ScreenToWorldPoint(screen);
+            button.transform.position += delta;
         }
+    }
+
+    private static Vector2 FindSpeedGroupClearance(Rect visible, Rect body, Vector2 min, Vector2 max,
+        Vector2 clamped, float gap)
+    {
+        Rect occupied = Rect.MinMaxRect(body.xMin - gap, body.yMin - gap, body.xMax + gap, body.yMax + gap);
+        Rect current = new Rect(min + clamped, max - min);
+        if (!current.Overlaps(occupied))
+            return clamped;
+        float width = max.x - min.x, height = max.y - min.y;
+        float y = Mathf.Clamp(body.yMax - height * 0.5f, visible.yMin, visible.yMax - height);
+        float left = Mathf.Min(visible.xMax - width, occupied.xMin - width);
+        float right = Mathf.Max(visible.xMin, occupied.xMax);
+        bool canLeft = left >= visible.xMin;
+        bool canRight = right + width <= visible.xMax;
+        if (canLeft || canRight)
+        {
+            float x = !canRight || (canLeft && Mathf.Abs(left - current.x) <= Mathf.Abs(right - current.x)) ? left : right;
+            return new Vector2(x - min.x, y - min.y);
+        }
+        float below = Mathf.Min(visible.yMax - height, occupied.yMin - height);
+        if (below >= visible.yMin)
+            return new Vector2(clamped.x, below - min.y);
+        // A body covering the complete safe viewport leaves no external rectangle.
+        // Retain the reachable edge placement rather than moving controls offscreen.
+        return clamped;
+    }
+
+    private bool TryGetSpeedLayoutBodyBounds(out Bounds bounds)
+    {
+        if (speedLayoutBodyRenderer == null)
+            speedLayoutBodyRenderer = FindPrimaryBodyRenderer(transform);
+        if (speedLayoutBodyRenderer != null && speedLayoutBodyRenderer.sprite != null)
+        {
+            bounds = speedLayoutBodyRenderer.bounds;
+            return true;
+        }
+        Sprite sprite = GetCurrentStageSprite();
+        bounds = default;
+        if (sprite == null)
+            return false;
+        Vector3 scale = ResolveBodyScale();
+        Vector3 size = Vector3.Scale(sprite.bounds.size, new Vector3(Mathf.Abs(scale.x), Mathf.Abs(scale.y), Mathf.Abs(scale.z)));
+        Vector3 centre = ResolveVisualOffset() + Vector3.up * size.y * 0.5f;
+        bounds = new Bounds(transform.TransformPoint(centre), Vector3.zero);
+        for (int corner = 0; corner < 8; corner++)
+            bounds.Encapsulate(transform.TransformPoint(centre + Vector3.Scale(size * 0.5f,
+                new Vector3((corner & 1) == 0 ? -1f : 1f, (corner & 2) == 0 ? -1f : 1f, (corner & 4) == 0 ? -1f : 1f))));
+        return true;
+    }
+
+    private static bool TryProjectSpeedLayoutBounds(Camera camera, Bounds bounds, out Rect rect)
+    {
+        Vector2 min = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
+        Vector2 max = new Vector2(float.NegativeInfinity, float.NegativeInfinity);
+        rect = default;
+        for (int corner = 0; corner < 8; corner++)
+        {
+            Vector3 screen = camera.WorldToScreenPoint(bounds.center + Vector3.Scale(bounds.extents,
+                new Vector3((corner & 1) == 0 ? -1f : 1f, (corner & 2) == 0 ? -1f : 1f, (corner & 4) == 0 ? -1f : 1f)));
+            if (screen.z <= camera.nearClipPlane)
+                return false;
+            min = Vector2.Min(min, screen);
+            max = Vector2.Max(max, screen);
+        }
+        rect = Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+        return true;
     }
 
     private void Awake()
@@ -1893,6 +1986,7 @@ public class BattleEnemyController : MonoBehaviour
     private void ApplyCurrentStageVisual()
     {
         SpriteRenderer renderer = FindPrimaryBodyRenderer(transform);
+        speedLayoutBodyRenderer = renderer;
         if (renderer == null)
             return;
 

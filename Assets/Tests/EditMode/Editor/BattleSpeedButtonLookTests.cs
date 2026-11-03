@@ -68,6 +68,37 @@ public sealed class BattleSpeedButtonLookTests
     }
 
     [Test]
+    public void ViewportBoundsIncludeTheActiveHaloAfterMovingWithoutPhysicsSync()
+    {
+        SpeedButton button = root.GetComponent<SpeedButton>();
+        BattleSpeedButtonLook look = root.GetComponent<BattleSpeedButtonLook>();
+        bool previousSync = Physics2D.autoSyncTransforms;
+        try
+        {
+            Physics2D.autoSyncTransforms = false;
+            look.RefreshLook();
+            button.GetViewportBounds();
+            root.transform.position = new Vector3(9f, 6f, 0f);
+            foreach (bool pressed in new[] { false, true })
+            {
+                button.unpressedButton.transform.localPosition = pressed ? Vector3.one * 100f : Vector3.zero;
+                button.pressedButton.transform.localPosition = pressed ? Vector3.zero : Vector3.one * 100f;
+                button.unpressedButton.SetActive(!pressed);
+                button.pressedButton.SetActive(pressed);
+                Assert.IsTrue(look.TryGetVisualBounds(out Bounds halo));
+                Bounds viewport = button.GetViewportBounds();
+                viewport.Expand(0.00001f); // Bounds centre/extents reconstruction can round by one float ULP.
+                Assert.IsTrue(viewport.Contains(halo.min));
+                Assert.IsTrue(viewport.Contains(halo.max));
+                Assert.That(viewport.size.x, Is.LessThan(10f), "Inactive state geometry must not enlarge the bounds.");
+            }
+            button.HideForCombat();
+            Assert.IsFalse(look.TryGetVisualBounds(out _));
+        }
+        finally { Physics2D.autoSyncTransforms = previousSync; }
+    }
+
+    [Test]
     public void HeadlessBattleDoesNotAllocateGlowObjectsOrAdvanceRandomState()
     {
         SpeedButton button = root.GetComponent<SpeedButton>();

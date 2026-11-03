@@ -35,6 +35,7 @@ public class SpeedButton : MonoBehaviour
     private PolygonCollider2D viewportCollider;
     private Bounds viewportLocalBounds;
     private int viewportPathCount;
+    private BattleSpeedButtonLook viewportLook;
 
     [Header("Button Settings")]
     [Tooltip("按钮类型：0=敌方，1=我方")]
@@ -1223,7 +1224,7 @@ public class SpeedButton : MonoBehaviour
         return new Bounds(transform.position, Vector3.one);
     }
 
-    /// <summary>The clickable badge and its visible number, excluding intent curves.</summary>
+    /// <summary>The badge, visible halo and number, excluding intent curves.</summary>
     public Bounds GetViewportBounds()
     {
         Bounds local = new Bounds(Vector3.zero, Vector3.one * 0.8f);
@@ -1259,6 +1260,10 @@ public class SpeedButton : MonoBehaviour
             if (label != null && label.enabled && label.bounds.size.sqrMagnitude > 0.0001f)
                 bounds.Encapsulate(label.bounds);
         }
+        if (viewportLook == null)
+            viewportLook = GetComponent<BattleSpeedButtonLook>();
+        if (viewportLook != null && viewportLook.TryGetVisualBounds(out Bounds visualBounds))
+            bounds.Encapsulate(visualBounds);
         return bounds;
     }
 

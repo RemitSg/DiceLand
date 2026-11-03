@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Reflection;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 
 public sealed class BattlePresentationFramingTests
@@ -167,6 +168,104 @@ public sealed class BattlePresentationFramingTests
             Object.DestroyImmediate(target);
             Object.DestroyImmediate(data); Object.DestroyImmediate(sprite); Object.DestroyImmediate(texture);
         }
+    }
+
+    [TestCase(1.777778f, false, false)]
+    [TestCase(1.777778f, true, false)]
+    [TestCase(1.333333f, false, true)]
+    [TestCase(2.4f, false, true)]
+    [TestCase(1.333333f, true, true)]
+    [TestCase(2.4f, true, true)]
+    public void EnemySpeedHalosClearTheRenderedBodyWithNegativeOffsets(float aspect, bool orthographic, bool tall)
+    {
+        GameObject root = new GameObject("Enemy badge clearance regression");
+        root.SetActive(false);
+        GameObject cameraObject = new GameObject("Badge clearance camera");
+        Texture2D texture = new Texture2D(6, tall ? 20 : 5);
+        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f, 1f);
+        EnemyData_SO data = ScriptableObject.CreateInstance<EnemyData_SO>();
+        RenderTexture target = new RenderTexture(Mathf.RoundToInt(1080f * aspect), 1080, 0);
+        bool previousLock = SpeedButton.CombatLocked;
+        try
+        {
+            SpeedButton.CombatLocked = false;
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.targetTexture = target;
+            camera.transform.position = new Vector3(0f, 3f, -24f);
+            camera.orthographic = orthographic;
+            camera.orthographicSize = 6f;
+            camera.fieldOfView = 28f;
+            camera.aspect = aspect;
+            Rect safe = new Rect(90f, 20f, camera.pixelWidth - 150f, 1040f);
+            root.AddComponent<PolygonCollider2D>();
+            SpriteRenderer body = new GameObject("Rendered body", typeof(SpriteRenderer)).GetComponent<SpriteRenderer>();
+            body.transform.SetParent(root.transform, false);
+            body.sprite = sprite;
+            data.enemySprite = sprite;
+            data.baseSpeedButtonCount = 3;
+            data.speedButtonOffset = new Vector2(0f, -3f);
+            data.baseHP = 20;
+            BattleEnemyController enemy = root.AddComponent<BattleEnemyController>();
+            enemy.enemyData = data;
+            var buttons = new System.Collections.Generic.List<SpeedButton>();
+            for (int i = 0; i < 3; i++)
+            {
+                GameObject badge = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Button.prefab"), root.transform);
+                buttons.Add(badge.GetComponent<SpeedButton>());
+            }
+            enemy.RegisterSpeedButtons(buttons);
+            root.transform.position = new Vector3(4f, 0f, 0f);
+            root.SetActive(true);
+            camera.transform.rotation = Quaternion.Euler(3f, 0f, 0f);
+            body.transform.localPosition += Vector3.up;
+            foreach (SpeedButton button in buttons)
+                button.GetComponent<BattleSpeedButtonLook>().RefreshLook();
+            Vector3 actorPosition = root.transform.position;
+            enemy.FitSpeedButtonsToCamera(camera, safe);
+            Rect bodyRect = ProjectBounds(camera, body.bounds);
+            Rect group = ProjectBounds(camera, buttons[0].GetViewportBounds());
+            foreach (SpeedButton button in buttons)
+            {
+                Rect badge = ProjectBounds(camera, button.GetViewportBounds());
+                group = Rect.MinMaxRect(Mathf.Min(group.xMin, badge.xMin), Mathf.Min(group.yMin, badge.yMin),
+                    Mathf.Max(group.xMax, badge.xMax), Mathf.Max(group.yMax, badge.yMax));
+                Assert.That(badge.xMin, Is.GreaterThanOrEqualTo(safe.xMin + 17f));
+                Assert.That(badge.xMax, Is.LessThanOrEqualTo(safe.xMax - 17f));
+                Assert.That(badge.yMin, Is.GreaterThanOrEqualTo(safe.yMin + 17f));
+                Assert.That(badge.yMax, Is.LessThanOrEqualTo(safe.yMax - 128f));
+            }
+            Rect clearance = Rect.MinMaxRect(bodyRect.xMin - 5f, bodyRect.yMin - 5f, bodyRect.xMax + 5f, bodyRect.yMax + 5f);
+            Assert.IsFalse(group.Overlaps(clearance), "The complete halo group must leave a visible gap around the body.");
+            if (!tall)
+                Assert.Greater(group.yMin, bodyRect.yMax + 5f, "Use the head clearance whenever it is available.");
+            else
+                Assert.IsTrue(group.xMax < bodyRect.xMin || group.xMin > bodyRect.xMax, "A tall body needs side clearance.");
+            Vector3 fitted = buttons[0].transform.position;
+            for (int frame = 0; frame < 120; frame++)
+                enemy.FitSpeedButtonsToCamera(camera, safe);
+            Assert.That(Vector3.Distance(fitted, buttons[0].transform.position), Is.LessThan(0.001f));
+            Assert.That(buttons[0].transform.localPosition.z, Is.EqualTo(0f).Within(0.001f));
+            Assert.That(buttons[1].transform.localPosition.x - buttons[0].transform.localPosition.x, Is.EqualTo(0.82f).Within(0.001f));
+            Assert.AreEqual(actorPosition, root.transform.position);
+        }
+        finally
+        {
+            SpeedButton.CombatLocked = previousLock;
+            Object.DestroyImmediate(root); Object.DestroyImmediate(cameraObject); Object.DestroyImmediate(target);
+            Object.DestroyImmediate(data); Object.DestroyImmediate(sprite); Object.DestroyImmediate(texture);
+        }
+    }
+
+    private static Rect ProjectBounds(Camera camera, Bounds bounds)
+    {
+        Vector2 min = Vector2.one * float.PositiveInfinity, max = Vector2.one * float.NegativeInfinity;
+        for (int corner = 0; corner < 8; corner++)
+        {
+            Vector3 point = camera.WorldToScreenPoint(bounds.center + Vector3.Scale(bounds.extents,
+                new Vector3((corner & 1) == 0 ? -1f : 1f, (corner & 2) == 0 ? -1f : 1f, (corner & 4) == 0 ? -1f : 1f)));
+            min = Vector2.Min(min, point); max = Vector2.Max(max, point);
+        }
+        return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
     }
 
     private static SpriteRenderer CreateActor(Transform parent, Sprite sprite, float x, float width, float height)

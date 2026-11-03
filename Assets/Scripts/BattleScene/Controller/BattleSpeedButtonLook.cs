@@ -69,6 +69,22 @@ public sealed class BattleSpeedButtonLook : MonoBehaviour
 
     private static SpriteRenderer Body(GameObject target) => target != null ? target.GetComponent<SpriteRenderer>() : null;
 
+    public bool TryGetVisualBounds(out Bounds bounds)
+    {
+        bounds = default;
+        bool found = false;
+        if (halos == null)
+            return false;
+        foreach (MeshRenderer halo in halos)
+        {
+            if (halo == null || !halo.enabled || !halo.gameObject.activeInHierarchy)
+                continue;
+            if (found) bounds.Encapsulate(halo.bounds);
+            else { bounds = halo.bounds; found = true; }
+        }
+        return found;
+    }
+
     private MeshRenderer CreateHalo(SpriteRenderer source, out Vector4 bounds)
     {
         bounds = new Vector4(-1f, -1f, 2f, 2f);
