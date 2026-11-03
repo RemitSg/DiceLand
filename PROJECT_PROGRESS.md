@@ -1847,3 +1847,12 @@ Root CLAUDE.md references the same AGENTS.md convention so Claude-based agents s
 - 最终相关 EditMode 264/264、PlayMode 24/24 通过。实际序列化 SampleScene 组件及字体接线检查通过；九种正式组件渲染已检查，包括小屏、安全区、多角色／多物品及失败空奖励。
 - 扩大筛选时复现此前已有的 MapEventNestedFlowTests.SaveAssetCatalog_IncludesNestedFollowUpEvents 失败（175/176），本次未修改该事件索引问题；最终明确 UI／奖励回归范围不包含该既有失败。
 - 交付说明：docs/visuals/battle-settlement-ui.md；经验图标出处：docs/visuals/experience-keyword-icon-20261102-prompt.txt；可复现渲染入口 BattleSettlementVisualTools.BatchPreview。临时 PNG、布局、测试日志与隔离工程仍在忽略输出目录；未打包 APK、未进行真机测试。
+
+
+## 2026-11-03 修复正式事件面板白底与旧布局覆盖
+
+- 用户实际“发光的树洞”截图暴露正式 MapScene 的旧序列化覆盖：白色 panelBackgroundColor、1080×640 面板及 36／24／24 字号，导致新版浅色正文在白底上不可读。此前新建组件的默认预览未覆盖这条路径。
+- 精确同步 MapScene 中既有 MapEventOverlay 的六处有效样式值：森林绿不透明底、配套暗幕、1280×920、52／32／32 字号；保留字体接入、事件文案／效果、独立滚动和存档逻辑。
+- MapEventVisualTools 改为读取正式场景已有组件及管理器字体，并限定场景查找范围；新增正式树洞事件和匹配用户截图的 2048×943 渲染。通过附加场景临时读取，不保存或执行地图战局。
+- 新增三项真实场景配置回归，检查正文对比度、阅读字号、完整文字、三项选项、布局分离与安全边界；相关 EditMode 88/88、PlayMode 12/12 通过。九张正式配置渲染逐一复核，六个源码／元数据副本校验一致。
+- 说明更新于 docs/visuals/event-panel-ui.md；本次证据在忽略目录 outputs/agent-battle/event-scene-fix-20261103/。未改敌人／技能／遗物／事件效果等内容配置，无需目录同步；未重新打包 APK。

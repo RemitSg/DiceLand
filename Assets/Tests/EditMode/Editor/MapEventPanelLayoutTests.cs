@@ -75,6 +75,45 @@ public sealed class MapEventPanelLayoutTests
         Assert.IsFalse(text.enableAutoSizing, "Keep readable body sizes.");
     }
 
+    [TestCase(2340, 1080)]
+    [TestCase(2048, 943)]
+    [TestCase(1600, 1200)]
+    public void ExistingMapSceneOverlayKeepsReadableContrastAndFullRemadeLayout(int width, int height)
+    {
+        MapEventVisualTools.CopyProductionSettings(overlay);
+        MapEvent_SO tree = AssetDatabase.LoadAssetAtPath<MapEvent_SO>("Assets/Data/Events/002 发光的树洞/发光的树洞.asset");
+        Assert.IsNotNull(tree);
+        overlay.Show(null, tree, null);
+        Layout(width, height);
+        Color background = Find("Panel").GetComponent<Image>().color;
+        TMP_Text story = Find("ContentText").GetComponent<TMP_Text>();
+        Assert.GreaterOrEqual(background.a, 0.99f, "The story must not wash out against the bright forest.");
+        Assert.Greater(background.g, background.r);
+        Assert.Greater((Luminance(story.color) + 0.05f) / (Luminance(background) + 0.05f), 7f,
+            "Catch serialized white-panel overrides, which new-component previews cannot detect.");
+        Assert.GreaterOrEqual(story.fontSize, 32);
+        Assert.GreaterOrEqual(Find("Title").GetComponent<TMP_Text>().fontSize, 52);
+        Assert.AreEqual(tree.eventContent, story.text);
+        Assert.AreEqual(3, host.GetComponentsInChildren<Button>().Count(b => b.name.StartsWith("Option_")));
+        Rect panel = Bounds("Panel");
+        Contains(Bounds("SafeArea"), panel);
+        Contains(panel, Bounds("ContentScrollRect"));
+        Contains(panel, Bounds("OptionScrollRect"));
+        Contains(panel, Bounds("ConfirmButton"));
+        Assert.IsFalse(Bounds("ContentScrollRect").Overlaps(Bounds("OptionScrollRect")));
+        Assert.IsFalse(Bounds("OptionScrollRect").Overlaps(Bounds("Footer")));
+        Assert.Greater(Bounds("ContentScrollRect").height, panel.height * 0.38f);
+        story.ForceMeshUpdate(true, true);
+        Assert.IsTrue(story.textInfo.characterInfo.Take(story.textInfo.characterCount).Any(c => c.isVisible));
+        Assert.IsFalse(story.isTextTruncated);
+    }
+
+    private static float Luminance(Color color)
+    {
+        Color linear = color.linear;
+        return linear.r * 0.2126f + linear.g * 0.7152f + linear.b * 0.0722f;
+    }
+
     [Test]
     public void LongNarrativeAndManyWrappedChoicesRetainAllTextAndScrollIndependently()
     {

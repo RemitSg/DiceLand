@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using TMPro;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>Real event UI over the disposable map preview; never reads saves or executes event rewards.</summary>
@@ -24,18 +27,48 @@ public static class MapEventVisualTools
         Capture("event-long.png", 2340, 1080, longContent: true);
         Capture("event-unavailable.png", 2340, 1080, unavailable: true);
         Capture("event-result.png", 2340, 1080, result: true);
-        File.WriteAllText(Path.Combine(OutputPath, "preview-complete.json"), "{\"success\":true,\"images\":7,\"playerSavesUsed\":false,\"eventEffectsExecuted\":false}");
+        Capture("event-tree-hole.png", 2340, 1080, eventName: "发光的树洞");
+        Capture("event-tree-hole-screenshot.png", 2048, 943, eventName: "发光的树洞");
+        File.WriteAllText(Path.Combine(OutputPath, "preview-complete.json"), "{\"success\":true,\"images\":9,\"productionSceneSettingsUsed\":true,\"playerSavesUsed\":false,\"eventEffectsExecuted\":false}");
     }
 
-    public static string Capture(string name, int width, int height, bool longContent = false, bool unavailable = false, bool result = false, Rect? safe = null)
+    /// <summary>Use the same existing scene component and map fonts as RunGameManager, rather than new-component defaults.</summary>
+    public static void CopyProductionSettings(MapEventOverlay target)
+    {
+        Scene original = SceneManager.GetActiveScene();
+        Scene scene = SceneManager.GetSceneByPath("Assets/MapScene.scene");
+        bool opened = !scene.IsValid() || !scene.isLoaded;
+        if (opened) scene = EditorSceneManager.OpenScene("Assets/MapScene.scene", OpenSceneMode.Additive);
+        try
+        {
+            RunGameManager manager = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<RunGameManager>(true)).FirstOrDefault();
+            if (manager == null) throw new InvalidDataException("Production map manager is missing.");
+            // Resolve within this scene so another open scene or the capture target cannot
+            // supply its defaults. Reading the serialized component never starts a map run.
+            SerializedObject settings = new SerializedObject(manager);
+            MapEventOverlay source = settings.FindProperty("mapEventOverlay").objectReferenceValue as MapEventOverlay;
+            if (source == null) source = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<MapEventOverlay>(true)).SingleOrDefault();
+            if (source == null || source.gameObject.scene != scene) throw new InvalidDataException("Event overlay did not resolve from the production map scene.");
+            EditorUtility.CopySerialized(source, target);
+            target.ConfigureFonts(settings.FindProperty("mapKeywordFont").objectReferenceValue as TMP_FontAsset,
+                settings.FindProperty("mapBodyFont").objectReferenceValue as TMP_FontAsset);
+        }
+        finally
+        {
+            if (original.IsValid() && original.isLoaded) SceneManager.SetActiveScene(original);
+            if (opened) EditorSceneManager.CloseScene(scene, true);
+        }
+    }
+
+    public static string Capture(string name, int width, int height, bool longContent = false, bool unavailable = false, bool result = false, Rect? safe = null, string eventName = "熄灭的营火")
     {
         MapEvent_SO campfire = null;
         foreach (string guid in AssetDatabase.FindAssets("t:MapEvent_SO", new[] { "Assets/Data/Events" }))
         {
             MapEvent_SO item = AssetDatabase.LoadAssetAtPath<MapEvent_SO>(AssetDatabase.GUIDToAssetPath(guid));
-            if (item != null && item.eventName == "熄灭的营火") { campfire = item; break; }
+            if (item != null && item.eventName == eventName) { campfire = item; break; }
         }
-        if (campfire == null) throw new InvalidDataException("Production campfire event not found.");
+        if (campfire == null) throw new InvalidDataException("Production event not found: " + eventName);
         MapEvent_SO sample = UnityEngine.Object.Instantiate(campfire);
         try
         {
@@ -57,8 +90,7 @@ public static class MapEventVisualTools
                 GameObject eventHost = new GameObject("EventPanelPreview");
                 eventHost.transform.SetParent(host.transform, false);
                 MapEventOverlay overlay = eventHost.AddComponent<MapEventOverlay>();
-                TMP_FontAsset font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(AssetDatabase.GUIDToAssetPath("c6e7143cd2df45b45a784ef8c61a210f"));
-                overlay.ConfigureFonts(font, font);
+                CopyProductionSettings(overlay);
                 overlay.Show(tile, sample, PreviewChoice, (t, e, option) => unavailable && option == sample.options[0]
                     ? new MapEventOverlay.EventOptionPreviewData { isSelectable = false, unavailableReason = "当前不满足该选项的执行条件。" } : null);
                 Canvas canvas = overlay.GetComponentInChildren<Canvas>();

@@ -1193,13 +1193,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keywordFont: {fileID: 11400000, guid: 1927579a4b7620b428469b73f8d5046f, type: 2}
   bodyFont: {fileID: 11400000, guid: c6e7143cd2df45b45a784ef8c61a210f, type: 2}
-  titleFontSize: 36
-  bodyFontSize: 24
-  buttonFontSize: 24
-  panelSize: {x: 1080, y: 640}
+  titleFontSize: 52
+  bodyFontSize: 32
+  buttonFontSize: 32
+  panelSize: {x: 1280, y: 920}
   panelBackgroundSprite: {fileID: 21300000, guid: eacc67c39564c3c4abad8dcbb48de01f, type: 3}
-  panelBackgroundColor: {r: 1, g: 1, b: 1, a: 1}
-  backdropColor: {r: 0, g: 0, b: 0, a: 0.52}
+  panelBackgroundColor: {r: 0.035, g: 0.09, b: 0.061, a: 1}
+  backdropColor: {r: 0.005, g: 0.012, b: 0.009, a: 0.64}
   panelOffset: {x: 0, y: 0}
   titleOffset: {x: 40, y: -30}
   titleSize: {x: 520, y: 42}
