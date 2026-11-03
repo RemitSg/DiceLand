@@ -21,4 +21,26 @@ half3 ForestCanopyTransport(half3 pigment, half4 response, float3 normalWS, floa
     return (reflected+transmitted) * DiceLandForestSunColor() * (light * visible * pigmentGate);
 }
 
+half3 ForestCanopyLeafGloss(half3 pigment, half4 response, float3 normalWS, float3 world,
+    float strength, float windStrength)
+{
+    float weight = saturate(strength) * saturate(_DiceLandForestLighting) * response.a * response.b;
+    if (weight <= 0.001)
+        return 0;
+    float3 sun = DiceLandForestSunDirection();
+    // Match the front-facing painted key used by the diffuse canopy response.
+    float3 key = float3(sun.xy, -abs(sun.z));
+    float2 bend = DiceLandForestCanopyBend(DiceLandForestProjectedGround(world), DiceLandForestCanopyBreeze());
+    float motion = saturate(windStrength) * saturate(_DiceLandForestOpenings.w);
+    float3 normal = SafeNormalize(normalWS + float3(bend.x * 0.75, bend.y * 0.5, 0) * motion);
+    float3 view = SafeNormalize(GetCameraPositionWS() - world);
+    float3 halfway = SafeNormalize(key + view);
+    float incidence = saturate(dot(normal, key));
+    float lobe = pow(saturate(dot(normal, halfway)), 16.0);
+    float fresnel = 0.08 + 0.92 * pow(1.0 - saturate(dot(view, halfway)), 5.0);
+    float pigmentGate = smoothstep(0.06, 0.32, dot(pigment, half3(0.2126, 0.7152, 0.0722)));
+    return DiceLandForestSunColor() * (lobe * fresnel * incidence * 10.0 * weight
+        * pigmentGate * DiceLandForestSunVisibility(world));
+}
+
 #endif

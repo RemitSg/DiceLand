@@ -12,6 +12,7 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - _CANOPY_LEAF_GLOSS
   - _CANOPY_LIGHT_RESPONSE
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -119,6 +120,7 @@ Material:
     - _Glossiness: 0.05
     - _GlossyReflections: 0
     - _HighlightGain: 1.6
+    - _LeafGlossStrength: 1
     - _LeafTransmission: 0.7
     - _LocalWindStrength: 0.85
     - _Metallic: 0

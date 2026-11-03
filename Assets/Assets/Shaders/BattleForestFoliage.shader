@@ -20,6 +20,7 @@ Shader "DiceLand/Battle Forest Foliage"
         _ResponseWeight ("Canopy response strength", Range(0,1)) = 0.75
         _BarkLightGain ("Broad bark sunlight", Range(0,2)) = 0.8
         _LeafTransmission ("Thin leaf transmission", Range(0,2)) = 0.7
+        [Toggle(_CANOPY_LEAF_GLOSS)] _LeafGlossStrength ("Sunlit leaf gloss", Float) = 0
         [HideInInspector] _RendererColor ("Renderer color", Color) = (1,1,1,1)
         [HideInInspector] _Flip ("Flip", Vector) = (1,1,1,1)
         [PerRendererData] _AlphaTex ("External alpha", 2D) = "white" {}
@@ -42,7 +43,7 @@ Shader "DiceLand/Battle Forest Foliage"
         half4 _Color, _PaintedFill;
         float _Cutoff, _EnableExternalAlpha, _SwayAmplitude, _DefocusTexels, _HighlightGain, _SceneLightingWeight, _LocalWindStrength;
         float _SoftSilhouette, _SrcBlend, _DstBlend, _ZWrite;
-        float _CanopyResponse, _ResponseWeight, _BarkLightGain, _LeafTransmission;
+        float _CanopyResponse, _ResponseWeight, _BarkLightGain, _LeafTransmission, _LeafGlossStrength;
         CBUFFER_END
         TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
         TEXTURE2D(_AlphaTex); SAMPLER(sampler_AlphaTex);
@@ -161,6 +162,7 @@ Shader "DiceLand/Battle Forest Foliage"
             #pragma multi_compile_fog
             #pragma multi_compile _ ETC1_EXTERNAL_ALPHA
             #pragma shader_feature_local _CANOPY_LIGHT_RESPONSE
+            #pragma shader_feature_local_fragment _CANOPY_LEAF_GLOSS
             half4 Frag(Varyings input) : SV_Target
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
@@ -193,6 +195,11 @@ Shader "DiceLand/Battle Forest Foliage"
                         +input.normalY*(normalOS.y*frameFlip.y)+input.normalZ*normalOS.z);
                     color.rgb+=ForestCanopyTransport(pigment,response,normalWS,input.world,
                         _ResponseWeight,_BarkLightGain,_LeafTransmission);
+                    #if defined(_CANOPY_LEAF_GLOSS)
+                        if (_LeafGlossStrength > 0.001)
+                            color.rgb+=ForestCanopyLeafGloss(pigment,response,normalWS,input.world,
+                                _LeafGlossStrength * saturate(_ResponseWeight), _LocalWindStrength);
+                    #endif
                 #endif
                 return half4(MixFog(color.rgb,input.fog),_SoftSilhouette > 0.5 ? color.a : 1);
             }

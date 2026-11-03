@@ -73,19 +73,27 @@ public static class BattleForestCanopyBakeTools
     {
         if (source==null) throw new ArgumentNullException(nameof(source));
         Texture2D map=BakeMap();
-        Material material=AssetDatabase.LoadAssetAtPath<Material>(MaterialPath);
-        if (material==null)
+        Material configured=new Material(source){name="Ancient Canopy Light"};
+        try
         {
-            material=new Material(source){name="Ancient Canopy Light"};AssetDatabase.CreateAsset(material,MaterialPath);
+            configured.SetTexture(MapProperty,map);configured.SetFloat("_CanopyResponse",1f);
+            configured.SetFloat("_ResponseWeight",1f);configured.SetFloat("_BarkLightGain",1.2f);configured.SetFloat("_LeafTransmission",0.7f);
+            configured.SetFloat("_LocalWindStrength",0.85f);configured.SetFloat("_LeafGlossStrength",1f);
+            configured.EnableKeyword("_CANOPY_LIGHT_RESPONSE");configured.EnableKeyword("_CANOPY_LEAF_GLOSS");
+            Material material=AssetDatabase.LoadAssetAtPath<Material>(MaterialPath);
+            if(material==null)
+            {
+                AssetDatabase.CreateAsset(configured,MaterialPath);material=configured;configured=null;
+            }
+            else
+            {
+                // Publish the complete configuration at once, retaining the asset's GUID.
+                EditorUtility.CopySerialized(configured,material);EditorUtility.SetDirty(material);
+            }
+            AssetDatabase.SaveAssetIfDirty(material);
+            return material;
         }
-        material.CopyPropertiesFromMaterial(source);
-        material.name="Ancient Canopy Light";
-        material.SetTexture(MapProperty,map);material.SetFloat("_CanopyResponse",1f);
-        material.SetFloat("_ResponseWeight",1f);material.SetFloat("_BarkLightGain",1.2f);material.SetFloat("_LeafTransmission",0.7f);
-        material.SetFloat("_LocalWindStrength",0.85f);
-        material.EnableKeyword("_CANOPY_LIGHT_RESPONSE");
-        EditorUtility.SetDirty(material);AssetDatabase.SaveAssetIfDirty(material);
-        return material;
+        finally { if(configured!=null) UnityEngine.Object.DestroyImmediate(configured); }
     }
 
     public static Texture2D BakeMap()
