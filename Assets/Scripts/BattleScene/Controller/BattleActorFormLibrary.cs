@@ -12,6 +12,7 @@ public sealed class BattleActorFormLibrary : ScriptableObject
         public Texture2D materialMap;
         // Legacy material maps have silhouette A; emission must be explicitly opted in.
         public bool emissiveAlpha;
+        public bool fabricSheen;
     }
 
     [SerializeField] private Entry[] entries = Array.Empty<Entry>();
@@ -32,6 +33,14 @@ public sealed class BattleActorFormLibrary : ScriptableObject
         if (sprite == null || sprite.packed) return false;
         foreach (Entry entry in entries)
             if (entry.sprite == sprite) return entry.materialMap != null && entry.emissiveAlpha;
+        return false;
+    }
+
+    public bool UsesFabricSheen(Sprite sprite)
+    {
+        if (sprite == null || sprite.packed) return false;
+        foreach (Entry entry in entries)
+            if (entry.sprite == sprite) return entry.materialMap != null && entry.fabricSheen;
         return false;
     }
 

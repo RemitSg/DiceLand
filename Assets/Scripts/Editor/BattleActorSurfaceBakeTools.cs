@@ -14,6 +14,7 @@ public static class BattleActorSurfaceBakeTools
     public const string ManPath = "Assets/Data/Characters/Man/Man_InBattle.png";
     public const string MollyPath = "Assets/Assets/Textures/Characters/Molly/Molly_InBattle.png";
     public const string CoffinPath = "Assets/Data/Enemies/Enemies/037 BlackCoffin/黑棺_x4.png";
+    public const int MollyMapLongEdge = 512;
 
     private sealed class Region
     {
@@ -52,12 +53,13 @@ public static class BattleActorSurfaceBakeTools
             {
                 if (!ImageConversion.LoadImage(source, File.ReadAllBytes(path), false))
                     throw new InvalidOperationException("Cannot read material source: " + path);
-                float scale = (float)(path == CoffinPath ? 512 : LongEdge) / Mathf.Max(source.width, source.height);
+                int longEdge = path == MollyPath ? MollyMapLongEdge : path == CoffinPath ? 512 : LongEdge;
+                float scale = (float)longEdge / Mathf.Max(source.width, source.height);
                 int width = Mathf.Max(4, Mathf.RoundToInt(source.width * scale));
                 int height = Mathf.Max(4, Mathf.RoundToInt(source.height * scale));
                 map = new Texture2D(width, height, TextureFormat.RGBA32, true, true)
                 {
-                    name = sprite.name + (path == CoffinPath ? " Surface" : " material regions"), filterMode = FilterMode.Trilinear,
+                    name = sprite.name + (path == CoffinPath || path == MollyPath ? " Surface" : " material regions"), filterMode = FilterMode.Trilinear,
                     wrapMode = TextureWrapMode.Clamp, anisoLevel = 1
                 };
                 Color32[] pixels = BakePixels(path, width, height);
@@ -82,6 +84,7 @@ public static class BattleActorSurfaceBakeTools
                 }
                 entry.FindPropertyRelative("materialMap").objectReferenceValue = existing;
                 entry.FindPropertyRelative("emissiveAlpha").boolValue = path == CoffinPath;
+                entry.FindPropertyRelative("fabricSheen").boolValue = path == ManPath || path == MollyPath;
             }
             finally
             {
@@ -115,7 +118,7 @@ public static class BattleActorSurfaceBakeTools
     {
         if(sourcePath==CoffinPath)
         {
-            RefineCoffinPlanes(pixels,width,height);
+            RefinePlanes(pixels,width,height,CoffinFaces());
             return;
         }
         Volume[] volumes = Volumes(sourcePath);
@@ -153,12 +156,12 @@ public static class BattleActorSurfaceBakeTools
             Color32 result = new Color(refined.x * 0.5f + 0.5f,refined.y * 0.5f + 0.5f,refined.z * 0.5f + 0.5f,1f);
             result.a = pixel.a; pixels[index] = result;
         }
+        if (sourcePath == MollyPath) RefinePlanes(pixels,width,height,MollyPlanes());
     }
 
-    private static void RefineCoffinPlanes(Color32[] pixels,int width,int height)
+    private static void RefinePlanes(Color32[] pixels,int width,int height,Region[] faces)
     {
-        if(pixels==null||pixels.Length!=width*height)throw new ArgumentException("A complete coffin form is required.");
-        Region[] faces=CoffinFaces();
+        if(pixels==null||pixels.Length!=width*height)throw new ArgumentException("A complete form map is required.");
         for(int y=0;y<height;y++)for(int x=0;x<width;x++)
         {
             int i=y*width+x;Color32 pixel=pixels[i];if(pixel.a==0)continue;
@@ -172,6 +175,23 @@ public static class BattleActorSurfaceBakeTools
             Color32 refined=new Color(normal.x*.5f+.5f,normal.y*.5f+.5f,normal.z*.5f+.5f,1);
             refined.a=pixel.a;pixels[i]=refined;
         }
+    }
+
+    private static Region[] MollyPlanes()
+    {
+        // Broad fold faces follow the painted coat and trousers, not pigment gradients.
+        // Coordinates share the 1280x1941 illustration reference used by the material regions.
+        return new[]
+        {
+            Shape(new Color(-.34f,.32f,.884f,.82f),1280,1941, 482,411, 560,359, 703,415, 781,449, 708,473, 565,425),
+            Shape(new Color(.20f,.52f,.830f,.80f),1280,1941, 568,893, 645,862, 716,928, 636,971, 493,1008),
+            Shape(new Color(-.42f,.08f,.904f,.84f),1280,1941, 706,951, 800,979, 729,1123, 687,1290, 665,1377, 685,1114),
+            Shape(new Color(.48f,.23f,.847f,.88f),1280,1941, 800,979, 870,907, 865,1080, 810,1292, 665,1377, 687,1290, 729,1123),
+            Shape(new Color(-.12f,.52f,.846f,.82f),1280,1941, 512,1040, 681,987, 681,1168, 456,1301, 300,1320, 377,1173),
+            Shape(new Color(-.28f,-.30f,.912f,.74f),1280,1941, 300,1320, 456,1301, 681,1168, 480,1448, 304,1454),
+            Shape(new Color(.10f,.57f,.815f,.84f),1280,1941, 895,961, 1017,985, 1162,1081, 1266,1157, 1181,1216, 1078,1153, 878,1109),
+            Shape(new Color(-.22f,-.30f,.928f,.76f),1280,1941, 878,1109, 1078,1153, 1181,1216, 1240,1259, 1153,1336, 1061,1354, 1065,1244, 948,1213)
+        };
     }
 
     private static Region[] CoffinFaces()
@@ -202,7 +222,11 @@ public static class BattleActorSurfaceBakeTools
         {
             new Volume(787,280,793,330,55,70,.90f), new Volume(650,333,680,357,45,37,.72f),
             new Volume(618,495,631,521,78,66,.95f), new Volume(645,587,713,628,45,45,.82f),
-            new Volume(817,616,930,616,46,44,.90f), new Volume(491,599,458,681,33,36,.88f)
+            new Volume(817,616,930,616,46,44,.90f), new Volume(491,599,458,681,33,36,.88f),
+            new Volume(720,147,710,205,136,105,.76f), new Volume(760,695,760,728,83,96,.72f),
+            new Volume(470,1160,354,1332,123,130,.84f), new Volume(967,1080,1132,1165,126,105,.82f),
+            new Volume(188,1590,108,1792,78,116,.88f), new Volume(1105,1501,1098,1711,99,111,.86f),
+            new Volume(262,1462,253,1481,70,65,.84f), new Volume(1129,1396,1129,1413,74,63,.86f)
         };
         return null;
     }
@@ -255,8 +279,19 @@ public static class BattleActorSurfaceBakeTools
             Shape(Skin,1280,1941, 498,539, 547,578, 513,649, 492,681, 481,711, 460,718, 431,694, 426,681, 455,607),
             Shape(Skin,1280,1941, 1056,545, 1070,543, 1085,554, 1107,572, 1107,587, 1093,602, 1086,624, 1072,644, 1045,650, 1044,624, 1050,597),
             Shape(Metal,1280,1941, 548,454, 591,431, 648,452, 699,493, 721,530, 688,565, 624,586, 568,560, 535,532),
-            Shape(Metal,1280,1941, 772,572, 839,568, 895,577, 945,575, 971,598, 976,622, 964,646, 927,668, 855,671, 815,650, 786,629),
-            Shape(Metal,1280,1941, 784,804, 829,779, 871,822, 860,877, 821,900, 787,865)
+            Shape(Leather,1280,1941, 772,572, 839,568, 895,577, 945,575, 971,598, 976,622, 964,646, 927,668, 855,671, 815,650, 786,629),
+            Shape(Metal,1280,1941, 639,554, 675,538, 708,548, 734,560, 700,580, 675,604, 665,636, 647,626, 632,597),
+            Shape(Metal,1280,1941, 674,603, 703,579, 733,567, 741,569, 715,590, 695,621, 688,650, 698,664, 680,654, 667,634),
+            Shape(Metal,1280,1941, 776,573, 788,568, 769,593, 756,621, 761,647, 779,666, 763,662, 747,647, 741,621, 754,591),
+            Shape(Metal,1280,1941, 789,568, 845,579, 887,585, 950,575, 952,583, 888,594, 842,587, 785,577),
+            Shape(Metal,1280,1941, 773,633, 870,587, 884,587, 779,646),
+            Shape(Metal,1280,1941, 835,595, 847,596, 922,659, 910,665),
+            Shape(Metal,1280,1941, 943,579, 952,576, 957,611, 949,637, 939,643, 946,612),
+            Shape(Leather,1280,1941, 616,768, 802,752, 882,824, 867,890, 649,862, 584,826),
+            Shape(Metal,1280,1941, 784,804, 829,779, 871,822, 860,877, 821,900, 787,865),
+            Shape(Metal,1280,1941, 702,975, 710,969, 704,1123, 692,1283, 680,1357, 804,1274, 836,1105, 861,961, 870,921, 880,924, 847,1113, 821,1290, 653,1415, 673,1279, 689,1121),
+            Shape(Metal,1280,1941, 227,1417, 266,1429, 302,1476, 302,1514, 264,1537, 224,1499),
+            Shape(Metal,1280,1941, 1080,1372, 1153,1396, 1217,1366, 1197,1405, 1134,1474, 1105,1434)
         };
         if(path==CoffinPath)return CoffinRegions();
         return null;

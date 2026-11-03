@@ -78,6 +78,20 @@ float DiceLandForestMaterialDiffuse(half3 material, float incidence)
     return (0.30 + 0.96 * wrapped) * lerp(0.94, 0.83, material.g);
 }
 
+half3 DiceLandForestFabricSheen(half3 albedo, half3 material, float normalHalf, float normalView, float incidence)
+{
+    // Charlie distribution and smooth cloth visibility, with a small artistic gain.
+    // Model reference: https://google.github.io/filament/main/filament.html#materialsystem/clothmodel
+    float cloth = (1.0-saturate(material.r)) * (1.0-saturate(material.g)) * smoothstep(0.92,1.0,material.b);
+    float inverseRoughness = rcp(clamp(material.b,0.5,1.0));
+    float sineSquared = max(0.0078125,1.0-saturate(normalHalf)*saturate(normalHalf));
+    float distribution = (2.0+inverseRoughness) * pow(sineSquared,0.5*inverseRoughness) / (2.0*PI);
+    float nl=saturate(incidence),nv=saturate(normalView);
+    float visibility = rcp(max(0.04,4.0*(nl+nv-nl*nv)));
+    half3 sheenColor=sqrt(max(half3(0,0,0),albedo));
+    return sheenColor * (cloth * distribution * visibility * nl * 1.35);
+}
+
 float DiceLandForestMaterialRim(half3 material)
 {
     return lerp(lerp(0.28, 0.62, material.r), 1.35, material.g);

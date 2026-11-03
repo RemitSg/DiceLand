@@ -40,7 +40,9 @@ public static class BattleActorFormBakeTools
             {
                 if (!ImageConversion.LoadImage(source, File.ReadAllBytes(sourcePath), false))
                     throw new InvalidOperationException("Cannot read source alpha: " + sourcePath);
-                float scale = (float)LongEdge / Mathf.Max(source.width, source.height);
+                int longEdge = sourcePath == BattleActorSurfaceBakeTools.MollyPath
+                    ? BattleActorSurfaceBakeTools.MollyMapLongEdge : LongEdge;
+                float scale = (float)longEdge / Mathf.Max(source.width, source.height);
                 int width = Mathf.Max(4, Mathf.RoundToInt(source.width * scale));
                 int height = Mathf.Max(4, Mathf.RoundToInt(source.height * scale));
                 var inside = new bool[width * height];
@@ -49,7 +51,7 @@ public static class BattleActorFormBakeTools
                     inside[y * width + x] = source.GetPixelBilinear((x + 0.5f) / width, (y + 0.5f) / height).a >= 0.5f;
                 form = new Texture2D(width, height, TextureFormat.RGBA32, true, true)
                 {
-                    name = sprite.name + " silhouette form",
+                    name = sprite.name + (sourcePath == BattleActorSurfaceBakeTools.MollyPath ? " Form" : " silhouette form"),
                     wrapMode = TextureWrapMode.Clamp,
                     filterMode = FilterMode.Trilinear,
                     anisoLevel = 1
@@ -74,7 +76,8 @@ public static class BattleActorFormBakeTools
                 }
                 maps.Add(new BattleActorFormLibrary.Entry { sprite = sprite, formMap = existing,
                     materialMap = previousLibrary != null ? previousLibrary.FindMaterialMap(sprite) : null,
-                    emissiveAlpha = previousLibrary != null && previousLibrary.UsesEmissiveAlpha(sprite) });
+                    emissiveAlpha = previousLibrary != null && previousLibrary.UsesEmissiveAlpha(sprite),
+                    fabricSheen = previousLibrary != null && previousLibrary.UsesFabricSheen(sprite) });
             }
             finally
             {
@@ -99,6 +102,7 @@ public static class BattleActorFormBakeTools
             entries.GetArrayElementAtIndex(i).FindPropertyRelative("formMap").objectReferenceValue = maps[i].formMap;
             entries.GetArrayElementAtIndex(i).FindPropertyRelative("materialMap").objectReferenceValue = maps[i].materialMap;
             entries.GetArrayElementAtIndex(i).FindPropertyRelative("emissiveAlpha").boolValue = maps[i].emissiveAlpha;
+            entries.GetArrayElementAtIndex(i).FindPropertyRelative("fabricSheen").boolValue = maps[i].fabricSheen;
         }
         serialized.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(library);

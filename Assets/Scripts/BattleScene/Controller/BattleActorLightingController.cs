@@ -18,6 +18,7 @@ public sealed class BattleActorLightingController : MonoBehaviour
     private static readonly int MaterialMapId = Shader.PropertyToID("_ForestMaterialMap");
     private static readonly int MaterialWeightId = Shader.PropertyToID("_ForestMaterialWeight");
     private static readonly int EmissionWeightId = Shader.PropertyToID("_ForestEmissionWeight");
+    private static readonly int SheenStrengthId = Shader.PropertyToID("_ForestSheenStrength");
     private readonly List<Transform> actors = new List<Transform>();
     private readonly List<Entry> entries = new List<Entry>();
     private float nextRefresh;
@@ -104,6 +105,9 @@ public sealed class BattleActorLightingController : MonoBehaviour
                 if (entry.runtimeMaterial.HasProperty(EmissionWeightId))
                     entry.runtimeMaterial.SetFloat(EmissionWeightId,
                         materialMap != null && formLibrary.UsesEmissiveAlpha(renderer.sprite) ? 1f : 0f);
+                if (entry.runtimeMaterial.HasProperty(SheenStrengthId))
+                    entry.runtimeMaterial.SetFloat(SheenStrengthId,
+                        materialMap != null && formLibrary.UsesFabricSheen(renderer.sprite) ? 1f : 0f);
             }
             entry.lastBounds = bounds;
             entry.lastWeight = surfaceWeight;

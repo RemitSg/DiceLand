@@ -28,6 +28,7 @@ Shader "Assets/Shaders/Lit"
         [HideInInspector] _ForestMaterialMap ("Forest skin, metal and roughness", 2D) = "black" {}
         [HideInInspector] _ForestMaterialWeight ("Forest authored material response", Range(0,1)) = 0
         [HideInInspector] _ForestEmissionWeight ("Forest emissive material regions", Range(0,1)) = 0
+        [HideInInspector] _ForestSheenStrength ("Forest fabric sheen", Range(0,1)) = 0
     }
 
     SubShader
@@ -88,7 +89,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
-            float _ForestMaterialWeight, _ForestEmissionWeight;
+            float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
@@ -192,7 +193,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
-            float _ForestMaterialWeight, _ForestEmissionWeight;
+            float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
@@ -329,7 +330,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
-            float _ForestMaterialWeight, _ForestEmissionWeight;
+            float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);       SAMPLER(sampler_MainTex);
@@ -452,6 +453,9 @@ Shader "Assets/Shaders/Lit"
                     float specPow = pow(NdotH, specularPower) * specularWeight;
                     float3 reflected = lerp(specPow * _Specular.rgb,
                         DiceLandForestMaterialSpecular(albedo, material, NdotH), materialWeight);
+                    if (_ForestSheenStrength > 0.001 && materialWeight > 0.001)
+                        reflected += DiceLandForestFabricSheen(albedo, material, NdotH,
+                            dot(normalWS,viewDirWS),NdotL_main) * (_ForestSheenStrength * materialWeight);
                     totalSpecular += mainLight.color * reflected
                                      * mainLight.shadowAttenuation * mainLight.distanceAttenuation;
                 }
@@ -475,6 +479,9 @@ Shader "Assets/Shaders/Lit"
                         float specPow = pow(NdotH, specularPower) * specularWeight;
                         float3 reflected = lerp(specPow * _Specular.rgb,
                             DiceLandForestMaterialSpecular(albedo, material, NdotH), materialWeight);
+                        if (_ForestSheenStrength > 0.001 && materialWeight > 0.001)
+                            reflected += DiceLandForestFabricSheen(albedo, material, NdotH,
+                                dot(normalWS,viewDirWS),NdotL) * (_ForestSheenStrength * materialWeight);
                         totalSpecular += light.color * reflected * lightAttenuation;
                     }
                 }
@@ -613,7 +620,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
-            float _ForestMaterialWeight, _ForestEmissionWeight;
+            float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength;
             CBUFFER_END
             TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
             TEXTURE2D(_AlphaTex); SAMPLER(sampler_AlphaTex);

@@ -150,7 +150,7 @@ public sealed class BattleActorLightingTests
         resources.Add(library);
         resources.Add(map);
         typeof(BattleActorFormLibrary).GetField("entries", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-            .SetValue(library, new[] { new BattleActorFormLibrary.Entry { sprite = sprite, formMap = map, materialMap = map, emissiveAlpha = true } });
+            .SetValue(library, new[] { new BattleActorFormLibrary.Entry { sprite = sprite, formMap = map, materialMap = map, emissiveAlpha = true, fabricSheen = true } });
         lighting.Configure(allies, enemies, library);
         lighting.UpdateLighting();
         Material runtime = body.sharedMaterial;
@@ -159,6 +159,8 @@ public sealed class BattleActorLightingTests
         Assert.Greater(runtime.GetFloat("_ForestMaterialWeight"), 0f);
         Assert.AreEqual(1f,runtime.GetFloat("_ForestEmissionWeight"));
         Assert.AreEqual(0f,material.GetFloat("_ForestEmissionWeight"));
+        Assert.AreEqual(1f,runtime.GetFloat("_ForestSheenStrength"));
+        Assert.AreEqual(0f,material.GetFloat("_ForestSheenStrength"));
         Assert.AreEqual(0f, material.GetFloat("_ForestMaterialWeight"));
         Assert.Greater(runtime.GetVector("_ForestFormParams").x, 0f);
         Assert.AreEqual(0f, material.GetVector("_ForestFormParams").x);
@@ -178,6 +180,7 @@ public sealed class BattleActorLightingTests
         Assert.IsNull(runtime.GetTexture("_ForestFormMap"));
         Assert.AreEqual(0f, runtime.GetFloat("_ForestMaterialWeight"));
         Assert.AreEqual(0f,runtime.GetFloat("_ForestEmissionWeight"));
+        Assert.AreEqual(0f,runtime.GetFloat("_ForestSheenStrength"));
         Assert.IsNull(runtime.GetTexture("_ForestMaterialMap"));
         lighting.ReleaseLighting();
         Assert.AreSame(material, body.sharedMaterial);
@@ -197,6 +200,8 @@ public sealed class BattleActorLightingTests
         Assert.Greater(body.sharedMaterial.GetFloat("_ForestMaterialWeight"),0f);
         Assert.AreEqual(0f,body.sharedMaterial.GetFloat("_ForestEmissionWeight"));
         Assert.IsFalse(library.UsesEmissiveAlpha(sprite));
+        Assert.IsFalse(library.UsesFabricSheen(sprite));
+        Assert.AreEqual(0f,body.sharedMaterial.GetFloat("_ForestSheenStrength"));
     }
 
     [Test]

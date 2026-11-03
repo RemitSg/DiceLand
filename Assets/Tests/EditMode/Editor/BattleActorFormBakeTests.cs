@@ -4,6 +4,40 @@ using UnityEngine;
 public sealed class BattleActorFormBakeTests
 {
     [Test]
+    public void MollyLeatherDoesNotReflectAsSteelAndSeparateArmorBandsRemainMetal()
+    {
+        const int width=338,height=512;
+        Color32[] pixels=BattleActorSurfaceBakeTools.BakePixels(BattleActorSurfaceBakeTools.MollyPath,width,height);
+        System.Func<float,float,Color32> sample=(x,y)=>pixels[Mathf.FloorToInt((1-y/1941f)*height)*width+Mathf.FloorToInt(x/1280f*width)];
+        Color32 leather=sample(820,640),steel=sample(685,588),gold=sample(861,588),buckle=sample(831,837);
+        Assert.Less(leather.r,10);Assert.Less(leather.g,15);Assert.That(leather.b,Is.InRange(190,210));
+        Assert.Greater(steel.g,240);Assert.Less(steel.b,100);
+        Assert.Greater(gold.g,150);Assert.Greater(buckle.g,240);
+        Assert.Less(sample(980,1060).g,10,"The broad trouser fold must remain matte cloth.");
+    }
+
+    [Test]
+    public void MollyFoldFacesKeepTheExactInputSilhouetteAndUseDifferentNormalDirections()
+    {
+        const int width=338,height=512;
+        Color32[] before=new Color32[width*height];
+        for(int y=0;y<height;y++)for(int x=0;x<width;x++)
+            before[y*width+x]=new Color32(128,128,255,(byte)((x+y)%5==0?0:255));
+        Color32[] after=(Color32[])before.Clone();string random=JsonUtility.ToJson(Random.state);
+        BattleActorSurfaceBakeTools.RefineFormNormals(BattleActorSurfaceBakeTools.MollyPath,after,width,height);
+        for(int i=0;i<after.Length;i++)
+        {
+            Assert.AreEqual(before[i].a,after[i].a);
+            if(before[i].a==0)Assert.AreEqual(before[i],after[i]);
+            Vector3 normal=new Vector3(after[i].r/127.5f-1,after[i].g/127.5f-1,after[i].b/127.5f-1);
+            Assert.Greater(normal.z,0);Assert.That(normal.magnitude,Is.EqualTo(1).Within(.015f));
+        }
+        System.Func<float,float,float> vertical=(x,y)=>after[Mathf.FloorToInt((1-y/1941f)*height)*width+Mathf.FloorToInt(x/1280f*width)].g/127.5f-1;
+        Assert.Greater(vertical(990,1062),.25f);Assert.Less(vertical(1112,1282),-.15f);
+        Assert.AreEqual(random,JsonUtility.ToJson(Random.state));
+    }
+
+    [Test]
     public void CoffinMaterialKeepsDarkPanelsSeparateFromMetalAndEmissiveGems()
     {
         foreach(int size in new[]{256,512})
