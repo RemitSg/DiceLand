@@ -120,6 +120,7 @@ Material:
     - _GlossyReflections: 0
     - _HighlightGain: 1.6
     - _LeafTransmission: 0.7
+    - _LocalWindStrength: 0.85
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005

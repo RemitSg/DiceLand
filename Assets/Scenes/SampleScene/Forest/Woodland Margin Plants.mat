@@ -37,6 +37,7 @@ Material:
     - _DefocusTexels: 0
     - _EnableExternalAlpha: 0
     - _HighlightGain: 1
+    - _LocalWindStrength: 0.2
     - _SceneLightingWeight: 1
     - _SwayAmplitude: 0.015
     m_Colors:

@@ -502,6 +502,7 @@ public static class BattleLookPreviewTools
         Sprite plants = LoadForestSprite(MarginTexturePath);
         Material margin = ForestMaterial("Woodland Margin Plants", "DiceLand/Battle Forest Foliage");
         margin.SetFloat("_SwayAmplitude", 0.015f);
+        margin.SetFloat("_LocalWindStrength", 0.2f);
         margin.SetFloat("_HighlightGain", 1f);
         margin.SetFloat("_SceneLightingWeight", 1f);
         // Authored variation is repeatable and leaves the gameplay RNG entirely untouched.

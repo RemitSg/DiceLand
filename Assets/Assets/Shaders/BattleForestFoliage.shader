@@ -6,6 +6,7 @@ Shader "DiceLand/Battle Forest Foliage"
         _Color ("Tint", Color) = (1,1,1,1)
         _Cutoff ("Alpha cutoff", Range(0,1)) = 0.4
         _SwayAmplitude ("Canopy breeze (metres)", Range(0,0.2)) = 0.045
+        _LocalWindStrength ("Local leaf and stem wind", Range(0,1)) = 0
         _DefocusTexels ("Near foliage softness", Range(0,16)) = 0
         [Toggle] _SoftSilhouette ("Defocused transparent silhouette", Float) = 0
         [HideInInspector] _SrcBlend ("Source blend", Float) = 1
@@ -39,7 +40,7 @@ Shader "DiceLand/Battle Forest Foliage"
         CBUFFER_START(UnityPerMaterial)
         float4 _MainTex_ST, _MainTex_TexelSize;
         half4 _Color, _PaintedFill;
-        float _Cutoff, _EnableExternalAlpha, _SwayAmplitude, _DefocusTexels, _HighlightGain, _SceneLightingWeight;
+        float _Cutoff, _EnableExternalAlpha, _SwayAmplitude, _DefocusTexels, _HighlightGain, _SceneLightingWeight, _LocalWindStrength;
         float _SoftSilhouette, _SrcBlend, _DstBlend, _ZWrite;
         float _CanopyResponse, _ResponseWeight, _BarkLightGain, _LeafTransmission;
         CBUFFER_END
@@ -68,6 +69,19 @@ Shader "DiceLand/Battle Forest Foliage"
             #endif
             input.positionOS=UnityFlipSprite(input.positionOS,spriteFlip);
             float3 positionWS=TransformObjectToWorld(input.positionOS);
+            if (_LocalWindStrength > 0.001)
+            {
+                float weight=pow(saturate(input.uv.y),3.0);
+                if (_CanopyResponse > 0.5)
+                    weight=SAMPLE_TEXTURE2D_LOD(_CanopyResponseMap,sampler_CanopyResponseMap,input.uv,1.0).b;
+                float2 ground=DiceLandForestProjectedGround(positionWS);
+                float2 bend=DiceLandForestCanopyBend(ground,DiceLandForestCanopyBreeze());
+                float motion=saturate(_LocalWindStrength)*saturate(_DiceLandForestLighting)
+                    *saturate(_DiceLandForestOpenings.w)*saturate(weight);
+                // Cookie coordinates move forward, so their leaf shadow moves backward.
+                // Bark has zero leaf weight; grass stems keep their planted base.
+                positionWS.xy+=float2(-bend.x,bend.y*0.12)*motion;
+            }
             // Roots stay planted; only the upper canopy moves, identically in color and depth passes.
             float breeze=sin(_Time.y*0.63+positionWS.x*0.18)+0.35*sin(_Time.y*1.07+positionWS.z*0.23);
             positionWS.x+=breeze*_SwayAmplitude*pow(saturate(input.uv.y),3.0);
@@ -142,6 +156,7 @@ Shader "DiceLand/Battle Forest Foliage"
             HLSLPROGRAM
             #pragma vertex Vert
             #pragma fragment Frag
+            #pragma target 3.0
             #pragma multi_compile_instancing
             #pragma multi_compile_fog
             #pragma multi_compile _ ETC1_EXTERNAL_ALPHA
@@ -191,6 +206,7 @@ Shader "DiceLand/Battle Forest Foliage"
             HLSLPROGRAM
             #pragma vertex Vert
             #pragma fragment DepthFrag
+            #pragma target 3.0
             #pragma multi_compile_instancing
             #pragma multi_compile _ ETC1_EXTERNAL_ALPHA
             #pragma shader_feature_local _CANOPY_LIGHT_RESPONSE

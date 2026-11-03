@@ -51,6 +51,12 @@ float2 DiceLandForestCanopyBreeze()
     return lerp(legacy, breeze, saturate(_DiceLandForestOpenings.w));
 }
 
+float2 DiceLandForestCanopyBend(float2 ground, float2 breeze)
+{
+    return breeze * 0.45 + float2(sin(ground.y * 0.61 + _Time.y * 0.83),
+        sin(ground.x * 0.47 + _Time.y * 0.69 + 1.4)) * 0.08;
+}
+
 float2 DiceLandForestProjectedGround(float3 positionWS)
 {
     float3 sunDirection = DiceLandForestSunDirection();
@@ -65,8 +71,7 @@ float DiceLandForestCanopyTransmission(float2 p, float2 breeze, float height)
         float4 settings = _DiceLandForestCanopyCookieParams;
         float motion = saturate(_DiceLandForestOpenings.w);
         // Branches stay rooted. Nearby leaves bend together, with a small spatial shear.
-        float2 bend = breeze * 0.45 + float2(sin(p.y * 0.61 + _Time.y * 0.83),
-            sin(p.x * 0.47 + _Time.y * 0.69 + 1.4)) * 0.08;
+        float2 bend = DiceLandForestCanopyBend(p, breeze);
         float2 uv = (p + bend * motion) * settings.x;
         float2 dx = ddx(uv) * settings.y, dy = ddy(uv) * settings.y;
         float footprint = max(dot(dx, dx), dot(dy, dy));

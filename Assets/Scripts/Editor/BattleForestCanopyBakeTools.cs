@@ -82,6 +82,7 @@ public static class BattleForestCanopyBakeTools
         material.name="Ancient Canopy Light";
         material.SetTexture(MapProperty,map);material.SetFloat("_CanopyResponse",1f);
         material.SetFloat("_ResponseWeight",1f);material.SetFloat("_BarkLightGain",1.2f);material.SetFloat("_LeafTransmission",0.7f);
+        material.SetFloat("_LocalWindStrength",0.85f);
         material.EnableKeyword("_CANOPY_LIGHT_RESPONSE");
         EditorUtility.SetDirty(material);AssetDatabase.SaveAssetIfDirty(material);
         return material;
