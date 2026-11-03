@@ -14,7 +14,9 @@ public static class BattleActorSurfaceBakeTools
     public const string ManPath = "Assets/Data/Characters/Man/Man_InBattle.png";
     public const string MollyPath = "Assets/Assets/Textures/Characters/Molly/Molly_InBattle.png";
     public const string CoffinPath = "Assets/Data/Enemies/Enemies/037 BlackCoffin/黑棺_x4.png";
+    public const string AxePath = "Assets/Data/Weapons/204 猎光者/猎光者_x4.png";
     public const int MollyMapLongEdge = 512;
+    public const int AxeMapLongEdge = 512;
 
     private sealed class Region
     {
@@ -46,20 +48,20 @@ public static class BattleActorSurfaceBakeTools
             SerializedProperty entry = entries.GetArrayElementAtIndex(i);
             Sprite sprite = entry.FindPropertyRelative("sprite").objectReferenceValue as Sprite;
             string path = AssetDatabase.GetAssetPath(sprite);
-            if (path != ManPath && path != MollyPath && path != CoffinPath) continue;
+            if (path != ManPath && path != MollyPath && path != CoffinPath && path != AxePath) continue;
             Texture2D source = new Texture2D(2, 2, TextureFormat.RGBA32, false, true);
             Texture2D map = null;
             try
             {
                 if (!ImageConversion.LoadImage(source, File.ReadAllBytes(path), false))
                     throw new InvalidOperationException("Cannot read material source: " + path);
-                int longEdge = path == MollyPath ? MollyMapLongEdge : path == CoffinPath ? 512 : LongEdge;
+                int longEdge = path == MollyPath ? MollyMapLongEdge : path == AxePath ? AxeMapLongEdge : path == CoffinPath ? 512 : LongEdge;
                 float scale = (float)longEdge / Mathf.Max(source.width, source.height);
                 int width = Mathf.Max(4, Mathf.RoundToInt(source.width * scale));
                 int height = Mathf.Max(4, Mathf.RoundToInt(source.height * scale));
                 map = new Texture2D(width, height, TextureFormat.RGBA32, true, true)
                 {
-                    name = sprite.name + (path == CoffinPath || path == MollyPath ? " Surface" : " material regions"), filterMode = FilterMode.Trilinear,
+                    name = sprite.name + (path == CoffinPath || path == MollyPath || path == AxePath ? " Surface" : " material regions"), filterMode = FilterMode.Trilinear,
                     wrapMode = TextureWrapMode.Clamp, anisoLevel = 1
                 };
                 Color32[] pixels = BakePixels(path, width, height);
@@ -68,7 +70,7 @@ public static class BattleActorSurfaceBakeTools
                 {
                     int index=y*width+x;
                     bool inside=source.GetPixelBilinear((x + 0.5f) / width, (y + 0.5f) / height).a >= 0.5f;
-                    pixels[index].a=inside?(path==CoffinPath?pixels[index].a:(byte)255):(byte)0;
+                    pixels[index].a=inside?(path==CoffinPath||path==AxePath?pixels[index].a:(byte)255):(byte)0;
                 }
                 map.SetPixels32(pixels); map.Apply(true, true);
                 string mapPath = BattleActorFormBakeTools.Folder + "/" + sprite.name + " Surface.asset";
@@ -83,7 +85,7 @@ public static class BattleActorSurfaceBakeTools
                     AssetDatabase.SaveAssetIfDirty(existing);
                 }
                 entry.FindPropertyRelative("materialMap").objectReferenceValue = existing;
-                entry.FindPropertyRelative("emissiveAlpha").boolValue = path == CoffinPath;
+                entry.FindPropertyRelative("emissiveAlpha").boolValue = path == CoffinPath || path == AxePath;
                 entry.FindPropertyRelative("fabricSheen").boolValue = path == ManPath || path == MollyPath;
             }
             finally
@@ -105,11 +107,15 @@ public static class BattleActorSurfaceBakeTools
         for(int i=0;i<entries.arraySize;i++)
         {
             SerializedProperty entry = entries.GetArrayElementAtIndex(i);
-            if(AssetDatabase.GetAssetPath(entry.FindPropertyRelative("sprite").objectReferenceValue)!=CoffinPath)continue;
-            BattleActorFormBakeTools.WriteEmissionLights(entry,new[]
+            string path=AssetDatabase.GetAssetPath(entry.FindPropertyRelative("sprite").objectReferenceValue);
+            if(path==CoffinPath) BattleActorFormBakeTools.WriteEmissionLights(entry,new[]
             {
                 new BattleActorFormLibrary.EmissionLight { uv=new Vector2(.404f,.655f),color=new Color(1f,.035f,.38f),range=.65f,intensity=.12f },
                 new BattleActorFormLibrary.EmissionLight { uv=new Vector2(.62f,.10f),color=new Color(.40f,.12f,1f),range=.42f,intensity=.035f }
+            });
+            else if(path==AxePath) BattleActorFormBakeTools.WriteEmissionLights(entry,new[]
+            {
+                new BattleActorFormLibrary.EmissionLight { uv=new Vector2(.474f,.738f),color=new Color(1f,.57f,.16f),range=.75f,intensity=.05f }
             });
         }
         serialized.ApplyModifiedPropertiesWithoutUndo();EditorUtility.SetDirty(library);AssetDatabase.SaveAssetIfDirty(library);
@@ -125,7 +131,8 @@ public static class BattleActorSurfaceBakeTools
         for (int x = 0; x < width; x++)
         {
             Vector2 point = new Vector2((x + 0.5f) / width, 1f - (y + 0.5f) / height);
-            Color value = sourcePath == CoffinPath ? new Color(0,0,0.90f,0) : Cloth;
+            Color value = sourcePath == CoffinPath ? new Color(0,0,0.90f,0)
+                : sourcePath == AxePath ? new Color(0,1,0.36f,0) : Cloth;
             foreach (Region region in regions)
                 value = Color.Lerp(value, region.value, Coverage(point, region.points));
             pixels[y * width + x] = value;
@@ -135,9 +142,9 @@ public static class BattleActorSurfaceBakeTools
 
     public static void RefineFormNormals(string sourcePath, Color32[] pixels, int width, int height)
     {
-        if(sourcePath==CoffinPath)
+        if(sourcePath==CoffinPath||sourcePath==AxePath)
         {
-            RefinePlanes(pixels,width,height,CoffinFaces());
+            RefinePlanes(pixels,width,height,sourcePath==AxePath?AxeFaces():CoffinFaces());
             return;
         }
         Volume[] volumes = Volumes(sourcePath);
@@ -210,6 +217,25 @@ public static class BattleActorSurfaceBakeTools
             Shape(new Color(-.28f,-.30f,.912f,.74f),1280,1941, 300,1320, 456,1301, 681,1168, 480,1448, 304,1454),
             Shape(new Color(.10f,.57f,.815f,.84f),1280,1941, 895,961, 1017,985, 1162,1081, 1266,1157, 1181,1216, 1078,1153, 878,1109),
             Shape(new Color(-.22f,-.30f,.928f,.76f),1280,1941, 878,1109, 1078,1153, 1181,1216, 1240,1259, 1153,1336, 1061,1354, 1065,1244, 948,1213)
+        };
+    }
+
+    private static Region[] AxeFaces()
+    {
+        // The cutting bevel and inset plates tilt independently. Do not emboss the engraving.
+        return new[]
+        {
+            Shape(new Color(.30f,.48f,.825f,.90f),1600,1600, 1100,35, 1120,142, 1180,247, 1233,345, 1272,420, 1207,397, 1174,286, 1128,202, 1082,116),
+            Shape(new Color(.58f,-.24f,.779f,.92f),1600,1600, 1272,420, 1260,552, 1216,669, 1138,776, 1015,878, 873,968, 925,863, 1044,756, 1142,628, 1207,478),
+            Shape(new Color(-.26f,.36f,.896f,.86f),1600,1600, 859,222, 901,257, 978,268, 1049,243, 1099,359, 1059,386, 965,380, 907,353, 858,304),
+            Shape(new Color(.32f,-.28f,.905f,.86f),1600,1600, 911,476, 984,450, 1072,461, 1108,524, 1053,580, 1012,593, 963,614, 923,646, 898,624),
+            Shape(new Color(-.46f,.30f,.836f,.90f),1600,1600, 605,244, 608,307, 582,371, 550,394, 520,365, 552,330),
+            Shape(new Color(-.36f,-.40f,.843f,.90f),1600,1600, 552,450, 583,468, 603,548, 636,588, 626,636, 586,589, 556,518),
+            Shape(new Color(-.46f,.30f,.836f,.90f),1600,1600, 324,420, 389,405, 472,421, 423,449, 495,485, 524,507, 397,462),
+            Shape(new Color(-.42f,.34f,.841f,.92f),1600,1600, 758,365, 758,420, 718,420),
+            Shape(new Color(.42f,.34f,.841f,.92f),1600,1600, 758,365, 799,420, 758,420),
+            Shape(new Color(-.42f,-.34f,.841f,.92f),1600,1600, 718,420, 758,420, 758,482),
+            Shape(new Color(.42f,-.34f,.841f,.92f),1600,1600, 758,420, 799,420, 758,482)
         };
     }
 
@@ -313,7 +339,26 @@ public static class BattleActorSurfaceBakeTools
             Shape(Metal,1280,1941, 1080,1372, 1153,1396, 1217,1366, 1197,1405, 1134,1474, 1105,1434)
         };
         if(path==CoffinPath)return CoffinRegions();
+        if(path==AxePath)return AxeRegions();
         return null;
+    }
+
+    private static Region[] AxeRegions()
+    {
+        Color blade = new Color(0,1,.22f,0), inset = new Color(0,1,.48f,0);
+        Color grip = new Color(0,0,.86f,0), gem = new Color(0,.55f,.24f,.45f);
+        return new[]
+        {
+            Shape(blade,1600,1600, 1100,35, 1120,142, 1180,247, 1233,345, 1272,420, 1260,552, 1216,669, 1138,776, 1015,878, 873,968, 925,863, 1044,756, 1142,628, 1207,478, 1207,397, 1174,286, 1128,202, 1082,116),
+            Shape(inset,1600,1600, 859,222, 901,257, 978,268, 1049,243, 1099,359, 1059,386, 965,380, 907,353, 858,304),
+            Shape(inset,1600,1600, 911,476, 984,450, 1072,461, 1108,524, 1053,580, 1012,593, 963,614, 923,646, 898,624),
+            Shape(blade,1600,1600, 605,244, 608,307, 582,371, 550,394, 520,365, 552,330),
+            Shape(blade,1600,1600, 552,450, 583,468, 603,548, 636,588, 626,636, 586,589, 556,518),
+            Shape(blade,1600,1600, 324,420, 522,332, 476,385, 397,420, 475,455, 524,507),
+            Shape(grip,1600,1600, 731,713, 782,713, 786,1165, 729,1165),
+            Shape(gem,1600,1600, 758,365, 799,420, 758,482, 718,420),
+            Shape(new Color(0,.55f,.24f,.40f),1600,1600, 758,1406, 788,1437, 758,1467, 728,1437)
+        };
     }
 
     private static Region[] CoffinRegions()

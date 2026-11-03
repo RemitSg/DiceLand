@@ -254,6 +254,7 @@ public class BattlePresentationSystem : MonoBehaviour
 
         PlaneData plane = BuildPlane(ally, enemy, clashPlaneReference);
         float gap = Mathf.Min(clashFaceGap, Mathf.Max(clashMinimumGap, plane.distance - 0.05f));
+        gap = CalculateClashVisualSeparation(ally, enemy, plane.direction, gap, clashMinimumGap);
         Vector3 allyTarget = plane.midpoint - plane.direction * (gap * 0.5f);
         Vector3 enemyTarget = plane.midpoint + plane.direction * (gap * 0.5f);
         allyTarget.z = plane.z;
@@ -998,6 +999,25 @@ public class BattlePresentationSystem : MonoBehaviour
         }
 
         return current == root ? depth : int.MaxValue;
+    }
+
+    public static float CalculateClashVisualSeparation(Transform first, Transform second, Vector3 direction,
+        float rootGap, float bodyClearance)
+    {
+        if (!BattleActorVisualUtility.TryGetActorSpriteBounds(first, out Bounds firstBounds)
+            || !BattleActorVisualUtility.TryGetActorSpriteBounds(second, out Bounds secondBounds))
+            return rootGap;
+
+        direction.z = 0f;
+        direction = direction.sqrMagnitude > 0.000001f ? direction.normalized : Vector3.right;
+        Vector3 axis = new Vector3(Mathf.Abs(direction.x), Mathf.Abs(direction.y), 0f);
+        float firstReach = Vector3.Dot(firstBounds.center - first.position, direction)
+            + Vector3.Dot(firstBounds.extents, axis);
+        float secondReach = Vector3.Dot(second.position - secondBounds.center, direction)
+            + Vector3.Dot(secondBounds.extents, axis);
+        // Roots can be close while a large illustrated body already covers its opponent's weapon.
+        // Preserve the configured approach distance when it already leaves enough visual room.
+        return Mathf.Max(rootGap, Mathf.Max(0f, firstReach) + Mathf.Max(0f, secondReach) + Mathf.Max(0f, bodyClearance));
     }
 
     private PlaneData BuildPlane(Transform first, Transform second, PlaneReference planeReference)

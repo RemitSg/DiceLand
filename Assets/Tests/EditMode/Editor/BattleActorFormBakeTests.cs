@@ -4,6 +4,54 @@ using UnityEngine;
 public sealed class BattleActorFormBakeTests
 {
     [Test]
+    public void AxeMaterialsSeparateBladeGripAndOnlyItsGemRegionsEmit()
+    {
+        string random = JsonUtility.ToJson(Random.state);
+        foreach (int size in new[] { 256, 512 })
+        {
+            Color32[] pixels = BattleActorSurfaceBakeTools.BakePixels(BattleActorSurfaceBakeTools.AxePath, size, size);
+            System.Func<int, int, Color32> at = (x, y) => pixels[Mathf.FloorToInt((1f - y / 1600f) * size) * size + Mathf.FloorToInt(x / 1600f * size)];
+            Color32 blade = at(1230, 450), inset = at(1000, 540), grip = at(755, 950);
+            Assert.Greater(blade.g, 240);
+            Assert.Less(blade.b, 75);
+            Assert.AreEqual(0, blade.a);
+            Assert.Greater(inset.g, 240);
+            Assert.Greater(inset.b, 110);
+            Assert.Less(grip.g, 15);
+            Assert.Greater(grip.b, 200);
+            Assert.AreEqual(0, grip.a);
+            Assert.Greater(at(758, 420).a, 100);
+            Assert.Greater(at(758, 1437).a, 90);
+            Assert.AreEqual(0, at(1060, 418).a);
+            CollectionAssert.AreEqual(pixels, BattleActorSurfaceBakeTools.BakePixels(BattleActorSurfaceBakeTools.AxePath, size, size));
+        }
+        Assert.AreEqual(random, JsonUtility.ToJson(Random.state));
+    }
+
+    [Test]
+    public void AxeFacetNormalsFollowOpposingBevelsAndPreserveCutoutAlpha()
+    {
+        const int size = 256;
+        var pixels = new Color32[size * size];
+        for (int i = 0; i < pixels.Length; i++) pixels[i] = new Color32(128, 128, 255, 255);
+        int hole = 198 * size + 196;
+        pixels[hole].a = 0;
+        Color32[] before = (Color32[])pixels.Clone();
+        BattleActorSurfaceBakeTools.RefineFormNormals(BattleActorSurfaceBakeTools.AxePath, pixels, size, size);
+        System.Func<int, int, Color32> at = (x, y) => pixels[Mathf.FloorToInt((1f - y / 1600f) * size) * size + Mathf.FloorToInt(x / 1600f * size)];
+        Assert.Greater(at(1200, 330).g, 150);
+        Assert.Less(at(1140, 720).g, 115);
+        Assert.AreEqual(before[hole], pixels[hole]);
+        for (int i = 0; i < pixels.Length; i++)
+        {
+            Assert.AreEqual(before[i].a, pixels[i].a);
+            Vector3 normal = new Vector3(pixels[i].r / 127.5f - 1, pixels[i].g / 127.5f - 1, pixels[i].b / 127.5f - 1);
+            Assert.That(normal.magnitude, Is.EqualTo(1f).Within(.012f));
+            Assert.Greater(normal.z, 0);
+        }
+    }
+
+    [Test]
     public void MollyLeatherDoesNotReflectAsSteelAndSeparateArmorBandsRemainMetal()
     {
         const int width=338,height=512;

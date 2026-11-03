@@ -6,6 +6,69 @@ using UnityEngine;
 
 public sealed class BattlePresentationFramingTests
 {
+    [TestCase(1f, 2.27f)]
+    [TestCase(-1f, 2.27f)]
+    [TestCase(1f, 0.4f)]
+    [TestCase(0f, 2.27f)]
+    public void ClashPlacementLeavesBodyClearanceAcrossOffsetsMirrorsAndCloseStarts(float directionSign, float preferredGap)
+    {
+        GameObject root = new GameObject("Clash clearance fixture");
+        Texture2D texture = new Texture2D(2, 2);
+        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, 2, 2), Vector2.one * .5f, 2f);
+        try
+        {
+            float facing = directionSign == 0f ? 1f : directionSign;
+            Transform first = new GameObject("Ally").transform, second = new GameObject("Enemy").transform;
+            first.SetParent(root.transform); second.SetParent(root.transform);
+            first.position = Vector3.left * (8f * facing); second.position = -first.position;
+            first.localScale = second.localScale = new Vector3(facing, 1, 1);
+            var firstBody = new GameObject("Ally body").AddComponent<SpriteRenderer>();
+            firstBody.transform.SetParent(first, false); firstBody.sprite = sprite;
+            firstBody.transform.localPosition = new Vector3(.6f, 2, 0); firstBody.transform.localScale = new Vector3(3, 4, 1);
+            var secondBody = new GameObject("Enemy body").AddComponent<SpriteRenderer>();
+            secondBody.transform.SetParent(second, false); secondBody.sprite = sprite;
+            secondBody.transform.localPosition = new Vector3(-.4f, 3, 0); secondBody.transform.localScale = new Vector3(4, 5, 1);
+            var badge = new GameObject("Excluded speed UI", typeof(SpeedButton)).transform;
+            badge.SetParent(first, false);
+            var badgeBody = new GameObject("Huge badge").AddComponent<SpriteRenderer>();
+            badgeBody.transform.SetParent(badge, false); badgeBody.sprite = sprite; badgeBody.transform.localScale = Vector3.one * 30;
+
+            Vector3 direction = Vector3.right * directionSign;
+            float gap = BattlePresentationSystem.CalculateClashVisualSeparation(first, second, direction, preferredGap, .4f);
+            first.position = Vector3.left * (gap * .5f * facing); second.position = -first.position;
+            float clearance = facing > 0 ? secondBody.bounds.min.x - firstBody.bounds.max.x
+                : firstBody.bounds.min.x - secondBody.bounds.max.x;
+            Assert.That(clearance, Is.EqualTo(.4f).Within(.0001f));
+            Assert.GreaterOrEqual(gap, preferredGap);
+            Assert.Less(gap, 6f, "Speed UI must not enlarge cinematic body spacing.");
+        }
+        finally
+        {
+            Object.DestroyImmediate(root); Object.DestroyImmediate(sprite); Object.DestroyImmediate(texture);
+        }
+    }
+
+    [Test]
+    public void SmallOrMissingVisualsKeepTheConfiguredClashSpacing()
+    {
+        GameObject root = new GameObject("Small clash fixture");
+        Texture2D texture = new Texture2D(2, 2);
+        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, 2, 2), Vector2.one * .5f, 2f);
+        try
+        {
+            SpriteRenderer first = CreateActor(root.transform, sprite, -2, .6f, 1);
+            SpriteRenderer second = CreateActor(root.transform, sprite, 2, .6f, 1);
+            Assert.AreEqual(2.27f, BattlePresentationSystem.CalculateClashVisualSeparation(first.transform, second.transform, Vector3.right, 2.27f, .4f));
+            Transform secondRoot = second.transform;
+            Object.DestroyImmediate(second);
+            Assert.AreEqual(2.27f, BattlePresentationSystem.CalculateClashVisualSeparation(first.transform, secondRoot, Vector3.right, 2.27f, .4f));
+        }
+        finally
+        {
+            Object.DestroyImmediate(root); Object.DestroyImmediate(sprite); Object.DestroyImmediate(texture);
+        }
+    }
+
     [TestCase(1.333333f, 2f, 7f)]
     [TestCase(1.777778f, 2f, 7f)]
     [TestCase(2.222222f, 2f, 7f)]
