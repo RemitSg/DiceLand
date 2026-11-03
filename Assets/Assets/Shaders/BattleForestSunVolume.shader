@@ -59,7 +59,7 @@ Shader "DiceLand/Battle Forest Sun Volume"
                 float3 local = TransformWorldToObject(world) + 0.5;
                 float fade = smoothstep(0.0, 0.04, local.y) * (1.0 - smoothstep(0.7, 1.0, local.y));
                 fade *= smoothstep(0.0, 0.07, local.z) * (1.0 - smoothstep(0.84, 1.0, local.z));
-                float leaves = DiceLandForestCanopyTransmission(DiceLandForestProjectedGround(world), DiceLandForestCanopyBreeze());
+                float leaves = DiceLandForestCanopyTransmission(DiceLandForestProjectedGround(world), DiceLandForestCanopyBreeze(), world.y);
                 return fade * lerp(1.0, leaves, saturate(_DiceLandForestOpenings.z));
             }
             half4 Frag(Varyings input) : SV_Target

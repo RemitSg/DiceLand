@@ -74,7 +74,7 @@ Shader "DiceLand/Battle Forest Atmosphere"
                     mask*=lerp(1.0,0.28+ribbons,saturate(_ShaftStriation));
                     // The same drifting canopy gates both the air and the floor. Fine density
                     // moves along the beam, while depth fading still hides it behind scenery.
-                    float transmission=DiceLandForestCanopyTransmission(ground,DiceLandForestCanopyBreeze());
+                    float transmission=DiceLandForestCanopyTransmission(ground,DiceLandForestCanopyBreeze(),input.world.y);
                     float density=0.80+0.35*DiceLandForestNoise(float2(across*14.0+seed*9.0,uv.y*7.0-_Time.y*0.45));
                     mask*=lerp(1.0,(0.35+transmission*0.85)*density,motion);
                 }

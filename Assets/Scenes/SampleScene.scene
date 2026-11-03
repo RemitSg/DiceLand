@@ -13614,6 +13614,7 @@ MonoBehaviour:
   forestLighting: 0.82
   canopyOcclusion: 0.65
   sunlightMotion: 0.8
+  canopyCookie: {fileID: 2800000, guid: 361855492f9495648ba4cca1e957cd7c, type: 2}
 --- !u!114 &1603544717
 MonoBehaviour:
   m_ObjectHideFlags: 0

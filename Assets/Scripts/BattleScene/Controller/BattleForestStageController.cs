@@ -13,11 +13,14 @@ public sealed class BattleForestStageController : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float forestLighting = 0.82f;
     [SerializeField, Range(0f, 1f)] private float canopyOcclusion = 0.65f;
     [SerializeField, Range(0f, 1f)] private float sunlightMotion = 0.8f;
+    [SerializeField] private Texture2D canopyCookie;
 
     private static readonly int LightingId = Shader.PropertyToID("_DiceLandForestLighting");
     private static readonly int OpeningsId = Shader.PropertyToID("_DiceLandForestOpenings");
     private static readonly int SunDirectionId = Shader.PropertyToID("_DiceLandForestSunDirection");
     private static readonly int SunColorId = Shader.PropertyToID("_DiceLandForestSunColor");
+    private static readonly int CookieId = Shader.PropertyToID("_DiceLandForestCanopyCookie");
+    private static readonly int CookieParamsId = Shader.PropertyToID("_DiceLandForestCanopyCookieParams");
     private readonly List<Mesh> meshes = new List<Mesh>();
     private GameObject stageRoot;
     private bool originalGroundEnabled;
@@ -25,14 +28,17 @@ public sealed class BattleForestStageController : MonoBehaviour
     private Vector4 previousOpenings;
     private Vector4 previousSunDirection;
     private Vector4 previousSunColor;
+    private Texture previousCookie;
+    private Vector4 previousCookieParams;
     private bool initialized;
 
-    public void Configure(MeshRenderer ground, Material stone, float canopyShadowStrength = 0.65f, float sunlightMotionStrength = 0.8f)
+    public void Configure(MeshRenderer ground, Material stone, float canopyShadowStrength = 0.65f, float sunlightMotionStrength = 0.8f, Texture2D cookie = null)
     {
         originalGround = ground;
         stoneMaterial = stone;
         canopyOcclusion = Mathf.Clamp01(canopyShadowStrength);
         sunlightMotion = Mathf.Clamp01(sunlightMotionStrength);
+        canopyCookie = cookie;
     }
 
     private void OnEnable()
@@ -49,8 +55,12 @@ public sealed class BattleForestStageController : MonoBehaviour
         previousOpenings = Shader.GetGlobalVector(OpeningsId);
         previousSunDirection = Shader.GetGlobalVector(SunDirectionId);
         previousSunColor = Shader.GetGlobalVector(SunColorId);
+        previousCookie = Shader.GetGlobalTexture(CookieId);
+        previousCookieParams = Shader.GetGlobalVector(CookieParamsId);
         Shader.SetGlobalFloat(LightingId, forestLighting);
         Shader.SetGlobalVector(OpeningsId, new Vector4(CanopyOpenings.x, CanopyOpenings.y, canopyOcclusion, sunlightMotion));
+        Shader.SetGlobalTexture(CookieId, canopyCookie);
+        Shader.SetGlobalVector(CookieParamsId, new Vector4(0.05f, canopyCookie != null ? canopyCookie.width : 1f, 18f, canopyCookie != null ? 1f : 0f));
         // The two cheapest URP tiers disable the main light. Retain the authored
         // forest sun for air scattering and the shared canopy projection there.
         Light sun = RenderSettings.sun;
@@ -146,6 +156,8 @@ public sealed class BattleForestStageController : MonoBehaviour
         Shader.SetGlobalVector(OpeningsId, previousOpenings);
         Shader.SetGlobalVector(SunDirectionId, previousSunDirection);
         Shader.SetGlobalVector(SunColorId, previousSunColor);
+        Shader.SetGlobalTexture(CookieId, previousCookie);
+        Shader.SetGlobalVector(CookieParamsId, previousCookieParams);
         if (stageRoot != null)
         {
             stageRoot.SetActive(false);

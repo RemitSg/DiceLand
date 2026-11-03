@@ -8,6 +8,9 @@ float4 _DiceLandForestOpenings;
 // Authored sun fallback when a low URP tier disables main-light shading.
 float4 _DiceLandForestSunDirection;
 half4 _DiceLandForestSunColor;
+TEXTURE2D(_DiceLandForestCanopyCookie); SAMPLER(sampler_DiceLandForestCanopyCookie);
+// x: repeats/metre, y: texture resolution, z: canopy height, w: authored cookie enabled.
+float4 _DiceLandForestCanopyCookieParams;
 
 float3 DiceLandForestSunDirection()
 {
@@ -54,22 +57,49 @@ float2 DiceLandForestProjectedGround(float3 positionWS)
     return positionWS.xz - sunDirection.xz / max(0.2, sunDirection.y) * positionWS.y;
 }
 
+float DiceLandForestCanopyTransmission(float2 p, float2 breeze, float height)
+{
+    float transmission = 1.0;
+    [branch] if (_DiceLandForestCanopyCookieParams.w > 0.001)
+    {
+        float4 settings = _DiceLandForestCanopyCookieParams;
+        float motion = saturate(_DiceLandForestOpenings.w);
+        // Branches stay rooted. Nearby leaves bend together, with a small spatial shear.
+        float2 bend = breeze * 0.45 + float2(sin(p.y * 0.61 + _Time.y * 0.83),
+            sin(p.x * 0.47 + _Time.y * 0.69 + 1.4)) * 0.08;
+        float2 uv = (p + bend * motion) * settings.x;
+        float2 dx = ddx(uv) * settings.y, dy = ddy(uv) * settings.y;
+        float footprint = max(dot(dx, dx), dot(dy, dy));
+        // Sun angular radius, projected through the remaining distance below the canopy.
+        float distance = max(0.0, settings.z - height) / max(0.2, DiceLandForestSunDirection().y);
+        float penumbra = distance * 0.00465 * settings.x * settings.y;
+        float mip = 0.5 * log2(max(1.0, max(footprint, penumbra * penumbra)));
+        float leaves = SAMPLE_TEXTURE2D_LOD(_DiceLandForestCanopyCookie,
+            sampler_DiceLandForestCanopyCookie, uv, mip).r;
+        float branches = SAMPLE_TEXTURE2D_LOD(_DiceLandForestCanopyCookie,
+            sampler_DiceLandForestCanopyCookie, p * settings.x, mip).g;
+        transmission = (1.0 - leaves * 0.82) * (1.0 - branches * 0.78);
+    }
+    else
+    {
+        // Keep the original procedural canopy for scenes without an authored cookie.
+        float2 q = p + breeze;
+        float clusters = DiceLandForestNoise(q * float2(0.34, 0.46) + float2(13.7, 4.1)) * 0.72;
+        clusters += DiceLandForestNoise(q * 1.65 + float2(2.6, 19.3)) * 0.28;
+        float gaps = smoothstep(0.38, 0.62, clusters);
+
+        float limb = p.y + p.x * 0.24 + sin(p.x * 0.31) * 0.42;
+        float branch = 1.0 - smoothstep(0.17, 0.42, abs(limb + 1.4));
+        float fork = p.y - p.x * 0.46 - 2.2 + sin(p.x * 0.23) * 0.28;
+        branch = max(branch, (1.0 - smoothstep(0.10, 0.29, abs(fork))) * 0.78);
+        transmission = lerp(0.18, 1.0, gaps) * (1.0 - branch * 0.78);
+    }
+    return transmission;
+}
+
 float DiceLandForestCanopyTransmission(float2 p, float2 breeze)
 {
-    // Large leaf clusters establish connected shade; smaller leaves break their edges.
-    // Projected world coordinates keep the same pattern on the floor, plants and actors.
-    float2 q = p + breeze;
-    float clusters = DiceLandForestNoise(q * float2(0.34, 0.46) + float2(13.7, 4.1)) * 0.72;
-    clusters += DiceLandForestNoise(q * 1.65 + float2(2.6, 19.3)) * 0.28;
-    float gaps = smoothstep(0.38, 0.62, clusters);
-
-    // Branch silhouettes stay rooted while only the leaves drift. Two unequal limbs
-    // prevent the opening from reading as a row of identical circular spotlights.
-    float limb = p.y + p.x * 0.24 + sin(p.x * 0.31) * 0.42;
-    float branch = 1.0 - smoothstep(0.17, 0.42, abs(limb + 1.4));
-    float fork = p.y - p.x * 0.46 - 2.2 + sin(p.x * 0.23) * 0.28;
-    branch = max(branch, (1.0 - smoothstep(0.10, 0.29, abs(fork))) * 0.78);
-    return lerp(0.18, 1.0, gaps) * (1.0 - branch * 0.78);
+    return DiceLandForestCanopyTransmission(p, breeze, 0.0);
 }
 
 float DiceLandForestSunVisibility(float3 positionWS)
@@ -85,7 +115,7 @@ float DiceLandForestSunVisibility(float3 positionWS)
     float leaves = smoothstep(0.24, 0.74, DiceLandForestNoise(p * 0.52 + breeze));
     float sunlight = saturate(openCanopy * (0.60 + leaves * 0.40) + (1.0 - openCanopy) * leaves * 0.13);
     if (_DiceLandForestOpenings.z > 0.001)
-        sunlight *= lerp(1.0, DiceLandForestCanopyTransmission(p, breeze), saturate(_DiceLandForestOpenings.z));
+        sunlight *= lerp(1.0, DiceLandForestCanopyTransmission(p, breeze, positionWS.y), saturate(_DiceLandForestOpenings.z));
     return sunlight;
 }
 

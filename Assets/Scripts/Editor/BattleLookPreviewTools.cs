@@ -427,7 +427,8 @@ public static class BattleLookPreviewTools
         stone.SetColor("_SoilColor", new Color(0.39f, 0.34f, 0.23f));
         stone.SetColor("_MossColor", new Color(0.19f, 0.27f, 0.15f));
         root.AddComponent<BattleForestStageController>().Configure(
-            scene.GetRootGameObjects().SelectMany(item => item.GetComponentsInChildren<MeshRenderer>(true)).First(item => item.name == "Plane"), stone, 0.65f, 0.8f);
+            scene.GetRootGameObjects().SelectMany(item => item.GetComponentsInChildren<MeshRenderer>(true)).First(item => item.name == "Plane"), stone, 0.65f, 0.8f,
+            BattleForestCanopyShadowBakeTools.BakeCookie());
         root.AddComponent<BattleActorLightingController>().Configure(manager.alliesParent.transform, manager.enemiesParent.transform,
             AssetDatabase.LoadAssetAtPath<BattleActorFormLibrary>(BattleActorFormBakeTools.LibraryPath));
         foreach (Material generated in new[] { nearMaterial, stone })

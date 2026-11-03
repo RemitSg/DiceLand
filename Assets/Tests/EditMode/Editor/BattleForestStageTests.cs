@@ -4,11 +4,11 @@ using UnityEngine;
 
 public sealed class BattleForestStageTests
 {
-    [TestCase(true, 0.65f, 0.8f)]
-    [TestCase(false, 0.65f, 0.8f)]
-    [TestCase(true, 0f, 0f)]
-    [TestCase(false, 1f, 1f)]
-    public void DecorativeStagePreservesCombatAndRandomStateAndReleasesEveryMesh(bool groundWasEnabled, float canopyOcclusion, float sunlightMotion)
+    [TestCase(true, 0.65f, 0.8f, true)]
+    [TestCase(false, 0.65f, 0.8f, false)]
+    [TestCase(true, 0f, 0f, true)]
+    [TestCase(false, 1f, 1f, true)]
+    public void DecorativeStagePreservesCombatAndRandomStateAndReleasesEveryMesh(bool groundWasEnabled, float canopyOcclusion, float sunlightMotion, bool useCookie)
     {
         GameObject root = new GameObject("Forest stage lifecycle regression");
         GameObject groundObject = new GameObject("Original ground");
@@ -25,6 +25,13 @@ public sealed class BattleForestStageTests
         Vector4 originalOpenings = Shader.GetGlobalVector("_DiceLandForestOpenings");
         Vector4 originalSunDirection = Shader.GetGlobalVector("_DiceLandForestSunDirection");
         Vector4 originalSunColor = Shader.GetGlobalVector("_DiceLandForestSunColor");
+        Texture originalCookie = Shader.GetGlobalTexture("_DiceLandForestCanopyCookie");
+        Vector4 originalCookieParams = Shader.GetGlobalVector("_DiceLandForestCanopyCookieParams");
+        Texture2D cookie = useCookie ? new Texture2D(2,2) : null;
+        Texture2D cookieWitness = new Texture2D(4,4);
+        Vector4 cookieParamsWitness = new Vector4(2f,3f,4f,5f);
+        Shader.SetGlobalTexture("_DiceLandForestCanopyCookie",cookieWitness);
+        Shader.SetGlobalVector("_DiceLandForestCanopyCookieParams",cookieParamsWitness);
         Light originalSun = RenderSettings.sun;
         GameObject sunObject = new GameObject("Authored forest sun", typeof(Light));
         sunObject.transform.SetParent(root.transform);
@@ -42,7 +49,7 @@ public sealed class BattleForestStageTests
         Shader.SetGlobalVector("_DiceLandForestSunColor", sunColorWitness);
         string randomState = JsonUtility.ToJson(Random.state);
         BattleForestStageController stage = root.AddComponent<BattleForestStageController>();
-        stage.Configure(ground, material, canopyOcclusion, sunlightMotion);
+        stage.Configure(ground, material, canopyOcclusion, sunlightMotion, cookie);
         try
         {
             for (int cycle = 0; cycle < 2; cycle++)
@@ -60,6 +67,9 @@ public sealed class BattleForestStageTests
                     Shader.GetGlobalVector("_DiceLandForestSunDirection"));
                 Color sunColor = (QualitySettings.activeColorSpace == ColorSpace.Linear ? sun.color.linear : sun.color) * sun.intensity;
                 Assert.AreEqual((Vector4)sunColor, Shader.GetGlobalVector("_DiceLandForestSunColor"));
+                Assert.AreSame(cookie,Shader.GetGlobalTexture("_DiceLandForestCanopyCookie"));
+                Assert.AreEqual(new Vector4(0.05f,useCookie?2f:1f,18f,useCookie?1f:0f),
+                    Shader.GetGlobalVector("_DiceLandForestCanopyCookieParams"));
                 Assert.AreSame(material, ground.sharedMaterial);
                 Assert.AreEqual(actorPosition, actor.transform.position);
                 Assert.IsEmpty(root.GetComponentsInChildren<Collider>());
@@ -71,6 +81,8 @@ public sealed class BattleForestStageTests
                 Assert.AreEqual(openingWitness, Shader.GetGlobalVector("_DiceLandForestOpenings"));
                 Assert.AreEqual(sunDirectionWitness, Shader.GetGlobalVector("_DiceLandForestSunDirection"));
                 Assert.AreEqual(sunColorWitness, Shader.GetGlobalVector("_DiceLandForestSunColor"));
+                Assert.AreSame(cookieWitness,Shader.GetGlobalTexture("_DiceLandForestCanopyCookie"));
+                Assert.AreEqual(cookieParamsWitness,Shader.GetGlobalVector("_DiceLandForestCanopyCookieParams"));
                 Assert.IsEmpty(root.GetComponentsInChildren<MeshFilter>());
                 Assert.IsTrue(meshes.All(mesh => mesh == null), "Preview and scene unload must free generated meshes.");
             }
@@ -80,10 +92,14 @@ public sealed class BattleForestStageTests
             stage.ReleaseStage();
             Object.DestroyImmediate(root);
             Object.DestroyImmediate(material);
+            if(cookie!=null)Object.DestroyImmediate(cookie);
+            Object.DestroyImmediate(cookieWitness);
             Shader.SetGlobalFloat("_DiceLandForestLighting", originalLighting);
             Shader.SetGlobalVector("_DiceLandForestOpenings", originalOpenings);
             Shader.SetGlobalVector("_DiceLandForestSunDirection", originalSunDirection);
             Shader.SetGlobalVector("_DiceLandForestSunColor", originalSunColor);
+            Shader.SetGlobalTexture("_DiceLandForestCanopyCookie",originalCookie);
+            Shader.SetGlobalVector("_DiceLandForestCanopyCookieParams",originalCookieParams);
             RenderSettings.sun = originalSun;
         }
     }
