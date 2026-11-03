@@ -26,6 +26,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Mode: 0
+    - _ShaftMotion: 0.85
     - _ShaftStriation: 0.6
     - _SoftDistance: 2
     m_Colors:

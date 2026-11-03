@@ -3,7 +3,7 @@
 
 // Enabled only by the forest stage; shared sprite materials stay neutral in other scenes.
 float _DiceLandForestLighting;
-// xy: light-shaft openings, z: authored canopy occlusion strength (zero keeps the old lighting).
+// xy: light-shaft openings, z: canopy occlusion, w: shared sunlight motion.
 float4 _DiceLandForestOpenings;
 
 float DiceLandForestNoise(float2 p)
@@ -15,6 +15,27 @@ float DiceLandForestNoise(float2 p)
         dot(cell + float2(0, 1), float2(127.1, 311.7)),
         dot(cell + 1, float2(127.1, 311.7)))) * 43758.5453);
     return lerp(lerp(h.x, h.y, f.x), lerp(h.z, h.w, f.x), f.y);
+}
+
+float DiceLandForestSunSweep(float opening)
+{
+    float drift = sin(_Time.y * 0.36 + opening * 0.17) * 0.44;
+    drift += sin(_Time.y * 0.73 + opening * 0.29) * 0.15;
+    return drift * saturate(_DiceLandForestOpenings.w);
+}
+
+float2 DiceLandForestCanopyBreeze()
+{
+    float2 legacy = float2(sin(_Time.y * 0.24), cos(_Time.y * 0.19)) * 0.16;
+    float2 breeze = float2(sin(_Time.y * 0.42) * 0.55 + sin(_Time.y * 0.93 + 2.1) * 0.09,
+        cos(_Time.y * 0.31) * 0.44 + sin(_Time.y * 0.67) * 0.08);
+    return lerp(legacy, breeze, saturate(_DiceLandForestOpenings.w));
+}
+
+float2 DiceLandForestProjectedGround(float3 positionWS)
+{
+    float3 sunDirection = GetMainLight().direction;
+    return positionWS.xz - sunDirection.xz / max(0.2, sunDirection.y) * positionWS.y;
 }
 
 float DiceLandForestCanopyTransmission(float2 p, float2 breeze)
@@ -40,12 +61,11 @@ half3 DiceLandForestLightTint(float3 positionWS)
     if (_DiceLandForestLighting <= 0.001)
         return half3(1, 1, 1);
     // Points along the actual sun ray share one canopy opening, on actors and floor alike.
-    float3 sunDirection = GetMainLight().direction;
-    float2 p = positionWS.xz - sunDirection.xz / max(0.2, sunDirection.y) * positionWS.y;
+    float2 p = DiceLandForestProjectedGround(positionWS);
     float shaft = p.x + p.y * 0.42;
-    float openCanopy = max(1.0 - smoothstep(1.7, 5.0, abs(shaft - _DiceLandForestOpenings.x)),
-                          1.0 - smoothstep(1.0, 3.6, abs(shaft - _DiceLandForestOpenings.y)));
-    float2 breeze = float2(sin(_Time.y * 0.24), cos(_Time.y * 0.19)) * 0.16;
+    float openCanopy = max(1.0 - smoothstep(1.7, 5.0, abs(shaft - _DiceLandForestOpenings.x - DiceLandForestSunSweep(_DiceLandForestOpenings.x))),
+                          1.0 - smoothstep(1.0, 3.6, abs(shaft - _DiceLandForestOpenings.y - DiceLandForestSunSweep(_DiceLandForestOpenings.y))));
+    float2 breeze = DiceLandForestCanopyBreeze();
     float leaves = smoothstep(0.24, 0.74, DiceLandForestNoise(p * 0.52 + breeze));
     float sunlight = saturate(openCanopy * (0.60 + leaves * 0.40) + (1.0 - openCanopy) * leaves * 0.13);
     if (_DiceLandForestOpenings.z > 0.001)

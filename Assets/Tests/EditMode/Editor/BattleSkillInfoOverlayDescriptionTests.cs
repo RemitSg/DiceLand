@@ -33,6 +33,48 @@ public class BattleSkillInfoOverlayDescriptionTests
     }
 
     [Test]
+    public void EnemyInformationEntrypointsRejectCombatClicksAndPresentationWaits()
+    {
+        GameObject enemyObject = new GameObject("Enemy information click witness");
+        enemyObject.SetActive(false);
+        createdObjects.Add(enemyObject);
+        BattleEnemyController enemy = enemyObject.AddComponent<BattleEnemyController>();
+        GameObject battleObject = new GameObject("Battle information phase witness");
+        battleObject.SetActive(false);
+        createdObjects.Add(battleObject);
+        BattleButton battle = battleObject.AddComponent<BattleButton>();
+        typeof(BattleSkillInfoOverlay).GetField("cachedBattleButton", BindingFlags.Instance | BindingFlags.NonPublic)
+            .SetValue(overlay, battle);
+        FieldInfo resolving = typeof(BattleButton).GetField("isResolvingCombat", BindingFlags.Instance | BindingFlags.NonPublic);
+        bool originalLock = SpeedButton.CombatLocked;
+        int opened = 0;
+        overlay.EnemyDetailShown += _ => opened++;
+        overlay.EnemySkillInfoShown += (_, __) => opened++;
+        System.Action tryOpen = () =>
+        {
+            overlay.ShowEnemyDetail(enemy);
+            overlay.ShowEnemySkillInfo(enemy);
+            overlay.ShowEnemyHoverSkillInfo(enemy, null);
+            Assert.IsFalse(overlay.IsVisible);
+            Assert.AreEqual(0, overlayObject.transform.childCount, "Blocked clicks must not build a modal or hover UI.");
+            Assert.AreEqual(0, opened);
+        };
+        try
+        {
+            SpeedButton.CombatLocked = true;
+            tryOpen();
+            SpeedButton.CombatLocked = false;
+            resolving.SetValue(battle, true);
+            tryOpen();
+            resolving.SetValue(battle, false);
+            using (BattlePresentationContinueInputService.BeginPresentationInteractionLock())
+                tryOpen();
+            Assert.IsTrue(battle.CanInspectCombatants, "Ready/targeting must regain access after combat releases input.");
+        }
+        finally { SpeedButton.CombatLocked = originalLock; }
+    }
+
+    [Test]
     public void CompactSkillDetail_MergesConsumedStatusPowerModifierAndShowsCap()
     {
         BattleStatus_SO darkness = CreateStatus("darkness", "黑暗");

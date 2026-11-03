@@ -12,6 +12,7 @@ public sealed class BattleForestStageController : MonoBehaviour
     [SerializeField] private Material stoneMaterial;
     [SerializeField, Range(0f, 1f)] private float forestLighting = 0.82f;
     [SerializeField, Range(0f, 1f)] private float canopyOcclusion = 0.65f;
+    [SerializeField, Range(0f, 1f)] private float sunlightMotion = 0.8f;
 
     private static readonly int LightingId = Shader.PropertyToID("_DiceLandForestLighting");
     private static readonly int OpeningsId = Shader.PropertyToID("_DiceLandForestOpenings");
@@ -22,11 +23,12 @@ public sealed class BattleForestStageController : MonoBehaviour
     private Vector4 previousOpenings;
     private bool initialized;
 
-    public void Configure(MeshRenderer ground, Material stone, float canopyShadowStrength = 0.65f)
+    public void Configure(MeshRenderer ground, Material stone, float canopyShadowStrength = 0.65f, float sunlightMotionStrength = 0.8f)
     {
         originalGround = ground;
         stoneMaterial = stone;
         canopyOcclusion = Mathf.Clamp01(canopyShadowStrength);
+        sunlightMotion = Mathf.Clamp01(sunlightMotionStrength);
     }
 
     private void OnEnable()
@@ -42,7 +44,7 @@ public sealed class BattleForestStageController : MonoBehaviour
         previousLighting = Shader.GetGlobalFloat(LightingId);
         previousOpenings = Shader.GetGlobalVector(OpeningsId);
         Shader.SetGlobalFloat(LightingId, forestLighting);
-        Shader.SetGlobalVector(OpeningsId, new Vector4(CanopyOpenings.x, CanopyOpenings.y, canopyOcclusion, 0f));
+        Shader.SetGlobalVector(OpeningsId, new Vector4(CanopyOpenings.x, CanopyOpenings.y, canopyOcclusion, sunlightMotion));
         originalGroundEnabled = originalGround.enabled;
         originalGround.enabled = false;
         stageRoot = new GameObject("Runtime forest terrace");

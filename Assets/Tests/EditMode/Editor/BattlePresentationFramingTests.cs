@@ -63,6 +63,112 @@ public sealed class BattlePresentationFramingTests
         return item.AddComponent<Camera>();
     }
 
+    [TestCase(0f)]
+    [TestCase(0.5f)]
+    [TestCase(1f)]
+    public void EnemySpeedAnchorUsesTheAlignedSpriteHeightForEveryPivot(float pivotY)
+    {
+        GameObject root = new GameObject("Enemy speed anchor regression");
+        root.SetActive(false);
+        Texture2D texture = new Texture2D(2, 20);
+        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, 2, 20), new Vector2(0.5f, pivotY), 2f);
+        EnemyData_SO data = ScriptableObject.CreateInstance<EnemyData_SO>();
+        try
+        {
+            data.enemySprite = sprite;
+            data.enemyVisualScale = 1.3f;
+            data.enemyVisualOffset = Vector3.up * 0.4f;
+            data.baseSpeedButtonCount = 1;
+            BattleEnemyController enemy = root.AddComponent<BattleEnemyController>();
+            enemy.enemyData = data;
+            GameObject badge = new GameObject("Speed badge", typeof(BoxCollider2D), typeof(SpeedButton));
+            badge.transform.SetParent(root.transform, false);
+            enemy.RegisterSpeedButtons(new[] { badge.GetComponent<SpeedButton>() });
+            Assert.That(badge.transform.localPosition.y, Is.EqualTo(16.35f).Within(0.001f),
+                "The bottom alignment offset must not be added a second time.");
+        }
+        finally
+        {
+            Object.DestroyImmediate(root); Object.DestroyImmediate(data);
+            Object.DestroyImmediate(sprite); Object.DestroyImmediate(texture);
+        }
+    }
+
+    [TestCase(1.333333f, false)]
+    [TestCase(2.4f, false)]
+    [TestCase(1.333333f, true)]
+    [TestCase(2.4f, true)]
+    public void LargeEnemySpeedGroupFitsSafeAreaAndRecoversItsAnchorAfterZoom(float aspect, bool orthographic)
+    {
+        GameObject root = new GameObject("Large enemy speed viewport regression");
+        root.SetActive(false);
+        GameObject cameraObject = new GameObject("Speed viewport camera");
+        Texture2D texture = new Texture2D(2, 40);
+        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, 2, 40), Vector2.one * 0.5f, 2f);
+        EnemyData_SO data = ScriptableObject.CreateInstance<EnemyData_SO>();
+        RenderTexture target = new RenderTexture(Mathf.RoundToInt(1080f * aspect), 1080, 0);
+        bool previousLock = SpeedButton.CombatLocked;
+        try
+        {
+            SpeedButton.CombatLocked = false;
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.targetTexture = target;
+            camera.transform.position = new Vector3(0f, 3f, -24f);
+            camera.orthographic = orthographic;
+            camera.orthographicSize = 6f;
+            camera.fieldOfView = 28f;
+            camera.pixelRect = new Rect(0f, 0f, 1080f * aspect, 1080f);
+            camera.aspect = aspect;
+            Rect safe = new Rect(90f, 20f, camera.pixelWidth - 150f, 1040f);
+            data.enemySprite = sprite;
+            data.baseSpeedButtonCount = 3;
+            data.baseHP = 20;
+            BattleEnemyController enemy = root.AddComponent<BattleEnemyController>();
+            enemy.enemyData = data;
+            var buttons = new System.Collections.Generic.List<SpeedButton>();
+            for (int i = 0; i < 3; i++)
+            {
+                GameObject badge = new GameObject("Badge " + i, typeof(BoxCollider2D), typeof(SpeedButton));
+                badge.transform.SetParent(root.transform, false);
+                badge.GetComponent<BoxCollider2D>().size = new Vector2(0.7f, 0.8f);
+                buttons.Add(badge.GetComponent<SpeedButton>());
+            }
+            enemy.RegisterSpeedButtons(buttons);
+            root.transform.position = new Vector3(14f, 0f, 0f);
+            root.SetActive(true);
+            Vector3 actorPosition = root.transform.position;
+            enemy.FitSpeedButtonsToCamera(camera, safe);
+            foreach (SpeedButton button in buttons)
+            {
+                Bounds bounds = button.GetViewportBounds();
+                foreach (float x in new[] { bounds.min.x, bounds.max.x })
+                foreach (float y in new[] { bounds.min.y, bounds.max.y })
+                {
+                    Vector3 screen = camera.WorldToScreenPoint(new Vector3(x, y, bounds.center.z));
+                    Assert.That(screen.x, Is.InRange(safe.xMin + 17f, safe.xMax - 17f));
+                    Assert.That(screen.y, Is.InRange(safe.yMin + 17f, safe.yMax - 128f));
+                }
+            }
+            float groupSpacing = buttons[1].transform.localPosition.x - buttons[0].transform.localPosition.x;
+            Assert.That(groupSpacing, Is.EqualTo(0.82f).Within(0.001f));
+            Assert.AreEqual(actorPosition, root.transform.position);
+            enemy.FitSpeedButtonsToCamera(camera, safe);
+            Assert.That(buttons[1].transform.localPosition.x - buttons[0].transform.localPosition.x,
+                Is.EqualTo(groupSpacing).Within(0.001f), "Repeated fitting must not accumulate drift.");
+            camera.orthographicSize = 30f;
+            camera.fieldOfView = 110f;
+            enemy.FitSpeedButtonsToCamera(camera, safe);
+            Assert.That(buttons[0].transform.localPosition.y, Is.EqualTo(24f).Within(0.001f));
+        }
+        finally
+        {
+            SpeedButton.CombatLocked = previousLock;
+            Object.DestroyImmediate(root); Object.DestroyImmediate(cameraObject);
+            Object.DestroyImmediate(target);
+            Object.DestroyImmediate(data); Object.DestroyImmediate(sprite); Object.DestroyImmediate(texture);
+        }
+    }
+
     private static SpriteRenderer CreateActor(Transform parent, Sprite sprite, float x, float width, float height)
     {
         GameObject item = new GameObject("Actor " + x);

@@ -54,6 +54,7 @@ public class BattleEnemyController : MonoBehaviour
     private Vector2 speedButtonMultiGroupOffset = Vector2.zero;
     private float speedButtonHorizontalSpacing = 0.82f;
     private int temporarySpeedButtonCountOverride = -1;
+
     private const string BurnStatusId = "burn";
     private static int aliveBleedDecayPreventerCount;
     private int pendingStageTransitionIndex = -1;
@@ -64,6 +65,85 @@ public class BattleEnemyController : MonoBehaviour
     private int activeAttackSkillPowerBonus;
     private bool pendingCalamityDelayedDeath;
     public bool HasPendingCalamityDelayedDeath => pendingCalamityDelayedDeath && !IsDead;
+
+    private void LateUpdate()
+    {
+        if (Application.isPlaying && !SpeedButton.CombatLocked)
+            FitSpeedButtonsToCamera(Camera.main, Screen.safeArea);
+    }
+
+    /// <summary>Keep the whole speed group below the HUD without moving the enemy or its targets.</summary>
+    public void FitSpeedButtonsToCamera(Camera camera, Rect safePixels)
+    {
+        if (camera == null || SpeedButton.CombatLocked || activeSpeedButtons.Count == 0)
+            return;
+        Rect viewport = camera.pixelRect;
+        if (viewport.width <= 0f || viewport.height <= 0f)
+            return;
+        if (safePixels.width <= 0f || safePixels.height <= 0f)
+            safePixels = viewport;
+        else if (camera.targetTexture != null && safePixels == Screen.safeArea)
+        {
+            // Offscreen captures can have a different pixel size from the display.
+            Vector2 scale = new Vector2(viewport.width / Mathf.Max(1, Screen.width), viewport.height / Mathf.Max(1, Screen.height));
+            safePixels = new Rect(viewport.x + safePixels.x * scale.x, viewport.y + safePixels.y * scale.y,
+                safePixels.width * scale.x, safePixels.height * scale.y);
+        }
+        float padding = Mathf.Max(8f, viewport.height / 60f);
+        Rect visible = Rect.MinMaxRect(Mathf.Max(viewport.xMin, safePixels.xMin) + padding,
+            Mathf.Max(viewport.yMin, safePixels.yMin) + padding,
+            Mathf.Min(viewport.xMax, safePixels.xMax) - padding,
+            Mathf.Min(viewport.yMax, safePixels.yMax) - Mathf.Max(padding, viewport.height * 0.12f));
+        if (visible.width <= 0f || visible.height <= 0f)
+            return;
+        Vector2 offset = ResolveSpeedButtonOffset();
+        float top = CalculateCurrentStageTopLocalY();
+        float spacing = Mathf.Abs(speedButtonHorizontalSpacing);
+        float start = -(activeSpeedButtons.Count - 1) * spacing * 0.5f;
+        Vector2 min = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
+        Vector2 max = new Vector2(float.NegativeInfinity, float.NegativeInfinity);
+        bool found = false;
+        for (int i = 0; i < activeSpeedButtons.Count; i++)
+        {
+            SpeedButton button = activeSpeedButtons[i];
+            if (button == null || button.UsesHeadlessExecution || !button.gameObject.activeInHierarchy)
+                continue;
+            // Rebuild from the authored anchor every time so aspect changes can undo the clamp.
+            bool multiple = activeSpeedButtons.Count > 1;
+            button.transform.localPosition = new Vector3(offset.x + (multiple ? speedButtonMultiGroupOffset.x + start + i * spacing : 0f),
+                top + offset.y + (multiple ? speedButtonMultiGroupOffset.y : 0f), button.transform.localPosition.z);
+            Bounds bounds = button.GetViewportBounds();
+            for (int corner = 0; corner < 8; corner++)
+            {
+                Vector3 point = bounds.center + Vector3.Scale(bounds.extents,
+                    new Vector3((corner & 1) == 0 ? -1f : 1f, (corner & 2) == 0 ? -1f : 1f, (corner & 4) == 0 ? -1f : 1f));
+                Vector3 screen = camera.WorldToScreenPoint(point);
+                if (screen.z <= camera.nearClipPlane)
+                    return;
+                min = Vector2.Min(min, screen);
+                max = Vector2.Max(max, screen);
+            }
+            found = true;
+        }
+        if (!found)
+            return;
+        Vector2 shift = new Vector2(
+            max.x - min.x > visible.width ? visible.center.x - (min.x + max.x) * 0.5f
+                : Mathf.Clamp(0f, visible.xMin - min.x, visible.xMax - max.x),
+            max.y - min.y > visible.height ? visible.center.y - (min.y + max.y) * 0.5f
+                : Mathf.Clamp(0f, visible.yMin - min.y, visible.yMax - max.y));
+        if (shift.sqrMagnitude < 0.001f)
+            return;
+        foreach (SpeedButton button in activeSpeedButtons)
+        {
+            if (button == null || button.UsesHeadlessExecution || !button.gameObject.activeInHierarchy)
+                continue;
+            Vector3 screen = camera.WorldToScreenPoint(button.transform.position);
+            screen.x += shift.x;
+            screen.y += shift.y;
+            button.transform.position = camera.ScreenToWorldPoint(screen);
+        }
+    }
 
     private void Awake()
     {
@@ -1919,12 +1999,13 @@ public class BattleEnemyController : MonoBehaviour
     {
         Sprite sprite = GetCurrentStageSprite();
         if (sprite == null)
-            return speedButtonBaseOffset.y;
+            return 0f;
 
         Vector3 scale = ResolveBodyScale();
         Vector3 localOffset = ResolveVisualOffset();
         Bounds bounds = sprite.bounds;
-        return (-bounds.min.y * scale.y) + (bounds.size.y * scale.y) + localOffset.y;
+        // ApplySpriteAnchorAlignment already lifts the sprite's bottom to the actor origin.
+        return bounds.size.y * Mathf.Abs(scale.y) + localOffset.y;
     }
 
     private Vector2 ResolveSpeedButtonOffset()

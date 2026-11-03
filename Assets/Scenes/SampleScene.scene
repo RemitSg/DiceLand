@@ -1846,15 +1846,15 @@ MonoBehaviour:
   closeupRangePositionPulseAmplitude: 0.06
   closeupRangePulseFrequency: 0.16
   continuousRangePulseIntensity: 0.45
-  clashShakeAmplitude: 0.14
-  hitShakeAmplitude: 0.22
-  clashCameraImpactDuration: 0.2
-  hitCameraImpactDuration: 0.28
-  cameraImpactLensKick: 0.025
-  cameraImpactRoll: 0.65
-  cameraPowerNormalization: 12
-  minimumCameraIntensity: 0.18
-  cameraShakeFrequency: 28
+  clashShakeAmplitude: 0.28
+  hitShakeAmplitude: 0.4
+  clashCameraImpactDuration: 0.22
+  hitCameraImpactDuration: 0.3
+  cameraImpactLensKick: 0.032
+  cameraImpactRoll: 0.95
+  cameraPowerNormalization: 9
+  minimumCameraIntensity: 0.46
+  cameraShakeFrequency: 18
   cameraShakeDecayCurve:
     serializedVersion: 2
     m_Curve:
@@ -13490,6 +13490,7 @@ MonoBehaviour:
   stoneMaterial: {fileID: 2100000, guid: 1d9d2bf62a52544eb529a11a85862661, type: 2}
   forestLighting: 0.82
   canopyOcclusion: 0.65
+  sunlightMotion: 0.8
 --- !u!114 &1603544717
 MonoBehaviour:
   m_ObjectHideFlags: 0

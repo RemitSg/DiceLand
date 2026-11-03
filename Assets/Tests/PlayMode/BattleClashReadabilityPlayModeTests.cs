@@ -102,6 +102,71 @@ public sealed class BattleClashReadabilityPlayModeTests
     }
 
     [UnityTest]
+    public IEnumerator LowPowerImpactsRemainVisibleAndHitsAreStrongerThanClashes()
+    {
+        root = new GameObject("Low-power impact screen displacement test");
+        Component presentation = CreatePresentation();
+        Camera camera = (Camera)Field(presentation, "closeupCamera");
+        Transform first = Child("Ally").transform;
+        Transform second = Child("Enemy").transform;
+        first.position = Vector3.left;
+        second.position = Vector3.right;
+        Invoke(presentation, "StartCloseupShot", first, second, Vector3.zero, 2f);
+        yield return new WaitForSecondsRealtime(0.06f);
+        float clashPeak = 0f, hitPeak = 0f;
+        foreach (bool hit in new[] { false, true })
+        {
+            Vector3 stable = camera.WorldToViewportPoint(Vector3.zero);
+            Invoke(presentation, "TriggerCameraImpact", Vector3.zero, 2f, hit);
+            float peak = 0f;
+            for (float end = Time.realtimeSinceStartup + 0.42f; Time.realtimeSinceStartup < end;)
+            {
+                Vector3 delta = camera.WorldToViewportPoint(Vector3.zero) - stable;
+                peak = Mathf.Max(peak, new Vector2(delta.x * camera.aspect, delta.y).magnitude);
+                yield return null;
+            }
+            Assert.That(peak, Is.GreaterThan(0.008f), "Even a small roll must move more than 0.8% of frame height.");
+            Assert.That((camera.WorldToViewportPoint(Vector3.zero) - stable).magnitude, Is.LessThan(0.001f));
+            if (hit) hitPeak = peak; else clashPeak = peak;
+        }
+        Assert.That(hitPeak, Is.GreaterThan(clashPeak * 1.12f));
+        Invoke(presentation, "TriggerCameraImpact", Vector3.zero, 12f, true);
+        Invoke(presentation, "TriggerCameraImpact", Vector3.zero, 1f, false);
+        Assert.IsTrue((bool)Field(presentation, "closeupImpactIsHit"), "A weak clash must not replace a heavy hit's remaining beat.");
+    }
+
+    [UnityTest]
+    public IEnumerator HitCameraBeatBeginsWithTheDelayedDamageCallback()
+    {
+        root = new GameObject("Hit timing regression");
+        Component presentation = CreatePresentation();
+        Transform attacker = Child("Attacker").transform;
+        Transform defender = Child("Defender").transform;
+        attacker.position = Vector3.left;
+        defender.position = Vector3.right;
+        Invoke(presentation, "StartCloseupShot", attacker, defender, Vector3.zero, 3f);
+        Set(presentation, "defaultHitReactionDelay", 0.25f);
+        bool resolved = false, impulseAtDamage = false;
+        Action damage = () =>
+        {
+            resolved = true;
+            impulseAtDamage = (float)Field(presentation, "closeupShakeRemaining") > 0f
+                && (bool)Field(presentation, "closeupImpactIsHit");
+        };
+        object fx = Activator.CreateInstance(RuntimeType("EnemySkill_SO+DicePresentationSettings"));
+        IEnumerator moment = (IEnumerator)Invoke(presentation, "PlayHitMoment", defender, Vector3.zero, Vector3.right,
+            Color.white, 3f, fx, false, null, attacker.position, 0f, damage);
+        ((MonoBehaviour)presentation).StartCoroutine(moment);
+        Assert.IsFalse(resolved);
+        Assert.That((float)Field(presentation, "closeupShakeRemaining"), Is.Zero,
+            "The beat must not be spent during anticipation before damage lands.");
+        for (float end = Time.realtimeSinceStartup + 2f; !resolved && Time.realtimeSinceStartup < end;)
+            yield return null;
+        Assert.IsTrue(resolved);
+        Assert.IsTrue(impulseAtDamage);
+    }
+
+    [UnityTest]
     public IEnumerator SpectatorsAndNewWeaponsAreCulledWithoutDisablingCombatants()
     {
         root = new GameObject("Closeup spectator state test");

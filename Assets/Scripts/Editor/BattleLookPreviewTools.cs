@@ -70,6 +70,15 @@ public static class BattleLookPreviewTools
             settings.FindProperty("closeupLookOffset").vector3Value = Vector3.zero;
             settings.FindProperty("closeupLargeTargetVerticalBias").floatValue = 0f;
             settings.FindProperty("closeupRangePositionPulseAmplitude").floatValue = 0.06f;
+            settings.FindProperty("clashShakeAmplitude").floatValue = 0.28f;
+            settings.FindProperty("hitShakeAmplitude").floatValue = 0.40f;
+            settings.FindProperty("clashCameraImpactDuration").floatValue = 0.22f;
+            settings.FindProperty("hitCameraImpactDuration").floatValue = 0.30f;
+            settings.FindProperty("minimumCameraIntensity").floatValue = 0.46f;
+            settings.FindProperty("cameraPowerNormalization").floatValue = 9f;
+            settings.FindProperty("cameraShakeFrequency").floatValue = 18f;
+            settings.FindProperty("cameraImpactLensKick").floatValue = 0.032f;
+            settings.FindProperty("cameraImpactRoll").floatValue = 0.95f;
             settings.ApplyModifiedPropertiesWithoutUndo();
         }
         BattleManager manager = roots.SelectMany(root => root.GetComponentsInChildren<BattleManager>(true)).First();
@@ -291,6 +300,7 @@ public static class BattleLookPreviewTools
         material.SetColor("_Color", Color.white);
         material.SetFloat("_HighlightGain", 1.18f);
         material.SetColor("_PaintedFill", new Color(0.36f, 0.40f, 0.32f, 0.12f));
+        material.SetFloat("_SceneLightingWeight", 0.22f);
         Sprite ancientTree = LoadForestSprite(MidgroundPath);
         float treeScale = 1.85f;
         AddTree(root.transform, ancientTree, material, "Ancient tree and ruined terrace",
@@ -336,7 +346,7 @@ public static class BattleLookPreviewTools
         stone.SetColor("_SoilColor", new Color(0.39f, 0.34f, 0.23f));
         stone.SetColor("_MossColor", new Color(0.19f, 0.27f, 0.15f));
         root.AddComponent<BattleForestStageController>().Configure(
-            scene.GetRootGameObjects().SelectMany(item => item.GetComponentsInChildren<MeshRenderer>(true)).First(item => item.name == "Plane"), stone, 0.65f);
+            scene.GetRootGameObjects().SelectMany(item => item.GetComponentsInChildren<MeshRenderer>(true)).First(item => item.name == "Plane"), stone, 0.65f, 0.8f);
         root.AddComponent<BattleActorLightingController>().Configure(manager.alliesParent.transform, manager.enemiesParent.transform,
             AssetDatabase.LoadAssetAtPath<BattleActorFormLibrary>(BattleActorFormBakeTools.LibraryPath));
         foreach (Material generated in new[] { nearMaterial, stone })
@@ -410,6 +420,7 @@ public static class BattleLookPreviewTools
         rays.SetFloat("_Mode", 0f);
         rays.SetFloat("_SoftDistance", 2f);
         rays.SetFloat("_ShaftStriation", 0.6f);
+        rays.SetFloat("_ShaftMotion", 0.85f);
         string meshPath = ForestAssets + "/Canopy Light Shaft.asset";
         Mesh rayMesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
         if (rayMesh == null)

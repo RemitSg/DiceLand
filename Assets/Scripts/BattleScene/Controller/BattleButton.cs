@@ -86,6 +86,8 @@ public partial class BattleButton : MonoBehaviour
     private int currentRound = 1;
     private bool isResolvingCombat;
     public bool IsResolvingCombat => isResolvingCombat;
+    public bool CanInspectCombatants => !isResolvingCombat && !SpeedButton.CombatLocked
+        && (currentPhase == BattlePhase.Ready || currentPhase == BattlePhase.Targeting);
     private bool enemyBattleStartEffectsApplied;
     private bool battleStartEnergyCalamityApplied;
     private bool allyBattleStartCalamityApplied;
@@ -1270,7 +1272,7 @@ public partial class BattleButton : MonoBehaviour
             plan.HideAllySpeedButtons,
             plan.HideEnemySpeedButtons);
 
-        if (plan.HideSkillInfoOverlay && battleSkillInfoOverlay != null && battleSkillInfoOverlay.IsVisible)
+        if (plan.HideSkillInfoOverlay && battleSkillInfoOverlay != null)
             battleSkillInfoOverlay.Hide(false);
     }
 

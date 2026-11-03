@@ -6,6 +6,7 @@ Shader "DiceLand/Battle Forest Atmosphere"
         [Enum(Light shaft,0,Ground mist,1,Dust,2,Leaf,3)] _Mode ("Shape", Float) = 0
         _SoftDistance ("Soft intersection distance", Float) = 1.5
         _ShaftStriation ("Leaf-filtered shaft detail", Range(0,1)) = 0
+        _ShaftMotion ("Moving canopy-filtered sunlight", Range(0,1)) = 0
         _MistBreakup ("Ground mist breakup", Range(0,1)) = 0
     }
     SubShader
@@ -22,12 +23,14 @@ Shader "DiceLand/Battle Forest Atmosphere"
             #pragma fragment Frag
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            #include "Assets/Assets/Shaders/BattleForestLighting.hlsl"
             CBUFFER_START(UnityPerMaterial)
             half4 _Color;
-            float _Mode, _SoftDistance, _ShaftStriation, _MistBreakup;
+            float _Mode, _SoftDistance, _ShaftStriation, _ShaftMotion, _MistBreakup;
             CBUFFER_END
             struct Attributes { float4 positionOS : POSITION; float2 uv : TEXCOORD0; half4 color : COLOR; };
-            struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; float eyeDepth : TEXCOORD1; half4 color : COLOR; };
+            struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; float eyeDepth : TEXCOORD1; half4 color : COLOR; float3 world : TEXCOORD2; };
             Varyings Vert(Attributes input)
             {
                 Varyings output;
@@ -36,6 +39,7 @@ Shader "DiceLand/Battle Forest Atmosphere"
                 output.eyeDepth=-TransformWorldToView(positionWS).z;
                 output.uv=input.uv;
                 output.color=input.color;
+                output.world=positionWS;
                 return output;
             }
             half4 Frag(Varyings input) : SV_Target
@@ -53,10 +57,26 @@ Shader "DiceLand/Battle Forest Atmosphere"
                     float seed=frac(dot(origin,float2(0.1031,0.11369)));
                     float width=lerp(0.85,1.2,frac(seed*7.13+0.37));
                     float across=(uv.x-0.5)/width+0.5+(seed-0.5)*0.12;
+                    float motion=saturate(_ShaftMotion)*saturate(_DiceLandForestOpenings.w);
+                    float2 ground=DiceLandForestProjectedGround(input.world);
+                    float shaft=ground.x+ground.y*0.42;
+                    float opening=abs(shaft-_DiceLandForestOpenings.x)<abs(shaft-_DiceLandForestOpenings.y)
+                        ? _DiceLandForestOpenings.x : _DiceLandForestOpenings.y;
+                    float3 sun=GetMainLight().direction;
+                    float3 right=mul((float3x3)unity_ObjectToWorld,float3(1,0,0));
+                    float2 projectedRight=right.xz-sun.xz/max(0.2,sun.y)*right.y;
+                    float shaftWidth=projectedRight.x+projectedRight.y*0.42;
+                    across-=DiceLandForestSunSweep(opening)/max(0.8,abs(shaftWidth))
+                        *sign(shaftWidth)*(1.0-uv.y*0.65)*saturate(_ShaftMotion);
                     float ribbons=0.90*(1.0-smoothstep(0.025,0.09,abs(across-0.32)));
                     ribbons+=1.0-smoothstep(0.02,0.075,abs(across-0.50));
                     ribbons+=0.55*(1.0-smoothstep(0.02,0.06,abs(across-0.67)));
                     mask*=lerp(1.0,0.28+ribbons,saturate(_ShaftStriation));
+                    // The same drifting canopy gates both the air and the floor. Fine density
+                    // moves along the beam, while depth fading still hides it behind scenery.
+                    float transmission=DiceLandForestCanopyTransmission(ground,DiceLandForestCanopyBreeze());
+                    float density=0.80+0.35*DiceLandForestNoise(float2(across*14.0+seed*9.0,uv.y*7.0-_Time.y*0.45));
+                    mask*=lerp(1.0,(0.35+transmission*0.85)*density,motion);
                 }
                 else if (_Mode < 1.5)
                 {

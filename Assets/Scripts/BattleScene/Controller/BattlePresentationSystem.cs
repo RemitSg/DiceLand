@@ -148,15 +148,15 @@ public class BattlePresentationSystem : MonoBehaviour
     [SerializeField, Min(0f)] private float closeupRangePositionPulseAmplitude = 0.06f;
     [SerializeField, Min(0.01f)] private float closeupRangePulseFrequency = 2.1f;
     [SerializeField, Range(0f, 1f)] private float continuousRangePulseIntensity = 0.45f;
-    [SerializeField, Min(0f)] private float clashShakeAmplitude = 0.14f;
-    [SerializeField, Min(0f)] private float hitShakeAmplitude = 0.22f;
-    [SerializeField, Min(0.01f)] private float clashCameraImpactDuration = 0.20f;
-    [SerializeField, Min(0.01f)] private float hitCameraImpactDuration = 0.28f;
-    [SerializeField, Range(0f, 0.08f)] private float cameraImpactLensKick = 0.025f;
-    [SerializeField, Range(0f, 2f)] private float cameraImpactRoll = 0.65f;
-    [SerializeField, Min(0f)] private float cameraPowerNormalization = 12f;
-    [SerializeField, Range(0f, 1f)] private float minimumCameraIntensity = 0.18f;
-    [SerializeField, Min(0.01f)] private float cameraShakeFrequency = 28f;
+    [SerializeField, Min(0f)] private float clashShakeAmplitude = 0.28f;
+    [SerializeField, Min(0f)] private float hitShakeAmplitude = 0.40f;
+    [SerializeField, Min(0.01f)] private float clashCameraImpactDuration = 0.22f;
+    [SerializeField, Min(0.01f)] private float hitCameraImpactDuration = 0.30f;
+    [SerializeField, Range(0f, 0.08f)] private float cameraImpactLensKick = 0.032f;
+    [SerializeField, Range(0f, 2f)] private float cameraImpactRoll = 0.95f;
+    [SerializeField, Min(0f)] private float cameraPowerNormalization = 9f;
+    [SerializeField, Range(0f, 1f)] private float minimumCameraIntensity = 0.46f;
+    [SerializeField, Min(0.01f)] private float cameraShakeFrequency = 18f;
     [SerializeField] private AnimationCurve cameraShakeDecayCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
 
     [Header("Colors")]
@@ -617,7 +617,6 @@ public class BattlePresentationSystem : MonoBehaviour
         float planeZ,
         Action onImpact)
     {
-        TriggerCameraImpact(position, cameraImpactPower, true);
         float damageDelay;
         if (useCustom)
         {
@@ -654,6 +653,9 @@ public class BattlePresentationSystem : MonoBehaviour
 
         StartCoroutine(ResolveImpactAfterDelay(impactDelay, () =>
         {
+            // Land the camera beat with damage and the defender's reaction, rather
+            // than spending it during a custom effect's anticipation frames.
+            TriggerCameraImpact(position, cameraImpactPower, true);
             onImpact?.Invoke();
             damageResolved = true;
         }));
@@ -1516,7 +1518,14 @@ public class BattlePresentationSystem : MonoBehaviour
         if (UseCloseupCutCamera())
         {
             float intensity = NormalizeCameraIntensity(power);
-            closeupShakePulse = Mathf.Max(closeupShakePulse, intensity);
+            float currentDecay = closeupShakeDuration > 0.0001f
+                ? cameraShakeDecayCurve.Evaluate(1f - Mathf.Clamp01(closeupShakeRemaining / closeupShakeDuration)) : 0f;
+            float currentAmplitude = (closeupImpactIsHit ? hitShakeAmplitude : clashShakeAmplitude)
+                * closeupShakePulse * currentDecay;
+            float incomingAmplitude = (isHit ? hitShakeAmplitude : clashShakeAmplitude) * intensity;
+            if (closeupShakeRemaining > 0f && incomingAmplitude < currentAmplitude)
+                return;
+            closeupShakePulse = intensity;
             closeupImpactIsHit = isHit;
             closeupShakeDuration = isHit ? hitCameraImpactDuration : clashCameraImpactDuration;
             closeupShakeRemaining = closeupShakeDuration;

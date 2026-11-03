@@ -32,6 +32,9 @@ public class SpeedButton : MonoBehaviour
     [SerializeField] private Color speedTextColor = Color.white;
     [SerializeField] private int speedTextSortingOrder = 30;
     private PolygonCollider2D polygonCollider2D;
+    private PolygonCollider2D viewportCollider;
+    private Bounds viewportLocalBounds;
+    private int viewportPathCount;
 
     [Header("Button Settings")]
     [Tooltip("按钮类型：0=敌方，1=我方")]
@@ -149,6 +152,7 @@ public class SpeedButton : MonoBehaviour
 
     public void SetButtonType(ButtonType type)
     {
+        viewportCollider = null;
         buttonType = type;
         UpdateHoverOutlineVisibility();
     }
@@ -1217,6 +1221,45 @@ public class SpeedButton : MonoBehaviour
         }
 
         return new Bounds(transform.position, Vector3.one);
+    }
+
+    /// <summary>The clickable badge and its visible number, excluding intent curves.</summary>
+    public Bounds GetViewportBounds()
+    {
+        Bounds local = new Bounds(Vector3.zero, Vector3.one * 0.8f);
+        PolygonCollider2D polygon = GetComponent<PolygonCollider2D>();
+        BoxCollider2D box = GetComponent<BoxCollider2D>();
+        if (polygon != null && polygon.pathCount > 0)
+        {
+            if (viewportCollider != polygon || viewportPathCount != polygon.pathCount)
+            {
+                Vector2 min = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
+                Vector2 max = new Vector2(float.NegativeInfinity, float.NegativeInfinity);
+                for (int path = 0; path < polygon.pathCount; path++)
+                    foreach (Vector2 point in polygon.GetPath(path))
+                    { min = Vector2.Min(min, point); max = Vector2.Max(max, point); }
+                viewportLocalBounds = new Bounds((min + max) * 0.5f, max - min);
+                viewportCollider = polygon;
+                viewportPathCount = polygon.pathCount;
+            }
+            local = viewportLocalBounds;
+            local.center += (Vector3)polygon.offset;
+        }
+        else if (box != null)
+            local = new Bounds(box.offset, box.size);
+        // Physics2D auto-sync is disabled in this project. Transform local geometry
+        // directly so fitting never reads the collider's stale previous-frame bounds.
+        Bounds bounds = new Bounds(transform.TransformPoint(local.center), Vector3.zero);
+        for (int corner = 0; corner < 4; corner++)
+            bounds.Encapsulate(transform.TransformPoint(local.center + Vector3.Scale(local.extents,
+                new Vector3((corner & 1) == 0 ? -1f : 1f, (corner & 2) == 0 ? -1f : 1f, 0f))));
+        if (speedText != null && speedText.activeInHierarchy)
+        {
+            Renderer label = speedText.GetComponent<Renderer>();
+            if (label != null && label.enabled && label.bounds.size.sqrMagnitude > 0.0001f)
+                bounds.Encapsulate(label.bounds);
+        }
+        return bounds;
     }
 
     private void SetupCurveRenderingStyle()

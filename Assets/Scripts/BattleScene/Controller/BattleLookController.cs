@@ -24,6 +24,7 @@ public sealed class BattleLookController : MonoBehaviour
 
     private readonly List<SpriteRenderer> actorRenderers = new List<SpriteRenderer>();
     private readonly List<SpriteRenderer> scratchRenderers = new List<SpriteRenderer>();
+    private readonly List<BattleEnemyController> scratchEnemies = new List<BattleEnemyController>();
     private VolumeProfile runtimeProfile;
     private VolumeProfile originalProfile;
     private DepthOfField depthOfField;
@@ -86,6 +87,13 @@ public sealed class BattleLookController : MonoBehaviour
         }
         if (worldUiCamera != null && (camera == overviewCamera || camera == closeupCamera))
         {
+            if (!SpeedButton.CombatLocked && enemies != null)
+            {
+                scratchEnemies.Clear();
+                enemies.GetComponentsInChildren(false, scratchEnemies);
+                foreach (BattleEnemyController enemy in scratchEnemies)
+                    enemy.FitSpeedButtonsToCamera(camera, Screen.safeArea);
+            }
             SyncWorldUiCamera(camera);
             MoveWorldUi(allies, camera);
             MoveWorldUi(enemies, camera);

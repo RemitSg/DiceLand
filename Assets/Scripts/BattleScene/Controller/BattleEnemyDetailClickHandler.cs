@@ -16,7 +16,7 @@ public class BattleEnemyDetailClickHandler : MonoBehaviour
         if (enemyController == null || enemyController.IsDead)
             return;
 
-        if (BattlePresentationContinueInputService.IsEnemyDetailInteractionBlocked)
+        if (SpeedButton.CombatLocked || BattlePresentationContinueInputService.IsEnemyDetailInteractionBlocked)
             return;
 
         if (!SpeedButton.IsScreenPointAllowedByTutorialHighlight(Input.mousePosition))

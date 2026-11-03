@@ -107,6 +107,22 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         SpeedButton.InputSuppressed = false;
     }
 
+    private bool CanInspectEnemyInfo()
+    {
+        if (SpeedButton.CombatLocked || BattlePresentationContinueInputService.IsEnemyDetailInteractionBlocked)
+            return false;
+        ResolveBattleButton();
+        return cachedBattleButton == null || cachedBattleButton.CanInspectCombatants;
+    }
+
+    private void LateUpdate()
+    {
+        bool showingEnemy = currentEnemy != null && IsVisible;
+        bool showingHover = hoverPanelRoot != null && hoverPanelRoot.gameObject.activeSelf;
+        if ((showingEnemy || showingHover) && !CanInspectEnemyInfo())
+            Hide(false);
+    }
+
     public void ConfigureFonts(TMP_FontAsset keywordFontAsset, TMP_FontAsset bodyFontAsset)
     {
         if (keywordFontAsset != null)
@@ -148,7 +164,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
     public void ShowEnemySkillInfo(BattleEnemyController enemy, SpeedButton sourceButton)
     {
-        if (enemy == null)
+        if (enemy == null || !CanInspectEnemyInfo())
             return;
 
         EnsureUi();
@@ -168,7 +184,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
     public void ShowEnemyHoverSkillInfo(BattleEnemyController enemy, SpeedButton sourceButton)
     {
-        if (enemy == null)
+        if (enemy == null || !CanInspectEnemyInfo())
             return;
 
         EnsureUi();
@@ -212,7 +228,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
 
     public void ShowEnemyDetail(BattleEnemyController enemy)
     {
-        if (enemy == null)
+        if (enemy == null || !CanInspectEnemyInfo())
             return;
 
         EnsureUi();
