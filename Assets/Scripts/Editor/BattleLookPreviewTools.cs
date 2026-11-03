@@ -598,13 +598,23 @@ public static class BattleLookPreviewTools
         AssetDatabase.SaveAssetIfDirty(material);
     }
 
-    private static Material AddSunVolume(Transform atmosphere)
+    public static void ConfigureSunVolumeMaterial(Material material)
     {
-        Material material = ForestMaterial("Canopy Sun Volume", "DiceLand/Battle Forest Sun Volume");
+        if (material == null)
+            throw new ArgumentNullException(nameof(material));
         material.SetColor("_Color", new Color(1.8f, 1.45f, 0.85f, 1f));
         material.SetFloat("_Density", 0.016f);
         material.SetFloat("_BeamWidth", 1.35f);
         material.SetFloat("_Anisotropy", 0.45f);
+        material.SetFloat("_DepthAverage", 1f);
+        material.SetFloat("_ShaftSoftness", 0.4f);
+        material.EnableKeyword("_VOLUME_DEPTH_AVERAGE");
+    }
+
+    private static Material AddSunVolume(Transform atmosphere)
+    {
+        Material material = ForestMaterial("Canopy Sun Volume", "DiceLand/Battle Forest Sun Volume");
+        ConfigureSunVolumeMaterial(material);
         Transform volume = atmosphere.Find("Canopy sunlight volume");
         if (volume == null)
         {
