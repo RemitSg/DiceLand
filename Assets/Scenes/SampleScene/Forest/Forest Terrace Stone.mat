@@ -34,8 +34,8 @@ Material:
     m_Ints: []
     m_Floats:
     - _LowerStepGain: 0.35
-    - _PavingGrowth: 0.62
-    - _PavingScale: 0.12
+    - _PavingGrowth: 0.72
+    - _PavingScale: 0.16
     - _StoneTextureWeight: 0.8
     - _TextureScale: 0.055
     - _TextureWeight: 1

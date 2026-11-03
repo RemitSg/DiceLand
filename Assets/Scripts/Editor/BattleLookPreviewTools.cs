@@ -22,6 +22,7 @@ public static class BattleLookPreviewTools
     public const string ForegroundPath = "Assets/Assets/Textures/Environments/Forest/MossFernForegroundLow.png";
     public const string StoneTexturePath = "Assets/Assets/Textures/Environments/Forest/ForestTerracePavingSoft.png";
     public const string MarginTexturePath = "Assets/Assets/Textures/Environments/Forest/ForestMarginPlants.png";
+    public const string RuinTexturePath = "Assets/Assets/Textures/Environments/Forest/ForestRuinTerraces.png";
     public const string OutputPath = "outputs/agent-battle/battle-look-20261029";
 
     [MenuItem("Tools/Battle Visuals/Apply Forest Cinematic Look")]
@@ -35,6 +36,37 @@ public static class BattleLookPreviewTools
         {
             SceneManager.SetActiveScene(scene);
             ConfigureScene(scene);
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+        }
+        finally
+        {
+            SceneManager.SetActiveScene(original);
+            EditorSceneManager.CloseScene(scene, true);
+        }
+    }
+
+    [MenuItem("Tools/Battle Visuals/Apply Ruin Depth Layers")]
+    public static void ApplyRuinDepthToSavedBattleScene()
+    {
+        Scene original = SceneManager.GetActiveScene();
+        if (Enumerable.Range(0, SceneManager.sceneCount).Any(i => SceneManager.GetSceneAt(i).path == ScenePath))
+            throw new InvalidOperationException("Close the battle scene before applying its ruin layers; unsaved changes are never replaced.");
+        Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+        try
+        {
+            SceneManager.SetActiveScene(scene);
+            GameObject atmosphere = scene.GetRootGameObjects().First(item => item.name == "Battle Atmosphere");
+            AddRuinDepthLayers(atmosphere.transform);
+            foreach (string path in new[] { GroundPath, ForestAssets + "/Forest Terrace Stone.mat" })
+            {
+                Material material = AssetDatabase.LoadAssetAtPath<Material>(path);
+                if (material == null)
+                    throw new InvalidOperationException("Missing forest paving material: " + path);
+                ConfigurePavingScale(material);
+                EditorUtility.SetDirty(material);
+                AssetDatabase.SaveAssetIfDirty(material);
+            }
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
         }
@@ -154,8 +186,7 @@ public static class BattleLookPreviewTools
         ground.SetFloat("_TextureWeight", 1f);
         ground.SetTexture("_StoneMap", AssetDatabase.LoadAssetAtPath<Texture2D>(StoneTexturePath));
         ground.SetFloat("_StoneTextureWeight", 0.8f);
-        ground.SetFloat("_PavingScale", 0.12f);
-        ground.SetFloat("_PavingGrowth", 0.62f);
+        ConfigurePavingScale(ground);
         EditorUtility.SetDirty(ground);
         AssetDatabase.SaveAssetIfDirty(ground);
         MeshRenderer groundRenderer = roots.SelectMany(root => root.GetComponentsInChildren<MeshRenderer>(true)).First(renderer => renderer.name == "Plane");
@@ -338,8 +369,7 @@ public static class BattleLookPreviewTools
         stone.SetTexture("_StoneMap", paving);
         stone.SetFloat("_StoneTextureWeight", paving != null ? 0.8f : 0f);
         stone.SetFloat("_LowerStepGain", 0.35f);
-        stone.SetFloat("_PavingScale", 0.12f);
-        stone.SetFloat("_PavingGrowth", 0.62f);
+        ConfigurePavingScale(stone);
         stone.SetTexture("_GroundMap", AssetDatabase.LoadAssetAtPath<Texture2D>(GroundTexturePath));
         stone.SetFloat("_TextureScale", 0.055f);
         stone.SetFloat("_TextureWeight", 1f);
@@ -357,6 +387,61 @@ public static class BattleLookPreviewTools
 
         AddAtmosphere(root, manager, backdrop, material);
         AddWoodlandMargin(root.transform);
+        AddRuinDepthLayers(root.transform);
+    }
+
+    private static void ConfigurePavingScale(Material material)
+    {
+        material.SetFloat("_PavingScale", 0.16f);
+        material.SetFloat("_PavingGrowth", 0.72f);
+    }
+
+    private static void AddRuinDepthLayers(Transform parent)
+    {
+        Sprite sprite = LoadForestSprite(RuinTexturePath);
+        Material material = ForestMaterial("Forest Ruin Terraces", "DiceLand/Battle Forest Foliage");
+        material.SetColor("_PaintedFill", new Color(0.36f, 0.40f, 0.32f, 0.12f));
+        material.SetFloat("_HighlightGain", 1.1f);
+        material.SetFloat("_SwayAmplitude", 0f);
+        material.SetFloat("_SceneLightingWeight", 0.35f);
+        material.SetFloat("_Cutoff", 0.45f);
+        material.SetColor("_Color", Color.white);
+        Transform root = parent.Find("Ruin depth layers");
+        if (root == null)
+        {
+            root = new GameObject("Ruin depth layers").transform;
+            root.SetParent(parent, false);
+        }
+        ConfigureRuinPiece(root, sprite, material, "Near left ruined terraces", -7f, 9.5f, -0.35f,
+            0.95f, new Color(0.92f, 0.96f, 1f), false);
+        ConfigureRuinPiece(root, sprite, material, "Far right ruined terraces", 16.5f, 16f, -0.4f,
+            1.1f, new Color(0.82f, 0.9f, 0.95f), true);
+        EditorUtility.SetDirty(material);
+        AssetDatabase.SaveAssetIfDirty(material);
+    }
+
+    private static void ConfigureRuinPiece(Transform parent, Sprite sprite, Material material, string name,
+        float x, float z, float baseHeight, float scale, Color tint, bool flip)
+    {
+        // Reuse authored objects so running the update twice preserves scene references.
+        Transform piece = parent.Find(name);
+        if (piece == null)
+        {
+            piece = new GameObject(name).transform;
+            piece.SetParent(parent, false);
+        }
+        piece.localPosition = new Vector3(x, -sprite.bounds.min.y * scale + baseHeight, z);
+        piece.localRotation = Quaternion.identity;
+        piece.localScale = Vector3.one * scale;
+        SpriteRenderer renderer = piece.GetComponent<SpriteRenderer>();
+        if (renderer == null)
+            renderer = piece.gameObject.AddComponent<SpriteRenderer>();
+        renderer.sprite = sprite;
+        renderer.sharedMaterial = material;
+        renderer.color = tint;
+        renderer.flipX = flip;
+        renderer.shadowCastingMode = ShadowCastingMode.Off;
+        renderer.receiveShadows = false;
     }
 
     private static void AddWoodlandMargin(Transform parent)
