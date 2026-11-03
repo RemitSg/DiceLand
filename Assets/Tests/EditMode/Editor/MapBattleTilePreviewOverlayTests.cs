@@ -61,7 +61,8 @@ public class MapBattleTilePreviewOverlayTests
         Assert.That(rendered, Does.Contain("6/8"));
         Assert.That(rendered, Does.Contain("Fire"));
         Assert.That(rendered, Does.Contain("Dark"));
-        Assert.That(rendered, Does.Contain("Enter Battle - 2 AP"));
+        Assert.That(rendered, Does.Contain("进入战斗"));
+        Assert.That(rendered, Does.Not.Contain("2 AP"));
         Assert.That(rendered, Does.Contain("返回地图"));
         Assert.That(rendered, Does.Not.Contain("17"));
         Assert.That(rendered, Does.Not.Contain("EnemyGroupOmega"));
@@ -104,7 +105,7 @@ public class MapBattleTilePreviewOverlayTests
 
         overlay.Show(context);
 
-        Assert.That(FindText("BattleClassText").text, Does.Contain("Boss"));
+        Assert.That(FindText("BattleClassText").text, Does.Contain("首领"));
         Assert.That(FindText("StatusText").text, Does.Contain("1/3"));
         Assert.IsFalse(FindButton("ConfirmButton").interactable);
         Assert.IsTrue(FindButton("ReturnButton").interactable);
@@ -133,11 +134,11 @@ public class MapBattleTilePreviewOverlayTests
         Assert.IsFalse(FindButton("ConfirmButton").interactable);
         Assert.IsFalse(FindButton("ReturnButton").interactable);
 
-        overlay.ShowFailure("Transition failed: AP changed");
+        overlay.ShowFailure("Transition failed: MAP is unavailable");
 
         Assert.IsTrue(FindButton("ConfirmButton").interactable);
         Assert.IsTrue(FindButton("ReturnButton").interactable);
-        Assert.AreEqual("Transition failed: AP changed", FindText("StatusText").text);
+        Assert.AreEqual("Transition failed: MAP is unavailable", FindText("StatusText").text);
     }
 
     [Test]
@@ -236,8 +237,8 @@ public class MapBattleTilePreviewOverlayTests
         Assert.AreEqual(new Vector2(1f, 0.5f), panel.anchorMin);
         Assert.AreEqual(new Vector2(1f, 0.5f), panel.anchorMax);
         Assert.AreEqual(new Vector2(1f, 0.5f), panel.pivot);
-        Assert.That(panel.sizeDelta.x, Is.EqualTo(500f).Within(0.01f));
-        Assert.That(panel.sizeDelta.y, Is.EqualTo(620f).Within(0.01f));
+        Assert.That(panel.sizeDelta.x, Is.EqualTo(600f).Within(0.01f));
+        Assert.That(panel.sizeDelta.y, Is.EqualTo(810f).Within(0.01f));
 
         overlay.ApplyResponsiveLayout(new Vector2(1080f, 1920f));
 
@@ -245,7 +246,7 @@ public class MapBattleTilePreviewOverlayTests
         Assert.AreEqual(new Vector2(0.5f, 0f), panel.anchorMax);
         Assert.AreEqual(new Vector2(0.5f, 0f), panel.pivot);
         Assert.That(panel.sizeDelta.x, Is.EqualTo(920f).Within(0.01f));
-        Assert.That(panel.sizeDelta.y, Is.EqualTo(330f).Within(0.01f));
+        Assert.That(panel.sizeDelta.y, Is.EqualTo(520f).Within(0.01f));
         Assert.That(FindRect("BattleClassText").rect.height, Is.GreaterThanOrEqualTo(52f));
         Assert.That(FindRect("AttributeHeadingText").rect.height, Is.GreaterThanOrEqualTo(32f));
     }
@@ -264,7 +265,7 @@ public class MapBattleTilePreviewOverlayTests
 
         overlay.ApplyResponsiveLayout(new Vector2(1080f, 1920f), new Rect(0f, 0f, 1080f, 1920f));
 
-        Assert.AreEqual(new Vector2(920f, 330f), smallSize);
+        Assert.AreEqual(new Vector2(920f, 520f), smallSize);
         Assert.AreEqual(smallSize, panel.sizeDelta);
         Assert.AreEqual(new Vector2(0.5f, 0f), smallAnchorMin);
         Assert.AreEqual(smallAnchorMin, panel.anchorMin);
@@ -284,7 +285,7 @@ public class MapBattleTilePreviewOverlayTests
 
         overlay.ApplyResponsiveLayout(screenSize, safeArea);
 
-        Assert.AreEqual(new Vector2(920f, 330f), panel.sizeDelta);
+        Assert.AreEqual(new Vector2(920f, 520f), panel.sizeDelta);
         Assert.AreEqual(new Vector2(0.5f, 0f), panel.anchorMin);
         Assert.AreEqual(new Vector2(0.5f, 0f), panel.anchorMax);
         Assert.That(panel.anchoredPosition.y, Is.EqualTo(144f).Within(0.01f));
@@ -303,7 +304,7 @@ public class MapBattleTilePreviewOverlayTests
 
         float panelRight = screenSize.x + panel.anchoredPosition.x;
         float panelTop = screenSize.y * 0.5f + panel.anchoredPosition.y + panel.sizeDelta.y * 0.5f;
-        Assert.AreEqual(new Vector2(500f, 620f), panel.sizeDelta);
+        Assert.AreEqual(new Vector2(600f, 810f), panel.sizeDelta);
         Assert.AreEqual(new Vector2(1f, 0.5f), panel.anchorMin);
         Assert.AreEqual(new Vector2(1f, 0.5f), panel.anchorMax);
         Assert.That(panel.anchoredPosition.x, Is.EqualTo(-160f).Within(0.01f));
@@ -324,7 +325,7 @@ public class MapBattleTilePreviewOverlayTests
 
         Assert.IsTrue(overlay.IsVisible);
         Assert.AreEqual(new Vector2(1f, 0.5f), panel.anchorMin);
-        Assert.AreEqual(new Vector2(500f, 620f), panel.sizeDelta);
+        Assert.AreEqual(new Vector2(600f, 810f), panel.sizeDelta);
 
         bool appliedPortrait = overlay.RefreshResponsiveLayoutIfChanged(
             new Vector2(720f, 1280f),
@@ -334,7 +335,7 @@ public class MapBattleTilePreviewOverlayTests
         Assert.IsTrue(overlay.IsVisible);
         Assert.AreEqual(new Vector2(0.5f, 0f), panel.anchorMin);
         Assert.AreEqual(new Vector2(0.5f, 0f), panel.anchorMax);
-        Assert.AreEqual(new Vector2(920f, 330f), panel.sizeDelta);
+        Assert.AreEqual(new Vector2(920f, 520f), panel.sizeDelta);
     }
 
     [Test]
@@ -350,7 +351,7 @@ public class MapBattleTilePreviewOverlayTests
         const float expectedScaleFactor = 2f / 3f;
         float panelBottomPixels = panel.anchoredPosition.y * expectedScaleFactor;
         float panelTopPixels = (panel.anchoredPosition.y + panel.sizeDelta.y) * expectedScaleFactor;
-        Assert.AreEqual(new Vector2(920f, 330f), panel.sizeDelta);
+        Assert.AreEqual(new Vector2(920f, 520f), panel.sizeDelta);
         Assert.That(panel.anchoredPosition.y, Is.EqualTo(144f).Within(0.01f));
         Assert.GreaterOrEqual(panelBottomPixels, safeArea.yMin);
         Assert.LessOrEqual(panelTopPixels, safeArea.yMax);
@@ -415,6 +416,85 @@ public class MapBattleTilePreviewOverlayTests
 
         Assert.AreEqual(1, cancels);
         Assert.IsFalse(overlay.IsVisible);
+    }
+
+    [Test]
+    public void HeraldicPanelUsesRealTileMetadataAndKeepsCostOutOfThePrimaryAction()
+    {
+        MapBattleTilePreviewContext context = CreateContext(MapTileType.Elite, true);
+        context.tile.coord = new Vector2Int(3, 5);
+        context.tile.dangerBand = MapDangerBand.Inner;
+        context.tile.isVisited = true;
+        context.tile.isResolved = false;
+        context.confirmLabel = "进入战斗 · 预计 2 AP";
+        overlay.Show(context);
+        Assert.AreEqual("内层 · [3,5]", FindText("MetadataText").text);
+        Assert.AreEqual("已探索 · 未解决", FindText("ExplorationText").text);
+        Assert.AreEqual("进入战斗", FindText("ConfirmLabel").text);
+        Assert.IsNotNull(root.GetComponentInChildren<MapBattlePreviewFrameGraphic>(true));
+        Assert.IsNotNull(root.GetComponentsInChildren<Image>(true).First(i => i.name == "HeraldicCrest").sprite);
+        Assert.AreSame(MapForestArt.Get("Elite"), root.GetComponentsInChildren<Image>(true).First(i => i.name == "BattleClassIcon").sprite);
+        Assert.That(AllRenderedText(), Does.Not.Contain("预计"));
+    }
+
+    [Test]
+    public void PreviewSuppressesOnlyTheRepeatedTileCardAndRestoresItsPreviousState()
+    {
+        MapHUD hud = root.AddComponent<MapHUD>();
+        hud.Initialize();
+        overlay.ConfigureMapHud(hud);
+        RectTransform details = FindRect("TilePanel");
+        details.gameObject.SetActive(true);
+        MapBattleTilePreviewContext context = CreateContext(MapTileType.Elite, true);
+        overlay.Show(context);
+        Assert.IsFalse(details.gameObject.activeSelf);
+        Assert.IsTrue(FindRect("TopLeftPanel").gameObject.activeSelf);
+        hud.ShowTile(context.tile, 2, true);
+        Assert.IsFalse(details.gameObject.activeSelf);
+        overlay.Hide();
+        Assert.IsTrue(details.gameObject.activeSelf);
+        details.gameObject.SetActive(false);
+        overlay.Show(context);
+        overlay.Hide();
+        Assert.IsFalse(details.gameObject.activeSelf);
+    }
+
+    [TestCase("行动点不足，需要 2 点。")]
+    [TestCase("预计消耗 2 行动点")]
+    [TestCase("Not enough AP")]
+    [TestCase("Insufficient action points")]
+    public void ActionPointNotesStayAbsentWhileTheOriginalBlockRemainsEffective(string message)
+    {
+        MapBattleTilePreviewContext context = CreateContext(MapTileType.Elite, false);
+        context.blockReason = message;
+        overlay.Show(context);
+        Assert.AreEqual(string.Empty, FindText("StatusText").text);
+        Assert.IsFalse(FindRect("StatusViewport").gameObject.activeSelf);
+        Assert.IsFalse(FindButton("ConfirmButton").interactable);
+        Assert.IsTrue(FindButton("ReturnButton").interactable);
+        overlay.ShowFailure(message);
+        Assert.AreEqual(string.Empty, FindText("StatusText").text);
+        Assert.IsFalse(FindRect("StatusViewport").gameObject.activeSelf);
+        Assert.IsFalse(FindButton("ConfirmButton").interactable);
+        Assert.That(AllRenderedText(), Does.Not.Contain("行动点"));
+        Assert.That(AllRenderedText(), Does.Not.Contain(" AP"));
+        Assert.AreEqual(message, context.blockReason);
+    }
+
+    [Test]
+    public void LongBlockedReasonCanScrollWithoutDisablingTheReturnAction()
+    {
+        MapBattleTilePreviewContext context = CreateContext(MapTileType.Boss, false);
+        context.blockReason = string.Concat(Enumerable.Repeat("钥匙不足，请先探索地图并收集钥匙。", 14));
+        overlay.Show(context);
+        overlay.ApplyResponsiveLayout(new Vector2(1920f, 1080f));
+        ScrollRect scroll = FindRect("StatusViewport").GetComponent<ScrollRect>();
+        Assert.Greater(scroll.content.rect.height, scroll.viewport.rect.height);
+        Assert.AreEqual(context.blockReason, FindText("StatusText").text);
+        Assert.IsTrue(scroll.vertical);
+        Assert.IsFalse(scroll.horizontal);
+        Assert.IsFalse(FindButton("ConfirmButton").interactable);
+        Assert.IsTrue(FindButton("ReturnButton").interactable);
     }
 
     private static MapBattleTilePreviewContext CreateContext(MapTileType tileType, bool canConfirm)

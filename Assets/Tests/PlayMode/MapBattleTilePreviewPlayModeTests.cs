@@ -135,6 +135,90 @@ public sealed class MapBattleTilePreviewPlayModeTests
     }
 
     [UnityTest]
+    public IEnumerator NativeButtonsRestoreTheRepeatedDetailsAndCommitExactlyOneMove()
+    {
+        fixture.AttachHud();
+        Assert.IsTrue(fixture.BeginPreview(immediate: true));
+        yield return null;
+        Assert.IsFalse(fixture.IsTileDetailsVisible);
+        Click(fixture.ReturnButton);
+        yield return fixture.WaitForState("Hidden", 1f);
+        Assert.IsTrue(fixture.IsTileDetailsVisible);
+        Assert.AreEqual(0, fixture.CommitCount);
+        Assert.AreEqual(5, fixture.CurrentActionPoints);
+        Assert.AreEqual(fixture.OriginCoordinate, fixture.PlayerCoordinate);
+        Assert.IsTrue(fixture.BeginPreview(immediate: true));
+        yield return null;
+        Click(fixture.ConfirmButton);
+        yield return null;
+        Assert.AreEqual(1, fixture.CommitCount);
+        Assert.AreEqual(3, fixture.CurrentActionPoints);
+        Assert.AreEqual(fixture.TargetCoordinate, fixture.PlayerCoordinate);
+        Assert.AreEqual("Hidden", fixture.StateName);
+        Assert.IsTrue(fixture.IsTileDetailsVisible);
+    }
+
+    [UnityTest]
+    public IEnumerator PausedBlockedPreviewScrollsItsReasonAndKeepsNativeReturnAvailable()
+    {
+        float previous = Time.timeScale;
+        try
+        {
+            Time.timeScale = 0f;
+            fixture.ConfigureBlockedMessage(string.Concat(Enumerable.Repeat("钥匙不足，请返回地图收集钥匙。", 18)));
+            Assert.IsTrue(fixture.BeginPreview(immediate: true));
+            yield return null;
+            ScrollRect scroll = fixture.StatusScroll;
+            Assert.Greater(scroll.content.rect.height, scroll.viewport.rect.height);
+            Assert.IsFalse(fixture.ConfirmButton.interactable);
+            float before = scroll.verticalNormalizedPosition;
+            ExecuteEvents.Execute(scroll.gameObject, new PointerEventData(EventSystem.current) { scrollDelta = new Vector2(0, -5) }, ExecuteEvents.scrollHandler);
+            yield return null;
+            Assert.Less(scroll.verticalNormalizedPosition, before);
+            Assert.IsTrue(fixture.ReturnButton.interactable);
+            Click(fixture.ReturnButton);
+            yield return fixture.WaitForState("Hidden", 1f);
+            Assert.AreEqual(0, fixture.CommitCount);
+            Assert.AreEqual(5, fixture.CurrentActionPoints);
+        }
+        finally { Time.timeScale = previous; }
+    }
+
+    [UnityTest]
+    public IEnumerator ActionPointBlockHasNoDescriptionAndCannotCommitThroughTheNativeButton()
+    {
+        fixture.ConfigureBlockedMessage("行动点不足，需要 2 点。");
+        Assert.IsTrue(fixture.BeginPreview(immediate: true));
+        yield return null;
+        Assert.That(fixture.AllOverlayText, Does.Not.Contain("行动点"));
+        Assert.That(fixture.AllOverlayText, Does.Not.Contain(" AP"));
+        Assert.IsFalse(fixture.ConfirmButton.interactable);
+        Assert.IsFalse(fixture.StatusScroll.gameObject.activeSelf);
+        Click(fixture.ConfirmButton);
+        yield return null;
+        Assert.AreEqual(0, fixture.CommitCount);
+        Assert.AreEqual(5, fixture.CurrentActionPoints);
+        Assert.AreEqual(fixture.OriginCoordinate, fixture.PlayerCoordinate);
+        Click(fixture.ReturnButton);
+        yield return fixture.WaitForState("Hidden", 1f);
+    }
+
+    private static void Click(Button button)
+    {
+        Canvas.ForceUpdateCanvases();
+        RectTransform rect = (RectTransform)button.transform;
+        PointerEventData pointer = new PointerEventData(EventSystem.current)
+            { position = RectTransformUtility.WorldToScreenPoint(null, rect.TransformPoint(rect.rect.center)), button = PointerEventData.InputButton.Left };
+        List<RaycastResult> hits = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, hits);
+        Assert.IsNotEmpty(hits);
+        Assert.AreSame(button, hits[0].gameObject.GetComponentInParent<Button>());
+        ExecuteEvents.ExecuteHierarchy(hits[0].gameObject, pointer, ExecuteEvents.pointerDownHandler);
+        ExecuteEvents.ExecuteHierarchy(hits[0].gameObject, pointer, ExecuteEvents.pointerUpHandler);
+        ExecuteEvents.ExecuteHierarchy(hits[0].gameObject, pointer, ExecuteEvents.pointerClickHandler);
+    }
+
+    [UnityTest]
     public IEnumerator ImmediatePauseCleanup_RestoresPreviewWithoutCommitting()
     {
         Assert.IsTrue(fixture.BeginPreview(immediate: true));
@@ -180,6 +264,23 @@ internal sealed class MapBattleTilePreviewPlayModeFixture
     public bool IsOverlayVisible => (bool)GetProperty(overlay, "IsVisible");
     public bool IsCameraPreviewActive => (bool)GetProperty(view, "IsBattlePreviewActive");
     public Button ConfirmButton => FindButton("ConfirmButton");
+    public Button ReturnButton => FindButton("ReturnButton");
+    public ScrollRect StatusScroll => ((Component)overlay).GetComponentsInChildren<ScrollRect>(true).First(s => s.name == "StatusViewport");
+    public bool IsTileDetailsVisible => ((Component)controller).GetComponentsInChildren<RectTransform>(true).First(r => r.name == "TilePanel").gameObject.activeSelf;
+
+    public void AttachHud()
+    {
+        Component hud = (Component)AddRuntimeComponent(((Component)controller).gameObject, "MapHUD");
+        Invoke(hud, "Initialize");
+        Invoke(hud, "Refresh", runState, actionPoints);
+        Invoke(overlay, "ConfigureMapHud", hud);
+    }
+
+    public void ConfigureBlockedMessage(string message)
+    {
+        SetField(currentContext, "canConfirm", false);
+        SetField(currentContext, "blockReason", message);
+    }
     public string AllOverlayText
     {
         get

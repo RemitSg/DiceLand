@@ -911,6 +911,8 @@ public class RunGameManager : MonoBehaviour
             mapTutorialGuideOverlay.ConfigureFonts(tutorialMapGuideTitleFont, tutorialMapGuideBodyFont, tutorialMapGuideButtonFont);
         mapViewController = GetOrCreateManager(mapViewController);
         mapBattleTilePreviewOverlay = GetOrCreateBattleTilePreviewOverlay();
+        mapBattleTilePreviewOverlay.ConfigureTheme(Resources.Load<MapBattlePreviewTheme>("MapUI/BattlePreviewTheme"));
+        mapBattleTilePreviewOverlay.ConfigureMapHud(mapHUD);
         if (mapKeywordFont != null || mapBodyFont != null || mapAttributeFont != null)
             mapBattleTilePreviewOverlay.ConfigureFonts(mapKeywordFont, mapBodyFont, mapAttributeFont);
         mapBattleTilePreviewController = GetOrCreateBattleTilePreviewController();

@@ -200,6 +200,8 @@ public partial class MapHUD : MonoBehaviour
     private RectTransform rootRect;
     private Image tilePanelImage;
     private RectTransform tilePanelRect;
+    private bool battlePreviewSuppressesDetails;
+    private bool detailsWereActiveBeforePreview;
     private TextMeshProUGUI actionPointText;
     private TextMeshProUGUI moneyText;
     private MapResourceFeedback resourceFeedback;
@@ -337,6 +339,15 @@ public partial class MapHUD : MonoBehaviour
 
         RefreshPartyPanel();
         RefreshInventoryView();
+    }
+
+    public void SetBattlePreviewDetailsSuppressed(bool suppressed)
+    {
+        if (suppressed) Initialize();
+        if (battlePreviewSuppressesDetails == suppressed || tilePanelRect == null) return;
+        if (suppressed) detailsWereActiveBeforePreview = tilePanelRect.gameObject.activeSelf;
+        battlePreviewSuppressesDetails = suppressed;
+        tilePanelRect.gameObject.SetActive(suppressed ? false : detailsWereActiveBeforePreview);
     }
 
     public void ShowTile(BoardTileData tile, int moveCost = -1, bool detailed = false)

@@ -1,0 +1,25 @@
+DiceLand 战斗格子预览盾徽底图与绶带
+日期：2026-11-03（Asia/Singapore）
+方式：内置 image_gen，transparent_background=true；未使用 CLI/API 密钥。
+用途：按已确认第二版参考图落地战斗格子预览，提供一张中心留空的盾徽／绶带底图，普通、精英和首领叠加既有 Sword／Elite／Boss 图标，不生成敌人立绘或新玩法资产。
+正式素材：Assets/Resources/MapUI/BattlePreviewCrest.png
+选定原图：C:/Users/Karmas/.codex/generated_images/01a19b52-5ddb-7880-a1be-70f8b56a2036/exec-5485aa6b-5329-438c-975e-34fdf87b92c4.png
+原图为 1024×1536 RGBA，alpha 范围 0～254；边角透明。原样复制，不修改像素；Unity 按单精灵、保留透明、无 mipmap、最大边 512 导入，实际显示用 preserveAspect。
+原图与正式素材 SHA-256：71840BA10E60A739DA3C3C70286A1019CA687514435A0C1EE9657142E30E0180。
+标题与操作文字复用项目已有 Hi字楷体简 SDF；字体资源实际 GUID 通过编辑器 AssetDatabase 只读解析，未把团结加密后的 meta 字符串当作资源 GUID，也未复制或改写已有字体。
+
+输入参考：
+1. C:/DiceLand/docs/visuals/battle-tile-detail-concept-v2-20261103.png —— 用户认可的面板轮廓、盾徽和绶带方向。
+2. C:/DiceLand/Assets/Resources/MapUI/MapAtlas.png —— 既有手绘黄铜与金属工艺。
+
+原始提示词：
+Use case: stylized-concept.
+Asset type: ONE reusable fantasy game UI crest backing with a hanging ribbon, genuinely transparent PNG.
+Image 1 is the approved DiceLand battle-details screen reference. Recreate only the small upper-left heraldic shield-and-ribbon ornament as a standalone production UI asset, with the painted craftsmanship and colors of that reference.
+Image 2 supplies the existing painted brass and steel game-art finish.
+
+Create a single compact FRONT-FACING heraldic shield with a fine layered aged-brass outer rim and a deep oxblood-red enamel interior. Its shape has three modest pointed crowns along the top, gently tapering sides and one clean lower point. Small restrained brass leaf relief hugs the two lower outside edges of the shield, integrated into its silhouette.
+Behind the LEFT part of the shield hangs one narrow worn oxblood velvet ribbon. It runs from just behind the top rim down to about 1.7 times the shield height, with a clean swallowtail cut at the bottom. A fine quiet gold embroidered edge follows the ribbon. The shield is in front of the ribbon, with subtle painted overlap shadows confined to the objects.
+IMPORTANT: Leave the entire inner red shield surface EMPTY, calm and uninterrupted so an existing game icon can be overlaid in Unity. There must be NO swords, NO weapon, NO skull, NO letter, NO crest symbol, NO Chinese text and NO number inside it. Do not generate the large panel or its border, map, scenery, text, buttons, character, portrait, or a second shield.
+
+Composition: isolated shield-and-ribbon object, upper shield about 70% of the total asset width; longer ribbon just below its left side. Portrait aspect around 0.65:1, fully visible and tightly framed with an even transparent safety gutter. Keep a straight-on orthographic look suitable for UI; no perspective rotation. Rich but restrained hand-painted material variation, clean thick silhouette at small sizes, elegant brass highlights, no neon bloom or long exterior shadow. Background and holes genuinely alpha transparent, never a black/green rectangle or painted checkerboard. ONE asset only.

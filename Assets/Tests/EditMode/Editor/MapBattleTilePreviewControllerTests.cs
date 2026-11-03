@@ -138,7 +138,9 @@ public class MapBattleTilePreviewControllerTests
         Assert.AreEqual(0, commitCount);
         Assert.AreEqual(MapBattleTilePreviewState.Ready, controller.State);
         Assert.IsTrue(overlay.IsVisible);
-        Assert.That(AllOverlayText(), Does.Contain(reason));
+        if (boss) Assert.That(AllOverlayText(), Does.Contain(reason));
+        else Assert.That(AllOverlayText(), Does.Not.Contain(reason));
+        Assert.AreEqual(reason, refreshed.blockReason);
         Assert.IsFalse(FindConfirmButton().interactable);
     }
 
@@ -244,7 +246,9 @@ public class MapBattleTilePreviewControllerTests
 
         Assert.AreEqual(0, commitCount);
         Assert.AreEqual(MapBattleTilePreviewState.Ready, controller.State);
-        Assert.That(AllOverlayText(), Does.Contain(reason));
+        if (boss) Assert.That(AllOverlayText(), Does.Contain(reason));
+        else Assert.That(AllOverlayText(), Does.Not.Contain(reason));
+        Assert.AreEqual(reason, context.blockReason);
     }
 
     [Test]
