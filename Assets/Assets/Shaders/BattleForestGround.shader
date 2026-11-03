@@ -12,6 +12,9 @@ Shader "DiceLand/Battle Forest Ground"
         _StoneTextureWeight ("Painted paving weight", Range(0,1)) = 1
         _PavingScale ("Paving repeats per metre", Float) = 0.07
         _PavingGrowth ("Earth and moss islands", Range(0,1)) = 0
+        _PavingReliefMap ("Paving normal XZ, cavity and height", 2D) = "gray" {}
+        _PavingReliefStrength ("Paving bevel lighting", Range(0,1)) = 0
+        _PavingGlintStrength ("Rough paving highlights", Range(0,0.3)) = 0
     }
     SubShader
     {
@@ -53,7 +56,8 @@ Shader "DiceLand/Battle Forest Ground"
             }
             half4 Frag(Varyings input) : SV_Target
             {
-                half3 color=ForestSurfaceAlbedo(input.positionWS.xz)*ForestSurfaceLighting(input.positionWS,half3(0,1,0));
+                float paving = ForestSurfacePaving(input.positionWS.xz);
+                half3 color=ForestSurfaceShading(input.positionWS,half3(0,1,0),ForestSurfaceAlbedo(input.positionWS.xz,paving),paving);
                 return half4(MixFog(color,input.fog),ForestFloorCoverage(input.positionWS));
             }
             ENDHLSL

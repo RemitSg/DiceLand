@@ -13,6 +13,9 @@ Shader "DiceLand/Battle Forest Stone"
         _PavingScale ("Paving repeats per metre", Float) = 0.07
         _PavingGrowth ("Earth and moss islands", Range(0,1)) = 0
         _LowerStepGain ("Lower terrace step shade", Range(0,1)) = 1
+        _PavingReliefMap ("Paving normal XZ, cavity and height", 2D) = "gray" {}
+        _PavingReliefStrength ("Paving bevel lighting", Range(0,1)) = 0
+        _PavingGlintStrength ("Rough paving highlights", Range(0,0.3)) = 0
     }
     SubShader
     {
@@ -44,8 +47,9 @@ Shader "DiceLand/Battle Forest Stone"
             {
                 float top = saturate(input.normal.y);
                 half3 fascia = SAMPLE_TEXTURE2D(_StoneMap, sampler_StoneMap, input.world.xy * float2(_PavingScale, _PavingScale * 3.0)).rgb;
-                half3 albedo = lerp(fascia, ForestSurfaceAlbedo(input.world.xz), top);
-                half3 color = albedo * ForestSurfaceLighting(input.world, normalize(input.normal));
+                float paving = ForestSurfacePaving(input.world.xz);
+                half3 albedo = lerp(fascia, ForestSurfaceAlbedo(input.world.xz,paving), top);
+                half3 color = ForestSurfaceShading(input.world, normalize(input.normal), albedo,paving);
                 // Recessed steps stay in shade while the combat plane keeps its existing light.
                 float lowerStep = 1.0 - smoothstep(-0.24, 0.045, input.world.y);
                 color *= lerp(1.0, _LowerStepGain, lowerStep);

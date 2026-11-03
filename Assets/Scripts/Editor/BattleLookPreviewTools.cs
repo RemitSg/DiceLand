@@ -446,6 +446,7 @@ public static class BattleLookPreviewTools
     {
         material.SetFloat("_PavingScale", 0.16f);
         material.SetFloat("_PavingGrowth", 0.72f);
+        BattleForestPavingBakeTools.Configure(material, BattleForestPavingBakeTools.BakeMap());
     }
 
     private static void AddRuinDepthLayers(Transform parent)
