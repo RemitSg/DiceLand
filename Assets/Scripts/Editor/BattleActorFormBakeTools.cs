@@ -73,7 +73,8 @@ public static class BattleActorFormBakeTools
                     AssetDatabase.SaveAssetIfDirty(existing);
                 }
                 maps.Add(new BattleActorFormLibrary.Entry { sprite = sprite, formMap = existing,
-                    materialMap = previousLibrary != null ? previousLibrary.FindMaterialMap(sprite) : null });
+                    materialMap = previousLibrary != null ? previousLibrary.FindMaterialMap(sprite) : null,
+                    emissiveAlpha = previousLibrary != null && previousLibrary.UsesEmissiveAlpha(sprite) });
             }
             finally
             {
@@ -97,6 +98,7 @@ public static class BattleActorFormBakeTools
             entries.GetArrayElementAtIndex(i).FindPropertyRelative("sprite").objectReferenceValue = maps[i].sprite;
             entries.GetArrayElementAtIndex(i).FindPropertyRelative("formMap").objectReferenceValue = maps[i].formMap;
             entries.GetArrayElementAtIndex(i).FindPropertyRelative("materialMap").objectReferenceValue = maps[i].materialMap;
+            entries.GetArrayElementAtIndex(i).FindPropertyRelative("emissiveAlpha").boolValue = maps[i].emissiveAlpha;
         }
         serialized.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(library);

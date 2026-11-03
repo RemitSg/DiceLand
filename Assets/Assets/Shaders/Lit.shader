@@ -27,6 +27,7 @@ Shader "Assets/Shaders/Lit"
         [HideInInspector] _ForestFormParams ("Form weight and sprite mirroring", Vector) = (0,1,1,0)
         [HideInInspector] _ForestMaterialMap ("Forest skin, metal and roughness", 2D) = "black" {}
         [HideInInspector] _ForestMaterialWeight ("Forest authored material response", Range(0,1)) = 0
+        [HideInInspector] _ForestEmissionWeight ("Forest emissive material regions", Range(0,1)) = 0
     }
 
     SubShader
@@ -87,7 +88,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
-            float _ForestMaterialWeight;
+            float _ForestMaterialWeight, _ForestEmissionWeight;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
@@ -191,7 +192,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
-            float _ForestMaterialWeight;
+            float _ForestMaterialWeight, _ForestEmissionWeight;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
@@ -328,7 +329,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
-            float _ForestMaterialWeight;
+            float _ForestMaterialWeight, _ForestEmissionWeight;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);       SAMPLER(sampler_MainTex);
@@ -540,14 +541,23 @@ Shader "Assets/Shaders/Lit"
                 #endif
                 
                 float materialWeight = saturate(_ForestMaterialWeight) * surfaceWeight;
-                half3 material = half3(0,0,1);
+                half4 materialData = half4(0,0,1,0);
                 if (materialWeight > 0.001)
-                    material = SAMPLE_TEXTURE2D(_ForestMaterialMap, sampler_ForestMaterialMap, i.uv).rgb;
+                    materialData = SAMPLE_TEXTURE2D(_ForestMaterialMap, sampler_ForestMaterialMap, i.uv);
+                half3 material = materialData.rgb;
                 float3 litColor = CalculateLighting(baseColor.rgb, normalWS, i.positionWS,
                                                     viewDirWS, shadowCoord, surfaceWeight, material, materialWeight);
                 float highlightWeight = saturate(surfaceWeight * _ForestHighlightStrength);
                 if (highlightWeight > 0.001)
                     litColor = lerp(litColor, DiceLandForestHighlightShoulder(litColor), highlightWeight);
+                // Only explicitly tagged material maps use A as emission. Older maps keep
+                // their silhouette alpha and never inherit this response.
+                float emission = materialWeight * saturate(_ForestEmissionWeight) * materialData.a;
+                if (emission > 0.001)
+                {
+                    float breath = 0.90 + 0.10 * sin(_Time.y * 2.1 + dot(_ForestSpriteBounds.xy, float2(0.07,0.11)));
+                    litColor += baseColor.rgb * (5.0 * emission * breath);
+                }
                 if (_DiceLandForestLighting > 0.001)
                 {
                     // A narrow sun-facing alpha edge gives flat illustrated sprites a restrained rim.
@@ -603,7 +613,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
             float4 _ForestFormParams;
-            float _ForestMaterialWeight;
+            float _ForestMaterialWeight, _ForestEmissionWeight;
             CBUFFER_END
             TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
             TEXTURE2D(_AlphaTex); SAMPLER(sampler_AlphaTex);

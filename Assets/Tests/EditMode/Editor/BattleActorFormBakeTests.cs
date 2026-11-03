@@ -4,6 +4,42 @@ using UnityEngine;
 public sealed class BattleActorFormBakeTests
 {
     [Test]
+    public void CoffinMaterialKeepsDarkPanelsSeparateFromMetalAndEmissiveGems()
+    {
+        foreach(int size in new[]{256,512})
+        {
+            Color32[] pixels=BattleActorSurfaceBakeTools.BakePixels(BattleActorSurfaceBakeTools.CoffinPath,size,size);
+            System.Func<float,float,Color32> at=(x,y)=>pixels[Mathf.FloorToInt((1-y)*size)*size+Mathf.FloorToInt(x*size)];
+            Assert.Greater(at(.38f,.104f).g,230);
+            Assert.Less(at(.38f,.22f).g,15);
+            Assert.AreEqual(0,at(.38f,.22f).a);
+            Assert.Greater(at(.411f,.344f).a,240);
+            Assert.Greater(at(.742f,.070f).a,220);
+            Assert.AreEqual(0,at(.38f,.65f).a);
+            Assert.Less(at(.80f,.65f).a,80,"Purple air stays weaker than the central gemstone.");
+        }
+    }
+
+    [Test]
+    public void CoffinPlanesKeepTheExactSilhouetteAndBattleRandomState()
+    {
+        const int size=96;bool[] mask=new bool[size*size];
+        for(int i=0;i<mask.Length;i++)mask[i]=i%9!=0;
+        var before=BattleActorFormBakeTools.BakeFormPixels(mask,size,size);
+        var after=(Color32[])before.Clone();string random=JsonUtility.ToJson(Random.state);
+        BattleActorSurfaceBakeTools.RefineFormNormals(BattleActorSurfaceBakeTools.CoffinPath,after,size,size);
+        int changed=0;
+        for(int i=0;i<after.Length;i++)
+        {
+            Assert.AreEqual(before[i].a,after[i].a);
+            if(before[i].a==0)Assert.AreEqual(before[i],after[i]);
+            if(!before[i].Equals(after[i]))changed++;
+            Assert.Greater(after[i].b,127);
+        }
+        Assert.Greater(changed,1000);Assert.AreEqual(random,JsonUtility.ToJson(Random.state));
+    }
+
+    [Test]
     public void AuthoredMaterialsSeparateFacialSkinArmorAndClothAtEitherBakeResolution()
     {
         foreach (int size in new[] { 128, 256 })

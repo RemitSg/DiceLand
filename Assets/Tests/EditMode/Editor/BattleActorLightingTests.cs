@@ -150,13 +150,15 @@ public sealed class BattleActorLightingTests
         resources.Add(library);
         resources.Add(map);
         typeof(BattleActorFormLibrary).GetField("entries", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-            .SetValue(library, new[] { new BattleActorFormLibrary.Entry { sprite = sprite, formMap = map, materialMap = map } });
+            .SetValue(library, new[] { new BattleActorFormLibrary.Entry { sprite = sprite, formMap = map, materialMap = map, emissiveAlpha = true } });
         lighting.Configure(allies, enemies, library);
         lighting.UpdateLighting();
         Material runtime = body.sharedMaterial;
         Assert.AreSame(map, runtime.GetTexture("_ForestFormMap"));
         Assert.AreSame(map, runtime.GetTexture("_ForestMaterialMap"));
         Assert.Greater(runtime.GetFloat("_ForestMaterialWeight"), 0f);
+        Assert.AreEqual(1f,runtime.GetFloat("_ForestEmissionWeight"));
+        Assert.AreEqual(0f,material.GetFloat("_ForestEmissionWeight"));
         Assert.AreEqual(0f, material.GetFloat("_ForestMaterialWeight"));
         Assert.Greater(runtime.GetVector("_ForestFormParams").x, 0f);
         Assert.AreEqual(0f, material.GetVector("_ForestFormParams").x);
@@ -175,9 +177,26 @@ public sealed class BattleActorLightingTests
         Assert.AreEqual(0f, runtime.GetVector("_ForestFormParams").x);
         Assert.IsNull(runtime.GetTexture("_ForestFormMap"));
         Assert.AreEqual(0f, runtime.GetFloat("_ForestMaterialWeight"));
+        Assert.AreEqual(0f,runtime.GetFloat("_ForestEmissionWeight"));
         Assert.IsNull(runtime.GetTexture("_ForestMaterialMap"));
         lighting.ReleaseLighting();
         Assert.AreSame(material, body.sharedMaterial);
+    }
+
+    [Test]
+    public void ExistingMaterialAlphaDoesNotBecomeEmissionWithoutAnExplicitTag()
+    {
+        SpriteRenderer body=CreateActor("Non emissive material",allies,Vector3.up*2f,false);
+        var library=ScriptableObject.CreateInstance<BattleActorFormLibrary>();
+        var map=new Texture2D(4,8,TextureFormat.RGBA32,false,true);
+        resources.Add(library);resources.Add(map);
+        typeof(BattleActorFormLibrary).GetField("entries",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)
+            .SetValue(library,new[]{new BattleActorFormLibrary.Entry{sprite=sprite,materialMap=map}});
+        lighting.Configure(allies,enemies,library);lighting.UpdateLighting();
+        Assert.AreSame(map,body.sharedMaterial.GetTexture("_ForestMaterialMap"));
+        Assert.Greater(body.sharedMaterial.GetFloat("_ForestMaterialWeight"),0f);
+        Assert.AreEqual(0f,body.sharedMaterial.GetFloat("_ForestEmissionWeight"));
+        Assert.IsFalse(library.UsesEmissiveAlpha(sprite));
     }
 
     [Test]
