@@ -32,6 +32,7 @@ public static class BattleForestPavingBakeTools
         material.SetTexture("_PavingReliefMap", map);
         material.SetFloat("_PavingReliefStrength", 1f);
         material.SetFloat("_PavingGlintStrength", 0.12f);
+        material.SetFloat("_PavingLocalGlintStrength", 0.22f);
     }
 
     public static Texture2D BakeMap(string assetPath = MapPath)

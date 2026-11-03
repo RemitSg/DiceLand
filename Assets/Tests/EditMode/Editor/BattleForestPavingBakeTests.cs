@@ -24,6 +24,7 @@ public sealed class BattleForestPavingBakeTests
             AssetDatabase.ImportAsset(materialPath,ImportAssetOptions.ForceSynchronousImport|ImportAssetOptions.ForceUpdate);
             Material reloaded = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
             Assert.AreEqual(path,AssetDatabase.GetAssetPath(reloaded.GetTexture("_PavingReliefMap")));
+            Assert.That(reloaded.GetFloat("_PavingLocalGlintStrength"), Is.EqualTo(.22f).Within(.0001f));
             string guid = AssetDatabase.AssetPathToGUID(path);
             BattleForestPavingBakeTools.BakeMap(path);
             AssetDatabase.ImportAsset(materialPath,ImportAssetOptions.ForceSynchronousImport|ImportAssetOptions.ForceUpdate);

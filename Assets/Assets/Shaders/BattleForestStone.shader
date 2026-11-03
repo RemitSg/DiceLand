@@ -16,6 +16,7 @@ Shader "DiceLand/Battle Forest Stone"
         _PavingReliefMap ("Paving normal XZ, cavity and height", 2D) = "gray" {}
         _PavingReliefStrength ("Paving bevel lighting", Range(0,1)) = 0
         _PavingGlintStrength ("Rough paving highlights", Range(0,0.3)) = 0
+        _PavingLocalGlintStrength ("Local light paving highlights", Range(0,0.6)) = 0
     }
     SubShader
     {

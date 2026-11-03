@@ -39,6 +39,7 @@ Material:
     m_Floats:
     - _PavingGlintStrength: 0.12
     - _PavingGrowth: 0.72
+    - _PavingLocalGlintStrength: 0.22
     - _PavingReliefStrength: 1
     - _PavingScale: 0.16
     - _StoneTextureWeight: 0.8

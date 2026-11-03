@@ -8,7 +8,7 @@
 CBUFFER_START(UnityPerMaterial)
 half4 _SoilColor, _MossColor, _StoneColor;
 float _TextureScale, _TextureWeight, _StoneTextureWeight, _PavingScale, _PavingGrowth, _LowerStepGain;
-float _PavingReliefStrength, _PavingGlintStrength;
+float _PavingReliefStrength, _PavingGlintStrength, _PavingLocalGlintStrength;
 CBUFFER_END
 TEXTURE2D(_GroundMap); SAMPLER(sampler_GroundMap);
 TEXTURE2D(_StoneMap); SAMPLER(sampler_StoneMap);
@@ -65,6 +65,8 @@ half3 ForestSurfaceLighting(float3 world, half3 normal)
 half3 ForestSurfaceShading(float3 world, half3 geometricNormal, half3 albedo, float paving)
 {
     half3 localNormal = geometricNormal;
+    float3 viewDirection = 0;
+    float localGlintWeight = 0;
     float top = saturate(geometricNormal.y);
     float surfaceWeight = saturate(_PavingReliefStrength) * top * saturate(_DiceLandForestLighting);
     float weight = surfaceWeight * paving * saturate(_StoneTextureWeight);
@@ -89,8 +91,9 @@ half3 ForestSurfaceShading(float3 world, half3 geometricNormal, half3 albedo, fl
         half3 illumination = fill * cavity + light.color * saturate(dot(normal,light.direction))
             * lerp(0.4,1.0,light.shadowAttenuation);
         half3 tint = lerp(half3(0.85,0.92,1.0), DiceLandForestLightTint(world), top);
-        float3 view = normalize(GetWorldSpaceViewDir(world));
-        float3 halfDirection = normalize(light.direction + view + float3(0,0.0001,0));
+        viewDirection = normalize(GetWorldSpaceViewDir(world));
+        localGlintWeight = relief.a * weight * _PavingLocalGlintStrength;
+        float3 halfDirection = normalize(light.direction + viewDirection + float3(0,0.0001,0));
         float glint = pow(saturate(dot(normal,halfDirection)),28.0) * relief.a;
         half3 specular = light.color * glint * (_PavingGlintStrength * weight)
             * light.shadowAttenuation * DiceLandForestSunVisibility(world);
@@ -110,6 +113,16 @@ half3 ForestSurfaceShading(float3 world, half3 geometricNormal, half3 albedo, fl
                 Light localLight = GetAdditionalLight(index,world);
                 result += albedo * localLight.color * saturate(dot(localNormal,localLight.direction))
                     * (localLight.distanceAttenuation * localLight.shadowAttenuation * saturate(_DiceLandForestLighting));
+                if (localGlintWeight > 0.001)
+                {
+                    // Local reflections use their own attenuation, not the canopy's sun visibility.
+                    // The existing paving height mask keeps earth and joints out of the highlight.
+                    float3 halfDirection = normalize(localLight.direction + viewDirection + float3(0,0.0001,0));
+                    float glint = pow(saturate(dot(localNormal,halfDirection)),28.0);
+                    result += localLight.color * (glint * localGlintWeight
+                        * saturate(dot(localNormal,localLight.direction))
+                        * localLight.distanceAttenuation * localLight.shadowAttenuation);
+                }
             }
         }
     #endif
