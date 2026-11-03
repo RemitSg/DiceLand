@@ -1,0 +1,57 @@
+DiceLand 战斗格子详情面板重制参考图
+日期：2026-11-03（Asia/Singapore）
+方式：内置 image_gen；未使用 CLI/API 密钥。
+用户要求：根据当前战斗格子截图生成一版重制参考图，适当放大关键信息，排版错落有致。
+方案：将右侧黑色战斗预览和后方格子详情整合为单一深绿黄铜面板；放大精英战斗标题、危险度评级与数值、预计行动点消耗。坐标、区域、探索／解决状态作为次级信息，属性保持紧凑，底部使用金色进入战斗和深绿返回地图按钮。
+范围：仅视觉参考，未接入正式 UGUI，未修改代码、正式场景、角色资源、敌人、技能、遗物、玩法配置或存档。
+样例：采用用户截图的精英战斗、[3,5]、外围、吃力 2/8、预计 2 行动点，以及资源 HUD 和队员数值；探索／解决状态用于展示布局。属性字样采用 Assets/Data/Loots/Attributes/Flame_Attribute.asset 中的实际 attributeName“炎”（U+708E）。这些展示内容不构成对实际敌群、属性投放、危险度或消耗的新增／修改。
+界面语义：危险度八格指示为二格亮起、六格熄灭；预计消耗保持绿色资源文字及足迹图标，金币沿用金色，钥匙沿用浅蓝。预览标签和遭遇种子不放在主界面。背景里的地图格仅用于画面语境，不代表恢复角色随行底板。
+正式参考图：docs/visuals/battle-tile-detail-concept-20261103.png
+选定原图：C:/Users/Karmas/.codex/generated_images/01a19b52-5ddb-7880-a1be-70f8b56a2036/exec-090afe25-ead4-4cc6-92c6-c3db12673a21.png
+
+输入参考（顺序与原始提示词一致）：
+1. 用户提供的现状截图，作为功能、信息与地图语境参考：
+C:/Users/Karmas/Documents/xwechat_files/wxid_rs05v648c5z332_ef93/temp/RWTemp/2026-11/9e20f478899dc29eb19741386f9343c8/accbbabef57a6b8c556988888889d53a.jpg
+2. 已确认的深绿黄铜事件面板风格参考：
+C:/DiceLand/docs/visuals/event-panel-reading-concept-20261102.png
+
+原始提示词：
+Use case: ui-mockup.
+Create ONE polished, high-fidelity redesign reference for the DiceLand battle-tile details and confirmation panel. A complete in-game screen, ultrawide mobile landscape about 2.17:1, crisp readable simplified Chinese. The user's request is a more refined panel with larger key information and a varied, carefully composed typographic hierarchy.
+
+INPUT ROLES:
+Image 1 is the current game screenshot: reference for map context, the selected elite battle, real information, and the current two overlapping right-hand detail panels to redesign.
+Image 2 is the approved event UI: style reference for almost opaque forest-green surfaces, fine aged-brass framing, warm ivory typography and a substantial gold action button.
+Generate a new mockup informed by these references.
+
+CONTEXT AND COMPOSITION:
+Retain the recognizable forest-ruins map, stone tile icons, top-left resource HUD, party card and top-right menu in their existing general positions. The selected tile and the brown-haired chibi traveler remain visible in the central map area. The character is a transparent cutout standing above the board; do not put the character inside a separate portable framed card.
+Replace BOTH the plain black battle-preview rectangle and the older overlapping lower-right tile details card with ONE coherent right-hand framed panel. No second panel visible behind it. Place this single panel about 32% of screen width and 82% of screen height, with comfortable right and bottom margins. Its richly legible contents fill the height without a large blank middle. The map remains visible to the left and is subtly dimmed behind the UI.
+
+ART DIRECTION:
+Hand-painted fantasy adventure UI matching the references. Nearly opaque deep pine-green and charcoal-green surfaces, subtle restrained leather texture, aged brass double keyline, modest angular corner caps and two small leaf accents at the lower corners. Fine brass dividers with a small central diamond. Warm ivory main text, muted sage supporting labels. Bold legible Chinese headings, clean Chinese body type, strong contrast. Brass is detailed and elegant, not thick ornate baroque filigree. No neon bloom or modern web dashboard.
+
+PANEL LAYOUT — varied scale and rhythm, not uniform stacked text:
+1. Compact identity header: a moderately sized crossed-swords emblem in a square inset at upper left; alongside it the large warm-ivory title “精英战斗”. A smaller brass-outlined coordinate badge “[3,5]” aligns at upper right. A quiet supporting row below shows “外围” plus the two subdued status chips “未探索” and “未解决”. Fine divider.
+2. The MAIN hero information is danger. A small muted label “危险度” sits above a very large bold orange-red “吃力”, aligned left. On the right, a prominent but smaller “2” followed by a quiet “/8”. Beneath, eight small separated diamond markers, exactly TWO warm lit markers and SIX subdued markers, as a compact visual scale. Keep the Chinese rating label visibly dominant, with generous breathing room.
+3. The attribute section is shorter and visually lighter, not another equal-size card: small heading “属性倾向”, a restrained circular flame medallion on the left and a large readable character “炎” to its right in warm amber. The exact attribute name is “炎”, U+708E. Only this one attribute. A thin horizontal divider ends this section.
+4. A wide DARK inset cost summary directly above the actions. At its left, a small footprint icon and muted heading “预计消耗”; at its right, a very large mint-green numeral “2” paired with the smaller mint-green words “行动点”. The cost is the second most prominent number in the panel. Use green #9EDBB8 for the entire action-point resource and footprint; this inset stays dark for contrast.
+5. A broad, substantial primary button under the cost summary, warm gold with dark readable text “进入战斗” and a small crossed-swords icon. Below, a shorter secondary dark-green brass-outline button “返回地图”, ivory text. Both buttons have comfortable touch areas. Avoid repeating the cost inside the gold button; it already has its own clear summary above.
+
+Keep text concise and accurate. All required panel text verbatim:
+“精英战斗” “[3,5]” “外围” “未探索” “未解决”
+“危险度” “吃力” “2” “/8”
+“属性倾向” “炎”
+“预计消耗” “2” “行动点”
+“进入战斗” “返回地图”
+
+Surrounding HUD sample values follow Image 1: action resources 15/15, calamity 1, difficulty “简单”, coins 58, keys 1/2, Chara Lv.2 HP 20/20 and XP 0/20. HUD remains secondary to the new panel.
+
+CONSTRAINTS:
+This is a visual reference for existing game information and confirm/cancel actions. Do not add enemy portraits, enemy roster, stats, resistances, rewards, loot previews, recommended power, fictional battle descriptions, extra tabs, extra buttons or new gameplay systems. Omit the old debug seed and English preview tags from the primary panel. No enormous empty gap, no repeated information in a second panel. No arrows, annotations, comparison layouts, multiple screens, device frames, logos or watermarks. The output is ONE finished cohesive UI reference image, with the redesigned right-side panel as the focal point.
+
+
+文件校验：
+PNG：1848×851，RGB。
+SHA-256：216AB259813CE41BDB0BF637F1C39A4AFDD1F9AA0685D1E4E55D6E519B817424。
+原图和项目拷贝字节一致，PNG 解码校验通过；已目视核对面板层级、中文、八格危险度指示（二亮六暗）、行动点绿色及进入／返回操作。仅参考图任务，未运行游戏测试或打包。
