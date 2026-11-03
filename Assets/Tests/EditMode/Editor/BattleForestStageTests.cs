@@ -23,8 +23,23 @@ public sealed class BattleForestStageTests
         Vector3 actorPosition = actor.transform.position;
         float originalLighting = Shader.GetGlobalFloat("_DiceLandForestLighting");
         Vector4 originalOpenings = Shader.GetGlobalVector("_DiceLandForestOpenings");
+        Vector4 originalSunDirection = Shader.GetGlobalVector("_DiceLandForestSunDirection");
+        Vector4 originalSunColor = Shader.GetGlobalVector("_DiceLandForestSunColor");
+        Light originalSun = RenderSettings.sun;
+        GameObject sunObject = new GameObject("Authored forest sun", typeof(Light));
+        sunObject.transform.SetParent(root.transform);
+        sunObject.transform.rotation = Quaternion.Euler(52f, 218f, 0f);
+        Light sun = sunObject.GetComponent<Light>();
+        sun.type = LightType.Directional;
+        sun.color = new Color(0.8f, 0.7f, 0.6f);
+        sun.intensity = 1.6f;
+        RenderSettings.sun = sun;
+        Vector4 sunDirectionWitness = new Vector4(1f, 2f, 3f, 4f);
+        Vector4 sunColorWitness = new Vector4(5f, 6f, 7f, 8f);
         Vector4 openingWitness = new Vector4(-123f, 456f, 7f, 8f);
         Shader.SetGlobalVector("_DiceLandForestOpenings", openingWitness);
+        Shader.SetGlobalVector("_DiceLandForestSunDirection", sunDirectionWitness);
+        Shader.SetGlobalVector("_DiceLandForestSunColor", sunColorWitness);
         string randomState = JsonUtility.ToJson(Random.state);
         BattleForestStageController stage = root.AddComponent<BattleForestStageController>();
         stage.Configure(ground, material, canopyOcclusion, sunlightMotion);
@@ -40,6 +55,11 @@ public sealed class BattleForestStageTests
                 Assert.IsFalse(ground.enabled);
                 Assert.AreEqual(new Vector4(BattleForestStageController.CanopyOpenings.x,
                     BattleForestStageController.CanopyOpenings.y, canopyOcclusion, sunlightMotion), Shader.GetGlobalVector("_DiceLandForestOpenings"));
+                Vector3 sunDirection = -sun.transform.forward;
+                Assert.AreEqual(new Vector4(sunDirection.x, sunDirection.y, sunDirection.z, 1f),
+                    Shader.GetGlobalVector("_DiceLandForestSunDirection"));
+                Color sunColor = (QualitySettings.activeColorSpace == ColorSpace.Linear ? sun.color.linear : sun.color) * sun.intensity;
+                Assert.AreEqual((Vector4)sunColor, Shader.GetGlobalVector("_DiceLandForestSunColor"));
                 Assert.AreSame(material, ground.sharedMaterial);
                 Assert.AreEqual(actorPosition, actor.transform.position);
                 Assert.IsEmpty(root.GetComponentsInChildren<Collider>());
@@ -49,6 +69,8 @@ public sealed class BattleForestStageTests
                 Assert.AreEqual(groundWasEnabled, ground.enabled);
                 Assert.AreEqual(originalLighting, Shader.GetGlobalFloat("_DiceLandForestLighting"));
                 Assert.AreEqual(openingWitness, Shader.GetGlobalVector("_DiceLandForestOpenings"));
+                Assert.AreEqual(sunDirectionWitness, Shader.GetGlobalVector("_DiceLandForestSunDirection"));
+                Assert.AreEqual(sunColorWitness, Shader.GetGlobalVector("_DiceLandForestSunColor"));
                 Assert.IsEmpty(root.GetComponentsInChildren<MeshFilter>());
                 Assert.IsTrue(meshes.All(mesh => mesh == null), "Preview and scene unload must free generated meshes.");
             }
@@ -60,6 +82,9 @@ public sealed class BattleForestStageTests
             Object.DestroyImmediate(material);
             Shader.SetGlobalFloat("_DiceLandForestLighting", originalLighting);
             Shader.SetGlobalVector("_DiceLandForestOpenings", originalOpenings);
+            Shader.SetGlobalVector("_DiceLandForestSunDirection", originalSunDirection);
+            Shader.SetGlobalVector("_DiceLandForestSunColor", originalSunColor);
+            RenderSettings.sun = originalSun;
         }
     }
 

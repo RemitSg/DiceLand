@@ -16,11 +16,15 @@ public sealed class BattleForestStageController : MonoBehaviour
 
     private static readonly int LightingId = Shader.PropertyToID("_DiceLandForestLighting");
     private static readonly int OpeningsId = Shader.PropertyToID("_DiceLandForestOpenings");
+    private static readonly int SunDirectionId = Shader.PropertyToID("_DiceLandForestSunDirection");
+    private static readonly int SunColorId = Shader.PropertyToID("_DiceLandForestSunColor");
     private readonly List<Mesh> meshes = new List<Mesh>();
     private GameObject stageRoot;
     private bool originalGroundEnabled;
     private float previousLighting;
     private Vector4 previousOpenings;
+    private Vector4 previousSunDirection;
+    private Vector4 previousSunColor;
     private bool initialized;
 
     public void Configure(MeshRenderer ground, Material stone, float canopyShadowStrength = 0.65f, float sunlightMotionStrength = 0.8f)
@@ -43,8 +47,25 @@ public sealed class BattleForestStageController : MonoBehaviour
         initialized = true;
         previousLighting = Shader.GetGlobalFloat(LightingId);
         previousOpenings = Shader.GetGlobalVector(OpeningsId);
+        previousSunDirection = Shader.GetGlobalVector(SunDirectionId);
+        previousSunColor = Shader.GetGlobalVector(SunColorId);
         Shader.SetGlobalFloat(LightingId, forestLighting);
         Shader.SetGlobalVector(OpeningsId, new Vector4(CanopyOpenings.x, CanopyOpenings.y, canopyOcclusion, sunlightMotion));
+        // The two cheapest URP tiers disable the main light. Retain the authored
+        // forest sun for air scattering and the shared canopy projection there.
+        Light sun = RenderSettings.sun;
+        if (sun == null)
+            foreach (Light candidate in FindObjectsOfType<Light>())
+                if (candidate.enabled && candidate.type == LightType.Directional)
+                { sun = candidate; break; }
+        Vector3 direction = sun != null ? -sun.transform.forward : Vector3.zero;
+        Color sunColor = sun != null ? sun.color : Color.black;
+        if (QualitySettings.activeColorSpace == ColorSpace.Linear)
+            sunColor = sunColor.linear;
+        if (sun != null)
+            sunColor *= sun.intensity;
+        Shader.SetGlobalVector(SunDirectionId, new Vector4(direction.x, direction.y, direction.z, sun != null ? 1f : 0f));
+        Shader.SetGlobalVector(SunColorId, sunColor);
         originalGroundEnabled = originalGround.enabled;
         originalGround.enabled = false;
         stageRoot = new GameObject("Runtime forest terrace");
@@ -123,6 +144,8 @@ public sealed class BattleForestStageController : MonoBehaviour
             originalGround.enabled = originalGroundEnabled;
         Shader.SetGlobalFloat(LightingId, previousLighting);
         Shader.SetGlobalVector(OpeningsId, previousOpenings);
+        Shader.SetGlobalVector(SunDirectionId, previousSunDirection);
+        Shader.SetGlobalVector(SunColorId, previousSunColor);
         if (stageRoot != null)
         {
             stageRoot.SetActive(false);

@@ -5,6 +5,22 @@
 float _DiceLandForestLighting;
 // xy: light-shaft openings, z: canopy occlusion, w: shared sunlight motion.
 float4 _DiceLandForestOpenings;
+// Authored sun fallback when a low URP tier disables main-light shading.
+float4 _DiceLandForestSunDirection;
+half4 _DiceLandForestSunColor;
+
+float3 DiceLandForestSunDirection()
+{
+    Light sun = GetMainLight();
+    return dot(sun.color, half3(1, 1, 1)) > 0.0001 || _DiceLandForestSunDirection.w < 0.5
+        ? sun.direction : _DiceLandForestSunDirection.xyz;
+}
+
+half3 DiceLandForestSunColor()
+{
+    half3 color = GetMainLight().color;
+    return dot(color, half3(1, 1, 1)) > 0.0001 ? color : _DiceLandForestSunColor.rgb;
+}
 
 float DiceLandForestNoise(float2 p)
 {
@@ -34,7 +50,7 @@ float2 DiceLandForestCanopyBreeze()
 
 float2 DiceLandForestProjectedGround(float3 positionWS)
 {
-    float3 sunDirection = GetMainLight().direction;
+    float3 sunDirection = DiceLandForestSunDirection();
     return positionWS.xz - sunDirection.xz / max(0.2, sunDirection.y) * positionWS.y;
 }
 

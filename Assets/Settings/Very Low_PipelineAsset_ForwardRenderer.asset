@@ -18,8 +18,9 @@ MonoBehaviour:
     debugVisibilityShader: {fileID: 4800000, guid: 3619753c663387743934d88a20720796, type: 3}
     debugMaterialIDShader: {fileID: 4800000, guid: 4cad10f498f948a4db366954d3d91f01, type: 3}
     blitPS: {fileID: 4800000, guid: c17132b1f77d20942aa75f8429c0f8bc, type: 3}
-  m_RendererFeatures: []
-  m_RendererFeatureMap: 
+  m_RendererFeatures:
+  - {fileID: 778885147780676980}
+  m_RendererFeatureMap: 747d4b4aea27cf0a
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -71,3 +72,16 @@ MonoBehaviour:
   m_CopyDepthMode: 1
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 1
+--- !u!114 &778885147780676980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f80be76773f7904081a5e318fafc1b0, type: 3}
+  m_Name: Forest transparent depth
+  m_EditorClassIdentifier:
+  m_Active: 1

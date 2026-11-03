@@ -23,6 +23,7 @@ public static class BattleLookPreviewTools
     public const string StoneTexturePath = "Assets/Assets/Textures/Environments/Forest/ForestTerracePavingSoft.png";
     public const string MarginTexturePath = "Assets/Assets/Textures/Environments/Forest/ForestMarginPlants.png";
     public const string RuinTexturePath = "Assets/Assets/Textures/Environments/Forest/ForestRuinTerraces.png";
+    public const string SunVolumeMaterialPath = ForestAssets + "/Canopy Sun Volume.mat";
     public const string OutputPath = "outputs/agent-battle/battle-look-20261029";
 
     [MenuItem("Tools/Battle Visuals/Apply Forest Cinematic Look")]
@@ -67,6 +68,31 @@ public static class BattleLookPreviewTools
                 EditorUtility.SetDirty(material);
                 AssetDatabase.SaveAssetIfDirty(material);
             }
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+        }
+        finally
+        {
+            SceneManager.SetActiveScene(original);
+            EditorSceneManager.CloseScene(scene, true);
+        }
+    }
+
+    [MenuItem("Tools/Battle Visuals/Apply Forest Sun Volume")]
+    public static void ApplySunVolumeToSavedBattleScene()
+    {
+        Scene original = SceneManager.GetActiveScene();
+        if (Enumerable.Range(0, SceneManager.sceneCount).Any(i => SceneManager.GetSceneAt(i).path == ScenePath))
+            throw new InvalidOperationException("Close the battle scene before applying its sunlight; unsaved changes are never replaced.");
+        Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+        try
+        {
+            SceneManager.SetActiveScene(scene);
+            Transform atmosphere = scene.GetRootGameObjects().First(item => item.name == "Battle Atmosphere").transform;
+            foreach (MeshRenderer renderer in atmosphere.GetComponentsInChildren<MeshRenderer>(true))
+                if (renderer.name.StartsWith("Canopy sun shaft ", StringComparison.Ordinal))
+                    renderer.enabled = false;
+            AddSunVolume(atmosphere);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
         }
@@ -500,37 +526,7 @@ public static class BattleLookPreviewTools
 
     private static void AddAtmosphere(GameObject root, BattleManager manager, Material backdrop, Material material)
     {
-        Material rays = ForestMaterial("Canopy Light Shafts", "DiceLand/Battle Forest Atmosphere");
-        rays.SetColor("_Color", new Color(2.8f, 2.25f, 1.4f, 0.24f));
-        rays.SetFloat("_Mode", 0f);
-        rays.SetFloat("_SoftDistance", 2f);
-        rays.SetFloat("_ShaftStriation", 0.82f);
-        rays.SetFloat("_ShaftMotion", 0.85f);
-        string meshPath = ForestAssets + "/Canopy Light Shaft.asset";
-        Mesh rayMesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
-        if (rayMesh == null)
-        {
-            rayMesh = new Mesh { name = "Tapered canopy shaft" };
-            AssetDatabase.CreateAsset(rayMesh, meshPath);
-        }
-        rayMesh.vertices = new[] { new Vector3(-0.5f, 0f, 0f), new Vector3(0.5f, 0f, 0f), new Vector3(0.09f, 1f, 0f), new Vector3(-0.09f, 1f, 0f) };
-        rayMesh.uv = new[] { Vector2.zero, Vector2.right, Vector2.one, Vector2.up };
-        rayMesh.colors = new[] { Color.white, Color.white, Color.white, Color.white };
-        rayMesh.triangles = new[] { 0, 2, 1, 0, 3, 2 };
-        rayMesh.RecalculateBounds();
-        EditorUtility.SetDirty(rayMesh);
-        AssetDatabase.SaveAssetIfDirty(rayMesh);
-        Vector3 towardSun = -(Quaternion.Euler(52f, 218f, 0f) * Vector3.forward);
-        for (int i = 0; i < 4; i++)
-        {
-            GameObject shaft = Quad("Canopy sun shaft " + (i + 1), root.transform, rays);
-            shaft.GetComponent<MeshFilter>().sharedMesh = rayMesh;
-            float depth = i < 2 ? 10f : 20f;
-            float opening = BattleForestStageController.CanopyOpenings[i % 2];
-            shaft.transform.localPosition = new Vector3(opening - depth * 0.42f, 0.12f, depth);
-            shaft.transform.localRotation = Quaternion.FromToRotation(Vector3.up, towardSun);
-            shaft.transform.localScale = new Vector3(i % 2 == 0 ? 4.2f : 2.6f, (24f + i * 2f) / towardSun.y, 1f);
-        }
+        Material rays = AddSunVolume(root.transform);
         Material mist = ForestMaterial("Low Forest Mist", "DiceLand/Battle Forest Atmosphere");
         mist.SetColor("_Color", new Color(0.98f, 0.91f, 0.75f, 0.28f));
         mist.SetFloat("_MistBreakup", 0.65f);
@@ -553,6 +549,70 @@ public static class BattleLookPreviewTools
         {
             EditorUtility.SetDirty(generated);
             AssetDatabase.SaveAssetIfDirty(generated);
+        }
+    }
+
+    private static Material AddSunVolume(Transform atmosphere)
+    {
+        Material material = ForestMaterial("Canopy Sun Volume", "DiceLand/Battle Forest Sun Volume");
+        material.SetColor("_Color", new Color(1.8f, 1.45f, 0.85f, 1f));
+        material.SetFloat("_Density", 0.016f);
+        material.SetFloat("_BeamWidth", 1.35f);
+        material.SetFloat("_Anisotropy", 0.45f);
+        Transform volume = atmosphere.Find("Canopy sunlight volume");
+        if (volume == null)
+        {
+            GameObject item = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            item.name = "Canopy sunlight volume";
+            volume = item.transform;
+            volume.SetParent(atmosphere, false);
+            UnityEngine.Object.DestroyImmediate(item.GetComponent<Collider>());
+        }
+        volume.localPosition = new Vector3(0f, 11f, 20f);
+        volume.localRotation = Quaternion.identity;
+        volume.localScale = new Vector3(70f, 22f, 32f);
+        MeshRenderer renderer = volume.GetComponent<MeshRenderer>();
+        renderer.sharedMaterial = material;
+        renderer.shadowCastingMode = ShadowCastingMode.Off;
+        renderer.receiveShadows = false;
+        renderer.lightProbeUsage = LightProbeUsage.Off;
+        renderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+        EditorUtility.SetDirty(material);
+        AssetDatabase.SaveAssetIfDirty(material);
+        EnsureForestDepthFeatures();
+        return material;
+    }
+
+    private static void EnsureForestDepthFeatures()
+    {
+        foreach (string tier in new[] { "Very Low", "Low", "Medium", "High", "Very High", "Ultra" })
+        {
+            string path = "Assets/Settings/" + tier + "_PipelineAsset_ForwardRenderer.asset";
+            UniversalRendererData data = AssetDatabase.LoadAssetAtPath<UniversalRendererData>(path);
+            if (data == null)
+                throw new InvalidOperationException("Missing battle renderer: " + path);
+            BattleForestDepthFeature feature = data.rendererFeatures.OfType<BattleForestDepthFeature>().FirstOrDefault();
+            if (feature == null)
+            {
+                feature = ScriptableObject.CreateInstance<BattleForestDepthFeature>();
+                feature.name = "Forest transparent depth";
+                AssetDatabase.AddObjectToAsset(feature, data);
+                data.rendererFeatures.Add(feature);
+            }
+            feature.SetActive(true);
+            SerializedObject serialized = new SerializedObject(data);
+            SerializedProperty map = serialized.FindProperty("m_RendererFeatureMap");
+            map.arraySize = data.rendererFeatures.Count;
+            for (int index = 0; index < data.rendererFeatures.Count; index++)
+            {
+                AssetDatabase.TryGetGUIDAndLocalFileIdentifier(data.rendererFeatures[index], out string guid, out long localId);
+                map.GetArrayElementAtIndex(index).longValue = localId;
+            }
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            data.SetDirty();
+            EditorUtility.SetDirty(feature);
+            EditorUtility.SetDirty(data);
+            AssetDatabase.SaveAssetIfDirty(data);
         }
     }
 
