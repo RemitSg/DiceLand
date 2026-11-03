@@ -46,7 +46,7 @@ public static class BattleActorVisualUtility
         for (int i = 0; i < renderers.Length; i++)
         {
             SpriteRenderer renderer = renderers[i];
-            if (ShouldIgnoreRenderer(actor, renderer))
+            if (!IsActorBodyRenderer(actor, renderer))
                 continue;
 
             if (!hasBounds)
@@ -64,20 +64,20 @@ public static class BattleActorVisualUtility
         return hasBounds;
     }
 
-    private static bool ShouldIgnoreRenderer(Transform actor, SpriteRenderer renderer)
+    public static bool IsActorBodyRenderer(Transform actor, SpriteRenderer renderer)
     {
         if (actor == null || renderer == null)
-            return true;
+            return false;
 
         SpeedButton speedButtonAncestor = renderer.GetComponentInParent<SpeedButton>(true);
         if (speedButtonAncestor != null && speedButtonAncestor.transform != actor)
-            return true;
+            return false;
 
         Weapon weaponAncestor = renderer.GetComponentInParent<Weapon>(true);
         if (weaponAncestor != null && weaponAncestor.transform != actor)
-            return true;
+            return false;
 
-        return false;
+        return true;
     }
 }
 

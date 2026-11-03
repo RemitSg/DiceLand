@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEditor;
 
 public sealed class BattleActorLightingTests
 {
@@ -16,6 +17,96 @@ public sealed class BattleActorLightingTests
     private readonly List<Object> resources = new List<Object>();
     private const string BoundsProperty = "_ForestSpriteBounds";
     private const string WeightProperty = "_ForestSurfaceWeight";
+
+    [Test]
+    public void SeparatedSolesHaveTheirOwnShadowsAndMirroringKeepsThemUnderTheFeet()
+    {
+        SpriteRenderer body = CreateActor("Standing", allies, Vector3.zero, false);
+        body.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(BattleActorSurfaceBakeTools.ManPath);
+        Transform actor = body.transform.parent;
+        actor.position = new Vector3(-2f, -body.sprite.bounds.min.y, 3f);
+        actor.gameObject.AddComponent<Weapon>(); // Equipment data on the unit root is not a held-weapon renderer.
+        shadows = root.AddComponent<BattleContactShadowController>();
+        shadows.Configure(allies, enemies, uiMaterial);
+        string random = JsonUtility.ToJson(Random.state);
+        shadows.UpdateShadows();
+        MeshRenderer first = root.transform.Find("Runtime contact shadows/Contact shadow Standing").GetComponent<MeshRenderer>();
+        MeshRenderer second = root.transform.Find("Runtime contact shadows/Contact shadow Standing foot 2").GetComponent<MeshRenderer>();
+        Assert.Less(first.transform.position.x, body.bounds.center.x - .5f);
+        Assert.Greater(second.transform.position.x, body.bounds.center.x + .5f);
+        Assert.AreSame(first.GetComponent<MeshFilter>().sharedMesh, second.GetComponent<MeshFilter>().sharedMesh);
+        Assert.AreSame(uiMaterial, first.sharedMaterial); Assert.AreSame(uiMaterial, second.sharedMaterial);
+        Vector3 beforeFirst = first.transform.position, beforeSecond = second.transform.position;
+        body.flipX = true; shadows.UpdateShadows();
+        Assert.That(first.transform.position.x, Is.EqualTo(2f*actor.position.x-beforeFirst.x).Within(.001f));
+        Assert.That(second.transform.position.x, Is.EqualTo(2f*actor.position.x-beforeSecond.x).Within(.001f));
+        actor.localScale = new Vector3(-1, 1, 1); shadows.UpdateShadows();
+        Assert.That(first.transform.position.x, Is.EqualTo(beforeFirst.x).Within(.001f));
+        Assert.That(second.transform.position.x, Is.EqualTo(beforeSecond.x).Within(.001f));
+        Assert.AreEqual(random, JsonUtility.ToJson(Random.state));
+    }
+
+    [Test]
+    public void RaisedFeetBroadenAndFadeWithoutChangingTheSharedMaterial()
+    {
+        SpriteRenderer body = CreateActor("Raised", allies, Vector3.zero, false);
+        body.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(BattleActorSurfaceBakeTools.ManPath);
+        body.transform.parent.position = Vector3.up * -body.sprite.bounds.min.y;
+        shadows = root.AddComponent<BattleContactShadowController>();
+        shadows.Configure(allies, enemies, uiMaterial); shadows.UpdateShadows();
+        MeshRenderer contact = root.GetComponentInChildren<MeshRenderer>();
+        var block = new MaterialPropertyBlock(); contact.GetPropertyBlock(block);
+        float grounded = block.GetFloat("_ContactStrength"), width = contact.transform.localScale.x;
+        body.transform.parent.position += Vector3.up;
+        shadows.UpdateShadows(); contact.GetPropertyBlock(block);
+        Assert.Less(block.GetFloat("_ContactStrength"), grounded * .7f);
+        Assert.Greater(contact.transform.localScale.x, width);
+        Assert.That(contact.transform.position.y, Is.EqualTo(.055f).Within(.001f));
+        Assert.AreSame(uiMaterial, contact.sharedMaterial);
+        Assert.IsFalse(uiMaterial.HasProperty("_ContactStrength"), "Only the shadow property block is changed.");
+    }
+
+    [Test]
+    public void FootShadowsHandleReplacementInvisibilityAndDestroyedActorsWithoutOrphans()
+    {
+        SpriteRenderer body = CreateActor("Lifecycle", allies, Vector3.zero, false);
+        Sprite man = AssetDatabase.LoadAssetAtPath<Sprite>(BattleActorSurfaceBakeTools.ManPath);
+        body.sprite = man;
+        shadows = root.AddComponent<BattleContactShadowController>(); shadows.Configure(allies, enemies, uiMaterial);
+        shadows.UpdateShadows();
+        Assert.AreEqual(2, System.Array.FindAll(root.GetComponentsInChildren<MeshRenderer>(), r=>r.enabled).Length);
+        body.sprite = sprite; shadows.UpdateShadows();
+        Assert.AreEqual(1, System.Array.FindAll(root.GetComponentsInChildren<MeshRenderer>(), r=>r.enabled).Length);
+        body.sprite = man; body.flipY = true; shadows.UpdateShadows();
+        Assert.AreEqual(1, System.Array.FindAll(root.GetComponentsInChildren<MeshRenderer>(), r=>r.enabled).Length);
+        body.flipY = false; body.color = new Color(1,1,1,0); shadows.UpdateShadows();
+        Assert.AreEqual(0, System.Array.FindAll(root.GetComponentsInChildren<MeshRenderer>(), r=>r.enabled).Length);
+        body.color = Color.white; shadows.UpdateShadows();
+        Assert.AreEqual(2, System.Array.FindAll(root.GetComponentsInChildren<MeshRenderer>(), r=>r.enabled).Length);
+        Object.DestroyImmediate(body.transform.parent.gameObject); shadows.UpdateShadows();
+        Assert.AreEqual(0, root.GetComponentsInChildren<MeshRenderer>().Length);
+        shadows.ReleaseShadows(); shadows.ReleaseShadows();
+        Assert.IsNull(root.transform.Find("Runtime contact shadows"));
+    }
+
+    [Test]
+    public void InactiveEquipmentAndSpeedUiCannotReplaceBodyContactContours()
+    {
+        SpriteRenderer body = CreateActor("Filtering", allies, Vector3.zero, false);
+        body.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(BattleActorSurfaceBakeTools.ManPath);
+        Transform actor = body.transform.parent;
+        Transform held = Child("Held weapon", actor); held.gameObject.SetActive(false); held.gameObject.AddComponent<Weapon>();
+        CreateSprite("Weapon art", held, Vector3.zero, material).transform.localScale = Vector3.one*100;
+        Transform badge = Child("Speed UI", actor); badge.gameObject.SetActive(false); badge.gameObject.AddComponent<SpeedButton>();
+        CreateSprite("Badge art", badge, Vector3.zero, material).transform.localScale = Vector3.one*100;
+        shadows = root.AddComponent<BattleContactShadowController>(); shadows.Configure(allies, enemies, uiMaterial);
+        shadows.UpdateShadows();
+        held.gameObject.SetActive(true); // Initially inactive renderers must never enter the cached body list.
+        badge.gameObject.SetActive(true); shadows.UpdateShadows();
+        MeshRenderer[] contacts = root.GetComponentsInChildren<MeshRenderer>();
+        Assert.AreEqual(2, contacts.Length);
+        Assert.IsTrue(System.Array.TrueForAll(contacts, r=>r.enabled && r.transform.localScale.x<2));
+    }
 
     [SetUp]
     public void SetUp()

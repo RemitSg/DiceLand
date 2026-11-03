@@ -3,6 +3,7 @@ Shader "DiceLand/Battle Contact Shadow"
     Properties
     {
         _Color ("Cool contact shade", Color) = (0.055,0.09,0.075,0.32)
+        [HideInInspector] _ContactStrength ("Contact opacity", Range(0,1)) = 1
     }
     SubShader
     {
@@ -20,6 +21,7 @@ Shader "DiceLand/Battle Contact Shadow"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             CBUFFER_START(UnityPerMaterial)
             half4 _Color;
+            half _ContactStrength;
             CBUFFER_END
             struct Attributes { float3 positionOS : POSITION; float2 uv : TEXCOORD0; };
             struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; half fog : TEXCOORD1; };
@@ -34,7 +36,7 @@ Shader "DiceLand/Battle Contact Shadow"
             half4 Frag(Varyings input) : SV_Target
             {
                 half mask=1.0-smoothstep(0.06,1.0,dot(input.uv,input.uv));
-                return half4(MixFog(_Color.rgb,input.fog),_Color.a*mask*mask);
+                return half4(MixFog(_Color.rgb,input.fog),_Color.a*mask*mask*saturate(_ContactStrength));
             }
             ENDHLSL
         }
