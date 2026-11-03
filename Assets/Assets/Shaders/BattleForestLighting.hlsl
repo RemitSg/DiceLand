@@ -72,10 +72,10 @@ float DiceLandForestCanopyTransmission(float2 p, float2 breeze)
     return lerp(0.18, 1.0, gaps) * (1.0 - branch * 0.78);
 }
 
-half3 DiceLandForestLightTint(float3 positionWS)
+float DiceLandForestSunVisibility(float3 positionWS)
 {
     if (_DiceLandForestLighting <= 0.001)
-        return half3(1, 1, 1);
+        return 0.0;
     // Points along the actual sun ray share one canopy opening, on actors and floor alike.
     float2 p = DiceLandForestProjectedGround(positionWS);
     float shaft = p.x + p.y * 0.42;
@@ -86,6 +86,14 @@ half3 DiceLandForestLightTint(float3 positionWS)
     float sunlight = saturate(openCanopy * (0.60 + leaves * 0.40) + (1.0 - openCanopy) * leaves * 0.13);
     if (_DiceLandForestOpenings.z > 0.001)
         sunlight *= lerp(1.0, DiceLandForestCanopyTransmission(p, breeze), saturate(_DiceLandForestOpenings.z));
+    return sunlight;
+}
+
+half3 DiceLandForestLightTint(float3 positionWS)
+{
+    if (_DiceLandForestLighting <= 0.001)
+        return half3(1, 1, 1);
+    float sunlight = DiceLandForestSunVisibility(positionWS);
     half3 tint = lerp(half3(0.21, 0.32, 0.48), half3(1.65, 1.32, 0.86), sunlight);
     return lerp(half3(1, 1, 1), tint, saturate(_DiceLandForestLighting));
 }

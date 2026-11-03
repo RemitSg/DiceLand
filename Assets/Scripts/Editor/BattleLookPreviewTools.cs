@@ -103,6 +103,30 @@ public static class BattleLookPreviewTools
         }
     }
 
+    [MenuItem("Tools/Battle Visuals/Apply Actor Sun Shadows")]
+    public static void ApplySunShadowsToSavedBattleScene()
+    {
+        Scene original = SceneManager.GetActiveScene();
+        if (Enumerable.Range(0, SceneManager.sceneCount).Any(i => SceneManager.GetSceneAt(i).path == ScenePath))
+            throw new InvalidOperationException("Close the battle scene before applying its actor shadows; unsaved changes are never replaced.");
+        BattleActorFormBakeTools.BakeLibrary();
+        Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+        try
+        {
+            SceneManager.SetActiveScene(scene);
+            GameObject atmosphere = scene.GetRootGameObjects().First(item => item.name == "Battle Atmosphere");
+            BattleManager manager = scene.GetRootGameObjects().SelectMany(item => item.GetComponentsInChildren<BattleManager>(true)).Single();
+            AddActorSunShadows(atmosphere, manager);
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+        }
+        finally
+        {
+            SceneManager.SetActiveScene(original);
+            EditorSceneManager.CloseScene(scene, true);
+        }
+    }
+
     private static void ConfigureScene(Scene scene)
     {
         GameObject[] roots = scene.GetRootGameObjects();
@@ -543,6 +567,7 @@ public static class BattleLookPreviewTools
         Material contact = ForestMaterial("Contact Shadows", "DiceLand/Battle Contact Shadow");
         BattleContactShadowController shadows = root.AddComponent<BattleContactShadowController>();
         shadows.Configure(manager.alliesParent.transform, manager.enemiesParent.transform, contact);
+        AddActorSunShadows(root, manager);
         EditorUtility.SetDirty(contact);
         AssetDatabase.SaveAssetIfDirty(contact);
         foreach (Material generated in new[] { backdrop, material, rays, mist })
@@ -550,6 +575,25 @@ public static class BattleLookPreviewTools
             EditorUtility.SetDirty(generated);
             AssetDatabase.SaveAssetIfDirty(generated);
         }
+    }
+
+    private static void AddActorSunShadows(GameObject root, BattleManager manager)
+    {
+        Material material = ForestMaterial("Actor Sun Shadows", "DiceLand/Battle Actor Sun Shadow");
+        material.SetColor("_Shade", new Color(0.42f,0.54f,0.72f,1f));
+        material.SetFloat("_Opacity", 0.75f);
+        material.SetFloat("_Softness", 0.035f);
+        material.SetFloat("_Blur", 5f);
+        material.SetFloat("_GroundHeight", 0.06f);
+        Light sun = root.scene.GetRootGameObjects().SelectMany(item => item.GetComponentsInChildren<Light>(true))
+            .FirstOrDefault(item => item.enabled && item.type == LightType.Directional);
+        BattleActorSunShadowController controller = root.GetComponent<BattleActorSunShadowController>();
+        if (controller == null) controller = root.AddComponent<BattleActorSunShadowController>();
+        controller.Configure(manager.alliesParent.transform, manager.enemiesParent.transform, material,
+            AssetDatabase.LoadAssetAtPath<BattleActorFormLibrary>(BattleActorFormBakeTools.LibraryPath), sun);
+        EditorUtility.SetDirty(controller);
+        EditorUtility.SetDirty(material);
+        AssetDatabase.SaveAssetIfDirty(material);
     }
 
     private static Material AddSunVolume(Transform atmosphere)
@@ -825,6 +869,7 @@ public static class BattleLookPreviewTools
         Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
         BattleForestStageController stage = null;
         BattleContactShadowController shadows = null;
+        BattleActorSunShadowController sunShadows = null;
         BattleLookController look = null;
         BattleActorLightingController actorLighting = null;
         BattleBackdropCoverageController coverage = null;
@@ -853,6 +898,10 @@ public static class BattleLookPreviewTools
                 .SelectMany(root => root.GetComponentsInChildren<BattleContactShadowController>(true)).FirstOrDefault();
             if (shadows != null && !legacy)
                 shadows.UpdateShadows();
+            sunShadows = scene.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<BattleActorSunShadowController>(true)).FirstOrDefault();
+            if (sunShadows != null && !legacy)
+                sunShadows.UpdateShadows();
             look = scene.GetRootGameObjects().SelectMany(root => root.GetComponentsInChildren<BattleLookController>(true)).FirstOrDefault();
             if (legacy)
                 ApplyLegacyLook(scene);
@@ -877,6 +926,8 @@ public static class BattleLookPreviewTools
                 look.ReleaseLook();
             if (shadows != null)
                 shadows.ReleaseShadows();
+            if (sunShadows != null)
+                sunShadows.ReleaseShadows();
             if (stage != null)
                 stage.ReleaseStage();
             QualitySettings.SetQualityLevel(quality, false);

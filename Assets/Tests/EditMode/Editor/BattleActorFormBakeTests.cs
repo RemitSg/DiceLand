@@ -4,6 +4,26 @@ using UnityEngine;
 public sealed class BattleActorFormBakeTests
 {
     [Test]
+    public void ShadowSilhouetteUsesAlphaWithoutChangingAnyNormalChannel()
+    {
+        const int width = 32, height = 48;
+        bool[] mask = new bool[width * height];
+        for (int y = 4; y < 44; y++)
+        for (int x = 3; x < 29; x++)
+            mask[y * width + x] = !(x >= 12 && x < 20 && y >= 16 && y < 32);
+        Color32[] normals = BattleActorFormBakeTools.BakeNormalPixels(mask, width, height);
+        Color32[] forms = BattleActorFormBakeTools.BakeFormPixels(mask, width, height);
+        for (int index = 0; index < forms.Length; index++)
+        {
+            Assert.AreEqual(normals[index].r, forms[index].r);
+            Assert.AreEqual(normals[index].g, forms[index].g);
+            Assert.AreEqual(normals[index].b, forms[index].b);
+            Assert.AreEqual(mask[index] ? 255 : 0, forms[index].a);
+        }
+        CollectionAssert.AreEqual(forms, BattleActorFormBakeTools.BakeFormPixels(mask, width, height));
+    }
+
+    [Test]
     public void SeparateLimbsReceiveTheirOwnOutwardNormalsAndTheGapStaysFlat()
     {
         const int width = 80, height = 64;

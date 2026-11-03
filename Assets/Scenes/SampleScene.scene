@@ -13572,6 +13572,7 @@ GameObject:
   - component: {fileID: 1603544716}
   - component: {fileID: 1603544715}
   - component: {fileID: 1603544719}
+  - component: {fileID: 1603544720}
   m_Layer: 0
   m_HasEditorInfo: 1
   m_Name: Battle Atmosphere
@@ -13686,6 +13687,24 @@ MonoBehaviour:
   surfaceWeight: 0.8
   formLibrary: {fileID: 11400000, guid: 1a01b333a8b826a4aa3bf4f883816aee, type: 2}
   formWeight: 0.7
+--- !u!114 &1603544720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603544714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8523fea17e14f2343825d4faae158581, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  allies: {fileID: 1916402021}
+  enemies: {fileID: 1378645307}
+  shadowMaterial: {fileID: 2100000, guid: 62141dbb62c404d4aa06db20934369e3, type: 2}
+  formLibrary: {fileID: 11400000, guid: 1a01b333a8b826a4aa3bf4f883816aee, type: 2}
+  sunlight: {fileID: 705507994}
+  groundHeight: 0.06
 --- !u!1 &1717632942
 GameObject:
   m_ObjectHideFlags: 0

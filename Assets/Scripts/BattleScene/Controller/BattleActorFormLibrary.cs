@@ -12,6 +12,9 @@ public sealed class BattleActorFormLibrary : ScriptableObject
     }
 
     [SerializeField] private Entry[] entries = Array.Empty<Entry>();
+    [SerializeField] private bool silhouetteAlpha;
+
+    public Texture2D FindShadowMask(Sprite sprite) => silhouetteAlpha ? Find(sprite) : null;
 
     public Texture2D Find(Sprite sprite)
     {

@@ -53,7 +53,7 @@ public static class BattleActorFormBakeTools
                     filterMode = FilterMode.Trilinear,
                     anisoLevel = 1
                 };
-                form.SetPixels32(BakeNormalPixels(inside, width, height));
+                form.SetPixels32(BakeFormPixels(inside, width, height));
                 form.Apply(true, true);
                 string mapPath = Folder + "/" + sprite.name + " Form.asset";
                 Texture2D existing = AssetDatabase.LoadAssetAtPath<Texture2D>(mapPath);
@@ -85,6 +85,7 @@ public static class BattleActorFormBakeTools
             AssetDatabase.CreateAsset(library, LibraryPath);
         }
         SerializedObject serialized = new SerializedObject(library);
+        serialized.FindProperty("silhouetteAlpha").boolValue = true;
         SerializedProperty entries = serialized.FindProperty("entries");
         entries.arraySize = maps.Count;
         for (int i = 0; i < maps.Count; i++)
@@ -95,6 +96,15 @@ public static class BattleActorFormBakeTools
         serialized.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(library);
         AssetDatabase.SaveAssetIfDirty(library);
+    }
+
+    public static Color32[] BakeFormPixels(bool[] inside, int width, int height)
+    {
+        Color32[] pixels = BakeNormalPixels(inside, width, height);
+        // Keep the original normals in RGB; mipmapped alpha softens sun shadows.
+        for (int index = 0; index < pixels.Length; index++)
+            pixels[index].a = inside[index] ? (byte)255 : (byte)0;
+        return pixels;
     }
 
     public static Color32[] BakeNormalPixels(bool[] inside, int width, int height)
