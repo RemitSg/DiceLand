@@ -14,6 +14,11 @@ Shader "DiceLand/Battle Forest Foliage"
         _HighlightGain ("Sunlit canopy highlight gain", Range(1,2)) = 1
         _PaintedFill ("Painted shadow color and strength", Color) = (0.36,0.40,0.32,0)
         _SceneLightingWeight ("World canopy lighting", Range(0,1)) = 0
+        [Toggle(_CANOPY_LIGHT_RESPONSE)] _CanopyResponse ("Authored canopy light response", Float) = 0
+        _CanopyResponseMap ("Canopy normals, leaf regions and coverage", 2D) = "black" {}
+        _ResponseWeight ("Canopy response strength", Range(0,1)) = 0.75
+        _BarkLightGain ("Broad bark sunlight", Range(0,2)) = 0.8
+        _LeafTransmission ("Thin leaf transmission", Range(0,2)) = 0.7
         [HideInInspector] _RendererColor ("Renderer color", Color) = (1,1,1,1)
         [HideInInspector] _Flip ("Flip", Vector) = (1,1,1,1)
         [PerRendererData] _AlphaTex ("External alpha", 2D) = "white" {}
@@ -30,26 +35,38 @@ Shader "DiceLand/Battle Forest Foliage"
         #include "Packages/com.unity.render-pipelines.universal/Shaders/2D/Include/Core2D.hlsl"
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
         #include "Assets/Assets/Shaders/BattleForestLighting.hlsl"
+        #include "Assets/Assets/Shaders/BattleForestCanopyLight.hlsl"
         CBUFFER_START(UnityPerMaterial)
         float4 _MainTex_ST, _MainTex_TexelSize;
         half4 _Color, _PaintedFill;
         float _Cutoff, _EnableExternalAlpha, _SwayAmplitude, _DefocusTexels, _HighlightGain, _SceneLightingWeight;
         float _SoftSilhouette, _SrcBlend, _DstBlend, _ZWrite;
+        float _CanopyResponse, _ResponseWeight, _BarkLightGain, _LeafTransmission;
         CBUFFER_END
         TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
         TEXTURE2D(_AlphaTex); SAMPLER(sampler_AlphaTex);
+        TEXTURE2D(_CanopyResponseMap); SAMPLER(sampler_CanopyResponseMap);
         struct Attributes { float3 positionOS : POSITION; float2 uv : TEXCOORD0; half4 color : COLOR; UNITY_VERTEX_INPUT_INSTANCE_ID };
-        struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; half4 color : COLOR; half fog : TEXCOORD1; float3 world : TEXCOORD2; UNITY_VERTEX_OUTPUT_STEREO };
+        struct Varyings
+        {
+            float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; half4 color : COLOR;
+            half fog : TEXCOORD1; float3 world : TEXCOORD2;
+            #if defined(_CANOPY_LIGHT_RESPONSE)
+                float3 normalX : TEXCOORD3; float3 normalY : TEXCOORD4; float3 normalZ : TEXCOORD5;
+            #endif
+            UNITY_VERTEX_OUTPUT_STEREO
+        };
         Varyings Vert(Attributes input)
         {
             Varyings output=(Varyings)0;
             UNITY_SETUP_INSTANCE_ID(input);
             UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
             #ifdef UNITY_INSTANCING_ENABLED
-                input.positionOS=UnityFlipSprite(input.positionOS,unity_SpriteFlip);
+                float2 spriteFlip=unity_SpriteFlip;
             #else
-                input.positionOS=UnityFlipSprite(input.positionOS,unity_SpriteProps.xy);
+                float2 spriteFlip=unity_SpriteProps.xy;
             #endif
+            input.positionOS=UnityFlipSprite(input.positionOS,spriteFlip);
             float3 positionWS=TransformObjectToWorld(input.positionOS);
             // Roots stay planted; only the upper canopy moves, identically in color and depth passes.
             float breeze=sin(_Time.y*0.63+positionWS.x*0.18)+0.35*sin(_Time.y*1.07+positionWS.z*0.23);
@@ -59,6 +76,12 @@ Shader "DiceLand/Battle Forest Foliage"
             output.uv=TRANSFORM_TEX(input.uv,_MainTex);
             output.color=input.color*_Color*unity_SpriteColor;
             output.fog=ComputeFogFactor(output.positionCS.z);
+            #if defined(_CANOPY_LIGHT_RESPONSE)
+                // The fragment derives actual UV handedness, including native sprite batching flips.
+                output.normalX=TransformObjectToWorldNormal(float3(1,0,0),false);
+                output.normalY=TransformObjectToWorldNormal(float3(0,1,0),false);
+                output.normalZ=TransformObjectToWorldNormal(float3(0,0,1),false);
+            #endif
             return output;
         }
         half4 SampleSoftSprite(float2 uv, float bias)
@@ -122,15 +145,40 @@ Shader "DiceLand/Battle Forest Foliage"
             #pragma multi_compile_instancing
             #pragma multi_compile_fog
             #pragma multi_compile _ ETC1_EXTERNAL_ALPHA
+            #pragma shader_feature_local _CANOPY_LIGHT_RESPONSE
             half4 Frag(Varyings input) : SV_Target
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+                #if defined(_CANOPY_LIGHT_RESPONSE)
+                    // Compute derivatives before alpha clipping. SpriteRenderer may mirror its
+                    // streamed vertices/UVs without exposing that flip in unity_SpriteProps.
+                    float2 uvX=ddx(input.uv),uvY=ddy(input.uv);
+                    float3 worldX=ddx(input.world),worldY=ddy(input.world);
+                    float orientation=uvX.x*uvY.y-uvX.y*uvY.x < 0 ? -1.0 : 1.0;
+                    float3 tangent=(worldX*uvY.y-worldY*uvX.y)*orientation;
+                    float3 bitangent=(worldY*uvX.x-worldX*uvY.x)*orientation;
+                    float2 frameFlip=float2(dot(tangent,input.normalX)<0 ? -1.0 : 1.0,
+                        dot(bitangent,input.normalY)<0 ? -1.0 : 1.0);
+                #endif
                 half4 color=SampleSprite(input);
+                half3 pigment=color.rgb;
                 half highlight=smoothstep(0.36,0.82,dot(color.rgb,half3(0.2126,0.7152,0.0722)));
                 color.rgb*=lerp(1.0,_HighlightGain,highlight);
                 half shade=1.0-smoothstep(0.04,0.40,dot(color.rgb,half3(0.2126,0.7152,0.0722)));
                 color.rgb+=_PaintedFill.rgb*_PaintedFill.a*shade*input.color.rgb;
                 color.rgb*=lerp(half3(1,1,1),DiceLandForestLightTint(input.world),_SceneLightingWeight);
+                #if defined(_CANOPY_LIGHT_RESPONSE)
+                    half4 response=SAMPLE_TEXTURE2D(_CanopyResponseMap,sampler_CanopyResponseMap,input.uv);
+                    float2 xy=response.rg*2.0-1.0;
+                    // An unassigned response map falls back to black, which is not a valid
+                    // normal; rejecting it prevents a rectangular sunlight patch.
+                    response.a*=1.0-step(1.02,dot(xy,xy));
+                    float3 normalOS=float3(xy,-sqrt(max(0.08,1.0-dot(xy,xy))));
+                    float3 normalWS=SafeNormalize(input.normalX*(normalOS.x*frameFlip.x)
+                        +input.normalY*(normalOS.y*frameFlip.y)+input.normalZ*normalOS.z);
+                    color.rgb+=ForestCanopyTransport(pigment,response,normalWS,input.world,
+                        _ResponseWeight,_BarkLightGain,_LeafTransmission);
+                #endif
                 return half4(MixFog(color.rgb,input.fog),_SoftSilhouette > 0.5 ? color.a : 1);
             }
             ENDHLSL
@@ -145,6 +193,7 @@ Shader "DiceLand/Battle Forest Foliage"
             #pragma fragment DepthFrag
             #pragma multi_compile_instancing
             #pragma multi_compile _ ETC1_EXTERNAL_ALPHA
+            #pragma shader_feature_local _CANOPY_LIGHT_RESPONSE
             half4 DepthFrag(Varyings input) : SV_Target
             {
                 clip(0.5-_SoftSilhouette);

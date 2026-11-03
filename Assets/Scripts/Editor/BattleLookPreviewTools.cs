@@ -382,9 +382,10 @@ public static class BattleLookPreviewTools
         material.SetFloat("_HighlightGain", 1.6f);
         material.SetColor("_PaintedFill", new Color(0.36f, 0.40f, 0.32f, 0.12f));
         material.SetFloat("_SceneLightingWeight", 0.22f);
+        Material canopyMaterial = BattleForestCanopyBakeTools.ConfigureMaterial(material);
         Sprite ancientTree = LoadForestSprite(MidgroundPath);
         float treeScale = 1.85f;
-        AddTree(root.transform, ancientTree, material, "Ancient tree and ruined terrace",
+        AddTree(root.transform, ancientTree, canopyMaterial, "Ancient tree and ruined terrace",
             new Vector3(0.2f, -ancientTree.bounds.min.y * treeScale - 1.7f, 12f), treeScale,
             new Color(0.95f, 0.98f, 1f), false);
         SpriteRenderer midground = root.transform.Find("Ancient tree and ruined terrace").GetComponent<SpriteRenderer>();
