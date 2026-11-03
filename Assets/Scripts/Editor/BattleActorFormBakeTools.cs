@@ -40,7 +40,9 @@ public static class BattleActorFormBakeTools
             {
                 if (!ImageConversion.LoadImage(source, File.ReadAllBytes(sourcePath), false))
                     throw new InvalidOperationException("Cannot read source alpha: " + sourcePath);
-                int longEdge = sourcePath == BattleActorSurfaceBakeTools.MollyPath
+                int longEdge = sourcePath == BattleActorSurfaceBakeTools.ManPath
+                    ? BattleActorSurfaceBakeTools.ManMapLongEdge
+                    : sourcePath == BattleActorSurfaceBakeTools.MollyPath
                     ? BattleActorSurfaceBakeTools.MollyMapLongEdge
                     : sourcePath == BattleActorSurfaceBakeTools.AxePath ? BattleActorSurfaceBakeTools.AxeMapLongEdge : LongEdge;
                 float scale = (float)longEdge / Mathf.Max(source.width, source.height);
@@ -52,7 +54,7 @@ public static class BattleActorFormBakeTools
                     inside[y * width + x] = source.GetPixelBilinear((x + 0.5f) / width, (y + 0.5f) / height).a >= 0.5f;
                 form = new Texture2D(width, height, TextureFormat.RGBA32, true, true)
                 {
-                    name = sprite.name + (sourcePath == BattleActorSurfaceBakeTools.MollyPath || sourcePath == BattleActorSurfaceBakeTools.AxePath ? " Form" : " silhouette form"),
+                    name = sprite.name + (sourcePath == BattleActorSurfaceBakeTools.ManPath || sourcePath == BattleActorSurfaceBakeTools.MollyPath || sourcePath == BattleActorSurfaceBakeTools.AxePath ? " Form" : " silhouette form"),
                     wrapMode = TextureWrapMode.Clamp,
                     filterMode = FilterMode.Trilinear,
                     anisoLevel = 1

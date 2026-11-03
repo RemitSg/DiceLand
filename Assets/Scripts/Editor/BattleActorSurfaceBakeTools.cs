@@ -15,6 +15,7 @@ public static class BattleActorSurfaceBakeTools
     public const string MollyPath = "Assets/Assets/Textures/Characters/Molly/Molly_InBattle.png";
     public const string CoffinPath = "Assets/Data/Enemies/Enemies/037 BlackCoffin/黑棺_x4.png";
     public const string AxePath = "Assets/Data/Weapons/204 猎光者/猎光者_x4.png";
+    public const int ManMapLongEdge = 512;
     public const int MollyMapLongEdge = 512;
     public const int AxeMapLongEdge = 512;
 
@@ -55,13 +56,14 @@ public static class BattleActorSurfaceBakeTools
             {
                 if (!ImageConversion.LoadImage(source, File.ReadAllBytes(path), false))
                     throw new InvalidOperationException("Cannot read material source: " + path);
-                int longEdge = path == MollyPath ? MollyMapLongEdge : path == AxePath ? AxeMapLongEdge : path == CoffinPath ? 512 : LongEdge;
+                int longEdge = path == ManPath ? ManMapLongEdge : path == MollyPath ? MollyMapLongEdge
+                    : path == AxePath ? AxeMapLongEdge : path == CoffinPath ? 512 : LongEdge;
                 float scale = (float)longEdge / Mathf.Max(source.width, source.height);
                 int width = Mathf.Max(4, Mathf.RoundToInt(source.width * scale));
                 int height = Mathf.Max(4, Mathf.RoundToInt(source.height * scale));
                 map = new Texture2D(width, height, TextureFormat.RGBA32, true, true)
                 {
-                    name = sprite.name + (path == CoffinPath || path == MollyPath || path == AxePath ? " Surface" : " material regions"), filterMode = FilterMode.Trilinear,
+                    name = sprite.name + " Surface", filterMode = FilterMode.Trilinear,
                     wrapMode = TextureWrapMode.Clamp, anisoLevel = 1
                 };
                 Color32[] pixels = BakePixels(path, width, height);
@@ -182,7 +184,8 @@ public static class BattleActorSurfaceBakeTools
             Color32 result = new Color(refined.x * 0.5f + 0.5f,refined.y * 0.5f + 0.5f,refined.z * 0.5f + 0.5f,1f);
             result.a = pixel.a; pixels[index] = result;
         }
-        if (sourcePath == MollyPath) RefinePlanes(pixels,width,height,MollyPlanes());
+        if (sourcePath == ManPath) RefinePlanes(pixels,width,height,ManPlanes());
+        else if (sourcePath == MollyPath) RefinePlanes(pixels,width,height,MollyPlanes());
     }
 
     private static void RefinePlanes(Color32[] pixels,int width,int height,Region[] faces)
@@ -201,6 +204,30 @@ public static class BattleActorSurfaceBakeTools
             Color32 refined=new Color(normal.x*.5f+.5f,normal.y*.5f+.5f,normal.z*.5f+.5f,1);
             refined.a=pixel.a;pixels[i]=refined;
         }
+    }
+
+    private static Region[] ManPlanes()
+    {
+        // Illustration planes, in the same 1230x1478 source space as the material masks.
+        // Hair tufts, armor facets and cloth folds must not share one silhouette-wide curve.
+        return new[]
+        {
+            Shape(new Color(-.20f,.50f,.842f,.80f),1230,1478, 570,38, 612,53, 659,40, 664,3, 711,43, 744,13, 773,57, 797,105, 754,103, 698,86, 631,103, 585,83),
+            Shape(new Color(.20f,.48f,.854f,.78f),1230,1478, 539,103, 593,107, 631,103, 698,86, 754,103, 787,118, 730,105, 699,132, 656,145, 602,132, 561,127),
+            Shape(new Color(-.43f,-.12f,.895f,.78f),1230,1478, 547,135, 602,132, 656,145, 699,132, 690,160, 678,185, 639,190, 577,181, 539,155),
+            Shape(new Color(.34f,.12f,.933f,.72f),1230,1478, 710,120, 739,110, 780,128, 790,151, 793,183, 783,195, 797,213, 781,220, 777,248, 769,269, 738,267, 698,245, 685,218, 685,188, 699,158),
+            Shape(new Color(.12f,-.58f,.806f,.76f),1230,1478, 686,226, 710,249, 739,266, 773,274, 738,278, 697,263, 682,249),
+            Shape(new Color(.36f,.16f,.919f,.88f),1230,1478, 815,183, 852,200, 877,252, 892,282, 886,321, 854,332, 824,353, 794,342, 800,284, 789,232),
+            Shape(new Color(-.52f,.30f,.800f,.86f),1230,1478, 797,173, 813,182, 818,208, 812,249, 807,274, 793,301, 789,333, 770,355, 743,365, 747,339, 755,305, 777,277, 785,233, 788,198),
+            Shape(new Color(-.24f,.24f,.941f,.86f),1230,1478, 45,644, 119,628, 181,653, 182,704, 153,748, 115,777, 34,763, 24,689),
+            Shape(new Color(.42f,-.28f,.863f,.86f),1230,1478, 34,787, 110,803, 75,853, 16,901, 16,916, 112,889, 158,825),
+            Shape(new Color(-.24f,.28f,.929f,.86f),1230,1478, 236,1057, 290,1035, 353,1064, 370,1104, 332,1155, 287,1178, 246,1149, 225,1110),
+            Shape(new Color(.30f,.30f,.905f,.86f),1230,1478, 977,1003, 1042,987, 1080,1028, 1061,1066, 1022,1090, 979,1066, 967,1039),
+            Shape(new Color(.26f,.18f,.949f,.76f),1230,1478, 519,775, 580,809, 623,852, 653,814, 688,778, 705,843, 682,938, 662,1054, 603,1095, 555,1015),
+            Shape(new Color(-.52f,-.14f,.843f,.74f),1230,1478, 540,800, 593,862, 604,950, 631,1055, 591,1092, 557,1009),
+            Shape(new Color(-.22f,.50f,.838f,.78f),1230,1478, 332,839, 405,790, 486,798, 477,868, 385,912, 301,936, 281,900),
+            Shape(new Color(.35f,.42f,.837f,.78f),1230,1478, 759,777, 834,802, 926,858, 949,885, 873,855, 818,850, 760,828)
+        };
     }
 
     private static Region[] MollyPlanes()
@@ -314,7 +341,14 @@ public static class BattleActorSurfaceBakeTools
             Shape(Metal,1230,1478, 580,691, 642,663, 706,681, 748,727, 714,778, 649,805, 589,765),
             Shape(Metal,1230,1478, 216,1041, 290,1014, 371,1048, 394,1110, 342,1185, 287,1220, 235,1176, 207,1118),
             Shape(Metal,1230,1478, 973,974, 1042,967, 1100,1023, 1084,1085, 1049,1128, 1005,1113, 958,1076, 952,1028),
-            Shape(Skin,1230,1478, 706,113, 729,103, 761,112, 783,127, 791,150, 797,185, 786,191, 785,205, 798,213, 786,221, 777,247, 778,274, 772,280, 738,279, 690,263, 679,248, 675,214, 660,207, 648,197, 644,177, 652,161, 663,160, 672,172, 682,184, 693,157, 695,140)
+            Shape(Skin,1230,1478, 706,113, 729,103, 761,112, 783,127, 791,150, 797,185, 786,191, 785,205, 798,213, 786,221, 777,247, 778,274, 772,280, 738,279, 690,263, 679,248, 675,214, 660,207, 648,197, 644,177, 652,161, 663,160, 672,172, 682,184, 693,157, 695,140),
+            // Hair stays nonmetal and loses the cloth sheen; roughness controls its broad highlight.
+            Shape(new Color(0,0,.64f,1),1230,1478, 539,103, 572,82, 570,38, 612,53, 659,40, 664,3, 711,43, 744,13, 773,57, 797,105, 813,106, 823,121, 794,113, 775,103, 730,102, 706,113, 695,140, 693,157, 682,184, 663,160, 652,161, 644,177, 648,197, 612,194, 577,181, 539,155, 561,141),
+            Shape(Metal,1230,1478, 544,373, 563,370, 581,383, 579,407, 562,421, 543,410, 539,390),
+            Shape(Metal,1230,1478, 768,334, 791,333, 806,351, 801,377, 784,391, 764,382, 755,360),
+            Shape(Metal,1230,1478, 648,473, 676,499, 653,530, 623,505),
+            Shape(Leather,1230,1478, 647,486, 661,500, 652,516, 638,504),
+            Shape(Metal,1230,1478, 585,371, 620,381, 650,385, 681,380, 704,371, 705,386, 682,397, 654,407, 619,397, 590,387)
         };
         if (path == MollyPath) return new[]
         {

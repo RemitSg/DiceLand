@@ -4,6 +4,55 @@ using UnityEngine;
 public sealed class BattleActorFormBakeTests
 {
     [Test]
+    public void ManHairAndJewelryStaySeparateFromSkinAndCloth()
+    {
+        const int width = 426, height = 512;
+        Color32[] pixels = BattleActorSurfaceBakeTools.BakePixels(BattleActorSurfaceBakeTools.ManPath, width, height);
+        System.Func<int,int,Color32> at = (x,y) => pixels[Mathf.FloorToInt((1f-y/1478f)*height)*width+Mathf.FloorToInt(x/1230f*width)];
+        Color32 hair = at(650,80), cloth = at(500,1000), chain = at(650,395), neck = at(635,340);
+        Assert.Less(hair.r, 10); Assert.Less(hair.g, 10);
+        Assert.That(hair.b, Is.InRange(155, 170), "Hair must not inherit the cloth-only sheen mask.");
+        Assert.Greater(cloth.b, 245); Assert.Less(cloth.g, 10);
+        Assert.Greater(chain.g, 230); Assert.Less(chain.r, 15);
+        Assert.Greater(neck.r, 240); Assert.Less(neck.g, 10);
+        Assert.Greater(at(558,393).g, 240, "The round strap fastener is metal.");
+        Assert.Less(at(648,501).g, 15, "The central buckle inset remains leather.");
+    }
+
+    [Test]
+    public void ManHairJawArmorAndFoldFacesPreserveCutoutsAndHaveIndependentNormals()
+    {
+        const int width = 426, height = 512;
+        var input = new Color32[width*height];
+        for (int y=0;y<height;y++) for (int x=0;x<width;x++)
+            input[y*width+x]=new Color32(128,128,255,(byte)((x+y)%7==0?0:255));
+        Color32[] first=(Color32[])input.Clone(), second=(Color32[])input.Clone();
+        string random=JsonUtility.ToJson(Random.state);
+        BattleActorSurfaceBakeTools.RefineFormNormals(BattleActorSurfaceBakeTools.ManPath,first,width,height);
+        BattleActorSurfaceBakeTools.RefineFormNormals(BattleActorSurfaceBakeTools.ManPath,second,width,height);
+        for(int i=0;i<first.Length;i++)
+        {
+            Assert.AreEqual(input[i].a,first[i].a);
+            if(input[i].a==0) Assert.AreEqual(input[i],first[i]);
+            Vector3 normal=new Vector3(first[i].r/127.5f-1,first[i].g/127.5f-1,first[i].b/127.5f-1);
+            Assert.Greater(normal.z,0); Assert.That(normal.magnitude,Is.EqualTo(1).Within(.015f));
+        }
+        // Sample an opaque pixel in each small neighborhood, independent of the cutout pattern.
+        System.Func<int,int,Vector3> at=(sx,sy)=>{
+            int cx=Mathf.FloorToInt(sx/1230f*width),cy=Mathf.FloorToInt((1f-sy/1478f)*height);
+            for(int y=cy-1;y<=cy+1;y++)for(int x=cx-1;x<=cx+1;x++)
+                if(first[y*width+x].a!=0){var c=first[y*width+x];return new Vector3(c.r/127.5f-1,c.g/127.5f-1,c.b/127.5f-1);}
+            throw new System.InvalidOperationException("No opaque sample");
+        };
+        Assert.Greater(at(690,60).y-at(600,164).y,.3f);
+        Assert.Greater(at(747,225).y-at(733,267).y,.3f);
+        Assert.Greater(at(850,260).x-at(780,315).x,.35f);
+        Assert.Greater(at(650,900).x-at(590,950).x,.25f);
+        CollectionAssert.AreEqual(first,second);
+        Assert.AreEqual(random,JsonUtility.ToJson(Random.state));
+    }
+
+    [Test]
     public void AxeMaterialsSeparateBladeGripAndOnlyItsGemRegionsEmit()
     {
         string random = JsonUtility.ToJson(Random.state);
