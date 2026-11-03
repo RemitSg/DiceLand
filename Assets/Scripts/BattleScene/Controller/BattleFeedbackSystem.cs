@@ -235,6 +235,15 @@ public class BattleFeedbackSystem : MonoBehaviour
     private RectTransform overlayRoot;
     private Material particleMaterial;
     private Texture2D particleTexture;
+    private const float ImpactPulseDuration = 0.14f;
+    private Image impactPulseImage;
+    private Sprite impactPulseSprite;
+    private Vector3 impactPulseWorldPosition;
+    private bool impactPulseHasWorldPosition;
+    private float impactPulseAge = ImpactPulseDuration;
+    private float impactPulseStrength;
+    private int impactPulseStartFrame;
+    private Color impactPulseTint;
     private Camera presentationCameraOverride;
     private BattlePresentationSystem presentationSystem;
     private float presentationDamageScaleOverride = 1f;
@@ -256,6 +265,7 @@ public class BattleFeedbackSystem : MonoBehaviour
 
     private void OnDisable()
     {
+        ClearImpactPulse();
         if (deathSlowMotionRoutine == null)
             return;
 
@@ -267,6 +277,7 @@ public class BattleFeedbackSystem : MonoBehaviour
 
     private void LateUpdate()
     {
+        UpdateImpactPulse(Time.unscaledDeltaTime);
         UpdateTrackedPositions(allyUIs, healthBarWorldOffset);
         UpdateTrackedPositions(enemyUIs, healthBarWorldOffset);
     }
@@ -1607,33 +1618,84 @@ public class BattleFeedbackSystem : MonoBehaviour
 
     public void PlayImpactPulse(Color tint, float strength)
     {
-        if (!isActiveAndEnabled)
-            return;
-        EnsureCanvas();
-        StartCoroutine(AnimateImpactPulse(tint, Mathf.Clamp01(strength)));
+        if (!isActiveAndEnabled) return;
+        BeginImpactPulse(null, tint, strength);
     }
 
-    private IEnumerator AnimateImpactPulse(Color tint, float strength)
+    public void PlayImpactPulse(Vector3 worldPosition, Color tint, float strength)
     {
-        GameObject pulse = new GameObject("BattleImpactPulse", typeof(RectTransform), typeof(Image));
-        RectTransform rect = pulse.GetComponent<RectTransform>();
-        rect.SetParent(overlayRoot, false);
-        rect.SetAsFirstSibling();
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = Vector2.one;
-        rect.offsetMin = rect.offsetMax = Vector2.zero;
-        Image image = pulse.GetComponent<Image>();
-        image.raycastTarget = false;
-        const float duration = 0.14f;
-        for (float time = 0f; time < duration; time += Time.unscaledDeltaTime)
+        if (!isActiveAndEnabled) return;
+        BeginImpactPulse(worldPosition, tint, strength);
+    }
+
+    public void StopImpactPulse() => ClearImpactPulse();
+
+    private void BeginImpactPulse(Vector3? worldPosition, Color tint, float strength)
+    {
+        strength = Mathf.Clamp01(strength);
+        if (strength <= 0f) return;
+        EnsureCanvas();
+        EnsureParticleResources();
+        if (impactPulseSprite == null)
         {
-            if (image == null)
-                yield break;
-            tint.a = 0.07f * strength * Mathf.Pow(1f - time / duration, 2f);
-            image.color = tint;
-            yield return null;
+            impactPulseSprite = Sprite.Create(particleTexture,
+                new Rect(0,0,particleTexture.width,particleTexture.height),Vector2.one*.5f,64f,0,SpriteMeshType.FullRect);
+            impactPulseSprite.name = "Battle focused screen impact";
+            impactPulseSprite.hideFlags = HideFlags.HideAndDontSave;
         }
-        Destroy(pulse);
+        if (impactPulseImage == null)
+        {
+            GameObject pulse = new GameObject("BattleImpactPulse", typeof(RectTransform), typeof(Image));
+            pulse.transform.SetParent(overlayRoot, false);
+            pulse.transform.SetAsFirstSibling();
+            impactPulseImage = pulse.GetComponent<Image>();
+            impactPulseImage.sprite = impactPulseSprite;
+            impactPulseImage.raycastTarget = false;
+        }
+        float remaining = impactPulseImage.gameObject.activeSelf
+            ? impactPulseStrength * Mathf.Pow(1f-Mathf.Clamp01(impactPulseAge/ImpactPulseDuration),2f) : 0f;
+        impactPulseStrength = Mathf.Max(remaining,strength);
+        impactPulseTint = Color.Lerp(Color.white,tint,.35f);
+        impactPulseHasWorldPosition = worldPosition.HasValue;
+        impactPulseWorldPosition = worldPosition.GetValueOrDefault();
+        impactPulseAge = 0f;
+        impactPulseStartFrame = Time.frameCount;
+        impactPulseImage.gameObject.SetActive(true);
+        UpdateImpactPulse(0f);
+    }
+
+    private void UpdateImpactPulse(float deltaTime)
+    {
+        if (impactPulseImage == null || !impactPulseImage.gameObject.activeSelf || overlayRoot == null) return;
+        // Keep the first rendered beat even when the triggering frame was long.
+        if (Time.frameCount != impactPulseStartFrame) impactPulseAge += Mathf.Max(0f,deltaTime);
+        if (impactPulseAge >= ImpactPulseDuration) { ClearImpactPulse(); return; }
+        Vector2 viewport = Vector2.one*.5f;
+        if (impactPulseHasWorldPosition)
+        {
+            Camera camera = ResolveCamera();
+            if (camera == null) { ClearImpactPulse(); return; }
+            Vector3 projected = camera.WorldToViewportPoint(impactPulseWorldPosition);
+            if (projected.z <= 0f) { ClearImpactPulse(); return; }
+            viewport = new Vector2(projected.x,projected.y);
+        }
+        Rect bounds = overlayRoot.rect;
+        RectTransform rect = impactPulseImage.rectTransform;
+        rect.anchorMin = rect.anchorMax = rect.pivot = Vector2.one*.5f;
+        rect.sizeDelta = Vector2.one * (bounds.height*.82f);
+        rect.anchoredPosition = new Vector2(bounds.xMin+viewport.x*bounds.width,bounds.yMin+viewport.y*bounds.height);
+        Color color = impactPulseTint;
+        color.a = .12f * impactPulseStrength * Mathf.Pow(1f-Mathf.Clamp01(impactPulseAge/ImpactPulseDuration),2f);
+        impactPulseImage.color = color;
+    }
+
+    private void ClearImpactPulse()
+    {
+        impactPulseAge = ImpactPulseDuration;
+        impactPulseStrength = 0f;
+        if (impactPulseImage == null) return;
+        impactPulseImage.color = Color.clear;
+        impactPulseImage.gameObject.SetActive(false);
     }
 
     private void PlayHealthBarHitFx(TrackedUnitUI ui)
@@ -2207,17 +2269,26 @@ public class BattleFeedbackSystem : MonoBehaviour
 
     private void OnDestroy()
     {
+        ClearImpactPulse();
         foreach (BattleAllyController ally in new List<BattleAllyController>(allyUIs.Keys))
             RemoveTrackedAlly(ally);
         foreach (BattleEnemyController enemy in new List<BattleEnemyController>(enemyUIs.Keys))
             RemoveTrackedEnemy(enemy);
 
         if (overlayCanvas != null)
-            Destroy(overlayCanvas.gameObject);
+            ReleaseFeedbackResource(overlayCanvas.gameObject);
 
+        ReleaseFeedbackResource(impactPulseSprite);
         if (particleMaterial != null)
-            Destroy(particleMaterial);
+            ReleaseFeedbackResource(particleMaterial);
         if (particleTexture != null)
-            Destroy(particleTexture);
+            ReleaseFeedbackResource(particleTexture);
+    }
+
+    private static void ReleaseFeedbackResource(UnityEngine.Object value)
+    {
+        if (value == null) return;
+        if (Application.isPlaying) Destroy(value);
+        else DestroyImmediate(value);
     }
 }

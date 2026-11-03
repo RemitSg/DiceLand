@@ -546,9 +546,9 @@ public class BattlePresentationSystem : MonoBehaviour
         EnemySkill_SO.DicePresentationSettings allyFx,
         EnemySkill_SO.DicePresentationSettings enemyFx)
     {
-        TriggerCameraImpact(impactPosition, clashCameraPower, false);
         float waitDuration = Mathf.Max(0f, clashEffectDuration);
         Vector3 contactPosition = ResolveClashContactPoint(ally, enemy, impactPosition, clashDirection, impactHeightOffset);
+        TriggerCameraImpact(impactPosition, clashCameraPower, false, contactPosition);
 
         PlaySideClashFx(ally, planeZ, allyFx, clashDirection, allyHitColor);
         PlaySideClashFx(enemy, planeZ, enemyFx, -clashDirection, enemyHitColor);
@@ -1613,12 +1613,12 @@ public class BattlePresentationSystem : MonoBehaviour
         return color;
     }
 
-    private void TriggerCameraImpact(Vector3 focusPosition, float power, bool isHit)
+    private void TriggerCameraImpact(Vector3 focusPosition, float power, bool isHit, Vector3? pulsePosition = null)
     {
         if (!enableCameraImpact)
             return;
 
-        ResolveFeedbackSystem()?.PlayImpactPulse(isHit ? flashColor : clashSparkColor,
+        ResolveFeedbackSystem()?.PlayImpactPulse(pulsePosition ?? focusPosition, isHit ? flashColor : clashSparkColor,
             Mathf.Lerp(0.45f, 1f, NormalizeCameraIntensity(power)));
 
         if (UseCloseupCutCamera())
@@ -1945,6 +1945,7 @@ public class BattlePresentationSystem : MonoBehaviour
 
     private void StopActiveCloseupShotImmediate()
     {
+        ResolveFeedbackSystem()?.StopImpactPulse();
         if (activeCloseupShotRoutine != null)
             StopCoroutine(activeCloseupShotRoutine);
 

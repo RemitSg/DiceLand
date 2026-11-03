@@ -83,9 +83,11 @@ public sealed class BattleClashReadabilityTests
         }
     }
 
-    [TestCase(false)]
-    [TestCase(true)]
-    public void ImpactDisplacementKeepsTheSameScreenFractionForDifferentFraming(bool isHit)
+    [TestCase(false,.14f)]
+    [TestCase(false,.28f)]
+    [TestCase(true,.22f)]
+    [TestCase(true,.40f)]
+    public void ImpactDisplacementKeepsTheSameScreenFractionForDifferentFraming(bool isHit,float configuredAmplitude)
     {
         GameObject owner = new GameObject("Impact framing test");
         owner.SetActive(false);
@@ -93,6 +95,7 @@ public sealed class BattleClashReadabilityTests
         {
             BattlePresentationSystem presentation = owner.AddComponent<BattlePresentationSystem>();
             Camera camera = Child(owner, "Camera").AddComponent<Camera>();
+            Set(presentation,isHit?"hitShakeAmplitude":"clashShakeAmplitude",configuredAmplitude);
             MethodInfo amplitude = typeof(BattlePresentationSystem).GetMethod("ResolveImpactWorldAmplitude", Private);
             foreach (float depth in new[] { 5f, 10f, 25f })
             foreach (float fov in new[] { 18f, 50f })
@@ -102,13 +105,115 @@ public sealed class BattleClashReadabilityTests
                 float displacement = (float)amplitude.Invoke(presentation, new object[] { camera, focus, isHit });
                 Vector3 before = camera.WorldToViewportPoint(focus);
                 Vector3 after = camera.WorldToViewportPoint(focus + camera.transform.up * displacement);
-                Assert.That(after.y - before.y, Is.EqualTo(isHit ? 0.022f : 0.014f).Within(0.00001f));
+                Assert.That(after.y - before.y, Is.EqualTo(configuredAmplitude*.1f).Within(0.00001f));
             }
         }
         finally
         {
             Object.DestroyImmediate(owner);
         }
+    }
+
+    [TestCase(1920f,1080f)]
+    [TestCase(2960f,1440f)]
+    [TestCase(1600f,1200f)]
+    public void ImpactGlowTracksWorldContactAndKeepsScreenHeightAcrossAspects(float width,float height)
+    {
+        GameObject owner = new GameObject("Impact glow layout"); owner.SetActive(false);
+        BattleFeedbackSystem feedback = owner.AddComponent<BattleFeedbackSystem>();
+        try
+        {
+            Camera camera = PreparePulseFixture(owner,feedback,width,height);
+            Vector3 contact = camera.ViewportToWorldPoint(new Vector3(.7f,.6f,10));
+            BeginPulse(feedback,contact,1);
+            var image = PulseImage(feedback);
+            Assert.IsFalse(image.raycastTarget);
+            Assert.AreSame(typeof(BattleFeedbackSystem).GetField("particleTexture",Private).GetValue(feedback),image.sprite.texture);
+            Assert.That(image.rectTransform.sizeDelta.y/height,Is.EqualTo(.82f).Within(.00001f));
+            Assert.That(image.rectTransform.sizeDelta.x,Is.EqualTo(image.rectTransform.sizeDelta.y).Within(.001f));
+            Assert.That(image.rectTransform.anchoredPosition.x,Is.EqualTo(width*.2f).Within(.01f));
+            Assert.That(image.rectTransform.anchoredPosition.y,Is.EqualTo(height*.1f).Within(.01f));
+            Vector2 first = image.rectTransform.anchoredPosition;
+            camera.transform.position = Vector3.right;
+            typeof(BattleFeedbackSystem).GetMethod("UpdateImpactPulse",Private).Invoke(feedback,new object[]{0f});
+            Assert.Greater(Vector2.Distance(first,image.rectTransform.anchoredPosition),1f);
+            BeginPulse(feedback,Vector3.back*10,1);
+            Assert.IsFalse(image.gameObject.activeSelf,"A contact behind the camera must not become a centered flash.");
+        }
+        finally { DisposePulseFixture(owner,feedback); }
+    }
+
+    [Test]
+    public void ImpactGlowReusesOneImageAndCannotStackOrSkipItsFirstFrame()
+    {
+        GameObject owner = new GameObject("Impact glow envelope"); owner.SetActive(false);
+        BattleFeedbackSystem feedback = owner.AddComponent<BattleFeedbackSystem>();
+        try
+        {
+            PreparePulseFixture(owner,feedback,1920,1080);
+            BeginPulse(feedback,null,1);
+            var image=PulseImage(feedback);Sprite sprite=image.sprite;
+            for(int i=0;i<20;i++)BeginPulse(feedback,null,.45f);
+            Assert.AreSame(image,PulseImage(feedback));Assert.AreSame(sprite,image.sprite);
+            Assert.AreEqual(1,image.transform.parent.GetComponentsInChildren<UnityEngine.UI.Image>(true).Length);
+            Assert.That(image.color.a,Is.EqualTo(.12f).Within(.0001f));
+            MethodInfo update=typeof(BattleFeedbackSystem).GetMethod("UpdateImpactPulse",Private);
+            update.Invoke(feedback,new object[]{1f});
+            Assert.That(image.color.a,Is.EqualTo(.12f).Within(.0001f),"A long triggering frame still has one visible beat.");
+            Set(feedback,"impactPulseStartFrame",-1);
+            update.Invoke(feedback,new object[]{.07f});
+            Assert.That(image.color.a,Is.EqualTo(.03f).Within(.0001f));
+            update.Invoke(feedback,new object[]{.08f});
+            Assert.IsFalse(image.gameObject.activeSelf);
+            Assert.AreEqual(0,image.color.a);
+        }
+        finally { DisposePulseFixture(owner,feedback); }
+    }
+
+    [Test]
+    public void ImpactGlowClearsWhenFeedbackOrPresentationIsInterrupted()
+    {
+        GameObject owner=new GameObject("Impact glow interruption");owner.SetActive(false);
+        BattleFeedbackSystem feedback=owner.AddComponent<BattleFeedbackSystem>();
+        try
+        {
+            Camera camera=PreparePulseFixture(owner,feedback,1920,1080);
+            BeginPulse(feedback,null,1);var image=PulseImage(feedback);
+            typeof(BattleFeedbackSystem).GetMethod("OnDisable",Private).Invoke(feedback,null);
+            Assert.IsFalse(image.gameObject.activeSelf);Assert.AreEqual(0,image.color.a);
+            BeginPulse(feedback,null,1);
+            BattlePresentationSystem presentation=owner.AddComponent<BattlePresentationSystem>();
+            Set(presentation,"battleFeedbackSystem",feedback);Set(presentation,"battleCamera",camera);
+            typeof(BattlePresentationSystem).GetMethod("StopActiveCloseupShotImmediate",Private).Invoke(presentation,null);
+            Assert.IsFalse(image.gameObject.activeSelf);Assert.AreEqual(0,image.color.a);
+        }
+        finally { DisposePulseFixture(owner,feedback); }
+    }
+
+    private static Camera PreparePulseFixture(GameObject owner,BattleFeedbackSystem feedback,float width,float height)
+    {
+        var overlay=Child(owner,"Pulse overlay",typeof(RectTransform)).GetComponent<RectTransform>();
+        overlay.sizeDelta=new Vector2(width,height);
+        var canvas=Child(owner,"Fixture canvas",typeof(RectTransform),typeof(Canvas)).GetComponent<Canvas>();
+        Camera camera=Child(owner,"Pulse camera").AddComponent<Camera>();camera.aspect=width/height;
+        Set(feedback,"overlayRoot",overlay);Set(feedback,"overlayCanvas",canvas);Set(feedback,"worldCamera",camera);
+        return camera;
+    }
+
+    private static void BeginPulse(BattleFeedbackSystem feedback,Vector3? position,float strength)
+    {
+        typeof(BattleFeedbackSystem).GetMethod("BeginImpactPulse",Private).Invoke(feedback,new object[]{position,new Color(1,.82f,.42f,1),strength});
+    }
+
+    private static UnityEngine.UI.Image PulseImage(BattleFeedbackSystem feedback)
+    {
+        return (UnityEngine.UI.Image)typeof(BattleFeedbackSystem).GetField("impactPulseImage",Private).GetValue(feedback);
+    }
+
+    private static void DisposePulseFixture(GameObject owner,BattleFeedbackSystem feedback)
+    {
+        typeof(BattleFeedbackSystem).GetMethod("OnDestroy",Private).Invoke(feedback,null);
+        Object.DestroyImmediate(owner);
     }
 
     private static GameObject Child(GameObject parent, string name, params System.Type[] types)
