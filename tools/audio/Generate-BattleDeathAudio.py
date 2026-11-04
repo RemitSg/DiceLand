@@ -1,99 +1,98 @@
-"""Synthesize a continuous thunder-drum death impact (Python stdlib only).
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["numpy==2.5.4", "scipy==1.18.1"]
+# ///
+"""Generate an original pressure-impact death cue using coarse reference features.
 
-A struck membrane drops from a midrange attack into deep bass. Smooth, filtered
-noise supplies the thunder tail; there are no chopped samples, distortion stages,
-or discrete echo taps. --demo-music renders a local, unpitched ducking preview.
+Run: uv run tools/audio/Generate-BattleDeathAudio.py
+The confirmed Library of Ruina reference informs octave balance, stereo width,
+and broad decay timing. Every sound sample is synthesized from new noise and
+resonators; no reference recording is read or embedded by this generator.
+--demo-music renders the existing 0.4-second BGM ducking behavior for audition.
 """
 import argparse
 from array import array
 import json
 import math
 from pathlib import Path
-import random
 import struct
 import wave
+
+import numpy as np
+from scipy import interpolate, signal
 
 ROOT = Path(__file__).resolve().parents[2]
 RATE = 48000
 DURATION = 2.4
 TAU = math.tau
+REFERENCE_URL = 'https://tuna.voicemod.net/sound/1ccd942e-bce6-4546-9bc0-f7ccda71901b'
+# Coarse energy bands: sustained bass pressure plus the shorter upper impact.
+BANDS = [(15, 25), (25, 48), (48, 96), (96, 192), (192, 384),
+         (384, 768), (768, 1536), (1536, 3072), (3072, 6144), (6144, 12000)]
+TIMES = [0, 0.12, 0.35, 0.75, 1.25, 1.75, 2.2, 2.4]
+LEVELS_DB = [-7.5, -6.5, -7.5, -11.5, -20, -30, -40, -55]
+BAND_ENERGY = np.array([
+    [.10, .16, .24, .43, .018, .010, .015, .012, .010, .005],
+    [.09, .30, .48, .06, .012, .006, .014, .017, .014, .007],
+    [.04, .06, .69, .05, .03, .022, .055, .025, .022, .006],
+    [.009, .15, .64, .10, .020, .015, .033, .018, .013, .002],
+    [.001, .16, .64, .11, .06, .020, .002, .001, .001, .001],
+    [.001, .06, .69, .11, .10, .035, .002, .001, .001, .0005],
+    [.001, .07, .85, .06, .01, .003, .001, .0003, .0003, .0001],
+    [.001, .07, .85, .06, .01, .003, .001, .0003, .0003, .0001],
+])
 
 
-def biquad(samples, frequency, highpass=False):
-    omega = TAU * frequency / RATE
-    cosine = math.cos(omega)
-    alpha = math.sin(omega) / math.sqrt(2)
-    if highpass:
-        b0, b1, b2 = (1 + cosine) / 2, -(1 + cosine), (1 + cosine) / 2
-    else:
-        b0, b1, b2 = (1 - cosine) / 2, 1 - cosine, (1 - cosine) / 2
-    a0, a1, a2 = 1 + alpha, -2 * cosine, 1 - alpha
-    b0, b1, b2, a1, a2 = (x / a0 for x in (b0, b1, b2, a1, a2))
-    x1 = x2 = y1 = y2 = 0.0
-    result = []
-    for x in samples:
-        y = b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2
-        result.append(y)
-        x2, x1, y2, y1 = x1, x, y1, y
-    return result
+def band_noise(rng, length, low, high):
+    # Warm the filters before taking the impact so the onset is already full-bodied.
+    warmup = RATE
+    noise = rng.standard_normal((3, length + warmup))
+    sos = signal.butter(3, [low, high], btype='bandpass', fs=RATE, output='sos')
+    filtered = signal.sosfilt(sos, noise, axis=-1)[:, warmup:]
+    rms = np.sqrt(np.mean(filtered[:, :RATE] ** 2, axis=-1, keepdims=True))
+    return filtered / np.maximum(1e-8, rms)
 
 
-def falling_noise(rng, length, start_cutoff, end_cutoff, fall_seconds):
-    """Continuous double-pole filtering; the cutoff never steps between blocks."""
-    first = second = 0.0
-    result = []
-    for i in range(length):
-        t = i / RATE
-        cutoff = end_cutoff + (start_cutoff - end_cutoff) * math.exp(-t / fall_seconds)
-        coefficient = 1 - math.exp(-TAU * cutoff / RATE)
-        first += coefficient * (rng.gauss(0, 1) - first)
-        second += coefficient * (first - second)
-        result.append(second * math.sqrt(start_cutoff / cutoff))
-    result = biquad(result, 27, highpass=True)
-    rms = math.sqrt(sum(x * x for x in result[:RATE // 2]) / (RATE // 2))
-    return [x / max(0.001, rms) for x in result]
+def limit_peaks(channels, ceiling):
+    """Look-ahead gain control, without clipping or waveshaping the bass waveform."""
+    allowed = np.minimum(1, ceiling / np.maximum(1e-9, np.max(np.abs(channels), axis=0)))
+    gain = np.empty_like(allowed)
+    release = 1 - math.exp(-1 / (RATE * 0.070))
+    attack = 1 - math.exp(-1 / (RATE * 0.001))
+    current = 1.0
+    for i in range(len(gain)):
+        current = min(allowed[i], current + (1 - current) * release)
+        gain[i] = current
+    current = 1.0
+    for i in range(len(gain) - 1, -1, -1):
+        current = min(gain[i], current + (1 - current) * attack)
+        gain[i] = current
+    return channels * gain
 
 
 def render():
-    rng = random.Random(20261104)
+    rng = np.random.default_rng(2026110419)
     length = round(RATE * DURATION)
-    thunder = falling_noise(rng, length, 1750, 85, 0.30)
-    room_left = falling_noise(rng, length, 1200, 180, 0.36)
-    room_right = falling_noise(rng, length, 1200, 180, 0.36)
-    contact = biquad([rng.gauss(0, 1) for _ in range(length)], 1700)
-    # Membrane modes give a drum skin its body without a distorted explosion layer.
-    modes = [(1.0, 1.0, 0.90), (1.593, 0.50, 0.45), (2.136, 0.29, 0.30),
-             (2.296, 0.20, 0.23), (2.655, 0.13, 0.16), (2.917, 0.09, 0.12),
-             (3.157, 0.065, 0.085), (3.50, 0.04, 0.065)]
-    center, left_space, right_space = [], [], []
-    for i in range(length):
-        t = i / RATE
-        # Integrated frequency sweep: 265 Hz on contact, settling smoothly at 42 Hz.
-        phase = TAU * (42 * t + 158 * 0.13 * (1 - math.exp(-t / 0.13))
-                       + 65 * 0.025 * (1 - math.exp(-t / 0.025)))
-        skin = sum(weight * math.sin(phase * ratio) * math.exp(-t / decay)
-                   for ratio, weight, decay in modes)
-        strike = contact[i] * 0.30 * math.exp(-t / 0.018)
-        roll = thunder[i] * 0.58 * math.exp(-t / 1.10)
-        center.append(skin * 0.93 + strike + roll)
-        room_envelope = (1 - math.exp(-t / 0.035)) * math.exp(-t / 0.64)
-        left_space.append(room_left[i] * 0.15 * room_envelope)
-        right_space.append(room_right[i] * 0.15 * room_envelope)
-    # Only the upper tail spreads into stereo; the drum and bass stay centered.
-    left_space = biquad(left_space, 155, highpass=True)
-    right_space = biquad(right_space, 155, highpass=True)
-    center = biquad(center, 24, highpass=True)
-    left = [x + y for x, y in zip(center, left_space)]
-    right = [x + y for x, y in zip(center, right_space)]
-    for i in range(length):
-        t = i / RATE
-        # Only the final tail fades. The foreground strike has no fade-in envelope.
-        envelope = min(1.0, (DURATION - t) / 0.18) ** 2
-        left[i] *= envelope
-        right[i] *= envelope
-    peak = max(max(abs(x) for x in left), max(abs(x) for x in right))
-    gain = 10 ** (-0.7 / 20) / peak
-    return [[x * gain for x in channel] for channel in (left, right)]
+    t = np.arange(length) / RATE
+    rows = BAND_ENERGY / BAND_ENERGY.sum(axis=1, keepdims=True)
+    amplitudes = np.sqrt(rows) * (10 ** (np.array(LEVELS_DB)[:, None] / 20))
+    envelopes = interpolate.PchipInterpolator(TIMES, amplitudes, axis=0)(t)
+    channels = np.zeros((2, length))
+    widths = [0.04, 0.32, 0.65, 0.68, 0.72, 0.74, 0.78, 0.80, 0.82, 0.85]
+    for band, ((low, high), width) in enumerate(zip(BANDS, widths)):
+        center, side_left, side_right = band_noise(rng, length, low, high)
+        normalization = math.sqrt(1 + width * width)
+        channels[0] += (center + width * side_left) / normalization * envelopes[:, band]
+        channels[1] += (center + width * side_right) / normalization * envelopes[:, band]
+    # A single pressure front gives an immediate hit, with no audible pitched tom sweep.
+    phase = TAU * (59 * t + 42 * 0.026 * (1 - np.exp(-t / 0.026)))
+    pressure = 0.28 * np.cos(phase) * np.exp(-t / 0.075)
+    channels += pressure
+    # Sustain the first half-second, then let the large low-end space collapse naturally.
+    channels *= 10 ** (1.2 / 20)
+    channels = limit_peaks(channels, 10 ** (-0.7 / 20))
+    channels *= np.minimum(1, (DURATION - t) / 0.09) ** 2
+    return channels
 
 
 def write_wav(path, channels):
@@ -136,23 +135,23 @@ def main():
     channels = render()
     write_wav(args.output, channels)
     preview = ROOT / 'outputs/agent-battle/death-audio-20261104'
-    write_wav(preview / 'death-thunder-drum-v3.wav', channels)
-    mono = [(a + b) * 0.5 for a, b in zip(*channels)]
-    low = biquad(mono, 180)
-    energy = sum(x * x for x in mono)
+    write_wav(preview / 'death-pressure-impact-v4.wav', channels)
+    mono = channels.mean(axis=0)
+    low = signal.sosfilt(signal.butter(2, 180, fs=RATE, output='sos'), mono)
+    energy = float(np.sum(mono * mono))
     report = dict(durationSeconds=DURATION, sampleRate=RATE, channels=2,
                   peakDbFS=20 * math.log10(max(abs(x) for channel in channels for x in channel)),
                   rmsDbFS=10 * math.log10(energy / len(mono)),
                   below180HzEnergyFraction=sum(x * x for x in low) / energy,
                   first50msRmsDbFS=10 * math.log10(sum(x * x for x in mono[:RATE // 20]) / (RATE // 20)),
-                  leadingSample=channels[0][0], trailingSample=channels[0][-1],
-                  attackFadeSeconds=0, sources=[], synthesizedSubBassHz=42,
-                  startingDrumFrequencyHz=265, texture='continuous thunder and struck membrane',
+                  leadingSample=float(channels[0][0]), trailingSample=float(channels[0][-1]),
+                  attackFadeSeconds=0, reference=REFERENCE_URL, recordedSamplesUsed=False,
+                  bodyBandHz=[48, 96], texture='broadband pressure front and dense bass decay',
                   distortion=False, discreteEchoes=False)
     (preview / 'synthesis-report.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
     if args.demo_music:
-        render_demo(args.demo_music, channels, preview / 'death-music-ducking-v3.wav')
-    print(json.dumps(dict(asset=str(args.output), audition=str(preview / 'death-thunder-drum-v3.wav'), **report)))
+        render_demo(args.demo_music, channels, preview / 'death-music-ducking-v4.wav')
+    print(json.dumps(dict(asset=str(args.output), audition=str(preview / 'death-pressure-impact-v4.wav'), **report)))
 
 
 if __name__ == '__main__':
