@@ -668,6 +668,8 @@ public class BattlePresentationSystem : MonoBehaviour
             if (!useCustom)
                 PulseImpactLight(position, hitColor, 0.16f);
             TriggerCameraImpact(position, cameraImpactPower, true);
+            // A lethal callback may hide the defender before the reaction coroutine runs.
+            CacheLastHitDirection(defender, GroundKnockbackDir(attackerPosition, defender != null ? defender.position : position, planeZ));
             onImpact?.Invoke();
             damageResolved = true;
         }));

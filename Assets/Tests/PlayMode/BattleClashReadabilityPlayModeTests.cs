@@ -81,7 +81,7 @@ public sealed class BattleClashReadabilityPlayModeTests
         yield return new WaitForSecondsRealtime(0.05f);
         Vector3 stablePosition = closeup.transform.position;
         float stableLens = closeup.fieldOfView;
-        Invoke(presentation, "TriggerCameraImpact", Vector3.zero, 12f, false);
+        Invoke(presentation, "TriggerCameraImpact", Vector3.zero, 12f, false, null);
         float displacement = 0f;
         float minimumLens = stableLens;
         for (float end = Time.realtimeSinceStartup + 0.35f; Time.realtimeSinceStartup < end;)
@@ -106,6 +106,9 @@ public sealed class BattleClashReadabilityPlayModeTests
     {
         root = new GameObject("Low-power impact screen displacement test");
         Component presentation = CreatePresentation();
+        // Compare force at a steady envelope; oscillation and recovery are covered by the live camera test.
+        Set(presentation, "cameraShakeFrequency", 0.01f);
+        Set(presentation, "cameraShakeDecayCurve", AnimationCurve.Constant(0, 1, 1));
         Camera camera = (Camera)Field(presentation, "closeupCamera");
         Transform first = Child("Ally").transform;
         Transform second = Child("Enemy").transform;
@@ -117,7 +120,7 @@ public sealed class BattleClashReadabilityPlayModeTests
         foreach (bool hit in new[] { false, true })
         {
             Vector3 stable = camera.WorldToViewportPoint(Vector3.zero);
-            Invoke(presentation, "TriggerCameraImpact", Vector3.zero, 2f, hit);
+            Invoke(presentation, "TriggerCameraImpact", Vector3.zero, 2f, hit, null);
             float peak = 0f;
             for (float end = Time.realtimeSinceStartup + 0.42f; Time.realtimeSinceStartup < end;)
             {
@@ -130,8 +133,8 @@ public sealed class BattleClashReadabilityPlayModeTests
             if (hit) hitPeak = peak; else clashPeak = peak;
         }
         Assert.That(hitPeak, Is.GreaterThan(clashPeak * 1.12f));
-        Invoke(presentation, "TriggerCameraImpact", Vector3.zero, 12f, true);
-        Invoke(presentation, "TriggerCameraImpact", Vector3.zero, 1f, false);
+        Invoke(presentation, "TriggerCameraImpact", Vector3.zero, 12f, true, null);
+        Invoke(presentation, "TriggerCameraImpact", Vector3.zero, 1f, false, null);
         Assert.IsTrue((bool)Field(presentation, "closeupImpactIsHit"), "A weak clash must not replace a heavy hit's remaining beat.");
     }
 

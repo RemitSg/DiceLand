@@ -8,9 +8,12 @@ using UnityEngine.SceneManagement;
 public sealed class BattleDeathVfx : MonoBehaviour
 {
     public const float Lifetime = 2.25f;
+    public const float MinimumVisualTimeScale = 0.6f;
     public float Elapsed { get; private set; }
     public bool IsComplete => Elapsed >= Lifetime;
     public int FragmentCount => particles.Count;
+    public Vector3 TravelDirection => push;
+    public Vector3 RecoilOffset => Recoil(Elapsed);
     private readonly List<Material> ownedMaterials = new List<Material>();
     private readonly List<Material> silhouettes = new List<Material>();
     private readonly List<Particle> particles = new List<Particle>();
@@ -22,7 +25,8 @@ public sealed class BattleDeathVfx : MonoBehaviour
     private int quads;
     private float height, width, floor;
     private Color primary, gold;
-    private Vector3 push;
+    private Vector3 push, spread;
+    private Transform silhouetteRoot;
     private uint randomState = 145981;
     private const int QuadBudget = 1024;
 
@@ -61,15 +65,18 @@ public sealed class BattleDeathVfx : MonoBehaviour
         height = Mathf.Clamp(bounds.size.y, 0.8f, 8f);
         width = Mathf.Clamp(bounds.size.x, height * 0.35f, height * 1.5f);
         floor = bounds.min.y - bounds.center.y + 0.04f;
+        direction.z = 0;
         push = direction.sqrMagnitude > 0.001f ? direction.normalized : Vector3.up;
-        push.z *= 0.15f;
+        spread = new Vector3(-push.y, push.x, 0);
+        silhouetteRoot = new GameObject("Recoil silhouette pivot").transform;
+        silhouetteRoot.SetParent(transform, false); silhouetteRoot.localPosition = Vector3.up * floor;
         primary = enemy ? new Color(0.68f, 0.3f, 1f) : new Color(0.2f, 0.88f, 1f);
         gold = enemy ? new Color(1f, 0.64f, 0.22f) : new Color(1f, 0.87f, 0.48f);
         foreach (SpriteRenderer source in actor.GetComponentsInChildren<SpriteRenderer>(true))
         {
             if (!BattleActorVisualUtility.IsActorBodyRenderer(actor, source) || !source.enabled || !source.gameObject.activeInHierarchy || source.sprite == null) continue;
             GameObject copy = new GameObject("Dissolving silhouette"); copy.layer = source.gameObject.layer;
-            copy.transform.SetParent(transform, false);
+            copy.transform.SetParent(silhouetteRoot, false);
             copy.transform.SetPositionAndRotation(source.transform.position, source.transform.rotation);
             copy.transform.localScale = source.transform.lossyScale;
             SpriteRenderer snapshot = copy.AddComponent<SpriteRenderer>();
@@ -79,7 +86,7 @@ public sealed class BattleDeathVfx : MonoBehaviour
             snapshot.sortingLayerID = source.sortingLayerID; snapshot.sortingOrder = Mathf.Max(order, source.sortingOrder);
             Material material = Own(new Material(dissolve) { name = "Death silhouette (runtime)" });
             material.SetColor("_SoulColor", primary); material.SetColor("_EdgeColor", gold);
-            material.SetVector("_BodyBounds", new Vector4(bounds.min.y, height, bounds.min.x, width));
+            material.SetVector("_BodyBounds", new Vector4(-0.04f, height, -width * 0.5f, width));
             Texture2D alpha = source.sprite.associatedAlphaSplitTexture;
             if (alpha != null) { material.SetTexture("_AlphaTex", alpha); material.SetFloat("_UseExternalAlpha", 1); }
             snapshot.sharedMaterial = material; silhouettes.Add(material);
@@ -103,12 +110,17 @@ public sealed class BattleDeathVfx : MonoBehaviour
         {
             float x = Rand(-1, 1), y = Rand(-0.47f, 0.48f), angle = Rand(0, Mathf.PI * 2);
             bool shard = i % 3 == 0, star = i % 11 == 0;
+            bool impact = i % 4 == 0;
+            float delay = impact ? Rand(0.015f, 0.075f) : Rand(0.09f, 0.30f);
+            Vector3 origin = new Vector3(x * width * 0.42f, y * height, Rand(-0.08f, 0.08f));
+            if (impact) origin = -push * width * 0.25f + spread * y * height * 0.6f;
+            Vector3 velocity = (push * Rand(2.8f, 5.2f) + spread * Rand(-0.65f, 0.65f) + Vector3.up * Rand(0.12f, 0.45f)) * height;
             particles.Add(new Particle {
-                origin = new Vector3(x * width * 0.42f, y * height, Rand(-0.08f, 0.08f)),
-                velocity = new Vector3(Mathf.Cos(angle) * Rand(0.3f, 1.4f), Mathf.Sin(angle) * 0.45f + Rand(0.4f, 1.2f), 0) * height + push * height * 0.35f,
-                delay = Rand(0.08f, 0.4f) + (y + 0.5f) * 0.12f, life = Rand(0.75f, 1.65f),
+                origin = RecoilMatrix(delay).MultiplyPoint3x4(origin), velocity = velocity,
+                delay = delay, life = Rand(0.75f, 1.65f),
                 size = height * (star ? Rand(0.08f, 0.14f) : shard ? Rand(0.026f, 0.062f) : Rand(0.012f, 0.038f)),
-                angle = angle, spin = Rand(-3, 3), phase = Rand(0, 6), kind = star ? 1 : shard ? 2 : 0,
+                angle = shard ? Mathf.Atan2(velocity.y, velocity.x) - Mathf.PI * 0.5f : angle,
+                spin = Rand(-3, 3), phase = Rand(0, 6), kind = star ? 1 : shard ? 2 : 0,
                 color = i % 3 == 0 ? gold : Color.Lerp(primary, Color.white, Rand(0.05f, 0.35f))
             });
         }
@@ -117,18 +129,28 @@ public sealed class BattleDeathVfx : MonoBehaviour
 
     private Material Own(Material material) { ownedMaterials.Add(material); return material; }
     private float Rand(float min, float max) { randomState ^= randomState << 13; randomState ^= randomState >> 17; randomState ^= randomState << 5; return Mathf.Lerp(min, max, (randomState & 0xFFFFFF) / 16777215f); }
-    private void Update() { if (Application.isPlaying) Advance(Time.deltaTime); }
+    public static float VisualTimeScale(float battleTimeScale) => battleTimeScale > 0 ? Mathf.Max(MinimumVisualTimeScale, battleTimeScale) : 0;
+    private void Update() { if (Application.isPlaying) Advance(Mathf.Min(Time.unscaledDeltaTime, 0.05f) * VisualTimeScale(Time.timeScale)); }
 
     /// <summary>The same simulation is used by runtime, deterministic render capture and lifecycle checks.</summary>
     public void Advance(float delta)
     {
         Elapsed = Mathf.Min(Lifetime, Elapsed + Mathf.Max(0, delta));
-        foreach (Material silhouette in silhouettes) silhouette.SetFloat("_Age", Elapsed);
+        silhouetteRoot.localPosition = Vector3.up * floor + Recoil(Elapsed);
+        silhouetteRoot.localRotation = RecoilRotation(Elapsed);
+        silhouetteRoot.localScale = RecoilScale(Elapsed);
+        foreach (Material silhouette in silhouettes)
+        {
+            silhouette.SetFloat("_Age", Elapsed);
+            silhouette.SetMatrix("_DissolveWorldToLocal", silhouetteRoot.worldToLocalMatrix);
+        }
         quads = 0;
-        float flash = Mathf.Sin(Mathf.Clamp01(Elapsed / 0.24f) * Mathf.PI);
-        Quad(Vector3.zero, Vector3.right * height * (0.7f + Elapsed), Vector3.up * height * (0.7f + Elapsed), WithAlpha(primary, flash * 0.25f), 0);
-        Ring(0.04f, 0.58f, 0.88f, gold, false);
-        Ring(0.12f, 0.8f, 0.75f, primary, true);
+        float flash = Mathf.Sin(Mathf.Clamp01(Elapsed / 0.18f) * Mathf.PI);
+        Quad(Vector3.zero, push * height * (0.6f + Elapsed), spread * height * 0.32f, WithAlpha(primary, flash * 0.3f), 0);
+        Segment(-spread * height * 0.32f - push * height * 0.08f, spread * height * 0.32f + push * height * 0.08f,
+            height * 0.018f * flash, WithAlpha(gold, flash * 0.75f));
+        Ring(0.015f, 0.30f, 0.62f, gold, false);
+        Ring(0.05f, 0.42f, 0.5f, primary, true);
         foreach (Particle p in particles)
         {
             float t = Elapsed - p.delay, u = t / p.life;
@@ -141,21 +163,21 @@ public sealed class BattleDeathVfx : MonoBehaviour
             Vector3 up = new Vector3(-Mathf.Sin(a), Mathf.Cos(a), 0) * scale * (p.kind == 2 ? 1.9f : 1);
             if (p.kind == 2)
             {
-                Vector3 tail = Position(p, Mathf.Max(0, t - 0.12f));
-                Segment(tail, point, height * 0.009f * fade, WithAlpha(p.color, fade * 0.28f));
+                Vector3 tail = Position(p, Mathf.Max(0, t - 0.09f));
+                Segment(tail, point, height * 0.009f * fade, WithAlpha(p.color, fade * 0.6f));
             }
             Quad(point, right, up, WithAlpha(p.color, fade), p.kind);
         }
-        float ribbonFade = Mathf.SmoothStep(0, 1, Mathf.Clamp01((Elapsed - 0.1f) * 7)) * Mathf.Clamp01((1.55f - Elapsed) / 0.7f);
+        float ribbonFade = Mathf.SmoothStep(0, 1, Mathf.Clamp01((Elapsed - 0.04f) * 13)) * Mathf.Clamp01((0.95f - Elapsed) / 0.5f);
         if (ribbonFade > 0)
         {
             for (int strand = 0; strand < 3; strand++)
             {
-                Vector3 previous = Spiral(0, strand);
+                Vector3 previous = Wake(0, strand);
                 for (int step = 1; step <= 22; step++)
                 {
-                    float u = step / 22f; Vector3 next = Spiral(u, strand);
-                    Segment(previous, next, height * 0.008f * Mathf.Sin(u * Mathf.PI), WithAlpha(strand == 1 ? gold : primary, ribbonFade * Mathf.Sin(u * Mathf.PI) * 0.55f));
+                    float u = step / 22f; Vector3 next = Wake(u, strand);
+                    Segment(previous, next, height * 0.012f * Mathf.Sin(u * Mathf.PI), WithAlpha(strand == 1 ? gold : primary, ribbonFade * Mathf.Sin(u * Mathf.PI) * 0.7f));
                     previous = next;
                 }
             }
@@ -163,25 +185,41 @@ public sealed class BattleDeathVfx : MonoBehaviour
         for (int i = quads * 4; i < vertices.Length; i++) { vertices[i] = Vector3.zero; colors[i] = Color.clear; }
         mesh.vertices = vertices; mesh.uv = uv; mesh.uv2 = kinds; mesh.colors = colors;
         mesh.SetTriangles(indices, 0, quads * 6, 0, false);
-        mesh.bounds = new Bounds(Vector3.up * height * 0.5f, Vector3.one * height * 7);
+        mesh.bounds = new Bounds(push * height * 0.85f + Vector3.up * height * 0.4f, Vector3.one * height * 8);
         if (IsComplete && Application.isPlaying) Destroy(gameObject);
     }
 
-    private Vector3 Position(Particle p, float time) => p.origin + p.velocity * ((1 - Mathf.Exp(-time * 1.8f)) / 1.8f)
-        + Vector3.up * height * time * time * 0.24f + Vector3.right * Mathf.Sin(time * 4 + p.phase) * height * 0.035f;
+    private Vector3 Position(Particle p, float time) => p.origin + p.velocity * ((1 - Mathf.Exp(-time * 3.8f)) / 3.8f)
+        + Vector3.up * height * Mathf.Pow(Mathf.Max(0, time - 0.25f), 2) * 0.22f
+        + spread * (Mathf.Sin(time * 4 + p.phase) - Mathf.Sin(p.phase)) * height * 0.025f;
 
-    private Vector3 Spiral(float u, int strand)
+    private Vector3 Recoil(float time) => push * height * 0.62f * (1 - Mathf.Exp(-time * 8))
+        + Vector3.up * height * 0.08f * Mathf.Sin(Mathf.Clamp01(time / 0.65f) * Mathf.PI);
+
+    private Quaternion RecoilRotation(float time) => Quaternion.Euler(0, 0, -push.x * 18 * (1 - Mathf.Exp(-time * 12)));
+    private Vector3 RecoilScale(float time)
     {
-        float a = u * Mathf.PI * 2.8f + Elapsed * 4.5f + strand * Mathf.PI * 2 / 3;
-        float radius = height * (0.16f + u * 0.08f) * (1 + Elapsed * 0.15f);
-        return new Vector3(Mathf.Cos(a) * radius, (u - 0.4f) * height * 1.25f + Elapsed * height * 0.24f, Mathf.Sin(a) * radius * 0.35f);
+        float compression = Mathf.Sin(Mathf.Clamp01(time / 0.13f) * Mathf.PI);
+        return new Vector3(1 - 0.09f * compression, 1 + 0.05f * compression, 1);
+    }
+
+    private Matrix4x4 RecoilMatrix(float time) => Matrix4x4.TRS(Vector3.up * floor + Recoil(time), RecoilRotation(time), RecoilScale(time)) * Matrix4x4.Translate(Vector3.down * floor);
+
+    private Vector3 Wake(float u, int strand)
+    {
+        float length = height * (0.1f + (1 - Mathf.Exp(-Elapsed * 5)) * 1.65f);
+        float fan = Mathf.Sin(u * Mathf.PI) * (strand - 1) * height * 0.12f;
+        float ripple = Mathf.Sin(u * 8 - Elapsed * 9 + strand) * height * 0.025f * Mathf.Sin(u * Mathf.PI);
+        return push * (u * length) + spread * (fan + ripple) + Vector3.up * (u * Elapsed * height * 0.13f);
     }
 
     private void Ring(float delay, float life, float size, Color color, bool ground)
     {
         float u = (Elapsed - delay) / life; if (u < 0 || u >= 1) return;
         float radius = height * size * (0.2f + Mathf.Sqrt(u) * 0.8f);
-        Quad(ground ? new Vector3(0, floor, 0) : Vector3.zero, Vector3.right * radius, (ground ? Vector3.forward : Vector3.up) * radius,
+        Quad(ground ? new Vector3(0, floor, 0) : push * height * u * 0.35f,
+            ground ? Vector3.right * radius : push * radius * 0.32f,
+            ground ? Vector3.forward * radius : spread * radius,
             WithAlpha(color, Mathf.Sin(Mathf.Pow(u, 0.5f) * Mathf.PI) * (ground ? 0.65f : 0.45f)), 3);
     }
 

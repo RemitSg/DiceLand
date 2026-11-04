@@ -90,4 +90,30 @@ public sealed class BattleDeathVfxPlayModeTests
         Assert.IsNotNull(effect); Assert.IsNotNull(effect.GetComponentInChildren<SpriteRenderer>());
         yield return UntilGone(); Assert.IsTrue(effect == null);
     }
+
+    [UnityTest]
+    public IEnumerator FatalDamageAlreadyHasTheCurrentHitDirectionBeforeTheReactionCoroutineRuns()
+    {
+        Component controller = Bind(true);
+        controller.GetType().GetMethod("RegisterLastHitDirection").Invoke(controller, new object[] { Vector3.left });
+        Component presentation = root.AddComponent(RuntimeType("BattlePresentationSystem"));
+        presentation.GetType().GetField("defaultHitReactionDelay", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(presentation, 0.05f);
+        object fx = Activator.CreateInstance(RuntimeType("EnemySkill_SO+DicePresentationSettings"));
+        bool resolved = false;
+        Vector3 atDamage = Vector3.zero;
+        Action fatalDamage = () =>
+        {
+            atDamage = (Vector3)controller.GetType().GetProperty("LastHitDirection").GetValue(controller);
+            Kill(controller); resolved = true;
+        };
+        IEnumerator moment = (IEnumerator)presentation.GetType().GetMethod("PlayHitMoment", BindingFlags.Instance | BindingFlags.NonPublic)
+            .Invoke(presentation, new object[] { actor.transform, Vector3.zero, Vector3.right, Color.white, 3f, fx, false, null, Vector3.left * 3, 0f, fatalDamage });
+        ((MonoBehaviour)presentation).StartCoroutine(moment);
+        float deadline = Time.realtimeSinceStartup + 3;
+        while (!resolved) { Assert.Less(Time.realtimeSinceStartup, deadline); yield return null; }
+        Assert.Greater(atDamage.x, 0.99f);
+        Component effect = Effects().Single();
+        Assert.Greater(((Vector3)effect.GetType().GetProperty("TravelDirection").GetValue(effect)).x, 0.99f);
+        yield return UntilGone();
+    }
 }

@@ -30,6 +30,7 @@ Shader "DiceLand/Battle Death Dissolve"
             TEXTURE2D(_AlphaTex); SAMPLER(sampler_AlphaTex);
             CBUFFER_START(UnityPerMaterial)
             half4 _SoulColor,_EdgeColor,_RendererColor; float4 _BodyBounds,_Flip; float _Age,_UseExternalAlpha;
+            float4x4 _DissolveWorldToLocal;
             CBUFFER_END
             struct Attributes { float3 positionOS:POSITION; float2 uv:TEXCOORD0; half4 color:COLOR; };
             struct Varyings { float4 positionCS:SV_POSITION; float2 uv:TEXCOORD0; float2 body:TEXCOORD1; half4 color:COLOR; };
@@ -43,16 +44,17 @@ Shader "DiceLand/Battle Death Dissolve"
             {
                 Varyings output; input.positionOS.xy*=_Flip.xy; float3 world=TransformObjectToWorld(input.positionOS);
                 output.positionCS=TransformWorldToHClip(world); output.uv=input.uv; output.color=input.color*_RendererColor;
-                output.body=float2((world.x-_BodyBounds.z)/_BodyBounds.w,(world.y-_BodyBounds.x)/_BodyBounds.y); return output;
+                float2 body=mul(_DissolveWorldToLocal,float4(world,1)).xy;
+                output.body=float2((body.x-_BodyBounds.z)/_BodyBounds.w,(body.y-_BodyBounds.x)/_BodyBounds.y); return output;
             }
             half4 Frag(Varyings input):SV_Target
             {
                 half4 sprite=SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex,input.uv)*input.color;
                 if(_UseExternalAlpha>0.5) sprite.a=SAMPLE_TEXTURE2D(_AlphaTex,sampler_AlphaTex,input.uv).r*input.color.a;
                 float noise=Noise(input.body*float2(19,27))*0.58+Noise(input.body*float2(43,57))*0.16+input.body.y*0.26;
-                float progress=saturate((_Age-0.1)/0.72)*1.15-0.1;
+                float progress=saturate((_Age-0.16)/0.55)*1.15-0.1;
                 float edge=noise-progress;
-                float coverage=smoothstep(-0.02,0.035,edge)*saturate((0.95-_Age)*12);
+                float coverage=smoothstep(-0.02,0.035,edge)*saturate((0.84-_Age)*12);
                 float rim=(1-smoothstep(0.01,0.16,edge))*step(0,edge);
                 float flash=pow(saturate(1-abs(_Age-0.075)/0.075),2);
                 half3 color=lerp(sprite.rgb,_SoulColor.rgb*0.6+sprite.rgb*0.4,saturate(_Age*2));

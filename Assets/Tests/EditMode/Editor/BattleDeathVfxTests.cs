@@ -125,4 +125,37 @@ public sealed class BattleDeathVfxTests
             Shader shader = Resources.Load<Shader>("BattleVfx/" + name); Assert.NotNull(shader); Assert.IsTrue(shader.isSupported); Assert.IsFalse(ShaderUtil.ShaderHasError(shader), name);
         }
     }
+
+    [TestCase(-1)] [TestCase(1)]
+    public void RecoilAndFragmentConeFollowTheHitWhileTheGameplayActorStaysPut(int sign)
+    {
+        Vector3 start = actor.transform.position;
+        Assert.IsTrue(BattleDeathVfx.TryPlay(actor.transform, Vector3.right * sign, true));
+        effect = Object.FindObjectOfType<BattleDeathVfx>();
+        SpriteRenderer copy = effect.GetComponentInChildren<SpriteRenderer>();
+        Vector3 before = copy.bounds.center;
+        effect.Advance(0.18f);
+        Assert.Greater(effect.RecoilOffset.x * sign, 1f, "The visual recoil must be clearly visible in the first impact beat.");
+        Assert.Greater((copy.bounds.center.x - before.x) * sign, 1f);
+        Assert.AreEqual(start, actor.transform.position, "Presentation recoil must not move a combatant or its formation slot.");
+        Assert.AreEqual(1, effect.TravelDirection.x * sign, 0.001f);
+        Mesh batch = effect.GetComponent<MeshFilter>().sharedMesh;
+        Vector3[] positions = batch.vertices; Vector2[] kinds = batch.uv2; Color[] colors = batch.colors;
+        int downstream = 0, live = 0;
+        for (int i = 0; i < positions.Length; i += 4)
+        {
+            if (colors[i].a < 0.05f || kinds[i].x > 2.5f) continue;
+            float center = (positions[i].x + positions[i + 1].x + positions[i + 2].x + positions[i + 3].x) * 0.25f;
+            live++; if (center * sign > 0.2f) downstream++;
+        }
+        Assert.Greater(live, 10); Assert.Greater((float)downstream / live, 0.8f, "Fragments should be thrown behind the hit, rather than spread symmetrically.");
+    }
+
+    [TestCase(0, 0)] [TestCase(0.09f, 0.6f)] [TestCase(1, 1)] [TestCase(2, 2)]
+    public void VisualClockKeepsPauseAndBattleSpeedWhileAvoidingAFrozenSlowMotionPose(float battle, float visual)
+    {
+        float original = Time.timeScale;
+        Assert.AreEqual(visual, BattleDeathVfx.VisualTimeScale(battle), 0.0001f);
+        Assert.AreEqual(original, Time.timeScale);
+    }
 }

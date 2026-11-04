@@ -1,12 +1,17 @@
 """Encode unmodified Unity MCP render frames. Requires Pillow; no game artwork is synthesized here."""
+import argparse
 import json
 from pathlib import Path
 from PIL import Image
 
-root = Path(__file__).resolve().parents[2] / 'outputs/agent-battle/death-vfx-20261104'
+parser = argparse.ArgumentParser()
+parser.add_argument('--source', default='outputs/agent-battle/death-impact-vfx-20261104')
+args = parser.parse_args()
+root = Path(__file__).resolve().parents[2] / args.source
 for name in ('ally', 'enemy'):
     folder = root / name
     report = json.loads((folder / 'capture.json').read_text(encoding='utf-8-sig'))
+    assert report.get('effectComplete', True), 'Capture must include the completed dissolution'
     paths = sorted(folder.glob('[0-9][0-9][0-9].png'))
     assert len(paths) == report['frames']
     images = [Image.open(path).convert('RGB') for path in paths]
@@ -21,7 +26,7 @@ for name in ('ally', 'enemy'):
     output = root / f'{name}-death-dissolution.gif'
     frames[0].save(output, save_all=True, append_images=frames[1:], duration=durations, loop=0, optimize=True, disposal=1)
     sheet = Image.new('RGB', (480 * 3, 270 * 2))
-    for index, frame_index in enumerate((0, 12, 17, 23, 34, 49)):
+    for index, frame_index in enumerate((0, 16, 21, 27, 36, 51)):
         sheet.paste(images[min(frame_index, len(images)-1)].resize((480, 270)), ((index % 3)*480, (index // 3)*270))
     sheet.save(root / f'{name}-contact.png')
     print(json.dumps({'file': str(output), 'frames': len(frames), 'bytes': output.stat().st_size, 'durationMs': sum(durations)}))
