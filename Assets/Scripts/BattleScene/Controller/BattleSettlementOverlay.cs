@@ -331,6 +331,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
 
     private void OnDisable()
     {
+        HideSharedRelicPanel();
         HideLootDetailModal();
         if (showRoutine != null) { StopCoroutine(showRoutine); showRoutine = null; }
         CancelPresentation();
@@ -340,6 +341,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
     public void ShowResult(BattleSettlementData data)
     {
         if (data == null) return;
+        HideSharedRelicPanel();
         if (showRoutine != null) { StopCoroutine(showRoutine); showRoutine = null; }
         CancelPresentation();
         EnsureEventSystem();
@@ -368,6 +370,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
 
     public void HideResult()
     {
+        HideSharedRelicPanel();
         HideLootDetailModal();
         if (showRoutine != null)
         {
@@ -1076,6 +1079,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
     {
         if (choiceData == null || !choiceData.HasChoices)
             return;
+        if (TryOpenSharedRelicPanel(choiceData)) return;
 
         HideLootDetailModal();
         activeRelicChoiceData = choiceData;

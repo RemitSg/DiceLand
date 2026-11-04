@@ -1,0 +1,54 @@
+宝藏格三选一页面重制
+日期：2026-11-04（Asia/Singapore）
+
+参考与正式素材
+- 视觉参考：docs/visuals/treasure-choice-ideal-reference-20261104.png。
+- 正式资产：Assets/Resources/TreasureUI/，包含独立主面板、宝箱标题装饰、空白奖励卡、领取按钮与六图标图集。
+- 图标图集包含金币，以及常见、罕见、稀有、史诗、传奇五种遗物袋；具体中文稀有度由现有奖励服务返回。
+- 图纸继续读取 blueprint.DisplayIcon，直接遗物读取实际 relic.icon，副本自定义图标优先读取 iconOverride。
+- Theme.asset 集中引用素材与现有中文字体。所有文字、数值、描述和按钮都是原生 UGUI/TMP 内容，示例奖励没有烘焙进图片。
+- 素材使用内置 image_gen 生成，保留原 PNG alpha；Unity 仅配置精灵裁切、图集切片与导入参数，不修改原始 PNG 像素。完整提示词见 treasure-panel-assets-20261104-prompts.json。
+
+页面与布局
+- 深翡翠绿底、金属金边、藤叶与青绿宝石；三张卡片均保留独立插画区、分类、名称、数量和领取按钮。
+- 奖励金额、图纸名称、稀有度、可用状态与不可领取原因来自传入的 TreasureRewardChoice。
+- 羊皮纸上的名称使用深色文字，不套用浅色背景上对比不足的资源词条染色；效果说明保留原富文本与资源词条。
+- 遗物袋后续选择沿用同一套卡片，显示真实遗物与完整可滚动效果说明；选中与取消选中同步更新描边、按钮文案与确认状态。
+- 超过三项的副本或其他奖励可横向滚动查看；安全区适配包含主面板上方的完整宝箱装饰。
+
+原有逻辑接入
+- RunGameManager 继续使用原来的奖励生成与选择、确认回调；仅在原 UI 配置后应用森林主题。
+- TreasureRewardService、SpecialDungeonTreasureService 的生成、随机种子、奖励池、概率、数量和领取结算未改动。
+- 金币／图纸／直接遗物领取成功后进入结果页；选择遗物袋后进入原有遗物选择流程，确认成功后才完成宝藏格结算。
+- 初始遗物的直接确认入口、遗物刷新池与刷新次数继续使用既有实现；刷新会清除选择并要求重新确认。
+- 精英战斗掉落遗物袋复用同一个 MapTreasureOverlay 遗物选择界面、素材、说明滚动和动效，不再另画一套卡片。
+- 战斗场景确认后返回战利品列表，仅保存选择；发放仍由原 TryApplyRequiredRelicChoice／BattleRelicChoiceSelectionService 在返回地图时处理。
+- 战斗入口继续要求取消当前选择后才可刷新；地图宝箱入口保留原有可刷新行为。两种入口的刷新池、次数和排除规则仍由共享服务决定。
+- 再次打开战斗遗物袋会保留已选项；切换／关闭战斗结算时立即清理共用面板，避免残留窗口和失效回调。
+- 不可领取、已过期的卡片、重复确认与回调重入会在视图层阻止；失败时保留当前页面及实际错误消息，允许重试。
+- 原有资源反馈来源、继续按钮与 Hidden 回调保留；关闭完成后只发送一次 Hidden，由现有地图流程继续处理后续内容。
+
+开合与交互动效
+- 主面板以 0.25 秒渐显、轻微缩放与位移入场，关闭为 0.16 秒。
+- 卡片以 0.045 秒间隔依次进入，包含渐显、轻微缩放与上移。
+- 卡片悬停微抬升并点亮边缘；按钮有悬停提亮、轻微放大、按压收缩与回弹。
+- 遗物选中使用持续金色轮廓与“已选择”状态；取消选择后同步恢复。
+- 领取成功后展示真实奖励图标与结算消息，附带短暂回弹和少量金色光点。
+- 全部动效使用非缩放时间；暂停时仍可操作。关闭期间保留全屏遮罩和地图阻挡，结束前禁用窗口交互。
+- UI 动效单帧最多推进 0.05 秒，避免首次加载或异常长帧直接跳过卡片入场与成功反馈；不改变游戏时间或奖励结算。
+
+复现与检查
+- 导入正式素材：MapTreasureVisualTools.ConfigureAssets()。
+- 编辑器菜单：Tools/Map Visuals/Capture Treasure Panel。
+- 静态预览：MapTreasureVisualTools.Capture(name, width, height, stage, safe)，stage 支持 offers、bag、selected、result。
+- 预览使用一次性地图场景、独立 RunState、真实奖励表与原奖励服务，不读写玩家存档。
+- 本地截图、测试和检查证据：outputs/agent-battle/treasure-panel-20261104/（忽略提交）。
+- 正式验证类：MapTreasureOverlayVisualTests、MapTreasureRemasterTests、MapTreasureRewardServiceTests、SpecialDungeonTreasureServiceTests、AgentAdventureTreasureTests、MapTreasureRemasterPlayModeTests。
+- 战斗复用验证：BattleRelicPanelReuseTests，并回归原有 BattleSettlementOverlayTests、遗物选择生成与结算服务检查。
+
+最终验证结果
+- 2026-11-04，Tuanjie 2022.3.62t6：EditMode 70/70 通过，无失败或跳过；覆盖原奖励生成、特殊副本、领取、防重入、遗物刷新、战斗结算与面板复用。
+- 同日 PlayMode 5/5 通过，无失败或跳过；通过实际 UGUI 射线与事件验证暂停时开合、关闭遮罩、按钮反馈、遗物确认防重复、触摸横向滚动与精英奖励延迟发放。
+- 最后测试任务：EditMode 0969c08657fa4950bc0fde6e4d682f27；PlayMode f0dca5d453894eda80957773a49f49db。
+- 已检查 1920×1080、2340×1080，以及 1600×1200 带安全区预览；已检查宝藏三选一、遗物袋选择与精英结算共用面板的实际渲染。
+- 本次检查在编辑器完成，未进行 Android 真机或 APK 性能测试。

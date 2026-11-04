@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76bddcf970dca594292f3361d3e1796c, type: 3}
+  m_Name: Theme
+  m_EditorClassIdentifier: 
+  panelFrame: {fileID: 21300000, guid: 10c9481fc739e9946a27fe4a2b74b92f, type: 3}
+  card: {fileID: -512998719, guid: d6d86487d9d630a41aa18ea96e43245c, type: 3}
+  header: {fileID: 21300000, guid: 7f00f6e99313a1d4085693c0ef0eeef4, type: 3}
+  button: {fileID: -100039599, guid: 3f6aa91b182e9cc49a85871418b9dd63, type: 3}
+  coins: {fileID: 1199834351, guid: 38d22a73d61e2c2489fcf40ede355240, type: 3}
+  relicBags:
+  - {fileID: -293842783, guid: 38d22a73d61e2c2489fcf40ede355240, type: 3}
+  - {fileID: -1910053792, guid: 38d22a73d61e2c2489fcf40ede355240, type: 3}
+  - {fileID: 1579270370, guid: 38d22a73d61e2c2489fcf40ede355240, type: 3}
+  - {fileID: 491038930, guid: 38d22a73d61e2c2489fcf40ede355240, type: 3}
+  - {fileID: 97838044, guid: 38d22a73d61e2c2489fcf40ede355240, type: 3}
+  headingFont: {fileID: 11400000, guid: 3285407dd9827054e9f4e40c9f7b9009, type: 2}
+  bodyFont: {fileID: 11400000, guid: c6e7143cd2df45b45a784ef8c61a210f, type: 2}

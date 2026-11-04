@@ -899,6 +899,7 @@ public class RunGameManager : MonoBehaviour
             treasureRelicBagRareIcon,
             treasureRelicBagEpicIcon,
             treasureRelicBagLegendaryIcon);
+        mapTreasureOverlay.ConfigureForestPresentation();
         mapTreasureOverlay.Hidden -= HandleMapTreasureOverlayHidden;
         mapTreasureOverlay.Hidden += HandleMapTreasureOverlayHidden;
         mapCalamityOverlay = GetOrCreateCalamityOverlay();
