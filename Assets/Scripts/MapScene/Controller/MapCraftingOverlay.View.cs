@@ -61,7 +61,7 @@ public partial class MapCraftingOverlay
         Stretch(root);
         safeAreaRect = Rect(root, "SafeArea"); Stretch(safeAreaRect);
         panelRect = Rect(safeAreaRect, "Panel");
-        panelRect.anchorMin = panelRect.anchorMax = panelRect.pivot = new Vector2(1, 0.5f);
+        panelRect.anchorMin = panelRect.anchorMax = panelRect.pivot = Vector2.one * 0.5f;
         panelGroup = panelRect.gameObject.AddComponent<CanvasGroup>();
         Face(panelRect, MapCraftingFrameGraphic.Style.Window);
         titlePlaque = Rect(panelRect, "TitlePlaque");
@@ -141,10 +141,10 @@ public partial class MapCraftingOverlay
         Vector2 available = safe.size * (1080f / height);
         // Include the plaque and anvil above the main window in the safe-area fit.
         layoutScale = Mathf.Max(0.01f, Mathf.Min(1, (available.x - 48) / panelSize.x, (available.y - 48) / (panelSize.y + 78)));
-        float gap = Mathf.Max(0, available.x - panelSize.x * layoutScale);
-        float right = Mathf.Clamp(available.x * 0.048f - panelOffset.x, 24, Mathf.Max(24, gap - 24));
+        float horizontalRoom = Mathf.Max(0, (available.x - panelSize.x * layoutScale) * 0.5f - 24);
         float verticalRoom = Mathf.Max(0, (available.y - (panelSize.y + 78) * layoutScale) * 0.5f - 24);
-        restingPosition = new Vector2(-right, Mathf.Clamp(panelOffset.y, -verticalRoom, verticalRoom) - 39 * layoutScale);
+        restingPosition = new Vector2(Mathf.Clamp(panelOffset.x, -horizontalRoom, horizontalRoom),
+            Mathf.Clamp(panelOffset.y, -verticalRoom, verticalRoom) - 39 * layoutScale);
         lastViewport = viewport; lastSafeArea = safePixels;
         ApplyMotion();
     }
