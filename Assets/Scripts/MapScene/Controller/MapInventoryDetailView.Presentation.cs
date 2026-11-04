@@ -151,16 +151,8 @@ public partial class MapInventoryDetailView
         PlaceDetail((RectTransform)descriptionScroll.transform, 22, 52, 444, wellHeight - 68);
         PlaceDetail((RectTransform)descriptionScrollbar.transform, 474, 54, 7, wellHeight - 74);
         float width = 438;
-        float descriptionWidth = width;
-        if (descriptionText.font != null && descriptionText.fontSharedMaterial != null &&
-            descriptionText.text.Length <= 80 && !descriptionText.text.Contains("\n") && !descriptionText.text.Contains("<"))
-        {
-            float singleLine = descriptionText.GetPreferredValues(descriptionText.text, Mathf.Infinity, 0).x;
-            if (singleLine > width && singleLine <= width * 2)
-                descriptionWidth = Mathf.Clamp(singleLine * 0.55f, width * 0.64f, width);
-        }
-        float descriptionHeight = PreferredDetailHeight(descriptionText, descriptionWidth);
-        PlaceDetail(descriptionText.rectTransform, 0, 0, descriptionWidth, descriptionHeight);
+        float descriptionHeight = PreferredDetailHeight(descriptionText, width);
+        PlaceDetail(descriptionText.rectTransform, 0, 0, width, descriptionHeight);
         bool extra = relicAdditionalDescriptionText.gameObject.activeSelf && !string.IsNullOrWhiteSpace(relicAdditionalDescriptionText.text);
         extraHeading.gameObject.SetActive(extra);
         float height = descriptionHeight;
