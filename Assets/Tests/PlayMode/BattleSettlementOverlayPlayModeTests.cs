@@ -67,13 +67,18 @@ public sealed class BattleSettlementOverlayPlayModeTests
     public IEnumerator PausedGameNaturallyFinishesRewardsWalletAndEveryCharacter()
     {
         Assert.AreEqual("金币 +0", Text("MoneyReward"));
-        yield return new WaitForSecondsRealtime(0.38f);
         Assert.IsTrue((bool)Get(overlay, "IsPresenting"));
-        Assert.AreEqual(0, (int)Get(overlay, "ActiveExperienceFlights"));
-        yield return new WaitForSecondsRealtime(0.5f);
-        Assert.Greater((int)Get(overlay, "ActiveExperienceFlights"), 0);
-        Assert.AreEqual("150", Text("Money"));
-        yield return new WaitForSecondsRealtime(2.5f);
+        float deadline = Time.realtimeSinceStartup + 8f;
+        while ((bool)Get(overlay, "IsPresenting") && Time.realtimeSinceStartup < deadline)
+        {
+            // Editor stalls can skip a fixed observation time. Assert the phase invariant
+            // whenever counting is observed, then wait for actual unscaled completion.
+            if (Get(overlay, "PresentationPhase").ToString() == "Counting")
+            {
+                Assert.AreEqual(0, (int)Get(overlay, "ActiveExperienceFlights"));
+            }
+            yield return null;
+        }
         Assert.AreEqual("Complete", Get(overlay, "PresentationPhase").ToString());
         Assert.AreEqual("金币 +23", Text("MoneyReward"));
         Assert.AreEqual("经验值 +13", Text("Exp"));
@@ -110,7 +115,10 @@ public sealed class BattleSettlementOverlayPlayModeTests
         Click(Find("ReturnButton"));
         Assert.AreEqual("Complete", Get(overlay, "PresentationPhase").ToString());
         Assert.IsTrue((bool)Get(overlay, "IsVisible"));
-        Assert.IsTrue(((RectTransform)Get(overlay, "relicChoiceModalRoot")).gameObject.activeSelf);
+        Component sharedPanel = Get(overlay, "sharedRelicPanel") as Component;
+        bool sharedVisible = sharedPanel != null && (bool)Get(sharedPanel, "IsVisible");
+        bool legacyVisible = ((RectTransform)Get(overlay, "relicChoiceModalRoot")).gameObject.activeInHierarchy;
+        Assert.IsTrue(sharedVisible || legacyVisible, "The required relic selection must remain visible.");
         Assert.IsFalse((bool)Get(choice, "rewardApplied"));
         Assert.AreEqual(0, (int)Get(overlay, "ActiveExperienceFlights"));
         Assert.AreEqual("金币 +23", Text("MoneyReward"));

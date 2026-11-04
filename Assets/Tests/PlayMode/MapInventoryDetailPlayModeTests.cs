@@ -94,7 +94,8 @@ public sealed class MapInventoryDetailPlayModeTests
         Invoke("ConfigureActionButton", "无法装备", false, (UnityEngine.Events.UnityAction)(() => calls++), "当前队伍中没有适配该武器的角色。");
         Button action = (Button)Get(view, "actionButton");
         Click(action.transform); Assert.AreEqual(0, calls);
-        Transform close = Find("CloseButton"); Vector3 center = close.TransformPoint(((RectTransform)close).rect.center);
+        Transform close = Find("CloseButton");
+        Vector3 center = close.parent.InverseTransformPoint(close.TransformPoint(((RectTransform)close).rect.center));
         var pointer = new PointerEventData(events) { button = PointerEventData.InputButton.Left, position = ScreenPoint((RectTransform)close) };
         ExecuteEvents.Execute(close.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
         yield return new WaitForSecondsRealtime(0.12f);
@@ -102,7 +103,8 @@ public sealed class MapInventoryDetailPlayModeTests
         ExecuteEvents.Execute(close.gameObject, pointer, ExecuteEvents.pointerDownHandler);
         yield return new WaitForSecondsRealtime(0.12f);
         Assert.Less(close.localScale.x, 0.98f);
-        Assert.That(Vector3.Distance(center, close.TransformPoint(((RectTransform)close).rect.center)), Is.LessThan(0.01f));
+        Vector3 pressedCenter = close.parent.InverseTransformPoint(close.TransformPoint(((RectTransform)close).rect.center));
+        Assert.That(Vector3.Distance(center, pressedCenter), Is.LessThan(0.01f));
         ExecuteEvents.Execute(close.gameObject, pointer, ExecuteEvents.pointerUpHandler);
         ExecuteEvents.Execute(close.gameObject, pointer, ExecuteEvents.pointerExitHandler);
     }

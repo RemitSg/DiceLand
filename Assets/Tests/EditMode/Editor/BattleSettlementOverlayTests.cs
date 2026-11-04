@@ -41,6 +41,46 @@ public sealed class BattleSettlementOverlayTests
     private static T Row<T>(object row, string name) => (T)row.GetType().GetField(name).GetValue(row);
 
     [Test]
+    public void GeneratedCanvasBelongsToItsControllerAndCannotBeSavedInAnAuthoredScene()
+    {
+        Canvas canvas = Field<Canvas>("overlayCanvas");
+        Assert.IsTrue(canvas.transform.IsChildOf(host.transform));
+        Assert.AreEqual(host.scene, canvas.gameObject.scene);
+        Assert.IsTrue((canvas.gameObject.hideFlags & HideFlags.DontSaveInEditor) != 0);
+        Assert.IsTrue((canvas.gameObject.hideFlags & HideFlags.DontSaveInBuild) != 0);
+        Object.DestroyImmediate(host);
+        Assert.IsTrue(canvas == null, "Destroying an EditMode fixture must remove its generated UI.");
+    }
+
+    [Test]
+    public void CreatingTheViewWithoutAResultDoesNotShowAnEmptyVictoryPanel()
+    {
+        GameObject freshHost = new GameObject("UnshownSettlementFixture");
+        try
+        {
+            BattleSettlementOverlay fresh = freshHost.AddComponent<BattleSettlementOverlay>();
+            TMP_FontAsset font = Field<TMP_Text>("titleText").font;
+            fresh.ConfigureFonts(font, font);
+            Assert.IsFalse(fresh.IsVisible);
+        }
+        finally { Object.DestroyImmediate(freshHost); }
+    }
+
+    [Test]
+    public void FailedVisualPreviewLeavesTheOriginalSceneAndRootsUnchanged()
+    {
+        var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+        int[] roots = scene.GetRootGameObjects().Select(g => g.GetInstanceID()).OrderBy(id => id).ToArray();
+        bool dirty = scene.isDirty;
+        Assert.Throws<System.InvalidOperationException>(() => BattleSettlementVisualTools.Capture(
+            "expected-preview-failure.png", 640, 360, 0, null, 1, 1, true,
+            _ => throw new System.InvalidOperationException("Expected preview failure.")));
+        Assert.AreEqual(scene, UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+        CollectionAssert.AreEqual(roots, scene.GetRootGameObjects().Select(g => g.GetInstanceID()).OrderBy(id => id).ToArray());
+        Assert.AreEqual(dirty, scene.isDirty, "A disposable preview must not dirty the user's scene.");
+    }
+
+    [Test]
     public void CountersStartTogetherAndKeepCharacterExperienceUnchangedUntilFlightsArrive()
     {
         Assert.AreEqual("金币 +0", Label("MoneyReward").text);

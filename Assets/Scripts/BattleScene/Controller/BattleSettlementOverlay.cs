@@ -776,7 +776,10 @@ public partial class BattleSettlementOverlay : MonoBehaviour
             return;
 
         GameObject canvasGo = new GameObject("BattleSettlementCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
-        canvasGo.transform.SetParent(null, false);
+        // Own generated UI even in EditMode, where Awake/OnDestroy may never run.
+        // Preview failures must not leave a root canvas in the user's active scene.
+        canvasGo.transform.SetParent(transform, false);
+        canvasGo.hideFlags = HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
         canvasGo.transform.localPosition = Vector3.zero;
         canvasGo.transform.localRotation = Quaternion.identity;
         canvasGo.transform.localScale = Vector3.one;
@@ -876,6 +879,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         victoryIntroRoot.anchoredPosition = victoryIntroOffset;
         SetVictoryIntroVisible(false);
         ConfigureForestView();
+        SetVisible(false);
     }
 
     private RectTransform CreateVerticalRoot(Transform parent, string name, float spacing)

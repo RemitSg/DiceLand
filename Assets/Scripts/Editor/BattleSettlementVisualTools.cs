@@ -99,7 +99,10 @@ public static class BattleSettlementVisualTools
     public static string Capture(string name, int width, int height, float seconds, Rect? safe = null, int partyCount = 2, int lootCount = 6, bool victory = true, Action<BattleSettlementOverlay> customize = null)
     {
         Scene original = SceneManager.GetActiveScene();
-        Scene preview = EditorSceneManager.NewPreviewScene();
+        // A temporary active scene keeps even the first frame of object construction away from
+        // the user's scene; preview scenes cannot be active and would briefly dirty that scene.
+        Scene preview = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
+        SceneManager.SetActiveScene(preview);
         RenderTexture previous = RenderTexture.active, target = null;
         Texture2D pixels = null;
         GameObject host = null;
@@ -125,7 +128,9 @@ public static class BattleSettlementVisualTools
             overlay.ConfigureFonts(font, font);
             overlay.ShowResult(SampleData(partyCount, lootCount, victory));
             Canvas main = (Canvas)typeof(BattleSettlementOverlay).GetField("overlayCanvas", Private).GetValue(overlay);
-            SceneManager.MoveGameObjectToScene(main.gameObject, preview);
+            // The owning host places all generated UI in the preview scene from creation.
+            if (main.gameObject.scene != preview)
+                throw new InvalidOperationException("Settlement preview canvas escaped its owning scene.");
             ConvertCanvas(main, camera, width, height, -3);
             overlay.ApplyViewport(new Vector2(width, height), safe ?? new Rect(0, 0, width, height));
             target = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32); camera.targetTexture = target;
@@ -159,8 +164,8 @@ public static class BattleSettlementVisualTools
             if (pixels != null) UnityEngine.Object.DestroyImmediate(pixels);
             if (target != null) UnityEngine.Object.DestroyImmediate(target);
             if (host != null) UnityEngine.Object.DestroyImmediate(host);
-            EditorSceneManager.ClosePreviewScene(preview);
             if (original.IsValid() && original.isLoaded) SceneManager.SetActiveScene(original);
+            EditorSceneManager.CloseScene(preview, true);
             Canvas.ForceUpdateCanvases();
         }
     }
