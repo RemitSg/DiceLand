@@ -1,8 +1,8 @@
-"""Build DiceLand's death impact from project-owned effects and synthesized bass.
+"""Synthesize a continuous thunder-drum death impact (Python stdlib only).
 
-Run with Python 3 (stdlib only). Source layers come from the existing Epic Toon FX
-pack and battle hit in this repository; no external audio is downloaded. The bass
-stays mono. --demo-music also renders a local, unpitched ducking preview.
+A struck membrane drops from a midrange attack into deep bass. Smooth, filtered
+noise supplies the thunder tail; there are no chopped samples, distortion stages,
+or discrete echo taps. --demo-music renders a local, unpitched ducking preview.
 """
 import argparse
 from array import array
@@ -17,59 +17,6 @@ ROOT = Path(__file__).resolve().parents[2]
 RATE = 48000
 DURATION = 2.4
 TAU = math.tau
-SOURCES = [
-    ('Assets/Assets/ResourcePack/Epic Toon FX/Sound/etfx_explosion_dark01.wav', 0.60, 1450, 0.80),
-    ('Assets/Assets/ResourcePack/Epic Toon FX/Sound/etfx_explosion_nuke.wav', 0.56, 850, 0.74),
-    ('Assets/Assets/ResourcePack/Epic Toon FX/Sound/etfx_explosion_soul.wav', 0.72, 2100, 0.42),
-    ('Assets/Resources/SFX/Hit.wav', 0.68, 2400, 0.32),
-]
-
-
-def read_audio(path):
-    """Read PCM or IEEE float RIFF audio, including the pack's float32 WAVs."""
-    data = path.read_bytes()
-    if data[:4] != b'RIFF' or data[8:12] != b'WAVE':
-        raise ValueError(f'Not a RIFF/WAVE asset: {path}')
-    offset, fmt, payload = 12, None, None
-    while offset + 8 <= len(data):
-        tag, size = struct.unpack_from('<4sI', data, offset)
-        chunk = data[offset + 8:offset + 8 + size]
-        if tag == b'fmt ':
-            fmt = struct.unpack_from('<HHIIHH', chunk)
-            if fmt[0] == 65534:
-                fmt = (struct.unpack_from('<H', chunk, 24)[0], *fmt[1:])
-        if tag == b'data':
-            payload = chunk
-        offset += 8 + size + size % 2
-    if fmt is None or payload is None:
-        raise ValueError(f'Missing WAVE chunks: {path}')
-    encoding, channels, rate, _, _, bits = fmt
-    width = bits // 8
-    if encoding == 3:
-        values = [x[0] for x in struct.iter_unpack('<f' if width == 4 else '<d', payload)]
-    elif encoding == 1:
-        values = [int.from_bytes(payload[i:i + width], 'little', signed=True) / (2 ** (bits - 1))
-                  for i in range(0, len(payload), width)]
-    else:
-        raise ValueError(f'Unsupported WAVE format {encoding}: {path}')
-    return [[values[i] for i in range(c, len(values), channels)] for c in range(channels)], rate
-
-
-def source_layer(path, speed, cutoff, length):
-    channels, rate = read_audio(path)
-    mono = [sum(frame) / len(frame) for frame in zip(*channels)]
-    peak = max(abs(x) for x in mono)
-    # Cut directly to the impact. No swell, pre-roll, or gradual attack.
-    start = max(0, next(i for i, x in enumerate(mono) if abs(x) >= peak * 0.18) - 3)
-    result = []
-    for i in range(length):
-        position = start + i * rate / RATE * speed
-        k = int(position)
-        sample = mono[k] + (mono[k + 1] - mono[k]) * (position - k) if k + 1 < len(mono) else 0.0
-        result.append(sample)
-    result = biquad(biquad(result, cutoff), 38, highpass=True)
-    rms = math.sqrt(sum(x * x for x in result[:RATE // 2]) / (RATE // 2))
-    return [x * (0.32 / max(rms, 0.001)) for x in result]
 
 
 def biquad(samples, frequency, highpass=False):
@@ -91,49 +38,56 @@ def biquad(samples, frequency, highpass=False):
     return result
 
 
-def room_tail(excitation, delays):
-    result = [0.0] * len(excitation)
-    for milliseconds, feedback in delays:
-        delay = round(milliseconds * RATE / 1000)
-        buffer = [0.0] * delay
-        filtered = 0.0
-        for i, sample in enumerate(excitation):
-            j = i % delay
-            echo = buffer[j]
-            filtered += 0.075 * (echo - filtered)
-            buffer[j] = sample + filtered * feedback
-            result[i] += echo / len(delays)
-    return result
+def falling_noise(rng, length, start_cutoff, end_cutoff, fall_seconds):
+    """Continuous double-pole filtering; the cutoff never steps between blocks."""
+    first = second = 0.0
+    result = []
+    for i in range(length):
+        t = i / RATE
+        cutoff = end_cutoff + (start_cutoff - end_cutoff) * math.exp(-t / fall_seconds)
+        coefficient = 1 - math.exp(-TAU * cutoff / RATE)
+        first += coefficient * (rng.gauss(0, 1) - first)
+        second += coefficient * (first - second)
+        result.append(second * math.sqrt(start_cutoff / cutoff))
+    result = biquad(result, 27, highpass=True)
+    rms = math.sqrt(sum(x * x for x in result[:RATE // 2]) / (RATE // 2))
+    return [x / max(0.001, rms) for x in result]
 
 
 def render():
     rng = random.Random(20261104)
     length = round(RATE * DURATION)
-    noise = [rng.uniform(-1, 1) for _ in range(length)]
-    rumble = biquad(biquad(noise, 155), 28, highpass=True)
-    air = biquad(biquad(noise, 1100), 180, highpass=True)
-    layers = [(source_layer(ROOT / path, speed, cutoff, length), gain)
-              for path, speed, cutoff, gain in SOURCES]
-    dry, room_input = [], []
+    thunder = falling_noise(rng, length, 1750, 85, 0.30)
+    room_left = falling_noise(rng, length, 1200, 180, 0.36)
+    room_right = falling_noise(rng, length, 1200, 180, 0.36)
+    contact = biquad([rng.gauss(0, 1) for _ in range(length)], 1700)
+    # Membrane modes give a drum skin its body without a distorted explosion layer.
+    modes = [(1.0, 1.0, 0.90), (1.593, 0.50, 0.45), (2.136, 0.29, 0.30),
+             (2.296, 0.20, 0.23), (2.655, 0.13, 0.16), (2.917, 0.09, 0.12),
+             (3.157, 0.065, 0.085), (3.50, 0.04, 0.065)]
+    center, left_space, right_space = [], [], []
     for i in range(length):
         t = i / RATE
-        phase = TAU * (36 * t + 82 * 0.037 * (1 - math.exp(-t / 0.037)))
-        body = (math.cos(phase) + 0.38 * math.cos(2 * phase) + 0.17 * math.cos(3 * phase))
-        body *= 0.85 * math.exp(-t / 0.66)
-        pressure = math.cos(TAU * (63 * t + 57 * 0.018 * (1 - math.exp(-t / 0.018))))
-        pressure *= 0.66 * math.exp(-t / 0.075)
-        grit = rumble[i] * 3.0 * math.exp(-t / 0.82)
-        transient = air[i] * 0.35 * math.exp(-t / 0.045)
-        texture = sum(samples[i] * gain for samples, gain in layers)
-        dry.append(math.tanh((body + pressure + grit + transient + texture) * 1.65))
-        room_input.append((texture * 0.40 + pressure * 0.15 + rumble[i] * 0.32) * math.exp(-t / 0.55))
-    left_tail = room_tail(room_input, [(53, 0.76), (97, 0.70), (149, 0.65)])
-    right_tail = room_tail(room_input, [(67, 0.76), (113, 0.70), (173, 0.65)])
-    left = biquad([math.tanh(x * 1.45 + y * 0.70) for x, y in zip(dry, left_tail)], 25, highpass=True)
-    right = biquad([math.tanh(x * 1.45 + y * 0.70) for x, y in zip(dry, right_tail)], 25, highpass=True)
+        # Integrated frequency sweep: 265 Hz on contact, settling smoothly at 42 Hz.
+        phase = TAU * (42 * t + 158 * 0.13 * (1 - math.exp(-t / 0.13))
+                       + 65 * 0.025 * (1 - math.exp(-t / 0.025)))
+        skin = sum(weight * math.sin(phase * ratio) * math.exp(-t / decay)
+                   for ratio, weight, decay in modes)
+        strike = contact[i] * 0.30 * math.exp(-t / 0.018)
+        roll = thunder[i] * 0.58 * math.exp(-t / 1.10)
+        center.append(skin * 0.93 + strike + roll)
+        room_envelope = (1 - math.exp(-t / 0.035)) * math.exp(-t / 0.64)
+        left_space.append(room_left[i] * 0.15 * room_envelope)
+        right_space.append(room_right[i] * 0.15 * room_envelope)
+    # Only the upper tail spreads into stereo; the drum and bass stay centered.
+    left_space = biquad(left_space, 155, highpass=True)
+    right_space = biquad(right_space, 155, highpass=True)
+    center = biquad(center, 24, highpass=True)
+    left = [x + y for x, y in zip(center, left_space)]
+    right = [x + y for x, y in zip(center, right_space)]
     for i in range(length):
         t = i / RATE
-        # Only the final tail fades. The first sample contains the full pressure hit.
+        # Only the final tail fades. The foreground strike has no fade-in envelope.
         envelope = min(1.0, (DURATION - t) / 0.18) ** 2
         left[i] *= envelope
         right[i] *= envelope
@@ -182,7 +136,7 @@ def main():
     channels = render()
     write_wav(args.output, channels)
     preview = ROOT / 'outputs/agent-battle/death-audio-20261104'
-    write_wav(preview / 'death-impact-v2.wav', channels)
+    write_wav(preview / 'death-thunder-drum-v3.wav', channels)
     mono = [(a + b) * 0.5 for a, b in zip(*channels)]
     low = biquad(mono, 180)
     energy = sum(x * x for x in mono)
@@ -192,11 +146,13 @@ def main():
                   below180HzEnergyFraction=sum(x * x for x in low) / energy,
                   first50msRmsDbFS=10 * math.log10(sum(x * x for x in mono[:RATE // 20]) / (RATE // 20)),
                   leadingSample=channels[0][0], trailingSample=channels[0][-1],
-                  attackFadeSeconds=0, sources=[source[0] for source in SOURCES], synthesizedSubBassHz=36)
+                  attackFadeSeconds=0, sources=[], synthesizedSubBassHz=42,
+                  startingDrumFrequencyHz=265, texture='continuous thunder and struck membrane',
+                  distortion=False, discreteEchoes=False)
     (preview / 'synthesis-report.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
     if args.demo_music:
-        render_demo(args.demo_music, channels, preview / 'death-music-ducking-v2.wav')
-    print(json.dumps(dict(asset=str(args.output), audition=str(preview / 'death-impact-v2.wav'), **report)))
+        render_demo(args.demo_music, channels, preview / 'death-music-ducking-v3.wav')
+    print(json.dumps(dict(asset=str(args.output), audition=str(preview / 'death-thunder-drum-v3.wav'), **report)))
 
 
 if __name__ == '__main__':
