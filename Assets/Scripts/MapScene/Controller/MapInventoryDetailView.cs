@@ -17,6 +17,7 @@ public class MapInventoryDetailView : MonoBehaviour
 
     private void Awake()
     {
+        MapItemIconFit.Attach(iconImage);
         if (closeButton != null)
             closeButton.onClick.AddListener(Hide);
     }
@@ -24,6 +25,7 @@ public class MapInventoryDetailView : MonoBehaviour
     public void ConfigureRuntime(Image icon, TextMeshProUGUI title, TextMeshProUGUI meta, TextMeshProUGUI description, TextMeshProUGUI relicAdditionalDescription, TextMeshProUGUI actionStatus, Button action, Button close)
     {
         iconImage = icon;
+        MapItemIconFit.Attach(iconImage);
         titleText = title;
         metaText = meta;
         descriptionText = description;

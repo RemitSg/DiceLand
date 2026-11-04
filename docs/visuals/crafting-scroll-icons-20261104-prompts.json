@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-04",
+  "timezone": "Asia/Singapore",
+  "tool": "built-in image_gen",
+  "transparentBackground": true,
+  "notes": "Dedicated scroll art replaces missing blueprint icons; source images copied unchanged with generated alpha preserved.",
+  "assets": [
+    {
+      "key": "ember",
+      "path": "Assets/Data/Scroll/103 烬吻短匕/烬吻之卷.png",
+      "prompt": "Use case: style-transfer. Asset type: final DiceLand crafting scroll inventory sprite. Edit the first reference parchment scroll: preserve its painterly golden aged parchment, rolled top and bottom, worn edges and fine engraved crafting diagrams. Replace only the weapon drawing, colored markings and schematic subject with the subject below. ONE isolated scroll, front facing, complete silhouette, centered with balanced empty margin, fully transparent background. Keep the painted weapon clearly a drawing ON the parchment, not a floating physical weapon. No readable text, letters, numbers, UI, frame outside the paper, watermark, external shadow, or backdrop. Match existing hand-painted fantasy game icons, clear at thumbnail size. Portrait 1024x1536. Subject: the second reference weapon, Emberkiss dagger: a slender near-black forged steel blade with silver scalloped guard, subtle glowing orange-red edge and ember fissures, black wrapped grip and circular silver ring pommel. Diagonal ink-and-pigment schematic across the parchment, muted ember-red rune circles and fine charcoal construction lines.",
+      "references": [
+        "Assets/Data/Scroll/102 疾电匕首/疾电匕首_卷轴.png",
+        "Assets/Data/Weapons/103 烬吻短匕/烬吻短匕.png"
+      ]
+    },
+    {
+      "key": "shadow",
+      "path": "Assets/Data/Scroll/104 刹影短匕/刹影之卷.png",
+      "prompt": "Use case: style-transfer. Asset type: final DiceLand crafting scroll inventory sprite. Edit the first reference parchment scroll: preserve its painterly golden aged parchment, rolled top and bottom, worn edges and fine engraved crafting diagrams. Replace only the weapon drawing, colored markings and schematic subject with the subject below. ONE isolated scroll, front facing, complete silhouette, centered with balanced empty margin, fully transparent background. Keep the painted weapon clearly a drawing ON the parchment, not a floating physical weapon. No readable text, letters, numbers, UI, frame outside the paper, watermark, external shadow, or backdrop. Match existing hand-painted fantasy game icons, clear at thumbnail size. Portrait 1024x1536. Subject: Shadowstep dagger design: a very narrow lightweight black-silver blade, angular small crossguard, short dark wrapped handle, exactly three tiny cyan crystal fragments inset along the spine. Diagonal ink-and-pigment schematic across parchment, faint broken teal motion trails and precision rune circles, muted turquoise and graphite details.",
+      "references": [
+        "Assets/Data/Scroll/102 疾电匕首/疾电匕首_卷轴.png"
+      ]
+    },
+    {
+      "key": "eclipse",
+      "path": "Assets/Data/Scroll/302 蚀夜/蚀夜之卷.png",
+      "prompt": "Use case: style-transfer. Asset type: final DiceLand crafting scroll inventory sprite. Edit the first reference parchment scroll: preserve its painterly golden aged parchment, rolled top and bottom, worn edges and fine engraved crafting diagrams. Replace only the weapon drawing, colored markings and schematic subject with the subject below. ONE isolated scroll, front facing, complete silhouette, centered with balanced empty margin, fully transparent background. Keep the painted weapon clearly a drawing ON the parchment, not a floating physical weapon. No readable text, letters, numbers, UI, frame outside the paper, watermark, external shadow, or backdrop. Match existing hand-painted fantasy game icons, clear at thumbnail size. Portrait 1024x1536. Subject: the second reference weapon, Eclipse Night staff: a long twisted black thorn-like shaft, pointed base, dark claw-shaped crown cradling a violet star-filled void gemstone, and a small dangling chain with a star charm. Diagonal ink-and-pigment schematic across parchment, fine violet astronomical circles and star geometry. Ensure the whole staff design is drawn within the paper.",
+      "references": [
+        "Assets/Data/Scroll/102 疾电匕首/疾电匕首_卷轴.png",
+        "Assets/Data/Weapons/302 Eclipse_Night_Staff/Eclipse_Night_Staff.png"
+      ]
+    }
+  ]
+}

@@ -1307,6 +1307,7 @@ public partial class MapHUD : MonoBehaviour
             iconSprite != null ? iconSprite : GetFallbackSprite(),
             Color.white);
         icon.preserveAspect = true;
+        MapItemIconFit.Attach(icon);
 
         TextMeshProUGUI count = CreateText(slotRect, "Count", new Vector2(0f, -(inventorySlotSize.y - 34f)), new Vector2(inventorySlotSize.x - 10f, 24f), bodyFontSize - 2, inventoryCountColor, $"x{countText}", keywordFont);
         count.alignment = TextAlignmentOptions.BottomRight;

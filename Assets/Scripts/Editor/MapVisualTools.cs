@@ -148,13 +148,14 @@ public static class MapVisualTools
         RenderTexture target = null;
         Texture2D pixels = null;
         GameObject host = null;
+        Camera camera = null;
         try
         {
             host = new GameObject("MapVisualPreview");
             SceneManager.MoveGameObjectToScene(host, preview);
             GameObject cameraObject = new GameObject("MapPreviewCamera", typeof(Camera));
             SceneManager.MoveGameObjectToScene(cameraObject, preview);
-            Camera camera = cameraObject.GetComponent<Camera>();
+            camera = cameraObject.GetComponent<Camera>();
             camera.scene = preview;
             camera.transform.position = new Vector3(0f, 0f, -10f);
             camera.orthographic = true;
@@ -251,6 +252,7 @@ public static class MapVisualTools
         finally
         {
             RenderTexture.active = previous;
+            if (camera != null) camera.targetTexture = null;
             if (pixels != null) UnityEngine.Object.DestroyImmediate(pixels);
             if (target != null) UnityEngine.Object.DestroyImmediate(target);
             HashSet<UnityEngine.Object> generated = CollectGeneratedResources(host);
@@ -281,7 +283,8 @@ public static class MapVisualTools
     {
         if (sprite == null || AssetDatabase.Contains(sprite)) return;
         result.Add(sprite);
-        if (sprite.texture != null && !AssetDatabase.Contains(sprite.texture)) result.Add(sprite.texture);
+        if (sprite.texture != null && !AssetDatabase.Contains(sprite.texture) && sprite.texture != Texture2D.whiteTexture && sprite.texture != Texture2D.blackTexture)
+            result.Add(sprite.texture);
     }
 
     private static List<BoardTileData> ReferenceBoard()
