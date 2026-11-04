@@ -71,8 +71,9 @@ half3 DiceLandForestMaterialSpecular(half3 albedo, half3 material, float normalH
     float skin = saturate(material.r), metal = saturate(material.g);
     float roughness = clamp(material.b, 0.2, 1.0);
     float broad = pow(saturate(normalHalf), lerp(48.0, 12.0, roughness));
-    float polished = smoothstep(lerp(0.82,0.64,roughness), lerp(0.99,0.895,roughness), normalHalf);
-    polished *= polished;
+    // A continuous lobe keeps broad metal planes below the aligned glint peak.
+    // Reuse the roughness lobe instead of a smoothstep with a large flat plateau.
+    float polished = broad;
     half3 reflectance = lerp(half3(0.018,0.018,0.018), half3(0.035,0.028,0.023), skin);
     half3 metalColor = lerp(half3(0.48,0.48,0.48), albedo * 0.70 + 0.08, 0.55);
     float pigment = smoothstep(0.008, 0.05, dot(albedo, half3(0.2126,0.7152,0.0722)));
@@ -99,7 +100,7 @@ float DiceLandForestMaterialDiffuse(half3 material, float incidence)
 {
     // Soft wrapped skin response; matte fabric retains the painted dark folds.
     float wrapped = saturate((incidence + material.r * 0.24) / (1.0 + material.r * 0.24));
-    return (0.30 + 0.96 * wrapped) * lerp(0.94, 0.83, material.g);
+    return (0.30 + 0.96 * wrapped) * lerp(0.94, 0.55, material.g);
 }
 
 half3 DiceLandForestSkinScatter(half3 albedo, half3 material, float incidence)
