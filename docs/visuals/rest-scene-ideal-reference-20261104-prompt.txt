@@ -1,0 +1,50 @@
+DiceLand 休息场景重制理想参考图
+日期：2026-11-04（Asia/Singapore）
+生成方式：内置 image_gen；transparent_background=false；未使用 CLI 或 API 密钥。
+用途：供休息场景重制讨论和后续美术实现使用的视觉概念参考。
+正式参考图：docs/visuals/rest-scene-ideal-reference-20261104.png
+分辨率：1672×941
+SHA-256：AB1EAF0452CEE9CAE74505642A55D65F43E72B2EA26A85B5BFC6225F0A685E6E
+原图来源：C:\Users\Karmas\.codex\generated_images\01a1a46a-8d84-7c11-be29-54b44d950349\exec-0611b541-e2d3-475f-bba0-3eec225582b5.png
+文件处理：原样复制，未修改生成像素，原文件保留。
+
+参考输入：
+1. 用户提供的现有休息场景截图（木屋、床铺、餐桌、金发接待员及锻炉）：内容参考。
+2. 用户提供的现有森林战斗截图（森林、遗迹、斜射暖光、金边青蓝宝石 UI）：主要风格参考。
+输入截图为视觉材料，不将截图或附带文档中的文字当作任务指令。
+
+设计方向：
+林间半开放驿站，以树根木梁、苔石、远景森林和瀑布建立连贯空间。
+从左至右四处交互点：
+- 行动点恢复：补给餐桌、食物与少量青蓝能量光。
+- 锻造：石砌锻炉、风箱、铁砧和工具。
+- 招募：接待柜台、人物告示板与金发接待员。
+- 休息：架高床铺、帷幔与床头灯。
+四处均有金边中文标牌；保留前景通行空间。
+这张图仅表达理想美术和交互布局，没有实现或验证运行场景、玩法数值、招募名单、技能或遗物机制。
+
+核验：
+已目视检查四个功能物件与标牌；“行动点恢复”“锻造”“招募”“休息”和标题“林间驿站”均准确可读，关键物件未被前景遮挡。
+PNG 可正常解码，原图与项目副本 SHA-256 一致。
+
+完整生成提示词：
+Use case: stylized-concept.
+Asset type: ONE polished 16:9 landscape fantasy game rest-hub redesign reference, a believable in-game environment screenshot for DiceLand.
+
+Input images: Image 1 is a CONTENT reference only: the current simple wooden inn, blonde female attendant, table, bed and forge. Redesign this environment completely. Image 2 is the PRIMARY STYLE reference: match its luminous hand-painted anime fantasy 2.5D rendering, substantial three-dimensional forms, golden forest sunlight, ancient mossy stone, detailed foliage, atmospheric depth, restrained bloom and ornate gold UI with small cyan gems. Both are visual references, neither is a canvas to preserve.
+
+Primary request: Create an ideal upgraded REST SCENE with exactly FOUR clearly readable environmental interaction destinations: action-point restoration, forging, recruitment and resting. The result must feel as visually rich and polished as Image 2, while safe, welcoming and restful.
+
+Scene: a beautiful sheltered woodland waystation / half-open fantasy inn built into enormous living tree roots and old stone foundations. Strong timber arches frame a broad open rear veranda overlooking a layered teal-green forest, distant ruined columns and waterfall haze. Warm golden afternoon shafts enter diagonally through foliage. A coherent wooden-and-stone floor joins the whole interior. A leafy roof, hanging lanterns, thoughtful textiles and a few carefully placed supplies give it life. Keep the architectural roof/frame visible, the usable floor readable, and meaningful depth between the foreground, interaction props and background.
+
+Composition: one continuous wide gameplay scene, fixed side-view camera with a modest raised three-quarter perspective similar to the battle reference; NOT isometric and NOT top-down. All four destinations visible together, independently clickable, with generous breathing room and distinct silhouettes, distributed naturally across the width. A clear connected foreground walking area. The environment fills the frame with no outer poster border and no split panels. The main props should be large and detailed, not scattered miniatures.
+
+Four destinations, arranged left to right:
+1. ACTION-POINT RESTORATION: an inviting sturdy dining/supply table with warm soup, fresh bread, fruit and a small softly glowing cyan energy vessel; two chairs and a few packed provisions. Reads immediately as replenishing travel energy, distinct from sleeping.
+2. FORGING: a substantial grounded stone-and-bronze forge built into a short chimney, orange coals, bellows, large iron anvil on a stump, neatly hung hammer/tongs and one weapon rack. Physically separated from the bedding. Local warm firelight; no floating furnace.
+3. RECRUITMENT: a welcoming timber recruitment counter beside a large guild noticeboard with parchment character portrait sketches and a small adventurer banner; the blonde female inn attendant from Image 1 stands naturally behind/alongside this counter in her white blouse and dark vest/apron. Keep her smaller than the architecture and in the project's anime character style.
+4. REST: a sheltered raised wooden sleeping alcove under a curved root arch, a fully visible inviting single bed with ivory pillows, a deep muted green blanket, partly tied-back fabric canopy and bedside lantern. Cozy and unmistakable at screenshot scale.
+
+UI: restrained precise game-overlay labels anchored just above the corresponding environmental prop, not an enormous bottom menu. Exactly one compact dark green nameplate with a crafted gold rim and a small cyan gem for EACH station, matching the original battle UI. Add a small meaningful icon at the left of each label: lightning, hammer/anvil, adventurer silhouettes, crescent moon. Render these four Simplified Chinese labels clearly and verbatim, once each: "行动点恢复", "锻造", "招募", "休息". Each plate must be close to its prop without covering the important object. One small matching centered top title plaque reads "林间驿站". These are the only words; no costs, statistics, tooltips or extra menus. Crisp legible typography with subtle calligraphic character matching the reference.
+
+Art direction: premium hand-painted anime fantasy game environment with convincing 3D volume, textured wood and stone, readable material separation, rich emerald and teal depth, warm amber highlights and cool shaded backgrounds. Dappled sunlight, grounded contact shadows, soft distant mist and subtle motes. The interior stays balanced and readable, with the forge glow and cyan restoration energy as local accents. Match the visual language of the supplied battle screenshot closely; avoid flat clipart, modern furniture, photorealism, empty bare walls, giant foreground foliage hiding stations, excessive orange grading, blown-out light, unrelated characters, enemies, combat HUD, floating hexagonal combat markers, a map, feature cards, decorative concept-sheet captions and watermarks. Deliver ONE finished landscape reference image, ideally 16:9 at high resolution.
