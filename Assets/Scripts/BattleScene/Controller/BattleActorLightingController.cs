@@ -20,6 +20,7 @@ public sealed class BattleActorLightingController : MonoBehaviour
     private static readonly int EmissionWeightId = Shader.PropertyToID("_ForestEmissionWeight");
     private static readonly int SheenStrengthId = Shader.PropertyToID("_ForestSheenStrength");
     private static readonly int SkinScatterStrengthId = Shader.PropertyToID("_ForestSkinScatterStrength");
+    private static readonly int MetalReflectionStrengthId = Shader.PropertyToID("_ForestMetalReflectionStrength");
     private static readonly int SunEdgeStrengthId = Shader.PropertyToID("_ForestSunEdgeStrength");
     private readonly List<Transform> actors = new List<Transform>();
     private readonly List<Entry> entries = new List<Entry>();
@@ -124,6 +125,8 @@ public sealed class BattleActorLightingController : MonoBehaviour
                 entry.runtimeMaterial.SetFloat(MaterialWeightId, materialMap != null ? materialWeight : 0f);
                 if (entry.runtimeMaterial.HasProperty(SkinScatterStrengthId))
                     entry.runtimeMaterial.SetFloat(SkinScatterStrengthId, materialMap != null ? 1f : 0f);
+                if (entry.runtimeMaterial.HasProperty(MetalReflectionStrengthId))
+                    entry.runtimeMaterial.SetFloat(MetalReflectionStrengthId, materialMap != null ? 1f : 0f);
                 if (entry.runtimeMaterial.HasProperty(EmissionWeightId))
                     entry.runtimeMaterial.SetFloat(EmissionWeightId,
                         materialMap != null && formLibrary.UsesEmissiveAlpha(renderer.sprite) ? 1f : 0f);

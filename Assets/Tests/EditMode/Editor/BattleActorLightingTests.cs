@@ -254,6 +254,8 @@ public sealed class BattleActorLightingTests
         Assert.AreEqual(0f,material.GetFloat("_ForestSheenStrength"));
         Assert.AreEqual(1f, runtime.GetFloat("_ForestSkinScatterStrength"));
         Assert.AreEqual(0f, material.GetFloat("_ForestSkinScatterStrength"));
+        Assert.AreEqual(1f, runtime.GetFloat("_ForestMetalReflectionStrength"));
+        Assert.AreEqual(0f, material.GetFloat("_ForestMetalReflectionStrength"));
         Assert.AreEqual(0f, material.GetFloat("_ForestMaterialWeight"));
         Assert.Greater(runtime.GetVector("_ForestFormParams").x, 0f);
         Assert.AreEqual(0f, material.GetVector("_ForestFormParams").x);
@@ -275,6 +277,7 @@ public sealed class BattleActorLightingTests
         Assert.AreEqual(0f,runtime.GetFloat("_ForestEmissionWeight"));
         Assert.AreEqual(0f,runtime.GetFloat("_ForestSheenStrength"));
         Assert.AreEqual(0f, runtime.GetFloat("_ForestSkinScatterStrength"));
+        Assert.AreEqual(0f, runtime.GetFloat("_ForestMetalReflectionStrength"));
         Assert.IsNull(runtime.GetTexture("_ForestMaterialMap"));
         lighting.ReleaseLighting();
         Assert.AreSame(material, body.sharedMaterial);

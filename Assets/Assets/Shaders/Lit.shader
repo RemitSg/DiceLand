@@ -30,6 +30,7 @@ Shader "Assets/Shaders/Lit"
         [HideInInspector] _ForestEmissionWeight ("Forest emissive material regions", Range(0,1)) = 0
         [HideInInspector] _ForestSheenStrength ("Forest fabric sheen", Range(0,1)) = 0
         [HideInInspector] _ForestSkinScatterStrength ("Forest skin light transition", Range(0,1)) = 0
+        [HideInInspector] _ForestMetalReflectionStrength ("Forest metal environment reflection", Range(0,2)) = 0
         [HideInInspector] _ForestSunEdgeStrength ("Forest sunlit silhouette", Range(0,1)) = 0
     }
 
@@ -93,6 +94,7 @@ Shader "Assets/Shaders/Lit"
             float4 _ForestFormParams;
             float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength, _ForestSunEdgeStrength;
             float _ForestSkinScatterStrength;
+            float _ForestMetalReflectionStrength;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
@@ -198,6 +200,7 @@ Shader "Assets/Shaders/Lit"
             float4 _ForestFormParams;
             float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength, _ForestSunEdgeStrength;
             float _ForestSkinScatterStrength;
+            float _ForestMetalReflectionStrength;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
@@ -339,6 +342,7 @@ Shader "Assets/Shaders/Lit"
             float4 _ForestFormParams;
             float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength, _ForestSunEdgeStrength;
             float _ForestSkinScatterStrength;
+            float _ForestMetalReflectionStrength;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);       SAMPLER(sampler_MainTex);
@@ -583,6 +587,9 @@ Shader "Assets/Shaders/Lit"
                 half3 material = materialData.rgb;
                 float3 litColor = CalculateLighting(baseColor.rgb, normalWS, i.positionWS,
                                                     viewDirWS, shadowCoord, surfaceWeight, material, materialWeight);
+                if (_ForestMetalReflectionStrength > 0.001 && materialWeight > 0.001)
+                    litColor += DiceLandForestMetalEnvironment(baseColor.rgb, material, normalWS, viewDirWS)
+                        * (_ForestMetalReflectionStrength * materialWeight);
                 float highlightWeight = saturate(surfaceWeight * _ForestHighlightStrength);
                 if (highlightWeight > 0.001)
                     litColor = lerp(litColor, DiceLandForestHighlightShoulder(litColor), highlightWeight);
@@ -678,6 +685,7 @@ Shader "Assets/Shaders/Lit"
             float4 _ForestFormParams;
             float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength, _ForestSunEdgeStrength;
             float _ForestSkinScatterStrength;
+            float _ForestMetalReflectionStrength;
             CBUFFER_END
             TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
             TEXTURE2D(_AlphaTex); SAMPLER(sampler_AlphaTex);

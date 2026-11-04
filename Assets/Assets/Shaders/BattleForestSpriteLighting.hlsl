@@ -79,6 +79,22 @@ half3 DiceLandForestMaterialSpecular(half3 albedo, half3 material, float normalH
     return lerp(reflectance * broad, metalColor * polished * 1.65, metal) * pigment;
 }
 
+half3 DiceLandForestMetalEnvironment(half3 albedo, half3 material, float3 normalWS, float3 viewDirWS)
+{
+    // Low-frequency sky/ground reflection from the renderer's existing SH lighting.
+    // This complements direct glints; it is not a sharp reflection-probe substitute.
+    float metal = saturate(material.g) * (1.0 - saturate(material.r));
+    float roughness = clamp(material.b, 0.2, 1.0);
+    float3 reflected = reflect(-viewDirWS, normalWS);
+    float3 lookup = SafeNormalize(lerp(reflected, normalWS, roughness * roughness * 0.6));
+    half3 environment = SampleSH(lookup);
+    half3 f0 = saturate(lerp(half3(0.48,0.48,0.48), albedo * 0.70 + 0.08, 0.55));
+    float grazing = pow(1.0 - saturate(dot(normalWS, viewDirWS)), 5.0);
+    half3 fresnel = f0 + (1.0 - f0) * grazing;
+    float pigment = smoothstep(0.008, 0.05, dot(albedo, half3(0.2126,0.7152,0.0722)));
+    return environment * fresnel * (metal * pigment * (1.0 - 0.65 * roughness));
+}
+
 float DiceLandForestMaterialDiffuse(half3 material, float incidence)
 {
     // Soft wrapped skin response; matte fabric retains the painted dark folds.
