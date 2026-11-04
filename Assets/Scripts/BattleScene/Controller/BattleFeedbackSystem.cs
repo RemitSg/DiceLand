@@ -266,6 +266,7 @@ public class BattleFeedbackSystem : MonoBehaviour
     private void OnDisable()
     {
         ClearImpactPulse();
+        GameMusicPlayer.EndDeathSlowMotion(this);
         if (deathSlowMotionRoutine == null)
             return;
 
@@ -1066,6 +1067,8 @@ public class BattleFeedbackSystem : MonoBehaviour
 
     private void TriggerDeathSlowMotion()
     {
+        if (Application.isPlaying)
+            GameMusicPlayer.PlayDeathAudio(enableDeathSlowMotion && deathSlowMotionDuration > 0f ? this : null);
         if (!enableDeathSlowMotion)
             return;
 
@@ -1119,6 +1122,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         Time.timeScale = restoreScale;
         Time.fixedDeltaTime = baseFixedStep * restoreScale;
         deathSlowMotionRoutine = null;
+        GameMusicPlayer.EndDeathSlowMotion(this);
     }
 
     private void ShowDamagePopup(Vector3 worldPosition, int amount, bool targetIsEnemy, int ratioPercent, int powerModifierAmount)

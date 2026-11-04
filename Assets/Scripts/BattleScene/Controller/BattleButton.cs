@@ -6320,7 +6320,7 @@ public partial class BattleButton : MonoBehaviour
         }
         if (battleManager != null)
             battleManager.EndBattle();
-        if (!headlessExecution) GameMusicPlayer.FadeOutAndStop();
+        // Let the final death cue restore the running music through settlement.
 
         SpeedButton.CombatLocked = true;
         currentPhase = BattlePhase.Ready;

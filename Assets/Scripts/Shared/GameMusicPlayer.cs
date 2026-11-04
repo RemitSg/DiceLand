@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class GameMusicPlayer : MonoBehaviour
+public partial class GameMusicPlayer : MonoBehaviour
 {
     private const string PlayerObjectName = "GameMusicPlayer";
     private const string DefaultConfigResourcePath = "GameMusicConfig";
@@ -13,13 +13,6 @@ public class GameMusicPlayer : MonoBehaviour
     [SerializeField] private AudioSource musicSource;
     [SerializeField, Min(0f)] private float defaultStopFadeDuration = 0.35f;
 
-    [Header("Slow Motion Treatment")]
-    [SerializeField, Range(0.1f, 1f)] private float slowMotionPitch = 0.62f;
-    [SerializeField, Min(10f)] private float normalLowPassCutoff = 22000f;
-    [SerializeField, Min(10f)] private float slowMotionLowPassCutoff = 1800f;
-    [SerializeField, Min(0.1f)] private float slowMotionLerpSpeed = 8f;
-
-    private AudioLowPassFilter lowPassFilter;
     private Coroutine fadeOutRoutine;
     private float fadeVolumeMultiplier = 1f;
 
@@ -128,8 +121,9 @@ public class GameMusicPlayer : MonoBehaviour
         if (musicSource == null)
             return;
 
+        musicSource.pitch = 1f;
+        UpdateDeathAudio(Time.unscaledDeltaTime);
         ApplyMusicVolume();
-        UpdateSlowMotionTreatment();
     }
 
     private void EnsureComponents()
@@ -141,19 +135,11 @@ public class GameMusicPlayer : MonoBehaviour
 
         musicSource.playOnAwake = false;
         musicSource.loop = true;
+        musicSource.pitch = 1f;
 
-        if (lowPassFilter == null)
-            lowPassFilter = GetComponent<AudioLowPassFilter>();
-
-        bool createdLowPassFilter = false;
-        if (lowPassFilter == null)
-        {
-            lowPassFilter = gameObject.AddComponent<AudioLowPassFilter>();
-            createdLowPassFilter = true;
-        }
-
-        if (createdLowPassFilter)
-            lowPassFilter.cutoffFrequency = normalLowPassCutoff;
+        // Older live players may still carry the former slow-motion filter.
+        AudioLowPassFilter legacyFilter = GetComponent<AudioLowPassFilter>();
+        if (legacyFilter != null) legacyFilter.enabled = false;
     }
 
     private void ApplyMusicVolume()
@@ -163,20 +149,7 @@ public class GameMusicPlayer : MonoBehaviour
 
         MainMenuSettingsData settings = MainMenuSettingsPersistence.Current;
         float settingsVolume = settings != null ? Mathf.Clamp01(settings.musicVolume) : 1f;
-        musicSource.volume = settingsVolume * Mathf.Clamp01(fadeVolumeMultiplier);
-    }
-
-    private void UpdateSlowMotionTreatment()
-    {
-        EnsureComponents();
-
-        bool slowMotionActive = Time.timeScale > 0.01f && Time.timeScale < 0.99f;
-        float targetPitch = slowMotionActive ? slowMotionPitch : 1f;
-        float targetCutoff = slowMotionActive ? slowMotionLowPassCutoff : normalLowPassCutoff;
-        float t = 1f - Mathf.Exp(-slowMotionLerpSpeed * Time.unscaledDeltaTime);
-
-        musicSource.pitch = Mathf.Lerp(musicSource.pitch, targetPitch, t);
-        lowPassFilter.cutoffFrequency = Mathf.Lerp(lowPassFilter.cutoffFrequency, targetCutoff, t);
+        musicSource.volume = settingsVolume * Mathf.Clamp01(fadeVolumeMultiplier) * deathMusicMultiplier;
     }
 
     private void FadeOutAndStopInstance(float duration)
