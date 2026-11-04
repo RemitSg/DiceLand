@@ -1,0 +1,52 @@
+DiceLand 宝藏格三选一页面重制理想参考图
+日期：2026-11-04（Asia/Singapore）
+生成方式：内置 image_gen；transparent_background=false；未使用 CLI 或 API 密钥。
+用途：宝藏格三选一奖励页面的视觉设计参考。
+正式参考图：docs/visuals/treasure-choice-ideal-reference-20261104.png
+分辨率：1672×941
+SHA-256：AE3947D3C621FC7110D6720C7590CF6CEA21D5806FEC24527478B2B565685BCE
+选定原图：C:\Users\Karmas\.codex\generated_images\01a1a46a-8d84-7c11-be29-54b44d950349\exec-ea27a5c3-68fa-4111-8367-b8a7565ea963.png
+文件处理：原样复制生成结果，未修改像素，原文件保留。
+
+参考输入：
+用户提供的当前宝藏格三选一页面截图：01bb5b4cf349c90868a71fe3530a0c64.jpg。
+以截图核对奖励类型、名称和数量，并参考既有森林遗迹地图、金边、深绿色及羊皮纸的美术风格。输入截图仅为视觉和内容参考。
+
+设计方向：
+- 深绿色主面板配金属金边、小颗青绿宝石与适量藤叶。
+- 顶部开启的宝箱与“宝藏馈赠”标题形成视觉焦点。
+- 三张等宽奖励卡并排，统一插画、名称、数量和领取按钮的层次。
+- 左侧为 45 金币，中间为霜铁之卷 ×1，右侧为史诗遗物袋 ×1。
+- 金币、图纸与史诗遗物袋分别以暖金、冰蓝和紫色插画光色区分，三个领取按钮保持一致。
+- 地图背景压暗并适度虚化，突出奖励卡；明确说明“仅可领取一项奖励”。
+
+核验：
+已目视检查恰好三张卡片，奖励名称、45 金币与两个数量 ×1 均准确，三个领取按钮清晰可见。
+PNG 可正常解码，正式副本与生成原图 SHA-256 一致。
+本次仅新增视觉参考图与提示词记录，没有修改运行页面、奖励配置或领取逻辑。
+
+完整生成提示词：
+Use case: ui-mockup.
+Asset type: ONE high-fidelity landscape in-game UI redesign reference for DiceLand's treasure-tile THREE-CHOICE REWARD screen.
+
+Input image: content and game-style reference. It shows the current treasure reward modal over the forest ruins board map. Redesign the screen to a polished ideal, preserving the three actual reward options, quantities and the one-of-three decision. This is a NEW finished reference image, not a patch preserving the old panel.
+
+Primary request: Create a beautiful, readable and production-plausible fantasy reward selection screen that belongs in this forest game: hand-painted aged gold/brass craftsmanship, deep forest-green enamel, warm parchment, small turquoise gemstone accents, subtle ivy motifs and soft magical treasure light. The modal is the clear foreground focus, with a coherent THREE-CARD layout rather than three plain brown rectangles.
+
+Scene and layering: retain a recognizable woodland ruin board-map backdrop from the reference, with mossy ruins, treetops, and a few softly visible square battle/event/merchant/rest tiles. Apply strong but tasteful dimming and slight defocus to the background so the map/HUD does not fight the reward text. Keep any peripheral map HUD subordinate and very sparse. A wide, centered, substantially opaque deep emerald modal with a finely crafted golden rim and restrained leaf corner ornaments separates the rewards from the map. No desktop window frame.
+
+Composition: wide 16:9 landscape, premium actual game UI screenshot, sharp readable typography. The large centered modal occupies about 80% of the width and 85% of the height, with generous margins, one compact hero heading above three evenly spaced reward cards. Include a small beautifully painted OPEN TREASURE CHEST integrated into the upper heading ornament, warm golden light escaping its lid. Avoid covering the cards with giant chest art. Under the heading, exactly THREE equally sized tall cards in a single straight horizontal row, aligned art, names, quantities and buttons. Each card has crafted thin metal corners, a dark textured upper art well and a warm ivory parchment lower information area. Make the three reward illustrations much larger and more detailed than the original screenshot, occupying a meaningful part of the card. Keep elegant visual hierarchy and comfortable breathing room.
+
+Header text, Simplified Chinese, verbatim:
+Main heading: "宝藏馈赠"
+Small subtitle: "请从三份馈赠中选择一份"
+
+Left card: a richly rendered pile of recognizable gold coins with a small soft amber halo; honest resource reward, not a bag or a premium shop offer. Small category label "金币"; main reward name/quantity "45 金币". Warm brass/gold accent. One clear parchment-and-gold button at the bottom with exact label "领取".
+
+Middle card: a handsome curled parchment blueprint scroll bearing a delicate icy blue weapon line drawing, matching the existing scroll reward. Small category label "图纸"; main reward title "霜铁之卷"; a separate small quantity line "数量 ×1". A restrained frost-blue accent on the artwork only; keep the same shared card design. One identical button labeled "领取".
+
+Right card: an ornate violet silk relic pouch with fine gold cords and clasps, clearly a PURPLE BAG like the original reward, with restrained purple magical radiance and a few tiny sparkles. Small category label "史诗"; main reward title "史诗遗物袋"; a separate small quantity line "数量 ×1". Amethyst accent, same shared card design. One identical button labeled "领取".
+
+A small centered footer below the cards reads "仅可领取一项奖励". Do not add any other item descriptions, stats, odds, costs, currencies, power values or mechanics. No recommended option, checkmark, selected state or brighter button favoring one reward. All three options remain equally available and visually balanced. No fourth card, reroll, close button, countdown, purchase button, claim-all or secondary confirmation panel.
+
+Rendering style: polished painterly 2D fantasy game interface with convincing material highlights and volumetric icon illustrations, matching the supplied game's visual language. Fine gold filigree with clear silhouettes; restrained ornamentation, not a hyper-baroque border. Deep emerald and dark teal backdrop, luminous parchment and antique gold, selective icy blue and amethyst reward accents. All foreground Chinese text must be clear, correctly spelled and unobstructed; use elegant readable Chinese display lettering for the heading and clean readable Chinese text for reward names and quantities. No English, no watermark, no mockup annotations or captions outside the game screen. Deliver ONE finished high-resolution landscape reference image.
