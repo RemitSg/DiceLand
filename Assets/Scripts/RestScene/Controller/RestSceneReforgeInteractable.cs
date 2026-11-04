@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Collider2D))]
-public class RestSceneReforgeInteractable : MonoBehaviour
+public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPresentation
 {
     private const string OutlineShaderResourcePath = "Shaders/RestSceneSolidOutline";
     private const string OutlineShaderName = "MobileGame/RestScene/SolidSpriteOutline";
@@ -119,6 +119,15 @@ public class RestSceneReforgeInteractable : MonoBehaviour
     private bool mouseHovering;
     private bool touchHighlighting;
     private bool ownsModalLock;
+    private bool presentationFocus;
+
+    public bool HasInteractionFocus => mouseHovering || touchHighlighting;
+
+    public void SetPresentationFocus(bool focused)
+    {
+        presentationFocus = focused;
+        RefreshHighlightState();
+    }
     private bool promptVisible;
     private bool mainPanelVisible;
 
@@ -148,6 +157,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour
 
     private void OnDisable()
     {
+        presentationFocus = false;
         mouseHovering = false;
         touchHighlighting = false;
         HideAllPanels(true);
@@ -172,6 +182,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour
     {
         UpdateTouchHighlight();
         RefreshOutlineRendererVisuals();
+        RefreshHighlightState();
     }
 
     private void OnMouseEnter()
@@ -994,7 +1005,8 @@ public class RestSceneReforgeInteractable : MonoBehaviour
         if (outlineRenderer == null)
             return;
 
-        bool visible = (mouseHovering || touchHighlighting) && !promptVisible && !mainPanelVisible;
+        bool visible = (mouseHovering || touchHighlighting || presentationFocus) && !promptVisible && !mainPanelVisible
+            && RestSceneRuntime.HasPendingVisit && !RestSceneModalState.IsLocked;
         outlineRenderer.enabled = visible;
     }
 
@@ -1277,6 +1289,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour
         Image image = buttonObject.GetComponent<Image>();
         image.sprite = sprite;
         image.type = sprite != null ? Image.Type.Sliced : Image.Type.Simple;
+        image.pixelsPerUnitMultiplier = sprite != null && sprite.name == "GildedButton" ? 8f : 1f;
         image.color = actionButtonColor;
 
         Button button = buttonObject.GetComponent<Button>();
@@ -1311,6 +1324,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour
         {
             image.sprite = selected && selectedButtonSprite != null ? selectedButtonSprite : actionButtonSprite;
             image.type = image.sprite != null ? Image.Type.Sliced : Image.Type.Simple;
+            image.pixelsPerUnitMultiplier = image.sprite != null && image.sprite.name == "GildedButton" ? 8f : 1f;
             image.color = selected ? selectedButtonColor : actionButtonColor;
         }
 

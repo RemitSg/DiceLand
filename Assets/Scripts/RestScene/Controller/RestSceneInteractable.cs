@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Collider2D))]
-public class RestSceneInteractable : MonoBehaviour
+public class RestSceneInteractable : MonoBehaviour, IRestSceneStationPresentation
 {
     private const string OutlineShaderResourcePath = "Shaders/RestSceneSolidOutline";
     private const string OutlineShaderName = "MobileGame/RestScene/SolidSpriteOutline";
@@ -57,6 +57,15 @@ public class RestSceneInteractable : MonoBehaviour
     private bool mouseHovering;
     private bool touchHighlighting;
     private bool ownsModalLock;
+    private bool presentationFocus;
+
+    public bool HasInteractionFocus => mouseHovering || touchHighlighting;
+
+    public void SetPresentationFocus(bool focused)
+    {
+        presentationFocus = focused;
+        RefreshHighlightState();
+    }
 
     private void Awake()
     {
@@ -75,6 +84,7 @@ public class RestSceneInteractable : MonoBehaviour
 
     private void OnDisable()
     {
+        presentationFocus = false;
         mouseHovering = false;
         touchHighlighting = false;
         ReleaseModalLock();
@@ -99,6 +109,7 @@ public class RestSceneInteractable : MonoBehaviour
     {
         UpdateTouchHighlight();
         RefreshOutlineRendererVisuals();
+        RefreshHighlightState();
     }
 
     private void OnMouseEnter()
@@ -291,7 +302,8 @@ public class RestSceneInteractable : MonoBehaviour
         if (outlineRenderer == null)
             return;
 
-        bool visible = (mouseHovering || touchHighlighting) && !IsPromptVisible();
+        bool visible = (mouseHovering || touchHighlighting || presentationFocus) && !IsPromptVisible()
+            && RestSceneRuntime.HasPendingVisit && !RestSceneModalState.IsLocked;
         outlineRenderer.enabled = visible;
     }
 
@@ -394,6 +406,7 @@ public class RestSceneInteractable : MonoBehaviour
         Image image = button.GetComponent<Image>();
         image.sprite = sprite;
         image.type = sprite != null ? Image.Type.Sliced : Image.Type.Simple;
+        image.pixelsPerUnitMultiplier = sprite != null && sprite.name == "GildedButton" ? 8f : 1f;
 
         TextMeshProUGUI labelText = button.GetComponentInChildren<TextMeshProUGUI>(true);
         if (labelText != null)

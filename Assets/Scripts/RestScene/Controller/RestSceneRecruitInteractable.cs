@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Collider2D))]
-public class RestSceneRecruitInteractable : MonoBehaviour
+public class RestSceneRecruitInteractable : MonoBehaviour, IRestSceneStationPresentation
 {
     private const string OutlineShaderResourcePath = "Shaders/RestSceneSolidOutline";
     private const string OutlineShaderName = "MobileGame/RestScene/SolidSpriteOutline";
@@ -101,6 +101,15 @@ public class RestSceneRecruitInteractable : MonoBehaviour
     private bool mouseHovering;
     private bool touchHighlighting;
     private bool ownsModalLock;
+    private bool presentationFocus;
+
+    public bool HasInteractionFocus => mouseHovering || touchHighlighting;
+
+    public void SetPresentationFocus(bool focused)
+    {
+        presentationFocus = focused;
+        RefreshHighlightState();
+    }
 
     private void Awake()
     {
@@ -119,6 +128,7 @@ public class RestSceneRecruitInteractable : MonoBehaviour
 
     private void OnDisable()
     {
+        presentationFocus = false;
         mouseHovering = false;
         touchHighlighting = false;
         ReleaseModalLock();
@@ -143,6 +153,7 @@ public class RestSceneRecruitInteractable : MonoBehaviour
     {
         UpdateTouchHighlight();
         RefreshOutlineRendererVisuals();
+        RefreshHighlightState();
     }
 
     private void OnMouseEnter()
@@ -601,7 +612,8 @@ public class RestSceneRecruitInteractable : MonoBehaviour
         if (outlineRenderer == null)
             return;
 
-        outlineRenderer.enabled = (mouseHovering || touchHighlighting) && !IsPanelVisible();
+        outlineRenderer.enabled = (mouseHovering || touchHighlighting || presentationFocus) && !IsPanelVisible()
+            && RestSceneRuntime.HasPendingVisit && !RestSceneModalState.IsLocked;
     }
 
     private bool IsPanelVisible()
@@ -689,6 +701,7 @@ public class RestSceneRecruitInteractable : MonoBehaviour
         Image image = buttonObject.GetComponent<Image>();
         image.sprite = sprite;
         image.type = sprite != null ? Image.Type.Sliced : Image.Type.Simple;
+        image.pixelsPerUnitMultiplier = sprite != null && sprite.name == "GildedButton" ? 8f : 1f;
         image.color = primaryButtonColor;
 
         Button button = buttonObject.GetComponent<Button>();

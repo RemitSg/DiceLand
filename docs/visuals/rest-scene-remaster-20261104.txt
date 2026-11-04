@@ -1,0 +1,35 @@
+休息场景重制（2026-11-04）
+
+正式场景：Assets/Scenes/RestScene.scene
+参考图：docs/visuals/rest-scene-ideal-reference-20261104.png
+拆层源图与生成提示词：rest-scene-layer-source-20261104.png、rest-scene-layers-20261104-prompts.json
+素材通过内置 image_gen 编辑生成，正式 PNG 与 Unity 元数据保存在 Assets/Resources/RestScene/。
+
+绘景与交互
+Environment.png 保存森林、瀑布、木石结构、地面与树根休息区。
+ActionPoints.png、Forge.png、Recruit.png、Rest.png 分别是带真实透明通道的补给餐桌、锻炉铁砧、招募柜台与床铺帷幔。
+四个物件继续使用原 GameObject 上的 SpriteRenderer、PolygonCollider2D 和四个 RestScene 控制器。
+Sprite 物理轮廓在编辑期写入碰撞体；运行时关闭纹理 CPU 可读性。碰撞深度按精灵显示顺序排列，优先拾取前景物件。
+描边继续使用原 RestSceneSolidOutline Shader，从对应精灵的透明边缘产生轮廓。标牌悬停通过展示接口驱动同一套描边。
+
+原有流程
+行动点恢复：RestSceneActionPointRestoreInteractable.ShowPrompt。
+锻造：RestSceneReforgeInteractable.ShowOpenPrompt，继续使用原材料池、属性选项、遗物池、次数规则和结算流程。
+招募：RestSceneRecruitInteractable.ShowPanel，继续使用地图传入的名册、难度、金币费用与人数限制。
+休息：RestSceneInteractable.ShowPrompt，继续由 RestSceneRuntime 与 MapRunRuntime 处理实际恢复和地图返回。
+真实物件保留原鼠标／触摸处理；标牌使用原生 Button 接入相同入口。RestSceneModalState 继续负责弹窗互斥。
+取消操作只关闭界面，保留本次休息访问。重铸成功后的既有锁定和退出规则保持原实现。
+
+展示与重建
+RestSceneForestView 将 1672×941 参考构图中的世界精灵和屏幕标牌一起适配安全区域，额外画幅用压暗的环境绘景补齐。
+标牌文字与闪电、铁砧、人群、月亮图标为真实 UI，图标与柔光必须带 CanvasRenderer。尘光与轻微光源脉动不拦截射线。
+弹窗沿用原布局，使用深绿底、金边、浅色正文与羊皮纸按钮。GildedButton 的九宫格倍率在按钮处单独调整，避免中心挤成零宽。
+重建入口：Unity 菜单 Tools/Rest Scene/Rebuild Woodland Waystation。
+对应工具：Assets/Scripts/Editor/RestSceneForestBakeTools.cs。工具仅保存休息场景，保留四个原控制器及其数据引用。
+
+验证方式
+RestSceneForestViewTests 检查四种画幅和安全区域、世界精灵与 UI 投影对齐、真实透明像素、场景引用、绘制组件与碰撞体。
+RestSceneForestPlayModeTests 检查四处标牌、物件悬停、原弹窗、取消保留访问、模态互斥、描边恢复、全屏遮罩与按钮中心区域。
+本次通过 Unity MCP 执行 NUnit 断言，并在正式场景的运行模式逐帧驱动 UnityTest 协程；未使用会自动保存其他脏场景的 MCP TestRunner 包装。
+原生游戏截图用于核对实际 Overlay UI，较高分辨率相机截图用于核对构图。测试截图、日志与详细 JSON 留在 outputs/agent-battle/rest-remaster-20261104/，按仓库约定忽略。
+本次没有新增或修改敌人、技能和遗物内容。
