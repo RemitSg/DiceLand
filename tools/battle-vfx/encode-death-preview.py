@@ -5,7 +5,7 @@ from pathlib import Path
 from PIL import Image
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--source', default='outputs/agent-battle/death-impact-vfx-20261104')
+parser.add_argument('--source', default='outputs/agent-battle/death-burst-vfx-20261104')
 args = parser.parse_args()
 root = Path(__file__).resolve().parents[2] / args.source
 for name in ('ally', 'enemy'):

@@ -105,16 +105,16 @@ public sealed class BattleDeathVfx : MonoBehaviour
         MeshRenderer renderer = gameObject.AddComponent<MeshRenderer>(); renderer.sharedMaterial = Own(new Material(light) { name = "Death light (runtime)" });
         renderer.sortingOrder = order + 2; renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false;
         SpriteRenderer body = actor.GetComponentInChildren<SpriteRenderer>(); if (body != null) renderer.sortingLayerID = body.sortingLayerID;
-        int count = Mathf.Clamp(detail * 3, 72, 180);
+        int count = Mathf.Clamp(Mathf.Clamp(detail, 0, 60) * 6, 128, 360);
         for (int i = 0; i < count; i++)
         {
             float x = Rand(-1, 1), y = Rand(-0.47f, 0.48f), angle = Rand(0, Mathf.PI * 2);
             bool shard = i % 3 == 0, star = i % 11 == 0;
             bool impact = i % 4 == 0;
             float delay = impact ? Rand(0.015f, 0.075f) : Rand(0.09f, 0.30f);
-            Vector3 origin = new Vector3(x * width * 0.42f, y * height, Rand(-0.08f, 0.08f));
+            Vector3 origin = new Vector3(x * width * 0.5f, y * height, Rand(-0.15f, 0.15f));
             if (impact) origin = -push * width * 0.25f + spread * y * height * 0.6f;
-            Vector3 velocity = (push * Rand(2.8f, 5.2f) + spread * Rand(-0.65f, 0.65f) + Vector3.up * Rand(0.12f, 0.45f)) * height;
+            Vector3 velocity = (push * Rand(4.2f, 7.8f) + spread * Rand(-1.6f, 1.6f) + Vector3.up * Rand(0.25f, 0.75f)) * height;
             particles.Add(new Particle {
                 origin = RecoilMatrix(delay).MultiplyPoint3x4(origin), velocity = velocity,
                 delay = delay, life = Rand(0.75f, 1.65f),
@@ -189,7 +189,7 @@ public sealed class BattleDeathVfx : MonoBehaviour
         if (IsComplete && Application.isPlaying) Destroy(gameObject);
     }
 
-    private Vector3 Position(Particle p, float time) => p.origin + p.velocity * ((1 - Mathf.Exp(-time * 3.8f)) / 3.8f)
+    private Vector3 Position(Particle p, float time) => p.origin + p.velocity * ((1 - Mathf.Exp(-time * 3.4f)) / 3.4f)
         + Vector3.up * height * Mathf.Pow(Mathf.Max(0, time - 0.25f), 2) * 0.22f
         + spread * (Mathf.Sin(time * 4 + p.phase) - Mathf.Sin(p.phase)) * height * 0.025f;
 

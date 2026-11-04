@@ -9,7 +9,7 @@ using UnityEngine.Rendering.Universal;
 /// <summary>Captures production death callbacks in a disposable copy of the saved battle scene.</summary>
 public static class BattleDeathVfxVisualTools
 {
-    public const string OutputPath = "outputs/agent-battle/death-impact-vfx-20261104";
+    public const string OutputPath = "outputs/agent-battle/death-burst-vfx-20261104";
     private const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
 
     [MenuItem("Tools/Battle Visuals/Capture Death Dissolution")]
@@ -29,8 +29,8 @@ public static class BattleDeathVfxVisualTools
             foreach (SpeedButton button in actor.GetComponentsInChildren<SpeedButton>(true)) button.gameObject.SetActive(false);
             BattleActorVisualUtility.TryGetActorSpriteBounds(actor, out Bounds bounds);
             Vector3 direction = enemy ? Vector3.right : Vector3.left;
-            Vector3 target = bounds.center + Vector3.up * bounds.size.y * 0.2f + direction * bounds.size.y * 0.6f;
-            float distance = Mathf.Max(2, bounds.size.y) * 3.7f;
+            Vector3 target = bounds.center + Vector3.up * bounds.size.y * 0.2f + direction * bounds.size.y * 0.9f;
+            float distance = Mathf.Max(2, bounds.size.y) * 4f;
             camera.transform.position = target + new Vector3(0, distance * 0.12f, -distance);
             camera.transform.LookAt(target); camera.fieldOfView = 42; camera.aspect = (float)width / height;
             camera.GetUniversalAdditionalCameraData().cameraStack.Clear();

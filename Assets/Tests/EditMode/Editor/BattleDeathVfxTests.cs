@@ -60,10 +60,10 @@ public sealed class BattleDeathVfxTests
     [Test]
     public void LightBurstHasABoundedBudgetAndDifferentFriendlyAndHostilePalettes()
     {
-        Play(false, 10000); Assert.AreEqual(180, effect.FragmentCount);
+        Play(false, 10000); Assert.AreEqual(360, effect.FragmentCount);
         Color friendly = effect.GetComponentInChildren<SpriteRenderer>().sharedMaterial.GetColor("_SoulColor");
         Object.DestroyImmediate(effect.gameObject); effect = null; Play(true, -1);
-        Assert.AreEqual(72, effect.FragmentCount);
+        Assert.AreEqual(128, effect.FragmentCount);
         Color hostile = effect.GetComponentInChildren<SpriteRenderer>().sharedMaterial.GetColor("_SoulColor");
         Assert.Greater(friendly.g, hostile.g); Assert.Greater(hostile.r, friendly.r);
     }
