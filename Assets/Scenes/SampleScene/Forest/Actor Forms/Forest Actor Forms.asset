@@ -18,30 +18,40 @@ MonoBehaviour:
     materialMap: {fileID: 2800000, guid: 7a44923744fd2ea46bd7fb5797f0e5d7, type: 2}
     emissiveAlpha: 0
     fabricSheen: 1
+    hairAlpha: 1
+    hairDirection: {x: -0.96, y: 0.28}
     emissionLights: []
   - sprite: {fileID: 21300000, guid: e82db6940ca08274ca713c600b1090a5, type: 3}
     formMap: {fileID: 2800000, guid: 8cfa5a472ed13894a9b90d329e753c3b, type: 2}
     materialMap: {fileID: 2800000, guid: 9e5946012a713ac4099e41a87365bc44, type: 2}
     emissiveAlpha: 0
     fabricSheen: 1
+    hairAlpha: 0
+    hairDirection: {x: 1, y: 0}
     emissionLights: []
   - sprite: {fileID: 21300000, guid: 7278200b9c886ef499ac32e36ebac9bb, type: 3}
     formMap: {fileID: 2800000, guid: a6caeb1d9be1baa45957c7c2b2a8dbf6, type: 2}
     materialMap: {fileID: 0}
     emissiveAlpha: 0
     fabricSheen: 0
+    hairAlpha: 0
+    hairDirection: {x: 1, y: 0}
     emissionLights: []
   - sprite: {fileID: 21300000, guid: 228f0f2faa31282489ab4effce2e3006, type: 3}
     formMap: {fileID: 2800000, guid: 6df0e1c97cabc674eb7f487c9579870b, type: 2}
     materialMap: {fileID: 0}
     emissiveAlpha: 0
     fabricSheen: 0
+    hairAlpha: 0
+    hairDirection: {x: 1, y: 0}
     emissionLights: []
   - sprite: {fileID: 21300000, guid: 8064e01a6ecf1274a8163c07b55b555e, type: 3}
     formMap: {fileID: 2800000, guid: 892f00049dfd9d14ea337286a0f94a04, type: 2}
     materialMap: {fileID: 2800000, guid: f4e2f12e29988ea40b4305421a69ee56, type: 2}
     emissiveAlpha: 1
     fabricSheen: 0
+    hairAlpha: 0
+    hairDirection: {x: 1, y: 0}
     emissionLights:
     - uv: {x: 0.404, y: 0.655}
       color: {r: 1, g: 0.035, b: 0.38, a: 1}
@@ -56,6 +66,8 @@ MonoBehaviour:
     materialMap: {fileID: 2800000, guid: 87625aed8e8a48047afa1e48cfbeae6e, type: 2}
     emissiveAlpha: 1
     fabricSheen: 0
+    hairAlpha: 0
+    hairDirection: {x: 1, y: 0}
     emissionLights:
     - uv: {x: 0.474, y: 0.738}
       color: {r: 1, g: 0.57, b: 0.16, a: 1}
@@ -66,5 +78,7 @@ MonoBehaviour:
     materialMap: {fileID: 0}
     emissiveAlpha: 0
     fabricSheen: 0
+    hairAlpha: 0
+    hairDirection: {x: 1, y: 0}
     emissionLights: []
   silhouetteAlpha: 1

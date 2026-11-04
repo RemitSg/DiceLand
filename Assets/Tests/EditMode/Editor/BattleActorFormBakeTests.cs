@@ -15,6 +15,9 @@ public sealed class BattleActorFormBakeTests
         Assert.Greater(cloth.b, 245); Assert.Less(cloth.g, 10);
         Assert.Greater(chain.g, 230); Assert.Less(chain.r, 15);
         Assert.Greater(neck.r, 240); Assert.Less(neck.g, 10);
+        Assert.Greater(hair.a, 240, "Only the authored hair region owns material alpha.");
+        Assert.AreEqual(0, cloth.a); Assert.AreEqual(0, chain.a); Assert.AreEqual(0, neck.a);
+        Assert.IsTrue(System.Array.Exists(pixels, p => p.a > 0 && p.a < 255), "Hair edges retain coverage feathering.");
         Assert.Greater(at(558,393).g, 240, "The round strap fastener is metal.");
         Assert.Less(at(648,501).g, 15, "The central buckle inset remains leather.");
     }

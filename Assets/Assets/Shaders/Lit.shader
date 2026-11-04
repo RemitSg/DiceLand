@@ -31,6 +31,7 @@ Shader "Assets/Shaders/Lit"
         [HideInInspector] _ForestSheenStrength ("Forest fabric sheen", Range(0,1)) = 0
         [HideInInspector] _ForestSkinScatterStrength ("Forest skin light transition", Range(0,1)) = 0
         [HideInInspector] _ForestMetalReflectionStrength ("Forest metal environment reflection", Range(0,2)) = 0
+        [HideInInspector] _ForestHairParams ("Forest hair direction and strength", Vector) = (1,0,0,0)
         [HideInInspector] _ForestSunEdgeStrength ("Forest sunlit silhouette", Range(0,1)) = 0
     }
 
@@ -95,6 +96,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength, _ForestSunEdgeStrength;
             float _ForestSkinScatterStrength;
             float _ForestMetalReflectionStrength;
+            float4 _ForestHairParams;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
@@ -201,6 +203,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength, _ForestSunEdgeStrength;
             float _ForestSkinScatterStrength;
             float _ForestMetalReflectionStrength;
+            float4 _ForestHairParams;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);
@@ -343,6 +346,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength, _ForestSunEdgeStrength;
             float _ForestSkinScatterStrength;
             float _ForestMetalReflectionStrength;
+            float4 _ForestHairParams;
             CBUFFER_END
 
             TEXTURE2D(_MainTex);       SAMPLER(sampler_MainTex);
@@ -425,7 +429,8 @@ Shader "Assets/Shaders/Lit"
             }
             
             float3 CalculateLighting(float3 albedo, float3 normalWS, float3 positionWS, 
-                                     float3 viewDirWS, float4 shadowCoord, float surfaceWeight, half3 material, float materialWeight)
+                                     float3 viewDirWS, float4 shadowCoord, float surfaceWeight, half3 material, float materialWeight,
+                                     float hairWeight, float3 hairTangentWS)
             {
                 float pigmentWeight = saturate(surfaceWeight * _ForestPigmentStrength);
                 if (pigmentWeight > 0.001)
@@ -474,6 +479,9 @@ Shader "Assets/Shaders/Lit"
                     if (_ForestSheenStrength > 0.001 && materialWeight > 0.001)
                         reflected += DiceLandForestFabricSheen(albedo, material, NdotH,
                             dot(normalWS,viewDirWS),NdotL_main) * (_ForestSheenStrength * materialWeight);
+                    if (hairWeight > 0.001)
+                        reflected += DiceLandForestHairSpecular(albedo, material.b, normalWS, hairTangentWS,
+                            halfDir, NdotL_main) * hairWeight;
                     totalSpecular += mainLight.color * reflected
                                      * mainLight.shadowAttenuation * mainLight.distanceAttenuation;
                 }
@@ -510,6 +518,9 @@ Shader "Assets/Shaders/Lit"
                         if (_ForestSheenStrength > 0.001 && materialWeight > 0.001)
                             reflected += DiceLandForestFabricSheen(albedo, material, NdotH,
                                 dot(normalWS,viewDirWS),NdotL) * (_ForestSheenStrength * materialWeight);
+                        if (hairWeight > 0.001)
+                            reflected += DiceLandForestHairSpecular(albedo, material.b, normalWS, hairTangentWS,
+                                halfDir, NdotL) * hairWeight;
                         totalSpecular += light.color * reflected * lightAttenuation;
                     }
                 }
@@ -585,8 +596,22 @@ Shader "Assets/Shaders/Lit"
                 if (materialWeight > 0.001)
                     materialData = SAMPLE_TEXTURE2D(_ForestMaterialMap, sampler_ForestMaterialMap, i.uv);
                 half3 material = materialData.rgb;
+                float hairWeight = 0.0;
+                float3 hairTangentWS = float3(1,0,0);
+                if (_ForestHairParams.z > 0.001 && _ForestEmissionWeight < 0.001 && materialWeight > 0.001)
+                {
+                    hairWeight = saturate(_ForestHairParams.z) * materialWeight * materialData.a
+                        * (1.0 - saturate(material.r)) * (1.0 - saturate(material.g));
+                    float3 flow = float3(_ForestHairParams.xy * _ForestFormParams.yz, 0);
+                    if (dot(flow, flow) < 0.0001) flow = float3(1,0,0);
+                    float3 worldFlow = TransformObjectToWorldDir(flow);
+                    float3 projectedFlow = worldFlow - normalWS * dot(worldFlow, normalWS);
+                    if (dot(projectedFlow, projectedFlow) < 0.0001)
+                        projectedFlow = cross(float3(0,1,0), normalWS);
+                    hairTangentWS = SafeNormalize(projectedFlow);
+                }
                 float3 litColor = CalculateLighting(baseColor.rgb, normalWS, i.positionWS,
-                                                    viewDirWS, shadowCoord, surfaceWeight, material, materialWeight);
+                                                    viewDirWS, shadowCoord, surfaceWeight, material, materialWeight, hairWeight, hairTangentWS);
                 if (_ForestMetalReflectionStrength > 0.001 && materialWeight > 0.001)
                     litColor += DiceLandForestMetalEnvironment(baseColor.rgb, material, normalWS, viewDirWS)
                         * (_ForestMetalReflectionStrength * materialWeight);
@@ -686,6 +711,7 @@ Shader "Assets/Shaders/Lit"
             float _ForestMaterialWeight, _ForestEmissionWeight, _ForestSheenStrength, _ForestSunEdgeStrength;
             float _ForestSkinScatterStrength;
             float _ForestMetalReflectionStrength;
+            float4 _ForestHairParams;
             CBUFFER_END
             TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
             TEXTURE2D(_AlphaTex); SAMPLER(sampler_AlphaTex);

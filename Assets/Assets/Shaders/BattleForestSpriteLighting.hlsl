@@ -103,6 +103,22 @@ float DiceLandForestMaterialDiffuse(half3 material, float incidence)
     return (0.30 + 0.96 * wrapped) * lerp(0.94, 0.55, material.g);
 }
 
+half3 DiceLandForestHairSpecular(half3 albedo, float roughness, float3 normalWS,
+    float3 tangentWS, float3 halfDirection, float incidence)
+{
+    // Shifted tangent lobes approximate fibre highlights on the painted hair surface.
+    float3 primaryTangent = SafeNormalize(tangentWS + normalWS * 0.15);
+    float3 secondaryTangent = SafeNormalize(tangentWS - normalWS * 0.20);
+    float primaryDot = dot(primaryTangent, halfDirection);
+    float secondaryDot = dot(secondaryTangent, halfDirection);
+    float exponent = lerp(96.0, 24.0, saturate(roughness));
+    float primary = pow(sqrt(saturate(1.0 - primaryDot * primaryDot)), exponent);
+    float secondary = pow(sqrt(saturate(1.0 - secondaryDot * secondaryDot)), exponent * 0.5);
+    float pigment = smoothstep(0.008, 0.04, dot(albedo, half3(0.2126,0.7152,0.0722)));
+    return (half3(0.10,0.09,0.075) * primary + sqrt(max(albedo, half3(0,0,0))) * (0.10 * secondary))
+        * (saturate(incidence) * pigment);
+}
+
 half3 DiceLandForestSkinScatter(half3 albedo, half3 material, float incidence)
 {
     // A colored wrap near the terminator, not thickness-based subsurface transport.

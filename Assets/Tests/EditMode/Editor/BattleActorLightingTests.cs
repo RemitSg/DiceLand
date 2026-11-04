@@ -299,6 +299,64 @@ public sealed class BattleActorLightingTests
         Assert.IsFalse(library.UsesEmissiveAlpha(sprite));
         Assert.IsFalse(library.UsesFabricSheen(sprite));
         Assert.AreEqual(0f,body.sharedMaterial.GetFloat("_ForestSheenStrength"));
+        Assert.IsFalse(library.UsesHairAlpha(sprite));
+        Assert.AreEqual(0f,body.sharedMaterial.GetVector("_ForestHairParams").z);
+    }
+
+    [Test]
+    public void AuthoredHairBindsItsFlowAndClearsOnSpriteReplacementWithoutChangingSharedMaterials()
+    {
+        SpriteRenderer body=CreateActor("Hair binding",allies,Vector3.up*2f,false);
+        var library=ScriptableObject.CreateInstance<BattleActorFormLibrary>();
+        var form=new Texture2D(4,8,TextureFormat.RGBA32,false,true);
+        var hairMap=new Texture2D(4,8,TextureFormat.RGBA32,false,true);
+        resources.Add(library);resources.Add(form);resources.Add(hairMap);
+        typeof(BattleActorFormLibrary).GetField("entries",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)
+            .SetValue(library,new[]{new BattleActorFormLibrary.Entry{sprite=sprite,formMap=form,materialMap=hairMap,hairAlpha=true,hairDirection=new Vector2(-.96f,.28f)}});
+        typeof(BattleActorFormLibrary).GetField("silhouetteAlpha",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(library,true);
+        lighting.Configure(allies,enemies,library);lighting.UpdateLighting();
+        Material runtime=body.sharedMaterial;
+        Assert.That(Vector4.Distance(new Vector4(-.96f,.28f,1,0),runtime.GetVector("_ForestHairParams")),Is.LessThan(.0001f));
+        Assert.AreEqual(0,material.GetVector("_ForestHairParams").z);
+        Assert.AreEqual(0,runtime.GetFloat("_ForestEmissionWeight"));
+        Assert.AreSame(form,library.FindShadowMask(sprite),"Hair coverage must never replace the independent shadow silhouette.");
+        body.flipX=true;body.flipY=true;lighting.UpdateLighting();
+        Assert.AreEqual(-1,runtime.GetVector("_ForestFormParams").y);
+        Assert.AreEqual(-1,runtime.GetVector("_ForestFormParams").z);
+        Assert.That(Vector4.Distance(new Vector4(-.96f,.28f,1,0),runtime.GetVector("_ForestHairParams")),Is.LessThan(.0001f));
+        Sprite replacement=Sprite.Create(texture,new Rect(0,0,4,8),Vector2.one*.5f,2f);resources.Add(replacement);
+        body.sprite=replacement;lighting.UpdateLighting();
+        Assert.AreEqual(0,runtime.GetVector("_ForestHairParams").z);
+        lighting.ReleaseLighting();Assert.AreSame(material,body.sharedMaterial);Assert.IsTrue(runtime==null);
+    }
+
+    [Test]
+    public void HairCoverageRequiresAnExplicitNonEmissiveMaterialMap()
+    {
+        var library=ScriptableObject.CreateInstance<BattleActorFormLibrary>();var map=new Texture2D(4,8);
+        resources.Add(library);resources.Add(map);
+        var field=typeof(BattleActorFormLibrary).GetField("entries",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+        field.SetValue(library,new[]{new BattleActorFormLibrary.Entry{sprite=sprite,materialMap=map,hairAlpha=true,emissiveAlpha=true}});
+        Assert.IsFalse(library.UsesHairAlpha(sprite));Assert.IsTrue(library.UsesEmissiveAlpha(sprite));
+        var body=CreateActor("Conflicting alpha tags",allies,Vector3.up*2f,false);lighting.Configure(allies,enemies,library);lighting.UpdateLighting();
+        Assert.AreEqual(0,body.sharedMaterial.GetVector("_ForestHairParams").z);Assert.AreEqual(1,body.sharedMaterial.GetFloat("_ForestEmissionWeight"));
+        field.SetValue(library,new[]{new BattleActorFormLibrary.Entry{sprite=sprite,hairAlpha=true}});
+        Assert.IsFalse(library.UsesHairAlpha(sprite));Assert.IsFalse(library.UsesHairAlpha(null));
+    }
+
+    [Test]
+    public void HairFlowNormalizesAuthoredDirectionsAndFallsBackForInvalidData()
+    {
+        var library=ScriptableObject.CreateInstance<BattleActorFormLibrary>();resources.Add(library);
+        var field=typeof(BattleActorFormLibrary).GetField("entries",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+        foreach(var direction in new[]{Vector2.zero,new Vector2(float.NaN,1),new Vector2(float.PositiveInfinity,0)})
+        {
+            field.SetValue(library,new[]{new BattleActorFormLibrary.Entry{sprite=sprite,hairDirection=direction}});
+            Assert.AreEqual(Vector2.right,library.FindHairDirection(sprite));
+        }
+        field.SetValue(library,new[]{new BattleActorFormLibrary.Entry{sprite=sprite,hairDirection=new Vector2(3,4)}});
+        Assert.That(Vector2.Distance(new Vector2(.6f,.8f),library.FindHairDirection(sprite)),Is.LessThan(.0001f));
+        Assert.AreEqual(Vector2.right,library.FindHairDirection(null));
     }
 
     [Test]

@@ -23,6 +23,9 @@ public sealed class BattleActorFormLibrary : ScriptableObject
         // Legacy material maps have silhouette A; emission must be explicitly opted in.
         public bool emissiveAlpha;
         public bool fabricSheen;
+        // Material A is hair coverage only on tagged, non-emissive maps.
+        public bool hairAlpha;
+        public Vector2 hairDirection;
         public EmissionLight[] emissionLights;
     }
 
@@ -61,6 +64,28 @@ public sealed class BattleActorFormLibrary : ScriptableObject
         foreach (Entry entry in entries)
             if (entry.sprite == sprite) return entry.materialMap != null && entry.fabricSheen;
         return false;
+    }
+
+    public bool UsesHairAlpha(Sprite sprite)
+    {
+        if (sprite == null || sprite.packed) return false;
+        foreach (Entry entry in entries)
+            if (entry.sprite == sprite)
+                return entry.materialMap != null && entry.hairAlpha && !entry.emissiveAlpha;
+        return false;
+    }
+
+    public Vector2 FindHairDirection(Sprite sprite)
+    {
+        if (sprite == null || sprite.packed) return Vector2.right;
+        foreach (Entry entry in entries)
+            if (entry.sprite == sprite)
+            {
+                float lengthSquared = entry.hairDirection.sqrMagnitude;
+                return !float.IsNaN(lengthSquared) && !float.IsInfinity(lengthSquared) && lengthSquared > 0.0001f
+                    ? entry.hairDirection / Mathf.Sqrt(lengthSquared) : Vector2.right;
+            }
+        return Vector2.right;
     }
 
     public Texture2D Find(Sprite sprite)

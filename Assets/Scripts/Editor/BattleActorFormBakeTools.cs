@@ -81,6 +81,8 @@ public static class BattleActorFormBakeTools
                     materialMap = previousLibrary != null ? previousLibrary.FindMaterialMap(sprite) : null,
                     emissiveAlpha = previousLibrary != null && previousLibrary.UsesEmissiveAlpha(sprite),
                     fabricSheen = previousLibrary != null && previousLibrary.UsesFabricSheen(sprite),
+                    hairAlpha = previousLibrary != null && previousLibrary.UsesHairAlpha(sprite),
+                    hairDirection = previousLibrary != null ? previousLibrary.FindHairDirection(sprite) : Vector2.right,
                     emissionLights = previousLibrary != null ? previousLibrary.FindEmissionLights(sprite) : null });
             }
             finally
@@ -107,6 +109,8 @@ public static class BattleActorFormBakeTools
             entries.GetArrayElementAtIndex(i).FindPropertyRelative("materialMap").objectReferenceValue = maps[i].materialMap;
             entries.GetArrayElementAtIndex(i).FindPropertyRelative("emissiveAlpha").boolValue = maps[i].emissiveAlpha;
             entries.GetArrayElementAtIndex(i).FindPropertyRelative("fabricSheen").boolValue = maps[i].fabricSheen;
+            entries.GetArrayElementAtIndex(i).FindPropertyRelative("hairAlpha").boolValue = maps[i].hairAlpha;
+            entries.GetArrayElementAtIndex(i).FindPropertyRelative("hairDirection").vector2Value = maps[i].hairDirection;
             WriteEmissionLights(entries.GetArrayElementAtIndex(i),maps[i].emissionLights);
         }
         serialized.ApplyModifiedPropertiesWithoutUndo();

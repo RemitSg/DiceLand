@@ -72,7 +72,7 @@ public static class BattleActorSurfaceBakeTools
                 {
                     int index=y*width+x;
                     bool inside=source.GetPixelBilinear((x + 0.5f) / width, (y + 0.5f) / height).a >= 0.5f;
-                    pixels[index].a=inside?(path==CoffinPath||path==AxePath?pixels[index].a:(byte)255):(byte)0;
+                    pixels[index].a=inside?(path==CoffinPath||path==AxePath||path==ManPath?pixels[index].a:(byte)255):(byte)0;
                 }
                 map.SetPixels32(pixels); map.Apply(true, true);
                 string mapPath = BattleActorFormBakeTools.Folder + "/" + sprite.name + " Surface.asset";
@@ -89,6 +89,8 @@ public static class BattleActorSurfaceBakeTools
                 entry.FindPropertyRelative("materialMap").objectReferenceValue = existing;
                 entry.FindPropertyRelative("emissiveAlpha").boolValue = path == CoffinPath || path == AxePath;
                 entry.FindPropertyRelative("fabricSheen").boolValue = path == ManPath || path == MollyPath;
+                entry.FindPropertyRelative("hairAlpha").boolValue = path == ManPath;
+                entry.FindPropertyRelative("hairDirection").vector2Value = path == ManPath ? new Vector2(-0.96f, 0.28f) : Vector2.right;
             }
             finally
             {
@@ -128,6 +130,7 @@ public static class BattleActorSurfaceBakeTools
         if (width < 2 || height < 2) throw new ArgumentException("A material map needs at least 2x2 pixels.");
         Region[] regions = Regions(sourcePath);
         if (regions == null) throw new ArgumentException("No authored material regions for " + sourcePath);
+        Region hair = sourcePath == ManPath ? ManHairRegion() : null;
         Color32[] pixels = new Color32[width * height];
         for (int y = 0; y < height; y++)
         for (int x = 0; x < width; x++)
@@ -137,6 +140,7 @@ public static class BattleActorSurfaceBakeTools
                 : sourcePath == AxePath ? new Color(0,1,0.36f,0) : Cloth;
             foreach (Region region in regions)
                 value = Color.Lerp(value, region.value, Coverage(point, region.points));
+            if (hair != null) value.a = Coverage(point, hair.points);
             pixels[y * width + x] = value;
         }
         return pixels;
@@ -343,7 +347,7 @@ public static class BattleActorSurfaceBakeTools
             Shape(Metal,1230,1478, 973,974, 1042,967, 1100,1023, 1084,1085, 1049,1128, 1005,1113, 958,1076, 952,1028),
             Shape(Skin,1230,1478, 706,113, 729,103, 761,112, 783,127, 791,150, 797,185, 786,191, 785,205, 798,213, 786,221, 777,247, 778,274, 772,280, 738,279, 690,263, 679,248, 675,214, 660,207, 648,197, 644,177, 652,161, 663,160, 672,172, 682,184, 693,157, 695,140),
             // Hair stays nonmetal and loses the cloth sheen; roughness controls its broad highlight.
-            Shape(new Color(0,0,.64f,1),1230,1478, 539,103, 572,82, 570,38, 612,53, 659,40, 664,3, 711,43, 744,13, 773,57, 797,105, 813,106, 823,121, 794,113, 775,103, 730,102, 706,113, 695,140, 693,157, 682,184, 663,160, 652,161, 644,177, 648,197, 612,194, 577,181, 539,155, 561,141),
+            ManHairRegion(),
             Shape(Metal,1230,1478, 544,373, 563,370, 581,383, 579,407, 562,421, 543,410, 539,390),
             Shape(Metal,1230,1478, 768,334, 791,333, 806,351, 801,377, 784,391, 764,382, 755,360),
             Shape(Metal,1230,1478, 648,473, 676,499, 653,530, 623,505),
@@ -375,6 +379,11 @@ public static class BattleActorSurfaceBakeTools
         if(path==CoffinPath)return CoffinRegions();
         if(path==AxePath)return AxeRegions();
         return null;
+    }
+
+    private static Region ManHairRegion()
+    {
+        return Shape(new Color(0,0,.64f,1),1230,1478, 539,103, 572,82, 570,38, 612,53, 659,40, 664,3, 711,43, 744,13, 773,57, 797,105, 813,106, 823,121, 794,113, 775,103, 730,102, 706,113, 695,140, 693,157, 682,184, 663,160, 652,161, 644,177, 648,197, 612,194, 577,181, 539,155, 561,141);
     }
 
     private static Region[] AxeRegions()
