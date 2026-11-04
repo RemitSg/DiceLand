@@ -163,6 +163,7 @@ public partial class BattleSettlementOverlay
         walletRoot.localScale = Vector3.one * Mathf.Min(1, Mathf.Max(0.5f, scale));
         settlementViewport = viewport;
         settlementSafePixels = safePixels;
+        if (lootDetailView != null) lootDetailView.ApplyViewport(viewport, safe);
     }
 
     private void BuildPortraitSummaryRows(IReadOnlyList<BattleSettlementEntry> entries)

@@ -331,6 +331,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
 
     private void OnDisable()
     {
+        HideLootDetailModal();
         if (showRoutine != null) { StopCoroutine(showRoutine); showRoutine = null; }
         CancelPresentation();
         SetVisible(false);
@@ -367,6 +368,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
 
     public void HideResult()
     {
+        HideLootDetailModal();
         if (showRoutine != null)
         {
             StopCoroutine(showRoutine);
@@ -527,7 +529,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
     {
         currentSelectedLootView = null;
         if (lootDetailView != null)
-            lootDetailView.Hide();
+            lootDetailView.HideImmediately();
         if (lootDetailModalRoot != null)
             lootDetailModalRoot.gameObject.SetActive(false);
         UpdateLootSlotColors();
@@ -936,59 +938,16 @@ public partial class BattleSettlementOverlay : MonoBehaviour
 
     private void BuildLootDetailModalRoot()
     {
-        if (overlayRoot == null)
-            return;
-
-        lootDetailModalBackdropImage = CreateImage(overlayRoot, "LootDetailBackdrop", new Color(0f, 0f, 0f, 0.42f), null);
-        lootDetailModalRoot = lootDetailModalBackdropImage.rectTransform;
-        lootDetailModalRoot.anchorMin = Vector2.zero;
-        lootDetailModalRoot.anchorMax = Vector2.one;
-        lootDetailModalRoot.offsetMin = Vector2.zero;
-        lootDetailModalRoot.offsetMax = Vector2.zero;
-
-        Button backdropButton = lootDetailModalBackdropImage.gameObject.AddComponent<Button>();
-        backdropButton.transition = Selectable.Transition.None;
-        backdropButton.onClick.AddListener(HideLootDetailModal);
-
-        Image panelImage = CreateImage(lootDetailModalRoot, "LootDetailPanel", lootDetailPanelColor, lootDetailBackgroundSprite);
-        Button panelClickBlocker = panelImage.gameObject.AddComponent<Button>();
-        panelClickBlocker.transition = Selectable.Transition.None;
-        RectTransform detailRoot = panelImage.rectTransform;
-        detailRoot.anchorMin = new Vector2(0.5f, 0.5f);
-        detailRoot.anchorMax = new Vector2(0.5f, 0.5f);
-        detailRoot.pivot = new Vector2(0.5f, 0.5f);
-        detailRoot.sizeDelta = lootDetailPanelSize;
-        detailRoot.anchoredPosition = Vector2.zero;
-
-        Image icon = CreateImage(detailRoot, "Icon", Color.white, GetFallbackLootSprite());
-        RectTransform iconRect = icon.rectTransform;
-        iconRect.anchorMin = new Vector2(0f, 1f);
-        iconRect.anchorMax = new Vector2(0f, 1f);
-        iconRect.pivot = new Vector2(0f, 1f);
-        iconRect.anchoredPosition = new Vector2(34f, -34f);
-        iconRect.sizeDelta = lootDetailIconSize;
-        icon.preserveAspect = true;
-
-        TextMeshProUGUI title = CreateModalText(detailRoot, "Title", new Vector2(168f, -28f), new Vector2(lootDetailPanelSize.x - 244f, 46f), lootTitleFontSize + 4f, lootTitleColor, string.Empty, true);
-        TextMeshProUGUI meta = CreateModalText(detailRoot, "Meta", new Vector2(168f, -82f), new Vector2(lootDetailPanelSize.x - 244f, 34f), lootBodyFontSize, expTextColor, string.Empty, true);
-        TextMeshProUGUI description = CreateModalText(detailRoot, "Description", new Vector2(168f, -126f), new Vector2(lootDetailPanelSize.x - 210f, lootDetailPanelSize.y - 162f), lootBodyFontSize, lootTextColor, string.Empty, false);
-        description.enableWordWrapping = true;
-        description.overflowMode = TextOverflowModes.Overflow;
-
-        TextMeshProUGUI relicAdditionalDescription = CreateModalText(detailRoot, "RelicAdditionalDescription", new Vector2(34f, -lootDetailPanelSize.y + 92f), new Vector2(lootDetailPanelSize.x - 68f, 54f), lootBodyFontSize - 2f, expTextColor, string.Empty, false);
-        relicAdditionalDescription.enableWordWrapping = true;
-        relicAdditionalDescription.overflowMode = TextOverflowModes.Overflow;
-        relicAdditionalDescription.gameObject.SetActive(false);
-
-        TextMeshProUGUI actionStatus = CreateModalText(detailRoot, "ActionStatus", new Vector2(34f, -lootDetailPanelSize.y + 34f), new Vector2(lootDetailPanelSize.x - 132f, 34f), lootBodyFontSize - 2f, expTextColor, string.Empty, false);
-        Button action = CreateModalButton(detailRoot, "ActionButton", new Vector2(0f, 0f), new Vector2(0f, 0f), string.Empty, null);
-        action.gameObject.SetActive(false);
-        Button close = CreateModalButton(detailRoot, "CloseButton", new Vector2(lootDetailPanelSize.x - 58f, -18f), new Vector2(44f, 44f), "X", HideLootDetailModal);
-
-        lootDetailView = detailRoot.gameObject.AddComponent<MapInventoryDetailView>();
-        lootDetailView.ConfigureRuntime(icon, title, meta, description, relicAdditionalDescription, actionStatus, action, close);
+        if (overlayRoot == null) return;
+        lootDetailView = MapInventoryDetailView.Create(overlayRoot, "LootDetailPanel");
         lootDetailView.ConfigureFonts(titleFont != null ? titleFont : bodyFont, bodyFont);
-        lootDetailModalRoot.gameObject.SetActive(false);
+        lootDetailModalRoot = lootDetailView.ModalRoot;
+        lootDetailModalBackdropImage = lootDetailView.Backdrop;
+        lootDetailView.Hidden += () =>
+        {
+            currentSelectedLootView = null;
+            UpdateLootSlotColors();
+        };
     }
 
     private void BuildRelicChoiceModalRoot()

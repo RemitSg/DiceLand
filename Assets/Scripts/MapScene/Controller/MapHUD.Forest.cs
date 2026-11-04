@@ -91,6 +91,7 @@ public partial class MapHUD
         rootRect.anchoredPosition = Vector2.zero;
         rootRect.sizeDelta = referenceSize / Mathf.Max(0.1f, scale);
         rootRect.localScale = Vector3.one * scale;
+        if (runtimeInventoryDetailView != null) runtimeInventoryDetailView.ApplyViewport(viewport, safe);
         forestLastViewport = viewport;
         forestLastSafeArea = safePixels;
         ApplyPartyPanelLayout();

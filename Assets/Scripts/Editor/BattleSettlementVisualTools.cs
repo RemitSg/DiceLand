@@ -96,18 +96,19 @@ public static class BattleSettlementVisualTools
         return data;
     }
 
-    public static string Capture(string name, int width, int height, float seconds, Rect? safe = null, int partyCount = 2, int lootCount = 6, bool victory = true)
+    public static string Capture(string name, int width, int height, float seconds, Rect? safe = null, int partyCount = 2, int lootCount = 6, bool victory = true, Action<BattleSettlementOverlay> customize = null)
     {
         Scene original = SceneManager.GetActiveScene();
         Scene preview = EditorSceneManager.NewPreviewScene();
         RenderTexture previous = RenderTexture.active, target = null;
         Texture2D pixels = null;
         GameObject host = null;
+        Camera camera = null;
         try
         {
             host = new GameObject("SettlementVisualPreview", typeof(EventSystem)); SceneManager.MoveGameObjectToScene(host, preview);
             GameObject cameraHost = new GameObject("SettlementPreviewCamera", typeof(Camera)); SceneManager.MoveGameObjectToScene(cameraHost, preview);
-            Camera camera = cameraHost.GetComponent<Camera>(); camera.scene = preview; camera.orthographic = true; camera.orthographicSize = 5;
+            camera = cameraHost.GetComponent<Camera>(); camera.scene = preview; camera.orthographic = true; camera.orthographicSize = 5;
             camera.aspect = width / (float)height; camera.transform.position = new Vector3(0, 0, -10); camera.clearFlags = CameraClearFlags.SolidColor;
             camera.backgroundColor = new Color(0.015f, 0.035f, 0.025f);
             GameObject light = new GameObject("SettlementPreviewLight", typeof(Light)); SceneManager.MoveGameObjectToScene(light, preview);
@@ -137,6 +138,7 @@ public static class BattleSettlementVisualTools
                     if (canvas.renderMode != RenderMode.WorldSpace) ConvertCanvas(canvas, camera, width, height, -4);
                 Canvas.ForceUpdateCanvases();
             }
+            customize?.Invoke(overlay);
             foreach (TMP_Text text in main.GetComponentsInChildren<TMP_Text>(true)) if (text.gameObject.activeInHierarchy) text.ForceMeshUpdate(true, true);
             foreach (Graphic graphic in main.GetComponentsInChildren<Graphic>())
             {
@@ -153,6 +155,7 @@ public static class BattleSettlementVisualTools
         finally
         {
             RenderTexture.active = previous;
+            if (camera != null) camera.targetTexture = null;
             if (pixels != null) UnityEngine.Object.DestroyImmediate(pixels);
             if (target != null) UnityEngine.Object.DestroyImmediate(target);
             if (host != null) UnityEngine.Object.DestroyImmediate(host);

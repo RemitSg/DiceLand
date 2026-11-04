@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
-public class MapInventoryDetailView : MonoBehaviour
+public partial class MapInventoryDetailView : MonoBehaviour
 {
     [SerializeField] private Image iconImage;
     [SerializeField] private TextMeshProUGUI titleText;
@@ -19,7 +19,10 @@ public class MapInventoryDetailView : MonoBehaviour
     {
         MapItemIconFit.Attach(iconImage);
         if (closeButton != null)
+        {
+            closeButton.onClick.RemoveListener(Hide);
             closeButton.onClick.AddListener(Hide);
+        }
     }
 
     public void ConfigureRuntime(Image icon, TextMeshProUGUI title, TextMeshProUGUI meta, TextMeshProUGUI description, TextMeshProUGUI relicAdditionalDescription, TextMeshProUGUI actionStatus, Button action, Button close)
@@ -43,12 +46,15 @@ public class MapInventoryDetailView : MonoBehaviour
 
     public void ConfigureFonts(TMP_FontAsset keywordFont, TMP_FontAsset bodyFont)
     {
+        detailHeadingFont = keywordFont;
+        detailBodyFont = bodyFont != null ? bodyFont : keywordFont;
         EnsureFontFallback(keywordFont, bodyFont);
         ApplyFont(titleText, keywordFont);
         ApplyFont(metaText, keywordFont);
         ApplyFont(descriptionText, bodyFont != null ? bodyFont : keywordFont);
         ApplyFont(relicAdditionalDescriptionText, bodyFont != null ? bodyFont : keywordFont);
         ApplyFont(actionStatusText, bodyFont != null ? bodyFont : keywordFont);
+        ApplyPresentationFonts();
 
         if (actionButton != null)
         {
@@ -74,29 +80,12 @@ public class MapInventoryDetailView : MonoBehaviour
         }
 
         LootItem_SO item = lootState.lootItem;
-        if (iconImage != null)
-        {
-            iconImage.sprite = item.icon != null ? item.icon : fallbackSprite;
-            iconImage.preserveAspect = true;
-        }
-
-        if (titleText != null)
-            titleText.text = string.IsNullOrWhiteSpace(item.lootName) ? lootState.DisplayName : item.lootName;
-
-        if (metaText != null)
-        {
-            string attributeName = item.attribute != null && !string.IsNullOrWhiteSpace(item.attribute.attributeName)
-                ? item.attribute.attributeName
-                : "\u65e0\u5c5e\u6027";
-            metaText.text = $"{BuildColoredLootRarityLabel(item.rarity)} | {attributeName} | x{Mathf.Max(1, lootState.amount)}";
-        }
-
-        if (descriptionText != null)
-            descriptionText.text = string.IsNullOrWhiteSpace(item.description) ? "\u6682\u65e0\u63cf\u8ff0\u3002" : item.description;
-
-        SetRelicAdditionalDescription(string.Empty);
-        ConfigureActionButton(string.Empty, false, null, string.Empty);
-        gameObject.SetActive(true);
+        string attribute = item.attribute != null && !string.IsNullOrWhiteSpace(item.attribute.attributeName)
+            ? item.attribute.attributeName : "无属性";
+        PresentItem(item, item.icon != null ? item.icon : fallbackSprite,
+            string.IsNullOrWhiteSpace(item.lootName) ? lootState.DisplayName : item.lootName,
+            GetLootRarityLabel(item.rarity), GetLootRarityColor(item.rarity), attribute, lootState.amount,
+            item.description, string.Empty);
     }
 
     public void Show(RunWeaponState weaponState, Sprite fallbackSprite = null)
@@ -108,23 +97,10 @@ public class MapInventoryDetailView : MonoBehaviour
         }
 
         Weapon_SO weapon = weaponState.weaponData;
-        if (iconImage != null)
-        {
-            iconImage.sprite = weapon.icon != null ? weapon.icon : fallbackSprite;
-            iconImage.preserveAspect = true;
-        }
-
-        if (titleText != null)
-            titleText.text = string.IsNullOrWhiteSpace(weapon.weaponName) ? weaponState.DisplayName : weapon.weaponName;
-
-        if (metaText != null)
-            metaText.text = $"{BuildColoredWeaponRarityLabel(weapon.rarity)} | {GetWeaponTypeLabel(weapon.weaponType)} | x{Mathf.Max(1, weaponState.amount)}";
-
-        if (descriptionText != null)
-            descriptionText.text = string.IsNullOrWhiteSpace(weapon.description) ? "\u6682\u65e0\u63cf\u8ff0\u3002" : weapon.description;
-
-        SetRelicAdditionalDescription(string.Empty);
-        gameObject.SetActive(true);
+        PresentItem(weapon, weapon.icon != null ? weapon.icon : fallbackSprite,
+            string.IsNullOrWhiteSpace(weapon.weaponName) ? weaponState.DisplayName : weapon.weaponName,
+            GetWeaponRarityLabel(weapon.rarity), GetWeaponRarityColor(weapon.rarity), GetWeaponTypeLabel(weapon.weaponType),
+            weaponState.amount, weapon.description, string.Empty);
     }
 
     public void Show(RunBlueprintState blueprintState, Sprite fallbackSprite = null)
@@ -136,29 +112,11 @@ public class MapInventoryDetailView : MonoBehaviour
         }
 
         CraftingBlueprint_SO blueprint = blueprintState.blueprintData;
-        if (iconImage != null)
-        {
-            iconImage.sprite = blueprint.DisplayIcon != null ? blueprint.DisplayIcon : fallbackSprite;
-            iconImage.preserveAspect = true;
-        }
-
-        if (titleText != null)
-            titleText.text = blueprint.DisplayName;
-
-        if (metaText != null)
-        {
-            string weaponName = blueprint.targetWeapon != null && !string.IsNullOrWhiteSpace(blueprint.targetWeapon.weaponName)
-                ? blueprint.targetWeapon.weaponName
-                : "\u672a\u914d\u7f6e\u6b66\u5668";
-            metaText.text = $"{BuildColoredLootRarityLabel(blueprint.rarity)} | {weaponName} | x{Mathf.Max(1, blueprintState.amount)}";
-        }
-
-        if (descriptionText != null)
-            descriptionText.text = BuildBlueprintDescription(blueprint);
-
-        SetRelicAdditionalDescription(string.Empty);
-        ConfigureActionButton(string.Empty, false, null, string.Empty);
-        gameObject.SetActive(true);
+        string target = blueprint.targetWeapon != null && !string.IsNullOrWhiteSpace(blueprint.targetWeapon.weaponName)
+            ? blueprint.targetWeapon.weaponName : "未配置武器";
+        PresentItem(blueprint, blueprint.DisplayIcon != null ? blueprint.DisplayIcon : fallbackSprite, blueprint.DisplayName,
+            GetLootRarityLabel(blueprint.rarity), GetLootRarityColor(blueprint.rarity), "图纸", blueprintState.amount,
+            "锻造成品：" + target + "\n\n" + BuildBlueprintDescription(blueprint), string.Empty);
     }
 
     public void Show(RunRelicState relicState, Sprite fallbackSprite = null)
@@ -170,24 +128,34 @@ public class MapInventoryDetailView : MonoBehaviour
         }
 
         Relic_SO relic = relicState.relicData;
+        PresentItem(relic, relic.icon != null ? relic.icon : fallbackSprite, relic.DisplayName,
+            GetLootRarityLabel(relic.rarity), GetLootRarityColor(relic.rarity), "遗物", relicState.amount,
+            relic.description, relic.additionalDescription);
+    }
+
+    private void PresentItem(Object item, Sprite icon, string title, string rarity, Color rarityColor,
+        string category, int amount, string description, string additional)
+    {
+        bool changed = displayedItem != item;
+        if (changed) ConfigureActionButton(string.Empty, false, null, string.Empty);
+        displayedItem = item;
         if (iconImage != null)
         {
-            iconImage.sprite = relic.icon != null ? relic.icon : fallbackSprite;
+            iconImage.sprite = icon;
+            iconImage.enabled = icon != null;
             iconImage.preserveAspect = true;
         }
-
-        if (titleText != null)
-            titleText.text = relic.DisplayName;
-
+        if (titleText != null) titleText.text = title;
         if (metaText != null)
-            metaText.text = BuildColoredLootRarityLabel(relic.rarity);
-
-        if (descriptionText != null)
-            descriptionText.text = string.IsNullOrWhiteSpace(relic.description) ? "\u6682\u65e0\u63cf\u8ff0\u3002" : relic.description;
-
-        SetRelicAdditionalDescription(relic.additionalDescription);
-        ConfigureActionButton(string.Empty, false, null, string.Empty);
-        gameObject.SetActive(true);
+            metaText.text = modalRoot != null ? WrapWithColor(rarity, Color.Lerp(rarityColor, Color.white, 0.22f))
+                : $"{WrapWithColor(rarity, rarityColor)} | {category} | x{Mathf.Max(1, amount)}";
+        if (categoryText != null) categoryText.text = category;
+        if (quantityText != null) quantityText.text = "数量 ×" + Mathf.Max(1, amount);
+        if (rarityFace != null) { rarityFace.accent = rarityColor; rarityFace.SetVerticesDirty(); }
+        if (categoryFace != null) { categoryFace.electricElement = category == "电"; categoryFace.SetVerticesDirty(); }
+        if (descriptionText != null) descriptionText.text = string.IsNullOrWhiteSpace(description) ? "暂无描述。" : description;
+        SetRelicAdditionalDescription(additional);
+        BeginPresentation(changed);
     }
 
     public void ConfigureActionButton(string label, bool interactable, UnityEngine.Events.UnityAction onClick, string status)
@@ -208,13 +176,20 @@ public class MapInventoryDetailView : MonoBehaviour
 
         if (actionStatusText != null)
             actionStatusText.text = status ?? string.Empty;
+        if (actionFace != null) actionFace.SetState(false, interactable);
+        if (modalRoot != null) RefreshDescriptionLayout(false);
     }
 
     public void Hide()
     {
-        SetRelicAdditionalDescription(string.Empty);
-        ConfigureActionButton(string.Empty, false, null, string.Empty);
-        gameObject.SetActive(false);
+        if (!IsVisible || closing) return;
+        if (modalRoot == null || !Application.isPlaying || !gameObject.activeInHierarchy) HideImmediately();
+        else
+        {
+            closing = true;
+            panelGroup.interactable = false;
+            if (descriptionScroll != null) descriptionScroll.StopMovement();
+        }
     }
 
     private void SetRelicAdditionalDescription(string value)
@@ -225,16 +200,6 @@ public class MapInventoryDetailView : MonoBehaviour
         bool hasContent = !string.IsNullOrWhiteSpace(value);
         relicAdditionalDescriptionText.gameObject.SetActive(hasContent);
         relicAdditionalDescriptionText.text = hasContent ? value : string.Empty;
-    }
-
-    private static string BuildColoredLootRarityLabel(LootRarity rarity)
-    {
-        return WrapWithColor(GetLootRarityLabel(rarity), GetLootRarityColor(rarity));
-    }
-
-    private static string BuildColoredWeaponRarityLabel(Rarity rarity)
-    {
-        return WrapWithColor(GetWeaponRarityLabel(rarity), GetWeaponRarityColor(rarity));
     }
 
     private static string WrapWithColor(string value, Color color)
@@ -382,6 +347,7 @@ public class MapInventoryDetailView : MonoBehaviour
             return;
 
         text.font = font;
+        text.fontSharedMaterial = font.material;
         text.UpdateMeshPadding();
         text.SetAllDirty();
     }

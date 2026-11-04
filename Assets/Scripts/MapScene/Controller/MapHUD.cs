@@ -675,30 +675,9 @@ public partial class MapHUD : MonoBehaviour
 
     private void BuildInventoryDetail()
     {
-        RectTransform detailRoot = CreateRect("InventoryDetail", rootRect, new Vector2(0.5f, 0.5f), inventoryDetailOffset, inventoryDetailSize);
-        Image bg = detailRoot.gameObject.AddComponent<Image>();
-        bg.type = Image.Type.Sliced;
-        bg.sprite = inventoryDetailBackgroundSprite;
-        bg.color = inventoryDetailBackgroundSprite != null ? Color.white : panelColor;
-        detailRoot.gameObject.SetActive(false);
-
-        Image icon = CreateImage(detailRoot, "Icon", inventoryDetailIconOffset, inventoryDetailIconSize, null, Color.white);
-        TextMeshProUGUI title = CreateText(detailRoot, "Title", new Vector2(162f, -20f), new Vector2(inventoryDetailSize.x - 240f, 42f), titleFontSize, titleColor, string.Empty, keywordFont);
-        TextMeshProUGUI meta = CreateText(detailRoot, "Meta", new Vector2(162f, -68f), new Vector2(inventoryDetailSize.x - 240f, 34f), bodyFontSize, accentColor, string.Empty, keywordFont);
-        TextMeshProUGUI description = CreateText(detailRoot, "Description", new Vector2(162f, -112f), new Vector2(inventoryDetailSize.x - 200f, inventoryDetailSize.y - 132f), bodyFontSize, bodyColor, string.Empty, bodyFont);
-        description.enableWordWrapping = true;
-        description.overflowMode = TextOverflowModes.Overflow;
-        TextMeshProUGUI relicAdditionalDescription = CreateText(detailRoot, "RelicAdditionalDescription", inventoryDetailRelicAdditionalDescriptionOffset, inventoryDetailRelicAdditionalDescriptionSize, bodyFontSize - 2, inventoryDetailRelicAdditionalDescriptionColor, string.Empty, bodyFont);
-        relicAdditionalDescription.enableWordWrapping = true;
-        relicAdditionalDescription.overflowMode = TextOverflowModes.Overflow;
-        relicAdditionalDescription.gameObject.SetActive(false);
-        TextMeshProUGUI actionStatus = CreateText(detailRoot, "ActionStatus", inventoryDetailActionStatusOffset, inventoryDetailActionStatusSize, bodyFontSize - 2, accentColor, string.Empty, bodyFont);
-        Button action = BuildInventoryActionButton(detailRoot, "ActionButton", inventoryDetailActionButtonOffset, inventoryDetailActionButtonSize, string.Empty, null);
-
-        Button close = BuildSimpleButton(detailRoot, "CloseButton", new Vector2(inventoryDetailSize.x - 66f, -18f), new Vector2(48f, 48f), "X", HideInventoryDetail);
-        runtimeInventoryDetailView = detailRoot.gameObject.AddComponent<MapInventoryDetailView>();
-        runtimeInventoryDetailView.ConfigureRuntime(icon, title, meta, description, relicAdditionalDescription, actionStatus, action, close);
+        runtimeInventoryDetailView = MapInventoryDetailView.Create((RectTransform)canvas.transform, "InventoryDetail");
         runtimeInventoryDetailView.ConfigureFonts(keywordFont, bodyFont);
+        runtimeInventoryDetailView.Hidden += () => selectedInventoryState = null;
     }
 
     private void RefreshPartyPanel()
@@ -1039,43 +1018,7 @@ public partial class MapHUD : MonoBehaviour
         UpdateInventoryScrollLayout(false);
 
         if (runtimeInventoryDetailView != null)
-        {
-            RectTransform detailRect = runtimeInventoryDetailView.GetComponent<RectTransform>();
-            detailRect.anchorMin = new Vector2(0.5f, 0.5f);
-            detailRect.anchorMax = new Vector2(0.5f, 0.5f);
-            detailRect.pivot = new Vector2(0.5f, 0.5f);
-            detailRect.anchoredPosition = inventoryDetailOffset;
-            detailRect.sizeDelta = inventoryDetailSize;
-
-            Image detailBg = runtimeInventoryDetailView.GetComponent<Image>();
-            if (detailBg != null)
-            {
-                detailBg.sprite = inventoryDetailBackgroundSprite;
-                detailBg.color = inventoryDetailBackgroundSprite != null ? Color.white : panelColor;
-                detailBg.type = Image.Type.Sliced;
-            }
-
-            Transform detailIcon = runtimeInventoryDetailView.transform.Find("Icon");
-            if (detailIcon is RectTransform detailIconRect)
-                ApplyRect(detailIconRect, new Vector2(0f, 1f), inventoryDetailIconOffset, inventoryDetailIconSize);
-
-            Transform actionStatus = runtimeInventoryDetailView.transform.Find("ActionStatus");
-            if (actionStatus is RectTransform actionStatusRect)
-                ApplyRect(actionStatusRect, new Vector2(0f, 1f), inventoryDetailActionStatusOffset, inventoryDetailActionStatusSize);
-
-            Transform relicAdditionalDescription = runtimeInventoryDetailView.transform.Find("RelicAdditionalDescription");
-            if (relicAdditionalDescription is RectTransform relicAdditionalDescriptionRect)
-            {
-                ApplyRect(relicAdditionalDescriptionRect, new Vector2(0f, 1f), inventoryDetailRelicAdditionalDescriptionOffset, inventoryDetailRelicAdditionalDescriptionSize);
-                TMP_Text relicAdditionalDescriptionText = relicAdditionalDescriptionRect.GetComponent<TMP_Text>();
-                if (relicAdditionalDescriptionText != null)
-                    relicAdditionalDescriptionText.color = inventoryDetailRelicAdditionalDescriptionColor;
-            }
-
-            Transform actionButton = runtimeInventoryDetailView.transform.Find("ActionButton");
-            if (actionButton is RectTransform actionButtonRect)
-                ApplyRect(actionButtonRect, new Vector2(0f, 1f), inventoryDetailActionButtonOffset, inventoryDetailActionButtonSize);
-        }
+            runtimeInventoryDetailView.ApplyViewport(new Vector2(Screen.width, Screen.height), Screen.safeArea);
     }
 
     private void ToggleInventoryPanel()
@@ -1087,7 +1030,8 @@ public partial class MapHUD : MonoBehaviour
         inventoryPanelRect.gameObject.SetActive(nextState);
         if (!nextState)
         {
-            HideInventoryDetail();
+            selectedInventoryState = null;
+            if (runtimeInventoryDetailView != null) runtimeInventoryDetailView.HideImmediately();
             ResetCanvasSortOrder();
         }
         else
@@ -1112,7 +1056,8 @@ public partial class MapHUD : MonoBehaviour
         if (inventoryPanelRect != null)
             inventoryPanelRect.gameObject.SetActive(false);
 
-        HideInventoryDetail();
+        selectedInventoryState = null;
+        if (runtimeInventoryDetailView != null) runtimeInventoryDetailView.HideImmediately();
         ResetCanvasSortOrder();
     }
 

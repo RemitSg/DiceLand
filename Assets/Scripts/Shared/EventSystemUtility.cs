@@ -13,6 +13,9 @@ public static class EventSystemUtility
         }
 
         EventSystem preferred = ChoosePreferredSystem(systems);
+        // Editor previews and EditMode tests must not delete or mutate the user's loaded scene.
+        // Only the running game owns the lifetime and configuration of duplicate event systems.
+        if (!Application.isPlaying) return preferred;
         for (int i = 0; i < systems.Length; i++)
         {
             EventSystem system = systems[i];
