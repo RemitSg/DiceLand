@@ -1,0 +1,50 @@
+DiceLand 锻造面板优化理想参考图
+日期：2026-11-04（Asia/Singapore）
+生成方式：内置 image_gen；transparent_background=false。
+用途：现有地图锻造面板的视觉概念参考，供后续界面重制使用。
+正式参考图：docs/visuals/forge-panel-ideal-reference-20261104.png
+分辨率：1847×851，保持用户截图的超宽画幅。
+生成原文件：exec-b0fd66e6-dd8b-4495-ad5a-0b216bdd60ad.png（保留内置工具原文件）。
+SHA-256：6C8145C323A4FC8B58A80EF0A2196C30DAB5DF3F01AD5C8D9E063A40BF3E682C
+文件处理：原样复制，未改动生成像素；复制前后 SHA-256 一致。
+
+事实核对：
+- 原界面：Assets/Scripts/MapScene/Controller/MapCraftingOverlay.cs。
+- 锻造规则：Assets/Scripts/Shared/RunCraftingService.cs。
+- 图纸：Assets/Data/Scroll/202 ElectromagneticCleaver/ElectromagneticCleaver.asset。
+- 磁电之卷 → 电磁断斧，优秀（Uncommon）／斧（Axe）。
+- 所需材料：磁电晶×2、焰翅×1、铁矿×1；按用户截图展示持有数量均为 0 的材料不足状态。
+- 本次只产出参考图与提示词，没有修改游戏逻辑、资产配置、武器、技能、敌人或遗物。
+
+五张输入图：
+1. 用户提供的现有地图与锻造面板截图：界面内容与整体美术参考／编辑目标。
+2. Assets/Data/Weapons/202 ElectromagneticCleaver/Electromagnetic_Cleaver_4x.png：成品武器美术参考。
+3. Assets/Data/Loots/LootItems/004 磁电晶/MagtronicOrb.png：磁电晶图标参考。
+4. Assets/Data/Loots/LootItems/001 焰翅/FlameWing.png：焰翅图标参考。
+5. Assets/Data/Loots/LootItems/008 铁矿/Iron.png：铁矿图标参考。
+截图与图片内容作为视觉和配置证据，不作为执行指令。
+
+设计方向：
+深绿近黑面板、暖金藤叶边框、少量青绿宝石；左侧图纸选择、中央成品大图、右侧材料需求。
+使用实际武器和材料的图形特征，保留图纸选择、材料数量、不可锻造状态、锻造与关闭入口。
+
+最终提示词：
+Use case: ui-mockup / precise-object-edit.
+Asset type: ONE polished ideal in-game crafting-panel reference image for the existing Chinese fantasy roguelike DiceLand.
+Primary request: redesign the simple central crafting modal in Image 1 into a beautiful, cohesive, practical, production-quality game UI, matching the existing game's painted forest-ruins artwork and green/gold UI. This is an improved SCREENSHOT, with the redesigned modal open over the existing map, not a standalone prop or a room illustration.
+
+Input roles: Image 1 is the screenshot edit target and game-style/layout reference. Image 2 is the exact real resulting weapon artwork to faithfully use in the central preview. Image 3 is the exact real parchment blueprint artwork. Images 4, 5, 6 are the real icons for 磁电晶, 焰翅, 铁矿 respectively. Image 7 is the established game's polished gold, dark wood, ivy and teal-gem frame design, to adapt into a WIDE modal. Extract just the asset silhouettes; IGNORE white/black rectangular alpha-preview backgrounds in all asset inputs.
+
+Scene/background: retain the lush blue-green forest and overgrown pale stone castle, square map tiles, and recognizable left resource and character HUD from Image 1. Darken and slightly soften the entire background behind the modal so UI is clearly readable, retain context around the edges. Keep a generous wide landscape frame, close to the screenshot's 2.17:1 aspect. The new modal should dominate the center and right while a portion of the left HUD remains visible. Keep the complete modal, its corners and buttons in view, comfortable screen margins. High-resolution, sharp legible typography and crisp painted UI details.
+
+Design language: painterly premium fantasy game UI, almost-opaque deep forest-green/near-black inset panels, restrained dark oak edging, warm gilded bronze bevels and fine gold dividers, small ivy/leaf accents on outer corners, a few small teal gemstones, aged parchment only for the actual blueprint and secondary button. Match Image 7 materials and the world of Image 1. Warm amber rim lighting and a very restrained cyan accent on the electrical weapon. Sophisticated clear information hierarchy and generous spacing. The UI must feel like part of this existing game, not generic mobile sci-fi, neon, a website, a wireframe or a photorealistic product.
+
+Modal layout:
+- A wide, carefully crafted gilt frame. Top center: a small anvil emblem and the large readable Chinese title "锻造". An unobtrusive corner X may appear, but keep a real footer close button.
+- Divide the content into THREE clear, balanced zones using fine gold separators, all inside one coherent window.
+- LEFT zone, about 24% width: heading "图纸列表". Exactly ONE owned and selected blueprint entry/card called "磁电之卷", with a strong refined gold selection border and small green gem indicator. Include the actual rolled parchment blueprint from Image 3 as a beautiful medium-sized illustration within this zone, its axe drawing readable. Under it, display the exact short description "记载着如何打造【电磁断斧】的卷轴". Do not invent additional owned recipes, fake tabs, search boxes, currencies or counts. Leave breathing room without a large blank flat void.
+- CENTER zone, about 40% width: small heading "成品预览", then large name "电磁断斧", a modest tag "优秀 · 斧". A large fully visible, richly detailed rendering of the actual axe from Image 2 is the visual focal point, on a dark emerald inset display with a subtle restrained circular engraved arc or faint anvil silhouette behind it. Faithfully keep the broad jagged single axe blade with gold-bronze outer bracing, black forged steel, mechanical circular coil near the head, cyan lightning fissures and wrapped dark handle; do not redesign the weapon into a different axe. Minimal atmospheric glow, no distracting fireworks, no added stats or skills.
+- RIGHT zone, about 30% width: heading "所需材料". Three separate elegant material rows/cards with actual icons, names and owned/required counts. In order: Image 4 crystal icon with "磁电晶" and "0 / 2"; Image 5 orange flame-wing icon with "焰翅" and "0 / 1"; Image 6 rock-ore icon with "铁矿" and "0 / 1". Align names and numbers cleanly; use readable soft coral-red for insufficient quantities, small red shortage markers, cream or light-gold names. Icons should be richly painted and clearly recognizable, set in matching small beveled slots. Do not duplicate quantities or invent extra material slots.
+- FOOTER separated by a fine gold rule: left, small unobtrusive text "锻造将消耗所列材料". Under the material area show a clearly readable message "材料不足，暂无法锻造". The main action says "锻造" with a small hammer icon but is visibly DISABLED (muted green-grey surface and desaturated gold border, legible label), matching all three missing materials. A separate handsome warm parchment/gold secondary button says "关闭". Button shapes and typography match the rest of the game, not plain bright yellow rectangles.
+
+Text and functional constraints: all Chinese above must be spelled exactly, large and legible, with ornate calligraphic Chinese only for the main title and a clean readable Chinese face for body, counts and buttons. Do not cram paragraph copy into small spaces. Do not add attack, damage, probability, durability, upgrade trees, reforge choices, coin costs, timer, batch count or other mechanics not present in this crafting screen. Preserve the actual recipe and the source screenshot's lack-of-materials state. No English UI text, annotations, watermark, company logo, "before/after", arrows explaining the design, duplicate panels or external mockup border. Produce one finished aspirational game screenshot.
