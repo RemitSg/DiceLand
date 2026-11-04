@@ -136,7 +136,7 @@ public sealed partial class MapBattleTilePreviewOverlay
         if (!compactLayout)
         {
             Place(crestRect, 0, -12, 200, 300);
-            Place(classIcon.rectTransform, 42, 40, 120, 120);
+            PlaceCenteredIcon(classIcon, 42, 40, 120, 120);
             Place(watermarkRect, 280, 248, 260, 260);
             Place(metadataText.rectTransform, 214, 48, 332, 42);
             Place(battleClassText.rectTransform, 190, 102, 365, 90);
@@ -160,7 +160,7 @@ public sealed partial class MapBattleTilePreviewOverlay
         else
         {
             Place(crestRect, 0, -6, 150, 225);
-            Place(classIcon.rectTransform, 33, 34, 90, 90);
+            PlaceCenteredIcon(classIcon, 33, 34, 90, 90);
             Place(watermarkRect, 570, 130, 220, 220);
             Place(metadataText.rectTransform, 170, 28, 660, 40);
             Place(battleClassText.rectTransform, 166, 70, 670, 78);
@@ -250,6 +250,14 @@ public sealed partial class MapBattleTilePreviewOverlay
         graphic.rectTransform.anchorMax = Vector2.one;
         graphic.rectTransform.offsetMin = graphic.rectTransform.offsetMax = Vector2.zero;
         return graphic;
+    }
+
+    private static void PlaceCenteredIcon(Image icon, float x, float y, float width, float height)
+    {
+        RectTransform rect = icon.rectTransform;
+        Place(rect, x + width * 0.5f, y + height * 0.5f, width, height);
+        // preserveAspect aligns unused space by the pivot; narrow swords must stay centred.
+        rect.pivot = new Vector2(0.5f, 0.5f);
     }
 
     private static void Place(RectTransform rect, float x, float y, float width, float height)
