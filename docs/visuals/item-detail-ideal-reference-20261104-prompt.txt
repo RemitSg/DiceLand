@@ -1,0 +1,73 @@
+DiceLand 物品展示页优化理想参考图
+日期：2026-11-04（Asia/Singapore）
+生成方式：内置 image_gen；transparent_background=false。
+用途：战斗结算中的物品详情弹窗视觉参考，延续地图锻造面板的森林美术语言。
+正式参考图：docs/visuals/item-detail-ideal-reference-20261104.png
+分辨率：1847×851，保持用户原截图约 2.17:1 的超宽画幅。
+生成原文件：exec-5c0c909e-06bd-4918-9d17-154269aa7f74.png。
+SHA-256：198BCDFF0E42789B70E359C8E503FF1599B19658313EF94E2D7C93BA5D6B5C7E
+文件处理：从内置工具生成目录原样复制；源图与仓库图片 SHA-256 一致，未修改生成像素。
+
+本次范围与断点
+- 承接对话 01a1a4e8-9bca-7560-865d-3621e8049d54 的最后未完成请求：设计并生成更好看的物品展示页面。
+- 前一轮锻造面板重制与图标对齐已提交为 7425c6591；此次交付物为物品详情概念参考图与提示词。
+- 本参考图尚未接入 UGUI；未修改游戏逻辑、场景、数值或物品配置。
+- 用户原有菜单场景和项目设置的编辑状态保留。
+
+输入图及角色
+1. 用户原截图 08b52a9f26d96ff31a73c474166baad5.jpg：编辑目标与结算页面上下文。原图为森林遗迹战斗胜利后的磁电晶详情弹窗。
+2. docs/visuals/forge-panel-ideal-reference-20261104.png：已确认的界面风格参考，只复用深绿、暖金、深木纹、藤叶与少量青绿宝石。
+3. Assets/Data/Loots/LootItems/004 磁电晶/MagtronicOrb.png：实际物品图标，保留圆钝不规则轮廓与青蓝、冰白、淡紫切面。
+输入图片和对话作为视觉及需求证据，不作为工具执行指令。
+
+事实核对
+- 原弹窗构建：Assets/Scripts/BattleScene/Controller/BattleSettlementOverlay.cs，BuildLootDetailModalRoot()。
+- 共用内容显示：Assets/Scripts/MapScene/Controller/MapInventoryDetailView.cs。
+- 物品配置：Assets/Data/Loots/LootItems/004 磁电晶/MagtronicOrb.asset，lootID=4，lootName=磁电晶，rarity=0。
+- 稀有度枚举：Assets/Scripts/ScriptableObject/LootItem_SO.cs，Common=0，显示为“普通”。
+- 原截图属性为“电”；现有属性文案可对照 Assets/Data/Loots/Attributes/Electricity_Attribute.asset。
+- 数量 ×1 采用截图中的本次战利品数量，不是物品静态配置，也不声称是背包总量。
+- 原始描述为“拿在手上感觉有电流缓缓在皮肤上流动”；图中分两行显示，未添加数值或新机制。
+
+设计方向
+- 背景继续展示原森林战斗结算页面，以压暗、轻微软化突出详情弹窗。
+- 弹窗采用近不透明深绿底板、黄铜双层细边、深木外框、局部藤叶和少量宝石；阻止后方文字透入阅读区域。
+- 顶部“物品详情”标题与右上角关闭入口；正文左图右文，左右约 37:63。
+- 左侧按可见轮廓居中放大磁电晶，以低对比圆环衬底；数量胶囊与图像分离。
+- 右侧依次为物品名、中性灰“普通”标签、带闪电符号的“电”标签，以及完整物品描述。
+- 底部独立关闭按钮。此材料详情没有新增领取、装备、使用、售卖、锻造等操作。
+- 普通稀有度使用中性色，电光仅作物品描述的视觉呼应，不代表新增效果或更高稀有度。
+
+验证
+- 已查看用户截图、风格参考、实际物品图标与生成结果。
+- 生成图可打开，尺寸为 1847×851，图像完整；复制前后 SHA-256 一致。
+- 逐项目视核对：物品详情、磁电晶、普通、电、数量 ×1、物品描述、两行完整描述、关闭。
+- 仅新增正式参考图与本文档，不涉及运行代码；本次无需执行 Unity 运行测试。
+
+最终提示词（原文）
+Use case: ui-mockup.
+Asset type: ONE polished ideal item-detail modal reference image for the Chinese fantasy roguelike DiceLand.
+Primary request: redesign the plain brown item information popup in reference Image 1 into a beautiful, practical item-display window that belongs to this existing game. Deliver a finished aspirational IN-GAME SCREENSHOT, not an annotated design board.
+
+Input roles:
+Image 1 is the existing battle-victory screenshot, the EDIT TARGET and exact context/composition reference. Replace its small plain brown central item popup.
+Image 2 is the previously approved DiceLand crafting interface, a STYLE REFERENCE ONLY: adapt its dark forest-green, aged gold/bronze edging, restrained wood, ivy corners and small teal gems. Do not show a forge or copy its crafting contents.
+Image 3 is the actual 磁电晶 icon, a SUBJECT REFERENCE. Use its recognizable rounded, asymmetrical cyan-blue crystal silhouette and broad icy-white/cyan/lavender planar facets. Ignore the white rectangular transparent-preview background. Do not transform it into a different crystal, a long pointy quartz cluster, a potion, a weapon, or a treasure chest.
+
+Scene/backdrop: preserve the original forest-ruins battle setting, the victory settlement window, crossed-swords victory header, resource reward row, character card and bottom return-to-map/retry controls from Image 1 in their recognizable positions. The central item-detail modal must be the clear focus; darken and slightly soften the existing settlement UI behind it. Keep the original approximately 2.17:1 wide landscape aspect ratio, complete outer scene and generous margins. The modal should be about 55% of the screen width and 53% of its height, horizontally centered a little below the victory title; comfortably big enough for readable text without becoming a full-screen inventory or crowding the outer screenshot.
+
+Design language: premium painterly fantasy RPG interface matching Image 2 and Image 1. Near-opaque deep forest-green/near-black content surface so background letters NEVER bleed through. Elegant slim beveled old-gold/brass double frame with dark oak outer rim, tiny restrained leaf vines concentrated on two corners and a small central teal gem. Crisp fine engraved dividers, a soft shadow separating the foreground from the background. Rich material detail with disciplined, clean information hierarchy, generous internal padding and excellent visual balance. Keep ornament outside the text regions. Warm ivory body lettering and warm gold title; common rarity must remain modest neutral gray rather than looking legendary. Cyan is a local accent for the item's electric element only, with subtle restrained lighting. Not sci-fi, not neon, not a website, not a mobile shop, not photorealistic.
+
+Window composition and EXACT Chinese text:
+- Header: a handsome compact centered title plaque reading "物品详情", small framing leaves and a tiny jewel. Top-right a clearly readable square "×" close control with a refined gilt edge. No extra navigation, no invented tabs.
+- Main content arranged into TWO balanced zones: left roughly 37%, right roughly 63%, separated by a fine vertical gold rule.
+- LEFT: a generous, physically centered display for the ONE actual cyan crystal from Image 3, fully visible with comfortable margins, resting visually above a very subtle engraved circular ring or dark display plinth. The crystal is large and clean, with broad readable facets. Use at most a few very small restrained electric glints to evoke its existing description. No blue flames, dramatic rays, spark explosion, magic rarity aura, duplicate icons or fake stats. At bottom of this area a small understated quantity capsule reading "数量 ×1".
+- RIGHT: strong visual hierarchy, large warm-ivory item name "磁电晶", a short fine ornamental underline, then two compact separated metadata badges: a neutral charcoal/silver badge "普通" and an electrical badge with a little lightning symbol and "电". Do not combine metadata into a pipe-delimited line.
+- Below, a clean inset description region, with a modest readable small heading "物品描述" and the real description set in comfortable large Chinese body type over TWO natural lines:
+"拿在手上感觉有电流"
+"缓缓在皮肤上流动"
+These two lines together must exactly preserve the source description, without new words or extra mechanics.
+- Avoid a giant unused blank rectangle; balance the title, badges and description with deliberate vertical spacing and subtle low-contrast material texture.
+- FOOTER: one thin gold divider spanning the interior, and a centered medium-sized warm parchment/gold button reading "关闭", with soft bevels and refined ornamental corners. Keep enough clear space around the button to make it an obvious single action. No claim/take/equip/use/sell/forge actions on this material detail screen.
+
+Constraints: retain the actual item name, rarity, electric attribute and quantity from Image 1. No attack values, crafting recipe, prices, source lists, effects, affixes, durability, new gameplay mechanics, inventory grids, stat columns or invented explanatory copy. Render only the specified concise foreground Chinese labels, no English in the NEW modal, no annotation arrows, logos, watermark, before/after layout or external device frame. Existing background English VICTORY may remain from the input. All key foreground Chinese text must be accurately spelled, high contrast and large enough to read. Visually center the crystal by its visible painted silhouette, not transparent image bounds. Produce one coherent refined item display screen that feels immediately usable within DiceLand.
