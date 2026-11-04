@@ -1,0 +1,26 @@
+战斗死亡消散特效重制（2026-11-04）
+
+接入与视觉
+- 原 BattleFeedbackSystem.OnAllyDied / OnEnemyDied 创建独立 BattleDeathVfx，再按原顺序隐藏死亡角色、关闭碰撞体、移除血条；死亡判定、Died 事件、技能、遗物和胜负结算不变。
+- 使用当前姿态的真实精灵残影，保留精灵、透明纹理、翻转、世界缩放与排序层，排除速度按钮和武器节点。
+- 角色先短暂闪光，再从下向上沿不规则亮边裂解；配合扩散光环、贴地光圈、旋转上升的细光丝、带拖尾晶片和四芒余光。
+- 友方为青金灵光，敌人为紫金消散。颜色和透明形状由原生着色器计算，无新增 AI 贴图依赖。
+- 约 2.25 秒完成，沿受击方向带出碎片，按角色实际大小适配；继续使用战斗缩放时间，暂停时冻结，并保留原有死亡慢动作。
+- 单次效果 72～180 个碎片，以一个动态网格批量提交灯光／碎片；精灵残影单独绘制。网格与材质在结束或场景卸载时清理，不改写原角色材质，不依赖角色继续存活。
+- 着色器置于 Resources/BattleVfx，确保构建收录；不支持时回退既有粒子效果。原旧粒子参数继续用于回退路径。
+
+MCP 复现
+- BattleDeathVfxVisualTools.CaptureDefault()：在保存的实际森林战斗场景的临时副本中，分别对友方和敌人调用真实 KillInstantly → Died → BattleFeedbackSystem 回调。
+- 使用原战斗场景、角色、灯光与后处理，通过 Unity 摄像机逐帧渲染同一个运行组件；每秒 24 帧。仅录制时关闭慢动作，便于对比消散自身的节奏。
+- 录制不读写玩家存档、不保存场景；复用 BattleLookPreviewTools 的资源释放和场景恢复流程。
+- 本地帧、动图与验证证据：outputs/agent-battle/death-vfx-20261104/（忽略提交）。
+- 编码命令：uv run --no-project --with pillow python tools/battle-vfx/encode-death-preview.py。
+- 编码只将 Unity 原始渲染帧压成 GIF，不添加或重绘特效。
+
+验证结果
+- Tuanjie 2022.3.62t6，EditMode 27/27 通过，包含 BattleDeathVfxTests、原死亡遗物上下文、拼点可读性与血条回归。
+- PlayMode 3/3 通过：真实 BindCombatants → KillInstantly → Died 仅触发一次；死亡角色立即隐藏且碰撞体关闭；暂停／恢复后按战斗时间完成消散；源角色销毁不会中断残影；结束后释放原生网格和材质。
+- 在编辑器预览中也执行资源清理（ExecuteAlways，仅运行态自动推进时间）。
+- 测试任务：EditMode 7df1a6afd4a94db896d35b6f5e4e3926；PlayMode 35cc7d03b16241ac98ebe752d3273a95。
+- 已通过 Unity MCP 分别渲染真实场景友方／敌人死亡各 78 帧，960×540、24 fps；当前场景配置落在每次 180 个碎片的上限。GIF 含首尾停留，各约 4.15 秒。
+- 已核对残影裂解、光环、碎片与余光阶段的原始帧和 GIF 帧数。未进行 Android 真机帧率或 APK 性能测量。

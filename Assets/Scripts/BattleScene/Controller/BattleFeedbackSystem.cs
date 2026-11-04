@@ -1048,7 +1048,7 @@ public class BattleFeedbackSystem : MonoBehaviour
             return;
 
         TriggerDeathSlowMotion();
-        PlayDeathEffect(BattleActorVisualUtility.GetActorCenterWorld(ally.transform), ally.LastHitDirection);
+        PlayDeathEffect(ally.transform, ally.LastHitDirection, false);
         HideCombatantVisuals(ally.gameObject);
         RemoveTrackedAlly(ally);
     }
@@ -1059,7 +1059,7 @@ public class BattleFeedbackSystem : MonoBehaviour
             return;
 
         TriggerDeathSlowMotion();
-        PlayDeathEffect(BattleActorVisualUtility.GetActorCenterWorld(enemy.transform), enemy.LastHitDirection);
+        PlayDeathEffect(enemy.transform, enemy.LastHitDirection, true);
         HideCombatantVisuals(enemy.gameObject);
         RemoveTrackedEnemy(enemy);
     }
@@ -1758,6 +1758,12 @@ public class BattleFeedbackSystem : MonoBehaviour
 
         particleSystem.Play();
         Destroy(root, healthBarHitParticleLifetime + 0.08f);
+    }
+
+    private void PlayDeathEffect(Transform actor, Vector3 preferredDirection, bool enemy)
+    {
+        if (!BattleDeathVfx.TryPlay(actor, preferredDirection, enemy, deathSortingOrder, deathBurstCount))
+            PlayDeathEffect(BattleActorVisualUtility.GetActorCenterWorld(actor), preferredDirection);
     }
 
     private void PlayDeathEffect(Vector3 position, Vector3 preferredDirection)
