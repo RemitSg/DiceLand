@@ -1,0 +1,60 @@
+DiceLand 敌人信息面板重制
+日期：2026-11-05（Asia/Singapore）
+
+实现范围
+- 重制 BattleSkillInfoOverlay.ShowEnemyDetail 入口，仍由点击实际敌人打开。
+- 以 enemy-info-ideal-reference-20261105.png 为构图／材质参考：居中木质标题牌，金边藤叶深绿窗口，左侧大立绘与编号，右侧名称、生命标签、描述和特殊被动卡片，底部固定关闭按钮。
+- 正式无字材质使用内置 image_gen 生成，原样纳入 Assets/Resources/BattleUI/EnemyDossierFrame.png；尺寸1536×1024，保留透明边缘。完整提示词、来源、SHA-256 与导入设置见 enemy-info-frame-20261105-prompt.txt。
+- 图像只包含窗口底材和装饰，标题、数据、卡片和按钮全部为实际 UGUI 元素，未将带字参考图直接铺在界面上。
+- 保留原有我方技能、敌方当前技能、右上角简要面板及各自的多骰规则；敌人详情不混入技能选择列表。
+
+真实内容与排版
+- 名称、enemyID、描述、被动顺序及被动名颜色读取当前 enemyData。
+- 立绘使用 GetCurrentStageSprite，与实际形态一致；保留完整轮廓，不修改原始立绘、导入边界或战场 SpriteRenderer。
+- 最大生命使用当前敌人的 MaxHP（含战斗中的最大生命修正）；未初始化的预览回退到 baseHP。名称和最大生命各显示一次。
+- 每条有效被动生成一个自适应高度的独立卡片，名称、正文分别测量并换行，保留完整原文与已有富文本。空条目不生成空卡，缺名称／缺正文的有效条目仍可显示。
+- 表现层强调【引用目标】、数字和“虚弱”，原数据不变；已有 color／noparse 范围保持原样。沿用资源关键词配色，不在被动正文中塞入重复图标。
+- 单条嗜血啮鼠被动可完整展示且不出现多余滚动条。长描述、多条长被动只在右侧阅读区滚动，鼠标滚轮、拖动、触屏均走原生 ScrollRect。
+- 立绘、编号、名称、生命标签与关闭区不随正文滚动。短页隐藏滚动条与提示；长页提示后方仍有内容，到底后显示已读完提示。刷新保留阅读位置，重新打开重置到顶部，复用已有卡片。
+- 缺立绘、缺描述、没有有效被动时有清晰回退，避免空白卡片和异常。
+- 基准窗口1240×770，带外沿留白按 Canvas 和安全区等比适配。长被动不靠缩小正文字号处理。
+
+开合与交互
+- 复用现有模态生命周期、输入所有权、教程事件与检查战斗阶段的入口限制。
+- 使用不受 Time.timeScale 影响的时间：打开0.22秒，关闭0.16秒，淡入／淡出与轻微缩放、位移。
+- 立绘独立错峰显现，12px收拢位移与0.98→1缩放；内容刷新使用现有0.16秒淡入。
+- 被动卡片悬停0.13秒提亮边框和底色，不移动正文、不开合或隐藏条款。
+- 关闭按钮沿用现有按下／悬停反馈。顶部×、底部关闭、背景点击和 EventSystem 配置的取消操作均可关闭。
+- 打开详情将键盘／控制器焦点置于关闭按钮，关闭后恢复此前仍有效的焦点。取消键使用现有 EventSystem 绑定，不引入固定按键或另一套输入系统。
+- 收起动画结束前继续阻止底层战场输入，结束后只释放本面板持有的抑制状态，并且只触发一次 Hidden；立即隐藏、禁用销毁仍能释放状态。
+
+主要文件
+- Assets/Scripts/BattleScene/Controller/BattleSkillInfoOverlay.EnemyProfile.cs：专用视图、真实内容绑定、动态卡片、滚动与立绘显现。
+- Assets/Scripts/BattleScene/Controller/BattleEnemyProfileGraphic.cs：分区标题、被动／编号／生命卡、分隔线、立绘背景与悬停反馈。
+- Assets/Scripts/BattleScene/Controller/BattleSkillOverlayCancel.cs：现有 EventSystem 取消事件适配。
+- BattleSkillInfoOverlay 的入口、Presentation／Content／Motion：路由与生命周期复用。
+- Assets/Scripts/Editor/BattleSkillVisualTools.cs：一次性预览场景，模式8为真实鼠敌详情、9为多被动长文验证、10为缺项回退验证；不保存场景或改动存档。
+
+验证记录
+- 团结引擎2022.3.62t6，经 Unity MCP 编译，最终控制台错误0条。
+- EditMode：48/48通过（失败0、跳过0）；作业 acc314774df44d5bb3810766c16f23f8，13.45秒。
+  BattleSkillForestUiTests、BattleSkillInfoOverlayDescriptionTests、BattleJinGuanSwordMechanicsTests、AgentEquipmentCatalogTests。
+  新增详情验证包括实际画像与编号、运行时最大生命、形态变化刷新、长被动与多卡片、无数据回退、富文本保留，以及宽屏／平板／安全区。
+- PlayMode：8/8通过（失败0、跳过0）；作业 a84e4263b664443b81a3c593db35f05a，7.61秒。
+  原有5项技能交互测试及新增3项详情测试：暂停中的立绘显现和取消／焦点恢复；触屏与滚轮到达末尾且画像／关闭固定；不受暂停影响的被动悬停反馈。
+- 初轮有两处测试夹具修正：电线杆实际资产名为 UtilityPole_Data.asset；ScrollRect 顶部归一化浮点数使用0.0001容差。未为通过测试修改玩法数值或语义。
+- 通过一次性预览场景生成并检查9张最终实际UI画面及文字布局报告：
+  enemy-profile-final-wide.png：2640×1216，匹配用户截图宽屏比例。
+  enemy-profile-final-tablet.png：1600×1200，安全区(0,40,1600,1120)。
+  enemy-profile-final-safe.png：1920×1080，安全区(100,30,1700,1000)。
+  enemy-profile-final-long-top.png／enemy-profile-final-long-bottom.png：长描述与6条长被动，完整滚动到最后一条。
+  enemy-profile-final-empty.png：缺立绘、缺描述、无被动回退。
+  profile-regression-ally-multi.png／profile-regression-enemy-three.png／profile-regression-hover-three.png：原有技能／三骰简要页回归。
+- 9份最终布局报告中可见TMP文本 isTextTruncated 均为false；短页content=415.23、viewport=417.99，滚动条隐藏；长页content=2835.83，可读到最后一条并显示已显示全部内容。
+- 清理核对：未进入运行态、未处于编译，BattleSkillInfoCanvas=0、预览／测试host=0，InputSuppressed=false、CombatLocked=false；返回原有Menu Selection场景，未保存或提交场景。
+- 完整本地验证结果：outputs/agent-battle/skill-ui-20261105/enemy-profile-validation.json。
+
+范围说明
+- 本次为纯展示改造，未修改敌人、技能、遗物的配置、数值、触发条件或机制；目录条目无需内容重写。
+- 预览／检查日志保存在 outputs/agent-battle/skill-ui-20261105/，属于本地验证产物，不混入正式资产提交。
+- 未进行移动端真机性能测试或重新构建发行包。

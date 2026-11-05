@@ -29,6 +29,7 @@ public partial class BattleSkillInfoOverlay
         if (backdropButton != null) backdropButton.gameObject.SetActive(false);
         HideEnemyHoverSkillInfo();
         if (detailScrollRect != null) detailScrollRect.StopMovement();
+        if (enemyProfileScroll != null) enemyProfileScroll.StopMovement();
         if (skillListScroll != null) skillListScroll.StopMovement();
         if (ownsInput) { SpeedButton.InputSuppressed = false; ownsInput = false; }
         currentAlly = null; currentEnemy = null; currentAllySourceButton = null; currentEnemySourceButton = null; displayedSkill = null;
@@ -69,6 +70,7 @@ public partial class BattleSkillInfoOverlay
         panelRoot.anchoredPosition = Vector2.down * ((1 - ease) * 16 * panelFit);
         if (shade != null) shade.color = new Color(0.004f, 0.012f, 0.008f, ease * 0.60f);
         if (contentGroup != null) contentGroup.alpha = Mathf.Lerp(0.72f, 1, 1 - Mathf.Pow(1 - switchProgress, 3));
+        ApplyEnemyProfileMotion(ease);
     }
 
     public void ApplyViewport(Vector2 pixels, Rect safeArea)
@@ -81,7 +83,9 @@ public partial class BattleSkillInfoOverlay
         Vector2 canvasSize = canvasRoot.rect.size;
         if (canvasSize.x < 1 || canvasSize.y < 1) canvasSize = new Vector2(1920, 1080);
         Vector2 available = Vector2.Scale(canvasSize, safeRoot.anchorMax - safeRoot.anchorMin);
-        panelFit = Mathf.Min(1, available.x / (Mathf.Max(1, frameState.width) + 80), available.y / (Mathf.Max(1, frameState.height) + 96));
+        float horizontalMargin = viewMode == SkillViewMode.EnemyData ? 100 : 80;
+        float verticalMargin = viewMode == SkillViewMode.EnemyData ? 140 : 96;
+        panelFit = Mathf.Min(1, available.x / (Mathf.Max(1, frameState.width) + horizontalMargin), available.y / (Mathf.Max(1, frameState.height) + verticalMargin));
         ApplySkillMotion(); ApplyHoverTransform();
     }
 

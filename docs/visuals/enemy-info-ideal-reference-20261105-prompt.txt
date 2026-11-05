@@ -1,7 +1,7 @@
 DiceLand 敌人信息面板优化理想参考图
 日期：2026-11-05（Asia/Singapore）
 生成方式：内置 image_gen；transparent_background=false。
-状态：设计参考，尚未按本图重制敌人信息入口。
+状态：已按本图重制敌人信息入口；原图保留为设计参考。实现说明见 enemy-info-ui-remaster-20261105.txt。
 正式图片：docs/visuals/enemy-info-ideal-reference-20261105.png
 尺寸：1847×851，RGB，约 2.17:1。
 生成原文件：exec-92584218-5e7e-4ef0-b9a9-3f1fa50217e4.png。
@@ -17,7 +17,7 @@ SHA-256：6C737E6A8B72F259A3FDE636B30DE8C2BC9FCDA8FC237A04FD351D83D045D243。
   游戏原字段不带末尾句号，原文中的空格按排版调整不改变语义。
 - Unity MCP 已核对 watchedEnemyData 正确指向同一个嗜血啮鼠资产；
   statusData 显示为虚弱，stackAmount=1，additionalRoundStartApplications=0。
-- 本次只生成参考图；不修改敌人配置、技能机制、目录数据与数值。
+- 原始制图阶段只生成参考图；后续 UI 实现同样不修改敌人配置、技能机制、目录数据与数值。
 - 原信息入口的字段来自 BattleSkillInfoOverlay.BuildEnemyDataDetail；
   当前入口展示名称、最大生命、描述与特殊被动。
 - 保留实际 ID，图中以“编号 14”单独展示；最大生命使用单一标签，不重复堆叠。

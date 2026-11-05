@@ -173,6 +173,8 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         EnsureUi(); currentAlly = null; currentEnemy = enemy; currentAllySourceButton = null;
         currentEnemySourceButton = null; viewMode = SkillViewMode.EnemyData;
         OpenForestPanel(); ClearSkillButtons(); RenderCurrentSkill(true);
+        if (UnityEngine.EventSystems.EventSystem.current != null)
+            UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(footerClose.gameObject);
         EnemyDetailShown?.Invoke(enemy);
     }
 

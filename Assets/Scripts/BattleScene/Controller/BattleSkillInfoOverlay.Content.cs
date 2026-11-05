@@ -8,6 +8,12 @@ public partial class BattleSkillInfoOverlay
 {
     private void RenderCurrentSkill(bool reset)
     {
+        if (viewMode == SkillViewMode.EnemyData)
+        {
+            displayedSkill = null;
+            RenderEnemyProfile(reset);
+            return;
+        }
         EnemySkill_SO skill = viewMode == SkillViewMode.Ally ? currentAlly?.GetSelectedSkillForButton(currentAllySourceButton)
             : viewMode == SkillViewMode.EnemySkill ? currentEnemy?.GetSelectedSkillForButton(currentEnemySourceButton) : null;
         bool changed = displayedSkill != skill || reset;
@@ -124,6 +130,7 @@ public partial class BattleSkillInfoOverlay
 
     private void LayoutSkillContent(bool reset)
     {
+        if (viewMode == SkillViewMode.EnemyData) { LayoutEnemyProfile(reset); return; }
         if (detailRegion == null || frameState.height < 1) return;
         float oldPosition = detailScrollRect != null ? detailScrollRect.verticalNormalizedPosition : 1;
         bool dataMode = viewMode == SkillViewMode.EnemyData;

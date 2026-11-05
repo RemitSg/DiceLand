@@ -145,6 +145,82 @@ public sealed class BattleSkillForestPlayModeTests
     }
 
     private bool Visible() => (bool)Get(overlay, "IsVisible");
+
+    [UnityTest]
+    public IEnumerator EnemyProfileRevealsAndCancelsWhilePausedAndRestoresPreviousFocus()
+    {
+        Call(overlay, "HideImmediately", false);
+        GameObject previous = new GameObject("PreviousFocus", typeof(RectTransform), typeof(Button)); previous.transform.SetParent(host.transform, false);
+        events.SetSelectedGameObject(previous);
+        Time.timeScale = 0;
+        ShowProfile(false);
+        Assert.Less(((CanvasGroup)Get(overlay, "enemyPortraitGroup")).alpha, .01f);
+        Assert.AreSame(((Button)Get(overlay, "footerClose")).gameObject, events.currentSelectedGameObject);
+        yield return new WaitForSecondsRealtime(.35f);
+        Assert.AreEqual(1, ((CanvasGroup)Get(overlay, "enemyPortraitGroup")).alpha, .001f);
+        Assert.AreEqual(Vector2.zero, ((RectTransform)Get(overlay, "enemyPortraitMotion")).anchoredPosition);
+        int hidden = 0; overlay.GetType().GetEvent("Hidden").AddEventHandler(overlay, (Action)(() => hidden++));
+        ExecuteEvents.Execute(events.currentSelectedGameObject, new BaseEventData(events), ExecuteEvents.cancelHandler);
+        Assert.IsTrue(Visible()); Assert.IsTrue(StaticFlag("InputSuppressed"));
+        Assert.IsFalse(((CanvasGroup)Get(overlay, "panelGroup")).interactable);
+        float deadline = Time.realtimeSinceStartup + 1;
+        while (Visible() && Time.realtimeSinceStartup < deadline) yield return null;
+        Assert.IsFalse(Visible()); Assert.IsFalse(StaticFlag("InputSuppressed")); Assert.AreEqual(1, hidden);
+        Assert.AreSame(previous, events.currentSelectedGameObject);
+    }
+
+    [UnityTest]
+    public IEnumerator EnemyProfileTouchAndWheelReadToEndWhilePortraitAndCloseStayFixed()
+    {
+        Call(overlay, "HideImmediately", false); ShowProfile(true); Time.timeScale = 0;
+        yield return new WaitForSecondsRealtime(.35f);
+        ScrollRect scroll = (ScrollRect)Get(overlay, "enemyProfileScroll");
+        Assert.Greater(scroll.content.rect.height, scroll.viewport.rect.height * 3);
+        RectTransform portrait = (RectTransform)Get(overlay, "enemyPortraitWell");
+        RectTransform close = (RectTransform)((Button)Get(overlay, "footerClose")).transform;
+        Vector3 portraitPosition = portrait.position, closePosition = close.position;
+        Vector2 point = RectTransformUtility.WorldToScreenPoint(null, scroll.viewport.TransformPoint(scroll.viewport.rect.center));
+        var touch = new PointerEventData(events) { pointerId = 4, button = PointerEventData.InputButton.Left, position = point, pressPosition = point };
+        ExecuteEvents.Execute(scroll.gameObject, touch, ExecuteEvents.initializePotentialDrag);
+        ExecuteEvents.Execute(scroll.gameObject, touch, ExecuteEvents.beginDragHandler);
+        touch.position += Vector2.up * 180; touch.delta = Vector2.up * 180;
+        ExecuteEvents.Execute(scroll.gameObject, touch, ExecuteEvents.dragHandler);
+        ExecuteEvents.Execute(scroll.gameObject, touch, ExecuteEvents.endDragHandler);
+        yield return null; Assert.Less(scroll.verticalNormalizedPosition, .999f);
+        ExecuteEvents.Execute(scroll.gameObject, new PointerEventData(events) { position = point, scrollDelta = new Vector2(0, -500) }, ExecuteEvents.scrollHandler);
+        yield return null; Assert.Less(scroll.verticalNormalizedPosition, .5f);
+        scroll.StopMovement(); scroll.verticalNormalizedPosition = 0; yield return null;
+        Assert.AreEqual(portraitPosition, portrait.position); Assert.AreEqual(closePosition, close.position);
+        Assert.IsTrue(Hits(RectTransformUtility.WorldToScreenPoint(null, close.TransformPoint(close.rect.center))).Any(h => h.gameObject.name == "FooterCloseButton"));
+        Assert.IsTrue(StaticFlag("InputSuppressed"));
+    }
+
+    [UnityTest]
+    public IEnumerator EnemyProfilePassiveHoverUsesUnscaledFeedbackWithoutMovingText()
+    {
+        Call(overlay, "HideImmediately", false); ShowProfile(false); Time.timeScale = 0;
+        yield return new WaitForSecondsRealtime(.35f);
+        Component frame = host.GetComponentsInChildren(TypeOf("BattleEnemyProfileGraphic")).First(c => c.gameObject.name == "EnemyPassive_0");
+        Vector3 position = frame.transform.position;
+        ExecuteEvents.Execute(frame.gameObject, new PointerEventData(events), ExecuteEvents.pointerEnterHandler);
+        yield return new WaitForSecondsRealtime(.18f); Assert.Greater((float)Get(frame, "emphasis"), .95f);
+        Assert.AreEqual(position, frame.transform.position);
+        ExecuteEvents.Execute(frame.gameObject, new PointerEventData(events), ExecuteEvents.pointerExitHandler);
+        yield return new WaitForSecondsRealtime(.18f); Assert.Less((float)Get(frame, "emphasis"), .05f);
+    }
+
+    private void ShowProfile(bool longText)
+    {
+        ScriptableObject data = (ScriptableObject)Asset("Assets/Data/Enemies/Enemies/014 BloodRat/BloodRat.asset", "EnemyData_SO");
+        if (longText)
+        {
+            data = UnityEngine.Object.Instantiate(data); transient.Add(data);
+            data.GetType().GetField("enemyDescription").SetValue(data, string.Join("\n", Enumerable.Repeat("长描述保留完整条件与说明，不截断末尾内容。", 60)));
+        }
+        object skill = Asset("Assets/Data/Enemies/Enemies/014 BloodRat/RotfangBite.asset", "EnemySkill_SO");
+        object enemy = TypeOf("BattleSkillVisualTools").GetMethod("CreateEnemy").Invoke(null, new[] { host.transform, data, skill });
+        Call(overlay, "ShowEnemyDetail", enemy);
+    }
     private List<RaycastResult> Hits(Vector2 point)
     {
         var hits = new List<RaycastResult>(); ((Canvas)Get(overlay, "canvas")).GetComponent<GraphicRaycaster>().Raycast(new PointerEventData(events) { position = point }, hits); return hits;

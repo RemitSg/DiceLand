@@ -61,9 +61,24 @@ public static class BattleSkillVisualTools
             {
                 string folder = mode == 4 || mode == 5 ? "Assets/Data/Enemies/Enemies/027 UtilityPole" : mode == 7 ? "Assets/Data/Enemies/Enemies/029 EmberScaleLizard" : "Assets/Data/Enemies/Enemies/014 BloodRat";
                 EnemyData_SO data = AssetDatabase.FindAssets("t:EnemyData_SO", new[] { folder }).Select(g => AssetDatabase.LoadAssetAtPath<EnemyData_SO>(AssetDatabase.GUIDToAssetPath(g))).First();
+                if (mode == 9 || mode == 10)
+                {
+                    data = UnityEngine.Object.Instantiate(data); transient.Add(data);
+                    if (mode == 9)
+                    {
+                        data.enemyDescription = string.Join("\n", Enumerable.Repeat(data.enemyDescription, 5));
+                        data.passiveDescriptions = Enumerable.Range(0, 6).Select(i => new EnemyData_SO.PassiveDescriptionEntry
+                        {
+                            passiveName = "长名称与多条被动验证 · " + (i + 1), displayColorType = (EnemyData_SO.PassiveDisplayColorType)(i % 3),
+                            description = string.Join("\n", Enumerable.Repeat("当自身以外的 【嗜血啮鼠】 死亡时，给予自身 1 层虚弱。保留完整条件与持续说明。", 3))
+                        }).ToList();
+                    }
+                    else { data.enemySprite = null; data.passiveDescriptions = null; data.enemyDescription = string.Empty; }
+                }
                 EnemySkill_SO skill = AssetDatabase.LoadAssetAtPath<EnemySkill_SO>(folder + (mode == 4 || mode == 5 ? "/HighVoltage.asset" : mode == 7 ? "/CurlCounter.asset" : "/RotfangBite.asset"));
                 BattleEnemyController enemy = CreateEnemy(host.transform, data, skill);
-                if (mode == 3 || mode == 5) overlay.ShowEnemyHoverSkillInfo(enemy, enemy.SpeedButtons[0]);
+                if (mode >= 8) overlay.ShowEnemyDetail(enemy);
+                else if (mode == 3 || mode == 5) overlay.ShowEnemyHoverSkillInfo(enemy, enemy.SpeedButtons[0]);
                 else overlay.ShowEnemySkillInfo(enemy, enemy.SpeedButtons[0]);
             }
             Canvas canvas = (Canvas)typeof(BattleSkillInfoOverlay).GetField("canvas", Private).GetValue(overlay);
@@ -77,7 +92,7 @@ public static class BattleSkillVisualTools
             {
                 if (overlay.IsVisible)
                 {
-                    ScrollRect scroll = (ScrollRect)typeof(BattleSkillInfoOverlay).GetField("detailScrollRect", Private).GetValue(overlay);
+                    ScrollRect scroll = (ScrollRect)typeof(BattleSkillInfoOverlay).GetField(mode >= 8 ? "enemyProfileScroll" : "detailScrollRect", Private).GetValue(overlay);
                     scroll.verticalNormalizedPosition = 0;
                 }
                 else
@@ -87,6 +102,7 @@ public static class BattleSkillVisualTools
                     content.anchoredPosition = Vector2.up * Mathf.Max(0, content.rect.height - viewport.rect.height);
                 }
                 Canvas.ForceUpdateCanvases();
+                if (mode >= 8) typeof(BattleSkillInfoOverlay).GetMethod("UpdateEnemyScrollHint", Private).Invoke(overlay, null);
             }
             foreach (TMP_Text text in canvas.GetComponentsInChildren<TMP_Text>()) text.ForceMeshUpdate(true, true);
             foreach (Graphic graphic in canvas.GetComponentsInChildren<Graphic>())
@@ -97,6 +113,11 @@ public static class BattleSkillVisualTools
             pixels = new Texture2D(width, height, TextureFormat.RGB24, false); pixels.ReadPixels(new Rect(0, 0, width, height), 0, 0); pixels.Apply();
             Directory.CreateDirectory(OutputPath); string path = Path.Combine(OutputPath, name); File.WriteAllBytes(path, pixels.EncodeToPNG());
             File.WriteAllLines(path + ".layout.txt", canvas.GetComponentsInChildren<TMP_Text>(true).Select(t => t.name + " | " + t.text + " | active=" + t.isActiveAndEnabled + " | truncated=" + t.isTextTruncated));
+            if (mode >= 8)
+            {
+                ScrollRect scroll = (ScrollRect)typeof(BattleSkillInfoOverlay).GetField("enemyProfileScroll", Private).GetValue(overlay);
+                File.AppendAllText(path + ".layout.txt", "Profile content=" + scroll.content.rect.height + " viewport=" + scroll.viewport.rect.height + " scrollbar=" + scroll.verticalScrollbar.gameObject.activeInHierarchy);
+            }
             return Path.GetFullPath(path);
         }
         finally

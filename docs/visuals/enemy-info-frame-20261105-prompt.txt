@@ -1,0 +1,21 @@
+DiceLand 敌人详情正式无字底图
+日期：2026-11-05（Asia/Singapore）
+生成方式：内置 image_gen；transparent_background=true；使用参考图提取材质与构图。
+正式资产：Assets/Resources/BattleUI/EnemyDossierFrame.png
+原文件：exec-cd2045b3-0b77-4f30-aac0-ef4fa11b6237.png（原样复制，未重绘／裁切）。
+SHA-256：39C2AF0A1D4317F46C099D7DC8A2EABDA7B8104A1D8134DF97926EA3D0DD5660。
+实际尺寸／通道：1536×1024，RGBA；透明边缘 alpha=0，面板内部近不透明。
+导入：Sprite/Single，Bilinear，无 mipmap，无压缩，maxSize=2048，保留透明。
+用途：敌人详情窗口的金边、藤叶、深绿面材与空白标题牌；所有文字、画像、信息卡、分隔线与按钮由 UGUI 独立生成。
+参考：docs/visuals/enemy-info-ideal-reference-20261105.png（风格与构图参考，未当作带字背景直接覆盖）。
+
+以下为实际完整生成提示词：
+
+Use case: precise-object-edit.
+Asset type: Production Unity UGUI enemy dossier window background, transparent cutout raster, no text.
+Input image 1 is a STYLE AND COMPOSITION REFERENCE: DiceLand's approved enemy information concept.
+Create a clean reusable painted UI PANEL ONLY from the center of that reference, straight-on orthographic, isolated with real alpha transparency outside its silhouette.
+Canvas 1536x1024, window silhouette bounds x32..1504 y72..960, main rectangle approximately 1.65:1. Center the large single window, occupying nearly the canvas with about 32px transparent margin each side. Top wooden plaque rises slightly above the frame, centered x550..986 y40..145. No perspective.
+Preserve exceptionally close visual styling: double beveled polished antique gold rails with brilliant thin edge highlights and copper shadow channels, refined carved filigree in four corners, small teal gems centered bottom and at sides of the blank dark walnut title plaque. Ivy leaf sprays only upper left and lower right on outside frame. The main interior is an opaque very dark emerald green subtly painted leather/forest texture, light diagonal brush grain and barely visible fern silhouettes around perimeter; interior must be uniformly calm and suitable for readable ivory text. Do not create a separate portrait inset or any visible boxes in the interior. A subtle forest-green glow in the left interior is fine. No heavy black patches.
+CRITICAL: Remove ALL characters, animals, portrait, battlefield, title lettering, body text, numbers, icons, heart, buttons, close X, ID badge, dividers, passive cards and all text. The top wood title plaque MUST BE COMPLETELY BLANK. Do not generate a close button. Do not generate footer rules or footer button. All functional elements will be drawn independently by Unity. Do not bake any UI glyphs or placeholder labels into this image.
+The output is just ONE premium hand-painted blank forest-and-gold window frame and green interior, with a centered blank wooden title plaque and restrained ivy corners. Preserve exact warm gold / deep emerald / turquoise palette, tactile 2D fantasy game illustration. Crisp high resolution, production-ready, consistent edge details. Real transparent alpha around frame and leaves, never a checkerboard or white background.

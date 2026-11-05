@@ -110,6 +110,9 @@ public partial class BattleSkillInfoOverlay
         footerRule = SkillRect(panelRoot, "FooterRule"); AddSkillRule(footerRule);
         footerHint = SkillText(panelRoot, "FooterHint", 23, SkillMuted, "点击技能即切换");
         footerClose = SkillButton(panelRoot, "FooterCloseButton", "关闭", Hide);
+        footerClose.gameObject.AddComponent<BattleSkillOverlayCancel>().close = Hide;
+        closeButton.gameObject.AddComponent<BattleSkillOverlayCancel>().close = Hide;
+        BuildEnemyProfileUi();
         BuildHoverUi();
         ApplyFonts();
         backdrop.gameObject.SetActive(false); panelRoot.gameObject.SetActive(false); hoverPanelRoot.gameObject.SetActive(false);
@@ -138,6 +141,9 @@ public partial class BattleSkillInfoOverlay
 
     private void LayoutForestPanel()
     {
+        bool profile = viewMode == SkillViewMode.EnemyData;
+        SetEnemyProfileVisible(profile);
+        if (profile) { LayoutEnemyProfile(false); return; }
         bool ally = viewMode == SkillViewMode.Ally;
         frameState = new SkillFrameState { width = ally ? 1420 : 980, height = ally ? 820 : viewMode == SkillViewMode.EnemySkill ? 680 : 730, listWidth = 340 };
         float w = frameState.width, h = frameState.height;
