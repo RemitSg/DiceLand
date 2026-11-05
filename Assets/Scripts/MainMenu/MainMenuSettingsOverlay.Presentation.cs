@@ -10,8 +10,9 @@ public partial class MainMenuSettingsOverlay
     private static readonly Color Muted=new Color32(166,184,158,255);
     private Font forestFont;
     private RectTransform safeRoot,titlePlaque,audioSection,displaySection,musicRow,sfxRow,vibrationRow;
+    private RectTransform gameplaySection, battleAdvanceRow, detailSizeRow;
     private RectTransform fullscreenRow,qualityRow,resolutionRow,frameRateRow,footerRule;
-    private Text footerHint,deviceHint;
+    private Text subtitleText, footerHint,deviceHint;
     private Button closeXButton;
     private GameObject previousSelection;
     private bool saveInvoked,focusWhenReady;
@@ -36,12 +37,17 @@ public partial class MainMenuSettingsOverlay
         Stretch(frame.rectTransform); frame.craftingStyle=MapCraftingFrameGraphic.Style.Window; frame.raycastTarget=false;
         titlePlaque=MakeRect("TitlePlaque",panelRect); Skin(titlePlaque,MainMenuSettingsGraphic.Part.Title);
         titleText=MakeText("Title",titlePlaque,"设 置",46,ResolveTitleFont(),Gold,TextAnchor.MiddleCenter); Stretch(titleText.rectTransform,48,4);
-        Text subtitle=MakeText("Subtitle",panelRect,"声音 · 画面 · 操作",22,ResolveLabelFont(),Muted,TextAnchor.MiddleCenter); labelTexts.Add(subtitle);
-        audioSection=BuildSection("AudioSection","声音与反馈",MainMenuSettingsGraphic.Part.Speaker);
+        subtitleText=MakeText("Subtitle",panelRect,"声音 · 画面 · 游玩",22,ResolveLabelFont(),Muted,TextAnchor.MiddleCenter); labelTexts.Add(subtitleText);
+        audioSection=BuildSection("AudioSection","声音",MainMenuSettingsGraphic.Part.Speaker);
         displaySection=BuildSection("DisplaySection","画面与性能",MainMenuSettingsGraphic.Part.Display);
+        gameplaySection = BuildSection("GameplaySection", "游玩与反馈", MainMenuSettingsGraphic.Part.Grip);
         musicRow=BuildAudioRow("MusicRow","音乐音量",audioSection,out musicSlider,out musicValueText);
         sfxRow=BuildAudioRow("SfxRow","音效音量",audioSection,out sfxSlider,out sfxValueText);
-        vibrationRow=BuildSwitchRow("VibrationRow","振动反馈",audioSection,out vibrationToggle);
+        battleAdvanceRow = BuildDropdownRow("BattleAdvanceRow", "战斗推进", gameplaySection, out battleAdvanceDropdown);
+        battleAdvanceDropdown.AddOptions(new List<string> { "手动", "自动", "快速" });
+        detailSizeRow = BuildDropdownRow("DetailSizeRow", "详情字号", gameplaySection, out detailSizeDropdown);
+        detailSizeDropdown.AddOptions(new List<string> { "标准", "大字" });
+        vibrationRow=BuildSwitchRow("VibrationRow","振动反馈",gameplaySection,out vibrationToggle);
         fullscreenRow=BuildSwitchRow("FullscreenRow","全屏显示",displaySection,out fullscreenToggle);
         qualityRow=BuildDropdownRow("QualityRow","画质预设",displaySection,out qualityDropdown);
         resolutionRow=BuildDropdownRow("ResolutionRow","分辨率",displaySection,out resolutionDropdown);
@@ -148,30 +154,48 @@ public partial class MainMenuSettingsOverlay
         Vector2 canvasSize=((RectTransform)canvas.transform).rect.size;
         Vector2 safeSize=new Vector2(canvasSize.x*safePixels.width/viewport.x,canvasSize.y*safePixels.height/viewport.y);
         bool portrait=viewport.x/viewport.y<1.1f;
-        float width=portrait?680:1160,height=portrait?1120:780;
+        float width = gameplayOnly || portrait ? 680 : 1160;
+        float height = gameplayOnly ? 574 : portrait ? 1290 : 886;
         panelRect.sizeDelta=new Vector2(width,height); panelRect.anchoredPosition=Vector2.zero;
-        panelRect.localScale=Vector3.one*Mathf.Min(1,(safeSize.x-40)/width,(safeSize.y-76)/height);
+        panelRect.localScale = Vector3.one * Mathf.Max(0.01f, Mathf.Min(1, (safeSize.x - 40) / width, (safeSize.y - 76) / height));
         Place(titlePlaque,(width-390)/2,-28,390,88);
-        Place(panelRect.Find("Subtitle") as RectTransform,40,77,width-80,34);
+        Place(subtitleText.rectTransform,40,77,width-80,34);
         Place((RectTransform)closeXButton.transform,width-85,27,54,54);
-        Place(audioSection,portrait?32:44,portrait?130:142,portrait?616:470,portrait?364:470);
-        Place(displaySection,portrait?32:532,portrait?512:142,portrait?616:584,portrait?416:470);
-        LayoutSection(audioSection); LayoutSection(displaySection);
-        float audioWidth=audioSection.rect.width-48;
-        LayoutAudioRow(musicRow,24,portrait?78:94,audioWidth);
-        LayoutAudioRow(sfxRow,24,portrait?180:210,audioWidth);
-        LayoutSwitchRow(vibrationRow,24,portrait?292:366,audioWidth);
-        float displayWidth=displaySection.rect.width-48;
-        LayoutSwitchRow(fullscreenRow,24,portrait?82:94,displayWidth);
-        LayoutDropdownRow(qualityRow,24,portrait?158:178,displayWidth);
-        LayoutDropdownRow(resolutionRow,24,portrait?234:262,displayWidth);
-        LayoutDropdownRow(frameRateRow,24,portrait?310:346,displayWidth);
-        deviceHint.gameObject.SetActive(!MainMenuSettingsPersistence.SupportsRuntimeResolutionChanges);
-        Place(deviceHint.rectTransform,210,portrait?374:418,displaySection.rect.width-234,24);
-        Place(footerRule,36,portrait?950:632,width-72,4);
-        Place(footerHint.rectTransform,40,portrait?974:649,width-80,34);
-        Place((RectTransform)closeButton.transform,portrait?64:260,portrait?1030:696,portrait?240:272,60);
-        Place((RectTransform)saveButton.transform,portrait?352:610,portrait?1030:696,portrait?264:300,60);
+
+        bool narrow = gameplayOnly || portrait;
+        float sectionX = narrow ? 32 : 44;
+        float sectionWidth = narrow ? 616 : 470;
+        float gameplayTop = gameplayOnly ? 126 : portrait ? 420 : 430;
+        Place(gameplaySection, sectionX, gameplayTop, sectionWidth, 284);
+        LayoutSection(gameplaySection);
+        float gameplayWidth = sectionWidth - 48;
+        LayoutDropdownRow(battleAdvanceRow, 24, 82, gameplayWidth);
+        LayoutDropdownRow(detailSizeRow, 24, 149, gameplayWidth);
+        LayoutSwitchRow(vibrationRow, 24, 216, gameplayWidth);
+
+        if (!gameplayOnly)
+        {
+            Place(audioSection, sectionX, portrait ? 124 : 134, sectionWidth, 284);
+            LayoutSection(audioSection);
+            LayoutAudioRow(musicRow, 24, 78, sectionWidth - 48);
+            LayoutAudioRow(sfxRow, 24, 179, sectionWidth - 48);
+
+            float displayWidth = portrait ? 616 : 584;
+            Place(displaySection, portrait ? 32 : 532, portrait ? 716 : 134, displayWidth, portrait ? 414 : 580);
+            LayoutSection(displaySection);
+            LayoutSwitchRow(fullscreenRow, 24, portrait ? 82 : 95, displayWidth - 48);
+            LayoutDropdownRow(qualityRow, 24, portrait ? 155 : 201, displayWidth - 48);
+            LayoutDropdownRow(resolutionRow, 24, portrait ? 228 : 307, displayWidth - 48);
+            LayoutDropdownRow(frameRateRow, 24, portrait ? 301 : 413, displayWidth - 48);
+            deviceHint.gameObject.SetActive(!MainMenuSettingsPersistence.SupportsRuntimeResolutionChanges);
+            Place(deviceHint.rectTransform, 210, portrait ? 374 : 502, displayWidth - 234, 24);
+        }
+
+        float footerTop = gameplayOnly ? 424 : portrait ? 1144 : 735;
+        Place(footerRule, 36, footerTop, width - 72, 4);
+        Place(footerHint.rectTransform, 40, footerTop + 17, width - 80, 34);
+        Place((RectTransform)closeButton.transform, narrow ? 64 : 260, footerTop + 64, narrow ? 240 : 272, 60);
+        Place((RectTransform)saveButton.transform, narrow ? 352 : 610, footerTop + 64, narrow ? 264 : 300, 60);
         layoutViewport=viewport; layoutSafe=safePixels; layoutCanvas=canvasSize;
         RefreshSwitches();
     }
@@ -207,7 +231,14 @@ public partial class MainMenuSettingsOverlay
     private void RememberSelection() { if(!IsVisible&&EventSystem.current!=null) previousSelection=EventSystem.current.currentSelectedGameObject; focusWhenReady=true; }
     private void RestoreSelection() { focusWhenReady=false; if(previousSelection!=null&&previousSelection.activeInHierarchy&&EventSystem.current!=null) EventSystem.current.SetSelectedGameObject(previousSelection); previousSelection=null; }
     private bool IsPageMoving() { var motion=canvas!=null?canvas.GetComponent<MainMenuPageMotion>():null; return motion!=null&&motion.IsTransitioning; }
-    private void CloseDropdowns() { if(qualityDropdown!=null) qualityDropdown.Hide(); if(resolutionDropdown!=null) resolutionDropdown.Hide(); if(frameRateDropdown!=null) frameRateDropdown.Hide(); }
+    private void CloseDropdowns()
+    {
+        if (qualityDropdown != null) qualityDropdown.Hide();
+        if (resolutionDropdown != null) resolutionDropdown.Hide();
+        if (frameRateDropdown != null) frameRateDropdown.Hide();
+        if (battleAdvanceDropdown != null) battleAdvanceDropdown.Hide();
+        if (detailSizeDropdown != null) detailSizeDropdown.Hide();
+    }
     private void RefreshSwitches() { if(canvas!=null) foreach(var control in canvas.GetComponentsInChildren<MainMenuSettingsControl>(true)) control.Refresh(true); }
     private static string QualityLabel(string value)
     {

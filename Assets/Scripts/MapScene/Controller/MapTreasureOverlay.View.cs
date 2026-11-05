@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public partial class MapTreasureOverlay
 {
+    private const int RelicDescriptionSize = 23;
+
     private static readonly Color ForestGold = new Color32(250, 214, 135, 255);
     private static readonly Color ParchmentInk = new Color32(54, 34, 15, 255);
     private MapTreasureArt art;
@@ -27,6 +29,8 @@ public partial class MapTreasureOverlay
         public BattleSettlementLootEntry entry;
         public MapTreasureCardMotion motion;
         public TextMeshProUGUI label;
+        public TextMeshProUGUI description;
+        public ScrollRect descriptionScroll;
     }
 
     public void ConfigureForestPresentation()
@@ -240,14 +244,29 @@ public partial class MapTreasureOverlay
             scroll.scrollSensitivity = 32;
             RectTransform content = Box(viewport, "DescriptionContent", 0, 0, viewport.sizeDelta.x, viewport.sizeDelta.y);
             scroll.content = content;
-            TextMeshProUGUI description = ForestText(content, "ChoiceDetail", 0, 0, viewport.sizeDelta.x, viewport.sizeDelta.y, 23, ParchmentInk, entry.description);
+            TextMeshProUGUI description = ForestText(content, "ChoiceDetail", 0, 0, viewport.sizeDelta.x, viewport.sizeDelta.y, RelicDescriptionSize, ParchmentInk, entry.description);
             description.enableWordWrapping = true; description.overflowMode = TextOverflowModes.Overflow;
-            float height = Mathf.Max(viewport.sizeDelta.y, description.GetPreferredValues(entry.description, viewport.sizeDelta.x, 0).y + 8);
-            content.sizeDelta = description.rectTransform.sizeDelta = new Vector2(viewport.sizeDelta.x, height);
             Button select = BuildButton(card, "SelectButton", new Vector2(0, 53), "选择", () => SelectRelicChoice(entry));
-            relicViews.Add(new RelicCardView { entry = entry, motion = card.GetComponent<MapTreasureCardMotion>(), label = select.GetComponentInChildren<TextMeshProUGUI>() });
+            var view = new RelicCardView
+            {
+                entry = entry,
+                motion = card.GetComponent<MapTreasureCardMotion>(),
+                label = select.GetComponentInChildren<TextMeshProUGUI>(),
+                description = description,
+                descriptionScroll = scroll
+            };
+            LayoutRelicDescription(view, MainMenuSettingsPersistence.DetailFontSize(RelicDescriptionSize));
+            relicViews.Add(view);
         }
         resultIcon.gameObject.SetActive(false);
+    }
+
+    private static void LayoutRelicDescription(RelicCardView view, float size)
+    {
+        view.description.fontSize = size;
+        Vector2 viewportSize = view.descriptionScroll.viewport.sizeDelta;
+        float height = Mathf.Max(viewportSize.y, view.description.GetPreferredValues(viewportSize.x, 0).y + 8);
+        view.descriptionScroll.content.sizeDelta = view.description.rectTransform.sizeDelta = new Vector2(viewportSize.x, height);
     }
 
     private void RefreshRelicSelection()
@@ -380,6 +399,10 @@ public partial class MapTreasureOverlay
     private void Update()
     {
         if (canvas == null || !canvas.gameObject.activeSelf) return;
+        float descriptionSize = MainMenuSettingsPersistence.DetailFontSize(RelicDescriptionSize);
+        foreach (RelicCardView view in relicViews)
+            if (view.description.fontSize != descriptionSize)
+                LayoutRelicDescription(view, descriptionSize);
         if (lastViewport != new Vector2(Screen.width, Screen.height) || lastSafeArea != Screen.safeArea)
             ApplyViewport(new Vector2(Screen.width, Screen.height), Screen.safeArea);
         float delta = Mathf.Min(Time.unscaledDeltaTime, 0.05f);

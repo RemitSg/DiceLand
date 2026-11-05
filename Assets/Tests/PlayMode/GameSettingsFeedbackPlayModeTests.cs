@@ -2,11 +2,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 public sealed class GameSettingsFeedbackPlayModeTests
@@ -33,6 +35,7 @@ public sealed class GameSettingsFeedbackPlayModeTests
         haptics = TypeOf("GameHaptics"); persistence = TypeOf("MainMenuSettingsPersistence"); musicType = TypeOf("GameMusicPlayer");
         originalSettings = persistence.GetProperty("Current").GetValue(null);
         object draft = Invoke(originalSettings, "Clone"); Set(draft, "vibrationEnabled", true);
+        Set(draft, "battleAdvanceMode", Enum.Parse(TypeOf("BattleAdvanceMode"), "Manual"));
         persistence.GetField("cachedSettings", Members).SetValue(null, draft);
         previousPlayer = musicType.GetField("instance", Members).GetValue(null);
         musicType.GetField("instance", Members).SetValue(null, null);
@@ -115,11 +118,126 @@ public sealed class GameSettingsFeedbackPlayModeTests
     public IEnumerator RealAllyDeathEmitsOnceAndFurtherDamageDoesNotReplayIt()
     {
         BuildBattle(1, 30, 20, 6);
+        SetAdvanceMode("Fast");
         battle.ClickBattleButton(); battle.ForceEnemySingleAttackConnection(); battle.ClickBattleButton();
         yield return battle.WaitUntilCombatSettles();
         CollectionAssert.AreEqual(new[] { "AllyDefeated" }, cues);
         Invoke(battle.Ally, "TakeDamage", 100, 0, -1);
         Assert.AreEqual(1, cues.Count);
+    }
+
+    [UnityTest]
+    public IEnumerator ManualClashCanSwitchToAutomaticWhileTheBattleMenuIsOpen()
+    {
+        BuildBattle(8, 1, 4, 30);
+        SetAdvanceMode("Manual");
+        battle.ClickBattleButton(); battle.ForceContestedConnection(); battle.ClickBattleButton();
+        yield return new WaitForSeconds(1f);
+        Assert.IsTrue(battle.IsResolvingCombat);
+        Assert.IsEmpty(cues, "Manual mode must wait before revealing the clash result.");
+
+        object pause = Get(battle.BattleButton, "battlePauseMenuOverlay");
+        Invoke(pause, "Show");
+        SetAdvanceMode("Automatic");
+        yield return new WaitForSeconds(1f);
+        Assert.IsEmpty(cues, "The open pause menu must keep the automatic range timer suspended.");
+        Invoke(pause, "SetVisible", false);
+        yield return battle.WaitUntilCombatSettles();
+        CollectionAssert.AreEqual(new[] { "Clash", "EnemyDefeated" }, cues);
+
+        object presentation = Get(battle.BattleButton, "battlePresentationSystem");
+        Assert.AreEqual(0.6f, (float)Invoke(presentation, "GetPresentationDelay", 0.6f), 0.001f);
+        SetAdvanceMode("Fast");
+        Assert.AreEqual(0.3f, (float)Invoke(presentation, "GetPresentationDelay", 0.6f), 0.001f);
+    }
+
+    [UnityTest]
+    public IEnumerator BothPauseMenusSaveOnlyRunPreferencesAndRestoreTheirInputOnReturn()
+    {
+        string path = Path.Combine(Application.persistentDataPath, "main_menu_settings.json");
+        byte[] previousFile = File.Exists(path) ? File.ReadAllBytes(path) : null;
+        try
+        {
+            object data = Invoke(originalSettings, "Clone");
+            Set(data, "musicVolume", 0.37f); Set(data, "sfxVolume", 0.63f);
+            Set(data, "isFullscreen", !Screen.fullScreen);
+            Set(data, "targetFrameRate", originalFrameRate == 90 ? 60 : 90);
+            Set(data, "resolutionWidth", 1280); Set(data, "resolutionHeight", 720); Set(data, "refreshRate", 75);
+            Set(data, "vibrationEnabled", true); Set(data, "largeDetailText", false);
+            Set(data, "battleAdvanceMode", Enum.Parse(TypeOf("BattleAdvanceMode"), "Manual"));
+            persistence.GetMethod("Save").Invoke(null, new[] { data });
+            bool fullscreenBefore = Screen.fullScreen;
+
+            foreach (string type in new[] { "MapPauseMenuOverlay", "BattlePauseMenuOverlay" })
+            {
+                var menuHost = new GameObject(type + " fixture");
+                menuHost.transform.SetParent(host.transform);
+                Component pause = menuHost.AddComponent(TypeOf(type));
+                Invoke(pause, "Show");
+                Canvas pauseCanvas = (Canvas)Get(pause, "canvas");
+                Button entry = pauseCanvas.GetComponentsInChildren<Button>().Single(button => button.name == "SettingsButton");
+                entry.onClick.Invoke();
+
+                Component settings = menuHost.GetComponent(TypeOf("MainMenuSettingsOverlay"));
+                CanvasGroup pauseInput = pauseCanvas.GetComponent<CanvasGroup>();
+                Assert.IsFalse(pauseInput.interactable);
+                Assert.IsFalse(pauseInput.blocksRaycasts);
+                Assert.IsFalse(((RectTransform)Get(settings, "audioSection")).gameObject.activeSelf);
+                Assert.IsFalse(((RectTransform)Get(settings, "displaySection")).gameObject.activeSelf);
+
+                var advance = (Dropdown)Get(settings, "battleAdvanceDropdown");
+                var detail = (Dropdown)Get(settings, "detailSizeDropdown");
+                var vibration = (Toggle)Get(settings, "vibrationToggle");
+                int loadedMode = type == "MapPauseMenuOverlay" ? 0 : 2;
+                Assert.AreEqual(loadedMode, advance.value);
+                Assert.AreEqual(loadedMode == 0 ? 0 : 1, detail.value);
+                Assert.AreEqual(loadedMode == 0, vibration.isOn);
+                advance.value = 1;
+                ((Button)Get(settings, "closeButton")).onClick.Invoke();
+                yield return WaitForSettingsMotion(settings);
+                Assert.IsFalse((bool)Get(settings, "IsVisible"));
+                Assert.IsTrue(pauseInput.interactable);
+                Assert.IsTrue(pauseInput.blocksRaycasts);
+
+                entry.onClick.Invoke();
+                yield return WaitForSettingsMotion(settings);
+                Assert.AreEqual(loadedMode, advance.value, "Returning must discard the draft.");
+                int newMode = loadedMode == 0 ? 2 : 1;
+                advance.value = newMode; detail.value = loadedMode == 0 ? 1 : 0; vibration.isOn = loadedMode != 0;
+                ((Button)Get(settings, "saveButton")).onClick.Invoke();
+                yield return WaitForSettingsMotion(settings);
+
+                object saved = persistence.GetMethod("Load").Invoke(null, null);
+                Assert.AreEqual(newMode, Convert.ToInt32(Get(saved, "battleAdvanceMode")));
+                Assert.AreEqual(loadedMode == 0, Get(saved, "largeDetailText"));
+                Assert.AreEqual(loadedMode != 0, Get(saved, "vibrationEnabled"));
+                Assert.AreEqual(0.37f, (float)Get(saved, "musicVolume"), 0.001f);
+                Assert.AreEqual(0.63f, (float)Get(saved, "sfxVolume"), 0.001f);
+                foreach (string field in new[] { "isFullscreen", "qualityLevel", "resolutionWidth", "resolutionHeight", "refreshRate", "targetFrameRate" })
+                    Assert.AreEqual(Get(data, field), Get(saved, field), field);
+                Assert.AreEqual(fullscreenBefore, Screen.fullScreen);
+                Assert.AreEqual(originalFrameRate, Application.targetFrameRate);
+                Assert.IsTrue((bool)Get(pause, "IsVisible"));
+                Assert.IsTrue(pauseInput.interactable);
+                Object.Destroy(menuHost);
+                yield return null;
+            }
+        }
+        finally
+        {
+            if (previousFile == null) File.Delete(path);
+            else File.WriteAllBytes(path, previousFile);
+        }
+    }
+
+    private static IEnumerator WaitForSettingsMotion(Component settings)
+    {
+        var canvas = (Canvas)Get(settings, "PresentationCanvas");
+        Component motion = canvas.GetComponent(TypeOf("MainMenuPageMotion"));
+        float deadline = Time.realtimeSinceStartup + 5f;
+        while ((bool)Get(motion, "IsTransitioning") && Time.realtimeSinceStartup < deadline)
+            yield return null;
+        Assert.IsFalse((bool)Get(motion, "IsTransitioning"));
     }
 
     [UnityTest]
@@ -176,8 +294,7 @@ public sealed class GameSettingsFeedbackPlayModeTests
     private void BuildBattle(int allyPower, int enemyPower, int enemyHp, int allyHp)
     {
         battle = new BattleFlowPlayModeFixture(); battle.BuildOneOnOneBattle(allyPower, enemyPower, enemyHp, allyHp);
-        object presentation = Get(battle.BattleButton, "battlePresentationSystem");
-        Set(presentation, "waitForPlayerClickDuringDicePresentation", false);
+        SetAdvanceMode("Automatic");
         // The disposable fixture has no scene-authored settlement font references.
         // Use the same real font as the dedicated settlement integration tests.
         Type database = TypeOf("UnityEditor.AssetDatabase");
@@ -187,6 +304,11 @@ public sealed class GameSettingsFeedbackPlayModeTests
             .Invoke(null, new object[] { fontPath, TypeOf("TMPro.TMP_FontAsset") });
         Assert.IsNotNull(font, "The battle fixture requires the project settlement font.");
         Invoke(Get(battle.BattleButton, "battleSettlementOverlay"), "ConfigureFonts", font, font);
+    }
+
+    private void SetAdvanceMode(string mode)
+    {
+        Set(persistence.GetProperty("Current").GetValue(null), "battleAdvanceMode", Enum.Parse(TypeOf("BattleAdvanceMode"), mode));
     }
 
     private void Play(string cue) => haptics.GetMethod("Play").Invoke(null, new[] { Enum.Parse(TypeOf("GameHapticCue"), cue) });

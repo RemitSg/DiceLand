@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public partial class MapEventOverlay
 {
+    private const int EventDetailSize = 28;
+
     private static readonly Color Ivory = new Color(0.96f, 0.93f, 0.81f);
     private static readonly Color Gold = new Color(0.75f, 0.60f, 0.32f);
     private Canvas canvas;
@@ -78,7 +80,7 @@ public partial class MapEventOverlay
         statusText = Text(panelRect, "Status", 26, new Color(1f, 0.72f, 0.49f));
         consequenceTitleText = Text(panelRect, "ConsequenceTitle", 28, Gold, true);
         consequenceScrollRect = ScrollArea(panelRect, "ConsequenceScrollRect", out consequenceViewportRect, out consequenceContentRect);
-        consequenceText = Text(consequenceContentRect, "ConsequenceText", 28, Ivory);
+        consequenceText = Text(consequenceContentRect, "ConsequenceText", EventDetailSize, Ivory);
         consequenceText.alignment = TextAlignmentOptions.TopLeft;
         confirmButton = BuildActionButton();
 
@@ -130,7 +132,7 @@ public partial class MapEventOverlay
         row.number.alignment = TextAlignmentOptions.Midline;
         row.label = Text(rect, "Label", buttonFontSize, Ivory, true);
         row.label.text = FormatOptionLabel(option, preview);
-        row.detail = Text(rect, "Detail", 28, Ivory);
+        row.detail = Text(rect, "Detail", EventDetailSize, Ivory);
         row.detail.text = FormatOptionDetail(option, preview);
         optionRows.Add(row);
         return button;
@@ -154,6 +156,9 @@ public partial class MapEventOverlay
     {
         if (canvas == null) return;
         float width = Mathf.Max(960f, panelSize.x), height = Mathf.Max(800f, panelSize.y);
+        contentText.fontSize = MainMenuSettingsPersistence.DetailFontSize(bodyFontSize);
+        float detailSize = MainMenuSettingsPersistence.DetailFontSize(EventDetailSize);
+        consequenceText.fontSize = detailSize;
         panelRect.sizeDelta = new Vector2(width, height);
         float titleHeight = Mathf.Max(70f, PreferredHeight(titleText, width - 326f) + 4f);
         float headerHeight = Mathf.Max(104f, titleHeight + 42f);
@@ -164,6 +169,7 @@ public partial class MapEventOverlay
         float rowsHeight = 0f, rowWidth = width - 82f;
         foreach (OptionRow row in optionRows)
         {
+            row.detail.fontSize = detailSize;
             float labelHeight = PreferredHeight(row.label, 240f);
             float detailHeight = PreferredHeight(row.detail, rowWidth - 444f);
             float rowHeight = Mathf.Max(82f, Mathf.Max(labelHeight, detailHeight) + 24f);
@@ -376,7 +382,7 @@ public partial class MapEventOverlay
         if (!IsVisible) return;
         Vector2 viewport = new Vector2(Screen.width, Screen.height);
         if (viewport != lastViewport || Screen.safeArea != lastSafeArea) ApplyViewport(viewport, Screen.safeArea);
-        if (layoutDirty) RefreshLayout();
+        if (layoutDirty || contentText.fontSize != MainMenuSettingsPersistence.DetailFontSize(bodyFontSize)) RefreshLayout();
     }
 
     private void OnValidate()

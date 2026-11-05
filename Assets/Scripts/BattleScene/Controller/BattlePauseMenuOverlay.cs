@@ -8,6 +8,9 @@ using UnityEngine.UI;
 public class BattlePauseMenuOverlay : MonoBehaviour
 {
     private const string FallbackFontName = "LegacyRuntime.ttf";
+    private static BattlePauseMenuOverlay openMenu;
+
+    internal static bool IsOpen => openMenu != null && openMenu.IsVisible;
 
     [Header("Scene Flow")]
     [SerializeField] private string mainMenuSceneName = BattleExitFlowService.DefaultMainMenuSceneName;
@@ -77,6 +80,8 @@ public class BattlePauseMenuOverlay : MonoBehaviour
     private Slider sfxSlider;
     private Text musicValueText;
     private Text sfxValueText;
+    private Text settingsButtonText;
+    private MainMenuSettingsOverlay settingsOverlay;
     private bool ignoreSliderEvents;
 
     public bool IsVisible => canvas != null && canvas.gameObject.activeSelf;
@@ -94,10 +99,34 @@ public class BattlePauseMenuOverlay : MonoBehaviour
         if (!allowEscapeToggle || !Input.GetKeyDown(KeyCode.Escape))
             return;
 
-        if (IsVisible)
+        if (settingsOverlay != null && settingsOverlay.IsVisible)
+            settingsOverlay.Hide();
+        else if (IsVisible)
             Hide();
         else
             Show();
+    }
+
+    public void ConfigureSettingsFont(Font font)
+    {
+        EnsureUi();
+        settingsButtonText.font = font != null ? font : ResolveButtonFont();
+    }
+
+    private void ShowSettings()
+    {
+        if (settingsOverlay == null)
+            settingsOverlay = gameObject.AddComponent<MainMenuSettingsOverlay>();
+        settingsOverlay.ShowInRun(canvas, settingsButtonText.font);
+    }
+
+    private void OnDisable() => SetVisible(false);
+
+    private void OnDestroy()
+    {
+        if (canvas == null) return;
+        if (Application.isPlaying) Destroy(canvas.gameObject);
+        else DestroyImmediate(canvas.gameObject);
     }
 
     public void Show()
@@ -192,8 +221,7 @@ public class BattlePauseMenuOverlay : MonoBehaviour
         MainMenuSettingsData settings = MainMenuSettingsPersistence.Current.Clone();
         settings.musicVolume = musicSlider.value;
         settings.sfxVolume = sfxSlider.value;
-        MainMenuSettingsPersistence.Save(settings);
-        MainMenuSettingsPersistence.Apply(settings);
+        MainMenuSettingsPersistence.SaveInRun(settings);
     }
 
     private void HandleSliderChanged(float _)
@@ -213,6 +241,13 @@ public class BattlePauseMenuOverlay : MonoBehaviour
 
     private void SetVisible(bool visible)
     {
+        if (visible)
+            openMenu = this;
+        else
+        {
+            if (openMenu == this) openMenu = null;
+            if (settingsOverlay != null) settingsOverlay.HideImmediately();
+        }
         if (canvas != null)
             canvas.gameObject.SetActive(visible);
     }
@@ -252,7 +287,7 @@ public class BattlePauseMenuOverlay : MonoBehaviour
         panelRect.anchorMax = new Vector2(0.5f, 0.5f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
         panelRect.anchoredPosition = Vector2.zero;
-        panelRect.sizeDelta = panelSize;
+        panelRect.sizeDelta = panelSize + Vector2.up * (buttonSize.y + buttonSpacing);
 
         VerticalLayoutGroup panelLayout = panelRect.gameObject.AddComponent<VerticalLayoutGroup>();
         panelLayout.padding = new RectOffset(
@@ -273,7 +308,8 @@ public class BattlePauseMenuOverlay : MonoBehaviour
         musicSlider = CreateSliderRow(musicLabel, out musicValueText);
         sfxSlider = CreateSliderRow(sfxLabel, out sfxValueText);
 
-        RectTransform buttonsRoot = CreateRect("Buttons", panelRect, buttonSize);
+        Vector2 buttonsSize = new Vector2(buttonSize.x, buttonSize.y * 5f + buttonSpacing * 4f);
+        RectTransform buttonsRoot = CreateRect("Buttons", panelRect, buttonsSize);
         VerticalLayoutGroup buttonsLayout = buttonsRoot.gameObject.AddComponent<VerticalLayoutGroup>();
         buttonsLayout.spacing = buttonSpacing;
         buttonsLayout.childAlignment = TextAnchor.UpperCenter;
@@ -281,9 +317,11 @@ public class BattlePauseMenuOverlay : MonoBehaviour
         buttonsLayout.childControlHeight = false;
         buttonsLayout.childForceExpandWidth = false;
         buttonsLayout.childForceExpandHeight = false;
-        AddLayoutElement(buttonsRoot, buttonSize.x, buttonSize.y * 4f + buttonSpacing * 3f);
+        AddLayoutElement(buttonsRoot, buttonsSize.x, buttonsSize.y);
 
         CreateButton(buttonsRoot, "ResumeButton", resumeLabel, buttonColor, buttonBackgroundSprite, Hide);
+        Button settingsButton = CreateButton(buttonsRoot, "SettingsButton", "设置", buttonColor, buttonBackgroundSprite, ShowSettings);
+        settingsButtonText = settingsButton.GetComponentInChildren<Text>(true);
         CreateButton(buttonsRoot, "RetryButton", retryLabel, buttonColor, buttonBackgroundSprite, HandleRetryClicked);
         CreateButton(buttonsRoot, "AbandonButton", abandonLabel, abandonButtonColor, abandonButtonBackgroundSprite, HandleAbandonClicked);
         CreateButton(buttonsRoot, "CloseButton", closeLabel, buttonColor, buttonBackgroundSprite, Hide);

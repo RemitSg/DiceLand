@@ -5941,6 +5941,8 @@ public partial class BattleButton : MonoBehaviour
         if (headlessExecution) return;
         GameObject host = battleManager != null ? battleManager.gameObject : gameObject;
         battlePauseMenuOverlay = BattleComponentResolver.ResolveSceneOrHost(battlePauseMenuOverlay, host, true, true);
+        TMP_FontAsset settingsFont = tutorialGuideBodyFont != null ? tutorialGuideBodyFont : sharedEnergyFont;
+        battlePauseMenuOverlay?.ConfigureSettingsFont(settingsFont != null ? settingsFont.sourceFontFile : null);
     }
 
     private void InitializeTutorialBattleForEncounter()

@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public partial class MapMerchantOverlay
 {
+    private const int FlavorSize = 27;
+
     private static readonly Color Ivory = new Color(0.96f, 0.93f, 0.81f);
     private static readonly Color Gold = new Color(0.75f, 0.60f, 0.32f);
     private static readonly Color MoneyGold = new Color32(240, 204, 107, 255);
@@ -94,7 +96,7 @@ public partial class MapMerchantOverlay
         descriptionRule = Rule(detailContent, "EffectRule", 160, 0, 100, 12, true);
         descriptionText = Text(detailContent, "Description", bodyFontSize, Ivory, string.Empty);
         flavorRule = Rule(detailContent, "FlavorRule", 0, 0, 100, 1);
-        flavorText = Text(detailContent, "Flavor", 27, Muted, string.Empty);
+        flavorText = Text(detailContent, "Flavor", FlavorSize, Muted, string.Empty);
         flavorText.fontStyle = FontStyles.Italic;
         availabilityText = Text(detailContent, "Availability", 27, new Color(0.96f, 0.65f, 0.53f), string.Empty);
         statusText = Text(detailContent, "Status", 27, Ivory, string.Empty);
@@ -217,6 +219,8 @@ public partial class MapMerchantOverlay
 
     private void LayoutDetails()
     {
+        descriptionText.fontSize = MainMenuSettingsPersistence.DetailFontSize(bodyFontSize);
+        flavorText.fontSize = MainMenuSettingsPersistence.DetailFontSize(FlavorSize);
         float width = Mathf.Max(40, detailViewport.rect.width - 6);
         float nameHeight = Preferred(goodsNameText, width - 204), metaHeight = Preferred(metaText, width - 222);
         Place(detailIconWell, 0, 0, 178, 198);
@@ -342,6 +346,6 @@ public partial class MapMerchantOverlay
         if (!IsVisible) return;
         Vector2 viewport = new Vector2(Screen.width, Screen.height);
         if (viewport != lastViewport || Screen.safeArea != lastSafeArea) ApplyViewport(viewport, Screen.safeArea);
-        if (layoutDirty) RefreshLayout();
+        if (layoutDirty || descriptionText.fontSize != MainMenuSettingsPersistence.DetailFontSize(bodyFontSize)) RefreshLayout();
     }
 }

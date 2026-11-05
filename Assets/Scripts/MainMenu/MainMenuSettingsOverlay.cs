@@ -25,6 +25,8 @@ public partial class MainMenuSettingsOverlay : MonoBehaviour
     private Dropdown qualityDropdown;
     private Dropdown resolutionDropdown;
     private Dropdown frameRateDropdown;
+    private Dropdown battleAdvanceDropdown;
+    private Dropdown detailSizeDropdown;
     private Text musicValueText;
     private Text sfxValueText;
     private Text titleText;
@@ -46,6 +48,10 @@ public partial class MainMenuSettingsOverlay : MonoBehaviour
     private Font buttonFontOverride;
 
     private Action<MainMenuSettingsData> saveHandler;
+    private bool gameplayOnly;
+    private CanvasGroup pauseInputGroup;
+    private bool previousPauseInteractable;
+    private bool previousPauseRaycasts;
 
     public bool IsVisible => canvas != null && canvas.gameObject.activeSelf;
     public Canvas PresentationCanvas => canvas;
@@ -72,19 +78,52 @@ public partial class MainMenuSettingsOverlay : MonoBehaviour
 
     public void Show(MainMenuSettingsData currentSettings, Action<MainMenuSettingsData> onSave)
     {
+        ShowSettings(currentSettings, onSave, false, 9500);
+    }
+
+    public void ShowInRun(Canvas pauseCanvas, Font font)
+    {
+        if (pauseCanvas == null || IsVisible) return;
+
+        ConfigureForestFont(font);
+        ShowSettings(MainMenuSettingsPersistence.Current, MainMenuSettingsPersistence.SaveInRun, true,
+            Mathf.Max(9800, pauseCanvas.sortingOrder + 1));
+
+        pauseInputGroup = pauseCanvas.GetComponent<CanvasGroup>();
+        if (pauseInputGroup == null)
+            pauseInputGroup = pauseCanvas.gameObject.AddComponent<CanvasGroup>();
+        previousPauseInteractable = pauseInputGroup.interactable;
+        previousPauseRaycasts = pauseInputGroup.blocksRaycasts;
+        pauseInputGroup.interactable = false;
+        pauseInputGroup.blocksRaycasts = false;
+    }
+
+    private void ShowSettings(MainMenuSettingsData currentSettings, Action<MainMenuSettingsData> onSave,
+        bool inRun, int sortOrder)
+    {
         EnsureUi();
+        gameplayOnly = inRun;
         saveHandler = onSave;
+        canvas.sortingOrder = sortOrder;
+        audioSection.gameObject.SetActive(!inRun);
+        displaySection.gameObject.SetActive(!inRun);
+        titleText.text = inRun ? "局内设置" : "设 置";
+        subtitleText.text = inRun ? "战斗 · 阅读 · 反馈" : "声音 · 画面 · 游玩";
 
         MainMenuSettingsData safeSettings = currentSettings != null ? currentSettings.Clone() : MainMenuSettingsPersistence.CreateDefault();
-        PopulateResolutionOptions(safeSettings);
-
-        musicSlider.SetValueWithoutNotify(safeSettings.musicVolume);
-        sfxSlider.SetValueWithoutNotify(safeSettings.sfxVolume);
-        fullscreenToggle.SetIsOnWithoutNotify(safeSettings.isFullscreen);
         vibrationToggle.SetIsOnWithoutNotify(safeSettings.vibrationEnabled);
-        qualityDropdown.SetValueWithoutNotify(Mathf.Clamp(safeSettings.qualityLevel, 0, Mathf.Max(0, qualityDropdown.options.Count - 1)));
-        resolutionDropdown.SetValueWithoutNotify(FindResolutionIndex(safeSettings));
-        frameRateDropdown.SetValueWithoutNotify(FindFrameRateIndex(safeSettings.targetFrameRate));
+        battleAdvanceDropdown.SetValueWithoutNotify((int)safeSettings.battleAdvanceMode);
+        detailSizeDropdown.SetValueWithoutNotify(safeSettings.largeDetailText ? 1 : 0);
+        if (!inRun)
+        {
+            PopulateResolutionOptions(safeSettings);
+            musicSlider.SetValueWithoutNotify(safeSettings.musicVolume);
+            sfxSlider.SetValueWithoutNotify(safeSettings.sfxVolume);
+            fullscreenToggle.SetIsOnWithoutNotify(safeSettings.isFullscreen);
+            qualityDropdown.SetValueWithoutNotify(Mathf.Clamp(safeSettings.qualityLevel, 0, Mathf.Max(0, qualityDropdown.options.Count - 1)));
+            resolutionDropdown.SetValueWithoutNotify(FindResolutionIndex(safeSettings));
+            frameRateDropdown.SetValueWithoutNotify(FindFrameRateIndex(safeSettings.targetFrameRate));
+        }
 
         RefreshSliderTexts();
         RefreshSwitches();
@@ -101,12 +140,20 @@ public partial class MainMenuSettingsOverlay : MonoBehaviour
         if (!MainMenuPageMotion.TryHide(canvas, HideImmediately)) HideImmediately();
     }
 
-    private void HideImmediately()
+    internal void HideImmediately()
     {
-        if (canvas != null)
+        if (IsVisible)
             canvas.gameObject.SetActive(false);
+        if (pauseInputGroup != null)
+        {
+            pauseInputGroup.interactable = previousPauseInteractable;
+            pauseInputGroup.blocksRaycasts = previousPauseRaycasts;
+        }
+        pauseInputGroup = null;
         RestoreSelection();
     }
+
+    private void OnDisable() => HideImmediately();
 
     private void OnDestroy()
     {
@@ -142,7 +189,8 @@ public partial class MainMenuSettingsOverlay : MonoBehaviour
             for (int i = resolutions.Length - 1; i >= 0; i--)
             {
                 Resolution resolution = resolutions[i];
-                string key = $"{resolution.width}x{resolution.height}@{Mathf.RoundToInt((float)resolution.refreshRateRatio.value)}";
+                int refreshRate = MainMenuSettingsPersistence.GetRefreshRate(resolution);
+                string key = $"{resolution.width}x{resolution.height}@{refreshRate}";
                 if (!seen.Add(key))
                     continue;
 
@@ -150,8 +198,8 @@ public partial class MainMenuSettingsOverlay : MonoBehaviour
                 {
                     width = resolution.width,
                     height = resolution.height,
-                    refreshRate = Mathf.RoundToInt((float)resolution.refreshRateRatio.value),
-                    label = $"{resolution.width} x {resolution.height} ({Mathf.RoundToInt((float)resolution.refreshRateRatio.value)}Hz)"
+                    refreshRate = refreshRate,
+                    label = $"{resolution.width} x {resolution.height} ({refreshRate}Hz)"
                 });
             }
 
@@ -217,22 +265,22 @@ public partial class MainMenuSettingsOverlay : MonoBehaviour
     private void HandleSaveClicked()
     {
         if (!IsVisible || saveInvoked || IsPageMoving()) return;
-        MainMenuSettingsData data = new MainMenuSettingsData
+        MainMenuSettingsData data = gameplayOnly ? MainMenuSettingsPersistence.Current.Clone() : new MainMenuSettingsData();
+        data.vibrationEnabled = vibrationToggle.isOn;
+        data.battleAdvanceMode = (BattleAdvanceMode)battleAdvanceDropdown.value;
+        data.largeDetailText = detailSizeDropdown.value == 1;
+        if (!gameplayOnly)
         {
-            musicVolume = musicSlider.value,
-            sfxVolume = sfxSlider.value,
-            isFullscreen = fullscreenToggle.isOn,
-            vibrationEnabled = vibrationToggle.isOn,
-            qualityLevel = qualityDropdown.value
-        };
-
-        int resolutionIndex = Mathf.Clamp(resolutionDropdown.value, 0, Mathf.Max(0, resolutionOptions.Count - 1));
-        RuntimeResolutionOption selectedResolution = resolutionOptions[Mathf.Clamp(resolutionIndex, 0, resolutionOptions.Count - 1)];
-        data.resolutionWidth = selectedResolution.width;
-        data.resolutionHeight = selectedResolution.height;
-        data.refreshRate = selectedResolution.refreshRate;
-        int frameRateIndex = Mathf.Clamp(frameRateDropdown.value, 0, Mathf.Max(0, frameRateOptions.Count - 1));
-        data.targetFrameRate = frameRateOptions[Mathf.Clamp(frameRateIndex, 0, frameRateOptions.Count - 1)];
+            data.musicVolume = musicSlider.value;
+            data.sfxVolume = sfxSlider.value;
+            data.isFullscreen = fullscreenToggle.isOn;
+            data.qualityLevel = qualityDropdown.value;
+            RuntimeResolutionOption selectedResolution = resolutionOptions[Mathf.Clamp(resolutionDropdown.value, 0, resolutionOptions.Count - 1)];
+            data.resolutionWidth = selectedResolution.width;
+            data.resolutionHeight = selectedResolution.height;
+            data.refreshRate = selectedResolution.refreshRate;
+            data.targetFrameRate = frameRateOptions[Mathf.Clamp(frameRateDropdown.value, 0, frameRateOptions.Count - 1)];
+        }
 
         saveInvoked = true;
         saveHandler?.Invoke(data);

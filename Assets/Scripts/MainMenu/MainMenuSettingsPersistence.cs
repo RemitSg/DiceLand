@@ -2,6 +2,13 @@ using System;
 using System.IO;
 using UnityEngine;
 
+public enum BattleAdvanceMode
+{
+    Manual = 0,
+    Automatic = 1,
+    Fast = 2
+}
+
 [Serializable]
 public sealed class MainMenuSettingsData
 {
@@ -9,6 +16,8 @@ public sealed class MainMenuSettingsData
     [Range(0f, 1f)] public float sfxVolume = 1f;
     public bool isFullscreen = true;
     public bool vibrationEnabled = true;
+    public BattleAdvanceMode battleAdvanceMode;
+    public bool largeDetailText;
     public int qualityLevel = -1;
     public int resolutionWidth;
     public int resolutionHeight;
@@ -23,6 +32,8 @@ public sealed class MainMenuSettingsData
             sfxVolume = sfxVolume,
             isFullscreen = isFullscreen,
             vibrationEnabled = vibrationEnabled,
+            battleAdvanceMode = battleAdvanceMode,
+            largeDetailText = largeDetailText,
             qualityLevel = qualityLevel,
             resolutionWidth = resolutionWidth,
             resolutionHeight = resolutionHeight,
@@ -35,6 +46,7 @@ public sealed class MainMenuSettingsData
 public static class MainMenuSettingsPersistence
 {
     private const string SettingsFileName = "main_menu_settings.json";
+    private const float LargeDetailFontScale = 1.25f;
 
     private static MainMenuSettingsData cachedSettings;
 
@@ -117,10 +129,7 @@ public static class MainMenuSettingsPersistence
         MainMenuSettingsData safeSettings = settings != null ? settings.Clone() : CreateDefault();
         EnsureValid(safeSettings);
 
-        // Music and SFX apply their own channel volumes at their AudioSources.
-        // Scaling the listener by either slider would scale both channels a second time.
-        AudioListener.volume = 1f;
-        GameHaptics.ApplySettings(safeSettings.vibrationEnabled);
+        ApplyAudioAndHaptics(safeSettings);
 
         safeSettings.qualityLevel = Mathf.Clamp(
             safeSettings.qualityLevel < 0 ? QualitySettings.GetQualityLevel() : safeSettings.qualityLevel,
@@ -143,22 +152,22 @@ public static class MainMenuSettingsPersistence
 
         Resolution[] resolutions = Screen.resolutions;
         DisplayResolutionOption[] options = Array.ConvertAll(resolutions, resolution =>
-            new DisplayResolutionOption(resolution.width, resolution.height,
-                Mathf.RoundToInt((float)resolution.refreshRateRatio.value)));
+            new DisplayResolutionOption(resolution.width, resolution.height, GetRefreshRate(resolution)));
         int matchedIndex = DisplayResolutionSelectionService.FindBestIndex(options,
             new DisplayResolutionOption(safeSettings.resolutionWidth, safeSettings.resolutionHeight, safeSettings.refreshRate));
         Resolution matchedResolution = matchedIndex >= 0 ? resolutions[matchedIndex] : Screen.currentResolution;
 
         safeSettings.resolutionWidth = matchedResolution.width;
         safeSettings.resolutionHeight = matchedResolution.height;
-        safeSettings.refreshRate = Mathf.Max(30, Mathf.RoundToInt((float)matchedResolution.refreshRateRatio.value));
+        safeSettings.refreshRate = GetRefreshRate(matchedResolution);
 
 #if UNITY_2022_2_OR_NEWER
-        Screen.SetResolution(
-            matchedResolution.width,
-            matchedResolution.height,
-            safeSettings.isFullscreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed,
-            matchedResolution.refreshRateRatio);
+        FullScreenMode screenMode = safeSettings.isFullscreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
+        RefreshRate ratio = matchedResolution.refreshRateRatio;
+        if (ratio.numerator > 0 && ratio.denominator > 0)
+            Screen.SetResolution(matchedResolution.width, matchedResolution.height, screenMode, ratio);
+        else
+            Screen.SetResolution(matchedResolution.width, matchedResolution.height, screenMode);
 #else
         Screen.SetResolution(
             matchedResolution.width,
@@ -168,6 +177,24 @@ public static class MainMenuSettingsPersistence
 #endif
 
         cachedSettings = safeSettings.Clone();
+    }
+
+    public static void SaveInRun(MainMenuSettingsData settings)
+    {
+        Save(settings);
+        ApplyAudioAndHaptics(Current);
+    }
+
+    public static float DetailFontSize(float standardSize)
+    {
+        return Current.largeDetailText ? standardSize * LargeDetailFontScale : standardSize;
+    }
+
+    private static void ApplyAudioAndHaptics(MainMenuSettingsData settings)
+    {
+        // Each audio source applies its own channel volume.
+        AudioListener.volume = 1f;
+        GameHaptics.ApplySettings(settings.vibrationEnabled);
     }
 
     public static MainMenuSettingsData CreateDefault()
@@ -195,6 +222,8 @@ public static class MainMenuSettingsPersistence
 
         settings.musicVolume = Mathf.Clamp01(settings.musicVolume);
         settings.sfxVolume = Mathf.Clamp01(settings.sfxVolume);
+        if (!Enum.IsDefined(typeof(BattleAdvanceMode), settings.battleAdvanceMode))
+            settings.battleAdvanceMode = BattleAdvanceMode.Manual;
         settings.qualityLevel = Mathf.Clamp(
             settings.qualityLevel < 0 ? QualitySettings.GetQualityLevel() : settings.qualityLevel,
             0,
@@ -232,12 +261,15 @@ public static class MainMenuSettingsPersistence
         return closest;
     }
 
-    private static int GetCurrentRefreshRate()
+    private static int GetCurrentRefreshRate() => GetRefreshRate(Screen.currentResolution);
+
+    internal static int GetRefreshRate(Resolution resolution)
     {
 #if UNITY_2022_2_OR_NEWER
-        return Mathf.Max(30, Mathf.RoundToInt((float)Screen.currentResolution.refreshRateRatio.value));
+        double rate = resolution.refreshRateRatio.value;
 #else
-        return Mathf.Max(30, Screen.currentResolution.refreshRate);
+        double rate = resolution.refreshRate;
 #endif
+        return rate > 0 && rate <= int.MaxValue ? Mathf.Max(30, (int)Math.Round(rate)) : 60;
     }
 }

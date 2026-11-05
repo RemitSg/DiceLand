@@ -52,6 +52,8 @@ public sealed class BattleSettlementOverlayPlayModeTests
             ((IList)Get(data, "lootEntries")).Add(entry);
         }
         Invoke("ShowResult", data);
+        Assert.AreEqual("金币 +0", Text("MoneyReward"));
+        Assert.IsTrue((bool)Get(overlay, "IsPresenting"));
     }
 
     [TearDown]
@@ -66,8 +68,6 @@ public sealed class BattleSettlementOverlayPlayModeTests
     [UnityTest]
     public IEnumerator PausedGameNaturallyFinishesRewardsWalletAndEveryCharacter()
     {
-        Assert.AreEqual("金币 +0", Text("MoneyReward"));
-        Assert.IsTrue((bool)Get(overlay, "IsPresenting"));
         float deadline = Time.realtimeSinceStartup + 8f;
         while ((bool)Get(overlay, "IsPresenting") && Time.realtimeSinceStartup < deadline)
         {

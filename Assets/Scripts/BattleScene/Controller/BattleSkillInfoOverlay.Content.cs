@@ -6,6 +6,10 @@ using UnityEngine.UI;
 
 public partial class BattleSkillInfoOverlay
 {
+    private const int SkillRequirementsSize = 24;
+    private const int SkillDescriptionSize = 27;
+    private const int DiceClauseSize = 26;
+
     private void RenderCurrentSkill(bool reset)
     {
         if (viewMode == SkillViewMode.EnemyData)
@@ -95,7 +99,7 @@ public partial class BattleSkillInfoOverlay
             RectTransform icon = SkillRect(rect, "DieIcon");
             card.icon = icon.gameObject.AddComponent<BattleSkillFrameGraphic>(); card.icon.skillStyle = BattleSkillFrameGraphic.SkillStyle.Die; card.icon.raycastTarget = false;
             card.rule = SkillRect(rect, "Rule"); AddSkillRule(card.rule);
-            card.clauses = SkillText(rect, "DiceClauses", 26, SkillIvory, string.Empty);
+            card.clauses = SkillText(rect, "DiceClauses", DiceClauseSize, SkillIvory, string.Empty);
             card.clauses.enableWordWrapping = true; card.clauses.alignment = TextAlignmentOptions.TopLeft; card.clauses.paragraphSpacing = 7;
             diceCards.Add(card);
         }
@@ -132,6 +136,8 @@ public partial class BattleSkillInfoOverlay
     {
         if (viewMode == SkillViewMode.EnemyData) { LayoutEnemyProfile(reset); return; }
         if (detailRegion == null || frameState.height < 1) return;
+        requirementsText.fontSize = MainMenuSettingsPersistence.DetailFontSize(SkillRequirementsSize);
+        descriptionBody.fontSize = MainMenuSettingsPersistence.DetailFontSize(SkillDescriptionSize);
         float oldPosition = detailScrollRect != null ? detailScrollRect.verticalNormalizedPosition : 1;
         bool dataMode = viewMode == SkillViewMode.EnemyData;
         float nameHeight = Mathf.Clamp(SkillTextHeight(skillNameText, detailWidth, 54), 54, 100);
@@ -175,6 +181,7 @@ public partial class BattleSkillInfoOverlay
             for (int i = 0; i < count && i < diceCards.Count; i++)
             {
                 DiceCardView card = diceCards[i]; card.top = cursor;
+                card.clauses.fontSize = MainMenuSettingsPersistence.DetailFontSize(DiceClauseSize);
                 float rulesHeight = SkillTextHeight(card.clauses, bodyWidth - 48, 34);
                 float height = 100 + rulesHeight;
                 PlaceSkill(card.rect, 0, cursor, bodyWidth, height);
@@ -334,6 +341,7 @@ public partial class BattleSkillInfoOverlay
     private void LayoutHover()
     {
         if (hoverPanelRoot == null || hoverSkill == null) return;
+        hoverDetailText.fontSize = hoverClauseText.fontSize = MainMenuSettingsPersistence.DetailFontSize(enemyHoverBodyFontSize);
         float width = 570, inner = width - 56;
         PlaceSkill(hoverTitleText.rectTransform, 28, 18, inner, 44);
         PlaceSkill(hoverContextText.rectTransform, 28, 68, inner, 32);

@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public partial class MapInventoryDetailView
 {
+    private const float DescriptionSize = 28;
+    private const float AdditionalDescriptionSize = 26;
+
     private static readonly Color DetailIvory = new Color32(242, 231, 200, 255);
     private static readonly Color DetailGold = new Color32(220, 182, 97, 255);
     private TMP_FontAsset detailHeadingFont, detailBodyFont;
@@ -103,10 +106,10 @@ public partial class MapInventoryDetailView
         RectTransform content = DetailRect(viewport, "Content");
         content.anchorMin = new Vector2(0, 1); content.anchorMax = Vector2.one; content.pivot = new Vector2(0, 1);
         descriptionScroll.viewport = viewport; descriptionScroll.content = content;
-        descriptionText = DetailText(content, "Description", 28, DetailIvory, string.Empty);
+        descriptionText = DetailText(content, "Description", DescriptionSize, DetailIvory, string.Empty);
         descriptionText.enableWordWrapping = true; descriptionText.alignment = TextAlignmentOptions.TopLeft;
         extraHeading = DetailText(content, "ExtraHeading", 24, DetailGold, "补充说明");
-        relicAdditionalDescriptionText = DetailText(content, "RelicAdditionalDescription", 26, new Color32(188, 202, 168, 255), string.Empty);
+        relicAdditionalDescriptionText = DetailText(content, "RelicAdditionalDescription", AdditionalDescriptionSize, new Color32(188, 202, 168, 255), string.Empty);
         relicAdditionalDescriptionText.enableWordWrapping = true;
         BuildDescriptionScrollbar();
         footerRule = DetailRect(detailRect, "FooterRule"); PlaceDetail(footerRule, 36, 462, 928, 6); DetailRule(footerRule);
@@ -144,6 +147,8 @@ public partial class MapInventoryDetailView
     private void RefreshDescriptionLayout(bool reset)
     {
         if (modalRoot == null) return;
+        descriptionText.fontSize = MainMenuSettingsPersistence.DetailFontSize(DescriptionSize);
+        relicAdditionalDescriptionText.fontSize = MainMenuSettingsPersistence.DetailFontSize(AdditionalDescriptionSize);
         bool action = actionButton.gameObject.activeSelf;
         bool status = actionStatusText != null && !string.IsNullOrWhiteSpace(actionStatusText.text);
         float wellHeight = status ? 177 : 204;

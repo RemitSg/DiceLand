@@ -79,6 +79,8 @@ public class MapPauseMenuOverlay : MonoBehaviour
     private Text sfxValueText;
     private Text statusText;
     private Text abandonButtonText;
+    private Text settingsButtonText;
+    private MainMenuSettingsOverlay settingsOverlay;
     private Func<bool> canOpenEvaluator;
     private Action saveAndReturnHandler;
     private Action abandonHandler;
@@ -102,7 +104,10 @@ public class MapPauseMenuOverlay : MonoBehaviour
 
         if (IsVisible)
         {
-            Hide();
+            if (settingsOverlay != null && settingsOverlay.IsVisible)
+                settingsOverlay.Hide();
+            else
+                Hide();
             return;
         }
 
@@ -116,6 +121,21 @@ public class MapPauseMenuOverlay : MonoBehaviour
         saveAndReturnHandler = onSaveAndReturn;
         abandonHandler = onAbandon;
     }
+
+    public void ConfigureSettingsFont(Font font)
+    {
+        EnsureUi();
+        settingsButtonText.font = font != null ? font : ResolveButtonFont();
+    }
+
+    private void ShowSettings()
+    {
+        if (settingsOverlay == null)
+            settingsOverlay = gameObject.AddComponent<MainMenuSettingsOverlay>();
+        settingsOverlay.ShowInRun(canvas, settingsButtonText.font);
+    }
+
+    private void OnDisable() => SetVisible(false);
 
     public void Show()
     {
@@ -191,8 +211,7 @@ public class MapPauseMenuOverlay : MonoBehaviour
         MainMenuSettingsData settings = MainMenuSettingsPersistence.Current.Clone();
         settings.musicVolume = musicSlider.value;
         settings.sfxVolume = sfxSlider.value;
-        MainMenuSettingsPersistence.Save(settings);
-        MainMenuSettingsPersistence.Apply(settings);
+        MainMenuSettingsPersistence.SaveInRun(settings);
     }
 
     private void HandleSliderChanged(float _)
@@ -212,6 +231,8 @@ public class MapPauseMenuOverlay : MonoBehaviour
 
     private void SetVisible(bool visible)
     {
+        if (!visible && settingsOverlay != null)
+            settingsOverlay.HideImmediately();
         if (canvas != null)
             canvas.gameObject.SetActive(visible);
     }
@@ -251,7 +272,7 @@ public class MapPauseMenuOverlay : MonoBehaviour
         panelRect.anchorMax = new Vector2(0.5f, 0.5f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
         panelRect.anchoredPosition = Vector2.zero;
-        panelRect.sizeDelta = panelSize;
+        panelRect.sizeDelta = panelSize + Vector2.up * (buttonSize.y + buttonSpacing);
 
         VerticalLayoutGroup panelLayout = panelRect.gameObject.AddComponent<VerticalLayoutGroup>();
         panelLayout.padding = new RectOffset(
@@ -275,7 +296,8 @@ public class MapPauseMenuOverlay : MonoBehaviour
         statusText = CreateText(panelRect, "Status", string.Empty, statusFontSize, ResolveBodyFont(), statusColor, TextAnchor.MiddleCenter);
         AddLayoutElement(statusText.rectTransform, panelSize.x - panelPadding.x * 2f, 44f);
 
-        RectTransform buttonsRoot = CreateRect("Buttons", panelRect, buttonSize);
+        Vector2 buttonsSize = new Vector2(buttonSize.x, buttonSize.y * 5f + buttonSpacing * 4f);
+        RectTransform buttonsRoot = CreateRect("Buttons", panelRect, buttonsSize);
         VerticalLayoutGroup buttonsLayout = buttonsRoot.gameObject.AddComponent<VerticalLayoutGroup>();
         buttonsLayout.spacing = buttonSpacing;
         buttonsLayout.childAlignment = TextAnchor.UpperCenter;
@@ -283,9 +305,11 @@ public class MapPauseMenuOverlay : MonoBehaviour
         buttonsLayout.childControlHeight = false;
         buttonsLayout.childForceExpandWidth = false;
         buttonsLayout.childForceExpandHeight = false;
-        AddLayoutElement(buttonsRoot, buttonSize.x, buttonSize.y * 4f + buttonSpacing * 3f);
+        AddLayoutElement(buttonsRoot, buttonsSize.x, buttonsSize.y);
 
         CreateButton(buttonsRoot, "ResumeButton", resumeLabel, buttonColor, buttonBackgroundSprite, Hide);
+        Button settingsButton = CreateButton(buttonsRoot, "SettingsButton", "设置", buttonColor, buttonBackgroundSprite, ShowSettings);
+        settingsButtonText = settingsButton.GetComponentInChildren<Text>(true);
         CreateButton(buttonsRoot, "SaveAndReturnButton", saveAndReturnLabel, saveButtonColor, saveButtonBackgroundSprite, HandleSaveAndReturnClicked);
         Button abandonButton = CreateButton(buttonsRoot, "AbandonButton", abandonLabel, abandonButtonColor, abandonButtonBackgroundSprite, HandleAbandonClicked);
         abandonButtonText = abandonButton.GetComponentInChildren<Text>(true);

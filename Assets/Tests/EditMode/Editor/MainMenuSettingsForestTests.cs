@@ -33,6 +33,8 @@ public sealed class MainMenuSettingsForestTests
         Assert.AreEqual("23%",Field<Text>("musicValueText").text); Assert.AreEqual("61%",Field<Text>("sfxValueText").text);
         Assert.IsFalse(Field<Toggle>("fullscreenToggle").isOn); Assert.IsFalse(Field<Toggle>("vibrationToggle").isOn);
         Assert.AreEqual("关闭",Field<Toggle>("vibrationToggle").transform.Find("State").GetComponent<Text>().text);
+        CollectionAssert.AreEqual(new[] { "手动", "自动", "快速" }, Field<Dropdown>("battleAdvanceDropdown").options.Select(option => option.text));
+        CollectionAssert.AreEqual(new[] { "标准", "大字" }, Field<Dropdown>("detailSizeDropdown").options.Select(option => option.text));
         Dropdown frames=Field<Dropdown>("frameRateDropdown"); Assert.AreEqual("90 FPS",frames.options[frames.value].text);
         Assert.AreEqual(QualitySettings.names.Length,Field<Dropdown>("qualityDropdown").options.Count);
         Assert.AreEqual(MainMenuSettingsPersistence.SupportsRuntimeResolutionChanges,Field<Dropdown>("resolutionDropdown").interactable);
@@ -45,15 +47,36 @@ public sealed class MainMenuSettingsForestTests
     {
         Field<Slider>("musicSlider").value=.84f; Field<Slider>("sfxSlider").value=.36f;
         Field<Toggle>("fullscreenToggle").isOn=true; Field<Toggle>("vibrationToggle").isOn=true;
+        Field<Dropdown>("battleAdvanceDropdown").value = (int)BattleAdvanceMode.Fast;
+        Field<Dropdown>("detailSizeDropdown").value = 1;
         Field<Dropdown>("frameRateDropdown").value=5;
         Field<Dropdown>("qualityDropdown").value=Mathf.Min(1,QualitySettings.names.Length-1);
         Field<Button>("saveButton").onClick.Invoke(); Field<Button>("saveButton").onClick.Invoke();
         Assert.AreEqual(1,saves); Assert.AreEqual(.84f,saved.musicVolume,.001f); Assert.AreEqual(.36f,saved.sfxVolume,.001f);
         Assert.IsTrue(saved.isFullscreen); Assert.IsTrue(saved.vibrationEnabled); Assert.AreEqual(144,saved.targetFrameRate);
+        Assert.AreEqual(BattleAdvanceMode.Fast, saved.battleAdvanceMode);
+        Assert.IsTrue(saved.largeDetailText);
+        Assert.AreEqual(BattleAdvanceMode.Manual, original.battleAdvanceMode);
+        Assert.IsFalse(original.largeDetailText);
         Assert.AreEqual(Mathf.Min(1,QualitySettings.names.Length-1),saved.qualityLevel);
         Assert.Greater(saved.resolutionWidth,0); Assert.Greater(saved.resolutionHeight,0); Assert.GreaterOrEqual(saved.refreshRate,30);
         Assert.AreEqual(.23f,original.musicVolume,.001f); Assert.IsFalse(original.isFullscreen); Assert.AreEqual(90,original.targetFrameRate);
         Assert.IsFalse(overlay.IsVisible);
+    }
+
+    [Test]
+    public void LegacySettingsUseManualAndStandardAndInvalidModesAreRepaired()
+    {
+        MainMenuSettingsData legacy = JsonUtility.FromJson<MainMenuSettingsData>("{\"musicVolume\":0.4,\"targetFrameRate\":90}");
+        MainMenuSettingsPersistence.EnsureValid(legacy);
+        Assert.AreEqual(BattleAdvanceMode.Manual, legacy.battleAdvanceMode);
+        Assert.IsFalse(legacy.largeDetailText);
+        Assert.AreEqual(0.4f, legacy.musicVolume, 0.001f);
+        Assert.AreEqual(90, legacy.targetFrameRate);
+
+        legacy.battleAdvanceMode = (BattleAdvanceMode)99;
+        MainMenuSettingsPersistence.EnsureValid(legacy);
+        Assert.AreEqual(BattleAdvanceMode.Manual, legacy.battleAdvanceMode);
     }
 
     [Test]
@@ -80,6 +103,9 @@ public sealed class MainMenuSettingsForestTests
         Rect safe=Bounds(Field<RectTransform>("safeRoot")),panel=Bounds(Field<RectTransform>("panelRect"));
         Contains(safe,panel); Contains(safe,Bounds(Field<RectTransform>("titlePlaque")));
         Assert.IsFalse(Bounds(Field<RectTransform>("audioSection")).Overlaps(Bounds(Field<RectTransform>("displaySection"))));
+        Rect gameplay = Bounds(Field<RectTransform>("gameplaySection"));
+        Assert.IsFalse(gameplay.Overlaps(Bounds(Field<RectTransform>("audioSection"))));
+        Assert.IsFalse(gameplay.Overlaps(Bounds(Field<RectTransform>("displaySection"))));
         foreach(Selectable control in canvas.GetComponentsInChildren<Selectable>().Where(c=>!(c is Scrollbar))) Contains(panel,Bounds(control.transform));
         foreach(Slider slider in new[]{Field<Slider>("musicSlider"),Field<Slider>("sfxSlider")})
         {

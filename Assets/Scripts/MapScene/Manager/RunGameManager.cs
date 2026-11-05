@@ -906,6 +906,7 @@ public class RunGameManager : MonoBehaviour
             mapCalamityOverlay.ConfigureFonts(mapKeywordFont, mapBodyFont);
         mapPauseMenuOverlay = GetOrCreatePauseMenuOverlay();
         mapPauseMenuOverlay.Configure(CanOpenMapPauseMenu, HandlePauseMenuSaveAndReturn, HandlePauseMenuAbandon);
+        mapPauseMenuOverlay.ConfigureSettingsFont(mapBodyFont != null ? mapBodyFont.sourceFontFile : tutorialMapGuideBodyFont);
         mapTutorialGuideOverlay = GetOrCreateTutorialGuideOverlay();
         if (tutorialMapGuideTitleFont != null || tutorialMapGuideBodyFont != null || tutorialMapGuideButtonFont != null)
             mapTutorialGuideOverlay.ConfigureFonts(tutorialMapGuideTitleFont, tutorialMapGuideBodyFont, tutorialMapGuideButtonFont);

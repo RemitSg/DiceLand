@@ -7,6 +7,9 @@ using UnityEngine.UI;
 
 public partial class BattleSkillInfoOverlay
 {
+    private const int EnemyProfileBodySize = 30;
+    private const int EnemyNoPassivesSize = 28;
+
     private RectTransform enemyProfileRoot, enemyProfileRight, enemyPortraitWell, enemyPortraitMotion;
     private RectTransform enemyIdBadge, enemyHealthBadge, enemyProfileBody, enemyProfileViewport, enemyProfileContent;
     private RectTransform enemyProfileDivider, enemyDescriptionSection, enemyPassiveSection;
@@ -62,11 +65,11 @@ public partial class BattleSkillInfoOverlay
         enemyProfileScroll = BuildSkillScroll(enemyProfileBody, "EnemyProfile", out enemyProfileViewport, out enemyProfileContent, out _);
         enemyProfileScroll.onValueChanged.AddListener(_ => UpdateEnemyScrollHint());
         enemyDescriptionSection = BuildEnemySection(enemyProfileContent, "EnemyDescriptionSection", "敌人描述");
-        enemyProfileDescription = SkillText(enemyProfileContent, "EnemyDescription", 30, SkillIvory, string.Empty);
+        enemyProfileDescription = SkillText(enemyProfileContent, "EnemyDescription", EnemyProfileBodySize, SkillIvory, string.Empty);
         enemyProfileDescription.enableWordWrapping = true; enemyProfileDescription.alignment = TextAlignmentOptions.TopLeft;
         enemyProfileDescription.lineSpacing = 5; ResourceKeywordText.Attach(enemyProfileDescription);
         enemyPassiveSection = BuildEnemySection(enemyProfileContent, "EnemyPassiveSection", "特殊被动");
-        enemyNoPassives = SkillText(enemyProfileContent, "NoPassives", 28, SkillMuted, "暂无特殊被动。");
+        enemyNoPassives = SkillText(enemyProfileContent, "NoPassives", EnemyNoPassivesSize, SkillMuted, "暂无特殊被动。");
         enemyNoPassives.enableWordWrapping = true; ResourceKeywordText.Attach(enemyNoPassives, false);
         enemyScrollHint = SkillText(enemyProfileRight, "ReadingHint", 21, SkillMuted, "向下滚动查看更多");
         enemyScrollHint.alignment = TextAlignmentOptions.MidlineRight;
@@ -148,7 +151,7 @@ public partial class BattleSkillInfoOverlay
         view.frame = ProfileFace(view.rect, BattleEnemyProfileGraphic.ProfileStyle.Passive);
         view.name = SkillText(view.rect, "PassiveName", 33, SkillGold, string.Empty);
         view.name.enableWordWrapping = true; view.name.alignment = TextAlignmentOptions.TopLeft;
-        view.description = SkillText(view.rect, "PassiveDescription", 30, SkillIvory, string.Empty);
+        view.description = SkillText(view.rect, "PassiveDescription", EnemyProfileBodySize, SkillIvory, string.Empty);
         view.description.enableWordWrapping = true; view.description.alignment = TextAlignmentOptions.TopLeft; view.description.lineSpacing = 5;
         ResourceKeywordText.Attach(view.name, false); ResourceKeywordText.Attach(view.description);
         enemyPassiveViews.Add(view);
@@ -157,6 +160,9 @@ public partial class BattleSkillInfoOverlay
     private void LayoutEnemyProfile(bool reset)
     {
         if (enemyProfileRoot == null) return;
+        float bodySize = MainMenuSettingsPersistence.DetailFontSize(EnemyProfileBodySize);
+        enemyProfileDescription.fontSize = bodySize;
+        enemyNoPassives.fontSize = MainMenuSettingsPersistence.DetailFontSize(EnemyNoPassivesSize);
         frameState = new SkillFrameState { width = 1240, height = 770 };
         float w = frameState.width, h = frameState.height;
         float oldPosition = enemyProfileScroll.verticalNormalizedPosition;
@@ -190,6 +196,7 @@ public partial class BattleSkillInfoOverlay
         foreach (EnemyPassiveView view in enemyPassiveViews)
         {
             if (!view.rect.gameObject.activeSelf) continue;
+            view.description.fontSize = bodySize;
             float nameHeightInCard = view.name.gameObject.activeSelf ? SkillTextHeight(view.name, width - 76, 40) : 0;
             float textHeight = view.description.gameObject.activeSelf ? SkillTextHeight(view.description, width - 52, 38) : 0;
             float textTop = 18 + nameHeightInCard + (nameHeightInCard > 0 && textHeight > 0 ? 6 : 0);

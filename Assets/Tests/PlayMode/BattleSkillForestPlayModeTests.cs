@@ -209,6 +209,44 @@ public sealed class BattleSkillForestPlayModeTests
         yield return new WaitForSecondsRealtime(.18f); Assert.Less((float)Get(frame, "emphasis"), .05f);
     }
 
+    [UnityTest]
+    public IEnumerator OpenEnemyDescriptionReflowsWhenDetailTextGetsLarger()
+    {
+        Type persistence = TypeOf("MainMenuSettingsPersistence");
+        FieldInfo cache = persistence.GetField("cachedSettings", BindingFlags.Static | BindingFlags.NonPublic);
+        object original = persistence.GetProperty("Current").GetValue(null);
+        object settings = Call(original, "Clone");
+        FieldInfo largeText = settings.GetType().GetField("largeDetailText");
+        largeText.SetValue(settings, false);
+        cache.SetValue(null, settings);
+        try
+        {
+            Call(overlay, "HideImmediately", false);
+            ShowProfile(true);
+            object description = Get(overlay, "enemyProfileDescription");
+            var scroll = (ScrollRect)Get(overlay, "enemyProfileScroll");
+            float standardSize = (float)Get(description, "fontSize");
+            float standardHeight = scroll.content.rect.height;
+
+            largeText.SetValue(settings, true);
+            yield return null;
+            yield return null;
+            Assert.AreEqual(standardSize * 1.25f, (float)Get(description, "fontSize"), 0.001f);
+            Assert.Greater(scroll.content.rect.height, standardHeight);
+            Assert.IsTrue(scroll.verticalScrollbar.gameObject.activeSelf);
+
+            largeText.SetValue(settings, false);
+            yield return null;
+            yield return null;
+            Assert.AreEqual(standardSize, (float)Get(description, "fontSize"), 0.001f);
+            Assert.AreEqual(standardHeight, scroll.content.rect.height, 0.1f);
+        }
+        finally
+        {
+            cache.SetValue(null, original);
+        }
+    }
+
     private void ShowProfile(bool longText)
     {
         ScriptableObject data = (ScriptableObject)Asset("Assets/Data/Enemies/Enemies/014 BloodRat/BloodRat.asset", "EnemyData_SO");

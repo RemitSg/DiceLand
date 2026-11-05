@@ -100,13 +100,13 @@ public partial class BattleSkillInfoOverlay
             metadata[i].alignment = TextAlignmentOptions.Midline;
         }
         metadataText = metadata[0]; energyMetadata = metadata[1]; diceMetadata = metadata[2];
-        requirementsText = SkillText(detailRegion, "Requirements", 24, SkillMuted, string.Empty); requirementsText.enableWordWrapping = true;
+        requirementsText = SkillText(detailRegion, "Requirements", SkillRequirementsSize, SkillMuted, string.Empty); requirementsText.enableWordWrapping = true;
         summaryRoot = SkillRect(detailRegion, "DiceOverview");
         bodyArea = SkillRect(detailRegion, "DetailArea");
         detailScrollRect = BuildSkillScroll(bodyArea, "Detail", out detailViewport, out detailContent, out _);
         detailText = SkillText(detailContent, "EnemyData", 27, SkillIvory, string.Empty); detailText.enableWordWrapping = true;
         descriptionHeading = SkillText(detailContent, "DescriptionHeading", 26, SkillGold, "描述");
-        descriptionBody = SkillText(detailContent, "Description", 27, SkillIvory, string.Empty); descriptionBody.enableWordWrapping = true;
+        descriptionBody = SkillText(detailContent, "Description", SkillDescriptionSize, SkillIvory, string.Empty); descriptionBody.enableWordWrapping = true;
         footerRule = SkillRect(panelRoot, "FooterRule"); AddSkillRule(footerRule);
         footerHint = SkillText(panelRoot, "FooterHint", 23, SkillMuted, "点击技能即切换");
         footerClose = SkillButton(panelRoot, "FooterCloseButton", "关闭", Hide);

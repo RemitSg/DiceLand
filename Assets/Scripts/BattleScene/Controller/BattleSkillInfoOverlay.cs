@@ -115,10 +115,19 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         if (currentHoverEnemy == null && hoverPanelRoot != null && hoverPanelRoot.gameObject.activeSelf) HideEnemyHoverSkillInfo();
         if (IsVisible || currentHoverEnemy != null)
         {
+            if (IsVisible && IsDetailFontSizeChanged())
+                LayoutSkillContent(false);
             if (viewportPixels != new Vector2(Screen.width, Screen.height) || safePixels != Screen.safeArea)
                 ApplyViewport(new Vector2(Screen.width, Screen.height), Screen.safeArea);
             AdvancePresentation(Time.unscaledDeltaTime);
         }
+    }
+
+    private bool IsDetailFontSizeChanged()
+    {
+        return viewMode == SkillViewMode.EnemyData
+            ? enemyProfileDescription.fontSize != MainMenuSettingsPersistence.DetailFontSize(EnemyProfileBodySize)
+            : descriptionBody.fontSize != MainMenuSettingsPersistence.DetailFontSize(SkillDescriptionSize);
     }
 
     public void ConfigureFonts(TMP_FontAsset keywordFontAsset, TMP_FontAsset bodyFontAsset)

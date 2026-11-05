@@ -289,31 +289,29 @@ public class BattlePresentationSystem : MonoBehaviour
         if (moveIntoPosition)
             yield return MovePair(ally, plane.firstStart, allyTarget, enemy, plane.secondStart, enemyTarget, advanceDuration);
         int clashShotId = StartCloseupShot(ally, enemy, plane.midpoint + Vector3.up * impactHeightOffset, Mathf.Max(clashCameraPower, hitCameraPower));
-        BeginCloseupRangePulse(clashCloseupLeadDuration + delayBeforeClashDiceReveal, waitForPlayerClickDuringDicePresentation);
+        float rangeHold = Mathf.Max(0.4f, delayBeforeClashDiceReveal);
+        BeginCloseupRangePulse(GetPresentationDelay(clashCloseupLeadDuration + rangeHold),
+            ResolveBattleAdvanceMode() == BattleAdvanceMode.Manual);
         if (clashShotId != 0 && clashCloseupLeadDuration > 0f)
-            yield return new WaitForSeconds(clashCloseupLeadDuration);
-        if (waitForPlayerClickDuringDicePresentation)
-        {
-            yield return WaitForPresentationContinueClick();
-            StopCloseupRangePulse();
-        }
-        else if (delayBeforeClashDiceReveal > 0f)
-            yield return new WaitForSeconds(delayBeforeClashDiceReveal);
+            yield return new WaitForSeconds(GetPresentationDelay(clashCloseupLeadDuration));
+        yield return WaitForPresentationAdvance(rangeHold);
+        StopCloseupRangePulse();
         feedbackSystem?.RevealClashDiceValue(allyDiceDisplay, allyPower, allyPowerModifier);
         feedbackSystem?.RevealClashDiceValue(enemyDiceDisplay, enemyPower, enemyPowerModifier);
         ResolveBattleSfxPlayer()?.PlayClashAnimation();
         yield return PlayClashExchangeFx(ally, enemy, plane.z, plane.midpoint + Vector3.up * impactHeightOffset, plane.direction, clashCameraPower, allyClashFx, enemyClashFx);
-        if (waitForPlayerClickDuringDicePresentation && hasWinner)
-            yield return WaitForPresentationContinueClick();
+        float revealRemaining = (feedbackSystem != null ? feedbackSystem.GetClashDiceValueRevealDuration() : 0f)
+            - Mathf.Max(0f, clashEffectDuration);
+        if (revealRemaining > 0f)
+            yield return new WaitForSeconds(revealRemaining);
+        if (hasWinner)
+            yield return WaitForPresentationAdvance(0.3f);
 
-        if (delayAfterClash > 0f)
-            yield return new WaitForSeconds(delayAfterClash);
+        float impactDelay = delayAfterClash + (hasWinner ? delayBeforeHitAfterClash : 0f);
+        yield return WaitForPresentationAdvance(impactDelay, allowManual: false);
 
         if (hasWinner)
         {
-            if (delayBeforeHitAfterClash > 0f)
-                yield return new WaitForSeconds(delayBeforeHitAfterClash);
-
             Transform attacker = allyWon ? ally : enemy;
             Transform defender = allyWon ? enemy : ally;
             EnemySkill_SO.DicePresentationSettings winnerClashFx = allyWon ? allyClashFx : enemyClashFx;
@@ -345,7 +343,7 @@ public class BattlePresentationSystem : MonoBehaviour
         }
 
         // Hold the impact in close-up, then return through the already-framed overview.
-        yield return EndCloseupShot(clashShotId, hasWinner ? hitCloseupHoldDuration : clashCloseupHoldDuration);
+        yield return EndCloseupShot(clashShotId, GetPresentationDelay(hasWinner ? hitCloseupHoldDuration : clashCloseupHoldDuration));
         if (returnToOrigin)
             yield return MovePair(ally, ally.position, plane.firstStart, enemy, enemy.position, plane.secondStart, returnDuration);
         feedbackSystem?.HideClashDiceDisplay(allyDiceDisplay);
@@ -391,22 +389,14 @@ public class BattlePresentationSystem : MonoBehaviour
 
         int hitShotId = StartCloseupShot(attacker, defender, Project(attackerCenter, plane.z) + Vector3.up * impactHeightOffset, hitCameraPower);
         diceDisplay = feedbackSystem?.ShowClashDiceRange(attacker, !attackerIsAlly, attackRange, baseAttackRange);
-        BeginCloseupRangePulse(singleAttackRangeDisplayDuration, waitForPlayerClickDuringDicePresentation);
-
-        if (waitForPlayerClickDuringDicePresentation)
-        {
-            yield return WaitForPresentationContinueClick();
-            StopCloseupRangePulse();
-        }
-        else if (singleAttackRangeDisplayDuration > 0f)
-            yield return new WaitForSeconds(singleAttackRangeDisplayDuration);
+        float rangeHold = Mathf.Max(0.35f, singleAttackRangeDisplayDuration);
+        BeginCloseupRangePulse(GetPresentationDelay(rangeHold), ResolveBattleAdvanceMode() == BattleAdvanceMode.Manual);
+        yield return WaitForPresentationAdvance(rangeHold);
+        StopCloseupRangePulse();
 
         feedbackSystem?.RevealClashDiceValue(diceDisplay, attackPower, attackPowerModifier);
-        if (waitForPlayerClickDuringDicePresentation)
-        {
-            yield return WaitForDiceValueReveal(feedbackSystem);
-            yield return WaitForPresentationContinueClick();
-        }
+        yield return WaitForDiceValueReveal(feedbackSystem);
+        yield return WaitForPresentationAdvance(0.3f);
         float skillSpriteDuration = fx.overrideSkillSpriteDuration
             ? Mathf.Max(0.01f, fx.skillSpriteDuration)
             : hitEffectDuration;
@@ -434,7 +424,7 @@ public class BattlePresentationSystem : MonoBehaviour
         {
             yield return new WaitForSeconds(Mathf.Max(0.08f, hitEffectDuration * 0.35f));
         }
-        yield return EndCloseupShot(hitShotId, hitCloseupHoldDuration);
+        yield return EndCloseupShot(hitShotId, GetPresentationDelay(hitCloseupHoldDuration));
         if (returnToOrigin)
             yield return MovePair(attacker, attacker.position, plane.firstStart, defender, defender.position, plane.secondStart, returnDuration);
         feedbackSystem?.HideClashDiceDisplay(diceDisplay);
@@ -457,19 +447,46 @@ public class BattlePresentationSystem : MonoBehaviour
         yield return MovePair(first, currentFirst, firstTarget, second, currentSecond, secondTarget, returnDuration);
     }
 
-    private IEnumerator WaitForPresentationContinueClick()
+    private BattleAdvanceMode ResolveBattleAdvanceMode()
+    {
+        BattleAdvanceMode mode = MainMenuSettingsPersistence.Current.battleAdvanceMode;
+        if (TutorialBattleRuntime.IsActive)
+            return waitForPlayerClickDuringDicePresentation ? BattleAdvanceMode.Manual : BattleAdvanceMode.Automatic;
+        return mode;
+    }
+
+    private float GetPresentationDelay(float duration)
+    {
+        return ResolveBattleAdvanceMode() == BattleAdvanceMode.Fast ? duration * 0.5f : duration;
+    }
+
+    private IEnumerator WaitForPresentationAdvance(float automaticDelay, bool allowManual = true)
     {
         BattlePresentationContinueInputState inputState = BattlePresentationContinueInputService.CreateState(Input.GetMouseButton(0));
+        float elapsed = 0f;
         while (true)
         {
-            bool mousePressedThisFrame = Input.GetMouseButtonDown(0);
-            bool blockedGameplayClick = mousePressedThisFrame && IsPresentationContinueClickBlocked();
-            if (BattlePresentationContinueInputService.ShouldContinue(
-                    ref inputState,
-                    Input.GetMouseButton(0),
-                    mousePressedThisFrame,
-                    blockedGameplayClick))
+            bool mouseHeld = Input.GetMouseButton(0);
+            if (BattlePauseMenuOverlay.IsOpen)
+            {
+                inputState = BattlePresentationContinueInputService.CreateState(mouseHeld);
+            }
+            else if (allowManual && ResolveBattleAdvanceMode() == BattleAdvanceMode.Manual)
+            {
+                elapsed = 0f;
+                bool pressed = Input.GetMouseButtonDown(0);
+                if (BattlePresentationContinueInputService.ShouldContinue(
+                        ref inputState, mouseHeld, pressed, pressed && IsPresentationContinueClickBlocked()))
+                    yield break;
+            }
+            else if (elapsed >= GetPresentationDelay(automaticDelay))
+            {
                 yield break;
+            }
+            else
+            {
+                elapsed += Time.deltaTime;
+            }
 
             yield return null;
         }

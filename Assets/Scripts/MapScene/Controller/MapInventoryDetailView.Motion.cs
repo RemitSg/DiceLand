@@ -28,6 +28,8 @@ public partial class MapInventoryDetailView
     private void LateUpdate()
     {
         if (modalRoot == null || !IsVisible) return;
+        if (descriptionText.fontSize != MainMenuSettingsPersistence.DetailFontSize(DescriptionSize))
+            RefreshDescriptionLayout(false);
         Vector2 viewport = new Vector2(Screen.width, Screen.height);
         if (viewport != layoutViewport || Screen.safeArea != layoutSafeArea || modalRoot.rect.size != layoutCanvasSize)
             ApplyViewport(viewport, Screen.safeArea);
