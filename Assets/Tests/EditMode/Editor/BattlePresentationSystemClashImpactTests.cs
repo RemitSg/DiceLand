@@ -6,6 +6,37 @@ using UnityEngine;
 public class BattlePresentationSystemClashImpactTests
 {
     [Test]
+    public void ClashSparksShowALitReboundAfterGroundContactBeforeReleasingTheShot()
+    {
+        GameObject owner = new GameObject("Clash rebound fixture");
+        try
+        {
+            BattleContactVfx effect = BattleContactVfx.Spawn(owner.transform, new Vector3(0, 1.3f, 0), Vector3.right,
+                Color.white, 1, 2.2f, 0, 0, 290, true);
+            Assert.IsNotNull(effect);
+            int visibleReboundFrames = 0;
+            bool shotHoldsAfterMostSparksLand = false;
+            for (int frame = 0; frame < 165 && !effect.IsComplete; frame++)
+            {
+                effect.Advance(1f / 60);
+                if (effect.HighestSparkRebound < 0.33f || !effect.HasVisibleGeometry)
+                    continue;
+                Assert.Greater(effect.GroundedParticleCount, 0, "The lift must follow contact with the floor.");
+                visibleReboundFrames++;
+                if (effect.GroundedParticleCount >= effect.ParticleCount * 0.65f && effect.HasFallingBurst)
+                    shotHoldsAfterMostSparksLand = true;
+            }
+            Assert.GreaterOrEqual(visibleReboundFrames, 18, "The fast clash should still show a substantial bounce across multiple frames.");
+            Assert.IsTrue(shotHoldsAfterMostSparksLand, "The closeup must retain the rebound after the majority have touched down.");
+            Assert.IsTrue(effect.IsComplete);
+        }
+        finally
+        {
+            Object.DestroyImmediate(owner);
+        }
+    }
+
+    [Test]
     public void HitDebrisTouchesTheTerraceEvenWhenTheDefenderPivotIsHigh()
     {
         GameObject fixture = new GameObject("Ground contact fixture");

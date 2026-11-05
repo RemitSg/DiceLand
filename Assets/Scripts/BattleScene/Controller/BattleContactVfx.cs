@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public sealed class BattleContactVfx : MonoBehaviour
 {
     private enum Shape { Halo, Streak, Shard, Ribbon, Dust }
-    private const int QuadBudget = 660;
+    private const int QuadBudget = 720;
     private const float ClashPlaybackSpeed = 1.22f;
     private static Shader contactShader;
 
@@ -31,8 +31,8 @@ public sealed class BattleContactVfx : MonoBehaviour
     {
         public Vector3 origin, velocity;
         public float delay, width, length, angle, spin;
-        public float gravity, groundY, landAt, reboundSpeed, bounceDuration, life;
-        public bool raisesDust;
+        public float gravity, groundY, landAt, reboundSpeed, bounceGravity, bounceDuration, bounceCarry, life;
+        public bool raisesDust, accentBounce;
         public Color color;
     }
 
@@ -40,7 +40,9 @@ public sealed class BattleContactVfx : MonoBehaviour
     public bool IsComplete => Elapsed >= duration;
     public int ParticleCount => particles != null ? particles.Length : 0;
     public int GroundedParticleCount { get; private set; }
-    public bool HasFallingBurst => !IsComplete && GroundedParticleCount < ParticleCount * 0.65f;
+    public int SettledParticleCount { get; private set; }
+    public float HighestSparkRebound { get; private set; }
+    public bool HasFallingBurst => !IsComplete && (clash ? SettledParticleCount : GroundedParticleCount) < ParticleCount * 0.65f;
     public Bounds VisualBounds => batchRenderer.bounds;
     public bool HasVisibleGeometry => vertices.Count > 0;
 
@@ -116,7 +118,8 @@ public sealed class BattleContactVfx : MonoBehaviour
         if (randomState == 0)
             randomState = 1;
         BuildParticles();
-        int capacity = Mathf.Min(QuadBudget, ParticleCount * (clash ? 2 : 1) + 64);
+        int landingMarks = clash ? (ParticleCount + 2) / 3 : 0;
+        int capacity = Mathf.Min(QuadBudget, ParticleCount * (clash ? 2 : 1) + landingMarks + 64);
         vertices.Capacity = uv.Capacity = shapes.Capacity = colors.Capacity = capacity * 4;
         triangles.Capacity = capacity * 6;
         Advance(0);
@@ -149,8 +152,17 @@ public sealed class BattleContactVfx : MonoBehaviour
             float gravity = size * Range(13.5f, 18.2f);
             float landingSpeed = Mathf.Sqrt(velocity.y * velocity.y + 2 * gravity * (origin.y - groundY));
             float landAt = (velocity.y + landingSpeed) / gravity;
-            float reboundSpeed = landingSpeed * (clash ? Range(0.18f, 0.34f) : Range(0.15f, 0.27f));
-            float bounceDuration = 2 * reboundSpeed / gravity;
+            bool accentBounce = clash && i % 3 == 0;
+            float bounceGravity = clash ? gravity * 0.82f : gravity;
+            float reboundSpeed = landingSpeed * (clash ? Range(0.29f, 0.46f) : Range(0.15f, 0.27f));
+            if (clash)
+            {
+                float minLift = accentBounce ? size * 0.17f : 0f;
+                float maxLift = size * (accentBounce ? 0.25f : 0.16f);
+                float liftHeight = Mathf.Clamp(reboundSpeed * reboundSpeed / (2 * bounceGravity), minLift, maxLift);
+                reboundSpeed = Mathf.Sqrt(2 * bounceGravity * liftHeight);
+            }
+            float bounceDuration = 2 * reboundSpeed / bounceGravity;
             float delay = late ? Range(0.035f, 0.09f) : Range(0, 0.035f);
             float settledLifetime = clash ? Range(0.66f, 1.04f)
                 : compact ? Range(0.14f, 0.23f) : Range(0.23f, 0.43f);
@@ -170,8 +182,11 @@ public sealed class BattleContactVfx : MonoBehaviour
                 groundY = groundY,
                 landAt = landAt,
                 reboundSpeed = reboundSpeed,
+                bounceGravity = bounceGravity,
                 bounceDuration = bounceDuration,
+                bounceCarry = clash ? (accentBounce ? 0.022f : 0.011f) : 0f,
                 raisesDust = !clash && !compact && large,
+                accentBounce = accentBounce,
                 color = clash ? Color.Lerp(accent, rim, Range(0.12f, 0.93f)) : Color.Lerp(chunk, accent, 0.18f)
             };
             duration = Mathf.Max(duration, delay + life);
@@ -194,6 +209,8 @@ public sealed class BattleContactVfx : MonoBehaviour
         colors.Clear();
         triangles.Clear();
         GroundedParticleCount = IsComplete ? ParticleCount : 0;
+        SettledParticleCount = GroundedParticleCount;
+        HighestSparkRebound = 0f;
         if (!IsComplete)
         {
             DrawContact();
@@ -253,12 +270,14 @@ public sealed class BattleContactVfx : MonoBehaviour
     private void DrawParticle(Particle particle)
     {
         float time = Elapsed - particle.delay;
+        float settleAt = particle.landAt + particle.bounceDuration;
         if (time >= particle.landAt)
             GroundedParticleCount++;
+        if (time >= settleAt)
+            SettledParticleCount++;
         if (time < 0 || time >= particle.life)
             return;
 
-        float settleAt = particle.landAt + particle.bounceDuration;
         float fade = 1 - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(settleAt, particle.life, time));
         Vector3 point = ParticlePosition(particle, time);
         if (clash)
@@ -301,9 +320,26 @@ public sealed class BattleContactVfx : MonoBehaviour
         float cooling = Mathf.Clamp01(time / Mathf.Max(0.1f, settleAt));
         Color hot = Color.Lerp(particle.color, new Color(1, 0.23f, 0.028f), cooling * 0.86f);
         float heat = fade * Mathf.Lerp(1.22f, 0.62f, cooling);
+        float landingAge = time - particle.landAt;
+        float bounceLight = 0f;
+        if (particle.accentBounce && landingAge >= 0f && time < settleAt)
+        {
+            HighestSparkRebound = Mathf.Max(HighestSparkRebound, point.y - particle.groundY);
+            bounceLight = 1 - Mathf.SmoothStep(0, 1, Mathf.Clamp01(landingAge / particle.bounceDuration));
+            hot = Color.Lerp(hot, new Color(1, 0.76f, 0.24f), bounceLight * 0.8f);
+            heat += bounceLight * 0.95f;
+
+            float contactLight = 1 - Mathf.Clamp01(landingAge / 0.16f);
+            Vector3 contact = ParticlePosition(particle, particle.landAt);
+            contact.y = floor + particle.width * 0.46f;
+            Quad(contact, Vector3.right * particle.width * 3.4f, Vector3.up * particle.width * 1.15f,
+                Tint(new Color(1, 0.62f, 0.14f), contactLight * contactLight), Shape.Halo);
+        }
         if (time < settleAt)
         {
-            Vector3 tail = ParticlePosition(particle, Mathf.Max(0, time - 0.046f));
+            // Start a fresh streak at the contact point so the old downward streak cannot hide the rebound.
+            float trailStart = landingAge >= 0f ? particle.landAt : 0f;
+            Vector3 tail = ParticlePosition(particle, Mathf.Max(trailStart, time - 0.046f));
             Vector3 span = (point - tail) * 0.5f;
             if (span.sqrMagnitude > 0.000004f)
             {
@@ -311,7 +347,7 @@ public sealed class BattleContactVfx : MonoBehaviour
                 Quad(tail + span, span, across * particle.width * 0.80f, Tint(hot, heat * 0.9f), Shape.Streak);
             }
         }
-        float glow = particle.width * Mathf.Lerp(1.55f, 1.06f, cooling);
+        float glow = particle.width * Mathf.Lerp(1.55f, 1.06f, cooling) * (1 + bounceLight * 0.9f);
         Quad(point, Vector3.right * glow, Vector3.up * glow, Tint(hot, heat), Shape.Halo);
     }
 
@@ -321,10 +357,11 @@ public sealed class BattleContactVfx : MonoBehaviour
         float bounceTime = Mathf.Clamp(time - particle.landAt, 0, particle.bounceDuration);
         float travelTime = Mathf.Min(time, particle.landAt) + bounceTime * 0.34f;
         float travel = (1 - Mathf.Exp(-travelTime * 4.45f)) / 4.45f;
+        travel += particle.bounceCarry * EaseOut(bounceTime / particle.bounceDuration);
         Vector3 point = particle.origin + particle.velocity * travel;
         point.y = time < particle.landAt
             ? particle.origin.y + particle.velocity.y * time - 0.5f * particle.gravity * time * time
-            : particle.groundY + particle.reboundSpeed * bounceTime - 0.5f * particle.gravity * bounceTime * bounceTime;
+            : particle.groundY + particle.reboundSpeed * bounceTime - 0.5f * particle.bounceGravity * bounceTime * bounceTime;
         return point;
     }
 

@@ -7,11 +7,15 @@ from PIL import Image
 parser = argparse.ArgumentParser()
 parser.add_argument('--source')
 parser.add_argument('--contacts', action='store_true', help='Encode the clash and hit contact captures')
+parser.add_argument('--clip', choices=('ally', 'enemy', 'clash', 'hit'), help='Encode a single captured clip')
 parser.add_argument('--preview-width', type=int, default=720)
 args = parser.parse_args()
-default_source = 'contact-grounded-20261105' if args.contacts else 'death-camera-dramatic-20261105'
+default_source = 'contact-bounce-20261105' if args.contacts else 'death-camera-dramatic-20261105'
 root = Path(__file__).resolve().parents[2] / (args.source or f'outputs/agent-battle/{default_source}')
-for name in (('clash', 'hit') if args.contacts else ('ally', 'enemy')):
+clips = ('clash', 'hit') if args.contacts else ('ally', 'enemy')
+if args.clip and args.clip not in clips:
+    parser.error(f'--clip must be one of {", ".join(clips)} for this capture type')
+for name in ((args.clip,) if args.clip else clips):
     folder = root / name
     report = json.loads((folder / 'capture.json').read_text(encoding='utf-8-sig'))
     assert report.get('effectComplete', True), 'Capture must include the complete effect'

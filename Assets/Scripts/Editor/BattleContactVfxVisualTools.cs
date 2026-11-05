@@ -9,9 +9,9 @@ using UnityEngine.Rendering.Universal;
 /// <summary>Records the production contact effects with battle sprites and lighting in a temporary scene.</summary>
 public static class BattleContactVfxVisualTools
 {
-    public const string OutputPath = "outputs/agent-battle/contact-grounded-20261105";
+    public const string OutputPath = "outputs/agent-battle/contact-bounce-20261105";
     private const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
-    private const int Width = 960, Height = 540, Fps = 60, Frames = 156, ContactFrame = 18;
+    private const int Width = 960, Height = 540, Fps = 60, Frames = 168, ContactFrame = 18;
 
     [MenuItem("Tools/Battle Visuals/Capture Contact Effects")]
     public static void CaptureBoth()
@@ -82,6 +82,9 @@ public static class BattleContactVfxVisualTools
         int clipped = 0;
         int groundedTailFrames = 0;
         int firstLandingFrame = -1;
+        int visibleReboundFrames = 0;
+        int peakReboundFrame = -1;
+        float peakSparkRebound = 0;
         float lowestGroundedTailY = float.PositiveInfinity;
         float followedLens = baseLens;
         float maxLens = baseLens;
@@ -136,7 +139,14 @@ public static class BattleContactVfxVisualTools
                         firstLandingFrame = frame;
                     if (IsClipped(camera, effect.VisualBounds))
                         clipped++;
-                    if (!effect.HasFallingBurst)
+                    if (effect.HighestSparkRebound > 0.24f)
+                        visibleReboundFrames++;
+                    if (effect.HighestSparkRebound > peakSparkRebound)
+                    {
+                        peakSparkRebound = effect.HighestSparkRebound;
+                        peakReboundFrame = frame;
+                    }
+                    if (effect.GroundedParticleCount >= effect.ParticleCount * 0.65f)
                     {
                         groundedTailFrames++;
                         lowestGroundedTailY = Mathf.Min(lowestGroundedTailY, effect.VisualBounds.min.y);
@@ -158,7 +168,9 @@ public static class BattleContactVfxVisualTools
                 particles = effect.ParticleCount, groundedParticles = effect.GroundedParticleCount,
                 groundedTailFrames = groundedTailFrames, maximumFov = maxLens, effectComplete = effect.IsComplete,
                 firstLandingFrame = firstLandingFrame, stageGroundY = stage != null ? stage.GroundHeight : 0f,
-                lowestGroundedTailY = groundedTailFrames > 0 ? lowestGroundedTailY : 0f
+                lowestGroundedTailY = groundedTailFrames > 0 ? lowestGroundedTailY : 0f,
+                visibleReboundFrames = visibleReboundFrames, peakReboundFrame = peakReboundFrame,
+                peakSparkRebound = peakSparkRebound
             }, true));
         }
         finally
@@ -215,7 +227,9 @@ public static class BattleContactVfxVisualTools
     private sealed class Report
     {
         public int frames, fps, width, height, particles, groundedParticles, groundedTailFrames, clippedFrames, firstLandingFrame;
+        public int visibleReboundFrames, peakReboundFrame;
         public float maximumFov, stageGroundY, lowestGroundedTailY;
+        public float peakSparkRebound;
         public bool effectComplete;
     }
 }
