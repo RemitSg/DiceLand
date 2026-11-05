@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>DiceLand · 商店实时配置</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="./"><span class="brand-mark">D</span> DICELAND <span class="brand-divider">/</span><span class="brand-label">经济配置台</span></a><div id="connection" class="connection" role="status"><i></i><span>连接 Unity…</span></div></header>
+  <main>
+    <section class="hero"><div><div class="eyebrow">MERCHANT CATALOG · LIVE EDITOR</div><h1>商店配置，实时相连<span>。</span></h1><p>在这里调整商品，在 Unity 中即时生效。配置从两端同步，有效修改自动保存。</p></div><span class="live-badge"><i></i> UNITY <span>↔</span> HTML</span></section>
+    <section id="offline" class="notice offline" hidden><strong>等待 Unity 编辑器</strong><p>在本项目的 Unity 中选择 <code>Tools → Economy → Open Live Merchant Editor</code>，然后打开下面的本地页面。编辑器重载后会自动重连。</p><a class="button primary" href="http://127.0.0.1:8092/">打开实时配置页 ↗</a><p id="offline-detail"></p></section>
+    <section id="conflict" class="notice conflict" hidden role="alert"><div><strong>配置在其他位置发生了变化</strong><p>保留了你尚未保存的输入。可以使用最新配置，或将你修改的字段重新应用到最新版本。</p></div><div class="notice-actions"><button id="use-latest" class="button">使用最新配置</button><button id="retry-changes" class="button primary">重新应用我的修改</button></div></section>
+    <section class="stats" aria-label="配置概览">
+      <div class="stat"><span>掉落物覆盖</span><div><b id="coverage">—</b><em id="coverage-note">正在读取</em></div><small>商品池 / 全部掉落物资产</small></div>
+      <div class="stat"><span>商品池条目</span><div><b id="entry-count">—</b><em>项</em></div><small>包含四类商品配置</small></div>
+      <div class="stat"><span>单店商品数量</span><div><b id="stock-count">—</b><em>件</em></div><small>保底数量与遗物可影响实际库存</small></div>
+      <div class="stat sync-stat"><span>同步状态</span><div><b id="save-label">等待连接</b></div><small id="save-detail" aria-live="polite">读取游戏实际配置</small></div>
+    </section>
+    <div class="workspace">
+      <aside class="panel settings"><div class="section-heading"><span class="section-number">01</span><h2>库存生成</h2><span class="muted">自动保存</span></div>
+        <div class="field-group"><label>单店商品总数</label><div class="range-input"><label><span>最少</span><input id="total-min" data-key="settings" data-field="minTotalGoodsCount" type="number" min="0" max="10000" step="1" aria-label="单店商品总数下限"></label><span>—</span><label><span>最多</span><input id="total-max" data-key="settings" data-field="maxTotalGoodsCount" type="number" min="0" max="10000" step="1" aria-label="单店商品总数上限"></label></div></div>
+        <div class="category-settings-title"><span>商品类型</span><span>保底数量</span><span>补位权重</span></div><div id="category-settings"></div>
+        <p class="help">先按类型满足保底，再按补位权重补足商品。类型权重 0 只停止随机补位；保底商品仍会生成。</p>
+        <div class="source-block"><span class="eyebrow">SOURCE OF TRUTH</span><p>直接连接实际商店资产</p><code id="source-path">Assets/Data/Economy/<br>MerchantCatalog.asset</code><span id="unity-dirty" class="dirty-note" hidden>Unity 存在未落盘的修改；网页已读取这些值。</span></div>
+        <div class="scope-note"><strong>何时在游戏中生效？</strong><p>新生成的商店和后续刷新读取最新商品池。已生成的库存会保留；教程与特殊副本使用各自的固定商品。</p><p>需要撤销网页修改时，可在 Unity 中使用 Undo。</p></div>
+      </aside>
+      <section class="panel catalog"><div class="section-heading"><span class="section-number">02</span><h2>商品池</h2><span id="pool-summary" class="muted"></span><button id="save-now" class="button small" disabled>立即保存</button><button id="open-add" class="button primary small" disabled>＋ 加入商品</button></div>
+        <nav id="tabs" class="tabs" aria-label="商品类型"></nav>
+        <div class="filters"><div class="search"><span aria-hidden="true">⌕</span><input id="query" type="search" placeholder="搜索名称、ID、描述或资产路径" aria-label="搜索商品"></div><select id="rarity" aria-label="筛选稀有度"><option value="">全部稀有度</option><option value="0">普通</option><option value="1">罕见</option><option value="2">稀有</option><option value="3">史诗</option><option value="4">传说</option><option value="5">杂物</option></select><select id="sort" aria-label="排序字段"><option value="id">按资产 ID</option><option value="name">按名称</option><option value="rarity">按稀有度</option><option value="minPrice">按价格下限</option><option value="weight">按权重</option></select><button id="direction" class="button square" aria-label="切换排序方向" title="切换排序方向">↑</button></div>
+        <div class="table-wrap"><table><thead><tr><th>商品 / 资产 ID</th><th>稀有度</th><th>价格下限</th><th>价格上限</th><th>抽取权重</th><th class="action-column">操作</th></tr></thead><tbody id="rows"><tr><td colspan="6" class="empty">正在连接 Unity，读取商店配置…</td></tr></tbody></table></div>
+        <div class="table-footer"><span id="result-count">—</span><span>权重占比按当前类型的完整商品池计算，不等于最终上架概率。</span></div>
+      </section>
+    </div>
+    <footer class="page-footer"><span>DICELAND <i>·</i> 本地配置工作台</span><span>约每秒检查外部配置变化 <i>·</i> 修改后约 0.6 秒自动保存</span></footer>
+  </main>
+  <dialog id="add-dialog"><form id="add-form"><div class="dialog-header"><div><span class="eyebrow">ADD TO CATALOG</span><h2>加入商品池</h2></div><button type="button" id="close-add" class="button square" aria-label="关闭">×</button></div><label class="field-group">选择尚未加入的资产<select id="add-asset" required></select></label><p id="add-description" class="help"></p><div class="add-numbers"><label>价格下限<input id="add-min" type="number" min="1" max="1000000" step="1" required></label><label>价格上限<input id="add-max" type="number" min="1" max="1000000" step="1" required></label><label>抽取权重<input id="add-weight" type="number" min="1" max="1000000" step="1" required></label></div><p class="help">默认值优先参考当前类型、相同稀有度的既有配置；新增商品标识自动生成。</p><p id="add-error" role="alert"></p><button id="confirm-add" class="button primary" type="submit">加入并保存</button></form></dialog>
+</body>
+</html>

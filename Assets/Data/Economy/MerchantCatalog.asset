@@ -127,6 +127,41 @@ MonoBehaviour:
     minPrice: 18
     maxPrice: 26
     weight: 4
+  - goodsId: loot_011
+    lootItem: {fileID: 11400000, guid: d1eb5424360bc9f40a2b6a89faa718cb, type: 2}
+    minPrice: 8
+    maxPrice: 12
+    weight: 10
+  - goodsId: loot_012
+    lootItem: {fileID: 11400000, guid: 86cf119c5ff77594f96939517d1506a7, type: 2}
+    minPrice: 18
+    maxPrice: 26
+    weight: 4
+  - goodsId: loot_022
+    lootItem: {fileID: 11400000, guid: 54ec389721584606bcd7a8933f88a65a, type: 2}
+    minPrice: 18
+    maxPrice: 26
+    weight: 4
+  - goodsId: loot_023
+    lootItem: {fileID: 11400000, guid: 786679dcd19c470b9c92aeba18a319b8, type: 2}
+    minPrice: 18
+    maxPrice: 26
+    weight: 4
+  - goodsId: loot_025
+    lootItem: {fileID: 11400000, guid: dea757009a544ee8bb1407ede929e955, type: 2}
+    minPrice: 18
+    maxPrice: 26
+    weight: 4
+  - goodsId: loot_026
+    lootItem: {fileID: 11400000, guid: 22aabd44e1d173445a17d7c47544e7ea, type: 2}
+    minPrice: 30
+    maxPrice: 40
+    weight: 2
+  - goodsId: loot_027
+    lootItem: {fileID: 11400000, guid: d0843e8639d4e334c85f8a6016c955ef, type: 2}
+    minPrice: 18
+    maxPrice: 26
+    weight: 4
   weaponEntries:
   - goodsId: 101
     weaponData: {fileID: 11400000, guid: cdf2798ce1fc9ed42954b0864d1ce01f, type: 2}
