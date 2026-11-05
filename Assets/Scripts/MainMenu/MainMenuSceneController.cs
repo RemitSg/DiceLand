@@ -136,7 +136,7 @@ public class MainMenuSceneController : MonoBehaviour
             settingsOverlay = gameObject.AddComponent<MainMenuSettingsOverlay>();
 
         contributorsOverlay.ConfigureFonts(contributorsTitleFont, contributorsBodyFont);
-        tutorialOverlay.ConfigureFonts(tutorialStartPopupBodyFont);
+        tutorialOverlay.ConfigureFonts(tutorialStartPopupBodyFont, settingsTitleFont, settingsButtonFont);
         abilityOverlay.ConfigureFonts(settingsTitleFont, settingsBodyFont, settingsButtonFont);
         settingsOverlay.ConfigureFonts(
             settingsTitleFont,
@@ -744,7 +744,6 @@ public class MainMenuSceneController : MonoBehaviour
             "即将开始教程，是否开始？",
             "进入教程会让你了解战斗规则、基本玩法、游戏系统等。教程会从地图推进开始，逐步带你熟悉移动、战斗、资源管理与成长流程。",
             true);
-        AnimatePage(tutorialOverlay.PresentationCanvas);
         SetGalleryInputEnabled(false);
     }
 

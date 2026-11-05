@@ -6048,6 +6048,7 @@ public partial class BattleButton : MonoBehaviour
         {
             activeTutorialHighlightTarget = target;
             tutorialBattleGuideOverlay.ShowTargetHighlight(screenRect);
+            tutorialBattleGuideOverlay.TrackTarget(() => TryResolveTutorialHighlightRect(target, out Rect current) ? current : (Rect?)null);
             return true;
         }
 
@@ -6103,27 +6104,10 @@ public partial class BattleButton : MonoBehaviour
             rectTransform = button != null ? button.GetComponent<RectTransform>() : null;
         }
 
-        if (rectTransform == null)
-            return false;
-
-        Vector3[] corners = new Vector3[4];
-        rectTransform.GetWorldCorners(corners);
-        float minX = float.PositiveInfinity;
-        float minY = float.PositiveInfinity;
-        float maxX = float.NegativeInfinity;
-        float maxY = float.NegativeInfinity;
-        for (int i = 0; i < corners.Length; i++)
-        {
-            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(null, corners[i]);
-            minX = Mathf.Min(minX, screenPoint.x);
-            minY = Mathf.Min(minY, screenPoint.y);
-            maxX = Mathf.Max(maxX, screenPoint.x);
-            maxY = Mathf.Max(maxY, screenPoint.y);
-        }
-
+        if (!TutorialHighlightCoordinateUtility.TryGetScreenRect(rectTransform, out Rect bounds)) return false;
         const float padding = 18f;
-        screenRect = Rect.MinMaxRect(minX - padding, minY - padding, maxX + padding, maxY + padding);
-        return screenRect.width > 0.5f && screenRect.height > 0.5f;
+        screenRect = Rect.MinMaxRect(bounds.xMin - padding, bounds.yMin - padding, bounds.xMax + padding, bounds.yMax + padding);
+        return true;
     }
 
     private bool TryGetFirstEnemySpeedButtonScreenRect(out Rect screenRect)

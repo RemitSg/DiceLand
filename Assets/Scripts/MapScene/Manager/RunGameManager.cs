@@ -10,8 +10,6 @@ public class RunGameManager : MonoBehaviour
 {
     private const int TutorialBoardSize = 6;
     private const int TutorialFirstBattleSequenceIndex = 1;
-    private static readonly Vector2 TutorialTopLeftStatusHighlightAnchor = new Vector2(14f, -14f);
-    private static readonly Vector2 TutorialTopLeftStatusHighlightSize = new Vector2(438f, 236f);
     private const string DefaultTreasureRewardTableResourcePath = "DefaultTreasureRewardTable";
     private const string TreasureBlueprintTableResourcePath = "TreasureBlueprintTable";
     private const string TreasureRelicTableResourcePath = "TreasureRelicTable";
@@ -2173,12 +2171,19 @@ public class RunGameManager : MonoBehaviour
 
     private void UpdateMapTutorialBattleInspectHighlight()
     {
-        if (mapTutorialGuideOverlay == null || boardManager == null || mapCamera == null)
+        if (mapTutorialGuideOverlay == null || mapTutorialGuideOverlay.IsTargetHighlightVisible)
             return;
+        Rect? screenRect = ResolveMapTutorialBattleInspectRect();
+        if (!screenRect.HasValue) return;
+        mapTutorialGuideOverlay.ShowTargetHighlight(screenRect.Value);
+        mapTutorialGuideOverlay.TrackTarget(ResolveMapTutorialBattleInspectRect);
+    }
 
+    private Rect? ResolveMapTutorialBattleInspectRect()
+    {
+        if (boardManager == null || mapCamera == null) return null;
         Vector2Int battleCoord = new Vector2Int(TutorialFirstBattleSequenceIndex, TutorialBoardSize / 2);
-        if (boardManager.TryGetTileScreenHighlightRect(battleCoord, mapCamera, out Rect screenRect, 12f))
-            mapTutorialGuideOverlay.ShowTargetHighlight(screenRect);
+        return boardManager.TryGetTileScreenHighlightRect(battleCoord, mapCamera, out Rect screenRect, 12f) ? screenRect : (Rect?)null;
     }
 
     private void HideMapTutorialTargetHighlight()
@@ -2194,7 +2199,7 @@ public class RunGameManager : MonoBehaviour
             "左上角的状态栏显示了你当前的行动点，移动到其它格子都会消耗你的行动点。",
             ShowMapMoneyGuide,
             "继续",
-            true);
+            MapTutorialFocusPart.ActionPoints);
     }
 
     private void ShowMapMoneyGuide()
@@ -2204,7 +2209,7 @@ public class RunGameManager : MonoBehaviour
             "金币是游戏的必要资源！你可以用金币在商店或事件中换取你需要的资源。",
             ShowMapRouteGoalGuide,
             "继续",
-            true);
+            MapTutorialFocusPart.Money);
     }
 
     private void ShowMapRouteGoalGuide()
@@ -2214,7 +2219,7 @@ public class RunGameManager : MonoBehaviour
             "这次教程会沿一条固定的 6 格路线推进：先完成两场基础战斗，再到商店购买图纸和材料，随后在锻造格制作武器，最后挑战精英终战。\n\n先把每个格子的详情看清楚，再决定进入下一格。",
             ShowMapTileInspectIntro,
             "继续",
-            true);
+            MapTutorialFocusPart.Resources);
     }
 
     private void ShowMapTileInspectIntro()
@@ -2287,7 +2292,7 @@ public class RunGameManager : MonoBehaviour
         ShowMapTileDetailTutorialMessage(
             "坐标与类型",
             "第一行包括格子的坐标与类型。“战斗”代表你会在进入该格子时开启一场战斗。",
-            ShowMapTileExploreStateGuide);
+            ShowMapTileExploreStateGuide, MapTutorialFocusPart.TileHeader);
     }
 
     private void ShowMapTileExploreStateGuide()
@@ -2295,7 +2300,7 @@ public class RunGameManager : MonoBehaviour
         ShowMapTileDetailTutorialMessage(
             "探索状态",
             "第二行标志着格子的探索情况。当你进入一个格子并完成内容后，格子将会被探索并解决。",
-            ShowMapTileMovementCostGuide);
+            ShowMapTileMovementCostGuide, MapTutorialFocusPart.TileState);
     }
 
     private void ShowMapTileMovementCostGuide()
@@ -2303,7 +2308,7 @@ public class RunGameManager : MonoBehaviour
         ShowMapTileDetailTutorialMessage(
             "移动消耗",
             "第三行显示进入格子所需的行动点。通常探索一个新的格子需要消耗 2 行动点，而移动到已探索的格子只需要 1 行动点。",
-            ShowMapBattleTileAttributeGuide);
+            ShowMapBattleTileAttributeGuide, MapTutorialFocusPart.TileCost);
     }
 
     private void ShowMapBattleTileAttributeGuide()
@@ -2311,7 +2316,7 @@ public class RunGameManager : MonoBehaviour
         ShowMapTileDetailTutorialMessage(
             "敌人属性",
             "由于当前是“战斗格”，剩余的信息是战斗格特有的内容。\n\n敌人属性记录驻扎在当前格子敌人的属性。提前了解敌人的属性，可以帮助你规划路线，或是准备战斗所需的装备。",
-            ShowMapBattleTileDangerGuide);
+            ShowMapBattleTileDangerGuide, MapTutorialFocusPart.TileDescription);
     }
 
     private void ShowMapBattleTileDangerGuide()
@@ -2319,7 +2324,7 @@ public class RunGameManager : MonoBehaviour
         ShowMapTileDetailTutorialMessage(
             "危险度与区域",
             "危险度记录当前格子敌人的危险程度。时刻注意观察危险度，否则你可能会败在危险程度远高于你当前能力的敌人手下！\n\n区域记录当前格子所在的位置：外围、中层、内层、核心。越靠近 Boss，区域越深入，敌人的危险度也会逐渐增加。",
-            ShowMapFirstBattleEntryIntro);
+            ShowMapFirstBattleEntryIntro, MapTutorialFocusPart.TileDescription);
     }
 
     private void ShowMapFirstBattleEntryIntro()
@@ -2339,48 +2344,35 @@ public class RunGameManager : MonoBehaviour
             });
     }
 
-    private void ShowMapTutorialMessage(string title, string body, Action onContinue, string buttonLabel = "继续", bool highlightTopLeftStatus = false)
+    private Rect? ResolveMapTutorialFocus(MapTutorialFocusPart part)
+    {
+        return mapHUD != null && mapHUD.TryGetTutorialTargetScreenRect(part, out Rect rect) ? rect : (Rect?)null;
+    }
+
+    private void ShowMapTutorialMessage(string title, string body, Action onContinue, string buttonLabel = "继续", MapTutorialFocusPart? focus = null)
     {
         mapTutorialGuideStep = MapTutorialGuideStep.None;
         if (mapTutorialGuideOverlay == null)
             return;
 
-        if (highlightTopLeftStatus)
+        if (focus.HasValue && mapHUD != null)
         {
-            mapTutorialGuideOverlay.Show(
-                title,
-                body,
-                onContinue,
-                buttonLabel,
-                true,
-                TutorialTopLeftStatusHighlightAnchor,
-                TutorialTopLeftStatusHighlightSize);
+            mapTutorialGuideOverlay.ShowFocused(title, body, onContinue, buttonLabel,
+                () => ResolveMapTutorialFocus(focus.Value), () => ResolveMapTutorialFocus(MapTutorialFocusPart.Resources));
             return;
         }
 
         mapTutorialGuideOverlay.Show(title, body, onContinue, buttonLabel);
     }
 
-    private void ShowMapTileDetailTutorialMessage(string title, string body, Action onContinue, string buttonLabel = "继续")
+    private void ShowMapTileDetailTutorialMessage(string title, string body, Action onContinue, MapTutorialFocusPart focus = MapTutorialFocusPart.TilePanel)
     {
         mapTutorialGuideStep = MapTutorialGuideStep.None;
         if (mapTutorialGuideOverlay == null)
             return;
 
-        if (mapHUD != null && mapHUD.TryGetTileDetailTutorialHighlight(out Vector2 highlightAnchor, out Vector2 highlightSize))
-        {
-            mapTutorialGuideOverlay.Show(
-                title,
-                body,
-                onContinue,
-                buttonLabel,
-                true,
-                highlightAnchor,
-                highlightSize);
-            return;
-        }
-
-        mapTutorialGuideOverlay.Show(title, body, onContinue, buttonLabel);
+        mapTutorialGuideOverlay.ShowFocused(title, body, onContinue, "继续",
+            () => ResolveMapTutorialFocus(focus), () => ResolveMapTutorialFocus(MapTutorialFocusPart.TilePanel), "格子详情");
     }
 
     private bool TryShowTutorialArrivalGuide(BoardTileData tile, Action onContinue = null)

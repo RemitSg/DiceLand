@@ -15,6 +15,8 @@ public class MainMenuTutorialOverlay : MonoBehaviour
     [Header("Fonts")]
     [SerializeField] private Font summaryBodyFont;
 
+    private Font headingFont, buttonFont;
+    private TutorialForestView view;
     private Canvas canvas;
     private RectTransform panelRect;
     private Text summaryTitleText;
@@ -31,17 +33,20 @@ public class MainMenuTutorialOverlay : MonoBehaviour
 
     public bool IsVisible => canvas != null && canvas.gameObject.activeSelf;
     public Canvas PresentationCanvas => canvas;
+    public TutorialForestView Presentation => view;
     public Text DebugSummaryTitleText => summaryTitleText;
     public Text DebugSummaryBodyText => summaryBodyText;
     public Text DebugStartButtonText => startButtonText;
     public Text DebugBackButtonText => backButtonText;
     public int DebugSectionCount => sectionViews.Count;
 
-    public void ConfigureFonts(Font summaryBodyFontOverride)
+    public void ConfigureFonts(Font summaryBodyFontOverride, Font heading = null, Font buttons = null)
     {
         if (summaryBodyFontOverride != null)
             summaryBodyFont = summaryBodyFontOverride;
 
+        if (heading != null) headingFont = heading;
+        if (buttons != null) buttonFont = buttons;
         ApplyConfiguredFonts();
     }
 
@@ -81,65 +86,47 @@ public class MainMenuTutorialOverlay : MonoBehaviour
             if (startRequested || !IsVisible || !startButton.IsInteractable()) return;
             startRequested = true;
             startButton.interactable = false;
-            onStart?.Invoke();
+            if (onStart != null) view.Close(() => { HideImmediately(false); onStart(); });
         });
         backButton.onClick.AddListener(Hide);
 
         RebuildSections(safeCatalog);
-        ApplyLayout(hideSections);
-        canvas.gameObject.SetActive(true);
+        view.CatalogVisible = !hideSections;
+        ApplyConfiguredFonts();
+        view.Show();
+        view.Reading.StopMovement(); view.Reading.verticalNormalizedPosition = 1;
+        sectionScrollRect.StopMovement(); sectionScrollRect.verticalNormalizedPosition = 1;
     }
 
     public void Hide()
     {
-        if (!MainMenuPageMotion.TryHide(canvas, HideImmediately)) HideImmediately();
+        if (view != null) view.Close(() => HideImmediately(true));
+        else HideImmediately(true);
     }
 
-    private void HideImmediately()
+    private void HideImmediately(bool invokeBack)
     {
-        if (canvas != null)
-            canvas.gameObject.SetActive(false);
-        Action callback = backHandler;
+        view?.HideImmediately();
+        Action callback = invokeBack ? backHandler : null;
         backHandler = null;
         callback?.Invoke();
     }
 
-    private void OnDestroy()
-    {
-        if (canvas == null) return;
-        if (Application.isPlaying) Destroy(canvas.gameObject);
-        else DestroyImmediate(canvas.gameObject);
-    }
+    private void LateUpdate() { AdvancePresentation(Time.unscaledDeltaTime); }
+    public void AdvancePresentation(float delta) { view?.Advance(delta); }
+    private void OnDisable() { HideImmediately(false); }
+    private void OnDestroy() { view?.Dispose(); }
 
     private void EnsureUi()
     {
-        if (canvas != null)
-            return;
-
-        Font font = Resources.GetBuiltinResource<Font>(FallbackFontName);
-        Font resolvedSummaryBodyFont = ResolveSummaryBodyFont(font);
-
-        GameObject canvasGo = new GameObject("MainMenuTutorialOverlay", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
-        canvas = canvasGo.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 9550;
-
-        CanvasScaler scaler = canvasGo.GetComponent<CanvasScaler>();
-        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1920f, 1080f);
-        scaler.matchWidthOrHeight = 0.5f;
-
-        RectTransform rootRect = canvasGo.GetComponent<RectTransform>();
-        StretchRect(rootRect);
-
-        panelRect = CreateRect("Panel", rootRect, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1120f, 760f));
-        Image panelImage = panelRect.gameObject.AddComponent<Image>();
-        panelImage.color = new Color(0.07f, 0.09f, 0.13f, 0.96f);
-
-        summaryTitleText = CreateText("SummaryTitle", panelRect, new Vector2(0.5f, 1f), new Vector2(0f, -56f), new Vector2(860f, 72f), font, 42, TextAnchor.MiddleCenter, Color.white);
-        summaryBodyText = CreateText("SummaryBody", panelRect, new Vector2(0.5f, 1f), new Vector2(0f, -124f), new Vector2(860f, 120f), resolvedSummaryBodyFont, 24, TextAnchor.UpperCenter, new Color(0.85f, 0.88f, 0.92f, 1f));
-        summaryBodyText.horizontalOverflow = HorizontalWrapMode.Wrap;
-        summaryBodyText.verticalOverflow = VerticalWrapMode.Overflow;
+        if (canvas != null) return;
+        view = new TutorialForestView("MainMenuTutorialOverlay", transform, 9550, false, true);
+        canvas = view.Canvas; panelRect = view.Panel;
+        summaryTitleText = (Text)view.Title; summaryBodyText = (Text)view.Body;
+        startButton = view.Primary; backButton = view.Secondary;
+        startButtonText = (Text)view.PrimaryLabel; backButtonText = (Text)view.SecondaryLabel;
+        startButton.gameObject.AddComponent<BattleSkillOverlayCancel>().close = Hide;
+        backButton.gameObject.AddComponent<BattleSkillOverlayCancel>().close = Hide;
 
         RectTransform sectionsRect = CreateRect("Sections", panelRect, new Vector2(0.5f, 1f), new Vector2(0f, -270f), new Vector2(920f, 360f));
         sectionScrollRect = sectionsRect.gameObject.AddComponent<ScrollRect>();
@@ -176,53 +163,13 @@ public class MainMenuTutorialOverlay : MonoBehaviour
         sectionSizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
         sectionSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-        startButton = CreateButton("StartButton", panelRect, new Vector2(0.5f, 0f), new Vector2(-126f, 48f), new Vector2(240f, 64f), font, out startButtonText);
-        startButtonText.text = "Start";
-
-        backButton = CreateButton("BackButton", panelRect, new Vector2(0.5f, 0f), new Vector2(126f, 48f), new Vector2(240f, 64f), font, out backButtonText);
-        backButtonText.text = "Back";
-
-        canvas.gameObject.SetActive(false);
+        view.Catalog = sectionsRect;
+        ApplyConfiguredFonts();
     }
 
     private void ApplyConfiguredFonts()
     {
-        if (summaryBodyText == null)
-            return;
-
-        Font fallbackFont = Resources.GetBuiltinResource<Font>(FallbackFontName);
-        summaryBodyText.font = ResolveSummaryBodyFont(fallbackFont);
-    }
-
-    private Font ResolveSummaryBodyFont(Font fallbackFont)
-    {
-        return summaryBodyFont != null ? summaryBodyFont : fallbackFont;
-    }
-
-    private void ApplyLayout(bool hideSections)
-    {
-        if (panelRect == null || summaryTitleText == null || summaryBodyText == null || startButton == null || backButton == null)
-            return;
-
-        if (hideSections)
-        {
-            panelRect.sizeDelta = new Vector2(920f, 420f);
-            SetRect(summaryTitleText.rectTransform, new Vector2(0f, -60f), new Vector2(780f, 72f));
-            SetRect(summaryBodyText.rectTransform, new Vector2(0f, -148f), new Vector2(760f, 150f));
-            SetRect(startButton.GetComponent<RectTransform>(), new Vector2(-126f, 58f), new Vector2(240f, 64f));
-            SetRect(backButton.GetComponent<RectTransform>(), new Vector2(126f, 58f), new Vector2(240f, 64f));
-        }
-        else
-        {
-            panelRect.sizeDelta = new Vector2(1120f, 760f);
-            SetRect(summaryTitleText.rectTransform, new Vector2(0f, -56f), new Vector2(860f, 72f));
-            SetRect(summaryBodyText.rectTransform, new Vector2(0f, -124f), new Vector2(860f, 120f));
-            SetRect(startButton.GetComponent<RectTransform>(), new Vector2(-126f, 48f), new Vector2(240f, 64f));
-            SetRect(backButton.GetComponent<RectTransform>(), new Vector2(126f, 48f), new Vector2(240f, 64f));
-        }
-
-        if (sectionScrollRect != null)
-            sectionScrollRect.gameObject.SetActive(!hideSections);
+        view?.SetLegacyFonts(headingFont, summaryBodyFont, buttonFont);
     }
 
     private void RebuildSections(TutorialMenuCatalog_SO catalog)
@@ -248,8 +195,9 @@ public class MainMenuTutorialOverlay : MonoBehaviour
                 Vector2.zero,
                 new Vector2(920f, 0f));
 
-            Image itemBackground = itemRect.gameObject.AddComponent<Image>();
-            itemBackground.color = new Color(0.13f, 0.16f, 0.21f, 0.92f);
+            var itemBackground = itemRect.gameObject.AddComponent<MapCraftingFrameGraphic>();
+            itemBackground.craftingStyle = MapCraftingFrameGraphic.Style.Material;
+            itemBackground.raycastTarget = false;
 
             LayoutElement itemLayout = itemRect.gameObject.AddComponent<LayoutElement>();
             itemLayout.preferredHeight = 108f;
@@ -267,10 +215,10 @@ public class MainMenuTutorialOverlay : MonoBehaviour
             itemSizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
             itemSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-            Text titleText = CreateText("Title", itemRect, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(0f, 34f), font, 28, TextAnchor.MiddleLeft, Color.white);
+            Text titleText = CreateText("Title", itemRect, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(0f, 34f), font, 29, TextAnchor.MiddleLeft, TutorialForestView.Gold);
             titleText.text = section != null ? section.title ?? string.Empty : string.Empty;
 
-            Text bodyText = CreateText("Summary", itemRect, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(0f, 0f), font, 20, TextAnchor.UpperLeft, new Color(0.78f, 0.82f, 0.88f, 1f));
+            Text bodyText = CreateText("Summary", itemRect, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(0f, 0f), font, 26, TextAnchor.UpperLeft, TutorialForestView.Ivory);
             bodyText.horizontalOverflow = HorizontalWrapMode.Wrap;
             bodyText.verticalOverflow = VerticalWrapMode.Overflow;
             bodyText.text = section != null ? section.summary ?? string.Empty : string.Empty;
@@ -309,15 +257,6 @@ public class MainMenuTutorialOverlay : MonoBehaviour
         return rect;
     }
 
-    private static void SetRect(RectTransform rect, Vector2 anchoredPosition, Vector2 size)
-    {
-        if (rect == null)
-            return;
-
-        rect.anchoredPosition = anchoredPosition;
-        rect.sizeDelta = size;
-    }
-
     private static Text CreateText(string name, RectTransform parent, Vector2 anchorPivot, Vector2 anchoredPosition, Vector2 size, Font font, int fontSize, TextAnchor alignment, Color color)
     {
         RectTransform rect = CreateRect(name, parent, anchorPivot, anchoredPosition, size);
@@ -326,17 +265,9 @@ public class MainMenuTutorialOverlay : MonoBehaviour
         text.fontSize = fontSize;
         text.alignment = alignment;
         text.color = color;
+        text.raycastTarget = false;
+        text.lineSpacing = 1.15f;
+        text.verticalOverflow = VerticalWrapMode.Overflow;
         return text;
-    }
-
-    private static Button CreateButton(string name, RectTransform parent, Vector2 anchorPivot, Vector2 anchoredPosition, Vector2 size, Font font, out Text labelText)
-    {
-        RectTransform rect = CreateRect(name, parent, anchorPivot, anchoredPosition, size);
-        Image image = rect.gameObject.AddComponent<Image>();
-        image.color = new Color(0.28f, 0.78f, 1f, 1f);
-
-        Button button = rect.gameObject.AddComponent<Button>();
-        labelText = CreateText("Label", rect, new Vector2(0.5f, 0.5f), Vector2.zero, size, font, 22, TextAnchor.MiddleCenter, Color.black);
-        return button;
     }
 }

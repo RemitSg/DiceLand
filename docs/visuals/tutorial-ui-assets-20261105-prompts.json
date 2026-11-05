@@ -1,0 +1,88 @@
+{
+  "date": "2026-11-05",
+  "tool": "built-in image_gen",
+  "transparent_background": true,
+  "reference": "docs/visuals/tutorial-welcome-ideal-reference-20261105.png",
+  "prompts": {
+    "frame": "Use case: precise-object-edit. Production Unity UGUI 9-slice tutorial window background. Input image is STYLE REFERENCE, DiceLand approved adventure tutorial dialog. Produce ONLY one isolated EMPTY rectangular window surface on actual transparent background, about1536x1024. Main rectangle bounds x32..1504 y32..992, almost fills canvas. Same premium hand-painted deep emerald green leather with subtle brushed grain, double fine bright antique gold beveled rim, carved rounded corners. Restrained ivy sprays upper left and lower right, fully inside a 140px corner footprint for nine-slicing. Calm uniformly dark green center for readable text. No integrated title plaque, no text or lettering, no illustration, no buttons, no dividers, no icons, no gems floating in the center, no reference battlefield. Only the complete gold border and green opaque interior, transparent outside corners and leaves. Straight-on, crisp 2D fantasy game UI. Borders consistently narrow, not massive. Preserve reference palette and tactile painted materials. High-quality production art, real alpha transparency outside, not checkerboard.",
+    "plaque": "Use case: precise-object-edit. Production Unity tutorial title plaque. Input image STYLE REFERENCE DiceLand approved adventure tutorial. Produce ONLY the centered dark WALNUT WOOD title plaque from its top, with gold beveled polygonal carved frame and two small turquoise diamond jewels at its left and right ends. Isolated cutout on true transparent background, wide aspect5:1 (e.g1500x300), tightly framed with modest transparent margin. Blank wooden interior MUST have NO text, no letters, no symbols. No whole dialog, no background, no leaves, no button, no map, no characters. Premium painted fantasy RPG art matching the source's glossy thin antique gold edges and tactile dark walnut grain. Symmetrical, front-on, crisp, reusable; fill most of canvas with single plaque and clean transparent edges.",
+    "illustration": "Use case: precise-object-edit. Production tutorial illustration cutout for DiceLand. Input image STYLE AND SUBJECT REFERENCE, approved adventure tutorial confirmation. Extract and recreate ONLY its left-side still life: a warm cream parchment route map with curled edges showing a dotted trail, tiny painted hills and one destination pennant, ONE ivory six-sided die in front, a brass compass lower right, a little bed of natural moss and a few ivy leaves. Match composition and premium hand-painted fantasy game style very closely. Portrait-square composition with all parts fully visible, centred and occupying most of1024x1024 canvas. Real transparent alpha outside the objects, no background scene, no window frame, no text labels, no UI buttons, no human or creature, no extra dice or props. Warm gold and parchment contrasting with restrained green moss, soft natural painted shading, crisp edges, contact shadows only inside cutout, no harsh black rectangle or halo. Ready for UI Image over deep green panel."
+  },
+  "outputs": [
+  {
+    "file": "Assets/Resources/TutorialUI/AdventureGuide.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "alphaAtCorner": 0,
+    "sha256": "246d1a0c8ebbcefbaa3b8b3a1625eae68afc68b9c589a974a6d2647e1e305271",
+    "sourceGeneratedFile": "exec-07745c62-ed81-4f44-888a-aea4b5eb585c.png",
+    "import": {
+      "type": "Sprite / Single",
+      "alphaIsTransparency": true,
+      "mipmaps": false,
+      "filter": "Bilinear",
+      "compression": "Uncompressed",
+      "maxSize": 1024
+    }
+  },
+  {
+    "file": "Assets/Resources/TutorialUI/ForestWindow.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "mode": "RGBA",
+    "alphaExtrema": [
+      0,
+      254
+    ],
+    "alphaAtCorner": 0,
+    "sha256": "70c72b21ee45e43ffda25943bc260b50d133feb9e506269b69c9e166eb867399",
+    "sourceGeneratedFile": "exec-72bb687d-a3eb-47f0-aad6-61e2e7d408ff.png",
+    "import": {
+      "type": "Sprite / Single",
+      "alphaIsTransparency": true,
+      "mipmaps": false,
+      "filter": "Bilinear",
+      "compression": "Uncompressed",
+      "maxSize": 2048,
+      "spriteBorder": [
+        264,
+        264,
+        264,
+        288
+      ]
+    }
+  },
+  {
+    "file": "Assets/Resources/TutorialUI/WoodTitle.png",
+    "size": [
+      2172,
+      724
+    ],
+    "mode": "RGBA",
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "alphaAtCorner": 0,
+    "sha256": "1abdf6034dc0973799f70adcb6f9dfd6d35a73e85763c0b330d2e07b4302142a",
+    "sourceGeneratedFile": "exec-f677df70-0da9-493a-9286-91ba5300c6d5.png",
+    "import": {
+      "type": "Sprite / Single",
+      "alphaIsTransparency": true,
+      "mipmaps": false,
+      "filter": "Bilinear",
+      "compression": "Uncompressed",
+      "maxSize": 2048
+    }
+  }
+]
+}

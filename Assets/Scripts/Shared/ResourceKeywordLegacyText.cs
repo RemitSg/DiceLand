@@ -6,6 +6,7 @@ using UnityEngine.UI;
 /// <summary>Keeps legacy Text APIs/fonts, using a TMP child only when inline resource icons are needed.</summary>
 public sealed class ResourceKeywordLegacyText : Text
 {
+    public bool IncludeIcons { get; set; } = true;
     private TextMeshProUGUI resourceText;
     private bool synchronizing;
     private static readonly Dictionary<Font, TMP_FontAsset> fonts = new Dictionary<Font, TMP_FontAsset>();
@@ -42,7 +43,7 @@ public sealed class ResourceKeywordLegacyText : Text
                 rect.offsetMin = rect.offsetMax = Vector2.zero;
                 resourceText = go.AddComponent<TextMeshProUGUI>();
                 resourceText.raycastTarget = false;
-                ResourceKeywordText.Attach(resourceText);
+                ResourceKeywordText.Attach(resourceText, IncludeIcons);
             }
             resourceText.gameObject.SetActive(true);
             resourceText.font = face;

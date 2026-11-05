@@ -11,11 +11,9 @@ using UnityEditor;
 public partial class MapHUD : MonoBehaviour
 {
     private const int DefaultCanvasSortingOrder = 8000;
-    private const float TileDetailTutorialHighlightPadding = 12f;
     private const float PartyPanelTopGap = 24f;
     private static readonly Vector2 TopLeftHudOffset = new Vector2(26f, -26f);
     private static readonly Vector2 TopLeftHudSize = new Vector2(580f, 276f);
-    private static readonly Vector2 TutorialHighlightReferenceResolution = new Vector2(1920f, 1080f);
 
     private sealed class PartyMemberHudView
     {
@@ -411,41 +409,6 @@ public partial class MapHUD : MonoBehaviour
             tileAttributeLabelText.gameObject.SetActive(false);
         if (tileAttributeValueText != null)
             tileAttributeValueText.gameObject.SetActive(false);
-    }
-
-    public bool TryGetTileDetailTutorialHighlight(out Vector2 highlightAnchor, out Vector2 highlightSize)
-    {
-        Initialize();
-        highlightAnchor = Vector2.zero;
-        highlightSize = Vector2.zero;
-        if (tilePanelRect == null || canvas == null)
-            return false;
-
-        Vector3[] corners = new Vector3[4];
-        tilePanelRect.GetWorldCorners(corners);
-
-        float screenWidth = Mathf.Max(1f, Screen.width);
-        float screenHeight = Mathf.Max(1f, Screen.height);
-
-        float minX = float.PositiveInfinity;
-        float minY = float.PositiveInfinity;
-        float maxX = float.NegativeInfinity;
-        float maxY = float.NegativeInfinity;
-        for (int i = 0; i < corners.Length; i++)
-        {
-            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, corners[i]);
-            minX = Mathf.Min(minX, screenPoint.x);
-            minY = Mathf.Min(minY, screenPoint.y);
-            maxX = Mathf.Max(maxX, screenPoint.x);
-            maxY = Mathf.Max(maxY, screenPoint.y);
-        }
-
-        float scaleX = TutorialHighlightReferenceResolution.x / screenWidth;
-        float scaleY = TutorialHighlightReferenceResolution.y / screenHeight;
-        float padding = TileDetailTutorialHighlightPadding;
-        highlightAnchor = new Vector2(minX * scaleX - padding, -(screenHeight - maxY) * scaleY + padding);
-        highlightSize = new Vector2((maxX - minX) * scaleX + padding * 2f, (maxY - minY) * scaleY + padding * 2f);
-        return highlightSize.x > 0.5f && highlightSize.y > 0.5f;
     }
 
     public void ShowStatus(string message)

@@ -113,6 +113,9 @@ public partial class MapHUD
         RectTransform money = ForestResourceCell("MoneyCell", panel, new Vector2(14f, -170f), new Vector2(190f, 92f), ForestInk);
         RectTransform keys = ForestResourceCell("KeysCell", panel, new Vector2(212f, -170f), new Vector2(206f, 92f), ForestInk);
         RectTransform difficulty = ForestResourceCell("DifficultyCell", panel, new Vector2(426f, -14f), new Vector2(140f, 248f), ForestInk);
+        forestResourcePanel = panel;
+        forestActionCell = ap;
+        forestMoneyCell = money;
         ForestLabel(ap, "ActionPointLabel", new Vector2(16f, -10f), new Vector2(200f, 38f), 30, "行动资源", ForestIvory);
         actionPointText = ForestLabel(ap, "ActionPoints", new Vector2(12f, -50f), new Vector2(202f, 88f), 74, string.Empty, ForestIvory);
         actionPointText.alignment = TextAlignmentOptions.Center;
