@@ -565,6 +565,7 @@ public class BattlePresentationSystem : MonoBehaviour
     {
         float waitDuration = Mathf.Max(0f, clashEffectDuration);
         Vector3 contactPosition = ResolveClashContactPoint(ally, enemy, impactPosition, clashDirection, impactHeightOffset);
+        GameHaptics.Play(GameHapticCue.Clash);
         TriggerCameraImpact(impactPosition, clashCameraPower, false, contactPosition);
 
         PlaySideClashFx(ally, planeZ, allyFx, clashDirection, allyHitColor);

@@ -102,6 +102,7 @@ public partial class MapResourceFeedback
     private bool AdvanceCoins()
     {
         bool allArrived = true;
+        bool receivedCoins = false;
         Vector2 destination = LocalPosition(WalletLandingPosition());
         for (int i = 0; i < liveCoins; i++)
         {
@@ -115,6 +116,7 @@ public partial class MapResourceFeedback
                 coin.arrived = true;
                 coin.image.gameObject.SetActive(false);
                 displayedMoney += coin.value;
+                receivedCoins = true;
                 walletPulse = Mathf.Max(walletPulse, 0.7f);
                 ReceiveCoin(i, i == liveCoins - 1);
                 PlaySound("CoinArrival", 0.97f + i * 0.018f, 0.34f);
@@ -134,6 +136,12 @@ public partial class MapResourceFeedback
             rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(age * 8f + i) * 22f);
             coin.image.color = new Color(1f, 1f, 1f, Mathf.Clamp01(age / 0.065f) * (1f - absorb * 0.82f));
             coin.glint.color = new Color(1f, 0.95f, 0.73f, (0.14f + 0.35f * Mathf.Pow(Mathf.Max(0f, Mathf.Sin(age * 16f + i)), 6f)) * (1f - absorb));
+        }
+        if (receivedCoins)
+        {
+            // Match the wallet credit, not reward creation or coin launch. One pulse per frame.
+            WriteMoney();
+            GameHaptics.Play(GameHapticCue.CoinArrived);
         }
         return allArrived;
     }

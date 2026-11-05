@@ -1048,6 +1048,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         if (ally == null)
             return;
 
+        GameHaptics.Play(GameHapticCue.AllyDefeated);
         TriggerDeathSlowMotion();
         PlayDeathEffect(ally.transform, ally.LastHitDirection, false);
         HideCombatantVisuals(ally.gameObject);
@@ -1059,6 +1060,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         if (enemy == null)
             return;
 
+        GameHaptics.Play(GameHapticCue.EnemyDefeated);
         TriggerDeathSlowMotion();
         PlayDeathEffect(enemy.transform, enemy.LastHitDirection, true);
         HideCombatantVisuals(enemy.gameObject);

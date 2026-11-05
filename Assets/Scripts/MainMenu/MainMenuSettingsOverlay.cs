@@ -177,17 +177,10 @@ public partial class MainMenuSettingsOverlay : MonoBehaviour
 
     private int FindResolutionIndex(MainMenuSettingsData currentSettings)
     {
-        for (int i = 0; i < resolutionOptions.Count; i++)
-        {
-            RuntimeResolutionOption option = resolutionOptions[i];
-            if (option.width == currentSettings.resolutionWidth &&
-                option.height == currentSettings.resolutionHeight)
-            {
-                return i;
-            }
-        }
-
-        return 0;
+        int index = DisplayResolutionSelectionService.FindBestIndex(
+            resolutionOptions.ConvertAll(option => new DisplayResolutionOption(option.width, option.height, option.refreshRate)),
+            new DisplayResolutionOption(currentSettings.resolutionWidth, currentSettings.resolutionHeight, currentSettings.refreshRate));
+        return Mathf.Max(0, index);
     }
 
     private void PopulateFrameRateOptions()

@@ -117,7 +117,10 @@ public static class MainMenuSettingsPersistence
         MainMenuSettingsData safeSettings = settings != null ? settings.Clone() : CreateDefault();
         EnsureValid(safeSettings);
 
-        AudioListener.volume = Mathf.Clamp01(Mathf.Max(safeSettings.musicVolume, safeSettings.sfxVolume));
+        // Music and SFX apply their own channel volumes at their AudioSources.
+        // Scaling the listener by either slider would scale both channels a second time.
+        AudioListener.volume = 1f;
+        GameHaptics.ApplySettings(safeSettings.vibrationEnabled);
 
         safeSettings.qualityLevel = Mathf.Clamp(
             safeSettings.qualityLevel < 0 ? QualitySettings.GetQualityLevel() : safeSettings.qualityLevel,
@@ -139,27 +142,16 @@ public static class MainMenuSettingsPersistence
         }
 
         Resolution[] resolutions = Screen.resolutions;
-        Resolution matchedResolution = default;
-        bool foundResolution = false;
+        DisplayResolutionOption[] options = Array.ConvertAll(resolutions, resolution =>
+            new DisplayResolutionOption(resolution.width, resolution.height,
+                Mathf.RoundToInt((float)resolution.refreshRateRatio.value)));
+        int matchedIndex = DisplayResolutionSelectionService.FindBestIndex(options,
+            new DisplayResolutionOption(safeSettings.resolutionWidth, safeSettings.resolutionHeight, safeSettings.refreshRate));
+        Resolution matchedResolution = matchedIndex >= 0 ? resolutions[matchedIndex] : Screen.currentResolution;
 
-        for (int i = 0; i < resolutions.Length; i++)
-        {
-            Resolution resolution = resolutions[i];
-            if (resolution.width != safeSettings.resolutionWidth || resolution.height != safeSettings.resolutionHeight)
-                continue;
-
-            matchedResolution = resolution;
-            if (resolution.refreshRateRatio.value >= safeSettings.refreshRate)
-            {
-                foundResolution = true;
-                break;
-            }
-
-            foundResolution = true;
-        }
-
-        if (!foundResolution)
-            matchedResolution = Screen.currentResolution;
+        safeSettings.resolutionWidth = matchedResolution.width;
+        safeSettings.resolutionHeight = matchedResolution.height;
+        safeSettings.refreshRate = Mathf.Max(30, Mathf.RoundToInt((float)matchedResolution.refreshRateRatio.value));
 
 #if UNITY_2022_2_OR_NEWER
         Screen.SetResolution(
