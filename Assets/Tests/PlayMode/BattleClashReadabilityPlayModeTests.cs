@@ -139,7 +139,7 @@ public sealed class BattleClashReadabilityPlayModeTests
     }
 
     [UnityTest]
-    public IEnumerator HitCameraBeatBeginsWithTheDelayedDamageCallback()
+    public IEnumerator HitCameraAndContactBurstBeginWithTheDelayedDamageCallback()
     {
         root = new GameObject("Hit timing regression");
         Component presentation = CreatePresentation();
@@ -150,23 +150,29 @@ public sealed class BattleClashReadabilityPlayModeTests
         Invoke(presentation, "StartCloseupShot", attacker, defender, Vector3.zero, 3f);
         Set(presentation, "defaultHitReactionDelay", 0.25f);
         bool resolved = false, impulseAtDamage = false;
+        Type contactType = RuntimeType("BattleContactVfx");
+        int burstsAtDamage = 0;
         Action damage = () =>
         {
             resolved = true;
             impulseAtDamage = (float)Field(presentation, "closeupShakeRemaining") > 0f
                 && (bool)Field(presentation, "closeupImpactIsHit");
+            burstsAtDamage = root.GetComponentsInChildren(contactType, true).Length;
         };
         object fx = Activator.CreateInstance(RuntimeType("EnemySkill_SO+DicePresentationSettings"));
         IEnumerator moment = (IEnumerator)Invoke(presentation, "PlayHitMoment", defender, Vector3.zero, Vector3.right,
             Color.white, 3f, fx, false, null, attacker.position, 0f, damage);
         ((MonoBehaviour)presentation).StartCoroutine(moment);
         Assert.IsFalse(resolved);
+        Assert.AreEqual(0, root.GetComponentsInChildren(contactType, true).Length,
+            "Contact sparks belong to the damage frame, after anticipation.");
         Assert.That((float)Field(presentation, "closeupShakeRemaining"), Is.Zero,
             "The beat must not be spent during anticipation before damage lands.");
         for (float end = Time.realtimeSinceStartup + 2f; !resolved && Time.realtimeSinceStartup < end;)
             yield return null;
         Assert.IsTrue(resolved);
         Assert.IsTrue(impulseAtDamage);
+        Assert.AreEqual(1, burstsAtDamage, "One shared directional burst should land with damage.");
     }
 
     [UnityTest]

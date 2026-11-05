@@ -568,10 +568,14 @@ public class BattlePresentationSystem : MonoBehaviour
         GameHaptics.Play(GameHapticCue.Clash);
         TriggerCameraImpact(impactPosition, clashCameraPower, false, contactPosition);
 
-        PlaySideClashFx(ally, planeZ, allyFx, clashDirection, allyHitColor);
-        PlaySideClashFx(enemy, planeZ, enemyFx, -clashDirection, enemyHitColor);
+        bool hasContactFx = SpawnClashContactFx(ally, enemy, contactPosition, clashDirection, clashCameraPower) != null;
+        PlaySideClashFx(ally, planeZ, allyFx, clashDirection, allyHitColor, !hasContactFx);
+        PlaySideClashFx(enemy, planeZ, enemyFx, -clashDirection, enemyHitColor, !hasContactFx);
 
-        StartCoroutine(PlayBuiltInClashImpactFx(contactPosition, clashDirection));
+        if (hasContactFx)
+            PulseImpactLight(contactPosition, clashSparkColor, 0.12f);
+        else
+            StartCoroutine(PlayBuiltInClashImpactFx(contactPosition, clashDirection));
         if (waitDuration > 0f)
             yield return new WaitForSeconds(waitDuration);
     }
@@ -581,7 +585,8 @@ public class BattlePresentationSystem : MonoBehaviour
         float planeZ,
         EnemySkill_SO.DicePresentationSettings fx,
         Vector3 direction,
-        Color fallbackColor)
+        Color fallbackColor,
+        bool useLegacyFx)
     {
         if (source == null)
             return;
@@ -609,7 +614,48 @@ public class BattlePresentationSystem : MonoBehaviour
             return;
         }
 
-        StartCoroutine(PlayBuiltInHitFx(sourcePosition, direction, fallbackColor));
+        if (useLegacyFx)
+            StartCoroutine(PlayBuiltInHitFx(sourcePosition, direction, fallbackColor));
+    }
+
+    private BattleContactVfx SpawnClashContactFx(Transform ally, Transform enemy, Vector3 position, Vector3 direction, float power)
+    {
+        float height = Mathf.Min(ContactBodyHeight(ally), ContactBodyHeight(enemy));
+        Transform anchor = ally != null ? ally : enemy;
+        return SpawnContactFx(anchor, position, direction, clashSparkColor, power, height, true, false);
+    }
+
+    private BattleContactVfx SpawnHitContactFx(Transform defender, Vector3 position, Vector3 direction, Color tint, float power, bool compact)
+    {
+        return SpawnContactFx(defender, position, direction, tint, power, ContactBodyHeight(defender), false, compact);
+    }
+
+    private BattleContactVfx SpawnContactFx(Transform actor, Vector3 position, Vector3 direction, Color tint, float power,
+        float height, bool clash, bool compact)
+    {
+        int sortingLayer = 0;
+        int sortingOrder = effectSortingOrder + defenderReactionSortingBoost;
+        float ground = position.y - height * 0.5f;
+        if (actor != null)
+        {
+            ground = actor.position.y;
+            foreach (SpriteRenderer renderer in actor.GetComponentsInChildren<SpriteRenderer>())
+            {
+                if (!BattleActorVisualUtility.IsActorBodyRenderer(actor, renderer) || renderer.sprite == null)
+                    continue;
+                sortingLayer = renderer.sortingLayerID;
+                sortingOrder = Mathf.Max(sortingOrder, renderer.sortingOrder + 4);
+                break;
+            }
+        }
+        position.z += effectDepthOffset;
+        return BattleContactVfx.Spawn(transform, position, direction, tint, NormalizeCameraIntensity(power),
+            height, ground, sortingLayer, sortingOrder, clash, compact);
+    }
+
+    private static float ContactBodyHeight(Transform actor)
+    {
+        return BattleActorVisualUtility.TryGetActorSpriteBounds(actor, out Bounds bounds) ? bounds.size.y : 2.2f;
     }
 
     private IEnumerator PlayBuiltInClashImpactFx(Vector3 position, Vector3 direction)
@@ -645,6 +691,7 @@ public class BattlePresentationSystem : MonoBehaviour
         float planeZ,
         Action onImpact)
     {
+        bool hasContactFx = BattleContactVfx.IsSupported;
         float damageDelay;
         if (useCustom)
         {
@@ -670,7 +717,8 @@ public class BattlePresentationSystem : MonoBehaviour
         }
         else
         {
-            StartCoroutine(PlayBuiltInHitFx(position, direction, hitColor));
+            if (!hasContactFx)
+                StartCoroutine(PlayBuiltInHitFx(position, direction, hitColor));
             damageDelay = builtInHitDamageDelay;
         }
 
@@ -685,6 +733,9 @@ public class BattlePresentationSystem : MonoBehaviour
             // than spending it during a custom effect's anticipation frames.
             if (!useCustom)
                 PulseImpactLight(position, hitColor, 0.16f);
+            if (hasContactFx)
+                SpawnHitContactFx(defender, position, direction, hitColor, cameraImpactPower,
+                    useCustom || ShouldUseCustomAllyDefenderReaction(defender));
             TriggerCameraImpact(position, cameraImpactPower, true);
             // A lethal callback may hide the defender before the reaction coroutine runs.
             CacheLastHitDirection(defender, GroundKnockbackDir(attackerPosition, defender != null ? defender.position : position, planeZ));
@@ -694,7 +745,7 @@ public class BattlePresentationSystem : MonoBehaviour
 
         if (defender != null)
         {
-            StartCoroutine(PlayDefenderReaction(defender, attackerPosition, planeZ, hitColor, reactionDelay, () =>
+            StartCoroutine(PlayDefenderReaction(defender, attackerPosition, planeZ, hitColor, reactionDelay, hasContactFx, () =>
             {
                 reactionResolved = true;
             }));
@@ -712,7 +763,8 @@ public class BattlePresentationSystem : MonoBehaviour
         onResolved?.Invoke();
     }
 
-    private IEnumerator PlayDefenderReaction(Transform defender, Vector3 attackerPosition, float planeZ, Color hitColor, float reactionDelay, Action onResolved)
+    private IEnumerator PlayDefenderReaction(Transform defender, Vector3 attackerPosition, float planeZ, Color hitColor,
+        float reactionDelay, bool hasContactFx, Action onResolved)
     {
         if (defender == null)
         {
@@ -728,7 +780,7 @@ public class BattlePresentationSystem : MonoBehaviour
         CacheLastHitDirection(defender, knockbackDirection);
         Vector3 reactionPosition = Project(defenderCenter, planeZ) + Vector3.up * impactHeightOffset;
         StartCoroutine(FlashDefenderSprites(defender));
-        PlayDefenderReactionFx(defender, reactionPosition, knockbackDirection, hitColor);
+        PlayDefenderReactionFx(defender, reactionPosition, knockbackDirection, hitColor, hasContactFx);
         yield return Knockback(defender, attackerPosition, planeZ);
         onResolved?.Invoke();
     }
@@ -793,7 +845,7 @@ public class BattlePresentationSystem : MonoBehaviour
         }
     }
 
-    private void PlayDefenderReactionFx(Transform defender, Vector3 position, Vector3 direction, Color hitColor)
+    private void PlayDefenderReactionFx(Transform defender, Vector3 position, Vector3 direction, Color hitColor, bool hasContactFx)
     {
         if (ShouldUseCustomAllyDefenderReaction(defender))
         {
@@ -814,7 +866,8 @@ public class BattlePresentationSystem : MonoBehaviour
             return;
         }
 
-        StartCoroutine(PlayBuiltInDefenderReactionFx(position, hitColor));
+        if (!hasContactFx)
+            StartCoroutine(PlayBuiltInDefenderReactionFx(position, hitColor));
     }
 
     private IEnumerator PlayBuiltInDefenderReactionFx(Vector3 position, Color hitColor)

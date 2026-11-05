@@ -42,6 +42,8 @@ public class BattlePresentationSystemClashImpactTests
             RunCoroutineToCompletion(routine);
 
             Assert.IsTrue(impactResolved);
+            Assert.AreEqual(1, systemObject.GetComponentsInChildren<BattleContactVfx>().Length,
+                "Even a tied clash should play one shared contact burst.");
         }
         finally
         {
