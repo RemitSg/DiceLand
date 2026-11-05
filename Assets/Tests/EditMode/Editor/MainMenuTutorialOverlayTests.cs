@@ -97,6 +97,37 @@ public class MainMenuTutorialOverlayTests
     }
 
     [Test]
+    public void Show_UsesIndependentCanvasWhenLegacyGalleryIsHidden()
+    {
+        var gallery = new GameObject("LegacyGallery", typeof(RectTransform), typeof(Canvas), typeof(CanvasGroup));
+        try
+        {
+            gallery.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
+            CanvasGroup hiddenGroup = gallery.GetComponent<CanvasGroup>();
+            hiddenGroup.alpha = 0f;
+            hiddenGroup.interactable = false;
+            hiddenGroup.blocksRaycasts = false;
+            var host = new GameObject("Host");
+            host.transform.SetParent(gallery.transform, false);
+            var overlay = host.AddComponent<MainMenuTutorialOverlay>();
+
+            overlay.Show(null, null, null, hideSections: true);
+
+            Assert.IsTrue(overlay.IsVisible);
+            Assert.IsTrue(overlay.PresentationCanvas.isRootCanvas);
+            Assert.AreEqual(RenderMode.ScreenSpaceOverlay, overlay.PresentationCanvas.renderMode);
+            Assert.AreEqual(gallery.scene, overlay.PresentationCanvas.gameObject.scene);
+            Assert.IsTrue(overlay.Presentation.Secondary.IsInteractable());
+            overlay.Presentation.Secondary.onClick.Invoke();
+            Assert.IsFalse(overlay.IsVisible);
+        }
+        finally
+        {
+            Object.DestroyImmediate(gallery);
+        }
+    }
+
+    [Test]
     public void Show_UsesConfiguredSummaryBodyFontForTutorialStartPopupBody()
     {
         GameObject host = new GameObject("Host");

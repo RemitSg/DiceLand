@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
@@ -31,7 +32,7 @@ public class MainMenuTutorialOverlay : MonoBehaviour
     private RectTransform sectionContainer;
     private readonly List<GameObject> sectionViews = new List<GameObject>();
 
-    public bool IsVisible => canvas != null && canvas.gameObject.activeSelf;
+    public bool IsVisible => canvas != null && canvas.isActiveAndEnabled;
     public Canvas PresentationCanvas => canvas;
     public TutorialForestView Presentation => view;
     public Text DebugSummaryTitleText => summaryTitleText;
@@ -120,8 +121,10 @@ public class MainMenuTutorialOverlay : MonoBehaviour
     private void EnsureUi()
     {
         if (canvas != null) return;
-        view = new TutorialForestView("MainMenuTutorialOverlay", transform, 9550, false, true);
+        // The menu controller lives under the hidden legacy gallery canvas.
+        view = new TutorialForestView("MainMenuTutorialOverlay", null, 9550, false, true);
         canvas = view.Canvas; panelRect = view.Panel;
+        SceneManager.MoveGameObjectToScene(canvas.gameObject, gameObject.scene);
         summaryTitleText = (Text)view.Title; summaryBodyText = (Text)view.Body;
         startButton = view.Primary; backButton = view.Secondary;
         startButtonText = (Text)view.PrimaryLabel; backButtonText = (Text)view.SecondaryLabel;
