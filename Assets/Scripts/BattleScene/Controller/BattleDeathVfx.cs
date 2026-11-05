@@ -141,7 +141,32 @@ public sealed class BattleDeathVfx : MonoBehaviour
     private Material Own(Material material) { ownedMaterials.Add(material); return material; }
     private float Rand(float min, float max) { randomState ^= randomState << 13; randomState ^= randomState >> 17; randomState ^= randomState << 5; return Mathf.Lerp(min, max, (randomState & 0xFFFFFF) / 16777215f); }
     public static float VisualTimeScale(float battleTimeScale) => battleTimeScale > 0 ? Mathf.Max(MinimumVisualTimeScale, battleTimeScale) : 0;
-    private void Update() { if (Application.isPlaying) Advance(Mathf.Min(Time.unscaledDeltaTime, 0.05f) * VisualTimeScale(Time.timeScale)); }
+
+    /// <summary>Contact, hit-stop, release, suspended debris, then a readable tail. Integrate phase boundaries so capture and runtime agree at different frame rates.</summary>
+    public static float PlaybackDelta(float realDelta, float battleTimeScale, float elapsed)
+    {
+        if (realDelta <= 0 || battleTimeScale <= 0 || elapsed >= Lifetime) return 0;
+        float remaining = realDelta, age = Mathf.Max(0, elapsed);
+        float slow = Mathf.Clamp01((1 - battleTimeScale) / 0.92f);
+        for (int phase = 0; phase < 5 && remaining > 0; phase++)
+        {
+            float end, rate;
+            if (age < 0.045f) { end = 0.045f; rate = 0.8f; }
+            else if (age < 0.11f) { end = 0.11f; rate = 0.12f; }
+            else if (age < 0.42f) { end = 0.42f; rate = 1.25f; }
+            else if (age < 0.90f) { end = 0.90f; rate = 0.24f; }
+            else { end = Lifetime; rate = 0.68f; }
+            rate = Mathf.Max(1, battleTimeScale) * Mathf.Lerp(1, rate, slow);
+            float step = Mathf.Min(remaining, (end - age) / rate);
+            age = Mathf.Min(end, age + step * rate); remaining -= step;
+            // End exactly on a boundary instead of losing a phase to floating point rounding.
+            if (remaining > 0) age = end;
+        }
+        return age - elapsed;
+    }
+
+    public void AdvancePlayback(float realDelta, float battleTimeScale) { Advance(PlaybackDelta(realDelta, battleTimeScale, Elapsed)); }
+    private void Update() { if (Application.isPlaying) AdvancePlayback(Mathf.Min(Time.unscaledDeltaTime, 0.05f), Time.timeScale); }
 
     /// <summary>The same simulation is used by runtime, deterministic render capture and lifecycle checks.</summary>
     public void Advance(float delta)
@@ -215,14 +240,14 @@ public sealed class BattleDeathVfx : MonoBehaviour
         + Vector3.up * height * Mathf.Pow(Mathf.Max(0, time - 0.25f), 2) * 0.22f
         + spread * (Mathf.Sin(time * 4 + p.phase) - Mathf.Sin(p.phase)) * height * 0.025f;
 
-    private Vector3 Recoil(float time) => push * height * 0.62f * (1 - Mathf.Exp(-time * 8))
-        + Vector3.up * height * 0.08f * Mathf.Sin(Mathf.Clamp01(time / 0.65f) * Mathf.PI);
+    private Vector3 Recoil(float time) => push * height * 0.82f * (1 - Mathf.Exp(-time * 8))
+        + Vector3.up * height * 0.12f * Mathf.Sin(Mathf.Clamp01(time / 0.65f) * Mathf.PI);
 
-    private Quaternion RecoilRotation(float time) => Quaternion.Euler(0, 0, -push.x * 18 * (1 - Mathf.Exp(-time * 12)));
+    private Quaternion RecoilRotation(float time) => Quaternion.Euler(0, 0, -push.x * 27 * (1 - Mathf.Exp(-time * 12)));
     private Vector3 RecoilScale(float time)
     {
         float compression = Mathf.Sin(Mathf.Clamp01(time / 0.13f) * Mathf.PI);
-        return new Vector3(1 - 0.09f * compression, 1 + 0.05f * compression, 1);
+        return new Vector3(1 - 0.15f * compression, 1 + 0.10f * compression, 1);
     }
 
     private Matrix4x4 RecoilMatrix(float time) => Matrix4x4.TRS(Vector3.up * floor + Recoil(time), RecoilRotation(time), RecoilScale(time)) * Matrix4x4.Translate(Vector3.down * floor);

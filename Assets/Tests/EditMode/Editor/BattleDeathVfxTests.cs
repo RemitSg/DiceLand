@@ -152,10 +152,35 @@ public sealed class BattleDeathVfxTests
     }
 
     [TestCase(0, 0)] [TestCase(0.09f, 0.6f)] [TestCase(1, 1)] [TestCase(2, 2)]
-    public void VisualClockKeepsPauseAndBattleSpeedWhileAvoidingAFrozenSlowMotionPose(float battle, float visual)
+    public void CameraClockKeepsPauseAndBattleSpeedDuringTheParticleHitStop(float battle, float visual)
     {
         float original = Time.timeScale;
         Assert.AreEqual(visual, BattleDeathVfx.VisualTimeScale(battle), 0.0001f);
         Assert.AreEqual(original, Time.timeScale);
+    }
+
+    [Test]
+    public void SlowMotionSeparatesTheHitStopExplosiveReleaseAndSuspendedDebris()
+    {
+        float original = Time.timeScale;
+        float hold = BattleDeathVfx.PlaybackDelta(0.02f, 0.09f, 0.06f);
+        float release = BattleDeathVfx.PlaybackDelta(0.02f, 0.09f, 0.20f);
+        float floating = BattleDeathVfx.PlaybackDelta(0.02f, 0.09f, 0.60f);
+        Assert.Less(hold, 0.004f); Assert.Greater(release, 0.02f); Assert.Less(floating, 0.007f);
+        Assert.Greater(release, floating * 4); Assert.Greater(floating, hold);
+        Assert.AreEqual(0.02f, BattleDeathVfx.PlaybackDelta(0.02f, 1, 0.06f), 0.00001f);
+        Assert.AreEqual(0.04f, BattleDeathVfx.PlaybackDelta(0.02f, 2, 0.06f), 0.00001f);
+        Assert.AreEqual(0, BattleDeathVfx.PlaybackDelta(1, 0, 0.06f));
+        Assert.AreEqual(original, Time.timeScale);
+    }
+
+    [TestCase(30)] [TestCase(60)] [TestCase(144)]
+    public void PlaybackPhaseTransitionsAreIndependentOfFrameRateAndAlwaysFinish(int fps)
+    {
+        float age = 0;
+        for (int frame = 0; frame < fps * 3; frame++) age += BattleDeathVfx.PlaybackDelta(1f / fps, 0.09f, age);
+        Assert.AreEqual(BattleDeathVfx.PlaybackDelta(3, 0.09f, 0), age, 0.0001f);
+        age += BattleDeathVfx.PlaybackDelta(4, 0.09f, age);
+        Assert.AreEqual(BattleDeathVfx.Lifetime, age, 0.00001f);
     }
 }

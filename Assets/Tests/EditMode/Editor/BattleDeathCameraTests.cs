@@ -63,8 +63,8 @@ public sealed class BattleDeathCameraTests
         Vector3 position = camera.transform.position; Quaternion rotation = camera.transform.rotation; float lens = camera.fieldOfView;
         Spawn(Vector3.right); Frame(0.1f);
         Assert.Greater(Vector3.Distance(position, camera.transform.position), 0.01f);
-        Assert.Greater(Quaternion.Angle(rotation, camera.transform.rotation), 0.1f);
-        Assert.Less(camera.fieldOfView, lens);
+        Assert.Greater(Quaternion.Angle(rotation, camera.transform.rotation), 3f, "The lethal beat needs a visible roll, not a tiny tilt");
+        Assert.Less(camera.fieldOfView, lens * 0.67f, "The lethal closeup must be substantially tighter than the normal view");
         Vector3 once = camera.transform.position; float onceLens = camera.fieldOfView;
         motion.ApplyPose(); Assert.Less(Vector3.Distance(once, camera.transform.position), 0.0001f); Assert.AreEqual(onceLens, camera.fieldOfView, 0.0001f);
         Frame(3); Frame(BattleDeathCameraMotion.RecoveryDuration + 0.01f);

@@ -9,13 +9,13 @@ using UnityEngine.Rendering.Universal;
 /// <summary>Captures production death callbacks in a disposable copy of the saved battle scene.</summary>
 public static class BattleDeathVfxVisualTools
 {
-    public const string OutputPath = "outputs/agent-battle/death-camera-20261105";
+    public const string OutputPath = "outputs/agent-battle/death-camera-dramatic-20261105";
     private const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
 
     [MenuItem("Tools/Battle Visuals/Capture Death Dissolution")]
     public static void CaptureDefault() { Capture("ally", false); Capture("enemy", true); }
 
-    public static string Capture(string clip, bool enemy, int frames = 150, int width = 960, int height = 540)
+    public static string Capture(string clip, bool enemy, int frames = 210, int width = 960, int height = 540)
     {
         string folder = Path.GetFullPath(Path.Combine(OutputPath, clip)); Directory.CreateDirectory(folder);
         Action<Camera> render = camera =>
@@ -50,6 +50,8 @@ public static class BattleDeathVfxVisualTools
             BattleDeathVfx effect = null;
             BattleDeathCameraMotion motion = null;
             Vector3 startingPosition = camera.transform.position;
+            Quaternion startingRotation = camera.transform.rotation;
+            float initialSilhouetteHeight = ViewportHeight(camera, bounds), maximumSilhouetteHeight = initialSilhouetteHeight, maximumRoll = 0;
             float maximumTravel = 0, minimumFov = camera.fieldOfView, maximumFov = camera.fieldOfView;
             int clippedFrames = 0;
             RenderTexture buffer = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
@@ -61,7 +63,7 @@ public static class BattleDeathVfxVisualTools
                 for (int frame = 0; frame < frames; frame++)
                 {
                     if (motion != null) motion.RestoreBasePose();
-                    float visualDelta = 0;
+                    float cameraDelta = 0;
                     if (frame == 12)
                     {
                         if (enemy)
@@ -91,12 +93,16 @@ public static class BattleDeathVfxVisualTools
                             float t = recovery > 0 ? Mathf.Clamp01((age - hold) / recovery) : 0;
                             scale = Mathf.Lerp(slowScale, 1, curve != null ? curve.Evaluate(t) : t);
                         }
-                        visualDelta = BattleDeathVfx.VisualTimeScale(scale) / 30;
-                        effect.Advance(visualDelta);
+                        effect.AdvancePlayback(1f / 30, scale);
+                        cameraDelta = BattleDeathVfx.VisualTimeScale(scale) / 30;
                     }
-                    if (motion != null) { motion.Advance(visualDelta); motion.ApplyPose(); }
+                    if (motion != null) { motion.Advance(cameraDelta); motion.ApplyPose(); }
                     maximumTravel = Mathf.Max(maximumTravel, Vector3.Distance(startingPosition, camera.transform.position));
                     minimumFov = Mathf.Min(minimumFov, camera.fieldOfView); maximumFov = Mathf.Max(maximumFov, camera.fieldOfView);
+                    maximumRoll = Mathf.Max(maximumRoll, Quaternion.Angle(startingRotation, camera.transform.rotation));
+                    if (effect != null && effect.Elapsed < 0.16f)
+                        foreach (SpriteRenderer silhouette in effect.GetComponentsInChildren<SpriteRenderer>())
+                            maximumSilhouetteHeight = Mathf.Max(maximumSilhouetteHeight, ViewportHeight(camera, silhouette.bounds));
                     if (effect != null && effect.HasVisibleGeometry)
                     {
                         Bounds visible = effect.VisualBounds; bool clipped = false;
@@ -114,7 +120,7 @@ public static class BattleDeathVfxVisualTools
                     pixels.ReadPixels(new Rect(0, 0, width, height), 0, 0); pixels.Apply();
                     File.WriteAllBytes(Path.Combine(folder, frame.ToString("D3") + ".png"), pixels.EncodeToPNG());
                 }
-                File.WriteAllText(Path.Combine(folder, "capture.json"), JsonUtility.ToJson(new CaptureReport { frames = frames, fps = 30, width = width, height = height, enemy = enemy, direction = direction, slowMotion = slowMotion, effectComplete = effect != null && effect.IsComplete, fragments = effect != null ? effect.FragmentCount : 0, cameraMotionComplete = motion != null && !motion.IsActive, clippedFrames = clippedFrames, maximumCameraTravel = maximumTravel, minimumFov = minimumFov, maximumFov = maximumFov }, true));
+                File.WriteAllText(Path.Combine(folder, "capture.json"), JsonUtility.ToJson(new CaptureReport { frames = frames, fps = 30, width = width, height = height, enemy = enemy, direction = direction, slowMotion = slowMotion, effectComplete = effect != null && effect.IsComplete, fragments = effect != null ? effect.FragmentCount : 0, cameraMotionComplete = motion != null && !motion.IsActive, clippedFrames = clippedFrames, maximumCameraTravel = maximumTravel, minimumFov = minimumFov, maximumFov = maximumFov, initialSilhouetteHeight = initialSilhouetteHeight, maximumSilhouetteHeight = maximumSilhouetteHeight, maximumRoll = maximumRoll }, true));
             }
             finally
             {
@@ -129,11 +135,22 @@ public static class BattleDeathVfxVisualTools
         return folder;
     }
 
+    private static float ViewportHeight(Camera camera, Bounds bounds)
+    {
+        float minimum = float.PositiveInfinity, maximum = float.NegativeInfinity;
+        for (int corner = 0; corner < 8; corner++)
+        {
+            Vector3 point = bounds.center + Vector3.Scale(bounds.extents, new Vector3((corner & 1) == 0 ? -1 : 1, (corner & 2) == 0 ? -1 : 1, (corner & 4) == 0 ? -1 : 1));
+            float y = camera.WorldToViewportPoint(point).y; minimum = Mathf.Min(minimum, y); maximum = Mathf.Max(maximum, y);
+        }
+        return maximum - minimum;
+    }
+
     [Serializable] private sealed class CaptureReport
     {
         public int frames, fps, width, height, fragments, clippedFrames;
         public bool enemy, slowMotion, effectComplete, cameraMotionComplete;
-        public float maximumCameraTravel, minimumFov, maximumFov;
+        public float maximumCameraTravel, minimumFov, maximumFov, initialSilhouetteHeight, maximumSilhouetteHeight, maximumRoll;
         public Vector3 direction;
     }
 }

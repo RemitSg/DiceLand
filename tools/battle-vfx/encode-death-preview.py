@@ -5,7 +5,7 @@ from pathlib import Path
 from PIL import Image
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--source', default='outputs/agent-battle/death-camera-20261105')
+parser.add_argument('--source', default='outputs/agent-battle/death-camera-dramatic-20261105')
 parser.add_argument('--preview-width', type=int, default=720)
 args = parser.parse_args()
 root = Path(__file__).resolve().parents[2] / args.source
@@ -32,7 +32,7 @@ for name in ('ally', 'enemy'):
     output = root / f'{name}-death-dissolution.gif'
     frames[0].save(output, save_all=True, append_images=frames[1:], duration=durations, loop=0, optimize=True, disposal=1)
     sheet = Image.new('RGB', (480 * 3, 270 * 2))
-    for index, frame_index in enumerate((0, 16, 21, 27, 36, 51)):
+    for index, frame_index in enumerate((0, 17, 27, 42, 70, 110)):
         sheet.paste(images[min(frame_index, len(images)-1)].resize((480, 270)), ((index % 3)*480, (index // 3)*270))
     sheet.save(root / f'{name}-contact.png')
     print(json.dumps({'file': str(output), 'frames': len(frames), 'bytes': output.stat().st_size, 'durationMs': sum(durations)}))

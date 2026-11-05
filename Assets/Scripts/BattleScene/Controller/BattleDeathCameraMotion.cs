@@ -13,6 +13,7 @@ public sealed class BattleDeathCameraMotion : MonoBehaviour
     private readonly List<BattleDeathVfx> effects = new List<BattleDeathVfx>();
     private Func<Camera> cameraProvider;
     private Camera appliedCamera;
+    private BattleDeathVfx impactEffect;
     private Vector3 basePosition, center, direction;
     private Quaternion baseRotation;
     private float baseLens, age, kickAge, recovery, lastDelta, strength = 1;
@@ -34,7 +35,7 @@ public sealed class BattleDeathCameraMotion : MonoBehaviour
             hasEnvelope = false; age = kickAge = 0; center = effect.VisualBounds.center;
         }
         else if (kickAge > 0.18f) kickAge = 0;
-        direction = effect.TravelDirection;
+        direction = effect.TravelDirection; impactEffect = effect;
         effects.Add(effect); IsActive = true; releasing = false; recovery = 0;
         GatherBounds();
     }
@@ -70,7 +71,8 @@ public sealed class BattleDeathCameraMotion : MonoBehaviour
             if (!effect.HasVisibleGeometry) continue;
             Bounds visible = effect.VisualBounds;
             visible.Expand(effect.WorldHeight * 0.14f);
-            if (!hasEnvelope) { envelope = visible; hasEnvelope = true; }
+            // Follow the recoiling silhouette tightly before release; retain the full expanding burst afterwards.
+            if (!hasEnvelope || (effects.Count == 1 && effect.Elapsed < 0.12f)) { envelope = visible; hasEnvelope = true; }
             else envelope.Encapsulate(visible);
         }
     }
@@ -86,16 +88,21 @@ public sealed class BattleDeathCameraMotion : MonoBehaviour
         wasOrthographic = camera.orthographic; baseLens = wasOrthographic ? camera.orthographicSize : camera.fieldOfView;
         appliedCamera = camera;
         float release = releasing ? 1 - Mathf.SmoothStep(0, 1, recovery / RecoveryDuration) : 1;
-        float tracking = Mathf.SmoothStep(0, 1, Mathf.Clamp01(age / 0.22f));
-        float kick = Mathf.Sin(Mathf.Clamp01(kickAge / 0.28f) * Mathf.PI) * strength;
-        float size = Mathf.Max(0.5f, envelope.size.y);
+        float tracking = Mathf.SmoothStep(0, 1, Mathf.Clamp01(age / 0.085f));
+        float impactAge = impactEffect != null ? impactEffect.Elapsed : BattleDeathVfx.Lifetime;
+        float kick = Mathf.SmoothStep(0, 1, Mathf.Clamp01(impactAge / 0.045f))
+            * (1 - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(0.12f, 0.55f, impactAge))) * strength;
+        float shock = Mathf.Sin(kickAge * 58) * Mathf.Exp(-kickAge * 14) * strength;
+        float rebound = Mathf.Sin(Mathf.Clamp01((impactAge - 0.12f) / 0.55f) * Mathf.PI) * strength;
+        float size = impactEffect != null ? impactEffect.WorldHeight : Mathf.Max(0.5f, envelope.size.y);
         Vector3 forward = baseRotation * Vector3.forward;
         Vector3 right = baseRotation * Vector3.right, up = baseRotation * Vector3.up;
         Vector3 focusDelta = center - basePosition;
         Vector3 pan = right * Vector3.Dot(focusDelta, right) + up * Vector3.Dot(focusDelta, up);
-        Vector3 position = basePosition + pan * tracking + forward * size * 0.035f * kick + direction * size * 0.035f * kick;
-        Quaternion rotation = baseRotation * Quaternion.Euler(0, 0, -Mathf.Sign(direction.x) * 1.15f * kick);
-        float lens = baseLens * (1 - 0.13f * kick);
+        Vector3 position = basePosition + pan * tracking + forward * size * (0.50f * kick - 0.16f * rebound)
+            + direction * size * (0.13f * kick + 0.045f * shock) + up * size * 0.025f * shock;
+        Quaternion rotation = baseRotation * Quaternion.Euler(0, 0, -Mathf.Sign(direction.x) * (4.5f * kick + 2.4f * shock - 1.8f * rebound));
+        float lens = baseLens * Mathf.Clamp(1 - 0.48f * kick + 0.12f * rebound, 0.30f, 1.2f);
         // Keep the fitted pose during release, then blend it back. Dropping the fit here would snap the lens/dolly on the first recovery frame.
         if (wasOrthographic) lens = Mathf.Max(lens, RequiredOrthoSize(position, rotation, camera.aspect));
         else
@@ -162,7 +169,7 @@ public sealed class BattleDeathCameraMotion : MonoBehaviour
 
     public void Cancel()
     {
-        RestoreBasePose(); effects.Clear(); IsActive = false; hasEnvelope = false; releasing = false; recovery = 0;
+        RestoreBasePose(); effects.Clear(); impactEffect = null; IsActive = false; hasEnvelope = false; releasing = false; recovery = 0;
     }
 
     public static BattleDeathCameraMotion FindActive(Scene scene)
