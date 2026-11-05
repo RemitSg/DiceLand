@@ -56,7 +56,7 @@ public static class ResourceKeywordVisualTools
             OverviewLabel(panel, "Health", "恢复 10% 最大生命值，当前血量 20/20。", 36, -468f, 1330f, 108f);
             OverviewLabel(panel, "Aliases", "生命值 / 血量 / HP / 回血", 32, -588f, 1330f, 64f);
             OverviewLabel(panel, "Resources", "获得 25 金币，恢复 3 行动点，获得 1 把钥匙和 13EXP。", 30, -688f, 1330f, 72f);
-            OverviewLabel(panel, "OrdinaryWords", "普通词保持原样：无法、速度、流血、中毒、水壶、灯光。", 27, -790f, 1330f, 66f);
+            OverviewLabel(panel, "OrdinaryWords", "普通词保持原样：无法、速度、水壶、灯光。", 27, -790f, 1330f, 66f);
         }, AttributeHealthOutputPath);
         CaptureHealthEvent("keyword-event-phone.png", 2340, 1080);
         CaptureHealthEvent("keyword-event-tablet.png", 1600, 1200);

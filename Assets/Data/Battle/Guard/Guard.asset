@@ -15,7 +15,7 @@ MonoBehaviour:
   statusId: guard
   displayName: "\u91CD\u9632"
   description: "\u8FDB\u884C\u6295\u63B7\u9632\u5FA1\u9AB0\u5B50\u65F6\u9AB0\u5B50\u5A01\u529B\u589E\u52A0\u76F8\u5F53\u4E8E\u5C42\u6570\u7684\u6570\u503C"
-  iconSprite: {fileID: 21300000, guid: 763323c383f8ae043bf2b9b0546eafd6, type: 3}
+  iconSprite: {fileID: -368529762, guid: c79818a78794dae47ae9ed090310c8d3, type: 3}
   accentColor: {r: 1, g: 1, b: 1, a: 1}
   tickEffectPrefab: {fileID: 0}
   tickEffectPositionOffset: {x: 0, y: 0, z: 0}

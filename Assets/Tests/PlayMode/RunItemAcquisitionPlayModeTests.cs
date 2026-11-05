@@ -53,17 +53,18 @@ public sealed class RunItemAcquisitionPlayModeTests
     {
         Invoke(detail,"Hide");
         Assert.AreEqual(2,Pending()); Assert.IsTrue((bool)Get(overlay,"IsVisible"));
-        yield return new WaitForSecondsRealtime(.32f);
-        Assert.Greater(((CanvasGroup)Get(detail,"panelGroup")).alpha,.99f);
+        var panel = (CanvasGroup)Get(detail,"panelGroup");
+        yield return WaitForPresentation(() => panel.alpha > .99f, "The relic should finish opening while paused.");
         Assert.AreEqual("获得遗物",Text("Heading"));
         Click(Find("CloseButton"));
         Assert.AreEqual(2,Pending());
         Assert.AreEqual("AcquiredItemDetailModal",Hits(new Vector2(3,3))[0].gameObject.name);
-        yield return new WaitForSecondsRealtime(.26f);
+        yield return WaitForPresentation(() => Pending() == 1, "Closing the relic should present the next reward.");
         Assert.AreEqual(1,Pending()); Assert.AreEqual("获得图纸",Text("Heading"));
         Assert.AreEqual(2,Invoke(state,"GetRelicAmount",relic)); Assert.AreEqual(1,Invoke(state,"GetBlueprintAmount",blueprint));
-        yield return new WaitForSecondsRealtime(.3f); Click(Find("CloseButton"));
-        yield return new WaitForSecondsRealtime(.24f);
+        yield return WaitForPresentation(() => panel.alpha > .99f, "The blueprint should finish opening before it is clicked.");
+        Click(Find("CloseButton"));
+        yield return WaitForPresentation(() => Pending() == 0, "Closing the blueprint should acknowledge the last reward.");
         Assert.AreEqual(0,Pending()); Assert.IsFalse((bool)Get(overlay,"IsVisible"));
     }
 
@@ -121,6 +122,13 @@ public sealed class RunItemAcquisitionPlayModeTests
     }
 
     private int Pending() => (int)Get(Get(state,"ItemAcquisitions"),"PendingCount");
+    private static IEnumerator WaitForPresentation(Func<bool> condition, string failure)
+    {
+        float deadline = Time.realtimeSinceStartup + 3f;
+        while (!condition() && Time.realtimeSinceStartup < deadline) yield return null;
+        Assert.IsTrue(condition(), failure);
+    }
+
     private Transform Find(string name) => ((RectTransform)Get(detail,"ModalRoot")).GetComponentsInChildren<Transform>(true).First(t=>t.name==name);
     private string Text(string name) => (string)Get(Find(name).GetComponent(TypeOf("TMPro.TMP_Text")),"text");
     private void Click(Transform target)

@@ -15,7 +15,7 @@ MonoBehaviour:
   statusId: bleed
   displayName: "\u6D41\u8840"
   description: "\u53D7\u5230\u653B\u51FB\u65F6\uFF0C\u9020\u6210\u76F8\u5F53\u4E8E\u6D41\u8840\u5C42\u6570\u7684\u4F24\u5BB3\uFF0C\u968F\u540E\u5C42\u6570\u51CF\u534A\uFF08\u5411\u4E0B\u53D6\u6574\uFF09"
-  iconSprite: {fileID: 21300000, guid: 5341476bd2cb6364bbadb08fd4067d79, type: 3}
+  iconSprite: {fileID: 1404391825, guid: c79818a78794dae47ae9ed090310c8d3, type: 3}
   accentColor: {r: 1, g: 1, b: 1, a: 1}
   tickEffectPrefab: {fileID: 0}
   tickEffectPositionOffset: {x: 0, y: 0, z: 0}

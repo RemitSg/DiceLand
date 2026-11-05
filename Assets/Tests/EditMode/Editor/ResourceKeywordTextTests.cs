@@ -274,8 +274,10 @@ public sealed class ResourceKeywordTextTests
     public void AttributesUseTokenBoundariesAndExplicitPhrasesRatherThanOrdinaryChineseSubstrings()
     {
         const string ordinary = "无法移动，速度不足；流血与中毒，灯光照着水壶，黑暗里有电梯。";
-        Assert.IsFalse(ResourceKeywordText.ContainsKeyword(ordinary));
-        Assert.AreSame(ordinary, ResourceKeywordText.Format(ordinary));
+        string statuses = ResourceKeywordText.Format(ordinary);
+        Assert.AreEqual(3, Count(statuses, "<sprite name=\"DL_Status_"));
+        Assert.AreEqual(0, Count(statuses, "<sprite name=\"DL_Attribute_"));
+        Assert.IsFalse(ResourceKeywordText.ContainsKeyword("无法移动，速度不足；灯光照着水壶，电梯停下。"));
         const string mentions = "炎、水、毒、血、暗、电、光、速、无。受到炎属性伤害，获得水抗性。";
         Assert.AreEqual(11, Count(ResourceKeywordText.Format(mentions), "<sprite "));
         string rich = ResourceKeywordText.Format("敌人属性：<color=#000000><b>暗</b></color>；受到<color=red>炎</color>属性伤害。");
@@ -293,7 +295,7 @@ public sealed class ResourceKeywordTextTests
         ResourceKeywordText.Attach(label);
         label.ForceMeshUpdate(true, true);
         Assert.AreEqual(raw, label.text);
-        Assert.AreEqual(10, SpriteCount(label));
+        Assert.AreEqual(12, SpriteCount(label));
         string formatted = label.textPreprocessor.PreprocessText(raw);
         Assert.AreEqual(9, Count(formatted, "<sprite name=\"DL_Health\""));
         Assert.AreEqual(1, Count(formatted, "<sprite name=\"DL_Attribute_Blood\""));

@@ -21,12 +21,13 @@ public static partial class ResourceKeywordText
     {
         public readonly string Word, Color, IconName, Source;
         public readonly bool Attribute;
-        public Keyword(string word, string color, string iconName, string source, bool attribute = false)
-        { Word = word; Color = color; IconName = iconName; Source = source; Attribute = attribute; }
+        public readonly bool Status;
+        public Keyword(string word, string color, string iconName, string source, bool attribute = false, bool status = false)
+        { Word = word; Color = color; IconName = iconName; Source = source; Attribute = attribute; Status = status; }
     }
 
     // Longer health aliases precede their shorter forms. Health is resolved before the single blood attribute.
-    private static readonly Keyword[] Keywords =
+    private static readonly Keyword[] ResourceKeywords =
     {
         new Keyword("金币", MoneyColor, "DL_Money", "Coins"),
         new Keyword("金钱", MoneyColor, "DL_Money", "Coins"),
@@ -74,6 +75,7 @@ public static partial class ResourceKeywordText
 
     private static Sprite IconFor(Keyword word)
     {
+        if (word.Status) return StatusIcon(word.Source);
         if (word.Source == "ExperienceStar") return ExperienceIcon;
         if (word.Attribute || word.Source == "Health") return KeywordIcon(word.Source);
         return MapForestArt.Get(word.Source);

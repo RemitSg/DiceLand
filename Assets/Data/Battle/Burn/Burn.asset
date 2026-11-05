@@ -15,7 +15,7 @@ MonoBehaviour:
   statusId: burn
   displayName: "\u71C3\u70E7"
   description: "\u6BCF\u56DE\u5408\u5F00\u59CB\u65F6\u53D7\u5230\u7B49\u540C\u4E8E\u5C42\u6570\u7684\u4F24\u5BB3\uFF0C\u968F\u540E\u8BE5\u5C42\u6570\u51CF\u534A\uFF08\u5411\u4E0B\u53D6\u6574\uFF09"
-  iconSprite: {fileID: 21300000, guid: 7b4ca239748d0b142b63c64422cd6e7a, type: 3}
+  iconSprite: {fileID: 1319369853, guid: c79818a78794dae47ae9ed090310c8d3, type: 3}
   accentColor: {r: 1, g: 0.5176569, b: 0, a: 1}
   tickEffectPrefab: {fileID: 1373414875523580204, guid: 50280e2f124eb614baaeef77fc3ad34b, type: 3}
   tickEffectPositionOffset: {x: 0, y: 0, z: 0}

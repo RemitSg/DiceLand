@@ -1976,6 +1976,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         icon.raycastTarget = false;
 
         TextMeshProUGUI title = CreateTooltipText(root, "Title", new Vector2(68f, -14f), new Vector2(228f, 34f), statusTooltipTitleFontSize, statusTooltipTitleColor, TextAlignmentOptions.TopLeft, statusTooltipTitleFont);
+        ResourceKeywordText.Attach(title, false); // The tooltip already has a dedicated status image.
         TextMeshProUGUI body = CreateTooltipText(root, "Body", new Vector2(16f, -64f), new Vector2(288f, 42f), statusTooltipBodyFontSize, statusTooltipBodyColor, TextAlignmentOptions.TopLeft, statusTooltipBodyFont);
         body.enableWordWrapping = true;
         body.overflowMode = TextOverflowModes.Overflow;

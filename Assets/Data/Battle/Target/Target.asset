@@ -15,7 +15,7 @@ MonoBehaviour:
   statusId: target
   displayName: "\u6807\u8BB0"
   description: "\u53EF\u80FD\u4F1A\u88AB\u96C6\u706B"
-  iconSprite: {fileID: 21300000, guid: f1db628e1bc101640916fa2f308cd228, type: 3}
+  iconSprite: {fileID: -1323535492, guid: c79818a78794dae47ae9ed090310c8d3, type: 3}
   accentColor: {r: 1, g: 1, b: 1, a: 1}
   tickEffectPrefab: {fileID: 0}
   tickEffectPositionOffset: {x: 0, y: 0, z: 0}

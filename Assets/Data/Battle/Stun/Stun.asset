@@ -15,7 +15,7 @@ MonoBehaviour:
   statusId: stun
   displayName: "\u7729\u6655"
   description: "\u62E5\u6709\u6B64\u72B6\u6001\u7684\u89D2\u8272\u51CF\u5C11\u76F8\u5F53\u4E8E\u5C42\u6570\u7684\u901F\u5EA6\u6309\u94AE\uFF0C\u56DE\u5408\u7ED3\u675F\u65F6\u5931\u53BB\u6240\u6709\u5C42\u6570"
-  iconSprite: {fileID: 21300000, guid: 572d4cc6247f91e4091bab5f4d610c6d, type: 3}
+  iconSprite: {fileID: -1296544319, guid: c79818a78794dae47ae9ed090310c8d3, type: 3}
   accentColor: {r: 0.95, g: 0.9, b: 0.35, a: 1}
   tickEffectPrefab: {fileID: 0}
   tickEffectPositionOffset: {x: 0, y: 0, z: 0}

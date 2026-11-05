@@ -84,7 +84,8 @@ public static partial class ResourceKeywordText
                     string value = keyword.Word;
                     if (!MatchesWord(source, i, word)) continue;
                     output.Append("<nobr><link=\"dl-resource-").Append(keyword.IconName).Append("\"><color=#").Append(keyword.Color).Append('>');
-                    if (includeIcons) output.Append("<sprite name=\"").Append(keyword.IconName).Append("\" tint=0>");
+                    if (includeIcons && (!keyword.Status || StatusIcon(keyword.Source) != null))
+                        output.Append("<sprite name=\"").Append(keyword.IconName).Append("\" tint=0>");
                     output.Append(source, i, value.Length).Append("</color></link></nobr>");
                     i += value.Length;
                     matched = true;
@@ -168,6 +169,8 @@ public static partial class ResourceKeywordText
             }
             asset.UpdateLookupTables();
             asset.fallbackSpriteAssets = new List<TMP_SpriteAsset> { CreateExperienceSprites(shader), CreateAttributeAndHealthSprites(shader) };
+            TMP_SpriteAsset statuses = CreateStatusSprites(shader);
+            if (statuses != null) asset.fallbackSpriteAssets.Add(statuses);
             spriteAsset = asset;
             return spriteAsset;
         }
@@ -220,6 +223,7 @@ public static partial class ResourceKeywordText
         spriteAsset = null;
         experienceSprites = null;
         ResetAttributeAndHealthSprites();
+        ResetStatusSprites();
     }
 
     private static void DestroyOwned(UnityEngine.Object value)

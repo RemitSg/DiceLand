@@ -64,7 +64,7 @@ public partial class BattleSkillInfoOverlay
         enemyDescriptionSection = BuildEnemySection(enemyProfileContent, "EnemyDescriptionSection", "敌人描述");
         enemyProfileDescription = SkillText(enemyProfileContent, "EnemyDescription", 30, SkillIvory, string.Empty);
         enemyProfileDescription.enableWordWrapping = true; enemyProfileDescription.alignment = TextAlignmentOptions.TopLeft;
-        enemyProfileDescription.lineSpacing = 5; ResourceKeywordText.Attach(enemyProfileDescription, false);
+        enemyProfileDescription.lineSpacing = 5; ResourceKeywordText.Attach(enemyProfileDescription);
         enemyPassiveSection = BuildEnemySection(enemyProfileContent, "EnemyPassiveSection", "特殊被动");
         enemyNoPassives = SkillText(enemyProfileContent, "NoPassives", 28, SkillMuted, "暂无特殊被动。");
         enemyNoPassives.enableWordWrapping = true; ResourceKeywordText.Attach(enemyNoPassives, false);
@@ -150,7 +150,7 @@ public partial class BattleSkillInfoOverlay
         view.name.enableWordWrapping = true; view.name.alignment = TextAlignmentOptions.TopLeft;
         view.description = SkillText(view.rect, "PassiveDescription", 30, SkillIvory, string.Empty);
         view.description.enableWordWrapping = true; view.description.alignment = TextAlignmentOptions.TopLeft; view.description.lineSpacing = 5;
-        ResourceKeywordText.Attach(view.name, false); ResourceKeywordText.Attach(view.description, false);
+        ResourceKeywordText.Attach(view.name, false); ResourceKeywordText.Attach(view.description);
         enemyPassiveViews.Add(view);
     }
 

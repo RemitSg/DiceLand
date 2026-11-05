@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: "\u62B5\u6297"
   description: "\u514D\u75AB\u4E0B\u4E00\u6B21\u53D7\u5230\u7684\u8D1F\u9762\u72B6\u6001\uFF0C\u89E6\u53D1\u540E\u51CF\u5C11
     1 \u5C42\u3002"
-  iconSprite: {fileID: 21300000, guid: 4b740c2db694941dabf916fbfcf27ed4, type: 3}
+  iconSprite: {fileID: 458659924, guid: c79818a78794dae47ae9ed090310c8d3, type: 3}
   accentColor: {r: 0.72, g: 0.88, b: 1, a: 1}
   tickEffectPrefab: {fileID: 0}
   tickEffectPositionOffset: {x: 0, y: 0, z: 0}
