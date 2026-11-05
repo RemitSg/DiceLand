@@ -2700,7 +2700,7 @@
       "relicId": 12,
       "relicName": "驰隙时序环",
       "description": "若即将对友方角色造成伤害的敌人速度低于友方角色，则使即将到来的伤害 -20%",
-      "additionalDescription": "它不追逐时间，只在缝隙里轻轻拨动结局",
+      "additionalDescription": "时间的长河被叠为一个环，周而复始，周而复始。",
       "rarity": 2,
       "icon": {
         "fileID": 21300000,
@@ -2906,7 +2906,8 @@
       "iconTextureSize": [
         2048,
         2048
-      ]
+      ],
+      "additionalDescriptionUpdatedAt": "2026-11-05"
     },
     {
       "path": "Assets/Data/Relics/013 流云翎/流云翎.asset",
@@ -3393,7 +3394,7 @@
       "relicId": 15,
       "relicName": "繁生核",
       "description": "当进行掉落物锻造时，额外获得一个随机相同级别的随机属性掉落物",
-      "additionalDescription": "当结构被打开时，它总会再衍生出一份意料之外的成果",
+      "additionalDescription": "它总会再衍生出一份意料之外的成果",
       "rarity": 1,
       "icon": {
         "fileID": 21300000,
@@ -3593,7 +3594,8 @@
       "iconTextureSize": [
         2048,
         2048
-      ]
+      ],
+      "additionalDescriptionUpdatedAt": "2026-11-05"
     },
     {
       "path": "Assets/Data/Relics/016 矮人腕环/矮人腕环.asset",
@@ -3622,7 +3624,7 @@
       "relicId": 16,
       "relicName": "矮人腕环",
       "description": "在休息区可锻造的物品数量变为 3",
-      "additionalDescription": "坚硬的金属环面并不起眼，却总能多挤出一次鍊打的机会",
+      "additionalDescription": "锻造技术哪家强，洞穴矮人帮你忙。",
       "rarity": 1,
       "icon": {
         "fileID": 21300000,
@@ -3822,7 +3824,8 @@
       "iconTextureSize": [
         2048,
         2048
-      ]
+      ],
+      "additionalDescriptionUpdatedAt": "2026-11-05"
     },
     {
       "path": "Assets/Data/Relics/017 归星/归星.asset",

@@ -15,6 +15,11 @@
   "relicCatalog": {
     "directory": "outputs/relic-catalog",
     "snapshotDate": "2026-10-29",
+    "latestTextRevision": {
+      "date": "2026-11-05",
+      "catalogNumbers": [12, 15, 16],
+      "scope": "Supplemental descriptions synchronized with the assets. The configuration export remains the 2026-10-29 snapshot."
+    },
     "relicCount": 161,
     "categoryCount": 17,
     "newCatalogNumbers": "143–161 (159 is the fixed reforge result with actual relicId yin_yang_fish)",

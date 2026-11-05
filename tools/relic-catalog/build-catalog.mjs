@@ -31,6 +31,13 @@ const lines=['# DiceLand 现有遗物体系表','',`更新日期：${catalog.dat
 for(const g of groups){lines.push('',`## ${g.name}（${g.count}件）`,'',g.play,'','| ID | 遗物 | 稀有度 | 定位 | 完整效果 | 联动与备注 |','|---:|---|---|---|---|---|');for(const r of relics.filter(r=>r.category===g.name))lines.push(`|${r.id}|${cell(r.relicName)}|${r.rarityName}|${cell(r.role)}|${cell(r.description)}|${cell([r.tags,r.note].filter(Boolean).join('；'))}|`);}
 lines.push('','## 本次新增及修订的机制与来源核对','');
 for(const r of relics.filter(r=>r.mechanics)){lines.push(`### ${r.id} · ${r.relicName}`,'',`- 实际 relicId：\`${r.relicId}\`；GUID：\`${r.guid}\`。`,`- 资产：\`${r.path}\`。`,`- 触发：${r.triggerNames}。`,`- 条件与目标：${r.mechanics.condition}；${r.mechanics.target}。`,`- 次数与叠加：${r.mechanics.limit}；${r.mechanics.stacking}。`,`- 机制备注：${r.note}`,`- 遗物表引用：${r.referencedByRelicTables.length?r.referencedByRelicTables.map(p=>'`'+p+'`').join('、'):'无 RelicTable_SO 直接引用；固定重铸产物。'}`,'');}
+const revisedDescriptions = relics.filter(relic => relic.additionalDescriptionUpdatedAt);
+if (revisedDescriptions.length) {
+  lines.push('', '## 补充描述修订', '');
+  for (const relic of revisedDescriptions) {
+    lines.push(`- ${relic.additionalDescriptionUpdatedAt} · ${relic.id} ${cell(relic.relicName)} · ${cell(relic.additionalDescription)}`);
+  }
+}
 await fs.writeFile(`${dir}/遗物体系完整表.md`,lines.join('\n').trimEnd()+'\n');
 const icons={};
 for(const r of relics){if(!r.iconPath||icons[r.iconGuid])continue;const meta=await sharp(r.iconPath).metadata();let img=sharp(r.iconPath);const [x,y,w,h]=r.iconRect||[0,0,meta.width,meta.height];const [tw,th]=r.iconTextureSize?.length===2?r.iconTextureSize:[meta.width,meta.height];const sx=meta.width/tw,sy=meta.height/th;if(w&&h)img=img.extract({left:Math.round(x*sx),top:Math.round((th-y-h)*sy),width:Math.min(meta.width,Math.round(w*sx)),height:Math.min(meta.height,Math.round(h*sy))});icons[r.iconGuid]='data:image/webp;base64,'+(await img.resize(96,96,{fit:'contain',background:{r:0,g:0,b:0,alpha:0}}).webp({quality:85}).toBuffer()).toString('base64');}
