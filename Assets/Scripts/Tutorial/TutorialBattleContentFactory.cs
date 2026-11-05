@@ -484,11 +484,9 @@ public static class TutorialBattleContentFactory
 
     private static EnemyGroup_SO CreateBattle01EnemyGroup(TutorialEnemyVisualTemplateSet visualTemplates)
     {
-        EnemySkill_SO enemyLight = CreateSkill("轻击", "基础攻击。用来演示敌方单方面攻击与拼点。", 0, 1, 2);
-        enemyLight.localizationKey = "tutorial.battle01.light_strike";
+        EnemySkill_SO enemyLight = CreateSkill("轻击", "基础攻击。用来演示敌方单方面攻击与拼点。", 0, 1, 2, "tutorial.battle01.light_strike");
 
-        EnemySkill_SO allyHeavy = CreateSkill("重击", "稳定而有力的基础攻击。威力范围高于轻击，适合第一次学习拼点。", 0, 3, 4);
-        allyHeavy.localizationKey = "tutorial.battle01.heavy_strike";
+        EnemySkill_SO allyHeavy = CreateSkill("重击", "稳定而有力的基础攻击。威力范围高于轻击，适合第一次学习拼点。", 0, 3, 4, "tutorial.battle01.heavy_strike");
 
         EnemyData_SO enemy = CreateScriptedTutorialEnemy(
             "木桩鼠",
@@ -510,11 +508,11 @@ public static class TutorialBattleContentFactory
 
     private static EnemyGroup_SO CreateBattle02EnemyGroup(TutorialEnemyVisualTemplateSet visualTemplates)
     {
-        EnemySkill_SO enemyExecute = CreateSkill("斩杀", "始终优先指向血量最低的目标。", 0, 2, 4);
+        EnemySkill_SO enemyExecute = CreateSkill("斩杀", "始终优先指向血量最低的目标。", 0, 2, 4, "tutorial.battle02.enemy_execute");
         enemyExecute.targetPriorityMode = EnemySkill_SO.TargetPriorityMode.PreferLowestHP;
 
-        EnemySkill_SO mollyLight = CreateSkill("轻击", "Molly 的基础攻击。", 0, 1, 2);
-        EnemySkill_SO charaGuard = CreateSkill("守护", "Chara 用来转移危险攻击目标的防御技能。", 0, 2, 3);
+        EnemySkill_SO mollyLight = CreateSkill("轻击", "Molly 的基础攻击。", 0, 1, 2, "tutorial.battle02.molly_light");
+        EnemySkill_SO charaGuard = CreateSkill("守护", "Chara 用来转移危险攻击目标的防御技能。", 0, 2, 3, "tutorial.battle02.chara_guard");
         charaGuard.skillCategory = EnemySkill_SO.SkillCategory.Defense;
 
         EnemyData_SO enemy = CreateScriptedTutorialEnemy(
@@ -540,6 +538,7 @@ public static class TutorialBattleContentFactory
             enemy.battleStartGrantedAllySkills[1] = charaGrant;
         }
 
+        enemy.localizationKey = "tutorial.battle02.enemy";
         enemy.enemyDescription = "始终盯住血量最低的目标，用来教学高速守护与目标转移。";
         ApplyVisualTemplate(enemy, visualTemplates != null ? visualTemplates.openingSecondaryTemplate : null);
         return CreateGroup("TutorialBattleGroup_02", 9202, "教程战 02", "速度、守护与目标转移", enemy);
@@ -547,12 +546,12 @@ public static class TutorialBattleContentFactory
 
     private static EnemyGroup_SO CreateBattle03EnemyGroup(TutorialEnemyVisualTemplateSet visualTemplates)
     {
-        EnemySkill_SO enemyClash = CreateSkill("逼迫对撞", "迫使玩家考虑切成更适合当前回合的技能。", 0, 2, 4);
-        EnemySkill_SO enemyGap = CreateSkill("侧向压进", "提醒玩家并不是每条线都要用同一种技能去处理。", 0, 1, 3);
+        EnemySkill_SO enemyClash = CreateSkill("逼迫对撞", "迫使玩家考虑切成更适合当前回合的技能。", 0, 2, 4, "tutorial.battle03.enemy_clash");
+        EnemySkill_SO enemyGap = CreateSkill("侧向压进", "提醒玩家并不是每条线都要用同一种技能去处理。", 0, 1, 3, "tutorial.battle03.enemy_gap");
 
-        EnemySkill_SO allyStable = CreateSkill("稳步挥击", "0 费基础技能。", 0, 2, 3);
-        EnemySkill_SO allyClash = CreateSkill("前压拦截", "适合正面对撞的 0 费技能。", 0, 2, 4);
-        EnemySkill_SO allyHeavy = CreateSkill("蓄力重斩", "高威力但需要 1 点能量。", 1, 3, 6);
+        EnemySkill_SO allyStable = CreateSkill("稳步挥击", "0 费基础技能。", 0, 2, 3, "tutorial.battle03.ally_stable");
+        EnemySkill_SO allyClash = CreateSkill("前压拦截", "适合正面对撞的 0 费技能。", 0, 2, 4, "tutorial.battle03.ally_clash");
+        EnemySkill_SO allyHeavy = CreateSkill("蓄力重斩", "高威力但需要 1 点能量。", 1, 3, 6, "tutorial.battle03.ally_heavy");
 
         EnemyData_SO enemy = CreateScriptedTutorialEnemy(
             "能量教官",
@@ -567,6 +566,7 @@ public static class TutorialBattleContentFactory
             ("Round 2 Slot 1", enemyGap, 2, 200, 1),
             ("Round 2 Slot 2", enemyClash, 2, 100, 1));
 
+        enemy.localizationKey = "tutorial.battle03.enemy";
         enemy.enemyDescription = "会迫使玩家在连线前先决定技能与能量分配。";
         ApplyVisualTemplate(enemy, visualTemplates != null ? visualTemplates.openingSecondaryTemplate : null);
         return CreateGroup("TutorialBattleGroup_03", 9203, "教程战 03", "技能切换与能量", enemy);
@@ -574,14 +574,14 @@ public static class TutorialBattleContentFactory
 
     private static EnemyGroup_SO CreateBattle04EnemyGroup(TutorialEnemyVisualTemplateSet visualTemplates)
     {
-        EnemySkill_SO enemyClash = CreateClashSkill("正面拆招", "这条线更适合拿 [拼点时] 技能去接。", 0, 2, 4, 2);
-        EnemySkill_SO enemySingle = CreateSingleAttackSkill("越位追击", "放掉后会以单方面攻击结算。", 0, 2, 4, 2);
+        EnemySkill_SO enemyClash = CreateClashSkill("正面拆招", "这条线更适合拿 [拼点时] 技能去接。", 0, 2, 4, 2, "tutorial.battle04.enemy_clash");
+        EnemySkill_SO enemySingle = CreateSingleAttackSkill("越位追击", "放掉后会以单方面攻击结算。", 0, 2, 4, 2, "tutorial.battle04.enemy_single");
 
-        EnemySkill_SO allyUse = CreateSkill("稳态斩击", "写着 [使用时] 的保底技能。", 0, 2, 4);
+        EnemySkill_SO allyUse = CreateSkill("稳态斩击", "写着 [使用时] 的保底技能。", 0, 2, 4, "tutorial.battle04.ally_use");
         SetPowerModifiers(allyUse, CreateFlatPowerModifier(EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 1, "使用时 +1"));
 
-        EnemySkill_SO allyClash = CreateClashSkill("迎击斩", "写着 [拼点时]，更适合拿去对撞。", 0, 2, 4, 3);
-        EnemySkill_SO allySingle = CreateSingleAttackSkill("追身斩", "写着 [单方面攻击时]，更适合拿去打空线。", 1, 2, 4, 3);
+        EnemySkill_SO allyClash = CreateClashSkill("迎击斩", "写着 [拼点时]，更适合拿去对撞。", 0, 2, 4, 3, "tutorial.battle04.ally_clash");
+        EnemySkill_SO allySingle = CreateSingleAttackSkill("追身斩", "写着 [单方面攻击时]，更适合拿去打空线。", 1, 2, 4, 3, "tutorial.battle04.ally_single");
 
         EnemyData_SO enemy = CreateScriptedTutorialEnemy(
             "词条教官",
@@ -596,6 +596,7 @@ public static class TutorialBattleContentFactory
             ("Round 2 Slot 1", enemySingle, 2, 200, 1),
             ("Round 2 Slot 2", enemyClash, 2, 100, 1));
 
+        enemy.localizationKey = "tutorial.battle04.enemy";
         enemy.enemyDescription = "专门用来拆开三种威力修正何时生效。";
         ApplyVisualTemplate(enemy, visualTemplates != null ? visualTemplates.eliteTemplate : null);
         return CreateGroup("TutorialBattleGroup_04", 9204, "教程战 04", "三种威力修正何时生效", enemy);
@@ -603,16 +604,16 @@ public static class TutorialBattleContentFactory
 
     private static EnemyGroup_SO CreateBattle05EnemyGroup(TutorialEnemyVisualTemplateSet visualTemplates)
     {
-        EnemySkill_SO enemyClash = CreateClashSkill("压线对撞", "拼点时更强，逼你尽快找对撞技能去接。", 0, 2, 4, 2);
-        EnemySkill_SO enemySingle = CreateSingleAttackSkill("后手追杀", "如果放掉，会在单方面攻击时更危险。", 0, 2, 4, 3);
-        EnemySkill_SO enemyUse = CreateSkill("稳步横扫", "无论哪种结算都会吃到 [使用时] 的稳定收益。", 0, 2, 4);
+        EnemySkill_SO enemyClash = CreateClashSkill("压线对撞", "拼点时更强，逼你尽快找对撞技能去接。", 0, 2, 4, 2, "tutorial.battle05.legacy.enemy_clash");
+        EnemySkill_SO enemySingle = CreateSingleAttackSkill("后手追杀", "如果放掉，会在单方面攻击时更危险。", 0, 2, 4, 3, "tutorial.battle05.legacy.enemy_single");
+        EnemySkill_SO enemyUse = CreateSkill("稳步横扫", "无论哪种结算都会吃到 [使用时] 的稳定收益。", 0, 2, 4, "tutorial.battle05.legacy.enemy_use");
         SetPowerModifiers(enemyUse, CreateFlatPowerModifier(EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 1, "使用时 +1"));
 
-        EnemySkill_SO allyUse = CreateSkill("稳态推进", "写着 [使用时]，适合保底。", 0, 2, 4);
+        EnemySkill_SO allyUse = CreateSkill("稳态推进", "写着 [使用时]，适合保底。", 0, 2, 4, "tutorial.battle05.legacy.ally_use");
         SetPowerModifiers(allyUse, CreateFlatPowerModifier(EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 1, "使用时 +1"));
 
-        EnemySkill_SO allyClash = CreateClashSkill("拆招重击", "写着 [拼点时]，适合处理正面对撞线。", 0, 2, 4, 3);
-        EnemySkill_SO allySingle = CreateSingleAttackSkill("穿插追击", "写着 [单方面攻击时]，适合留给空线。", 1, 2, 4, 3);
+        EnemySkill_SO allyClash = CreateClashSkill("拆招重击", "写着 [拼点时]，适合处理正面对撞线。", 0, 2, 4, 3, "tutorial.battle05.legacy.ally_clash");
+        EnemySkill_SO allySingle = CreateSingleAttackSkill("穿插追击", "写着 [单方面攻击时]，适合留给空线。", 1, 2, 4, 3, "tutorial.battle05.legacy.ally_single");
 
         EnemyData_SO enemy = CreateScriptedTutorialEnemy(
             "修正考官",
@@ -629,6 +630,7 @@ public static class TutorialBattleContentFactory
             ("Round 3 Slot 1", enemyClash, 3, 200, 1),
             ("Round 3 Slot 2", enemyUse, 3, 100, 1));
 
+        enemy.localizationKey = "tutorial.battle05.legacy.enemy";
         enemy.enemyDescription = "固定顺序演示该拼点、该放线和该保底的不同判断。";
         ApplyVisualTemplate(enemy, visualTemplates != null ? visualTemplates.eliteTemplate : null);
         return CreateGroup("TutorialBattleGroup_05", 9205, "教程战 05", "看词条决定拼哪条线", enemy);
@@ -636,16 +638,16 @@ public static class TutorialBattleContentFactory
 
     private static EnemyGroup_SO CreateBattle06EnemyGroup(TutorialEnemyVisualTemplateSet visualTemplates)
     {
-        EnemySkill_SO enemyFast = CreateClashSkill("抢先压制", "更快的一条线，适合用来练“速度改变拼点对象”。", 0, 2, 4, 2);
-        EnemySkill_SO enemyGap = CreateSingleAttackSkill("空档追咬", "放掉时会以单方面攻击结算。", 0, 2, 4, 2);
-        EnemySkill_SO enemyStable = CreateSkill("稳步推进", "无论哪种结算都会稳定吃到 [使用时]。", 0, 2, 4);
+        EnemySkill_SO enemyFast = CreateClashSkill("抢先压制", "更快的一条线，适合用来练“速度改变拼点对象”。", 0, 2, 4, 2, "tutorial.battle06.enemy_fast");
+        EnemySkill_SO enemyGap = CreateSingleAttackSkill("空档追咬", "放掉时会以单方面攻击结算。", 0, 2, 4, 2, "tutorial.battle06.enemy_gap");
+        EnemySkill_SO enemyStable = CreateSkill("稳步推进", "无论哪种结算都会稳定吃到 [使用时]。", 0, 2, 4, "tutorial.battle06.enemy_stable");
         SetPowerModifiers(enemyStable, CreateFlatPowerModifier(EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 1, "使用时 +1"));
 
-        EnemySkill_SO allyUse = CreateSkill("稳态斜切", "更适合局势不确定时保底。", 0, 2, 4);
+        EnemySkill_SO allyUse = CreateSkill("稳态斜切", "更适合局势不确定时保底。", 0, 2, 4, "tutorial.battle06.ally_use");
         SetPowerModifiers(allyUse, CreateFlatPowerModifier(EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 1, "使用时 +1"));
 
-        EnemySkill_SO allyClash = CreateClashSkill("迎锋拦截", "适合去接高优先级拼点目标。", 0, 2, 4, 3);
-        EnemySkill_SO allySingle = CreateSingleAttackSkill("穿位追斩", "适合保留给空线。", 1, 2, 4, 3);
+        EnemySkill_SO allyClash = CreateClashSkill("迎锋拦截", "适合去接高优先级拼点目标。", 0, 2, 4, 3, "tutorial.battle06.ally_clash");
+        EnemySkill_SO allySingle = CreateSingleAttackSkill("穿位追斩", "适合保留给空线。", 1, 2, 4, 3, "tutorial.battle06.ally_single");
 
         EnemyData_SO enemy = CreateScriptedTutorialEnemy(
             "规划考官",
@@ -662,6 +664,7 @@ public static class TutorialBattleContentFactory
             ("Round 3 Slot 1", enemyFast, 3, 200, 1),
             ("Round 3 Slot 2", enemyStable, 3, 100, 1));
 
+        enemy.localizationKey = "tutorial.battle06.enemy";
         enemy.enemyDescription = "把速度、能量和技能词条放到同一个判断里。";
         ApplyVisualTemplate(enemy, visualTemplates != null ? visualTemplates.eliteTemplate : null);
         return CreateGroup("TutorialBattleGroup_06", 9206, "教程战 06", "速度、能量与词条一起判断", enemy);
@@ -669,7 +672,7 @@ public static class TutorialBattleContentFactory
 
     private static EnemyGroup_SO CreateBattle07EnemyGroup(TutorialEnemyVisualTemplateSet visualTemplates, BattleStatus_SO burnStatus)
     {
-        EnemySkill_SO enemyBurn = CreateSkill("烙印火痕", "命中后施加 1 层燃烧。", 0, 2, 3);
+        EnemySkill_SO enemyBurn = CreateSkill("烙印火痕", "命中后施加 1 层燃烧。", 0, 2, 3, "tutorial.battle07.enemy_burn");
         SetStatusEffects(enemyBurn, CreateStatusEffect(
             EnemySkill_SO.DiceEffectTrigger.OnHit,
             EnemySkill_SO.DamageTargetMode.CurrentTarget,
@@ -678,15 +681,15 @@ public static class TutorialBattleContentFactory
             1,
             "最终战燃烧"));
 
-        EnemySkill_SO enemyClash = CreateClashSkill("正面断招", "拼点时更强。", 0, 2, 4, 3);
-        EnemySkill_SO enemySingle = CreateSingleAttackSkill("裂隙追击", "放掉后会在单方面攻击时更危险。", 0, 2, 4, 3);
+        EnemySkill_SO enemyClash = CreateClashSkill("正面断招", "拼点时更强。", 0, 2, 4, 3, "tutorial.battle07.enemy_clash");
+        EnemySkill_SO enemySingle = CreateSingleAttackSkill("裂隙追击", "放掉后会在单方面攻击时更危险。", 0, 2, 4, 3, "tutorial.battle07.enemy_single");
 
-        EnemySkill_SO allyUse = CreateSkill("稳态推进", "适合保底。", 0, 2, 4);
+        EnemySkill_SO allyUse = CreateSkill("稳态推进", "适合保底。", 0, 2, 4, "tutorial.battle07.ally_use");
         SetPowerModifiers(allyUse, CreateFlatPowerModifier(EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 1, "使用时 +1"));
 
-        EnemySkill_SO allyClash = CreateClashSkill("拆招重压", "适合接正面对撞线。", 0, 2, 4, 3);
-        EnemySkill_SO allySingle = CreateSingleAttackSkill("穿刺追击", "适合处理空线。", 1, 2, 4, 3);
-        EnemySkill_SO allyBurn = CreateSkill("火种压制", "命中后施加 1 层燃烧。", 0, 1, 3);
+        EnemySkill_SO allyClash = CreateClashSkill("拆招重压", "适合接正面对撞线。", 0, 2, 4, 3, "tutorial.battle07.ally_clash");
+        EnemySkill_SO allySingle = CreateSingleAttackSkill("穿刺追击", "适合处理空线。", 1, 2, 4, 3, "tutorial.battle07.ally_single");
+        EnemySkill_SO allyBurn = CreateSkill("火种压制", "命中后施加 1 层燃烧。", 0, 1, 3, "tutorial.battle07.ally_burn");
         SetStatusEffects(allyBurn, CreateStatusEffect(
             EnemySkill_SO.DiceEffectTrigger.OnHit,
             EnemySkill_SO.DamageTargetMode.CurrentTarget,
@@ -710,6 +713,7 @@ public static class TutorialBattleContentFactory
             ("Round 3 Slot 1", enemyClash, 3, 200, 1),
             ("Round 3 Slot 2", enemySingle, 3, 100, 1));
 
+        enemy.localizationKey = "tutorial.battle07.enemy";
         enemy.enemyDescription = "综合使用速度、拼点、单方面攻击与状态图标的最终演练敌人。";
         ApplyVisualTemplate(enemy, visualTemplates != null ? visualTemplates.bossTemplate : null);
         return CreateGroup("TutorialBattleGroup_07", 9207, "教程战 07", "综合演练", enemy);
@@ -771,16 +775,16 @@ public static class TutorialBattleContentFactory
 
     private static EnemyGroup_SO CreateMergedBattle05EnemyGroup(TutorialEnemyVisualTemplateSet visualTemplates)
     {
-        EnemySkill_SO enemyFastClash = CreateClashSkill("抢先压制", "更快的正面对撞线，会迫使你优先决定拼点对象。", 0, 2, 4, 2);
-        EnemySkill_SO enemyGapPunish = CreateSingleAttackSkill("空档追咬", "如果被放掉，会在单方面攻击时变得更危险。", 0, 2, 4, 2);
-        EnemySkill_SO enemyStableUse = CreateSkill("稳步推进", "无论哪种结算都会稳定吃到 [使用时] 的收益。", 0, 2, 4);
+        EnemySkill_SO enemyFastClash = CreateClashSkill("抢先压制", "更快的正面对撞线，会迫使你优先决定拼点对象。", 0, 2, 4, 2, "tutorial.battle05.enemy_fast_clash");
+        EnemySkill_SO enemyGapPunish = CreateSingleAttackSkill("空档追咬", "如果被放掉，会在单方面攻击时变得更危险。", 0, 2, 4, 2, "tutorial.battle05.enemy_gap_punish");
+        EnemySkill_SO enemyStableUse = CreateSkill("稳步推进", "无论哪种结算都会稳定吃到 [使用时] 的收益。", 0, 2, 4, "tutorial.battle05.enemy_stable_use");
         SetPowerModifiers(enemyStableUse, CreateFlatPowerModifier(EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 1, "使用时 +1"));
 
-        EnemySkill_SO allyUse = CreateSkill("稳态斜切", "更适合局势还不确定时保底。", 0, 2, 4);
+        EnemySkill_SO allyUse = CreateSkill("稳态斜切", "更适合局势还不确定时保底。", 0, 2, 4, "tutorial.battle05.ally_use");
         SetPowerModifiers(allyUse, CreateFlatPowerModifier(EnemySkill_SO.DiceEffectTrigger.OnSkillUse, 1, "使用时 +1"));
 
-        EnemySkill_SO allyClash = CreateClashSkill("迎锋拦截", "更适合拿去正面拼点，处理高优先级目标。", 0, 2, 4, 3);
-        EnemySkill_SO allySingle = CreateSingleAttackSkill("穿位追斩", "更适合故意留下来打空线。", 1, 2, 4, 3);
+        EnemySkill_SO allyClash = CreateClashSkill("迎锋拦截", "更适合拿去正面拼点，处理高优先级目标。", 0, 2, 4, 3, "tutorial.battle05.ally_clash");
+        EnemySkill_SO allySingle = CreateSingleAttackSkill("穿位追斩", "更适合故意留下来打空线。", 1, 2, 4, 3, "tutorial.battle05.ally_single");
 
         EnemyData_SO enemy = CreateScriptedTutorialEnemy(
             "综合考官",
@@ -797,6 +801,7 @@ public static class TutorialBattleContentFactory
             ("Round 3 Slot 1", enemyFastClash, 3, 200, 1),
             ("Round 3 Slot 2", enemyStableUse, 3, 100, 1));
 
+        enemy.localizationKey = "tutorial.battle05.enemy";
         enemy.enemyDescription = "固定顺序演示速度优先级、拼点对象切换与空线取舍。";
         ApplyVisualTemplate(enemy, visualTemplates != null ? visualTemplates.eliteTemplate : null);
         return CreateGroup("TutorialBattleGroup_05", 9205, "教程战 05", "综合练习速度、词条时机与路线规划", enemy);
@@ -868,11 +873,12 @@ public static class TutorialBattleContentFactory
         };
     }
 
-    private static EnemySkill_SO CreateSkill(string name, string description, int energyCost, int minPower, int maxPower)
+    private static EnemySkill_SO CreateSkill(string name, string description, int energyCost, int minPower, int maxPower, string localizationKey)
     {
         EnemySkill_SO skill = ScriptableObject.CreateInstance<EnemySkill_SO>();
         PrepareRuntimeObject(skill, $"Skill_{name}");
         skill.skillName = name;
+        skill.localizationKey = localizationKey;
         skill.description = description;
         skill.energyCost = energyCost;
         skill.minPower = minPower;
@@ -882,16 +888,16 @@ public static class TutorialBattleContentFactory
         return skill;
     }
 
-    private static EnemySkill_SO CreateClashSkill(string name, string description, int energyCost, int minPower, int maxPower, int powerBonus)
+    private static EnemySkill_SO CreateClashSkill(string name, string description, int energyCost, int minPower, int maxPower, int powerBonus, string localizationKey)
     {
-        EnemySkill_SO skill = CreateSkill(name, description, energyCost, minPower, maxPower);
+        EnemySkill_SO skill = CreateSkill(name, description, energyCost, minPower, maxPower, localizationKey);
         SetPowerModifiers(skill, CreateFlatPowerModifier(EnemySkill_SO.DiceEffectTrigger.OnClash, powerBonus, "拼点时加成"));
         return skill;
     }
 
-    private static EnemySkill_SO CreateSingleAttackSkill(string name, string description, int energyCost, int minPower, int maxPower, int powerBonus)
+    private static EnemySkill_SO CreateSingleAttackSkill(string name, string description, int energyCost, int minPower, int maxPower, int powerBonus, string localizationKey)
     {
-        EnemySkill_SO skill = CreateSkill(name, description, energyCost, minPower, maxPower);
+        EnemySkill_SO skill = CreateSkill(name, description, energyCost, minPower, maxPower, localizationKey);
         SetPowerModifiers(skill, CreateFlatPowerModifier(EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, powerBonus, "单方面攻击时加成"));
         return skill;
     }

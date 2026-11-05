@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: OrnateCut
   m_EditorClassIdentifier: 
+  localizationKey: skill.ornatecut
   skillName: "\u82B1\u5207"
   description: "\u7CBE\u51C6\u800C\u534E\u4E3D\u7684\u6740\u62DB"
   skillCategory: 0

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "\u5723\u5149\u9501\u72F1"
   m_EditorClassIdentifier: 
+  localizationKey: skill.012_lightknight_slash_2
   skillName: "\u5723\u5149\u9501\u72F1"
   description: "\u5149\u9501\u4ECE\u5730\u9762\u5408\u62E2\uFF0C\u628A\u9003\u79BB\u7684\u811A\u6B65\u4E00\u5BF8\u5BF8\u62D6\u6162\u3002"
   skillCategory: 0

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "\u6495\u54AC"
   m_EditorClassIdentifier: 
+  localizationKey: skill.huntersdog_slash
   skillName: "\u6495\u54AC"
   description: "\u730E\u72AC\u5F20\u7259\u821E\u722A\u5730\u4E0A\u524D\u5C1D\u8BD5\u6495\u626F\u4F60\u7684\u8EAB\u4F53"
   skillCategory: 0

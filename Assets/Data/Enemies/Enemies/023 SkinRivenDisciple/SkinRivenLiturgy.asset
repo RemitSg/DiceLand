@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: SkinRivenLiturgy
   m_EditorClassIdentifier: 
+  localizationKey: skill.skinrivenliturgy
   skillName: "\u88C2\u80A4\u793C\u62DC"
   description: "\u65E0\u6240\u8C13\u9F9F\u88C2\u7684\u76AE\u80A4\uFF0C\u65E0\u6240\u8C13\u6D8C\u51FA\u7684\u9C9C\u8840\uFF0C\u5728\u8FD9\u4E00\u523B\uFF0C\u5B83\u53EA\u6709\u4FE1\u4EF0\u3002"
   skillCategory: 0

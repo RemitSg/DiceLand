@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Roast
   m_EditorClassIdentifier: 
+  localizationKey: skill.roast
   skillName: "\u7099\u70E4"
   description: "\u5B83\u4F0F\u4F4E\u8EAB\u4F53\uFF0C\u80CC\u4E0A\u7684\u7130\u7EB9\u50CF\u88AB\u5439\u4EAE\u7684\u7089\u7F1D\u3002"
   skillCategory: 0

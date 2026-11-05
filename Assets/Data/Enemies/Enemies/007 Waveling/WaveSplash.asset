@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: WaveSplash
   m_EditorClassIdentifier: 
+  localizationKey: skill.wavesplash
   skillName: "\u5DE8\u6D6A\u62CD\u51FB"
   description: "\u7275\u5F15\u51FA\u4E00\u6392\u5DE8\u6D6A\u653B\u51FB\uFF0C\u6C14\u52BF\u5F88\u5F3A\u5927"
   skillCategory: 0

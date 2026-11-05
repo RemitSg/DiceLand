@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: DuskDart
   m_EditorClassIdentifier: 
+  localizationKey: skill.duskdart
   skillName: "\u706F\u70EC\u5F39"
   description: "\u706F\u8EAB\u5468\u56F4\u663E\u73B0\u4E86\u4E00\u4E9B\u9ED1\u8272\u7684\u7269\u8D28"
   transformEnemyToStageIndex: -1

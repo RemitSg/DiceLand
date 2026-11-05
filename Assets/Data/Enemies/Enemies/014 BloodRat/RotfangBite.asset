@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: RotfangBite
   m_EditorClassIdentifier: 
+  localizationKey: skill.rotfangbite
   skillName: "\u8150\u9F7F\u5543\u54AC"
   description: "\u5B83\u7684\u5C16\u5634\u4E2D\u8FD8\u5E26\u6709\u6A21\u7CCA\u7684\u8840\u6C61\u4E0E\u8150\u8089\uFF0C\u6700\u597D\u522B\u88AB\u78B0\u5230"
   skillCategory: 0

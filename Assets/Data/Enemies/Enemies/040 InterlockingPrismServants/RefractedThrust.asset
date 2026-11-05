@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: RefractedThrust
   m_EditorClassIdentifier: 
+  localizationKey: skill.refractedthrust
   skillName: "\u6298\u8F89\u523A"
   description: "\u68F1\u7EBF\u6CBF\u7740\u5149\u9762\u659C\u659C\u523A\u51FA\uFF0C\u547D\u4E2D\u7684\u4F4D\u7F6E\u6D6E\u8D77\u7EC6\u5C0F\u7684\u767D\u8272\u523B\u75D5\u3002"
   skillCategory: 0

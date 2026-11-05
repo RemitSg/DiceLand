@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Hope
   m_EditorClassIdentifier: 
+  localizationKey: skill.hope
   skillName: "\u5E0C\u671B"
   description: "\u5FC3\u5E95\u603B\u6709\u4E00\u4EFD\u5E0C\u671B\u3002"
   energyCost: 3

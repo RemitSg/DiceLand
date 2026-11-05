@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: RendFeast
   m_EditorClassIdentifier: 
+  localizationKey: skill.rendfeast
   skillName: "\u88C2\u8109\u6251\u98DF"
   description: "\u770B\u7740\u4F60\u7684\u4F24\u53E3\u9010\u6E10\u52A0\u6DF1\uFF0C\u5B83\u6108\u52A0\u5174\u594B"
   skillCategory: 0

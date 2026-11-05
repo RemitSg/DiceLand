@@ -4,6 +4,8 @@ using UnityEngine;
 // A single validation/consumption path for both the forge UI and agent decisions.
 public static class RunCraftingService
 {
+    public enum Availability { Ready, Unavailable, InsufficientGold, InsufficientMaterials }
+
     public static List<CraftingMaterialRequirement> GetRequirements(CraftingBlueprint_SO blueprint)
     {
         var result = new List<CraftingMaterialRequirement>();
@@ -27,19 +29,22 @@ public static class RunCraftingService
     public static int Cost(RunState state) => CalamitySystem.ApplyForgeCostModifiers(0, state != null ? state.activeCalamities : null);
 
     public static bool CanCraft(RunState state, CraftingBlueprint_SO blueprint, out string message)
+        => CheckAvailability(state, blueprint, out message) == Availability.Ready;
+
+    public static Availability CheckAvailability(RunState state, CraftingBlueprint_SO blueprint, out string message)
     {
         message = null;
-        if (state == null || blueprint == null) { message = "无法进行锻造。"; return false; }
-        if (state.GetBlueprintAmount(blueprint) <= 0) { message = "尚未拥有该图纸。"; return false; }
-        if (blueprint.targetWeapon == null) { message = "该图纸未配置目标武器。"; return false; }
+        if (state == null || blueprint == null) { message = GameText.Get("ui.run_crafting.forging_is_unavailable", "无法进行锻造。"); return Availability.Unavailable; }
+        if (state.GetBlueprintAmount(blueprint) <= 0) { message = GameText.Get("ui.run_crafting.you_do_not_own_this_blueprint", "尚未拥有该图纸。"); return Availability.Unavailable; }
+        if (blueprint.targetWeapon == null) { message = GameText.Get("ui.run_crafting.this_blueprint_has_no_weapon_configured", "该图纸未配置目标武器。"); return Availability.Unavailable; }
         List<CraftingMaterialRequirement> requirements = GetRequirements(blueprint);
-        if (requirements.Count == 0) { message = "该图纸未配置有效材料需求。"; return false; }
+        if (requirements.Count == 0) { message = GameText.Get("ui.run_crafting.this_blueprint_has_no_valid_material_requirements", "该图纸未配置有效材料需求。"); return Availability.Unavailable; }
         int cost = Cost(state);
-        if (state.money < cost) { message = $"金币不足：需要 {cost} 金币"; return false; }
+        if (state.money < cost) { message = GameText.Format("ui.run_crafting.you_need_gold", "金币不足：需要 {cost} 金币", ("cost", cost)); return Availability.InsufficientGold; }
         foreach (CraftingMaterialRequirement entry in requirements)
             if (state.GetLootAmount(entry.lootItem) < entry.amount)
-            { message = $"材料不足：{entry.lootItem.lootName} x{entry.amount}"; return false; }
-        return true;
+            { message = GameText.Format("ui.run_crafting.missing_material", "材料不足：{localizedName} x{amount}", ("localizedName", entry.lootItem.LocalizedName), ("amount", entry.amount)); return Availability.InsufficientMaterials; }
+        return Availability.Ready;
     }
 
     public static bool TryCraft(RunState state, CraftingBlueprint_SO blueprint, out string message)
@@ -50,7 +55,7 @@ public static class RunCraftingService
         state.AddWeapon(blueprint.targetWeapon);
         if (state.settlementStats == null) state.settlementStats = new RunSettlementStats();
         state.settlementStats.craftedWeaponCount++;
-        message = $"成功锻造：{blueprint.targetWeapon.weaponName}";
+        message = GameText.Format("ui.run_crafting.forged", "成功锻造：{localizedName}", ("localizedName", blueprint.targetWeapon.LocalizedName));
         return true;
     }
 }

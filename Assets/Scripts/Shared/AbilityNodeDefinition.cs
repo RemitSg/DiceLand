@@ -6,6 +6,8 @@ using UnityEngine;
 public sealed class AbilityNodeDefinition
 {
     public string nodeId;
+    public string LocalizedName => GameText.Content("ability." + nodeId, "name", string.IsNullOrWhiteSpace(displayName) ? nodeId : displayName);
+    public string LocalizedDescription => GameText.Content("ability." + nodeId, "description", description);
     public string displayName;
     [TextArea(2, 4)] public string description;
     [Min(0)] public int cost = 1;

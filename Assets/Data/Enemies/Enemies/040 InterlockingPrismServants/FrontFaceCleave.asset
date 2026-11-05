@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: FrontFaceCleave
   m_EditorClassIdentifier: 
+  localizationKey: skill.frontfacecleave
   skillName: "\u7167\u9762\u5207\u843D"
   description: "\u4E3B\u52A8\u9762\u9AA4\u7136\u8F6C\u4EAE\uFF0C\u68F1\u5203\u987A\u7740\u65E7\u6709\u5370\u8BB0\u628A\u5149\u538B\u6210\u4E00\u9053\u8584\u7EBF\u3002"
   skillCategory: 0

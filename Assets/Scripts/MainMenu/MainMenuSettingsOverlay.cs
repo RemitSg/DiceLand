@@ -182,7 +182,7 @@ public partial class MainMenuSettingsOverlay : MonoBehaviour
                 width = Screen.width,
                 height = Screen.height,
                 refreshRate = Mathf.Max(30, currentSettings.refreshRate),
-                label = $"{Screen.width} × {Screen.height}（设备）"
+                label = GameText.Format("ui.settings.device_mode", "{width} × {height}（设备）", ("width", Screen.width), ("height", Screen.height))
             });
         }
         else

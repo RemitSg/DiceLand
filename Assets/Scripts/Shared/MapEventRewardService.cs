@@ -19,12 +19,12 @@ public static class MapEventRewardService
 
             int amount = RollLootAmount(selectedReward);
             runState?.AddLoot(selectedReward.lootItem, amount);
-            gainedLootDescriptions.Add($"{selectedReward.lootItem.lootName} x{amount}");
+            gainedLootDescriptions.Add($"{selectedReward.lootItem.LocalizedName} x{amount}");
         }
 
         message = gainedLootDescriptions.Count > 0
-            ? $"\u83b7\u5f97\u6218\u5229\u54c1\uff1a{string.Join("\uff0c", gainedLootDescriptions)}\u3002"
-            : "\u672a\u83b7\u5f97\u4efb\u4f55\u6218\u5229\u54c1\u3002";
+            ? GameText.Format("map.event.gained_loot", "获得战利品：{join}。", ("join", string.Join("\uff0c", gainedLootDescriptions)))
+            : GameText.Get("map.event.no_loot_gained", "未获得任何战利品。");
         return true;
     }
 
@@ -46,12 +46,12 @@ public static class MapEventRewardService
                 continue;
 
             runState?.AddRelic(selectedRelic, 1);
-            gainedRelicDescriptions.Add(selectedRelic.DisplayName);
+            gainedRelicDescriptions.Add(selectedRelic.LocalizedName);
         }
 
         message = gainedRelicDescriptions.Count > 0
-            ? $"\u83b7\u5f97\u9057\u7269\uff1a{string.Join("\uff0c", gainedRelicDescriptions)}\u3002"
-            : "\u672a\u83b7\u5f97\u4efb\u4f55\u9057\u7269\u3002";
+            ? GameText.Format("map.event.gained_relics", "获得遗物：{join}。", ("join", string.Join("\uff0c", gainedRelicDescriptions)))
+            : GameText.Get("map.event.no_relics_gained", "未获得任何遗物。");
         return true;
     }
 
@@ -70,12 +70,12 @@ public static class MapEventRewardService
                 continue;
 
             runState?.AddBlueprint(selectedBlueprint, 1);
-            gainedBlueprintDescriptions.Add(selectedBlueprint.DisplayName);
+            gainedBlueprintDescriptions.Add(selectedBlueprint.LocalizedName);
         }
 
         message = gainedBlueprintDescriptions.Count > 0
-            ? $"\u83b7\u5f97\u56fe\u7eb8\uff1a{string.Join("\uff0c", gainedBlueprintDescriptions)}\u3002"
-            : "\u672a\u83b7\u5f97\u4efb\u4f55\u56fe\u7eb8\u3002";
+            ? GameText.Format("map.event.gained_blueprints", "获得图纸：{join}。", ("join", string.Join("\uff0c", gainedBlueprintDescriptions)))
+            : GameText.Get("map.event.no_blueprints_gained", "未获得任何图纸。");
         return true;
     }
 
@@ -83,7 +83,7 @@ public static class MapEventRewardService
     {
         if (encounterData == null)
         {
-            message = "\u672a\u627e\u5230\u5f85\u89e6\u53d1\u7684\u4e8b\u4ef6\u906d\u9047\u3002";
+            message = GameText.Get("map.event.no_event_encounter_is_pending", "未找到待触发的事件遭遇。");
             return false;
         }
 
@@ -124,12 +124,12 @@ public static class MapEventRewardService
                 lootItem = selectedReward.lootItem,
                 amount = amount
             });
-            descriptions.Add($"{selectedReward.lootItem.lootName} x{amount}");
+            descriptions.Add($"{selectedReward.lootItem.LocalizedName} x{amount}");
         }
 
         message = descriptions.Count > 0
-            ? $"\u6218\u6597\u80dc\u5229\u540e\u5c06\u83b7\u5f97\u6218\u5229\u54c1\uff1a{string.Join("\uff0c", descriptions)}\u3002"
-            : "\u6218\u6597\u80dc\u5229\u540e\u672a\u914d\u7f6e\u4efb\u4f55\u6218\u5229\u54c1\u5956\u52b1\u3002";
+            ? GameText.Format("map.event.win_the_battle_to_gain_loot", "战斗胜利后将获得战利品：{join}。", ("join", string.Join("\uff0c", descriptions)))
+            : GameText.Get("map.event.no_loot_reward_is_configured_for_victory", "战斗胜利后未配置任何战利品奖励。");
         return true;
     }
 
@@ -155,12 +155,12 @@ public static class MapEventRewardService
                 relicData = selectedRelic,
                 amount = 1
             });
-            descriptions.Add(selectedRelic.DisplayName);
+            descriptions.Add(selectedRelic.LocalizedName);
         }
 
         message = descriptions.Count > 0
-            ? $"\u6218\u6597\u80dc\u5229\u540e\u5c06\u83b7\u5f97\u9057\u7269\uff1a{string.Join("\uff0c", descriptions)}\u3002"
-            : "\u6218\u6597\u80dc\u5229\u540e\u672a\u914d\u7f6e\u4efb\u4f55\u9057\u7269\u5956\u52b1\u3002";
+            ? GameText.Format("map.event.win_the_battle_to_gain_relics", "战斗胜利后将获得遗物：{join}。", ("join", string.Join("\uff0c", descriptions)))
+            : GameText.Get("map.event.no_relic_reward_is_configured_for_victory", "战斗胜利后未配置任何遗物奖励。");
         return true;
     }
 
@@ -179,12 +179,12 @@ public static class MapEventRewardService
 
             int amount = Mathf.Max(1, reward.amount);
             runState?.AddRelic(reward.relicData, amount);
-            descriptions.Add(amount > 1 ? $"{reward.relicData.DisplayName} x{amount}" : reward.relicData.DisplayName);
+            descriptions.Add(amount > 1 ? $"{reward.relicData.LocalizedName} x{amount}" : reward.relicData.LocalizedName);
         }
 
         message = descriptions.Count > 0
-            ? $"获得遗物：{string.Join("，", descriptions)}。"
-            : "未获得任何遗物。";
+            ? GameText.Format("map.event.gained_relics", "获得遗物：{join}。", ("join", string.Join("，", descriptions)))
+            : GameText.Get("map.event.no_relics_gained", "未获得任何遗物。");
         return true;
     }
 
@@ -207,12 +207,12 @@ public static class MapEventRewardService
                 relicData = reward.relicData,
                 amount = amount
             });
-            descriptions.Add(amount > 1 ? $"{reward.relicData.DisplayName} x{amount}" : reward.relicData.DisplayName);
+            descriptions.Add(amount > 1 ? $"{reward.relicData.LocalizedName} x{amount}" : reward.relicData.LocalizedName);
         }
 
         message = descriptions.Count > 0
-            ? $"战斗胜利后将获得遗物：{string.Join("，", descriptions)}。"
-            : "战斗胜利后未配置任何遗物奖励。";
+            ? GameText.Format("map.event.win_the_battle_to_gain_relics", "战斗胜利后将获得遗物：{join}。", ("join", string.Join("，", descriptions)))
+            : GameText.Get("map.event.no_relic_reward_is_configured_for_victory", "战斗胜利后未配置任何遗物奖励。");
         return true;
     }
 
@@ -250,12 +250,12 @@ public static class MapEventRewardService
                 blueprintData = selectedBlueprint,
                 amount = 1
             });
-            descriptions.Add(selectedBlueprint.DisplayName);
+            descriptions.Add(selectedBlueprint.LocalizedName);
         }
 
         message = descriptions.Count > 0
-            ? $"\u6218\u6597\u80dc\u5229\u540e\u5c06\u83b7\u5f97\u56fe\u7eb8\uff1a{string.Join("\uff0c", descriptions)}\u3002"
-            : "\u6218\u6597\u80dc\u5229\u540e\u672a\u914d\u7f6e\u4efb\u4f55\u56fe\u7eb8\u5956\u52b1\u3002";
+            ? GameText.Format("map.event.win_the_battle_to_gain_blueprints", "战斗胜利后将获得图纸：{join}。", ("join", string.Join("\uff0c", descriptions)))
+            : GameText.Get("map.event.no_blueprint_reward_is_configured_for_victory", "战斗胜利后未配置任何图纸奖励。");
         return true;
     }
 
@@ -276,12 +276,12 @@ public static class MapEventRewardService
                 weaponData = weapon,
                 amount = 1
             });
-            descriptions.Add(weapon.weaponName);
+            descriptions.Add(weapon.LocalizedName);
         }
 
         message = descriptions.Count > 0
-            ? $"战斗胜利后将获得武器：{string.Join("，", descriptions)}。"
-            : "战斗胜利后未配置任何武器奖励。";
+            ? GameText.Format("map.event.win_the_battle_to_gain_weapons", "战斗胜利后将获得武器：{join}。", ("join", string.Join("，", descriptions)))
+            : GameText.Get("map.event.no_weapon_reward_is_configured_for_victory", "战斗胜利后未配置任何武器奖励。");
         return true;
     }
 
@@ -298,12 +298,12 @@ public static class MapEventRewardService
                 continue;
 
             runState?.AddWeapon(weapon, 1);
-            descriptions.Add(weapon.weaponName);
+            descriptions.Add(weapon.LocalizedName);
         }
 
         message = descriptions.Count > 0
-            ? $"获得武器：{string.Join("，", descriptions)}。"
-            : "未获得任何武器。";
+            ? GameText.Format("map.event.gained_weapons", "获得武器：{join}。", ("join", string.Join("，", descriptions)))
+            : GameText.Get("map.event.no_weapons_gained", "未获得任何武器。");
         return true;
     }
 
@@ -312,7 +312,7 @@ public static class MapEventRewardService
         selectedWeapons = new List<Weapon_SO>();
         if (effectData == null || effectData.weaponCatalog == null)
         {
-            message = "该事件效果未配置武器目录。";
+            message = GameText.Get("map.event.this_event_has_no_weapon_catalog", "该事件效果未配置武器目录。");
             return false;
         }
 
@@ -330,7 +330,7 @@ public static class MapEventRewardService
 
         if (candidates.Count == 0)
         {
-            message = $"武器目录中没有 {effectData.weaponRarity} 品质武器。";
+            message = GameText.Format("map.event.the_catalog_has_no_weapons", "武器目录中没有 {weaponRarity} 品质武器。", ("weaponRarity", effectData.weaponRarity));
             return false;
         }
 
@@ -356,7 +356,7 @@ public static class MapEventRewardService
         availableRewards = new List<MapEventLootRewardEntry>();
         if (effectData == null || effectData.lootRewards == null || effectData.lootRewards.Count == 0)
         {
-            message = "\u8be5\u4e8b\u4ef6\u6548\u679c\u672a\u914d\u7f6e\u6218\u5229\u54c1\u5217\u8868\u3002";
+            message = GameText.Get("map.event.this_event_has_no_loot_list", "该事件效果未配置战利品列表。");
             return false;
         }
 
@@ -369,7 +369,7 @@ public static class MapEventRewardService
 
         if (availableRewards.Count == 0)
         {
-            message = "\u8be5\u4e8b\u4ef6\u6548\u679c\u672a\u914d\u7f6e\u6709\u6548\u7684\u6218\u5229\u54c1\u3002";
+            message = GameText.Get("map.event.no_valid_loot_is_configured_for_this_effect", "该事件效果未配置有效的战利品。");
             return false;
         }
 
@@ -385,14 +385,14 @@ public static class MapEventRewardService
         availableRewards = new List<Relic_SO>();
         if (effectData == null || effectData.relicTable == null)
         {
-            message = "\u8be5\u4e8b\u4ef6\u6548\u679c\u672a\u914d\u7f6e\u9057\u7269\u8868\u3002";
+            message = GameText.Get("map.event.this_event_has_no_relic_reward_table", "该事件效果未配置遗物表。");
             return false;
         }
 
         IReadOnlyList<Relic_SO> relics = effectData.relicTable.Relics;
         if (relics == null)
         {
-            message = "\u8be5\u4e8b\u4ef6\u6548\u679c\u672a\u914d\u7f6e\u6709\u6548\u7684\u9057\u7269\u3002";
+            message = GameText.Get("map.event.this_event_has_no_valid_relics", "该事件效果未配置有效的遗物。");
             return false;
         }
 
@@ -405,7 +405,7 @@ public static class MapEventRewardService
 
         if (availableRewards.Count == 0)
         {
-            message = "\u8be5\u4e8b\u4ef6\u6548\u679c\u672a\u914d\u7f6e\u6709\u6548\u7684\u9057\u7269\u3002";
+            message = GameText.Get("map.event.this_event_has_no_valid_relics", "该事件效果未配置有效的遗物。");
             return false;
         }
 
@@ -532,7 +532,7 @@ public static class MapEventRewardService
         availableRewards = new List<CraftingBlueprint_SO>();
         if (effectData == null || effectData.blueprintTable == null)
         {
-            message = "\u8be5\u4e8b\u4ef6\u6548\u679c\u672a\u914d\u7f6e\u56fe\u7eb8\u8868\u3002";
+            message = GameText.Get("map.event.this_event_has_no_blueprint_table", "该事件效果未配置图纸表。");
             return false;
         }
 
@@ -546,7 +546,7 @@ public static class MapEventRewardService
 
         if (availableRewards.Count == 0)
         {
-            message = "\u8be5\u4e8b\u4ef6\u6548\u679c\u672a\u914d\u7f6e\u6709\u6548\u7684\u56fe\u7eb8\u3002";
+            message = GameText.Get("map.event.this_event_has_no_valid_blueprints", "该事件效果未配置有效的图纸。");
             return false;
         }
 

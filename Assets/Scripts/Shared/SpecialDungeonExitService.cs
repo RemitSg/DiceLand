@@ -40,7 +40,7 @@ public static class SpecialDungeonExitService
         IEnumerable<int> currentPendingCalamities, out MapRunSnapshot restored, out string message)
     {
         restored = null;
-        message = "当前无法离开特殊副本。";
+        message = GameText.Get("ui.special_dungeon_exit.you_cannot_leave_this_dungeon_now", "当前无法离开特殊副本。");
         if (context == null || !context.isActive || latest == null || exit == null
             || exit.tileType != MapTileType.SpecialDungeonExit || exit.coord != latest.playerGridPosition
             || exit.sourceSpecialDungeon != context.activeDungeon || exit.coord.y != Mathf.Max(1, latest.boardSize / 2)
@@ -62,7 +62,7 @@ public static class SpecialDungeonExitService
             foreach (int tier in currentPendingCalamities)
                 if (tiers.Add(tier)) restored.pendingCalamityTiers.Add(tier);
         context.isActive = false;
-        message = "已离开特殊副本，回到主地图。";
+        message = GameText.Get("map.feedback.you_left_the_dungeon_and_returned_to_the", "已离开特殊副本，回到主地图。");
         return true;
     }
 }

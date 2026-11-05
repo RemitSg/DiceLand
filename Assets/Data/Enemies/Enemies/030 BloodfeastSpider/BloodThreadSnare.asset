@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: BloodThreadSnare
   m_EditorClassIdentifier: 
+  localizationKey: skill.bloodthreadsnare
   skillName: "\u8840\u4E1D\u7F20\u7ED3"
   description: "\u7EA2\u4E1D\u8D34\u7740\u5730\u9762\u6E38\u8D70\uFF0C\u5BFB\u5411\u8FD8\u6CA1\u88AB\u8840\u5473\u6807\u8BB0\u7684\u4EBA\u3002"
   skillCategory: 0

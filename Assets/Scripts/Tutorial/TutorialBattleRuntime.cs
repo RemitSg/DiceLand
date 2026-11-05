@@ -99,9 +99,9 @@ public static class TutorialBattleRuntime
         if (step == null || step.inputPolicy != TutorialBattleInputPolicy.RequireBeforeCombat)
             return true;
 
-        blockedMessage = string.IsNullOrWhiteSpace(step.blockedMessage)
-            ? "请先完成当前教程提示。"
-            : step.blockedMessage;
+        blockedMessage = GameText.Content("tutorial." + step.stepId, "blocked",
+            string.IsNullOrWhiteSpace(step.blockedMessage)
+                ? GameText.Get("tutorial.battle.blocked", "请先完成当前教程提示。") : step.blockedMessage);
         HasPendingStepPopup |= step.autoShow;
         return false;
     }

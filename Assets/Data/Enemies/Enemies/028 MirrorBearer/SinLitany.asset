@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: SinLitany
   m_EditorClassIdentifier: 
+  localizationKey: skill.sinlitany
   skillName: "\u7167\u7F6A\u7977\u6587"
   description: "\u5B83\u5FF5\u51FA\u4E00\u6BB5\u6CA1\u6709\u58F0\u97F3\u7684\u7977\u6587\uFF0C\u955C\u91CC\u7684\u4EBA\u5148\u4E00\u6B65\u4F4E\u4E0B\u5934\u3002"
   skillCategory: 0

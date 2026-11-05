@@ -60,7 +60,7 @@ public partial class MapMerchantOverlay
         Frame(panelRect, MapMerchantFrameGraphic.Style.Panel);
         Image shop = Icon(panelRect, "ShopIcon", MapForestArt.Get("Merchant"));
         Place(shop.rectTransform, 40, 24, 92, 92);
-        titleText = Text(panelRect, "Title", titleFontSize, Ivory, "林间商店", true);
+        titleText = Text(panelRect, "Title", titleFontSize, Ivory, GameText.Get("ui.map_merchant.woodland_shop", "林间商店"), true);
         Place(titleText.rectTransform, 150, 30, 670, 72);
         RectTransform wallet = Panel(panelRect, "Wallet", Color.clear);
         Frame(wallet, MapMerchantFrameGraphic.Style.Wallet);
@@ -71,12 +71,12 @@ public partial class MapMerchantOverlay
         Button closeX = Action(panelRect, "CloseXButton", "×", Hide, true);
         Place((RectTransform)closeX.transform, panelSize.x - 116, 30, 72, 72);
         Rule(panelRect, "HeaderRule", 30, 128, panelSize.x - 60, 1.5f);
-        TextMeshProUGUI heading = Text(panelRect, "OffersHeading", 30, HeadingIvory, "在售商品", true);
+        TextMeshProUGUI heading = Text(panelRect, "OffersHeading", 30, HeadingIvory, GameText.Get("ui.map_merchant.stock", "在售商品"), true);
         Place(heading.rectTransform, 44, 142, 280, 44);
         offersRule = Rule(panelRect, "OffersRule", 252, 162, 300, 12, true);
         columnRule = Rule(panelRect, "ColumnRule", 0, 0, 8, 500);
         offerScrollRect = ScrollArea(panelRect, "OfferScrollRect", out offerViewport, out listRoot);
-        emptyText = Text(offerViewport, "EmptyStock", 30, Muted, "本次商店暂无商品。", true);
+        emptyText = Text(offerViewport, "EmptyStock", 30, Muted, GameText.Get("ui.map_merchant.the_shop_has_no_stock_this_time", "本次商店暂无商品。"), true);
         Inset(emptyText.rectTransform, 16, 24);
         emptyText.alignment = TextAlignmentOptions.Top;
 
@@ -92,7 +92,7 @@ public partial class MapMerchantOverlay
         MapMerchantFrameGraphic detailBadge = detailMetaBadge.gameObject.AddComponent<MapMerchantFrameGraphic>();
         detailBadge.style = MapMerchantFrameGraphic.Style.Badge; detailBadge.raycastTarget = false;
         metaText = Text(detailContent, "Meta", 25, Muted, string.Empty);
-        effectLabel = Text(detailContent, "EffectHeading", 29, HeadingIvory, "物品效果", true);
+        effectLabel = Text(detailContent, "EffectHeading", 29, HeadingIvory, GameText.Get("ui.map_merchant.item_effect", "物品效果"), true);
         descriptionRule = Rule(detailContent, "EffectRule", 160, 0, 100, 12, true);
         descriptionText = Text(detailContent, "Description", bodyFontSize, Ivory, string.Empty);
         flavorRule = Rule(detailContent, "FlavorRule", 0, 0, 100, 1);
@@ -102,18 +102,18 @@ public partial class MapMerchantOverlay
         statusText = Text(detailContent, "Status", 27, Ivory, string.Empty);
         purchaseRoot = Panel(detailRoot, "PurchaseSummary", Color.clear);
         Frame(purchaseRoot);
-        TextMeshProUGUI caption = Text(purchaseRoot, "PriceHeading", 26, Ivory, "购买价格");
+        TextMeshProUGUI caption = Text(purchaseRoot, "PriceHeading", 26, Ivory, GameText.Get("ui.map_merchant.price", "购买价格"));
         Place(caption.rectTransform, 22, 12, 190, 38);
         priceText = Text(purchaseRoot, "Price", 36, MoneyGold, string.Empty, true);
-        buyButton = Action(purchaseRoot, "BuyButton", buyButtonLabel, OnBuyClicked, true);
-        refreshButton = Action(panelRect, "RefreshButton", refreshButtonLabel, OnRefreshClicked, false);
+        buyButton = Action(purchaseRoot, "BuyButton", GameText.Get("map.shop.buy", buyButtonLabel), OnBuyClicked, true);
+        refreshButton = Action(panelRect, "RefreshButton", GameText.Get("map.shop.restock", refreshButtonLabel), OnRefreshClicked, false);
         RectTransform refreshIconRect = Rect(refreshButton.transform, "RefreshIcon");
         Place(refreshIconRect, 22, 20, 40, 40);
         MapHudGlyph refreshIcon = refreshIconRect.gameObject.AddComponent<MapHudGlyph>();
         refreshIcon.shape = MapHudGlyph.Shape.Refresh; refreshIcon.color = Gold; refreshIcon.raycastTarget = false;
         RectTransform refreshLabel = refreshButton.GetComponentInChildren<TMP_Text>().rectTransform;
         refreshLabel.offsetMin = new Vector2(72, 6);
-        closeButton = Action(panelRect, "CloseButton", closeButtonLabel, Hide, false);
+        closeButton = Action(panelRect, "CloseButton", GameText.Get("map.shop.leave", closeButtonLabel), Hide, false);
         ApplyFonts();
     }
 
@@ -140,7 +140,7 @@ public partial class MapMerchantOverlay
         MapMerchantFrameGraphic soldOutFrame = card.soldOutBadge.gameObject.AddComponent<MapMerchantFrameGraphic>();
         soldOutFrame.style = MapMerchantFrameGraphic.Style.Badge; soldOutFrame.raycastTarget = false;
         card.soldOutBadge.gameObject.SetActive(offer.isSoldOut);
-        card.price = Text(rect, "Price", 30, offer.isSoldOut ? Muted : MoneyGold, offer.isSoldOut ? "已售罄" : FormatPrice(offer, true), true);
+        card.price = Text(rect, "Price", 30, offer.isSoldOut ? Muted : MoneyGold, offer.isSoldOut ? GameText.Get("ui.map_merchant.sold_out", "已售罄") : FormatPrice(offer, true), true);
         if (offer.isSoldOut) card.price.alignment = TextAlignmentOptions.Top;
         return card;
     }

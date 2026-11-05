@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "导流"
   m_EditorClassIdentifier: 
+  localizationKey: skill.304_slash_2
   skillName: "导流"
   description: "蓝白电弧沿杖身成束窜出，把已带电的目标推向爆发边缘。"
   skillCategory: 0

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Sacrifice
   m_EditorClassIdentifier: 
+  localizationKey: skill.sacrifice
   skillName: "\u727A\u7272"
   description: "\u7EBF\u88AB\u731B\u5730\u62C9\u7D27\uFF0C\u5080\u5121\u628A\u81EA\u5DF1\u6324\u6210\u4E00\u628A\u4E0D\u4F1A\u75BC\u7684\u5203\u3002"
   skillCategory: 0

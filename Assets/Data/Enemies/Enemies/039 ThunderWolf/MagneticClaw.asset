@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: MagneticClaw
   m_EditorClassIdentifier: 
+  localizationKey: skill.magneticclaw
   skillName: "\u78C1\u722A"
   description: "\u5E26\u7535\u7684\u722A\u51FB\u547D\u4E2D\u65F6\uFF0C\u5BF9\u81EA\u8EAB\u4E0E\u76EE\u6807\u5404\u65BD\u52A0
     2 \u5C42\u7535\u6D41\u3002"

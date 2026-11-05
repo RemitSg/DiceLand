@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Scratch
   m_EditorClassIdentifier: 
+  localizationKey: skill.scratch
   skillName: "\u6293\u6320"
   description: "\u5C0F\u732B\u54AA\u51B2\u4F60\u4F38\u51FA\u4E86\u722A\u5B50"
   energyCost: 0

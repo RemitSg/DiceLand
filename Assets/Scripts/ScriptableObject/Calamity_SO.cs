@@ -43,6 +43,8 @@ public class CalamityBuiltInEffectEntry
 public class Calamity_SO : ScriptableObject
 {
     public string calamityId = "calamity";
+    public string LocalizedName => GameText.Content("calamity." + calamityId, "name", DisplayName);
+    public string LocalizedDescription => GameText.Content("calamity." + calamityId, "description", description);
     public string calamityName = "灾厄";
     [Min(1)] public int calamityTier = 1;
     [TextArea(3, 8)] public string description;

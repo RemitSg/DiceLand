@@ -595,7 +595,7 @@ public class BattleAllyController : MonoBehaviour
     {
         CharacterData_SO characterData = CharacterData;
         if (characterData != null && !string.IsNullOrWhiteSpace(characterData.characterName))
-            return characterData.characterName;
+            return characterData.LocalizedName;
 
         return gameObject.name;
     }

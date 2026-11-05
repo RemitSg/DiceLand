@@ -45,14 +45,14 @@ public static class GameText
     {
         code = Normalize(code);
         int request = ++selection;
-        if (code == LanguageCode)
+        if (code == LanguageCode && table.IsValid())
         {
             IsChanging = false;
             completed?.Invoke(true);
             return;
         }
 
-        IsChanging = true;
+        IsChanging = code != LanguageCode;
         var initialization = LocalizationSettings.InitializationOperation;
         if (initialization.IsDone) LoadTable(initialization);
         else initialization.Completed += LoadTable;
@@ -100,9 +100,13 @@ public static class GameText
         return string.IsNullOrEmpty(localized) ? source : localized;
     }
 
+    public static string Content(string category, int id, string field, string source)
+        => Content(category + "." + id.ToString(CultureInfo.InvariantCulture), field, source);
+
     public static string Content(string key, string field, string source)
     {
-        return string.IsNullOrEmpty(key) ? source : Get(key + "." + field, source);
+        // Chinese is the authored content, including runtime changes to its source fields.
+        return LanguageCode == Chinese || string.IsNullOrEmpty(key) ? source : Get(key + "." + field, source);
     }
 
     public static string Format(string key, string source, params (string name, object value)[] arguments)

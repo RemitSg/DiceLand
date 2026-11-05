@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Creep
   m_EditorClassIdentifier: 
+  localizationKey: skill.creep
   skillName: "\u8513\u5EF6"
   description: "\u9ED1\u6697\u5728\u8513\u5EF6\u3002"
   energyCost: 0

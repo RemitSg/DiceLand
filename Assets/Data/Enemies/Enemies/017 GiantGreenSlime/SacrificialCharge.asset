@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: SacrificialCharge
   m_EditorClassIdentifier: 
+  localizationKey: skill.sacrificialcharge
   skillName: "\u820D\u8EAB\u51B2\u649E"
   description: "\u4F7F\u7528\u65F6\u5BF9\u81EA\u5DF1\u9020\u6210 2 \u4F24\u5BB3\u3002\u5355\u65B9\u9762\u653B\u51FB\u65F6\uFF0C\u6BCF\u679A\u9AB0\u5B50\u989D\u5916\u9020\u6210 2 \u4F24\u5BB3"
   skillCategory: 0

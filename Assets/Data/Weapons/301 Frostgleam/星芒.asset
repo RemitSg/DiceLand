@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "\u661F\u8292"
   m_EditorClassIdentifier: 
+  localizationKey: skill.301_frostgleam_slash_3
   skillName: "\u661F\u8292 \xB7 \u5BD2"
   description: "Jenny \u5C06\u81EA\u8EAB\u7684\u62FF\u624B\u6280\u80FD\u4E0E\u6CD5\u6756\u80FD\u529B\u7ED3\u5408\u8D77\u6765\u7684\u5F3A\u529B\u6280\u80FD\uFF0C\u65BD\u5C55\u9700\u8981\u6781\u81F4\u7684\u6CE8\u610F\u529B\u3002"
   skillCategory: 0

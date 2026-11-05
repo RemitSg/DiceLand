@@ -2901,6 +2901,7 @@ MonoBehaviour:
   composition: {fileID: 122505921}
   interactionGroup: {fileID: 122505922}
   modalFrame: {fileID: 21300000, guid: dc474d05632f01e4fba20795f45f088f, type: 3}
+  stationHeading: {fileID: 15314066}
   stations:
   - station: 0
     plaque: {fileID: 1808608201}

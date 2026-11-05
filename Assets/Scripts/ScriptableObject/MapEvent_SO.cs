@@ -148,7 +148,8 @@ public class MapEventOptionData
     public bool resolveEvent = true;
     public MapEventOptionHandler_SO customHandler;
 
-    public string DisplayLabel => string.IsNullOrWhiteSpace(optionLabel) ? "未命名选项" : optionLabel;
+    public string DisplayLabel => string.IsNullOrWhiteSpace(optionLabel)
+        ? GameText.Get("ui.event.unnamed_choice", "未命名选项") : optionLabel;
 }
 
 [CreateAssetMenu(fileName = "MapEvent", menuName = "Events/Map Event")]
@@ -165,13 +166,19 @@ public class MapEvent_SO : ScriptableObject
 
     public string Localize(string field, string source)
     {
-        return string.IsNullOrWhiteSpace(eventId) ? source : GameText.Get($"event.{eventId}.{field}", source);
+        return string.IsNullOrWhiteSpace(eventId) ? source : GameText.Content("event." + eventId, field, source);
     }
 
     public string LocalizeOption(MapEventOptionData option, string field, string source)
     {
         return option != null && !string.IsNullOrWhiteSpace(option.optionId)
             ? Localize($"option.{option.optionId}.{field}", source) : source;
+    }
+
+    public string LocalizeResult(MapEventOptionData option, MapEventPossibleResultData result, string field, string source)
+    {
+        return result != null && !string.IsNullOrWhiteSpace(result.resultId)
+            ? LocalizeOption(option, $"result.{result.resultId}.{field}", source) : source;
     }
 
     public IReadOnlyList<MapEventOptionData> GetValidOptions()

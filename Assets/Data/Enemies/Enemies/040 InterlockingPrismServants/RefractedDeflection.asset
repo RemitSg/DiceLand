@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: RefractedDeflection
   m_EditorClassIdentifier: 
+  localizationKey: skill.refracteddeflection
   skillName: "\u6298\u5C04\u504F\u8F6C"
   description: "\u68F1\u9762\u8F7B\u8F7B\u4E00\u4FA7\uFF0C\u539F\u672C\u7B14\u76F4\u7684\u653B\u51FB\u88AB\u5F15\u5411\u901F\u5EA6\u6700\u6162\u7684\u5F71\u5B50\u3002"
   skillCategory: 1

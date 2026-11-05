@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "定影斩"
   m_EditorClassIdentifier: 
+  localizationKey: skill.204_slash
   skillName: "定影斩"
   description: "光线追着污浊与创痕收束，再沿折光印切出更深的白线。"
   skillCategory: 0

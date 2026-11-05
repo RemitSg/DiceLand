@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Siphon
   m_EditorClassIdentifier: 
+  localizationKey: skill.siphon
   skillName: "\u56DE\u6D41\u8679\u5438"
   description: "\u5B83\u6B63\u5728\u6536\u56DE\u6D12\u51FA\u7684\u8840"
   skillCategory: 0

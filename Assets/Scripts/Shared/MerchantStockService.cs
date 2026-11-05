@@ -23,18 +23,18 @@ public static class MerchantStockService
 
     public static bool TryRefreshStock(RunState state, BoardTileData tile, MerchantCatalog_SO catalog, DifficultyConfig_SO difficulty, out string message)
     {
-        message = "当前无法刷新商店。";
+        message = GameText.Get("ui.merchant_stock.the_shop_cannot_restock_now", "当前无法刷新商店。");
         if (state == null || tile == null || tile.tileType != MapTileType.Merchant || catalog == null) return false;
-        if (tile.sourceSpecialDungeon != null) { message = "特殊副本商店商品固定，无法刷新。"; return false; }
-        if (tile.merchantOffers == null || tile.merchantOffers.Count == 0) { message = "当前没有可刷新的商品。"; return false; }
+        if (tile.sourceSpecialDungeon != null) { message = GameText.Get("ui.merchant_stock.special_dungeon_shops_have_fixed_stock", "特殊副本商店商品固定，无法刷新。"); return false; }
+        if (tile.merchantOffers == null || tile.merchantOffers.Count == 0) { message = GameText.Get("ui.merchant_stock.there_are_no_items_to_replace", "当前没有可刷新的商品。"); return false; }
         int cost = RefreshCost(state, tile, difficulty);
-        if (state.money < cost) { message = $"金钱不足，需要 {cost} 金钱。"; return false; }
+        if (state.money < cost) { message = GameText.Format("map.event.try_execute.you_need_gold", "金钱不足，需要 {cost} 金钱。", ("cost", cost)); return false; }
         int total = CountRefreshableOffers(tile);
         int refreshed = RefreshOffers(tile, catalog, state, difficulty, CreateRandom(tile, tile.merchantRefreshCount + 1));
-        if (refreshed <= 0) { message = "当前没有可用的新商品可刷新。"; return false; }
-        if (!state.TrySpendMoney(cost)) { message = $"金钱不足，需要 {cost} 金钱。"; return false; }
+        if (refreshed <= 0) { message = GameText.Get("ui.merchant_stock.no_new_items_are_available_for_restocking", "当前没有可用的新商品可刷新。"); return false; }
+        if (!state.TrySpendMoney(cost)) { message = GameText.Format("map.event.try_execute.you_need_gold", "金钱不足，需要 {cost} 金钱。", ("cost", cost)); return false; }
         tile.merchantRefreshCount++;
-        message = refreshed >= total ? $"刷新成功：替换了 {refreshed} 个商品。" : $"部分刷新成功：替换了 {refreshed}/{total} 个商品。";
+        message = refreshed >= total ? GameText.Format("ui.merchant_stock.restocked_items", "刷新成功：替换了 {refreshed} 个商品。", ("refreshed", refreshed)) : GameText.Format("ui.merchant_stock.try_refresh_stock.restocked_items", "部分刷新成功：替换了 {refreshed}/{total} 个商品。", ("refreshed", refreshed), ("total", total));
         return true;
     }
 

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Cheat
   m_EditorClassIdentifier: 
+  localizationKey: skill.cheat
   skillName: "\u5343\u672F"
   description: "\u4ECE\u8896\u53E3\u91CC\u6362\u51FA\u4EC0\u4E48\uFF0C\u7136\u540E\u628A\u8D26\u672C\u7684\u4E00\u9875\u6084\u6084\u6495\u6389\u3002"
   skillCategory: 0

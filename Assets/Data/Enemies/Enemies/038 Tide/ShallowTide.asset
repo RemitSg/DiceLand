@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: ShallowTide
   m_EditorClassIdentifier: 
+  localizationKey: skill.shallowtide
   skillName: "\u6D45\u6F6E"
   description: "\u4F18\u5148\u653B\u51FB\u6C34\u8680\u5C42\u6570\u6700\u9AD8\u7684\u76EE\u6807\u3002\u4F7F\u7528\u65F6\uFF0C\u82E5\u76EE\u6807\u62E5\u6709
     10 \u5C42\u53CA\u4EE5\u4E0A\u6613\u4F24\uFF0C\u6BCF\u4E2A\u9AB0\u5B50\u5A01\u529B

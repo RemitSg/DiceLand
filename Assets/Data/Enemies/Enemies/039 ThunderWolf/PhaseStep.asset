@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: PhaseStep
   m_EditorClassIdentifier: 
+  localizationKey: skill.phasestep
   skillName: "\u9519\u76F8\u6B65"
   description: "\u9632\u5FA1\u6280\u80FD\u3002\u9AB0\u5B50 1 \u547D\u4E2D\u65F6\uFF0C\u5BF9\u81EA\u8EAB\u4E0E\u76EE\u6807\u5404\u65BD\u52A0
     2 \u5C42\u7535\u6D41\uFF1B\u9AB0\u5B50 2 \u62FC\u70B9\u65F6\uFF0C\u82E5\u81EA\u8EAB\u62E5\u6709\u7535\u6D41\uFF0C\u5A01\u529B

@@ -62,7 +62,7 @@ public partial class MapInventoryDetailView
         DetailFace(surface, MapCraftingFrameGraphic.Style.Window);
         titlePlaque = DetailRect(detailRect, "TitlePlaque"); PlaceDetail(titlePlaque, 298, -18, 404, 70);
         DetailCustomFace(titlePlaque, MapItemDetailFrameGraphic.DetailStyle.Title);
-        headingText = DetailText(titlePlaque, "Heading", 36, DetailGold, "物品详情");
+        headingText = DetailText(titlePlaque, "Heading", 36, DetailGold, GameText.Get("ui.map_inventory_detail_view.item_details", "物品详情"));
         StretchDetail(headingText.rectTransform, 44, 7); headingText.alignment = TextAlignmentOptions.Midline;
         closeXButton = DetailButton(detailRect, "CloseXButton", "×", false, Hide, out _);
         PlaceDetail((RectTransform)closeXButton.transform, 920, 20, 58, 58);
@@ -93,7 +93,7 @@ public partial class MapInventoryDetailView
         StretchDetail(categoryText.rectTransform, 32, 0); categoryText.alignment = TextAlignmentOptions.Midline;
         descriptionWell = DetailRect(detailRect, "DescriptionWell"); PlaceDetail(descriptionWell, 454, 238, 492, 204);
         DetailFace(descriptionWell, MapCraftingFrameGraphic.Style.Material);
-        descriptionHeading = DetailText(descriptionWell, "DescriptionHeading", 25, DetailGold, "物品描述");
+        descriptionHeading = DetailText(descriptionWell, "DescriptionHeading", 25, DetailGold, GameText.Get("ui.map_inventory_detail_view.description", "物品描述"));
         PlaceDetail(descriptionHeading.rectTransform, 22, 9, 390, 38);
         RectTransform scrollRoot = DetailRect(descriptionWell, "DescriptionScroll");
         descriptionScroll = scrollRoot.gameObject.AddComponent<ScrollRect>();
@@ -108,7 +108,7 @@ public partial class MapInventoryDetailView
         descriptionScroll.viewport = viewport; descriptionScroll.content = content;
         descriptionText = DetailText(content, "Description", DescriptionSize, DetailIvory, string.Empty);
         descriptionText.enableWordWrapping = true; descriptionText.alignment = TextAlignmentOptions.TopLeft;
-        extraHeading = DetailText(content, "ExtraHeading", 24, DetailGold, "补充说明");
+        extraHeading = DetailText(content, "ExtraHeading", 24, DetailGold, GameText.Get("ui.map_inventory_detail_view.additional_notes", "补充说明"));
         relicAdditionalDescriptionText = DetailText(content, "RelicAdditionalDescription", AdditionalDescriptionSize, new Color32(188, 202, 168, 255), string.Empty);
         relicAdditionalDescriptionText.enableWordWrapping = true;
         BuildDescriptionScrollbar();
@@ -117,7 +117,7 @@ public partial class MapInventoryDetailView
         actionStatusText.enableWordWrapping = true; actionStatusText.alignment = TextAlignmentOptions.Midline;
         actionButton = DetailButton(detailRect, "ActionButton", string.Empty, true, null, out actionLabel);
         actionFace = actionButton.GetComponent<MapCraftingFrameGraphic>(); actionButton.gameObject.SetActive(false);
-        closeButton = DetailButton(detailRect, "CloseButton", "关闭", false, Hide, out closeLabel);
+        closeButton = DetailButton(detailRect, "CloseButton", GameText.Get("ui.close", "关闭"), false, Hide, out closeLabel);
         PlaceDetail((RectTransform)closeButton.transform, 370, 484, 260, 56);
     }
 

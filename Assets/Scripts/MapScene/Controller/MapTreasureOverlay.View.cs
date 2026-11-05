@@ -60,7 +60,7 @@ public partial class MapTreasureOverlay
         ShowRelicChoice(data, onConfirm);
         closeAfterRelicConfirm = requireDeselectForRefresh = true;
         if (previous != null && data.choices.Contains(previous)) data.selectedChoice = previous;
-        subtitleText.text = !string.IsNullOrWhiteSpace(data.requiredMessage) ? data.requiredMessage : "请选择一个遗物，确认后返回战利品。";
+        subtitleText.text = !string.IsNullOrWhiteSpace(data.requiredMessage) ? data.requiredMessage : GameText.Get("ui.map_treasure.choose_a_relic_and_confirm_to_return_to", "请选择一个遗物，确认后返回战利品。");
         RefreshRelicSelection();
         UpdateRelicRefreshButton();
     }
@@ -117,7 +117,7 @@ public partial class MapTreasureOverlay
         cardScroll.movementType = ScrollRect.MovementType.Clamped; cardScroll.scrollSensitivity = 38;
         cardContent = Box(cardRoot, "CardContent", 0, 0, cardRoot.sizeDelta.x, cardRoot.sizeDelta.y);
         cardScroll.content = cardContent;
-        footerText = ForestText(panel, "ChoiceRule", 180, panelSize.y - 61, panelSize.x - 360, 40, 28, ForestGold, "仅可领取一项奖励");
+        footerText = ForestText(panel, "ChoiceRule", 180, panelSize.y - 61, panelSize.x - 360, 40, 28, ForestGold, GameText.Get("ui.map_treasure.claim_one_reward", "仅可领取一项奖励"));
         footerText.alignment = TextAlignmentOptions.Center;
         resultIcon = Box(panel, "ResultRewardIcon", (panelSize.x - 220) * 0.5f, 230, 220, 220).gameObject.AddComponent<Image>();
         resultIcon.preserveAspect = true; resultIcon.raycastTarget = false; MapItemIconFit.Attach(resultIcon);
@@ -125,9 +125,9 @@ public partial class MapTreasureOverlay
         resultText = ForestText(panel, "Result", 180, 480, panelSize.x - 360, 176, 36, new Color32(246, 231, 193, 255), string.Empty);
         resultText.alignment = TextAlignmentOptions.Center; resultText.enableWordWrapping = true;
         resultText.gameObject.SetActive(false);
-        continueButton = BuildButton(panel, "ContinueButton", new Vector2(0, 48), continueLabel, Hide);
-        confirmRelicChoiceButton = BuildButton(panel, "ConfirmRelicChoiceButton", new Vector2(0, 48), "确认", ConfirmRelicChoice);
-        refreshRelicChoiceButton = BuildButton(panel, "RefreshRelicChoiceButton", new Vector2(buttonSize.x * 0.5f + 18, 48), "刷新", RefreshRelicChoice);
+        continueButton = BuildButton(panel, "ContinueButton", new Vector2(0, 48), GameText.Get("ui.continue", continueLabel), Hide);
+        confirmRelicChoiceButton = BuildButton(panel, "ConfirmRelicChoiceButton", new Vector2(0, 48), GameText.Get("ui.confirm", "确认"), ConfirmRelicChoice);
+        refreshRelicChoiceButton = BuildButton(panel, "RefreshRelicChoiceButton", new Vector2(buttonSize.x * 0.5f + 18, 48), GameText.Get("ui.refresh", "刷新"), RefreshRelicChoice);
         foreach (Button button in new[] { continueButton, confirmRelicChoiceButton, refreshRelicChoiceButton }) button.gameObject.SetActive(false);
         for (int i = 0; i < 14; i++)
         {
@@ -204,12 +204,12 @@ public partial class MapTreasureOverlay
             category.alignment = TextAlignmentOptions.Midline; category.enableAutoSizing = true; category.fontSizeMin = 18; category.fontSizeMax = 27;
             TextMeshProUGUI name = ForestText(card, "ChoiceTitle", 40, 334, cardSize.x - 80, 80, 38, ParchmentInk, RewardName(choice), true);
             name.alignment = TextAlignmentOptions.Midline; name.enableWordWrapping = true; name.enableAutoSizing = true; name.fontSizeMin = 24; name.fontSizeMax = 42;
-            string detail = !choice.isAvailable ? choice.unavailableReason : choice.rewardType == TreasureRewardType.Wealth ? string.Empty : "数量 ×1";
+            string detail = !choice.isAvailable ? choice.unavailableReason : choice.rewardType == TreasureRewardType.Wealth ? string.Empty : GameText.Get("ui.map_treasure.quantity", "数量 ×1");
             if (choice.specialDungeonOptionIndex >= 0 && !string.IsNullOrWhiteSpace(choice.description)) detail = BuildChoiceDetail(choice);
             TextMeshProUGUI quantity = ForestText(card, "ChoiceDetail", 44, 416, cardSize.x - 88, 62, 25, ParchmentInk, detail);
             quantity.alignment = TextAlignmentOptions.Center; quantity.enableWordWrapping = true;
             quantity.enableAutoSizing = true; quantity.fontSizeMin = 18; quantity.fontSizeMax = 25;
-            Button claim = BuildButton(card, "ChooseButton", new Vector2(0, 53), chooseLabel, () =>
+            Button claim = BuildButton(card, "ChooseButton", new Vector2(0, 53), GameText.Get("ui.claim", chooseLabel), () =>
             {
                 using (MapFeedbackOrigin.FromText(quantity, card)) OnChoiceClicked(choice);
             });
@@ -246,7 +246,7 @@ public partial class MapTreasureOverlay
             scroll.content = content;
             TextMeshProUGUI description = ForestText(content, "ChoiceDetail", 0, 0, viewport.sizeDelta.x, viewport.sizeDelta.y, RelicDescriptionSize, ParchmentInk, entry.description);
             description.enableWordWrapping = true; description.overflowMode = TextOverflowModes.Overflow;
-            Button select = BuildButton(card, "SelectButton", new Vector2(0, 53), "选择", () => SelectRelicChoice(entry));
+            Button select = BuildButton(card, "SelectButton", new Vector2(0, 53), GameText.Get("ui.choose", "选择"), () => SelectRelicChoice(entry));
             var view = new RelicCardView
             {
                 entry = entry,
@@ -274,7 +274,7 @@ public partial class MapTreasureOverlay
         foreach (RelicCardView card in relicViews)
         {
             bool chosen = activeRelicChoiceData != null && activeRelicChoiceData.selectedChoice == card.entry;
-            card.motion.SetSelected(chosen); card.label.text = chosen ? "已选择" : "选择";
+            card.motion.SetSelected(chosen); card.label.text = chosen ? GameText.Get("ui.selected", "已选择") : GameText.Get("ui.choose", "选择");
         }
         if (confirmRelicChoiceButton != null) confirmRelicChoiceButton.interactable = activeRelicChoiceData?.selectedChoice != null;
         if (requireDeselectForRefresh) UpdateRelicRefreshButton();
@@ -282,8 +282,8 @@ public partial class MapTreasureOverlay
 
     private string Category(TreasureRewardChoice choice)
     {
-        if (choice.rewardType == TreasureRewardType.Wealth) return "金币";
-        if (choice.rewardType == TreasureRewardType.Knowledge) return "图纸";
+        if (choice.rewardType == TreasureRewardType.Wealth) return GameText.Get("term.gold", "金币");
+        if (choice.rewardType == TreasureRewardType.Knowledge) return GameText.Get("ui.map_hud.blueprints", "图纸");
         return PlainRarity(choice.relic != null ? choice.relic.rarity : choice.relicBagRarity);
     }
 
@@ -294,7 +294,7 @@ public partial class MapTreasureOverlay
 
     private static string CompactRelicTitle(string source)
     {
-        if (string.IsNullOrWhiteSpace(source)) return "遗物馈赠";
+        if (string.IsNullOrWhiteSpace(source)) return GameText.Get("ui.map_treasure.relic_reward", "遗物馈赠");
         int separator = source.IndexOfAny(new[] { ':', '：', '\n', '\r' });
         return separator > 0 ? source.Substring(0, separator).Trim() : source;
     }
@@ -313,10 +313,10 @@ public partial class MapTreasureOverlay
 
     private string RewardName(TreasureRewardChoice choice)
     {
-        if (choice.rewardType == TreasureRewardType.Wealth) return Mathf.Max(0, choice.moneyAmount) + " 金币";
-        if (choice.rewardType == TreasureRewardType.Knowledge) return choice.blueprint != null ? choice.blueprint.DisplayName : "暂无可用图纸";
-        if (choice.relic != null) return choice.relic.relicName;
-        return PlainRarity(choice.relicBagRarity) + "遗物袋";
+        if (choice.rewardType == TreasureRewardType.Wealth) return Mathf.Max(0, choice.moneyAmount) + GameText.Get("ui.map_treasure.gold", " 金币");
+        if (choice.rewardType == TreasureRewardType.Knowledge) return choice.blueprint != null ? choice.blueprint.LocalizedName : GameText.Get("ui.map_treasure.no_blueprint_available", "暂无可用图纸");
+        if (choice.relic != null) return choice.relic.LocalizedName;
+        return PlainRarity(choice.relicBagRarity) + GameText.Get("ui.map_treasure.relic_bag", "遗物袋");
     }
 
     private Button BuildForestButton(RectTransform parent, string name, Vector2 position, string label, UnityEngine.Events.UnityAction action)
@@ -389,10 +389,10 @@ public partial class MapTreasureOverlay
         confirmRelicChoiceButton.gameObject.SetActive(false); refreshRelicChoiceButton.gameObject.SetActive(false);
         continueButton.gameObject.SetActive(true);
         resultText.gameObject.SetActive(true);
-        resultText.text = string.IsNullOrWhiteSpace(message) ? "已领取宝藏奖励。" : message;
+        resultText.text = string.IsNullOrWhiteSpace(message) ? GameText.Get("ui.map_treasure.treasure_claimed", "已领取宝藏奖励。") : message;
         resultIcon.sprite = icon; resultIcon.gameObject.SetActive(icon != null);
-        titleText.text = "领取成功";
-        subtitleText.text = "宝藏已经回应了你的选择。";
+        titleText.text = GameText.Get("ui.map_treasure.reward_claimed", "领取成功");
+        subtitleText.text = GameText.Get("ui.map_treasure.the_treasure_has_answered_your_choice", "宝藏已经回应了你的选择。");
         successTime = Application.isPlaying ? 0.65f : 0f;
     }
 

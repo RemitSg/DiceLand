@@ -170,9 +170,9 @@ public class MapPauseMenuOverlay : MonoBehaviour
         {
             awaitingAbandonConfirmation = true;
             if (statusText != null)
-                statusText.text = abandonWarningText;
+                statusText.text = GameText.Get("map.pause.abandon_warning", abandonWarningText);
             if (abandonButtonText != null)
-                abandonButtonText.text = confirmAbandonLabel;
+                abandonButtonText.text = GameText.Get("map.pause.confirm_abandon", confirmAbandonLabel);
             return;
         }
 
@@ -187,7 +187,7 @@ public class MapPauseMenuOverlay : MonoBehaviour
         if (statusText != null)
             statusText.text = string.Empty;
         if (abandonButtonText != null)
-            abandonButtonText.text = abandonLabel;
+            abandonButtonText.text = GameText.Get("map.pause.abandon", abandonLabel);
     }
 
     private void ApplyCurrentSettingsToSliders()
@@ -287,11 +287,11 @@ public class MapPauseMenuOverlay : MonoBehaviour
         panelLayout.childForceExpandWidth = false;
         panelLayout.childForceExpandHeight = false;
 
-        Text titleText = CreateText(panelRect, "Title", titleLabel, titleFontSize, ResolveTitleFont(), titleColor, TextAnchor.MiddleCenter);
+        Text titleText = CreateText(panelRect, "Title", GameText.Get("map.pause.title", titleLabel), titleFontSize, ResolveTitleFont(), titleColor, TextAnchor.MiddleCenter);
         AddLayoutElement(titleText.rectTransform, panelSize.x - panelPadding.x * 2f, 72f);
 
-        musicSlider = CreateSliderRow(musicLabel, out musicValueText);
-        sfxSlider = CreateSliderRow(sfxLabel, out sfxValueText);
+        musicSlider = CreateSliderRow(GameText.Get("ui.pause.music", musicLabel), out musicValueText);
+        sfxSlider = CreateSliderRow(GameText.Get("ui.pause.sfx", sfxLabel), out sfxValueText);
 
         statusText = CreateText(panelRect, "Status", string.Empty, statusFontSize, ResolveBodyFont(), statusColor, TextAnchor.MiddleCenter);
         AddLayoutElement(statusText.rectTransform, panelSize.x - panelPadding.x * 2f, 44f);
@@ -307,13 +307,13 @@ public class MapPauseMenuOverlay : MonoBehaviour
         buttonsLayout.childForceExpandHeight = false;
         AddLayoutElement(buttonsRoot, buttonsSize.x, buttonsSize.y);
 
-        CreateButton(buttonsRoot, "ResumeButton", resumeLabel, buttonColor, buttonBackgroundSprite, Hide);
-        Button settingsButton = CreateButton(buttonsRoot, "SettingsButton", "设置", buttonColor, buttonBackgroundSprite, ShowSettings);
+        CreateButton(buttonsRoot, "ResumeButton", GameText.Get("ui.resume", resumeLabel), buttonColor, buttonBackgroundSprite, Hide);
+        Button settingsButton = CreateButton(buttonsRoot, "SettingsButton", GameText.Get("ui.menu.settings", "设置"), buttonColor, buttonBackgroundSprite, ShowSettings);
         settingsButtonText = settingsButton.GetComponentInChildren<Text>(true);
-        CreateButton(buttonsRoot, "SaveAndReturnButton", saveAndReturnLabel, saveButtonColor, saveButtonBackgroundSprite, HandleSaveAndReturnClicked);
-        Button abandonButton = CreateButton(buttonsRoot, "AbandonButton", abandonLabel, abandonButtonColor, abandonButtonBackgroundSprite, HandleAbandonClicked);
+        CreateButton(buttonsRoot, "SaveAndReturnButton", GameText.Get("map.pause.save_return", saveAndReturnLabel), saveButtonColor, saveButtonBackgroundSprite, HandleSaveAndReturnClicked);
+        Button abandonButton = CreateButton(buttonsRoot, "AbandonButton", GameText.Get("map.pause.abandon", abandonLabel), abandonButtonColor, abandonButtonBackgroundSprite, HandleAbandonClicked);
         abandonButtonText = abandonButton.GetComponentInChildren<Text>(true);
-        CreateButton(buttonsRoot, "CloseButton", closeLabel, buttonColor, buttonBackgroundSprite, Hide);
+        CreateButton(buttonsRoot, "CloseButton", GameText.Get("ui.close", closeLabel), buttonColor, buttonBackgroundSprite, Hide);
 
         musicSlider.onValueChanged.AddListener(HandleSliderChanged);
         sfxSlider.onValueChanged.AddListener(HandleSliderChanged);

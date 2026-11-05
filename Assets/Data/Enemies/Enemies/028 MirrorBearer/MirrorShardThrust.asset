@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: MirrorShardThrust
   m_EditorClassIdentifier: 
+  localizationKey: skill.mirrorshardthrust
   skillName: "\u955C\u68F1\u523A"
   description: "\u7834\u88C2\u7684\u955C\u68F1\u4ECE\u8896\u4E0B\u7A81\u51FA\uFF0C\u53EA\u523A\u5411\u5DF2\u7ECF\u6709\u88C2\u75D5\u7684\u5F71\u5B50\u3002"
   skillCategory: 0

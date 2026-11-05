@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Sleep
   m_EditorClassIdentifier: 
+  localizationKey: skill.sleep
   skillName: "\u4F11\u7720"
   description: "\u547C\u5524\u505C\u6B62\u4E86\u2026\u2026\u6682\u65F6\u3002"
   skillCategory: 1

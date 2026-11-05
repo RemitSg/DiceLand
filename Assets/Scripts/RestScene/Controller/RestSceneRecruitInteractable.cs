@@ -224,9 +224,9 @@ public class RestSceneRecruitInteractable : MonoBehaviour, IRestSceneStationPres
         }
 
         if (goldText != null)
-            goldText.text = string.Format(goldFormat, currentGold);
+            goldText.text = string.Format(GameText.Get("rest.recruit.gold", goldFormat), currentGold);
         if (costText != null)
-            costText.text = string.Format(costFormat, recruitCost);
+            costText.text = string.Format(GameText.Get("rest.recruit.cost", costFormat), recruitCost);
         if (statusText != null)
         {
             statusText.color = noteColor;
@@ -238,7 +238,7 @@ public class RestSceneRecruitInteractable : MonoBehaviour, IRestSceneStationPres
         if (emptyText != null)
         {
             emptyText.gameObject.SetActive(!hasCandidates);
-            emptyText.text = recruitLimitReached ? partyFullLabel : noRecruitLabel;
+            emptyText.text = recruitLimitReached ? GameText.Get("rest.recruit.party_full", partyFullLabel) : GameText.Get("rest.recruit.empty", noRecruitLabel);
         }
 
         for (int i = 0; i < cardViews.Count; i++)
@@ -286,15 +286,15 @@ public class RestSceneRecruitInteractable : MonoBehaviour, IRestSceneStationPres
         }
 
         if (card.nameText != null)
-            card.nameText.text = string.IsNullOrWhiteSpace(character.characterName) ? character.name : character.characterName;
+            card.nameText.text = string.IsNullOrWhiteSpace(character.characterName) ? character.name : character.LocalizedName;
         if (card.weaponText != null)
-            card.weaponText.text = string.Format(weaponFormat, GetWeaponTypeLabel(character.compatibleWeaponType));
+            card.weaponText.text = string.Format(GameText.Get("rest.recruit.weapon", weaponFormat), GetWeaponTypeLabel(character.compatibleWeaponType));
         if (card.hpText != null)
-            card.hpText.text = string.Format(hpFormat, Mathf.Max(1, character.baseHP));
+            card.hpText.text = string.Format(GameText.Get("rest.recruit.health", hpFormat), Mathf.Max(1, character.baseHP));
         if (card.descriptionText != null)
-            card.descriptionText.text = string.IsNullOrWhiteSpace(character.basicDescription) ? missingDescriptionLabel : character.basicDescription;
+            card.descriptionText.text = string.IsNullOrWhiteSpace(character.basicDescription) ? GameText.Get("ui.no_description", missingDescriptionLabel) : character.LocalizedDescription;
         if (card.priceText != null)
-            card.priceText.text = recruitCost > currentGold ? $"{string.Format(costFormat, recruitCost)}  {insufficientGoldLabel}" : string.Format(costFormat, recruitCost);
+            card.priceText.text = recruitCost > currentGold ? $"{string.Format(GameText.Get("rest.recruit.cost", costFormat), recruitCost)}  {GameText.Get("ui.insufficient_gold", insufficientGoldLabel)}" : string.Format(GameText.Get("rest.recruit.cost", costFormat), recruitCost);
 
         bool canRecruit = currentGold >= recruitCost;
         if (card.recruitButton != null)
@@ -311,7 +311,7 @@ public class RestSceneRecruitInteractable : MonoBehaviour, IRestSceneStationPres
 
         if (card.recruitButtonText != null)
         {
-            card.recruitButtonText.text = recruitButtonLabel;
+            card.recruitButtonText.text = GameText.Get("rest.recruit.title", recruitButtonLabel);
             card.recruitButtonText.color = buttonTextColor;
         }
     }
@@ -357,7 +357,7 @@ public class RestSceneRecruitInteractable : MonoBehaviour, IRestSceneStationPres
         titleRect.pivot = new Vector2(0.5f, 1f);
         titleRect.anchoredPosition = new Vector2(0f, -28f);
         titleRect.sizeDelta = new Vector2(320f, 60f);
-        title.text = titleText;
+        title.text = GameText.Get("rest.recruit.title", titleText);
 
         goldText = CreateText("GoldText", panelRect, bodyFont != null ? bodyFont : titleFont, noteFontSize, noteColor, TextAlignmentOptions.Left);
         RectTransform goldRect = goldText.rectTransform;
@@ -402,7 +402,7 @@ public class RestSceneRecruitInteractable : MonoBehaviour, IRestSceneStationPres
         statusRect.anchoredPosition = new Vector2(0f, 92f);
         statusRect.sizeDelta = new Vector2(panelSize.x - 80f, 34f);
 
-        closeButton = CreateButton("CloseButton", panelRect, closeButtonSprite, closeButtonLabel, out RectTransform closeRect);
+        closeButton = CreateButton("CloseButton", panelRect, closeButtonSprite, GameText.Get("ui.close", closeButtonLabel), out RectTransform closeRect);
         closeRect.anchorMin = new Vector2(0.5f, 0f);
         closeRect.anchorMax = new Vector2(0.5f, 0f);
         closeRect.pivot = new Vector2(0.5f, 0f);
@@ -475,7 +475,7 @@ public class RestSceneRecruitInteractable : MonoBehaviour, IRestSceneStationPres
         priceRect.anchoredPosition = new Vector2(24f, 92f);
         priceRect.sizeDelta = new Vector2(cardSize.x - 48f, 34f);
 
-        card.recruitButton = CreateButton("RecruitButton", card.root, recruitButtonSprite, recruitButtonLabel, out RectTransform recruitButtonRect);
+        card.recruitButton = CreateButton("RecruitButton", card.root, recruitButtonSprite, GameText.Get("rest.recruit.title", recruitButtonLabel), out RectTransform recruitButtonRect);
         recruitButtonRect.anchorMin = new Vector2(0.5f, 0f);
         recruitButtonRect.anchorMax = new Vector2(0.5f, 0f);
         recruitButtonRect.pivot = new Vector2(0.5f, 0f);
@@ -723,15 +723,15 @@ public class RestSceneRecruitInteractable : MonoBehaviour, IRestSceneStationPres
         switch (weaponType)
         {
             case WeaponType.Sword:
-                return "\u5251";
+                return GameText.Get("ui.map_crafting.sword", "剑");
             case WeaponType.Axe:
-                return "\u65a7";
+                return GameText.Get("ui.map_crafting.axe", "斧");
             case WeaponType.Bow:
-                return "\u5f13";
+                return GameText.Get("ui.map_crafting.bow", "弓");
             case WeaponType.Wand:
-                return "\u6cd5\u6756";
+                return GameText.Get("ui.map_crafting.staff", "法杖");
             case WeaponType.Dagger:
-                return "\u77ed\u5251";
+                return GameText.Get("ui.rest_scene_recruit_interactable.shortsword", "短剑");
             default:
                 return weaponType.ToString();
         }

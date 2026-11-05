@@ -81,11 +81,11 @@ public partial class MapInventoryDetailView : MonoBehaviour
 
         LootItem_SO item = lootState.lootItem;
         string attribute = item.attribute != null && !string.IsNullOrWhiteSpace(item.attribute.attributeName)
-            ? item.attribute.attributeName : "无属性";
+            ? item.attribute.LocalizedName : GameText.Get("ui.map_inventory_detail_view.no_attribute", "无属性");
         PresentItem(item, item.icon != null ? item.icon : fallbackSprite,
-            string.IsNullOrWhiteSpace(item.lootName) ? lootState.DisplayName : item.lootName,
+            lootState.DisplayName,
             GetLootRarityLabel(item.rarity), GetLootRarityColor(item.rarity), attribute, lootState.amount,
-            item.description, string.Empty);
+            item.LocalizedDescription, string.Empty);
     }
 
     public void Show(RunWeaponState weaponState, Sprite fallbackSprite = null)
@@ -98,9 +98,9 @@ public partial class MapInventoryDetailView : MonoBehaviour
 
         Weapon_SO weapon = weaponState.weaponData;
         PresentItem(weapon, weapon.icon != null ? weapon.icon : fallbackSprite,
-            string.IsNullOrWhiteSpace(weapon.weaponName) ? weaponState.DisplayName : weapon.weaponName,
+            weaponState.DisplayName,
             GetWeaponRarityLabel(weapon.rarity), GetWeaponRarityColor(weapon.rarity), GetWeaponTypeLabel(weapon.weaponType),
-            weaponState.amount, weapon.description, string.Empty);
+            weaponState.amount, weapon.LocalizedDescription, string.Empty);
     }
 
     public void Show(RunBlueprintState blueprintState, Sprite fallbackSprite = null)
@@ -112,8 +112,8 @@ public partial class MapInventoryDetailView : MonoBehaviour
         }
 
         CraftingBlueprint_SO blueprint = blueprintState.blueprintData;
-        PresentItem(blueprint, blueprint.DisplayIcon != null ? blueprint.DisplayIcon : fallbackSprite, blueprint.DisplayName,
-            GetLootRarityLabel(blueprint.rarity), GetLootRarityColor(blueprint.rarity), "图纸", blueprintState.amount,
+        PresentItem(blueprint, blueprint.DisplayIcon != null ? blueprint.DisplayIcon : fallbackSprite, blueprint.LocalizedName,
+            GetLootRarityLabel(blueprint.rarity), GetLootRarityColor(blueprint.rarity), GameText.Get("ui.map_hud.blueprints", "图纸"), blueprintState.amount,
             BlueprintDetailDescription(blueprint), string.Empty);
     }
 
@@ -126,9 +126,9 @@ public partial class MapInventoryDetailView : MonoBehaviour
         }
 
         Relic_SO relic = relicState.relicData;
-        PresentItem(relic, relic.icon != null ? relic.icon : fallbackSprite, relic.DisplayName,
-            GetLootRarityLabel(relic.rarity), GetLootRarityColor(relic.rarity), "遗物", relicState.amount,
-            relic.description, relic.additionalDescription);
+        PresentItem(relic, relic.icon != null ? relic.icon : fallbackSprite, relic.LocalizedName,
+            GetLootRarityLabel(relic.rarity), GetLootRarityColor(relic.rarity), GameText.Get("ui.map_hud.relics", "遗物"), relicState.amount,
+            relic.LocalizedDescription, relic.LocalizedNotes);
     }
 
     private void PresentItem(Object item, Sprite icon, string title, string rarity, Color rarityColor,
@@ -149,10 +149,11 @@ public partial class MapInventoryDetailView : MonoBehaviour
             metaText.text = modalRoot != null ? WrapWithColor(rarity, Color.Lerp(rarityColor, Color.white, 0.22f))
                 : $"{WrapWithColor(rarity, rarityColor)} | {category} | x{Mathf.Max(1, amount)}";
         if (categoryText != null) categoryText.text = category;
-        if (quantityText != null) quantityText.text = "数量 ×" + Mathf.Max(1, amount);
+        if (quantityText != null) quantityText.text = GameText.Get("ui.map_inventory_detail_view.quantity", "数量 ×") + Mathf.Max(1, amount);
         if (rarityFace != null) { rarityFace.accent = rarityColor; rarityFace.SetVerticesDirty(); }
-        if (categoryFace != null) { categoryFace.electricElement = category == "电"; categoryFace.SetVerticesDirty(); }
-        if (descriptionText != null) descriptionText.text = string.IsNullOrWhiteSpace(description) ? "暂无描述。" : description;
+        if (categoryFace != null) { categoryFace.electricElement = item is LootItem_SO loot && loot.attribute != null
+            && loot.attribute.attributeId == LootAttribute_SO.ElectricityId; categoryFace.SetVerticesDirty(); }
+        if (descriptionText != null) descriptionText.text = string.IsNullOrWhiteSpace(description) ? GameText.Get("ui.no_description", "暂无描述。") : description;
         SetRelicAdditionalDescription(additional);
         BeginPresentation(changed);
     }
@@ -214,15 +215,15 @@ public partial class MapInventoryDetailView : MonoBehaviour
             case LootRarity.Trash:
                 return "Trash";
             case LootRarity.Common:
-                return "\u666e\u901a";
+                return GameText.Get("ui.difficulty.normal", "普通");
             case LootRarity.Uncommon:
-                return "\u4f18\u79c0";
+                return GameText.Get("ui.map_crafting.fine", "优秀");
             case LootRarity.Rare:
-                return "\u7a00\u6709";
+                return GameText.Get("battle.settlement.rare", "稀有");
             case LootRarity.Epic:
-                return "\u53f2\u8bd7";
+                return GameText.Get("battle.settlement.epic", "史诗");
             case LootRarity.Legendary:
-                return "\u4f20\u8bf4";
+                return GameText.Get("battle.settlement.legendary", "传说");
             default:
                 return rarity.ToString();
         }
@@ -233,15 +234,15 @@ public partial class MapInventoryDetailView : MonoBehaviour
         switch (rarity)
         {
             case Rarity.Common:
-                return "\u666e\u901a";
+                return GameText.Get("ui.difficulty.normal", "普通");
             case Rarity.Uncommon:
-                return "\u4f18\u79c0";
+                return GameText.Get("ui.map_crafting.fine", "优秀");
             case Rarity.Rare:
-                return "\u7a00\u6709";
+                return GameText.Get("battle.settlement.rare", "稀有");
             case Rarity.Epic:
-                return "\u53f2\u8bd7";
+                return GameText.Get("battle.settlement.epic", "史诗");
             case Rarity.Legendary:
-                return "\u4f20\u8bf4";
+                return GameText.Get("battle.settlement.legendary", "传说");
             default:
                 return rarity.ToString();
         }
@@ -252,15 +253,15 @@ public partial class MapInventoryDetailView : MonoBehaviour
         switch (weaponType)
         {
             case WeaponType.Sword:
-                return "\u5251";
+                return GameText.Get("ui.map_crafting.sword", "剑");
             case WeaponType.Axe:
-                return "\u65a7";
+                return GameText.Get("ui.map_crafting.axe", "斧");
             case WeaponType.Bow:
-                return "\u5f13";
+                return GameText.Get("ui.map_crafting.bow", "弓");
             case WeaponType.Wand:
-                return "\u6756";
+                return GameText.Get("ui.map_inventory_detail_view.staff", "杖");
             case WeaponType.Dagger:
-                return "\u5315\u9996";
+                return GameText.Get("ui.map_crafting.dagger", "匕首");
             default:
                 return weaponType.ToString();
         }

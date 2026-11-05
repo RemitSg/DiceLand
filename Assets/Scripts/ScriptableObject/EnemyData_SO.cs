@@ -133,8 +133,12 @@ public class EnemyData_SO : ScriptableObject
     public int enemyID;
     public string enemyName;
     public string localizationKey;
-    public string LocalizedName => GameText.Content(localizationKey, "name", enemyName);
-    public string LocalizedDescription => GameText.Content(localizationKey, "description", enemyDescription);
+    public string LocalizedName => Localize("name", enemyName);
+    public string LocalizedDescription => Localize("description", enemyDescription);
+
+    public string Localize(string field, string source) => string.IsNullOrWhiteSpace(localizationKey)
+        ? GameText.Content("enemy", enemyID, field, source)
+        : GameText.Content(localizationKey, field, source);
     public int baseHP;
     [Range(0f, 100f)]
     [Tooltip("Flat damage reduction percentage applied to all incoming damage after other damage calculations are finished.")]

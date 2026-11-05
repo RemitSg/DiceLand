@@ -7,6 +7,7 @@ public sealed class MapEventBuiltInEffectExecutionRequest
     public RunState runState;
     public ActionPointSystem actionPointSystem;
     public BoardTileData currentEventTile;
+    public MapEvent_SO eventData;
     public MapEventOptionData optionData;
     public LevelTable_SO levelTable;
     public string sourceSceneName;
@@ -50,7 +51,7 @@ public static class MapEventBuiltInEffectExecutorService
             {
                 var copy = new RunState { money = state.money };
                 if (selectionCost > 0 && !copy.TrySpendMoney(selectionCost))
-                { message = $"金钱不足，需要 {selectionCost} 金钱。"; return false; }
+                { message = GameText.Format("map.event.you_need_gold", "金钱不足，需要 {selectionCost} 金钱。", ("selectionCost", selectionCost)); return false; }
                 var request = new MapEventBuiltInEffectExecutionRequest { runState = copy, moneyBeforeSelection = Mathf.Max(0, state.money) };
                 foreach (MapEventBuiltInEffectData effect in effects)
                 {
@@ -88,7 +89,7 @@ public static class MapEventBuiltInEffectExecutorService
         result = new MapEventBuiltInEffectExecutionResult();
         if (request == null || request.optionData == null || request.runState == null)
         {
-            result.message = "事件执行失败。";
+            result.message = GameText.Get("map.event.could_not_resolve_the_event", "事件执行失败。");
             return false;
         }
 
@@ -99,7 +100,9 @@ public static class MapEventBuiltInEffectExecutorService
             : MapEventEffectSequenceBuilder.BuildAllEffects(request.optionData);
         if (selectedResult != null)
         {
-            result.resultContent = selectedResult.resultContent;
+            result.resultContent = request.eventData != null
+                ? request.eventData.LocalizeResult(request.optionData, selectedResult, "result", selectedResult.resultContent)
+                : selectedResult.resultContent;
             result.nextEventOverride = selectedResult.nextEvent;
             result.hasResolveEventOverride = true;
             result.resolveEventOverride = selectedResult.resolveEvent;
@@ -146,7 +149,7 @@ public static class MapEventBuiltInEffectExecutorService
 
         result.message = effectMessages.Count > 0
             ? string.Join("\n", effectMessages)
-            : BuildFallbackMessage(request.optionData, selectedResult);
+            : BuildFallbackMessage(request.eventData, request.optionData, selectedResult);
         result.success = true;
         return true;
     }
@@ -216,7 +219,7 @@ public static class MapEventBuiltInEffectExecutorService
             case MapEventOptionBuiltInEffectType.ReforgeOwnedRandomRelicsSameRarity:
                 return ExecuteReforgeOwnedRandomRelicsSameRarity(request.runState, effectData, out message);
             default:
-                message = "未知事件效果。";
+                message = GameText.Get("map.event.unknown_event_effect", "未知事件效果。");
                 return false;
         }
     }
@@ -227,7 +230,7 @@ public static class MapEventBuiltInEffectExecutorService
         if (amount > 0)
             runState.AddMoney(amount);
 
-        message = $"获得 {amount} 金钱。";
+        message = GameText.Format("map.event.gained_gold", "获得 {amount} 金钱。", ("amount", amount));
         return true;
     }
 
@@ -239,7 +242,7 @@ public static class MapEventBuiltInEffectExecutorService
         if (gainedAmount > 0)
             runState.AddMoney(gainedAmount);
 
-        message = $"获得 {gainedAmount} 金钱。";
+        message = GameText.Format("map.event.execute_gain_random_money.gained_gold", "获得 {gainedAmount} 金钱。", ("gainedAmount", gainedAmount));
         return true;
     }
 
@@ -254,7 +257,7 @@ public static class MapEventBuiltInEffectExecutorService
         if (gainedAmount > 0)
             request.runState.AddMoney(gainedAmount);
 
-        message = $"获得 {gainedAmount} 金钱。";
+        message = GameText.Format("map.event.execute_gain_random_money.gained_gold", "获得 {gainedAmount} 金钱。", ("gainedAmount", gainedAmount));
         return true;
     }
 
@@ -274,7 +277,7 @@ public static class MapEventBuiltInEffectExecutorService
         if (gainedAmount > 0)
             runState.AddMoney(gainedAmount);
 
-        message = $"赌局重算了所有金钱：失去 {moneyBefore} 金钱，按 {rolledPercent}% 找回 {gainedAmount} 金钱。";
+        message = GameText.Format("map.event.the_gamble_took_gold_and_returned_of_it", "赌局重算了所有金钱：失去 {moneyBefore} 金钱，按 {rolledPercent}% 找回 {gainedAmount} 金钱。", ("moneyBefore", moneyBefore), ("rolledPercent", rolledPercent), ("gainedAmount", gainedAmount));
         return true;
     }
 
@@ -286,7 +289,7 @@ public static class MapEventBuiltInEffectExecutorService
     {
         int gainedExperience = Mathf.Max(0, effectData.effectAmount);
         ApplyExperienceToAllPartyMembers(runState, levelTable, gainedExperience);
-        message = $"所有角色获得 {gainedExperience} 经验。";
+        message = GameText.Format("map.event.each_party_member_gained_xp", "所有角色获得 {gainedExperience} 经验。", ("gainedExperience", gainedExperience));
         return true;
     }
 
@@ -299,8 +302,8 @@ public static class MapEventBuiltInEffectExecutorService
             runState.TrySpendMoney(actualLost);
 
         message = actualLost < cost
-            ? $"失去 {actualLost} 金钱，金钱已降至 0。"
-            : $"失去 {actualLost} 金钱。";
+            ? GameText.Format("map.event.lost_gold_the_purse_is_now_empty", "失去 {actualLost} 金钱，金钱已降至 0。", ("actualLost", actualLost))
+            : GameText.Format("map.event.lost_gold", "失去 {actualLost} 金钱。", ("actualLost", actualLost));
         return true;
     }
 
@@ -314,8 +317,8 @@ public static class MapEventBuiltInEffectExecutorService
             runState.TrySpendMoney(actualLost);
 
         message = actualLost < cost
-            ? $"失去 {actualLost} 金钱，金钱已降至 0。"
-            : $"失去 {actualLost} 金钱。";
+            ? GameText.Format("map.event.lost_gold_the_purse_is_now_empty", "失去 {actualLost} 金钱，金钱已降至 0。", ("actualLost", actualLost))
+            : GameText.Format("map.event.lost_gold", "失去 {actualLost} 金钱。", ("actualLost", actualLost));
         return true;
     }
 
@@ -331,7 +334,7 @@ public static class MapEventBuiltInEffectExecutorService
             }
         }
 
-        message = "所有角色已恢复至满血。";
+        message = GameText.Get("map.event.every_party_member_is_back_at_full_hp", "所有角色已恢复至满血。");
         return true;
     }
 
@@ -374,7 +377,7 @@ public static class MapEventBuiltInEffectExecutorService
         int gainAmount = Mathf.Max(0, effectData.effectAmount);
         if (actionPointSystem == null)
         {
-            message = "当前未找到行动点系统。";
+            message = GameText.Get("map.event.action_points_are_unavailable", "当前未找到行动点系统。");
             return false;
         }
 
@@ -394,7 +397,7 @@ public static class MapEventBuiltInEffectExecutorService
         int loseAmount = Mathf.Max(0, effectData.effectAmount);
         if (actionPointSystem == null)
         {
-            message = "当前未找到行动点系统。";
+            message = GameText.Get("map.event.action_points_are_unavailable", "当前未找到行动点系统。");
             return false;
         }
 
@@ -408,7 +411,7 @@ public static class MapEventBuiltInEffectExecutorService
         if (actionPointSystem != null)
             actionPointSystem.RestoreState(actionPointSystem.BasePoints, actionPointSystem.BonusPoints, actionPointSystem.CurrentMaxPoints);
 
-        message = "行动点已恢复至当前上限。";
+        message = GameText.Get("map.event.action_points_fully_restored", "行动点已恢复至当前上限。");
         return true;
     }
 
@@ -441,12 +444,12 @@ public static class MapEventBuiltInEffectExecutorService
     {
         if (effectData == null || effectData.specialDungeon == null)
         {
-            message = "特殊副本未配置。";
+            message = GameText.Get("map.event.this_special_dungeon_has_not_been_configured", "特殊副本未配置。");
             return false;
         }
 
         result.pendingSpecialDungeon = effectData.specialDungeon;
-        message = $"进入特殊副本：{effectData.specialDungeon.DisplayName}";
+        message = GameText.Format("map.event.entering", "进入特殊副本：{localizedName}", ("localizedName", effectData.specialDungeon.LocalizedName));
         return true;
     }
 
@@ -457,13 +460,13 @@ public static class MapEventBuiltInEffectExecutorService
     {
         if (runState == null || runState.relicInventory == null || runState.relicInventory.Count == 0)
         {
-            message = "当前没有可重铸的遗物。";
+            message = GameText.Get("map.event.there_are_no_relics_to_reforge", "当前没有可重铸的遗物。");
             return true;
         }
 
         if (effectData == null || effectData.relicTable == null || effectData.relicTable.Relics == null)
         {
-            message = "该事件效果未配置遗物表。";
+            message = GameText.Get("map.event.this_event_has_no_relic_reward_table", "该事件效果未配置遗物表。");
             return false;
         }
 
@@ -486,12 +489,12 @@ public static class MapEventBuiltInEffectExecutorService
             }
 
             runState.AddRelic(newRelic, 1);
-            descriptions.Add($"{oldRelic.DisplayName} -> {newRelic.DisplayName}");
+            descriptions.Add($"{oldRelic.LocalizedName} -> {newRelic.LocalizedName}");
         }
 
         message = descriptions.Count > 0
-            ? $"遗物被同品质重铸：{string.Join("，", descriptions)}。"
-            : "没有遗物发生变化。";
+            ? GameText.Format("map.event.relics_reforged_at_the_same_rarity", "遗物被同品质重铸：{join}。", ("join", string.Join("，", descriptions)))
+            : GameText.Get("map.event.no_relics_changed", "没有遗物发生变化。");
         return true;
     }
 
@@ -581,14 +584,15 @@ public static class MapEventBuiltInEffectExecutorService
         return optionData.possibleResults[optionData.possibleResults.Count - 1];
     }
 
-    private static string BuildFallbackMessage(MapEventOptionData optionData, MapEventPossibleResultData selectedResult)
+    private static string BuildFallbackMessage(MapEvent_SO eventData, MapEventOptionData optionData, MapEventPossibleResultData selectedResult)
     {
         if (selectedResult != null && !string.IsNullOrWhiteSpace(selectedResult.consequenceDescription))
-            return selectedResult.consequenceDescription;
+            return eventData?.LocalizeResult(optionData, selectedResult, "preview", selectedResult.consequenceDescription)
+                ?? selectedResult.consequenceDescription;
 
         return string.IsNullOrWhiteSpace(optionData.consequenceDescription)
-            ? $"已选择：{optionData.DisplayLabel}"
-            : optionData.consequenceDescription;
+            ? GameText.Format("map.event.selected", "已选择：{displayLabel}", ("displayLabel", eventData?.LocalizeOption(optionData, "label", optionData.DisplayLabel) ?? optionData.DisplayLabel))
+            : eventData?.LocalizeOption(optionData, "preview", optionData.consequenceDescription) ?? optionData.consequenceDescription;
     }
 
     private static void AddMessage(List<string> messages, string message)

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "落雷归针"
   m_EditorClassIdentifier: 
+  localizationKey: skill.304_slash_4
   skillName: "落雷归针"
   description: "云层里的雷声终于落下，又被细针强行牵回同一个焦点。"
   skillCategory: 0

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: QuickCut
   m_EditorClassIdentifier: 
+  localizationKey: skill.quickcut
   skillName: "\u901F\u5207"
   description: "\u4EE5\u8FC5\u96F7\u4E0D\u53CA\u63A9\u8033\u76D7\u94C3\u4E4B\u52BF\u6345\u5200\u5B50"
   skillCategory: 0

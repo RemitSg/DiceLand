@@ -19,6 +19,8 @@ public class CharacterData_SO : ScriptableObject
     public string characterId;
     public string legacySaveId;
     public string characterName;
+    public string LocalizedName => GameText.Content(CharacterId, "name", characterName);
+    public string LocalizedDescription => GameText.Content(CharacterId, "description", basicDescription);
 
     public string CharacterId => string.IsNullOrWhiteSpace(characterId) ? LegacySaveId : characterId;
     public string LegacySaveId => !string.IsNullOrWhiteSpace(legacySaveId) ? legacySaveId

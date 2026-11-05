@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: SideStep
   m_EditorClassIdentifier: 
+  localizationKey: skill.sidestep
   skillName: "\u4FA7\u6B65"
   description: "\u4ED6\u6B65\u5C65\u8F7B\u76C8\u5730\u5FAE\u5FAE\u4E00\u95EA\u3002"
   skillCategory: 0

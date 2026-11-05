@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Hatch
   m_EditorClassIdentifier: 
+  localizationKey: skill.hatch
   skillName: "\u5B75\u5316"
   description: "\u8584\u819C\u5728\u8840\u7EA2\u7684\u8109\u52A8\u91CC\u7F29\u653E\uFF0C\u91CC\u9762\u7684\u4E1C\u897F\u6B63\u8BD5\u7740\u5B66\u4F1A\u547C\u5438\u3002"
   skillCategory: 1

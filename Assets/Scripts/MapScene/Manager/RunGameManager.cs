@@ -256,7 +256,7 @@ public class RunGameManager : MonoBehaviour
             playerMapController.SetPosition(currentTile, false);
         if (mapHUD != null && boardManager.TryGetTile(runState.playerGridPosition, out BoardTileData tile))
             mapHUD.ShowTile(tile, GetMoveCost(tile), true);
-        RefreshHUD("新世界展开，除当前格与 BOSS 外的地图格子已重新生成。");
+        RefreshHUD(GameText.Get("map.feedback.a_new_world_unfolds_the_map_has_been", "新世界展开，除当前格与 BOSS 外的地图格子已重新生成。"));
     }
 
     private void OnApplicationPause(bool pauseStatus)
@@ -460,7 +460,7 @@ public class RunGameManager : MonoBehaviour
         mapViewController.SetInputBlockedEvaluator(IsMapViewInputBlocked);
         mapViewController.SetPointerOverUiIgnoredEvaluator(ShouldMapViewIgnorePointerOverUi);
         InitializeMapBackground();
-        RefreshHUD("已恢复地图进度。");
+        RefreshHUD(GameText.Get("map.feedback.map_progress_restored", "已恢复地图进度。"));
         TryPresentPendingCalamity();
         return true;
     }
@@ -505,7 +505,7 @@ public class RunGameManager : MonoBehaviour
 
         if (!isRepeatedSelection)
         {
-            mapHUD.ShowStatus("正在查看格子详情。再次点击该格子可尝试进入。");
+            mapHUD.ShowStatus(GameText.Get("map.feedback.viewing_tile_details_select_the_tile_again_to", "正在查看格子详情。再次点击该格子可尝试进入。"));
             if (isTutorialRun && tutorialBattleInspectSelectionAllowed && IsTutorialFirstBattleTile(tile))
             {
                 tutorialBattleInspectSelectionAllowed = false;
@@ -579,7 +579,7 @@ public class RunGameManager : MonoBehaviour
 
         if (!boardManager.IsAdjacent(runState.playerGridPosition, tile.coord, runState != null && runState.allowDiagonalMapMovement))
         {
-            mapHUD.ShowStatus("该格子不在可进入范围内，已显示详细信息。");
+            mapHUD.ShowStatus(GameText.Get("map.feedback.this_tile_is_out_of_reach_you_can", "该格子不在可进入范围内，已显示详细信息。"));
             return;
         }
 
@@ -594,19 +594,19 @@ public class RunGameManager : MonoBehaviour
             if (previewContext.canPreview && mapBattleTilePreviewController != null)
             {
                 if (!mapBattleTilePreviewController.BeginPreview(previewContext))
-                    RefreshHUD("战斗格预览未能打开。");
+                    RefreshHUD(GameText.Get("ui.map_battle_tile_preview.could_not_open_the_battle_preview", "战斗格预览未能打开。"));
                 return;
             }
         }
 
         if (!CanAttemptMove(tile, selectedTileMoveCost))
         {
-            RefreshHUD($"行动点不足，需要 {selectedTileMoveCost} 点。");
+            RefreshHUD(GameText.Format("map.feedback.not_enough_ap_this_move_requires", "行动点不足，需要 {selectedTileMoveCost} 点。", ("selectedTileMoveCost", selectedTileMoveCost)));
             return;
         }
 
         if (!TryExecuteMove(tile, selectedTileMoveCost))
-            RefreshHUD("本次移动未能完成。");
+            RefreshHUD(GameText.Get("ui.map_battle_tile_preview.could_not_move", "本次移动未能完成。"));
         return;
     }
 
@@ -734,8 +734,8 @@ public class RunGameManager : MonoBehaviour
         ShowPendingMoveRelicStatusIfAny();
 
         string message = string.IsNullOrWhiteSpace(fallbackMessage)
-            ? "灾厄效果：伏击触发，空地中出现了敌人。"
-            : $"{fallbackMessage}\n灾厄效果：伏击触发，空地中出现了敌人。";
+            ? GameText.Get("map.feedback.calamity_ambush_enemies_have_appeared_on_the_empty", "灾厄效果：伏击触发，空地中出现了敌人。")
+            : GameText.Format("map.feedback.try_trigger_visited_empty_tile_ambush.calamity_ambush_enemies_have_appeared_on_the_empty", "{fallbackMessage}\n灾厄效果：伏击触发，空地中出现了敌人。", ("fallbackMessage", fallbackMessage));
         RefreshHUD(message);
         if (!TryEnterBattle(tile))
             TryPresentPendingCalamity();
@@ -763,7 +763,7 @@ public class RunGameManager : MonoBehaviour
         boardManager.SetSelectedTile(tile.coord);
         boardManager.RefreshAllViews();
         mapHUD.ShowTile(tile, GetMoveCost(tile), true);
-        mapHUD.ShowStatus("正在查看格子详情。");
+        mapHUD.ShowStatus(GameText.Get("map.feedback.viewing_tile_details", "正在查看格子详情。"));
     }
 
     private void OpenForgePanel(BoardTileData tile)
@@ -810,7 +810,7 @@ public class RunGameManager : MonoBehaviour
         if (!result.success)
             return result.message;
 
-        RefreshHUD($"购买成功：{result.displayName} - {result.price} 金钱");
+        RefreshHUD(GameText.Format("map.feedback.bought_for_gold", "购买成功：{displayName} - {price} 金钱", ("displayName", result.displayName), ("price", result.price)));
         return result.message;
     }
 
@@ -842,7 +842,7 @@ public class RunGameManager : MonoBehaviour
 
         MapMovementService.AdvanceExhaustedCycle(runState, actionPointSystem,
             activeDifficultyConfig != null ? activeDifficultyConfig : difficultyConfig, runFlowState.PendingCalamityTiers);
-        RefreshHUD($"\u707e\u5384\u6c14\u606f\u6fc0\u5316\uff0c\u5f53\u524d\u707e\u5384\u7b49\u7ea7 {runState.calamityTier}\u3002");
+        RefreshHUD(GameText.Format("map.feedback.calamity_intensifies_current_tier", "灾厄气息激化，当前灾厄等级 {calamityTier}。", ("calamityTier", runState.calamityTier)));
         if (runFlowState.DeferPendingCalamityUntilMapResume || runFlowState.DeferPendingCalamityUntilOverlayClosed)
             return;
         TryPresentPendingCalamity();
@@ -1452,7 +1452,7 @@ public class RunGameManager : MonoBehaviour
         if (tile.tileType == MapTileType.Boss && !runState.IsBossUnlocked)
         {
             runFlowState.DeferPendingCalamityUntilMapResume = false;
-            string lockedMessage = $"Boss 未解锁。当前钥匙 {runState.currentKeys}/{runState.requiredKeys}。";
+            string lockedMessage = GameText.Format("map.feedback.the_boss_is_locked_keys", "Boss 未解锁。当前钥匙 {currentKeys}/{requiredKeys}。", ("currentKeys", runState.currentKeys), ("requiredKeys", runState.requiredKeys));
             RefreshHUD(lockedMessage);
             boardManager.RefreshTile(tile.coord);
             return false;
@@ -1461,7 +1461,7 @@ public class RunGameManager : MonoBehaviour
         if (enemyRoster == null)
         {
             runFlowState.DeferPendingCalamityUntilMapResume = false;
-            RefreshHUD("RunGameManager 尚未配置敌人列表。");
+            RefreshHUD(GameText.Get("map.feedback.no_enemy_roster_is_configured", "RunGameManager 尚未配置敌人列表。"));
             return false;
         }
 
@@ -1544,7 +1544,7 @@ public class RunGameManager : MonoBehaviour
             });
         BattleEncounterRuntime.SetEncounter(encounterData);
 
-        RefreshHUD($"进入战斗：{encounterGroup.groupName}");
+        RefreshHUD(GameText.Format("map.feedback.entering_battle", "进入战斗：{localizedName}", ("localizedName", encounterGroup.LocalizedName)));
         sceneTransitionController.TransitionToScene(battleSceneName);
         return true;
     }
@@ -1636,7 +1636,7 @@ public class RunGameManager : MonoBehaviour
         {
             runFlowState.DeferPendingCalamityUntilMapResume = false;
             runFlowState.SuppressPendingCalamityOnNextRestActionPointRestore = false;
-            RefreshHUD("这个休息格已经使用过了。");
+            RefreshHUD(GameText.Get("map.feedback.you_have_already_used_this_rest_tile", "这个休息格已经使用过了。"));
             return false;
         }
         if (sceneTransitionController != null && sceneTransitionController.IsTransitioning)
@@ -1649,7 +1649,7 @@ public class RunGameManager : MonoBehaviour
         {
             runFlowState.DeferPendingCalamityUntilMapResume = false;
             runFlowState.SuppressPendingCalamityOnNextRestActionPointRestore = false;
-            RefreshHUD("尚未配置休息场景。");
+            RefreshHUD(GameText.Get("map.feedback.no_rest_scene_is_configured", "尚未配置休息场景。"));
             return false;
         }
         if (runState == null)
@@ -1671,7 +1671,7 @@ public class RunGameManager : MonoBehaviour
             runFlowState.SuppressPendingCalamityOnNextRestActionPointRestore,
             activeSpecialDungeonContext);
         RestSceneRuntime.BeginVisit(SceneManager.GetActiveScene().name, tile.coord, recruitCharacterRoster, activeDifficultyConfig);
-        RefreshHUD("进入休息场景。");
+        RefreshHUD(GameText.Get("map.feedback.entering_the_rest_area", "进入休息场景。"));
         sceneTransitionController.TransitionToScene(restSceneName);
         return true;
     }
@@ -1691,13 +1691,13 @@ public class RunGameManager : MonoBehaviour
         if (tile.assignedEvent == null)
         {
             runFlowState.DeferPendingCalamityUntilOverlayClosed = false;
-            RefreshHUD("当前未配置可触发事件。");
+            RefreshHUD(GameText.Get("map.feedback.no_event_is_available_here", "当前未配置可触发事件。"));
             return false;
         }
 
         eventRandomLootDiscardPreviewCache.Clear();
         mapEventOverlay.Show(tile, tile.assignedEvent, HandleEventOptionSelected, BuildEventOptionPreview);
-        RefreshHUD($"触发事件：{tile.assignedEvent.DisplayName}");
+        RefreshHUD(GameText.Format("map.feedback.event", "触发事件：{displayName}", ("displayName", tile.assignedEvent.LocalizedName)));
         return true;
     }
 
@@ -1714,7 +1714,7 @@ public class RunGameManager : MonoBehaviour
 
         IReadOnlyList<TreasureRewardChoice> choices = TreasureRewardService.BuildTileChoices(runState, treasureRewardTable, tile);
         mapTreasureOverlay.Show(tile, choices, HandleTreasureOptionSelected, HandleTreasureRelicChoiceConfirmed);
-        RefreshHUD("\u53d1\u73b0\u5b9d\u85cf\uff0c\u8bf7\u9009\u62e9\u4e00\u4efd\u5956\u52b1\u3002");
+        RefreshHUD(GameText.Get("map.feedback.you_found_a_treasure_choose_a_reward", "发现宝藏，请选择一份奖励。"));
         return true;
     }
 
@@ -1823,7 +1823,7 @@ public class RunGameManager : MonoBehaviour
         if (runFlowState.PendingCalamityTiers.Count > 0)
             runFlowState.DeferPendingCalamityUntilMapResume = true;
 
-        RefreshHUD($"进入战斗：{encounterData.encounterLabel}");
+        RefreshHUD(GameText.Format("map.feedback.start_pending_event_encounter.entering_battle", "进入战斗：{encounterLabel}", ("encounterLabel", encounterData.encounterLabel)));
         if (sceneTransitionController != null)
             sceneTransitionController.TransitionToScene(battleSceneName);
         else
@@ -1839,7 +1839,7 @@ public class RunGameManager : MonoBehaviour
 
         if (IsInSpecialDungeon())
         {
-            RefreshHUD("当前已经在特殊副本中，无法重复进入。");
+            RefreshHUD(GameText.Get("map.feedback.you_are_already_inside_a_special_dungeon", "当前已经在特殊副本中，无法重复进入。"));
             return;
         }
 
@@ -1847,12 +1847,12 @@ public class RunGameManager : MonoBehaviour
         MapRunSnapshot mainMapSnapshot = CaptureCurrentMapSnapshot(null);
         if (mainMapSnapshot == null)
         {
-            RefreshHUD("进入特殊副本失败：无法保存当前地图。");
+            RefreshHUD(GameText.Get("map.feedback.could_not_save_the_current_map_before_entering", "进入特殊副本失败：无法保存当前地图。"));
             return;
         }
 
         activeSpecialDungeonContext = SpecialDungeonRuntimeContext.Create(dungeon, mainMapSnapshot, returnCoord);
-        if (activeSpecialDungeonContext == null) { RefreshHUD("无法创建特殊副本上下文。"); return; }
+        if (activeSpecialDungeonContext == null) { RefreshHUD(GameText.Get("map.feedback.could_not_create_the_dungeon", "无法创建特殊副本上下文。")); return; }
         runFlowState.DrainPendingCalamityTiers();
 
         SpecialDungeonBoardBuildResult buildResult = SpecialDungeonBoardBuilder.Build(dungeon, Environment.TickCount);
@@ -1878,14 +1878,14 @@ public class RunGameManager : MonoBehaviour
         InitializeMapBackground();
         mapViewController.PlaySpawnIntro(boardManager.GridToWorld(buildResult.spawnCoord));
         PersistCurrentRunSave();
-        RefreshHUD($"进入特殊副本：{dungeon.DisplayName}。副本内移动不消耗行动点。");
+        RefreshHUD(GameText.Format("map.feedback.entering_moving_within_this_dungeon_costs_no_ap", "进入特殊副本：{displayName}。副本内移动不消耗行动点。", ("displayName", dungeon.LocalizedName)));
     }
 
     private void ExitSpecialDungeon()
     {
         if (!IsInSpecialDungeon())
         {
-            RefreshHUD("当前不在特殊副本中。");
+            RefreshHUD(GameText.Get("map.feedback.you_are_outside_the_special_dungeon", "当前不在特殊副本中。"));
             return;
         }
 
@@ -1928,7 +1928,7 @@ public class RunGameManager : MonoBehaviour
             runFlowState.PendingCalamityTiers,
             runFlowState.SuppressPendingCalamityOnNextRestActionPointRestore,
             null);
-        RefreshHUD("已离开特殊副本，回到主地图。");
+        RefreshHUD(GameText.Get("map.feedback.you_left_the_dungeon_and_returned_to_the", "已离开特殊副本，回到主地图。"));
         TryPresentPendingCalamity();
     }
 
@@ -2083,7 +2083,7 @@ public class RunGameManager : MonoBehaviour
         tutorialLastViewNavigationTime = 0f;
         tutorialViewPointerTracking = false;
         tutorialViewPointerLastScreenPosition = Vector2.zero;
-        mapHUD?.ShowStatus("请先拖动或缩放地图。完成后教程会继续。");
+        mapHUD?.ShowStatus(GameText.Get("map.feedback.drag_or_zoom_the_map_to_continue_the", "请先拖动或缩放地图。完成后教程会继续。"));
     }
 
     private void HandleMapViewNavigationPerformed()
@@ -2093,7 +2093,7 @@ public class RunGameManager : MonoBehaviour
 
         tutorialViewNavigationObserved = true;
         tutorialLastViewNavigationTime = Time.unscaledTime;
-        mapHUD?.ShowStatus("很好，松开操作并稍等片刻，教程会继续。");
+        mapHUD?.ShowStatus(GameText.Get("map.feedback.release_the_map_and_wait_a_moment_to", "很好，松开操作并稍等片刻，教程会继续。"));
     }
 
     private void UpdateMapTutorialGuide()
@@ -2159,7 +2159,7 @@ public class RunGameManager : MonoBehaviour
     {
         tutorialViewNavigationObserved = true;
         tutorialLastViewNavigationTime = Time.unscaledTime;
-        mapHUD?.ShowStatus("很好，松开操作并稍等片刻，教程会继续。");
+        mapHUD?.ShowStatus(GameText.Get("map.feedback.release_the_map_and_wait_a_moment_to", "很好，松开操作并稍等片刻，教程会继续。"));
     }
 
     private void UpdateMapTutorialTargetHighlight()
@@ -2244,7 +2244,7 @@ public class RunGameManager : MonoBehaviour
     {
         if (isTutorialRun && tutorialMapIntroSequenceActive)
         {
-            mapHUD?.ShowStatus("请先阅读并完成当前教程提示。");
+            mapHUD?.ShowStatus(GameText.Get("map.feedback.finish_the_current_tutorial_prompt_first", "请先阅读并完成当前教程提示。"));
             return false;
         }
 
@@ -2257,12 +2257,12 @@ public class RunGameManager : MonoBehaviour
         switch (mapTutorialGuideStep)
         {
             case MapTutorialGuideStep.WaitingForViewNavigation:
-                mapHUD?.ShowStatus("请先拖动或缩放地图。");
+                mapHUD?.ShowStatus(GameText.Get("map.feedback.drag_or_zoom_the_map_first", "请先拖动或缩放地图。"));
                 return false;
             case MapTutorialGuideStep.WaitingForBattleInspect:
                 if (!IsTutorialFirstBattleTile(tile))
                 {
-                    mapHUD?.ShowStatus("请先点击高亮的战斗格。");
+                    mapHUD?.ShowStatus(GameText.Get("map.feedback.select_the_highlighted_battle_tile_first", "请先点击高亮的战斗格。"));
                     return false;
                 }
                 mapTutorialGuideStep = MapTutorialGuideStep.None;
@@ -2271,7 +2271,7 @@ public class RunGameManager : MonoBehaviour
             case MapTutorialGuideStep.WaitingForBattleEntry:
                 if (!IsTutorialFirstBattleTile(tile))
                 {
-                    mapHUD?.ShowStatus("请继续前往右侧的战斗格。");
+                    mapHUD?.ShowStatus(GameText.Get("map.feedback.continue_to_the_battle_tile_on_the_right", "请继续前往右侧的战斗格。"));
                     return false;
                 }
                 return true;
@@ -2359,7 +2359,8 @@ public class RunGameManager : MonoBehaviour
         if (focus.HasValue && mapHUD != null)
         {
             mapTutorialGuideOverlay.ShowFocused(title, body, onContinue, buttonLabel ?? GameText.Get("ui.continue", "继续"),
-                () => ResolveMapTutorialFocus(focus.Value), () => ResolveMapTutorialFocus(MapTutorialFocusPart.Resources));
+                () => ResolveMapTutorialFocus(focus.Value), () => ResolveMapTutorialFocus(MapTutorialFocusPart.Resources),
+                showFootprint: focus == MapTutorialFocusPart.ActionPoints);
             return;
         }
 
@@ -2373,7 +2374,8 @@ public class RunGameManager : MonoBehaviour
             return;
 
         mapTutorialGuideOverlay.ShowFocused(title, body, onContinue, GameText.Get("ui.continue", "继续"),
-            () => ResolveMapTutorialFocus(focus), () => ResolveMapTutorialFocus(MapTutorialFocusPart.TilePanel), GameText.Get("tutorial.map.tile.title", "格子详情"));
+            () => ResolveMapTutorialFocus(focus), () => ResolveMapTutorialFocus(MapTutorialFocusPart.TilePanel),
+            GameText.Get("tutorial.map.tile.title", "格子详情"), showFootprint: focus == MapTutorialFocusPart.TileCost);
     }
 
     private bool TryShowTutorialArrivalGuide(BoardTileData tile, Action onContinue = null)
@@ -2389,7 +2391,7 @@ public class RunGameManager : MonoBehaviour
         if (!MapTutorialFlowService.TryConsumeArrivalGuide(tutorialFlowState, tile.tileType, out MapTutorialGuideContent content))
             return false;
 
-        ShowMapTutorialMessage(content.title, content.body, onContinue, "继续");
+        ShowMapTutorialMessage(content.title, content.body, onContinue, GameText.Get("ui.continue", "继续"));
         return true;
     }
 
@@ -2439,13 +2441,13 @@ public class RunGameManager : MonoBehaviour
             List<Calamity_SO> choices = CalamitySelectionService.RollChoices(calamityPool, runState, calamityTier);
             if (choices.Count <= 0)
             {
-                RefreshHUD($"\u707e\u5384\u7b49\u7ea7 {calamityTier} \u5df2\u65e0\u53ef\u7528\u707e\u5384\uff0c\u8df3\u8fc7\u672c\u6b21\u707e\u5384\u9009\u62e9\u3002");
+                RefreshHUD(GameText.Format("map.feedback.no_calamities_remain_at_tier_this_choice_has", "灾厄等级 {calamityTier} 已无可用灾厄，跳过本次灾厄选择。", ("calamityTier", calamityTier)));
                 continue;
             }
 
             CalamitySelectionService.MarkChoicesDrawn(runState, choices);
 
-            RefreshHUD($"\u707e\u5384\u964d\u4e34\uff0c\u8bf7\u4ece {choices.Count} \u4e2a\u9009\u9879\u4e2d\u9009\u62e9\u5176\u4e00\u3002");
+            RefreshHUD(GameText.Format("map.feedback.a_calamity_descends_choose_one_of_options", "灾厄降临，请从 {count} 个选项中选择其一。", ("count", choices.Count)));
             mapCalamityOverlay.Show(calamityTier, choices, calamity => HandleCalamityChosen(calamityTier, calamity));
             return;
         }
@@ -2464,7 +2466,7 @@ public class RunGameManager : MonoBehaviour
         calamity.customEffectHandler?.OnCalamityApplied(runState, this);
         RelicExecutionContext context = RelicTriggerDispatcher.ProcessCalamityApplied(runState, this, calamity, calamityTier);
 
-        string calamityMessage = $"\u5df2\u627f\u53d7\u707e\u5384\uff1a{calamity.DisplayName}";
+        string calamityMessage = GameText.Format("map.feedback.calamity_accepted", "已承受灾厄：{displayName}", ("displayName", calamity.LocalizedName));
         if (builtInFeedback.Count > 0)
             calamityMessage = $"{calamityMessage}\n{string.Join("\n", builtInFeedback)}";
         if (context.feedbackMessages != null && context.feedbackMessages.Count > 0)
@@ -2677,13 +2679,13 @@ public class RunGameManager : MonoBehaviour
 
         BattleSettlementRelicChoiceData choice = pendingStartingRelicBagChoices.Dequeue();
         mapTreasureOverlay.ShowRelicChoice(choice, HandleStartingRelicChoiceConfirmed);
-        RefreshHUD("请选择初始遗物。");
+        RefreshHUD(GameText.Get("map.feedback.choose_a_starting_relic", "请选择初始遗物。"));
     }
 
     private bool HandleStartingRelicChoiceConfirmed(BattleSettlementRelicChoiceData relicChoiceData, out string message)
     {
         TreasureRewardResult result = TreasureRewardService.ApplyRelicChoice(runState, relicChoiceData);
-        message = result != null ? result.message : "遗物领取失败。";
+        message = result != null ? result.message : GameText.Get("ui.map_treasure.could_not_claim_the_relic", "遗物领取失败。");
         if (result == null || !result.success)
             return false;
 

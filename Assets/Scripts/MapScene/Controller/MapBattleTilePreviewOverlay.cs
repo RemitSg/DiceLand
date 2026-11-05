@@ -68,7 +68,7 @@ public sealed partial class MapBattleTilePreviewOverlay : MonoBehaviour
     {
         if (!IsVisible) return;
         interactionEnabled = true;
-        statusText.text = VisibleReason(string.IsNullOrWhiteSpace(message) ? "战斗预览当前不可用。" : message);
+        statusText.text = VisibleReason(string.IsNullOrWhiteSpace(message) ? GameText.Get("ui.map_battle_tile_preview.battle_preview_is_unavailable", "战斗预览当前不可用。") : message);
         statusText.color = Failure;
         RefreshStatusLayout();
         RefreshButtonStates();
@@ -145,7 +145,7 @@ public sealed partial class MapBattleTilePreviewOverlay : MonoBehaviour
     {
         bool valid = IsValidContext(currentContext);
         MapTileType type = valid ? currentContext.tile.tileType : MapTileType.Battle;
-        battleClassText.text = valid ? GetBattleClassLabel(type) : "战斗预览";
+        battleClassText.text = valid ? GetBattleClassLabel(type) : GameText.Get("ui.map_battle_tile_preview.battle_preview", "战斗预览");
         classIcon.sprite = MapForestArt.Icon(type);
         classIcon.enabled = classIcon.sprite != null;
         if (valid)
@@ -162,13 +162,13 @@ public sealed partial class MapBattleTilePreviewOverlay : MonoBehaviour
             ratingText.text = $"{danger}/8";
             SetAttributes(currentContext.attributeNames);
             statusText.text = currentContext.canConfirm ? string.Empty
-                : VisibleReason(string.IsNullOrWhiteSpace(currentContext.blockReason) ? "当前无法进入战斗。" : currentContext.blockReason);
+                : VisibleReason(string.IsNullOrWhiteSpace(currentContext.blockReason) ? GameText.Get("ui.map_battle_tile_preview.you_cannot_enter_this_battle_now", "当前无法进入战斗。") : currentContext.blockReason);
         }
         else
         {
             metadataText.text = explorationText.text = dangerText.text = ratingText.text = string.Empty;
             SetAttributes(Array.Empty<string>());
-            statusText.text = "预览不可用：该格子当前无法进入战斗。";
+            statusText.text = GameText.Get("ui.map_battle_tile_preview.this_battle_tile_cannot_be_entered_right_now", "预览不可用：该格子当前无法进入战斗。");
         }
         // Cost remains in the context and commit flow; the approved button has no cost suffix.
         confirmLabelText.text = GameText.Get("map.battle.enter", "进入战斗");
@@ -219,7 +219,7 @@ public sealed partial class MapBattleTilePreviewOverlay : MonoBehaviour
             case MapDangerBand.Mid: return GameText.Get("map.region.mid", "中层");
             case MapDangerBand.Inner: return GameText.Get("map.region.inner", "内层");
             case MapDangerBand.Core: return GameText.Get("map.region.core", "核心");
-            default: return "未知";
+            default: return GameText.Get("ui.map_battle_tile_preview.unknown", "未知");
         }
     }
 

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: SporeBloom
   m_EditorClassIdentifier: 
+  localizationKey: skill.sporebloom
   skillName: "\u5B62\u7FA4\u7EFD\u653E"
   description: "\u88AB\u5B83\u5403\u6389\u7684\u751F\u7269\u4F1A\u4EE5\u53E6\u4E00\u79CD\u65B9\u5F0F\u590D\u6D3B\u3002"
   skillCategory: 1

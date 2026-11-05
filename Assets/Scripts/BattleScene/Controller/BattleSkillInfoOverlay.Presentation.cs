@@ -76,7 +76,7 @@ public partial class BattleSkillInfoOverlay
         titlePlaque = SkillRect(panelRoot, "TitlePlaque");
         var plaque = titlePlaque.gameObject.AddComponent<MapItemDetailFrameGraphic>();
         plaque.detailStyle = MapItemDetailFrameGraphic.DetailStyle.Title; plaque.raycastTarget = false;
-        titleText = SkillText(titlePlaque, "Title", 42, SkillGold, "武器技能");
+        titleText = SkillText(titlePlaque, "Title", 42, SkillGold, GameText.Get("battle.skill.ally", "武器技能"));
         StretchSkill(titleText.rectTransform, 44, 2); titleText.alignment = TextAlignmentOptions.Midline;
         closeButton = SkillButton(panelRoot, "CloseButton", "×", Hide);
         subtitleText = SkillText(panelRoot, "Actor", 30, SkillIvory, string.Empty);
@@ -136,7 +136,7 @@ public partial class BattleSkillInfoOverlay
         hoverClauseContent.anchorMin = new Vector2(0, 1); hoverClauseContent.anchorMax = Vector2.one; hoverClauseContent.pivot = new Vector2(0, 1);
         hoverClauseText = SkillText(hoverClauseContent, "Clauses", enemyHoverBodyFontSize, SkillIvory, string.Empty); hoverClauseText.enableWordWrapping = true;
         hoverClauseAutoScroller = hoverClauseViewport.gameObject.AddComponent<BattleSkillClauseAutoScroller>();
-        hoverHintText = SkillText(hoverPanelRoot, "HoverHint", 20, SkillMuted, "点击速度按钮查看详情"); hoverHintText.alignment = TextAlignmentOptions.Midline;
+        hoverHintText = SkillText(hoverPanelRoot, "HoverHint", 20, SkillMuted, GameText.Get("battle.skill.rules.select_the_speed_slot_for_details", "点击速度按钮查看详情")); hoverHintText.alignment = TextAlignmentOptions.Midline;
     }
 
     private void LayoutForestPanel()

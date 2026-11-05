@@ -69,7 +69,7 @@ public static class TreasureRewardService
                 ? SpecialDungeonTreasureService.ApplyChoice(state, SpecialDungeonTreasureService.ResolveOption(tile, choice), tile.encounterSeed).relicChoiceData
                 : BuildRelicChoiceData(state, table, choice.relicBagRarity, tile.encounterSeed);
             if (bag == null || !bag.HasChoices)
-            { choice.isAvailable = false; choice.unavailableReason = "未找到可从遗物袋中获得的遗物。"; }
+            { choice.isAvailable = false; choice.unavailableReason = GameText.Get("ui.special_dungeon_treasure.no_relics_are_available_in_this_bag", "未找到可从遗物袋中获得的遗物。"); }
         }
         return choices;
     }
@@ -77,7 +77,7 @@ public static class TreasureRewardService
     public static TreasureRewardResult ApplyTileChoice(RunState state, TreasureRewardTable_SO table, BoardTileData tile, TreasureRewardChoice choice)
     {
         if (state == null || tile == null || tile.tileType != MapTileType.Treasure || tile.isResolved || choice == null || !choice.isAvailable)
-            return Fail("宝藏奖励不可领取。");
+            return Fail(GameText.Get("ui.treasure_reward.this_treasure_cannot_be_claimed", "宝藏奖励不可领取。"));
         TreasureRewardResult result = IsSpecialDungeonTreasure(tile)
             ? SpecialDungeonTreasureService.ApplyChoice(state, SpecialDungeonTreasureService.ResolveOption(tile, choice), tile.encounterSeed)
             : ApplyChoice(state, AbilityRunBonusRuntimeService.ResolveTreasureRewardTable(state, table), choice, tile.encounterSeed);
@@ -91,7 +91,7 @@ public static class TreasureRewardService
     public static TreasureRewardResult ApplyTileRelicChoice(RunState state, BoardTileData tile, BattleSettlementRelicChoiceData choice)
     {
         if (state == null || tile == null || tile.tileType != MapTileType.Treasure || tile.isResolved)
-            return Fail("遗物奖励不可领取。");
+            return Fail(GameText.Get("ui.treasure_reward.this_relic_cannot_be_claimed", "遗物奖励不可领取。"));
         TreasureRewardResult result = ApplyRelicChoice(state, choice);
         if (result.success) { tile.isVisited = true; tile.isResolved = true; }
         return result;
@@ -104,9 +104,9 @@ public static class TreasureRewardService
         int seed)
     {
         if (runState == null || choice == null)
-            return Fail("\u5b9d\u85cf\u5956\u52b1\u9886\u53d6\u5931\u8d25\u3002");
+            return Fail(GameText.Get("ui.treasure_reward.could_not_claim_the_treasure_reward", "宝藏奖励领取失败。"));
         if (!choice.isAvailable)
-            return Fail(string.IsNullOrWhiteSpace(choice.unavailableReason) ? "\u8be5\u5b9d\u85cf\u9009\u9879\u6682\u4e0d\u53ef\u7528\u3002" : choice.unavailableReason);
+            return Fail(string.IsNullOrWhiteSpace(choice.unavailableReason) ? GameText.Get("ui.treasure_reward.this_treasure_reward_is_unavailable", "该宝藏选项暂不可用。") : choice.unavailableReason);
 
         switch (choice.rewardType)
         {
@@ -117,45 +117,45 @@ public static class TreasureRewardService
                 {
                     success = true,
                     moneyAmount = gainedMoney,
-                    message = $"\u83b7\u5f97 {gainedMoney} \u91d1\u94b1\u3002"
+                    message = GameText.Format("ui.treasure_reward.gained_gold", "获得 {gainedMoney} 金钱。", ("gainedMoney", gainedMoney))
                 };
             case TreasureRewardType.Knowledge:
                 if (choice.blueprint == null)
-                    return Fail("\u672a\u627e\u5230\u53ef\u9886\u53d6\u7684\u56fe\u7eb8\u3002");
+                    return Fail(GameText.Get("ui.treasure_reward.no_blueprint_is_available_to_claim", "未找到可领取的图纸。"));
 
                 runState.AddPreviewedBlueprint(choice.blueprint, 1);
                 return new TreasureRewardResult
                 {
                     success = true,
                     blueprint = choice.blueprint,
-                    message = $"\u83b7\u5f97\u56fe\u7eb8\uff1a{GetBlueprintDisplayName(choice.blueprint)}\u3002"
+                    message = GameText.Format("ui.special_dungeon_treasure.gained_blueprint", "获得图纸：{getBlueprintDisplayName}。", ("getBlueprintDisplayName", GetBlueprintDisplayName(choice.blueprint)))
                 };
             case TreasureRewardType.Power:
                 BattleSettlementRelicChoiceData relicChoiceData = BuildRelicChoiceData(runState, rewardTable, choice.relicBagRarity, seed);
                 if (relicChoiceData == null || !relicChoiceData.HasChoices)
-                    return Fail("\u672a\u627e\u5230\u53ef\u4ece\u9057\u7269\u888b\u4e2d\u83b7\u5f97\u7684\u9057\u7269\u3002");
+                    return Fail(GameText.Get("ui.special_dungeon_treasure.no_relics_are_available_in_this_bag", "未找到可从遗物袋中获得的遗物。"));
 
                 return new TreasureRewardResult
                 {
                     success = true,
                     relicChoiceData = relicChoiceData,
-                    message = $"\u6253\u5f00{GetColoredRarityLabel(choice.relicBagRarity)}\u9057\u7269\u888b\uff0c\u8bf7\u9009\u62e9 1 \u4e2a\u9057\u7269\u3002"
+                    message = GameText.Format("ui.special_dungeon_treasure.open_a_relic_bag_and_choose_one_relic", "打开{getColoredRarityLabel}遗物袋，请选择 1 个遗物。", ("getColoredRarityLabel", GetColoredRarityLabel(choice.relicBagRarity)))
                 };
             default:
-                return Fail("\u672a\u77e5\u7684\u5b9d\u85cf\u5956\u52b1\u3002");
+                return Fail(GameText.Get("ui.treasure_reward.unknown_treasure_reward", "未知的宝藏奖励。"));
         }
     }
 
     public static TreasureRewardResult ApplyRelicChoice(RunState runState, BattleSettlementRelicChoiceData choiceData)
     {
         if (runState == null || choiceData == null)
-            return Fail("\u9057\u7269\u9009\u62e9\u5931\u8d25\u3002");
+            return Fail(GameText.Get("ui.treasure_reward.could_not_select_the_relic", "遗物选择失败。"));
         if (choiceData.rewardApplied)
-            return Fail("\u8be5\u9057\u7269\u5956\u52b1\u5df2\u7ecf\u9886\u53d6\u3002");
+            return Fail(GameText.Get("ui.treasure_reward.this_relic_reward_has_already_been_claimed", "该遗物奖励已经领取。"));
 
         BattleSettlementLootEntry selectedChoice = choiceData.selectedChoice;
         if (selectedChoice == null || selectedChoice.relicData == null || choiceData.choices == null || !choiceData.choices.Contains(selectedChoice))
-            return Fail("\u8bf7\u5148\u9009\u62e9\u4e00\u4e2a\u9057\u7269\u3002");
+            return Fail(GameText.Get("ui.map_treasure.choose_a_relic_first", "请先选择一个遗物。"));
 
         int amount = Mathf.Max(1, selectedChoice.amount);
         runState.AddPreviewedRelic(selectedChoice.relicData, amount);
@@ -165,7 +165,7 @@ public static class TreasureRewardService
         {
             success = true,
             relic = selectedChoice.relicData,
-            message = $"\u83b7\u5f97\u9057\u7269\uff1a{GetRelicDisplayName(selectedChoice.relicData)}\u3002"
+            message = GameText.Format("ui.special_dungeon_treasure.gained_relic", "获得遗物：{getRelicDisplayName}。", ("getRelicDisplayName", GetRelicDisplayName(selectedChoice.relicData)))
         };
     }
 
@@ -179,9 +179,9 @@ public static class TreasureRewardService
         return new TreasureRewardChoice
         {
             rewardType = TreasureRewardType.Wealth,
-            title = "\u8d22\u5bcc",
+            title = GameText.Get("ui.special_dungeon_treasure.wealth", "财富"),
             moneyAmount = money,
-            description = $"\u83b7\u5f97 {money} \u91d1\u94b1"
+            description = GameText.Format("ui.treasure_reward.gain_gold", "获得 {money} 金钱", ("money", money))
         };
     }
 
@@ -192,13 +192,13 @@ public static class TreasureRewardService
         return new TreasureRewardChoice
         {
             rewardType = TreasureRewardType.Knowledge,
-            title = "\u77e5\u8bc6",
+            title = GameText.Get("ui.treasure_reward.knowledge", "知识"),
             blueprint = blueprint,
             isAvailable = available,
-            unavailableReason = available ? string.Empty : "\u5b9d\u85cf\u56fe\u7eb8\u8868\u672a\u914d\u7f6e\u53ef\u7528\u56fe\u7eb8\u3002",
+            unavailableReason = available ? string.Empty : GameText.Get("ui.treasure_reward.no_blueprints_are_available_in_this_treasure_table", "宝藏图纸表未配置可用图纸。"),
             description = available
-                ? $"\u83b7\u5f97 1 \u5f20\u56fe\u7eb8\uff1a{GetBlueprintDisplayName(blueprint)}"
-                : "\u6682\u65e0\u53ef\u7528\u56fe\u7eb8"
+                ? GameText.Format("ui.treasure_reward.gain_one_blueprint", "获得 1 张图纸：{getBlueprintDisplayName}", ("getBlueprintDisplayName", GetBlueprintDisplayName(blueprint)))
+                : GameText.Get("ui.map_treasure.no_blueprint_available", "暂无可用图纸")
         };
     }
 
@@ -209,13 +209,13 @@ public static class TreasureRewardService
         return new TreasureRewardChoice
         {
             rewardType = TreasureRewardType.Power,
-            title = "\u529b\u91cf",
+            title = GameText.Get("ui.treasure_reward.power", "力量"),
             relicBagRarity = rarity,
             isAvailable = hasRelics,
-            unavailableReason = hasRelics ? string.Empty : "\u5b9d\u85cf\u9057\u7269\u8868\u672a\u914d\u7f6e\u53ef\u7528\u9057\u7269\u3002",
+            unavailableReason = hasRelics ? string.Empty : GameText.Get("ui.treasure_reward.no_relics_are_available_in_this_treasure_table", "宝藏遗物表未配置可用遗物。"),
             description = hasRelics
-                ? $"\u83b7\u5f97 1 \u4e2a{GetColoredRarityLabel(rarity)}\u9057\u7269\u888b"
-                : "\u6682\u65e0\u53ef\u7528\u9057\u7269"
+                ? GameText.Format("ui.treasure_reward.gain_one_relic_bag", "获得 1 个{getColoredRarityLabel}遗物袋", ("getColoredRarityLabel", GetColoredRarityLabel(rarity)))
+                : GameText.Get("ui.treasure_reward.no_relics_available", "暂无可用遗物")
         };
     }
 
@@ -262,8 +262,8 @@ public static class TreasureRewardService
                 3))
             return null;
 
-        choiceData.title = $"{GetRarityLabel(rarity)}\u9057\u7269\u888b\uff1a\u9009\u62e9 1 \u4e2a\u9057\u7269";
-        choiceData.requiredMessage = "\u8bf7\u5148\u4ece\u9057\u7269\u888b\u4e2d\u9009\u62e9\u4e00\u4e2a\u9057\u7269\u3002";
+        choiceData.title = GameText.Format("ui.special_dungeon_treasure.relic_bag_choose_one_relic", "{getRarityLabel}遗物袋：选择 1 个遗物", ("getRarityLabel", GetRarityLabel(rarity)));
+        choiceData.requiredMessage = GameText.Get("ui.special_dungeon_treasure.choose_a_relic_from_the_bag_first", "请先从遗物袋中选择一个遗物。");
         return choiceData;
     }
 
@@ -425,17 +425,17 @@ public static class TreasureRewardService
     private static string GetBlueprintDisplayName(CraftingBlueprint_SO blueprint)
     {
         if (blueprint == null)
-            return "\u56fe\u7eb8";
+            return GameText.Get("ui.map_hud.blueprints", "图纸");
 
-        return !string.IsNullOrWhiteSpace(blueprint.DisplayName) ? blueprint.DisplayName : blueprint.name;
+        return !string.IsNullOrWhiteSpace(blueprint.DisplayName) ? blueprint.LocalizedName : blueprint.name;
     }
 
     private static string GetRelicDisplayName(Relic_SO relic)
     {
         if (relic == null)
-            return "\u9057\u7269";
+            return GameText.Get("ui.map_hud.relics", "遗物");
 
-        return !string.IsNullOrWhiteSpace(relic.DisplayName) ? relic.DisplayName : relic.name;
+        return !string.IsNullOrWhiteSpace(relic.DisplayName) ? relic.LocalizedName : relic.name;
     }
 
     public static string GetRarityLabel(LootRarity rarity)
@@ -445,16 +445,16 @@ public static class TreasureRewardService
             case LootRarity.Trash:
                 return "Trash";
             case LootRarity.Uncommon:
-                return "\u7f55\u89c1";
+                return GameText.Get("ui.treasure_reward.uncommon", "罕见");
             case LootRarity.Rare:
-                return "\u7a00\u6709";
+                return GameText.Get("battle.settlement.rare", "稀有");
             case LootRarity.Epic:
-                return "\u53f2\u8bd7";
+                return GameText.Get("battle.settlement.epic", "史诗");
             case LootRarity.Legendary:
-                return "\u4f20\u5947";
+                return GameText.Get("ui.treasure_reward.legendary", "传奇");
             case LootRarity.Common:
             default:
-                return "\u5e38\u89c1";
+                return GameText.Get("ui.treasure_reward.common", "常见");
         }
     }
 

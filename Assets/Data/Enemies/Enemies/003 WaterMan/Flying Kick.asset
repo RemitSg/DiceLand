@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Flying Kick
   m_EditorClassIdentifier: 
+  localizationKey: skill.flying_kick
   skillName: "\u98DE\u8E22"
   description: "\u5B83\u662F\u600E\u4E48\u505A\u5230\u7684\uFF1F"
   skillCategory: 0

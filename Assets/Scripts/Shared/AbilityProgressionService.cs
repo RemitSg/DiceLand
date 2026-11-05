@@ -119,18 +119,18 @@ public sealed class AbilityProgressionService
         int pointsBefore = wallet.GetCurrentPoints();
         AbilityNodeDefinition node = config != null ? config.FindNode(nodeId) : null;
         if (node == null)
-            return Result(false, "能力节点不存在。", pointsBefore, pointsBefore, AbilityNodeState.Locked);
+            return Result(false, GameText.Get("ui.ability_progression.ability_node_unavailable", "能力节点不存在。"), pointsBefore, pointsBefore, AbilityNodeState.Locked);
 
         HashSet<string> unlocked = LoadUnlockedNodeIds();
         if (unlocked.Contains(node.nodeId))
-            return Result(false, "能力节点已经解锁。", pointsBefore, pointsBefore, AbilityNodeState.Unlocked);
+            return Result(false, GameText.Get("ui.ability_progression.this_ability_is_already_unlocked", "能力节点已经解锁。"), pointsBefore, pointsBefore, AbilityNodeState.Unlocked);
 
         if (!ArePrerequisitesUnlocked(node, unlocked))
-            return Result(false, "前置能力尚未解锁。", pointsBefore, pointsBefore, AbilityNodeState.Locked);
+            return Result(false, GameText.Get("ui.ability_progression.unlock_the_prerequisite_abilities_first", "前置能力尚未解锁。"), pointsBefore, pointsBefore, AbilityNodeState.Locked);
 
         int cost = Mathf.Max(0, node.cost);
         if (!wallet.TrySpendPoints(cost, out int pointsAfter))
-            return Result(false, "能力点不足。", pointsBefore, pointsAfter, AbilityNodeState.Available);
+            return Result(false, GameText.Get("ui.ability_progression.not_enough_ability_points", "能力点不足。"), pointsBefore, pointsAfter, AbilityNodeState.Available);
 
         unlocked.Add(node.nodeId);
         AbilityProgressionData data = LoadProgressionData();
@@ -139,7 +139,7 @@ public sealed class AbilityProgressionService
         if (node.isToggleable && node.enabledByDefault)
             EnableNodeInData(data, node);
         SaveProgressionData(data);
-        return Result(true, "能力解锁成功。", pointsBefore, pointsAfter, AbilityNodeState.Unlocked);
+        return Result(true, GameText.Get("ui.ability_progression.ability_unlocked", "能力解锁成功。"), pointsBefore, pointsAfter, AbilityNodeState.Unlocked);
     }
 
     public AbilityUnlockResult SetNodeEnabled(string nodeId, bool enabled)
@@ -439,7 +439,7 @@ public sealed class AbilityProgressionService
         AbilityTreeValidationResult result = new AbilityTreeValidationResult();
         if (config == null)
         {
-            result.AddError("[EMPTY_CONFIG] 能力树配置为空。");
+            result.AddError(GameText.Get("ui.ability_progression.empty_config_no_ability_tree_configuration", "[EMPTY_CONFIG] 能力树配置为空。"));
             return result;
         }
 
@@ -452,23 +452,23 @@ public sealed class AbilityProgressionService
             AbilityNodeDefinition node = nodes[i];
             if (node == null)
             {
-                result.AddError($"[EMPTY_NODE] 第 {i + 1} 个节点为空。");
+                result.AddError(GameText.Format("ui.ability_progression.empty_node_node_is_empty", "[EMPTY_NODE] 第 {value} 个节点为空。", ("value", i + 1)));
                 continue;
             }
 
             if (node.cost < 0)
-                result.AddError($"[NEGATIVE_COST] 节点 {(string.IsNullOrWhiteSpace(node.nodeId) ? (i + 1).ToString() : node.nodeId)} 的消耗为负数。");
+                result.AddError(GameText.Format("ui.ability_progression.negative_cost_node_has_a_negative_cost", "[NEGATIVE_COST] 节点 {value} 的消耗为负数。", ("value", (string.IsNullOrWhiteSpace(node.nodeId) ? (i + 1).ToString() : node.nodeId))));
 
             if (string.IsNullOrWhiteSpace(node.nodeId))
             {
-                result.AddError($"[EMPTY_ID] 节点 {i + 1} 的 ID 为空。");
+                result.AddError(GameText.Format("ui.ability_progression.empty_id_node_is_missing_an_id", "[EMPTY_ID] 节点 {value} 的 ID 为空。", ("value", i + 1)));
                 continue;
             }
 
             if (lookup.ContainsKey(node.nodeId))
             {
                 duplicateIds.Add(node.nodeId);
-                result.AddError($"[DUPLICATE_ID] 节点 ID 重复：{node.nodeId}");
+                result.AddError(GameText.Format("ui.ability_progression.duplicate_id_duplicate_node_id", "[DUPLICATE_ID] 节点 ID 重复：{nodeId}", ("nodeId", node.nodeId)));
                 continue;
             }
 
@@ -491,7 +491,7 @@ public sealed class AbilityProgressionService
                     continue;
 
                 if (!lookup.ContainsKey(prerequisiteId))
-                    result.AddError($"[MISSING_PREREQUISITE] 节点 {node.nodeId} 缺少前置节点引用：{prerequisiteId}");
+                    result.AddError(GameText.Format("ui.ability_progression.missing_prerequisite_node_references_missing_prerequisite", "[MISSING_PREREQUISITE] 节点 {nodeId} 缺少前置节点引用：{prerequisiteId}", ("nodeId", node.nodeId), ("prerequisiteId", prerequisiteId)));
             }
         }
 
@@ -500,7 +500,7 @@ public sealed class AbilityProgressionService
         foreach (KeyValuePair<string, AbilityNodeDefinition> pair in lookup)
         {
             if (HasCycle(pair.Key, lookup, visiting, visited))
-                result.AddError($"[CYCLE] 能力树存在循环前置依赖，涉及节点：{pair.Key}");
+                result.AddError(GameText.Format("ui.ability_progression.cycle_circular_ability_prerequisite_at_node", "[CYCLE] 能力树存在循环前置依赖，涉及节点：{key}", ("key", pair.Key)));
         }
 
         return result;

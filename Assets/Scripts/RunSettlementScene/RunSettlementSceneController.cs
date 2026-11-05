@@ -142,7 +142,7 @@ public class RunSettlementSceneController : MonoBehaviour
         group.childAlignment = TextAnchor.MiddleCenter;
         group.childForceExpandWidth = false;
 
-        TextMeshProUGUI title = AddText(header, "本局统计信息", 32, textColor, TextAlignmentOptions.Left, FontStyles.Bold, 66f, titleFont);
+        TextMeshProUGUI title = AddText(header, GameText.Get("run.settlement.run_summary", "本局统计信息"), 32, textColor, TextAlignmentOptions.Left, FontStyles.Bold, 66f, titleFont);
         LayoutElement titleLayout = title.GetComponent<LayoutElement>();
         titleLayout.preferredWidth = 360f;
         titleLayout.flexibleWidth = 0f;
@@ -150,7 +150,7 @@ public class RunSettlementSceneController : MonoBehaviour
         RectTransform spacer = CreateTransparent("HeaderSpacer", header);
         spacer.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
 
-        TextMeshProUGUI duration = AddText(header, $"游戏时长 {FormatDuration(settlementData.displayStats.durationSeconds)}", 18, mutedTextColor, TextAlignmentOptions.Right, FontStyles.Normal, 66f, bodyFont);
+        TextMeshProUGUI duration = AddText(header, GameText.Format("run.settlement.time_played", "游戏时长 {formatDuration}", ("formatDuration", FormatDuration(settlementData.displayStats.durationSeconds))), 18, mutedTextColor, TextAlignmentOptions.Right, FontStyles.Normal, 66f, bodyFont);
         duration.enableWordWrapping = false;
         duration.overflowMode = TextOverflowModes.Overflow;
         LayoutElement durationLayout = duration.GetComponent<LayoutElement>();
@@ -171,18 +171,18 @@ public class RunSettlementSceneController : MonoBehaviour
         group.childForceExpandWidth = true;
         group.childForceExpandHeight = false;
 
-        AddStatListRow(list, "通过普通战斗", SumBands(stats.normalBattleOuterCleared, stats.normalBattleMidCleared, stats.normalBattleInnerCleared, stats.normalBattleCoreCleared), normalBattleIcon);
-        AddStatListRow(list, "通过精英战斗", SumBands(stats.eliteBattleOuterCleared, stats.eliteBattleMidCleared, stats.eliteBattleInnerCleared, stats.eliteBattleCoreCleared), eliteBattleIcon);
-        AddStatListRow(list, "通关特殊副本", stats.specialDungeonCleared, specialDungeonIcon);
-        AddStatListRow(list, "探索格子数", stats.unexploredTilesVisited, exploredTilesIcon);
-        AddStatListRow(list, "总金币获取量", stats.totalMoneyGained, moneyGainedIcon);
-        AddStatListRow(list, "队伍人数", stats.partyMemberCount, partyMemberIcon);
-        AddStatListRow(list, "遗物数量", stats.relicCount, relicIcon);
-        AddStatListRow(list, "武器打造", stats.craftedWeaponCount, craftedWeaponIcon);
-        AddStatListRow(list, "事件格子", stats.eventTilesCompleted, eventTileIcon);
-        AddStatListRow(list, "事件战斗", stats.eventBattlesCompleted, eventBattleIcon);
-        AddStatListRow(list, "获得钥匙", stats.keysCollected, keyIcon);
-        AddStatListRow(list, "通过 BOSS", stats.bossesDefeated, bossIcon);
+        AddStatListRow(list, GameText.Get("run.settlement.normal_battles_won", "通过普通战斗"), SumBands(stats.normalBattleOuterCleared, stats.normalBattleMidCleared, stats.normalBattleInnerCleared, stats.normalBattleCoreCleared), normalBattleIcon);
+        AddStatListRow(list, GameText.Get("run.settlement.elite_battles_won", "通过精英战斗"), SumBands(stats.eliteBattleOuterCleared, stats.eliteBattleMidCleared, stats.eliteBattleInnerCleared, stats.eliteBattleCoreCleared), eliteBattleIcon);
+        AddStatListRow(list, GameText.Get("run.settlement.special_dungeons_cleared", "通关特殊副本"), stats.specialDungeonCleared, specialDungeonIcon);
+        AddStatListRow(list, GameText.Get("run.settlement.tiles_explored", "探索格子数"), stats.unexploredTilesVisited, exploredTilesIcon);
+        AddStatListRow(list, GameText.Get("run.settlement.gold_earned", "总金币获取量"), stats.totalMoneyGained, moneyGainedIcon);
+        AddStatListRow(list, GameText.Get("run.settlement.party_members", "队伍人数"), stats.partyMemberCount, partyMemberIcon);
+        AddStatListRow(list, GameText.Get("run.settlement.relics_collected", "遗物数量"), stats.relicCount, relicIcon);
+        AddStatListRow(list, GameText.Get("run.settlement.weapons_forged", "武器打造"), stats.craftedWeaponCount, craftedWeaponIcon);
+        AddStatListRow(list, GameText.Get("run.settlement.events_completed", "事件格子"), stats.eventTilesCompleted, eventTileIcon);
+        AddStatListRow(list, GameText.Get("run.settlement.event_battles_won", "事件战斗"), stats.eventBattlesCompleted, eventBattleIcon);
+        AddStatListRow(list, GameText.Get("run.settlement.keys_collected", "获得钥匙"), stats.keysCollected, keyIcon);
+        AddStatListRow(list, GameText.Get("run.settlement.bosses_defeated", "通过 BOSS"), stats.bossesDefeated, bossIcon);
     }
 
     private void AddStatListRow(RectTransform parent, string label, int targetValue, Sprite icon)
@@ -204,6 +204,9 @@ public class RunSettlementSceneController : MonoBehaviour
         TextMeshProUGUI labelText = AddText(row, label, 22, textColor, TextAlignmentOptions.Left, FontStyles.Bold, 50f, bodyFont);
         if (icon != null) ResourceKeywordText.Attach(labelText, false);
         labelText.enableWordWrapping = false;
+        labelText.enableAutoSizing = true;
+        labelText.fontSizeMin = 16f;
+        labelText.fontSizeMax = 22f;
         LayoutElement labelLayout = labelText.GetComponent<LayoutElement>();
         labelLayout.preferredWidth = icon != null ? 226f : 272f;
         labelLayout.flexibleWidth = 0f;
@@ -232,9 +235,9 @@ public class RunSettlementSceneController : MonoBehaviour
 
     private void AddTitleLogo(RectTransform parent)
     {
-        if (titleLogoSprite == null)
+        if (titleLogoSprite == null || GameText.LanguageCode == GameText.English)
         {
-            AddText(parent, "骰掷大陆", 58, goldColor, TextAlignmentOptions.Center, FontStyles.Bold, titleLogoHeight, titleFont);
+            AddText(parent, GameText.Get("ui.game_name", "骰掷大陆"), 58, goldColor, TextAlignmentOptions.Center, FontStyles.Bold, titleLogoHeight, titleFont);
             return;
         }
 
@@ -285,11 +288,11 @@ public class RunSettlementSceneController : MonoBehaviour
         group.childForceExpandWidth = true;
         group.childForceExpandHeight = false;
 
-        AddText(panel, "总得分", 20, goldColor, TextAlignmentOptions.Center, FontStyles.Bold, 26f, bodyFont);
+        AddText(panel, GameText.Get("run.settlement.total_score", "总得分"), 20, goldColor, TextAlignmentOptions.Center, FontStyles.Bold, 26f, bodyFont);
         totalScoreText = AddText(panel, "0", 68, new Color(1f, 0.88f, 0.56f, 1f), TextAlignmentOptions.Center, FontStyles.Bold, 82f, numberFont);
-        AddText(panel, "获得能力点", 20, goldColor, TextAlignmentOptions.Center, FontStyles.Bold, 28f, bodyFont);
+        AddText(panel, GameText.Get("run.settlement.ability_points_earned", "获得能力点"), 20, goldColor, TextAlignmentOptions.Center, FontStyles.Bold, 28f, bodyFont);
         AddText(panel, $"+{settlementData.gainedAbilityPoints}", 40, textColor, TextAlignmentOptions.Center, FontStyles.Bold, 46f, numberFont);
-        AddText(panel, $"当前能力点 {settlementData.abilityPointsAfter}", 16, mutedTextColor, TextAlignmentOptions.Center, FontStyles.Normal, 24f, bodyFont);
+        AddText(panel, GameText.Format("run.settlement.ability_points", "当前能力点 {abilityPointsAfter}", ("abilityPointsAfter", settlementData.abilityPointsAfter)), 16, mutedTextColor, TextAlignmentOptions.Center, FontStyles.Normal, 24f, bodyFont);
     }
 
     private void AddBossStatus(RectTransform parent, bool runCleared)
@@ -298,7 +301,7 @@ public class RunSettlementSceneController : MonoBehaviour
         Sprite statusSprite = runCleared ? bossDefeatedBackgroundSprite : bossFailedBackgroundSprite;
         ApplyBackground(status, statusSprite, new Color(0.11f, 0.13f, 0.15f, 0.94f));
         status.gameObject.AddComponent<LayoutElement>().preferredHeight = 112f;
-        TextMeshProUGUI statusText = AddText(status, runCleared ? "已击败最终威胁" : "未能击败最终威胁", 24, textColor, TextAlignmentOptions.Center, FontStyles.Bold, 112f, bodyFont);
+        TextMeshProUGUI statusText = AddText(status, runCleared ? GameText.Get("run.settlement.final_threat_defeated", "已击败最终威胁") : GameText.Get("run.settlement.the_final_threat_remains", "未能击败最终威胁"), 24, textColor, TextAlignmentOptions.Center, FontStyles.Bold, 112f, bodyFont);
         statusText.enableWordWrapping = false;
         statusText.overflowMode = TextOverflowModes.Overflow;
     }
@@ -316,9 +319,9 @@ public class RunSettlementSceneController : MonoBehaviour
         group.childAlignment = TextAnchor.MiddleCenter;
         group.childForceExpandWidth = true;
 
-        AddText(panel, "灾厄等级", 24, textColor, TextAlignmentOptions.Center, FontStyles.Bold, 34f, bodyFont);
+        AddText(panel, GameText.Get("run.settlement.calamity_tier", "灾厄等级"), 24, textColor, TextAlignmentOptions.Center, FontStyles.Bold, 34f, bodyFont);
         AddText(panel, $"Lv. {stats.calamityTier}", 58, Color.white, TextAlignmentOptions.Center, FontStyles.Bold, 70f, numberFont);
-        AddText(panel, stats.calamityScoreCounted ? "通关计分" : "未通关不计分", 18, mutedTextColor, TextAlignmentOptions.Center, FontStyles.Normal, 30f, bodyFont);
+        AddText(panel, stats.calamityScoreCounted ? GameText.Get("run.settlement.included_on_victory", "通关计分") : GameText.Get("run.settlement.counts_on_victory_only", "未通关不计分"), 18, mutedTextColor, TextAlignmentOptions.Center, FontStyles.Normal, 30f, bodyFont);
     }
 
     private void AddReturnButton(RectTransform parent, RunSettlementData settlementData)
@@ -335,7 +338,7 @@ public class RunSettlementSceneController : MonoBehaviour
             SceneManager.LoadScene(string.IsNullOrWhiteSpace(settlementData.returnSceneName) ? fallbackReturnSceneName : settlementData.returnSceneName);
         });
 
-        AddText(rect, "返回主菜单", 22, textColor, TextAlignmentOptions.Center, FontStyles.Bold, 72f, buttonFont != null ? buttonFont : bodyFont);
+        AddText(rect, GameText.Get("ui.main_menu", "返回主菜单"), 22, textColor, TextAlignmentOptions.Center, FontStyles.Bold, 72f, buttonFont != null ? buttonFont : bodyFont);
     }
 
     private System.Collections.IEnumerator PlayRevealSequence()

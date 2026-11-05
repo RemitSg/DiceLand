@@ -81,7 +81,7 @@ public partial class MapMerchantOverlay : MonoBehaviour
         cards.Clear();
         offerButtons.Clear();
         offerLookup.Clear();
-        moneyText.text = $"{(currentRunState != null ? currentRunState.money : 0)} 金币";
+        moneyText.text = GameText.Format("ui.map_merchant.gold", "{value} 金币", ("value", (currentRunState != null ? currentRunState.money : 0)));
         if (currentTile?.merchantOffers != null)
             foreach (MerchantOfferState offer in currentTile.merchantOffers)
             {
@@ -118,16 +118,16 @@ public partial class MapMerchantOverlay : MonoBehaviour
         bool hasOffer = selectedOffer != null;
         iconImage.sprite = hasOffer ? selectedOffer.DisplayIcon ?? fallbackIconSprite : fallbackIconSprite;
         iconImage.enabled = iconImage.sprite != null;
-        goodsNameText.text = hasOffer ? selectedOffer.DisplayName : "未选择商品";
+        goodsNameText.text = hasOffer ? selectedOffer.DisplayName : GameText.Get("ui.map_merchant.no_item_selected", "未选择商品");
         goodsNameText.color = hasOffer ? ResolveOfferNameColor(selectedOffer) : Ivory;
         metaText.text = hasOffer ? $"{GetGoodsTypeLabel(selectedOffer.itemType)} · {ResolveOfferRarityLabel(selectedOffer)}" : string.Empty;
-        descriptionText.text = hasOffer ? (string.IsNullOrWhiteSpace(selectedOffer.Description) ? "暂无商品描述。" : selectedOffer.Description) : "请选择一个商品来查看详情。";
+        descriptionText.text = hasOffer ? (string.IsNullOrWhiteSpace(selectedOffer.Description) ? GameText.Get("ui.map_merchant.no_item_description_available", "暂无商品描述。") : selectedOffer.Description) : GameText.Get("ui.map_merchant.select_an_item_to_see_its_details", "请选择一个商品来查看详情。");
         flavorText.text = hasOffer && selectedOffer.relicData != null ? selectedOffer.relicData.additionalDescription ?? string.Empty : string.Empty;
         MerchantPurchaseResult availability = MerchantPurchaseService.EvaluateOffer(currentRunState, currentTile, selectedOffer);
         availabilityText.text = hasOffer && !availability.success ? availability.message : string.Empty;
         priceText.text = hasOffer ? FormatPrice(selectedOffer, false) : "—";
         buyButton.interactable = hasOffer && buyHandler != null && availability.success;
-        buyButton.GetComponentInChildren<TMP_Text>().text = hasOffer && selectedOffer.isSoldOut ? "已售罄" : buyButtonLabel;
+        buyButton.GetComponentInChildren<TMP_Text>().text = hasOffer && selectedOffer.isSoldOut ? GameText.Get("ui.map_merchant.sold_out", "已售罄") : GameText.Get("map.shop.buy", buyButtonLabel);
         RefreshRefreshButtonState();
         layoutDirty = true;
         RefreshLayout();
@@ -169,7 +169,7 @@ public partial class MapMerchantOverlay : MonoBehaviour
     private void RefreshRefreshButtonState()
     {
         int cost = ResolveRefreshCost();
-        refreshButton.GetComponentInChildren<TMP_Text>().text = cost > 0 ? $"{refreshButtonLabel}    <color=#F0CC6B>{cost} 金币</color>" : refreshButtonLabel;
+        refreshButton.GetComponentInChildren<TMP_Text>().text = cost > 0 ? GameText.Format("ui.map_merchant.refresh_refresh_button_state.gold", "{get}    <color=#F0CC6B>{cost} 金币</color>", ("get", GameText.Get("map.shop.restock", refreshButtonLabel)), ("cost", cost)) : GameText.Get("map.shop.restock", refreshButtonLabel);
         refreshButton.interactable = refreshHandler != null && currentTile != null && cards.Count > 0 && currentRunState != null && currentRunState.money >= cost;
     }
 
@@ -186,8 +186,8 @@ public partial class MapMerchantOverlay : MonoBehaviour
     private string FormatPrice(MerchantOfferState offer, bool multiline)
     {
         int price = ResolveDisplayPrice(offer), original = Mathf.Max(0, offer.price);
-        if (price == original) return $"{price} 金币";
-        return $"<size=75%><color=#C2937B><s>{original} 金币</s></color></size>" + (multiline ? "\n" : "  ") + $"{price} 金币";
+        if (price == original) return GameText.Format("ui.map_merchant.format_price.gold", "{price} 金币", ("price", price));
+        return GameText.Format("ui.map_merchant.format_price.gold_2", "<size=75%><color=#C2937B><s>{original} 金币</s></color></size>", ("original", original)) + (multiline ? "\n" : "  ") + GameText.Format("ui.map_merchant.format_price.gold", "{price} 金币", ("price", price));
     }
 
 
@@ -196,15 +196,15 @@ public partial class MapMerchantOverlay : MonoBehaviour
         switch (itemType)
         {
             case MerchantItemType.Loot:
-                return "战利品";
+                return GameText.Get("battle.settlement.build_loot_section.loot", "战利品");
             case MerchantItemType.Weapon:
-                return "武器";
+                return GameText.Get("ui.map_crafting.weapon", "武器");
             case MerchantItemType.Blueprint:
-                return "图纸";
+                return GameText.Get("ui.map_hud.blueprints", "图纸");
             case MerchantItemType.Relic:
-                return "遗物";
+                return GameText.Get("ui.map_hud.relics", "遗物");
             default:
-                return "商品";
+                return GameText.Get("ui.map_merchant.item", "商品");
         }
     }
 
@@ -281,15 +281,15 @@ public partial class MapMerchantOverlay : MonoBehaviour
             case LootRarity.Trash:
                 return "Trash";
             case LootRarity.Common:
-                return "普通";
+                return GameText.Get("ui.difficulty.normal", "普通");
             case LootRarity.Uncommon:
-                return "优秀";
+                return GameText.Get("ui.map_crafting.fine", "优秀");
             case LootRarity.Rare:
-                return "稀有";
+                return GameText.Get("battle.settlement.rare", "稀有");
             case LootRarity.Epic:
-                return "史诗";
+                return GameText.Get("battle.settlement.epic", "史诗");
             case LootRarity.Legendary:
-                return "传说";
+                return GameText.Get("battle.settlement.legendary", "传说");
             default:
                 return rarity.ToString();
         }
@@ -300,15 +300,15 @@ public partial class MapMerchantOverlay : MonoBehaviour
         switch (rarity)
         {
             case Rarity.Common:
-                return "普通";
+                return GameText.Get("ui.difficulty.normal", "普通");
             case Rarity.Uncommon:
-                return "优秀";
+                return GameText.Get("ui.map_crafting.fine", "优秀");
             case Rarity.Rare:
-                return "稀有";
+                return GameText.Get("battle.settlement.rare", "稀有");
             case Rarity.Epic:
-                return "史诗";
+                return GameText.Get("battle.settlement.epic", "史诗");
             case Rarity.Legendary:
-                return "传说";
+                return GameText.Get("battle.settlement.legendary", "传说");
             default:
                 return rarity.ToString();
         }

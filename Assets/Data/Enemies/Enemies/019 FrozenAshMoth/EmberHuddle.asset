@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: EmberHuddle
   m_EditorClassIdentifier: 
+  localizationKey: skill.emberhuddle
   skillName: "\u70EC\u706D"
   description: "\u4F7F\u7528\u65F6\u6E05\u9664\u76EE\u6807\u7684\u6240\u6709\u5BD2\u51B7\uFF0C\u5E76\u4F9D\u6B64\u83B7\u5F97\u7B49\u91CF\u7684\u5A01\u529B\u63D0\u5347"
   skillCategory: 0

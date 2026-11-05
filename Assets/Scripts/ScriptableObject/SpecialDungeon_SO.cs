@@ -105,12 +105,17 @@ public sealed class SpecialDungeonTileEntry
 public class SpecialDungeon_SO : ScriptableObject
 {
     public string dungeonId = "SpecialDungeon";
+    public string LocalizedName => GameText.Content("dungeon." + dungeonId, "name", DisplayName);
+    public string LocalizedDescription => GameText.Content("dungeon." + dungeonId, "description", description);
     public string dungeonName = "Special Dungeon";
     [TextArea(3, 8)] public string description;
     [Min(0)] public int settlementScoreValue = 200;
     public List<SpecialDungeonTileEntry> entries = new List<SpecialDungeonTileEntry>();
 
     public string DisplayName => string.IsNullOrWhiteSpace(dungeonName) ? name : dungeonName;
+
+    public string LocalizeTile(int index, string field, string source)
+        => GameText.Content("dungeon." + dungeonId, $"tile.{index}.{field}", source);
 
     public IReadOnlyList<SpecialDungeonTileEntry> GetValidEntries()
     {

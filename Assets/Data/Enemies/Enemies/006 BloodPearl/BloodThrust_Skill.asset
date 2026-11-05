@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: BloodThrust_Skill
   m_EditorClassIdentifier: 
+  localizationKey: skill.bloodthrust_skill
   skillName: "\u8840\u523A"
   description: "\u6700\u597D\u522B\u88AB\u5B83\u7684\u8840\u523A\u624E\u5230"
   skillCategory: 0

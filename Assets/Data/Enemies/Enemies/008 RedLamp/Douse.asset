@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Douse
   m_EditorClassIdentifier: 
+  localizationKey: skill.douse
   skillName: "\u590D\u71C3"
   description: "\u770B\u8D77\u6765\u5B83\u7684\u706F\u706B\u8981\u71C3\u5C3D\u4E86\uFF1F\u963B\u6B62\u5B83\u7684\u590D\u71C3\u3002"
   transformEnemyToStageIndex: -1

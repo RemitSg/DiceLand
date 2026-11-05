@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: UndertowDrag
   m_EditorClassIdentifier: 
+  localizationKey: skill.undertowdrag
   skillName: "\u6C89\u6F6E\u62D6\u62FD"
   description: "\u5355\u65B9\u9762\u653B\u51FB\u65F6\u4F7F\u76EE\u6807\u83B7\u5F97
     2 \u5C42\u6C34\u8680\uFF1B\u547D\u4E2D\u540E\u53E6\u4F7F\u76EE\u6807\u83B7\u5F97

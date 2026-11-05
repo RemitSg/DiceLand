@@ -83,9 +83,9 @@ public class MapCalamityOverlay : MonoBehaviour
         panelRect.gameObject.SetActive(true);
 
         if (titleText != null)
-            titleText.text = "\u707e\u5384\u964d\u4e34";
+            titleText.text = GameText.Get("ui.map_calamity.calamity_descends", "灾厄降临");
         if (subtitleText != null)
-            subtitleText.text = $"\u707e\u5384\u7b49\u7ea7 {Mathf.Max(1, calamityTier)}\uff0c\u8bf7\u4ece\u4e0b\u5217\u707e\u5384\u4e2d\u9009\u62e9\u5176\u4e00\u627f\u53d7\u3002";
+            subtitleText.text = GameText.Format("ui.map_calamity.calamity_tier_choose_one_calamity_to_endure", "灾厄等级 {max}，请从下列灾厄中选择其一承受。", ("max", Mathf.Max(1, calamityTier)));
 
         RebuildCards(choices);
         ApplyFonts();
@@ -212,10 +212,10 @@ public class MapCalamityOverlay : MonoBehaviour
             float headerX = hasIllustration ? 126f : 18f;
             float headerWidth = hasIllustration ? cardSize.x - 144f : cardSize.x - 36f;
 
-            TextMeshProUGUI tierText = CreateText(card, "Tier", new Vector2(headerX, -18f), new Vector2(headerWidth, 28f), bodyFontSize - 2, cardAccentColor, $"\u707e\u5384\u7b49\u7ea7 {Mathf.Max(1, calamity.calamityTier)}", true);
+            TextMeshProUGUI tierText = CreateText(card, "Tier", new Vector2(headerX, -18f), new Vector2(headerWidth, 28f), bodyFontSize - 2, cardAccentColor, GameText.Format("ui.map_calamity.calamity_tier", "灾厄等级 {max}", ("max", Mathf.Max(1, calamity.calamityTier))), true);
             tierText.alignment = TextAlignmentOptions.Center;
 
-            string displayName = string.IsNullOrWhiteSpace(calamity.DisplayName) ? calamity.UniqueId : calamity.DisplayName;
+            string displayName = string.IsNullOrWhiteSpace(calamity.DisplayName) ? calamity.UniqueId : calamity.LocalizedName;
             TextMeshProUGUI nameText = CreateText(card, "Name", new Vector2(18f, -52f), new Vector2(cardSize.x - 36f, 56f), titleFontSize - 6, cardTextColor, displayName);
             nameText.alignment = TextAlignmentOptions.Center;
             nameText.enableWordWrapping = true;
@@ -224,7 +224,7 @@ public class MapCalamityOverlay : MonoBehaviour
             TextMeshProUGUI rarityText = CreateText(card, "Rarity", new Vector2(headerX, -94f), new Vector2(headerWidth, 28f), bodyFontSize - 2, cardAccentColor, BuildColoredRarityLabel(calamity.rarity), true);
             rarityText.alignment = TextAlignmentOptions.Center;
 
-            TextMeshProUGUI descriptionText = CreateText(card, "Description", new Vector2(18f, -136f), new Vector2(cardSize.x - 36f, 220f), bodyFontSize, cardTextColor, string.IsNullOrWhiteSpace(calamity.description) ? "\u6682\u65e0\u707e\u5384\u63cf\u8ff0\u3002" : calamity.description);
+            TextMeshProUGUI descriptionText = CreateText(card, "Description", new Vector2(18f, -136f), new Vector2(cardSize.x - 36f, 220f), bodyFontSize, cardTextColor, string.IsNullOrWhiteSpace(calamity.description) ? GameText.Get("ui.map_calamity.no_calamity_description_available", "暂无灾厄描述。") : calamity.LocalizedDescription);
             descriptionText.enableWordWrapping = true;
             descriptionText.overflowMode = TextOverflowModes.Overflow;
 
@@ -253,7 +253,7 @@ public class MapCalamityOverlay : MonoBehaviour
             handler?.Invoke(calamity);
         });
 
-        TextMeshProUGUI label = CreateText(rect, "Label", Vector2.zero, chooseButtonSize, buttonFontSize, chooseButtonTextColor, chooseButtonLabel, true);
+        TextMeshProUGUI label = CreateText(rect, "Label", Vector2.zero, chooseButtonSize, buttonFontSize, chooseButtonTextColor, GameText.Get("ui.choose", chooseButtonLabel), true);
         label.alignment = TextAlignmentOptions.Center;
         label.rectTransform.anchorMin = Vector2.zero;
         label.rectTransform.anchorMax = Vector2.one;

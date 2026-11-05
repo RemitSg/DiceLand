@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: WoodenSword_Normal
   m_EditorClassIdentifier: 
+  localizationKey: skill.woodensword_normal
   skillName: "\u6325\u780D"
   description: "\u501F\u529B\u6325\u780D\uFF0C\u7B80\u5355\u7684\u62DB\u5F0F"
   skillCategory: 0

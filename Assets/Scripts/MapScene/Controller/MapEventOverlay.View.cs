@@ -55,7 +55,7 @@ public partial class MapEventOverlay
 
         titleText = Text(panelRect, "Title", titleFontSize, Ivory, true);
         eventMetaText = Text(panelRect, "EventMeta", 28, Gold, true);
-        eventMetaText.text = "旅途事件";
+        eventMetaText.text = GameText.Get("ui.event.encounter", "旅途事件");
         eventMetaText.alignment = TextAlignmentOptions.MidlineRight;
         headerDivider = Rule(panelRect, "HeaderDivider", Gold);
         storyAccent = Rule(panelRect, "StoryAccent", Gold);

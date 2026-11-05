@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "\u63A0\u70EC"
   m_EditorClassIdentifier: 
+  localizationKey: skill.103_slash_2
   skillName: "\u63A0\u70EC"
   description: "\u5315\u9996\u8F7B\u8F7B\u4E00\u6311\uFF0C\u50CF\u4ECE\u7184\u706D\u7684\u706B\u76C6\u91CC\u62E8\u8D77\u4E00\u7C92\u7070\u7EA2\u7684\u661F\u3002"
   skillCategory: 0

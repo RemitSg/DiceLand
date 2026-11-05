@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: LoomingDark
   m_EditorClassIdentifier: 
   groupID: 8
+  localizationKey: enemy_group.8.loomingdark
   groupName: LoomingDark
   description: 
   enemies:

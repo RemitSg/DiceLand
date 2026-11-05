@@ -5,29 +5,29 @@ public static class MapTilePresentationService
         switch (tileType)
         {
             case MapTileType.Empty:
-                return "空白";
+                return GameText.Get("map.tile.empty", "空白");
             case MapTileType.Battle:
-                return "战斗";
+                return GameText.Get("map.tile.battle", "战斗");
             case MapTileType.Elite:
-                return "精英";
+                return GameText.Get("ui.map_hud.elite", "精英");
             case MapTileType.Event:
-                return "事件";
+                return GameText.Get("ui.event.title", "事件");
             case MapTileType.Merchant:
-                return "商人";
+                return GameText.Get("ui.map_hud.merchant", "商人");
             case MapTileType.Treasure:
-                return "\u5b9d\u85cf";
+                return GameText.Get("ui.map_hud.treasure", "宝藏");
             case MapTileType.Forge:
-                return "锻造";
+                return GameText.Get("map.forge.craft", "锻造");
             case MapTileType.Rest:
-                return "休息";
+                return GameText.Get("rest.heal.title", "休息");
             case MapTileType.Key:
-                return "钥匙";
+                return GameText.Get("ui.map_hud.keys", "钥匙");
             case MapTileType.Boss:
                 return "Boss";
             case MapTileType.SpecialDungeonExit:
-                return "副本出口";
+                return GameText.Get("ui.map_hud.dungeon_exit", "副本出口");
             default:
-                return "未知";
+                return GameText.Get("ui.map_battle_tile_preview.unknown", "未知");
         }
     }
 
@@ -36,21 +36,21 @@ public static class MapTilePresentationService
         switch (dangerBand)
         {
             case MapDangerBand.Outer:
-                return "外围";
+                return GameText.Get("map.region.outer", "外围");
             case MapDangerBand.Mid:
-                return "中层";
+                return GameText.Get("map.region.mid", "中层");
             case MapDangerBand.Inner:
-                return "内层";
+                return GameText.Get("map.region.inner", "内层");
             case MapDangerBand.Core:
-                return "核心";
+                return GameText.Get("map.region.core", "核心");
             default:
-                return "未知";
+                return GameText.Get("ui.map_battle_tile_preview.unknown", "未知");
         }
     }
 
     public static string BuildUnavailableEnemyGroupMessage(MapTileType tileType, MapDangerBand dangerBand)
     {
-        return $"{GetTileTypeLabel(tileType)} / {GetDangerBandLabel(dangerBand)} 没有可用敌人组。";
+        return GameText.Format("ui.map_tile_presentation.no_enemy_group_is_available_for", "{getTileTypeLabel} / {getDangerBandLabel} 没有可用敌人组。", ("getTileTypeLabel", GetTileTypeLabel(tileType)), ("getDangerBandLabel", GetDangerBandLabel(dangerBand)));
     }
 }
 

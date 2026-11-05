@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "\u96EA\u82B1"
   m_EditorClassIdentifier: 
+  localizationKey: skill.301_frostgleam_slash_4
   skillName: "\u96EA\u82B1"
   description: "\u65BD\u653E\u7B80\u5355\u7684\u51B0\u5C5E\u6027\u9B54\u6CD5\u6765\u5E72\u6270\u654C\u4EBA"
   skillCategory: 0

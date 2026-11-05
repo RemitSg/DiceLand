@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: BlendIntoShadow
   m_EditorClassIdentifier: 
+  localizationKey: skill.blendintoshadow
   skillName: "\u878D\u5165\u6697\u5F71"
   mechanic: 3
   description: "\u5B83\u628A\u5468\u56F4\u7684\u6B8B\u5F71\u6536\u56DE\u8EAB\u4FA7\uFF0C\u50CF\u628A\u96F6\u6563\u7684\u591C\u8272\u7F1D\u6210\u4E00\u4EF6\u5916\u8863\u3002"

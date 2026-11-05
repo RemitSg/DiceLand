@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: CloseCoffin
   m_EditorClassIdentifier: 
+  localizationKey: skill.closecoffin
   skillName: "\u5408\u68FA"
   description: "\u5494\u5693\u4E00\u58F0\uFF0C\u91CC\u9762\u7684\u4EBA\u6C38\u8FDC\u9694\u7EDD\u4E86\u4EBA\u4E16\u3002"
   skillCategory: 0

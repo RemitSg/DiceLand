@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: AtonementTransfer
   m_EditorClassIdentifier: 
+  localizationKey: skill.atonementtransfer
   skillName: "\u8D66\u7F6A\u8F6C\u5AC1"
   description: "\u4E00\u79CD\u90AA\u6076\u7684\u6697\u9B54\u6CD5\uFF0C\u5C06\u81EA\u8EAB\u7684\u75DB\u82E6\u8F6C\u5AC1\u5230\u522B\u4EBA\u8EAB\u4E0A\u3002"
   skillCategory: 1

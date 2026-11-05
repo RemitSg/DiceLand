@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: DarkShadow
   m_EditorClassIdentifier: 
+  localizationKey: skill.033_wanderingphantom_darkshadow
   skillName: "\u6697\u5F71"
   description: "\u5E7B\u5F71\u7684\u5203\u5F88\u8F7B\uFF0C\u5374\u4F1A\u5728\u843D\u7A7A\u7684\u5730\u65B9\u7559\u4E0B\u7B2C\u4E8C\u9053\u75D5\u8FF9\u3002"
   skillCategory: 0

@@ -233,6 +233,8 @@ public class Relic_SO : ScriptableObject
 
     [Header("Identity")]
     public string relicId;
+    public string LocalizedName => GameText.Content("relic." + relicId, "name", DisplayName);
+    public string LocalizedDescription => GameText.Content("relic." + relicId, "description", description);
     public string relicName;
 
     [TextArea(2, 5)]
@@ -240,6 +242,7 @@ public class Relic_SO : ScriptableObject
 
     [TextArea(2, 5)]
     public string additionalDescription;
+    public string LocalizedNotes => GameText.Content("relic." + relicId, "notes", additionalDescription);
 
     [Header("Presentation")]
     public LootRarity rarity = LootRarity.Common;

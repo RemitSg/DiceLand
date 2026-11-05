@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "寻光劈"
   m_EditorClassIdentifier: 
+  localizationKey: skill.204_slash_2
   skillName: "寻光劈"
   description: "斧刃压下一道冷白直线，把目标钉进折光的轨迹里。"
   skillCategory: 0

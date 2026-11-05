@@ -36,6 +36,7 @@ public static class BattleReflectionSkillCopyService
     private static void CopyTemplateIdentity(EnemySkill_SO template, EnemySkill_SO copy)
     {
         copy.skillName = template.skillName;
+        copy.localizationKey = template.localizationKey;
         copy.description = template.description;
         copy.energyCost = template.energyCost;
         copy.requiredSelfStatusData = template.requiredSelfStatusData;

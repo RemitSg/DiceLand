@@ -29,21 +29,21 @@ public partial class MapInventoryDetailView
 
     public void RefreshAcquisitionPresentation(RunItemAcquisitionBatch acquisition, int remaining)
     {
-        if (headingText != null) headingText.text = acquisition.Item is Relic_SO ? "获得遗物" : "获得图纸";
+        if (headingText != null) headingText.text = acquisition.Item is Relic_SO ? GameText.Get("ui.map_inventory_detail_view.relic_acquired", "获得遗物") : GameText.Get("ui.map_inventory_detail_view.blueprint_acquired", "获得图纸");
         if (quantityText != null)
         {
-            quantityText.text = "本次获得 ×" + acquisition.Amount;
+            quantityText.text = GameText.Get("ui.map_inventory_detail_view.received", "本次获得 ×") + acquisition.Amount;
             quantityText.enableAutoSizing = true;
             quantityText.fontSizeMin = 16; quantityText.fontSizeMax = 26;
         }
-        if (closeLabel != null) closeLabel.text = remaining > 0 ? "下一件" : "继续";
-        ConfigureActionButton(string.Empty, false, null, remaining > 0 ? "已收入背包 · 还有 " + remaining + " 项待查看" : "已收入背包");
+        if (closeLabel != null) closeLabel.text = remaining > 0 ? GameText.Get("ui.map_inventory_detail_view.next_item", "下一件") : GameText.Get("ui.continue", "继续");
+        ConfigureActionButton(string.Empty, false, null, remaining > 0 ? GameText.Get("ui.map_inventory_detail_view.added_to_inventory", "已收入背包 · 还有 ") + remaining + GameText.Get("ui.map_inventory_detail_view.more_to_review", " 项待查看") : GameText.Get("ui.map_inventory_detail_view.refresh_acquisition_presentation.added_to_inventory", "已收入背包"));
     }
 
     private void ResetPresentationLabels()
     {
-        if (headingText != null) headingText.text = "物品详情";
-        if (closeLabel != null) closeLabel.text = "关闭";
+        if (headingText != null) headingText.text = GameText.Get("ui.map_inventory_detail_view.item_details", "物品详情");
+        if (closeLabel != null) closeLabel.text = GameText.Get("ui.close", "关闭");
         if (modalRoot != null) modalRoot.GetComponent<Button>().interactable = true;
     }
 

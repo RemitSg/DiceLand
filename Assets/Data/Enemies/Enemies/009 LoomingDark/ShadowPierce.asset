@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: ShadowPierce
   m_EditorClassIdentifier: 
+  localizationKey: skill.shadowpierce
   skillName: "\u6697\u5F71\u7A7F\u523A"
   description: "\u9ED1\u6697\u5728\u5B83\u624B\u4E2D\u51DD\u7ED3\u6210\u4E86\u5229\u5203\uFF0C\u4E0D\u8981\u88AB\u8D2F\u7A7F\u3002"
   energyCost: 0

@@ -47,6 +47,7 @@ public static class TutorialBattlePartyOverrideService
         EnemySkill_SO lightAttack = ScriptableObject.CreateInstance<EnemySkill_SO>();
         PrepareRuntimeObject(lightAttack, "Tutorial_Molly_LightAttack");
         lightAttack.skillName = "轻击";
+        lightAttack.localizationKey = "tutorial.battle02.molly_light";
         lightAttack.description = "Molly 的基础攻击。";
         lightAttack.minPower = 1;
         lightAttack.maxPower = 2;

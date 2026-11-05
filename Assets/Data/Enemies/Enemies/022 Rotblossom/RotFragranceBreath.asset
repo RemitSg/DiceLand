@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: RotFragranceBreath
   m_EditorClassIdentifier: 
+  localizationKey: skill.rotfragrancebreath
   skillName: "\u8150\u9999\u5410\u606F"
   description: "\u5B83\u5206\u6CCC\u7684\u6DB2\u4F53\u867D\u7136\u95FB\u8D77\u6765\u9999\u751C\uFF0C\u4F46\u4F60\u77E5\u9053\u90A3\u53EA\u662F\u9519\u89C9\u3002"
   skillCategory: 0

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: CallFromBeyond_Data
   m_EditorClassIdentifier: 
   enemyID: 15
+  localizationKey: enemy.15.callfrombeyond_data
   enemyName: "\u81EA\u5F7C\u5CB8\u7684\u547C\u5524"
   baseHP: 23
   damageReductionPercent: 0

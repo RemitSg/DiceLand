@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: PrismReturnMapping
   m_EditorClassIdentifier: 
+  localizationKey: skill.prismreturnmapping
   skillName: "\u68F1\u8FD4\u6620\u5C04"
   description: "\u5149\u4ECE\u53E6\u4E00\u9762\u6298\u56DE\uFF0C\u50CF\u628A\u540C\u4E00\u6761\u8F68\u8FF9\u5728\u6218\u573A\u4E0A\u91CD\u65B0\u63CF\u4E86\u4E00\u904D\u3002"
   skillCategory: 0

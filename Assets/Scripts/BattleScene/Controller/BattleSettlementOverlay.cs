@@ -434,7 +434,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         int count = entries != null ? entries.Count : 0;
         int displayCount = count + (hasRelicChoice ? 1 : 0);
         lootHeaderText.color = SettlementIvory;
-        lootHeaderText.text = "战利品";
+        lootHeaderText.text = GameText.Get("battle.settlement.build_loot_section.loot", "战利品");
         UpdateLootGridLayout(displayCount);
 
         if (displayCount <= 0)
@@ -472,8 +472,8 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         return new BattleSettlementLootEntry
         {
             amount = 1,
-            displayName = relicChoiceEntranceName,
-            description = relicChoiceEntranceDescription,
+            displayName = GameText.Get("battle.relic.reward", relicChoiceEntranceName),
+            description = GameText.Get("battle.relic.open_reward", relicChoiceEntranceDescription),
             rarity = rarity,
             icon = GetRelicChoiceQuestionSprite(rarity),
             isRelicChoiceEntrance = true,
@@ -699,14 +699,14 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         lootHeaderText.color = relicChoiceRequiredColor;
         lootHeaderText.text = choiceData != null && !string.IsNullOrWhiteSpace(choiceData.requiredMessage)
             ? choiceData.requiredMessage
-            : relicChoiceRequiredMessage;
+            : GameText.Get("battle.relic.choice_required", relicChoiceRequiredMessage);
         OpenRelicChoiceModal(choiceData);
         if (relicChoiceModalTitleText != null)
         {
             relicChoiceModalTitleText.color = relicChoiceRequiredColor;
             relicChoiceModalTitleText.text = choiceData != null && !string.IsNullOrWhiteSpace(choiceData.requiredMessage)
                 ? choiceData.requiredMessage
-                : relicChoiceRequiredMessage;
+                : GameText.Get("battle.relic.choice_required", relicChoiceRequiredMessage);
         }
     }
 
@@ -931,7 +931,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
             lootLayout.childForceExpandHeight = false;
         }
 
-        lootHeaderText = CreateLabel(lootRoot, "LootHeader", lootTitleFontSize, lootTitleColor, "战利品");
+        lootHeaderText = CreateLabel(lootRoot, "LootHeader", lootTitleFontSize, lootTitleColor, GameText.Get("battle.settlement.build_loot_section.loot", "战利品"));
         lootHeaderText.alignment = TextAlignmentOptions.Center;
         lootHeaderText.font = bodyFont != null ? bodyFont : lootHeaderText.font;
         AddLayoutElement(lootHeaderText.rectTransform, panelSize.x - panelPadding.x * 2f, 0f, 0f, lootTitleFontSize + 10f, lootTitleFontSize + 10f);
@@ -985,7 +985,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         panelRect.anchoredPosition = Vector2.zero;
         ApplyImageScaleMode(relicChoiceModalPanelImage, relicChoiceModalBackgroundScaleMode);
 
-        relicChoiceModalTitleText = CreateLabel(panelRect, "RelicChoiceTitle", lootTitleFontSize + 6f, lootTitleColor, relicChoiceHeaderText);
+        relicChoiceModalTitleText = CreateLabel(panelRect, "RelicChoiceTitle", lootTitleFontSize + 6f, lootTitleColor, GameText.Get("battle.relic.choose_one", relicChoiceHeaderText));
         relicChoiceModalTitleText.font = titleFont != null ? titleFont : relicChoiceModalTitleText.font;
         relicChoiceModalTitleText.alignment = TextAlignmentOptions.Center;
         RectTransform titleRect = relicChoiceModalTitleText.rectTransform;
@@ -1016,9 +1016,9 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         relicChoiceModalButtonRoot.pivot = new Vector2(0.5f, 0f);
         relicChoiceModalButtonRoot.anchoredPosition = new Vector2(0f, 30f);
         relicChoiceModalButtonRoot.sizeDelta = new Vector2(buttonSize.x * 2f + buttonSpacing, buttonSize.y);
-        relicChoiceRefreshButton = CreateActionButton(relicChoiceModalButtonRoot, "RelicChoiceRefreshButton", relicChoiceRefreshLabel, RefreshRelicChoiceModal, false);
+        relicChoiceRefreshButton = CreateActionButton(relicChoiceModalButtonRoot, "RelicChoiceRefreshButton", GameText.Get("ui.refresh", relicChoiceRefreshLabel), RefreshRelicChoiceModal, false);
         relicChoiceRefreshButtonText = relicChoiceRefreshButton != null ? relicChoiceRefreshButton.GetComponentInChildren<TextMeshProUGUI>(true) : null;
-        CreateActionButton(relicChoiceModalButtonRoot, "RelicChoiceConfirmButton", relicChoiceConfirmLabel, CloseRelicChoiceModal, false);
+        CreateActionButton(relicChoiceModalButtonRoot, "RelicChoiceConfirmButton", GameText.Get("ui.confirm", relicChoiceConfirmLabel), CloseRelicChoiceModal, false);
         BuildRelicChoiceTooltipRoot();
         SetRelicChoiceModalVisible(false);
     }
@@ -1076,7 +1076,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         relicChoiceDetailDescriptionText.raycastTarget = false;
         AddLayoutElement(relicChoiceDetailDescriptionText.rectTransform, 0f, 0f, 1f, relicChoiceTooltipSize.y - relicChoiceModalIconSize.y - 96f, relicChoiceTooltipSize.y - relicChoiceModalIconSize.y - 120f);
 
-        relicChoiceDetailHintText = CreateLabel(relicChoiceTooltipRoot, "RelicChoiceDetailHint", lootBodyFontSize - 2f, subtitleColor, relicChoiceDetailEmptyText);
+        relicChoiceDetailHintText = CreateLabel(relicChoiceTooltipRoot, "RelicChoiceDetailHint", lootBodyFontSize - 2f, subtitleColor, GameText.Get("battle.relic.instructions", relicChoiceDetailEmptyText));
         relicChoiceDetailHintText.alignment = TextAlignmentOptions.BottomLeft;
         relicChoiceDetailHintText.enableWordWrapping = true;
         relicChoiceDetailHintText.overflowMode = TextOverflowModes.Overflow;
@@ -1105,7 +1105,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
             relicChoiceModalTitleText.color = lootTitleColor;
             relicChoiceModalTitleText.text = !string.IsNullOrWhiteSpace(choiceData.title)
                 ? choiceData.title
-                : relicChoiceHeaderText;
+                : GameText.Get("battle.relic.choose_one", relicChoiceHeaderText);
         }
 
         for (int i = 0; i < choiceData.choices.Count; i++)
@@ -1174,7 +1174,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         rarityText.raycastTarget = false;
         AddLayoutElement(rarityText.rectTransform, 0f, 0f, 1f, lootBodyFontSize + 10f, lootBodyFontSize + 10f);
 
-        TextMeshProUGUI hintText = CreateLabel(cardGo.transform, "Hint", lootBodyFontSize - 2f, subtitleColor, "悬停 / 点击");
+        TextMeshProUGUI hintText = CreateLabel(cardGo.transform, "Hint", lootBodyFontSize - 2f, subtitleColor, GameText.Get("battle.settlement.hover_select", "悬停 / 点击"));
         hintText.alignment = TextAlignmentOptions.Center;
         hintText.raycastTarget = false;
         AddLayoutElement(hintText.rectTransform, 0f, 0f, 1f, lootBodyFontSize + 10f, lootBodyFontSize + 10f);
@@ -1254,14 +1254,14 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         if (relicChoiceDetailMetaText != null)
         {
             string selectedText = activeRelicChoiceData != null && activeRelicChoiceData.selectedChoice == entry
-                ? $" | {relicChoiceSelectedPrefix}"
+                ? $" | {GameText.Get("ui.selected", relicChoiceSelectedPrefix)}"
                 : string.Empty;
-            relicChoiceDetailMetaText.text = $"{GetLootRarityLabel(entry.rarity)} | 遗物{selectedText}";
+            relicChoiceDetailMetaText.text = GameText.Format("battle.settlement.relic", "{getLootRarityLabel} | 遗物{selectedText}", ("getLootRarityLabel", GetLootRarityLabel(entry.rarity)), ("selectedText", selectedText));
         }
         if (relicChoiceDetailDescriptionText != null)
-            relicChoiceDetailDescriptionText.text = string.IsNullOrWhiteSpace(entry.description) ? "暂无描述。" : entry.description;
+            relicChoiceDetailDescriptionText.text = string.IsNullOrWhiteSpace(entry.description) ? GameText.Get("ui.no_description", "暂无描述。") : entry.description;
         if (relicChoiceDetailHintText != null)
-            relicChoiceDetailHintText.text = relicChoiceDetailEmptyText;
+            relicChoiceDetailHintText.text = GameText.Get("battle.relic.instructions", relicChoiceDetailEmptyText);
 
         UpdateRelicChoiceCardColors();
     }
@@ -1272,11 +1272,11 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         if (relicChoiceDetailIcon != null)
             relicChoiceDetailIcon.gameObject.SetActive(false);
         if (relicChoiceDetailNameText != null)
-            relicChoiceDetailNameText.text = relicChoiceHeaderText;
+            relicChoiceDetailNameText.text = GameText.Get("battle.relic.choose_one", relicChoiceHeaderText);
         if (relicChoiceDetailMetaText != null)
             relicChoiceDetailMetaText.text = string.Empty;
         if (relicChoiceDetailDescriptionText != null)
-            relicChoiceDetailDescriptionText.text = relicChoiceDetailEmptyText;
+            relicChoiceDetailDescriptionText.text = GameText.Get("battle.relic.instructions", relicChoiceDetailEmptyText);
         if (relicChoiceDetailHintText != null)
             relicChoiceDetailHintText.text = string.Empty;
     }
@@ -1308,7 +1308,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         relicChoiceRefreshButton.gameObject.SetActive(activeRelicChoiceData != null && activeRelicChoiceData.refreshesRemaining > 0);
         relicChoiceRefreshButton.interactable = canRefresh;
         if (relicChoiceRefreshButtonText != null && activeRelicChoiceData != null)
-            relicChoiceRefreshButtonText.text = $"{relicChoiceRefreshLabel} ({Mathf.Max(0, activeRelicChoiceData.refreshesRemaining)})";
+            relicChoiceRefreshButtonText.text = $"{GameText.Get("ui.refresh", relicChoiceRefreshLabel)} ({Mathf.Max(0, activeRelicChoiceData.refreshesRemaining)})";
     }
 
     private static HashSet<Relic_SO> BuildRelicChoiceRefreshExclusions(BattleSettlementRelicChoiceData choiceData)
@@ -1325,7 +1325,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
                 relicChoiceModalTitleText.color = relicChoiceRequiredColor;
                 relicChoiceModalTitleText.text = !string.IsNullOrWhiteSpace(activeRelicChoiceData.requiredMessage)
                     ? activeRelicChoiceData.requiredMessage
-                    : relicChoiceRequiredMessage;
+                    : GameText.Get("battle.relic.choice_required", relicChoiceRequiredMessage);
             }
             return;
         }
@@ -1366,16 +1366,16 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         switch (rarity)
         {
             case LootRarity.Uncommon:
-                return "精良";
+                return GameText.Get("battle.settlement.uncommon", "精良");
             case LootRarity.Rare:
-                return "稀有";
+                return GameText.Get("battle.settlement.rare", "稀有");
             case LootRarity.Epic:
-                return "史诗";
+                return GameText.Get("battle.settlement.epic", "史诗");
             case LootRarity.Legendary:
-                return "传说";
+                return GameText.Get("battle.settlement.legendary", "传说");
             case LootRarity.Common:
             default:
-                return "普通";
+                return GameText.Get("ui.difficulty.normal", "普通");
         }
     }
 
@@ -1763,7 +1763,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
     {
         return entry != null && !string.IsNullOrWhiteSpace(entry.displayName)
             ? entry.displayName
-            : "角色";
+            : GameText.Get("battle.settlement.character", "角色");
     }
 
     private float ResolveHpRatio(int currentHP, int maxHP)

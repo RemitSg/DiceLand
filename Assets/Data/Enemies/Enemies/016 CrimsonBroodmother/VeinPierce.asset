@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: VeinPierce
   m_EditorClassIdentifier: 
+  localizationKey: skill.veinpierce
   skillName: "\u8840\u4E1D\u7A7F\u523A"
   description: "\u5C16\u9510\u7684\u8840\u4E1D\u4ECE\u5B83\u4F53\u5185\u66B4\u5C04\u800C\u51FA"
   skillCategory: 0

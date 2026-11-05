@@ -9,8 +9,8 @@ public static class BattleSettlementRelicChoiceBuilder
 
         BattleSettlementRelicChoiceData choiceData = new BattleSettlementRelicChoiceData
         {
-            title = "精英奖励：选择 1 个遗物",
-            requiredMessage = "返回前请选择一个精英遗物奖励。"
+            title = GameText.Get("ui.battle_settlement_relic_choice_builder.elite_reward_choose_one_relic", "精英奖励：选择 1 个遗物"),
+            requiredMessage = GameText.Get("ui.battle_settlement_relic_choice_builder.choose_an_elite_relic_reward_before_returning_to", "返回前请选择一个精英遗物奖励。")
         };
 
         for (int i = 0; i < relics.Count; i++)
@@ -23,8 +23,8 @@ public static class BattleSettlementRelicChoiceBuilder
             {
                 relicData = relic,
                 amount = 1,
-                displayName = relic.DisplayName,
-                description = relic.description ?? string.Empty,
+                displayName = relic.LocalizedName,
+                description = relic.LocalizedDescription ?? string.Empty,
                 rarity = relic.rarity,
                 attribute = null,
                 icon = relic.icon,

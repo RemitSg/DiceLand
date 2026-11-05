@@ -430,49 +430,49 @@ public static class MapRunRuntime
     {
         if (snapshot == null || string.IsNullOrWhiteSpace(sceneName))
         {
-            errorMessage = "\u672a\u627e\u5230\u5730\u56fe\u8fdb\u5ea6\u5feb\u7167\u3002";
+            errorMessage = GameText.Get("rest.reforge.missing_snapshot", "未找到地图进度快照。");
             return false;
         }
 
         if (!string.Equals(snapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
         {
-            errorMessage = "\u5f53\u524d\u5730\u56fe\u8fdb\u5ea6\u4e0e\u4f11\u606f\u573a\u666f\u4e0d\u5339\u914d\u3002";
+            errorMessage = GameText.Get("rest.reforge.snapshot_mismatch", "当前地图进度与休息场景不匹配。");
             return false;
         }
 
         if (snapshot.runState == null)
         {
-            errorMessage = "\u8fd0\u884c\u4e2d\u961f\u4f0d\u6570\u636e\u4e22\u5931\u3002";
+            errorMessage = GameText.Get("rest.reforge.missing_party", "运行中队伍数据丢失。");
             return false;
         }
 
         if (snapshot.runState.recruitmentDisabled)
         {
-            errorMessage = "当前遗物效果禁止招募。";
+            errorMessage = GameText.Get("ui.rest_scene_runtime.a_relic_is_preventing_recruitment", "当前遗物效果禁止招募。");
             return false;
         }
 
         if (characterData == null)
         {
-            errorMessage = "\u672a\u9009\u62e9\u53ef\u62db\u52df\u89d2\u8272\u3002";
+            errorMessage = GameText.Get("rest.recruit.invalid_candidate", "未选择可招募角色。");
             return false;
         }
 
         if (maxRecruitCount > 0 && snapshot.runState.recruitedMemberCount >= maxRecruitCount)
         {
-            errorMessage = "\u62db\u52df\u6b21\u6570\u5df2\u8fbe\u4e0a\u9650\uff0c\u65e0\u6cd5\u7ee7\u7eed\u62db\u52df\u3002";
+            errorMessage = GameText.Get("rest.recruit.limit", "招募次数已达上限，无法继续招募。");
             return false;
         }
 
         if (snapshot.runState.HasCharacter(characterData))
         {
-            errorMessage = "\u8be5\u89d2\u8272\u5df2\u5728\u961f\u4f0d\u4e2d\u3002";
+            errorMessage = GameText.Get("rest.recruit.already_member", "该角色已在队伍中。");
             return false;
         }
 
         if (!snapshot.runState.TrySpendMoney(Mathf.Max(0, recruitCost)))
         {
-            errorMessage = $"\u91d1\u94b1\u4e0d\u8db3\uff0c\u9700\u8981 {Mathf.Max(0, recruitCost)} \u91d1\u5e01\u3002";
+            errorMessage = GameText.Format("rest.recruit.need_gold", "金钱不足，需要 {max} 金币。", ("max", Mathf.Max(0, recruitCost)));
             return false;
         }
 
@@ -532,50 +532,50 @@ public static class MapRunRuntime
     {
         if (snapshot == null || string.IsNullOrWhiteSpace(sceneName))
         {
-            errorMessage = "未找到地图进度快照。";
+            errorMessage = GameText.Get("rest.reforge.missing_snapshot", "未找到地图进度快照。");
             return false;
         }
 
         if (!string.Equals(snapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
         {
-            errorMessage = "当前地图进度与休息场景不匹配。";
+            errorMessage = GameText.Get("rest.reforge.snapshot_mismatch", "当前地图进度与休息场景不匹配。");
             return false;
         }
 
         if (snapshot.runState == null)
         {
-            errorMessage = "运行中的队伍数据丢失。";
+            errorMessage = GameText.Get("rest.reforge.missing_party", "运行中的队伍数据丢失。");
             return false;
         }
 
         if (firstLoot == null || secondLoot == null || resultLoot == null)
         {
-            errorMessage = "重铸材料或结果未配置。";
+            errorMessage = GameText.Get("rest.reforge.invalid_materials", "重铸材料或结果未配置。");
             return false;
         }
 
         if (firstLoot.rarity != secondLoot.rarity)
         {
-            errorMessage = "两件战利品必须为同阶级。";
+            errorMessage = GameText.Get("rest.reforge.both_loot_items_must_have_the_same_rarity", "两件战利品必须为同阶级。");
             return false;
         }
 
         if (resultLoot.rarity != firstLoot.rarity)
         {
-            errorMessage = "目标战利品的阶级与材料不匹配。";
+            errorMessage = GameText.Get("rest.reforge.loot_rarity_mismatch", "目标战利品的阶级与材料不匹配。");
             return false;
         }
 
         int requiredFirstAmount = firstLoot == secondLoot ? 2 : 1;
         if (snapshot.runState.GetLootAmount(firstLoot) < requiredFirstAmount)
         {
-            errorMessage = $"材料不足：{GetLootDisplayName(firstLoot)}";
+            errorMessage = GameText.Format("rest.reforge.material_missing", "材料不足：{material}", ("material", GetLootDisplayName(firstLoot)));
             return false;
         }
 
         if (firstLoot != secondLoot && snapshot.runState.GetLootAmount(secondLoot) < 1)
         {
-            errorMessage = $"材料不足：{GetLootDisplayName(secondLoot)}";
+            errorMessage = GameText.Format("rest.reforge.material_missing", "材料不足：{material}", ("material", GetLootDisplayName(secondLoot)));
             return false;
         }
 
@@ -588,14 +588,14 @@ public static class MapRunRuntime
 
         if (!snapshot.runState.TryConsumeLoot(firstLoot, 1))
         {
-            errorMessage = $"无法消耗材料：{GetLootDisplayName(firstLoot)}";
+            errorMessage = GameText.Format("rest.reforge.material_unavailable", "无法消耗材料：{material}", ("material", GetLootDisplayName(firstLoot)));
             return false;
         }
 
         if (!snapshot.runState.TryConsumeLoot(secondLoot, 1))
         {
             snapshot.runState.AddLoot(firstLoot, 1);
-            errorMessage = $"无法消耗材料：{GetLootDisplayName(secondLoot)}";
+            errorMessage = GameText.Format("rest.reforge.material_unavailable", "无法消耗材料：{material}", ("material", GetLootDisplayName(secondLoot)));
             return false;
         }
 
@@ -633,31 +633,31 @@ public static class MapRunRuntime
     {
         if (snapshot == null || string.IsNullOrWhiteSpace(sceneName))
         {
-            errorMessage = "未找到地图进度快照。";
+            errorMessage = GameText.Get("rest.reforge.missing_snapshot", "未找到地图进度快照。");
             return false;
         }
 
         if (!string.Equals(snapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
         {
-            errorMessage = "当前地图进度与休息场景不匹配。";
+            errorMessage = GameText.Get("rest.reforge.snapshot_mismatch", "当前地图进度与休息场景不匹配。");
             return false;
         }
 
         if (snapshot.runState == null)
         {
-            errorMessage = "运行中的队伍数据丢失。";
+            errorMessage = GameText.Get("rest.reforge.missing_party", "运行中的队伍数据丢失。");
             return false;
         }
 
         if (firstRelic == null || secondRelic == null || resultRelic == null)
         {
-            errorMessage = "重铸遗物或结果未配置。";
+            errorMessage = GameText.Get("rest.reforge.invalid_relics", "重铸遗物或结果未配置。");
             return false;
         }
 
         if (firstRelic.rarity != secondRelic.rarity)
         {
-            errorMessage = "两件遗物必须为同阶级。";
+            errorMessage = GameText.Get("rest.reforge.both_relics_must_have_the_same_rarity", "两件遗物必须为同阶级。");
             return false;
         }
 
@@ -669,20 +669,20 @@ public static class MapRunRuntime
 
         if (!isFixedReforgeResult && resultRelic.rarity <= firstRelic.rarity)
         {
-            errorMessage = "结果遗物必须高于材料阶级。";
+            errorMessage = GameText.Get("rest.reforge.relic_rarity_mismatch", "结果遗物必须高于材料阶级。");
             return false;
         }
 
         int requiredFirstAmount = firstRelic == secondRelic ? 2 : 1;
         if (snapshot.runState.GetRelicAmount(firstRelic) < requiredFirstAmount)
         {
-            errorMessage = $"材料不足：{GetRelicDisplayName(firstRelic)}";
+            errorMessage = GameText.Format("rest.reforge.material_missing", "材料不足：{material}", ("material", GetRelicDisplayName(firstRelic)));
             return false;
         }
 
         if (firstRelic != secondRelic && snapshot.runState.GetRelicAmount(secondRelic) < 1)
         {
-            errorMessage = $"材料不足：{GetRelicDisplayName(secondRelic)}";
+            errorMessage = GameText.Format("rest.reforge.material_missing", "材料不足：{material}", ("material", GetRelicDisplayName(secondRelic)));
             return false;
         }
 
@@ -700,14 +700,14 @@ public static class MapRunRuntime
 
         if (!snapshot.runState.TryConsumeRelic(firstRelic, 1))
         {
-            errorMessage = $"无法消耗材料：{GetRelicDisplayName(firstRelic)}";
+            errorMessage = GameText.Format("rest.reforge.material_unavailable", "无法消耗材料：{material}", ("material", GetRelicDisplayName(firstRelic)));
             return false;
         }
 
         if (!snapshot.runState.TryConsumeRelic(secondRelic, 1))
         {
             snapshot.runState.AddPreviewedRelic(firstRelic, 1);
-            errorMessage = $"无法消耗材料：{GetRelicDisplayName(secondRelic)}";
+            errorMessage = GameText.Format("rest.reforge.material_unavailable", "无法消耗材料：{material}", ("material", GetRelicDisplayName(secondRelic)));
             return false;
         }
 
@@ -757,7 +757,7 @@ public static class MapRunRuntime
         if (relicData == null)
             return "遗物";
 
-        return !string.IsNullOrWhiteSpace(relicData.DisplayName) ? relicData.DisplayName : relicData.name;
+        return !string.IsNullOrWhiteSpace(relicData.DisplayName) ? relicData.LocalizedName : relicData.name;
     }
 
     public static void Clear(string sceneName = null)

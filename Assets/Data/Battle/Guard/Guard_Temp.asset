@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Guard_Temp
   m_EditorClassIdentifier: 
   statusId: guard
+  localizationKey: status.guard.guard_temp
   displayName: "\u4E34\u65F6\u91CD\u9632"
   description: "\u8FDB\u884C\u9632\u5FA1\u63B7\u9AB0\u65F6\u9AB0\u5B50\u5A01\u529B\u589E\u52A0\u76F8\u5F53\u4E8E\u5C42\u6570\u7684\u6570\u503C\uFF0C\u56DE\u5408\u7ED3\u675F\u65F6\u5931\u53BB\u5168\u90E8\u5C42\u6570"
   iconSprite: {fileID: -368529762, guid: c79818a78794dae47ae9ed090310c8d3, type: 3}

@@ -18,6 +18,12 @@ public class LootItem_SO : ScriptableObject
     public string saveId;
     public string legacySaveId;
     public string lootName;
+    public string LocalizedName => Localize("name", lootName);
+    public string LocalizedDescription => Localize("description", description);
+
+    private string Localize(string field, string source) => lootID > 0
+        ? GameText.Content("loot", lootID, field, source)
+        : GameText.Content(saveId, field, source);
 
     [TextArea(2, 5)]
     public string description;

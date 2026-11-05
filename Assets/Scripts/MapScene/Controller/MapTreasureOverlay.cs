@@ -153,8 +153,8 @@ public partial class MapTreasureOverlay : MonoBehaviour
         if (refreshRelicChoiceButton != null) refreshRelicChoiceButton.gameObject.SetActive(false);
         if (confirmRelicChoiceButton != null)
             confirmRelicChoiceButton.gameObject.SetActive(false);
-        titleText.text = "宝藏馈赠";
-        subtitleText.text = choices != null && choices.Count == 3 ? "请从三份馈赠中选择一份" : "请选择一份宝藏馈赠";
+        titleText.text = GameText.Get("ui.map_treasure.treasure_rewards", "宝藏馈赠");
+        subtitleText.text = choices != null && choices.Count == 3 ? GameText.Get("ui.map_treasure.choose_one_of_three_rewards", "请从三份馈赠中选择一份") : GameText.Get("ui.map_treasure.choose_a_treasure_reward", "请选择一份宝藏馈赠");
         RebuildCards(choices);
         ApplyFonts();
         BeginPresentation();
@@ -175,7 +175,7 @@ public partial class MapTreasureOverlay : MonoBehaviour
         cardRoot.gameObject.SetActive(true);
         resultText.gameObject.SetActive(false);
         continueButton.gameObject.SetActive(false);
-        ShowRelicChoice(choiceData, "请选择一个初始遗物。");
+        ShowRelicChoice(choiceData, GameText.Get("ui.map_treasure.choose_a_starting_relic", "请选择一个初始遗物。"));
         BeginPresentation();
     }
 
@@ -240,7 +240,7 @@ public partial class MapTreasureOverlay : MonoBehaviour
             string message = result != null ? result.message : string.Empty;
             if (!success || result == null || !result.success)
             {
-                subtitleText.text = string.IsNullOrWhiteSpace(message) ? "当前选项暂无法领取。" : message;
+                subtitleText.text = string.IsNullOrWhiteSpace(message) ? GameText.Get("ui.map_treasure.this_reward_is_unavailable", "当前选项暂无法领取。") : message;
                 return;
             }
             activeChoices = null;
@@ -272,7 +272,7 @@ public partial class MapTreasureOverlay : MonoBehaviour
             activeRelicChoiceData.selectedChoice = null;
 
         titleText.text = CompactRelicTitle(choiceData.title);
-        subtitleText.text = string.IsNullOrWhiteSpace(message) ? "\u8bf7\u4ece\u9057\u7269\u888b\u4e2d\u9009\u62e9 1 \u4e2a\u9057\u7269\u3002" : message;
+        subtitleText.text = string.IsNullOrWhiteSpace(message) ? GameText.Get("ui.map_treasure.choose_one_relic_from_the_bag", "请从遗物袋中选择 1 个遗物。") : message;
         resultText.gameObject.SetActive(false);
         continueButton.gameObject.SetActive(false);
         confirmRelicChoiceButton.gameObject.SetActive(true);
@@ -288,7 +288,7 @@ public partial class MapTreasureOverlay : MonoBehaviour
         if (requireDeselectForRefresh && activeRelicChoiceData?.selectedChoice != null) return;
         if (!BattleRelicChoiceSelectionService.TryRefresh(activeRelicChoiceData,
             new System.Random(UnityEngine.Random.Range(int.MinValue, int.MaxValue)))) return;
-        ShowRelicChoice(activeRelicChoiceData, "遗物选项已刷新，请重新选择。");
+        ShowRelicChoice(activeRelicChoiceData, GameText.Get("ui.map_treasure.relic_choices_refreshed_choose_again", "遗物选项已刷新，请重新选择。"));
     }
 
     private void UpdateRelicRefreshButton()
@@ -297,7 +297,7 @@ public partial class MapTreasureOverlay : MonoBehaviour
         refreshRelicChoiceButton.gameObject.SetActive(visible);
         refreshRelicChoiceButton.interactable = BattleRelicChoiceSelectionService.CanRefresh(activeRelicChoiceData)
             && (!requireDeselectForRefresh || activeRelicChoiceData.selectedChoice == null);
-        refreshRelicChoiceButton.GetComponentInChildren<TMP_Text>().text = "刷新 (" + (activeRelicChoiceData != null ? activeRelicChoiceData.refreshesRemaining : 0) + ")";
+        refreshRelicChoiceButton.GetComponentInChildren<TMP_Text>().text = GameText.Get("ui.map_treasure.reroll", "刷新 (") + (activeRelicChoiceData != null ? activeRelicChoiceData.refreshesRemaining : 0) + ")";
         confirmRelicChoiceButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(visible ? -(buttonSize.x * 0.5f + 18f) : 0f, 48f);
     }
 
@@ -313,8 +313,8 @@ public partial class MapTreasureOverlay : MonoBehaviour
 
         activeRelicChoiceData.selectedChoice = activeRelicChoiceData.selectedChoice == entry ? null : entry;
         subtitleText.text = activeRelicChoiceData.selectedChoice == null
-            ? "\u5df2\u53d6\u6d88\u9009\u62e9\uff0c\u8bf7\u4ece\u9057\u7269\u888b\u4e2d\u9009\u62e9 1 \u4e2a\u9057\u7269\u3002"
-            : $"\u5df2\u9009\u62e9\uff1a{entry.displayName}";
+            ? GameText.Get("ui.map_treasure.selection_cleared_choose_one_relic_from_the_bag", "已取消选择，请从遗物袋中选择 1 个遗物。")
+            : GameText.Format("ui.map_treasure.selected", "已选择：{displayName}", ("displayName", entry.displayName));
         RefreshRelicSelection();
     }
 
@@ -325,7 +325,7 @@ public partial class MapTreasureOverlay : MonoBehaviour
         if (activeRelicChoiceData.selectedChoice == null)
         {
             subtitleText.text = !string.IsNullOrWhiteSpace(activeRelicChoiceData.requiredMessage)
-                ? activeRelicChoiceData.requiredMessage : "请先选择一个遗物。";
+                ? activeRelicChoiceData.requiredMessage : GameText.Get("ui.map_treasure.choose_a_relic_first", "请先选择一个遗物。");
             return;
         }
         handlingAction = true;
@@ -336,7 +336,7 @@ public partial class MapTreasureOverlay : MonoBehaviour
                 : directRelicChoiceConfirmHandler.Invoke(activeRelicChoiceData, out message);
             if (!success)
             {
-                subtitleText.text = string.IsNullOrWhiteSpace(message) ? "遗物领取失败。" : message;
+                subtitleText.text = string.IsNullOrWhiteSpace(message) ? GameText.Get("ui.map_treasure.could_not_claim_the_relic", "遗物领取失败。") : message;
                 return;
             }
             if (closeAfterRelicConfirm) Hide();
@@ -350,7 +350,7 @@ public partial class MapTreasureOverlay : MonoBehaviour
         if (choice == null)
             return string.Empty;
 
-        string detail = string.IsNullOrWhiteSpace(choice.description) ? "\u6682\u65e0\u8bf4\u660e" : choice.description;
+        string detail = string.IsNullOrWhiteSpace(choice.description) ? GameText.Get("ui.map_treasure.no_details", "暂无说明") : choice.description;
         if (!choice.isAvailable && !string.IsNullOrWhiteSpace(choice.unavailableReason))
             detail = $"{detail}\n<color=#B0B0B0>{choice.unavailableReason}</color>";
         return detail;

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: CurlCounter
   m_EditorClassIdentifier: 
+  localizationKey: skill.curlcounter
   skillName: "\u8737\u7F29\u53CD\u51FB"
   description: "\u9CDE\u7247\u5148\u5408\u62E2\u6210\u4E00\u9762\u70ED\u76FE\uFF0C\u968F\u540E\u4ECE\u7F1D\u9699\u91CC\u5F39\u51FA\u4E00\u9053\u706B\u820C\u3002"
   skillCategory: 0

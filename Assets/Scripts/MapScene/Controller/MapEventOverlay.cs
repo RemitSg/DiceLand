@@ -162,7 +162,7 @@ public partial class MapEventOverlay : MonoBehaviour
             {
                 if (nestedEventDepth >= MaxNestedEventDepth)
                 {
-                    statusText.text = "事件嵌套层数过深，请检查事件配置。";
+                    statusText.text = GameText.Get("map.event.this_event_has_too_many_nested_branches", "事件嵌套层数过深，请检查事件配置。");
                     layoutDirty = true;
                     return;
                 }
@@ -232,9 +232,9 @@ public partial class MapEventOverlay : MonoBehaviour
         if (option == null) return empty;
         string detail = !string.IsNullOrWhiteSpace(option.consequenceDescription)
             ? currentEvent.LocalizeOption(option, "preview", option.consequenceDescription) : empty;
-        if (option.requiredMoney > 0) detail = $"需要支付 {option.requiredMoney} 金钱\n{detail}";
-        if (option.requiredMoneyPercent > 0) detail = $"需要支付当前金钱的 {option.requiredMoneyPercent}%\n{detail}";
-        if (option.nextEvent != null) detail += $"\n继续事件：{option.nextEvent.DisplayName}";
+        if (option.requiredMoney > 0) detail = GameText.Format("map.event.cost_gold", "需要支付 {requiredMoney} 金钱\n{detail}", ("requiredMoney", option.requiredMoney), ("detail", detail));
+        if (option.requiredMoneyPercent > 0) detail = GameText.Format("map.event.cost_of_your_gold", "需要支付当前金钱的 {requiredMoneyPercent}%\n{detail}", ("requiredMoneyPercent", option.requiredMoneyPercent), ("detail", detail));
+        if (option.nextEvent != null) detail += GameText.Format("map.event.next_event", "\n继续事件：{localizedName}", ("localizedName", option.nextEvent.LocalizedName));
         if (preview != null)
         {
             if (!string.IsNullOrWhiteSpace(preview.additionalDetail)) detail += "\n" + preview.additionalDetail;

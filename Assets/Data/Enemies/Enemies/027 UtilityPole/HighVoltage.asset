@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: HighVoltage
   m_EditorClassIdentifier: 
+  localizationKey: skill.highvoltage
   skillName: "\u9AD8\u538B\u7535"
   description: "\u4E09\u6BB5\u523A\u76EE\u7684\u767D\u84DD\u7535\u5149\u4ECE\u7EDD\u7F18\u5B50\u95F4\u8DF3\u843D\uFF0C\u50CF\u5931\u63A7\u7684\u7EBF\u8DEF\u8FDE\u7EED\u62BD\u51FB\u3002"
   skillCategory: 0

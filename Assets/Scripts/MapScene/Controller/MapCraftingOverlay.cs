@@ -118,28 +118,28 @@ public partial class MapCraftingOverlay : MonoBehaviour
         SetIcon(blueprintImage, hasBlueprint ? selectedBlueprint.DisplayIcon : null);
         SetIcon(iconImage, hasBlueprint && selectedBlueprint.targetWeapon != null ? selectedBlueprint.targetWeapon.icon : null);
         weaponNameText.text = hasBlueprint && selectedBlueprint.targetWeapon != null
-            ? selectedBlueprint.targetWeapon.weaponName : "未选择图纸";
+            ? selectedBlueprint.targetWeapon.LocalizedName : GameText.Get("ui.map_crafting.no_blueprint_selected", "未选择图纸");
         metaText.text = hasBlueprint ? GetRarityLabel(selectedBlueprint.rarity) + " · " +
-            (selectedBlueprint.targetWeapon != null ? GetWeaponTypeLabel(selectedBlueprint.targetWeapon.weaponType) : "武器") : string.Empty;
+            (selectedBlueprint.targetWeapon != null ? GetWeaponTypeLabel(selectedBlueprint.targetWeapon.weaponType) : GameText.Get("ui.map_crafting.weapon", "武器")) : string.Empty;
         metaBadge.gameObject.SetActive(hasBlueprint);
         descriptionText.text = hasBlueprint
-            ? (string.IsNullOrWhiteSpace(selectedBlueprint.description) ? "暂无图纸描述。" : selectedBlueprint.description)
-            : "获得图纸后，可在此查看成品与材料需求。";
+            ? (string.IsNullOrWhiteSpace(selectedBlueprint.description) ? GameText.Get("ui.map_crafting.no_blueprint_description_available", "暂无图纸描述。") : selectedBlueprint.LocalizedDescription)
+            : GameText.Get("ui.map_crafting.once_you_obtain_a_blueprint_you_can_preview", "获得图纸后，可在此查看成品与材料需求。");
         if (hasBlueprint && blueprintCards.Count > 1)
-            descriptionText.text = selectedBlueprint.DisplayName + "\n" + descriptionText.text;
+            descriptionText.text = selectedBlueprint.LocalizedName + "\n" + descriptionText.text;
         foreach (MaterialRow row in materialRows) RemoveUi(row.rect.gameObject);
         materialRows.Clear();
         if (hasBlueprint)
         {
             int cost = RunCraftingService.Cost(currentRunState);
             if (cost > 0)
-                materialRows.Add(BuildMaterialRow("金币", MapForestArt.Get("Coins"), currentRunState != null ? currentRunState.money : 0, cost));
+                materialRows.Add(BuildMaterialRow(GameText.Get("term.gold", "金币"), MapForestArt.Get("Coins"), currentRunState != null ? currentRunState.money : 0, cost));
             foreach (CraftingMaterialRequirement requirement in RunCraftingService.GetRequirements(selectedBlueprint))
-                materialRows.Add(BuildMaterialRow(requirement.lootItem.lootName, requirement.lootItem.icon,
+                materialRows.Add(BuildMaterialRow(requirement.lootItem.LocalizedName, requirement.lootItem.icon,
                     currentRunState != null ? currentRunState.GetLootAmount(requirement.lootItem) : 0, requirement.amount));
         }
         materialEmptyText.gameObject.SetActive(materialRows.Count == 0);
-        materialEmptyText.text = hasBlueprint ? "未配置有效材料需求" : "选择图纸以查看材料";
+        materialEmptyText.text = hasBlueprint ? GameText.Get("ui.map_crafting.no_valid_material_requirements", "未配置有效材料需求") : GameText.Get("ui.map_crafting.select_a_blueprint_to_see_its_materials", "选择图纸以查看材料");
         RefreshBlueprintCardStates();
         RefreshAvailability();
         RefreshLayout();
@@ -150,25 +150,27 @@ public partial class MapCraftingOverlay : MonoBehaviour
         foreach (BlueprintCard card in blueprintCards)
         {
             bool selected = card.blueprint == selectedBlueprint;
-            bool ready = RunCraftingService.CanCraft(currentRunState, card.blueprint, out string reason);
+            var availability = RunCraftingService.CheckAvailability(currentRunState, card.blueprint, out _);
+            bool ready = availability == RunCraftingService.Availability.Ready;
             card.face.SetState(selected, true);
             card.label.color = selected ? Ink : Ivory;
-            card.readiness.text = ready ? "可锻造" : reason != null && reason.StartsWith("金币不足") ? "缺金币"
-                : reason != null && reason.StartsWith("材料不足") ? "缺材料" : "暂不可用";
+            card.readiness.text = ready ? GameText.Get("ui.map_crafting.ready_to_forge", "可锻造") : availability == RunCraftingService.Availability.InsufficientGold ? GameText.Get("ui.map_crafting.need_gold", "缺金币")
+                : availability == RunCraftingService.Availability.InsufficientMaterials ? GameText.Get("ui.map_crafting.need_materials", "缺材料") : GameText.Get("ui.map_crafting.unavailable", "暂不可用");
             card.readiness.color = selected ? (ready ? new Color32(28, 83, 48, 255) : new Color32(117, 50, 29, 255)) : (ready ? Jade : Coral);
         }
     }
 
     private void RefreshAvailability()
     {
-        bool canCraft = RunCraftingService.CanCraft(currentRunState, selectedBlueprint, out string reason);
+        var availability = RunCraftingService.CheckAvailability(currentRunState, selectedBlueprint, out string reason);
+        bool canCraft = availability == RunCraftingService.Availability.Ready;
         bool enabled = canCraft && craftHandler != null && !handlingAction && feedbackTime <= 0 && !closing;
         craftButton.interactable = enabled;
         craftFace.SetState(false, enabled);
         craftLabel.color = enabled ? Ivory : Muted;
-        if (selectedBlueprint == null) availabilityText.text = "请选择一张图纸";
-        else if (!canCraft) availabilityText.text = reason != null && reason.StartsWith("材料不足") ? "材料不足，暂无法锻造" : reason;
-        else availabilityText.text = "材料齐备，可以锻造";
+        if (selectedBlueprint == null) availabilityText.text = GameText.Get("ui.map_crafting.select_a_blueprint", "请选择一张图纸");
+        else if (!canCraft) availabilityText.text = availability == RunCraftingService.Availability.InsufficientMaterials ? GameText.Get("ui.map_crafting.you_need_more_materials_to_forge_this_weapon", "材料不足，暂无法锻造") : reason;
+        else availabilityText.text = GameText.Get("ui.map_crafting.all_materials_ready_you_can_forge_this_weapon", "材料齐备，可以锻造");
         availabilityText.color = canCraft ? Jade : Coral;
     }
 
@@ -208,12 +210,12 @@ public partial class MapCraftingOverlay : MonoBehaviour
     {
         switch (type)
         {
-            case WeaponType.Sword: return "剑";
-            case WeaponType.Axe: return "斧";
-            case WeaponType.Bow: return "弓";
-            case WeaponType.Wand: return "法杖";
-            case WeaponType.Dagger: return "匕首";
-            default: return "武器";
+            case WeaponType.Sword: return GameText.Get("ui.map_crafting.sword", "剑");
+            case WeaponType.Axe: return GameText.Get("ui.map_crafting.axe", "斧");
+            case WeaponType.Bow: return GameText.Get("ui.map_crafting.bow", "弓");
+            case WeaponType.Wand: return GameText.Get("ui.map_crafting.staff", "法杖");
+            case WeaponType.Dagger: return GameText.Get("ui.map_crafting.dagger", "匕首");
+            default: return GameText.Get("ui.map_crafting.weapon", "武器");
         }
     }
 
@@ -221,13 +223,13 @@ public partial class MapCraftingOverlay : MonoBehaviour
     {
         switch (rarity)
         {
-            case LootRarity.Trash: return "劣质";
-            case LootRarity.Common: return "普通";
-            case LootRarity.Uncommon: return "优秀";
-            case LootRarity.Rare: return "稀有";
-            case LootRarity.Epic: return "史诗";
-            case LootRarity.Legendary: return "传说";
-            default: return "普通";
+            case LootRarity.Trash: return GameText.Get("ui.map_crafting.poor", "劣质");
+            case LootRarity.Common: return GameText.Get("ui.difficulty.normal", "普通");
+            case LootRarity.Uncommon: return GameText.Get("ui.map_crafting.fine", "优秀");
+            case LootRarity.Rare: return GameText.Get("battle.settlement.rare", "稀有");
+            case LootRarity.Epic: return GameText.Get("battle.settlement.epic", "史诗");
+            case LootRarity.Legendary: return GameText.Get("battle.settlement.legendary", "传说");
+            default: return GameText.Get("ui.difficulty.normal", "普通");
         }
     }
 }

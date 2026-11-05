@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: SweetCollapse
   m_EditorClassIdentifier: 
+  localizationKey: skill.sweetcollapse
   skillName: "\u9999\u751C\u9677\u843D"
   description: "\u4E0D\u9677\u843D\u3001\u4E0D\u6C89\u6CA6\u3002\u65F6\u523B\u8C28\u8BB0\u4F60\u4ECD\u7136\u5728\u6218\u6597\u3002"
   skillCategory: 0

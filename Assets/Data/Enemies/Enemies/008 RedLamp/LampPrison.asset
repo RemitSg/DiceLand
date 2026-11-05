@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: LampPrison
   m_EditorClassIdentifier: 
+  localizationKey: skill.lampprison
   skillName: "\u706F\u7F69\u7B3C"
   description: "\u706B\u7EA2\u7684\u7262\u7B3C\u6B63\u5728\u5F20\u5F00"
   transformEnemyToStageIndex: -1

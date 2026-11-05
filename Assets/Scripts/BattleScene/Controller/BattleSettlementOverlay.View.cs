@@ -31,9 +31,9 @@ public partial class BattleSettlementOverlay
         buttonSize = new Vector2(356f, 76f);
         buttonSpacing = 32f;
         buttonFontSize = 34f;
-        returnButtonLabel = "回到地图";
-        defeatReturnButtonLabel = "结束冒险";
-        retryButtonLabel = "重试战斗";
+        returnButtonLabel = GameText.Get("battle.settlement.return", "回到地图");
+        defeatReturnButtonLabel = GameText.Get("battle.settlement.end_run", "结束冒险");
+        retryButtonLabel = GameText.Get("battle.settlement.retry", "重试战斗");
         hpTextColor = SettlementIvory;
         deadRowColor = new Color32(203, 139, 128, 255);
         lootSlotColor = new Color(0.025f, 0.05f, 0.035f, 1f);
@@ -88,11 +88,11 @@ public partial class BattleSettlementOverlay
         FSPlace(moneyCapsule, 250, 203, 396, 70);
         FSPlace(experienceCapsule, 682, 203, 396, 70);
         FSPlace(lootCapsule, 1114, 203, 396, 70);
-        moneyRewardText = FSText(moneyCapsule, "MoneyReward", "金币 +0", 35, SettlementIvory);
+        moneyRewardText = FSText(moneyCapsule, "MoneyReward", GameText.Get("battle.settlement.configure_forest_view.gold", "金币 +0"), 35, SettlementIvory);
         expText.transform.SetParent(experienceCapsule, false);
         expText.fontSize = 35;
         expText.color = SettlementExperience;
-        lootCountText = FSText(lootCapsule, "LootCount", "战利品 ×0", 34, SettlementIvory, false);
+        lootCountText = FSText(lootCapsule, "LootCount", GameText.Get("battle.settlement.configure_forest_view.loot", "战利品 ×0"), 34, SettlementIvory, false);
         foreach (TMP_Text label in new TMP_Text[] { moneyRewardText, expText, lootCountText })
         { FSStretch(label.rectTransform, 16, 8); label.alignment = TextAlignmentOptions.Center; label.enableAutoSizing = false; }
         FSIcon(lootCapsule, "LootRewardIcon", MapForestArt.Get("Treasure"), 47, 10, 50, 50);
@@ -123,7 +123,7 @@ public partial class BattleSettlementOverlay
         walletRoot = FSPanel(settlementSafeArea, "SettlementWallet", MapMerchantFrameGraphic.Style.Wallet);
         walletRoot.anchorMin = walletRoot.anchorMax = walletRoot.pivot = Vector2.one;
         walletRoot.sizeDelta = new Vector2(410, 106);
-        walletCaptionText = FSText(walletRoot, "WalletCaption", "持有", 23, SettlementIvory, false);
+        walletCaptionText = FSText(walletRoot, "WalletCaption", GameText.Get("battle.settlement.wallet", "持有"), 23, SettlementIvory, false);
         FSPlace(walletCaptionText.rectTransform, 22, 12, 94, 32);
         FSIcon(walletRoot, "MoneyIcon", MapForestArt.Get("Coins"), 28, 49, 42, 38);
         TextMeshProUGUI currency = FSText(walletRoot, "CurrencyName", GameText.Get("term.gold", "金币"), 26, SettlementIvory, false);

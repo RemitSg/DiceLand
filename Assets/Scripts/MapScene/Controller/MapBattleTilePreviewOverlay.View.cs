@@ -53,11 +53,11 @@ public sealed partial class MapBattleTilePreviewOverlay
         divider.color = Gold;
         divider.raycastTarget = false;
         dangerHeadingText = Text("DangerHeadingText", designRoot, 24, Ivory);
-        dangerHeadingText.text = "危险度";
+        dangerHeadingText.text = GameText.Get("ui.map_battle_tile_preview.danger", "危险度");
         dangerText = Text("DangerText", designRoot, 56, Ivory);
         ratingText = Text("DangerRatingText", designRoot, 30, Ivory);
         attributeHeadingText = Text("AttributeHeadingText", designRoot, 24, Ivory);
-        attributeHeadingText.text = "属性倾向";
+        attributeHeadingText.text = GameText.Get("ui.map_battle_tile_preview.enemy_attributes", "属性倾向");
         for (int i = 0; i < attributeTexts.Length; i++) attributeTexts[i] = Text("Attribute" + i, designRoot, 36, Ivory);
         explorationText = Text("ExplorationText", designRoot, 23, Quiet);
 

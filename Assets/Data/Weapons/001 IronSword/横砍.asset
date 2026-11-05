@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "\u6A2A\u780D"
   m_EditorClassIdentifier: 
+  localizationKey: skill.001_ironsword_slash
   skillName: "\u6A2A\u780D"
   description: "\u5927\u529B\u6A2A\u5288\uFF0C\u5229\u7528\u6325\u5251\u7684\u5E7F\u5EA6\u653B\u51FB\u6240\u6709\u654C\u4EBA"
   energyCost: 3

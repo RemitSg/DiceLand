@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: QuakeWarning
   m_EditorClassIdentifier: 
+  localizationKey: skill.quakewarning
   skillName: "\u9707\u5730\u8B66\u544A"
   description: "\u5B83\u5927\u8E0F\u6B65\u5730\u9707\u5730\uFF0C\u4F3C\u4E4E\u662F\u5728\u8B66\u544A\u4F60\u4EEC"
   skillCategory: 1

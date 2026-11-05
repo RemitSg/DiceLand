@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Weakness_TempProxy
   m_EditorClassIdentifier: 
   statusId: weaknessTemp
+  localizationKey: status.weaknessTemp.weakness_tempproxy
   displayName: "\u4E34\u65F6\u865A\u5F31"
   description: "\u653B\u51FB\u63B7\u9AB0\u7684\u5A01\u529B\u51CF\u5C11\u76F8\u5F53\u4E8E\u5C42\u6570\u7684\u6570\u503C\uFF0C\u56DE\u5408\u7ED3\u675F\u65F6\u5931\u53BB\u6240\u6709\u5C42\u6570"
   iconSprite: {fileID: 1555881278, guid: c79818a78794dae47ae9ed090310c8d3, type: 3}

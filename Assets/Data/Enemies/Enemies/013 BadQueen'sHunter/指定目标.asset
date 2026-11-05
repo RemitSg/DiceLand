@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "\u6307\u5B9A\u76EE\u6807"
   m_EditorClassIdentifier: 
+  localizationKey: skill.013_badqueen_shunter_slash
   skillName: "\u6307\u5B9A\u76EE\u6807"
   description: "\u4E00\u9053\u9634\u51B7\u7684\u76EE\u5149\u626B\u89C6\u7740\u4F60\uFF0C\u5979\u5728\u5BFB\u627E\u730E\u7269\u7684\u5F31\u70B9"
   skillCategory: 1

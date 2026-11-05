@@ -163,10 +163,10 @@ public sealed class AbilityMenuOverlay : MonoBehaviour
         designRoot = CreateRect("SafeAreaComposition", rootRect, Vector2.zero, new Vector2(1920f, 1080f));
         RectTransform panel = designRoot;
         AddOrnament("TitleSigil", panel, new Vector2(-846f, 439f), new Vector2(110f, 110f), AbilityMenuOrnament.Shape.Tree, new Color(1f, 0.73f, 0.28f, 0.95f));
-        titleText = CreateText("Title", panel, new Vector2(-620f, 444f), new Vector2(300f, 96f), "能力", 72, titleFont, TextAnchor.MiddleLeft, new Color(1f, 0.81f, 0.4f));
+        titleText = CreateText("Title", panel, new Vector2(-620f, 444f), new Vector2(300f, 96f), GameText.Get("ui.menu.abilities", "能力"), 72, titleFont, TextAnchor.MiddleLeft, new Color(1f, 0.81f, 0.4f));
         AddOrnament("TitleRule", panel, new Vector2(-600f, 393f), new Vector2(590f, 18f), AbilityMenuOrnament.Shape.Divider, Gold);
         RectTransform pointsPanel = CreateFramedPanel("PointsPanel", panel, new Vector2(668f, 438f), new Vector2(448f, 80f), new Color(0.035f, 0.042f, 0.036f, 0.95f), false);
-        pointsText = CreateText("Points", pointsPanel, Vector2.zero, new Vector2(390f, 55f), "当前能力点  0", 31, bodyFont, TextAnchor.MiddleCenter, Ivory);
+        pointsText = CreateText("Points", pointsPanel, Vector2.zero, new Vector2(390f, 55f), GameText.Get("ui.ability.ability_points", "当前能力点  0"), 31, bodyFont, TextAnchor.MiddleCenter, Ivory);
 
         RectTransform treeFrame = CreateFramedPanel("TreeFrame", panel, new Vector2(-266f, -7f), new Vector2(1328f, 748f), new Color(0.022f, 0.044f, 0.059f, 0.985f), true);
         AddOrnament("AncestralTree", treeFrame, new Vector2(25f, 24f), new Vector2(655f, 655f), AbilityMenuOrnament.Shape.Tree, new Color(0.57f, 0.58f, 0.43f, 0.115f));
@@ -178,11 +178,11 @@ public sealed class AbilityMenuOverlay : MonoBehaviour
 
         treeContent = CreateRect("TreeContent", treeRoot, Vector2.zero, Vector2.zero);
         treeProgressText = CreateText("TreeProgress", treeFrame, new Vector2(-438f, -329f), new Vector2(310f, 34f), string.Empty, 20, bodyFont, TextAnchor.MiddleLeft, new Color(0.71f, 0.74f, 0.66f));
-        CreateSmallButton("FocusEntry", treeFrame, new Vector2(250f, -329f), new Vector2(130f, 46f), "定位起点", FocusEntry);
+        CreateSmallButton("FocusEntry", treeFrame, new Vector2(250f, -329f), new Vector2(130f, 46f), GameText.Get("ui.ability.center_on_start", "定位起点"), FocusEntry);
         CreateSmallButton("ZoomOut", treeFrame, new Vector2(354f, -329f), new Vector2(56f, 46f), "−", () => SetTreeZoom(treeZoom - 0.15f));
         zoomText = CreateText("Zoom", treeFrame, new Vector2(427f, -329f), new Vector2(80f, 38f), "100%", 20, bodyFont, TextAnchor.MiddleCenter, Gold);
         CreateSmallButton("ZoomIn", treeFrame, new Vector2(500f, -329f), new Vector2(56f, 46f), "+", () => SetTreeZoom(treeZoom + 0.15f));
-        CreateText("PanHint", panel, new Vector2(-266f, -423f), new Vector2(1100f, 38f), "拖动浏览能力树  ·  点击节点查看详情", 22, bodyFont, TextAnchor.MiddleCenter, new Color(0.89f, 0.87f, 0.72f));
+        CreateText("PanHint", panel, new Vector2(-266f, -423f), new Vector2(1100f, 38f), GameText.Get("ui.ability.drag_to_explore_the_tree_select_a_node", "拖动浏览能力树  ·  点击节点查看详情"), 22, bodyFont, TextAnchor.MiddleCenter, new Color(0.89f, 0.87f, 0.72f));
 
         detailPanel = CreateFramedPanel("DetailPanel", panel, new Vector2(668f, -7f), new Vector2(448f, 748f), new Color(0.065f, 0.057f, 0.031f, 0.985f), true);
         detailNameText = CreateText("DetailName", detailPanel, new Vector2(0f, 271f), new Vector2(354f, 92f), string.Empty, 40, titleFont, TextAnchor.MiddleCenter, new Color(1f, 0.81f, 0.4f));
@@ -197,12 +197,12 @@ public sealed class AbilityMenuOverlay : MonoBehaviour
         AddOrnament("StatusDivider", detailPanel, new Vector2(0f, -183f), new Vector2(344f, 12f), AbilityMenuOrnament.Shape.Divider, Gold);
         statusText = CreateText("Status", detailPanel, new Vector2(0f, -221f), new Vector2(344f, 62f), string.Empty, 23, bodyFont, TextAnchor.MiddleCenter, new Color(0.77f, 0.75f, 0.65f));
 
-        unlockButton = CreateButton("UnlockButton", detailPanel, new Vector2(0f, -299f), new Vector2(366f, 84f), "解锁", buttonFont, out unlockButtonText);
+        unlockButton = CreateButton("UnlockButton", detailPanel, new Vector2(0f, -299f), new Vector2(366f, 84f), GameText.Get("ui.ability.unlock", "解锁"), buttonFont, out unlockButtonText);
         unlockButtonText.fontSize = 36;
         unlockFrame = unlockButton.transform.Find("Frame").GetComponent<Image>();
         unlockButton.onClick.AddListener(HandleUnlockClicked);
 
-        closeButton = CreateButton("CloseButton", panel, new Vector2(668f, -449f), new Vector2(448f, 82f), "返回主菜单", buttonFont, out closeButtonText);
+        closeButton = CreateButton("CloseButton", panel, new Vector2(668f, -449f), new Vector2(448f, 82f), GameText.Get("ui.main_menu", "返回主菜单"), buttonFont, out closeButtonText);
         closeButtonText.fontSize = 34;
         closeButton.onClick.AddListener(Hide);
 
@@ -255,16 +255,16 @@ public sealed class AbilityMenuOverlay : MonoBehaviour
             return;
 
         int points = wallet != null ? wallet.GetCurrentPoints() : 0;
-        pointsText.text = $"当前能力点  <color=#FFD478><size=39>{points}</size></color>";
+        pointsText.text = GameText.Format("ui.ability.refresh.ability_points", "当前能力点  <color=#FFD478><size=39>{points}</size></color>", ("points", points));
         if (config == null || config.nodes == null || config.nodes.Count == 0)
         {
-            detailNameText.text = "未配置能力树";
-            detailDescriptionText.text = "请创建 AbilityTreeConfig，并在主菜单控制器中引用。";
+            detailNameText.text = GameText.Get("ui.ability.ability_tree_unavailable", "未配置能力树");
+            detailDescriptionText.text = GameText.Get("ui.ability.assign_an_abilitytreeconfig_in_the_main_menu_controller", "请创建 AbilityTreeConfig，并在主菜单控制器中引用。");
             detailCostText.text = string.Empty;
             detailEffectsText.text = string.Empty;
             statusText.text = string.Empty;
             unlockButton.interactable = false;
-            treeProgressText.text = "暂无能力节点";
+            treeProgressText.text = GameText.Get("ui.ability.no_ability_nodes", "暂无能力节点");
             return;
         }
 
@@ -289,7 +289,7 @@ public sealed class AbilityMenuOverlay : MonoBehaviour
                 text.text = BuildNodeLabel(node, state, service);
         }
 
-        treeProgressText.text = $"已解锁  {unlockedCount} / {nodeButtons.Count}";
+        treeProgressText.text = GameText.Format("ui.ability.unlocked", "已解锁  {unlockedCount} / {count}", ("unlockedCount", unlockedCount), ("count", nodeButtons.Count));
         foreach (ConnectionView connection in connectionLines)
         {
             bool fromUnlocked = states.TryGetValue(connection.fromId, out AbilityNodeState fromState) && fromState == AbilityNodeState.Unlocked;
@@ -315,24 +315,24 @@ public sealed class AbilityMenuOverlay : MonoBehaviour
             return;
 
         AbilityNodeState state = service.GetNodeState(node.nodeId);
-        detailNameText.text = string.IsNullOrWhiteSpace(node.displayName) ? node.nodeId : node.displayName;
-        detailDescriptionText.text = string.IsNullOrWhiteSpace(node.description) ? "暂无描述" : node.description;
+        detailNameText.text = node.LocalizedName;
+        detailDescriptionText.text = string.IsNullOrWhiteSpace(node.description) ? GameText.Get("ui.ability.no_description", "暂无描述") : node.LocalizedDescription;
         detailDescriptionText.rectTransform.anchoredPosition = Vector2.zero;
         detailEffectsText.rectTransform.anchoredPosition = Vector2.zero;
         int cost = Mathf.Max(0, node.cost);
         int points = wallet != null ? wallet.GetCurrentPoints() : 0;
         bool affordable = points >= cost;
-        detailCostText.text = state == AbilityNodeState.Unlocked ? "已解锁能力" : $"消耗能力点  {cost}";
+        detailCostText.text = state == AbilityNodeState.Unlocked ? GameText.Get("ui.ability.ability_unlocked", "已解锁能力") : GameText.Format("ui.ability.costs_ability_points", "消耗能力点  {cost}", ("cost", cost));
         detailEffectsText.text = BuildEffectDescription(node);
-        statusText.text = !string.IsNullOrEmpty(feedbackMessage) ? feedbackMessage : state == AbilityNodeState.Available && !affordable ? $"能力点不足，还需要 {cost - points} 点。" : ResolveStateText(state);
+        statusText.text = !string.IsNullOrEmpty(feedbackMessage) ? feedbackMessage : state == AbilityNodeState.Available && !affordable ? GameText.Format("ui.ability.you_need_more_ability_points", "能力点不足，还需要 {value} 点。", ("value", cost - points)) : ResolveStateText(state);
         statusText.color = !string.IsNullOrEmpty(feedbackMessage) && feedbackSuccess ? new Color(0.74f, 0.9f, 0.59f) : state == AbilityNodeState.Available && !affordable ? new Color(0.85f, 0.65f, 0.43f) : new Color(0.77f, 0.75f, 0.65f);
         unlockButton.interactable = (state == AbilityNodeState.Available && affordable) || (state == AbilityNodeState.Unlocked && node.isToggleable);
-        unlockButtonText.text = state == AbilityNodeState.Unlocked ? "已解锁" : "解锁";
+        unlockButtonText.text = state == AbilityNodeState.Unlocked ? GameText.Get("ui.ability.refresh_detail.unlocked", "已解锁") : GameText.Get("ui.ability.unlock", "解锁");
         if (state == AbilityNodeState.Unlocked && node.isToggleable)
         {
-            unlockButtonText.text = service.IsNodeEnabled(node.nodeId) ? "关闭" : "启用";
+            unlockButtonText.text = service.IsNodeEnabled(node.nodeId) ? GameText.Get("ui.close", "关闭") : GameText.Get("ui.ability.enable", "启用");
             if (string.IsNullOrEmpty(feedbackMessage))
-                statusText.text = service.IsNodeEnabled(node.nodeId) ? "该能力已启用。" : "该能力已关闭，可重新启用。";
+                statusText.text = service.IsNodeEnabled(node.nodeId) ? GameText.Get("ui.ability.this_ability_is_active", "该能力已启用。") : GameText.Get("ui.ability.this_ability_is_disabled_you_can_enable_it", "该能力已关闭，可重新启用。");
         }
         unlockFrame.color = unlockButton.interactable ? new Color(1f, 0.9f, 0.64f) : new Color(0.52f, 0.49f, 0.37f);
         unlockButtonText.color = unlockButton.interactable ? Ivory : new Color(0.66f, 0.63f, 0.53f);
@@ -359,7 +359,7 @@ public sealed class AbilityMenuOverlay : MonoBehaviour
             treeContent != null ? treeContent : treeRoot,
             ViewPosition(node.position),
             NodeButtonSize,
-            string.IsNullOrWhiteSpace(node.displayName) ? node.nodeId : node.displayName,
+            node.LocalizedName,
             ResolveBodyFont(),
             out Text text);
         text.fontSize = 29;
@@ -575,17 +575,17 @@ public sealed class AbilityMenuOverlay : MonoBehaviour
 
     private static string BuildNodeLabel(AbilityNodeDefinition node, AbilityNodeState state, AbilityProgressionService service)
     {
-        string name = string.IsNullOrWhiteSpace(node.displayName) ? node.nodeId : node.displayName;
-        string suffix = state == AbilityNodeState.Unlocked ? "已解锁" : $"{Mathf.Max(0, node.cost)} 点";
+        string name = node.LocalizedName;
+        string suffix = state == AbilityNodeState.Unlocked ? GameText.Get("ui.ability.refresh_detail.unlocked", "已解锁") : GameText.Format("ui.ability.pt", "{max} 点", ("max", Mathf.Max(0, node.cost)));
         if (state == AbilityNodeState.Unlocked && node.isToggleable && service != null)
-            suffix = service.IsNodeEnabled(node.nodeId) ? "已启用" : "已关闭";
+            suffix = service.IsNodeEnabled(node.nodeId) ? GameText.Get("ui.ability.enabled", "已启用") : GameText.Get("ui.ability.disabled", "已关闭");
         return $"{name}\n<size=23>{suffix}</size>";
     }
 
     private static string BuildEffectDescription(AbilityNodeDefinition node)
     {
         if (node == null || node.effects == null || node.effects.Count == 0)
-            return "无效果";
+            return GameText.Get("ui.ability.no_effect", "无效果");
 
         List<string> lines = new List<string>();
         for (int i = 0; i < node.effects.Count; i++)
@@ -597,51 +597,51 @@ public sealed class AbilityMenuOverlay : MonoBehaviour
             switch (effect.effectType)
             {
                 case AbilityEffectType.StartingMoneyFlat:
-                    lines.Add($"初始金币 +{effect.intValue}");
+                    lines.Add(GameText.Format("ui.ability.starting_gold", "初始金币 +{intValue}", ("intValue", effect.intValue)));
                     break;
                 case AbilityEffectType.StartingActionPointLimitFlat:
-                    lines.Add($"初始行动点上限 +{effect.intValue}");
+                    lines.Add(GameText.Format("ui.ability.starting_max_ap", "初始行动点上限 +{intValue}", ("intValue", effect.intValue)));
                     break;
                 case AbilityEffectType.StartingBlueprint:
-                    lines.Add($"初始随机图纸 x{Mathf.Max(1, effect.intValue)}");
+                    lines.Add(GameText.Format("ui.ability.starting_random_blueprints", "初始随机图纸 x{max}", ("max", Mathf.Max(1, effect.intValue))));
                     break;
                 case AbilityEffectType.StartingLootTableRoll:
-                    lines.Add($"初始随机掉落 x{Mathf.Max(1, effect.intValue)}");
+                    lines.Add(GameText.Format("ui.ability.starting_random_loot", "初始随机掉落 x{max}", ("max", Mathf.Max(1, effect.intValue))));
                     break;
                 case AbilityEffectType.MerchantFreeRefreshPerShop:
-                    lines.Add($"每个商店免费刷新 +{Mathf.Max(0, effect.intValue)}");
+                    lines.Add(GameText.Format("ui.ability.free_restocks_per_shop", "每个商店免费刷新 +{max}", ("max", Mathf.Max(0, effect.intValue))));
                     break;
                 case AbilityEffectType.FirstMerchantPurchaseHalfDiscount:
-                    lines.Add("每局首次购买半价");
+                    lines.Add(GameText.Get("ui.ability.first_purchase_per_run_is_half_price", "每局首次购买半价"));
                     break;
                 case AbilityEffectType.BattleStartTemporaryEnergy:
-                    lines.Add($"战斗开始临时能量 +{Mathf.Max(0, effect.intValue)}");
+                    lines.Add(GameText.Format("ui.ability.temporary_energy_at_battle_start", "战斗开始临时能量 +{max}", ("max", Mathf.Max(0, effect.intValue))));
                     break;
                 case AbilityEffectType.BattleStartEnergyMaxFlat:
-                    lines.Add($"战斗开始能量上限 +{Mathf.Max(0, effect.intValue)}");
+                    lines.Add(GameText.Format("ui.ability.max_energy_at_battle_start", "战斗开始能量上限 +{max}", ("max", Mathf.Max(0, effect.intValue))));
                     break;
                 case AbilityEffectType.BattleStartMaxHealthFlat:
-                    lines.Add($"战斗开始最大生命 +{Mathf.Max(0, effect.intValue)}");
+                    lines.Add(GameText.Format("ui.ability.max_hp_at_battle_start", "战斗开始最大生命 +{max}", ("max", Mathf.Max(0, effect.intValue))));
                     break;
                 case AbilityEffectType.StartingPartySizeFlat:
-                    lines.Add($"初始队伍人数 +{Mathf.Max(0, effect.intValue)}");
+                    lines.Add(GameText.Format("ui.ability.starting_party_members", "初始队伍人数 +{max}", ("max", Mathf.Max(0, effect.intValue))));
                     break;
                 case AbilityEffectType.ExtraStartingCompanion:
-                    lines.Add("选择额外初始队友");
+                    lines.Add(GameText.Get("ui.ability.choose_an_extra_starting_companion", "选择额外初始队友"));
                     break;
                 case AbilityEffectType.TreasureRewardTableOverride:
-                    lines.Add("替换宝藏奖励表");
+                    lines.Add(GameText.Get("ui.ability.replace_the_treasure_reward_table", "替换宝藏奖励表"));
                     break;
                 case AbilityEffectType.StartingWeaponReplacement:
-                    lines.Add("替换主角初始武器");
+                    lines.Add(GameText.Get("ui.ability.replace_the_starting_weapon", "替换主角初始武器"));
                     break;
                 case AbilityEffectType.RelicChoiceRefreshCount:
-                    lines.Add($"遗物选择刷新 +{Mathf.Max(0, effect.intValue)}");
+                    lines.Add(GameText.Format("ui.ability.relic_reward_rerolls", "遗物选择刷新 +{max}", ("max", Mathf.Max(0, effect.intValue))));
                     break;
             }
         }
 
-        return lines.Count > 0 ? string.Join("\n", lines) : "无效果";
+        return lines.Count > 0 ? string.Join("\n", lines) : GameText.Get("ui.ability.no_effect", "无效果");
     }
 
     private static string ResolveStateText(AbilityNodeState state)
@@ -649,11 +649,11 @@ public sealed class AbilityMenuOverlay : MonoBehaviour
         switch (state)
         {
             case AbilityNodeState.Unlocked:
-                return "该能力已经生效。";
+                return GameText.Get("ui.ability.this_ability_is_already_active", "该能力已经生效。");
             case AbilityNodeState.Available:
-                return "前置条件已满足，可以解锁。";
+                return GameText.Get("ui.ability.requirements_met_ready_to_unlock", "前置条件已满足，可以解锁。");
             default:
-                return "需要先解锁前置能力。";
+                return GameText.Get("ui.ability.unlock_the_prerequisite_abilities_first", "需要先解锁前置能力。");
         }
     }
 

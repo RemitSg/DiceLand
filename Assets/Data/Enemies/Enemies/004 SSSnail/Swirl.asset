@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Swirl
   m_EditorClassIdentifier: 
+  localizationKey: skill.swirl
   skillName: "\u9AD8\u901F\u65CB\u8F6C"
   description: "\u628A\u81EA\u5DF1\u65CB\u8F6C\u6210\u4E00\u4E2A\u7403\u51B2\u5411\u654C\u4EBA\u3002"
   skillCategory: 0

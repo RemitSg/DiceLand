@@ -10,6 +10,16 @@ public class EnemyGroup_SO : ScriptableObject
     public string saveId;
     public string legacySaveId;
     public string groupName;
+    public string localizationKey;
+    public string LocalizedName => Localize("name", groupName);
+    public string LocalizedDescription => Localize("description", description);
+
+    private string Localize(string field, string source)
+    {
+        if (!string.IsNullOrWhiteSpace(localizationKey)) return GameText.Content(localizationKey, field, source);
+        return groupID > 0 ? GameText.Content("enemy_group", groupID, field, source)
+            : GameText.Content(saveId, field, source);
+    }
 
     [TextArea(2, 4)]
     public string description;

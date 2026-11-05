@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: BacklightGuard
   m_EditorClassIdentifier: 
+  localizationKey: skill.backlightguard
   skillName: "\u80CC\u8F89\u683C\u6321"
   description: "\u6697\u4E0B\u6765\u7684\u68F1\u9762\u6A2A\u5728\u524D\u65B9\uFF0C\u628A\u88AD\u6765\u7684\u529B\u91CF\u538B\u8FDB\u4E00\u5708\u51B7\u4EAE\u7684\u8FB9\u6846\u3002"
   skillCategory: 1

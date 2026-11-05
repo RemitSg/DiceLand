@@ -32,24 +32,24 @@ public static class RunRestService
     public static bool ValidateLootReforge(RunState state, LootItem_SO first, LootItem_SO second, LootAttribute_SO attribute, out string error)
     {
         error = null;
-        if (first == null || second == null) { error = "请先选择两件战利品材料。"; return false; }
-        if (attribute == null) { error = "请先选择目标属性。"; return false; }
-        if (first.rarity != second.rarity) { error = "两件战利品必须为同阶级。"; return false; }
-        if (state == null) { error = "未找到当前队伍背包数据。"; return false; }
-        if (state.GetLootAmount(first) < (first == second ? 2 : 1)) { error = "材料不足：" + first.lootName; return false; }
-        if (first != second && state.GetLootAmount(second) < 1) { error = "材料不足：" + second.lootName; return false; }
+        if (first == null || second == null) { error = GameText.Get("ui.run_rest.choose_two_loot_materials_first", "请先选择两件战利品材料。"); return false; }
+        if (attribute == null) { error = GameText.Get("ui.run_rest.choose_a_target_attribute_first", "请先选择目标属性。"); return false; }
+        if (first.rarity != second.rarity) { error = GameText.Get("rest.reforge.both_loot_items_must_have_the_same_rarity", "两件战利品必须为同阶级。"); return false; }
+        if (state == null) { error = GameText.Get("ui.run_rest.party_inventory_is_unavailable", "未找到当前队伍背包数据。"); return false; }
+        if (state.GetLootAmount(first) < (first == second ? 2 : 1)) { error = GameText.Get("ui.run_rest.missing_material", "材料不足：") + first.LocalizedName; return false; }
+        if (first != second && state.GetLootAmount(second) < 1) { error = GameText.Get("ui.run_rest.missing_material", "材料不足：") + second.LocalizedName; return false; }
         return true;
     }
 
     public static bool ValidateRelicReforge(RunState state, Relic_SO first, Relic_SO second, out string error)
     {
         error = null;
-        if (first == null || second == null) { error = "请先选择两件遗物材料。"; return false; }
-        if (first.rarity != second.rarity) { error = "两件遗物必须为同阶级。"; return false; }
-        if (first.rarity >= LootRarity.Legendary) { error = "传说遗物无法继续升阶重铸。"; return false; }
-        if (state == null) { error = "未找到当前队伍遗物数据。"; return false; }
-        if (state.GetRelicAmount(first) < (first == second ? 2 : 1)) { error = "材料不足：" + first.DisplayName; return false; }
-        if (first != second && state.GetRelicAmount(second) < 1) { error = "材料不足：" + second.DisplayName; return false; }
+        if (first == null || second == null) { error = GameText.Get("ui.run_rest.choose_two_relics_first", "请先选择两件遗物材料。"); return false; }
+        if (first.rarity != second.rarity) { error = GameText.Get("rest.reforge.both_relics_must_have_the_same_rarity", "两件遗物必须为同阶级。"); return false; }
+        if (first.rarity >= LootRarity.Legendary) { error = GameText.Get("ui.run_rest.legendary_relics_cannot_be_reforged_to_a_higher", "传说遗物无法继续升阶重铸。"); return false; }
+        if (state == null) { error = GameText.Get("ui.run_rest.party_relic_data_is_unavailable", "未找到当前队伍遗物数据。"); return false; }
+        if (state.GetRelicAmount(first) < (first == second ? 2 : 1)) { error = GameText.Get("ui.run_rest.missing_material", "材料不足：") + first.LocalizedName; return false; }
+        if (first != second && state.GetRelicAmount(second) < 1) { error = GameText.Get("ui.run_rest.missing_material", "材料不足：") + second.LocalizedName; return false; }
         return true;
     }
 

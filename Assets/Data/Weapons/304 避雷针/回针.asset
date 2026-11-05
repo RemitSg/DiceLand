@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "回针"
   m_EditorClassIdentifier: 
+  localizationKey: skill.304_slash
   skillName: "回针"
   description: "导电针横在前方，把袭来的力道和雷弧一并折回。"
   skillCategory: 1

@@ -39,10 +39,10 @@ public static class MapBattleTilePreviewService
             tile = tile,
             moveCost = safeMoveCost,
             dangerRating = MapDangerRatingService.ClampRating(tile != null ? tile.previewDangerRating : 1),
-            attributeNames = attributeNames.Length > 0 ? attributeNames : new[] { "无明显倾向" },
+            attributeNames = attributeNames.Length > 0 ? attributeNames : new[] { GameText.Get("ui.map_battle_tile_preview.no_dominant_attribute", "无明显倾向") },
             canPreview = canPreview,
             canConfirm = canPreview && canAttemptMove,
-            confirmLabel = $"进入战斗 · 预计 {safeMoveCost} AP"
+            confirmLabel = GameText.Format("ui.map_battle_tile_preview.enter_battle_estimated_ap", "进入战斗 · 预计 {safeMoveCost} AP", ("safeMoveCost", safeMoveCost))
         };
 
         if (tile != null && tile.tileType == MapTileType.Boss &&
@@ -51,12 +51,12 @@ public static class MapBattleTilePreviewService
             int currentKeys = runState != null ? runState.currentKeys : 0;
             int requiredKeys = runState != null ? runState.requiredKeys : 0;
             context.canConfirm = false;
-            context.blockReason = $"Boss 未解锁：{currentKeys}/{requiredKeys} 钥匙";
+            context.blockReason = GameText.Format("ui.map_battle_tile_preview.boss_locked_keys", "Boss 未解锁：{currentKeys}/{requiredKeys} 钥匙", ("currentKeys", currentKeys), ("requiredKeys", requiredKeys));
         }
         else if (!canAttemptMove)
         {
             context.canConfirm = false;
-            context.blockReason = $"行动点不足，需要 {safeMoveCost} 点";
+            context.blockReason = GameText.Format("ui.map_battle_tile_preview.not_enough_ap_this_move_requires", "行动点不足，需要 {safeMoveCost} 点", ("safeMoveCost", safeMoveCost));
         }
 
         return context;
@@ -83,7 +83,7 @@ public static class MapBattleTilePreviewService
             if (attribute == null || string.IsNullOrWhiteSpace(attribute.attributeName))
                 continue;
 
-            string name = attribute.attributeName.Trim();
+            string name = attribute.LocalizedName.Trim();
             string key = !string.IsNullOrWhiteSpace(attribute.attributeId)
                 ? attribute.attributeId.Trim()
                 : name;

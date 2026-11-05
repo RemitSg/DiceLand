@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "花瘴"
   m_EditorClassIdentifier: 
+  localizationKey: skill.303_slash_2
   skillName: "花瘴"
   description: "半败花瓣散作淡绿雾气，专向已有毒意的血肉深处沉下去。"
   skillCategory: 0

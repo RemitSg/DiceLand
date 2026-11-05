@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "辉盾横架"
   m_EditorClassIdentifier: 
+  localizationKey: skill.204_slash_4
   skillName: "辉盾横架"
   description: "巨斧横起时，棱镜核心把来势分解成护在同伴身前的光面。"
   skillCategory: 1

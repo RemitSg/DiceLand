@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "\u5BD2\u6C14\u6A2A\u65A9"
   m_EditorClassIdentifier: 
+  localizationKey: skill.003_frostironsword_slash
   skillName: "\u5BD2\u6C14\u6A2A\u65A9"
   description: "\u7528\u5BD2\u51B7\u7684\u5251\u5203\u501F\u529B\u6A2A\u5288\u654C\u4EBA\uFF0C\u8BA9\u654C\u4EBA\u611F\u53D7\u53CC\u91CD\u75DB\u82E6"
   skillCategory: 0

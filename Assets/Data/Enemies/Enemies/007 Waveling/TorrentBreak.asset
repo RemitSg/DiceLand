@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: TorrentBreak
   m_EditorClassIdentifier: 
+  localizationKey: skill.torrentbreak
   skillName: "\u7011\u7834"
   description: "\u90A3\u662F......\u5DE8\u5927\u7684\u7011\u5E03\uFF1F"
   skillCategory: 0

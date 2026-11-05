@@ -40,7 +40,7 @@ public static class MerchantPurchaseService
                 MerchantPurchaseFailureReason.InsufficientMoney,
                 price,
                 displayName,
-                $"金钱不足，需要 {price} 金钱。");
+                GameText.Format("ui.merchant_purchase.you_need_gold", "金钱不足，需要 {price} 金钱。", ("price", price)));
         }
 
         bool canUsePositiveMoneyOverride = price > 0 && runState.money < price &&
@@ -51,7 +51,7 @@ public static class MerchantPurchaseService
                 MerchantPurchaseFailureReason.InsufficientMoney,
                 price,
                 displayName,
-                $"金钱不足，需要 {price} 金钱。");
+                GameText.Format("ui.merchant_purchase.you_need_gold", "金钱不足，需要 {price} 金钱。", ("price", price)));
         }
 
         return new MerchantPurchaseResult { success = true, price = price, displayName = displayName,
@@ -66,7 +66,7 @@ public static class MerchantPurchaseService
         string displayName = evaluation.displayName;
         if (evaluation.usesPositiveMoneyOverride) runState.money -= price;
         else if (!runState.TrySpendMoney(price))
-            return Failure(MerchantPurchaseFailureReason.InsufficientMoney, price, displayName, $"金钱不足，需要 {price} 金钱。");
+            return Failure(MerchantPurchaseFailureReason.InsufficientMoney, price, displayName, GameText.Format("ui.merchant_purchase.you_need_gold", "金钱不足，需要 {price} 金钱。", ("price", price)));
 
         switch (offer.itemType)
         {
@@ -83,7 +83,7 @@ public static class MerchantPurchaseService
                 runState.AddRelic(offer.relicData, 1);
                 break;
             default:
-                return Failure(MerchantPurchaseFailureReason.UnknownItemType, price, displayName, "未知商品类型。");
+                return Failure(MerchantPurchaseFailureReason.UnknownItemType, price, displayName, GameText.Get("ui.merchant_purchase.unknown_item_type", "未知商品类型。"));
         }
 
         offer.isSoldOut = true;
@@ -94,38 +94,38 @@ public static class MerchantPurchaseService
             failureReason = MerchantPurchaseFailureReason.None,
             price = price,
             displayName = displayName,
-            message = $"购买成功：{displayName}"
+            message = GameText.Format("ui.merchant_purchase.bought", "购买成功：{displayName}", ("displayName", displayName))
         };
     }
 
     private static MerchantPurchaseResult ValidatePurchaseContext(RunState runState, BoardTileData tile, MerchantOfferState offer)
     {
         if (runState == null || tile == null || offer == null)
-            return Failure(MerchantPurchaseFailureReason.InvalidContext, 0, string.Empty, "无法购买该商品。");
+            return Failure(MerchantPurchaseFailureReason.InvalidContext, 0, string.Empty, GameText.Get("ui.merchant_purchase.this_item_cannot_be_purchased", "无法购买该商品。"));
 
         if (offer.isSoldOut)
-            return Failure(MerchantPurchaseFailureReason.SoldOut, 0, offer.DisplayName, "该商品已售罄。");
+            return Failure(MerchantPurchaseFailureReason.SoldOut, 0, offer.DisplayName, GameText.Get("ui.merchant_purchase.this_item_is_sold_out", "该商品已售罄。"));
 
         switch (offer.itemType)
         {
             case MerchantItemType.Loot:
                 if (offer.lootItem == null)
-                    return Failure(MerchantPurchaseFailureReason.MissingLootData, 0, offer.DisplayName, "商品未配置战利品。");
+                    return Failure(MerchantPurchaseFailureReason.MissingLootData, 0, offer.DisplayName, GameText.Get("ui.merchant_purchase.no_loot_is_configured_for_this_item", "商品未配置战利品。"));
                 break;
             case MerchantItemType.Weapon:
                 if (offer.weaponData == null)
-                    return Failure(MerchantPurchaseFailureReason.MissingWeaponData, 0, offer.DisplayName, "商品未配置武器。");
+                    return Failure(MerchantPurchaseFailureReason.MissingWeaponData, 0, offer.DisplayName, GameText.Get("ui.merchant_purchase.no_weapon_is_configured_for_this_item", "商品未配置武器。"));
                 break;
             case MerchantItemType.Blueprint:
                 if (offer.blueprintData == null)
-                    return Failure(MerchantPurchaseFailureReason.MissingBlueprintData, 0, offer.DisplayName, "商品未配置图纸。");
+                    return Failure(MerchantPurchaseFailureReason.MissingBlueprintData, 0, offer.DisplayName, GameText.Get("ui.merchant_purchase.no_blueprint_is_configured_for_this_item", "商品未配置图纸。"));
                 break;
             case MerchantItemType.Relic:
                 if (offer.relicData == null)
-                    return Failure(MerchantPurchaseFailureReason.MissingRelicData, 0, offer.DisplayName, "商品未配置遗物。");
+                    return Failure(MerchantPurchaseFailureReason.MissingRelicData, 0, offer.DisplayName, GameText.Get("ui.merchant_purchase.no_relic_is_configured_for_this_item", "商品未配置遗物。"));
                 break;
             default:
-                return Failure(MerchantPurchaseFailureReason.UnknownItemType, 0, offer.DisplayName, "未知商品类型。");
+                return Failure(MerchantPurchaseFailureReason.UnknownItemType, 0, offer.DisplayName, GameText.Get("ui.merchant_purchase.unknown_item_type", "未知商品类型。"));
         }
 
         return new MerchantPurchaseResult

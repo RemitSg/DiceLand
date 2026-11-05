@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: MassDecay
   m_EditorClassIdentifier: 
+  localizationKey: skill.massdecay
   skillName: "\u7FA4\u4F53\u8150\u70C2"
   description: "\u6BCF\u679A\u9AB0\u5B50\u547D\u4E2D\u65F6\uFF0C\u4F7F\u5168\u4F53\u76EE\u6807\u5728\u4E0B\u56DE\u5408\u5F00\u59CB\u65F6\u83B7\u5F97
     1 \u5C42\u4E2D\u6BD2"

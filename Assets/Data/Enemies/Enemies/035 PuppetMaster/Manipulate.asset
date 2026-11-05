@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Manipulate
   m_EditorClassIdentifier: 
+  localizationKey: skill.manipulate
   skillName: "\u64CD\u7EB5"
   description: "\u7EC6\u7EBF\u4ECE\u6307\u95F4\u843D\u4E0B\uFF0C\u5148\u52FE\u4F4F\u5173\u8282\uFF0C\u518D\u628A\u547D\u4EE4\u7F1D\u8FDB\u76AE\u80A4\u91CC\u3002"
   skillCategory: 0

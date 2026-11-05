@@ -31,6 +31,9 @@ public sealed class BattleStatusRuntimeEntry
         }
     }
 
+    public string LocalizedName => statusData != null ? statusData.LocalizedName
+        : GameText.Content("status." + Key, "name", DisplayName);
+
     public Sprite IconSprite => statusData != null ? statusData.IconSprite : null;
     public Color AccentColor => statusData != null ? statusData.AccentColor : Color.white;
 }

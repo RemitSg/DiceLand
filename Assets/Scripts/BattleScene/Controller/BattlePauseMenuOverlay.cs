@@ -302,11 +302,11 @@ public class BattlePauseMenuOverlay : MonoBehaviour
         panelLayout.childForceExpandWidth = false;
         panelLayout.childForceExpandHeight = false;
 
-        Text titleText = CreateText(panelRect, "Title", titleLabel, titleFontSize, ResolveTitleFont(), titleColor, TextAnchor.MiddleCenter);
+        Text titleText = CreateText(panelRect, "Title", GameText.Get("battle.pause.title", titleLabel), titleFontSize, ResolveTitleFont(), titleColor, TextAnchor.MiddleCenter);
         AddLayoutElement(titleText.rectTransform, panelSize.x - panelPadding.x * 2f, 72f);
 
-        musicSlider = CreateSliderRow(musicLabel, out musicValueText);
-        sfxSlider = CreateSliderRow(sfxLabel, out sfxValueText);
+        musicSlider = CreateSliderRow(GameText.Get("ui.pause.music", musicLabel), out musicValueText);
+        sfxSlider = CreateSliderRow(GameText.Get("ui.pause.sfx", sfxLabel), out sfxValueText);
 
         Vector2 buttonsSize = new Vector2(buttonSize.x, buttonSize.y * 5f + buttonSpacing * 4f);
         RectTransform buttonsRoot = CreateRect("Buttons", panelRect, buttonsSize);
@@ -319,12 +319,12 @@ public class BattlePauseMenuOverlay : MonoBehaviour
         buttonsLayout.childForceExpandHeight = false;
         AddLayoutElement(buttonsRoot, buttonsSize.x, buttonsSize.y);
 
-        CreateButton(buttonsRoot, "ResumeButton", resumeLabel, buttonColor, buttonBackgroundSprite, Hide);
-        Button settingsButton = CreateButton(buttonsRoot, "SettingsButton", "设置", buttonColor, buttonBackgroundSprite, ShowSettings);
+        CreateButton(buttonsRoot, "ResumeButton", GameText.Get("ui.resume", resumeLabel), buttonColor, buttonBackgroundSprite, Hide);
+        Button settingsButton = CreateButton(buttonsRoot, "SettingsButton", GameText.Get("ui.menu.settings", "设置"), buttonColor, buttonBackgroundSprite, ShowSettings);
         settingsButtonText = settingsButton.GetComponentInChildren<Text>(true);
-        CreateButton(buttonsRoot, "RetryButton", retryLabel, buttonColor, buttonBackgroundSprite, HandleRetryClicked);
-        CreateButton(buttonsRoot, "AbandonButton", abandonLabel, abandonButtonColor, abandonButtonBackgroundSprite, HandleAbandonClicked);
-        CreateButton(buttonsRoot, "CloseButton", closeLabel, buttonColor, buttonBackgroundSprite, Hide);
+        CreateButton(buttonsRoot, "RetryButton", GameText.Get("battle.pause.retry", retryLabel), buttonColor, buttonBackgroundSprite, HandleRetryClicked);
+        CreateButton(buttonsRoot, "AbandonButton", GameText.Get("battle.pause.abandon", abandonLabel), abandonButtonColor, abandonButtonBackgroundSprite, HandleAbandonClicked);
+        CreateButton(buttonsRoot, "CloseButton", GameText.Get("ui.close", closeLabel), buttonColor, buttonBackgroundSprite, Hide);
 
         musicSlider.onValueChanged.AddListener(HandleSliderChanged);
         sfxSlider.onValueChanged.AddListener(HandleSliderChanged);

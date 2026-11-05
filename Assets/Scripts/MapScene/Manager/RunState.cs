@@ -18,7 +18,7 @@ public class RunPartyMemberState
 
     public string DisplayName =>
         characterData != null && !string.IsNullOrWhiteSpace(characterData.characterName)
-            ? characterData.characterName
+            ? characterData.LocalizedName
             : (!string.IsNullOrWhiteSpace(memberId) ? memberId : "PartyMember");
 
     public Sprite BattleSprite =>
@@ -54,7 +54,7 @@ public class RunLootState
 
     public string DisplayName =>
         lootItem != null && !string.IsNullOrWhiteSpace(lootItem.lootName)
-            ? lootItem.lootName
+            ? lootItem.LocalizedName
             : "Loot";
 
     public RunLootState Clone()
@@ -75,7 +75,7 @@ public class RunWeaponState
 
     public string DisplayName =>
         weaponData != null && !string.IsNullOrWhiteSpace(weaponData.weaponName)
-            ? weaponData.weaponName
+            ? weaponData.LocalizedName
             : "Weapon";
 
     public RunWeaponState Clone()
@@ -96,7 +96,7 @@ public class RunBlueprintState
 
     public string DisplayName =>
         blueprintData != null && !string.IsNullOrWhiteSpace(blueprintData.DisplayName)
-            ? blueprintData.DisplayName
+            ? blueprintData.LocalizedName
             : "Blueprint";
 
     public RunBlueprintState Clone()
@@ -117,7 +117,7 @@ public class RunRelicState
 
     public string DisplayName =>
         relicData != null && !string.IsNullOrWhiteSpace(relicData.DisplayName)
-            ? relicData.DisplayName
+            ? relicData.LocalizedName
             : "Relic";
 
     public RunRelicState Clone()
@@ -138,7 +138,7 @@ public class RunCalamityState
 
     public string DisplayName =>
         calamityData != null && !string.IsNullOrWhiteSpace(calamityData.DisplayName)
-            ? calamityData.DisplayName
+            ? calamityData.LocalizedName
             : "Calamity";
 
     public RunCalamityState Clone()
@@ -422,13 +422,13 @@ public partial class RunState
 
         if (weaponData == null)
         {
-            errorMessage = "未选择武器。";
+            errorMessage = GameText.Get("ui.equip.select_weapon", "未选择武器。");
             return false;
         }
 
         if (GetWeaponAmount(weaponData) <= 0)
         {
-            errorMessage = "背包中没有该武器。";
+            errorMessage = GameText.Get("ui.equip.weapon_missing", "背包中没有该武器。");
             return false;
         }
 
@@ -436,14 +436,14 @@ public partial class RunState
         if (currentOwner != null)
         {
             equippedMember = currentOwner;
-            errorMessage = $"{currentOwner.DisplayName} 当前已装备该武器。";
+            errorMessage = GameText.Format("ui.equip.already_equipped", "{displayName} 当前已装备该武器。", ("displayName", currentOwner.DisplayName));
             return false;
         }
 
         RunPartyMemberState targetMember = GetPreferredCompatibleMember(weaponData);
         if (targetMember == null)
         {
-            errorMessage = "当前队伍中没有适配该武器的角色。";
+            errorMessage = GameText.Get("ui.map_hud.no_party_member_can_use_this_weapon", "当前队伍中没有适配该武器的角色。");
             return false;
         }
 

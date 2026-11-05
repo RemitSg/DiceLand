@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Howl
   m_EditorClassIdentifier: 
+  localizationKey: skill.howl
   skillName: "\u9E23"
   description: "\u76EE\u6807\u504F\u597D\u573A\u4E0A\u7535\u6D41\u5C42\u6570\u6700\u9AD8\u7684\u76EE\u6807\u3002\u9AB0\u5B50
     1 \u547D\u4E2D\u65F6\u89E6\u53D1\u4E00\u91CD\u7535\u6D41\u7206\u53D1\uFF0C\u4E0D\u6D88\u8017\u76EE\u6807\u7535\u6D41\u5C42\u6570\uFF1B\u9AB0\u5B50

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Obey
   m_EditorClassIdentifier: 
+  localizationKey: skill.obey
   skillName: "\u9075\u4ECE"
   description: "\u6728\u8D28\u5173\u8282\u54AF\u54AF\u4F5C\u54CD\uFF0C\u5B83\u6CA1\u6709\u60F3\u6CD5\uFF0C\u53EA\u6709\u88AB\u62C9\u76F4\u7684\u65B9\u5411\u3002"
   skillCategory: 0

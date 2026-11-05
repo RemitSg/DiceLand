@@ -59,6 +59,11 @@ public class BattleStatus_SO : ScriptableObject
     [SerializeField] private StackDecayMode roundStartDecayMode = StackDecayMode.HalveRoundedDown;
     [SerializeField] private StackDecayMode roundEndDecayMode = StackDecayMode.None;
 
+    [SerializeField] private string localizationKey;
+    private string LocalizationKey => string.IsNullOrWhiteSpace(localizationKey) ? "status." + StatusId : localizationKey;
+    public string LocalizedName => GameText.Content(LocalizationKey, "name", DisplayName);
+    public string LocalizedDescription => GameText.Content(LocalizationKey, "description", Description);
+
     public string StatusId => string.IsNullOrWhiteSpace(statusId) ? name : statusId;
     public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? name : displayName;
     public string Description => description;

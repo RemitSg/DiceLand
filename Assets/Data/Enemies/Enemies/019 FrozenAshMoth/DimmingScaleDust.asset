@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: DimmingScaleDust
   m_EditorClassIdentifier: 
+  localizationKey: skill.dimmingscaledust
   skillName: "\u7184\u5149\u9CDE\u7C89"
   description: "\u7B2C 1 \u9AA0\u62FC\u70B9\u65F6\u82E5\u76EE\u6807\u5E26\u6709\u5BD2\u51B7\u5219\u5A01\u529B
     +1\uFF1B\u7B2C 2 \u9AA0\u547D\u4E2D\u540E\uFF0C\u76EE\u6807\u4E0B\u56DE\u5408\u5F00\u59CB\u65F6\u83B7\u5F97

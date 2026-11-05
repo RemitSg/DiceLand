@@ -42,11 +42,11 @@ public class MapTutorialGuideOverlay : MonoBehaviour
         canvas = view.Canvas; panelRoot = view.Panel;
         titleText = (Text)view.Title; bodyText = (Text)view.Body;
         buttonText = (Text)view.PrimaryLabel; continueButton = view.Primary;
-        view.SetContext("地图探索"); view.SetLegacyFonts(titleFont, bodyFont, buttonFont);
+        view.SetContext(GameText.Get("tutorial.map.context", "地图探索")); view.SetLegacyFonts(titleFont, bodyFont, buttonFont);
         continueButton.onClick.AddListener(Continue);
     }
 
-    public void Show(string title, string body, Action onContinue, string buttonLabel = "继续")
+    public void Show(string title, string body, Action onContinue, string buttonLabel = null)
     {
         ShowFocused(title, body, onContinue, buttonLabel, null);
     }
@@ -57,16 +57,16 @@ public class MapTutorialGuideOverlay : MonoBehaviour
         if (showHighlight) view.ShowLegacyHighlight(highlightAnchor, highlightSize);
     }
 
-    public void ShowFocused(string title, string body, Action onContinue, string buttonLabel, Func<Rect?> target, Func<Rect?> keepClear = null, string context = "地图探索")
+    public void ShowFocused(string title, string body, Action onContinue, string buttonLabel, Func<Rect?> target, Func<Rect?> keepClear = null, string context = null, bool showFootprint = false)
     {
         if (!gameObject.activeSelf) gameObject.SetActive(true);
         EnsureUi(); targetMode = false;
-        titleText.text = string.IsNullOrWhiteSpace(title) ? "教程" : title;
-        bodyText.text = title == "坐标与类型" && body != null
-            ? body.Replace("坐标与类型", "<color=#E6BF68>坐标与类型</color>").Replace("“战斗”", "<color=#F19A86>“战斗”</color>") : body ?? string.Empty;
-        buttonText.text = string.IsNullOrWhiteSpace(buttonLabel) ? "继续" : buttonLabel;
+        titleText.text = string.IsNullOrWhiteSpace(title) ? GameText.Get("ui.menu.tutorial", "教程") : title;
+        bodyText.text = body ?? string.Empty;
+        buttonText.text = string.IsNullOrWhiteSpace(buttonLabel) ? GameText.Get("ui.continue", "继续") : buttonLabel;
         continueHandler = onContinue;
-        view.SetContext(context == "地图探索" ? GameText.Get("tutorial.map.context", "地图探索") : context);
+        view.SetContext(context ?? GameText.Get("tutorial.map.context", "地图探索"));
+        view.ShowFootprint = showFootprint;
         view.Show(target != null, target, keepClear);
         view.Reading.StopMovement(); view.Reading.verticalNormalizedPosition = 1;
         if (!timeScalePaused) { previousTimeScale = Time.timeScale; timeScalePaused = true; Time.timeScale = 0; }

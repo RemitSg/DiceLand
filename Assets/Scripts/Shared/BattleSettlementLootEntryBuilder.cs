@@ -17,8 +17,8 @@ public static class BattleSettlementLootEntryBuilder
                 {
                     lootItem = loot.lootItem,
                     amount = loot.amount,
-                    displayName = string.IsNullOrWhiteSpace(loot.lootItem.lootName) ? loot.DisplayName : loot.lootItem.lootName,
-                    description = loot.lootItem.description ?? string.Empty,
+                    displayName = loot.DisplayName,
+                    description = loot.lootItem.LocalizedDescription ?? string.Empty,
                     rarity = loot.lootItem.rarity,
                     attribute = loot.lootItem.attribute,
                     icon = loot.lootItem.icon
@@ -38,8 +38,8 @@ public static class BattleSettlementLootEntryBuilder
                 {
                     relicData = relic.relicData,
                     amount = relic.amount,
-                    displayName = relic.relicData.DisplayName,
-                    description = relic.relicData.description ?? string.Empty,
+                    displayName = relic.relicData.LocalizedName,
+                    description = relic.relicData.LocalizedDescription ?? string.Empty,
                     rarity = relic.relicData.rarity,
                     attribute = null,
                     icon = relic.relicData.icon

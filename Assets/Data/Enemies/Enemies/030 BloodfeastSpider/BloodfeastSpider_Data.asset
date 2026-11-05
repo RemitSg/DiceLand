@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: BloodfeastSpider_Data
   m_EditorClassIdentifier: 
   enemyID: 30
+  localizationKey: enemy.30.bloodfeastspider_data
   enemyName: "\u8840\u566C\u86DB"
   baseHP: 19
   damageReductionPercent: 0

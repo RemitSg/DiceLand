@@ -35,9 +35,9 @@ public class TutorialBattleGuideOverlay : MonoBehaviour
     public void Show(string title, string body, string buttonLabel, Action onContinue)
     {
         EnsureUi(); targetMode = false; continueCallback = onContinue;
-        TutorialForestView.SetText(view.Title, string.IsNullOrWhiteSpace(title) ? "战斗教程" : title);
-        TutorialForestView.SetText(view.Body, string.IsNullOrWhiteSpace(body) ? "暂无说明。" : body);
-        TutorialForestView.SetText(view.PrimaryLabel, string.IsNullOrWhiteSpace(buttonLabel) ? "继续" : buttonLabel);
+        TutorialForestView.SetText(view.Title, string.IsNullOrWhiteSpace(title) ? GameText.Get("tutorial.battle.context", "战斗教程") : title);
+        TutorialForestView.SetText(view.Body, string.IsNullOrWhiteSpace(body) ? GameText.Get("ui.tutorial_battle_guide.no_details_available", "暂无说明。") : body);
+        TutorialForestView.SetText(view.PrimaryLabel, string.IsNullOrWhiteSpace(buttonLabel) ? GameText.Get("ui.continue", "继续") : buttonLabel);
         view.Show(); view.Reading.StopMovement(); view.Reading.verticalNormalizedPosition = 1;
         if (!timeScalePaused) { previousTimeScale = Time.timeScale; timeScalePaused = true; Time.timeScale = 0; }
         if (!ownsInput) { previousSuppression = SpeedButton.InputSuppressed; ownsInput = true; SpeedButton.InputSuppressed = true; }

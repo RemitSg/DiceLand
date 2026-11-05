@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: SeveringShot
   m_EditorClassIdentifier: 
+  localizationKey: skill.severingshot
   skillName: "\u65AD\u7EBF\u5C04\u51FB"
   description: "\u88AB\u51FB\u4E2D\u7684\u730E\u7269\u5982\u540C\u65AD\u4E86\u7EBF\u7684\u98CE\u7B5D\u3002"
   skillCategory: 0

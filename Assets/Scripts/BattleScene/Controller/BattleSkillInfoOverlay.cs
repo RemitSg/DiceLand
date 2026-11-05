@@ -282,24 +282,24 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
     {
         Weapon_SO weaponData = ally != null ? ally.GetComponent<AllyController>()?.weapon?.weaponData : null;
         if (weaponData == null)
-            return ally != null && ally.HasTemporarySkills ? "\u4ec5\u4f7f\u7528\u4e34\u65f6\u6280\u80fd" : "\u672a\u88c5\u5907\u6b66\u5668";
+            return ally != null && ally.HasTemporarySkills ? GameText.Get("battle.skill.rules.temporary_skills_only", "仅使用临时技能") : GameText.Get("battle.skill.no_weapon", "未装备武器");
 
         string sourceLabel = ally != null && ally.TemporarySkillsOverrideWeaponPool
-            ? "\u4e34\u65f6\u6280\u80fd"
-            : weaponData.weaponName;
+            ? GameText.Get("battle.skill.temporary", "临时技能")
+            : weaponData.LocalizedName;
         EnemySkill_SO selectedSkill = ally != null ? ally.GetSelectedSkillForButton(sourceButton) : null;
-        return $"{sourceLabel}  \u5f53\u524d\u6280\u80fd\uff1a{selectedSkill?.skillName ?? "\u672a\u914d\u7f6e"}";
+        return GameText.Format("battle.skill.rules.current_skill", "{sourceLabel}  当前技能：{value}", ("sourceLabel", sourceLabel), ("value", selectedSkill?.LocalizedName ?? GameText.Get("battle.skill.unset", "未配置")));
     }
 
     private string BuildAllyDetail(BattleAllyController ally, SpeedButton sourceButton)
     {
         if (ally == null)
-            return "\u672a\u627e\u5230\u89d2\u8272\u6570\u636e\u3002";
+            return GameText.Get("battle.skill.rules.character_data_unavailable", "未找到角色数据。");
 
         EnemySkill_SO selectedSkill = ally.GetSelectedSkillForButton(sourceButton);
         return BuildSkillDetail(
             selectedSkill,
-            "\u5f53\u524d\u6280\u80fd",
+            GameText.Get("battle.skill.current", "当前技能"),
             true,
             selectedSkill != null ? new Func<int, EnemySkill_SO.DicePowerRange>(diceIndex => ally.GetDisplayedDicePowerRange(selectedSkill, diceIndex)) : null,
             ally);
@@ -308,9 +308,9 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
     private string BuildEnemyDetail(BattleEnemyController enemy)
     {
         if (enemy == null)
-            return "\u672a\u627e\u5230\u654c\u65b9\u6570\u636e\u3002";
+            return GameText.Get("battle.skill.rules.enemy_data_unavailable", "未找到敌方数据。");
 
-        return BuildEnemySkillDetail(enemy, enemy.SelectedSkill, "\u5f53\u524d\u6280\u80fd");
+        return BuildEnemySkillDetail(enemy, enemy.SelectedSkill, GameText.Get("battle.skill.current", "当前技能"));
     }
 
     private string BuildEnemySkillDetail(BattleEnemyController enemy, EnemySkill_SO skill, string header)
@@ -331,26 +331,26 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
     private string BuildEnemyDataDetail(BattleEnemyController enemy)
     {
         if (enemy == null || enemy.enemyData == null)
-            return "未找到敌人数据。";
+            return GameText.Get("battle.enemy.missing", "未找到敌人数据。");
 
         EnemyData_SO enemyData = enemy.enemyData;
-        string description = string.IsNullOrWhiteSpace(enemyData.enemyDescription)
-            ? "暂无描述。"
-            : enemyData.enemyDescription;
+        string description = string.IsNullOrWhiteSpace(enemyData.LocalizedDescription)
+            ? GameText.Get("ui.no_description", "暂无描述。")
+            : enemyData.LocalizedDescription;
 
         List<string> lines = new List<string>
         {
-            $"名称：{enemyData.enemyName}",
-            $"最大生命：{enemyData.baseHP}",
+            GameText.Format("battle.skill.rules.name", "名称：{localizedName}", ("localizedName", enemyData.LocalizedName)),
+            GameText.Format("battle.skill.rules.max_hp", "最大生命：{baseHP}", ("baseHP", enemyData.baseHP)),
             string.Empty,
-            "描述：",
+            GameText.Get("battle.skill.rules.description", "描述："),
             description
         };
 
         if (enemyData.passiveDescriptions != null && enemyData.passiveDescriptions.Count > 0)
         {
             lines.Add(string.Empty);
-            lines.Add("特殊被动：");
+            lines.Add(GameText.Get("battle.skill.rules.passives", "特殊被动："));
             for (int i = 0; i < enemyData.passiveDescriptions.Count; i++)
             {
                 EnemyData_SO.PassiveDescriptionEntry entry = enemyData.passiveDescriptions[i];
@@ -358,9 +358,9 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                     continue;
 
                 if (!string.IsNullOrWhiteSpace(entry.passiveName))
-                    lines.Add($"• {BuildColoredToken(entry.passiveName, GetPassiveNameColor(entry.displayColorType))}");
+                    lines.Add($"• {BuildColoredToken(enemyData.Localize($"passive.{i}.name", entry.passiveName), GetPassiveNameColor(entry.displayColorType))}");
                 if (!string.IsNullOrWhiteSpace(entry.description))
-                    lines.Add($"  {entry.description}");
+                    lines.Add("  " + enemyData.Localize($"passive.{i}.description", entry.description));
             }
         }
 
@@ -370,13 +370,13 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
     // Reuses the in-game effect formatter without constructing any UI.
     public string DescribeSkillRules(EnemySkill_SO skill, bool attackerIsAlly)
     {
-        return BuildSkillDetail(skill, skill != null ? skill.skillName : "", attackerIsAlly);
+        return BuildSkillDetail(skill, skill != null ? skill.LocalizedName : "", attackerIsAlly);
     }
 
     private string BuildSkillDetail(EnemySkill_SO skill, string header, bool attackerIsAlly, Func<int, EnemySkill_SO.DicePowerRange> rangeResolver = null, BattleAllyController allyContext = null)
     {
         if (skill == null)
-            return $"{header}\n\u672a\u914d\u7f6e\u6280\u80fd\u3002";
+            return GameText.Format("battle.skill.rules.no_skill_equipped", "{header}\n未配置技能。", ("header", header));
 
         List<string> rangeLines = new List<string>();
         List<string> effectLines = new List<string>();
@@ -391,21 +391,21 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
             effectLines.AddRange(BuildDiceRuleLines(skill, i, attackerIsAlly));
         }
 
-        string description = string.IsNullOrWhiteSpace(skill.description) ? "\u6682\u65e0\u63cf\u8ff0\u3002" : skill.description;
+        string description = string.IsNullOrWhiteSpace(skill.LocalizedDescription) ? GameText.Get("ui.no_description", "暂无描述。") : skill.LocalizedDescription;
         string targetPrioritySection = BuildTargetPrioritySummary(skill);
         string requirementSection = string.Empty;
         if (attackerIsAlly && skill.RequiresSelfStatusToUse && skill.requiredSelfStatusData != null)
         {
             int requiredStacks = Mathf.Max(1, skill.requiredSelfStatusStacks);
             int currentStacks = allyContext != null ? allyContext.GetStatusStacks(skill.requiredSelfStatusData) : 0;
-            string currentSuffix = allyContext != null ? $"（当前 {currentStacks} 层）" : string.Empty;
-            string consumeSuffix = skill.keepRequiredSelfStatusAfterUse ? "，施放后不消耗" : "，施放后消耗";
-            requirementSection = $"\n施放条件：自身至少拥有 {requiredStacks} 层 {skill.requiredSelfStatusData.DisplayName}{currentSuffix}{consumeSuffix}";
+            string currentSuffix = allyContext != null ? GameText.Format("battle.skill.rules.currently", "（当前 {currentStacks} 层）", ("currentStacks", currentStacks)) : string.Empty;
+            string consumeSuffix = skill.keepRequiredSelfStatusAfterUse ? GameText.Get("battle.skill.rules.stacks_kept_after_use", "，施放后不消耗") : GameText.Get("battle.skill.rules.stacks_spent_on_use", "，施放后消耗");
+            requirementSection = GameText.Format("battle.skill.rules.requires_stacks_of", "\n施放条件：自身至少拥有 {requiredStacks} 层 {localizedName}{currentSuffix}{consumeSuffix}", ("requiredStacks", requiredStacks), ("localizedName", skill.requiredSelfStatusData.LocalizedName), ("currentSuffix", currentSuffix), ("consumeSuffix", consumeSuffix));
         }
         string effectSection = effectLines.Count > 0
-            ? $"\n\n\u8bcd\u6761\uff1a\n{string.Join("\n", effectLines)}"
+            ? GameText.Format("battle.skill.rules.effects", "\n\n词条：\n{join}", ("join", string.Join("\n", effectLines)))
             : string.Empty;
-        return $"{header}\n\u6280\u80fd\uff1a{skill.skillName}\n\u80fd\u8017\uff1a{Mathf.Max(0, skill.energyCost)}{requirementSection}\n\u9ab0\u5b50\u6570\uff1a{skill.diceCount}\n{string.Join("\n", rangeLines)}{targetPrioritySection}{effectSection}\n\n\u63cf\u8ff0\uff1a\n{description}";
+        return GameText.Format("battle.skill.rules.skill_energy_cost_dice_description", "{header}\n技能：{localizedName}\n能耗：{max}{requirementSection}\n骰子数：{diceCount}\n{join}{targetPrioritySection}{effectSection}\n\n描述：\n{description}", ("header", header), ("localizedName", skill.LocalizedName), ("max", Mathf.Max(0, skill.energyCost)), ("requirementSection", requirementSection), ("diceCount", skill.diceCount), ("join", string.Join("\n", rangeLines)), ("targetPrioritySection", targetPrioritySection), ("effectSection", effectSection), ("description", description));
     }
 
     // Both the catalog formatter and the card view use exactly the same per-die rules.
@@ -474,8 +474,8 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                     ? BuildColoredToken(BuildStatusEffectTimingLabel(effect), triggerHighlightColor)
                     : string.Empty;
                 effectLines.Add(effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
-                    ? $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 于 {timingLabel} 获得 {stackLabel} 层 {statusLabel}"
-                    : $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 获得 {stackLabel} 层 {statusLabel}");
+                    ? GameText.Format("battle.skill.rules.grant_stacks_of_to_at", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 于 {timingLabel} 获得 {stackLabel} 层 {statusLabel}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("targetLabel", targetLabel), ("timingLabel", timingLabel), ("stackLabel", stackLabel), ("statusLabel", statusLabel))
+                    : GameText.Format("battle.skill.rules.grant_stacks_of_to", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 获得 {stackLabel} 层 {statusLabel}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("targetLabel", targetLabel), ("stackLabel", stackLabel), ("statusLabel", statusLabel)));
             }
         }
 
@@ -492,8 +492,8 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                 string multiplierLabel = BuildColoredToken(effect.damagePerStack.ToString(), valueHighlightColor);
                 string statusLabel = BuildColoredToken(GetStatusLabel(effect), targetHighlightColor);
                 effectLines.Add(effect.clearStacksAfterBurst
-                    ? $"{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 引发 {multiplierLabel} 重 {statusLabel} 爆发，造成 {multiplierLabel} x 层数 的额外伤害，并清空 {statusLabel}"
-                    : $"{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 引发 {multiplierLabel} 重 {statusLabel} 爆发，造成 {multiplierLabel} x 层数 的额外伤害");
+                    ? GameText.Format("battle.skill.rules.trigger_a_burst_on_deal_damage_per_stack", "{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 引发 {multiplierLabel} 重 {statusLabel} 爆发，造成 {multiplierLabel2} x 层数 的额外伤害，并清空 {statusLabel2}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("targetLabel", targetLabel), ("multiplierLabel", multiplierLabel), ("statusLabel", statusLabel), ("multiplierLabel2", multiplierLabel), ("statusLabel2", statusLabel))
+                    : GameText.Format("battle.skill.rules.trigger_a_burst_on_deal_extra_damage_per", "{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 引发 {multiplierLabel} 重 {statusLabel} 爆发，造成 {multiplierLabel2} x 层数 的额外伤害", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("targetLabel", targetLabel), ("multiplierLabel", multiplierLabel), ("statusLabel", statusLabel), ("multiplierLabel2", multiplierLabel)));
             }
         }
 
@@ -518,12 +518,12 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
 
                 if (effect.operationType == EnemySkill_SO.StatusStackOperationType.ClearStacks)
                 {
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 清空 {targetLabel} 的 {statusLabel}");
+                    effectLines.Add(GameText.Format("battle.skill.rules.clear_from", "{diceEffectLabel}：{triggerLabel} 清空 {targetLabel} 的 {statusLabel}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("targetLabel", targetLabel), ("statusLabel", statusLabel)));
                 }
                 else
                 {
                     string valueLabel = BuildColoredToken(Mathf.Max(1, effect.stackAmount).ToString(), valueHighlightColor);
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 使 {targetLabel} 的 {statusLabel} 减少 {valueLabel} 层");
+                    effectLines.Add(GameText.Format("battle.skill.rules.remove_stacks_of_from", "{diceEffectLabel}：{triggerLabel} 使 {targetLabel} 的 {statusLabel} 减少 {valueLabel} 层", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("targetLabel", targetLabel), ("statusLabel", statusLabel), ("valueLabel", valueLabel)));
                 }
             }
         }
@@ -536,9 +536,9 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                 string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
                 string valueLabel = BuildColoredToken((effect.targetStageIndex + 1).ToString(), valueHighlightColor);
                 if (effect.applyTiming == EnemySkill_SO.EnemyStageTransitionApplyTiming.NextRoundStart)
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 于 下个回合开始时 切换至 第 {valueLabel} 阶段");
+                    effectLines.Add(GameText.Format("battle.skill.rules.switch_to_phase_at_the_start_of_the", "{diceEffectLabel}：{triggerLabel} 于 下个回合开始时 切换至 第 {valueLabel} 阶段", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("valueLabel", valueLabel)));
                 else
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 切换至 第 {valueLabel} 阶段");
+                    effectLines.Add(GameText.Format("battle.skill.rules.switch_to_phase", "{diceEffectLabel}：{triggerLabel} 切换至 第 {valueLabel} 阶段", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("valueLabel", valueLabel)));
             }
         }
 
@@ -556,23 +556,23 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                 if (effect.useCondition)
                 {
                     string conditionLabel = BuildColoredToken(GetHealingConditionLabel(effect), targetHighlightColor);
-                    conditionPrefix = $"若 {conditionLabel} ，则 ";
+                    conditionPrefix = GameText.Format("battle.skill.rules.if", "若 {conditionLabel} ，则 ", ("conditionLabel", conditionLabel));
                 }
 
                 switch (effect.amountMode)
                 {
                     case EnemySkill_SO.HealAmountMode.DamageDealt:
-                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 恢复 相当于 造成伤害 的生命");
+                        effectLines.Add(GameText.Format("battle.skill.rules.restore_hp_to_equal_to_damage_dealt", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 恢复 相当于 造成伤害 的生命", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("targetLabel", targetLabel)));
                         break;
                     case EnemySkill_SO.HealAmountMode.StatusStacks:
                         string statusLabel = BuildColoredToken(GetStatusLabel(effect), targetHighlightColor);
                         string sourceLabel = BuildColoredToken(GetDamageTargetLabel(effect.statusStackSourceMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
                         string perStackLabel = BuildColoredToken(Mathf.Max(1, effect.healAmount).ToString(), valueHighlightColor);
-                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 根据 {sourceLabel} 的 {statusLabel} 层数，每层 恢复 {perStackLabel} 点生命");
+                        effectLines.Add(GameText.Format("battle.skill.rules.heal_for_hp_per_stack_of_on", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 根据 {sourceLabel} 的 {statusLabel} 层数，每层 恢复 {perStackLabel} 点生命", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("targetLabel", targetLabel), ("sourceLabel", sourceLabel), ("statusLabel", statusLabel), ("perStackLabel", perStackLabel)));
                         break;
                     default:
                         string healValueLabel = BuildColoredToken(effect.healAmount.ToString(), valueHighlightColor);
-                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 恢复 {healValueLabel} 点生命");
+                        effectLines.Add(GameText.Format("battle.skill.rules.heal_for_hp", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 恢复 {healValueLabel} 点生命", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("targetLabel", targetLabel), ("healValueLabel", healValueLabel)));
                         break;
                 }
             }
@@ -603,19 +603,19 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                     if (IsScalingPowerModifier(effect))
                     {
                         string perStepValueLabel = BuildColoredToken(FormatSignedInt(effect.powerBonusPerStep), valueHighlightColor);
-                        string scalingPrefix = IsSpeedDifferenceScalingPowerModifier(effect) ? "每高出 1 点速度，" : "每达成一次条件，";
-                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 {scalingPrefix}威力 {perStepValueLabel}{BuildPowerModifierCapSuffix(effect)}");
+                        string scalingPrefix = IsSpeedDifferenceScalingPowerModifier(effect) ? GameText.Get("battle.skill.rules.for_each_point_of_speed_above_the_target", "每高出 1 点速度，") : GameText.Get("battle.skill.rules.each_time_the_condition_is_met", "每达成一次条件，");
+                        effectLines.Add(GameText.Format("battle.skill.rules.if_power", "{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 {scalingPrefix}威力 {perStepValueLabel}{buildPowerModifierCapSuffix}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionLabel", conditionLabel), ("scalingPrefix", scalingPrefix), ("perStepValueLabel", perStepValueLabel), ("buildPowerModifierCapSuffix", BuildPowerModifierCapSuffix(effect))));
                     }
                     else
                     {
                         string valueLabel = BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor);
-                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 威力 {valueLabel}");
+                        effectLines.Add(GameText.Format("battle.skill.rules.build_dice_rule_lines.if_power", "{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 威力 {valueLabel}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionLabel", conditionLabel), ("valueLabel", valueLabel)));
                     }
                 }
                 else
                 {
                     string valueLabel = BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor);
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 威力 {valueLabel}");
+                    effectLines.Add(GameText.Format("battle.skill.rules.power", "{diceEffectLabel}：{triggerLabel} 威力 {valueLabel}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("valueLabel", valueLabel)));
                 }
             }
         }
@@ -643,7 +643,7 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
     private string[] BuildCompactSkillHoverSections(EnemySkill_SO skill, bool attackerIsAlly, Func<int, EnemySkill_SO.DicePowerRange> rangeResolver)
     {
         if (skill == null)
-            return new[] { "未配置技能。", "词条：\n无" };
+            return new[] { GameText.Get("battle.skill.rules.build_compact_skill_hover_sections.no_skill_equipped", "未配置技能。"), GameText.Get("battle.skill.rules.effects_none", "词条：\n无") };
 
         List<string> rangeLines = new List<string>();
         List<string> effectLines = new List<string>();
@@ -662,8 +662,8 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
 
         string rangeSection = string.Join("\n", rangeLines);
         string clauseSection = effectLines.Count > 0
-            ? $"词条：\n{string.Join("\n", effectLines)}"
-            : "词条：\n无";
+            ? GameText.Format("battle.skill.rules.build_compact_skill_hover_sections.effects", "词条：\n{join}", ("join", string.Join("\n", effectLines)))
+            : GameText.Get("battle.skill.rules.effects_none", "词条：\n无");
         return new[] { rangeSection, clauseSection };
     }
 
@@ -679,7 +679,7 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
             return BuildCompactSkillHoverSections(skill, false, null);
 
         if (skill == null)
-            return new[] { "未配置技能。", "词条：\n无" };
+            return new[] { GameText.Get("battle.skill.rules.build_compact_skill_hover_sections.no_skill_equipped", "未配置技能。"), GameText.Get("battle.skill.rules.effects_none", "词条：\n无") };
 
         List<string> rangeLines = new List<string>();
         List<string> effectLines = new List<string>();
@@ -698,8 +698,8 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
 
         string rangeSection = string.Join("\n", rangeLines);
         string clauseSection = effectLines.Count > 0
-            ? $"词条：\n{string.Join("\n", effectLines)}"
-            : "词条：\n无";
+            ? GameText.Format("battle.skill.rules.build_compact_skill_hover_sections.effects", "词条：\n{join}", ("join", string.Join("\n", effectLines)))
+            : GameText.Get("battle.skill.rules.effects_none", "词条：\n无");
         return new[] { rangeSection, clauseSection };
     }
 
@@ -732,7 +732,7 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                 string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
                 string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
                 string valueLabel = BuildColoredToken(effect.damageAmount.ToString(), valueHighlightColor);
-                effectLines.Add($"{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 造成 {valueLabel} 点伤害");
+                effectLines.Add(GameText.Format("battle.skill.rules.deal_damage_to", "{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 造成 {valueLabel} 点伤害", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("targetLabel", targetLabel), ("valueLabel", valueLabel)));
             }
         }
 
@@ -764,8 +764,8 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                     ? BuildColoredToken(BuildStatusEffectTimingLabel(effect), triggerHighlightColor)
                     : string.Empty;
                 effectLines.Add(effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
-                    ? $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 于 {timingLabel} 获得 {stackLabel} 层 {statusLabel}"
-                    : $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 获得 {stackLabel} 层 {statusLabel}");
+                    ? GameText.Format("battle.skill.rules.grant_stacks_of_to_at", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 于 {timingLabel} 获得 {stackLabel} 层 {statusLabel}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("targetLabel", targetLabel), ("timingLabel", timingLabel), ("stackLabel", stackLabel), ("statusLabel", statusLabel))
+                    : GameText.Format("battle.skill.rules.grant_stacks_of_to", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 获得 {stackLabel} 层 {statusLabel}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("targetLabel", targetLabel), ("stackLabel", stackLabel), ("statusLabel", statusLabel)));
             }
         }
 
@@ -782,8 +782,8 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                 string multiplierLabel = BuildColoredToken(effect.damagePerStack.ToString(), valueHighlightColor);
                 string statusLabel = BuildColoredToken(GetStatusLabel(effect), targetHighlightColor);
                 effectLines.Add(effect.clearStacksAfterBurst
-                    ? $"{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 引发 {multiplierLabel} 重 {statusLabel} 爆发，造成 {multiplierLabel} x 层数 的额外伤害，并清空 {statusLabel}"
-                    : $"{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 引发 {multiplierLabel} 重 {statusLabel} 爆发，造成 {multiplierLabel} x 层数 的额外伤害");
+                    ? GameText.Format("battle.skill.rules.trigger_a_burst_on_deal_damage_per_stack", "{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 引发 {multiplierLabel} 重 {statusLabel} 爆发，造成 {multiplierLabel2} x 层数 的额外伤害，并清空 {statusLabel2}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("targetLabel", targetLabel), ("multiplierLabel", multiplierLabel), ("statusLabel", statusLabel), ("multiplierLabel2", multiplierLabel), ("statusLabel2", statusLabel))
+                    : GameText.Format("battle.skill.rules.trigger_a_burst_on_deal_extra_damage_per", "{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 引发 {multiplierLabel} 重 {statusLabel} 爆发，造成 {multiplierLabel2} x 层数 的额外伤害", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("targetLabel", targetLabel), ("multiplierLabel", multiplierLabel), ("statusLabel", statusLabel), ("multiplierLabel2", multiplierLabel)));
             }
         }
 
@@ -807,9 +807,9 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                 string statusLabel = BuildColoredToken(GetStatusLabel(effect), targetHighlightColor);
 
                 if (effect.operationType == EnemySkill_SO.StatusStackOperationType.ClearStacks)
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 清空 {targetLabel} 的 {statusLabel}");
+                    effectLines.Add(GameText.Format("battle.skill.rules.clear_from", "{diceEffectLabel}：{triggerLabel} 清空 {targetLabel} 的 {statusLabel}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("targetLabel", targetLabel), ("statusLabel", statusLabel)));
                 else
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 使 {targetLabel} 的 {statusLabel} 减少 {BuildColoredToken(Mathf.Max(1, effect.stackAmount).ToString(), valueHighlightColor)} 层");
+                    effectLines.Add(GameText.Format("battle.skill.rules.append_effect_lines.remove_stacks_of_from", "{diceEffectLabel}：{triggerLabel} 使 {targetLabel} 的 {statusLabel} 减少 {buildColoredToken} 层", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("targetLabel", targetLabel), ("statusLabel", statusLabel), ("buildColoredToken", BuildColoredToken(Mathf.Max(1, effect.stackAmount).ToString(), valueHighlightColor))));
             }
         }
 
@@ -821,8 +821,8 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                 string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
                 string valueLabel = BuildColoredToken((effect.targetStageIndex + 1).ToString(), valueHighlightColor);
                 effectLines.Add(effect.applyTiming == EnemySkill_SO.EnemyStageTransitionApplyTiming.NextRoundStart
-                    ? $"{diceEffectLabel}：{triggerLabel} 于 下个回合开始时 切换至 第 {valueLabel} 阶段"
-                    : $"{diceEffectLabel}：{triggerLabel} 切换至 第 {valueLabel} 阶段");
+                    ? GameText.Format("battle.skill.rules.switch_to_phase_at_the_start_of_the", "{diceEffectLabel}：{triggerLabel} 于 下个回合开始时 切换至 第 {valueLabel} 阶段", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("valueLabel", valueLabel))
+                    : GameText.Format("battle.skill.rules.switch_to_phase", "{diceEffectLabel}：{triggerLabel} 切换至 第 {valueLabel} 阶段", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("valueLabel", valueLabel)));
             }
         }
 
@@ -838,18 +838,18 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                 string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
                 string conditionPrefix = string.Empty;
                 if (effect.useCondition)
-                    conditionPrefix = $"若 {BuildColoredToken(GetHealingConditionLabel(effect), targetHighlightColor)} ，则 ";
+                    conditionPrefix = GameText.Format("battle.skill.rules.append_effect_lines.if", "若 {buildColoredToken} ，则 ", ("buildColoredToken", BuildColoredToken(GetHealingConditionLabel(effect), targetHighlightColor)));
 
                 switch (effect.amountMode)
                 {
                     case EnemySkill_SO.HealAmountMode.DamageDealt:
-                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 恢复 相当于 造成伤害 的生命");
+                        effectLines.Add(GameText.Format("battle.skill.rules.restore_hp_to_equal_to_damage_dealt", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 恢复 相当于 造成伤害 的生命", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("targetLabel", targetLabel)));
                         break;
                     case EnemySkill_SO.HealAmountMode.StatusStacks:
-                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 根据 {BuildColoredToken(GetDamageTargetLabel(effect.statusStackSourceMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor)} 的 {BuildColoredToken(GetStatusLabel(effect), targetHighlightColor)} 层数，每层 恢复 {BuildColoredToken(Mathf.Max(1, effect.healAmount).ToString(), valueHighlightColor)} 点生命");
+                        effectLines.Add(GameText.Format("battle.skill.rules.append_effect_lines.heal_for_hp_per_stack_of_on", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 根据 {buildColoredToken} 的 {buildColoredToken2} 层数，每层 恢复 {buildColoredToken3} 点生命", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("targetLabel", targetLabel), ("buildColoredToken", BuildColoredToken(GetDamageTargetLabel(effect.statusStackSourceMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor)), ("buildColoredToken2", BuildColoredToken(GetStatusLabel(effect), targetHighlightColor)), ("buildColoredToken3", BuildColoredToken(Mathf.Max(1, effect.healAmount).ToString(), valueHighlightColor))));
                         break;
                     default:
-                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 恢复 {BuildColoredToken(effect.healAmount.ToString(), valueHighlightColor)} 点生命");
+                        effectLines.Add(GameText.Format("battle.skill.rules.append_effect_lines.heal_for_hp", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 恢复 {buildColoredToken} 点生命", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("targetLabel", targetLabel), ("buildColoredToken", BuildColoredToken(effect.healAmount.ToString(), valueHighlightColor))));
                         break;
                 }
             }
@@ -876,14 +876,14 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                 if (effect.useCondition)
                 {
                     string conditionLabel = BuildColoredToken(GetPowerModifierConditionLabel(effect), targetHighlightColor);
-                    string scalingPrefix = IsSpeedDifferenceScalingPowerModifier(effect) ? "每高出 1 点速度，" : "每达成一次条件，";
+                    string scalingPrefix = IsSpeedDifferenceScalingPowerModifier(effect) ? GameText.Get("battle.skill.rules.for_each_point_of_speed_above_the_target", "每高出 1 点速度，") : GameText.Get("battle.skill.rules.each_time_the_condition_is_met", "每达成一次条件，");
                     effectLines.Add(IsScalingPowerModifier(effect)
-                        ? $"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 {scalingPrefix}威力 {BuildColoredToken(FormatSignedInt(effect.powerBonusPerStep), valueHighlightColor)}{BuildPowerModifierCapSuffix(effect)}"
-                        : $"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 威力 {BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor)}");
+                        ? GameText.Format("battle.skill.rules.append_effect_lines.if_power", "{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 {scalingPrefix}威力 {buildColoredToken}{buildPowerModifierCapSuffix}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionLabel", conditionLabel), ("scalingPrefix", scalingPrefix), ("buildColoredToken", BuildColoredToken(FormatSignedInt(effect.powerBonusPerStep), valueHighlightColor)), ("buildPowerModifierCapSuffix", BuildPowerModifierCapSuffix(effect)))
+                        : GameText.Format("battle.skill.rules.append_effect_lines.if_power_2", "{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 威力 {buildColoredToken}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionLabel", conditionLabel), ("buildColoredToken", BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor))));
                 }
                 else
                 {
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 威力 {BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor)}");
+                    effectLines.Add(GameText.Format("battle.skill.rules.append_effect_lines.power", "{diceEffectLabel}：{triggerLabel} 威力 {buildColoredToken}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("buildColoredToken", BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor))));
                 }
             }
         }
@@ -926,7 +926,7 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
             string consumedStackLabel = BuildColoredToken(Mathf.Max(1, operation.stackAmount).ToString(), valueHighlightColor);
             string consumedStatusLabel = BuildColoredToken(GetStatusLabel(operation), targetHighlightColor);
             string gainText = JoinGainClauses(gains);
-            effectLines.Add($"{diceEffectLabel}：{triggerLabel} 消耗 {consumeTargetLabel} {consumedStackLabel} 层 {consumedStatusLabel}，来使 {gainText}");
+            effectLines.Add(GameText.Format("battle.skill.rules.spend_stacks_of_on_to", "{diceEffectLabel}：{triggerLabel} 消耗 {consumeTargetLabel} {consumedStackLabel} 层 {consumedStatusLabel}，来使 {gainText}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("consumeTargetLabel", consumeTargetLabel), ("consumedStackLabel", consumedStackLabel), ("consumedStatusLabel", consumedStatusLabel), ("gainText", gainText)));
             mergedStatusStackOperationIndices.Add(operationIndex);
         }
     }
@@ -960,7 +960,7 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                 continue;
 
             string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
-            gains.Add($"{targetLabel}{BuildConsumedGainStatusTimingText(effect)}获得 {BuildColoredToken(effect.stackAmount.ToString(), valueHighlightColor)} 层 {BuildColoredToken(GetStatusLabel(effect), valueHighlightColor)}");
+            gains.Add(GameText.Format("battle.skill.rules.collect_consumed_status_status_effect_gains.grant_stacks_of_to", "{targetLabel}{buildConsumedGainStatusTimingText}获得 {buildColoredToken} 层 {buildColoredToken2}", ("targetLabel", targetLabel), ("buildConsumedGainStatusTimingText", BuildConsumedGainStatusTimingText(effect)), ("buildColoredToken", BuildColoredToken(effect.stackAmount.ToString(), valueHighlightColor)), ("buildColoredToken2", BuildColoredToken(GetStatusLabel(effect), valueHighlightColor))));
             mergedStatusEffectIndices.Add(i);
         }
     }
@@ -985,11 +985,11 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
 
             if (IsScalingPowerModifier(effect))
             {
-                gains.Add($"本骰子每达成一次条件，威力 {BuildColoredToken(FormatSignedInt(effect.powerBonusPerStep), valueHighlightColor)}{BuildPowerModifierCapSuffix(effect)}");
+                gains.Add(GameText.Format("battle.skill.rules.give_this_die_power_each_time_the_condition", "本骰子每达成一次条件，威力 {buildColoredToken}{buildPowerModifierCapSuffix}", ("buildColoredToken", BuildColoredToken(FormatSignedInt(effect.powerBonusPerStep), valueHighlightColor)), ("buildPowerModifierCapSuffix", BuildPowerModifierCapSuffix(effect))));
             }
             else
             {
-                gains.Add($"本骰子威力 {BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor)}");
+                gains.Add(GameText.Format("battle.skill.rules.give_this_die_power", "本骰子威力 {buildColoredToken}", ("buildColoredToken", BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor))));
             }
 
             mergedPowerModifierIndices.Add(i);
@@ -1019,16 +1019,16 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
             switch (effect.amountMode)
             {
                 case EnemySkill_SO.HealAmountMode.DamageDealt:
-                    gains.Add($"{targetLabel}恢复相当于造成伤害的生命");
+                    gains.Add(GameText.Format("battle.skill.rules.heal_for_hp_equal_to_damage_dealt", "{targetLabel}恢复相当于造成伤害的生命", ("targetLabel", targetLabel)));
                     break;
                 case EnemySkill_SO.HealAmountMode.StatusStacks:
                     string sourceLabel = BuildColoredToken(GetDamageTargetLabel(effect.statusStackSourceMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
                     string statusLabel = BuildColoredToken(GetStatusLabel(effect), targetHighlightColor);
                     string perStackLabel = BuildColoredToken(Mathf.Max(1, effect.healAmount).ToString(), valueHighlightColor);
-                    gains.Add($"{targetLabel}根据 {sourceLabel} 的 {statusLabel} 层数，每层恢复 {perStackLabel} 点生命");
+                    gains.Add(GameText.Format("battle.skill.rules.collect_consumed_status_healing_gains.heal_for_hp_per_stack_of_on", "{targetLabel}根据 {sourceLabel} 的 {statusLabel} 层数，每层恢复 {perStackLabel} 点生命", ("targetLabel", targetLabel), ("sourceLabel", sourceLabel), ("statusLabel", statusLabel), ("perStackLabel", perStackLabel)));
                     break;
                 default:
-                    gains.Add($"{targetLabel}恢复 {BuildColoredToken(effect.healAmount.ToString(), valueHighlightColor)} 点生命");
+                    gains.Add(GameText.Format("battle.skill.rules.collect_consumed_status_healing_gains.heal_for_hp", "{targetLabel}恢复 {buildColoredToken} 点生命", ("targetLabel", targetLabel), ("buildColoredToken", BuildColoredToken(effect.healAmount.ToString(), valueHighlightColor))));
                     break;
             }
 
@@ -1086,8 +1086,8 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         string conditionStatusLabel = BuildColoredToken(GetStatusEffectConditionStatusLabel(markedEffect), targetHighlightColor);
 
         effectLines.Add(
-            $"{diceEffectLabel}：{triggerLabel} {timingLabel}对{targetLabel}施加 {baseStackLabel} 层 {baseStatusLabel}。\n" +
-            $"若{targetLabel}已有{conditionStatusLabel}，改为{timingLabel}对{targetLabel}施加 {markedStackLabel} 层 {markedStatusLabel}。");
+            GameText.Format("battle.skill.rules.apply_stacks_of_to", "{diceEffectLabel}：{triggerLabel} {timingLabel}对{targetLabel}施加 {baseStackLabel} 层 {baseStatusLabel}。\n", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("timingLabel", timingLabel), ("targetLabel", targetLabel), ("baseStackLabel", baseStackLabel), ("baseStatusLabel", baseStatusLabel)) +
+            GameText.Format("battle.skill.rules.if_has_apply_stacks_of_to_instead", "若{targetLabel}已有{conditionStatusLabel}，改为{timingLabel}对{targetLabel2}施加 {markedStackLabel} 层 {markedStatusLabel}。", ("targetLabel", targetLabel), ("conditionStatusLabel", conditionStatusLabel), ("timingLabel", timingLabel), ("targetLabel2", targetLabel), ("markedStackLabel", markedStackLabel), ("markedStatusLabel", markedStatusLabel)));
     }
 
     private static bool CanBeUnmarkedBranch(EnemySkill_SO.StatusEffectEntry effect)
@@ -1153,20 +1153,20 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                 case EnemySkill_SO.BuiltInEffectType.Heal:
                     if (effect.amount <= 0)
                         continue;
-                    gains.Add($"{targetLabel}恢复 {BuildColoredToken(effect.amount.ToString(), valueHighlightColor)} 点生命");
+                    gains.Add(GameText.Format("battle.skill.rules.collect_consumed_status_healing_gains.heal_for_hp", "{targetLabel}恢复 {buildColoredToken} 点生命", ("targetLabel", targetLabel), ("buildColoredToken", BuildColoredToken(effect.amount.ToString(), valueHighlightColor))));
                     break;
                 case EnemySkill_SO.BuiltInEffectType.Damage:
                     if (effect.amount <= 0)
                         continue;
-                    gains.Add($"对{targetLabel}额外造成 {BuildColoredToken(effect.amount.ToString(), valueHighlightColor)} 点伤害");
+                    gains.Add(GameText.Format("battle.skill.rules.deal_extra_damage_to", "对{targetLabel}额外造成 {buildColoredToken} 点伤害", ("targetLabel", targetLabel), ("buildColoredToken", BuildColoredToken(effect.amount.ToString(), valueHighlightColor))));
                     break;
                 case EnemySkill_SO.BuiltInEffectType.ApplyStatus:
                     if (effect.statusStackAmount <= 0)
                         continue;
-                    gains.Add($"{targetLabel}{BuildConsumedGainBuiltInTimingText(effect)}获得 {BuildColoredToken(effect.statusStackAmount.ToString(), valueHighlightColor)} 层 {BuildColoredToken(GetBuiltInPrimaryStatusLabel(effect), valueHighlightColor)}");
+                    gains.Add(GameText.Format("battle.skill.rules.collect_consumed_status_built_in_gains.grant_stacks_of_to", "{targetLabel}{buildConsumedGainBuiltInTimingText}获得 {buildColoredToken} 层 {buildColoredToken2}", ("targetLabel", targetLabel), ("buildConsumedGainBuiltInTimingText", BuildConsumedGainBuiltInTimingText(effect)), ("buildColoredToken", BuildColoredToken(effect.statusStackAmount.ToString(), valueHighlightColor)), ("buildColoredToken2", BuildColoredToken(GetBuiltInPrimaryStatusLabel(effect), valueHighlightColor))));
                     break;
                 case EnemySkill_SO.BuiltInEffectType.RepeatCurrentDie:
-                    gains.Add("重复使用该骰子");
+                    gains.Add(GameText.Get("battle.skill.rules.roll_this_die_again", "重复使用该骰子"));
                     break;
                 default:
                     continue;
@@ -1252,14 +1252,14 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         if (effect.applyTiming != EnemySkill_SO.StatusApplyTiming.NextRoundStart)
             return string.Empty;
 
-        return $"于 {BuildConsumedStatusStatusEffectTimingLabel(effect)} ";
+        return GameText.Format("battle.skill.rules.at", "于 {buildConsumedStatusStatusEffectTimingLabel} ", ("buildConsumedStatusStatusEffectTimingLabel", BuildConsumedStatusStatusEffectTimingLabel(effect)));
     }
 
     private static string BuildStatusEffectTimingLabel(EnemySkill_SO.StatusEffectEntry effect)
     {
         return Mathf.Max(1, effect.applyRepeatCount) > 1
-            ? $"接下来 {Mathf.Max(1, effect.applyRepeatCount)} 个回合开始时"
-            : $"下 {Mathf.Max(1, effect.applyAfterRoundStarts)} 个回合开始时";
+            ? GameText.Format("battle.skill.rules.the_start_of_the_next_rounds", "接下来 {max} 个回合开始时", ("max", Mathf.Max(1, effect.applyRepeatCount)))
+            : GameText.Format("battle.skill.rules.the_start_of_the_round_in_rounds", "下 {max} 个回合开始时", ("max", Mathf.Max(1, effect.applyAfterRoundStarts)));
     }
 
     private string BuildConsumedGainBuiltInTimingText(EnemySkill_SO.BuiltInEffectEntry effect)
@@ -1269,10 +1269,10 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
 
         int repeatCount = Mathf.Max(1, effect.applyRepeatCount);
         if (repeatCount > 1)
-            return $"于 {BuildColoredToken($"接下来 {repeatCount} 个回合开始时", triggerHighlightColor)} ";
+            return GameText.Format("battle.skill.rules.build_consumed_gain_built_in_timing_text.at", "于 {buildColoredToken} ", ("buildColoredToken", BuildColoredToken(GameText.Format("battle.skill.rules.build_consumed_gain_built_in_timing_text.the_start_of_the_next_rounds", "接下来 {repeatCount} 个回合开始时", ("repeatCount", repeatCount)), triggerHighlightColor)));
 
         int delayRounds = Mathf.Max(1, effect.applyAfterRoundStarts);
-        return $"于 {BuildColoredToken(delayRounds == 1 ? "下回合" : $"下 {delayRounds} 个回合开始时", triggerHighlightColor)} ";
+        return GameText.Format("battle.skill.rules.build_consumed_gain_built_in_timing_text.at", "于 {buildColoredToken} ", ("buildColoredToken", BuildColoredToken(delayRounds == 1 ? GameText.Get("battle.skill.rules.next_round", "下回合") : GameText.Format("battle.skill.rules.build_consumed_gain_built_in_timing_text.the_start_of_the_round_in_rounds", "下 {delayRounds} 个回合开始时", ("delayRounds", delayRounds)), triggerHighlightColor)));
     }
 
     private static string JoinGainClauses(List<string> gains)
@@ -1282,13 +1282,13 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         if (gains.Count == 1)
             return gains[0];
         if (gains.Count == 2)
-            return $"{gains[0]}，并使{gains[1]}";
+            return GameText.Format("battle.skill.rules.and", "{value}，并使{value2}", ("value", gains[0]), ("value2", gains[1]));
 
         List<string> leading = new List<string>();
         for (int i = 0; i < gains.Count - 1; i++)
             leading.Add(gains[i]);
 
-        return $"{string.Join("，", leading)}，并使{gains[gains.Count - 1]}";
+        return GameText.Format("battle.skill.rules.join_gain_clauses.and", "{join}，并使{value}", ("join", string.Join("，", leading)), ("value", gains[gains.Count - 1]));
     }
 
     private bool TryFindConsumedStatusForStatusEffect(
@@ -1342,7 +1342,7 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         string appliedStatusLabel = BuildColoredToken(GetStatusLabel(statusEffect), valueHighlightColor);
         string timingLabel = BuildConsumedStatusStatusEffectTimingLabel(statusEffect);
 
-        effectLines.Add($"{diceEffectLabel}：{triggerLabel} 消耗{targetLabel} {consumedStackLabel} 层{consumedStatusLabel}，使{targetLabel}{timingLabel}获得 {appliedStackLabel} 层{appliedStatusLabel}");
+        effectLines.Add(GameText.Format("battle.skill.rules.spend_stacks_of_on_to_grant_stacks_of", "{diceEffectLabel}：{triggerLabel} 消耗{targetLabel} {consumedStackLabel} 层{consumedStatusLabel}，使{targetLabel2}{timingLabel}获得 {appliedStackLabel} 层{appliedStatusLabel}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("targetLabel", targetLabel), ("consumedStackLabel", consumedStackLabel), ("consumedStatusLabel", consumedStatusLabel), ("targetLabel2", targetLabel), ("timingLabel", timingLabel), ("appliedStackLabel", appliedStackLabel), ("appliedStatusLabel", appliedStatusLabel)));
     }
 
     private string BuildConsumedStatusStatusEffectTimingLabel(EnemySkill_SO.StatusEffectEntry statusEffect)
@@ -1352,10 +1352,10 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
 
         int repeatCount = Mathf.Max(1, statusEffect.applyRepeatCount);
         if (repeatCount > 1)
-            return BuildColoredToken($"接下来 {repeatCount} 个回合开始时", triggerHighlightColor);
+            return BuildColoredToken(GameText.Format("battle.skill.rules.build_consumed_gain_built_in_timing_text.the_start_of_the_next_rounds", "接下来 {repeatCount} 个回合开始时", ("repeatCount", repeatCount)), triggerHighlightColor);
 
         int delayRounds = Mathf.Max(1, statusEffect.applyAfterRoundStarts);
-        return BuildColoredToken(delayRounds == 1 ? "下回合" : $"下 {delayRounds} 个回合开始时", triggerHighlightColor);
+        return BuildColoredToken(delayRounds == 1 ? GameText.Get("battle.skill.rules.next_round", "下回合") : GameText.Format("battle.skill.rules.build_consumed_gain_built_in_timing_text.the_start_of_the_round_in_rounds", "下 {delayRounds} 个回合开始时", ("delayRounds", delayRounds)), triggerHighlightColor);
     }
 
     private static bool IsSameConditionStatus(
@@ -1466,13 +1466,13 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         string statusLabel = BuildColoredToken(GetStatusLabel(stackOperation), targetHighlightColor);
         string powerLabel = BuildColoredToken(FormatSignedInt(modifier.powerBonusPerStep), valueHighlightColor);
 
-        effectLines.Add($"{diceEffectLabel}：{triggerLabel} 消耗敌人的{statusLabel}层数，每消耗{targetLabel} {stackLabel} 层{statusLabel}，使骰子威力 {powerLabel}{BuildPowerModifierCapSuffix(modifier)}");
+        effectLines.Add(GameText.Format("battle.skill.rules.spend_the_enemy_s_for_each_stacks_of", "{diceEffectLabel}：{triggerLabel} 消耗敌人的{statusLabel}层数，每消耗{targetLabel} {stackLabel} 层{statusLabel2}，使骰子威力 {powerLabel}{buildPowerModifierCapSuffix}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("statusLabel", statusLabel), ("targetLabel", targetLabel), ("stackLabel", stackLabel), ("statusLabel2", statusLabel), ("powerLabel", powerLabel), ("buildPowerModifierCapSuffix", BuildPowerModifierCapSuffix(modifier))));
     }
 
     private string BuildPowerModifierCapSuffix(EnemySkill_SO.ConditionalPowerModifierEntry modifier)
     {
         return modifier.maxPowerBonus > 0
-            ? $"，最多 {BuildColoredToken(FormatSignedInt(modifier.maxPowerBonus), valueHighlightColor)}"
+            ? GameText.Format("battle.skill.rules.max", "，最多 {buildColoredToken}", ("buildColoredToken", BuildColoredToken(FormatSignedInt(modifier.maxPowerBonus), valueHighlightColor)))
             : string.Empty;
     }
 
@@ -1502,7 +1502,7 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
     private static string GetConsumedStatusTargetLabel(EnemySkill_SO.StatusStackOperationEffectEntry effect, bool attackerIsAlly)
     {
         if (effect.targetMode == EnemySkill_SO.DamageTargetMode.CurrentTarget)
-            return attackerIsAlly ? "当前目标（敌人）" : "当前目标";
+            return attackerIsAlly ? GameText.Get("battle.skill.rules.current_target_enemy", "当前目标（敌人）") : GameText.Get("battle.skill.rules.current_target", "当前目标");
 
         return GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly);
     }
@@ -1532,25 +1532,25 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                 case EnemySkill_SO.BuiltInEffectType.Heal:
                     if (effect.amount <= 0)
                         continue;
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使{targetLabel}恢复 {BuildColoredToken(effect.amount.ToString(), valueHighlightColor)} 点生命");
+                    effectLines.Add(GameText.Format("battle.skill.rules.append_built_in_effect_lines.heal_for_hp", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}使{targetLabel}恢复 {buildColoredToken} 点生命", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("targetLabel", targetLabel), ("buildColoredToken", BuildColoredToken(effect.amount.ToString(), valueHighlightColor))));
                     break;
                 case EnemySkill_SO.BuiltInEffectType.Damage:
                     if (effect.amount <= 0)
                         continue;
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}对{targetLabel}额外造成 {BuildColoredToken(effect.amount.ToString(), valueHighlightColor)} 点伤害");
+                    effectLines.Add(GameText.Format("battle.skill.rules.append_built_in_effect_lines.deal_extra_damage_to", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}对{targetLabel}额外造成 {buildColoredToken} 点伤害", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("targetLabel", targetLabel), ("buildColoredToken", BuildColoredToken(effect.amount.ToString(), valueHighlightColor))));
                     break;
                 case EnemySkill_SO.BuiltInEffectType.ApplyStatus:
                     if (effect.statusStackAmount <= 0)
                         continue;
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使{targetLabel}{BuildBuiltInTimingPrefix(effect)}获得 {BuildColoredToken(effect.statusStackAmount.ToString(), valueHighlightColor)} 层{BuildColoredToken(GetBuiltInPrimaryStatusLabel(effect), valueHighlightColor)}");
+                    effectLines.Add(GameText.Format("battle.skill.rules.append_built_in_effect_lines.grant_stacks_of_to", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}使{targetLabel}{buildBuiltInTimingPrefix}获得 {buildColoredToken} 层{buildColoredToken2}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("targetLabel", targetLabel), ("buildBuiltInTimingPrefix", BuildBuiltInTimingPrefix(effect)), ("buildColoredToken", BuildColoredToken(effect.statusStackAmount.ToString(), valueHighlightColor)), ("buildColoredToken2", BuildColoredToken(GetBuiltInPrimaryStatusLabel(effect), valueHighlightColor))));
                     break;
                 case EnemySkill_SO.BuiltInEffectType.TransferRandomNegativeStatus:
                     if (effect.amount <= 0 && effect.fallbackAmount <= 0)
                         continue;
-                    string transferLine = $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}将自身 {BuildColoredToken(Mathf.Max(1, effect.amount).ToString(), valueHighlightColor)} 层随机负面状态转移给 {targetLabel}";
+                    string transferLine = GameText.Format("battle.skill.rules.transfer_stacks_of_a_random_debuff_from_the", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}将自身 {buildColoredToken} 层随机负面状态转移给 {targetLabel}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("buildColoredToken", BuildColoredToken(Mathf.Max(1, effect.amount).ToString(), valueHighlightColor)), ("targetLabel", targetLabel));
                     if (effect.fallbackAmount > 0)
                     {
-                        transferLine += $"；若未找到可转移的负面状态，则使{BuildColoredToken("自己", targetHighlightColor)} {BuildBuiltInTimingPrefix(effect)}获得 {BuildColoredToken(effect.fallbackAmount.ToString(), valueHighlightColor)} 层 {BuildColoredToken(GetBuiltInPrimaryStatusLabel(effect), valueHighlightColor)}";
+                        transferLine += GameText.Format("battle.skill.rules.if_no_debuff_can_be_transferred_grant_stacks", "；若未找到可转移的负面状态，则使{buildColoredToken} {buildBuiltInTimingPrefix}获得 {buildColoredToken2} 层 {buildColoredToken3}", ("buildColoredToken", BuildColoredToken(GameText.Get("battle.skill.rules.self", "自己"), targetHighlightColor)), ("buildBuiltInTimingPrefix", BuildBuiltInTimingPrefix(effect)), ("buildColoredToken2", BuildColoredToken(effect.fallbackAmount.ToString(), valueHighlightColor)), ("buildColoredToken3", BuildColoredToken(GetBuiltInPrimaryStatusLabel(effect), valueHighlightColor)));
                     }
 
                     effectLines.Add(transferLine);
@@ -1558,7 +1558,7 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                 case EnemySkill_SO.BuiltInEffectType.QueueNextDicePowerBonus:
                     if (effect.amount == 0)
                         continue;
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使该技能的下一个骰子威力 {BuildColoredToken(FormatSignedInt(effect.amount), valueHighlightColor)}");
+                    effectLines.Add(GameText.Format("battle.skill.rules.power_for_the_next_die_in_this_skill", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}使该技能的下一个骰子威力 {buildColoredToken}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("buildColoredToken", BuildColoredToken(FormatSignedInt(effect.amount), valueHighlightColor))));
                     break;
                 case EnemySkill_SO.BuiltInEffectType.DamageByTargetStatusStacksDivided:
                     if (effect.amount <= 0)
@@ -1566,15 +1566,15 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                     int threshold = Mathf.Max(1, effect.requiredConditionStatusStacks);
                     string statusLabel = BuildColoredToken(GetBuiltInGeneralConditionStatusLabel(effect), valueHighlightColor);
                     string damageLabel = effect.amount == 1
-                        ? $"相当于 {targetLabel} {statusLabel} 层数 / {BuildColoredToken(threshold.ToString(), valueHighlightColor)}"
-                        : $"相当于 {targetLabel} 每 {BuildColoredToken(threshold.ToString(), valueHighlightColor)} 层 {statusLabel} {BuildColoredToken(effect.amount.ToString(), valueHighlightColor)} 点";
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}对{targetLabel}额外造成 {damageLabel} 的伤害");
+                        ? GameText.Format("battle.skill.rules.equal_to_s_stacks", "相当于 {targetLabel} {statusLabel} 层数 / {buildColoredToken}", ("targetLabel", targetLabel), ("statusLabel", statusLabel), ("buildColoredToken", BuildColoredToken(threshold.ToString(), valueHighlightColor)))
+                        : GameText.Format("battle.skill.rules.equal_to_damage_per_stacks_of_on", "相当于 {targetLabel} 每 {buildColoredToken} 层 {statusLabel} {buildColoredToken2} 点", ("targetLabel", targetLabel), ("buildColoredToken", BuildColoredToken(threshold.ToString(), valueHighlightColor)), ("statusLabel", statusLabel), ("buildColoredToken2", BuildColoredToken(effect.amount.ToString(), valueHighlightColor)));
+                    effectLines.Add(GameText.Format("battle.skill.rules.append_built_in_effect_lines.deal_extra_damage_to_2", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}对{targetLabel}额外造成 {damageLabel} 的伤害", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("targetLabel", targetLabel), ("damageLabel", damageLabel)));
                     break;
                 case EnemySkill_SO.BuiltInEffectType.RepeatCurrentDie:
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}重复使用该骰子");
+                    effectLines.Add(GameText.Format("battle.skill.rules.append_built_in_effect_lines.roll_this_die_again", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}重复使用该骰子", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix)));
                     break;
                 case EnemySkill_SO.BuiltInEffectType.TriggerTargetLinkedStatus:
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}结算{targetLabel}的 {BuildColoredToken(GetBuiltInGeneralConditionStatusLabel(effect), valueHighlightColor)} 状态");
+                    effectLines.Add(GameText.Format("battle.skill.rules.trigger_on", "{diceEffectLabel}：{triggerLabel} {conditionPrefix}结算{targetLabel}的 {buildColoredToken} 状态", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("conditionPrefix", conditionPrefix), ("targetLabel", targetLabel), ("buildColoredToken", BuildColoredToken(GetBuiltInGeneralConditionStatusLabel(effect), valueHighlightColor))));
                     break;
             }
         }
@@ -1594,17 +1594,17 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
             string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
             string countLabel = BuildColoredToken(BattleSummonEffectService.NormalizeSummonCount(effect.summonCount).ToString(), valueHighlightColor);
             string enemyLabel = BuildColoredToken(GetSummonEnemyLabel(effect, effectIndex), targetHighlightColor);
-            effectLines.Add($"{diceEffectLabel}：{triggerLabel} 召唤 {countLabel} 个 {enemyLabel}");
+            effectLines.Add(GameText.Format("battle.skill.rules.summon", "{diceEffectLabel}：{triggerLabel} 召唤 {countLabel} 个 {enemyLabel}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("countLabel", countLabel), ("enemyLabel", enemyLabel)));
         }
     }
 
     private static string GetSummonEnemyLabel(EnemySkill_SO.SummonEnemyEffectEntry effect, int effectIndex)
     {
-        if (effect.enemyData != null && !string.IsNullOrWhiteSpace(effect.enemyData.enemyName))
-            return effect.enemyData.enemyName;
+        if (effect.enemyData != null && !string.IsNullOrWhiteSpace(effect.enemyData.LocalizedName))
+            return effect.enemyData.LocalizedName;
         if (!string.IsNullOrWhiteSpace(effect.effectName))
             return effect.effectName;
-        return $"召唤目标 {effectIndex + 1}";
+        return GameText.Format("battle.skill.rules.summon_target", "召唤目标 {value}", ("value", effectIndex + 1));
     }
 
     private void AppendRangeModifierLines(List<string> effectLines, string diceEffectLabel, EnemySkill_SO.DiceEffectSettings effectSettings)
@@ -1619,10 +1619,10 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                 continue;
 
             string conditionPrefix = effect.useCondition
-                ? $"若 {BuildColoredToken(GetRangeModifierConditionLabel(effect), targetHighlightColor)} ，则 "
+                ? GameText.Format("battle.skill.rules.append_effect_lines.if", "若 {buildColoredToken} ，则 ", ("buildColoredToken", BuildColoredToken(GetRangeModifierConditionLabel(effect), targetHighlightColor)))
                 : string.Empty;
             string scalingPrefix = effect.useCondition && effect.condition == EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold
-                ? "每达成一次条件，"
+                ? GameText.Get("battle.skill.rules.each_time_the_condition_is_met", "每达成一次条件，")
                 : string.Empty;
             effectLines.Add($"{diceEffectLabel}：{conditionPrefix}{scalingPrefix}{BuildRangeModifierDeltaLabel(effect)}");
         }
@@ -1631,15 +1631,15 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
     private static string BuildSkillButtonLabel(EnemySkill_SO skill, bool isSelected, string unavailableReason)
     {
         if (skill == null)
-            return isSelected ? "\u5df2\u88c5\u5907\u6280\u80fd" : "\u672a\u547d\u540d\u6280\u80fd";
+            return isSelected ? GameText.Get("battle.skill.rules.equipped_skill", "已装备技能") : GameText.Get("battle.skill.rules.unnamed_skill", "未命名技能");
 
         string requirementSuffix = string.Empty;
         if (skill.RequiresSelfStatusToUse && skill.requiredSelfStatusData != null)
-            requirementSuffix = $" [{skill.requiredSelfStatusData.DisplayName} {Mathf.Max(1, skill.requiredSelfStatusStacks)}]";
+            requirementSuffix = $" [{skill.requiredSelfStatusData.LocalizedName} {Mathf.Max(1, skill.requiredSelfStatusStacks)}]";
 
-        string equippedSuffix = isSelected ? "  [已装备]" : string.Empty;
+        string equippedSuffix = isSelected ? GameText.Get("battle.skill.rules.build_skill_button_label.equipped", "  [已装备]") : string.Empty;
         string disabledSuffix = string.IsNullOrWhiteSpace(unavailableReason) ? string.Empty : $"  [{unavailableReason}]";
-        return $"{skill.skillName}{requirementSuffix}{equippedSuffix}\n能耗 {Mathf.Max(0, skill.energyCost)}{disabledSuffix}";
+        return GameText.Format("battle.skill.rules.energy_cost", "{localizedName}{requirementSuffix}{equippedSuffix}\n能耗 {max}{disabledSuffix}", ("localizedName", skill.LocalizedName), ("requirementSuffix", requirementSuffix), ("equippedSuffix", equippedSuffix), ("max", Mathf.Max(0, skill.energyCost)), ("disabledSuffix", disabledSuffix));
     }
 
     private void ResetDetailScrollToTop()
@@ -1729,145 +1729,145 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         switch (targetMode)
         {
             case EnemySkill_SO.DamageTargetMode.Self:
-                return "\u81ea\u5df1";
+                return GameText.Get("battle.skill.rules.self", "自己");
             case EnemySkill_SO.DamageTargetMode.CurrentTarget:
-                return "\u5f53\u524d\u76ee\u6807";
+                return GameText.Get("battle.skill.rules.current_target", "当前目标");
             case EnemySkill_SO.DamageTargetMode.RandomOpponents:
-                return $"\u968f\u673a {Mathf.Max(1, randomTargetCount)} \u540d\u76ee\u6807";
+                return GameText.Format("battle.skill.rules.random_targets", "随机 {max} 名目标", ("max", Mathf.Max(1, randomTargetCount)));
             case EnemySkill_SO.DamageTargetMode.AllOpponents:
-                return "\u6240\u6709\u76ee\u6807";
+                return GameText.Get("battle.skill.rules.all_targets", "所有目标");
             case EnemySkill_SO.DamageTargetMode.AllOpponentsExceptCurrent:
-                return "其它目标";
+                return GameText.Get("battle.skill.rules.other_targets", "其它目标");
             case EnemySkill_SO.DamageTargetMode.AllFriendlies:
-                return "全体友方";
+                return GameText.Get("battle.skill.rules.all_allies", "全体友方");
             case EnemySkill_SO.DamageTargetMode.AllFriendliesExceptSelf:
-                return "除自身以外的友方";
+                return GameText.Get("battle.skill.rules.other_allies", "除自身以外的友方");
             case EnemySkill_SO.DamageTargetMode.LowestHpFriendly:
-                return "血量最低的友方";
+                return GameText.Get("battle.skill.rules.ally_with_the_lowest_hp", "血量最低的友方");
             case EnemySkill_SO.DamageTargetMode.LowestHpOpponent:
-                return "血量最低的目标";
+                return GameText.Get("battle.skill.rules.target_with_the_lowest_hp", "血量最低的目标");
             default:
-                return "\u76ee\u6807";
+                return GameText.Get("battle.skill.rules.target", "目标");
         }
     }
 
     private static string GetStatusLabel(EnemySkill_SO.StatusEffectEntry effect)
     {
         if (effect.statusData != null)
-            return effect.statusData.DisplayName;
+            return effect.statusData.LocalizedName;
 
         switch (effect.statusType)
         {
             case EnemySkill_SO.DiceStatusType.Burn:
-                return "\u71c3\u70e7";
+                return GameText.Get("battle.skill.rules.burn", "燃烧");
             case EnemySkill_SO.DiceStatusType.Electro:
-                return "\u7535\u6d41";
+                return GameText.Get("battle.skill.rules.shock", "电流");
             case EnemySkill_SO.DiceStatusType.Darkness:
-                return "\u9ed1\u6697";
+                return GameText.Get("battle.skill.rules.darkness", "黑暗");
             case EnemySkill_SO.DiceStatusType.Mark:
-                return "标记";
+                return GameText.Get("battle.skill.rules.mark", "标记");
             default:
-                return "\u672a\u914d\u7f6e\u72b6\u6001";
+                return GameText.Get("battle.skill.rules.unknown_status", "未配置状态");
         }
     }
 
     private static string GetStatusLabel(EnemySkill_SO.StatusBurstDamageEffectEntry effect)
     {
         if (effect.statusData != null)
-            return effect.statusData.DisplayName;
+            return effect.statusData.LocalizedName;
 
         switch (effect.statusType)
         {
             case EnemySkill_SO.DiceStatusType.Burn:
-                return "\u71c3\u70e7";
+                return GameText.Get("battle.skill.rules.burn", "燃烧");
             case EnemySkill_SO.DiceStatusType.Electro:
-                return "\u7535\u6d41";
+                return GameText.Get("battle.skill.rules.shock", "电流");
             case EnemySkill_SO.DiceStatusType.Darkness:
-                return "\u9ed1\u6697";
+                return GameText.Get("battle.skill.rules.darkness", "黑暗");
             case EnemySkill_SO.DiceStatusType.Mark:
-                return "标记";
+                return GameText.Get("battle.skill.rules.mark", "标记");
             default:
-                return "\u672a\u914d\u7f6e\u72b6\u6001";
+                return GameText.Get("battle.skill.rules.unknown_status", "未配置状态");
         }
     }
 
     private static string GetStatusLabel(EnemySkill_SO.HealingEffectEntry effect)
     {
         if (effect.statusData != null)
-            return effect.statusData.DisplayName;
+            return effect.statusData.LocalizedName;
 
         switch (effect.statusType)
         {
             case EnemySkill_SO.DiceStatusType.Burn:
-                return "\u71c3\u70e7";
+                return GameText.Get("battle.skill.rules.burn", "燃烧");
             case EnemySkill_SO.DiceStatusType.Electro:
-                return "\u7535\u6d41";
+                return GameText.Get("battle.skill.rules.shock", "电流");
             case EnemySkill_SO.DiceStatusType.Darkness:
-                return "\u9ed1\u6697";
+                return GameText.Get("battle.skill.rules.darkness", "黑暗");
             case EnemySkill_SO.DiceStatusType.Mark:
-                return "标记";
+                return GameText.Get("battle.skill.rules.mark", "标记");
             default:
-                return "\u672a\u914d\u7f6e\u72b6\u6001";
+                return GameText.Get("battle.skill.rules.unknown_status", "未配置状态");
         }
     }
 
     private static string GetStatusLabel(EnemySkill_SO.BuiltInEffectEntry effect)
     {
         if (effect.conditionStatusData != null)
-            return effect.conditionStatusData.DisplayName;
+            return effect.conditionStatusData.LocalizedName;
 
         switch (effect.conditionStatusType)
         {
             case EnemySkill_SO.DiceStatusType.Burn:
-                return "燃烧";
+                return GameText.Get("battle.skill.rules.burn", "燃烧");
             case EnemySkill_SO.DiceStatusType.Electro:
-                return "电流";
+                return GameText.Get("battle.skill.rules.shock", "电流");
             case EnemySkill_SO.DiceStatusType.Darkness:
-                return "黑暗";
+                return GameText.Get("battle.skill.rules.darkness", "黑暗");
             case EnemySkill_SO.DiceStatusType.Mark:
-                return "标记";
+                return GameText.Get("battle.skill.rules.mark", "标记");
             default:
-                return "未配置状态";
+                return GameText.Get("battle.skill.rules.unknown_status", "未配置状态");
         }
     }
 
     private static string GetBuiltInPrimaryStatusLabel(EnemySkill_SO.BuiltInEffectEntry effect)
     {
         if (effect.statusData != null)
-            return effect.statusData.DisplayName;
+            return effect.statusData.LocalizedName;
 
         switch (effect.statusType)
         {
             case EnemySkill_SO.DiceStatusType.Burn:
-                return "燃烧";
+                return GameText.Get("battle.skill.rules.burn", "燃烧");
             case EnemySkill_SO.DiceStatusType.Electro:
-                return "电流";
+                return GameText.Get("battle.skill.rules.shock", "电流");
             case EnemySkill_SO.DiceStatusType.Darkness:
-                return "黑暗";
+                return GameText.Get("battle.skill.rules.darkness", "黑暗");
             case EnemySkill_SO.DiceStatusType.Mark:
-                return "标记";
+                return GameText.Get("battle.skill.rules.mark", "标记");
             default:
-                return "未配置状态";
+                return GameText.Get("battle.skill.rules.unknown_status", "未配置状态");
         }
     }
 
     private static string GetStatusLabel(EnemySkill_SO.StatusStackOperationEffectEntry effect)
     {
         if (effect.statusData != null)
-            return effect.statusData.DisplayName;
+            return effect.statusData.LocalizedName;
 
         switch (effect.statusType)
         {
             case EnemySkill_SO.DiceStatusType.Burn:
-                return "\u71c3\u70e7";
+                return GameText.Get("battle.skill.rules.burn", "燃烧");
             case EnemySkill_SO.DiceStatusType.Electro:
-                return "\u7535\u6d41";
+                return GameText.Get("battle.skill.rules.shock", "电流");
             case EnemySkill_SO.DiceStatusType.Darkness:
-                return "\u9ed1\u6697";
+                return GameText.Get("battle.skill.rules.darkness", "黑暗");
             case EnemySkill_SO.DiceStatusType.Mark:
-                return "标记";
+                return GameText.Get("battle.skill.rules.mark", "标记");
             default:
-                return "\u672a\u914d\u7f6e\u72b6\u6001";
+                return GameText.Get("battle.skill.rules.unknown_status", "未配置状态");
         }
     }
 
@@ -1880,23 +1880,23 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         {
             string statusLabel = GetTargetPriorityStatusLabel(skill);
             int stacks = Mathf.Max(1, skill.targetPriorityRequiredStacks);
-            return $"\n目标偏好：优先攻击具有 {stacks} 层 {statusLabel} 的目标";
+            return GameText.Format("battle.skill.rules.target_priority_targets_with_stacks_of", "\n目标偏好：优先攻击具有 {stacks} 层 {statusLabel} 的目标", ("stacks", stacks), ("statusLabel", statusLabel));
         }
 
         if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferLowestSpeed)
-            return "\n目标偏好：优先攻击速度最低的目标";
+            return GameText.Get("battle.skill.rules.target_priority_lowest_speed", "\n目标偏好：优先攻击速度最低的目标");
 
         if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferLowestHP)
-            return "\n目标偏好：优先攻击血量最低的目标";
+            return GameText.Get("battle.skill.rules.target_priority_lowest_hp", "\n目标偏好：优先攻击血量最低的目标");
 
         if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferTargetsWithNegativeStatusTypesAtLeast)
-            return $"\n目标偏好：优先攻击拥有至少 {Mathf.Max(1, skill.targetPriorityRequiredStacks)} 种负面状态的目标";
+            return GameText.Format("battle.skill.rules.target_priority_targets_with_at_least_different_debuffs", "\n目标偏好：优先攻击拥有至少 {max} 种负面状态的目标", ("max", Mathf.Max(1, skill.targetPriorityRequiredStacks)));
 
         if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferTargetsWithLowestStatusStacks)
-            return $"\n目标偏好：优先攻击{GetTargetPriorityStatusLabel(skill)}层数最低的目标";
+            return GameText.Format("battle.skill.rules.target_priority_fewest_stacks_of", "\n目标偏好：优先攻击{getTargetPriorityStatusLabel}层数最低的目标", ("getTargetPriorityStatusLabel", GetTargetPriorityStatusLabel(skill)));
 
         if (skill.targetPriorityMode == EnemySkill_SO.TargetPriorityMode.PreferTargetsWithHighestStatusStacks)
-            return $"\n目标偏好：优先攻击{GetTargetPriorityStatusLabel(skill)}层数最高的目标";
+            return GameText.Format("battle.skill.rules.target_priority_most_stacks_of", "\n目标偏好：优先攻击{getTargetPriorityStatusLabel}层数最高的目标", ("getTargetPriorityStatusLabel", GetTargetPriorityStatusLabel(skill)));
 
         return string.Empty;
     }
@@ -1904,23 +1904,23 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
     private static string GetTargetPriorityStatusLabel(EnemySkill_SO skill)
     {
         if (skill == null)
-            return "未配置状态";
+            return GameText.Get("battle.skill.rules.unknown_status", "未配置状态");
 
         if (skill.targetPriorityStatusData != null)
-            return skill.targetPriorityStatusData.DisplayName;
+            return skill.targetPriorityStatusData.LocalizedName;
 
         switch (skill.targetPriorityStatusType)
         {
             case EnemySkill_SO.DiceStatusType.Burn:
-                return "\u71c3\u70e7";
+                return GameText.Get("battle.skill.rules.burn", "燃烧");
             case EnemySkill_SO.DiceStatusType.Electro:
-                return "\u7535\u6d41";
+                return GameText.Get("battle.skill.rules.shock", "电流");
             case EnemySkill_SO.DiceStatusType.Darkness:
-                return "\u9ed1\u6697";
+                return GameText.Get("battle.skill.rules.darkness", "黑暗");
             case EnemySkill_SO.DiceStatusType.Mark:
-                return "标记";
+                return GameText.Get("battle.skill.rules.mark", "标记");
             default:
-                return "\u672a\u914d\u7f6e\u72b6\u6001";
+                return GameText.Get("battle.skill.rules.unknown_status", "未配置状态");
         }
     }
 
@@ -1929,41 +1929,41 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         switch (effect.condition)
         {
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanTarget:
-                return $"自身速度 高出 目标单位速度 {Mathf.Max(1, effect.requiredConditionSpeedDifference)} 点（含）";
+                return GameText.Format("battle.skill.rules.the_user_s_speed_is_at_least_higher", "自身速度 高出 目标单位速度 {max} 点（含）", ("max", Mathf.Max(1, effect.requiredConditionSpeedDifference)));
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanTarget:
-                return $"自身速度 低于 目标单位速度 {Mathf.Max(1, effect.requiredConditionSpeedDifference)} 点（含）";
+                return GameText.Format("battle.skill.rules.the_user_s_speed_is_at_least_lower", "自身速度 低于 目标单位速度 {max} 点（含）", ("max", Mathf.Max(1, effect.requiredConditionSpeedDifference)));
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedEqualToTarget:
-                return "\u81ea\u8eab\u901f\u5ea6 \u7b49\u4e8e \u76ee\u6807\u5355\u4f4d\u901f\u5ea6";
+                return GameText.Get("battle.skill.rules.the_user_s_speed_equals_the_target_s", "自身速度 等于 目标单位速度");
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanValue:
-                return $"自身速度 高于 {effect.requiredConditionSpeedValue}（含）";
+                return GameText.Format("battle.skill.rules.the_user_s_speed_is_at_least", "自身速度 高于 {requiredConditionSpeedValue}（含）", ("requiredConditionSpeedValue", effect.requiredConditionSpeedValue));
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanValue:
-                return $"自身速度 低于 {effect.requiredConditionSpeedValue}（含）";
+                return GameText.Format("battle.skill.rules.the_user_s_speed_is_at_most", "自身速度 低于 {requiredConditionSpeedValue}（含）", ("requiredConditionSpeedValue", effect.requiredConditionSpeedValue));
             case EnemySkill_SO.PowerModifierCondition.SelfHasStatus:
-                return $"自身拥有 {GetHealingConditionStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.the_user_has", "自身拥有 {getHealingConditionStatusLabel}", ("getHealingConditionStatusLabel", GetHealingConditionStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterThan:
-                return $"自身 {GetHealingConditionStatusLabel(effect)} 层数 高于 {Mathf.Max(0, effect.requiredConditionStatusStacks)}";
+                return GameText.Format("battle.skill.rules.the_user_has_more_than_stacks_of", "自身 {getHealingConditionStatusLabel} 层数 高于 {max}", ("getHealingConditionStatusLabel", GetHealingConditionStatusLabel(effect)), ("max", Mathf.Max(0, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterOrEqual:
-                return $"自身 {GetHealingConditionStatusLabel(effect)} 层数 至少为 {Mathf.Max(1, effect.requiredConditionStatusStacks)}";
+                return GameText.Format("battle.skill.rules.the_user_has_at_least_stacks_of", "自身 {getHealingConditionStatusLabel} 层数 至少为 {max}", ("getHealingConditionStatusLabel", GetHealingConditionStatusLabel(effect)), ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksLessThan:
-                return $"自身 {GetHealingConditionStatusLabel(effect)} 层数 低于 {Mathf.Max(1, effect.requiredConditionStatusStacks)}";
+                return GameText.Format("battle.skill.rules.the_user_has_fewer_than_stacks_of", "自身 {getHealingConditionStatusLabel} 层数 低于 {max}", ("getHealingConditionStatusLabel", GetHealingConditionStatusLabel(effect)), ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksLessOrEqual:
-                return $"自身 {GetHealingConditionStatusLabel(effect)} 层数 至多为 {Mathf.Max(0, effect.requiredConditionStatusStacks)}";
+                return GameText.Format("battle.skill.rules.the_user_has_at_most_stacks_of", "自身 {getHealingConditionStatusLabel} 层数 至多为 {max}", ("getHealingConditionStatusLabel", GetHealingConditionStatusLabel(effect)), ("max", Mathf.Max(0, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.TargetHasStatus:
-                return $"目标拥有 {GetHealingConditionStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.the_target_has", "目标拥有 {getHealingConditionStatusLabel}", ("getHealingConditionStatusLabel", GetHealingConditionStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
-                return $"目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetHealingConditionStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.the_target_has_at_least_stacks_of", "目标拥有至少 {max} 层 {getHealingConditionStatusLabel}", ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)), ("getHealingConditionStatusLabel", GetHealingConditionStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksLessOrEqual:
-                return $"目标 {GetHealingConditionStatusLabel(effect)} 层数 至多为 {Mathf.Max(0, effect.requiredConditionStatusStacks)}";
+                return GameText.Format("battle.skill.rules.the_target_has_at_most_stacks_of", "目标 {getHealingConditionStatusLabel} 层数 至多为 {max}", ("getHealingConditionStatusLabel", GetHealingConditionStatusLabel(effect)), ("max", Mathf.Max(0, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
-                return $"目标每拥有 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetHealingConditionStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.for_every_stacks_of_on_the_target", "目标每拥有 {max} 层 {getHealingConditionStatusLabel}", ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)), ("getHealingConditionStatusLabel", GetHealingConditionStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
-                return $"目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 种负面状态";
+                return GameText.Format("battle.skill.rules.the_target_has_at_least_different_debuffs", "目标拥有至少 {max} 种负面状态", ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.AnyOpponentNegativeStatusTypesAtLeast:
-                return $"任意敌方目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 种负面状态";
+                return GameText.Format("battle.skill.rules.any_enemy_has_at_least_different_debuffs", "任意敌方目标拥有至少 {max} 种负面状态", ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfHpRatioBelowOrEqual:
-                return $"自身生命值不高于 {Mathf.Clamp(effect.requiredConditionStatusStacks, 0, 100)}%";
+                return GameText.Format("battle.skill.rules.the_user_has_hp_or_less", "自身生命值不高于 {clamp}%", ("clamp", Mathf.Clamp(effect.requiredConditionStatusStacks, 0, 100)));
             default:
-                return "\u672a\u914d\u7f6e\u6761\u4ef6";
+                return GameText.Get("battle.skill.rules.no_condition_set", "未配置条件");
         }
     }
 
@@ -1972,7 +1972,7 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         if (!effect.useCondition)
             return string.Empty;
 
-        return $"若 {BuildColoredToken(GetStatusEffectConditionLabel(effect), targetHighlightColor)} ，则 ";
+        return GameText.Format("battle.skill.rules.append_effect_lines.if", "若 {buildColoredToken} ，则 ", ("buildColoredToken", BuildColoredToken(GetStatusEffectConditionLabel(effect), targetHighlightColor)));
     }
 
     private static string GetStatusEffectConditionLabel(EnemySkill_SO.StatusEffectEntry effect)
@@ -1980,71 +1980,71 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         switch (effect.condition)
         {
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanTarget:
-                return $"自身速度 高出 目标单位速度 {Mathf.Max(1, effect.requiredConditionSpeedDifference)} 点（含）";
+                return GameText.Format("battle.skill.rules.the_user_s_speed_is_at_least_higher", "自身速度 高出 目标单位速度 {max} 点（含）", ("max", Mathf.Max(1, effect.requiredConditionSpeedDifference)));
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanTarget:
-                return $"自身速度 低于 目标单位速度 {Mathf.Max(1, effect.requiredConditionSpeedDifference)} 点（含）";
+                return GameText.Format("battle.skill.rules.the_user_s_speed_is_at_least_lower", "自身速度 低于 目标单位速度 {max} 点（含）", ("max", Mathf.Max(1, effect.requiredConditionSpeedDifference)));
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedEqualToTarget:
-                return "自身速度 等于 目标单位速度";
+                return GameText.Get("battle.skill.rules.the_user_s_speed_equals_the_target_s", "自身速度 等于 目标单位速度");
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanValue:
-                return $"自身速度 高于 {effect.requiredConditionSpeedValue}（含）";
+                return GameText.Format("battle.skill.rules.the_user_s_speed_is_at_least", "自身速度 高于 {requiredConditionSpeedValue}（含）", ("requiredConditionSpeedValue", effect.requiredConditionSpeedValue));
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanValue:
-                return $"自身速度 低于 {effect.requiredConditionSpeedValue}（含）";
+                return GameText.Format("battle.skill.rules.the_user_s_speed_is_at_most", "自身速度 低于 {requiredConditionSpeedValue}（含）", ("requiredConditionSpeedValue", effect.requiredConditionSpeedValue));
             case EnemySkill_SO.PowerModifierCondition.SelfHasStatus:
-                return $"自身拥有 {GetStatusEffectConditionStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.get_status_effect_condition_label.the_user_has", "自身拥有 {getStatusEffectConditionStatusLabel}", ("getStatusEffectConditionStatusLabel", GetStatusEffectConditionStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterThan:
-                return $"自身 {GetStatusEffectConditionStatusLabel(effect)} 层数 高于 {Mathf.Max(0, effect.requiredConditionStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_status_effect_condition_label.the_user_has_more_than_stacks_of", "自身 {getStatusEffectConditionStatusLabel} 层数 高于 {max}", ("getStatusEffectConditionStatusLabel", GetStatusEffectConditionStatusLabel(effect)), ("max", Mathf.Max(0, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterOrEqual:
-                return $"自身 {GetStatusEffectConditionStatusLabel(effect)} 层数 至少为 {Mathf.Max(1, effect.requiredConditionStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_status_effect_condition_label.the_user_has_at_least_stacks_of", "自身 {getStatusEffectConditionStatusLabel} 层数 至少为 {max}", ("getStatusEffectConditionStatusLabel", GetStatusEffectConditionStatusLabel(effect)), ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksLessThan:
-                return $"自身 {GetStatusEffectConditionStatusLabel(effect)} 层数 低于 {Mathf.Max(1, effect.requiredConditionStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_status_effect_condition_label.the_user_has_fewer_than_stacks_of", "自身 {getStatusEffectConditionStatusLabel} 层数 低于 {max}", ("getStatusEffectConditionStatusLabel", GetStatusEffectConditionStatusLabel(effect)), ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksLessOrEqual:
-                return $"自身 {GetStatusEffectConditionStatusLabel(effect)} 层数 至多为 {Mathf.Max(0, effect.requiredConditionStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_status_effect_condition_label.the_user_has_at_most_stacks_of", "自身 {getStatusEffectConditionStatusLabel} 层数 至多为 {max}", ("getStatusEffectConditionStatusLabel", GetStatusEffectConditionStatusLabel(effect)), ("max", Mathf.Max(0, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.TargetHasStatus:
-                return $"目标拥有 {GetStatusEffectConditionStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.get_status_effect_condition_label.the_target_has", "目标拥有 {getStatusEffectConditionStatusLabel}", ("getStatusEffectConditionStatusLabel", GetStatusEffectConditionStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
-                return $"目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetStatusEffectConditionStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.get_status_effect_condition_label.the_target_has_at_least_stacks_of", "目标拥有至少 {max} 层 {getStatusEffectConditionStatusLabel}", ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)), ("getStatusEffectConditionStatusLabel", GetStatusEffectConditionStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksLessOrEqual:
-                return $"目标 {GetStatusEffectConditionStatusLabel(effect)} 层数 至多为 {Mathf.Max(0, effect.requiredConditionStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_status_effect_condition_label.the_target_has_at_most_stacks_of", "目标 {getStatusEffectConditionStatusLabel} 层数 至多为 {max}", ("getStatusEffectConditionStatusLabel", GetStatusEffectConditionStatusLabel(effect)), ("max", Mathf.Max(0, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
-                return $"目标每拥有 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetStatusEffectConditionStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.get_status_effect_condition_label.for_every_stacks_of_on_the_target", "目标每拥有 {max} 层 {getStatusEffectConditionStatusLabel}", ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)), ("getStatusEffectConditionStatusLabel", GetStatusEffectConditionStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetSkillIsSpecific:
-                return $"与技能 {GetStatusEffectConditionSkillLabel(effect)} 拼点";
+                return GameText.Format("battle.skill.rules.clashing_against", "与技能 {getStatusEffectConditionSkillLabel} 拼点", ("getStatusEffectConditionSkillLabel", GetStatusEffectConditionSkillLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
-                return $"目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 种负面状态";
+                return GameText.Format("battle.skill.rules.the_target_has_at_least_different_debuffs", "目标拥有至少 {max} 种负面状态", ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.AnyOpponentNegativeStatusTypesAtLeast:
-                return $"任意敌方目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 种负面状态";
+                return GameText.Format("battle.skill.rules.any_enemy_has_at_least_different_debuffs", "任意敌方目标拥有至少 {max} 种负面状态", ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfHpRatioBelowOrEqual:
-                return $"自身生命值不高于 {Mathf.Clamp(effect.requiredConditionStatusStacks, 0, 100)}%";
+                return GameText.Format("battle.skill.rules.the_user_has_hp_or_less", "自身生命值不高于 {clamp}%", ("clamp", Mathf.Clamp(effect.requiredConditionStatusStacks, 0, 100)));
             default:
-                return "未配置条件";
+                return GameText.Get("battle.skill.rules.no_condition_set", "未配置条件");
         }
     }
 
     private static string GetStatusEffectConditionStatusLabel(EnemySkill_SO.StatusEffectEntry effect)
     {
         if (effect.conditionStatusData != null)
-            return effect.conditionStatusData.DisplayName;
+            return effect.conditionStatusData.LocalizedName;
 
         switch (effect.conditionStatusType)
         {
             case EnemySkill_SO.DiceStatusType.Burn:
-                return "燃烧";
+                return GameText.Get("battle.skill.rules.burn", "燃烧");
             case EnemySkill_SO.DiceStatusType.Electro:
-                return "电流";
+                return GameText.Get("battle.skill.rules.shock", "电流");
             case EnemySkill_SO.DiceStatusType.Darkness:
-                return "黑暗";
+                return GameText.Get("battle.skill.rules.darkness", "黑暗");
             case EnemySkill_SO.DiceStatusType.Mark:
-                return "标记";
+                return GameText.Get("battle.skill.rules.mark", "标记");
             default:
-                return "未配置状态";
+                return GameText.Get("battle.skill.rules.unknown_status", "未配置状态");
         }
     }
 
     private static string GetStatusEffectConditionSkillLabel(EnemySkill_SO.StatusEffectEntry effect)
     {
-        return effect.conditionTargetSkillData != null && !string.IsNullOrWhiteSpace(effect.conditionTargetSkillData.skillName)
-            ? effect.conditionTargetSkillData.skillName
-            : "未配置技能";
+        return effect.conditionTargetSkillData != null && !string.IsNullOrWhiteSpace(effect.conditionTargetSkillData.LocalizedName)
+            ? effect.conditionTargetSkillData.LocalizedName
+            : GameText.Get("battle.skill.unconfigured", "未配置技能");
     }
 
     private static string GetBuiltInConditionLabel(EnemySkill_SO.BuiltInEffectEntry effect)
@@ -2054,15 +2054,15 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         switch (effect.conditionScope)
         {
             case EnemySkill_SO.BuiltInConditionScope.CurrentTarget:
-                return $"目标拥有至少 {requiredStacks} 层 {statusLabel}";
+                return GameText.Format("battle.skill.rules.get_built_in_condition_label.the_target_has_at_least_stacks_of", "目标拥有至少 {requiredStacks} 层 {statusLabel}", ("requiredStacks", requiredStacks), ("statusLabel", statusLabel));
             case EnemySkill_SO.BuiltInConditionScope.AnyOpponent:
-                return $"任意目标拥有至少 {requiredStacks} 层 {statusLabel}";
+                return GameText.Format("battle.skill.rules.any_target_has_at_least_stacks_of", "任意目标拥有至少 {requiredStacks} 层 {statusLabel}", ("requiredStacks", requiredStacks), ("statusLabel", statusLabel));
             case EnemySkill_SO.BuiltInConditionScope.AnyFriendly:
-                return $"任意友方拥有至少 {requiredStacks} 层 {statusLabel}";
+                return GameText.Format("battle.skill.rules.any_ally_has_at_least_stacks_of", "任意友方拥有至少 {requiredStacks} 层 {statusLabel}", ("requiredStacks", requiredStacks), ("statusLabel", statusLabel));
             case EnemySkill_SO.BuiltInConditionScope.Self:
-                return $"自身拥有至少 {requiredStacks} 层 {statusLabel}";
+                return GameText.Format("battle.skill.rules.get_built_in_condition_label.the_user_has_at_least_stacks_of", "自身拥有至少 {requiredStacks} 层 {statusLabel}", ("requiredStacks", requiredStacks), ("statusLabel", statusLabel));
             default:
-                return $"目标拥有至少 {requiredStacks} 层 {statusLabel}";
+                return GameText.Format("battle.skill.rules.get_built_in_condition_label.the_target_has_at_least_stacks_of", "目标拥有至少 {requiredStacks} 层 {statusLabel}", ("requiredStacks", requiredStacks), ("statusLabel", statusLabel));
         }
     }
 
@@ -2075,7 +2075,7 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
             conditions.Add(BuildColoredToken(GetBuiltInGeneralConditionLabel(effect), targetHighlightColor));
 
         return conditions.Count > 0
-            ? $"若 {string.Join(" 且 ", conditions)} ，则 "
+            ? GameText.Format("battle.skill.rules.build_built_in_condition_prefix.if", "若 {join} ，则 ", ("join", string.Join(GameText.Get("battle.skill.rules.build_built_in_condition_prefix.and", " 且 "), conditions)))
             : string.Empty;
     }
 
@@ -2087,8 +2087,8 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         int repeatCount = Mathf.Max(1, effect.applyRepeatCount);
         int delayRounds = Mathf.Max(1, effect.applyAfterRoundStarts);
         return repeatCount > 1
-            ? $"于 接下来 {repeatCount} 个回合开始时 "
-            : $"于 下 {delayRounds} 个回合开始时 ";
+            ? GameText.Format("battle.skill.rules.at_the_start_of_the_next_rounds", "于 接下来 {repeatCount} 个回合开始时 ", ("repeatCount", repeatCount))
+            : GameText.Format("battle.skill.rules.at_the_start_of_the_round_in_rounds", "于 下 {delayRounds} 个回合开始时 ", ("delayRounds", delayRounds));
     }
 
     private static string GetBuiltInGeneralConditionLabel(EnemySkill_SO.BuiltInEffectEntry effect)
@@ -2096,69 +2096,69 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         switch (effect.condition)
         {
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanTarget:
-                return $"自身速度 高出 目标单位速度 {Mathf.Max(1, effect.requiredConditionSpeedDifference)} 点（含）";
+                return GameText.Format("battle.skill.rules.the_user_s_speed_is_at_least_higher", "自身速度 高出 目标单位速度 {max} 点（含）", ("max", Mathf.Max(1, effect.requiredConditionSpeedDifference)));
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanTarget:
-                return $"自身速度 低于 目标单位速度 {Mathf.Max(1, effect.requiredConditionSpeedDifference)} 点（含）";
+                return GameText.Format("battle.skill.rules.the_user_s_speed_is_at_least_lower", "自身速度 低于 目标单位速度 {max} 点（含）", ("max", Mathf.Max(1, effect.requiredConditionSpeedDifference)));
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedEqualToTarget:
-                return "自身速度 等于 目标单位速度";
+                return GameText.Get("battle.skill.rules.the_user_s_speed_equals_the_target_s", "自身速度 等于 目标单位速度");
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanValue:
-                return $"自身速度 高于 {effect.requiredConditionSpeedValue}（含）";
+                return GameText.Format("battle.skill.rules.the_user_s_speed_is_at_least", "自身速度 高于 {requiredConditionSpeedValue}（含）", ("requiredConditionSpeedValue", effect.requiredConditionSpeedValue));
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanValue:
-                return $"自身速度 低于 {effect.requiredConditionSpeedValue}（含）";
+                return GameText.Format("battle.skill.rules.the_user_s_speed_is_at_most", "自身速度 低于 {requiredConditionSpeedValue}（含）", ("requiredConditionSpeedValue", effect.requiredConditionSpeedValue));
             case EnemySkill_SO.PowerModifierCondition.SelfHasStatus:
-                return $"自身拥有 {GetBuiltInGeneralConditionStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.get_built_in_general_condition_label.the_user_has", "自身拥有 {getBuiltInGeneralConditionStatusLabel}", ("getBuiltInGeneralConditionStatusLabel", GetBuiltInGeneralConditionStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterThan:
-                return $"自身 {GetBuiltInGeneralConditionStatusLabel(effect)} 层数 高于 {Mathf.Max(0, effect.requiredConditionStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_built_in_general_condition_label.the_user_has_more_than_stacks_of", "自身 {getBuiltInGeneralConditionStatusLabel} 层数 高于 {max}", ("getBuiltInGeneralConditionStatusLabel", GetBuiltInGeneralConditionStatusLabel(effect)), ("max", Mathf.Max(0, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterOrEqual:
-                return $"自身 {GetBuiltInGeneralConditionStatusLabel(effect)} 层数 至少为 {Mathf.Max(1, effect.requiredConditionStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_built_in_general_condition_label.the_user_has_at_least_stacks_of", "自身 {getBuiltInGeneralConditionStatusLabel} 层数 至少为 {max}", ("getBuiltInGeneralConditionStatusLabel", GetBuiltInGeneralConditionStatusLabel(effect)), ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksLessThan:
-                return $"自身 {GetBuiltInGeneralConditionStatusLabel(effect)} 层数 低于 {Mathf.Max(1, effect.requiredConditionStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_built_in_general_condition_label.the_user_has_fewer_than_stacks_of", "自身 {getBuiltInGeneralConditionStatusLabel} 层数 低于 {max}", ("getBuiltInGeneralConditionStatusLabel", GetBuiltInGeneralConditionStatusLabel(effect)), ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksLessOrEqual:
-                return $"自身 {GetBuiltInGeneralConditionStatusLabel(effect)} 层数 至多为 {Mathf.Max(0, effect.requiredConditionStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_built_in_general_condition_label.the_user_has_at_most_stacks_of", "自身 {getBuiltInGeneralConditionStatusLabel} 层数 至多为 {max}", ("getBuiltInGeneralConditionStatusLabel", GetBuiltInGeneralConditionStatusLabel(effect)), ("max", Mathf.Max(0, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.TargetHasStatus:
-                return $"目标拥有 {GetBuiltInGeneralConditionStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.get_built_in_general_condition_label.the_target_has", "目标拥有 {getBuiltInGeneralConditionStatusLabel}", ("getBuiltInGeneralConditionStatusLabel", GetBuiltInGeneralConditionStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
-                return $"目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetBuiltInGeneralConditionStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.get_built_in_general_condition_label.the_target_has_at_least_stacks_of", "目标拥有至少 {max} 层 {getBuiltInGeneralConditionStatusLabel}", ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)), ("getBuiltInGeneralConditionStatusLabel", GetBuiltInGeneralConditionStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
-                return $"目标每拥有 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 层 {GetBuiltInGeneralConditionStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.get_built_in_general_condition_label.for_every_stacks_of_on_the_target", "目标每拥有 {max} 层 {getBuiltInGeneralConditionStatusLabel}", ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)), ("getBuiltInGeneralConditionStatusLabel", GetBuiltInGeneralConditionStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetSkillIsSpecific:
-                return $"与技能 {GetBuiltInGeneralConditionSkillLabel(effect)} 拼点";
+                return GameText.Format("battle.skill.rules.get_built_in_general_condition_label.clashing_against", "与技能 {getBuiltInGeneralConditionSkillLabel} 拼点", ("getBuiltInGeneralConditionSkillLabel", GetBuiltInGeneralConditionSkillLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
-                return $"目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 种负面状态";
+                return GameText.Format("battle.skill.rules.the_target_has_at_least_different_debuffs", "目标拥有至少 {max} 种负面状态", ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.AnyOpponentNegativeStatusTypesAtLeast:
-                return $"任意敌方目标拥有至少 {Mathf.Max(1, effect.requiredConditionStatusStacks)} 种负面状态";
+                return GameText.Format("battle.skill.rules.any_enemy_has_at_least_different_debuffs", "任意敌方目标拥有至少 {max} 种负面状态", ("max", Mathf.Max(1, effect.requiredConditionStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfHpRatioBelowOrEqual:
-                return $"自身生命值不高于 {Mathf.Clamp(effect.requiredConditionStatusStacks, 0, 100)}%";
+                return GameText.Format("battle.skill.rules.the_user_has_hp_or_less", "自身生命值不高于 {clamp}%", ("clamp", Mathf.Clamp(effect.requiredConditionStatusStacks, 0, 100)));
             default:
-                return "未配置条件";
+                return GameText.Get("battle.skill.rules.no_condition_set", "未配置条件");
         }
     }
 
     private static string GetBuiltInGeneralConditionStatusLabel(EnemySkill_SO.BuiltInEffectEntry effect)
     {
         if (effect.targetStatusData != null)
-            return effect.targetStatusData.DisplayName;
+            return effect.targetStatusData.LocalizedName;
 
         switch (effect.targetStatusType)
         {
             case EnemySkill_SO.DiceStatusType.Burn:
-                return "燃烧";
+                return GameText.Get("battle.skill.rules.burn", "燃烧");
             case EnemySkill_SO.DiceStatusType.Electro:
-                return "电流";
+                return GameText.Get("battle.skill.rules.shock", "电流");
             case EnemySkill_SO.DiceStatusType.Darkness:
-                return "黑暗";
+                return GameText.Get("battle.skill.rules.darkness", "黑暗");
             case EnemySkill_SO.DiceStatusType.Mark:
-                return "标记";
+                return GameText.Get("battle.skill.rules.mark", "标记");
             default:
-                return "未配置状态";
+                return GameText.Get("battle.skill.rules.unknown_status", "未配置状态");
         }
     }
 
     private static string GetBuiltInGeneralConditionSkillLabel(EnemySkill_SO.BuiltInEffectEntry effect)
     {
-        return effect.targetSkillData != null && !string.IsNullOrWhiteSpace(effect.targetSkillData.skillName)
-            ? effect.targetSkillData.skillName
-            : "未配置技能";
+        return effect.targetSkillData != null && !string.IsNullOrWhiteSpace(effect.targetSkillData.LocalizedName)
+            ? effect.targetSkillData.LocalizedName
+            : GameText.Get("battle.skill.unconfigured", "未配置技能");
     }
 
     private static string GetBuiltInActionTargetLabel(EnemySkill_SO.BuiltInEffectEntry effect, bool attackerIsAlly)
@@ -2166,48 +2166,48 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         switch (effect.targetMode)
         {
             case EnemySkill_SO.DamageTargetMode.Self:
-                return "自己";
+                return GameText.Get("battle.skill.rules.self", "自己");
             case EnemySkill_SO.DamageTargetMode.CurrentTarget:
-                return "目标";
+                return GameText.Get("battle.skill.rules.target", "目标");
             case EnemySkill_SO.DamageTargetMode.RandomOpponents:
-                return $"随机 {Mathf.Max(1, effect.randomTargetCount)} 名目标";
+                return GameText.Format("battle.skill.rules.random_targets", "随机 {max} 名目标", ("max", Mathf.Max(1, effect.randomTargetCount)));
             case EnemySkill_SO.DamageTargetMode.AllOpponents:
-                return "所有目标";
+                return GameText.Get("battle.skill.rules.all_targets", "所有目标");
             case EnemySkill_SO.DamageTargetMode.AllOpponentsExceptCurrent:
-                return "其它目标";
+                return GameText.Get("battle.skill.rules.other_targets", "其它目标");
             case EnemySkill_SO.DamageTargetMode.AllFriendlies:
-                return "全体友方";
+                return GameText.Get("battle.skill.rules.all_allies", "全体友方");
             case EnemySkill_SO.DamageTargetMode.AllFriendliesExceptSelf:
-                return "除自身以外的友方";
+                return GameText.Get("battle.skill.rules.other_allies", "除自身以外的友方");
             case EnemySkill_SO.DamageTargetMode.LowestHpFriendly:
-                return "血量最低的友方";
+                return GameText.Get("battle.skill.rules.ally_with_the_lowest_hp", "血量最低的友方");
             case EnemySkill_SO.DamageTargetMode.LowestHpOpponent:
-                return "血量最低的目标";
+                return GameText.Get("battle.skill.rules.target_with_the_lowest_hp", "血量最低的目标");
             default:
-                return attackerIsAlly ? "敌方目标" : "目标";
+                return attackerIsAlly ? GameText.Get("battle.skill.rules.enemy_target", "敌方目标") : GameText.Get("battle.skill.rules.target", "目标");
         }
     }
 
     private static string GetHealingConditionStatusLabel(EnemySkill_SO.HealingEffectEntry effect)
     {
         if (effect.conditionStatusData != null)
-            return effect.conditionStatusData.DisplayName;
+            return effect.conditionStatusData.LocalizedName;
 
         if (effect.statusData != null)
-            return effect.statusData.DisplayName;
+            return effect.statusData.LocalizedName;
 
         switch (effect.conditionStatusType)
         {
             case EnemySkill_SO.DiceStatusType.Burn:
-                return "\u71c3\u70e7";
+                return GameText.Get("battle.skill.rules.burn", "燃烧");
             case EnemySkill_SO.DiceStatusType.Electro:
-                return "\u7535\u6d41";
+                return GameText.Get("battle.skill.rules.shock", "电流");
             case EnemySkill_SO.DiceStatusType.Darkness:
-                return "\u9ed1\u6697";
+                return GameText.Get("battle.skill.rules.darkness", "黑暗");
             case EnemySkill_SO.DiceStatusType.Mark:
-                return "标记";
+                return GameText.Get("battle.skill.rules.mark", "标记");
             default:
-                return "\u672a\u914d\u7f6e\u72b6\u6001";
+                return GameText.Get("battle.skill.rules.unknown_status", "未配置状态");
         }
     }
 
@@ -2216,71 +2216,71 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         switch (effect.condition)
         {
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanTarget:
-                return $"自身速度 高出 目标单位速度 {Mathf.Max(1, effect.requiredSpeedDifference)} 点（含）";
+                return GameText.Format("battle.skill.rules.the_user_s_speed_is_at_least_higher", "自身速度 高出 目标单位速度 {max} 点（含）", ("max", Mathf.Max(1, effect.requiredSpeedDifference)));
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanTarget:
-                return $"自身速度 低于 目标单位速度 {Mathf.Max(1, effect.requiredSpeedDifference)} 点（含）";
+                return GameText.Format("battle.skill.rules.the_user_s_speed_is_at_least_lower", "自身速度 低于 目标单位速度 {max} 点（含）", ("max", Mathf.Max(1, effect.requiredSpeedDifference)));
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedEqualToTarget:
-                return "\u81ea\u8eab\u901f\u5ea6 \u7b49\u4e8e \u76ee\u6807\u5355\u4f4d\u901f\u5ea6";
+                return GameText.Get("battle.skill.rules.the_user_s_speed_equals_the_target_s", "自身速度 等于 目标单位速度");
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanValue:
-                return $"自身速度 高于 {effect.requiredSpeedValue}（含）";
+                return GameText.Format("battle.skill.rules.get_power_modifier_condition_label.the_user_s_speed_is_at_least", "自身速度 高于 {requiredSpeedValue}（含）", ("requiredSpeedValue", effect.requiredSpeedValue));
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanValue:
-                return $"自身速度 低于 {effect.requiredSpeedValue}（含）";
+                return GameText.Format("battle.skill.rules.get_power_modifier_condition_label.the_user_s_speed_is_at_most", "自身速度 低于 {requiredSpeedValue}（含）", ("requiredSpeedValue", effect.requiredSpeedValue));
             case EnemySkill_SO.PowerModifierCondition.SelfHasStatus:
-                return $"自身拥有 {GetPowerModifierStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.get_power_modifier_condition_label.the_user_has", "自身拥有 {getPowerModifierStatusLabel}", ("getPowerModifierStatusLabel", GetPowerModifierStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterThan:
-                return $"自身 {GetPowerModifierStatusLabel(effect)} 层数 高于 {Mathf.Max(0, effect.requiredStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_power_modifier_condition_label.the_user_has_more_than_stacks_of", "自身 {getPowerModifierStatusLabel} 层数 高于 {max}", ("getPowerModifierStatusLabel", GetPowerModifierStatusLabel(effect)), ("max", Mathf.Max(0, effect.requiredStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterOrEqual:
-                return $"自身 {GetPowerModifierStatusLabel(effect)} 层数 至少为 {Mathf.Max(1, effect.requiredStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_power_modifier_condition_label.the_user_has_at_least_stacks_of", "自身 {getPowerModifierStatusLabel} 层数 至少为 {max}", ("getPowerModifierStatusLabel", GetPowerModifierStatusLabel(effect)), ("max", Mathf.Max(1, effect.requiredStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksLessThan:
-                return $"自身 {GetPowerModifierStatusLabel(effect)} 层数 低于 {Mathf.Max(1, effect.requiredStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_power_modifier_condition_label.the_user_has_fewer_than_stacks_of", "自身 {getPowerModifierStatusLabel} 层数 低于 {max}", ("getPowerModifierStatusLabel", GetPowerModifierStatusLabel(effect)), ("max", Mathf.Max(1, effect.requiredStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksLessOrEqual:
-                return $"自身 {GetPowerModifierStatusLabel(effect)} 层数 至多为 {Mathf.Max(0, effect.requiredStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_power_modifier_condition_label.the_user_has_at_most_stacks_of", "自身 {getPowerModifierStatusLabel} 层数 至多为 {max}", ("getPowerModifierStatusLabel", GetPowerModifierStatusLabel(effect)), ("max", Mathf.Max(0, effect.requiredStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.TargetHasStatus:
-                return $"目标拥有 {GetPowerModifierStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.get_power_modifier_condition_label.the_target_has", "目标拥有 {getPowerModifierStatusLabel}", ("getPowerModifierStatusLabel", GetPowerModifierStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
-                return $"目标拥有至少 {Mathf.Max(1, effect.requiredStatusStacks)} 层 {GetPowerModifierStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.get_power_modifier_condition_label.the_target_has_at_least_stacks_of", "目标拥有至少 {max} 层 {getPowerModifierStatusLabel}", ("max", Mathf.Max(1, effect.requiredStatusStacks)), ("getPowerModifierStatusLabel", GetPowerModifierStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksLessOrEqual:
-                return $"目标 {GetPowerModifierStatusLabel(effect)} 层数 至多为 {Mathf.Max(0, effect.requiredStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_power_modifier_condition_label.the_target_has_at_most_stacks_of", "目标 {getPowerModifierStatusLabel} 层数 至多为 {max}", ("getPowerModifierStatusLabel", GetPowerModifierStatusLabel(effect)), ("max", Mathf.Max(0, effect.requiredStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
-                return $"目标每拥有 {Mathf.Max(1, effect.requiredStatusStacks)} 层 {GetPowerModifierStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.get_power_modifier_condition_label.for_every_stacks_of_on_the_target", "目标每拥有 {max} 层 {getPowerModifierStatusLabel}", ("max", Mathf.Max(1, effect.requiredStatusStacks)), ("getPowerModifierStatusLabel", GetPowerModifierStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetSkillIsSpecific:
-                return $"与技能 {GetPowerModifierTargetSkillLabel(effect)} 拼点";
+                return GameText.Format("battle.skill.rules.get_power_modifier_condition_label.clashing_against", "与技能 {getPowerModifierTargetSkillLabel} 拼点", ("getPowerModifierTargetSkillLabel", GetPowerModifierTargetSkillLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
-                return $"目标拥有至少 {Mathf.Max(1, effect.requiredStatusStacks)} 种负面状态";
+                return GameText.Format("battle.skill.rules.the_target_has_at_least_different_debuffs", "目标拥有至少 {max} 种负面状态", ("max", Mathf.Max(1, effect.requiredStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.AnyOpponentNegativeStatusTypesAtLeast:
-                return $"任意敌方目标拥有至少 {Mathf.Max(1, effect.requiredStatusStacks)} 种负面状态";
+                return GameText.Format("battle.skill.rules.any_enemy_has_at_least_different_debuffs", "任意敌方目标拥有至少 {max} 种负面状态", ("max", Mathf.Max(1, effect.requiredStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfHpRatioBelowOrEqual:
-                return $"自身生命值不高于 {Mathf.Clamp(effect.requiredStatusStacks, 0, 100)}%";
+                return GameText.Format("battle.skill.rules.the_user_has_hp_or_less", "自身生命值不高于 {clamp}%", ("clamp", Mathf.Clamp(effect.requiredStatusStacks, 0, 100)));
             default:
-                return "\u672a\u914d\u7f6e\u6761\u4ef6";
+                return GameText.Get("battle.skill.rules.no_condition_set", "未配置条件");
         }
     }
 
     private static string GetPowerModifierStatusLabel(EnemySkill_SO.ConditionalPowerModifierEntry effect)
     {
         if (effect.targetStatusData != null)
-            return effect.targetStatusData.DisplayName;
+            return effect.targetStatusData.LocalizedName;
 
         switch (effect.targetStatusType)
         {
             case EnemySkill_SO.DiceStatusType.Burn:
-                return "燃烧";
+                return GameText.Get("battle.skill.rules.burn", "燃烧");
             case EnemySkill_SO.DiceStatusType.Electro:
-                return "电流";
+                return GameText.Get("battle.skill.rules.shock", "电流");
             case EnemySkill_SO.DiceStatusType.Darkness:
-                return "黑暗";
+                return GameText.Get("battle.skill.rules.darkness", "黑暗");
             case EnemySkill_SO.DiceStatusType.Mark:
-                return "标记";
+                return GameText.Get("battle.skill.rules.mark", "标记");
             default:
-                return "未配置状态";
+                return GameText.Get("battle.skill.rules.unknown_status", "未配置状态");
         }
     }
 
     private static string GetPowerModifierTargetSkillLabel(EnemySkill_SO.ConditionalPowerModifierEntry effect)
     {
-        return effect.targetSkillData != null && !string.IsNullOrWhiteSpace(effect.targetSkillData.skillName)
-            ? effect.targetSkillData.skillName
-            : "未配置技能";
+        return effect.targetSkillData != null && !string.IsNullOrWhiteSpace(effect.targetSkillData.LocalizedName)
+            ? effect.targetSkillData.LocalizedName
+            : GameText.Get("battle.skill.unconfigured", "未配置技能");
     }
 
     private static string GetRangeModifierConditionLabel(EnemySkill_SO.ConditionalDiceRangeModifierEntry effect)
@@ -2288,43 +2288,43 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         switch (effect.condition)
         {
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanTarget:
-                return $"自身速度 高出 目标单位速度 {Mathf.Max(1, effect.requiredSpeedDifference)} 点（含）";
+                return GameText.Format("battle.skill.rules.the_user_s_speed_is_at_least_higher", "自身速度 高出 目标单位速度 {max} 点（含）", ("max", Mathf.Max(1, effect.requiredSpeedDifference)));
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanTarget:
-                return $"自身速度 低于 目标单位速度 {Mathf.Max(1, effect.requiredSpeedDifference)} 点（含）";
+                return GameText.Format("battle.skill.rules.the_user_s_speed_is_at_least_lower", "自身速度 低于 目标单位速度 {max} 点（含）", ("max", Mathf.Max(1, effect.requiredSpeedDifference)));
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedEqualToTarget:
-                return "自身速度 等于 目标单位速度";
+                return GameText.Get("battle.skill.rules.the_user_s_speed_equals_the_target_s", "自身速度 等于 目标单位速度");
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedHigherThanValue:
-                return $"自身速度 高于 {effect.requiredSpeedValue}（含）";
+                return GameText.Format("battle.skill.rules.get_power_modifier_condition_label.the_user_s_speed_is_at_least", "自身速度 高于 {requiredSpeedValue}（含）", ("requiredSpeedValue", effect.requiredSpeedValue));
             case EnemySkill_SO.PowerModifierCondition.SelfSpeedLowerThanValue:
-                return $"自身速度 低于 {effect.requiredSpeedValue}（含）";
+                return GameText.Format("battle.skill.rules.get_power_modifier_condition_label.the_user_s_speed_is_at_most", "自身速度 低于 {requiredSpeedValue}（含）", ("requiredSpeedValue", effect.requiredSpeedValue));
             case EnemySkill_SO.PowerModifierCondition.SelfHasStatus:
-                return $"自身拥有 {GetRangeModifierStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.get_range_modifier_condition_label.the_user_has", "自身拥有 {getRangeModifierStatusLabel}", ("getRangeModifierStatusLabel", GetRangeModifierStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterThan:
-                return $"自身 {GetRangeModifierStatusLabel(effect)} 层数 高于 {Mathf.Max(0, effect.requiredStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_range_modifier_condition_label.the_user_has_more_than_stacks_of", "自身 {getRangeModifierStatusLabel} 层数 高于 {max}", ("getRangeModifierStatusLabel", GetRangeModifierStatusLabel(effect)), ("max", Mathf.Max(0, effect.requiredStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksGreaterOrEqual:
-                return $"自身 {GetRangeModifierStatusLabel(effect)} 层数 至少为 {Mathf.Max(1, effect.requiredStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_range_modifier_condition_label.the_user_has_at_least_stacks_of", "自身 {getRangeModifierStatusLabel} 层数 至少为 {max}", ("getRangeModifierStatusLabel", GetRangeModifierStatusLabel(effect)), ("max", Mathf.Max(1, effect.requiredStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksLessThan:
-                return $"自身 {GetRangeModifierStatusLabel(effect)} 层数 低于 {Mathf.Max(1, effect.requiredStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_range_modifier_condition_label.the_user_has_fewer_than_stacks_of", "自身 {getRangeModifierStatusLabel} 层数 低于 {max}", ("getRangeModifierStatusLabel", GetRangeModifierStatusLabel(effect)), ("max", Mathf.Max(1, effect.requiredStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfStatusStacksLessOrEqual:
-                return $"自身 {GetRangeModifierStatusLabel(effect)} 层数 至多为 {Mathf.Max(0, effect.requiredStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_range_modifier_condition_label.the_user_has_at_most_stacks_of", "自身 {getRangeModifierStatusLabel} 层数 至多为 {max}", ("getRangeModifierStatusLabel", GetRangeModifierStatusLabel(effect)), ("max", Mathf.Max(0, effect.requiredStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.TargetHasStatus:
-                return $"目标拥有 {GetRangeModifierStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.get_range_modifier_condition_label.the_target_has", "目标拥有 {getRangeModifierStatusLabel}", ("getRangeModifierStatusLabel", GetRangeModifierStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksAtLeast:
-                return $"目标拥有至少 {Mathf.Max(1, effect.requiredStatusStacks)} 层 {GetRangeModifierStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.get_range_modifier_condition_label.the_target_has_at_least_stacks_of", "目标拥有至少 {max} 层 {getRangeModifierStatusLabel}", ("max", Mathf.Max(1, effect.requiredStatusStacks)), ("getRangeModifierStatusLabel", GetRangeModifierStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksLessOrEqual:
-                return $"目标 {GetRangeModifierStatusLabel(effect)} 层数 至多为 {Mathf.Max(0, effect.requiredStatusStacks)}";
+                return GameText.Format("battle.skill.rules.get_range_modifier_condition_label.the_target_has_at_most_stacks_of", "目标 {getRangeModifierStatusLabel} 层数 至多为 {max}", ("getRangeModifierStatusLabel", GetRangeModifierStatusLabel(effect)), ("max", Mathf.Max(0, effect.requiredStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.TargetStatusStacksPerThreshold:
-                return $"目标每拥有 {Mathf.Max(1, effect.requiredStatusStacks)} 层 {GetRangeModifierStatusLabel(effect)}";
+                return GameText.Format("battle.skill.rules.get_range_modifier_condition_label.for_every_stacks_of_on_the_target", "目标每拥有 {max} 层 {getRangeModifierStatusLabel}", ("max", Mathf.Max(1, effect.requiredStatusStacks)), ("getRangeModifierStatusLabel", GetRangeModifierStatusLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetSkillIsSpecific:
-                return $"与技能 {GetRangeModifierTargetSkillLabel(effect)} 拼点";
+                return GameText.Format("battle.skill.rules.get_range_modifier_condition_label.clashing_against", "与技能 {getRangeModifierTargetSkillLabel} 拼点", ("getRangeModifierTargetSkillLabel", GetRangeModifierTargetSkillLabel(effect)));
             case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
-                return $"目标拥有至少 {Mathf.Max(1, effect.requiredStatusStacks)} 种负面状态";
+                return GameText.Format("battle.skill.rules.the_target_has_at_least_different_debuffs", "目标拥有至少 {max} 种负面状态", ("max", Mathf.Max(1, effect.requiredStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.AnyOpponentNegativeStatusTypesAtLeast:
-                return $"任意敌方目标拥有至少 {Mathf.Max(1, effect.requiredStatusStacks)} 种负面状态";
+                return GameText.Format("battle.skill.rules.any_enemy_has_at_least_different_debuffs", "任意敌方目标拥有至少 {max} 种负面状态", ("max", Mathf.Max(1, effect.requiredStatusStacks)));
             case EnemySkill_SO.PowerModifierCondition.SelfHpRatioBelowOrEqual:
-                return $"自身生命值不高于 {Mathf.Clamp(effect.requiredStatusStacks, 0, 100)}%";
+                return GameText.Format("battle.skill.rules.the_user_has_hp_or_less", "自身生命值不高于 {clamp}%", ("clamp", Mathf.Clamp(effect.requiredStatusStacks, 0, 100)));
             default:
-                return "未配置条件";
+                return GameText.Get("battle.skill.rules.no_condition_set", "未配置条件");
         }
     }
 
@@ -2332,44 +2332,44 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
     {
         List<string> segments = new List<string>();
         if (effect.minPowerBonus != 0)
-            segments.Add($"威力范围最小值 {BuildColoredToken(FormatSignedInt(effect.minPowerBonus), valueHighlightColor)}{BuildRangeModifierCapSuffix(effect.minPowerBonusCap)}");
+            segments.Add(GameText.Format("battle.skill.rules.min_power", "威力范围最小值 {buildColoredToken}{buildRangeModifierCapSuffix}", ("buildColoredToken", BuildColoredToken(FormatSignedInt(effect.minPowerBonus), valueHighlightColor)), ("buildRangeModifierCapSuffix", BuildRangeModifierCapSuffix(effect.minPowerBonusCap))));
         if (effect.maxPowerBonus != 0)
-            segments.Add($"威力范围最大值 {BuildColoredToken(FormatSignedInt(effect.maxPowerBonus), valueHighlightColor)}{BuildRangeModifierCapSuffix(effect.maxPowerBonusCap)}");
+            segments.Add(GameText.Format("battle.skill.rules.max_power", "威力范围最大值 {buildColoredToken}{buildRangeModifierCapSuffix}", ("buildColoredToken", BuildColoredToken(FormatSignedInt(effect.maxPowerBonus), valueHighlightColor)), ("buildRangeModifierCapSuffix", BuildRangeModifierCapSuffix(effect.maxPowerBonusCap))));
         return string.Join("，", segments);
     }
 
     private string BuildRangeModifierCapSuffix(int cap)
     {
         return cap > 0
-            ? $"，最多 {BuildColoredToken(FormatSignedInt(cap), valueHighlightColor)}"
+            ? GameText.Format("battle.skill.rules.max", "，最多 {buildColoredToken}", ("buildColoredToken", BuildColoredToken(FormatSignedInt(cap), valueHighlightColor)))
             : string.Empty;
     }
 
     private static string GetRangeModifierStatusLabel(EnemySkill_SO.ConditionalDiceRangeModifierEntry effect)
     {
         if (effect.targetStatusData != null)
-            return effect.targetStatusData.DisplayName;
+            return effect.targetStatusData.LocalizedName;
 
         switch (effect.targetStatusType)
         {
             case EnemySkill_SO.DiceStatusType.Burn:
-                return "燃烧";
+                return GameText.Get("battle.skill.rules.burn", "燃烧");
             case EnemySkill_SO.DiceStatusType.Electro:
-                return "电流";
+                return GameText.Get("battle.skill.rules.shock", "电流");
             case EnemySkill_SO.DiceStatusType.Darkness:
-                return "黑暗";
+                return GameText.Get("battle.skill.rules.darkness", "黑暗");
             case EnemySkill_SO.DiceStatusType.Mark:
-                return "标记";
+                return GameText.Get("battle.skill.rules.mark", "标记");
             default:
-                return "未配置状态";
+                return GameText.Get("battle.skill.rules.unknown_status", "未配置状态");
         }
     }
 
     private static string GetRangeModifierTargetSkillLabel(EnemySkill_SO.ConditionalDiceRangeModifierEntry effect)
     {
-        return effect.targetSkillData != null && !string.IsNullOrWhiteSpace(effect.targetSkillData.skillName)
-            ? effect.targetSkillData.skillName
-            : "未配置技能";
+        return effect.targetSkillData != null && !string.IsNullOrWhiteSpace(effect.targetSkillData.LocalizedName)
+            ? effect.targetSkillData.LocalizedName
+            : GameText.Get("battle.skill.unconfigured", "未配置技能");
     }
 
     private static string GetPowerModifierTriggerLabel(EnemySkill_SO.DiceEffectTrigger trigger)
@@ -2377,19 +2377,19 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         switch (trigger)
         {
             case EnemySkill_SO.DiceEffectTrigger.OnHit:
-                return "[ 命中时 ]";
+                return GameText.Get("battle.skill.rules.on_hit", "[ 命中时 ]");
             case EnemySkill_SO.DiceEffectTrigger.OnMiss:
-                return "[ 未击中时 ]";
+                return GameText.Get("battle.skill.rules.on_miss", "[ 未击中时 ]");
             case EnemySkill_SO.DiceEffectTrigger.OnClash:
-                return "[ \u62fc\u70b9\u65f6 ]";
+                return GameText.Get("battle.skill.rules.on_clash", "[ 拼点时 ]");
             case EnemySkill_SO.DiceEffectTrigger.OnSkillUse:
-                return "[ \u4f7f\u7528\u8be5\u6280\u80fd\u65f6 ]";
+                return GameText.Get("battle.skill.rules.on_skill_use", "[ 使用该技能时 ]");
             case EnemySkill_SO.DiceEffectTrigger.OnClashWin:
-                return "[ 拼点胜利时 ]";
+                return GameText.Get("battle.skill.rules.on_clash_win", "[ 拼点胜利时 ]");
             case EnemySkill_SO.DiceEffectTrigger.OnSingleAttack:
-                return "[ 单方面攻击时 ]";
+                return GameText.Get("battle.skill.rules.on_one_sided_attack", "[ 单方面攻击时 ]");
             case EnemySkill_SO.DiceEffectTrigger.OnAllDiceHit:
-                return "[ 全部攻击段命中时 ]";
+                return GameText.Get("battle.skill.rules.if_all_hits_land", "[ 全部攻击段命中时 ]");
             default:
                 return $"[ {trigger} ]";
         }
@@ -2400,19 +2400,19 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         switch (trigger)
         {
             case EnemySkill_SO.DiceEffectTrigger.OnHit:
-                return "[ \u547d\u4e2d\u65f6 ]";
+                return GameText.Get("battle.skill.rules.on_hit", "[ 命中时 ]");
             case EnemySkill_SO.DiceEffectTrigger.OnMiss:
-                return "[ \u672a\u51fb\u4e2d\u65f6 ]";
+                return GameText.Get("battle.skill.rules.on_miss", "[ 未击中时 ]");
             case EnemySkill_SO.DiceEffectTrigger.OnSkillUse:
-                return "[ \u4f7f\u7528\u65f6 ]";
+                return GameText.Get("battle.skill.rules.on_use", "[ 使用时 ]");
             case EnemySkill_SO.DiceEffectTrigger.OnClash:
-                return "[ \u62fc\u70b9\u65f6 ]";
+                return GameText.Get("battle.skill.rules.on_clash", "[ 拼点时 ]");
             case EnemySkill_SO.DiceEffectTrigger.OnClashWin:
-                return "[ 拼点胜利时 ]";
+                return GameText.Get("battle.skill.rules.on_clash_win", "[ 拼点胜利时 ]");
             case EnemySkill_SO.DiceEffectTrigger.OnSingleAttack:
-                return "[ 单方面攻击时 ]";
+                return GameText.Get("battle.skill.rules.on_one_sided_attack", "[ 单方面攻击时 ]");
             case EnemySkill_SO.DiceEffectTrigger.OnAllDiceHit:
-                return "[ 全部攻击段命中时 ]";
+                return GameText.Get("battle.skill.rules.if_all_hits_land", "[ 全部攻击段命中时 ]");
             default:
                 return $"[ {trigger} ]";
         }

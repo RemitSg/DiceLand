@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Strength
   m_EditorClassIdentifier: 
   statusId: strength
+  localizationKey: status.strength.strength
   displayName: "\u5F3A\u58EE"
   description: "\u653B\u51FB\u63B7\u9AB0\u7684\u5A01\u529B\u589E\u52A0\u76F8\u5F53\u4E8E\u5C42\u6570\u7684\u6570\u503C"
   iconSprite: {fileID: 192540396, guid: c79818a78794dae47ae9ed090310c8d3, type: 3}

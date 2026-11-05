@@ -2075,7 +2075,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         }
 
         if (statusTooltipView.titleText != null)
-            statusTooltipView.titleText.text = entry.DisplayName;
+            statusTooltipView.titleText.text = entry.LocalizedName;
 
         if (statusTooltipView.bodyText != null)
             statusTooltipView.bodyText.text = BuildStatusTooltipDescription(entry);
@@ -2099,13 +2099,13 @@ public class BattleFeedbackSystem : MonoBehaviour
         if (entry == null)
             return string.Empty;
 
-        if (entry.statusData != null && !string.IsNullOrWhiteSpace(entry.statusData.Description))
-            return entry.statusData.Description;
+        if (entry.statusData != null && !string.IsNullOrWhiteSpace(entry.statusData.LocalizedDescription))
+            return entry.statusData.LocalizedDescription;
 
         if (entry.statusData != null && entry.statusData.BehaviorType == BattleStatus_SO.StatusBehaviorType.DamageAtRoundStart)
-            return $"\u6bcf\u56de\u5408\u5f00\u59cb\u65f6\u53d7\u5230 {entry.stacks} \u70b9\u4f24\u5bb3\u3002";
+            return GameText.Format("ui.battle_feedback.take_damage_at_the_start_of_each_round", "每回合开始时受到 {stacks} 点伤害。", ("stacks", entry.stacks));
 
-        return $"\u5f53\u524d\u62e5\u6709 {entry.stacks} \u5c42 {entry.DisplayName}\u3002";
+        return GameText.Format("ui.battle_feedback.current_stacks_of", "当前拥有 {stacks} 层 {localizedName}。", ("stacks", entry.stacks), ("localizedName", entry.LocalizedName));
     }
 
     private void EnsureCanvas()

@@ -29,7 +29,7 @@ public static class MapEventOptionService
         bool enough = preview.requiredMoney <= 0 || state.money >= preview.requiredMoney;
         preview.isSelectable = loot.isSelectable && enough;
         preview.additionalDetail = loot.additionalDetail;
-        preview.unavailableReason = enough ? loot.unavailableReason : $"金钱不足，需要 {preview.requiredMoney} 金钱。";
+        preview.unavailableReason = enough ? loot.unavailableReason : GameText.Format("map.event.build_preview.you_need_gold", "金钱不足，需要 {requiredMoney} 金钱。", ("requiredMoney", preview.requiredMoney));
         if (preview.isSelectable && !MapEventBuiltInEffectExecutorService.CanAffordMoneyEffects(state, option, preview.requiredMoney, out string moneyReason))
         { preview.isSelectable = false; preview.unavailableReason = moneyReason; }
         return preview;
@@ -40,7 +40,7 @@ public static class MapEventOptionService
     {
         result = new MapEventBuiltInEffectExecutionResult();
         if (request?.runState == null || request.currentEventTile == null || request.optionData == null || eventData == null)
-        { result.message = "事件执行失败。"; return false; }
+        { result.message = GameText.Get("map.event.could_not_resolve_the_event", "事件执行失败。"); return false; }
         RunState state = request.runState;
         MapEventOptionData option = request.optionData;
         request.moneyBeforeSelection = Mathf.Max(0, state.money);
@@ -48,8 +48,9 @@ public static class MapEventOptionService
         if (!MapEventBuiltInEffectExecutorService.CanAffordMoneyEffects(state, option, cost, out string moneyReason))
         { result.message = moneyReason; return false; }
         if (cost > 0 && !state.TrySpendMoney(cost))
-        { result.message = $"金钱不足，需要 {cost} 金钱。"; return false; }
+        { result.message = GameText.Format("map.event.try_execute.you_need_gold", "金钱不足，需要 {cost} 金钱。", ("cost", cost)); return false; }
 
+        request.eventData = eventData;
         bool success = MapEventBuiltInEffectExecutorService.TryExecute(request, out result);
         if (success && option.customHandler != null)
         {
@@ -59,7 +60,7 @@ public static class MapEventOptionService
                 eventData = eventData, optionData = option, runGameManager = manager
             }, out string customMessage);
             if (!string.IsNullOrWhiteSpace(customMessage)) result.message = customMessage;
-            else if (!success) result.message = "事件的自定义效果未能执行。";
+            else if (!success) result.message = GameText.Get("map.event.could_not_apply_the_event_s_custom_effect", "事件的自定义效果未能执行。");
         }
         if (!success)
         {
@@ -80,7 +81,7 @@ public static class MapEventOptionService
                 state.settlementStats.eventTilesCompleted++;
             }
         }
-        if (cost > 0) result.message = $"支付 {cost} 金钱。" + (string.IsNullOrWhiteSpace(result.message) ? "" : "\n" + result.message);
+        if (cost > 0) result.message = GameText.Format("map.event.paid_gold", "支付 {cost} 金钱。", ("cost", cost)) + (string.IsNullOrWhiteSpace(result.message) ? "" : "\n" + result.message);
         result.success = true;
         return true;
     }

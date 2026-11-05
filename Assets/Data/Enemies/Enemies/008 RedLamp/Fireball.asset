@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Fireball
   m_EditorClassIdentifier: 
+  localizationKey: skill.fireball
   skillName: "\u706F\u82AF\u706B"
   description: "\u5B83\u7684\u706F\u82AF\u6B63\u51DD\u7ED3\u7740\u70C8\u706B"
   transformEnemyToStageIndex: -1

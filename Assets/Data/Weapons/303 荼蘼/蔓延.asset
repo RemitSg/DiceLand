@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "蔓延"
   m_EditorClassIdentifier: 
+  localizationKey: skill.303_slash_4
   skillName: "蔓延"
   description: "毒雾贴着地面铺开，先缠住眼前的猎物，再向旁侧枝蔓般伸展。"
   skillCategory: 0

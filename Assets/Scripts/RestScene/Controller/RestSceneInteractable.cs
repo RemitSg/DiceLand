@@ -351,7 +351,7 @@ public class RestSceneInteractable : MonoBehaviour, IRestSceneStationPresentatio
         titleRect.pivot = new Vector2(0.5f, 1f);
         titleRect.anchoredPosition = new Vector2(0f, -34f);
         titleRect.sizeDelta = new Vector2(640f, 70f);
-        title.text = titleText;
+        title.text = GameText.Get("rest.heal.title", titleText);
 
         TextMeshProUGUI body = CreateText("Body", panelRect, bodyFont != null ? bodyFont : titleFont, bodyFontSize, bodyColor, TextAlignmentOptions.Center);
         body.enableWordWrapping = true;
@@ -361,14 +361,14 @@ public class RestSceneInteractable : MonoBehaviour, IRestSceneStationPresentatio
         bodyRect.pivot = new Vector2(0.5f, 0.5f);
         bodyRect.anchoredPosition = new Vector2(0f, 12f);
         bodyRect.sizeDelta = new Vector2(620f, 140f);
-        body.text = bodyText;
+        body.text = GameText.Get("rest.heal.prompt", bodyText);
 
-        confirmButton = CreateButton("ConfirmButton", panelRect, confirmButtonSprite, confirmLabel, out RectTransform confirmRect);
+        confirmButton = CreateButton("ConfirmButton", panelRect, confirmButtonSprite, GameText.Get("ui.confirm", confirmLabel), out RectTransform confirmRect);
         confirmRect.anchorMin = new Vector2(0.5f, 0f);
         confirmRect.anchorMax = new Vector2(0.5f, 0f);
         confirmRect.pivot = new Vector2(0.5f, 0f);
 
-        cancelButton = CreateButton("CancelButton", panelRect, cancelButtonSprite, cancelLabel, out RectTransform cancelRect);
+        cancelButton = CreateButton("CancelButton", panelRect, cancelButtonSprite, GameText.Get("ui.cancel", cancelLabel), out RectTransform cancelRect);
         cancelRect.anchorMin = new Vector2(0.5f, 0f);
         cancelRect.anchorMax = new Vector2(0.5f, 0f);
         cancelRect.pivot = new Vector2(0.5f, 0f);
@@ -390,8 +390,8 @@ public class RestSceneInteractable : MonoBehaviour, IRestSceneStationPresentatio
         panelImage.type = promptBackgroundSprite != null ? Image.Type.Sliced : Image.Type.Simple;
         panelImage.color = promptBackgroundColor;
 
-        ApplyButtonLayout(confirmButton, new Vector2(-(buttonSize.x * 0.5f + buttonSpacing * 0.5f), 28f), confirmButtonSprite, confirmLabel);
-        ApplyButtonLayout(cancelButton, new Vector2(buttonSize.x * 0.5f + buttonSpacing * 0.5f, 28f), cancelButtonSprite, cancelLabel);
+        ApplyButtonLayout(confirmButton, new Vector2(-(buttonSize.x * 0.5f + buttonSpacing * 0.5f), 28f), confirmButtonSprite, GameText.Get("ui.confirm", confirmLabel));
+        ApplyButtonLayout(cancelButton, new Vector2(buttonSize.x * 0.5f + buttonSpacing * 0.5f, 28f), cancelButtonSprite, GameText.Get("ui.cancel", cancelLabel));
     }
 
     private void ApplyButtonLayout(Button button, Vector2 anchoredPosition, Sprite sprite, string label)

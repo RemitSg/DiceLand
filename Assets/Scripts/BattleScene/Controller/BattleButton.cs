@@ -683,7 +683,7 @@ public partial class BattleButton : MonoBehaviour
     public string GetAllySkillUnavailableReason(BattleAllyController ally, SpeedButton button, EnemySkill_SO skill)
     {
         if (ally == null || skill == null)
-            return "技能未配置";
+            return GameText.Get("ui.battle_button.no_skill_equipped", "技能未配置");
 
         bool hasEnoughEnergy = button != null
             ? BattleAllySkillEnergyAvailabilityService.HasEnoughEnergyForSkillOnButton(
@@ -700,14 +700,14 @@ public partial class BattleButton : MonoBehaviour
                 temporarySharedEnergy,
                 reservedSharedEnergy);
         if (!hasEnoughEnergy)
-            return "能量不足";
+            return GameText.Get("ui.battle_button.not_enough_energy", "能量不足");
 
         if (skill.RequiresSelfStatusToUse)
         {
             int requiredStacks = Mathf.Max(1, skill.requiredSelfStatusStacks);
             int currentStacks = ally.GetStatusStacks(skill.requiredSelfStatusData);
             if (currentStacks < requiredStacks)
-                return $"{skill.requiredSelfStatusData.DisplayName}不足";
+                return GameText.Format("ui.battle_button.not_enough", "{localizedName}不足", ("localizedName", skill.requiredSelfStatusData.LocalizedName));
         }
 
         return string.Empty;

@@ -19,13 +19,13 @@ public sealed class MerchantOfferState
             switch (itemType)
             {
                 case MerchantItemType.Loot:
-                    return lootItem != null ? lootItem.lootName : "Loot";
+                    return lootItem != null ? lootItem.LocalizedName : "Loot";
                 case MerchantItemType.Weapon:
-                    return weaponData != null ? weaponData.weaponName : "Weapon";
+                    return weaponData != null ? weaponData.LocalizedName : "Weapon";
                 case MerchantItemType.Blueprint:
-                    return blueprintData != null ? blueprintData.DisplayName : "Blueprint";
+                    return blueprintData != null ? blueprintData.LocalizedName : "Blueprint";
                 case MerchantItemType.Relic:
-                    return relicData != null ? relicData.DisplayName : "Relic";
+                    return relicData != null ? relicData.LocalizedName : "Relic";
                 default:
                     return "Goods";
             }
@@ -39,13 +39,13 @@ public sealed class MerchantOfferState
             switch (itemType)
             {
                 case MerchantItemType.Loot:
-                    return lootItem != null ? lootItem.description : string.Empty;
+                    return lootItem != null ? lootItem.LocalizedDescription : string.Empty;
                 case MerchantItemType.Weapon:
-                    return weaponData != null ? weaponData.description : string.Empty;
+                    return weaponData != null ? weaponData.LocalizedDescription : string.Empty;
                 case MerchantItemType.Blueprint:
-                    return blueprintData != null ? blueprintData.description : string.Empty;
+                    return blueprintData != null ? blueprintData.LocalizedDescription : string.Empty;
                 case MerchantItemType.Relic:
-                    return relicData != null ? relicData.description : string.Empty;
+                    return relicData != null ? relicData.LocalizedDescription : string.Empty;
                 default:
                     return string.Empty;
             }

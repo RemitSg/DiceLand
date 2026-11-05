@@ -15,6 +15,8 @@ public class CraftingBlueprint_SO : ScriptableObject
     [Header("Identity")]
     public int blueprintID;
     public string blueprintName;
+    public string LocalizedName => GameText.Content("blueprint", blueprintID, "name", DisplayName);
+    public string LocalizedDescription => GameText.Content("blueprint", blueprintID, "description", description);
 
     [TextArea(2, 5)]
     public string description;

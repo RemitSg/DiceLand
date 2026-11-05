@@ -12,6 +12,8 @@ public sealed class MainMenuForestView : MonoBehaviour
     private static readonly Color Ivory = new Color(0.97f, 0.92f, 0.77f);
     private static readonly Color Gold = new Color(0.78f, 0.61f, 0.33f);
     private static readonly Color Ink = new Color(0.21f, 0.12f, 0.045f);
+    private RawImage logo;
+    private Text logoWordmark;
     private readonly Dictionary<MenuAction, Button> buttons = new Dictionary<MenuAction, Button>();
     private readonly List<Button> difficultyButtons = new List<Button>();
     private readonly List<DifficultyConfig_SO> difficulties = new List<DifficultyConfig_SO>();
@@ -104,9 +106,12 @@ public sealed class MainMenuForestView : MonoBehaviour
         composition.anchorMin = composition.anchorMax = new Vector2(0f, 0.5f);
         composition.pivot = new Vector2(0f, 0.5f);
 
-        RawImage logo = Rect("DiceLandLogo", composition, new Vector2(48f, 32f), new Vector2(684f, 254f)).gameObject.AddComponent<RawImage>();
+        logo = Rect("DiceLandLogo", composition, new Vector2(48f, 32f), new Vector2(684f, 254f)).gameObject.AddComponent<RawImage>();
         logo.texture = Resources.Load<Texture2D>("MainMenu/DiceLandLogo");
         logo.raycastTarget = false;
+        logoWordmark = Text("DiceLandWordmark", composition, new Vector2(48f, 32f), new Vector2(684f, 254f),
+            GameText.Get("ui.game_name", "骰掷大陆"), 104, Gold, TextAnchor.MiddleCenter);
+        RefreshWordmark();
 
         menuPage = Rect("Menu", composition, Vector2.zero, new Vector2(760f, 1080f)).gameObject;
         menuGroup = menuPage.AddComponent<CanvasGroup>();
@@ -150,7 +155,7 @@ public sealed class MainMenuForestView : MonoBehaviour
             button.onClick.AddListener(() => Dispatch(id));
         }
         continueStatus = Text("SaveStatus", buttons[MenuAction.Continue].transform, new Vector2(408f, 16f), new Vector2(210f, 76f),
-            "暂无存档", 28, new Color(0.64f, 0.64f, 0.58f));
+            GameText.Get("ui.menu.no_save", "暂无存档"), 28, new Color(0.64f, 0.64f, 0.58f));
         buttons[MenuAction.Continue].transform.Find("Label").GetComponent<RectTransform>().sizeDelta = new Vector2(274f, 90f);
 
         AddUtility(MenuAction.Contributors, new Vector2(88f, 960f), new Vector2(310f, 72f), MainMenuOrnament.Shape.People, labels);
@@ -175,8 +180,17 @@ public sealed class MainMenuForestView : MonoBehaviour
 
     public Button GetButton(MenuAction action) => buttons.TryGetValue(action, out Button button) ? button : null;
 
+    private void RefreshWordmark()
+    {
+        bool showImage = GameText.LanguageCode == GameText.Chinese && logo.texture != null;
+        logo.enabled = showImage;
+        logoWordmark.enabled = !showImage;
+        logoWordmark.text = GameText.Get("ui.game_name", "骰掷大陆");
+    }
+
     public void RefreshLanguage(Func<MenuAction, string> label)
     {
+        RefreshWordmark();
         foreach (var entry in buttons)
             entry.Value.transform.Find("Label").GetComponent<Text>().text = label(entry.Key);
 

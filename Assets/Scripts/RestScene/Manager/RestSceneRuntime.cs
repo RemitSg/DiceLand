@@ -94,13 +94,13 @@ public static class RestSceneRuntime
     {
         if (!HasPendingVisit)
         {
-            errorMessage = "\u5f53\u524d\u4e0d\u5728\u4f11\u606f\u573a\u666f\u8bbf\u95ee\u6d41\u7a0b\u4e2d\u3002";
+            errorMessage = GameText.Get("rest.reforge.you_are_outside_a_rest_visit", "当前不在休息场景访问流程中。");
             return false;
         }
 
         if (TryGetCurrentSnapshot(out MapRunSnapshot snapshot) && snapshot?.runState != null && snapshot.runState.recruitmentDisabled)
         {
-            errorMessage = "当前遗物效果禁止招募。";
+            errorMessage = GameText.Get("ui.rest_scene_runtime.a_relic_is_preventing_recruitment", "当前遗物效果禁止招募。");
             return false;
         }
 
@@ -124,7 +124,7 @@ public static class RestSceneRuntime
     {
         if (!HasPendingVisit)
         {
-            errorMessage = "当前不在休息场景访问流程中。";
+            errorMessage = GameText.Get("rest.reforge.you_are_outside_a_rest_visit", "当前不在休息场景访问流程中。");
             return false;
         }
 
@@ -135,7 +135,7 @@ public static class RestSceneRuntime
     {
         if (!HasPendingVisit)
         {
-            errorMessage = "当前不在休息场景访问流程中。";
+            errorMessage = GameText.Get("rest.reforge.you_are_outside_a_rest_visit", "当前不在休息场景访问流程中。");
             return false;
         }
 

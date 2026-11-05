@@ -27,6 +27,12 @@ public class Weapon_SO : ScriptableObject
     public string saveId;
     public string legacySaveId;
     public string weaponName;
+    public string LocalizedName => Localize("name", weaponName);
+    public string LocalizedDescription => Localize("description", description);
+
+    private string Localize(string field, string source) => id > 0
+        ? GameText.Content("weapon", id, field, source)
+        : GameText.Content(saveId, field, source);
 
     [TextArea(2, 4)]
     public string description;

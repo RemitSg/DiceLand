@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Guardbreak
   m_EditorClassIdentifier: 
   statusId: guardbreak
+  localizationKey: status.guardbreak.guardbreak
   displayName: "\u7834\u9632"
   description: "\u6295\u63B7\u9632\u5FA1\u9AB0\u5B50\u65F6\u9AB0\u5B50\u5A01\u529B\u51CF\u5C11\u76F8\u5F53\u4E8E\u5C42\u6570\u7684\u6570\u503C"
   iconSprite: {fileID: 965615126, guid: c79818a78794dae47ae9ed090310c8d3, type: 3}

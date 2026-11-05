@@ -69,16 +69,16 @@ public class MainMenuTutorialOverlay : MonoBehaviour
         TutorialMenuCatalog_SO safeCatalog = catalog;
         summaryTitleText.text = !string.IsNullOrEmpty(titleOverride)
             ? titleOverride
-            : (!string.IsNullOrEmpty(safeCatalog != null ? safeCatalog.summaryTitle : null) ? safeCatalog.summaryTitle : DefaultTitle);
+            : (!string.IsNullOrEmpty(safeCatalog != null ? safeCatalog.summaryTitle : null) ? GameText.Get("tutorial.catalog.summaryTitle", safeCatalog.summaryTitle) : GameText.Get("ui.menu.tutorial", DefaultTitle));
         summaryBodyText.text = !string.IsNullOrEmpty(bodyOverride)
             ? bodyOverride
-            : (!string.IsNullOrEmpty(safeCatalog != null ? safeCatalog.summaryBody : null) ? safeCatalog.summaryBody : DefaultBody);
+            : (!string.IsNullOrEmpty(safeCatalog != null ? safeCatalog.summaryBody : null) ? GameText.Get("tutorial.catalog.summaryBody", safeCatalog.summaryBody) : GameText.Get("tutorial.catalog.empty", DefaultBody));
         startButtonText.text = !string.IsNullOrEmpty(startButtonLabelOverride)
             ? startButtonLabelOverride
-            : (!string.IsNullOrEmpty(safeCatalog != null ? safeCatalog.startButtonLabel : null) ? safeCatalog.startButtonLabel : DefaultStartLabel);
+            : (!string.IsNullOrEmpty(safeCatalog != null ? safeCatalog.startButtonLabel : null) ? GameText.Get("tutorial.catalog.startButtonLabel", safeCatalog.startButtonLabel) : GameText.Get("tutorial.menu.start", DefaultStartLabel));
         backButtonText.text = !string.IsNullOrEmpty(backButtonLabelOverride)
             ? backButtonLabelOverride
-            : (!string.IsNullOrEmpty(safeCatalog != null ? safeCatalog.backButtonLabel : null) ? safeCatalog.backButtonLabel : DefaultBackLabel);
+            : (!string.IsNullOrEmpty(safeCatalog != null ? safeCatalog.backButtonLabel : null) ? GameText.Get("tutorial.catalog.backButtonLabel", safeCatalog.backButtonLabel) : GameText.Get("ui.back", DefaultBackLabel));
 
         startButton.onClick.RemoveAllListeners();
         backButton.onClick.RemoveAllListeners();
@@ -219,12 +219,12 @@ public class MainMenuTutorialOverlay : MonoBehaviour
             itemSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             Text titleText = CreateText("Title", itemRect, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(0f, 34f), font, 29, TextAnchor.MiddleLeft, TutorialForestView.Gold);
-            titleText.text = section != null ? section.title ?? string.Empty : string.Empty;
+            titleText.text = section != null ? GameText.Content("tutorial.catalog.section." + section.sectionId, "title", section.title) ?? string.Empty : string.Empty;
 
             Text bodyText = CreateText("Summary", itemRect, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(0f, 0f), font, 26, TextAnchor.UpperLeft, TutorialForestView.Ivory);
             bodyText.horizontalOverflow = HorizontalWrapMode.Wrap;
             bodyText.verticalOverflow = VerticalWrapMode.Overflow;
-            bodyText.text = section != null ? section.summary ?? string.Empty : string.Empty;
+            bodyText.text = section != null ? GameText.Content("tutorial.catalog.section." + section.sectionId, "summary", section.summary) ?? string.Empty : string.Empty;
 
             sectionViews.Add(itemRect.gameObject);
         }

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: CurrentHalo
   m_EditorClassIdentifier: 
+  localizationKey: skill.currenthalo
   skillName: "\u7535\u6D41\u73AF\u7ED5"
   description: "\u547D\u4E2D\u540E\u4F7F\u76EE\u6807\u83B7\u5F97 2 \u5C42\u7535\u6D41\uFF1B\u82E5\u4E3A\u5355\u65B9\u9762\u653B\u51FB\uFF0C\u53E6\u4F7F\u76EE\u6807\u83B7\u5F97
     1 \u5C42\u7F13\u6162"

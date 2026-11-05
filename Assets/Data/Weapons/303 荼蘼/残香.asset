@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "残香"
   m_EditorClassIdentifier: 
+  localizationKey: skill.303_slash
   skillName: "残香"
   description: "轻淡花香滞在伤口里，毒意随后才慢慢醒来。"
   skillCategory: 0

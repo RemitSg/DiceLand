@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Blur
   m_EditorClassIdentifier: 
+  localizationKey: skill.blur
   skillName: "\u6A21\u7CCA"
   description: "\u5B83\u4E0D\u518D\u4FDD\u6301\u8FB9\u754C\uFF0C\u4E8E\u662F\u8EAB\u4FA7\u7684\u6697\u5F71\u90FD\u88AB\u62AC\u9AD8\u4E86\u4E00\u5BF8\u3002"
   skillCategory: 1

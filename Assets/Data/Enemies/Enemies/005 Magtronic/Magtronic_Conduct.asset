@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Magtronic_Conduct
   m_EditorClassIdentifier: 
+  localizationKey: skill.magtronic_conduct
   skillName: "\u5BFC\u7535"
   description: "\u9165\u9165\u9EBB\u9EBB\u7684\u611F\u89C9\uFF0C\u4F3C\u4E4E\u4E5F\u6CA1\u6709\u5F88\u96BE\u53D7"
   skillCategory: 0

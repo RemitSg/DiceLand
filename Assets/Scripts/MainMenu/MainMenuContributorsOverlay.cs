@@ -133,7 +133,7 @@ public class MainMenuContributorsOverlay : MonoBehaviour
 
         titleText.color = new Color(config.textColor.r, config.textColor.g, config.textColor.b, 0f);
         titleText.fontSize = config.titleFontSize;
-        titleText.text = config.title;
+        titleText.text = GameText.Get("ui.credits.title", config.title);
 
         creditsText.color = config.textColor;
         creditsText.fontSize = config.bodyFontSize;
@@ -203,9 +203,9 @@ public class MainMenuContributorsOverlay : MonoBehaviour
 
     private static string BuildCreditsText(DisplayConfig config)
     {
-        string opening = string.IsNullOrWhiteSpace(config.openingText) ? string.Empty : $"{config.openingText}\n\n";
-        string ending = string.IsNullOrWhiteSpace(config.endingText) ? string.Empty : $"\n\n{config.endingText}";
-        return $"{opening}{config.creditsText}{ending}";
+        string opening = string.IsNullOrWhiteSpace(config.openingText) ? string.Empty : GameText.Get("ui.credits.opening", config.openingText) + "\n\n";
+        string ending = string.IsNullOrWhiteSpace(config.endingText) ? string.Empty : "\n\n" + GameText.Get("ui.credits.thanks", config.endingText);
+        return opening + GameText.Get("ui.credits.people", config.creditsText) + ending;
     }
 
     private static float EstimateCreditsHeight(DisplayConfig config)

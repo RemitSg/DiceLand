@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: SpeedUp
   m_EditorClassIdentifier: 
+  localizationKey: skill.speedup
   skillName: "\u52A0\u901F"
   description: "\u770B\u8D77\u6765\u5728\u84C4\u529B..."
   skillCategory: 0

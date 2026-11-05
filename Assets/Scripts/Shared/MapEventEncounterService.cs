@@ -16,7 +16,7 @@ public static class MapEventEncounterService
         encounterData = null;
         if (runState == null)
         {
-            message = "当前未找到运行时队伍数据。";
+            message = GameText.Get("map.event.party_data_is_unavailable", "当前未找到运行时队伍数据。");
             return false;
         }
 
@@ -31,7 +31,7 @@ public static class MapEventEncounterService
         {
             sourceSceneName = sourceSceneName,
             targetSceneName = battleSceneName,
-            encounterLabel = $"事件遭遇：{encounterGroup.groupName}",
+            encounterLabel = GameText.Format("map.event.event_encounter", "事件遭遇：{groupName}", ("groupName", encounterGroup.LocalizedName)),
             tileType = MapTileType.Event,
             dangerBand = currentEventTile != null ? currentEventTile.dangerBand : MapDangerBand.Outer,
             sourceCoord = currentEventTile != null ? currentEventTile.coord : runState.playerGridPosition,
@@ -45,7 +45,7 @@ public static class MapEventEncounterService
         AppendRelicInventory(encounterData, runState);
         AppendActiveCalamities(encounterData, runState);
 
-        message = $"将触发遭遇战：{encounterGroup.groupName}";
+        message = GameText.Format("map.event.battle_ahead", "将触发遭遇战：{groupName}", ("groupName", encounterGroup.LocalizedName));
         return true;
     }
 
@@ -57,7 +57,7 @@ public static class MapEventEncounterService
         encounterGroup = null;
         if (effectData == null)
         {
-            message = "该事件未配置有效的遭遇敌人。";
+            message = GameText.Get("map.event.no_valid_enemies_are_configured_for_this_event", "该事件未配置有效的遭遇敌人。");
             return false;
         }
 
@@ -70,13 +70,13 @@ public static class MapEventEncounterService
                 encounterGroup = BuildEncounterGroupFromEventEnemies(effectData);
                 break;
             default:
-                message = "未知事件遭遇配置。";
+                message = GameText.Get("map.event.unknown_event_encounter", "未知事件遭遇配置。");
                 return false;
         }
 
         if (encounterGroup == null || !encounterGroup.IsValid)
         {
-            message = "该事件未配置有效的遭遇敌人。";
+            message = GameText.Get("map.event.no_valid_enemies_are_configured_for_this_event", "该事件未配置有效的遭遇敌人。");
             return false;
         }
 
@@ -127,6 +127,7 @@ public static class MapEventEncounterService
             return null;
 
         EnemyGroup_SO runtimeGroup = ScriptableObject.CreateInstance<EnemyGroup_SO>();
+        runtimeGroup.localizationKey = "map.event.encounter";
         runtimeGroup.groupName = "事件遭遇";
         runtimeGroup.description = "事件触发的随机遭遇。";
         runtimeGroup.enemies = new List<EnemyData_SO>();

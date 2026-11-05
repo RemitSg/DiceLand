@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Superconduct
   m_EditorClassIdentifier: 
+  localizationKey: skill.superconduct
   skillName: "\u8D85\u5BFC"
   description: "\u5468\u56F4\u6B8B\u7559\u7684\u7535\u8377\u88AB\u4E00\u5E76\u7275\u5F15\uFF0C\u987A\u7740\u6746\u8EAB\u6C47\u6210\u4E00\u675F\u523A\u773C\u7684\u8D2F\u901A\u7535\u6D41\u3002"
   skillCategory: 0

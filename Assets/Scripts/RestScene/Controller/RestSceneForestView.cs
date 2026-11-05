@@ -33,6 +33,7 @@ public sealed class RestSceneForestView : MonoBehaviour
     [SerializeField] private RectTransform canvasRect, composition;
     [SerializeField] private CanvasGroup interactionGroup;
     [SerializeField] private Sprite modalFrame;
+    [SerializeField] private Text stationHeading;
     [SerializeField] private StationVisual[] stations = Array.Empty<StationVisual>();
     private Vector2 lastCanvasSize, lastViewport;
     private Rect lastSafeArea;
@@ -66,8 +67,28 @@ public sealed class RestSceneForestView : MonoBehaviour
     private void Start()
     {
         if (!Application.isPlaying) return;
+        LocalizeSigns();
         StyleExistingModals();
         RefreshInteractionState();
+    }
+
+    private void LocalizeSigns()
+    {
+        if (stationHeading != null)
+        {
+            stationHeading.text = GameText.Get("rest.station.title", stationHeading.text);
+            stationHeading.resizeTextForBestFit = true;
+            stationHeading.resizeTextMaxSize = stationHeading.fontSize;
+            stationHeading.resizeTextMinSize = 20;
+        }
+        foreach (StationVisual visual in stations)
+        {
+            if (visual?.label == null) continue;
+            visual.label.text = GameText.Content("rest.station", visual.station.ToString(), visual.label.text);
+            visual.label.resizeTextForBestFit = true;
+            visual.label.resizeTextMaxSize = visual.label.fontSize;
+            visual.label.resizeTextMinSize = 18;
+        }
     }
 
     private void LateUpdate()

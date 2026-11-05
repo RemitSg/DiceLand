@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "\u78C1\u66B4"
   m_EditorClassIdentifier: 
+  localizationKey: skill.202_electromagneticcleaver_slash_3
   skillName: "\u78C1\u66B4"
   description: "\u5F15\u53D1\u5927\u89C4\u6A21\u78C1\u66B4\u6765\u9020\u6210\u76F8\u5F53\u53EF\u89C2\u7684\u7535\u78C1\u4F24\u5BB3"
   skillCategory: 0

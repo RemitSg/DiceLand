@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: AshPriest_Data
   m_EditorClassIdentifier: 
   enemyID: 30
+  localizationKey: enemy.30.ashpriest_data
   enemyName: "\u7070\u796D\u53F8"
   baseHP: 20
   damageReductionPercent: 0

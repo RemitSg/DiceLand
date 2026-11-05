@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: ThresholdSmash
   m_EditorClassIdentifier: 
+  localizationKey: skill.thresholdsmash
   skillName: "\u95E8\u69DB\u91CD\u51FB"
   description: "\u5B83\u4E3E\u8D77\u76FE\u724C\u91CD\u7838\uFF0C\u80FD\u63A5\u4F4F\u7684\u4EBA\u5BE5\u5BE5\u65E0\u51E0"
   skillCategory: 1

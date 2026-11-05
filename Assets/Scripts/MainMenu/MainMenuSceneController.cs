@@ -500,7 +500,7 @@ public class MainMenuSceneController : MonoBehaviour
 
         string label = continueLabel;
         if (!hasSave)
-            label += noSaveSuffix;
+            label += GameText.Get("ui.menu.no_save_suffix", noSaveSuffix);
 
         if (continueItem.text != null)
             continueItem.text.text = label;

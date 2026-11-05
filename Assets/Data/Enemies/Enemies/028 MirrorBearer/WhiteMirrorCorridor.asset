@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: WhiteMirrorCorridor
   m_EditorClassIdentifier: 
+  localizationKey: skill.whitemirrorcorridor
   skillName: "\u767D\u955C\u56DE\u5ECA"
   description: "\u6218\u573A\u88AB\u767D\u8272\u955C\u9762\u62C9\u957F\uFF0C\u811A\u6B65\u6CBF\u7740\u955C\u9762\u65E0\u9650\u5EF6\u4F38\u3002"
   skillCategory: 0

@@ -389,10 +389,11 @@ public partial class MapHUD : MonoBehaviour
                 dangerLine += " | " + GameText.Format("map.tile.region", "区域 {value}", ("value", WrapColor(GetDangerBandLabel(tile.dangerBand), tileRegionHighlightColor)));
             lines.Add(dangerLine);
 
-            if (!string.IsNullOrWhiteSpace(tile.previewTag))
-                lines.Add($"预览标签 {tile.previewTag}");
+            string tag = GetPreviewTag(tile);
+            if (!string.IsNullOrWhiteSpace(tag))
+                lines.Add(GameText.Format("ui.map_hud.preview_tag", "预览标签 {tag}", ("tag", tag)));
             if (detailed)
-                lines.Add($"遭遇种子 {tile.encounterSeed}");
+                lines.Add(GameText.Format("ui.map_hud.encounter_seed", "遭遇种子 {encounterSeed}", ("encounterSeed", tile.encounterSeed)));
         }
         else
         {
@@ -475,12 +476,12 @@ public partial class MapHUD : MonoBehaviour
         partyPanelImage = partyPanelRect.gameObject.AddComponent<Image>();
         partyPanelImage.type = Image.Type.Sliced;
 
-        partyPanelTitleText = CreateText(partyPanelRect, "PartyTitle", partyPanelTitleOffset, partyPanelTitleSize, partyTitleFontSize, titleColor, "当前队伍", GetPartyTitleFont());
+        partyPanelTitleText = CreateText(partyPanelRect, "PartyTitle", partyPanelTitleOffset, partyPanelTitleSize, partyTitleFontSize, titleColor, GameText.Get("ui.map_hud.party", "当前队伍"), GetPartyTitleFont());
         partyToggleButton = BuildPartyToggleButton(partyPanelRect);
         partyToggleButtonText = partyToggleButton != null ? partyToggleButton.GetComponentInChildren<TextMeshProUGUI>(true) : null;
         partyListViewport = CreateRect("PartyListViewport", partyPanelRect, new Vector2(0f, 1f), partyListOffset, new Vector2(partyPanelSize.x, partyPanelSize.y - 76f));
         partyListMask = partyListViewport.gameObject.AddComponent<RectMask2D>();
-        partyEmptyText = CreateText(partyListViewport, "PartyEmpty", Vector2.zero, new Vector2(partyPanelSize.x, 28f), partyStatFontSize, bodyColor, "当前没有队伍成员。", GetPartyStatFont());
+        partyEmptyText = CreateText(partyListViewport, "PartyEmpty", Vector2.zero, new Vector2(partyPanelSize.x, 28f), partyStatFontSize, bodyColor, GameText.Get("ui.map_hud.your_party_is_empty", "当前没有队伍成员。"), GetPartyStatFont());
         partyListRoot = CreateRect("PartyList", partyListViewport, new Vector2(0f, 1f), Vector2.zero, new Vector2(partyPanelSize.x, partyPanelSize.y - 76f));
 
         BuildForestPartyHeader();
@@ -561,10 +562,10 @@ public partial class MapHUD : MonoBehaviour
         inventoryPanelImage.type = Image.Type.Sliced;
 
         inventoryTabRoot = CreateRect("TabRoot", inventoryPanelRect, new Vector2(0f, 1f), inventoryTabRootOffset, new Vector2(inventoryPanelSize.x - 36f, inventoryTabSize.y));
-        lootTabButton = BuildTabButton(inventoryTabRoot, "LootTab", Vector2.zero, "战利品", () => SetInventoryTab(InventoryTab.Loot));
-        weaponTabButton = BuildTabButton(inventoryTabRoot, "WeaponTab", Vector2.zero, "武器", () => SetInventoryTab(InventoryTab.Weapons));
-        blueprintTabButton = BuildTabButton(inventoryTabRoot, "BlueprintTab", Vector2.zero, "图纸", () => SetInventoryTab(InventoryTab.Blueprints));
-        relicTabButton = BuildTabButton(inventoryTabRoot, "RelicTab", Vector2.zero, "遗物", () => SetInventoryTab(InventoryTab.Relics));
+        lootTabButton = BuildTabButton(inventoryTabRoot, "LootTab", Vector2.zero, GameText.Get("battle.settlement.build_loot_section.loot", "战利品"), () => SetInventoryTab(InventoryTab.Loot));
+        weaponTabButton = BuildTabButton(inventoryTabRoot, "WeaponTab", Vector2.zero, GameText.Get("ui.map_crafting.weapon", "武器"), () => SetInventoryTab(InventoryTab.Weapons));
+        blueprintTabButton = BuildTabButton(inventoryTabRoot, "BlueprintTab", Vector2.zero, GameText.Get("ui.map_hud.blueprints", "图纸"), () => SetInventoryTab(InventoryTab.Blueprints));
+        relicTabButton = BuildTabButton(inventoryTabRoot, "RelicTab", Vector2.zero, GameText.Get("ui.map_hud.relics", "遗物"), () => SetInventoryTab(InventoryTab.Relics));
 
         BuildInventoryScrollArea();
         inventoryPanelRect.gameObject.SetActive(false);
@@ -756,7 +757,7 @@ public partial class MapHUD : MonoBehaviour
         if (view == null)
             return;
 
-        string memberName = member != null ? member.DisplayName : "未知成员";
+        string memberName = member != null ? member.DisplayName : GameText.Get("ui.map_hud.unknown_member", "未知成员");
         int level = member != null ? Mathf.Max(1, member.level) : 1;
         int maxHP = member != null ? Mathf.Max(1, member.maxHP) : 1;
         int currentHP = member != null ? Mathf.Clamp(member.currentHP, 0, maxHP) : 0;
@@ -783,7 +784,7 @@ public partial class MapHUD : MonoBehaviour
             SetBarFill(view.hpFillImage, hpRatio);
         }
         if (view.expText != null)
-            view.expText.text = expToNext > 0 ? $"{currentExp}/{expToNext}" : "满级";
+            view.expText.text = expToNext > 0 ? $"{currentExp}/{expToNext}" : GameText.Get("ui.map_hud.max_level", "满级");
 
         SetBarFill(view.expFillImage, expRatio);
     }
@@ -945,7 +946,7 @@ public partial class MapHUD : MonoBehaviour
 
         if (partyToggleButtonText != null)
         {
-            partyToggleButtonText.text = isPartyPanelCollapsed ? partyCollapsedButtonLabel : partyExpandedButtonLabel;
+            partyToggleButtonText.text = isPartyPanelCollapsed ? GameText.Get("ui.expand", partyCollapsedButtonLabel) : GameText.Get("ui.collapse", partyExpandedButtonLabel);
             partyToggleButtonText.color = partyToggleButtonTextColor;
         }
 
@@ -1615,15 +1616,23 @@ public partial class MapHUD : MonoBehaviour
 
     private static string GetDisplayDifficultyName(string difficultyName)
     {
-        if (string.IsNullOrWhiteSpace(difficultyName)) return "普通";
+        if (string.IsNullOrWhiteSpace(difficultyName)) return GameText.Get("ui.difficulty.normal", "普通");
         switch (difficultyName.Trim().ToLowerInvariant())
         {
-            case "easy": return "简单";
-            case "normal": case "medium": return "普通";
-            case "hard": return "困难";
-            case "extreme": return "极难";
+            case "easy": return GameText.Get("ui.difficulty.easy", "简单");
+            case "normal": case "medium": return GameText.Get("ui.difficulty.normal", "普通");
+            case "hard": return GameText.Get("ui.difficulty.hard", "困难");
+            case "extreme": return GameText.Get("ui.difficulty.extreme", "极难");
             default: return difficultyName;
         }
+    }
+
+    private static string GetPreviewTag(BoardTileData tile)
+    {
+        if (tile.sourceSpecialDungeon == null) return tile.previewTag;
+        if (tile.tileType == MapTileType.SpecialDungeonExit) return GameText.Get("map.dungeon.exit", "副本出口");
+        if (tile.isSpawnTile) return GameText.Get("map.dungeon.start", "副本起点");
+        return tile.sourceSpecialDungeon.LocalizeTile(tile.specialDungeonEntryIndex, "tag", tile.previewTag);
     }
 
     private static string GetTileTypeLabel(MapTileType tileType)
@@ -1635,25 +1644,25 @@ public partial class MapHUD : MonoBehaviour
             case MapTileType.Battle:
                 return GameText.Get("map.tile.battle", "战斗");
             case MapTileType.Elite:
-                return "精英";
+                return GameText.Get("ui.map_hud.elite", "精英");
             case MapTileType.Event:
                 return GameText.Get("ui.event.title", "事件");
             case MapTileType.Merchant:
-                return "商人";
+                return GameText.Get("ui.map_hud.merchant", "商人");
             case MapTileType.Treasure:
-                return "宝藏";
+                return GameText.Get("ui.map_hud.treasure", "宝藏");
             case MapTileType.Forge:
-                return "锻造";
+                return GameText.Get("map.forge.craft", "锻造");
             case MapTileType.Rest:
-                return "休息";
+                return GameText.Get("rest.heal.title", "休息");
             case MapTileType.Key:
-                return "钥匙";
+                return GameText.Get("ui.map_hud.keys", "钥匙");
             case MapTileType.Boss:
                 return "Boss";
             case MapTileType.SpecialDungeonExit:
-                return "副本出口";
+                return GameText.Get("ui.map_hud.dungeon_exit", "副本出口");
             default:
-                return "未知";
+                return GameText.Get("ui.map_battle_tile_preview.unknown", "未知");
         }
     }
 
@@ -1670,7 +1679,7 @@ public partial class MapHUD : MonoBehaviour
             case MapDangerBand.Core:
                 return GameText.Get("map.region.core", "核心");
             default:
-                return "未知";
+                return GameText.Get("ui.map_battle_tile_preview.unknown", "未知");
         }
     }
 
@@ -1683,19 +1692,19 @@ public partial class MapHUD : MonoBehaviour
             case MapTileType.Event:
                 return GameText.Get("map.tile.event_detail", "事件格，可触发随机事件");
             case MapTileType.Merchant:
-                return "商人格，可消耗金钱购买商品";
+                return GameText.Get("ui.map_hud.buy_items_here_with_gold", "商人格，可消耗金钱购买商品");
             case MapTileType.Treasure:
-                return "宝藏格，进入后可选择一份奖励";
+                return GameText.Get("ui.map_hud.enter_to_choose_one_treasure_reward", "宝藏格，进入后可选择一份奖励");
             case MapTileType.Forge:
-                return "锻造格，可消耗材料与图纸锻造武器";
+                return GameText.Get("ui.map_hud.use_blueprints_and_materials_here_to_forge_weapons", "锻造格，可消耗材料与图纸锻造武器");
             case MapTileType.Rest:
-                return "休息格，可用于恢复与调整";
+                return GameText.Get("ui.map_hud.rest_here_to_recover_and_regroup", "休息格，可用于恢复与调整");
             case MapTileType.Key:
-                return "钥匙格，进入后可获得钥匙";
+                return GameText.Get("ui.map_hud.enter_to_collect_a_key", "钥匙格，进入后可获得钥匙");
             case MapTileType.Boss:
-                return "Boss 格，满足钥匙条件后可挑战首领";
+                return GameText.Get("ui.map_hud.collect_the_required_keys_to_challenge_the_boss", "Boss 格，满足钥匙条件后可挑战首领");
             case MapTileType.SpecialDungeonExit:
-                return "离开副本并返回主地图事件格。";
+                return GameText.Get("ui.map_hud.leave_the_dungeon_and_return_to_the_event", "离开副本并返回主地图事件格。");
             default:
                 return string.Empty;
         }
@@ -1748,7 +1757,7 @@ public partial class MapHUD : MonoBehaviour
         RunPartyMemberState equippedMember = currentRunState.GetEquippedMember(weaponData);
         if (equippedMember != null)
         {
-            runtimeInventoryDetailView.ConfigureActionButton("当前装备", false, null, $"当前装备者：{equippedMember.DisplayName}");
+            runtimeInventoryDetailView.ConfigureActionButton(GameText.Get("ui.map_hud.equipped", "当前装备"), false, null, GameText.Format("ui.map_hud.equipped_by", "当前装备者：{displayName}", ("displayName", equippedMember.DisplayName)));
             SetActionButtonVisual(false);
             return;
         }
@@ -1756,12 +1765,12 @@ public partial class MapHUD : MonoBehaviour
         RunPartyMemberState targetMember = currentRunState.GetPreferredCompatibleMember(weaponData);
         if (targetMember == null)
         {
-            runtimeInventoryDetailView.ConfigureActionButton("无法装备", false, null, "当前队伍中没有适配该武器的角色。");
+            runtimeInventoryDetailView.ConfigureActionButton(GameText.Get("ui.map_hud.cannot_equip", "无法装备"), false, null, GameText.Get("ui.map_hud.no_party_member_can_use_this_weapon", "当前队伍中没有适配该武器的角色。"));
             SetActionButtonVisual(false);
             return;
         }
 
-        runtimeInventoryDetailView.ConfigureActionButton("装备", true, OnEquipSelectedWeapon, $"将装备给：{targetMember.DisplayName}");
+        runtimeInventoryDetailView.ConfigureActionButton(GameText.Get("ui.map_hud.equip", "装备"), true, OnEquipSelectedWeapon, GameText.Format("ui.map_hud.equip_on", "将装备给：{displayName}", ("displayName", targetMember.DisplayName)));
         SetActionButtonVisual(true);
     }
 
@@ -1773,8 +1782,8 @@ public partial class MapHUD : MonoBehaviour
         if (currentRunState.TryEquipWeapon(weaponState.weaponData, out RunPartyMemberState equippedMember, out string errorMessage))
         {
             string successMessage = equippedMember != null
-                ? $"{equippedMember.DisplayName} 已装备 {weaponState.weaponData.weaponName}。"
-                : $"{weaponState.weaponData.weaponName} 已装备。";
+                ? GameText.Format("ui.map_hud.on_equip_selected_weapon.equipped", "{displayName} 已装备 {localizedName}。", ("displayName", equippedMember.DisplayName), ("localizedName", weaponState.weaponData.LocalizedName))
+                : GameText.Format("ui.map_hud.on_equip_selected_weapon.equipped_2", "{localizedName} 已装备。", ("localizedName", weaponState.weaponData.LocalizedName));
             ShowStatus(successMessage);
         }
         else if (!string.IsNullOrWhiteSpace(errorMessage))
@@ -1808,7 +1817,7 @@ public partial class MapHUD : MonoBehaviour
         if (string.IsNullOrEmpty(attributeValues))
             return string.Empty;
 
-        return $"敌人属性： {attributeValues}";
+        return GameText.Format("ui.map_hud.enemy_attributes", "敌人属性： {attributeValues}", ("attributeValues", attributeValues));
     }
 
     private string WrapFont(string text, TMP_FontAsset font)
@@ -1835,7 +1844,7 @@ public partial class MapHUD : MonoBehaviour
                 continue;
 
             Color color = attribute.displayColor.a <= 0f ? tileAttributeHighlightColor : attribute.displayColor;
-            parts.Add(WrapColor(WrapFont(attribute.attributeName, attributeFont), color));
+            parts.Add(WrapColor(WrapFont(attribute.LocalizedName, attributeFont), color));
         }
 
         return string.Join("  ", parts);

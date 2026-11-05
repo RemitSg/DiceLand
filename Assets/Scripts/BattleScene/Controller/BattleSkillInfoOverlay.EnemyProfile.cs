@@ -41,7 +41,7 @@ public partial class BattleSkillInfoOverlay
         RectTransform portrait = SkillRect(enemyPortraitMotion, "EnemyPortrait"); StretchSkill(portrait, 8, 8);
         enemyPortrait = portrait.gameObject.AddComponent<Image>(); enemyPortrait.preserveAspect = true; enemyPortrait.raycastTarget = false;
         MapItemIconFit.Attach(enemyPortrait);
-        enemyPortraitPlaceholder = SkillText(enemyPortraitMotion, "MissingPortrait", 28, SkillMuted, "暂无立绘");
+        enemyPortraitPlaceholder = SkillText(enemyPortraitMotion, "MissingPortrait", 28, SkillMuted, GameText.Get("battle.skill.rules.no_portrait_available", "暂无立绘"));
         StretchSkill(enemyPortraitPlaceholder.rectTransform); enemyPortraitPlaceholder.alignment = TextAlignmentOptions.Midline;
         enemyIdBadge = SkillRect(enemyProfileRoot, "EnemyIdBadge"); ProfileFace(enemyIdBadge, BattleEnemyProfileGraphic.ProfileStyle.Identifier);
         enemyProfileId = SkillText(enemyIdBadge, "EnemyId", 29, SkillIvory, string.Empty);
@@ -125,16 +125,17 @@ public partial class BattleSkillInfoOverlay
         int index = 0;
         if (data != null && data.passiveDescriptions != null)
         {
-            foreach (EnemyData_SO.PassiveDescriptionEntry entry in data.passiveDescriptions)
+            for (int i = 0; i < data.passiveDescriptions.Count; i++)
             {
+                EnemyData_SO.PassiveDescriptionEntry entry = data.passiveDescriptions[i];
                 if (string.IsNullOrWhiteSpace(entry.passiveName) && string.IsNullOrWhiteSpace(entry.description)) continue;
                 EnsureEnemyPassiveView(index);
                 EnemyPassiveView view = enemyPassiveViews[index++]; view.rect.gameObject.SetActive(true);
-                view.name.text = entry.passiveName ?? string.Empty;
+                view.name.text = data.Localize($"passive.{i}.name", entry.passiveName) ?? string.Empty;
                 view.name.color = GetPassiveNameColor(entry.displayColorType);
                 view.name.gameObject.SetActive(!string.IsNullOrWhiteSpace(view.name.text));
                 view.frame.hasHeading = view.name.gameObject.activeSelf;
-                view.description.text = FormatEnemyPassive(entry.description ?? string.Empty);
+                view.description.text = FormatEnemyPassive(data.Localize($"passive.{i}.description", entry.description) ?? string.Empty);
                 view.description.gameObject.SetActive(!string.IsNullOrWhiteSpace(view.description.text));
                 view.frame.accent = view.name.color; view.frame.SetVerticesDirty();
             }
@@ -225,7 +226,7 @@ public partial class BattleSkillInfoOverlay
         if (enemyScrollHint == null || enemyProfileScroll == null) return;
         bool more = enemyProfileContent.rect.height > enemyProfileViewport.rect.height + 1;
         enemyScrollHint.gameObject.SetActive(more);
-        enemyScrollHint.text = enemyProfileScroll.verticalNormalizedPosition > .015f ? "向下滚动查看更多" : "已显示全部内容";
+        enemyScrollHint.text = enemyProfileScroll.verticalNormalizedPosition > .015f ? GameText.Get("ui.scroll_more", "向下滚动查看更多") : GameText.Get("battle.skill.rules.end_of_details", "已显示全部内容");
     }
 
     private void ApplyEnemyProfileMotion(float panelEase)

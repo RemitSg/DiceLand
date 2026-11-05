@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: GrantedGamble
   m_EditorClassIdentifier: 
+  localizationKey: skill.grantedgamble
   skillName: "\u8D4C\u535A"
   mechanic: 4
   description: "\u684C\u9762\u5F88\u5B89\u9759\uFF0C\u53EA\u6709\u4E00\u679A\u9AB0\u5B50\u66FF\u4F60\u8BF4\u8BDD\u3002"

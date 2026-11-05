@@ -302,13 +302,13 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
     {
         if (!RestSceneRuntime.HasPendingVisit)
         {
-            SetStatus("当前不在休息场景访问流程中。", true);
+            SetStatus(GameText.Get("rest.reforge.you_are_outside_a_rest_visit", "当前不在休息场景访问流程中。"), true);
             return;
         }
 
         if (successfulReforgeCount >= GetMaxReforgeCount())
         {
-            SetStatus("本次访问的重铸次数已用完。", true);
+            SetStatus(GameText.Get("rest.reforge.you_have_used_all_reforges_for_this_visit", "本次访问的重铸次数已用完。"), true);
             return;
         }
 
@@ -332,7 +332,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
         }
 
         int remainingReforgeCount = Mathf.Max(0, maxReforgeCount - successfulReforgeCount);
-        SetStatus($"重铸成功：获得 {resultName}\n还可以继续重铸 {remainingReforgeCount} 次，或直接离开休息场景。", false);
+        SetStatus(GameText.Format("rest.reforge.reforged_you_can_reforge_more_times_or_leave", "重铸成功：获得 {resultName}\n还可以继续重铸 {remainingReforgeCount} 次，或直接离开休息场景。", ("resultName", resultName), ("remainingReforgeCount", remainingReforgeCount)), false);
     }
 
     private bool TryExecuteLootReforge(out string resultName)
@@ -347,13 +347,13 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
         LootItem_SO resultLoot = RollLootReforgeResult();
         if (resultLoot == null)
         {
-            SetStatus("当前没有符合条件的重铸结果。", true);
+            SetStatus(GameText.Get("rest.reforge.there_are_no_eligible_reforge_results", "当前没有符合条件的重铸结果。"), true);
             return false;
         }
 
         if (!RestSceneRuntime.TryApplyLootReforge(selectedLootA, selectedLootB, resultLoot, GetResolvedLootReforgePool(), out string applyError))
         {
-            SetStatus(string.IsNullOrWhiteSpace(applyError) ? "战利品重铸失败。" : applyError, true);
+            SetStatus(string.IsNullOrWhiteSpace(applyError) ? GameText.Get("rest.reforge.could_not_reforge_the_loot", "战利品重铸失败。") : applyError, true);
             return false;
         }
 
@@ -373,13 +373,13 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
         Relic_SO resultRelic = RollRelicReforgeResult();
         if (resultRelic == null)
         {
-            SetStatus("当前没有可用的更高阶遗物。", true);
+            SetStatus(GameText.Get("rest.reforge.no_higher_rarity_relic_is_available", "当前没有可用的更高阶遗物。"), true);
             return false;
         }
 
         if (!RestSceneRuntime.TryApplyRelicReforge(selectedRelicA, selectedRelicB, resultRelic, out string applyError))
         {
-            SetStatus(string.IsNullOrWhiteSpace(applyError) ? "遗物重铸失败。" : applyError, true);
+            SetStatus(string.IsNullOrWhiteSpace(applyError) ? GameText.Get("rest.reforge.could_not_reforge_the_relics", "遗物重铸失败。") : applyError, true);
             return false;
         }
 
@@ -484,7 +484,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
         itemButtons.Clear();
 
         if (itemSectionTitleText != null)
-            itemSectionTitleText.text = currentMode == ReforgeMode.Loot ? "选择战利品材料" : "选择遗物材料";
+            itemSectionTitleText.text = currentMode == ReforgeMode.Loot ? GameText.Get("rest.reforge.choose_loot_materials", "选择战利品材料") : GameText.Get("rest.reforge.choose_relics", "选择遗物材料");
 
         if (!RestSceneRuntime.TryGetCurrentSnapshot(out MapRunSnapshot snapshot) || snapshot?.runState == null)
             return;
@@ -542,7 +542,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
         if (attributeSectionTitleText != null)
         {
             attributeSectionTitleText.gameObject.SetActive(showAttributes);
-            attributeSectionTitleText.text = "选择目标属性";
+            attributeSectionTitleText.text = GameText.Get("rest.reforge.choose_an_attribute", "选择目标属性");
         }
 
         if (attributeScrollRect != null)
@@ -576,19 +576,19 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
     private void RefreshSummaryAndButtons()
     {
         if (titleText != null)
-            titleText.text = "重铸";
+            titleText.text = GameText.Get("rest.reforge.title", "重铸");
         if (remainingText != null)
-            remainingText.text = $"剩余次数 {Mathf.Max(0, 2 - successfulReforgeCount)}/2";
+            remainingText.text = GameText.Format("rest.reforge.reforges_left", "剩余次数 {max}/2", ("max", Mathf.Max(0, 2 - successfulReforgeCount)));
 
         if (hintText != null)
         {
             hintText.text = currentMode == ReforgeMode.Loot
-                ? "消耗两件同阶级战利品，重铸为一件指定属性的同阶随机战利品。"
-                : "消耗两件同阶级遗物，重铸为一件更高阶的随机遗物。";
+                ? GameText.Get("rest.reforge.spend_two_pieces_of_loot_of_the_same", "消耗两件同阶级战利品，重铸为一件指定属性的同阶随机战利品。")
+                : GameText.Get("rest.reforge.spend_two_relics_of_the_same_rarity_to", "消耗两件同阶级遗物，重铸为一件更高阶的随机遗物。");
         }
 
         if (remainingText != null)
-            remainingText.text = $"剩余次数 {Mathf.Max(0, GetMaxReforgeCount() - successfulReforgeCount)}/{GetMaxReforgeCount()}";
+            remainingText.text = GameText.Format("rest.reforge.refresh_summary_and_buttons.reforges_left", "剩余次数 {max}/{getMaxReforgeCount}", ("max", Mathf.Max(0, GetMaxReforgeCount() - successfulReforgeCount)), ("getMaxReforgeCount", GetMaxReforgeCount()));
 
         if (selectionSummaryText != null)
             selectionSummaryText.text = BuildSelectionSummary();
@@ -605,14 +605,14 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
 
             TextMeshProUGUI label = actionButton.GetComponentInChildren<TextMeshProUGUI>(true);
             if (label != null)
-                label.text = currentMode == ReforgeMode.Loot ? "确认重铸战利品" : "确认重铸遗物";
+                label.text = currentMode == ReforgeMode.Loot ? GameText.Get("rest.reforge.reforge_loot", "确认重铸战利品") : GameText.Get("rest.reforge.reforge_relics", "确认重铸遗物");
         }
 
         if (secondaryButton != null)
         {
             TextMeshProUGUI label = secondaryButton.GetComponentInChildren<TextMeshProUGUI>(true);
             if (label != null)
-                label.text = HasCommittedFirstReforge() ? "离开休息场景" : "关闭";
+                label.text = HasCommittedFirstReforge() ? GameText.Get("rest.reforge.leave_rest_area", "离开休息场景") : GameText.Get("ui.close", "关闭");
             ApplyActionButtonVisual(secondaryButton, true);
         }
     }
@@ -631,10 +631,10 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
     {
         if (currentMode == ReforgeMode.Loot)
         {
-            return $"材料一：{GetLootDisplayName(selectedLootA)}\n材料二：{GetLootDisplayName(selectedLootB)}\n目标属性：{GetLootAttributeDisplayName(selectedLootAttribute)}";
+            return GameText.Format("rest.reforge.material_material_target_attribute", "材料一：{getLootDisplayName}\n材料二：{getLootDisplayName2}\n目标属性：{getLootAttributeDisplayName}", ("getLootDisplayName", GetLootDisplayName(selectedLootA)), ("getLootDisplayName2", GetLootDisplayName(selectedLootB)), ("getLootAttributeDisplayName", GetLootAttributeDisplayName(selectedLootAttribute)));
         }
 
-        return $"材料一：{GetRelicDisplayName(selectedRelicA)}\n材料二：{GetRelicDisplayName(selectedRelicB)}\n目标结果：更高阶随机遗物";
+        return GameText.Format("rest.reforge.material_material_result_random_higher_rarity_relic", "材料一：{getRelicDisplayName}\n材料二：{getRelicDisplayName2}\n目标结果：更高阶随机遗物", ("getRelicDisplayName", GetRelicDisplayName(selectedRelicA)), ("getRelicDisplayName2", GetRelicDisplayName(selectedRelicB)));
     }
 
     private string BuildResultPreview()
@@ -642,21 +642,21 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
         if (currentMode == ReforgeMode.Loot)
         {
             if (selectedLootA == null || selectedLootB == null || selectedLootAttribute == null)
-                return "结果预览：选择完成后将显示为同阶、指定属性的随机战利品。";
+                return GameText.Get("rest.reforge.preview_choose_materials_and_an_attribute_to_see", "结果预览：选择完成后将显示为同阶、指定属性的随机战利品。");
 
             List<LootItem_SO> candidates = BuildCurrentLootReforgeCandidates();
             return candidates.Count > 0
-                ? $"结果预览：可能获得 {BuildLootCandidateNameList(candidates)}"
-                : "结果预览：当前条件下没有可用结果。";
+                ? GameText.Format("rest.reforge.possible_result", "结果预览：可能获得 {buildLootCandidateNameList}", ("buildLootCandidateNameList", BuildLootCandidateNameList(candidates)))
+                : GameText.Get("rest.reforge.no_result_matches_this_selection", "结果预览：当前条件下没有可用结果。");
         }
 
         if (selectedRelicA == null || selectedRelicB == null)
-            return "结果预览：选择完成后将显示为更高阶随机遗物。";
+            return GameText.Get("rest.reforge.preview_choose_materials_to_see_possible_higher_rarity", "结果预览：选择完成后将显示为更高阶随机遗物。");
 
         Relic_SO relicPreview = RollRelicReforgeResult();
         return relicPreview != null
-            ? $"结果预览：可能获得 {GetRelicDisplayName(relicPreview)}"
-            : "结果预览：当前没有更高阶遗物可供重铸。";
+            ? GameText.Format("rest.reforge.build_result_preview.possible_result", "结果预览：可能获得 {getRelicDisplayName}", ("getRelicDisplayName", GetRelicDisplayName(relicPreview)))
+            : GameText.Get("rest.reforge.no_higher_rarity_relic_can_be_reforged_from", "结果预览：当前没有更高阶遗物可供重铸。");
     }
 
     private string BuildLootCandidateNameList(IReadOnlyList<LootItem_SO> candidates)
@@ -703,7 +703,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
         {
             if (snapshot.runState.GetLootAmount(lootItem) < 2)
             {
-                SetStatus("该战利品数量不足 2，无法重复作为两份材料。", true);
+                SetStatus(GameText.Get("rest.reforge.you_need_two_copies_to_use_this_item", "该战利品数量不足 2，无法重复作为两份材料。"), true);
                 return;
             }
 
@@ -722,7 +722,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
 
         if (lootItem.rarity != selectedLootA.rarity)
         {
-            SetStatus("两件战利品必须为同阶级。", true);
+            SetStatus(GameText.Get("rest.reforge.both_loot_items_must_have_the_same_rarity", "两件战利品必须为同阶级。"), true);
             return;
         }
 
@@ -763,7 +763,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
         {
             if (snapshot.runState.GetRelicAmount(relicData) < 2)
             {
-                SetStatus("该遗物数量不足 2，无法重复作为两份材料。", true);
+                SetStatus(GameText.Get("rest.reforge.you_need_two_copies_to_use_this_relic", "该遗物数量不足 2，无法重复作为两份材料。"), true);
                 return;
             }
 
@@ -782,7 +782,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
 
         if (relicData.rarity != selectedRelicA.rarity)
         {
-            SetStatus("两件遗物必须为同阶级。", true);
+            SetStatus(GameText.Get("rest.reforge.both_relics_must_have_the_same_rarity", "两件遗物必须为同阶级。"), true);
             return;
         }
 
@@ -813,7 +813,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
             return;
 
         int maxReforgeCount = GetMaxReforgeCount();
-        promptBodyRuntimeText.text = $"确定要开始重铸吗？\n每次休息访问最多可进行 {maxReforgeCount} 次重铸。";
+        promptBodyRuntimeText.text = GameText.Format("rest.reforge.start_reforging_you_can_reforge_up_to_times", "确定要开始重铸吗？\n每次休息访问最多可进行 {maxReforgeCount} 次重铸。", ("maxReforgeCount", maxReforgeCount));
     }
 
     private void ClearCurrentModeSelection()
@@ -1054,7 +1054,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
         promptTitleRect.pivot = new Vector2(0.5f, 1f);
         promptTitleRect.anchoredPosition = new Vector2(0f, -34f);
         promptTitleRect.sizeDelta = new Vector2(620f, 68f);
-        promptTitle.text = promptTitleText;
+        promptTitle.text = GameText.Get("rest.reforge.title", promptTitleText);
 
         TextMeshProUGUI promptBody = CreateText("PromptBody", promptPanelRect, bodyFont, bodyFontSize, bodyColor, TextAlignmentOptions.Center);
         promptBodyRuntimeText = promptBody;
@@ -1065,15 +1065,15 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
         promptBodyRect.pivot = new Vector2(0.5f, 0.5f);
         promptBodyRect.anchoredPosition = new Vector2(0f, 20f);
         promptBodyRect.sizeDelta = new Vector2(620f, 150f);
-        promptBody.text = promptBodyText;
+        promptBody.text = GameText.Get("rest.reforge.prompt", promptBodyText);
 
-        promptConfirmButton = CreateActionButton("PromptConfirmButton", promptPanelRect, promptConfirmButtonSprite, promptConfirmLabel, HandlePromptConfirm);
+        promptConfirmButton = CreateActionButton("PromptConfirmButton", promptPanelRect, promptConfirmButtonSprite, GameText.Get("ui.confirm", promptConfirmLabel), HandlePromptConfirm);
         RectTransform promptConfirmRect = promptConfirmButton.GetComponent<RectTransform>();
         promptConfirmRect.anchorMin = new Vector2(0.5f, 0f);
         promptConfirmRect.anchorMax = new Vector2(0.5f, 0f);
         promptConfirmRect.pivot = new Vector2(0.5f, 0f);
 
-        promptCancelButton = CreateActionButton("PromptCancelButton", promptPanelRect, promptCancelButtonSprite, promptCancelLabel, () => HideAllPanels(true));
+        promptCancelButton = CreateActionButton("PromptCancelButton", promptPanelRect, promptCancelButtonSprite, GameText.Get("ui.cancel", promptCancelLabel), () => HideAllPanels(true));
         RectTransform promptCancelRect = promptCancelButton.GetComponent<RectTransform>();
         promptCancelRect.anchorMin = new Vector2(0.5f, 0f);
         promptCancelRect.anchorMax = new Vector2(0.5f, 0f);
@@ -1124,7 +1124,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
         hintText.enableWordWrapping = true;
         SetAnchoredRect(hintText.rectTransform, new Vector2(30f, -94f), new Vector2(760f, 86f));
 
-        lootModeButton = CreateActionButton("LootModeButton", mainPanelRect, actionButtonSprite, "战利品重铸", HandleLootModeClicked);
+        lootModeButton = CreateActionButton("LootModeButton", mainPanelRect, actionButtonSprite, GameText.Get("rest.reforge.build_main_panel.reforge_loot", "战利品重铸"), HandleLootModeClicked);
         RectTransform lootModeRect = lootModeButton.GetComponent<RectTransform>();
         lootModeRect.anchorMin = new Vector2(0f, 1f);
         lootModeRect.anchorMax = new Vector2(0f, 1f);
@@ -1132,7 +1132,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
         lootModeRect.anchoredPosition = new Vector2(30f, -190f);
         lootModeRect.sizeDelta = modeButtonSize;
 
-        relicModeButton = CreateActionButton("RelicModeButton", mainPanelRect, actionButtonSprite, "遗物重铸", HandleRelicModeClicked);
+        relicModeButton = CreateActionButton("RelicModeButton", mainPanelRect, actionButtonSprite, GameText.Get("rest.reforge.build_main_panel.reforge_relics", "遗物重铸"), HandleRelicModeClicked);
         RectTransform relicModeRect = relicModeButton.GetComponent<RectTransform>();
         relicModeRect.anchorMin = new Vector2(0f, 1f);
         relicModeRect.anchorMax = new Vector2(0f, 1f);
@@ -1164,7 +1164,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
         statusText.enableWordWrapping = true;
         SetAnchoredRect(statusText.rectTransform, new Vector2(790f, -530f), new Vector2(430f, 108f));
 
-        actionButton = CreateActionButton("ActionButton", mainPanelRect, actionButtonSprite, "确认重铸", HandleActionButtonClicked);
+        actionButton = CreateActionButton("ActionButton", mainPanelRect, actionButtonSprite, GameText.Get("rest.reforge.confirm_reforge", "确认重铸"), HandleActionButtonClicked);
         RectTransform actionRect = actionButton.GetComponent<RectTransform>();
         actionRect.anchorMin = new Vector2(1f, 0f);
         actionRect.anchorMax = new Vector2(1f, 0f);
@@ -1172,7 +1172,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
         actionRect.anchoredPosition = new Vector2(-286f, 28f);
         actionRect.sizeDelta = bottomButtonSize;
 
-        secondaryButton = CreateActionButton("SecondaryButton", mainPanelRect, actionButtonSprite, "关闭", HandleSecondaryButtonClicked);
+        secondaryButton = CreateActionButton("SecondaryButton", mainPanelRect, actionButtonSprite, GameText.Get("ui.close", "关闭"), HandleSecondaryButtonClicked);
         RectTransform secondaryRect = secondaryButton.GetComponent<RectTransform>();
         secondaryRect.anchorMin = new Vector2(1f, 0f);
         secondaryRect.anchorMax = new Vector2(1f, 0f);
@@ -1447,7 +1447,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
     private static string BuildLootButtonLabel(RunLootState stack)
     {
         if (stack == null || stack.lootItem == null)
-            return "未知战利品";
+            return GameText.Get("rest.reforge.unknown_loot", "未知战利品");
 
         return $"{GetLootDisplayName(stack.lootItem)}\n{GetRarityLabel(stack.lootItem.rarity)} | x{Mathf.Max(0, stack.amount)}";
     }
@@ -1455,7 +1455,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
     private static string BuildRelicButtonLabel(RunRelicState stack)
     {
         if (stack == null || stack.relicData == null)
-            return "未知遗物";
+            return GameText.Get("rest.reforge.unknown_relic", "未知遗物");
 
         return $"{GetRelicDisplayName(stack.relicData)}\n{GetRarityLabel(stack.relicData.rarity)} | x{Mathf.Max(0, stack.amount)}";
     }
@@ -1463,25 +1463,25 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
     private static string GetLootDisplayName(LootItem_SO lootItem)
     {
         if (lootItem == null)
-            return "未选择";
+            return GameText.Get("rest.reforge.unselected", "未选择");
 
-        return !string.IsNullOrWhiteSpace(lootItem.lootName) ? lootItem.lootName : lootItem.name;
+        return !string.IsNullOrWhiteSpace(lootItem.lootName) ? lootItem.LocalizedName : lootItem.name;
     }
 
     private static string GetRelicDisplayName(Relic_SO relicData)
     {
         if (relicData == null)
-            return "未选择";
+            return GameText.Get("rest.reforge.unselected", "未选择");
 
-        return !string.IsNullOrWhiteSpace(relicData.DisplayName) ? relicData.DisplayName : relicData.name;
+        return !string.IsNullOrWhiteSpace(relicData.DisplayName) ? relicData.LocalizedName : relicData.name;
     }
 
     private static string GetLootAttributeDisplayName(LootAttribute_SO attribute)
     {
         if (attribute == null)
-            return "未选择";
+            return GameText.Get("rest.reforge.unselected", "未选择");
 
-        return !string.IsNullOrWhiteSpace(attribute.attributeName) ? attribute.attributeName : attribute.name;
+        return !string.IsNullOrWhiteSpace(attribute.attributeName) ? attribute.LocalizedName : attribute.name;
     }
 
     private static string GetRarityLabel(LootRarity rarity)
@@ -1492,16 +1492,16 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
         switch (rarity)
         {
             case LootRarity.Uncommon:
-                return "优秀";
+                return GameText.Get("ui.map_crafting.fine", "优秀");
             case LootRarity.Rare:
-                return "稀有";
+                return GameText.Get("battle.settlement.rare", "稀有");
             case LootRarity.Epic:
-                return "史诗";
+                return GameText.Get("battle.settlement.epic", "史诗");
             case LootRarity.Legendary:
-                return "传说";
+                return GameText.Get("battle.settlement.legendary", "传说");
             case LootRarity.Common:
             default:
-                return "普通";
+                return GameText.Get("ui.difficulty.normal", "普通");
         }
     }
 }

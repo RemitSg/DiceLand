@@ -88,7 +88,7 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
             {
                 mapViewController.RestoreBattlePreviewImmediate();
                 ResetHidden();
-                showStatus?.Invoke("战斗格预览未能打开。");
+                showStatus?.Invoke(GameText.Get("ui.map_battle_tile_preview.could_not_open_the_battle_preview", "战斗格预览未能打开。"));
                 return false;
             }
 
@@ -136,14 +136,14 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
         if (result == MapBattleTilePreviewCommitResult.MovementCommittedWithoutHandoff)
         {
             CompleteCommittedPreview();
-            showStatus?.Invoke("已进入战斗格，但战斗未能启动，请再次点击重试");
+            showStatus?.Invoke(GameText.Get("ui.map_battle_tile_preview.you_entered_the_battle_tile_but_the_battle", "已进入战斗格，但战斗未能启动，请再次点击重试"));
             return;
         }
 
         commitInvoked = false;
         State = MapBattleTilePreviewState.Ready;
-        overlay?.ShowFailure("本次移动未能完成，请重试或返回地图。");
-        showStatus?.Invoke("本次移动未能完成。");
+        overlay?.ShowFailure(GameText.Get("ui.map_battle_tile_preview.could_not_move_retry_or_return_to_the", "本次移动未能完成，请重试或返回地图。"));
+        showStatus?.Invoke(GameText.Get("ui.map_battle_tile_preview.could_not_move", "本次移动未能完成。"));
     }
 
     public void Cancel(bool immediate = false)
@@ -199,7 +199,7 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
                 {
                     Debug.LogException(exception, this);
                     CancelImmediate();
-                    showStatus?.Invoke("战斗格预览未能打开。");
+                    showStatus?.Invoke(GameText.Get("ui.map_battle_tile_preview.could_not_open_the_battle_preview", "战斗格预览未能打开。"));
                     yield break;
                 }
 
@@ -240,7 +240,7 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
                 {
                     Debug.LogException(exception, this);
                     CancelImmediate();
-                    showStatus?.Invoke("战斗格预览恢复失败，已立即返回地图。");
+                    showStatus?.Invoke(GameText.Get("ui.map_battle_tile_preview.could_not_restore_the_battle_preview_returned_to", "战斗格预览恢复失败，已立即返回地图。"));
                     yield break;
                 }
 
@@ -304,7 +304,7 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
         if (!mapViewController.IsBattlePreviewActive || !playerMapController.IsBattlePreviewActive)
         {
             CancelImmediate();
-            showStatus?.Invoke("战斗格预览未能打开。");
+            showStatus?.Invoke(GameText.Get("ui.map_battle_tile_preview.could_not_open_the_battle_preview", "战斗格预览未能打开。"));
             return;
         }
 
@@ -338,14 +338,14 @@ public sealed class MapBattleTilePreviewController : MonoBehaviour
             catch (Exception exception)
             {
                 Debug.LogException(exception, this);
-                overlay?.ShowFailure("战斗信息刷新失败，请重试或返回地图。");
+                overlay?.ShowFailure(GameText.Get("ui.map_battle_tile_preview.could_not_refresh_the_battle_details_retry_or", "战斗信息刷新失败，请重试或返回地图。"));
                 return false;
             }
 
             if (refreshed == null || refreshed.tile != currentContext.tile || !refreshed.canPreview)
             {
                 CancelImmediate();
-                showStatus?.Invoke("战斗格预览已失效，已返回地图。");
+                showStatus?.Invoke(GameText.Get("ui.map_battle_tile_preview.the_battle_preview_has_expired_returned_to_the", "战斗格预览已失效，已返回地图。"));
                 return false;
             }
 

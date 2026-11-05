@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: BrokenHornCharge
   m_EditorClassIdentifier: 
+  localizationKey: skill.brokenhorncharge
   skillName: "\u65AD\u89D2\u51B2\u950B"
   description: "\u8FD9\u662F\u5B83\u552F\u4E00\u7684\u8FDB\u653B\u62DB\u5F0F\uFF0C\u5C1D\u8BD5\u5316\u89E3\u5B83\u7684\u653B\u51FB"
   skillCategory: 0

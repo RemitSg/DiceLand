@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "猎光断首"
   m_EditorClassIdentifier: 
+  localizationKey: skill.204_slash_3
   skillName: "猎光断首"
   description: "棱镜核心完全张开，斧刃把折光印压成一道直落的处刑白线。"
   skillCategory: 0

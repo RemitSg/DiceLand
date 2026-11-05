@@ -48,11 +48,11 @@ public static class MapEventLootCostService
                     if (discardPreview == null || discardPreview.lootItem == null || discardPreview.amount <= 0)
                     {
                         preview.isSelectable = false;
-                        preview.unavailableReason = "背包中没有可丢弃的战利品。";
+                        preview.unavailableReason = GameText.Get("map.event.you_have_no_loot_to_discard", "背包中没有可丢弃的战利品。");
                         break;
                     }
 
-                    detailLines.Add($"将随机丢弃：{discardPreview.lootItem.lootName} x{discardPreview.amount}");
+                    detailLines.Add(GameText.Format("map.event.random_discard", "将随机丢弃：{localizedName} x{amount}", ("localizedName", discardPreview.lootItem.LocalizedName), ("amount", discardPreview.amount)));
                     break;
                 }
                 case MapEventOptionBuiltInEffectType.LoseSpecificLoot:
@@ -135,17 +135,17 @@ public static class MapEventLootCostService
 
         if (preview == null || preview.lootItem == null || preview.amount <= 0)
         {
-            message = "背包中没有可丢弃的战利品。";
+            message = GameText.Get("map.event.you_have_no_loot_to_discard", "背包中没有可丢弃的战利品。");
             return false;
         }
 
         if (runState == null || !runState.TryConsumeLoot(preview.lootItem, preview.amount))
         {
-            message = $"无法丢弃 {preview.lootItem.lootName} x{preview.amount}。";
+            message = GameText.Format("map.event.could_not_discard", "无法丢弃 {localizedName} x{amount}。", ("localizedName", preview.lootItem.LocalizedName), ("amount", preview.amount));
             return false;
         }
 
-        message = $"失去战利品：{preview.lootItem.lootName} x{preview.amount}。";
+        message = GameText.Format("map.event.lost", "失去战利品：{localizedName} x{amount}。", ("localizedName", preview.lootItem.LocalizedName), ("amount", preview.amount));
         randomLootDiscardPreviewCache?.Remove(MapEventEffectSequenceBuilder.BuildRandomLootDiscardPreviewKey(optionData, effectIndex));
         return true;
     }
@@ -154,7 +154,7 @@ public static class MapEventLootCostService
     {
         if (effectData == null || effectData.lootRewards == null || effectData.lootRewards.Count == 0)
         {
-            message = "该事件效果未配置可丢弃的战利品。";
+            message = GameText.Get("map.event.no_discardable_loot_is_configured_for_this_effect", "该事件效果未配置可丢弃的战利品。");
             return false;
         }
 
@@ -168,7 +168,7 @@ public static class MapEventLootCostService
             int requiredAmount = MapEventEffectSequenceBuilder.GetFixedLootDiscardAmount(reward);
             if (runState == null || runState.GetLootAmount(reward.lootItem) < requiredAmount)
             {
-                message = $"背包中缺少 {reward.lootItem.lootName} x{requiredAmount}。";
+                message = GameText.Format("map.event.you_need", "背包中缺少 {localizedName} x{requiredAmount}。", ("localizedName", reward.lootItem.LocalizedName), ("requiredAmount", requiredAmount));
                 return false;
             }
         }
@@ -183,21 +183,21 @@ public static class MapEventLootCostService
             int requiredAmount = MapEventEffectSequenceBuilder.GetFixedLootDiscardAmount(reward);
             if (!runState.TryConsumeLoot(reward.lootItem, requiredAmount))
             {
-                message = $"无法丢弃 {reward.lootItem.lootName} x{requiredAmount}。";
+                message = GameText.Format("map.event.try_execute_specific_loot_discard.could_not_discard", "无法丢弃 {localizedName} x{requiredAmount}。", ("localizedName", reward.lootItem.LocalizedName), ("requiredAmount", requiredAmount));
                 return false;
             }
 
             consumedAny = true;
-            descriptions.Add($"{reward.lootItem.lootName} x{requiredAmount}");
+            descriptions.Add($"{reward.lootItem.LocalizedName} x{requiredAmount}");
         }
 
         if (!consumedAny)
         {
-            message = "该事件效果未配置有效的战利品。";
+            message = GameText.Get("map.event.no_valid_loot_is_configured_for_this_effect", "该事件效果未配置有效的战利品。");
             return false;
         }
 
-        message = $"失去战利品：{string.Join("，", descriptions)}。";
+        message = GameText.Format("map.event.lost_loot", "失去战利品：{join}。", ("join", string.Join("，", descriptions)));
         return true;
     }
 
@@ -219,7 +219,7 @@ public static class MapEventLootCostService
 
                 hasValidRequirement = true;
                 int requiredAmount = MapEventEffectSequenceBuilder.GetFixedLootDiscardAmount(reward);
-                detailLines.Add($"将失去：{reward.lootItem.lootName} x{requiredAmount}");
+                detailLines.Add(GameText.Format("map.event.lose", "将失去：{localizedName} x{requiredAmount}", ("localizedName", reward.lootItem.LocalizedName), ("requiredAmount", requiredAmount)));
                 if (runState.GetLootAmount(reward.lootItem) < requiredAmount)
                     requirementsSatisfied = false;
             }
@@ -228,12 +228,12 @@ public static class MapEventLootCostService
         if (!hasValidRequirement)
         {
             preview.isSelectable = false;
-            preview.unavailableReason = "该选项未配置可丢弃的战利品。";
+            preview.unavailableReason = GameText.Get("map.event.no_discardable_loot_is_configured_for_this_option", "该选项未配置可丢弃的战利品。");
         }
         else if (!requirementsSatisfied)
         {
             preview.isSelectable = false;
-            preview.unavailableReason = "背包中缺少所需的指定战利品。";
+            preview.unavailableReason = GameText.Get("map.event.you_do_not_have_the_required_loot", "背包中缺少所需的指定战利品。");
         }
     }
 }

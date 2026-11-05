@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Corrode
   m_EditorClassIdentifier: 
+  localizationKey: skill.corrode
   skillName: "\u8150\u8680"
   description: "\u547D\u4E2D\u65F6\u4F7F\u76EE\u6807\u5728\u4E0B\u56DE\u5408\u5F00\u59CB\u65F6\u83B7\u5F97
     2 \u5C42\u4E2D\u6BD2"

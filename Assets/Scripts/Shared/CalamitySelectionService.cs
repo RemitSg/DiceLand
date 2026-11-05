@@ -76,10 +76,10 @@ public static class CalamitySelectionService
                     if (TryTeleportToRandomOuterUnvisitedTile(runState, boardManager, out BoardTileData destination))
                     {
                         showDestination?.Invoke(destination);
-                        feedback.Add($"灾厄效果：你被传送至外围未探索格子 [{destination.coord.x},{destination.coord.y}]。");
+                        feedback.Add(GameText.Format("ui.calamity_selection.calamity_moved_to_unexplored_outer_tile", "灾厄效果：你被传送至外围未探索格子 [{x},{y}]。", ("x", destination.coord.x), ("y", destination.coord.y)));
                     }
                     else
-                        feedback.Add("灾厄效果：没有可传送的外围未探索格子。");
+                        feedback.Add(GameText.Get("ui.calamity_selection.calamity_no_unexplored_outer_tile_is_available", "灾厄效果：没有可传送的外围未探索格子。"));
                     break;
                 case CalamityBuiltInEffectType.LoseRandomRelics:
                     feedback.Add(RemoveRandomRelics(runState, Mathf.Max(0, effect.effectAmount)));
@@ -87,8 +87,8 @@ public static class CalamitySelectionService
                 case CalamityBuiltInEffectType.ConvertUnvisitedRestTilesToBattles:
                     int converted = ConvertRandomUnvisitedRestTilesToBattles(boardManager, enemyRoster, Mathf.Max(0, effect.effectAmount));
                     feedback.Add(converted > 0
-                        ? $"灾厄效果：{converted} 个未探索休息格变为了普通战斗。"
-                        : "灾厄效果：没有可替换的未探索休息格。");
+                        ? GameText.Format("ui.calamity_selection.calamity_unexplored_rest_tiles_became_normal_battle_tiles", "灾厄效果：{converted} 个未探索休息格变为了普通战斗。", ("converted", converted))
+                        : GameText.Get("ui.calamity_selection.calamity_no_unexplored_rest_tiles_can_be_converted", "灾厄效果：没有可替换的未探索休息格。"));
                     break;
             }
         }
@@ -131,9 +131,9 @@ public static class CalamitySelectionService
     private static string RemoveRandomRelics(RunState runState, int amount)
     {
         if (amount <= 0)
-            return "灾厄效果：没有失去遗物。";
+            return GameText.Get("ui.calamity_selection.calamity_no_relics_lost", "灾厄效果：没有失去遗物。");
         if (runState == null || runState.relicInventory == null || runState.relicInventory.Count == 0)
-            return "灾厄效果：没有可失去的遗物。";
+            return GameText.Get("ui.calamity_selection.calamity_there_are_no_relics_to_lose", "灾厄效果：没有可失去的遗物。");
 
         List<string> removedNames = new List<string>();
         for (int i = 0; i < amount; i++)
@@ -151,14 +151,14 @@ public static class CalamitySelectionService
 
             RunRelicState selected = candidates[UnityEngine.Random.Range(0, candidates.Count)];
             Relic_SO relicData = selected.relicData;
-            string relicName = relicData.DisplayName;
+            string relicName = relicData.LocalizedName;
             if (runState.TryConsumeRelic(relicData, 1))
                 removedNames.Add(relicName);
         }
 
         return removedNames.Count > 0
-            ? $"灾厄效果：失去遗物 {string.Join("、", removedNames)}。"
-            : "灾厄效果：没有可失去的遗物。";
+            ? GameText.Format("ui.calamity_selection.calamity_lost", "灾厄效果：失去遗物 {join}。", ("join", string.Join("、", removedNames)))
+            : GameText.Get("ui.calamity_selection.calamity_there_are_no_relics_to_lose", "灾厄效果：没有可失去的遗物。");
     }
 
     private static int ConvertRandomUnvisitedRestTilesToBattles(BoardManager boardManager, EnemyRoster_SO enemyRoster, int amount)

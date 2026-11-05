@@ -28,8 +28,8 @@ public partial class BattleSkillInfoOverlay
             Weapon_SO weapon = currentAlly != null ? currentAlly.GetComponent<AllyController>()?.weapon?.weaponData : null;
             string temporary = GameText.Get("battle.skill.temporary", "临时技能");
             string source = currentAlly != null && currentAlly.TemporarySkillsOverrideWeaponPool ? temporary
-                : weapon != null ? weapon.weaponName : currentAlly != null && currentAlly.HasTemporarySkills ? temporary : GameText.Get("battle.skill.no_weapon", "未装备武器");
-            subtitleText.text = (currentAlly != null ? currentAlly.GetSettlementDisplayName() : "角色") + " · " + source;
+                : weapon != null ? weapon.LocalizedName : currentAlly != null && currentAlly.HasTemporarySkills ? temporary : GameText.Get("battle.skill.no_weapon", "未装备武器");
+            subtitleText.text = (currentAlly != null ? currentAlly.GetSettlementDisplayName() : GameText.Get("battle.settlement.character", "角色")) + " · " + source;
         }
         else subtitleText.text = currentEnemy != null && currentEnemy.enemyData != null ? currentEnemy.enemyData.LocalizedName : GameText.Get("battle.enemy", "敌人");
         contextText.text = viewMode == SkillViewMode.Ally
@@ -90,8 +90,8 @@ public partial class BattleSkillInfoOverlay
         if (viewMode == SkillViewMode.Ally && skill.RequiresSelfStatusToUse && skill.requiredSelfStatusData != null)
         {
             int need = Mathf.Max(1, skill.requiredSelfStatusStacks);
-            string requirement = $"施放条件：自身至少拥有 {need} 层 {skill.requiredSelfStatusData.DisplayName}（当前 {currentAlly.GetStatusStacks(skill.requiredSelfStatusData)} 层）"
-                + (skill.keepRequiredSelfStatusAfterUse ? "，施放后不消耗" : "，施放后消耗");
+            string requirement = GameText.Format("battle.skill.rules.requires_stacks_of_current_stacks", "施放条件：自身至少拥有 {need} 层 {localizedName}（当前 {getStatusStacks} 层）", ("need", need), ("localizedName", skill.requiredSelfStatusData.LocalizedName), ("getStatusStacks", currentAlly.GetStatusStacks(skill.requiredSelfStatusData)))
+                + (skill.keepRequiredSelfStatusAfterUse ? GameText.Get("battle.skill.rules.stacks_kept_after_use", "，施放后不消耗") : GameText.Get("battle.skill.rules.stacks_spent_on_use", "，施放后消耗"));
             text = string.IsNullOrEmpty(text) ? requirement : requirement + "\n" + text;
         }
         return text;
@@ -135,7 +135,7 @@ public partial class BattleSkillInfoOverlay
             if (i < count)
             {
                 bool defense = displayedSkill.GetDiceSkillCategory(i) == EnemySkill_SO.SkillCategory.Defense;
-                diceLinkLabels[i].text = (i + 1) + " · " + (defense ? "防御 " : "攻击 ")
+                diceLinkLabels[i].text = (i + 1) + " · " + (defense ? GameText.Get("battle.skill.rules.defense", "防御 ") : GameText.Get("battle.skill.rules.attack", "攻击 "))
                     + BuildDiceRangeLabel(displayedSkill, i, displayedSkill.GetDicePowerRange(i), DisplayedSkillRange(displayedSkill, i));
             }
         }
@@ -241,13 +241,13 @@ public partial class BattleSkillInfoOverlay
         {
             SkillChoiceView row = choiceViews[i]; EnemySkill_SO skill = skills[i];
             bool selected = i == ally.GetSelectedSkillIndexForButton(sourceButton);
-            string reason = skill == null ? "技能未配置" : cachedBattleButton != null ? cachedBattleButton.GetAllySkillUnavailableReason(ally, sourceButton, skill) : string.Empty;
+            string reason = skill == null ? GameText.Get("ui.battle_button.no_skill_equipped", "技能未配置") : cachedBattleButton != null ? cachedBattleButton.GetAllySkillUnavailableReason(ally, sourceButton, skill) : string.Empty;
             bool available = string.IsNullOrEmpty(reason);
             row.button.interactable = available; row.face.SetState(selected, available);
             row.name.text = skill != null ? skill.LocalizedName : GameText.Get("battle.skill.unconfigured", "未配置技能");
             row.cost.text = SkillEnergyLabel(skill);
             string requirement = skill != null && skill.RequiresSelfStatusToUse && skill.requiredSelfStatusData != null
-                ? "需要 " + skill.requiredSelfStatusData.DisplayName + " " + Mathf.Max(1, skill.requiredSelfStatusStacks) : string.Empty;
+                ? GameText.Get("battle.skill.rules.requires", "需要 ") + skill.requiredSelfStatusData.LocalizedName + " " + Mathf.Max(1, skill.requiredSelfStatusStacks) : string.Empty;
             row.reason.text = string.IsNullOrEmpty(requirement) ? reason : requirement + (string.IsNullOrEmpty(reason) ? "" : " · " + reason);
             row.reason.color = available ? SkillMuted : new Color32(220, 153, 125, 255);
             row.reason.gameObject.SetActive(!string.IsNullOrEmpty(row.reason.text));
@@ -255,8 +255,8 @@ public partial class BattleSkillInfoOverlay
             bool defense = skill != null && skill.GetDiceSkillCategory(0) == EnemySkill_SO.SkillCategory.Defense;
             row.icon.skillStyle = defense ? BattleSkillFrameGraphic.SkillStyle.Defense : BattleSkillFrameGraphic.SkillStyle.Attack; row.icon.SetVerticesDirty();
             row.summary.text = skill == null ? string.Empty : skill.diceCount == 1
-                ? (defense ? "防御骰 " : "攻击骰 ") + BuildDiceRangeLabel(skill, 0, skill.GetDicePowerRange(0), ally.GetDisplayedDicePowerRange(skill, 0))
-                : "骰子数 " + Mathf.Max(0, skill.diceCount);
+                ? (defense ? GameText.Get("battle.skill.rules.defense_die", "防御骰 ") : GameText.Get("battle.skill.rules.attack_die", "攻击骰 ")) + BuildDiceRangeLabel(skill, 0, skill.GetDicePowerRange(0), ally.GetDisplayedDicePowerRange(skill, 0))
+                : GameText.Get("battle.skill.rules.dice", "骰子数 ") + Mathf.Max(0, skill.diceCount);
             float nameHeight = Mathf.Max(34, SkillTextHeight(row.name, width - 84) - 6);
             float reasonHeight = row.reason.gameObject.activeSelf ? SkillTextHeight(row.reason, width - 30, 28) : 0;
             float height = nameHeight + 75 + (reasonHeight > 0 ? reasonHeight + 7 : 0);
@@ -302,7 +302,7 @@ public partial class BattleSkillInfoOverlay
         row.cost = SkillText(rect, "Cost", 24, SkillIvory, string.Empty);
         row.summary = SkillText(rect, "Summary", 21, SkillMuted, string.Empty);
         row.reason = SkillText(rect, "Reason", 22, SkillMuted, string.Empty); row.reason.enableWordWrapping = true;
-        row.equipped = SkillText(rect, "Equipped", 21, SkillGold, "已装备"); row.equipped.alignment = TextAlignmentOptions.MidlineRight;
+        row.equipped = SkillText(rect, "Equipped", 21, SkillGold, GameText.Get("battle.skill.rules.equipped", "已装备")); row.equipped.alignment = TextAlignmentOptions.MidlineRight;
         row.check = SkillRect(rect, "EquippedCheck");
         var check = row.check.gameObject.AddComponent<BattleSkillFrameGraphic>(); check.skillStyle = BattleSkillFrameGraphic.SkillStyle.Check; check.raycastTarget = false;
         row.icon = SkillRect(rect, "TypeIcon").gameObject.AddComponent<BattleSkillFrameGraphic>(); row.icon.raycastTarget = false;
@@ -334,7 +334,7 @@ public partial class BattleSkillInfoOverlay
         EnemySkill_SO skill = currentHoverSourceButton != null ? currentHoverEnemy.GetSelectedSkillForButton(currentHoverSourceButton) : currentHoverEnemy.SelectedSkill;
         if (skill == null) { HideEnemyHoverSkillInfo(); return; }
         string[] sections = BuildCompactEnemyHoverSections(currentHoverEnemy, skill);
-        string clauses = sections[1] == "词条：\n无" ? "词条：<noparse>无</noparse>" : sections[1];
+        string clauses = sections[1];
         bool changed = reset || hoverSkill != skill || hoverClauseText.text != clauses;
         bool wasVisible = hoverPanelRoot.gameObject.activeSelf;
         hoverSkill = skill; hoverTitleText.text = skill.LocalizedName;
@@ -367,7 +367,7 @@ public partial class BattleSkillInfoOverlay
         hoverClauseContent.sizeDelta = new Vector2(0, height);
         PlaceSkill(hoverClauseText.rectTransform, 0, 0, inner, height);
         y += visibleHeight + 10;
-        hoverHintText.text = height > visibleHeight + 1 ? "词条自动滚动 · 点击速度按钮查看详情" : "点击速度按钮查看详情";
+        hoverHintText.text = height > visibleHeight + 1 ? GameText.Get("battle.skill.rules.effects_scroll_automatically_select_the_speed_slot_for", "词条自动滚动 · 点击速度按钮查看详情") : GameText.Get("battle.skill.rules.select_the_speed_slot_for_details", "点击速度按钮查看详情");
         PlaceSkill(hoverHintText.rectTransform, 26, y, width - 52, 32);
         hoverPanelRoot.sizeDelta = new Vector2(width, y + 54);
         ApplyHoverTransform();

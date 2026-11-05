@@ -74,12 +74,12 @@ public sealed class TutorialForestView : IDisposable
         {
             topicItems[i]=Rect(topics,"Topic_"+i); RectTransform icon=Rect(topicItems[i],"Icon");
             Face(icon,i==0?TutorialForestGraphic.TutorialStyle.Footprint:i==1?TutorialForestGraphic.TutorialStyle.Die:TutorialForestGraphic.TutorialStyle.Growth);
-            topicLabels[i]=Text(topicItems[i],"Label",23,Gold); SetText(topicLabels[i],i==0?"地图探索":i==1?"骰子战斗":"资源与成长");
+            topicLabels[i]=Text(topicItems[i],"Label",23,Gold); SetText(topicLabels[i],i==0?GameText.Get("tutorial.map.context", "地图探索"):i==1?GameText.Get("ui.tutorial_forest_view.dice_combat", "骰子战斗"):GameText.Get("ui.tutorial_forest_view.resources_progression", "资源与成长"));
         }
         rule=Rect(Panel,"FooterRule");Face(rule,TutorialForestGraphic.TutorialStyle.Divider);
         Primary=Button(Panel,welcome?"StartButton":"ContinueButton",true,out PrimaryLabel);
         if(welcome)Secondary=Button(Panel,"BackButton",false,out SecondaryLabel);
-        SetContext(welcome?"冒险教程":"教程");
+        SetContext(welcome?GameText.Get("ui.tutorial_forest_view.adventure_tutorial", "冒险教程"):GameText.Get("ui.menu.tutorial", "教程"));
         UnityEngine.Canvas.willRenderCanvases += BeforeRender;
         go.SetActive(false);
     }
@@ -100,14 +100,14 @@ public sealed class TutorialForestView : IDisposable
         { var font=text==Title||text==bannerLabel||text==PrimaryLabel||text==SecondaryLabel?title??body:body??title;if(font!=null)text.font=font; }
         dirty=true;
     }
+    public bool ShowFootprint { get; set; }
     public void MarkLayoutDirty() { dirty=true; }
     public void Show(bool highlight=false,Func<Rect?> target=null,Func<Rect?> keepClear=null)
     {
         bool wasVisible=Canvas.gameObject.activeSelf && Panel.gameObject.activeSelf;
         if(!wasVisible && EventSystem.current!=null)previousSelection=EventSystem.current.currentSelectedGameObject;
         focused=highlight;targetOnly=false;targetProvider=target;avoidanceProvider=keepClear;legacyTarget=null;
-        string heading=GetText(Title);
-        symbolFace.tutorialStyle=heading=="行动点"||heading=="移动消耗"?TutorialForestGraphic.TutorialStyle.Footprint:tmp?TutorialForestGraphic.TutorialStyle.Die:TutorialForestGraphic.TutorialStyle.Compass;
+        symbolFace.tutorialStyle=ShowFootprint?TutorialForestGraphic.TutorialStyle.Footprint:tmp?TutorialForestGraphic.TutorialStyle.Die:TutorialForestGraphic.TutorialStyle.Compass;
         symbolFace.SetVerticesDirty();
         completed=null;IsClosing=false;Panel.gameObject.SetActive(true);Canvas.gameObject.SetActive(true);
         group.interactable=true;group.blocksRaycasts=true;

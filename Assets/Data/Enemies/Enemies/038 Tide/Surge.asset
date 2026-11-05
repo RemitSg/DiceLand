@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Surge
   m_EditorClassIdentifier: 
+  localizationKey: skill.surge
   skillName: "\u6D8C\u52A8"
   description: "\u6C34\u52BF\u4E24\u6BB5\u62CD\u51FB\u3002\u9AB0\u5B50 1 \u547D\u4E2D\u65F6\u5BF9\u76EE\u6807\u65BD\u52A0
     1 \u5C42\u6C34\u8680\uFF1B\u9AB0\u5B50 2 \u547D\u4E2D\u65F6\u7ED3\u7B97\u4E00\u6B21\u76EE\u6807\u7684\u6C34\u8680\u72B6\u6001\u3002"

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Bite
   m_EditorClassIdentifier: 
+  localizationKey: skill.bite
   skillName: "\u566C\u54AC"
   description: "\u5B83\u4E0D\u8FA8\u8BA4\u808C\u8089\uFF0C\u53EA\u8FA8\u8BA4\u8840\u5473\u6700\u6D53\u7684\u5730\u65B9\u3002"
   skillCategory: 0

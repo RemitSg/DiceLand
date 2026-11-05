@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: Silence
   m_EditorClassIdentifier: 
+  localizationKey: skill.silence
   skillName: "\u9759\u9ED8"
   description: "\u58F0\u97F3\u88AB\u5B83\u538B\u8FDB\u9634\u5F71\u91CC\uFF0C\u8FDE\u547C\u5438\u90FD\u4F1A\u6162\u4E0A\u4E00\u62CD\u3002"
   skillCategory: 0

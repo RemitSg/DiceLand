@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
   m_Name: "\u6697\u6D41"
   m_EditorClassIdentifier: 
+  localizationKey: skill.302_eclipse_night_staff_slash_3
   skillName: "\u6697\u6D41"
   description: "\u7275\u52A8\u654C\u4EBA\u4F53\u5185\u6B8B\u7559\u7684\u9ED1\u6697"
   skillCategory: 0
