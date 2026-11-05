@@ -9,9 +9,9 @@ using UnityEngine.Rendering.Universal;
 /// <summary>Records the production contact effects with battle sprites and lighting in a temporary scene.</summary>
 public static class BattleContactVfxVisualTools
 {
-    public const string OutputPath = "outputs/agent-battle/contact-fallout-20261105";
+    public const string OutputPath = "outputs/agent-battle/contact-grounded-20261105";
     private const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
-    private const int Width = 960, Height = 540, Fps = 60, Frames = 144, ContactFrame = 18;
+    private const int Width = 960, Height = 540, Fps = 60, Frames = 156, ContactFrame = 18;
 
     [MenuItem("Tools/Battle Visuals/Capture Contact Effects")]
     public static void CaptureBoth()
@@ -72,6 +72,7 @@ public static class BattleContactVfxVisualTools
 
         var contactShadows = roots.SelectMany(root => root.GetComponentsInChildren<BattleContactShadowController>(true)).ToArray();
         var sunShadows = roots.SelectMany(root => root.GetComponentsInChildren<BattleActorSunShadowController>(true)).ToArray();
+        var stage = roots.SelectMany(root => root.GetComponentsInChildren<BattleForestStageController>(true)).FirstOrDefault();
         AnimationCurve move = Read<AnimationCurve>(presentation, "moveCurve");
         float approach = Read<float>(presentation, "advanceDuration");
         float recoilDistance = Read<float>(presentation, "defenderKnockbackDistance");
@@ -80,6 +81,8 @@ public static class BattleContactVfxVisualTools
         BattleContactVfx effect = null;
         int clipped = 0;
         int groundedTailFrames = 0;
+        int firstLandingFrame = -1;
+        float lowestGroundedTailY = float.PositiveInfinity;
         float followedLens = baseLens;
         float maxLens = baseLens;
         Vector3 followedTarget = target;
@@ -129,10 +132,15 @@ public static class BattleContactVfxVisualTools
                 maxLens = Mathf.Max(maxLens, followedLens);
                 if (visibleBurst)
                 {
+                    if (firstLandingFrame < 0 && effect.GroundedParticleCount > 0)
+                        firstLandingFrame = frame;
                     if (IsClipped(camera, effect.VisualBounds))
                         clipped++;
                     if (!effect.HasFallingBurst)
+                    {
                         groundedTailFrames++;
+                        lowestGroundedTailY = Mathf.Min(lowestGroundedTailY, effect.VisualBounds.min.y);
+                    }
                 }
                 foreach (BattleContactShadowController shadows in contactShadows)
                     shadows.UpdateShadows();
@@ -148,7 +156,9 @@ public static class BattleContactVfxVisualTools
             {
                 frames = Frames, fps = Fps, width = Width, height = Height, clippedFrames = clipped,
                 particles = effect.ParticleCount, groundedParticles = effect.GroundedParticleCount,
-                groundedTailFrames = groundedTailFrames, maximumFov = maxLens, effectComplete = effect.IsComplete
+                groundedTailFrames = groundedTailFrames, maximumFov = maxLens, effectComplete = effect.IsComplete,
+                firstLandingFrame = firstLandingFrame, stageGroundY = stage != null ? stage.GroundHeight : 0f,
+                lowestGroundedTailY = groundedTailFrames > 0 ? lowestGroundedTailY : 0f
             }, true));
         }
         finally
@@ -204,8 +214,8 @@ public static class BattleContactVfxVisualTools
     [Serializable]
     private sealed class Report
     {
-        public int frames, fps, width, height, particles, groundedParticles, groundedTailFrames, clippedFrames;
-        public float maximumFov;
+        public int frames, fps, width, height, particles, groundedParticles, groundedTailFrames, clippedFrames, firstLandingFrame;
+        public float maximumFov, stageGroundY, lowestGroundedTailY;
         public bool effectComplete;
     }
 }

@@ -9,6 +9,7 @@ public sealed class BattleContactVfx : MonoBehaviour
 {
     private enum Shape { Halo, Streak, Shard, Ribbon, Dust }
     private const int QuadBudget = 660;
+    private const float ClashPlaybackSpeed = 1.22f;
     private static Shader contactShader;
 
     private readonly List<Vector3> vertices = new List<Vector3>();
@@ -91,7 +92,7 @@ public sealed class BattleContactVfx : MonoBehaviour
         compact = isCompact;
         power = Mathf.Clamp01(intensity);
         size = Mathf.Clamp(bodyHeight, 1.45f, 4.2f) * Mathf.Lerp(0.73f, 1.04f, power) * (compact ? 0.70f : 1f);
-        floor = Mathf.Min(-size * 0.12f, groundY - transform.position.y);
+        floor = groundY - transform.position.y;
         direction.z = 0;
         axis = direction.sqrMagnitude > 0.001f ? direction.normalized : Vector3.right;
         normal = new Vector3(-axis.y, axis.x, 0);
@@ -132,8 +133,11 @@ public sealed class BattleContactVfx : MonoBehaviour
             bool large = i % 9 == 0;
             bool late = i % 5 == 0;
             float azimuth = clash ? Range(-Mathf.PI, Mathf.PI) : Range(-1.32f, 1.32f);
-            Vector3 spread = forward * Mathf.Cos(azimuth) + Vector3.forward * (Mathf.Sin(azimuth) * 0.48f);
+            float depthSpread = clash ? 0.40f : 0.48f;
+            Vector3 spread = forward * Mathf.Cos(azimuth) + Vector3.forward * (Mathf.Sin(azimuth) * depthSpread);
             float speed = late ? Range(2.2f, 5.0f) : Range(4.4f, 9.0f);
+            if (clash)
+                speed *= 1.20f;
             float lift = clash ? Range(-0.85f, 5.0f) : Range(0.25f, 4.25f);
             Vector3 velocity = (spread * speed + Vector3.up * lift) * (size * force);
             float width = size * (clash ? Range(0.0065f, 0.018f)
@@ -148,7 +152,9 @@ public sealed class BattleContactVfx : MonoBehaviour
             float reboundSpeed = landingSpeed * (clash ? Range(0.18f, 0.34f) : Range(0.15f, 0.27f));
             float bounceDuration = 2 * reboundSpeed / gravity;
             float delay = late ? Range(0.035f, 0.09f) : Range(0, 0.035f);
-            float life = landAt + bounceDuration + (compact ? Range(0.14f, 0.23f) : Range(0.23f, 0.43f));
+            float settledLifetime = clash ? Range(0.66f, 1.04f)
+                : compact ? Range(0.14f, 0.23f) : Range(0.23f, 0.43f);
+            float life = landAt + bounceDuration + settledLifetime;
             Color chunk = Color.Lerp(new Color(0.23f, 0.24f, 0.27f), new Color(0.78f, 0.70f, 0.57f), Range(0.17f, 0.93f));
             particles[i] = new Particle
             {
@@ -181,7 +187,7 @@ public sealed class BattleContactVfx : MonoBehaviour
 
     public void Advance(float delta)
     {
-        Elapsed = Mathf.Min(duration, Elapsed + Mathf.Max(0, delta));
+        Elapsed = Mathf.Min(duration, Elapsed + Mathf.Max(0, delta) * (clash ? ClashPlaybackSpeed : 1f));
         vertices.Clear();
         uv.Clear();
         shapes.Clear();
@@ -263,16 +269,28 @@ public sealed class BattleContactVfx : MonoBehaviour
 
         float spinTime = Mathf.Min(time, settleAt);
         float angle = particle.angle + particle.spin * spinTime;
-        Vector3 edge = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0);
-        Vector3 face = new Vector3(-edge.y, edge.x, 0);
+        Vector3 direction = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0);
         float tumble = 0.40f + 0.60f * Mathf.Abs(Mathf.Cos(angle * 1.63f));
-        Quad(point, edge * particle.length, face * (particle.width * tumble), Tint(particle.color, fade), Shape.Shard);
+        Vector3 edge = direction * particle.length;
+        Vector3 face = new Vector3(-direction.y, direction.x, 0) * (particle.width * tumble);
+        float nearFloor = 1 - Mathf.Clamp01((point.y - particle.groundY) / (particle.width * 2.5f));
+        // The visible shard occupies the cut interior of its quad. Seat that edge against the floor.
+        float support = (Mathf.Abs(edge.y) + Mathf.Abs(face.y)) * 0.80f + 0.006f;
+        point.y += (floor + support - particle.groundY) * nearFloor;
+        if (particle.raisesDust && nearFloor > 0)
+        {
+            Vector3 shadow = new Vector3(point.x, floor + 0.012f, point.z);
+            Quad(shadow, Vector3.right * particle.length * 1.12f, Vector3.forward * particle.width * 0.95f,
+                Tint(new Color(0.08f, 0.065f, 0.045f), fade * nearFloor * 0.55f), Shape.Dust);
+        }
+        Quad(point, edge, face, Tint(particle.color, fade), Shape.Shard);
 
         float landingAge = time - particle.landAt;
         if (particle.raisesDust && landingAge >= 0 && landingAge < 0.23f)
         {
             float spread = EaseOut(landingAge / 0.23f);
-            Vector3 landing = ParticlePosition(particle, particle.landAt) + Vector3.up * particle.width * spread;
+            Vector3 landing = ParticlePosition(particle, particle.landAt);
+            landing.y = floor + particle.width * (0.28f + spread * 0.72f);
             Quad(landing, Vector3.right * particle.length * (1.5f + 2.3f * spread),
                 Vector3.up * particle.width * (0.65f + spread), Tint(new Color(0.38f, 0.31f, 0.24f), (1 - spread) * 0.55f), Shape.Dust);
         }
@@ -293,7 +311,7 @@ public sealed class BattleContactVfx : MonoBehaviour
                 Quad(tail + span, span, across * particle.width * 0.80f, Tint(hot, heat * 0.9f), Shape.Streak);
             }
         }
-        float glow = particle.width * Mathf.Lerp(1.55f, 0.92f, cooling);
+        float glow = particle.width * Mathf.Lerp(1.55f, 1.06f, cooling);
         Quad(point, Vector3.right * glow, Vector3.up * glow, Tint(hot, heat), Shape.Halo);
     }
 

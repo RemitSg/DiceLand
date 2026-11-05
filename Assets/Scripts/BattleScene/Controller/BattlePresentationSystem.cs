@@ -210,6 +210,7 @@ public class BattlePresentationSystem : MonoBehaviour
     private Coroutine activeCloseupShotRoutine;
     private BattleContactVfx activeClashContact;
     private BattleContactVfx activeHitContact;
+    private BattleForestStageController contactStage;
     private BattleFeedbackSystem battleFeedbackSystem;
     private int activeCloseupShotId;
     private readonly BattleCloseupVisibility closeupVisibility = new BattleCloseupVisibility();
@@ -654,10 +655,8 @@ public class BattlePresentationSystem : MonoBehaviour
     {
         int sortingLayer = 0;
         int sortingOrder = effectSortingOrder + defenderReactionSortingBoost;
-        float ground = position.y - height * 0.5f;
         if (actor != null)
         {
-            ground = actor.position.y;
             foreach (SpriteRenderer renderer in actor.GetComponentsInChildren<SpriteRenderer>())
             {
                 if (!BattleActorVisualUtility.IsActorBodyRenderer(actor, renderer) || renderer.sprite == null)
@@ -669,12 +668,26 @@ public class BattlePresentationSystem : MonoBehaviour
         }
         position.z += effectDepthOffset;
         BattleContactVfx effect = BattleContactVfx.Spawn(transform, position, direction, tint, NormalizeCameraIntensity(power),
-            height, ground, sortingLayer, sortingOrder, clash, compact);
+            height, ResolveContactGroundHeight(), sortingLayer, sortingOrder, clash, compact);
         if (clash)
             activeClashContact = effect;
         else
             activeHitContact = effect;
         return effect;
+    }
+
+    private float ResolveContactGroundHeight()
+    {
+        if (contactStage == null)
+        {
+            foreach (GameObject root in gameObject.scene.GetRootGameObjects())
+            {
+                contactStage = root.GetComponentInChildren<BattleForestStageController>(true);
+                if (contactStage != null)
+                    break;
+            }
+        }
+        return contactStage != null ? contactStage.GroundHeight : 0f;
     }
 
     private static float ContactBodyHeight(Transform actor)

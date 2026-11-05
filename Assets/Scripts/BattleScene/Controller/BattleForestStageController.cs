@@ -6,6 +6,7 @@ using UnityEngine.Rendering;
 [DisallowMultipleComponent]
 public sealed class BattleForestStageController : MonoBehaviour
 {
+    private const float LaneHeight = 0.045f;
     // Shared with the authoring tool's shaft bases, in x + 0.42*z projected ground coordinates.
     public static readonly Vector2 CanopyOpenings = new Vector2(-9f, 5.5f);
     [SerializeField] private MeshRenderer originalGround;
@@ -31,6 +32,8 @@ public sealed class BattleForestStageController : MonoBehaviour
     private Texture previousCookie;
     private Vector4 previousCookieParams;
     private bool initialized;
+
+    public float GroundHeight => transform.TransformPoint(new Vector3(0, LaneHeight, 0)).y;
 
     public void Configure(MeshRenderer ground, Material stone, float canopyShadowStrength = 0.65f, float sunlightMotionStrength = 0.8f, Texture2D cookie = null)
     {
@@ -84,8 +87,8 @@ public sealed class BattleForestStageController : MonoBehaviour
         // The battle lane stays at the existing floor height. Thickness extends downward.
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
-        AddHorizontal(vertices, triangles, -36f, 36f, -7f, 8.5f, 0.045f);
-        AddFront(vertices, triangles, -36f, 36f, -7f, -0.62f, 0.045f);
+        AddHorizontal(vertices, triangles, -36f, 36f, -7f, 8.5f, LaneHeight);
+        AddFront(vertices, triangles, -36f, 36f, -7f, -0.62f, LaneHeight);
         AddHorizontal(vertices, triangles, -36.8f, 36.8f, -7.8f, -7f, -0.24f);
         AddFront(vertices, triangles, -36.8f, 36.8f, -7.8f, -0.78f, -0.24f);
         AddHorizontal(vertices, triangles, -37.4f, 37.4f, -8.6f, -7.8f, -0.53f);
@@ -97,8 +100,8 @@ public sealed class BattleForestStageController : MonoBehaviour
         AddHorizontal(vertices, triangles, -90f, 90f, -100f, -8.6f, -0.92f);
         // Meet the terrace at exactly the same height, then settle gently into the woodland.
         // The shared world-space material blends across this edge without a geometric crack.
-        AddQuad(vertices, triangles, new Vector3(-90f, 0.045f, 8.5f), new Vector3(-90f, -0.08f, 15f),
-            new Vector3(90f, -0.08f, 15f), new Vector3(90f, 0.045f, 8.5f));
+        AddQuad(vertices, triangles, new Vector3(-90f, LaneHeight, 8.5f), new Vector3(-90f, -0.08f, 15f),
+            new Vector3(90f, -0.08f, 15f), new Vector3(90f, LaneHeight, 8.5f));
         AddHorizontal(vertices, triangles, -90f, 90f, 15f, 55f, -0.08f);
         AddHorizontal(vertices, triangles, -90f, -36f, -8.6f, 8.5f, -0.92f);
         AddHorizontal(vertices, triangles, 36f, 90f, -8.6f, 8.5f, -0.92f);

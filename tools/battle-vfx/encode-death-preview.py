@@ -9,7 +9,7 @@ parser.add_argument('--source')
 parser.add_argument('--contacts', action='store_true', help='Encode the clash and hit contact captures')
 parser.add_argument('--preview-width', type=int, default=720)
 args = parser.parse_args()
-default_source = 'contact-fallout-20261105' if args.contacts else 'death-camera-dramatic-20261105'
+default_source = 'contact-grounded-20261105' if args.contacts else 'death-camera-dramatic-20261105'
 root = Path(__file__).resolve().parents[2] / (args.source or f'outputs/agent-battle/{default_source}')
 for name in (('clash', 'hit') if args.contacts else ('ally', 'enemy')):
     folder = root / name

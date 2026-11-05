@@ -1,9 +1,60 @@
 using System.Collections;
+using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 
 public class BattlePresentationSystemClashImpactTests
 {
+    [Test]
+    public void HitDebrisTouchesTheTerraceEvenWhenTheDefenderPivotIsHigh()
+    {
+        GameObject fixture = new GameObject("Ground contact fixture");
+        try
+        {
+            var stage = new GameObject("Raised terrace").AddComponent<BattleForestStageController>();
+            stage.transform.SetParent(fixture.transform);
+            stage.transform.position = Vector3.up * 0.6f;
+            Transform defender = new GameObject("High sprite pivot").transform;
+            defender.SetParent(fixture.transform);
+            defender.position = Vector3.up * 2.5f;
+            var presentation = fixture.AddComponent<BattlePresentationSystem>();
+            MethodInfo spawn = typeof(BattlePresentationSystem).GetMethod("SpawnHitContactFx",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            var effect = (BattleContactVfx)spawn.Invoke(presentation,
+                new object[] { defender, defender.position, Vector3.right, Color.white, 9f, false });
+            Assert.IsNotNull(effect);
+
+            Mesh mesh = effect.GetComponent<MeshFilter>().sharedMesh;
+            int mostTouching = 0;
+            for (int frame = 0; frame < 150 && !effect.IsComplete; frame++)
+            {
+                effect.Advance(1f / 60);
+                if (effect.HasFallingBurst || !effect.HasVisibleGeometry)
+                    continue;
+                Vector3[] vertices = mesh.vertices;
+                Vector2[] shapes = mesh.uv2;
+                int touching = 0;
+                for (int quad = 0; quad < vertices.Length; quad += 4)
+                {
+                    // Shape 2 is the rock face. Exclude the floor shadow and dust quads.
+                    if (shapes[quad].x != 2)
+                        continue;
+                    float bottom = float.PositiveInfinity;
+                    for (int corner = 0; corner < 4; corner++)
+                        bottom = Mathf.Min(bottom, effect.transform.TransformPoint(vertices[quad + corner]).y);
+                    if (Mathf.Abs(bottom - stage.GroundHeight) < 0.10f)
+                        touching++;
+                }
+                mostTouching = Mathf.Max(mostTouching, touching);
+            }
+            Assert.Greater(mostTouching, 30, "The visible rocks themselves should reach the terrace, not the defender pivot.");
+        }
+        finally
+        {
+            Object.DestroyImmediate(fixture);
+        }
+    }
+
     [TestCase(true)]
     [TestCase(false)]
     public void HeavyContactSpreadsAndLandsBeforeItsVisibleTailFades(bool clash)
