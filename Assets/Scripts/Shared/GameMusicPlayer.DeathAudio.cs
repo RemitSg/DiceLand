@@ -4,6 +4,7 @@ using UnityEngine;
 public partial class GameMusicPlayer
 {
     private const string DeathImpactResourcePath = "SFX/BattleDeathImpact";
+    private const float DeathMusicDuckMultiplier = 0.2f;
 
     [Header("Death Audio")]
     [SerializeField] private AudioClip deathImpactSound;
@@ -68,8 +69,9 @@ public partial class GameMusicPlayer
         ApplyDeathSoundVolume();
         bool holding = deathSlowMotionOwners.Count > 0 || deathSoundRemaining > 0f ||
             (deathAudioSource != null && deathAudioSource.isPlaying);
-        deathMusicMultiplier = Mathf.MoveTowards(deathMusicMultiplier, holding ? 0f : 1f,
-            Mathf.Max(0f, unscaledDeltaTime) / Mathf.Max(0.01f, deathMusicFadeDuration));
+        float fadeStep = (1f - DeathMusicDuckMultiplier) * Mathf.Max(0f, unscaledDeltaTime)
+            / Mathf.Max(0.01f, deathMusicFadeDuration);
+        deathMusicMultiplier = Mathf.MoveTowards(deathMusicMultiplier, holding ? DeathMusicDuckMultiplier : 1f, fadeStep);
         if (!holding && deathMusicMultiplier >= 1f) deathAudioActive = false;
     }
 

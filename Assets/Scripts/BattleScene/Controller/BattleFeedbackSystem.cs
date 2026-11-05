@@ -230,6 +230,7 @@ public class BattleFeedbackSystem : MonoBehaviour
 
     private readonly Dictionary<BattleAllyController, TrackedUnitUI> allyUIs = new Dictionary<BattleAllyController, TrackedUnitUI>();
     private readonly Dictionary<BattleEnemyController, TrackedUnitUI> enemyUIs = new Dictionary<BattleEnemyController, TrackedUnitUI>();
+    private readonly List<ClashDiceDisplayHandle> activeClashDiceDisplays = new List<ClashDiceDisplayHandle>();
 
     private Canvas overlayCanvas;
     private RectTransform overlayRoot;
@@ -265,6 +266,7 @@ public class BattleFeedbackSystem : MonoBehaviour
 
     private void OnDisable()
     {
+        ClearClashDiceDisplays();
         ClearImpactPulse();
         GameMusicPlayer.EndDeathSlowMotion(this);
         if (deathSlowMotionRoutine == null)
@@ -341,7 +343,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         EnemySkill_SO.DicePowerRange range,
         EnemySkill_SO.DicePowerRange? baseRange = null)
     {
-        if (actor == null)
+        if (actor == null || !isActiveAndEnabled)
             return null;
 
         EnsureCanvas();
@@ -407,7 +409,8 @@ public class BattleFeedbackSystem : MonoBehaviour
         SetTextGroupVisual(handle.rangeText, handle.rangeOutlines, handle.rangeColor, 0f, clashDiceRangeStartScale);
         SetTextGroupVisual(handle.valueText, handle.valueOutlines, handle.valueColor, 0f, clashDiceValueStartScale);
         SetTextGroupVisual(handle.modifierText, handle.modifierOutlines, handle.modifierColor, 0f, 1f);
-        handle.animationRoutine = StartCoroutine(AnimateClashDiceDisplay(handle));
+        activeClashDiceDisplays.Add(handle);
+        handle.animationRoutine = StartCoroutine(PlayClashDiceDisplay(handle));
         return handle;
     }
 
@@ -432,7 +435,7 @@ public class BattleFeedbackSystem : MonoBehaviour
 
     public void RevealClashDiceValue(ClashDiceDisplayHandle handle, int value, int modifierAmount = 0)
     {
-        if (handle == null)
+        if (handle == null || handle.root == null)
             return;
 
         handle.revealedValue = value;
@@ -442,10 +445,34 @@ public class BattleFeedbackSystem : MonoBehaviour
 
     public void HideClashDiceDisplay(ClashDiceDisplayHandle handle)
     {
-        if (handle == null)
+        if (handle == null || handle.root == null)
             return;
 
         handle.hideRequested = true;
+    }
+
+    private void ClearClashDiceDisplays()
+    {
+        for (int i = activeClashDiceDisplays.Count - 1; i >= 0; i--)
+        {
+            ClashDiceDisplayHandle handle = activeClashDiceDisplays[i];
+            if (handle.animationRoutine != null)
+                StopCoroutine(handle.animationRoutine);
+            ReleaseClashDiceDisplay(handle);
+        }
+    }
+
+    private void ReleaseClashDiceDisplay(ClashDiceDisplayHandle handle)
+    {
+        activeClashDiceDisplays.Remove(handle);
+        handle.animationRoutine = null;
+        if (handle.root == null)
+            return;
+
+        GameObject display = handle.root.gameObject;
+        handle.root = null;
+        display.SetActive(false);
+        ReleaseFeedbackResource(display);
     }
 
     private void RegisterAlly(BattleAllyController ally)
@@ -1048,6 +1075,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         if (ally == null)
             return;
 
+        ClearClashDiceDisplays();
         GameHaptics.Play(GameHapticCue.AllyDefeated);
         TriggerDeathSlowMotion();
         PlayDeathEffect(ally.transform, ally.LastHitDirection, false);
@@ -1060,6 +1088,7 @@ public class BattleFeedbackSystem : MonoBehaviour
         if (enemy == null)
             return;
 
+        ClearClashDiceDisplays();
         GameHaptics.Play(GameHapticCue.EnemyDefeated);
         TriggerDeathSlowMotion();
         PlayDeathEffect(enemy.transform, enemy.LastHitDirection, true);
@@ -1381,6 +1410,12 @@ public class BattleFeedbackSystem : MonoBehaviour
         return text;
     }
 
+    private IEnumerator PlayClashDiceDisplay(ClashDiceDisplayHandle handle)
+    {
+        yield return AnimateClashDiceDisplay(handle);
+        ReleaseClashDiceDisplay(handle);
+    }
+
     private IEnumerator AnimateClashDiceDisplay(ClashDiceDisplayHandle handle)
     {
         if (handle == null || handle.root == null || handle.worldAnchor == null)
@@ -1484,9 +1519,6 @@ public class BattleFeedbackSystem : MonoBehaviour
 
             yield return null;
         }
-
-        if (handle.root != null)
-            Destroy(handle.root.gameObject);
     }
 
     private List<TextMeshProUGUI> CreateOutlinedTextGroup(

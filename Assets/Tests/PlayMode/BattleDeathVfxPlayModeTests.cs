@@ -83,6 +83,62 @@ public sealed class BattleDeathVfxPlayModeTests
     }
 
     [UnityTest]
+    public IEnumerator LethalClashClearsBothRollsOnTheDeathFrame()
+    {
+        yield return CheckDiceClearOnEnemyDeath(clash: true);
+    }
+
+    [UnityTest]
+    public IEnumerator LethalSingleAttackClearsTheSurvivingAttackersRoll()
+    {
+        yield return CheckDiceClearOnEnemyDeath(clash: false);
+    }
+
+    private IEnumerator CheckDiceClearOnEnemyDeath(bool clash)
+    {
+        Component enemy = Bind(true);
+        Component feedback = root.GetComponent(RuntimeType("BattleFeedbackSystem"));
+        Camera camera = new GameObject("Dice camera").AddComponent<Camera>();
+        camera.transform.SetParent(root.transform, false);
+        camera.transform.position = Vector3.back * 10f;
+        feedback.GetType().GetMethod("SetPresentationCamera").Invoke(feedback, new object[] { camera, 1f });
+        Transform attacker = new GameObject("Surviving attacker").transform;
+        attacker.SetParent(root.transform, false);
+        attacker.position = Vector3.left;
+
+        RectTransform attackerRoll = ShowRolledDice(feedback, attacker, false);
+        RectTransform defenderRoll = clash ? ShowRolledDice(feedback, actor.transform, true) : null;
+        yield return new WaitForSeconds(0.22f);
+        Assert.IsTrue(attackerRoll.gameObject.activeInHierarchy);
+        if (clash) Assert.IsTrue(defenderRoll.gameObject.activeInHierarchy);
+
+        feedback.GetType().GetMethod("ShowDamageResultPopup").Invoke(feedback, new object[] { actor.transform.position, 3, true, 75, 0 });
+        Transform damage = attackerRoll.parent.Find("DamagePopup");
+        Assert.IsNotNull(damage);
+        Time.timeScale = 0f;
+        Kill(enemy);
+
+        Assert.IsFalse(attackerRoll.gameObject.activeSelf);
+        if (clash) Assert.IsFalse(defenderRoll.gameObject.activeSelf);
+        Assert.IsTrue(damage.gameObject.activeInHierarchy, "The hit's own damage feedback should stay visible.");
+        Assert.AreEqual(1, Effects().Length, "The death effect should play independently of the dice labels.");
+        yield return null;
+        Assert.IsTrue(attackerRoll == null);
+        Assert.IsTrue(defenderRoll == null);
+    }
+
+    private static RectTransform ShowRolledDice(Component feedback, Transform owner, bool enemy)
+    {
+        Type rangeType = RuntimeType("EnemySkill_SO+DicePowerRange");
+        object range = Activator.CreateInstance(rangeType);
+        rangeType.GetField("minPower").SetValue(range, 1);
+        rangeType.GetField("maxPower").SetValue(range, 4);
+        object handle = feedback.GetType().GetMethod("ShowClashDiceRange").Invoke(feedback, new[] { (object)owner, enemy, range, null });
+        feedback.GetType().GetMethod("RevealClashDiceValue").Invoke(feedback, new[] { handle, 3, 1 });
+        return (RectTransform)handle.GetType().GetField("root", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(handle);
+    }
+
+    [UnityTest]
     public IEnumerator RemovingTheDeadActorDoesNotCancelItsIndependentDissolution()
     {
         Component controller = Bind(false); Kill(controller); Component effect = Effects().Single();

@@ -65,7 +65,7 @@ public sealed class DeathAudioPlayModeTests
     }
 
     [UnityTest]
-    public IEnumerator SlowMotionDucksWithoutStoppingOrPitchingTheMusic()
+    public IEnumerator SlowMotionDucksToTwentyPercentWithoutStoppingOrPitchingTheMusic()
     {
         Time.timeScale = 0.09f;
         int before = music.timeSamples;
@@ -74,7 +74,7 @@ public sealed class DeathAudioPlayModeTests
         Assert.IsTrue(music.isPlaying);
         Assert.AreSame(musicClip, music.clip);
         Assert.AreEqual(1f, music.pitch);
-        Assert.AreEqual(0f, music.volume, 0.01f);
+        Assert.AreEqual(0.16f, music.volume, 0.01f);
         Assert.Greater(music.timeSamples - before, 48000 * 0.25f);
         Assert.AreEqual(1f, Voice().pitch);
     }
@@ -86,7 +86,7 @@ public sealed class DeathAudioPlayModeTests
         yield return new WaitForSecondsRealtime(0.1f);
         End(host);
         yield return new WaitForSecondsRealtime(0.4f);
-        Assert.AreEqual(0f, music.volume, 0.01f);
+        Assert.AreEqual(0.16f, music.volume, 0.01f);
         Assert.IsTrue(Voice().isPlaying);
         yield return new WaitForSecondsRealtime(0.68f);
         Assert.AreEqual(0.8f, music.volume, 0.01f);
@@ -103,10 +103,10 @@ public sealed class DeathAudioPlayModeTests
         Begin(second);
         yield return new WaitForSecondsRealtime(0.8f);
         Assert.IsFalse(Voice().isPlaying);
-        Assert.AreEqual(0f, music.volume, 0.01f);
+        Assert.AreEqual(0.16f, music.volume, 0.01f);
         End(host);
         yield return new WaitForSecondsRealtime(0.12f);
-        Assert.AreEqual(0f, music.volume, 0.01f);
+        Assert.AreEqual(0.16f, music.volume, 0.01f);
         End(second);
         yield return new WaitForSecondsRealtime(0.48f);
         Assert.AreEqual(0.8f, music.volume, 0.01f);
@@ -134,10 +134,11 @@ public sealed class DeathAudioPlayModeTests
         Time.timeScale = 0f;
         Begin(host);
         yield return new WaitForSecondsRealtime(0.48f);
-        Assert.AreEqual(0f, music.volume, 0.01f);
+        Assert.AreEqual(0.16f, music.volume, 0.01f);
         SetSetting("musicVolume", 0.25f);
         SetSetting("sfxVolume", 0f);
         yield return null;
+        Assert.AreEqual(0.05f, music.volume, 0.01f);
         Assert.AreEqual(0f, Voice().volume);
         End(host);
         yield return new WaitForSecondsRealtime(0.7f);
