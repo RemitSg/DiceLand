@@ -9,7 +9,7 @@ parser.add_argument('--source')
 parser.add_argument('--contacts', action='store_true', help='Encode the clash and hit contact captures')
 parser.add_argument('--preview-width', type=int, default=720)
 args = parser.parse_args()
-default_source = 'contact-vfx-20261105' if args.contacts else 'death-camera-dramatic-20261105'
+default_source = 'contact-fallout-20261105' if args.contacts else 'death-camera-dramatic-20261105'
 root = Path(__file__).resolve().parents[2] / (args.source or f'outputs/agent-battle/{default_source}')
 for name in (('clash', 'hit') if args.contacts else ('ally', 'enemy')):
     folder = root / name
@@ -34,7 +34,7 @@ for name in (('clash', 'hit') if args.contacts else ('ally', 'enemy')):
     output = root / (f'{name}.gif' if args.contacts else f'{name}-death-dissolution.gif')
     frames[0].save(output, save_all=True, append_images=frames[1:], duration=durations, loop=0, optimize=True, disposal=1)
     sheet = Image.new('RGB', (480 * 3, 270 * 2))
-    samples = (0, 19, 22, 27, 34, 46) if args.contacts else (0, 17, 27, 42, 70, 110)
+    samples = (0, 21, 29, 43, 60, 77) if args.contacts else (0, 17, 27, 42, 70, 110)
     for index, frame_index in enumerate(samples):
         sheet.paste(images[min(frame_index, len(images)-1)].resize((480, 270)), ((index % 3)*480, (index // 3)*270))
     sheet.save(root / f'{name}-contact.png')

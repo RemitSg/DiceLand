@@ -9,9 +9,9 @@ using UnityEngine.Rendering.Universal;
 /// <summary>Records the production contact effects with battle sprites and lighting in a temporary scene.</summary>
 public static class BattleContactVfxVisualTools
 {
-    public const string OutputPath = "outputs/agent-battle/contact-vfx-20261105";
+    public const string OutputPath = "outputs/agent-battle/contact-fallout-20261105";
     private const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
-    private const int Width = 960, Height = 540, Fps = 60, Frames = 96, ContactFrame = 18;
+    private const int Width = 960, Height = 540, Fps = 60, Frames = 144, ContactFrame = 18;
 
     [MenuItem("Tools/Battle Visuals/Capture Contact Effects")]
     public static void CaptureBoth()
@@ -60,9 +60,11 @@ public static class BattleContactVfxVisualTools
         Vector3 target = (allyBounds.center + enemyBounds.center) * 0.5f;
         target.x += clash ? 0 : 0.55f;
         float distance = Mathf.Max(2.5f, allyBounds.size.y, enemyBounds.size.y) * 3.0f;
-        camera.transform.position = target + new Vector3(0, distance * 0.12f, -distance);
+        Vector3 cameraOffset = new Vector3(0, distance * 0.12f, -distance);
+        camera.transform.position = target + cameraOffset;
         camera.transform.LookAt(target);
-        camera.fieldOfView = 40;
+        const float baseLens = 40;
+        camera.fieldOfView = baseLens;
         camera.aspect = (float)Width / Height;
         camera.GetUniversalAdditionalCameraData().cameraStack.Clear();
         foreach (BattleLookController look in roots.SelectMany(root => root.GetComponentsInChildren<BattleLookController>(true)))
@@ -77,6 +79,12 @@ public static class BattleContactVfxVisualTools
         float recoilBack = Read<float>(presentation, "defenderKnockbackReturnDuration");
         BattleContactVfx effect = null;
         int clipped = 0;
+        int groundedTailFrames = 0;
+        float followedLens = baseLens;
+        float maxLens = baseLens;
+        Vector3 followedTarget = target;
+        Bounds actorBounds = allyBounds;
+        actorBounds.Encapsulate(enemyBounds);
         var buffer = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32);
         var pixels = new Texture2D(Width, Height, TextureFormat.RGB24, false);
         RenderTexture previous = RenderTexture.active;
@@ -95,14 +103,37 @@ public static class BattleContactVfxVisualTools
                     effect = SpawnContact(presentation, ally, enemy, clash);
                 else if (effect != null)
                     effect.Advance(1f / Fps);
+                Bounds shotBounds = actorBounds;
                 if (!clash && time >= 0)
                 {
                     float outAmount = move.Evaluate(Mathf.InverseLerp(0, recoilOut, time));
                     float backAmount = 1 - move.Evaluate(Mathf.InverseLerp(recoilOut, recoilOut + recoilBack, time));
-                    enemy.position += Vector3.right * recoilDistance * outAmount * backAmount;
+                    Vector3 recoil = Vector3.right * recoilDistance * outAmount * backAmount;
+                    enemy.position += recoil;
+                    Bounds recoiledEnemy = enemyBounds;
+                    recoiledEnemy.center += recoil;
+                    shotBounds.Encapsulate(recoiledEnemy);
                 }
-                if (effect != null && effect.HasVisibleGeometry && IsClipped(camera, effect.VisualBounds))
-                    clipped++;
+                bool visibleBurst = effect != null && effect.HasVisibleGeometry;
+                if (visibleBurst)
+                    shotBounds.Encapsulate(effect.VisualBounds);
+                Vector3 centerShift = shotBounds.center - actorBounds.center;
+                centerShift.z = 0;
+                followedTarget = Vector3.Lerp(followedTarget, target + centerShift, 0.19f);
+                camera.transform.position = followedTarget + cameraOffset;
+                camera.transform.LookAt(followedTarget);
+                camera.fieldOfView = baseLens;
+                float fitLens = visibleBurst ? BattleContactVfx.LensThatFits(camera, shotBounds) : baseLens;
+                followedLens = Mathf.Max(fitLens, Mathf.Lerp(followedLens, baseLens, 0.12f));
+                camera.fieldOfView = followedLens;
+                maxLens = Mathf.Max(maxLens, followedLens);
+                if (visibleBurst)
+                {
+                    if (IsClipped(camera, effect.VisualBounds))
+                        clipped++;
+                    if (!effect.HasFallingBurst)
+                        groundedTailFrames++;
+                }
                 foreach (BattleContactShadowController shadows in contactShadows)
                     shadows.UpdateShadows();
                 foreach (BattleActorSunShadowController shadows in sunShadows)
@@ -116,7 +147,8 @@ public static class BattleContactVfxVisualTools
             File.WriteAllText(Path.Combine(folder, "capture.json"), JsonUtility.ToJson(new Report
             {
                 frames = Frames, fps = Fps, width = Width, height = Height, clippedFrames = clipped,
-                sparks = effect.SparkCount, effectComplete = effect.IsComplete
+                particles = effect.ParticleCount, groundedParticles = effect.GroundedParticleCount,
+                groundedTailFrames = groundedTailFrames, maximumFov = maxLens, effectComplete = effect.IsComplete
             }, true));
         }
         finally
@@ -172,7 +204,8 @@ public static class BattleContactVfxVisualTools
     [Serializable]
     private sealed class Report
     {
-        public int frames, fps, width, height, sparks, clippedFrames;
+        public int frames, fps, width, height, particles, groundedParticles, groundedTailFrames, clippedFrames;
+        public float maximumFov;
         public bool effectComplete;
     }
 }

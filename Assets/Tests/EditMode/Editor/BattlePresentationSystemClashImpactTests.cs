@@ -4,6 +4,50 @@ using UnityEngine;
 
 public class BattlePresentationSystemClashImpactTests
 {
+    [TestCase(true)]
+    [TestCase(false)]
+    public void HeavyContactSpreadsAndLandsBeforeItsVisibleTailFades(bool clash)
+    {
+        GameObject owner = new GameObject("Contact fallout fixture");
+        try
+        {
+            var origin = new Vector3(0, 1.3f, 0);
+            BattleContactVfx effect = BattleContactVfx.Spawn(owner.transform, origin, Vector3.right,
+                Color.white, 1, 2.2f, 0, 0, 290, clash);
+            Assert.IsNotNull(effect);
+            Assert.GreaterOrEqual(effect.ParticleCount, clash ? 250 : 140);
+            float highest = origin.y;
+            float left = origin.x;
+            float right = origin.x;
+            bool groundTailVisible = false;
+            for (int frame = 0; frame < 150 && !effect.IsComplete; frame++)
+            {
+                effect.Advance(1f / 60);
+                if (!effect.HasVisibleGeometry)
+                    continue;
+                Bounds bounds = effect.VisualBounds;
+                highest = Mathf.Max(highest, bounds.max.y);
+                left = Mathf.Min(left, bounds.min.x);
+                right = Mathf.Max(right, bounds.max.x);
+                if (effect.GroundedParticleCount >= effect.ParticleCount * 0.8f && bounds.min.y < 0.14f)
+                    groundTailVisible = true;
+            }
+            Assert.Greater(highest, origin.y + 0.65f, "The burst should visibly lift into the air.");
+            Assert.Greater(right, origin.x + 2f, "The heavy release should travel away from contact.");
+            if (clash)
+                Assert.Less(left, origin.x - 2f, "Clash sparks must spray on both sides.");
+            else
+                Assert.Greater(right - origin.x, (origin.x - left) * 1.8f, "The bulk of hit debris should travel with the impact.");
+            Assert.IsTrue(groundTailVisible, "The debris should still be visible after it has reached the floor.");
+            Assert.IsTrue(effect.IsComplete);
+            Assert.IsFalse(effect.HasVisibleGeometry);
+        }
+        finally
+        {
+            Object.DestroyImmediate(owner);
+        }
+    }
+
     [Test]
     public void PlayClashSequence_NoPresentationWinner_StillResolvesImpact()
     {

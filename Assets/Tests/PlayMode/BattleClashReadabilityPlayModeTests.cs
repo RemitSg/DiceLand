@@ -9,6 +9,14 @@ public sealed class BattleClashReadabilityPlayModeTests
 {
     private const BindingFlags Fields = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
     private GameObject root;
+    private float originalTimeScale;
+
+    [SetUp]
+    public void SetUp()
+    {
+        originalTimeScale = Time.timeScale;
+        Time.timeScale = 1;
+    }
 
     [UnityTearDown]
     public IEnumerator TearDown()
@@ -16,6 +24,7 @@ public sealed class BattleClashReadabilityPlayModeTests
         if (root != null)
             UnityEngine.Object.Destroy(root);
         yield return null;
+        Time.timeScale = originalTimeScale;
     }
 
     [UnityTest]
@@ -147,7 +156,7 @@ public sealed class BattleClashReadabilityPlayModeTests
         Transform defender = Child("Defender").transform;
         attacker.position = Vector3.left;
         defender.position = Vector3.right;
-        Invoke(presentation, "StartCloseupShot", attacker, defender, Vector3.zero, 3f);
+        int shot = (int)Invoke(presentation, "StartCloseupShot", attacker, defender, Vector3.zero, 3f);
         Set(presentation, "defaultHitReactionDelay", 0.25f);
         bool resolved = false, impulseAtDamage = false;
         Type contactType = RuntimeType("BattleContactVfx");
@@ -173,6 +182,13 @@ public sealed class BattleClashReadabilityPlayModeTests
         Assert.IsTrue(resolved);
         Assert.IsTrue(impulseAtDamage);
         Assert.AreEqual(1, burstsAtDamage, "One shared directional burst should land with damage.");
+        Camera closeup = (Camera)Field(presentation, "closeupCamera");
+        ((MonoBehaviour)presentation).StartCoroutine((IEnumerator)Invoke(presentation, "EndCloseupShot", shot, 0f));
+        yield return null;
+        Assert.IsTrue(closeup.enabled, "The shot should hold for the first landing after the burst.");
+        for (float end = Time.realtimeSinceStartup + 2f; closeup.enabled && Time.realtimeSinceStartup < end;)
+            yield return null;
+        Assert.IsFalse(closeup.enabled, "The shot should release after the bulk of the debris has landed.");
     }
 
     [UnityTest]

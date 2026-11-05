@@ -208,6 +208,8 @@ public class BattlePresentationSystem : MonoBehaviour
     private Quaternion cameraBeatBaseRotation;
     private float cameraBeatBaseLens;
     private Coroutine activeCloseupShotRoutine;
+    private BattleContactVfx activeClashContact;
+    private BattleContactVfx activeHitContact;
     private BattleFeedbackSystem battleFeedbackSystem;
     private int activeCloseupShotId;
     private readonly BattleCloseupVisibility closeupVisibility = new BattleCloseupVisibility();
@@ -666,8 +668,13 @@ public class BattlePresentationSystem : MonoBehaviour
             }
         }
         position.z += effectDepthOffset;
-        return BattleContactVfx.Spawn(transform, position, direction, tint, NormalizeCameraIntensity(power),
+        BattleContactVfx effect = BattleContactVfx.Spawn(transform, position, direction, tint, NormalizeCameraIntensity(power),
             height, ground, sortingLayer, sortingOrder, clash, compact);
+        if (clash)
+            activeClashContact = effect;
+        else
+            activeHitContact = effect;
+        return effect;
     }
 
     private static float ContactBodyHeight(Transform actor)
@@ -1879,9 +1886,16 @@ public class BattlePresentationSystem : MonoBehaviour
         if (shotId != activeCloseupShotId)
             yield break;
 
-        while (IsPlayingDeathCamera && shotId == activeCloseupShotId) yield return null;
+        while (shotId == activeCloseupShotId && (IsPlayingDeathCamera || HasFallingContactBurst()))
+            yield return null;
         if (shotId != activeCloseupShotId) yield break;
         StopActiveCloseupShotImmediate();
+    }
+
+    private bool HasFallingContactBurst()
+    {
+        return Application.isPlaying && ((activeClashContact != null && activeClashContact.HasFallingBurst)
+            || (activeHitContact != null && activeHitContact.HasFallingBurst));
     }
 
     private IEnumerator RunCloseupShot(int shotId, Transform first, Transform second, Vector3 fallbackFocus, float power)
@@ -1986,6 +2000,17 @@ public class BattlePresentationSystem : MonoBehaviour
             else
                 shotCamera.fieldOfView = Mathf.Max(1f, impactLens);
 
+            if (!IsPlayingDeathCamera && (activeClashContact != null || activeHitContact != null)
+                && TryGetShotBounds(first, second, out Bounds contactShotBounds))
+            {
+                float fitLens = BattleContactVfx.LensThatFits(shotCamera, contactShotBounds);
+                followedLens = Mathf.Max(followedLens, fitLens);
+                if (shotCamera.orthographic)
+                    shotCamera.orthographicSize = fitLens;
+                else
+                    shotCamera.fieldOfView = fitLens;
+            }
+
             yield return null;
         }
 
@@ -2039,6 +2064,8 @@ public class BattlePresentationSystem : MonoBehaviour
 
     private void StopActiveCloseupShotImmediate()
     {
+        activeClashContact = null;
+        activeHitContact = null;
         if (deathCameraMotion != null) deathCameraMotion.RestoreBasePose();
         ResolveFeedbackSystem()?.StopImpactPulse();
         if (activeCloseupShotRoutine != null)
@@ -2066,7 +2093,7 @@ public class BattlePresentationSystem : MonoBehaviour
         ResolveFeedbackSystem()?.SetPresentationCamera(mainCamera, 1f);
     }
 
-    private static Vector3 ResolveShotFocus(Transform first, Transform second, Vector3 fallbackFocus)
+    private Vector3 ResolveShotFocus(Transform first, Transform second, Vector3 fallbackFocus)
     {
         if (TryGetShotBounds(first, second, out Bounds bounds))
             return bounds.center;
@@ -2099,7 +2126,7 @@ public class BattlePresentationSystem : MonoBehaviour
         return Mathf.Max(closeupOrthographicSize, paddedHalfHeight, widthDrivenHalfHeight);
     }
 
-    private static bool TryGetShotBounds(Transform first, Transform second, out Bounds bounds)
+    private bool TryGetShotBounds(Transform first, Transform second, out Bounds bounds)
     {
         bool hasBounds = BattleActorVisualUtility.TryGetActorSpriteBounds(first, out bounds);
         if (BattleActorVisualUtility.TryGetActorSpriteBounds(second, out Bounds secondBounds))
@@ -2110,7 +2137,23 @@ public class BattlePresentationSystem : MonoBehaviour
                 bounds = secondBounds;
             hasBounds = true;
         }
+        if (!IsPlayingDeathCamera)
+        {
+            IncludeContactBounds(activeClashContact, ref bounds, ref hasBounds);
+            IncludeContactBounds(activeHitContact, ref bounds, ref hasBounds);
+        }
         return hasBounds;
+    }
+
+    private static void IncludeContactBounds(BattleContactVfx contact, ref Bounds bounds, ref bool hasBounds)
+    {
+        if (contact == null || !contact.HasVisibleGeometry)
+            return;
+        if (hasBounds)
+            bounds.Encapsulate(contact.VisualBounds);
+        else
+            bounds = contact.VisualBounds;
+        hasBounds = true;
     }
 
     private float ResolveCloseupFieldOfView(float desiredFrameSize)

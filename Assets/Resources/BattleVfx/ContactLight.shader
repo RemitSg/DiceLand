@@ -66,11 +66,16 @@ Shader "DiceLand/Battle Contact Light"
                 }
                 else if (input.shape < 2.5)
                 {
-                    float facet = abs(p.x) + abs(p.y + p.x * 0.18);
-                    mask = 1 - smoothstep(0.78, 1, facet);
-                    heat = (1 - smoothstep(0.04, 0.55, abs(p.y))) * (0.45 + 0.55 * step(0, p.x));
-                    coverage = 0.76;
-                    emission = lerp(0.65, 1.5, heat);
+                    float2 stone = float2(p.x + p.y * 0.19, p.y - p.x * 0.22);
+                    float cut = max(abs(stone.x) * 1.09 + max(0, stone.y) * 0.37, abs(stone.y) * 1.19);
+                    cut = max(cut, -stone.x * 0.91 - stone.y * 0.62);
+                    float top = step(0.09 + stone.x * 0.28, stone.y);
+                    float side = step(0.22 - stone.y * 0.69, stone.x);
+                    float grain = sin(p.x * 48 + p.y * 35) * sin(p.y * 44 - p.x * 30);
+                    float shade = lerp(0.81, 1.29, top) * lerp(1, 0.55, side) + grain * 0.062;
+                    shade *= lerp(1, 0.62, smoothstep(0.79, 0.99, cut));
+                    float alpha = (1 - smoothstep(0.92, 1, cut)) * input.color.a;
+                    return half4(saturate(input.color.rgb * shade) * alpha, alpha);
                 }
                 else if (input.shape < 3.5)
                 {
