@@ -112,11 +112,9 @@ public partial class MapInventoryDetailView : MonoBehaviour
         }
 
         CraftingBlueprint_SO blueprint = blueprintState.blueprintData;
-        string target = blueprint.targetWeapon != null && !string.IsNullOrWhiteSpace(blueprint.targetWeapon.weaponName)
-            ? blueprint.targetWeapon.weaponName : "未配置武器";
         PresentItem(blueprint, blueprint.DisplayIcon != null ? blueprint.DisplayIcon : fallbackSprite, blueprint.DisplayName,
             GetLootRarityLabel(blueprint.rarity), GetLootRarityColor(blueprint.rarity), "图纸", blueprintState.amount,
-            "锻造成品：" + target + "\n\n" + BuildBlueprintDescription(blueprint), string.Empty);
+            BlueprintDetailDescription(blueprint), string.Empty);
     }
 
     public void Show(RunRelicState relicState, Sprite fallbackSprite = null)
@@ -136,6 +134,7 @@ public partial class MapInventoryDetailView : MonoBehaviour
     private void PresentItem(Object item, Sprite icon, string title, string rarity, Color rarityColor,
         string category, int amount, string description, string additional)
     {
+        ResetPresentationLabels();
         bool changed = displayedItem != item;
         if (changed) ConfigureActionButton(string.Empty, false, null, string.Empty);
         displayedItem = item;
@@ -183,6 +182,7 @@ public partial class MapInventoryDetailView : MonoBehaviour
     public void Hide()
     {
         if (!IsVisible || closing) return;
+        if (DismissAllowed != null && !DismissAllowed()) return;
         if (modalRoot == null || !Application.isPlaying || !gameObject.activeInHierarchy) HideImmediately();
         else
         {
@@ -304,37 +304,6 @@ public partial class MapInventoryDetailView : MonoBehaviour
             default:
                 return Color.white;
         }
-    }
-
-    private static string BuildBlueprintDescription(CraftingBlueprint_SO blueprint)
-    {
-        if (blueprint == null)
-            return "\u6682\u65e0\u56fe\u7eb8\u4fe1\u606f\u3002";
-
-        System.Text.StringBuilder builder = new System.Text.StringBuilder();
-        if (!string.IsNullOrWhiteSpace(blueprint.description))
-            builder.AppendLine(blueprint.description);
-        else
-            builder.AppendLine("\u6682\u65e0\u56fe\u7eb8\u63cf\u8ff0\u3002");
-
-        if (blueprint.materialRequirements != null && blueprint.materialRequirements.Count > 0)
-        {
-            builder.AppendLine();
-            builder.AppendLine("\u6240\u9700\u6750\u6599\uff1a");
-            for (int i = 0; i < blueprint.materialRequirements.Count; i++)
-            {
-                CraftingMaterialRequirement requirement = blueprint.materialRequirements[i];
-                if (requirement == null || requirement.lootItem == null)
-                    continue;
-
-                builder.Append(" - ");
-                builder.Append(requirement.lootItem.lootName);
-                builder.Append(" x");
-                builder.AppendLine(requirement.amount.ToString());
-            }
-        }
-
-        return builder.ToString().TrimEnd();
     }
 
     private static void ApplyFont(TMP_Text text, TMP_FontAsset font)

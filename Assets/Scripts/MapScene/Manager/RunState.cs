@@ -168,7 +168,7 @@ public class PendingBattleStatusGrant
 }
 
 [Serializable]
-public class RunState
+public partial class RunState
 {
     public string difficultyName;
     public int boardSize;
@@ -455,8 +455,15 @@ public class RunState
 
     public void AddBlueprint(CraftingBlueprint_SO blueprintData, int amount = 1)
     {
+        AddBlueprintCore(blueprintData, amount, true);
+    }
+
+    private void AddBlueprintCore(CraftingBlueprint_SO blueprintData, int amount, bool showAcquisition)
+    {
         if (blueprintData == null || amount <= 0)
             return;
+
+        if (showAcquisition) ItemAcquisitions.Record(blueprintData, amount);
 
         if (blueprintInventory == null)
             blueprintInventory = new List<RunBlueprintState>();
@@ -497,8 +504,15 @@ public class RunState
 
     public void AddRelic(Relic_SO relicData, int amount = 1, bool processAcquireEffects = true)
     {
+        AddRelicCore(relicData, amount, processAcquireEffects, 0);
+    }
+
+    private void AddRelicCore(Relic_SO relicData, int amount, bool processAcquireEffects, int previewedAmount)
+    {
         if (relicData == null || amount <= 0)
             return;
+
+        if (processAcquireEffects) ItemAcquisitions.Record(relicData, Math.Max(0, amount - previewedAmount));
 
         if (relicInventory == null)
             relicInventory = new List<RunRelicState>();
@@ -877,6 +891,7 @@ public class RunState
             }
         }
 
+        clone.itemAcquisitions = itemAcquisitions != null ? itemAcquisitions.Clone() : null;
         return clone;
     }
 }

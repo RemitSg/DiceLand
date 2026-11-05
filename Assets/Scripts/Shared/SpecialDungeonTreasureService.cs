@@ -115,7 +115,7 @@ public static class SpecialDungeonTreasureService
 
     private static TreasureRewardResult ApplyBlueprint(RunState runState, SpecialDungeonTreasureOptionEntry option)
     {
-        runState.AddBlueprint(option.blueprintData, 1);
+        runState.AddPreviewedBlueprint(option.blueprintData, 1);
         return new TreasureRewardResult
         {
             success = true,
@@ -126,7 +126,7 @@ public static class SpecialDungeonTreasureService
 
     private static TreasureRewardResult ApplyRelic(RunState runState, SpecialDungeonTreasureOptionEntry option)
     {
-        runState.AddRelic(option.relicData, 1);
+        runState.AddPreviewedRelic(option.relicData, 1);
         return new TreasureRewardResult
         {
             success = true,

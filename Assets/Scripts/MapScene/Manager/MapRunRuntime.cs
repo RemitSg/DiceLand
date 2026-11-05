@@ -69,6 +69,12 @@ public static class MapRunRuntime
 {
     private static MapRunSnapshot currentSnapshot;
 
+    internal static RunState GetRunStateForAcquisitionDisplay(string sceneName)
+    {
+        return currentSnapshot != null && string.Equals(currentSnapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase)
+            ? currentSnapshot.runState : null;
+    }
+
     public static bool TryGetMoney(string sceneName, out int money)
     {
         bool available = currentSnapshot?.runState != null && !string.IsNullOrWhiteSpace(sceneName) &&
@@ -231,7 +237,11 @@ public static class MapRunRuntime
                 if (relic == null || relic.relicData == null || relic.amount <= 0)
                     continue;
 
-                snapshot.runState.AddRelic(relic.relicData, relic.amount);
+                int previewed = 0;
+                if (encounter.previewedRelicRewards != null)
+                    foreach (RunRelicState known in encounter.previewedRelicRewards)
+                        if (known?.relicData == relic.relicData) previewed += Mathf.Max(0, known.amount);
+                snapshot.runState.AddRelicWithPreviewedAmount(relic.relicData, relic.amount, previewed);
             }
         }
 
@@ -696,14 +706,14 @@ public static class MapRunRuntime
 
         if (!snapshot.runState.TryConsumeRelic(secondRelic, 1))
         {
-            snapshot.runState.AddRelic(firstRelic, 1);
+            snapshot.runState.AddPreviewedRelic(firstRelic, 1);
             errorMessage = $"无法消耗材料：{GetRelicDisplayName(secondRelic)}";
             return false;
         }
 
         snapshot.runState.AddRelic(resultRelic, 1);
         if (preservedMaterial != null)
-            snapshot.runState.AddRelic(preservedMaterial, 1);
+            snapshot.runState.AddPreviewedRelic(preservedMaterial, 1);
         errorMessage = string.Empty;
         RelicTriggerDispatcher.ProcessRestReforgeCompleted(snapshot.runState);
         return true;

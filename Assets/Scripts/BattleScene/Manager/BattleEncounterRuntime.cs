@@ -30,6 +30,7 @@ public sealed class BattleEncounterData
     public List<RunRelicState> resolvedRelics = new List<RunRelicState>();
     public List<RunLootState> pendingVictoryLootRewards = new List<RunLootState>();
     public List<RunRelicState> pendingVictoryRelicRewards = new List<RunRelicState>();
+    [System.NonSerialized] public List<RunRelicState> previewedRelicRewards = new List<RunRelicState>();
     public List<RunBlueprintState> pendingVictoryBlueprintRewards = new List<RunBlueprintState>();
     public List<RunWeaponState> pendingVictoryWeaponRewards = new List<RunWeaponState>();
     public List<RunRelicState> relicInventory = new List<RunRelicState>();

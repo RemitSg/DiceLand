@@ -481,7 +481,7 @@ public static class MapEventBuiltInEffectExecutorService
             Relic_SO newRelic = DrawRelicOfRarity(effectData.relicTable, oldRelic.rarity, oldRelic);
             if (newRelic == null)
             {
-                runState.AddRelic(oldRelic, 1);
+                runState.AddPreviewedRelic(oldRelic, 1);
                 continue;
             }
 

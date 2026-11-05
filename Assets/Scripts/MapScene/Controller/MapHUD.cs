@@ -308,6 +308,7 @@ public partial class MapHUD : MonoBehaviour
         currentRunState = runState;
         currentActionPointSystem = actionPointSystem;
         Initialize();
+        if (runtimeInventoryDetailView != null) runtimeInventoryDetailView.ConfigureInventoryContext(runState);
 
         if (actionPointText != null)
         {

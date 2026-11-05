@@ -123,7 +123,7 @@ public static class TreasureRewardService
                 if (choice.blueprint == null)
                     return Fail("\u672a\u627e\u5230\u53ef\u9886\u53d6\u7684\u56fe\u7eb8\u3002");
 
-                runState.AddBlueprint(choice.blueprint, 1);
+                runState.AddPreviewedBlueprint(choice.blueprint, 1);
                 return new TreasureRewardResult
                 {
                     success = true,
@@ -158,7 +158,7 @@ public static class TreasureRewardService
             return Fail("\u8bf7\u5148\u9009\u62e9\u4e00\u4e2a\u9057\u7269\u3002");
 
         int amount = Mathf.Max(1, selectedChoice.amount);
-        runState.AddRelic(selectedChoice.relicData, amount);
+        runState.AddPreviewedRelic(selectedChoice.relicData, amount);
         choiceData.rewardApplied = true;
 
         return new TreasureRewardResult

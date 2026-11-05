@@ -20,6 +20,8 @@ public static class BattleRelicChoiceSelectionService
         RunRelicState existing = encounter.resolvedRelics.Find(r => r != null && r.relicData == choice.selectedChoice.relicData);
         if (existing != null) existing.amount++;
         else encounter.resolvedRelics.Add(new RunRelicState { relicData = choice.selectedChoice.relicData, amount = 1 });
+        if (encounter.previewedRelicRewards == null) encounter.previewedRelicRewards = new List<RunRelicState>();
+        encounter.previewedRelicRewards.Add(new RunRelicState { relicData = choice.selectedChoice.relicData, amount = 1 });
         choice.rewardApplied = true;
         return true;
     }

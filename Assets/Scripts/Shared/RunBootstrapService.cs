@@ -354,7 +354,7 @@ public static class RunBootstrapService
         {
             RunGameManager.StartingBlueprintDefinition definition = startingBlueprints[i];
             if (definition != null && definition.blueprintData != null && definition.amount > 0)
-                targetRunState.AddBlueprint(definition.blueprintData, definition.amount);
+                targetRunState.AddPreviewedBlueprint(definition.blueprintData, definition.amount);
         }
     }
 
@@ -369,7 +369,7 @@ public static class RunBootstrapService
         {
             RunGameManager.StartingRelicDefinition definition = startingRelics[i];
             if (definition != null && definition.relicData != null && definition.amount > 0)
-                targetRunState.AddRelic(definition.relicData, definition.amount);
+                targetRunState.AddPreviewedRelic(definition.relicData, definition.amount);
         }
     }
 

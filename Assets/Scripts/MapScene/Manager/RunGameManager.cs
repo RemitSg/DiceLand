@@ -854,6 +854,7 @@ public class RunGameManager : MonoBehaviour
     {
         mapHUD.Initialize();
         mapHUD.Refresh(runState, actionPointSystem);
+        RunItemAcquisitionOverlay.BindToMap(this, runState, mapKeywordFont, mapBodyFont, CanPresentItemAcquisition);
         if (!string.IsNullOrEmpty(status))
             mapHUD.ShowStatus(status);
 
@@ -2021,6 +2022,7 @@ public class RunGameManager : MonoBehaviour
 
     private bool IsGameplayOverlayVisible()
     {
+        if (RunItemAcquisitionOverlay.IsBlockingInput) return true;
         if (mapBattleTilePreviewController != null && mapBattleTilePreviewController.IsActive)
             return true;
         if (mapBattleTilePreviewOverlay != null && mapBattleTilePreviewOverlay.IsVisible)
@@ -2039,6 +2041,19 @@ public class RunGameManager : MonoBehaviour
             return true;
 
         return false;
+    }
+
+    private bool CanPresentItemAcquisition()
+    {
+        return runState != null && !IsSceneTransitionInProgress()
+            && !(mapBattleTilePreviewController != null && mapBattleTilePreviewController.IsActive)
+            && !(mapEventOverlay != null && mapEventOverlay.IsVisible)
+            && !(mapMerchantOverlay != null && mapMerchantOverlay.IsVisible)
+            && !(mapTreasureOverlay != null && mapTreasureOverlay.IsVisible)
+            && !(mapCraftingOverlay != null && mapCraftingOverlay.IsVisible)
+            && !(mapCalamityOverlay != null && mapCalamityOverlay.IsVisible)
+            && !(mapPauseMenuOverlay != null && mapPauseMenuOverlay.IsVisible)
+            && !(mapTutorialGuideOverlay != null && mapTutorialGuideOverlay.IsModalVisible);
     }
 
     private void StartMapTutorialGuide()
