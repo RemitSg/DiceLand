@@ -1019,15 +1019,7 @@ public partial class BattleSceneEncounterBootstrap : MonoBehaviour
         if (weapon.HoldPoint == null)
             weapon.HoldPoint = FindChildRecursive(weaponObject.transform, "HoldPoint");
 
-        if (characterHoldPoint != null && weapon.HoldPoint != null)
-        {
-            Quaternion rotationOffset = characterHoldPoint.rotation * Quaternion.Inverse(weapon.HoldPoint.rotation);
-            weaponObject.transform.rotation = rotationOffset * weaponObject.transform.rotation;
-
-            Vector3 gripOffset = characterHoldPoint.position - weapon.HoldPoint.position;
-            weaponObject.transform.position += gripOffset;
-        }
-
+        weapon.AttachToBattleGrip(weaponObject.transform, characterHoldPoint);
         weaponObject.transform.position += Vector3.forward * Mathf.Abs(weaponDepthOffset);
 
         ApplyWeaponRendererSettings(weaponObject, referenceRenderer, targetSortingOrder);

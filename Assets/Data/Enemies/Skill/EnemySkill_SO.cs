@@ -233,6 +233,8 @@ public class EnemySkill_SO : ScriptableObject
         [Tooltip("How long the temporary skill sprite stays active.")]
         public float skillSpriteDuration;
 
+        [System.NonSerialized] internal CharacterAttackPose characterAttackPose;
+
         public Vector3 SafeClashScale => IsZeroScale(clashScale) ? Vector3.one : clashScale;
         public Vector3 SafeHitScale => IsZeroScale(hitScale) ? Vector3.one : hitScale;
         public Vector3 SafeSkillSpriteScale => IsZeroScale(skillSpriteScale) ? Vector3.one : skillSpriteScale;

@@ -1,0 +1,104 @@
+{
+  "date": "2026-11-05",
+  "generator": "OpenAI built-in image_gen",
+  "assetUse": "Character-specific fallback combat sprite for attack dice without an authored skill sprite. Equipped weapons use their original art and HoldPoint.",
+  "gripConvention": "Normalized sprite coordinates with origin at the bottom left. Rotation is in degrees about the sprite's local Z axis.",
+  "assets": [
+    {
+      "character": "Chara",
+      "characterData": "Assets/Data/Characters/Chara/Chara.asset",
+      "reference": "Assets/Assets/Textures/Characters/Chara/Chara_InBattle.png",
+      "attackSprite": "Assets/Data/Characters/Chara/Chara_Attack.png",
+      "originalImagegenFilename": "exec-beacd5b1-9364-47ec-8cac-ff57d6b5ce1b.png",
+      "sha256": "2b41d4f48cddd61abec74559446df2707a5aabfc1d966a610644fc51e2a6a113",
+      "spriteSize": [
+        1063,
+        1479
+      ],
+      "pixelsPerUnit": 483,
+      "spritePivotPixels": [
+        630,
+        785.9344
+      ],
+      "gripPixelsFromTopLeft": [
+        962,
+        635
+      ],
+      "gripAngle": -76,
+      "checkedWeapon": "Assets/Data/Weapons/000 WoodenSword/WoodenSword_Data.asset",
+      "prompt": "Use case: identity-preserve. Create one production-ready transparent full-body 2D RPG combat attack sprite of Chara, using the attached in-game idle sprite as the exact character and rendering reference. This is a new alternate frame of the same character. Draw A committed forward sword slash at the moment of extension. Torso leans a little forward, right-side front knee bends into a firm planted step, back leg stretches behind. His near arm swings diagonally across the front and ends with one clearly visible, naturally clenched bare sword-grip fist away from his body, at mid-torso height on screen right. The other hand is pulled back and does not cover that fist. The invisible sword would point mostly right and slightly up from the center of the fist. Preserve the boy's exact spiky chestnut hair silhouette, blue eyes, cream rolled sleeves, dark brown tunic with ochre trim, belt, trousers and brown boots. Same right-facing side / slight three-quarter camera angle, eye-level and orthographic game sprite perspective, similar camera scale, the same clean painted anime contours, line weights, shadow shapes, and palette as the reference. Strong action silhouette while staying the exact same design. Show the entire figure from hair to both soles without clipping, with small clear transparent margins around everything. The runtime draws the equipped weapon behind the hand. Draw a natural gripping fist only with no weapon pixels, no sword, axe, dagger, stick, staff, grip prop or weapon fragments at all. Both hands anatomically correct. True transparent alpha background, clean silhouette, no ground, floor, shadow cast on the background, motion arcs, light effects, text, border, logo, watermark, extra objects, or second figure."
+    },
+    {
+      "character": "Man",
+      "characterData": "Assets/Data/Characters/Man/Man_Data.asset",
+      "reference": "Assets/Data/Characters/Man/Man_InBattle.png",
+      "attackSprite": "Assets/Data/Characters/Man/Man_Attack.png",
+      "originalImagegenFilename": "exec-a19cbf1c-2c9d-426c-a9da-f7bbc2cb72b6.png",
+      "sha256": "f8cb917dd20112b8f317d6f42f1a36ac474de286f7123f2c825b81386a9578ae",
+      "spriteSize": [
+        1404,
+        1120
+      ],
+      "pixelsPerUnit": 357,
+      "spritePivotPixels": [
+        640,
+        677.5575
+      ],
+      "gripPixelsFromTopLeft": [
+        1288,
+        787
+      ],
+      "gripAngle": -99,
+      "checkedWeapon": "Assets/Data/Weapons/200 Enemyless/Enemyless.asset",
+      "prompt": "Use case: identity-preserve. Create one production-ready transparent full-body 2D RPG combat attack sprite of Man, using the attached in-game idle sprite as the exact character and rendering reference. This is a new alternate frame of the same character. Draw A heavy one-handed axe chop at the impact pose. The broad muscular body turns and leans hard to the right over a low, planted forward knee; back foot remains in frame. The armored near arm delivers the blow down and to the right, ending in one clearly exposed closed gripping fist, separated from the torso. The imaginary axe haft runs diagonally down-right through this fist. The free bare muscular arm braces behind him. Preserve the adult man's distinctive swept spiky brown hair, brow and blue eyes, bare muscular chest with crossed leather straps, single horned dark pauldron, fur trimming, brass fittings, wide boots and body proportions. Remove any pre-existing remnants of weapon, shaft, dark background blocks or cut edges from the reference. Same right-facing side / slight three-quarter camera angle, eye-level and orthographic game sprite perspective, similar camera scale, the same clean painted anime contours, line weights, shadow shapes, and palette as the reference. Strong action silhouette while staying the exact same design. Show the entire figure from hair to both soles without clipping, with small clear transparent margins around everything. The runtime draws the equipped weapon behind the hand. Draw a natural gripping fist only with no weapon pixels, no sword, axe, dagger, stick, staff, grip prop or weapon fragments at all. Both hands anatomically correct. True transparent alpha background, clean silhouette, no ground, floor, shadow cast on the background, motion arcs, light effects, text, border, logo, watermark, extra objects, or second figure."
+    },
+    {
+      "character": "Molly",
+      "characterData": "Assets/Data/Characters/Molly/Molly_Data.asset",
+      "reference": "Assets/Assets/Textures/Characters/Molly/Molly_InBattle.png",
+      "attackSprite": "Assets/Data/Characters/Molly/Molly_Attack.png",
+      "originalImagegenFilename": "exec-7ce39876-7a8d-47cb-8066-aadb015c8f39.png",
+      "sha256": "18272294686be4662787705865e31f2a0872ff36c5b6cf95470b0e1d8b840e21",
+      "spriteSize": [
+        1774,
+        887
+      ],
+      "pixelsPerUnit": 410,
+      "spritePivotPixels": [
+        815,
+        619.643738
+      ],
+      "gripPixelsFromTopLeft": [
+        1626,
+        354
+      ],
+      "gripAngle": -92,
+      "checkedWeapon": "Assets/Data/Weapons/100 Dagger/Dagger_Data.asset",
+      "prompt": "Use case: identity-preserve. Create one production-ready transparent full-body 2D RPG combat attack sprite of Molly, using the attached in-game idle sprite as the exact character and rendering reference. This is a new alternate frame of the same character. Draw A low, fast assassin's forward thrust in a deep narrow lunge. Her torso drops and leans forward. The near gloved arm extends decisively straight to screen right, with a single very clear compact naturally clenched dagger-grip fist at the end, separate from the body, with the invisible dagger pointing horizontally right. The other arm pulls back for balance, and the dark high ponytail and waist panels stream to the left. Keep the exact high ponytail and blue band, amber eye, dark navy-charcoal leather and cloth, gold edge stitching, rust-brown sash and buckled waist, distinctive shoulder guard, split panels, kneepads and boots. Preserve her lean proportions. Same right-facing side / slight three-quarter camera angle, eye-level and orthographic game sprite perspective, similar camera scale, the same clean painted anime contours, line weights, shadow shapes, and palette as the reference. Strong action silhouette while staying the exact same design. Show the entire figure from hair to both soles without clipping, with small clear transparent margins around everything. The runtime draws the equipped weapon behind the hand. Draw a natural gripping fist only with no weapon pixels, no sword, axe, dagger, stick, staff, grip prop or weapon fragments at all. Both hands anatomically correct. True transparent alpha background, clean silhouette, no ground, floor, shadow cast on the background, motion arcs, light effects, text, border, logo, watermark, extra objects, or second figure."
+    },
+    {
+      "character": "Jenny",
+      "characterData": "Assets/Data/Characters/Jenny/Jenny.asset",
+      "reference": "Assets/Assets/Textures/Characters/Jenny/Jenny_InBattle.png",
+      "attackSprite": "Assets/Data/Characters/Jenny/Jenny_Attack.png",
+      "originalImagegenFilename": "exec-5d421f10-0dab-4814-b150-a629be44f578.png",
+      "sha256": "e6a11e0ac6f0c625334329e87d9eb613c9e2a0fa314760b49c7327957e1400a7",
+      "spriteSize": [
+        1114,
+        1411
+      ],
+      "pixelsPerUnit": 425,
+      "spritePivotPixels": [
+        596.999939,
+        714.000061
+      ],
+      "gripPixelsFromTopLeft": [
+        1007,
+        244
+      ],
+      "gripAngle": -28,
+      "checkedWeapon": "Assets/Data/Weapons/300 OldWand/OldWand.asset",
+      "prompt": "Use case: identity-preserve. Create one production-ready transparent full-body 2D RPG combat attack sprite of Jenny, using the attached in-game idle sprite as the exact character and rendering reference. This is a new alternate frame of the same character. Draw An upright forward spellcasting strike. She steps forward and rotates her shoulders while her near arm raises and reaches to the right, visibly gripping an imaginary staff with one clean closed gloved fist near shoulder level away from the body. The imaginary staff would tilt diagonally up-right. The free hand opens naturally with a restrained casting gesture near her chest, separate from the gripping fist. The long cape moves left with the step and keeps its characteristic shape and color blocks. Keep the exact swept short chestnut hair, cyan eye, high dark collar, navy and deep teal layered outfit, gold edging, diamond ornaments, shoulder guard and matching boots. Maintain her original slim build. Same right-facing side / slight three-quarter camera angle, eye-level and orthographic game sprite perspective, similar camera scale, the same clean painted anime contours, line weights, shadow shapes, and palette as the reference. Strong action silhouette while staying the exact same design. Show the entire figure from hair to both soles without clipping, with small clear transparent margins around everything. The runtime draws the equipped weapon behind the hand. Draw a natural gripping fist only with no weapon pixels, no sword, axe, dagger, stick, staff, grip prop or weapon fragments at all. Both hands anatomically correct. True transparent alpha background, clean silhouette, no ground, floor, shadow cast on the background, motion arcs, light effects, text, border, logo, watermark, extra objects, or second figure."
+    }
+  ]
+}

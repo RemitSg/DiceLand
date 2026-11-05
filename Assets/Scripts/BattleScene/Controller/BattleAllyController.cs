@@ -527,10 +527,16 @@ public class BattleAllyController : MonoBehaviour
 
     public EnemySkill_SO.DicePresentationSettings GetDicePresentationSettings(int diceIndex)
     {
-        if (SelectedSkill == null)
-            return default;
+        EnemySkill_SO skill = SelectedSkill;
+        EnemySkill_SO.DicePresentationSettings settings = skill != null ? skill.GetDicePresentationSettings(diceIndex) : default;
+        CharacterData_SO character = CharacterData;
+        if (settings.skillSpriteOverride == null && character != null && EnemyDataVisualSource == null
+            && (skill == null || skill.GetDiceSkillCategory(diceIndex) == EnemySkill_SO.SkillCategory.Attack))
+        {
+            settings.characterAttackPose = character.attackPose;
+        }
 
-        return SelectedSkill.GetDicePresentationSettings(diceIndex);
+        return settings;
     }
 
     public EnemySkill_SO.DicePowerRange GetDicePowerRange(int diceIndex)

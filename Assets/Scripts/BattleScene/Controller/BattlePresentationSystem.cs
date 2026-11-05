@@ -61,6 +61,10 @@ public class BattlePresentationSystem : MonoBehaviour
         public Vector3 localScale;
         public int sortingOrder;
         public bool flipX;
+        public bool restoreSpriteTransform;
+        public Transform weaponRoot;
+        public Vector3 weaponLocalPosition;
+        public Quaternion weaponLocalRotation;
     }
 
     private sealed class ActiveSpriteSwap
@@ -997,10 +1001,13 @@ public class BattlePresentationSystem : MonoBehaviour
 
     private void TriggerSkillSpriteSwap(Transform source, EnemySkill_SO.DicePresentationSettings fx, float fallbackDuration)
     {
-        if (source == null || fx.skillSpriteOverride == null)
+        bool useCharacterPose = fx.skillSpriteOverride == null && fx.characterAttackPose.sprite != null;
+        if (source == null || (fx.skillSpriteOverride == null && !useCharacterPose))
             return;
 
-        SpriteRenderer primaryRenderer = FindPrimaryCombatSpriteRenderer(source);
+        Weapon weapon = useCharacterPose ? source.GetComponent<AllyController>()?.weapon : null;
+        Transform weaponRoot = weapon != null ? weapon.BattleVisualRoot : null;
+        SpriteRenderer primaryRenderer = FindPrimaryCombatSpriteRenderer(source, weaponRoot);
         if (primaryRenderer == null)
             return;
 
@@ -1026,58 +1033,101 @@ public class BattlePresentationSystem : MonoBehaviour
             localRotation = spriteTransform.localRotation,
             localScale = spriteTransform.localScale,
             sortingOrder = primaryRenderer.sortingOrder,
-            flipX = primaryRenderer.flipX
+            flipX = primaryRenderer.flipX,
+            restoreSpriteTransform = !useCharacterPose,
+            weaponRoot = weaponRoot,
+            weaponLocalPosition = weaponRoot != null ? weaponRoot.localPosition : Vector3.zero,
+            weaponLocalRotation = weaponRoot != null ? weaponRoot.localRotation : Quaternion.identity
         };
 
         ActiveSpriteSwap swap = new ActiveSpriteSwap
         {
             originalState = state
         };
-        swap.coroutine = StartCoroutine(PlaySkillSpriteSwap(primaryRenderer, fx, duration, swap));
+        swap.coroutine = StartCoroutine(PlaySkillSpriteSwap(primaryRenderer, fx, duration, swap, weapon));
         activeSpriteSwaps[primaryRenderer] = swap;
     }
 
-    private IEnumerator PlaySkillSpriteSwap(SpriteRenderer primaryRenderer, EnemySkill_SO.DicePresentationSettings fx, float duration, ActiveSpriteSwap swap)
+    private IEnumerator PlaySkillSpriteSwap(SpriteRenderer primaryRenderer, EnemySkill_SO.DicePresentationSettings fx, float duration, ActiveSpriteSwap swap, Weapon weapon)
     {
         if (primaryRenderer == null)
             yield break;
 
-        Transform spriteTransform = primaryRenderer.transform;
-        SpriteSwapState state = swap != null ? swap.originalState : default;
-
-        primaryRenderer.sprite = fx.skillSpriteOverride;
-        primaryRenderer.flipX = state.flipX;
-        spriteTransform.localPosition = state.localPosition + fx.skillSpritePositionOffset;
-        spriteTransform.localRotation = state.localRotation * Quaternion.Euler(fx.skillSpriteRotationOffset);
-        spriteTransform.localScale = Vector3.Scale(state.localScale, fx.SafeSkillSpriteScale);
-        primaryRenderer.sortingOrder = state.sortingOrder + fx.skillSpriteSortingOrderOffset;
+        SpriteSwapState state = swap.originalState;
+        if (fx.skillSpriteOverride != null)
+        {
+            Transform spriteTransform = primaryRenderer.transform;
+            primaryRenderer.sprite = fx.skillSpriteOverride;
+            primaryRenderer.flipX = state.flipX;
+            spriteTransform.localPosition = state.localPosition + fx.skillSpritePositionOffset;
+            spriteTransform.localRotation = state.localRotation * Quaternion.Euler(fx.skillSpriteRotationOffset);
+            spriteTransform.localScale = Vector3.Scale(state.localScale, fx.SafeSkillSpriteScale);
+            primaryRenderer.sortingOrder = state.sortingOrder + fx.skillSpriteSortingOrderOffset;
+        }
+        else
+        {
+            ApplyCharacterAttackPose(primaryRenderer, fx.characterAttackPose, weapon);
+        }
 
         yield return new WaitForSeconds(Mathf.Max(0.01f, duration));
 
-        if (state.renderer == null)
-            yield break;
-
         RestoreSpriteSwapState(state);
 
-        if (swap != null && activeSpriteSwaps.TryGetValue(primaryRenderer, out ActiveSpriteSwap currentSwap) && ReferenceEquals(currentSwap, swap))
+        if (activeSpriteSwaps.TryGetValue(primaryRenderer, out ActiveSpriteSwap currentSwap) && ReferenceEquals(currentSwap, swap))
             activeSpriteSwaps.Remove(primaryRenderer);
+    }
+
+    private static void ApplyCharacterAttackPose(SpriteRenderer renderer, CharacterAttackPose pose, Weapon weapon)
+    {
+        renderer.sprite = pose.sprite;
+        if (weapon == null || weapon.BattleVisualRoot == null || weapon.HoldPoint == null || weapon.CharacterHoldPoint == null)
+            return;
+
+        // Convert the hand on the imported sprite into the same world-space grip used to equip weapons.
+        Vector2 hand = (Vector2.Scale(pose.sprite.rect.size, pose.gripPosition) - pose.sprite.pivot) / pose.sprite.pixelsPerUnit;
+        Vector3 gripUp = Quaternion.Euler(0f, 0f, pose.gripAngle) * Vector3.up;
+        if (renderer.flipX)
+        {
+            hand.x = -hand.x;
+            gripUp.x = -gripUp.x;
+        }
+        if (renderer.flipY)
+        {
+            hand.y = -hand.y;
+            gripUp.y = -gripUp.y;
+        }
+
+        Transform body = renderer.transform;
+        Vector3 handWorld = body.TransformPoint(hand);
+        handWorld.z += weapon.HoldPoint.position.z - weapon.CharacterHoldPoint.position.z;
+        Quaternion gripRotation = Quaternion.LookRotation(body.forward, body.TransformVector(gripUp));
+        weapon.AlignBattleGrip(handWorld, gripRotation);
     }
 
     private static void RestoreSpriteSwapState(SpriteSwapState state)
     {
-        if (state.renderer == null)
-            return;
+        if (state.renderer != null)
+        {
+            state.renderer.sprite = state.sprite;
+            if (state.restoreSpriteTransform)
+            {
+                Transform restoreTransform = state.renderer.transform;
+                state.renderer.flipX = state.flipX;
+                restoreTransform.localPosition = state.localPosition;
+                restoreTransform.localRotation = state.localRotation;
+                restoreTransform.localScale = state.localScale;
+                state.renderer.sortingOrder = state.sortingOrder;
+            }
+        }
 
-        Transform restoreTransform = state.renderer.transform;
-        state.renderer.sprite = state.sprite;
-        state.renderer.flipX = state.flipX;
-        restoreTransform.localPosition = state.localPosition;
-        restoreTransform.localRotation = state.localRotation;
-        restoreTransform.localScale = state.localScale;
-        state.renderer.sortingOrder = state.sortingOrder;
+        if (state.weaponRoot != null)
+        {
+            state.weaponRoot.localPosition = state.weaponLocalPosition;
+            state.weaponRoot.localRotation = state.weaponLocalRotation;
+        }
     }
 
-    private static SpriteRenderer FindPrimaryCombatSpriteRenderer(Transform root)
+    private static SpriteRenderer FindPrimaryCombatSpriteRenderer(Transform root, Transform weaponRoot)
     {
         if (root == null)
             return null;
@@ -1093,7 +1143,7 @@ public class BattlePresentationSystem : MonoBehaviour
             if (renderer == null)
                 continue;
 
-            if (renderer.GetComponentInParent<SpeedButton>() != null)
+            if (renderer.GetComponentInParent<SpeedButton>() != null || (weaponRoot != null && renderer.transform.IsChildOf(weaponRoot)))
                 continue;
 
             int depth = GetTransformDepth(root, renderer.transform);
@@ -2366,6 +2416,14 @@ public class BattlePresentationSystem : MonoBehaviour
 
     private void OnDisable()
     {
+        foreach (ActiveSpriteSwap swap in activeSpriteSwaps.Values)
+        {
+            if (swap.coroutine != null)
+                StopCoroutine(swap.coroutine);
+            RestoreSpriteSwapState(swap.originalState);
+        }
+        activeSpriteSwaps.Clear();
+
         if (deathCameraMotion != null) deathCameraMotion.Cancel();
         impactLightRemaining = 0f;
         if (impactLight != null)

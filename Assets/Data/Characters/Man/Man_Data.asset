@@ -22,3 +22,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 00ee41d89ef702446b9233c07ce30e29, type: 3}
   battleSprite: {fileID: 21300000, guid: a601225b1e7d802479f0f1cb53897183, type: 3}
   characterPrefab: {fileID: 337647126021373419, guid: 9e8c534556d34d84285bfb629d103936, type: 3}
+  attackPose:
+    sprite: {fileID: 21300000, guid: 7d7c68300a5c76749bd2a5ebde47bde2, type: 3}
+    gripPosition: {x: 0.91737892, y: 0.29732143}
+    gripAngle: -99
