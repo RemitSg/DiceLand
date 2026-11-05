@@ -264,7 +264,7 @@ public class BattleSkillInfoOverlayDescriptionTests
     }
 
     [Test]
-    public void CompactSkillDetail_MergesMarkedDelayedStatusBranches()
+    public void CompactSkillDetail_KeepsSanitizedOverlappingDelayedBranchesSeparate()
     {
         BattleStatus_SO mark = CreateStatus("target", "\u6807\u8bb0");
         BattleStatus_SO darkness = CreateStatus("darkness", "\u9ed1\u6697");
@@ -320,14 +320,15 @@ public class BattleSkillInfoOverlayDescriptionTests
 
         Assert.That(detail, Does.Contain("\u547d\u4e2d\u65f6"));
         Assert.That(detail, Does.Contain("\u4e0b 1 \u4e2a\u56de\u5408\u5f00\u59cb\u65f6"));
-        Assert.That(detail, Does.Contain("\u65bd\u52a0"));
+        // The runtime getter clamps this configured zero threshold to one. Both conditions
+        // can hold at one stack, so the display must not claim one replaces the other.
+        Assert.AreEqual(1, skill.GetDiceEffectSettings(0).statusEffects[0].requiredConditionStatusStacks);
         Assert.That(detail, Does.Contain("\u6807\u8bb0"));
         Assert.That(detail, Does.Contain("\u82e5"));
-        Assert.That(detail, Does.Contain("\u5df2\u6709"));
-        Assert.That(detail, Does.Contain("\u6539\u4e3a"));
+        Assert.That(detail, Does.Not.Contain("\u6539\u4e3a"));
         Assert.That(detail, Does.Contain("\u9ed1\u6697"));
-        Assert.That(detail, Does.Not.Contain("\u81f3\u591a\u4e3a"));
-        Assert.That(detail, Does.Not.Contain("\u62e5\u6709\u81f3\u5c11"));
+        Assert.That(detail, Does.Contain("\u81f3\u591a\u4e3a 1"));
+        Assert.That(detail, Does.Contain("\u62e5\u6709\u81f3\u5c11 1"));
     }
 
     [Test]

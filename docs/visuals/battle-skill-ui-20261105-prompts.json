@@ -5,7 +5,8 @@
   "purpose": "战斗技能页面视觉设计；含我方单骰、多骰、敌方当前技能与悬浮摘要",
   "generationMethod": "built-in image_gen",
   "transparentBackground": false,
-  "implementationStatus": "concept references only; not integrated into Unity",
+  "implementationStatus": "Design PNGs retained as references; production UI implemented with native UGUI.",
+  "runtimeImplementationDocument": "docs/visuals/battle-skill-ui-remaster-20261105.txt",
   "pixelProcessing": "Generated PNGs copied byte-for-byte; no pixel edits.",
   "assets": [
     {

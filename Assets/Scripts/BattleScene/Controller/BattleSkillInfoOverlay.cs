@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
-public class BattleSkillInfoOverlay : MonoBehaviour
+public partial class BattleSkillInfoOverlay : MonoBehaviour
 {
     [Header("Fonts")]
     [SerializeField] private TMP_FontAsset keywordFont;
@@ -96,578 +96,115 @@ public class BattleSkillInfoOverlay : MonoBehaviour
     private SpeedButton currentHoverSourceButton;
     private BattleButton cachedBattleButton;
 
-    private void Awake()
-    {
-        EnsureUi();
-        Hide(false);
-    }
+    private void Awake() { Hide(false); }
 
-    private void OnDestroy()
-    {
-        SpeedButton.InputSuppressed = false;
-    }
+    private void OnDisable() { HideImmediately(false); }
+    private void OnDestroy() { HideImmediately(false); }
 
     private bool CanInspectEnemyInfo()
     {
-        if (SpeedButton.CombatLocked || BattlePresentationContinueInputService.IsEnemyDetailInteractionBlocked)
-            return false;
+        if (SpeedButton.CombatLocked || BattlePresentationContinueInputService.IsEnemyDetailInteractionBlocked) return false;
         ResolveBattleButton();
         return cachedBattleButton == null || cachedBattleButton.CanInspectCombatants;
     }
 
     private void LateUpdate()
     {
-        bool showingEnemy = currentEnemy != null && IsVisible;
-        bool showingHover = hoverPanelRoot != null && hoverPanelRoot.gameObject.activeSelf;
-        if ((showingEnemy || showingHover) && !CanInspectEnemyInfo())
-            Hide(false);
+        if ((currentEnemy != null && IsVisible || currentHoverEnemy != null) && !CanInspectEnemyInfo()) Hide(false);
+        if (canvasRoot == null) return;
+        if (currentHoverEnemy == null && hoverPanelRoot != null && hoverPanelRoot.gameObject.activeSelf) HideEnemyHoverSkillInfo();
+        if (IsVisible || currentHoverEnemy != null)
+        {
+            if (viewportPixels != new Vector2(Screen.width, Screen.height) || safePixels != Screen.safeArea)
+                ApplyViewport(new Vector2(Screen.width, Screen.height), Screen.safeArea);
+            AdvancePresentation(Time.unscaledDeltaTime);
+        }
     }
 
     public void ConfigureFonts(TMP_FontAsset keywordFontAsset, TMP_FontAsset bodyFontAsset)
     {
-        if (keywordFontAsset != null)
-            keywordFont = keywordFontAsset;
-        if (bodyFontAsset != null)
-            bodyFont = bodyFontAsset;
-
+        if (keywordFontAsset != null) keywordFont = keywordFontAsset;
+        if (bodyFontAsset != null) bodyFont = bodyFontAsset;
         ApplyFonts();
+        if (IsVisible) RefreshCurrentView();
+        if (currentHoverEnemy != null) RefreshHover(true);
     }
 
-    public void ShowAllySkillSelection(BattleAllyController ally)
-    {
-        ShowAllySkillSelection(ally, null);
-    }
-
+    public void ShowAllySkillSelection(BattleAllyController ally) { ShowAllySkillSelection(ally, null); }
     public void ShowAllySkillSelection(BattleAllyController ally, SpeedButton sourceButton)
     {
-        if (ally == null)
-            return;
-
-        EnsureUi();
-        currentAlly = ally;
-        currentEnemy = null;
-        currentAllySourceButton = sourceButton;
-        ShowForActor(
-            $"\u6b66\u5668\u6280\u80fd\uff1a{ally.GetDebugDisplayName()}",
-            BuildWeaponSubtitle(ally, sourceButton),
-            BuildAllyDetail(ally, sourceButton),
-            null);
-
-        RebuildSkillButtons(ally, sourceButton);
+        if (ally == null) return;
+        EnsureUi(); currentAlly = ally; currentEnemy = null; currentAllySourceButton = sourceButton;
+        currentEnemySourceButton = null; viewMode = SkillViewMode.Ally;
+        OpenForestPanel(); RenderCurrentSkill(true); RebuildSkillButtons(ally, sourceButton);
         AllySkillSelectionShown?.Invoke(ally);
     }
 
-    public void ShowEnemySkillInfo(BattleEnemyController enemy)
-    {
-        ShowEnemySkillInfo(enemy, null);
-    }
-
+    public void ShowEnemySkillInfo(BattleEnemyController enemy) { ShowEnemySkillInfo(enemy, null); }
     public void ShowEnemySkillInfo(BattleEnemyController enemy, SpeedButton sourceButton)
     {
-        if (enemy == null || !CanInspectEnemyInfo())
-            return;
-
-        EnsureUi();
-        currentAlly = null;
-        currentEnemy = enemy;
-        currentAllySourceButton = null;
-        EnemySkill_SO skill = sourceButton != null ? enemy.GetSelectedSkillForButton(sourceButton) : enemy.SelectedSkill;
-        ShowForActor(
-            $"\u654c\u65b9\u6280\u80fd\uff1a{enemy.GetDebugDisplayName()}",
-            skill != null ? skill.skillName : "\u5c1a\u672a\u51b3\u5b9a\u6280\u80fd",
-            BuildEnemySkillDetail(enemy, skill, "\u5f53\u524d\u6280\u80fd"),
-            null);
-
-        ClearSkillButtons();
+        if (enemy == null || !CanInspectEnemyInfo()) return;
+        EnsureUi(); currentAlly = null; currentEnemy = enemy; currentAllySourceButton = null;
+        currentEnemySourceButton = sourceButton; viewMode = SkillViewMode.EnemySkill;
+        OpenForestPanel(); ClearSkillButtons(); RenderCurrentSkill(true);
         EnemySkillInfoShown?.Invoke(enemy, sourceButton);
     }
 
     public void ShowEnemyHoverSkillInfo(BattleEnemyController enemy, SpeedButton sourceButton)
     {
-        if (enemy == null || !CanInspectEnemyInfo())
-            return;
-
+        if (enemy == null || !CanInspectEnemyInfo() || IsVisible) return;
         EnsureUi();
-        if (IsVisible)
-            return;
-
-        EnemySkill_SO skill = sourceButton != null ? enemy.GetSelectedSkillForButton(sourceButton) : enemy.SelectedSkill;
-        if (skill == null || hoverPanelRoot == null || hoverTitleText == null || hoverDetailText == null)
-            return;
-
-        currentHoverSourceButton = sourceButton;
-        string[] sections = BuildCompactEnemyHoverSections(enemy, skill);
-        hoverTitleText.text = skill.skillName;
-        hoverDetailText.text = sections[0];
-        if (hoverClauseText != null)
-            hoverClauseText.text = sections[1];
-        hoverClauseAutoScroller?.Configure(
-            hoverClauseViewport,
-            hoverClauseContent,
-            hoverClauseText,
-            enemyHoverClauseScrollSpeed,
-            enemyHoverClauseStartDelay,
-            enemyHoverClauseBottomPause);
-        hoverClauseAutoScroller?.StartLoopFromTop();
-        hoverPanelRoot.gameObject.SetActive(true);
+        bool changed = currentHoverEnemy != enemy || currentHoverSourceButton != sourceButton;
+        currentHoverEnemy = enemy; currentHoverSourceButton = sourceButton;
+        RefreshHover(changed);
     }
 
     public void HideEnemyHoverSkillInfo(SpeedButton sourceButton = null)
     {
-        if (hoverPanelRoot == null)
-            return;
-
-        if (sourceButton != null && currentHoverSourceButton != null && sourceButton != currentHoverSourceButton)
-            return;
-
-        hoverPanelRoot.gameObject.SetActive(false);
-        hoverClauseAutoScroller?.ResetToTop();
-        if (sourceButton == null || sourceButton == currentHoverSourceButton)
-            currentHoverSourceButton = null;
+        if (sourceButton != null && currentHoverSourceButton != null && sourceButton != currentHoverSourceButton) return;
+        currentHoverEnemy = null; currentHoverSourceButton = null; hoverSkill = null;
+        if (hoverPanelRoot != null) hoverPanelRoot.gameObject.SetActive(false);
+        hoverClauseAutoScroller?.ResetToTop(); hoverProgress = 0;
     }
 
     public void ShowEnemyDetail(BattleEnemyController enemy)
     {
-        if (enemy == null || !CanInspectEnemyInfo())
-            return;
-
-        EnsureUi();
-        currentAlly = null;
-        currentEnemy = enemy;
-        currentAllySourceButton = null;
-        ShowForActor(
-            $"敌人详情：{enemy.GetDebugDisplayName()}",
-            $"最大生命：{enemy.MaxHP}",
-            BuildEnemyDataDetail(enemy),
-            null);
-
-        ClearSkillButtons();
+        if (enemy == null || !CanInspectEnemyInfo()) return;
+        EnsureUi(); currentAlly = null; currentEnemy = enemy; currentAllySourceButton = null;
+        currentEnemySourceButton = null; viewMode = SkillViewMode.EnemyData;
+        OpenForestPanel(); ClearSkillButtons(); RenderCurrentSkill(true);
         EnemyDetailShown?.Invoke(enemy);
     }
 
     public void RefreshCurrentView()
     {
-        if (!IsVisible)
-            return;
-
-        if (currentAlly != null)
+        if (IsVisible && !closing)
         {
-            subtitleText.text = BuildWeaponSubtitle(currentAlly, currentAllySourceButton);
-            detailText.text = BuildAllyDetail(currentAlly, currentAllySourceButton);
-            RebuildSkillButtons(currentAlly, currentAllySourceButton);
-            ResetDetailScrollToTop();
-            return;
+            RenderCurrentSkill(false);
+            if (viewMode == SkillViewMode.Ally) RebuildSkillButtons(currentAlly, currentAllySourceButton);
         }
-
-        if (currentEnemy != null)
-        {
-            detailText.text = BuildEnemyDetail(currentEnemy);
-            ResetDetailScrollToTop();
-        }
+        if (currentHoverEnemy != null) RefreshHover(false);
     }
 
-    public void Hide()
-    {
-        Hide(true);
-    }
-
+    public void Hide() { Hide(true); }
     public void Hide(bool invokeCallback)
     {
-        bool wasVisible = IsVisible;
-        if (backdropButton != null)
-            backdropButton.gameObject.SetActive(false);
-        if (panelRoot != null)
-            panelRoot.gameObject.SetActive(false);
-
-        HideEnemyHoverSkillInfo();
-
-        SpeedButton.InputSuppressed = false;
-
-        if (invokeCallback && hideCallback != null)
+        if (invokeCallback && Application.isPlaying && IsVisible && isActiveAndEnabled)
         {
-            Action callback = hideCallback;
-            hideCallback = null;
-            callback.Invoke();
-        }
-        else
-        {
-            hideCallback = null;
-        }
-
-        if (wasVisible)
-            Hidden?.Invoke();
-    }
-
-    private void ShowForActor(string title, string subtitle, string detail, Action onHide)
-    {
-        HideEnemyHoverSkillInfo();
-        if (canvasRoot != null)
-            canvasRoot.gameObject.SetActive(true);
-        if (backdropButton != null)
-            backdropButton.gameObject.SetActive(true);
-        if (panelRoot != null)
-            panelRoot.gameObject.SetActive(true);
-        titleText.text = title;
-        subtitleText.text = subtitle;
-        detailText.text = detail;
-        hideCallback = onHide;
-        ResetDetailScrollToTop();
-        SpeedButton.InputSuppressed = true;
-    }
-
-    private void EnsureUi()
-    {
-        if (canvasRoot != null)
+            if (!closing) { closing = true; panelGroup.interactable = false; }
             return;
-
-        GameObject canvasGo = new GameObject("BattleSkillInfoCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
-        canvasGo.transform.SetParent(transform, false);
-
-        canvas = canvasGo.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 9600;
-
-        CanvasScaler scaler = canvasGo.GetComponent<CanvasScaler>();
-        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1920f, 1080f);
-        scaler.matchWidthOrHeight = 0.5f;
-
-        canvasRoot = canvasGo.GetComponent<RectTransform>();
-        canvasRoot.anchorMin = Vector2.zero;
-        canvasRoot.anchorMax = Vector2.one;
-        canvasRoot.offsetMin = Vector2.zero;
-        canvasRoot.offsetMax = Vector2.zero;
-
-        GameObject backdropGo = new GameObject("Backdrop", typeof(RectTransform), typeof(Image), typeof(Button));
-        backdropGo.transform.SetParent(canvasRoot, false);
-        RectTransform backdropRect = backdropGo.GetComponent<RectTransform>();
-        backdropRect.anchorMin = Vector2.zero;
-        backdropRect.anchorMax = Vector2.one;
-        backdropRect.offsetMin = Vector2.zero;
-        backdropRect.offsetMax = Vector2.zero;
-
-        Image backdropImage = backdropGo.GetComponent<Image>();
-        backdropImage.color = backdropColor;
-        backdropButton = backdropGo.GetComponent<Button>();
-        backdropButton.onClick.AddListener(Hide);
-
-        GameObject panelGo = new GameObject("Panel", typeof(RectTransform), typeof(Image));
-        panelGo.transform.SetParent(canvasRoot, false);
-        panelRoot = panelGo.GetComponent<RectTransform>();
-        panelRoot.anchorMin = new Vector2(0.5f, 0.5f);
-        panelRoot.anchorMax = new Vector2(0.5f, 0.5f);
-        panelRoot.pivot = new Vector2(0.5f, 0.5f);
-        panelRoot.anchoredPosition = panelOffset;
-        panelRoot.sizeDelta = panelSize;
-
-        Image panelImage = panelGo.GetComponent<Image>();
-        if (panelBackgroundSprite != null)
-        {
-            panelImage.sprite = panelBackgroundSprite;
-            panelImage.type = Image.Type.Sliced;
-            panelImage.color = Color.white;
         }
-        else
-        {
-            panelImage.color = panelColor;
-        }
-
-        titleText = CreateText(panelRoot, "Title", new Vector2(32f, -26f), new Vector2(panelSize.x - 180f, 52f), titleFontSize, titleColor, true, TextAlignmentOptions.TopLeft);
-        subtitleText = CreateText(panelRoot, "Subtitle", new Vector2(36f, -82f), new Vector2(panelSize.x - 180f, 44f), bodyFontSize, accentColor, true, TextAlignmentOptions.TopLeft);
-
-        GameObject detailAreaGo = new GameObject("DetailArea", typeof(RectTransform));
-        detailAreaGo.transform.SetParent(panelRoot, false);
-        RectTransform detailAreaRect = detailAreaGo.GetComponent<RectTransform>();
-        detailAreaRect.anchorMin = new Vector2(0f, 0f);
-        detailAreaRect.anchorMax = new Vector2(1f, 1f);
-        detailAreaRect.pivot = new Vector2(0f, 1f);
-        detailAreaRect.anchoredPosition = new Vector2(detailLeftInset, -detailTopPadding);
-        detailAreaRect.sizeDelta = new Vector2(-(detailLeftInset + detailRightPadding), -(detailTopPadding + detailBottomPadding));
-
-        GameObject viewportGo = new GameObject("DetailViewport", typeof(RectTransform), typeof(Image), typeof(Mask));
-        viewportGo.transform.SetParent(detailAreaRect, false);
-        detailViewport = viewportGo.GetComponent<RectTransform>();
-        detailViewport.anchorMin = Vector2.zero;
-        detailViewport.anchorMax = Vector2.one;
-        detailViewport.offsetMin = Vector2.zero;
-        detailViewport.offsetMax = new Vector2(-detailScrollbarWidth - detailInnerPadding, 0f);
-
-        Image viewportImage = viewportGo.GetComponent<Image>();
-        viewportImage.color = new Color(1f, 1f, 1f, 0.01f);
-        viewportGo.GetComponent<Mask>().showMaskGraphic = false;
-
-        GameObject contentGo = new GameObject("DetailContent", typeof(RectTransform), typeof(TextMeshProUGUI), typeof(ContentSizeFitter));
-        contentGo.transform.SetParent(detailViewport, false);
-        detailContent = contentGo.GetComponent<RectTransform>();
-        detailContent.anchorMin = new Vector2(0f, 1f);
-        detailContent.anchorMax = new Vector2(1f, 1f);
-        detailContent.pivot = new Vector2(0.5f, 1f);
-        detailContent.anchoredPosition = new Vector2(0f, -detailInnerPadding);
-        detailContent.offsetMin = new Vector2(detailInnerPadding, 0f);
-        detailContent.offsetMax = new Vector2(-detailInnerPadding, 0f);
-
-        detailText = contentGo.GetComponent<TextMeshProUGUI>();
-        ConfigureText(detailText, bodyFontSize, bodyColor, false, TextAlignmentOptions.TopLeft);
-        detailText.enableWordWrapping = true;
-        detailText.overflowMode = TextOverflowModes.Overflow;
-
-        ContentSizeFitter contentFitter = contentGo.GetComponent<ContentSizeFitter>();
-        contentFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-        contentFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-        GameObject scrollbarGo = new GameObject("DetailScrollbar", typeof(RectTransform), typeof(Image), typeof(Scrollbar));
-        scrollbarGo.transform.SetParent(detailAreaRect, false);
-        RectTransform scrollbarRect = scrollbarGo.GetComponent<RectTransform>();
-        scrollbarRect.anchorMin = new Vector2(1f, 0f);
-        scrollbarRect.anchorMax = new Vector2(1f, 1f);
-        scrollbarRect.pivot = new Vector2(1f, 0.5f);
-        scrollbarRect.sizeDelta = new Vector2(detailScrollbarWidth, 0f);
-        scrollbarRect.anchoredPosition = Vector2.zero;
-
-        Image scrollbarBackground = scrollbarGo.GetComponent<Image>();
-        scrollbarBackground.color = new Color(0f, 0f, 0f, 0.18f);
-
-        GameObject handleSlideAreaGo = new GameObject("SlidingArea", typeof(RectTransform));
-        handleSlideAreaGo.transform.SetParent(scrollbarRect, false);
-        RectTransform handleSlideAreaRect = handleSlideAreaGo.GetComponent<RectTransform>();
-        handleSlideAreaRect.anchorMin = Vector2.zero;
-        handleSlideAreaRect.anchorMax = Vector2.one;
-        handleSlideAreaRect.offsetMin = new Vector2(2f, 2f);
-        handleSlideAreaRect.offsetMax = new Vector2(-2f, -2f);
-
-        GameObject handleGo = new GameObject("Handle", typeof(RectTransform), typeof(Image));
-        handleGo.transform.SetParent(handleSlideAreaRect, false);
-        RectTransform handleRect = handleGo.GetComponent<RectTransform>();
-        handleRect.anchorMin = Vector2.zero;
-        handleRect.anchorMax = Vector2.one;
-        handleRect.pivot = new Vector2(0.5f, 1f);
-        handleRect.offsetMin = Vector2.zero;
-        handleRect.offsetMax = Vector2.zero;
-
-        Image handleImage = handleGo.GetComponent<Image>();
-        handleImage.color = accentColor;
-
-        Scrollbar scrollbar = scrollbarGo.GetComponent<Scrollbar>();
-        scrollbar.direction = Scrollbar.Direction.BottomToTop;
-        scrollbar.handleRect = handleRect;
-        scrollbar.targetGraphic = handleImage;
-
-        detailScrollRect = detailAreaGo.AddComponent<ScrollRect>();
-        detailScrollRect.content = detailContent;
-        detailScrollRect.viewport = detailViewport;
-        detailScrollRect.horizontal = false;
-        detailScrollRect.vertical = true;
-        detailScrollRect.scrollSensitivity = 30f;
-        detailScrollRect.verticalScrollbar = scrollbar;
-        detailScrollRect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHideAndExpandViewport;
-        detailScrollRect.movementType = ScrollRect.MovementType.Clamped;
-
-        GameObject listGo = new GameObject("SkillList", typeof(RectTransform));
-        listGo.transform.SetParent(panelRoot, false);
-        skillListRoot = listGo.GetComponent<RectTransform>();
-        skillListRoot.anchorMin = new Vector2(0f, 1f);
-        skillListRoot.anchorMax = new Vector2(0f, 1f);
-        skillListRoot.pivot = new Vector2(0f, 1f);
-        skillListRoot.anchoredPosition = new Vector2(listLeftPadding, -listTopPadding);
-
-        GameObject closeGo = new GameObject("CloseButton", typeof(RectTransform), typeof(Image), typeof(Button));
-        closeGo.transform.SetParent(panelRoot, false);
-        RectTransform closeRect = closeGo.GetComponent<RectTransform>();
-        closeRect.anchorMin = new Vector2(1f, 1f);
-        closeRect.anchorMax = new Vector2(1f, 1f);
-        closeRect.pivot = new Vector2(1f, 1f);
-        closeRect.anchoredPosition = new Vector2(-26f, -20f);
-        closeRect.sizeDelta = new Vector2(64f, 64f);
-
-        Image closeImage = closeGo.GetComponent<Image>();
-        if (closeButtonSprite != null)
-        {
-            closeImage.sprite = closeButtonSprite;
-            closeImage.type = Image.Type.Sliced;
-            closeImage.color = Color.white;
-        }
-        else
-        {
-            closeImage.color = accentColor;
-        }
-
-        closeButton = closeGo.GetComponent<Button>();
-        closeButton.onClick.AddListener(Hide);
-
-        TextMeshProUGUI closeLabel = CreateText(closeRect, "Label", Vector2.zero, closeRect.sizeDelta, buttonFontSize, Color.black, true, TextAlignmentOptions.Center);
-        closeLabel.rectTransform.anchorMin = Vector2.zero;
-        closeLabel.rectTransform.anchorMax = Vector2.one;
-        closeLabel.rectTransform.offsetMin = Vector2.zero;
-        closeLabel.rectTransform.offsetMax = Vector2.zero;
-        closeLabel.text = "X";
-
-        GameObject hoverPanelGo = new GameObject("EnemyHoverPanel", typeof(RectTransform), typeof(Image));
-        hoverPanelGo.transform.SetParent(canvasRoot, false);
-        hoverPanelRoot = hoverPanelGo.GetComponent<RectTransform>();
-        hoverPanelRoot.anchorMin = new Vector2(1f, 1f);
-        hoverPanelRoot.anchorMax = new Vector2(1f, 1f);
-        hoverPanelRoot.pivot = new Vector2(1f, 1f);
-        hoverPanelRoot.anchoredPosition = enemyHoverPanelOffset;
-        hoverPanelRoot.sizeDelta = enemyHoverPanelSize;
-
-        Image hoverPanelImage = hoverPanelGo.GetComponent<Image>();
-        if (panelBackgroundSprite != null)
-        {
-            hoverPanelImage.sprite = panelBackgroundSprite;
-            hoverPanelImage.type = Image.Type.Sliced;
-            hoverPanelImage.color = Color.white;
-        }
-        else
-        {
-            hoverPanelImage.color = panelColor;
-        }
-
-        hoverTitleText = CreateText(hoverPanelRoot, "HoverTitle", new Vector2(24f, -20f), new Vector2(enemyHoverPanelSize.x - 48f, 42f), enemyHoverTitleFontSize, titleColor, true, TextAlignmentOptions.TopLeft);
-        hoverDetailText = CreateText(hoverPanelRoot, "HoverDiceSummary", new Vector2(24f, -68f), new Vector2(enemyHoverPanelSize.x - 48f, 82f), enemyHoverBodyFontSize, bodyColor, false, TextAlignmentOptions.TopLeft);
-        hoverDetailText.enableWordWrapping = true;
-        hoverDetailText.overflowMode = TextOverflowModes.Ellipsis;
-
-        GameObject clauseViewportGo = new GameObject("HoverClauseViewport", typeof(RectTransform), typeof(Image), typeof(RectMask2D), typeof(BattleSkillClauseAutoScroller));
-        clauseViewportGo.transform.SetParent(hoverPanelRoot, false);
-        hoverClauseViewport = clauseViewportGo.GetComponent<RectTransform>();
-        hoverClauseViewport.anchorMin = new Vector2(0f, 1f);
-        hoverClauseViewport.anchorMax = new Vector2(0f, 1f);
-        hoverClauseViewport.pivot = new Vector2(0f, 1f);
-        hoverClauseViewport.anchoredPosition = new Vector2(24f, -154f);
-        hoverClauseViewport.sizeDelta = ResolveEnemyHoverClauseViewportSize();
-
-        Image clauseViewportImage = clauseViewportGo.GetComponent<Image>();
-        clauseViewportImage.color = new Color(0f, 0f, 0f, 0.001f);
-        clauseViewportImage.raycastTarget = true;
-
-        GameObject clauseContentGo = new GameObject("HoverClauseContent", typeof(RectTransform), typeof(TextMeshProUGUI), typeof(ContentSizeFitter));
-        clauseContentGo.transform.SetParent(hoverClauseViewport, false);
-        hoverClauseContent = clauseContentGo.GetComponent<RectTransform>();
-        hoverClauseContent.anchorMin = new Vector2(0f, 1f);
-        hoverClauseContent.anchorMax = new Vector2(1f, 1f);
-        hoverClauseContent.pivot = new Vector2(0f, 1f);
-        hoverClauseContent.anchoredPosition = Vector2.zero;
-        hoverClauseContent.offsetMin = new Vector2(0f, hoverClauseContent.offsetMin.y);
-        hoverClauseContent.offsetMax = new Vector2(0f, hoverClauseContent.offsetMax.y);
-
-        ContentSizeFitter clauseContentFitter = clauseContentGo.GetComponent<ContentSizeFitter>();
-        clauseContentFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-        clauseContentFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-        hoverClauseText = clauseContentGo.GetComponent<TextMeshProUGUI>();
-        ConfigureText(hoverClauseText, enemyHoverBodyFontSize, bodyColor, false, TextAlignmentOptions.TopLeft);
-        hoverClauseText.enableWordWrapping = true;
-        hoverClauseText.overflowMode = TextOverflowModes.Overflow;
-        hoverClauseText.raycastTarget = false;
-
-        hoverClauseAutoScroller = clauseViewportGo.GetComponent<BattleSkillClauseAutoScroller>();
-        hoverClauseAutoScroller.Configure(
-            hoverClauseViewport,
-            hoverClauseContent,
-            hoverClauseText,
-            enemyHoverClauseScrollSpeed,
-            enemyHoverClauseStartDelay,
-            enemyHoverClauseBottomPause);
-        hoverPanelRoot.gameObject.SetActive(false);
-
-        ApplyFonts();
+        HideImmediately(invokeCallback);
     }
 
-    private void RebuildSkillButtons(BattleAllyController ally, SpeedButton sourceButton)
-    {
-        ClearSkillButtons();
-        if (ally == null)
-            return;
-
-        ResolveBattleButton();
-        EnemySkill_SO[] skills = ally.GetAvailableSkills();
-        if (skills == null || skills.Length == 0)
-            return;
-
-        for (int i = 0; i < skills.Length; i++)
-        {
-            EnemySkill_SO skill = skills[i];
-            if (skill == null)
-                continue;
-
-            int capturedIndex = i;
-            GameObject buttonGo = new GameObject($"Skill_{i}", typeof(RectTransform), typeof(Image), typeof(Button));
-            buttonGo.transform.SetParent(skillListRoot, false);
-
-            RectTransform rect = buttonGo.GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0f, 1f);
-            rect.anchorMax = new Vector2(0f, 1f);
-            rect.pivot = new Vector2(0f, 1f);
-            rect.anchoredPosition = new Vector2(0f, -capturedIndex * (skillButtonSize.y + skillButtonSpacing));
-            rect.sizeDelta = skillButtonSize;
-
-            Image image = buttonGo.GetComponent<Image>();
-            bool isSelected = capturedIndex == ally.GetSelectedSkillIndexForButton(sourceButton);
-            string unavailableReason = cachedBattleButton != null ? cachedBattleButton.GetAllySkillUnavailableReason(ally, sourceButton, skill) : string.Empty;
-            bool canSelect = string.IsNullOrEmpty(unavailableReason);
-            Color baseColor = isSelected ? selectedSkillButtonColor : skillButtonColor;
-            image.color = canSelect ? baseColor : new Color(baseColor.r * 0.45f, baseColor.g * 0.45f, baseColor.b * 0.45f, baseColor.a * 0.75f);
-            image.sprite = isSelected && selectedSkillButtonSprite != null ? selectedSkillButtonSprite : skillButtonSprite;
-            image.type = image.sprite != null ? Image.Type.Sliced : Image.Type.Simple;
-
-            Button button = buttonGo.GetComponent<Button>();
-            button.interactable = canSelect;
-            button.onClick.AddListener(() =>
-            {
-                if (cachedBattleButton != null && !cachedBattleButton.CanSelectSkillForAllyButton(ally, sourceButton, skill))
-                    return;
-
-                if (ally.SetSelectedSkillIndexForButton(sourceButton, capturedIndex))
-                {
-                    subtitleText.text = BuildWeaponSubtitle(ally, sourceButton);
-                    detailText.text = BuildAllyDetail(ally, sourceButton);
-                    RebuildSkillButtons(ally, sourceButton);
-                }
-            });
-
-            TextMeshProUGUI label = CreateText(rect, "Label", new Vector2(16f, -14f), new Vector2(skillButtonSize.x - 24f, skillButtonSize.y - 24f), buttonFontSize, isSelected ? selectedSkillButtonTextColor : skillButtonTextColor, true, TextAlignmentOptions.MidlineLeft);
-            label.enableWordWrapping = true;
-            label.text = BuildSkillButtonLabel(skill, isSelected, unavailableReason);
-
-            skillButtons.Add(button);
-            skillButtonTexts.Add(label);
-        }
-
-        skillListRoot.sizeDelta = new Vector2(skillButtonSize.x, Mathf.Max(skillButtonSize.y, skillButtons.Count * (skillButtonSize.y + skillButtonSpacing) - skillButtonSpacing));
-    }
-
-    private void ClearSkillButtons()
-    {
-        for (int i = skillButtons.Count - 1; i >= 0; i--)
-        {
-            if (skillButtons[i] != null)
-                Destroy(skillButtons[i].gameObject);
-        }
-
-        skillButtons.Clear();
-        skillButtonTexts.Clear();
-        if (skillListRoot != null)
-            skillListRoot.sizeDelta = Vector2.zero;
-    }
-
+    private void EnsureUi() { if (canvasRoot == null) BuildForestUi(); }
+    private void RebuildSkillButtons(BattleAllyController ally, SpeedButton sourceButton) { UpdateSkillChoices(ally, sourceButton); }
+    private void ClearSkillButtons() { ClearSkillChoices(); }
     private void ApplyFonts()
     {
-        ApplyFont(titleText, GetKeywordFont());
-        ApplyFont(subtitleText, GetKeywordFont());
-        ApplyFont(detailText, GetBodyFont());
-        ApplyFont(hoverTitleText, GetKeywordFont());
-        ApplyFont(hoverDetailText, GetBodyFont());
-        ApplyFont(hoverClauseText, GetBodyFont());
-
-        for (int i = 0; i < skillButtonTexts.Count; i++)
-            ApplyFont(skillButtonTexts[i], GetKeywordFont());
-
-        if (closeButton != null)
-        {
-            TMP_Text[] closeTexts = closeButton.GetComponentsInChildren<TMP_Text>(true);
-            for (int i = 0; i < closeTexts.Length; i++)
-                ApplyFont(closeTexts[i], GetKeywordFont());
-        }
+        if (canvasRoot == null) return;
+        foreach (TMP_Text text in canvasRoot.GetComponentsInChildren<TMP_Text>(true))
+            ApplyFont(text, text == titleText ? GetKeywordFont() : GetBodyFont());
     }
 
     private TMP_FontAsset GetKeywordFont()
@@ -725,6 +262,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
         text.color = color;
         text.alignment = alignment;
         text.enableWordWrapping = false;
+        text.raycastTarget = false;
         ApplyFont(text, useKeywordFont ? GetKeywordFont() : GetBodyFont());
         ResourceKeywordText.Attach(text);
     }
@@ -839,211 +377,7 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             string diceEffectLabel = BuildDiceEffectLabel(skill, i);
             rangeLines.Add($"{diceLabel}：{BuildDiceRangeLabel(skill, i, baseRange, range)}");
 
-            EnemySkill_SO.DiceEffectSettings effectSettings = skill.GetDiceEffectSettings(i);
-            HashSet<int> mergedStatusEffectIndices = new HashSet<int>();
-            HashSet<int> mergedPowerModifierIndices = new HashSet<int>();
-            HashSet<int> mergedStatusStackOperationIndices = new HashSet<int>();
-            HashSet<int> mergedHealingEffectIndices = new HashSet<int>();
-            HashSet<int> mergedBuiltInEffectIndices = new HashSet<int>();
-            AppendConsumedStatusGainEffectLines(
-                effectLines,
-                diceEffectLabel,
-                effectSettings,
-                attackerIsAlly,
-                mergedStatusEffectIndices,
-                mergedPowerModifierIndices,
-                mergedStatusStackOperationIndices,
-                mergedHealingEffectIndices,
-                mergedBuiltInEffectIndices);
-
-            if (effectSettings.damageEffects != null)
-            {
-                for (int effectIndex = 0; effectIndex < effectSettings.damageEffects.Length; effectIndex++)
-                {
-                    EnemySkill_SO.DamageEffectEntry effect = effectSettings.damageEffects[effectIndex];
-                    if (effect.damageAmount <= 0)
-                        continue;
-
-                    string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
-                    string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
-                    string valueLabel = BuildColoredToken(effect.damageAmount.ToString(), valueHighlightColor);
-                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 造成 {valueLabel} 点伤害");
-                }
-            }
-
-            if (effectSettings.statusEffects != null)
-            {
-                AppendMergedStatusBranchLines(effectLines, diceEffectLabel, effectSettings.statusEffects, mergedStatusEffectIndices, attackerIsAlly);
-                for (int effectIndex = 0; effectIndex < effectSettings.statusEffects.Length; effectIndex++)
-                {
-                    if (mergedStatusEffectIndices.Contains(effectIndex))
-                        continue;
-
-                    EnemySkill_SO.StatusEffectEntry effect = effectSettings.statusEffects[effectIndex];
-                    if (effect.stackAmount <= 0)
-                        continue;
-
-                    if (TryFindConsumedStatusForStatusEffect(effectSettings, effect, out int mergedStackOperationIndex))
-                    {
-                        AppendConsumedStatusStatusEffectLine(effectLines, diceEffectLabel, effect, effectSettings.statusStackOperationEffects[mergedStackOperationIndex], attackerIsAlly);
-                        mergedStatusStackOperationIndices.Add(mergedStackOperationIndex);
-                        continue;
-                    }
-
-                    string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
-                    string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
-                    string stackLabel = BuildColoredToken(effect.stackAmount.ToString(), valueHighlightColor);
-                    string statusLabel = BuildColoredToken(GetStatusLabel(effect), valueHighlightColor);
-                    string conditionPrefix = BuildStatusEffectConditionPrefix(effect);
-                    string timingLabel = effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
-                        ? BuildColoredToken(BuildStatusEffectTimingLabel(effect), triggerHighlightColor)
-                        : string.Empty;
-                    effectLines.Add(effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
-                        ? $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 于 {timingLabel} 获得 {stackLabel} 层 {statusLabel}"
-                        : $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 获得 {stackLabel} 层 {statusLabel}");
-                }
-            }
-
-            if (effectSettings.statusBurstEffects != null)
-            {
-                for (int effectIndex = 0; effectIndex < effectSettings.statusBurstEffects.Length; effectIndex++)
-                {
-                    EnemySkill_SO.StatusBurstDamageEffectEntry effect = effectSettings.statusBurstEffects[effectIndex];
-                    if (effect.damagePerStack <= 0)
-                        continue;
-
-                    string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
-                    string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
-                    string multiplierLabel = BuildColoredToken(effect.damagePerStack.ToString(), valueHighlightColor);
-                    string statusLabel = BuildColoredToken(GetStatusLabel(effect), targetHighlightColor);
-                    effectLines.Add(effect.clearStacksAfterBurst
-                        ? $"{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 引发 {multiplierLabel} 重 {statusLabel} 爆发，造成 {multiplierLabel} x 层数 的额外伤害，并清空 {statusLabel}"
-                        : $"{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 引发 {multiplierLabel} 重 {statusLabel} 爆发，造成 {multiplierLabel} x 层数 的额外伤害");
-                }
-            }
-
-            if (effectSettings.statusStackOperationEffects != null)
-            {
-                for (int effectIndex = 0; effectIndex < effectSettings.statusStackOperationEffects.Length; effectIndex++)
-                {
-                    if (mergedStatusStackOperationIndices.Contains(effectIndex))
-                        continue;
-
-                    EnemySkill_SO.StatusStackOperationEffectEntry effect = effectSettings.statusStackOperationEffects[effectIndex];
-                    if (TryFindConsumedStatusPowerModifier(effectSettings, effect, out int mergedPowerModifierIndex))
-                    {
-                        AppendConsumedStatusPowerModifierLine(effectLines, diceEffectLabel, effect, effectSettings.powerModifiers[mergedPowerModifierIndex], attackerIsAlly);
-                        mergedPowerModifierIndices.Add(mergedPowerModifierIndex);
-                        continue;
-                    }
-
-                    string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
-                    string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
-                    string statusLabel = BuildColoredToken(GetStatusLabel(effect), targetHighlightColor);
-
-                    if (effect.operationType == EnemySkill_SO.StatusStackOperationType.ClearStacks)
-                    {
-                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} 清空 {targetLabel} 的 {statusLabel}");
-                    }
-                    else
-                    {
-                        string valueLabel = BuildColoredToken(Mathf.Max(1, effect.stackAmount).ToString(), valueHighlightColor);
-                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} 使 {targetLabel} 的 {statusLabel} 减少 {valueLabel} 层");
-                    }
-                }
-            }
-
-            if (effectSettings.enemyStageTransitionEffects != null)
-            {
-                for (int effectIndex = 0; effectIndex < effectSettings.enemyStageTransitionEffects.Length; effectIndex++)
-                {
-                    EnemySkill_SO.EnemyStageTransitionEffectEntry effect = effectSettings.enemyStageTransitionEffects[effectIndex];
-                    string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
-                    string valueLabel = BuildColoredToken((effect.targetStageIndex + 1).ToString(), valueHighlightColor);
-                    if (effect.applyTiming == EnemySkill_SO.EnemyStageTransitionApplyTiming.NextRoundStart)
-                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} 于 下个回合开始时 切换至 第 {valueLabel} 阶段");
-                    else
-                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} 切换至 第 {valueLabel} 阶段");
-                }
-            }
-
-            if (effectSettings.healingEffects != null)
-            {
-                for (int effectIndex = 0; effectIndex < effectSettings.healingEffects.Length; effectIndex++)
-                {
-                    if (mergedHealingEffectIndices.Contains(effectIndex))
-                        continue;
-
-                    EnemySkill_SO.HealingEffectEntry effect = effectSettings.healingEffects[effectIndex];
-                    string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
-                    string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
-                    string conditionPrefix = string.Empty;
-                    if (effect.useCondition)
-                    {
-                        string conditionLabel = BuildColoredToken(GetHealingConditionLabel(effect), targetHighlightColor);
-                        conditionPrefix = $"若 {conditionLabel} ，则 ";
-                    }
-
-                    switch (effect.amountMode)
-                    {
-                        case EnemySkill_SO.HealAmountMode.DamageDealt:
-                            effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 恢复 相当于 造成伤害 的生命");
-                            break;
-                        case EnemySkill_SO.HealAmountMode.StatusStacks:
-                            string statusLabel = BuildColoredToken(GetStatusLabel(effect), targetHighlightColor);
-                            string sourceLabel = BuildColoredToken(GetDamageTargetLabel(effect.statusStackSourceMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
-                            string perStackLabel = BuildColoredToken(Mathf.Max(1, effect.healAmount).ToString(), valueHighlightColor);
-                            effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 根据 {sourceLabel} 的 {statusLabel} 层数，每层 恢复 {perStackLabel} 点生命");
-                            break;
-                        default:
-                            string healValueLabel = BuildColoredToken(effect.healAmount.ToString(), valueHighlightColor);
-                            effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 恢复 {healValueLabel} 点生命");
-                            break;
-                    }
-                }
-            }
-
-            AppendBuiltInEffectLines(effectLines, diceEffectLabel, effectSettings, attackerIsAlly, mergedBuiltInEffectIndices);
-            AppendRangeModifierLines(effectLines, diceEffectLabel, effectSettings);
-            AppendSummonEffectLines(effectLines, diceEffectLabel, effectSettings);
-
-            if (effectSettings.powerModifiers != null)
-            {
-                for (int effectIndex = 0; effectIndex < effectSettings.powerModifiers.Length; effectIndex++)
-                {
-                    if (mergedPowerModifierIndices.Contains(effectIndex))
-                        continue;
-
-                    EnemySkill_SO.ConditionalPowerModifierEntry effect = effectSettings.powerModifiers[effectIndex];
-                    bool hasFlatBonus = effect.powerBonus != 0;
-                    bool hasScalingBonus = IsScalingPowerModifier(effect);
-                    if (!hasFlatBonus && !hasScalingBonus)
-                        continue;
-
-                    string triggerLabel = BuildColoredToken(GetPowerModifierTriggerLabel(effect.trigger), triggerHighlightColor);
-
-                    if (effect.useCondition)
-                    {
-                        string conditionLabel = BuildColoredToken(GetPowerModifierConditionLabel(effect), targetHighlightColor);
-                        if (IsScalingPowerModifier(effect))
-                        {
-                            string perStepValueLabel = BuildColoredToken(FormatSignedInt(effect.powerBonusPerStep), valueHighlightColor);
-                            string scalingPrefix = IsSpeedDifferenceScalingPowerModifier(effect) ? "每高出 1 点速度，" : "每达成一次条件，";
-                            effectLines.Add($"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 {scalingPrefix}威力 {perStepValueLabel}{BuildPowerModifierCapSuffix(effect)}");
-                        }
-                        else
-                        {
-                            string valueLabel = BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor);
-                            effectLines.Add($"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 威力 {valueLabel}");
-                        }
-                    }
-                    else
-                    {
-                        string valueLabel = BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor);
-                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} 威力 {valueLabel}");
-                    }
-                }
-            }
+            effectLines.AddRange(BuildDiceRuleLines(skill, i, attackerIsAlly));
         }
 
         string description = string.IsNullOrWhiteSpace(skill.description) ? "\u6682\u65e0\u63cf\u8ff0\u3002" : skill.description;
@@ -1061,6 +395,226 @@ public class BattleSkillInfoOverlay : MonoBehaviour
             ? $"\n\n\u8bcd\u6761\uff1a\n{string.Join("\n", effectLines)}"
             : string.Empty;
         return $"{header}\n\u6280\u80fd\uff1a{skill.skillName}\n\u80fd\u8017\uff1a{Mathf.Max(0, skill.energyCost)}{requirementSection}\n\u9ab0\u5b50\u6570\uff1a{skill.diceCount}\n{string.Join("\n", rangeLines)}{targetPrioritySection}{effectSection}\n\n\u63cf\u8ff0\uff1a\n{description}";
+    }
+
+    // Both the catalog formatter and the card view use exactly the same per-die rules.
+    private List<string> BuildDiceRuleLines(EnemySkill_SO skill, int diceIndex, bool attackerIsAlly, bool includeDiceLabel = true)
+    {
+        List<string> effectLines = new List<string>();
+        string diceEffectLabel = BuildDiceEffectLabel(skill, diceIndex);
+        EnemySkill_SO.DiceEffectSettings effectSettings = skill.GetDiceEffectSettings(diceIndex);
+        HashSet<int> mergedStatusEffectIndices = new HashSet<int>();
+        HashSet<int> mergedPowerModifierIndices = new HashSet<int>();
+        HashSet<int> mergedStatusStackOperationIndices = new HashSet<int>();
+        HashSet<int> mergedHealingEffectIndices = new HashSet<int>();
+        HashSet<int> mergedBuiltInEffectIndices = new HashSet<int>();
+        AppendConsumedStatusGainEffectLines(
+            effectLines,
+            diceEffectLabel,
+            effectSettings,
+            attackerIsAlly,
+            mergedStatusEffectIndices,
+            mergedPowerModifierIndices,
+            mergedStatusStackOperationIndices,
+            mergedHealingEffectIndices,
+            mergedBuiltInEffectIndices);
+
+        if (effectSettings.damageEffects != null)
+        {
+            for (int effectIndex = 0; effectIndex < effectSettings.damageEffects.Length; effectIndex++)
+            {
+                EnemySkill_SO.DamageEffectEntry effect = effectSettings.damageEffects[effectIndex];
+                if (effect.damageAmount <= 0)
+                    continue;
+
+                string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
+                string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
+                string valueLabel = BuildColoredToken(effect.damageAmount.ToString(), valueHighlightColor);
+                effectLines.Add($"{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 造成 {valueLabel} 点伤害");
+            }
+        }
+
+        if (effectSettings.statusEffects != null)
+        {
+            AppendMergedStatusBranchLines(effectLines, diceEffectLabel, effectSettings.statusEffects, mergedStatusEffectIndices, attackerIsAlly);
+            for (int effectIndex = 0; effectIndex < effectSettings.statusEffects.Length; effectIndex++)
+            {
+                if (mergedStatusEffectIndices.Contains(effectIndex))
+                    continue;
+
+                EnemySkill_SO.StatusEffectEntry effect = effectSettings.statusEffects[effectIndex];
+                if (effect.stackAmount <= 0)
+                    continue;
+
+                if (TryFindConsumedStatusForStatusEffect(effectSettings, effect, out int mergedStackOperationIndex))
+                {
+                    AppendConsumedStatusStatusEffectLine(effectLines, diceEffectLabel, effect, effectSettings.statusStackOperationEffects[mergedStackOperationIndex], attackerIsAlly);
+                    mergedStatusStackOperationIndices.Add(mergedStackOperationIndex);
+                    continue;
+                }
+
+                string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
+                string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
+                string stackLabel = BuildColoredToken(effect.stackAmount.ToString(), valueHighlightColor);
+                string statusLabel = BuildColoredToken(GetStatusLabel(effect), valueHighlightColor);
+                string conditionPrefix = BuildStatusEffectConditionPrefix(effect);
+                string timingLabel = effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
+                    ? BuildColoredToken(BuildStatusEffectTimingLabel(effect), triggerHighlightColor)
+                    : string.Empty;
+                effectLines.Add(effect.applyTiming == EnemySkill_SO.StatusApplyTiming.NextRoundStart
+                    ? $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 于 {timingLabel} 获得 {stackLabel} 层 {statusLabel}"
+                    : $"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 获得 {stackLabel} 层 {statusLabel}");
+            }
+        }
+
+        if (effectSettings.statusBurstEffects != null)
+        {
+            for (int effectIndex = 0; effectIndex < effectSettings.statusBurstEffects.Length; effectIndex++)
+            {
+                EnemySkill_SO.StatusBurstDamageEffectEntry effect = effectSettings.statusBurstEffects[effectIndex];
+                if (effect.damagePerStack <= 0)
+                    continue;
+
+                string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
+                string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
+                string multiplierLabel = BuildColoredToken(effect.damagePerStack.ToString(), valueHighlightColor);
+                string statusLabel = BuildColoredToken(GetStatusLabel(effect), targetHighlightColor);
+                effectLines.Add(effect.clearStacksAfterBurst
+                    ? $"{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 引发 {multiplierLabel} 重 {statusLabel} 爆发，造成 {multiplierLabel} x 层数 的额外伤害，并清空 {statusLabel}"
+                    : $"{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 引发 {multiplierLabel} 重 {statusLabel} 爆发，造成 {multiplierLabel} x 层数 的额外伤害");
+            }
+        }
+
+        if (effectSettings.statusStackOperationEffects != null)
+        {
+            for (int effectIndex = 0; effectIndex < effectSettings.statusStackOperationEffects.Length; effectIndex++)
+            {
+                if (mergedStatusStackOperationIndices.Contains(effectIndex))
+                    continue;
+
+                EnemySkill_SO.StatusStackOperationEffectEntry effect = effectSettings.statusStackOperationEffects[effectIndex];
+                if (TryFindConsumedStatusPowerModifier(effectSettings, effect, out int mergedPowerModifierIndex))
+                {
+                    AppendConsumedStatusPowerModifierLine(effectLines, diceEffectLabel, effect, effectSettings.powerModifiers[mergedPowerModifierIndex], attackerIsAlly);
+                    mergedPowerModifierIndices.Add(mergedPowerModifierIndex);
+                    continue;
+                }
+
+                string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
+                string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
+                string statusLabel = BuildColoredToken(GetStatusLabel(effect), targetHighlightColor);
+
+                if (effect.operationType == EnemySkill_SO.StatusStackOperationType.ClearStacks)
+                {
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 清空 {targetLabel} 的 {statusLabel}");
+                }
+                else
+                {
+                    string valueLabel = BuildColoredToken(Mathf.Max(1, effect.stackAmount).ToString(), valueHighlightColor);
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 使 {targetLabel} 的 {statusLabel} 减少 {valueLabel} 层");
+                }
+            }
+        }
+
+        if (effectSettings.enemyStageTransitionEffects != null)
+        {
+            for (int effectIndex = 0; effectIndex < effectSettings.enemyStageTransitionEffects.Length; effectIndex++)
+            {
+                EnemySkill_SO.EnemyStageTransitionEffectEntry effect = effectSettings.enemyStageTransitionEffects[effectIndex];
+                string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
+                string valueLabel = BuildColoredToken((effect.targetStageIndex + 1).ToString(), valueHighlightColor);
+                if (effect.applyTiming == EnemySkill_SO.EnemyStageTransitionApplyTiming.NextRoundStart)
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 于 下个回合开始时 切换至 第 {valueLabel} 阶段");
+                else
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 切换至 第 {valueLabel} 阶段");
+            }
+        }
+
+        if (effectSettings.healingEffects != null)
+        {
+            for (int effectIndex = 0; effectIndex < effectSettings.healingEffects.Length; effectIndex++)
+            {
+                if (mergedHealingEffectIndices.Contains(effectIndex))
+                    continue;
+
+                EnemySkill_SO.HealingEffectEntry effect = effectSettings.healingEffects[effectIndex];
+                string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
+                string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
+                string conditionPrefix = string.Empty;
+                if (effect.useCondition)
+                {
+                    string conditionLabel = BuildColoredToken(GetHealingConditionLabel(effect), targetHighlightColor);
+                    conditionPrefix = $"若 {conditionLabel} ，则 ";
+                }
+
+                switch (effect.amountMode)
+                {
+                    case EnemySkill_SO.HealAmountMode.DamageDealt:
+                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 恢复 相当于 造成伤害 的生命");
+                        break;
+                    case EnemySkill_SO.HealAmountMode.StatusStacks:
+                        string statusLabel = BuildColoredToken(GetStatusLabel(effect), targetHighlightColor);
+                        string sourceLabel = BuildColoredToken(GetDamageTargetLabel(effect.statusStackSourceMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
+                        string perStackLabel = BuildColoredToken(Mathf.Max(1, effect.healAmount).ToString(), valueHighlightColor);
+                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 根据 {sourceLabel} 的 {statusLabel} 层数，每层 恢复 {perStackLabel} 点生命");
+                        break;
+                    default:
+                        string healValueLabel = BuildColoredToken(effect.healAmount.ToString(), valueHighlightColor);
+                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} {conditionPrefix}使 {targetLabel} 恢复 {healValueLabel} 点生命");
+                        break;
+                }
+            }
+        }
+
+        AppendBuiltInEffectLines(effectLines, diceEffectLabel, effectSettings, attackerIsAlly, mergedBuiltInEffectIndices);
+        AppendRangeModifierLines(effectLines, diceEffectLabel, effectSettings);
+        AppendSummonEffectLines(effectLines, diceEffectLabel, effectSettings);
+
+        if (effectSettings.powerModifiers != null)
+        {
+            for (int effectIndex = 0; effectIndex < effectSettings.powerModifiers.Length; effectIndex++)
+            {
+                if (mergedPowerModifierIndices.Contains(effectIndex))
+                    continue;
+
+                EnemySkill_SO.ConditionalPowerModifierEntry effect = effectSettings.powerModifiers[effectIndex];
+                bool hasFlatBonus = effect.powerBonus != 0;
+                bool hasScalingBonus = IsScalingPowerModifier(effect);
+                if (!hasFlatBonus && !hasScalingBonus)
+                    continue;
+
+                string triggerLabel = BuildColoredToken(GetPowerModifierTriggerLabel(effect.trigger), triggerHighlightColor);
+
+                if (effect.useCondition)
+                {
+                    string conditionLabel = BuildColoredToken(GetPowerModifierConditionLabel(effect), targetHighlightColor);
+                    if (IsScalingPowerModifier(effect))
+                    {
+                        string perStepValueLabel = BuildColoredToken(FormatSignedInt(effect.powerBonusPerStep), valueHighlightColor);
+                        string scalingPrefix = IsSpeedDifferenceScalingPowerModifier(effect) ? "每高出 1 点速度，" : "每达成一次条件，";
+                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 {scalingPrefix}威力 {perStepValueLabel}{BuildPowerModifierCapSuffix(effect)}");
+                    }
+                    else
+                    {
+                        string valueLabel = BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor);
+                        effectLines.Add($"{diceEffectLabel}：{triggerLabel} 若 {conditionLabel} ，则 威力 {valueLabel}");
+                    }
+                }
+                else
+                {
+                    string valueLabel = BuildColoredToken(FormatSignedInt(effect.powerBonus), valueHighlightColor);
+                    effectLines.Add($"{diceEffectLabel}：{triggerLabel} 威力 {valueLabel}");
+                }
+            }
+        }
+        if (!includeDiceLabel)
+        {
+            string prefix = diceEffectLabel + "：";
+            for (int n = 0; n < effectLines.Count; n++)
+                if (effectLines[n].StartsWith(prefix, StringComparison.Ordinal))
+                    effectLines[n] = effectLines[n].Substring(prefix.Length).TrimStart();
+        }
+        return effectLines;
     }
 
     private string BuildCompactSkillHoverDetail(EnemySkill_SO skill, bool attackerIsAlly)
