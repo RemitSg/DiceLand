@@ -146,6 +146,7 @@ public class MainMenuSceneController : MonoBehaviour
             settingsToggleStateFont,
             settingsDropdownFont,
             settingsButtonFont);
+        settingsOverlay.ConfigureForestFont(forestMenuFont != null ? forestMenuFont : mainMenuItemFont);
 
         NormalizeLegacyDefaultLabels();
         EnsureOpaqueMenuBackground();
