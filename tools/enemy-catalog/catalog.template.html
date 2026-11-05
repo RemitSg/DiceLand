@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>DiceLand · 敌人与技能图鉴</title>
+  <style>
+/*__STYLE__*/
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到敌人列表</a>
+  <div class="app">
+    <aside class="rail" aria-label="敌人分类">
+      <div class="brand">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 27 8v8c0 6-4 10-11 13C9 26 5 22 5 16V8l11-5Z"/><path d="m11 21 10-10m-9 4 5 5m2-9h2v2m-10 8 2-2"/></svg>
+        <div>DICELAND<small>BESTIARY</small></div>
+      </div>
+      <div class="rail-label">遭遇分类</div>
+      <nav id="categories" class="categories" aria-label="按遭遇分类筛选"></nav>
+      <div class="rail-foot">
+        <span id="snapshot-date"></span>
+        <a href="../relic-catalog/遗物完整图鉴.html">遗物图鉴 ↗</a>
+      </div>
+    </aside>
+    <main id="main" class="main" tabindex="-1">
+      <div class="topline"><span>DICELAND / FIELD ARCHIVE</span><span class="offline">离线图鉴</span></div>
+      <header class="hero">
+        <div>
+          <p class="eyebrow">ENEMIES &amp; SKILLS</p>
+          <h1>敌人与技能图鉴</h1>
+          <p>按遭遇筛选敌人，按词条查找技能。</p>
+        </div>
+        <div class="hero-count" aria-label="收录数量">
+          <div><strong id="enemy-total">—</strong><span>敌人资产</span></div>
+          <div><strong id="skill-total">—</strong><span>关联技能</span></div>
+        </div>
+      </header>
+
+      <section class="toolbar" aria-label="图鉴筛选工具">
+        <div class="search-row">
+          <label class="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 4.5 4.5"/></svg>
+            <span class="sr-only">搜索敌人、技能、状态或编号</span>
+            <input id="query" type="search" placeholder="搜索敌人、技能、状态或编号…" autocomplete="off" spellcheck="false">
+            <kbd aria-hidden="true">/</kbd>
+          </label>
+          <button id="favorites-only" class="favorite-filter" type="button" aria-pressed="false">☆ 收藏</button>
+        </div>
+        <div class="filter-row">
+          <div class="filters">
+            <label class="select-wrap">属性
+              <select id="attribute"><option value="">全部属性</option></select>
+            </label>
+            <label class="select-wrap">排序
+              <select id="sort">
+                <option value="number">目录编号</option>
+                <option value="name">敌人名称</option>
+                <option value="hp">生命</option>
+                <option value="speed">最高速度</option>
+                <option value="slots">最多速度槽</option>
+                <option value="skills">技能数</option>
+              </select>
+            </label>
+            <button id="direction" class="compact direction" type="button">↑ 升序</button>
+          </div>
+          <div class="display-tools">
+            <div class="view-toggle" role="group" aria-label="浏览方式">
+              <button id="view-grid" type="button" aria-pressed="true">卡片</button>
+              <button id="view-list" type="button" aria-pressed="false">列表</button>
+            </div>
+            <button id="reset" class="compact quiet" type="button">重置</button>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="heading">
+        <div class="results-heading">
+          <div>
+            <h2 id="heading">全部敌人</h2>
+            <p id="result-count" class="sub" aria-live="polite"></p>
+          </div>
+          <p class="search-hint">搜索 <code>006</code>、<code>037–040</code> 或 <code>id:3001</code></p>
+        </div>
+        <div id="results" class="grid"></div>
+      </section>
+
+      <footer class="footer">
+        <details>
+          <summary>数据来源与快照范围</summary>
+          <p id="coverage"></p>
+          <p>属性取自快照中的所属敌群。同一敌人可以出现在多个遭遇分类。同名资产通过 GUID 区分。</p>
+        </details>
+        <div class="footer-links">
+          <a href="敌人与技能完整清单.txt">完整清单</a>
+          <a href="catalog.json">结构化数据</a>
+          <a href="../relic-catalog/遗物完整图鉴.html">遗物图鉴</a>
+          <button id="print" type="button">打印 / 保存为 PDF</button>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <dialog id="detail" class="drawer" aria-labelledby="detail-name">
+    <header class="drawer-header">
+      <div class="drawer-topline">
+        <strong>敌人档案</strong>
+        <div class="drawer-actions">
+          <button id="prev" type="button" class="compact" aria-label="上一名敌人" title="上一名敌人">←</button>
+          <span id="detail-position"></span>
+          <button id="next" type="button" class="compact" aria-label="下一名敌人" title="下一名敌人">→</button>
+          <button id="close" type="button" class="close" aria-label="关闭详情" autofocus>×</button>
+        </div>
+      </div>
+      <nav class="detail-nav" aria-label="档案章节">
+        <button type="button" data-section="overview">概况</button>
+        <button type="button" data-section="skills">技能 <span id="detail-skill-count"></span></button>
+        <button type="button" data-section="passives">被动与机制</button>
+        <button type="button" data-section="encounters">投放与来源</button>
+      </nav>
+    </header>
+    <div id="detail-content" class="drawer-content"></div>
+  </dialog>
+  <div id="print-view" aria-hidden="true"></div>
+  <noscript><p class="noscript">启用 JavaScript 后可使用交互图鉴。<a href="敌人与技能完整清单.txt">打开完整清单</a></p></noscript>
+  <script id="catalog-data" type="application/json">/*__CATALOG_DATA__*/</script>
+  <script>
+/*__SCRIPT__*/
+  </script>
+</body>
+</html>
