@@ -154,6 +154,7 @@ public class MainMenuSceneController : MonoBehaviour
         ConfigureMainMenuItems();
         ConfigureDifficultyMenu();
         ConfigureForestMenu();
+        GameText.Changed += RefreshLanguage;
     }
 
     private void Start()
@@ -170,6 +171,7 @@ public class MainMenuSceneController : MonoBehaviour
 
     private void OnDestroy()
     {
+        GameText.Changed -= RefreshLanguage;
         if (mainMenuGallery != null)
             mainMenuGallery.OnItemsClickedEvent -= HandleMainMenuItemClicked;
         if (difficultyGallery != null)
@@ -355,10 +357,10 @@ public class MainMenuSceneController : MonoBehaviour
 
             filteredItems.Add(item);
             menuActions[item] = action;
-            item.levelName = GetDisplayLabel(action);
+            item.levelName = GetMenuLabel(action).source;
             if (item.text != null)
             {
-                item.text.text = item.levelName;
+                item.text.text = GetDisplayLabel(action);
                 ApplyMainMenuItemFont(item.text);
             }
 
@@ -527,7 +529,7 @@ public class MainMenuSceneController : MonoBehaviour
 
     private void HandleMenuAction(MenuAction action)
     {
-        if (IsBlockingOverlayVisible())
+        if (IsBlockingOverlayVisible() || GameText.IsChanging)
             return;
 
         switch (action)
@@ -682,7 +684,7 @@ public class MainMenuSceneController : MonoBehaviour
             result.Add(new RunPartyMemberState
             {
                 memberId = string.IsNullOrWhiteSpace(definition.memberId)
-                    ? (string.IsNullOrWhiteSpace(definition.characterData.characterName) ? $"DemoMember{i + 1}" : definition.characterData.characterName)
+                    ? (string.IsNullOrWhiteSpace(definition.characterData.CharacterId) ? $"DemoMember{i + 1}" : definition.characterData.CharacterId)
                     : definition.memberId,
                 characterData = definition.characterData,
                 weaponData = resolvedWeapon,
@@ -707,8 +709,12 @@ public class MainMenuSceneController : MonoBehaviour
 
     private void HandleSettingsSaved(MainMenuSettingsData data)
     {
-        MainMenuSettingsPersistence.Save(data);
-        MainMenuSettingsPersistence.Apply(data);
+        GameText.Select(data.languageCode, _ =>
+        {
+            data.languageCode = GameText.LanguageCode;
+            MainMenuSettingsPersistence.Save(data);
+            MainMenuSettingsPersistence.Apply(data);
+        });
     }
 
     private void ShowSettingsOverlay()
@@ -739,10 +745,10 @@ public class MainMenuSceneController : MonoBehaviour
             ResolveTutorialCatalog(),
             StartTutorialFromMenu,
             TrackOverlayVisibilityState,
-            "开始教程",
-            "返回主菜单",
-            "即将开始教程，是否开始？",
-            "进入教程会让你了解战斗规则、基本玩法、游戏系统等。教程会从地图推进开始，逐步带你熟悉移动、战斗、资源管理与成长流程。",
+            GameText.Get("tutorial.menu.start", "开始教程"),
+            GameText.Get("ui.main_menu", "返回主菜单"),
+            GameText.Get("tutorial.menu.title", "即将开始教程，是否开始？"),
+            GameText.Get("tutorial.menu.body", "进入教程会让你了解战斗规则、基本玩法、游戏系统等。教程会从地图推进开始，逐步带你熟悉移动、战斗、资源管理与成长流程。"),
             true);
         SetGalleryInputEnabled(false);
     }
@@ -870,6 +876,15 @@ public class MainMenuSceneController : MonoBehaviour
                 labels[action] = GetDisplayLabel(action);
         forestMenu.Build(forestMenuFont != null ? forestMenuFont : mainMenuItemFont,
             labels, BuildDifficultyList(), HandleMenuAction, StartNewGame);
+        forestMenu.Canvas.enabled = !GameText.IsChanging;
+        RefreshContinueState();
+    }
+
+    private void RefreshLanguage()
+    {
+        if (forestMenu == null) return;
+        forestMenu.RefreshLanguage(GetDisplayLabel);
+        forestMenu.Canvas.enabled = true;
         RefreshContinueState();
     }
 
@@ -989,26 +1004,32 @@ public class MainMenuSceneController : MonoBehaviour
 
     private string GetDisplayLabel(MenuAction action)
     {
+        var label = GetMenuLabel(action);
+        return GameText.Get(label.key, label.source);
+    }
+
+    private (string key, string source) GetMenuLabel(MenuAction action)
+    {
         switch (action)
         {
             case MenuAction.NewGame:
-                return newGameLabel;
+                return ("ui.menu.new_game", newGameLabel);
             case MenuAction.Continue:
-                return continueLabel;
+                return ("ui.menu.continue", continueLabel);
             case MenuAction.Tutorial:
-                return tutorialLabel;
+                return ("ui.menu.tutorial", tutorialLabel);
             case MenuAction.Ability:
-                return abilityLabel;
+                return ("ui.menu.abilities", abilityLabel);
             case MenuAction.Contributors:
-                return contributorsLabel;
+                return ("ui.menu.contributors", contributorsLabel);
             case MenuAction.Settings:
-                return settingsLabel;
+                return ("ui.menu.settings", settingsLabel);
             case MenuAction.Exit:
-                return exitLabel;
+                return ("ui.menu.quit", exitLabel);
             case MenuAction.DemoTest:
-                return demoTestLabel;
+                return ("ui.menu.test_battle", demoTestLabel);
             default:
-                return string.Empty;
+                return (null, string.Empty);
         }
     }
 

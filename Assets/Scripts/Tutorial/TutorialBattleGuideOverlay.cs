@@ -21,7 +21,7 @@ public class TutorialBattleGuideOverlay : MonoBehaviour
     {
         if (view != null) return;
         view = new TutorialForestView("TutorialBattleGuideOverlay", transform, canvasSortOrder, true, false);
-        view.SetContext("战斗教程"); view.SetTmpFonts(keywordFont, bodyFont);
+        view.SetContext(GameText.Get("tutorial.battle.context", "战斗教程")); view.SetTmpFonts(keywordFont, bodyFont);
         view.Primary.onClick.AddListener(Hide);
     }
 

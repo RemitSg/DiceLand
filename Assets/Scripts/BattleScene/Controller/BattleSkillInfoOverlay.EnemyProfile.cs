@@ -64,14 +64,14 @@ public partial class BattleSkillInfoOverlay
         enemyProfileBody = SkillRect(enemyProfileRight, "EnemyReadingArea");
         enemyProfileScroll = BuildSkillScroll(enemyProfileBody, "EnemyProfile", out enemyProfileViewport, out enemyProfileContent, out _);
         enemyProfileScroll.onValueChanged.AddListener(_ => UpdateEnemyScrollHint());
-        enemyDescriptionSection = BuildEnemySection(enemyProfileContent, "EnemyDescriptionSection", "敌人描述");
+        enemyDescriptionSection = BuildEnemySection(enemyProfileContent, "EnemyDescriptionSection", GameText.Get("battle.enemy.description", "敌人描述"));
         enemyProfileDescription = SkillText(enemyProfileContent, "EnemyDescription", EnemyProfileBodySize, SkillIvory, string.Empty);
         enemyProfileDescription.enableWordWrapping = true; enemyProfileDescription.alignment = TextAlignmentOptions.TopLeft;
         enemyProfileDescription.lineSpacing = 5; ResourceKeywordText.Attach(enemyProfileDescription);
-        enemyPassiveSection = BuildEnemySection(enemyProfileContent, "EnemyPassiveSection", "特殊被动");
-        enemyNoPassives = SkillText(enemyProfileContent, "NoPassives", EnemyNoPassivesSize, SkillMuted, "暂无特殊被动。");
+        enemyPassiveSection = BuildEnemySection(enemyProfileContent, "EnemyPassiveSection", GameText.Get("battle.enemy.passives", "特殊被动"));
+        enemyNoPassives = SkillText(enemyProfileContent, "NoPassives", EnemyNoPassivesSize, SkillMuted, GameText.Get("battle.enemy.no_passives", "暂无特殊被动。"));
         enemyNoPassives.enableWordWrapping = true; ResourceKeywordText.Attach(enemyNoPassives, false);
-        enemyScrollHint = SkillText(enemyProfileRight, "ReadingHint", 21, SkillMuted, "向下滚动查看更多");
+        enemyScrollHint = SkillText(enemyProfileRight, "ReadingHint", 21, SkillMuted, GameText.Get("ui.scroll_more", "向下滚动查看更多"));
         enemyScrollHint.alignment = TextAlignmentOptions.MidlineRight;
         enemyProfileRoot.gameObject.SetActive(false); art.gameObject.SetActive(false);
     }
@@ -111,16 +111,17 @@ public partial class BattleSkillInfoOverlay
     private void RenderEnemyProfile(bool reset)
     {
         EnemyData_SO data = currentEnemy != null ? currentEnemy.enemyData : null;
-        titleText.text = "敌人详情";
-        enemyProfileName.text = data != null && !string.IsNullOrWhiteSpace(data.enemyName) ? data.enemyName : "敌人";
-        enemyProfileId.text = data != null ? "编号 " + data.enemyID : "编号 —";
+        titleText.text = GameText.Get("battle.enemy.profile", "敌人详情");
+        enemyProfileName.text = data != null && !string.IsNullOrWhiteSpace(data.enemyName) ? data.LocalizedName : GameText.Get("battle.enemy", "敌人");
+        enemyProfileId.text = GameText.Format("battle.enemy.id", "编号 {id}", ("id", data != null ? data.enemyID.ToString() : "—"));
         // Runtime maximum includes encounter/relic modifiers; an uninitialised preview uses the authored maximum.
         int maximum = currentEnemy != null && currentEnemy.MaxHP > 0 ? currentEnemy.MaxHP : data != null ? data.baseHP : 0;
-        enemyProfileHealth.text = "最大生命：<color=#F2DDAB>" + maximum + "</color>";
+        enemyProfileHealth.text = GameText.Format("battle.enemy.health", "最大生命：<color=#F2DDAB>{max}</color>", ("max", maximum));
         enemyPortrait.sprite = currentEnemy != null ? currentEnemy.GetCurrentStageSprite() : null;
         enemyPortrait.enabled = enemyPortrait.sprite != null;
         enemyPortraitPlaceholder.gameObject.SetActive(enemyPortrait.sprite == null);
-        enemyProfileDescription.text = data == null ? "未找到敌人数据。" : string.IsNullOrWhiteSpace(data.enemyDescription) ? "暂无描述。" : data.enemyDescription;
+        enemyProfileDescription.text = data == null ? GameText.Get("battle.enemy.missing", "未找到敌人数据。")
+            : string.IsNullOrWhiteSpace(data.enemyDescription) ? GameText.Get("ui.no_description", "暂无描述。") : data.LocalizedDescription;
         int index = 0;
         if (data != null && data.passiveDescriptions != null)
         {

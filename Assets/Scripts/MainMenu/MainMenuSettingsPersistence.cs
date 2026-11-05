@@ -18,6 +18,7 @@ public sealed class MainMenuSettingsData
     public bool vibrationEnabled = true;
     public BattleAdvanceMode battleAdvanceMode;
     public bool largeDetailText;
+    public string languageCode = GameText.Chinese;
     public int qualityLevel = -1;
     public int resolutionWidth;
     public int resolutionHeight;
@@ -34,6 +35,7 @@ public sealed class MainMenuSettingsData
             vibrationEnabled = vibrationEnabled,
             battleAdvanceMode = battleAdvanceMode,
             largeDetailText = largeDetailText,
+            languageCode = languageCode,
             qualityLevel = qualityLevel,
             resolutionWidth = resolutionWidth,
             resolutionHeight = resolutionHeight,
@@ -222,6 +224,7 @@ public static class MainMenuSettingsPersistence
 
         settings.musicVolume = Mathf.Clamp01(settings.musicVolume);
         settings.sfxVolume = Mathf.Clamp01(settings.sfxVolume);
+        settings.languageCode = GameText.Normalize(settings.languageCode);
         if (!Enum.IsDefined(typeof(BattleAdvanceMode), settings.battleAdvanceMode))
             settings.battleAdvanceMode = BattleAdvanceMode.Manual;
         settings.qualityLevel = Mathf.Clamp(

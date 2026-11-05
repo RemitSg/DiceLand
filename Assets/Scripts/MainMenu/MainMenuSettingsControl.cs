@@ -12,6 +12,7 @@ public sealed class MainMenuSettingsControl : MonoBehaviour, IPointerEnterHandle
     private Text stateText;
     private CanvasGroup appearance;
     private bool hovered,pressed,focused,hasState,lastState;
+    private string stateLanguage;
     private float brightness=1,scale=1;
 
     public void Bind(Selectable selectable,MainMenuSettingsGraphic graphic,RectTransform grip=null,Text state=null)
@@ -28,10 +29,15 @@ public sealed class MainMenuSettingsControl : MonoBehaviour, IPointerEnterHandle
         Toggle toggle=control as Toggle;
         if(toggle==null || thumb==null) return;
         bool on=toggle.isOn;
-        if(!hasState || lastState!=on)
+        if(!hasState || lastState!=on || stateLanguage!=GameText.LanguageCode)
         {
             hasState=true; lastState=on; face.SetState(on,true);
-            if(stateText!=null) { stateText.text=on?"开启":"关闭"; stateText.color=on?new Color32(232,236,200,255):new Color32(167,184,161,255); }
+            stateLanguage = GameText.LanguageCode;
+            if (stateText != null)
+            {
+                stateText.text = on ? GameText.Get("ui.on", "开启") : GameText.Get("ui.off", "关闭");
+                stateText.color = on ? new Color32(232,236,200,255) : new Color32(167,184,161,255);
+            }
         }
         float half=thumb.rect.width*.5f+6;
         float x=on?((RectTransform)transform).rect.width-half:half;

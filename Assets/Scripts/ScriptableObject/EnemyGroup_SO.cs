@@ -7,6 +7,8 @@ public class EnemyGroup_SO : ScriptableObject
 {
     [Header("Group Info")]
     public int groupID;
+    public string saveId;
+    public string legacySaveId;
     public string groupName;
 
     [TextArea(2, 4)]

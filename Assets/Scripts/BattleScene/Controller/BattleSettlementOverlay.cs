@@ -353,8 +353,9 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         SetRelicChoiceModalVisible(false);
         HideLootDetailModal();
         titleText.text = string.IsNullOrWhiteSpace(data.title) || data.title == "Victory" || data.title == "Defeat"
-            ? (data.isVictory ? "战斗胜利" : "战斗失败") : data.title == "Tutorial Failed" ? "教学挑战失败" : data.title;
-        victoryEnglishText.text = data.isVictory ? "VICTORY" : "DEFEAT";
+            ? (data.isVictory ? GameText.Get("battle.settlement.victory", "战斗胜利") : GameText.Get("battle.settlement.defeat", "战斗失败"))
+            : data.title == "Tutorial Failed" ? GameText.Get("battle.settlement.tutorial_defeat", "教学挑战失败") : data.title;
+        victoryEnglishText.text = GameText.LanguageCode == GameText.English ? "BATTLE RESULTS" : data.isVictory ? "VICTORY" : "DEFEAT";
         titleText.color = data.isVictory ? new Color32(241, 204, 111, 255) : new Color32(220, 148, 132, 255);
         subtitleText.text = data.subtitle ?? string.Empty;
         BuildSummaryRows(data.partyEntries);
@@ -617,7 +618,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         CreateActionButton(
             buttonRoot,
             "ReturnButton",
-            data.isVictory ? returnButtonLabel : defeatReturnButtonLabel,
+            data.isVictory ? GameText.Get("battle.settlement.return", returnButtonLabel) : GameText.Get("battle.settlement.end_run", defeatReturnButtonLabel),
             () =>
             {
                 if (data != null && !data.isVictory && !ShouldReturnToMapAfterDefeat())
@@ -632,7 +633,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         CreateActionButton(
             buttonRoot,
             "RetryButton",
-            retryButtonLabel,
+            GameText.Get("battle.settlement.retry", retryButtonLabel),
             () => HandleRetryBattle(data != null ? data.retrySceneName : null));
     }
 
@@ -1738,7 +1739,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
             row.hpText.color = row.entry.isAlive ? hpTextColor : deadRowColor;
             row.hpText.text = row.entry.isAlive
                 ? $"HP {displayedCurrentHP} / {displayedMaxHP}"
-                : $"倒下 {displayedCurrentHP} / {displayedMaxHP}";
+                : GameText.Format("battle.settlement.downed", "倒下 {current} / {max}", ("current", displayedCurrentHP), ("max", displayedMaxHP));
         }
         if (row.nameText != null)
             row.nameText.text = BuildSettlementName(row.entry);
@@ -1793,10 +1794,8 @@ public partial class BattleSettlementOverlay : MonoBehaviour
 
     private static string BuildExpLabel(int currentExp, int maxExp)
     {
-        if (maxExp <= 0)
-            return $"经验值 {Mathf.Max(0, currentExp)} / MAX";
-
-        return $"经验值 {Mathf.Max(0, currentExp)} / {Mathf.Max(1, maxExp)}";
+        object maximum = maxExp <= 0 ? (object)"MAX" : Mathf.Max(1, maxExp);
+        return GameText.Format("battle.settlement.exp_bar", "经验值 {current} / {max}", ("current", Mathf.Max(0, currentExp)), ("max", maximum));
     }
 
     private static void AddLayoutElement(

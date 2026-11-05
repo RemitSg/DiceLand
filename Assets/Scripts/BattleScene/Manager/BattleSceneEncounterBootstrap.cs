@@ -453,6 +453,7 @@ public partial class BattleSceneEncounterBootstrap : MonoBehaviour
 
         CharacterData_SO runtimeCharacter = ScriptableObject.CreateInstance<CharacterData_SO>();
         runtimeCharacter.name = $"{enemyData.name}_TemporaryAllyCharacter";
+        runtimeCharacter.characterId = $"summoned_enemy.{enemyData.enemyID}.{index}";
         runtimeCharacter.characterName = string.IsNullOrWhiteSpace(enemyData.enemyName) ? enemyData.name : enemyData.enemyName;
         runtimeCharacter.baseHP = Mathf.Max(1, enemyData.baseHP);
         runtimeCharacter.minSpeed = Mathf.Max(0, enemyData.minSpeed);
@@ -467,7 +468,7 @@ public partial class BattleSceneEncounterBootstrap : MonoBehaviour
 
         RunPartyMemberState allyState = new RunPartyMemberState
         {
-            memberId = runtimeCharacter.characterName,
+            memberId = runtimeCharacter.CharacterId,
             characterData = runtimeCharacter,
             weaponData = runtimeWeapon,
             level = 1,

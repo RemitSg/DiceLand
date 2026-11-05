@@ -480,7 +480,7 @@ public static class MapRunRuntime
         Weapon_SO initialWeapon = characterData.initialWeaponData;
         snapshot.runState.AddPartyMember(new RunPartyMemberState
         {
-            memberId = string.IsNullOrWhiteSpace(characterData.characterName) ? characterData.name : characterData.characterName,
+            memberId = characterData.CharacterId,
             characterData = characterData,
             weaponData = initialWeapon,
             level = 1,

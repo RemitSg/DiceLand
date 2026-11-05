@@ -161,6 +161,18 @@ public class MapEvent_SO : ScriptableObject
     public List<MapEventOptionData> options = new List<MapEventOptionData>();
 
     public string DisplayName => string.IsNullOrWhiteSpace(eventName) ? name : eventName;
+    public string LocalizedName => Localize("name", DisplayName);
+
+    public string Localize(string field, string source)
+    {
+        return string.IsNullOrWhiteSpace(eventId) ? source : GameText.Get($"event.{eventId}.{field}", source);
+    }
+
+    public string LocalizeOption(MapEventOptionData option, string field, string source)
+    {
+        return option != null && !string.IsNullOrWhiteSpace(option.optionId)
+            ? Localize($"option.{option.optionId}.{field}", source) : source;
+    }
 
     public IReadOnlyList<MapEventOptionData> GetValidOptions()
     {

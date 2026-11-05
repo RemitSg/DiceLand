@@ -27,6 +27,7 @@ public partial class MainMenuSettingsOverlay : MonoBehaviour
     private Dropdown frameRateDropdown;
     private Dropdown battleAdvanceDropdown;
     private Dropdown detailSizeDropdown;
+    private Dropdown languageDropdown;
     private Text musicValueText;
     private Text sfxValueText;
     private Text titleText;
@@ -107,8 +108,8 @@ public partial class MainMenuSettingsOverlay : MonoBehaviour
         canvas.sortingOrder = sortOrder;
         audioSection.gameObject.SetActive(!inRun);
         displaySection.gameObject.SetActive(!inRun);
-        titleText.text = inRun ? "局内设置" : "设 置";
-        subtitleText.text = inRun ? "战斗 · 阅读 · 反馈" : "声音 · 画面 · 游玩";
+        languageRow.gameObject.SetActive(!inRun);
+        RefreshLocalizedText();
 
         MainMenuSettingsData safeSettings = currentSettings != null ? currentSettings.Clone() : MainMenuSettingsPersistence.CreateDefault();
         vibrationToggle.SetIsOnWithoutNotify(safeSettings.vibrationEnabled);
@@ -116,6 +117,7 @@ public partial class MainMenuSettingsOverlay : MonoBehaviour
         detailSizeDropdown.SetValueWithoutNotify(safeSettings.largeDetailText ? 1 : 0);
         if (!inRun)
         {
+            languageDropdown.SetValueWithoutNotify(GameText.Normalize(safeSettings.languageCode) == GameText.English ? 1 : 0);
             PopulateResolutionOptions(safeSettings);
             musicSlider.SetValueWithoutNotify(safeSettings.musicVolume);
             sfxSlider.SetValueWithoutNotify(safeSettings.sfxVolume);
@@ -271,6 +273,7 @@ public partial class MainMenuSettingsOverlay : MonoBehaviour
         data.largeDetailText = detailSizeDropdown.value == 1;
         if (!gameplayOnly)
         {
+            data.languageCode = languageDropdown.value == 1 ? GameText.English : GameText.Chinese;
             data.musicVolume = musicSlider.value;
             data.sfxVolume = sfxSlider.value;
             data.isFullscreen = fullscreenToggle.isOn;

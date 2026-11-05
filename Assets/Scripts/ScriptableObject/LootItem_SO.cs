@@ -15,6 +15,8 @@ public class LootItem_SO : ScriptableObject
 {
     [Header("Identity")]
     public int lootID;
+    public string saveId;
+    public string legacySaveId;
     public string lootName;
 
     [TextArea(2, 5)]

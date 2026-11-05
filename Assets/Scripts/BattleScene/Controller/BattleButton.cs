@@ -1558,7 +1558,7 @@ public partial class BattleButton : MonoBehaviour
 
     private void ApplyBloodSpiderPregnancyClashLossEffects(BattleEnemyController enemy)
     {
-        if (enemy == null || enemy.EnemyID != 30 || enemy.SelectedSkill == null || enemy.SelectedSkill.skillName != "蛛孕")
+        if (enemy == null || enemy.EnemyID != 30 || enemy.SelectedSkill == null || enemy.SelectedSkill.mechanic != BattleSkillMechanic.SpiderPregnancy)
             return;
 
         List<BattleEnemyController> eggs = GetLivingEnemies();
@@ -1577,7 +1577,7 @@ public partial class BattleButton : MonoBehaviour
 
     private void ApplyBloodSpiderKinFeastEffects(BattleEnemyController attacker)
     {
-        if (attacker == null || attacker.EnemyID != 30 || attacker.SelectedSkill == null || attacker.SelectedSkill.skillName != "噬亲")
+        if (attacker == null || attacker.EnemyID != 30 || attacker.SelectedSkill == null || attacker.SelectedSkill.mechanic != BattleSkillMechanic.SpiderKinFeast)
             return;
 
         List<BattleEnemyController> enemies = GetLivingEnemies();
@@ -1635,7 +1635,7 @@ public partial class BattleButton : MonoBehaviour
 
     private void ApplyWanderingPhantomBlendIntoShadowEffects(BattleEnemyController attacker)
     {
-        if (attacker == null || attacker.EnemyID != 33 || attacker.SelectedSkill == null || attacker.SelectedSkill.skillName != "融入暗影")
+        if (attacker == null || attacker.EnemyID != 33 || attacker.SelectedSkill == null || attacker.SelectedSkill.mechanic != BattleSkillMechanic.BlendIntoShadow)
             return;
 
         int remnantCount = 0;
@@ -6019,7 +6019,9 @@ public partial class BattleButton : MonoBehaviour
         if (step == null)
             return;
 
-        tutorialBattleGuideOverlay.Show(step.title, step.body, step.continueButtonLabel, () =>
+        string key = "tutorial." + step.stepId;
+        tutorialBattleGuideOverlay.Show(GameText.Content(key, "title", step.title),
+            GameText.Content(key, "body", step.body), GameText.Get("ui.continue", step.continueButtonLabel), () =>
         {
             TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.ContinuePressed);
             ShowTutorialTargetHighlightIfNeeded(step.highlightAfterContinue);
@@ -6032,7 +6034,9 @@ public partial class BattleButton : MonoBehaviour
         if (tutorialBattleGuideOverlay == null || reaction == null)
             return;
 
-        tutorialBattleGuideOverlay.Show(reaction.title, reaction.body, reaction.continueButtonLabel, () =>
+        string key = "tutorial." + reaction.reactionId;
+        tutorialBattleGuideOverlay.Show(GameText.Content(key, "title", reaction.title),
+            GameText.Content(key, "body", reaction.body), GameText.Get("tutorial.got_it", reaction.continueButtonLabel), () =>
         {
             if (ShowTutorialTargetHighlightIfNeeded(reaction.highlightAfterContinue))
                 return;

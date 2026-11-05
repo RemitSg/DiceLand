@@ -93,13 +93,12 @@ public static class BattleEnemyBattleStartSkillGrantService
 
     private static bool ShouldGrantToAlly(EnemyData_SO.BattleStartAllySkillGrantEntry grant, BattleAllyController ally)
     {
-        if (string.IsNullOrWhiteSpace(grant.targetAllyCharacterName))
+        string targetId = !string.IsNullOrWhiteSpace(grant.targetAllyCharacterId)
+            ? grant.targetAllyCharacterId : grant.targetAllyCharacterName;
+        if (string.IsNullOrWhiteSpace(targetId))
             return true;
 
-        if (ally == null)
-            return false;
-
-        return string.Equals(ally.GetSettlementDisplayName(), grant.targetAllyCharacterName, System.StringComparison.OrdinalIgnoreCase);
+        return ally != null && ally.CharacterData != null && ally.CharacterData.MatchesId(targetId);
     }
 
     private static void ClearTemporarySkills(IReadOnlyList<BattleAllyController> allies)

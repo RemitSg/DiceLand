@@ -33,8 +33,7 @@ public static class TutorialBattlePartyOverrideService
             if (member.isTemporaryBattleGuest && string.Equals(member.memberId, MollyMemberId, StringComparison.OrdinalIgnoreCase))
                 return;
 
-            if (member.characterData != null
-                && string.Equals(member.characterData.characterName, "Molly", StringComparison.OrdinalIgnoreCase))
+            if (member.characterData != null && member.characterData.MatchesId(CharacterData_SO.MollyId))
             {
                 return;
             }
@@ -62,6 +61,8 @@ public static class TutorialBattlePartyOverrideService
 
         CharacterData_SO character = ScriptableObject.CreateInstance<CharacterData_SO>();
         PrepareRuntimeObject(character, "Tutorial_Molly_Character");
+        character.characterId = CharacterData_SO.MollyId;
+        character.legacySaveId = "Molly";
         character.characterName = "Molly";
         character.basicDescription = visualSource != null ? visualSource.basicDescription : string.Empty;
         character.baseHP = 16;

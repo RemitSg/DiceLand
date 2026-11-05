@@ -12,7 +12,6 @@ public static class BattleGamblerPassiveService
     public const int GamblerEnemyId = 36;
     public const string DebtStatusId = "debt";
     public const int DebtInstantDeathThreshold = 3;
-    private const string GambleSkillName = "\u8D4C\u535A";
 
     public static bool ShouldBlockIncomingDamage(BattleEnemyController target, BattleGamblerDamageSource damageSource)
     {
@@ -68,7 +67,7 @@ public static class BattleGamblerPassiveService
 
     public static bool IsGambleSkill(EnemySkill_SO skill)
     {
-        return skill != null && string.Equals(skill.skillName, GambleSkillName, StringComparison.OrdinalIgnoreCase);
+        return skill != null && skill.mechanic == BattleSkillMechanic.Gamble;
     }
 
     private static bool IsDebtStatus(BattleStatus_SO statusData, string fallbackStatusId)

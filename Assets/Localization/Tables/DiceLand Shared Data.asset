@@ -1,0 +1,932 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: DiceLand Shared Data
+  m_EditorClassIdentifier:
+  m_TableCollectionName: DiceLand
+  m_TableCollectionNameGuidString: 53ccebb454c0a204bb4519287daa21b4
+  m_Entries:
+  - m_Id: 2940809216
+    m_Key: battle.enemy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2970169344
+    m_Key: battle.enemy.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2970169345
+    m_Key: battle.enemy.health
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2978557952
+    m_Key: battle.enemy.id
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2982752256
+    m_Key: battle.enemy.missing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2982752257
+    m_Key: battle.enemy.no_passives
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2982752258
+    m_Key: battle.enemy.passives
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2982752259
+    m_Key: battle.enemy.profile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2982752260
+    m_Key: battle.hud.energy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2982752261
+    m_Key: battle.hud.round
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946560
+    m_Key: battle.rule.damage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946561
+    m_Key: battle.settlement.defeat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946562
+    m_Key: battle.settlement.defeat_summary
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946563
+    m_Key: battle.settlement.downed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946564
+    m_Key: battle.settlement.earned
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946565
+    m_Key: battle.settlement.end_run
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946566
+    m_Key: battle.settlement.exp_bar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946567
+    m_Key: battle.settlement.gold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946568
+    m_Key: battle.settlement.loot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946569
+    m_Key: battle.settlement.loot_hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946570
+    m_Key: battle.settlement.no_loot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946571
+    m_Key: battle.settlement.party
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946572
+    m_Key: battle.settlement.retry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946573
+    m_Key: battle.settlement.return
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946574
+    m_Key: battle.settlement.tutorial_defeat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946575
+    m_Key: battle.settlement.tutorial_defeat_summary
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946576
+    m_Key: battle.settlement.victory
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946577
+    m_Key: battle.settlement.victory_summary
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946578
+    m_Key: battle.settlement.wallet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946579
+    m_Key: battle.settlement.xp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946580
+    m_Key: battle.skill.ally
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946581
+    m_Key: battle.skill.attack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946582
+    m_Key: battle.skill.attack_die
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946583
+    m_Key: battle.skill.available
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946584
+    m_Key: battle.skill.current
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946585
+    m_Key: battle.skill.current_named
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946586
+    m_Key: battle.skill.defense
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946587
+    m_Key: battle.skill.defense_die
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946588
+    m_Key: battle.skill.dice_count
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946589
+    m_Key: battle.skill.die_effect
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946590
+    m_Key: battle.skill.effects
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946591
+    m_Key: battle.skill.enemy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946592
+    m_Key: battle.skill.energy_cost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946593
+    m_Key: battle.skill.mixed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946594
+    m_Key: battle.skill.no_effects
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946595
+    m_Key: battle.skill.no_weapon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946596
+    m_Key: battle.skill.select_hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946597
+    m_Key: battle.skill.temporary
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946598
+    m_Key: battle.skill.unconfigured
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946599
+    m_Key: battle.skill.unset
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946600
+    m_Key: event.1.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946601
+    m_Key: event.1.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946602
+    m_Key: event.1.option.1.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946603
+    m_Key: event.1.option.1.preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946604
+    m_Key: event.1.option.1.result
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946605
+    m_Key: event.1.option.2.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946606
+    m_Key: event.1.option.2.preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946607
+    m_Key: event.1.option.2.result
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946608
+    m_Key: event.effect.gain_ap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946609
+    m_Key: event.effect.lose_ap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946610
+    m_Key: event.effect.lose_hp_percent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946611
+    m_Key: event.effect.restore_hp_percent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946612
+    m_Key: map.battle.back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946613
+    m_Key: map.battle.boss
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946614
+    m_Key: map.battle.elite
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946615
+    m_Key: map.battle.enter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946616
+    m_Key: map.battle.standard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946617
+    m_Key: map.controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946618
+    m_Key: map.danger.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946619
+    m_Key: map.danger.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946620
+    m_Key: map.danger.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946621
+    m_Key: map.danger.4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946622
+    m_Key: map.danger.5
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946623
+    m_Key: map.danger.6
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946624
+    m_Key: map.danger.7
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946625
+    m_Key: map.danger.8
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946626
+    m_Key: map.explored
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946627
+    m_Key: map.generated
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946628
+    m_Key: map.region.core
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946629
+    m_Key: map.region.inner
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946630
+    m_Key: map.region.mid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946631
+    m_Key: map.region.outer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946632
+    m_Key: map.resolved
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946633
+    m_Key: map.tile.battle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946634
+    m_Key: map.tile.danger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946635
+    m_Key: map.tile.empty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946636
+    m_Key: map.tile.empty_detail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946637
+    m_Key: map.tile.event_detail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946638
+    m_Key: map.tile.inspect
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946639
+    m_Key: map.tile.none
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946640
+    m_Key: map.tile.region
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946641
+    m_Key: map.unexplored
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946642
+    m_Key: map.unresolved
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946643
+    m_Key: term.gold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946644
+    m_Key: tutorial.battle.context
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946645
+    m_Key: tutorial.battle01.heavy_strike.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946646
+    m_Key: tutorial.battle01.heavy_strike.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946647
+    m_Key: tutorial.battle01.light_strike.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946648
+    m_Key: tutorial.battle01.light_strike.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946649
+    m_Key: tutorial.battle01.training_rat.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946650
+    m_Key: tutorial.battle01.training_rat.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946651
+    m_Key: tutorial.battle01_clash_explained.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946652
+    m_Key: tutorial.battle01_clash_explained.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946653
+    m_Key: tutorial.battle01_draw_clash_line.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946654
+    m_Key: tutorial.battle01_draw_clash_line.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946655
+    m_Key: tutorial.battle01_enemy_single_explained.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946656
+    m_Key: tutorial.battle01_enemy_single_explained.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946657
+    m_Key: tutorial.battle01_intro_enemy_detail.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946658
+    m_Key: tutorial.battle01_intro_enemy_detail.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946659
+    m_Key: tutorial.battle01_press_prepare.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946660
+    m_Key: tutorial.battle01_press_prepare.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946661
+    m_Key: tutorial.battle01_read_enemy_skill.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946662
+    m_Key: tutorial.battle01_read_enemy_skill.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946663
+    m_Key: tutorial.battle01_start_clash.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946664
+    m_Key: tutorial.battle01_start_clash.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946665
+    m_Key: tutorial.battle01_start_enemy_attack.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946666
+    m_Key: tutorial.battle01_start_enemy_attack.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946667
+    m_Key: tutorial.battle01_victory.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946668
+    m_Key: tutorial.battle01_victory.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946669
+    m_Key: tutorial.battle01_view_ally_skill.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946670
+    m_Key: tutorial.battle01_view_ally_skill.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946671
+    m_Key: tutorial.got_it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946672
+    m_Key: tutorial.map.ap.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946673
+    m_Key: tutorial.map.ap.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946674
+    m_Key: tutorial.map.attributes.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946675
+    m_Key: tutorial.map.attributes.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946676
+    m_Key: tutorial.map.battle.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946677
+    m_Key: tutorial.map.battle.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946678
+    m_Key: tutorial.map.context
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946679
+    m_Key: tutorial.map.coord.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946680
+    m_Key: tutorial.map.coord.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946681
+    m_Key: tutorial.map.cost.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946682
+    m_Key: tutorial.map.cost.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946683
+    m_Key: tutorial.map.danger.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946684
+    m_Key: tutorial.map.danger.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946685
+    m_Key: tutorial.map.discovery.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946686
+    m_Key: tutorial.map.discovery.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946687
+    m_Key: tutorial.map.enter_battle_hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946688
+    m_Key: tutorial.map.explore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946689
+    m_Key: tutorial.map.gold.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946690
+    m_Key: tutorial.map.gold.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946691
+    m_Key: tutorial.map.inspect.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946692
+    m_Key: tutorial.map.inspect.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946693
+    m_Key: tutorial.map.inspect_hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946694
+    m_Key: tutorial.map.route.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946695
+    m_Key: tutorial.map.route.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946696
+    m_Key: tutorial.map.started
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946697
+    m_Key: tutorial.map.tile.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946698
+    m_Key: tutorial.map.tile.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946699
+    m_Key: tutorial.map.welcome.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946700
+    m_Key: tutorial.map.welcome.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946701
+    m_Key: tutorial.menu.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946702
+    m_Key: tutorial.menu.start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946703
+    m_Key: tutorial.menu.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946704
+    m_Key: ui.back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946705
+    m_Key: ui.close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946706
+    m_Key: ui.confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946707
+    m_Key: ui.continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946708
+    m_Key: ui.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946709
+    m_Key: ui.difficulty.details
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946710
+    m_Key: ui.difficulty.easy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946711
+    m_Key: ui.difficulty.extreme
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946712
+    m_Key: ui.difficulty.hard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946713
+    m_Key: ui.difficulty.missing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946714
+    m_Key: ui.difficulty.normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946715
+    m_Key: ui.difficulty.start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946716
+    m_Key: ui.difficulty.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946717
+    m_Key: ui.event.choice_failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946718
+    m_Key: ui.event.choose
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946719
+    m_Key: ui.event.continue_hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946720
+    m_Key: ui.event.empty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946721
+    m_Key: ui.event.encounter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946722
+    m_Key: ui.event.no_choices
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946723
+    m_Key: ui.event.no_preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946724
+    m_Key: ui.event.outcome
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946725
+    m_Key: ui.event.preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946726
+    m_Key: ui.event.resolved
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946727
+    m_Key: ui.event.result
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946728
+    m_Key: ui.event.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946729
+    m_Key: ui.event.unavailable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946730
+    m_Key: ui.main_menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946731
+    m_Key: ui.menu.abilities
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946732
+    m_Key: ui.menu.continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946733
+    m_Key: ui.menu.contributors
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946734
+    m_Key: ui.menu.new_game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946735
+    m_Key: ui.menu.no_save
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946736
+    m_Key: ui.menu.overwrite_save
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946737
+    m_Key: ui.menu.quit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946738
+    m_Key: ui.menu.settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946739
+    m_Key: ui.menu.test_battle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946740
+    m_Key: ui.menu.tutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946741
+    m_Key: ui.no_description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946742
+    m_Key: ui.off
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946743
+    m_Key: ui.on
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946744
+    m_Key: ui.scroll_more
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946745
+    m_Key: ui.settings.auto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946746
+    m_Key: ui.settings.battle_advance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946747
+    m_Key: ui.settings.detail_size
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946748
+    m_Key: ui.settings.device_resolution
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946749
+    m_Key: ui.settings.display
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946750
+    m_Key: ui.settings.fast
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946751
+    m_Key: ui.settings.frame_limit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946752
+    m_Key: ui.settings.fullscreen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946753
+    m_Key: ui.settings.gameplay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946754
+    m_Key: ui.settings.hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946755
+    m_Key: ui.settings.in_run
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946756
+    m_Key: ui.settings.in_run_subtitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946757
+    m_Key: ui.settings.language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946758
+    m_Key: ui.settings.large
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946759
+    m_Key: ui.settings.manual
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946760
+    m_Key: ui.settings.music
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946761
+    m_Key: ui.settings.quality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946762
+    m_Key: ui.settings.quality.high
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946763
+    m_Key: ui.settings.quality.low
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946764
+    m_Key: ui.settings.quality.medium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946765
+    m_Key: ui.settings.quality.ultra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946766
+    m_Key: ui.settings.quality.very_high
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946767
+    m_Key: ui.settings.quality.very_low
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946768
+    m_Key: ui.settings.resolution
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946769
+    m_Key: ui.settings.save
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946770
+    m_Key: ui.settings.sfx
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946771
+    m_Key: ui.settings.sound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946772
+    m_Key: ui.settings.standard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946773
+    m_Key: ui.settings.subtitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946774
+    m_Key: ui.settings.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946775
+    m_Key: ui.settings.vibration
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 5043701850270335001
+  references:
+    version: 2
+    RefIds:
+    - rid: 5043701850270335001
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1793866778031

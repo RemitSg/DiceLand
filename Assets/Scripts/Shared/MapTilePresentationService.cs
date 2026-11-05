@@ -116,22 +116,22 @@ public static class MapDangerRatingService
         switch (ClampRating(rating))
         {
             case 1:
-                return "轻松";
+                return GameText.Get("map.danger.1", "轻松");
             case 2:
-                return "吃力";
+                return GameText.Get("map.danger.2", "吃力");
             case 3:
-                return "艰难";
+                return GameText.Get("map.danger.3", "艰难");
             case 4:
-                return "十分艰难";
+                return GameText.Get("map.danger.4", "十分艰难");
             case 5:
-                return "极其艰难";
+                return GameText.Get("map.danger.5", "极其艰难");
             case 6:
-                return "噩梦";
+                return GameText.Get("map.danger.6", "噩梦");
             case 7:
-                return "绝望";
+                return GameText.Get("map.danger.7", "绝望");
             case 8:
             default:
-                return "死亡";
+                return GameText.Get("map.danger.8", "死亡");
         }
     }
 

@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: WoodenSword_Data
   m_EditorClassIdentifier: 
   id: 0
+  saveId: weapon.wooden_sword
+  legacySaveId: "\u65B0\u624B\u6728\u5251"
   weaponName: "\u65B0\u624B\u6728\u5251"
   description: "\u6700\u7B80\u5355\u7684\u6B66\u5668\uFF0C\u9002\u5408\u521D\u5B66\u8005\u4F7F\u7528"
   rarity: 0

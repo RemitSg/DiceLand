@@ -203,8 +203,8 @@ public class TutorialBattleContentFactoryTests
         Assert.AreEqual(2, enemy.battleStartGrantedAllySkills[1].skill.minPower);
         Assert.AreEqual(3, enemy.battleStartGrantedAllySkills[1].skill.maxPower);
         Assert.AreEqual(EnemySkill_SO.SkillCategory.Defense, enemy.battleStartGrantedAllySkills[1].skill.skillCategory);
-        Assert.AreEqual("Molly", enemy.battleStartGrantedAllySkills[0].targetAllyCharacterName);
-        Assert.AreEqual("Chara", enemy.battleStartGrantedAllySkills[1].targetAllyCharacterName);
+        Assert.AreEqual(CharacterData_SO.MollyId, enemy.battleStartGrantedAllySkills[0].targetAllyCharacterId);
+        Assert.AreEqual(CharacterData_SO.CharaId, enemy.battleStartGrantedAllySkills[1].targetAllyCharacterId);
     }
 
     [Test]

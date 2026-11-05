@@ -361,9 +361,9 @@ public partial class MapHUD : MonoBehaviour
         if (tile == null)
         {
             if (tileTitleText != null)
-                tileTitleText.text = "未选中格子";
+                tileTitleText.text = GameText.Get("map.tile.none", "未选中格子");
             if (tileBodyText != null)
-                tileBodyText.text = "点击任意格子查看详情。";
+                tileBodyText.text = GameText.Get("map.tile.inspect", "点击任意格子查看详情。");
             if (tileAttributeLabelText != null)
                 tileAttributeLabelText.gameObject.SetActive(false);
             if (tileAttributeValueText != null)
@@ -384,9 +384,9 @@ public partial class MapHUD : MonoBehaviour
                 lines.Add(attributeLine);
 
             bool isSpecialDungeonTile = tile.sourceSpecialDungeon != null;
-            string dangerLine = $"危险度 {MapDangerRatingService.GetRatingRichText(tile.previewDangerRating)}";
+            string dangerLine = GameText.Format("map.tile.danger", "危险度 {value}", ("value", MapDangerRatingService.GetRatingRichText(tile.previewDangerRating)));
             if (!isSpecialDungeonTile)
-                dangerLine = $"{dangerLine} | 区域 {WrapColor(GetDangerBandLabel(tile.dangerBand), tileRegionHighlightColor)}";
+                dangerLine += " | " + GameText.Format("map.tile.region", "区域 {value}", ("value", WrapColor(GetDangerBandLabel(tile.dangerBand), tileRegionHighlightColor)));
             lines.Add(dangerLine);
 
             if (!string.IsNullOrWhiteSpace(tile.previewTag))
@@ -507,7 +507,7 @@ public partial class MapHUD : MonoBehaviour
         rect.anchorMax = new Vector2(0f, 0f);
         rect.pivot = new Vector2(0f, 0f);
         TextMeshProUGUI hint = CreateText(rootRect, "MapInteractionHint", new Vector2(26f, 24f), new Vector2(1100f, 34f), 23, ForestIvory,
-            "点击格子查看详情 · 拖动地图 · 双指缩放", bodyFont);
+            GameText.Get("map.controls", "点击格子查看详情 · 拖动地图 · 双指缩放"), bodyFont);
         hint.rectTransform.anchorMin = hint.rectTransform.anchorMax = hint.rectTransform.pivot = Vector2.zero;
     }
 
@@ -1631,13 +1631,13 @@ public partial class MapHUD : MonoBehaviour
         switch (tileType)
         {
             case MapTileType.Empty:
-                return "空白";
+                return GameText.Get("map.tile.empty", "空白");
             case MapTileType.Battle:
-                return "战斗";
+                return GameText.Get("map.tile.battle", "战斗");
             case MapTileType.Elite:
                 return "精英";
             case MapTileType.Event:
-                return "事件";
+                return GameText.Get("ui.event.title", "事件");
             case MapTileType.Merchant:
                 return "商人";
             case MapTileType.Treasure:
@@ -1662,13 +1662,13 @@ public partial class MapHUD : MonoBehaviour
         switch (band)
         {
             case MapDangerBand.Outer:
-                return "外围";
+                return GameText.Get("map.region.outer", "外围");
             case MapDangerBand.Mid:
-                return "中层";
+                return GameText.Get("map.region.mid", "中层");
             case MapDangerBand.Inner:
-                return "内层";
+                return GameText.Get("map.region.inner", "内层");
             case MapDangerBand.Core:
-                return "核心";
+                return GameText.Get("map.region.core", "核心");
             default:
                 return "未知";
         }
@@ -1679,9 +1679,9 @@ public partial class MapHUD : MonoBehaviour
         switch (tileType)
         {
             case MapTileType.Empty:
-                return "空白格，无特殊效果";
+                return GameText.Get("map.tile.empty_detail", "空白格，无特殊效果");
             case MapTileType.Event:
-                return "事件格，可触发随机事件";
+                return GameText.Get("map.tile.event_detail", "事件格，可触发随机事件");
             case MapTileType.Merchant:
                 return "商人格，可消耗金钱购买商品";
             case MapTileType.Treasure:

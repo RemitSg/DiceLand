@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 659670d3d14c698459357612937821db, type: 3}
   m_Name: Chara
   m_EditorClassIdentifier: 
+  characterId: character.chara
+  legacySaveId: Chara
   characterName: Chara
   basicDescription: 
   baseHP: 24

@@ -24,6 +24,8 @@ public class Weapon_SO : ScriptableObject
     [Header("Base Info")]
 
     public int id;
+    public string saveId;
+    public string legacySaveId;
     public string weaponName;
 
     [TextArea(2, 4)]

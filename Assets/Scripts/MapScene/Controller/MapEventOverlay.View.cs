@@ -66,7 +66,7 @@ public partial class MapEventOverlay
         contentText.paragraphSpacing = 12f;
         optionSection = Rect(panelRect, "OptionSection");
         TextMeshProUGUI section = Text(optionSection, "OptionSectionTitle", 29, Gold, true);
-        section.text = "选择行动";
+        section.text = GameText.Get("ui.event.choose", "选择行动");
         Place(section.rectTransform, 0f, 0f, 166f, 44f);
         RectTransform divider = Glyph(optionSection, "OptionDivider", MapHudGlyph.Shape.Divider, Gold);
         Place(divider, 166f, 12f, panelSize.x - 254f, 20f);

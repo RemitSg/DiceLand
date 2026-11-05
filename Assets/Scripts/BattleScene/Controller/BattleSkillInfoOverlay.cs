@@ -441,7 +441,8 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
                 string triggerLabel = BuildColoredToken(GetGeneralEffectTriggerLabel(effect.trigger), triggerHighlightColor);
                 string targetLabel = BuildColoredToken(GetDamageTargetLabel(effect.targetMode, effect.randomTargetCount, attackerIsAlly), targetHighlightColor);
                 string valueLabel = BuildColoredToken(effect.damageAmount.ToString(), valueHighlightColor);
-                effectLines.Add($"{diceEffectLabel}：{triggerLabel} 对 {targetLabel} 造成 {valueLabel} 点伤害");
+                effectLines.Add(GameText.Format("battle.rule.damage", "{dice}：{trigger} 对 {target} 造成 {amount} 点伤害",
+                    ("dice", diceEffectLabel), ("trigger", triggerLabel), ("target", targetLabel), ("amount", valueLabel)));
             }
         }
 
@@ -1665,15 +1666,15 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
 
     private string BuildDiceEffectLabel(EnemySkill_SO skill, int diceIndex)
     {
-        return $"{GetDicePrefixLabel(skill, diceIndex)}词条";
+        return GameText.Format("battle.skill.die_effect", "{die}词条", ("die", GetDicePrefixLabel(skill, diceIndex)));
     }
 
     private static string GetDicePrefixLabel(EnemySkill_SO skill, int diceIndex)
     {
         bool isDefense = skill != null && skill.GetDiceSkillCategory(diceIndex) == EnemySkill_SO.SkillCategory.Defense;
         return isDefense
-            ? $"第 {diceIndex + 1} 防御骰"
-            : $"第 {diceIndex + 1} 攻击骰";
+            ? GameText.Format("battle.skill.defense_die", "第 {index} 防御骰", ("index", diceIndex + 1))
+            : GameText.Format("battle.skill.attack_die", "第 {index} 攻击骰", ("index", diceIndex + 1));
     }
 
     private Color GetDicePowerDisplayColor(EnemySkill_SO skill, int diceIndex)

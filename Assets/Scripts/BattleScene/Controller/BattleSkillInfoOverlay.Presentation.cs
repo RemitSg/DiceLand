@@ -83,7 +83,7 @@ public partial class BattleSkillInfoOverlay
         contextText = SkillText(panelRoot, "Context", 25, SkillMuted, string.Empty); contextText.alignment = TextAlignmentOptions.MidlineRight;
         RectTransform headerRule = SkillRect(panelRoot, "HeaderRule"); AddSkillRule(headerRule);
         listHeading = SkillRect(panelRoot, "ListHeading");
-        TextMeshProUGUI listTitle = SkillText(listHeading, "Label", 32, SkillGold, "可用技能"); StretchSkill(listTitle.rectTransform);
+        TextMeshProUGUI listTitle = SkillText(listHeading, "Label", 32, SkillGold, GameText.Get("battle.skill.available", "可用技能")); StretchSkill(listTitle.rectTransform);
         listArea = SkillRect(panelRoot, "SkillListArea");
         skillListScroll = BuildSkillScroll(listArea, "SkillList", out RectTransform listViewport, out skillListRoot, out listScrollbar);
         columnRule = SkillRect(panelRoot, "ColumnRule");
@@ -105,11 +105,11 @@ public partial class BattleSkillInfoOverlay
         bodyArea = SkillRect(detailRegion, "DetailArea");
         detailScrollRect = BuildSkillScroll(bodyArea, "Detail", out detailViewport, out detailContent, out _);
         detailText = SkillText(detailContent, "EnemyData", 27, SkillIvory, string.Empty); detailText.enableWordWrapping = true;
-        descriptionHeading = SkillText(detailContent, "DescriptionHeading", 26, SkillGold, "描述");
+        descriptionHeading = SkillText(detailContent, "DescriptionHeading", 26, SkillGold, GameText.Get("ui.description", "描述"));
         descriptionBody = SkillText(detailContent, "Description", SkillDescriptionSize, SkillIvory, string.Empty); descriptionBody.enableWordWrapping = true;
         footerRule = SkillRect(panelRoot, "FooterRule"); AddSkillRule(footerRule);
-        footerHint = SkillText(panelRoot, "FooterHint", 23, SkillMuted, "点击技能即切换");
-        footerClose = SkillButton(panelRoot, "FooterCloseButton", "关闭", Hide);
+        footerHint = SkillText(panelRoot, "FooterHint", 23, SkillMuted, GameText.Get("battle.skill.select_hint", "点击技能即切换"));
+        footerClose = SkillButton(panelRoot, "FooterCloseButton", GameText.Get("ui.close", "关闭"), Hide);
         footerClose.gameObject.AddComponent<BattleSkillOverlayCancel>().close = Hide;
         closeButton.gameObject.AddComponent<BattleSkillOverlayCancel>().close = Hide;
         BuildEnemyProfileUi();

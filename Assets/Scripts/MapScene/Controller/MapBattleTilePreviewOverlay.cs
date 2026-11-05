@@ -152,7 +152,9 @@ public sealed partial class MapBattleTilePreviewOverlay : MonoBehaviour
         {
             BoardTileData tile = currentContext.tile;
             metadataText.text = $"{RegionName(tile.dangerBand)} · [{tile.coord.x},{tile.coord.y}]";
-            explorationText.text = $"{(tile.isVisited ? "已探索" : "未探索")} · {(tile.isResolved ? "已解决" : "未解决")}";
+            string explored = tile.isVisited ? GameText.Get("map.explored", "已探索") : GameText.Get("map.unexplored", "未探索");
+            string resolved = tile.isResolved ? GameText.Get("map.resolved", "已解决") : GameText.Get("map.unresolved", "未解决");
+            explorationText.text = explored + " · " + resolved;
             int danger = MapDangerRatingService.ClampRating(currentContext.dangerRating);
             dangerText.text = MapDangerRatingService.GetRatingPhrase(danger);
             dangerText.color = danger <= 1 ? new Color(0.66f, 0.86f, 0.68f)
@@ -169,8 +171,8 @@ public sealed partial class MapBattleTilePreviewOverlay : MonoBehaviour
             statusText.text = "预览不可用：该格子当前无法进入战斗。";
         }
         // Cost remains in the context and commit flow; the approved button has no cost suffix.
-        confirmLabelText.text = "进入战斗";
-        returnLabelText.text = "返回地图";
+        confirmLabelText.text = GameText.Get("map.battle.enter", "进入战斗");
+        returnLabelText.text = GameText.Get("map.battle.back", "返回地图");
         statusText.color = Quiet;
         ApplyFonts();
         LayoutContent();
@@ -206,16 +208,17 @@ public sealed partial class MapBattleTilePreviewOverlay : MonoBehaviour
         context != null && context.canPreview && context.tile != null && context.tile.IsHostileTile;
 
     private static string GetBattleClassLabel(MapTileType type) =>
-        type == MapTileType.Elite ? "精英战斗" : type == MapTileType.Boss ? "首领战斗" : "普通战斗";
+        type == MapTileType.Elite ? GameText.Get("map.battle.elite", "精英战斗")
+            : type == MapTileType.Boss ? GameText.Get("map.battle.boss", "首领战斗") : GameText.Get("map.battle.standard", "普通战斗");
 
     private static string RegionName(MapDangerBand band)
     {
         switch (band)
         {
-            case MapDangerBand.Outer: return "外围";
-            case MapDangerBand.Mid: return "中层";
-            case MapDangerBand.Inner: return "内层";
-            case MapDangerBand.Core: return "核心";
+            case MapDangerBand.Outer: return GameText.Get("map.region.outer", "外围");
+            case MapDangerBand.Mid: return GameText.Get("map.region.mid", "中层");
+            case MapDangerBand.Inner: return GameText.Get("map.region.inner", "内层");
+            case MapDangerBand.Core: return GameText.Get("map.region.core", "核心");
             default: return "未知";
         }
     }

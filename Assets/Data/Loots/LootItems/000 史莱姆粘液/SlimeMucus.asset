@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: SlimeMucus
   m_EditorClassIdentifier: 
   lootID: 0
+  saveId: loot.slime_mucus
+  legacySaveId: "\u53F2\u83B1\u59C6\u7C98\u6DB2"
   lootName: "\u53F2\u83B1\u59C6\u7C98\u6DB2"
   description: "\u4E00\u5768\u7C98\u6DB2\uFF0C\u597D\u50CF\u9690\u9690\u8FD8\u5728\u8815\u52A8"
   attribute: {fileID: 11400000, guid: d4ed7fcdaf0e4f7fa153118a4219a68f, type: 2}

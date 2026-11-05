@@ -485,8 +485,10 @@ public static class TutorialBattleContentFactory
     private static EnemyGroup_SO CreateBattle01EnemyGroup(TutorialEnemyVisualTemplateSet visualTemplates)
     {
         EnemySkill_SO enemyLight = CreateSkill("轻击", "基础攻击。用来演示敌方单方面攻击与拼点。", 0, 1, 2);
+        enemyLight.localizationKey = "tutorial.battle01.light_strike";
 
         EnemySkill_SO allyHeavy = CreateSkill("重击", "稳定而有力的基础攻击。威力范围高于轻击，适合第一次学习拼点。", 0, 3, 4);
+        allyHeavy.localizationKey = "tutorial.battle01.heavy_strike";
 
         EnemyData_SO enemy = CreateScriptedTutorialEnemy(
             "木桩鼠",
@@ -501,6 +503,7 @@ public static class TutorialBattleContentFactory
             ("Round 3 Slot 1", enemyLight, 3, 200, 1));
 
         enemy.enemyDescription = "用于第一场教学战的低威胁敌人，只会使用轻击。";
+        enemy.localizationKey = "tutorial.battle01.training_rat";
         ApplyVisualTemplate(enemy, visualTemplates != null ? visualTemplates.openingPrimaryTemplate : null);
         return CreateGroup("TutorialBattleGroup_01", 9201, "教程战 01", "基础战斗与拼点", enemy);
     }
@@ -529,11 +532,11 @@ public static class TutorialBattleContentFactory
         if (enemy.battleStartGrantedAllySkills != null && enemy.battleStartGrantedAllySkills.Count >= 2)
         {
             EnemyData_SO.BattleStartAllySkillGrantEntry mollyGrant = enemy.battleStartGrantedAllySkills[0];
-            mollyGrant.targetAllyCharacterName = "Molly";
+            mollyGrant.targetAllyCharacterId = CharacterData_SO.MollyId;
             enemy.battleStartGrantedAllySkills[0] = mollyGrant;
 
             EnemyData_SO.BattleStartAllySkillGrantEntry charaGrant = enemy.battleStartGrantedAllySkills[1];
-            charaGrant.targetAllyCharacterName = "Chara";
+            charaGrant.targetAllyCharacterId = CharacterData_SO.CharaId;
             enemy.battleStartGrantedAllySkills[1] = charaGrant;
         }
 

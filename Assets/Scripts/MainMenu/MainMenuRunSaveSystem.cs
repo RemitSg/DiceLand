@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using UnityEngine;
 
@@ -21,16 +22,19 @@ public sealed class MainMenuSaveAssetCatalog
     public void Add(CharacterData_SO character)
     {
         Add(characters, MainMenuRunSaveSystem.GetCharacterId(character), character);
+        if (character != null) Add(characters, character.LegacySaveId, character);
     }
 
     public void Add(Weapon_SO weapon)
     {
         Add(weapons, MainMenuRunSaveSystem.GetWeaponId(weapon), weapon);
+        if (weapon != null) Add(weapons, weapon.legacySaveId, weapon);
     }
 
     public void Add(LootItem_SO loot)
     {
         Add(lootItems, MainMenuRunSaveSystem.GetLootId(loot), loot);
+        if (loot != null) Add(lootItems, loot.legacySaveId, loot);
     }
 
     public void Add(CraftingBlueprint_SO blueprint)
@@ -61,6 +65,7 @@ public sealed class MainMenuSaveAssetCatalog
     public void Add(EnemyGroup_SO enemyGroup)
     {
         Add(enemyGroups, MainMenuRunSaveSystem.GetEnemyGroupId(enemyGroup), enemyGroup);
+        if (enemyGroup != null) Add(enemyGroups, enemyGroup.legacySaveId, enemyGroup);
     }
 
     public void Add(MapEvent_SO eventData)
@@ -1096,23 +1101,23 @@ public static class MainMenuRunSaveSystem
 
     public static string GetCharacterId(CharacterData_SO character)
     {
-        if (character == null)
-            return string.Empty;
-        return !string.IsNullOrWhiteSpace(character.characterName) ? character.characterName : character.name;
+        return character != null ? character.CharacterId : string.Empty;
     }
 
     public static string GetWeaponId(Weapon_SO weapon)
     {
         if (weapon == null)
             return string.Empty;
-        return weapon.id > 0 ? weapon.id.ToString() : (!string.IsNullOrWhiteSpace(weapon.weaponName) ? weapon.weaponName : weapon.name);
+        if (!string.IsNullOrWhiteSpace(weapon.saveId)) return weapon.saveId;
+        return weapon.id > 0 ? weapon.id.ToString(CultureInfo.InvariantCulture) : (!string.IsNullOrWhiteSpace(weapon.weaponName) ? weapon.weaponName : weapon.name);
     }
 
     public static string GetLootId(LootItem_SO loot)
     {
         if (loot == null)
             return string.Empty;
-        return loot.lootID > 0 ? loot.lootID.ToString() : (!string.IsNullOrWhiteSpace(loot.lootName) ? loot.lootName : loot.name);
+        if (!string.IsNullOrWhiteSpace(loot.saveId)) return loot.saveId;
+        return loot.lootID > 0 ? loot.lootID.ToString(CultureInfo.InvariantCulture) : (!string.IsNullOrWhiteSpace(loot.lootName) ? loot.lootName : loot.name);
     }
 
     public static string GetBlueprintId(CraftingBlueprint_SO blueprint)
@@ -1120,7 +1125,7 @@ public static class MainMenuRunSaveSystem
         if (blueprint == null)
             return string.Empty;
         if (blueprint.blueprintID > 0)
-            return blueprint.blueprintID.ToString();
+            return blueprint.blueprintID.ToString(CultureInfo.InvariantCulture);
         if (!string.IsNullOrWhiteSpace(blueprint.blueprintName))
             return blueprint.blueprintName;
         return blueprint.name;
@@ -1158,7 +1163,8 @@ public static class MainMenuRunSaveSystem
     {
         if (enemyGroup == null)
             return string.Empty;
-        return enemyGroup.groupID > 0 ? enemyGroup.groupID.ToString() : (!string.IsNullOrWhiteSpace(enemyGroup.groupName) ? enemyGroup.groupName : enemyGroup.name);
+        if (!string.IsNullOrWhiteSpace(enemyGroup.saveId)) return enemyGroup.saveId;
+        return enemyGroup.groupID > 0 ? enemyGroup.groupID.ToString(CultureInfo.InvariantCulture) : (!string.IsNullOrWhiteSpace(enemyGroup.groupName) ? enemyGroup.groupName : enemyGroup.name);
     }
 
     public static string GetEventId(MapEvent_SO eventData)

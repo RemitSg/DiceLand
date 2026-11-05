@@ -76,12 +76,12 @@ public static class BattleSettlementDataFactory
             if (!string.IsNullOrWhiteSpace(encounter?.resolutionOverride?.subtitleOverride))
                 return encounter.resolutionOverride.subtitleOverride;
 
-            return $"战斗胜利，剩余可行动角色：{livingAllies}";
+            return GameText.Format("battle.settlement.victory_summary", "战斗胜利，剩余可行动角色：{count}", ("count", livingAllies));
         }
 
         return encounter != null && encounter.isTutorialEncounter
-            ? "本次教学战斗失败。可以直接重试当前战斗，不会写入正常存档。"
-            : "队伍已在战斗中全灭。";
+            ? GameText.Get("battle.settlement.tutorial_defeat_summary", "本次教学战斗失败。可以直接重试当前战斗，不会写入正常存档。")
+            : GameText.Get("battle.settlement.defeat_summary", "队伍已在战斗中全灭。");
     }
 
     private static string BuildReturnSceneName(bool victory, BattleEncounterData encounter)

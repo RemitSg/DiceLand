@@ -13,7 +13,22 @@ public struct CharacterAttackPose
 [CreateAssetMenu(fileName = "New CharacterData", menuName = "Characters/CharacterData")]
 public class CharacterData_SO : ScriptableObject
 {
+    public const string CharaId = "character.chara";
+    public const string MollyId = "character.molly";
+
+    public string characterId;
+    public string legacySaveId;
     public string characterName;
+
+    public string CharacterId => string.IsNullOrWhiteSpace(characterId) ? LegacySaveId : characterId;
+    public string LegacySaveId => !string.IsNullOrWhiteSpace(legacySaveId) ? legacySaveId
+        : !string.IsNullOrWhiteSpace(characterName) ? characterName : name;
+
+    public bool MatchesId(string id)
+    {
+        return !string.IsNullOrWhiteSpace(id) && (string.Equals(CharacterId, id, System.StringComparison.OrdinalIgnoreCase)
+            || string.Equals(LegacySaveId, id, System.StringComparison.OrdinalIgnoreCase));
+    }
     [TextArea(2, 5)]
     public string basicDescription;
     public int baseHP;

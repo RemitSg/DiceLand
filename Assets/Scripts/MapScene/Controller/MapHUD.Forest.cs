@@ -214,8 +214,8 @@ public partial class MapHUD
         forestTileIcon.sprite = selected ? MapForestArt.Icon(tile.tileType) : MapForestArt.Get("Footprint");
         forestTileIcon.gameObject.SetActive(forestTileIcon.sprite != null);
         if (!selected) return;
-        forestExplored.text = tile.isVisited ? "已探索" : "未探索";
-        forestResolved.text = tile.isResolved ? "已解决" : "未解决";
+        forestExplored.text = tile.isVisited ? GameText.Get("map.explored", "已探索") : GameText.Get("map.unexplored", "未探索");
+        forestResolved.text = tile.isResolved ? GameText.Get("map.resolved", "已解决") : GameText.Get("map.unresolved", "未解决");
         forestExplored.color = tile.isVisited ? ForestIvory : new Color(0.70f, 0.74f, 0.69f);
         forestResolved.color = tile.isResolved ? ForestIvory : new Color(0.70f, 0.74f, 0.69f);
         forestMoveCost.text = Mathf.Max(0, moveCost).ToString();

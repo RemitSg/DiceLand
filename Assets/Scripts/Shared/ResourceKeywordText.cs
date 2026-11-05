@@ -19,6 +19,7 @@ public static partial class ResourceKeywordText
     public static bool ContainsKeyword(string source)
     {
         if (string.IsNullOrEmpty(source)) return false;
+        if (source.IndexOf("[[DL_", StringComparison.Ordinal) >= 0) return true;
         for (int i = 0; i < Keywords.Length; i++) if (FindWord(source, i) >= 0) return true;
         return false;
     }
@@ -77,16 +78,19 @@ public static partial class ResourceKeywordText
                 continue;
             }
             bool matched = false;
+            if (noParseDepth == 0 && resourceLinkDepth == 0 && TryReadInlineKeyword(source, i, out Keyword inline, out int labelStart, out int labelEnd))
+            {
+                AppendKeyword(output, inline, source, labelStart, labelEnd - labelStart, includeIcons);
+                i = labelEnd + 2;
+                continue;
+            }
             if (noParseDepth == 0 && resourceLinkDepth == 0)
                 for (int word = 0; word < Keywords.Length; word++)
                 {
                     Keyword keyword = Keywords[word];
                     string value = keyword.Word;
                     if (!MatchesWord(source, i, word)) continue;
-                    output.Append("<nobr><link=\"dl-resource-").Append(keyword.IconName).Append("\"><color=#").Append(keyword.Color).Append('>');
-                    if (includeIcons && (!keyword.Status || StatusIcon(keyword.Source) != null))
-                        output.Append("<sprite name=\"").Append(keyword.IconName).Append("\" tint=0>");
-                    output.Append(source, i, value.Length).Append("</color></link></nobr>");
+                    AppendKeyword(output, keyword, source, i, value.Length, includeIcons);
                     i += value.Length;
                     matched = true;
                     break;
@@ -94,6 +98,38 @@ public static partial class ResourceKeywordText
             if (!matched) output.Append(source[i++]);
         }
         return output.ToString();
+    }
+
+    private static bool TryReadInlineKeyword(string source, int index, out Keyword keyword, out int labelStart, out int labelEnd)
+    {
+        keyword = null;
+        labelStart = labelEnd = 0;
+        if (source[index] != '[' || index + 1 >= source.Length || source[index + 1] != '[') return false;
+
+        int end = source.IndexOf("]]", index + 2, StringComparison.Ordinal);
+        if (end < 0) return false;
+        int separator = source.IndexOf('|', index + 2, end - index - 2);
+        if (separator < 0 || separator + 1 >= end) return false;
+
+        int length = separator - index - 2;
+        foreach (Keyword candidate in Keywords)
+        {
+            if (candidate.IconName.Length != length || string.CompareOrdinal(source, index + 2, candidate.IconName, 0, length) != 0)
+                continue;
+            keyword = candidate;
+            labelStart = separator + 1;
+            labelEnd = end;
+            return true;
+        }
+        return false;
+    }
+
+    private static void AppendKeyword(StringBuilder output, Keyword keyword, string source, int start, int length, bool includeIcons)
+    {
+        output.Append("<nobr><link=\"dl-resource-").Append(keyword.IconName).Append("\"><color=#").Append(keyword.Color).Append('>');
+        if (includeIcons && (!keyword.Status || StatusIcon(keyword.Source) != null))
+            output.Append("<sprite name=\"").Append(keyword.IconName).Append("\" tint=0>");
+        output.Append(source, start, length).Append("</color></link></nobr>");
     }
 
     public static Sprite ExperienceIcon => Resources.Load<Sprite>("MapUI/ExperienceStar");

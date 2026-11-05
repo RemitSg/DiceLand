@@ -108,8 +108,8 @@ public static class RunBootstrapService
         int baseHP = characterData != null ? Mathf.Max(1, characterData.baseHP) : 20;
         return new RunPartyMemberState
         {
-            memberId = characterData != null && !string.IsNullOrWhiteSpace(characterData.characterName)
-                ? characterData.characterName
+            memberId = characterData != null && !string.IsNullOrWhiteSpace(characterData.CharacterId)
+                ? characterData.CharacterId
                 : "AbilityCompanion",
             characterData = characterData,
             weaponData = characterData != null ? characterData.initialWeaponData : null,
@@ -271,7 +271,7 @@ public static class RunBootstrapService
                 int maxHP = definition.startingMaxHP > 0 ? Mathf.Max(1, definition.startingMaxHP) : baseHP;
                 result.Add(new RunPartyMemberState
                 {
-                    memberId = string.IsNullOrWhiteSpace(definition.memberId) ? definition.characterData.characterName : definition.memberId,
+                    memberId = string.IsNullOrWhiteSpace(definition.memberId) ? definition.characterData.CharacterId : definition.memberId,
                     characterData = definition.characterData,
                     weaponData = resolvedStartingWeapon,
                     level = Mathf.Max(1, definition.startingLevel),

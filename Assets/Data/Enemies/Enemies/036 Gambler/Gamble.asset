@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Gamble
   m_EditorClassIdentifier: 
   skillName: "\u8D4C\u535A"
+  mechanic: 4
   description: "\u9AB0\u5B50\u5728\u9ED1\u6697\u91CC\u6EDA\u52A8\uFF0C\u505C\u4E0B\u524D\u8C01\u4E5F\u4E0D\u77E5\u9053\u81EA\u5DF1\u62BC\u4E0A\u7684\u662F\u4EC0\u4E48\u3002"
   skillCategory: 0
   energyCost: 0

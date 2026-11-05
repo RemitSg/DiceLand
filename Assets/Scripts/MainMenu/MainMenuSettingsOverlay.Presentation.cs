@@ -10,7 +10,7 @@ public partial class MainMenuSettingsOverlay
     private static readonly Color Muted=new Color32(166,184,158,255);
     private Font forestFont;
     private RectTransform safeRoot,titlePlaque,audioSection,displaySection,musicRow,sfxRow,vibrationRow;
-    private RectTransform gameplaySection, battleAdvanceRow, detailSizeRow;
+    private RectTransform gameplaySection, battleAdvanceRow, detailSizeRow, languageRow;
     private RectTransform fullscreenRow,qualityRow,resolutionRow,frameRateRow,footerRule;
     private Text subtitleText, footerHint,deviceHint;
     private Button closeXButton;
@@ -44,16 +44,15 @@ public partial class MainMenuSettingsOverlay
         musicRow=BuildAudioRow("MusicRow","音乐音量",audioSection,out musicSlider,out musicValueText);
         sfxRow=BuildAudioRow("SfxRow","音效音量",audioSection,out sfxSlider,out sfxValueText);
         battleAdvanceRow = BuildDropdownRow("BattleAdvanceRow", "战斗推进", gameplaySection, out battleAdvanceDropdown);
-        battleAdvanceDropdown.AddOptions(new List<string> { "手动", "自动", "快速" });
         detailSizeRow = BuildDropdownRow("DetailSizeRow", "详情字号", gameplaySection, out detailSizeDropdown);
-        detailSizeDropdown.AddOptions(new List<string> { "标准", "大字" });
         vibrationRow=BuildSwitchRow("VibrationRow","振动反馈",gameplaySection,out vibrationToggle);
+        languageRow = BuildDropdownRow("LanguageRow", "语言", gameplaySection, out languageDropdown);
+        languageDropdown.AddOptions(new List<string> { "简体中文", "English" });
         fullscreenRow=BuildSwitchRow("FullscreenRow","全屏显示",displaySection,out fullscreenToggle);
         qualityRow=BuildDropdownRow("QualityRow","画质预设",displaySection,out qualityDropdown);
         resolutionRow=BuildDropdownRow("ResolutionRow","分辨率",displaySection,out resolutionDropdown);
         frameRateRow=BuildDropdownRow("FrameRateRow","帧率上限",displaySection,out frameRateDropdown);
-        var qualities=new List<string>(); foreach(string name in QualitySettings.names) qualities.Add(QualityLabel(name));
-        qualityDropdown.AddOptions(qualities); PopulateFrameRateOptions();
+        PopulateFrameRateOptions();
         deviceHint=MakeText("DeviceHint",displaySection,"分辨率跟随当前设备",18,ResolveLabelFont(),Muted,TextAnchor.MiddleRight); labelTexts.Add(deviceHint);
         footerRule=MakeRect("FooterRule",panelRect); var rule=footerRule.gameObject.AddComponent<MapMerchantFrameGraphic>(); rule.style=MapMerchantFrameGraphic.Style.Divider; rule.raycastTarget=false;
         footerHint=MakeText("FooterHint",panelRect,"保存设置后生效，返回将放弃本次修改",22,ResolveLabelFont(),Muted,TextAnchor.MiddleCenter); labelTexts.Add(footerHint);
@@ -62,6 +61,51 @@ public partial class MainMenuSettingsOverlay
         closeXButton=BuildButton("CloseX","×",false,Hide);
         musicSlider.onValueChanged.AddListener(_=>RefreshSliderTexts()); sfxSlider.onValueChanged.AddListener(_=>RefreshSliderTexts());
         ApplyConfiguredFonts(); root.SetActive(false);
+    }
+
+    private void RefreshLocalizedText()
+    {
+        titleText.text = gameplayOnly ? GameText.Get("ui.settings.in_run", "局内设置") : GameText.Get("ui.settings.title", "设 置");
+        subtitleText.text = gameplayOnly ? GameText.Get("ui.settings.in_run_subtitle", "战斗 · 阅读 · 反馈")
+            : GameText.Get("ui.settings.subtitle", "声音 · 画面 · 游玩");
+        SetLocalizedText(audioSection, "Heading", "ui.settings.sound", "声音");
+        SetLocalizedText(displaySection, "Heading", "ui.settings.display", "画面与性能");
+        SetLocalizedText(gameplaySection, "Heading", "ui.settings.gameplay", "游玩与反馈");
+        SetLocalizedText(musicRow, "Label", "ui.settings.music", "音乐音量");
+        SetLocalizedText(sfxRow, "Label", "ui.settings.sfx", "音效音量");
+        SetLocalizedText(battleAdvanceRow, "Label", "ui.settings.battle_advance", "战斗推进");
+        SetLocalizedText(detailSizeRow, "Label", "ui.settings.detail_size", "详情字号");
+        SetLocalizedText(vibrationRow, "Label", "ui.settings.vibration", "振动反馈");
+        SetLocalizedText(languageRow, "Label", "ui.settings.language", "语言");
+        SetLocalizedText(fullscreenRow, "Label", "ui.settings.fullscreen", "全屏显示");
+        SetLocalizedText(qualityRow, "Label", "ui.settings.quality", "画质预设");
+        SetLocalizedText(resolutionRow, "Label", "ui.settings.resolution", "分辨率");
+        SetLocalizedText(frameRateRow, "Label", "ui.settings.frame_limit", "帧率上限");
+        SetLocalizedText(saveButton.transform, "Label", "ui.settings.save", "保存设置");
+        SetLocalizedText(closeButton.transform, "Label", "ui.back", "返回");
+        footerHint.text = GameText.Get("ui.settings.hint", "保存设置后生效，返回将放弃本次修改");
+        deviceHint.text = GameText.Get("ui.settings.device_resolution", "分辨率跟随当前设备");
+
+        battleAdvanceDropdown.ClearOptions();
+        battleAdvanceDropdown.AddOptions(new List<string>
+        {
+            GameText.Get("ui.settings.manual", "手动"), GameText.Get("ui.settings.auto", "自动"), GameText.Get("ui.settings.fast", "快速")
+        });
+        detailSizeDropdown.ClearOptions();
+        detailSizeDropdown.AddOptions(new List<string> { GameText.Get("ui.settings.standard", "标准"), GameText.Get("ui.settings.large", "大字") });
+        qualityDropdown.ClearOptions();
+        var qualities = new List<string>();
+        foreach (string name in QualitySettings.names) qualities.Add(QualityLabel(name));
+        qualityDropdown.AddOptions(qualities);
+    }
+
+    private static void SetLocalizedText(Transform parent, string child, string key, string source)
+    {
+        Text label = parent.Find(child).GetComponent<Text>();
+        label.text = GameText.Get(key, source);
+        label.resizeTextForBestFit = true;
+        label.resizeTextMinSize = 18;
+        label.resizeTextMaxSize = label.fontSize;
     }
 
     private RectTransform BuildSection(string name,string heading,MainMenuSettingsGraphic.Part icon)
@@ -155,7 +199,7 @@ public partial class MainMenuSettingsOverlay
         Vector2 safeSize=new Vector2(canvasSize.x*safePixels.width/viewport.x,canvasSize.y*safePixels.height/viewport.y);
         bool portrait=viewport.x/viewport.y<1.1f;
         float width = gameplayOnly || portrait ? 680 : 1160;
-        float height = gameplayOnly ? 574 : portrait ? 1290 : 886;
+        float height = gameplayOnly ? 574 : portrait ? 1357 : 953;
         panelRect.sizeDelta=new Vector2(width,height); panelRect.anchoredPosition=Vector2.zero;
         panelRect.localScale = Vector3.one * Mathf.Max(0.01f, Mathf.Min(1, (safeSize.x - 40) / width, (safeSize.y - 76) / height));
         Place(titlePlaque,(width-390)/2,-28,390,88);
@@ -166,7 +210,7 @@ public partial class MainMenuSettingsOverlay
         float sectionX = narrow ? 32 : 44;
         float sectionWidth = narrow ? 616 : 470;
         float gameplayTop = gameplayOnly ? 126 : portrait ? 420 : 430;
-        Place(gameplaySection, sectionX, gameplayTop, sectionWidth, 284);
+        Place(gameplaySection, sectionX, gameplayTop, sectionWidth, gameplayOnly ? 284 : 351);
         LayoutSection(gameplaySection);
         float gameplayWidth = sectionWidth - 48;
         LayoutDropdownRow(battleAdvanceRow, 24, 82, gameplayWidth);
@@ -175,13 +219,14 @@ public partial class MainMenuSettingsOverlay
 
         if (!gameplayOnly)
         {
+            LayoutDropdownRow(languageRow, 24, 283, gameplayWidth);
             Place(audioSection, sectionX, portrait ? 124 : 134, sectionWidth, 284);
             LayoutSection(audioSection);
             LayoutAudioRow(musicRow, 24, 78, sectionWidth - 48);
             LayoutAudioRow(sfxRow, 24, 179, sectionWidth - 48);
 
             float displayWidth = portrait ? 616 : 584;
-            Place(displaySection, portrait ? 32 : 532, portrait ? 716 : 134, displayWidth, portrait ? 414 : 580);
+            Place(displaySection, portrait ? 32 : 532, portrait ? 783 : 134, displayWidth, portrait ? 414 : 647);
             LayoutSection(displaySection);
             LayoutSwitchRow(fullscreenRow, 24, portrait ? 82 : 95, displayWidth - 48);
             LayoutDropdownRow(qualityRow, 24, portrait ? 155 : 201, displayWidth - 48);
@@ -191,7 +236,7 @@ public partial class MainMenuSettingsOverlay
             Place(deviceHint.rectTransform, 210, portrait ? 374 : 502, displayWidth - 234, 24);
         }
 
-        float footerTop = gameplayOnly ? 424 : portrait ? 1144 : 735;
+        float footerTop = gameplayOnly ? 424 : portrait ? 1211 : 802;
         Place(footerRule, 36, footerTop, width - 72, 4);
         Place(footerHint.rectTransform, 40, footerTop + 17, width - 80, 34);
         Place((RectTransform)closeButton.transform, narrow ? 64 : 260, footerTop + 64, narrow ? 240 : 272, 60);
@@ -238,11 +283,21 @@ public partial class MainMenuSettingsOverlay
         if (frameRateDropdown != null) frameRateDropdown.Hide();
         if (battleAdvanceDropdown != null) battleAdvanceDropdown.Hide();
         if (detailSizeDropdown != null) detailSizeDropdown.Hide();
+        if (languageDropdown != null) languageDropdown.Hide();
     }
     private void RefreshSwitches() { if(canvas!=null) foreach(var control in canvas.GetComponentsInChildren<MainMenuSettingsControl>(true)) control.Refresh(true); }
     private static string QualityLabel(string value)
     {
-        switch((value??string.Empty).ToLowerInvariant()) { case "very low":return "最低"; case "low":return "低"; case "medium":return "中等"; case "high":return "高"; case "very high":return "很高"; case "ultra":return "极高"; default:return value; }
+        switch ((value ?? string.Empty).ToLowerInvariant())
+        {
+            case "very low": return GameText.Get("ui.settings.quality.very_low", "最低");
+            case "low": return GameText.Get("ui.settings.quality.low", "低");
+            case "medium": return GameText.Get("ui.settings.quality.medium", "中等");
+            case "high": return GameText.Get("ui.settings.quality.high", "高");
+            case "very high": return GameText.Get("ui.settings.quality.very_high", "很高");
+            case "ultra": return GameText.Get("ui.settings.quality.ultra", "极高");
+            default: return value;
+        }
     }
     private static RectTransform MakeRect(string name,RectTransform parent) { var rect=new GameObject(name,typeof(RectTransform)).GetComponent<RectTransform>(); rect.SetParent(parent,false); return rect; }
     private static void Stretch(RectTransform rect,float x=0,float y=0) { rect.anchorMin=Vector2.zero; rect.anchorMax=Vector2.one; rect.offsetMin=new Vector2(x,y); rect.offsetMax=new Vector2(-x,-y); }

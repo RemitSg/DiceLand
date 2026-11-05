@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-String-Tables-zh-Hans
+  m_EditorClassIdentifier:
+  m_GroupName: Localization-String-Tables-zh-Hans
+  m_Data:
+    m_SerializedData: []
+  m_GUID: e3c0ce69e2e15fd459d4fe29c8e4cfc7
+  m_SerializeEntries:
+  - m_GUID: cae2a31fd7c85e44fb57613012102e65
+    m_Address: DiceLand_zh-Hans
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh-Hans
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: f6c59b6ba51d7b04db176d1031ddc69e, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 35528e3a07ece254c978b6400e8a8629, type: 2}
+    - {fileID: 11400000, guid: 91bec65e3560d4b42a115fa42a6ef597, type: 2}

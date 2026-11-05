@@ -333,7 +333,7 @@ public class RunGameManager : MonoBehaviour
             mapHUD.ShowTile(spawnTile, 0);
         }
 
-        RefreshHUD("地图已生成，点击任意格子可查看详情。");
+        RefreshHUD(GameText.Get("map.generated", "地图已生成，点击任意格子可查看详情。"));
         mapViewController.Initialize(mapCamera, boardManager, cameraPadding);
         mapViewController.SetInputBlockedEvaluator(IsMapViewInputBlocked);
         mapViewController.SetPointerOverUiIgnoredEvaluator(ShouldMapViewIgnorePointerOverUi);
@@ -389,7 +389,7 @@ public class RunGameManager : MonoBehaviour
             mapHUD.ShowTile(spawnTile, 0);
         }
 
-        RefreshHUD("教程已开始：先点击相邻格子查看详情，再次点击即可沿固定路线推进。");
+        RefreshHUD(GameText.Get("tutorial.map.started", "教程已开始：先点击相邻格子查看详情，再次点击即可沿固定路线推进。"));
         mapViewController.Initialize(mapCamera, boardManager, cameraPadding);
         mapViewController.SetInputBlockedEvaluator(IsMapViewInputBlocked);
         mapViewController.SetPointerOverUiIgnoredEvaluator(ShouldMapViewIgnorePointerOverUi);
@@ -2069,10 +2069,10 @@ public class RunGameManager : MonoBehaviour
         tutorialMapIntroSequenceActive = false;
         mapTutorialGuideStep = MapTutorialGuideStep.None;
         ShowMapTutorialMessage(
-            "欢迎来到骰掷大陆",
-            "这里会带你学会进入地图后的基本操作。首先试着拖动画面、滚动鼠标滚轮，或用双指缩放来观察地图。",
+            GameText.Get("tutorial.map.welcome.title", "欢迎来到骰掷大陆"),
+            GameText.Get("tutorial.map.welcome.body", "这里会带你学会进入地图后的基本操作。首先试着拖动画面、滚动鼠标滚轮，或用双指缩放来观察地图。"),
             BeginWaitForViewNavigation,
-            "开始观察");
+            GameText.Get("tutorial.map.explore", "开始观察"));
         tutorialMapIntroSequenceActive = mapTutorialGuideOverlay != null && mapTutorialGuideOverlay.IsVisible;
     }
 
@@ -2196,38 +2196,38 @@ public class RunGameManager : MonoBehaviour
     private void ShowMapActionPointGuide()
     {
         ShowMapTutorialMessage(
-            "行动点",
-            "左上角的状态栏显示了你当前的行动点，移动到其它格子都会消耗你的行动点。",
+            GameText.Get("tutorial.map.ap.title", "行动点"),
+            GameText.Get("tutorial.map.ap.body", "左上角的状态栏显示了你当前的行动点，移动到其它格子都会消耗你的行动点。"),
             ShowMapMoneyGuide,
-            "继续",
+            GameText.Get("ui.continue", "继续"),
             MapTutorialFocusPart.ActionPoints);
     }
 
     private void ShowMapMoneyGuide()
     {
         ShowMapTutorialMessage(
-            "金币",
-            "金币是游戏的必要资源！你可以用金币在商店或事件中换取你需要的资源。",
+            GameText.Get("tutorial.map.gold.title", "金币"),
+            GameText.Get("tutorial.map.gold.body", "金币是游戏的必要资源！你可以用金币在商店或事件中换取你需要的资源。"),
             ShowMapRouteGoalGuide,
-            "继续",
+            GameText.Get("ui.continue", "继续"),
             MapTutorialFocusPart.Money);
     }
 
     private void ShowMapRouteGoalGuide()
     {
         ShowMapTutorialMessage(
-            "教程路线",
-            "这次教程会沿一条固定的 6 格路线推进：先完成两场基础战斗，再到商店购买图纸和材料，随后在锻造格制作武器，最后挑战精英终战。\n\n先把每个格子的详情看清楚，再决定进入下一格。",
+            GameText.Get("tutorial.map.route.title", "教程路线"),
+            GameText.Get("tutorial.map.route.body", "这次教程会沿一条固定的 6 格路线推进：先完成两场基础战斗，再到商店购买图纸和材料，随后在锻造格制作武器，最后挑战精英终战。\n\n先把每个格子的详情看清楚，再决定进入下一格。"),
             ShowMapTileInspectIntro,
-            "继续",
+            GameText.Get("ui.continue", "继续"),
             MapTutorialFocusPart.Resources);
     }
 
     private void ShowMapTileInspectIntro()
     {
         ShowMapTutorialMessage(
-            "查看格子详情",
-            "点击任意一个地图格子可以查看该格子的详情。",
+            GameText.Get("tutorial.map.inspect.title", "查看格子详情"),
+            GameText.Get("tutorial.map.inspect.body", "点击任意一个地图格子可以查看该格子的详情。"),
             BeginWaitForBattleInspect);
     }
 
@@ -2237,7 +2237,7 @@ public class RunGameManager : MonoBehaviour
         tutorialBattleInspectSelectionAllowed = true;
         mapTutorialGuideStep = MapTutorialGuideStep.WaitingForBattleInspect;
         UpdateMapTutorialBattleInspectHighlight();
-        mapHUD?.ShowStatus("请点击右侧的战斗格查看详情。");
+        mapHUD?.ShowStatus(GameText.Get("tutorial.map.inspect_hint", "请点击右侧的战斗格查看详情。"));
     }
 
     private bool CanHandleTutorialTileClick(BoardTileData tile)
@@ -2283,56 +2283,56 @@ public class RunGameManager : MonoBehaviour
     private void ContinueAfterBattleTileInspected()
     {
         ShowMapTileDetailTutorialMessage(
-            "格子详情",
-            "格子详情中会有多种你需要了解的信息，仔细观察格子详情是你通关游戏的一大秘籍！",
+            GameText.Get("tutorial.map.tile.title", "格子详情"),
+            GameText.Get("tutorial.map.tile.body", "格子详情中会有多种你需要了解的信息，仔细观察格子详情是你通关游戏的一大秘籍！"),
             ShowMapTileFirstLineGuide);
     }
 
     private void ShowMapTileFirstLineGuide()
     {
         ShowMapTileDetailTutorialMessage(
-            "坐标与类型",
-            "第一行包括格子的坐标与类型。“战斗”代表你会在进入该格子时开启一场战斗。",
+            GameText.Get("tutorial.map.coord.title", "坐标与类型"),
+            GameText.Get("tutorial.map.coord.body", "第一行包括格子的坐标与类型。“战斗”代表你会在进入该格子时开启一场战斗。"),
             ShowMapTileExploreStateGuide, MapTutorialFocusPart.TileHeader);
     }
 
     private void ShowMapTileExploreStateGuide()
     {
         ShowMapTileDetailTutorialMessage(
-            "探索状态",
-            "第二行标志着格子的探索情况。当你进入一个格子并完成内容后，格子将会被探索并解决。",
+            GameText.Get("tutorial.map.discovery.title", "探索状态"),
+            GameText.Get("tutorial.map.discovery.body", "第二行标志着格子的探索情况。当你进入一个格子并完成内容后，格子将会被探索并解决。"),
             ShowMapTileMovementCostGuide, MapTutorialFocusPart.TileState);
     }
 
     private void ShowMapTileMovementCostGuide()
     {
         ShowMapTileDetailTutorialMessage(
-            "移动消耗",
-            "第三行显示进入格子所需的行动点。通常探索一个新的格子需要消耗 2 行动点，而移动到已探索的格子只需要 1 行动点。",
+            GameText.Get("tutorial.map.cost.title", "移动消耗"),
+            GameText.Get("tutorial.map.cost.body", "第三行显示进入格子所需的行动点。通常探索一个新的格子需要消耗 2 行动点，而移动到已探索的格子只需要 1 行动点。"),
             ShowMapBattleTileAttributeGuide, MapTutorialFocusPart.TileCost);
     }
 
     private void ShowMapBattleTileAttributeGuide()
     {
         ShowMapTileDetailTutorialMessage(
-            "敌人属性",
-            "由于当前是“战斗格”，剩余的信息是战斗格特有的内容。\n\n敌人属性记录驻扎在当前格子敌人的属性。提前了解敌人的属性，可以帮助你规划路线，或是准备战斗所需的装备。",
+            GameText.Get("tutorial.map.attributes.title", "敌人属性"),
+            GameText.Get("tutorial.map.attributes.body", "由于当前是“战斗格”，剩余的信息是战斗格特有的内容。\n\n敌人属性记录驻扎在当前格子敌人的属性。提前了解敌人的属性，可以帮助你规划路线，或是准备战斗所需的装备。"),
             ShowMapBattleTileDangerGuide, MapTutorialFocusPart.TileDescription);
     }
 
     private void ShowMapBattleTileDangerGuide()
     {
         ShowMapTileDetailTutorialMessage(
-            "危险度与区域",
-            "危险度记录当前格子敌人的危险程度。时刻注意观察危险度，否则你可能会败在危险程度远高于你当前能力的敌人手下！\n\n区域记录当前格子所在的位置：外围、中层、内层、核心。越靠近 Boss，区域越深入，敌人的危险度也会逐渐增加。",
+            GameText.Get("tutorial.map.danger.title", "危险度与区域"),
+            GameText.Get("tutorial.map.danger.body", "危险度记录当前格子敌人的危险程度。时刻注意观察危险度，否则你可能会败在危险程度远高于你当前能力的敌人手下！\n\n区域记录当前格子所在的位置：外围、中层、内层、核心。越靠近 Boss，区域越深入，敌人的危险度也会逐渐增加。"),
             ShowMapFirstBattleEntryIntro, MapTutorialFocusPart.TileDescription);
     }
 
     private void ShowMapFirstBattleEntryIntro()
     {
         ShowMapTutorialMessage(
-            "准备进入战斗",
-            "这条教程路线会直接从第一场战斗开始。你已经提前看过它的详情了，继续点击右侧战斗格，进入第一场教程战斗。",
+            GameText.Get("tutorial.map.battle.title", "准备进入战斗"),
+            GameText.Get("tutorial.map.battle.body", "这条教程路线会直接从第一场战斗开始。你已经提前看过它的详情了，继续点击右侧战斗格，进入第一场教程战斗。"),
             () =>
             {
                 mapTutorialGuideStep = MapTutorialGuideStep.WaitingForBattleEntry;
@@ -2341,7 +2341,7 @@ public class RunGameManager : MonoBehaviour
                     boardManager.SetSelectedTile(battleTile.coord);
                     boardManager.RefreshAllViews();
                 }
-                mapHUD?.ShowStatus("请点击右侧战斗格进入教程战斗。");
+                mapHUD?.ShowStatus(GameText.Get("tutorial.map.enter_battle_hint", "请点击右侧战斗格进入教程战斗。"));
             });
     }
 
@@ -2350,7 +2350,7 @@ public class RunGameManager : MonoBehaviour
         return mapHUD != null && mapHUD.TryGetTutorialTargetScreenRect(part, out Rect rect) ? rect : (Rect?)null;
     }
 
-    private void ShowMapTutorialMessage(string title, string body, Action onContinue, string buttonLabel = "继续", MapTutorialFocusPart? focus = null)
+    private void ShowMapTutorialMessage(string title, string body, Action onContinue, string buttonLabel = null, MapTutorialFocusPart? focus = null)
     {
         mapTutorialGuideStep = MapTutorialGuideStep.None;
         if (mapTutorialGuideOverlay == null)
@@ -2358,12 +2358,12 @@ public class RunGameManager : MonoBehaviour
 
         if (focus.HasValue && mapHUD != null)
         {
-            mapTutorialGuideOverlay.ShowFocused(title, body, onContinue, buttonLabel,
+            mapTutorialGuideOverlay.ShowFocused(title, body, onContinue, buttonLabel ?? GameText.Get("ui.continue", "继续"),
                 () => ResolveMapTutorialFocus(focus.Value), () => ResolveMapTutorialFocus(MapTutorialFocusPart.Resources));
             return;
         }
 
-        mapTutorialGuideOverlay.Show(title, body, onContinue, buttonLabel);
+        mapTutorialGuideOverlay.Show(title, body, onContinue, buttonLabel ?? GameText.Get("ui.continue", "继续"));
     }
 
     private void ShowMapTileDetailTutorialMessage(string title, string body, Action onContinue, MapTutorialFocusPart focus = MapTutorialFocusPart.TilePanel)
@@ -2372,8 +2372,8 @@ public class RunGameManager : MonoBehaviour
         if (mapTutorialGuideOverlay == null)
             return;
 
-        mapTutorialGuideOverlay.ShowFocused(title, body, onContinue, "继续",
-            () => ResolveMapTutorialFocus(focus), () => ResolveMapTutorialFocus(MapTutorialFocusPart.TilePanel), "格子详情");
+        mapTutorialGuideOverlay.ShowFocused(title, body, onContinue, GameText.Get("ui.continue", "继续"),
+            () => ResolveMapTutorialFocus(focus), () => ResolveMapTutorialFocus(MapTutorialFocusPart.TilePanel), GameText.Get("tutorial.map.tile.title", "格子详情"));
     }
 
     private bool TryShowTutorialArrivalGuide(BoardTileData tile, Action onContinue = null)
@@ -2615,7 +2615,7 @@ public class RunGameManager : MonoBehaviour
         for (int i = 0; i < characters.Count; i++)
         {
             CharacterData_SO character = characters[i];
-            if (character != null && string.Equals(character.characterName, "Molly", StringComparison.OrdinalIgnoreCase))
+            if (character != null && character.MatchesId(CharacterData_SO.MollyId))
                 return character;
         }
 

@@ -98,6 +98,7 @@ public class EnemyData_SO : ScriptableObject
         [Tooltip("When enabled, granted temporary skills replace the ally weapon skill pool for this battle.")]
         public bool replaceWeaponSkills;
         [Tooltip("Optional character name filter. Leave empty to grant this skill to every living ally.")]
+        public string targetAllyCharacterId;
         public string targetAllyCharacterName;
     }
 
@@ -131,6 +132,9 @@ public class EnemyData_SO : ScriptableObject
 
     public int enemyID;
     public string enemyName;
+    public string localizationKey;
+    public string LocalizedName => GameText.Content(localizationKey, "name", enemyName);
+    public string LocalizedDescription => GameText.Content(localizationKey, "description", enemyDescription);
     public int baseHP;
     [Range(0f, 100f)]
     [Tooltip("Flat damage reduction percentage applied to all incoming damage after other damage calculations are finished.")]

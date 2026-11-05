@@ -65,7 +65,9 @@ public class MapTutorialGuideOverlay : MonoBehaviour
         bodyText.text = title == "坐标与类型" && body != null
             ? body.Replace("坐标与类型", "<color=#E6BF68>坐标与类型</color>").Replace("“战斗”", "<color=#F19A86>“战斗”</color>") : body ?? string.Empty;
         buttonText.text = string.IsNullOrWhiteSpace(buttonLabel) ? "继续" : buttonLabel;
-        continueHandler = onContinue; view.SetContext(context); view.Show(target != null, target, keepClear);
+        continueHandler = onContinue;
+        view.SetContext(context == "地图探索" ? GameText.Get("tutorial.map.context", "地图探索") : context);
+        view.Show(target != null, target, keepClear);
         view.Reading.StopMovement(); view.Reading.verticalNormalizedPosition = 1;
         if (!timeScalePaused) { previousTimeScale = Time.timeScale; timeScalePaused = true; Time.timeScale = 0; }
     }

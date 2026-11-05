@@ -1,6 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum BattleSkillMechanic
+{
+    None = 0,
+    SpiderPregnancy = 1,
+    SpiderKinFeast = 2,
+    BlendIntoShadow = 3,
+    Gamble = 4
+}
+
 [CreateAssetMenu(fileName = "New EnemySkill", menuName = "Enemies/EnemySkill")]
 public class EnemySkill_SO : ScriptableObject
 {
@@ -733,6 +742,10 @@ public class EnemySkill_SO : ScriptableObject
 
     [Tooltip("Skill display name.")]
     public string skillName = "Basic Attack";
+    public string localizationKey;
+    public BattleSkillMechanic mechanic;
+    public string LocalizedName => GameText.Content(localizationKey, "name", skillName);
+    public string LocalizedDescription => GameText.Content(localizationKey, "description", description);
 
     [TextArea(2, 4)]
     [Tooltip("Optional skill description.")]

@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: GreenSlime x2
   m_EditorClassIdentifier: 
   groupID: 0
+  saveId: enemy_group.green_slime_pair
+  legacySaveId: GreenSlime x2
   groupName: GreenSlime x2
   description: 
   enemies:

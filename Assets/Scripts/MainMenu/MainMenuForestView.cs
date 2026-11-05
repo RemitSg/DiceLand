@@ -175,6 +175,26 @@ public sealed class MainMenuForestView : MonoBehaviour
 
     public Button GetButton(MenuAction action) => buttons.TryGetValue(action, out Button button) ? button : null;
 
+    public void RefreshLanguage(Func<MenuAction, string> label)
+    {
+        foreach (var entry in buttons)
+            entry.Value.transform.Find("Label").GetComponent<Text>().text = label(entry.Key);
+
+        Transform page = difficultyPage.transform;
+        page.Find("Title").GetComponent<Text>().text = GameText.Get("ui.difficulty.title", "选择难度");
+        page.Find("StartAdventure/Label").GetComponent<Text>().text = GameText.Get("ui.difficulty.start", "开始冒险");
+        page.Find("Back/Label").GetComponent<Text>().text = GameText.Get("ui.back", "返回");
+        Transform missing = page.Find("MissingConfiguration");
+        if (missing != null) missing.GetComponent<Text>().text = GameText.Get("ui.difficulty.missing", "暂无可用难度");
+        for (int i = 0; i < difficultyButtons.Count; i++)
+        {
+            Transform row = difficultyButtons[i].transform;
+            row.Find("Label").GetComponent<Text>().text = DifficultyLabel(difficulties[i]);
+            row.Find("Details").GetComponent<Text>().text = DifficultyDetails(difficulties[i]);
+        }
+        SetContinueAvailable(canContinue);
+    }
+
     public void SetContinueAvailable(bool available)
     {
         canContinue = available;
@@ -183,9 +203,9 @@ public sealed class MainMenuForestView : MonoBehaviour
         button.interactable = available;
         if (!available && highlightedAction == MenuAction.Continue) highlightedAction = MenuAction.NewGame;
         RefreshHighlight();
-        continueStatus.text = available ? string.Empty : "暂无存档";
+        continueStatus.text = available ? string.Empty : GameText.Get("ui.menu.no_save", "暂无存档");
         if (saveWarning != null)
-            saveWarning.text = available ? "开始新游戏将覆盖当前冒险存档" : string.Empty;
+            saveWarning.text = available ? GameText.Get("ui.menu.overwrite_save", "开始新游戏将覆盖当前冒险存档") : string.Empty;
     }
 
     public void SetInputEnabled(bool value)
@@ -362,7 +382,7 @@ public sealed class MainMenuForestView : MonoBehaviour
     {
         difficultyPage = Rect("Difficulty", composition, Vector2.zero, new Vector2(900f, 1080f)).gameObject;
         difficultyGroup = difficultyPage.AddComponent<CanvasGroup>();
-        Text("Title", difficultyPage.transform, new Vector2(90f, 321f), new Vector2(710f, 92f), "选择难度", 60, Ivory);
+        Text("Title", difficultyPage.transform, new Vector2(90f, 321f), new Vector2(710f, 92f), GameText.Get("ui.difficulty.title", "选择难度"), 60, Ivory);
         Ornament("TitleRule", difficultyPage.transform, new Vector2(84f, 416f), new Vector2(700f, 12f), MainMenuOrnament.Shape.Divider, Gold);
         float rowHeight = Mathf.Min(98f, 396f / Mathf.Max(1, difficulties.Count));
         for (int i = 0; i < difficulties.Count; i++)
@@ -372,15 +392,15 @@ public sealed class MainMenuForestView : MonoBehaviour
                 new Vector2(700f, rowHeight - 6f), DifficultyLabel(config), MainMenuOrnament.Shape.Diamond, false, 42);
             row.transform.Find("Label").GetComponent<RectTransform>().sizeDelta = new Vector2(256f, rowHeight - 10f);
             Text("Details", row.transform, new Vector2(342f, 8f), new Vector2(344f, rowHeight - 18f),
-                config.BoardSize + "×" + config.BoardSize + " 棋盘 · " + config.startingActionPoints + " 行动点", 27, Ivory);
+                DifficultyDetails(config), 27, Ivory);
             row.onClick.AddListener(() => { if (CanUseDifficulty()) SelectDifficulty(config); });
             difficultyButtons.Add(row);
         }
         if (difficulties.Count == 0)
-            Text("MissingConfiguration", difficultyPage.transform, new Vector2(90f, 520f), new Vector2(700f, 110f), "暂无可用难度", 38, Ivory);
+            Text("MissingConfiguration", difficultyPage.transform, new Vector2(90f, 520f), new Vector2(700f, 110f), GameText.Get("ui.difficulty.missing", "暂无可用难度"), 38, Ivory);
         saveWarning = Text("SaveWarning", difficultyPage.transform, new Vector2(96f, 854f), new Vector2(710f, 48f), string.Empty, 27, Gold);
         startButton = MenuButton("StartAdventure", difficultyPage.transform, new Vector2(84f, 918f), new Vector2(430f, 106f),
-            "开始冒险", MainMenuOrnament.Shape.Diamond, true, 48);
+            GameText.Get("ui.difficulty.start", "开始冒险"), MainMenuOrnament.Shape.Diamond, true, 48);
         startButton.onClick.AddListener(() =>
         {
             if (!CanUseDifficulty() || selectedDifficulty == null) return;
@@ -389,7 +409,7 @@ public sealed class MainMenuForestView : MonoBehaviour
             onStart?.Invoke(selectedDifficulty);
         });
         Button back = MenuButton("Back", difficultyPage.transform, new Vector2(540f, 928f), new Vector2(245f, 86f),
-            "返回", MainMenuOrnament.Shape.Exit, false, 38, false);
+            GameText.Get("ui.back", "返回"), MainMenuOrnament.Shape.Exit, false, 38, false);
         back.onClick.AddListener(() => { if (inputEnabled) HideDifficulty(); });
         difficultyPage.SetActive(false);
     }
@@ -412,12 +432,18 @@ public sealed class MainMenuForestView : MonoBehaviour
     {
         switch ((config.difficultyName ?? string.Empty).ToLowerInvariant())
         {
-            case "easy": return "简单";
-            case "normal": case "medium": return "普通";
-            case "hard": return "困难";
-            case "extreme": return "极难";
+            case "easy": return GameText.Get("ui.difficulty.easy", "简单");
+            case "normal": case "medium": return GameText.Get("ui.difficulty.normal", "普通");
+            case "hard": return GameText.Get("ui.difficulty.hard", "困难");
+            case "extreme": return GameText.Get("ui.difficulty.extreme", "极难");
             default: return config.difficultyName;
         }
+    }
+
+    private static string DifficultyDetails(DifficultyConfig_SO config)
+    {
+        return GameText.Format("ui.difficulty.details", "{size}×{size} 棋盘 · {points} 行动点",
+            ("size", config.BoardSize), ("points", config.startingActionPoints));
     }
 
     private void AddUtility(MenuAction id, Vector2 position, Vector2 size, MainMenuOrnament.Shape icon, IDictionary<MenuAction, string> labels)

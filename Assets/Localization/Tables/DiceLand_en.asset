@@ -1,0 +1,1057 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: DiceLand_en
+  m_EditorClassIdentifier:
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 53ccebb454c0a204bb4519287daa21b4, type: 2}
+  m_Metadata:
+    m_Items:
+    - rid: 5043701850270335003
+  m_TableData:
+  - m_Id: 2940809216
+    m_Localized: Enemy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2970169344
+    m_Localized: Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2970169345
+    m_Localized: 'Max HP: <color=#F2DDAB>{max}</color>'
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2978557952
+    m_Localized: ID {id}
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2982752256
+    m_Localized: Enemy data is unavailable.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2982752257
+    m_Localized: No special passives.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2982752258
+    m_Localized: Special Passives
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2982752259
+    m_Localized: Enemy Profile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2982752260
+    m_Localized: Energy {current} / {max}
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2982752261
+    m_Localized: Round {round}
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946560
+    m_Localized: '{dice}: Deal {amount} damage to {target} {trigger}.'
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946561
+    m_Localized: Defeat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946562
+    m_Localized: The party was wiped out.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946563
+    m_Localized: Downed {current} / {max}
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946564
+    m_Localized: Earned
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946565
+    m_Localized: End Run
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946566
+    m_Localized: '[[DL_Experience|XP]] {current} / {max}'
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946567
+    m_Localized: '[[DL_Money|Gold]] +{amount}'
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946568
+    m_Localized: "Loot \xD7{count}"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946569
+    m_Localized: Select loot to inspect it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946570
+    m_Localized: No loot was earned.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946571
+    m_Localized: Party Status
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946572
+    m_Localized: Retry Battle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946573
+    m_Localized: Return to Map
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946574
+    m_Localized: Tutorial Battle Failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946575
+    m_Localized: You can retry this tutorial battle. It won't affect your regular
+      save.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946576
+    m_Localized: Victory
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946577
+    m_Localized: 'Battle won. Allies still standing: {count}'
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946578
+    m_Localized: Balance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946579
+    m_Localized: '[[DL_Experience|XP]] +{amount}'
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946580
+    m_Localized: Weapon Skills
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946581
+    m_Localized: Attack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946582
+    m_Localized: Attack Die {index}
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946583
+    m_Localized: Available Skills
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946584
+    m_Localized: Current Skill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946585
+    m_Localized: 'Current Skill: {name}'
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946586
+    m_Localized: Defense
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946587
+    m_Localized: Defense Die {index}
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946588
+    m_Localized: Dice {count}
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946589
+    m_Localized: '{die} Effects'
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946590
+    m_Localized: Effects
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946591
+    m_Localized: Enemy Skill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946592
+    m_Localized: Cost {cost}
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946593
+    m_Localized: Mixed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946594
+    m_Localized: 'Effects: None'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946595
+    m_Localized: No weapon equipped
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946596
+    m_Localized: Select a skill to equip it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946597
+    m_Localized: Temporary Skills
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946598
+    m_Localized: No skill assigned
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946599
+    m_Localized: None
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946600
+    m_Localized: As you hurry along, your feet sink into a pool of foul, poisonous
+      mud. What do you do?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946601
+    m_Localized: Mud Pit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946602
+    m_Localized: Struggle Free
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946603
+    m_Localized: Lose 2 additional action points.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946604
+    m_Localized: 'You struggle to pull yourself free.
+
+
+      At last you escape,
+      but the whole party is exhausted.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946605
+    m_Localized: Let Yourself Sink
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946606
+    m_Localized: Recover 1 action point. Each party member loses 15% of their max
+      HP.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946607
+    m_Localized: 'You let yourself sink into the mud.
+
+
+      The pit is shallower
+      than it looks, but the poison burns against your skin.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946608
+    m_Localized: Recovered {amount} [[DL_ActionPoints|{amount:plural:action point|action
+      points}]].
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946609
+    m_Localized: Lost {amount} [[DL_ActionPoints|{amount:plural:action point|action
+      points}]].
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946610
+    m_Localized: Each party member lost {amount}% of their max HP.
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946611
+    m_Localized: Each party member recovered {amount}% of their max HP.
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946612
+    m_Localized: Back to Map
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946613
+    m_Localized: Boss Battle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946614
+    m_Localized: Elite Battle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946615
+    m_Localized: Enter Battle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946616
+    m_Localized: Battle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946617
+    m_Localized: "Select a tile to inspect it \xB7 Drag to pan \xB7 Pinch to zoom"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946618
+    m_Localized: Easy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946619
+    m_Localized: Tough
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946620
+    m_Localized: Hard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946621
+    m_Localized: Very Hard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946622
+    m_Localized: Severe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946623
+    m_Localized: Nightmare
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946624
+    m_Localized: Desperate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946625
+    m_Localized: Deadly
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946626
+    m_Localized: Explored
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946627
+    m_Localized: The map is ready. Select a tile to inspect it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946628
+    m_Localized: Core
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946629
+    m_Localized: Inner Ring
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946630
+    m_Localized: Middle Ring
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946631
+    m_Localized: Outer Ring
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946632
+    m_Localized: Resolved
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946633
+    m_Localized: Battle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946634
+    m_Localized: Danger {value}
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946635
+    m_Localized: Empty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946636
+    m_Localized: An empty tile with no special effects.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946637
+    m_Localized: Entering this tile may trigger a random event.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946638
+    m_Localized: Select any tile to inspect it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946639
+    m_Localized: No tile selected
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946640
+    m_Localized: Region {value}
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946641
+    m_Localized: Unexplored
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946642
+    m_Localized: Unresolved
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946643
+    m_Localized: Gold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946644
+    m_Localized: Battle Tutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946645
+    m_Localized: A steady, powerful attack. Its power range is higher than Light
+      Strike's, making it ideal for your first clash.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946646
+    m_Localized: Heavy Strike
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946647
+    m_Localized: A basic attack used to demonstrate one-sided attacks and clashes.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946648
+    m_Localized: Light Strike
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946649
+    m_Localized: A low-threat enemy for the first tutorial battle. It only uses Light
+      Strike.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946650
+    m_Localized: Training Rat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946651
+    m_Localized: 'Your ally had the higher power range, making this clash favorable.
+
+
+      When
+      two attack dice clash, the winner destroys the losing die and deals its own
+      damage. A clash can stop an enemy attack, but it can also cost you a chance
+      to attack.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946652
+    m_Localized: How Clashes Work
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946653
+    m_Localized: 'The left side lists your ally''s skills. The right side shows the
+      selected skill''s details.
+
+
+      Pick a skill, close the panel, then drag
+      from your ally''s speed button to the enemy''s speed button.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946654
+    m_Localized: Choose a Target
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946655
+    m_Localized: The enemy just damaged your ally. Damage depends on the die's power.
+      The higher the power, the more damage it deals.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946656
+    m_Localized: A One-Sided Attack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946657
+    m_Localized: 'Let''s learn how battles work.
+
+
+      Select the enemy itself
+      to inspect its profile.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946658
+    m_Localized: Your First Battle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946659
+    m_Localized: Now that you've inspected the enemy, select the Prepare button at
+      the bottom of the screen to roll speed for both sides.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946660
+    m_Localized: Get Ready
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946661
+    m_Localized: 'The hexagon above the enemy is a speed button. The number above
+      it is the speed roll.
+
+
+      Each speed button is a skill slot. More buttons
+      mean more actions each round. Select the enemy''s speed button to see which
+      skill it''s using.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946662
+    m_Localized: Read the Enemy's Move
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946663
+    m_Localized: 'When both sides target each other, the line turns yellow and a
+      clash will occur.
+
+
+      Select Prepare to resolve the clash.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946664
+    m_Localized: Start a Clash
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946665
+    m_Localized: "Skills use dice. Attack dice deal damage. Defense dice block incoming
+      damage.\n\nA range such as 1\u20132 means the die rolls either 1 or 2. Close
+      the skill panel, then select Prepare to resolve the attack."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946666
+    m_Localized: Watch the Enemy Attack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946667
+    m_Localized: 'You can now inspect enemies, read speed and power ranges, connect
+      targets, and resolve clashes.
+
+
+      You''re ready for your next battle.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946668
+    m_Localized: Well Done!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946669
+    m_Localized: 'You can counter the enemy''s attack.
+
+
+      Select your ally''s
+      speed button to see their available skills.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946670
+    m_Localized: Time to Counterattack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946671
+    m_Localized: Got it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946672
+    m_Localized: The upper-left panel shows your current [[DL_ActionPoints|action
+      points]]. Moving to another tile costs action points.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946673
+    m_Localized: Action Points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946674
+    m_Localized: 'Battle tiles list the attributes of the enemies stationed there.
+
+
+      Check
+      them before you enter so you can plan a route or prepare suitable equipment.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946675
+    m_Localized: Enemy Attributes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946676
+    m_Localized: You've inspected the first battle tile. Select it again to enter
+      the first tutorial battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946677
+    m_Localized: Enter the First Battle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946678
+    m_Localized: Map Exploration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946679
+    m_Localized: The top line shows the tile's coordinates and type. A <color=#F19A86>Battle</color>
+      tile starts a fight when you enter it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946680
+    m_Localized: Coordinates and Type
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946681
+    m_Localized: This line shows the cost to enter a tile. A new tile normally costs
+      2 action points. Returning to an explored tile normally costs 1.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946682
+    m_Localized: Movement Cost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946683
+    m_Localized: 'Danger tells you how tough the enemies on this tile are. Pay attention
+      before taking on a fight.
+
+
+      The map has an outer ring, middle ring, inner
+      ring, and core. Enemies grow more dangerous as you get closer to the boss.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946684
+    m_Localized: Danger and Region
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946685
+    m_Localized: The second line shows the tile's exploration status. Visit a tile
+      and complete its encounter to explore and resolve it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946686
+    m_Localized: Exploration Status
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946687
+    m_Localized: Select the battle tile on the right to enter the tutorial battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946688
+    m_Localized: Explore the Map
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946689
+    m_Localized: Use [[DL_Money|gold]] at shops or in events to get the supplies
+      you need.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946690
+    m_Localized: Gold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946691
+    m_Localized: Select any tile on the map to see its details.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946692
+    m_Localized: Inspect a Tile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946693
+    m_Localized: Select the battle tile on the right to inspect it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946694
+    m_Localized: 'This tutorial follows a fixed route of six tiles. You''ll fight
+      two basic battles, buy a blueprint and materials, craft a weapon, and then
+      face an elite enemy.
+
+
+      Inspect each tile before deciding where to go.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946695
+    m_Localized: The Tutorial Route
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946696
+    m_Localized: Tutorial started. Select an adjacent tile to inspect it, then select
+      it again to move.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946697
+    m_Localized: Tile details show what you'll find and what it costs to enter. Check
+      them before moving.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946698
+    m_Localized: Tile Details
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946699
+    m_Localized: Let's start with the map controls. Drag to pan, and use the mouse
+      wheel or a two-finger pinch to zoom.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946700
+    m_Localized: Welcome to DiceLand
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946701
+    m_Localized: Learn the basics of DiceLand, from moving across the map and fighting
+      battles to managing resources and growing your party.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946702
+    m_Localized: Start Tutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946703
+    m_Localized: Start the Tutorial?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946704
+    m_Localized: Back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946705
+    m_Localized: Close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946706
+    m_Localized: Confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946707
+    m_Localized: Continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946708
+    m_Localized: Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946709
+    m_Localized: "{size}\xD7{size} board \xB7 {points} AP"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335003
+  - m_Id: 2986946710
+    m_Localized: Easy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946711
+    m_Localized: Extreme
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946712
+    m_Localized: Hard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946713
+    m_Localized: No difficulties available
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946714
+    m_Localized: Normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946715
+    m_Localized: Start Adventure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946716
+    m_Localized: Choose Difficulty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946717
+    m_Localized: That choice couldn't be completed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946718
+    m_Localized: Choose an Action
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946719
+    m_Localized: Select Continue to close the event.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946720
+    m_Localized: No event description is available.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946721
+    m_Localized: Journey Event
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946722
+    m_Localized: There are no available choices.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946723
+    m_Localized: No preview is available.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946724
+    m_Localized: Outcome
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946725
+    m_Localized: Consequence Preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946726
+    m_Localized: The event is complete.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946727
+    m_Localized: Event Result
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946728
+    m_Localized: Event
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946729
+    m_Localized: ' [Unavailable]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946730
+    m_Localized: Main Menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946731
+    m_Localized: Abilities
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946732
+    m_Localized: Continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946733
+    m_Localized: Credits
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946734
+    m_Localized: New Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946735
+    m_Localized: No Save
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946736
+    m_Localized: Starting a new game will overwrite your current save.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946737
+    m_Localized: Quit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946738
+    m_Localized: Settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946739
+    m_Localized: Test Battle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946740
+    m_Localized: Tutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946741
+    m_Localized: No description available.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946742
+    m_Localized: Off
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946743
+    m_Localized: On
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946744
+    m_Localized: Scroll down to read more
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946745
+    m_Localized: Automatic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946746
+    m_Localized: Battle Pacing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946747
+    m_Localized: Detail Text Size
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946748
+    m_Localized: Uses the device resolution
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946749
+    m_Localized: Display & Performance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946750
+    m_Localized: Fast
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946751
+    m_Localized: Frame Rate Limit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946752
+    m_Localized: Fullscreen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946753
+    m_Localized: Gameplay & Feedback
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946754
+    m_Localized: Save to apply changes, or go back to discard them
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946755
+    m_Localized: Run Settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946756
+    m_Localized: "Combat \xB7 Reading \xB7 Feedback"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946757
+    m_Localized: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946758
+    m_Localized: Large
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946759
+    m_Localized: Manual
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946760
+    m_Localized: Music Volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946761
+    m_Localized: Graphics Quality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946762
+    m_Localized: High
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946763
+    m_Localized: Low
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946764
+    m_Localized: Medium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946765
+    m_Localized: Ultra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946766
+    m_Localized: Very High
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946767
+    m_Localized: Very Low
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946768
+    m_Localized: Resolution
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946769
+    m_Localized: Save Settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946770
+    m_Localized: SFX Volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946771
+    m_Localized: Sound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946772
+    m_Localized: Standard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946773
+    m_Localized: "Sound \xB7 Display \xB7 Gameplay"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946774
+    m_Localized: Settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2986946775
+    m_Localized: Vibration
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 5043701850270335003
+      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Entries:
+        m_SharedEntries:
+        - id: 2970169345
+        - id: 2978557952
+        - id: 2982752260
+        - id: 2982752261
+        - id: 2986946560
+        - id: 2986946563
+        - id: 2986946566
+        - id: 2986946567
+        - id: 2986946568
+        - id: 2986946577
+        - id: 2986946579
+        - id: 2986946582
+        - id: 2986946585
+        - id: 2986946587
+        - id: 2986946588
+        - id: 2986946589
+        - id: 2986946592
+        - id: 2986946608
+        - id: 2986946609
+        - id: 2986946610
+        - id: 2986946611
+        - id: 2986946634
+        - id: 2986946640
+        - id: 2986946709

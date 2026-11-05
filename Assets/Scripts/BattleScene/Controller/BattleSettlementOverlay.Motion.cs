@@ -73,9 +73,9 @@ public partial class BattleSettlementOverlay
     private void WriteRewardCounters(float progress)
     {
         if (presentationData == null) return;
-        moneyRewardText.text = "金币 +" + CountReward(presentationData.moneyGained, progress);
-        expText.text = "经验值 +" + CountReward(presentationData.experienceGained, progress);
-        lootCountText.text = "战利品 ×" + CountReward(lootViews.Count, progress);
+        moneyRewardText.text = GameText.Format("battle.settlement.gold", "金币 +{amount}", ("amount", CountReward(presentationData.moneyGained, progress)));
+        expText.text = GameText.Format("battle.settlement.xp", "经验值 +{amount}", ("amount", CountReward(presentationData.experienceGained, progress)));
+        lootCountText.text = GameText.Format("battle.settlement.loot", "战利品 ×{count}", ("count", CountReward(lootViews.Count, progress)));
     }
 
     private static int CountReward(int value, float progress)
@@ -115,7 +115,8 @@ public partial class BattleSettlementOverlay
         if (presentationData.moneyGained > 0)
         {
             walletRoot.gameObject.SetActive(true);
-            walletCaptionText.text = presentationData.hasMoneyBalance ? "持有" : "本次获得";
+            walletCaptionText.text = presentationData.hasMoneyBalance ? GameText.Get("battle.settlement.wallet", "持有")
+                : GameText.Get("battle.settlement.earned", "本次获得");
             walletFeedback.gameObject.SetActive(true);
             walletFeedback.Bind(new RunState { money = presentationData.hasMoneyBalance ? presentationData.startingMoney : 0 }, walletAmountText);
             walletStage = 1; walletAge = 0;

@@ -22,33 +22,37 @@ public partial class BattleSkillInfoOverlay
             : viewMode == SkillViewMode.EnemySkill ? currentEnemy?.GetSelectedSkillForButton(currentEnemySourceButton) : null;
         bool changed = displayedSkill != skill || reset;
         displayedSkill = skill;
-        titleText.text = viewMode == SkillViewMode.Ally ? "武器技能" : viewMode == SkillViewMode.EnemyData ? "敌人详情" : "敌方技能";
+        titleText.text = viewMode == SkillViewMode.Ally ? GameText.Get("battle.skill.ally", "武器技能") : GameText.Get("battle.skill.enemy", "敌方技能");
         if (viewMode == SkillViewMode.Ally)
         {
             Weapon_SO weapon = currentAlly != null ? currentAlly.GetComponent<AllyController>()?.weapon?.weaponData : null;
-            string source = currentAlly != null && currentAlly.TemporarySkillsOverrideWeaponPool ? "临时技能"
-                : weapon != null ? weapon.weaponName : currentAlly != null && currentAlly.HasTemporarySkills ? "临时技能" : "未装备武器";
+            string temporary = GameText.Get("battle.skill.temporary", "临时技能");
+            string source = currentAlly != null && currentAlly.TemporarySkillsOverrideWeaponPool ? temporary
+                : weapon != null ? weapon.weaponName : currentAlly != null && currentAlly.HasTemporarySkills ? temporary : GameText.Get("battle.skill.no_weapon", "未装备武器");
             subtitleText.text = (currentAlly != null ? currentAlly.GetSettlementDisplayName() : "角色") + " · " + source;
         }
-        else subtitleText.text = currentEnemy != null && currentEnemy.enemyData != null ? currentEnemy.enemyData.enemyName : "敌人";
-        contextText.text = viewMode == SkillViewMode.Ally ? "当前技能：" + (skill != null ? skill.skillName : "未配置") : "当前技能";
-        skillNameText.text = viewMode == SkillViewMode.EnemyData ? "最大生命：" + (currentEnemy != null ? currentEnemy.MaxHP : 0)
-            : skill != null ? skill.skillName : "未配置技能";
+        else subtitleText.text = currentEnemy != null && currentEnemy.enemyData != null ? currentEnemy.enemyData.LocalizedName : GameText.Get("battle.enemy", "敌人");
+        contextText.text = viewMode == SkillViewMode.Ally
+            ? GameText.Format("battle.skill.current_named", "当前技能：{name}", ("name", skill != null ? skill.LocalizedName : GameText.Get("battle.skill.unset", "未配置")))
+            : GameText.Get("battle.skill.current", "当前技能");
+        skillNameText.text = skill != null ? skill.LocalizedName : GameText.Get("battle.skill.unconfigured", "未配置技能");
         metadataRoot.gameObject.SetActive(viewMode != SkillViewMode.EnemyData && skill != null);
         bool attack = false, defense = false;
         if (skill != null)
             for (int i = 0; i < skill.diceCount; i++)
                 if (skill.GetDiceSkillCategory(i) == EnemySkill_SO.SkillCategory.Defense) defense = true; else attack = true;
-        metadataText.text = attack && defense ? "攻防混合" : defense ? "防御" : "攻击";
-        energyMetadata.text = "能耗 " + (skill != null ? Mathf.Max(0, skill.energyCost) : 0);
-        diceMetadata.text = "骰子数 " + (skill != null ? Mathf.Max(0, skill.diceCount) : 0);
+        metadataText.text = attack && defense ? GameText.Get("battle.skill.mixed", "攻防混合")
+            : defense ? GameText.Get("battle.skill.defense", "防御") : GameText.Get("battle.skill.attack", "攻击");
+        energyMetadata.text = SkillEnergyLabel(skill);
+        diceMetadata.text = GameText.Format("battle.skill.dice_count", "骰子数 {count}", ("count", skill != null ? Mathf.Max(0, skill.diceCount) : 0));
         requirementsText.text = BuildSkillRequirements(skill);
         bool dataMode = viewMode == SkillViewMode.EnemyData;
         detailText.gameObject.SetActive(dataMode);
         if (dataMode) detailText.text = BuildEnemyDataDetail(currentEnemy);
         descriptionHeading.gameObject.SetActive(!dataMode);
         descriptionBody.gameObject.SetActive(!dataMode);
-        descriptionBody.text = skill != null && !string.IsNullOrWhiteSpace(skill.description) ? skill.description : "暂无描述。";
+        descriptionBody.text = skill != null && !string.IsNullOrWhiteSpace(skill.description)
+            ? skill.LocalizedDescription : GameText.Get("ui.no_description", "暂无描述。");
         int count = !dataMode && skill != null ? Mathf.Max(0, skill.diceCount) : 0;
         EnsureDiceCards(count);
         for (int i = 0; i < diceCards.Count; i++)
@@ -59,11 +63,17 @@ public partial class BattleSkillInfoOverlay
             card.range.text = BuildDiceRangeLabel(skill, i, skill.GetDicePowerRange(i), DisplayedSkillRange(skill, i));
             card.icon.defense = skill.GetDiceSkillCategory(i) == EnemySkill_SO.SkillCategory.Defense; card.icon.SetVerticesDirty();
             List<string> rules = BuildDiceRuleLines(skill, i, viewMode == SkillViewMode.Ally, false);
-            card.clauses.text = rules.Count > 0 ? "<color=#E2BB65>词条</color>\n" + string.Join("\n", rules) : "词条：<noparse>无</noparse>";
+            card.clauses.text = rules.Count > 0 ? "<color=#E2BB65>" + GameText.Get("battle.skill.effects", "词条") + "</color>\n" + string.Join("\n", rules)
+                : GameText.Get("battle.skill.no_effects", "词条：<noparse>无</noparse>");
         }
         UpdateDiceLinks(count > 1 ? count : 0);
         LayoutSkillContent(changed);
         if (changed) switchProgress = Application.isPlaying ? 0 : 1;
+    }
+
+    private static string SkillEnergyLabel(EnemySkill_SO skill)
+    {
+        return GameText.Format("battle.skill.energy_cost", "能耗 {cost}", ("cost", skill != null ? Mathf.Max(0, skill.energyCost) : 0));
     }
 
     private EnemySkill_SO.DicePowerRange DisplayedSkillRange(EnemySkill_SO skill, int index)
@@ -234,8 +244,8 @@ public partial class BattleSkillInfoOverlay
             string reason = skill == null ? "技能未配置" : cachedBattleButton != null ? cachedBattleButton.GetAllySkillUnavailableReason(ally, sourceButton, skill) : string.Empty;
             bool available = string.IsNullOrEmpty(reason);
             row.button.interactable = available; row.face.SetState(selected, available);
-            row.name.text = skill != null ? skill.skillName : "未配置技能";
-            row.cost.text = "能耗 " + (skill != null ? Mathf.Max(0, skill.energyCost) : 0);
+            row.name.text = skill != null ? skill.LocalizedName : GameText.Get("battle.skill.unconfigured", "未配置技能");
+            row.cost.text = SkillEnergyLabel(skill);
             string requirement = skill != null && skill.RequiresSelfStatusToUse && skill.requiredSelfStatusData != null
                 ? "需要 " + skill.requiredSelfStatusData.DisplayName + " " + Mathf.Max(1, skill.requiredSelfStatusStacks) : string.Empty;
             row.reason.text = string.IsNullOrEmpty(requirement) ? reason : requirement + (string.IsNullOrEmpty(reason) ? "" : " · " + reason);
@@ -327,8 +337,9 @@ public partial class BattleSkillInfoOverlay
         string clauses = sections[1] == "词条：\n无" ? "词条：<noparse>无</noparse>" : sections[1];
         bool changed = reset || hoverSkill != skill || hoverClauseText.text != clauses;
         bool wasVisible = hoverPanelRoot.gameObject.activeSelf;
-        hoverSkill = skill; hoverTitleText.text = skill.skillName;
-        hoverContextText.text = (currentHoverEnemy.enemyData != null ? currentHoverEnemy.enemyData.enemyName : "敌人") + " · 当前技能";
+        hoverSkill = skill; hoverTitleText.text = skill.LocalizedName;
+        hoverContextText.text = (currentHoverEnemy.enemyData != null ? currentHoverEnemy.enemyData.LocalizedName : GameText.Get("battle.enemy", "敌人"))
+            + " · " + GameText.Get("battle.skill.current", "当前技能");
         hoverDetailText.text = sections[0]; hoverClauseText.text = clauses;
         hoverPanelRoot.gameObject.SetActive(true);
         if (!wasVisible) hoverProgress = Application.isPlaying ? 0 : 1;

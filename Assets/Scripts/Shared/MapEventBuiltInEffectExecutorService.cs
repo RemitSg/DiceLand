@@ -361,8 +361,8 @@ public static class MapEventBuiltInEffectExecutorService
         }
 
         message = percent >= 0
-            ? $"所有角色恢复了最大生命值的 {percent}% 。"
-            : $"所有角色失去了最大生命值的 {Mathf.Abs(percent)}% 。";
+            ? GameText.Format("event.effect.restore_hp_percent", "所有角色恢复了最大生命值的 {amount}% 。", ("amount", percent))
+            : GameText.Format("event.effect.lose_hp_percent", "所有角色失去了最大生命值的 {amount}% 。", ("amount", Mathf.Abs(percent)));
         return true;
     }
 
@@ -382,7 +382,7 @@ public static class MapEventBuiltInEffectExecutorService
         int restoredPoints = Mathf.Clamp(pointsBeforeRestore + gainAmount, 0, actionPointSystem.CurrentMaxPoints);
         int actualRestoredAmount = Mathf.Max(0, restoredPoints - pointsBeforeRestore);
         actionPointSystem.RestoreState(actionPointSystem.BasePoints, actionPointSystem.BonusPoints, restoredPoints);
-        message = $"\u6062\u590d {actualRestoredAmount} \u70b9\u884c\u52a8\u70b9\u3002";
+        message = GameText.Format("event.effect.gain_ap", "恢复 {amount} 点行动点。", ("amount", actualRestoredAmount));
         return true;
     }
 
@@ -399,7 +399,7 @@ public static class MapEventBuiltInEffectExecutorService
         }
 
         MapMovementService.SpendActionPointsWithOverflow(actionPointSystem, loseAmount);
-        message = $"失去 {loseAmount} 点行动点。";
+        message = GameText.Format("event.effect.lose_ap", "失去 {amount} 点行动点。", ("amount", loseAmount));
         return true;
     }
 

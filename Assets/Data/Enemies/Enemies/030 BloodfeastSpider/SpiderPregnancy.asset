@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SpiderPregnancy
   m_EditorClassIdentifier: 
   skillName: "\u86DB\u5B55"
+  mechanic: 1
   description: "\u5B83\u628A\u8179\u90E8\u8D34\u5411\u5730\u9762\uFF0C\u8840\u8272\u7684\u5375\u56CA\u4ECE\u9634\u5F71\u91CC\u4E00\u679A\u679A\u6EDA\u51FA\u3002"
   skillCategory: 1
   energyCost: 0

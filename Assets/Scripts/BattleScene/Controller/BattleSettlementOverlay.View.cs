@@ -99,7 +99,7 @@ public partial class BattleSettlementOverlay
         FSPlace(lootCountText.rectTransform, 112, 8, 270, 54);
         lootCountText.alignment = TextAlignmentOptions.MidlineLeft;
         FSDivider(panelRoot, "HeaderDivider", 42, 292, 1676);
-        TextMeshProUGUI partyHeading = FSText(panelRoot, "PartyHeading", "队伍状态", 35, SettlementIvory, false);
+        TextMeshProUGUI partyHeading = FSText(panelRoot, "PartyHeading", GameText.Get("battle.settlement.party", "队伍状态"), 35, SettlementIvory, false);
         FSPlace(partyHeading.rectTransform, 50, 307, 250, 50);
         lootHeaderText.transform.SetParent(panelRoot, false);
         FSPlace(lootHeaderText.rectTransform, 926, 307, 760, 50);
@@ -111,10 +111,10 @@ public partial class BattleSettlementOverlay
         settlementLootScroll = FSScroll("LootScroll", lootGridRoot);
         FSPlace((RectTransform)settlementLootScroll.transform, 924, 368, LootWidth + 18, 438);
         lootRoot.gameObject.SetActive(false);
-        TextMeshProUGUI hint = FSText(panelRoot, "LootHint", "点击战利品查看详情", 23, new Color(0.74f, 0.76f, 0.69f), false);
+        TextMeshProUGUI hint = FSText(panelRoot, "LootHint", GameText.Get("battle.settlement.loot_hint", "点击战利品查看详情"), 23, new Color(0.74f, 0.76f, 0.69f), false);
         FSPlace(hint.rectTransform, 930, 808, 744, 36);
         hint.alignment = TextAlignmentOptions.Center;
-        emptyLootText = FSText(settlementLootScroll.viewport, "EmptyLoot", "本次没有获得战利品。", 28, SettlementIvory, false);
+        emptyLootText = FSText(settlementLootScroll.viewport, "EmptyLoot", GameText.Get("battle.settlement.no_loot", "本次没有获得战利品。"), 28, SettlementIvory, false);
         FSPlace(emptyLootText.rectTransform, 0, 90, LootWidth, 80);
         emptyLootText.alignment = TextAlignmentOptions.Center;
         FSDivider(panelRoot, "FooterDivider", 42, 844, 1676);
@@ -126,7 +126,7 @@ public partial class BattleSettlementOverlay
         walletCaptionText = FSText(walletRoot, "WalletCaption", "持有", 23, SettlementIvory, false);
         FSPlace(walletCaptionText.rectTransform, 22, 12, 94, 32);
         FSIcon(walletRoot, "MoneyIcon", MapForestArt.Get("Coins"), 28, 49, 42, 38);
-        TextMeshProUGUI currency = FSText(walletRoot, "CurrencyName", "金币", 26, SettlementIvory, false);
+        TextMeshProUGUI currency = FSText(walletRoot, "CurrencyName", GameText.Get("term.gold", "金币"), 26, SettlementIvory, false);
         ResourceKeywordText.Attach(currency, false);
         FSPlace(currency.rectTransform, 84, 48, 80, 38);
         walletAmountText = FSText(walletRoot, "Money", "0", 36, new Color32(240, 204, 107, 255), false);

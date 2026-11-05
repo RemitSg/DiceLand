@@ -17,7 +17,7 @@ public static class BattleSharedEnergyHudService
     public static string BuildEnergyText(int currentSharedEnergy, int reservedSharedEnergy, int maxSharedEnergy)
     {
         int availableEnergy = Mathf.Max(0, currentSharedEnergy - reservedSharedEnergy);
-        return $"能量 {availableEnergy} / {Mathf.Max(0, maxSharedEnergy)}";
+        return GameText.Format("battle.hud.energy", "能量 {current} / {max}", ("current", availableEnergy), ("max", Mathf.Max(0, maxSharedEnergy)));
     }
 
     public static string BuildEnergyText(
@@ -29,15 +29,13 @@ public static class BattleSharedEnergyHudService
     {
         int availableEnergy = CalculateAvailableEnergy(currentSharedEnergy, temporarySharedEnergy, reservedSharedEnergy);
         int maxEnergy = Mathf.Max(0, maxSharedEnergy);
-        if (temporarySharedEnergy > 0)
-            return $"能量 <color={temporaryEnergyColor}>{availableEnergy}</color> / {maxEnergy}";
-
-        return $"能量 {availableEnergy} / {maxEnergy}";
+        object displayedEnergy = temporarySharedEnergy > 0 ? (object)$"<color={temporaryEnergyColor}>{availableEnergy}</color>" : availableEnergy;
+        return GameText.Format("battle.hud.energy", "能量 {current} / {max}", ("current", displayedEnergy), ("max", maxEnergy));
     }
 
     public static string BuildRoundText(int currentRound)
     {
-        return $"第 {Mathf.Max(1, currentRound)} 回合";
+        return GameText.Format("battle.hud.round", "第 {round} 回合", ("round", Mathf.Max(1, currentRound)));
     }
 
     public static float CalculateFillRatio(int currentSharedEnergy, int reservedSharedEnergy, int maxSharedEnergy)

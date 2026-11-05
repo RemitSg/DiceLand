@@ -93,14 +93,15 @@ public partial class MapEventOverlay : MonoBehaviour
 
     private void RefreshHeader()
     {
-        titleText.text = currentEvent != null ? currentEvent.DisplayName : "事件";
-        contentText.text = currentEvent != null && !string.IsNullOrWhiteSpace(currentEvent.eventContent) ? currentEvent.eventContent : "暂无事件内容。";
-        eventMetaText.text = "旅途事件";
+        titleText.text = currentEvent != null ? currentEvent.LocalizedName : GameText.Get("ui.event.title", "事件");
+        contentText.text = currentEvent != null && !string.IsNullOrWhiteSpace(currentEvent.eventContent)
+            ? currentEvent.Localize("body", currentEvent.eventContent) : GameText.Get("ui.event.empty", "暂无事件内容。");
+        eventMetaText.text = GameText.Get("ui.event.encounter", "旅途事件");
         statusText.text = string.Empty;
         optionScrollRect.gameObject.SetActive(true);
         optionSection.gameObject.SetActive(true);
-        consequenceTitleText.text = "后果预览";
-        SetButtonLabel("确定");
+        consequenceTitleText.text = GameText.Get("ui.event.preview", "后果预览");
+        SetButtonLabel(GameText.Get("ui.confirm", "确定"));
         ResetScroll(contentScrollRect);
         layoutDirty = true;
     }
@@ -140,7 +141,7 @@ public partial class MapEventOverlay : MonoBehaviour
         RefreshOptionButtonVisuals();
         EventOptionPreviewData selectedPreview = null;
         if (option != null) optionPreviewLookup.TryGetValue(option, out selectedPreview);
-        consequenceText.text = option != null ? FormatOptionDetail(option, selectedPreview) : "当前事件暂无可选项。";
+        consequenceText.text = option != null ? FormatOptionDetail(option, selectedPreview) : GameText.Get("ui.event.no_choices", "当前事件暂无可选项。");
         SetConfirmButtonInteractable(option != null && (selectedPreview == null || selectedPreview.isSelectable));
         ResetScroll(consequenceScrollRect);
         layoutDirty = true;
@@ -178,7 +179,7 @@ public partial class MapEventOverlay : MonoBehaviour
                 ShowResultStep(selectedOption, message, resultContent, nextEventOverride);
             else
             {
-                statusText.text = string.IsNullOrWhiteSpace(message) ? "当前选项未能执行。" : message;
+                statusText.text = string.IsNullOrWhiteSpace(message) ? GameText.Get("ui.event.choice_failed", "当前选项未能执行。") : message;
                 layoutDirty = true;
             }
         }
@@ -191,14 +192,14 @@ public partial class MapEventOverlay : MonoBehaviour
         optionScrollRect.gameObject.SetActive(false);
         optionSection.gameObject.SetActive(false);
         string result = !string.IsNullOrWhiteSpace(resultContent) ? resultContent
-            : !string.IsNullOrWhiteSpace(option?.resultContent) ? option.resultContent
-            : !string.IsNullOrWhiteSpace(message) ? message : option?.consequenceDescription;
-        contentText.text = string.IsNullOrWhiteSpace(result) ? "事件已触发。" : result;
-        eventMetaText.text = "事件结果";
-        consequenceTitleText.text = "选择结果";
-        consequenceText.text = !string.IsNullOrWhiteSpace(message) ? message : "请选择继续以收起事件界面。";
+            : !string.IsNullOrWhiteSpace(option?.resultContent) ? currentEvent.LocalizeOption(option, "result", option.resultContent)
+            : !string.IsNullOrWhiteSpace(message) ? message : currentEvent.LocalizeOption(option, "preview", option?.consequenceDescription);
+        contentText.text = string.IsNullOrWhiteSpace(result) ? GameText.Get("ui.event.resolved", "事件已触发。") : result;
+        eventMetaText.text = GameText.Get("ui.event.result", "事件结果");
+        consequenceTitleText.text = GameText.Get("ui.event.outcome", "选择结果");
+        consequenceText.text = !string.IsNullOrWhiteSpace(message) ? message : GameText.Get("ui.event.continue_hint", "请选择继续以收起事件界面。");
         statusText.text = string.Empty;
-        SetButtonLabel("继续");
+        SetButtonLabel(GameText.Get("ui.continue", "继续"));
         SetConfirmButtonInteractable(true);
         ResetScroll(contentScrollRect);
         ResetScroll(consequenceScrollRect);
@@ -219,16 +220,18 @@ public partial class MapEventOverlay : MonoBehaviour
         RefreshLayout();
     }
 
-    private static string FormatOptionLabel(MapEventOptionData option, EventOptionPreviewData preview)
+    private string FormatOptionLabel(MapEventOptionData option, EventOptionPreviewData preview)
     {
-        string label = option.DisplayLabel;
-        return preview != null && !preview.isSelectable ? label + " [不可选]" : label;
+        string label = currentEvent.LocalizeOption(option, "label", option.DisplayLabel);
+        return preview != null && !preview.isSelectable ? label + GameText.Get("ui.event.unavailable", " [不可选]") : label;
     }
 
-    private static string FormatOptionDetail(MapEventOptionData option, EventOptionPreviewData preview)
+    private string FormatOptionDetail(MapEventOptionData option, EventOptionPreviewData preview)
     {
-        if (option == null) return "暂无后果说明。";
-        string detail = !string.IsNullOrWhiteSpace(option.consequenceDescription) ? option.consequenceDescription : "暂无后果说明。";
+        string empty = GameText.Get("ui.event.no_preview", "暂无后果说明。");
+        if (option == null) return empty;
+        string detail = !string.IsNullOrWhiteSpace(option.consequenceDescription)
+            ? currentEvent.LocalizeOption(option, "preview", option.consequenceDescription) : empty;
         if (option.requiredMoney > 0) detail = $"需要支付 {option.requiredMoney} 金钱\n{detail}";
         if (option.requiredMoneyPercent > 0) detail = $"需要支付当前金钱的 {option.requiredMoneyPercent}%\n{detail}";
         if (option.nextEvent != null) detail += $"\n继续事件：{option.nextEvent.DisplayName}";

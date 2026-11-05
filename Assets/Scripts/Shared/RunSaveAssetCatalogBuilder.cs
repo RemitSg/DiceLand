@@ -227,7 +227,7 @@ public static class RunSaveAssetCatalogBuilder
             return;
 
         catalog.Add(tile.assignedEnemyGroup);
-        catalog.Add(tile.assignedEvent);
+        AddEventAssets(catalog, tile.assignedEvent);
         AddSpecialDungeonAssets(catalog, tile.sourceSpecialDungeon);
 
         if (tile.specialDungeonTreasureOptions != null)
