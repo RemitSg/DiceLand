@@ -1,0 +1,86 @@
+DiceLand 敌人信息面板优化理想参考图
+日期：2026-11-05（Asia/Singapore）
+生成方式：内置 image_gen；transparent_background=false。
+状态：设计参考，尚未按本图重制敌人信息入口。
+正式图片：docs/visuals/enemy-info-ideal-reference-20261105.png
+尺寸：1847×851，RGB，约 2.17:1。
+生成原文件：exec-92584218-5e7e-4ef0-b9a9-3f1fa50217e4.png。
+SHA-256：6C737E6A8B72F259A3FDE636B30DE8C2BC9FCDA8FC237A04FD351D83D045D243。
+
+事实与范围
+- 实际敌人：Assets/Data/Enemies/Enemies/014 BloodRat/BloodRat.asset。
+- enemyID=14，名称=嗜血啮鼠，baseHP=4。
+- 原始描述：肮脏躁动、贪婪凶戾，典型的啮齿动物，喜欢成堆出现。
+  末尾句号仅为本文说明标点；游戏原字段不带末尾句号。
+- 被动名：啮齿群。
+- 被动原文：当自身以外的 【嗜血啮鼠】 死亡时，给予自身 1 层虚弱。
+  游戏原字段不带末尾句号，原文中的空格按排版调整不改变语义。
+- Unity MCP 已核对 watchedEnemyData 正确指向同一个嗜血啮鼠资产；
+  statusData 显示为虚弱，stackAmount=1，additionalRoundStartApplications=0。
+- 本次只生成参考图；不修改敌人配置、技能机制、目录数据与数值。
+- 原信息入口的字段来自 BattleSkillInfoOverlay.BuildEnemyDataDetail；
+  当前入口展示名称、最大生命、描述与特殊被动。
+- 保留实际 ID，图中以“编号 14”单独展示；最大生命使用单一标签，不重复堆叠。
+- 画像采用实际嗜血啮鼠立绘；右侧区分描述与被动，关闭入口固定。
+- 多被动与长说明的后续实现采用右侧滚动；本图的短内容完整展示，无虚构条目。
+
+参考输入及角色
+1. f361d3e64243a197dcf27ce69ba68bf0.jpg：用户现有敌人信息页，编辑目标与内容／战场上下文。
+2. Assets/Data/Enemies/Enemies/014 BloodRat/嗜血啮鼠.png：实际敌人立绘，只作主体参考。
+3. docs/visuals/battle-enemy-skill-reference-20261105.png：已确认的敌方技能页风格参考，只复用美术语言。
+
+验证
+- 已查看原截图、实际敌人立绘、技能页风格参考与生成结果。
+- 已逐项目视核对敌人名称、编号 14、最大生命 4、描述与完整被动，
+  保留“自身以外的同类死亡”条件，以及作用于自身的 1 层虚弱。
+- 立绘完整显示，文字与关闭按钮未被装饰遮挡；没有增加技能列表、掉落或虚构数值。
+- PNG 可完整解码，尺寸为 1847×851；项目图片与内置生成原文件逐字节一致。
+- 已核对 BattleButton.ApplyEnemyDeathTriggeredStatusGains：排除死亡者自身，
+  按 watchedEnemyData 匹配同类，向存活敌人自身施加配置状态。
+- 本次设计稿未修改运行代码，无需新增 Unity 运行测试。
+
+最终提示词（原文）
+Use case: ui-mockup.
+Asset type: ONE finished high-fidelity ideal ENEMY INFORMATION / ENEMY PROFILE MODAL screenshot for the Chinese fantasy roguelike DiceLand.
+Primary request: redesign the plain current enemy-details panel into a beautiful practical polished information window, consistent with the newly approved skill UI. Preserve all current information and read-only behavior. This is a finished in-game screen, not a design board or website.
+
+Input roles:
+Image 1 is the existing enemy-information screenshot, the EDIT TARGET and exact functional/background reference. Replace its huge translucent brown rectangle. Retain the recognizable forest ruins battlefield, young swordsman on the left, three dark rats on the right, gold speed hexagons, red enemy targeting curves, HP bars, top-left global "能量 10 / 10", top-center "第 1 回合", and bottom "准备" button in their original outer scene positions.
+Image 2 is the actual 嗜血啮鼠 game sprite, the SUBJECT REFERENCE ONLY. Preserve this rat's recognizable gray-black ragged fur, hunched bulky rodent silhouette, red eyes, long yellowish incisors, pink ears and long curving pink tail, small worn patches and the original stylized bloodstained mouth. Show ONE complete enemy illustration in the profile with all paws and the full tail visible. Ignore the input's white transparency-preview background; do not place a white square behind the portrait. Do not transform it into a wolf, boar, cute pet, skeleton rat, armored monster or generic new character.
+Image 3 is the approved DiceLand enemy SKILL DETAIL reference, a STYLE REFERENCE ONLY. Reuse its deep forest-green reading surface, restrained antique gold/brass double frame, subtle dark oak title plaque, small teal gems, delicate ivy at outer corners, warm ivory Chinese body text and parchment-gold close button. Do NOT copy its skill name, dice, cost chips, attack effects or skill description.
+
+Canvas and composition:
+One complete wide landscape screenshot, approximately 2.17:1 to match Image 1. A centered enemy-profile window roughly 63-66 percent of the screen width and 69-74 percent of its height, below the round HUD, with generous outer battlefield margins. Mildly darken and soften the battlefield behind the modal, but keep its context recognizable. The foreground content surface is near-opaque so branches, red curves and background letters NEVER bleed through text.
+The window uses two balanced zones: LEFT about 34 percent for the enemy illustration, RIGHT about 66 percent for information, separated by a fine brass vertical rule. This is a creature profile, not a skill selector or inventory. Balance content and spacing; avoid the original huge empty rectangle. Keep foliage and ornaments outside reading areas.
+
+Style and hierarchy:
+Premium painterly fantasy game UI with tactile dark green, dark oak and old brass; restrained material grain, clear thin beveled rails, quiet engraved rules, soft outer shadow. Warm ivory body text, elegant warm gold headings, muted teal jewels, red only for health and critical numeric accents. No neon, sci-fi, modern web dashboard, photorealistic animal, oversized bloom or lavish magical aura.
+Chinese glyphs must be accurate, substantial and comfortably readable. Decorative Chinese face for short headings only; clean heavier body face for descriptions. Do not shrink the text to create unnecessary decorative whitespace.
+
+HEADER:
+A compact centered wood-and-brass title plaque reading exactly "敌人详情". A clearly visible square gilded "×" close control at the upper-right corner.
+
+LEFT PORTRAIT ZONE:
+One generous full-body portrait of the actual rat from Image 2, centered by its visible silhouette inside a quiet dark green vignette with a very subtle forest/moss texture. It stands naturally with paws grounded; do not put it on a loot pedestal, in a portal or in a magic summoning circle. Keep comfortable margins around all paws, ears and the curved tail. No duplicate portrait.
+Under the illustration a small understated neutral brass-edged identity badge reading exactly "编号 14". This is the actual enemyID from the source. No invented rarity, threat rank, level, species category, health bar or extra stats in this portrait zone.
+
+RIGHT INFORMATION ZONE:
+1. A strong prominent warm-ivory enemy name exactly "嗜血啮鼠".
+2. Beneath the name, one compact readable informational badge with a small red heart icon and the exact label "最大生命：4". This is MAXIMUM HEALTH only; never draw a current 4/4 health meter or imply a current status stack count.
+3. An inset DESCRIPTION block headed "敌人描述", with this exact full existing Chinese description, naturally wrapping into comfortable lines:
+"肮脏躁动、贪婪凶戾，典型的啮齿动物，喜欢成堆出现"
+Keep every word and the punctuation; do not add new lore or a new gameplay effect.
+4. Below, a clearly separated PASSIVE block headed "特殊被动". A fine internal border and restrained gold ornament help the rule stand apart from flavor description. Show exactly ONE passive:
+Passive name, in warm gold: "啮齿群".
+Full effect text, large and readable, naturally wrapping over two or three lines:
+"当自身以外的【嗜血啮鼠】死亡时，给予自身 1 层虚弱"
+The trigger explicitly excludes itself and applies when another enemy of the same type dies. Preserve the target as 自身, the amount as 1 and the status as 虚弱. Use restrained emphasis on the trigger, the bracketed rat name in muted cyan, the numeral 1 in coral and 虚弱 in a muted status color. Do not convert the effect into a buff, a permanent stat penalty, every round, on its own death, on any enemy death, damage to all enemies, poison or bleeding. Do not add a separate status-stack badge that could be mistaken for a debuff currently on the enemy.
+No duplicate name or maximum-health row elsewhere in the right column.
+
+FOOTER:
+A slim brass divider below the content, and one centered medium parchment-gold button reading exactly "关闭". The footer and the top-right × stay outside scrollable information content.
+For other enemies, long descriptions and multiple passives can scroll in the right content area while the portrait and closing controls remain fixed. This one short description and single passive fit fully, so show all text and do NOT add a fake scrollbar or fabricated hidden entries.
+
+Functional boundaries:
+This panel displays enemy information only. No skill list, skill buttons, current-skill tab, dice cards, attack ranges, energy-cost chip, equipment, upgrade, learn, recruit, capture, start battle, target selection, claim button, drops, resistances or invented statistics. Preserve the four actual information types: enemy identity (including real ID 14), max HP 4, description and complete passive. All foreground content must stay legible and inside its own panel. Do not add keyboard hints that the game does not currently implement.
+No English headings in the new modal, no logo, watermark, annotation arrows, numbered design callouts, external device frame, before-and-after layout or additional windows. Produce one coherent polished usable fantasy enemy information screen.
