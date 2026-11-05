@@ -5,16 +5,22 @@ from pathlib import Path
 from PIL import Image
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--source', default='outputs/agent-battle/death-burst-vfx-20261104')
+parser.add_argument('--source', default='outputs/agent-battle/death-camera-20261105')
+parser.add_argument('--preview-width', type=int, default=720)
 args = parser.parse_args()
 root = Path(__file__).resolve().parents[2] / args.source
 for name in ('ally', 'enemy'):
     folder = root / name
     report = json.loads((folder / 'capture.json').read_text(encoding='utf-8-sig'))
     assert report.get('effectComplete', True), 'Capture must include the completed dissolution'
+    assert report.get('cameraMotionComplete', True), 'Capture must include the completed camera return'
+    assert report.get('clippedFrames', 0) == 0, 'Death effect must stay inside the camera frame'
     paths = sorted(folder.glob('[0-9][0-9][0-9].png'))
     assert len(paths) == report['frames']
     images = [Image.open(path).convert('RGB') for path in paths]
+    if 0 < args.preview_width < images[0].width:
+        size = (args.preview_width, round(images[0].height * args.preview_width / images[0].width))
+        images = [source.resize(size, Image.Resampling.LANCZOS) for source in images]
     palette_sample = Image.new('RGB', (320 * 4, 180 * 2))
     for index, source in enumerate(images[::max(1, len(images)//8)][:8]):
         palette_sample.paste(source.resize((320, 180)), ((index % 4)*320, (index // 4)*180))

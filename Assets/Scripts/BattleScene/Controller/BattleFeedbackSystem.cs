@@ -1766,8 +1766,14 @@ public class BattleFeedbackSystem : MonoBehaviour
 
     private void PlayDeathEffect(Transform actor, Vector3 preferredDirection, bool enemy)
     {
-        if (!BattleDeathVfx.TryPlay(actor, preferredDirection, enemy, deathSortingOrder, deathBurstCount))
+        BattleDeathVfx effect = BattleDeathVfx.Spawn(actor, preferredDirection, enemy, deathSortingOrder, deathBurstCount);
+        if (effect == null)
             PlayDeathEffect(BattleActorVisualUtility.GetActorCenterWorld(actor), preferredDirection);
+        else
+        {
+            if (presentationSystem == null) presentationSystem = FindObjectOfType<BattlePresentationSystem>();
+            if (presentationSystem != null) presentationSystem.PlayDeathCamera(effect);
+        }
     }
 
     private void PlayDeathEffect(Vector3 position, Vector3 preferredDirection)

@@ -159,6 +159,11 @@ public class BattlePresentationSystem : MonoBehaviour
     [SerializeField, Min(0.01f)] private float cameraShakeFrequency = 18f;
     [SerializeField] private AnimationCurve cameraShakeDecayCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
 
+    [Header("Death Camera")]
+    [SerializeField] private bool enableDeathCamera = true;
+    [SerializeField, Range(0.25f, 1.5f)] private float deathCameraStrength = 1f;
+    private BattleDeathCameraMotion deathCameraMotion;
+
     [Header("Colors")]
     [SerializeField] private int effectSortingOrder = 250;
     [SerializeField] private float effectDepthOffset = -0.35f;
@@ -227,6 +232,18 @@ public class BattlePresentationSystem : MonoBehaviour
     }
 
     public bool IsCombatantHiddenByCloseup(Transform actor) => closeupVisibility.IsSpectator(actor);
+    public bool IsPlayingDeathCamera => deathCameraMotion != null && deathCameraMotion.IsActive;
+
+    public void PlayDeathCamera(BattleDeathVfx effect)
+    {
+        if (!enableCameraImpact || !enableDeathCamera || effect == null) return;
+        Camera active = closeupCamera != null && closeupCamera.enabled ? closeupCamera : ResolveBattleCamera();
+        if (active == null || !active.isActiveAndEnabled) return;
+        StopCameraImpactImmediate(); closeupShakeRemaining = 0; StopCloseupRangePulse();
+        if (deathCameraMotion == null) deathCameraMotion = gameObject.AddComponent<BattleDeathCameraMotion>();
+        deathCameraMotion.Configure(() => closeupCamera != null && closeupCamera.enabled ? closeupCamera : ResolveBattleCamera(), deathCameraStrength);
+        deathCameraMotion.Play(effect);
+    }
 
     public IEnumerator PlayClashSequence(
         Transform ally,
@@ -1622,6 +1639,7 @@ public class BattlePresentationSystem : MonoBehaviour
 
         ResolveFeedbackSystem()?.PlayImpactPulse(pulsePosition ?? focusPosition, isHit ? flashColor : clashSparkColor,
             Mathf.Lerp(0.45f, 1f, NormalizeCameraIntensity(power)));
+        if (IsPlayingDeathCamera) return;
 
         if (UseCloseupCutCamera())
         {
@@ -1763,6 +1781,7 @@ public class BattlePresentationSystem : MonoBehaviour
         if (!UseCloseupCutCamera())
             return 0;
 
+        if (deathCameraMotion != null) deathCameraMotion.Cancel();
         StopActiveCloseupShotImmediate();
         CacheCloseupDefaults();
         activeCloseupShotId++;
@@ -1789,6 +1808,8 @@ public class BattlePresentationSystem : MonoBehaviour
         if (shotId != activeCloseupShotId)
             yield break;
 
+        while (IsPlayingDeathCamera && shotId == activeCloseupShotId) yield return null;
+        if (shotId != activeCloseupShotId) yield break;
         StopActiveCloseupShotImmediate();
     }
 
@@ -1947,6 +1968,7 @@ public class BattlePresentationSystem : MonoBehaviour
 
     private void StopActiveCloseupShotImmediate()
     {
+        if (deathCameraMotion != null) deathCameraMotion.RestoreBasePose();
         ResolveFeedbackSystem()?.StopImpactPulse();
         if (activeCloseupShotRoutine != null)
             StopCoroutine(activeCloseupShotRoutine);
@@ -2197,6 +2219,7 @@ public class BattlePresentationSystem : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (deathCameraMotion != null) deathCameraMotion.Cancel();
         closeupVisibility.Restore();
         if (spriteMat != null)
             Destroy(spriteMat);
@@ -2216,6 +2239,7 @@ public class BattlePresentationSystem : MonoBehaviour
 
     private void OnDisable()
     {
+        if (deathCameraMotion != null) deathCameraMotion.Cancel();
         impactLightRemaining = 0f;
         if (impactLight != null)
             impactLight.enabled = false;

@@ -391,6 +391,12 @@ public partial class BattleSettlementOverlay : MonoBehaviour
 
     private IEnumerator ShowResultRoutine(BattleSettlementData data)
     {
+        BattleDeathCameraMotion deathMotion = BattleDeathCameraMotion.FindActive(gameObject.scene);
+        if (deathMotion != null)
+        {
+            SetVisible(false);
+            while (deathMotion != null && deathMotion.IsActive) yield return null;
+        }
         SetVisible(true);
 
         bool playVictoryIntro = data.isVictory && victoryIntroSprite != null;

@@ -14,6 +14,9 @@ public sealed class BattleDeathVfx : MonoBehaviour
     public int FragmentCount => particles.Count;
     public Vector3 TravelDirection => push;
     public Vector3 RecoilOffset => Recoil(Elapsed);
+    public Bounds VisualBounds { get; private set; }
+    public bool HasVisibleGeometry { get; private set; }
+    public float WorldHeight => height;
     private readonly List<Material> ownedMaterials = new List<Material>();
     private readonly List<Material> silhouettes = new List<Material>();
     private readonly List<Particle> particles = new List<Particle>();
@@ -27,6 +30,10 @@ public sealed class BattleDeathVfx : MonoBehaviour
     private Color primary, gold;
     private Vector3 push, spread;
     private Transform silhouetteRoot;
+    private MeshRenderer lightRenderer;
+    private readonly List<SpriteRenderer> snapshots = new List<SpriteRenderer>();
+    private Bounds particleBounds;
+    private bool hasParticleBounds;
     private uint randomState = 145981;
     private const int QuadBudget = 1024;
 
@@ -39,17 +46,20 @@ public sealed class BattleDeathVfx : MonoBehaviour
     }
 
     public static bool TryPlay(Transform actor, Vector3 direction, bool enemy, int order = 420, int detail = 36)
+        => Spawn(actor, direction, enemy, order, detail) != null;
+
+    public static BattleDeathVfx Spawn(Transform actor, Vector3 direction, bool enemy, int order = 420, int detail = 36)
     {
-        if (actor == null) return false;
+        if (actor == null) return null;
         Shader dissolve = Resources.Load<Shader>("BattleVfx/DeathDissolve");
         Shader light = Resources.Load<Shader>("BattleVfx/DeathLight");
-        if (dissolve == null || light == null || !dissolve.isSupported || !light.isSupported) return false;
+        if (dissolve == null || light == null || !dissolve.isSupported || !light.isSupported) return null;
         GameObject root = new GameObject(enemy ? "Enemy Soul Dissolution" : "Ally Soul Dissolution");
         root.layer = actor.gameObject.layer;
         SceneManager.MoveGameObjectToScene(root, actor.gameObject.scene);
         BattleDeathVfx effect = root.AddComponent<BattleDeathVfx>();
         effect.Initialize(actor, direction, enemy, order, detail, dissolve, light);
-        return true;
+        return effect;
     }
 
     private void Initialize(Transform actor, Vector3 direction, bool enemy, int order, int detail, Shader dissolve, Shader light)
@@ -89,7 +99,7 @@ public sealed class BattleDeathVfx : MonoBehaviour
             material.SetVector("_BodyBounds", new Vector4(-0.04f, height, -width * 0.5f, width));
             Texture2D alpha = source.sprite.associatedAlphaSplitTexture;
             if (alpha != null) { material.SetTexture("_AlphaTex", alpha); material.SetFloat("_UseExternalAlpha", 1); }
-            snapshot.sharedMaterial = material; silhouettes.Add(material);
+            snapshot.sharedMaterial = material; silhouettes.Add(material); snapshots.Add(snapshot);
         }
         mesh = new Mesh { name = "Death light and fragment batch" }; mesh.MarkDynamic();
         vertices = new Vector3[QuadBudget * 4]; uv = new Vector2[vertices.Length]; kinds = new Vector2[vertices.Length]; colors = new Color[vertices.Length];
@@ -103,6 +113,7 @@ public sealed class BattleDeathVfx : MonoBehaviour
         }
         gameObject.AddComponent<MeshFilter>().sharedMesh = mesh;
         MeshRenderer renderer = gameObject.AddComponent<MeshRenderer>(); renderer.sharedMaterial = Own(new Material(light) { name = "Death light (runtime)" });
+        lightRenderer = renderer;
         renderer.sortingOrder = order + 2; renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false;
         SpriteRenderer body = actor.GetComponentInChildren<SpriteRenderer>(); if (body != null) renderer.sortingLayerID = body.sortingLayerID;
         int count = Mathf.Clamp(Mathf.Clamp(detail, 0, 60) * 6, 128, 360);
@@ -144,7 +155,7 @@ public sealed class BattleDeathVfx : MonoBehaviour
             silhouette.SetFloat("_Age", Elapsed);
             silhouette.SetMatrix("_DissolveWorldToLocal", silhouetteRoot.worldToLocalMatrix);
         }
-        quads = 0;
+        quads = 0; hasParticleBounds = false;
         float flash = Mathf.Sin(Mathf.Clamp01(Elapsed / 0.18f) * Mathf.PI);
         Quad(Vector3.zero, push * height * (0.6f + Elapsed), spread * height * 0.32f, WithAlpha(primary, flash * 0.3f), 0);
         Segment(-spread * height * 0.32f - push * height * 0.08f, spread * height * 0.32f + push * height * 0.08f,
@@ -185,7 +196,18 @@ public sealed class BattleDeathVfx : MonoBehaviour
         for (int i = quads * 4; i < vertices.Length; i++) { vertices[i] = Vector3.zero; colors[i] = Color.clear; }
         mesh.vertices = vertices; mesh.uv = uv; mesh.uv2 = kinds; mesh.colors = colors;
         mesh.SetTriangles(indices, 0, quads * 6, 0, false);
-        mesh.bounds = new Bounds(push * height * 0.85f + Vector3.up * height * 0.4f, Vector3.one * height * 8);
+        mesh.bounds = hasParticleBounds ? particleBounds : new Bounds(Vector3.zero, Vector3.zero);
+        HasVisibleGeometry = false;
+        Bounds visible = new Bounds(transform.position, Vector3.zero);
+        if (hasParticleBounds) { visible = lightRenderer.bounds; HasVisibleGeometry = true; }
+        if (Elapsed < 0.84f)
+            foreach (SpriteRenderer snapshot in snapshots)
+            {
+                if (snapshot == null) continue;
+                if (!HasVisibleGeometry) visible = snapshot.bounds; else visible.Encapsulate(snapshot.bounds);
+                HasVisibleGeometry = true;
+            }
+        VisualBounds = visible;
         if (IsComplete && Application.isPlaying) Destroy(gameObject);
     }
 
@@ -234,6 +256,9 @@ public sealed class BattleDeathVfx : MonoBehaviour
     {
         if (quads >= QuadBudget || color.a <= 0.0001f) return;
         int v = quads++ * 4;
+        Vector3 extent = new Vector3(Mathf.Abs(right.x) + Mathf.Abs(up.x), Mathf.Abs(right.y) + Mathf.Abs(up.y), Mathf.Abs(right.z) + Mathf.Abs(up.z));
+        if (!hasParticleBounds) { particleBounds = new Bounds(center, extent * 2); hasParticleBounds = true; }
+        else { particleBounds.Encapsulate(center - extent); particleBounds.Encapsulate(center + extent); }
         vertices[v] = center - right - up; vertices[v + 1] = center + right - up; vertices[v + 2] = center + right + up; vertices[v + 3] = center - right + up;
         for (int i = 0; i < 4; i++) { colors[v + i] = color; kinds[v + i] = new Vector2(kind, 0); }
     }
