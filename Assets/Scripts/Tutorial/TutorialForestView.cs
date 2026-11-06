@@ -306,7 +306,7 @@ public sealed class TutorialForestView : IDisposable
     }
     public static float Height(Graphic text,float width,float minimum=0)
     {
-        if(text is TMP_Text tmp)return Mathf.Max(minimum,tmp.GetPreferredValues(tmp.text,Mathf.Max(30,width),float.PositiveInfinity).y+8);
+        if(text is TMP_Text tmp)return Mathf.Max(minimum,tmp.GetPreferredValues(Mathf.Max(30,width),float.PositiveInfinity).y+8);
         var legacy=text as Text;if(legacy==null||legacy.font==null||legacy.pixelsPerUnit<.001f)return minimum;
         float height=legacy.cachedTextGeneratorForLayout.GetPreferredHeight(legacy.text,legacy.GetGenerationSettings(new Vector2(Mathf.Max(30,width),0)))/legacy.pixelsPerUnit+8;
         return float.IsNaN(height)||float.IsInfinity(height)?minimum:Mathf.Max(minimum,height);

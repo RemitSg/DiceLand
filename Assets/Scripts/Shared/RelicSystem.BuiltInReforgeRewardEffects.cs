@@ -28,7 +28,7 @@ public static partial class RelicSystem
                 : context.secondReforgeRelicMaterial;
 
             if (preservedRelic != null)
-                AddRelicFeedback(context, relicData, $"遗物锻造时保留了 {GetRelicDisplayName(preservedRelic)}。");
+                AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.preserve_random_relic_material_on_reforge", "遗物锻造时保留了 {relic}。", ("relic", GetRelicDisplayName(preservedRelic))));
         }
         return;
     }
@@ -61,7 +61,7 @@ public static partial class RelicSystem
                 continue;
 
             context.bonusLootReforgeRewards.Add(bonusLoot);
-            AddRelicFeedback(context, relicData, $"额外获得了 {GetLootDisplayName(bonusLoot)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.grant_random_loot_of_same_rarity_on_loot_reforge", "额外获得了 {loot}。", ("loot", GetLootDisplayName(bonusLoot))));
         }
         return;
     }

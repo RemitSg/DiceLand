@@ -7,8 +7,8 @@ public static partial class RelicSystem
     private static string BuildRoundRangeLabel(int minRound, int maxRound)
     {
         return minRound == maxRound
-            ? $"µÚ {minRound} »ØºÏ"
-            : $"µÚ {minRound}-{maxRound} »ØºÏ";
+            ? GameText.Format("relic.feedback.round", "ç¬¬ {round} å›åˆ", ("round", minRound))
+            : GameText.Format("relic.feedback.round_range", "ç¬¬ {firstRound}-{lastRound} å›åˆ", ("firstRound", minRound), ("lastRound", maxRound));
     }
 
     private static int CountDistinctStatuses(IReadOnlyList<BattleStatusRuntimeEntry> statusEntries)

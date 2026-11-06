@@ -13611,6 +13611,286 @@ MonoBehaviour:
     m_Key: map.dungeon.start
     m_Metadata:
       m_Items: []
+  - m_Id: 285509411221504
+    m_Key: relic.feedback.get_loot_display_name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581632
+    m_Key: relic.feedback.get_relic_display_name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581633
+    m_Key: run.starting_relic.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581634
+    m_Key: run.starting_relic.required
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581635
+    m_Key: battle.relic.choose_first
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581636
+    m_Key: battle.relic.missing_context
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581637
+    m_Key: relic.feedback.queue_status_to_player_on_clash_lost_against_status_target
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581638
+    m_Key: relic.feedback.ignore_move_cost_when_destination_unvisited_rest_tile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581639
+    m_Key: relic.feedback.apply_status_to_temporary_skill_user
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581640
+    m_Key: relic.feedback.prevent_battle_defeat_and_full_heal_party_once_per_run
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581641
+    m_Key: relic.feedback.transfer_status_to_all_enemies_on_enemy_death
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581642
+    m_Key: relic.feedback.heal_random_damaged_ally_on_enemy_death_with_status
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581643
+    m_Key: relic.feedback.prevent_lethal_damage_by_transferring_highest_hp_ally_health
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581644
+    m_Key: relic.feedback.refund_energy_on_clash_lost_once_per_skill_per_round
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581645
+    m_Key: relic.feedback.match_lowest_ally_speed_to_highest_on_battle_round_start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581646
+    m_Key: relic.feedback.apply_status_to_lowest_hp_ally_on_battle_round_start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581647
+    m_Key: relic.feedback.damage_random_enemy_when_ally_loses_shield_stacks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581648
+    m_Key: relic.feedback.chance_apply_status_to_all_allies_on_battle_round_start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581649
+    m_Key: relic.feedback.queue_next_battle_ally_status_on_calamity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581650
+    m_Key: relic.feedback.increase_party_max_hp_and_heal_on_calamity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581651
+    m_Key: relic.feedback.restore_shared_energy_at_battle_start_in_elite_or_boss
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581652
+    m_Key: relic.feedback.grant_temporary_extra_ally_speed_buttons_on_first_round
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581653
+    m_Key: relic.feedback.transfer_speed_buttons_to_lowest_hp_ally_on_player_death
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581654
+    m_Key: relic.feedback.reduce_incoming_single_attack_damage_flat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581655
+    m_Key: relic.feedback.reduce_incoming_single_attack_damage_percent_when_attacker_slower_than_target
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581656
+    m_Key: relic.feedback.reduce_incoming_attack_damage_percent_when_attacker_slower_than_target
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581657
+    m_Key: relic.feedback.survive_lethal_damage_once_per_battle_and_apply_status
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581658
+    m_Key: relic.feedback.reflect_single_attack_damage_to_attacker_percent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581659
+    m_Key: relic.feedback.set_enemy_status_minimum_stacks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581660
+    m_Key: relic.feedback.add_relic_feedback
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581661
+    m_Key: relic.feedback.get_status_display_name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581662
+    m_Key: relic.feedback.get_loot_display_name.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581663
+    m_Key: relic.feedback.heal_all_allies_on_enemy_death
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581664
+    m_Key: relic.feedback.heal_random_damaged_ally_on_battle_round_end
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581665
+    m_Key: relic.feedback.chance_to_ignore_move_cost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581666
+    m_Key: relic.feedback.ignore_move_cost_when_destination_visited
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581667
+    m_Key: relic.feedback.heal_party_percent_on_entering_unvisited_merchant_tile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581668
+    m_Key: relic.feedback.restore_action_points_on_key_collected_by_percent_max
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581669
+    m_Key: relic.feedback.preserve_random_relic_material_on_reforge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581670
+    m_Key: relic.feedback.grant_random_loot_of_same_rarity_on_loot_reforge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581671
+    m_Key: relic.feedback.apply_status_to_remaining_allies_on_player_death
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581672
+    m_Key: relic.feedback.apply_status_to_remaining_allies_on_player_death.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581673
+    m_Key: relic.feedback.apply_status_to_remaining_allies_on_player_death.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581674
+    m_Key: relic.feedback.transfer_status_to_highest_hp_ally_on_player_death
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581675
+    m_Key: relic.feedback.apply_status_to_attacker_after_taking_single_attack_damage_once_per_round
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581676
+    m_Key: relic.feedback.chance_to_queue_status_on_hit_when_slower_once_per_skill_use
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581677
+    m_Key: relic.feedback.apply_status_to_self_on_defense_clash_win
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581678
+    m_Key: relic.feedback.apply_status_to_self_on_enemy_killed_by_player
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581679
+    m_Key: relic.feedback.apply_status_to_player_when_speed_equals
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581680
+    m_Key: relic.feedback.apply_status_to_player_when_speed_equals.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581681
+    m_Key: relic.feedback.apply_status_to_all_enemies_on_specific_round
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581682
+    m_Key: relic.feedback.apply_status_to_all_enemies_on_specific_round.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581683
+    m_Key: relic.feedback.apply_status_to_all_allies_on_specific_round
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581684
+    m_Key: relic.feedback.apply_status_to_all_allies_on_specific_round.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581685
+    m_Key: relic.feedback.apply_status_to_random_ally_on_specific_round
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581686
+    m_Key: relic.feedback.apply_status_to_random_enemy_on_specific_round
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581687
+    m_Key: relic.feedback.apply_status_to_all_allies_on_odd_rounds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581688
+    m_Key: relic.feedback.round
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581689
+    m_Key: relic.feedback.round_range
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581690
+    m_Key: battle.settlement.enemy_retreat_summary
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581691
+    m_Key: map.tutorial.tag.final_battle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581692
+    m_Key: map.tutorial.tag.battle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581693
+    m_Key: map.tutorial.tag.rest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581694
+    m_Key: map.tutorial.tag.shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581695
+    m_Key: map.tutorial.tag.forge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581696
+    m_Key: map.tutorial.tag.key
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581697
+    m_Key: map.tutorial.tag.boss
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581698
+    m_Key: map.tutorial.tag.route
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286333692620800
+    m_Key: battle.settlement.finish_run
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286333717786624
+    m_Key: battle.settlement.finish_tutorial
+    m_Metadata:
+      m_Items: []
   - m_Id: 72000000000100
     m_Key: ui.encyclopedia.title
     m_Metadata:

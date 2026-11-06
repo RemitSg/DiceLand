@@ -21,7 +21,7 @@ public static partial class RelicSystem
 
         context.incomingDamageFlatModifier -= reductionAmount;
         context.AddIncomingDamageFlatModifierSource(-reductionAmount, GetRelicDisplayName(relicData));
-        AddRelicFeedback(context, relicData, $"本次单方面攻击伤害 -{reductionAmount}。");
+        AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.reduce_incoming_single_attack_damage_flat", "本次单方面攻击伤害 -{reductionAmount}。", ("reductionAmount", reductionAmount)));
         return;
     }
 
@@ -51,7 +51,7 @@ public static partial class RelicSystem
         AddRelicFeedback(
             context,
             relicData,
-            $"{percentReductionSource.GetDebugDisplayName()} 速度低于 {percentReductionTarget.GetDebugDisplayName()}，本次即将到来的伤害 -{reductionPercent}% 。");
+            GameText.Format("relic.feedback.reduce_incoming_single_attack_damage_percent_when_attacker_slower_than_target", "{actor} 速度低于 {target}，本次即将到来的伤害 -{reductionPercent}% 。", ("actor", GetActorDisplayName(percentReductionSource)), ("target", GetActorDisplayName(percentReductionTarget)), ("reductionPercent", reductionPercent)));
         return;
     }
 
@@ -81,7 +81,7 @@ public static partial class RelicSystem
         AddRelicFeedback(
             context,
             relicData,
-            $"{attackReductionSource.GetDebugDisplayName()} 速度低于 {attackReductionTarget.GetDebugDisplayName()}，本次即将到来的伤害 -{attackReductionPercent}%。");
+            GameText.Format("relic.feedback.reduce_incoming_attack_damage_percent_when_attacker_slower_than_target", "{actor} 速度低于 {target}，本次即将到来的伤害 -{attackReductionPercent}%。", ("actor", GetActorDisplayName(attackReductionSource)), ("target", GetActorDisplayName(attackReductionTarget)), ("attackReductionPercent", attackReductionPercent)));
         return;
     }
 
@@ -218,7 +218,7 @@ public static partial class RelicSystem
                 lethalStatusStacks);
         }
 
-        AddRelicFeedback(context, relicData, $"{lethalTarget.GetDebugDisplayName()} 以 {context.minimumSurvivingHp} 点生命幸存。");
+        AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.survive_lethal_damage_once_per_battle_and_apply_status", "{actor} 以 {minimumSurvivingHp} 点生命幸存。", ("actor", GetActorDisplayName(lethalTarget)), ("minimumSurvivingHp", context.minimumSurvivingHp)));
         return;
     }
 
@@ -325,7 +325,7 @@ public static partial class RelicSystem
         if (actualReflectedDamage <= 0)
             return;
 
-        AddRelicFeedback(context, relicData, $"反弹 {actualReflectedDamage} 点伤害给 {reflectedAttacker.GetDebugDisplayName()}。");
+        AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.reflect_single_attack_damage_to_attacker_percent", "反弹 {actualReflectedDamage} 点伤害给 {actor}。", ("actualReflectedDamage", actualReflectedDamage), ("actor", GetActorDisplayName(reflectedAttacker))));
         return;
     }
 }

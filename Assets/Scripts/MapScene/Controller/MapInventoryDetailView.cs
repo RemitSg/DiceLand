@@ -149,6 +149,7 @@ public partial class MapInventoryDetailView : MonoBehaviour
             rarityFace.gameObject.SetActive(true);
         }
         ResetPresentationLabels();
+        category = ResourceKeywordText.AttributeLabel(category);
         bool changed = displayedItem != item;
         if (changed) ConfigureActionButton(string.Empty, false, null, string.Empty);
         displayedItem = item;

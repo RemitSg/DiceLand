@@ -47,6 +47,20 @@ public sealed class ResourceKeywordTextTests
     [TestCase("光", "F6EAC8", "DL_Attribute_Light")]
     [TestCase("速", "E9C17B", "DL_Attribute_Speed")]
     [TestCase("无", "C8CDD1", "DL_Attribute_Neutral")]
+    [TestCase("Burn", "F4A261", "DL_Status_Burn")]
+    [TestCase("burn", "F4A261", "DL_Status_Burn")]
+    [TestCase("Burning", "F4A261", "DL_Status_Burn")]
+    [TestCase("Poison", "9BCB78", "DL_Status_Poison")]
+    [TestCase("Temporary Guard Break", "E8AF8B", "DL_Status_Guardbreak")]
+    [TestCase("Refraction Mark", "D7C5FA", "DL_Status_RefractedMark")]
+    [TestCase("Gold", "F0CC6B", "DL_Money")]
+    [TestCase("Action Points", "9EDBB8", "DL_ActionPoints")]
+    [TestCase("AP", "9EDBB8", "DL_ActionPoints")]
+    [TestCase("Keys", "B8D9E6", "DL_Keys")]
+    [TestCase("XP", "B8C9F4", "DL_Experience")]
+    [TestCase("Max HP", "F09BA5", "DL_Health")]
+    [TestCase("Fire", "F4A261", "DL_Attribute_Flame")]
+    [TestCase("Lightning", "F3DA78", "DL_Attribute_Electricity")]
     public void TermsUseTheirOwnColourAndPackagedIcon(string word, string color, string icon)
     {
         string result = ResourceKeywordText.Format("获得 3 " + word);
@@ -54,6 +68,51 @@ public sealed class ResourceKeywordTextTests
         StringAssert.Contains("<sprite name=\"" + icon + "\" tint=0>", result);
         StringAssert.Contains(word, result);
         Assert.AreEqual(result, ResourceKeywordText.Format(result));
+    }
+
+    [Test]
+    public void EnglishKeywordsUseWholeWordsAndKeepCompleteStatusNames()
+    {
+        const string ordinary = "sunburn burningcoal poisonedwater goldfish speedometer Lightfoot Expert maxHP status_Burn";
+        Assert.IsFalse(ResourceKeywordText.ContainsKeyword(ordinary));
+        Assert.AreEqual(ordinary, ResourceKeywordText.Format(ordinary));
+        const string words = "Temporary Strength, Temporary Guard Break, Refraction Mark, burning, poisoned.";
+        string result = ResourceKeywordText.Format(words);
+        Assert.AreEqual(5, Count(result, "<sprite "));
+        StringAssert.Contains(">Temporary Guard Break</color>", result);
+        StringAssert.Contains(">Refraction Mark</color>", result);
+        Assert.AreEqual(result, ResourceKeywordText.Format(result));
+        StringAssert.Contains("<noparse>Burn Poison</noparse>", ResourceKeywordText.Format("<noparse>Burn Poison</noparse> Burn"));
+    }
+
+    [Test]
+    public void SkillLayoutMeasuresTheRenderedEnglishKeywordSprites()
+    {
+        TextMeshProUGUI label = Label("English keyword layout");
+        label.text = "Burn Burn Burn Burn Burn Burn";
+        ResourceKeywordText.Attach(label);
+        const float width = 180f;
+        float rawHeight = label.GetPreferredValues(label.text, width, 0).y;
+        float renderedHeight = label.GetPreferredValues(ResourceKeywordText.Format(label.text), width, 0).y;
+        float layoutHeight = (float)typeof(BattleSkillInfoOverlay).GetMethod("SkillTextHeight", BindingFlags.Static | BindingFlags.NonPublic)
+            .Invoke(null, new object[] { label, width, 0f });
+        Assert.Greater(renderedHeight, rawHeight, "Status sprites occupy layout width.");
+        Assert.AreEqual(renderedHeight + 6f, layoutHeight, 0.1f);
+    }
+
+    [Test]
+    public void EnglishPoisonAttributeAndStatusUseTheirOwnIdentities()
+    {
+        string attribute = ResourceKeywordText.AttributeLabel("Poison");
+        StringAssert.Contains("DL_Attribute_Poison", ResourceKeywordText.Format(attribute));
+        StringAssert.Contains("DL_Status_Poison", ResourceKeywordText.Format("Poison"));
+        StringAssert.Contains("DL_Attribute_Poison", ResourceKeywordText.Format("Poison attribute"));
+        StringAssert.Contains("DL_Status_Poison", ResourceKeywordText.Format("Poison damage"));
+        Assert.AreSame(ResourceKeywordText.IconFor("毒"), ResourceKeywordText.IconFor(attribute));
+        Assert.AreSame(ResourceKeywordText.IconFor("毒"), ResourceKeywordText.IconFor(ResourceKeywordText.Format(attribute)));
+        Assert.AreSame(ResourceKeywordText.IconFor("中毒"), ResourceKeywordText.IconFor("Poison"));
+        Assert.AreNotSame(ResourceKeywordText.IconFor(attribute), ResourceKeywordText.IconFor("Poison"));
+        Assert.AreEqual(ResourceKeywordText.ColorFor("毒", Color.clear), ResourceKeywordText.ColorFor(attribute, Color.clear));
     }
 
     [Test]

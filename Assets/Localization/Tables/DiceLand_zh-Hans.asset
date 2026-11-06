@@ -14301,6 +14301,357 @@ MonoBehaviour:
     m_Localized: "\u526F\u672C\u8D77\u70B9"
     m_Metadata:
       m_Items: []
+  - m_Id: 285509411221504
+    m_Localized: "\u6218\u5229\u54C1"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581632
+    m_Localized: "\u9057\u7269"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581633
+    m_Localized: "\u521D\u59CB\u9057\u7269\u888B\uFF1A\u9009\u62E9 1 \u4E2A\u9057\u7269"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581634
+    m_Localized: "\u8BF7\u5148\u4ECE\u521D\u59CB\u9057\u7269\u888B\u4E2D\u9009\u62E9\u4E00\u4E2A\u9057\u7269\u3002"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581635
+    m_Localized: "\u8BF7\u5148\u9009\u62E9\u4E00\u4E2A\u9057\u7269\u3002"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581636
+    m_Localized: "\u6218\u6597\u7ED3\u7B97\u4E0A\u4E0B\u6587\u7F3A\u5931\u3002"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581637
+    m_Localized: "{actor} \u5C06\u83B7\u5F97 {stacks} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581638
+    m_Localized: "\u524D\u5F80\u672A\u63A2\u7D22\u7684\u4F11\u606F\u683C\u4E0D\u6D88\u8017\u884C\u52A8\u70B9\u3002"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581639
+    m_Localized: "{actor} \u4F7F\u7528\u4E34\u65F6\u6280\u80FD\uFF0C\u83B7\u5F97
+      {stacks} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581640
+    m_Localized: "\u91CD\u751F\u53D1\u52A8\uFF1A\u961F\u4F0D\u6062\u590D\u5E76\u8FD4\u56DE\u5730\u56FE\u3002"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581641
+    m_Localized: "{affected} \u540D\u654C\u4EBA\u83B7\u5F97 {stacks} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581642
+    m_Localized: "{actor} \u6062\u590D {healed} \u70B9\u751F\u547D\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581643
+    m_Localized: "{actor} \u501F\u7531 {target} \u7684\u751F\u547D\u5E78\u5B58\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581644
+    m_Localized: "\u62FC\u70B9\u5931\u8D25\uFF0C\u8FD4\u8FD8 {energy} \u70B9\u80FD\u91CF\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581645
+    m_Localized: "{actor} \u7684\u901F\u5EA6\u63D0\u5347\u81F3 {targetSpeed}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581646
+    m_Localized: "{actor} \u83B7\u5F97 {stacks} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581647
+    m_Localized: "{actor} \u56E0\u62A4\u76FE\u53CD\u51FB\u5931\u53BB {dealt} \u70B9\u751F\u547D\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581648
+    m_Localized: "{affected} \u540D\u53CB\u65B9\u83B7\u5F97 {stacks} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581649
+    m_Localized: "\u4E0B\u4E00\u573A\u6218\u6597\u65F6\uFF0C\u6240\u6709\u53CB\u65B9\u5C06\u83B7\u5F97
+      {calamityQueuedStacks} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581650
+    m_Localized: "\u6240\u6709\u53CB\u65B9\u6700\u5927\u751F\u547D +{hpGain}\uFF0C\u5E76\u56DE\u590D\u76F8\u540C\u6570\u503C\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581651
+    m_Localized: "\u672C\u56DE\u5408\u989D\u5916\u56DE\u590D {extraEnergy} \u70B9\u80FD\u91CF\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581652
+    m_Localized: "\u9996\u56DE\u5408\u6240\u6709\u53CB\u65B9\u989D\u5916\u83B7\u5F97
+      {extraButtons} \u4E2A\u901F\u5EA6\u6309\u94AE\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581653
+    m_Localized: "{actor} \u7684\u901F\u5EA6\u6309\u94AE\u8F6C\u79FB\u7ED9\u4E86
+      {target}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581654
+    m_Localized: "\u672C\u6B21\u5355\u65B9\u9762\u653B\u51FB\u4F24\u5BB3 -{reductionAmount}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581655
+    m_Localized: "{actor} \u901F\u5EA6\u4F4E\u4E8E {target}\uFF0C\u672C\u6B21\u5373\u5C06\u5230\u6765\u7684\u4F24\u5BB3
+      -{reductionPercent}% \u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581656
+    m_Localized: "{actor} \u901F\u5EA6\u4F4E\u4E8E {target}\uFF0C\u672C\u6B21\u5373\u5C06\u5230\u6765\u7684\u4F24\u5BB3
+      -{attackReductionPercent}%\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581657
+    m_Localized: "{actor} \u4EE5 {minimumSurvivingHp} \u70B9\u751F\u547D\u5E78\u5B58\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581658
+    m_Localized: "\u53CD\u5F39 {actualReflectedDamage} \u70B9\u4F24\u5BB3\u7ED9 {actor}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581659
+    m_Localized: "{affectedEnemies} \u540D\u654C\u4EBA\u7684 {status} \u88AB\u7EF4\u6301\u5230\u81F3\u5C11
+      {minimumStacks} \u5C42\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581660
+    m_Localized: "{relic} \u751F\u6548\uFF1A{detail}"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581661
+    m_Localized: "\u72B6\u6001"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581662
+    m_Localized: "\u6389\u843D\u7269"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581663
+    m_Localized: "\u654C\u4EBA\u5012\u4E0B\u540E\uFF0C{healedCount} \u540D\u53CB\u65B9\u5404\u56DE\u590D
+      {healAllAmount} \u70B9\u751F\u547D\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581664
+    m_Localized: "\u56DE\u5408\u7ED3\u675F\u65F6\uFF0C{actor} \u6062\u590D {actualHeal}
+      \u70B9\u751F\u547D\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581665
+    m_Localized: "\u672C\u6B21\u63A2\u7D22\u4E0D\u6D88\u8017\u884C\u52A8\u70B9\u3002"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581666
+    m_Localized: "\u524D\u5F80\u5DF2\u63A2\u7D22\u8FC7\u7684\u683C\u5B50\u4E0D\u6D88\u8017\u884C\u52A8\u70B9\u3002"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581667
+    m_Localized: "\u8FDB\u5165\u672A\u63A2\u7D22\u7684\u5546\u5E97\u683C\u65F6\uFF0C\u961F\u4F0D\u5171\u6062\u590D
+      {totalHealed} \u70B9\u751F\u547D\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581668
+    m_Localized: "\u6536\u96C6\u94A5\u5319\u65F6\u6062\u590D {actualRestore} \u70B9\u884C\u52A8\u70B9\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581669
+    m_Localized: "\u9057\u7269\u953B\u9020\u65F6\u4FDD\u7559\u4E86 {relic}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581670
+    m_Localized: "\u989D\u5916\u83B7\u5F97\u4E86 {loot}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581671
+    m_Localized: "\u53CB\u65B9\u89D2\u8272"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581672
+    m_Localized: "{defeatedName} \u6B7B\u4EA1\u540E\uFF0C\u5176\u4F59 {affectedAllyCount}
+      \u540D\u53CB\u65B9\u5C06\u4E8E\u4E0B {delayRounds} \u4E2A\u56DE\u5408\u5F00\u59CB\u65F6\u83B7\u5F97
+      {allyDeathStacksToApply} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581673
+    m_Localized: "{defeatedName} \u6B7B\u4EA1\u540E\uFF0C\u5176\u4F59 {affectedAllyCount}
+      \u540D\u53CB\u65B9\u83B7\u5F97 {allyDeathStacksToApply} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581674
+    m_Localized: "{actor} \u7684 {transferredStacks} \u5C42 {status} \u8F6C\u79FB\u7ED9\u4E86
+      {target}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581675
+    m_Localized: "{actor} \u83B7\u5F97 {attackerStatusStacks} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581676
+    m_Localized: "{actor} \u5C06\u83B7\u5F97 {slowerHitStacks} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581677
+    m_Localized: "{actor} \u83B7\u5F97 {defenseWinStacks} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581678
+    m_Localized: "{actor} \u83B7\u5F97 {killStacks} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581679
+    m_Localized: "{actor} \u5C06\u4E8E\u4E0B {delayRounds} \u4E2A\u56DE\u5408\u5F00\u59CB\u65F6\u83B7\u5F97
+      {stacksToApply} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581680
+    m_Localized: "{actor} \u83B7\u5F97 {stacksToApply} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581681
+    m_Localized: "{roundRangeText}\u5C06\u4F7F {appliedEnemyCount} \u540D\u654C\u4EBA\u4E8E\u4E0B
+      {delayRounds} \u4E2A\u56DE\u5408\u5F00\u59CB\u65F6\u83B7\u5F97 {enemyStacksToApply}
+      \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581682
+    m_Localized: "{roundRangeText}\u4F7F {appliedEnemyCount} \u540D\u654C\u4EBA\u83B7\u5F97
+      {enemyStacksToApply} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581683
+    m_Localized: "{roundRangeText}\u5C06\u4F7F {appliedAllyCount} \u540D\u53CB\u65B9\u4E8E\u4E0B
+      {delayRounds} \u4E2A\u56DE\u5408\u5F00\u59CB\u65F6\u83B7\u5F97 {allyStacksToApply}
+      \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581684
+    m_Localized: "{roundRangeText}\u4F7F {appliedAllyCount} \u540D\u53CB\u65B9\u83B7\u5F97
+      {allyStacksToApply} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581685
+    m_Localized: "{roundLabel}\u65F6\uFF0C{actor} \u83B7\u5F97 {randomAllyStacksToApply}
+      \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581686
+    m_Localized: "{roundLabel}\u65F6\uFF0C{actor} \u83B7\u5F97 {randomEnemyStacksToApply}
+      \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581687
+    m_Localized: "\u5947\u6570\u56DE\u5408\u5F00\u59CB\u65F6\uFF0C{oddRoundAffectedCount}
+      \u540D\u53CB\u65B9\u83B7\u5F97 {oddRoundStacks} \u5C42 {status}\u3002"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581688
+    m_Localized: "\u7B2C {round} \u56DE\u5408"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581689
+    m_Localized: "\u7B2C {firstRound}-{lastRound} \u56DE\u5408"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581690
+    m_Localized: "{enemy} \u8131\u79BB\u4E86\u6218\u6597\uFF0C\u5269\u4F59\u53EF\u884C\u52A8\u89D2\u8272\uFF1A{count}"
+    m_Metadata:
+      m_Items:
+      - rid: 5043701850270335002
+  - m_Id: 285509440581691
+    m_Localized: "\u6559\u7A0B\u7EC8\u6218"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581692
+    m_Localized: "\u6559\u7A0B\u6218\u6597"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581693
+    m_Localized: "\u6559\u7A0B\u8425\u5730"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581694
+    m_Localized: "\u6559\u7A0B\u5546\u5E97"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581695
+    m_Localized: "\u6559\u7A0B\u953B\u9020"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581696
+    m_Localized: "\u6559\u7A0B\u94A5\u5319"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581697
+    m_Localized: "\u6559\u7A0B\u9996\u9886"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285509440581698
+    m_Localized: "\u6559\u7A0B\u8DEF\u7EBF"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286333692620800
+    m_Localized: "\u5B8C\u6210\u5192\u9669"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286333717786624
+    m_Localized: "\u5B8C\u6210\u6559\u7A0B"
+    m_Metadata:
+      m_Items: []
   - m_Id: 72000000000100
     m_Localized: "\u56FE\u9274"
     m_Metadata:
@@ -14344,15 +14695,18 @@ MonoBehaviour:
   - m_Id: 72000000000110
     m_Localized: "\u901F\u5EA6 {min}\u2013{max} \xB7 \u901F\u5EA6\u9AB0 {slots}"
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 5043701850270335002
   - m_Id: 72000000000111
     m_Localized: "\u9636\u6BB5 {stage} \xB7 {speed}"
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 5043701850270335002
   - m_Id: 72000000000112
     m_Localized: "\u901F\u5EA6\u9AB0 {slots}"
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 5043701850270335002
   - m_Id: 72000000000113
     m_Localized: "\u6218\u5229\u54C1"
     m_Metadata:
@@ -14661,3 +15015,53 @@ MonoBehaviour:
         - id: 22781589270857
         - id: 22781589270858
         - id: 22781589270861
+        - id: 285509440581637
+        - id: 285509440581639
+        - id: 285509440581641
+        - id: 285509440581642
+        - id: 285509440581643
+        - id: 285509440581644
+        - id: 285509440581645
+        - id: 285509440581646
+        - id: 285509440581647
+        - id: 285509440581648
+        - id: 285509440581649
+        - id: 285509440581650
+        - id: 285509440581651
+        - id: 285509440581652
+        - id: 285509440581653
+        - id: 285509440581654
+        - id: 285509440581655
+        - id: 285509440581656
+        - id: 285509440581657
+        - id: 285509440581658
+        - id: 285509440581659
+        - id: 285509440581660
+        - id: 285509440581663
+        - id: 285509440581664
+        - id: 285509440581667
+        - id: 285509440581668
+        - id: 285509440581669
+        - id: 285509440581670
+        - id: 285509440581672
+        - id: 285509440581673
+        - id: 285509440581674
+        - id: 285509440581675
+        - id: 285509440581676
+        - id: 285509440581677
+        - id: 285509440581678
+        - id: 285509440581679
+        - id: 285509440581680
+        - id: 285509440581681
+        - id: 285509440581682
+        - id: 285509440581683
+        - id: 285509440581684
+        - id: 285509440581685
+        - id: 285509440581686
+        - id: 285509440581687
+        - id: 285509440581688
+        - id: 285509440581689
+        - id: 285509440581690
+        - id: 72000000000110
+        - id: 72000000000111
+        - id: 72000000000112

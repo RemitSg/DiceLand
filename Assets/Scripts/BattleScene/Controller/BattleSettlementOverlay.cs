@@ -615,10 +615,17 @@ public partial class BattleSettlementOverlay : MonoBehaviour
 
     private void CreateReturnButton(BattleSettlementData data)
     {
+        BattleEncounterData encounter = BattleEncounterRuntime.ActiveEncounter;
+        string victoryLabel = GameText.Get("battle.settlement.return", returnButtonLabel);
+        if (encounter != null && encounter.tileType == MapTileType.Boss && !encounter.isTutorialEncounter)
+            victoryLabel = GameText.Get("battle.settlement.finish_run", "完成冒险");
+        else if (encounter != null && encounter.isTutorialEncounter && encounter.returnToMainMenuOnVictory)
+            victoryLabel = GameText.Get("battle.settlement.finish_tutorial", "完成教程");
+
         CreateActionButton(
             buttonRoot,
             "ReturnButton",
-            data.isVictory ? GameText.Get("battle.settlement.return", returnButtonLabel) : GameText.Get("battle.settlement.end_run", defeatReturnButtonLabel),
+            data.isVictory ? victoryLabel : GameText.Get("battle.settlement.end_run", defeatReturnButtonLabel),
             () =>
             {
                 if (data != null && !data.isVictory && !ShouldReturnToMapAfterDefeat())

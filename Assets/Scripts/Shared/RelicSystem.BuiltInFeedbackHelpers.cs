@@ -5,30 +5,35 @@ public static partial class RelicSystem
         if (context == null || context.feedbackMessages == null || string.IsNullOrWhiteSpace(detail))
             return;
 
-        context.feedbackMessages.Add($"{GetRelicDisplayName(relicData)} 生效：{detail}");
+        context.feedbackMessages.Add(GameText.Format("relic.feedback.add_relic_feedback", "{relic} 生效：{detail}", ("relic", GetRelicDisplayName(relicData)), ("detail", detail)));
     }
 
     private static string GetRelicDisplayName(Relic_SO relicData)
     {
         if (relicData == null)
-            return "遗物";
+            return GameText.Get("relic.feedback.get_relic_display_name", "遗物");
 
-        return relicData.DisplayName;
+        return relicData.LocalizedName;
     }
 
     private static string GetStatusDisplayName(BattleStatus_SO statusData)
     {
         if (statusData == null)
-            return "状态";
+            return GameText.Get("relic.feedback.get_status_display_name", "状态");
 
-        return statusData.DisplayName;
+        return statusData.LocalizedName;
     }
 
     private static string GetLootDisplayName(LootItem_SO lootData)
     {
         if (lootData == null)
-            return "掉落物";
+            return GameText.Get("relic.feedback.get_loot_display_name.2", "掉落物");
 
-        return !string.IsNullOrWhiteSpace(lootData.lootName) ? lootData.lootName : lootData.name;
+        return lootData.LocalizedName;
     }
+
+    private static string GetActorDisplayName(BattleAllyController actor) => actor.GetSettlementDisplayName();
+
+    private static string GetActorDisplayName(BattleEnemyController actor) =>
+        actor.enemyData != null ? actor.enemyData.LocalizedName : actor.name;
 }

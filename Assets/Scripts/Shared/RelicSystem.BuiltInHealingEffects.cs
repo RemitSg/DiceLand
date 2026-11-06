@@ -29,7 +29,7 @@ public static partial class RelicSystem
         }
 
         if (healedCount > 0)
-            AddRelicFeedback(context, relicData, $"敌人倒下后，{healedCount} 名友方各回复 {healAllAmount} 点生命。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.heal_all_allies_on_enemy_death", "敌人倒下后，{healedCount} 名友方各回复 {healAllAmount} 点生命。", ("healedCount", healedCount), ("healAllAmount", healAllAmount)));
         return;
     }
 
@@ -66,7 +66,7 @@ public static partial class RelicSystem
         if (actualHeal <= 0)
             return;
 
-        AddRelicFeedback(context, relicData, $"回合结束时，{selectedAlly.GetDebugDisplayName()} 恢复 {actualHeal} 点生命。");
+        AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.heal_random_damaged_ally_on_battle_round_end", "回合结束时，{actor} 恢复 {actualHeal} 点生命。", ("actor", GetActorDisplayName(selectedAlly)), ("actualHeal", actualHeal)));
         return;
     }
 }

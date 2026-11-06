@@ -40,11 +40,11 @@ public static partial class RelicSystem
         if (effect.statusApplyTiming == Relic_SO.RelicStatusApplyTiming.NextRoundStart)
         {
             int delayRounds = Mathf.Max(1, effect.applyAfterRoundStarts);
-            AddRelicFeedback(context, relicData, $"{roundStartAlly.GetDebugDisplayName()} 将于下 {delayRounds} 个回合开始时获得 {stacksToApply} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.apply_status_to_player_when_speed_equals", "{actor} 将于下 {delayRounds} 个回合开始时获得 {stacksToApply} 层 {status}。", ("actor", GetActorDisplayName(roundStartAlly)), ("delayRounds", delayRounds), ("stacksToApply", stacksToApply), ("status", GetStatusDisplayName(effect.statusData))));
         }
         else
         {
-            AddRelicFeedback(context, relicData, $"{roundStartAlly.GetDebugDisplayName()} 获得 {stacksToApply} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.apply_status_to_player_when_speed_equals.2", "{actor} 获得 {stacksToApply} 层 {status}。", ("actor", GetActorDisplayName(roundStartAlly)), ("stacksToApply", stacksToApply), ("status", GetStatusDisplayName(effect.statusData))));
         }
     }
 
@@ -87,11 +87,11 @@ public static partial class RelicSystem
         if (effect.statusApplyTiming == Relic_SO.RelicStatusApplyTiming.NextRoundStart)
         {
             int delayRounds = Mathf.Max(1, effect.applyAfterRoundStarts);
-            AddRelicFeedback(context, relicData, $"{roundRangeText}将使 {appliedEnemyCount} 名敌人于下 {delayRounds} 个回合开始时获得 {enemyStacksToApply} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.apply_status_to_all_enemies_on_specific_round", "{roundRangeText}将使 {appliedEnemyCount} 名敌人于下 {delayRounds} 个回合开始时获得 {enemyStacksToApply} 层 {status}。", ("roundRangeText", roundRangeText), ("appliedEnemyCount", appliedEnemyCount), ("delayRounds", delayRounds), ("enemyStacksToApply", enemyStacksToApply), ("status", GetStatusDisplayName(effect.statusData))));
         }
         else
         {
-            AddRelicFeedback(context, relicData, $"{roundRangeText}使 {appliedEnemyCount} 名敌人获得 {enemyStacksToApply} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.apply_status_to_all_enemies_on_specific_round.2", "{roundRangeText}使 {appliedEnemyCount} 名敌人获得 {enemyStacksToApply} 层 {status}。", ("roundRangeText", roundRangeText), ("appliedEnemyCount", appliedEnemyCount), ("enemyStacksToApply", enemyStacksToApply), ("status", GetStatusDisplayName(effect.statusData))));
         }
     }
 
@@ -134,11 +134,11 @@ public static partial class RelicSystem
         if (effect.statusApplyTiming == Relic_SO.RelicStatusApplyTiming.NextRoundStart)
         {
             int delayRounds = Mathf.Max(1, effect.applyAfterRoundStarts);
-            AddRelicFeedback(context, relicData, $"{roundRangeText}将使 {appliedAllyCount} 名友方于下 {delayRounds} 个回合开始时获得 {allyStacksToApply} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.apply_status_to_all_allies_on_specific_round", "{roundRangeText}将使 {appliedAllyCount} 名友方于下 {delayRounds} 个回合开始时获得 {allyStacksToApply} 层 {status}。", ("roundRangeText", roundRangeText), ("appliedAllyCount", appliedAllyCount), ("delayRounds", delayRounds), ("allyStacksToApply", allyStacksToApply), ("status", GetStatusDisplayName(effect.statusData))));
         }
         else
         {
-            AddRelicFeedback(context, relicData, $"{roundRangeText}使 {appliedAllyCount} 名友方获得 {allyStacksToApply} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.apply_status_to_all_allies_on_specific_round.2", "{roundRangeText}使 {appliedAllyCount} 名友方获得 {allyStacksToApply} 层 {status}。", ("roundRangeText", roundRangeText), ("appliedAllyCount", appliedAllyCount), ("allyStacksToApply", allyStacksToApply), ("status", GetStatusDisplayName(effect.statusData))));
         }
     }
 
@@ -178,7 +178,7 @@ public static partial class RelicSystem
         ApplyImmediateBattleRoundStartSpeedBonus(context, randomAlly, effect, randomAllyStacksToApply);
 
         string roundLabel = BuildRoundRangeLabel(requiredRoundMin, requiredRoundMax);
-        AddRelicFeedback(context, relicData, $"{roundLabel}时，{randomAlly.GetDebugDisplayName()} 获得 {randomAllyStacksToApply} 层 {GetStatusDisplayName(effect.statusData)}。");
+        AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.apply_status_to_random_ally_on_specific_round", "{roundLabel}时，{actor} 获得 {randomAllyStacksToApply} 层 {status}。", ("roundLabel", roundLabel), ("actor", GetActorDisplayName(randomAlly)), ("randomAllyStacksToApply", randomAllyStacksToApply), ("status", GetStatusDisplayName(effect.statusData))));
     }
 
     private static void HandleApplyStatusToRandomEnemyOnSpecificRound(
@@ -217,7 +217,7 @@ public static partial class RelicSystem
         ApplyImmediateBattleRoundStartSpeedBonus(context, randomEnemy, effect, randomEnemyStacksToApply);
 
         string roundLabel = BuildRoundRangeLabel(requiredRoundMin, requiredRoundMax);
-        AddRelicFeedback(context, relicData, $"{roundLabel}时，{randomEnemy.GetDebugDisplayName()} 获得 {randomEnemyStacksToApply} 层 {GetStatusDisplayName(effect.statusData)}。");
+        AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.apply_status_to_random_enemy_on_specific_round", "{roundLabel}时，{actor} 获得 {randomEnemyStacksToApply} 层 {status}。", ("roundLabel", roundLabel), ("actor", GetActorDisplayName(randomEnemy)), ("randomEnemyStacksToApply", randomEnemyStacksToApply), ("status", GetStatusDisplayName(effect.statusData))));
     }
 
     private static void HandleApplyStatusToAllAlliesOnOddRounds(
@@ -250,6 +250,6 @@ public static partial class RelicSystem
         }
 
         if (oddRoundAffectedCount > 0)
-            AddRelicFeedback(context, relicData, $"奇数回合开始时，{oddRoundAffectedCount} 名友方获得 {oddRoundStacks} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.apply_status_to_all_allies_on_odd_rounds", "奇数回合开始时，{oddRoundAffectedCount} 名友方获得 {oddRoundStacks} 层 {status}。", ("oddRoundAffectedCount", oddRoundAffectedCount), ("oddRoundStacks", oddRoundStacks), ("status", GetStatusDisplayName(effect.statusData))));
     }
 }

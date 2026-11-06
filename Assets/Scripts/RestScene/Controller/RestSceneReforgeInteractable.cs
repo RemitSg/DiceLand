@@ -1481,7 +1481,7 @@ public class RestSceneReforgeInteractable : MonoBehaviour, IRestSceneStationPres
         if (attribute == null)
             return GameText.Get("rest.reforge.unselected", "未选择");
 
-        return !string.IsNullOrWhiteSpace(attribute.attributeName) ? attribute.LocalizedName : attribute.name;
+        return !string.IsNullOrWhiteSpace(attribute.attributeName) ? ResourceKeywordText.AttributeLabel(attribute.LocalizedName) : attribute.name;
     }
 
     private static string GetRarityLabel(LootRarity rarity)

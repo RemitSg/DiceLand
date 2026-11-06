@@ -14,7 +14,7 @@ public static partial class RelicSystem
             return;
 
         context.ignoreMoveCost = true;
-        AddRelicFeedback(context, relicData, "本次探索不消耗行动点。");
+        AddRelicFeedback(context, relicData, GameText.Get("relic.feedback.chance_to_ignore_move_cost", "本次探索不消耗行动点。"));
         return;
     }
 
@@ -30,7 +30,7 @@ public static partial class RelicSystem
             return;
 
         context.ignoreMoveCost = true;
-        AddRelicFeedback(context, relicData, "前往已探索过的格子不消耗行动点。");
+        AddRelicFeedback(context, relicData, GameText.Get("relic.feedback.ignore_move_cost_when_destination_visited", "前往已探索过的格子不消耗行动点。"));
         return;
     }
 
@@ -150,7 +150,7 @@ public static partial class RelicSystem
         }
 
         if (totalHealed > 0)
-            AddRelicFeedback(context, relicData, $"进入未探索的商店格时，队伍共恢复 {totalHealed} 点生命。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.heal_party_percent_on_entering_unvisited_merchant_tile", "进入未探索的商店格时，队伍共恢复 {totalHealed} 点生命。", ("totalHealed", totalHealed)));
         return;
     }
 
@@ -181,7 +181,7 @@ public static partial class RelicSystem
             context.actionPointSystem.BonusPoints,
             restoredPoints);
 
-        AddRelicFeedback(context, relicData, $"收集钥匙时恢复 {actualRestore} 点行动点。");
+        AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.restore_action_points_on_key_collected_by_percent_max", "收集钥匙时恢复 {actualRestore} 点行动点。", ("actualRestore", actualRestore)));
         return;
     }
 

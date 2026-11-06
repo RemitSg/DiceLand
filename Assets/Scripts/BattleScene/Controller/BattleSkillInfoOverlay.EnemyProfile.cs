@@ -180,7 +180,7 @@ public partial class BattleSkillInfoOverlay
         PlaceSkill(enemyProfileRight, 520, 66, rightWidth, h - 176);
         float nameHeight = Mathf.Clamp(SkillTextHeight(enemyProfileName, rightWidth, 64), 64, 122);
         PlaceSkill(enemyProfileName.rectTransform, 0, 0, rightWidth, nameHeight);
-        float badgeWidth = Mathf.Min(rightWidth, Mathf.Max(318, enemyProfileHealth.GetPreferredValues(enemyProfileHealth.text).x + 88));
+        float badgeWidth = Mathf.Min(rightWidth, Mathf.Max(318, enemyProfileHealth.GetPreferredValues().x + 88));
         PlaceSkill(enemyHealthBadge, 0, nameHeight + 10, badgeWidth, 54);
         float top = nameHeight + 90;
         float available = h - 186 - top;

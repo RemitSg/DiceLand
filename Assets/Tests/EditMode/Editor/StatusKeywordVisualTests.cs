@@ -45,6 +45,26 @@ public sealed class StatusKeywordVisualTests
     }
 
     [Test]
+    public void EveryEnglishStatusNameUsesTheSameKeywordAndSpriteAsChinese()
+    {
+        var english = AssetDatabase.LoadAssetAtPath<UnityEngine.Localization.Tables.StringTable>("Assets/Localization/Tables/DiceLand_en.asset");
+        foreach (string guid in AssetDatabase.FindAssets("t:BattleStatus_SO", new[] { "Assets/Data" }))
+        {
+            var status = AssetDatabase.LoadAssetAtPath<BattleStatus_SO>(AssetDatabase.GUIDToAssetPath(guid));
+            string key = new SerializedObject(status).FindProperty("localizationKey").stringValue;
+            if (string.IsNullOrWhiteSpace(key)) key = "status." + status.StatusId;
+            string name = english.GetEntry(key + ".name")?.Value;
+            Assert.IsNotEmpty(name, key);
+            Assert.AreSame(status.IconSprite, ResourceKeywordText.IconFor(name), name);
+            Assert.AreSame(status.IconSprite, ResourceKeywordText.IconFor(name.ToLowerInvariant()), name);
+            string markup = ResourceKeywordText.Format(name);
+            Assert.AreEqual(1, Regex.Matches(markup, "<sprite ").Count, name);
+            StringAssert.Contains("DL_Status_" + status.IconSprite.name, markup);
+            Assert.AreEqual(markup, ResourceKeywordText.Format(markup), name);
+        }
+    }
+
+    [Test]
     public void CompleteStatusNamesWinOverShorterNamesAndRichTextIsNotDuplicated()
     {
         const string raw="<b>临时强壮</b>、临时重防、临时标记、流血；<noparse>燃烧</noparse>。";

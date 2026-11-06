@@ -18,4 +18,10 @@
 
 蛛孕、噬亲、融入暗影和赌博继续使用 BattleSkillMechanic 触发。教学战指定角色授技使用角色 ID。译表新增的文本键只用于显示。
 
-部分长篇支线和风味文案使用本地翻译辅助起稿。主要界面、教程、状态、战斗和遗物机制已经单独校对。术语统一使用 Speed、Speed Slot、Power、Energy、Clash、One-Sided Attack 和 AP。[本地翻译模型说明](https://huggingface.co/Helsinki-NLP/opus-mt-zh-en)
+地图事件正文和选项，以及敌人、技能、遗物、状态和装备文案已对照原文校对，修正了专名、条件、数量关系与不自然的表述。术语统一使用 Speed、Speed Slot、Power、Energy、Clash、One-Sided Attack 和 AP。离线检查 Unity YAML 时需正确解析多行标量，不能把序列化折行当成译文结束。
+
+ResourceKeywordText 同时识别中英文资源、属性与完整状态名。英文按单词边界识别，支持大小写和临时状态名称，复用同一组图标、颜色和 dl-resource 标识。译表中的状态名变更后须同步英文别名，StatusKeywordVisualTests 会逐一检查全部英文状态名与资产图标的对应关系。新增语言时也需要维护对应的关键词别名。
+
+Poison 同时是毒属性和中毒状态的英文名称。属性展示使用 ResourceKeywordText.AttributeLabel 生成带属性标识的文本，状态文案直接使用 Poison。可通过 [[DL_Attribute_Poison|Poison]] 或 [[DL_Status_Poison|Poison]] 显式指定语义。解析后的重复格式化保留原标识和图标。
+
+PlayMode 回归覆盖设置往返切换、旧档继续游戏、全部地图事件选项、低语井副本出入、休息区四个交互、七套教学脚本与英文战斗详情。通关用例通过真实 Boss 战斗和奖励入口抵达胜利总分并返回主菜单，测试通过控制生命和强壮层数固定战斗结果。

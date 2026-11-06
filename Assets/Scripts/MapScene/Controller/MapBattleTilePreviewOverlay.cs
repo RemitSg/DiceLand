@@ -186,7 +186,7 @@ public sealed partial class MapBattleTilePreviewOverlay : MonoBehaviour
         {
             if (string.IsNullOrWhiteSpace(names[i])) continue;
             TextMeshProUGUI label = attributeTexts[count++];
-            label.text = names[i].Trim();
+            label.text = ResourceKeywordText.AttributeLabel(names[i].Trim());
             label.gameObject.SetActive(true);
         }
         for (int i = count; i < attributeTexts.Length; i++)

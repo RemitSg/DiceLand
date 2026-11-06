@@ -24,7 +24,7 @@ public static partial class RelicSystem
             return;
 
         context.additionalSharedEnergyRecovery += energy;
-        AddRelicFeedback(context, relicData, $"拼点失败，返还 {energy} 点能量。");
+        AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.refund_energy_on_clash_lost_once_per_skill_per_round", "拼点失败，返还 {energy} 点能量。", ("energy", energy)));
     }
 
     private static void HandleMatchLowestAllySpeedToHighestOnBattleRoundStart(
@@ -56,7 +56,7 @@ public static partial class RelicSystem
 
         int targetSpeed = Mathf.Max(1, highest.Speed);
         lowest.SetRoundSpeed(targetSpeed);
-        AddRelicFeedback(context, relicData, $"{lowest.GetDebugDisplayName()} 的速度提升至 {targetSpeed}。");
+        AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.match_lowest_ally_speed_to_highest_on_battle_round_start", "{actor} 的速度提升至 {targetSpeed}。", ("actor", GetActorDisplayName(lowest)), ("targetSpeed", targetSpeed)));
     }
 
     private static void HandleApplyStatusToLowestHpAllyOnBattleRoundStart(
@@ -77,7 +77,7 @@ public static partial class RelicSystem
             return;
 
         if (TryApplyStatus(target, effect, stacks))
-            AddRelicFeedback(context, relicData, $"{target.GetDebugDisplayName()} 获得 {stacks} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.apply_status_to_lowest_hp_ally_on_battle_round_start", "{actor} 获得 {stacks} 层 {status}。", ("actor", GetActorDisplayName(target)), ("stacks", stacks), ("status", GetStatusDisplayName(effect.statusData))));
     }
 
     private static void HandleDamageRandomEnemyWhenAllyLosesShieldStacks(
@@ -111,7 +111,7 @@ public static partial class RelicSystem
         BattleEnemyController target = livingEnemies[Random.Range(0, livingEnemies.Count)];
         int dealt = target.TakeDamage(damage, 0, damage);
         if (dealt > 0)
-            AddRelicFeedback(context, relicData, $"{target.GetDebugDisplayName()} 因护盾反击失去 {dealt} 点生命。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.damage_random_enemy_when_ally_loses_shield_stacks", "{actor} 因护盾反击失去 {dealt} 点生命。", ("actor", GetActorDisplayName(target)), ("dealt", dealt)));
     }
 
     private static void HandleModifyDefenseDiceMinPowerWhenSelfHasStatus(
@@ -242,7 +242,7 @@ public static partial class RelicSystem
         }
 
         if (affected > 0)
-            AddRelicFeedback(context, relicData, $"{affected} 名友方获得 {stacks} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.chance_apply_status_to_all_allies_on_battle_round_start", "{affected} 名友方获得 {stacks} 层 {status}。", ("affected", affected), ("stacks", stacks), ("status", GetStatusDisplayName(effect.statusData))));
     }
 
     private static void HandleDoubleFirstEnemyDamageEachBattle(

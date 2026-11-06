@@ -165,7 +165,7 @@ public static partial class RelicSystem
         }
 
         if (affected > 0)
-            AddRelicFeedback(context, relicData, $"{affected} 名敌人获得 {stacks} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.transfer_status_to_all_enemies_on_enemy_death", "{affected} 名敌人获得 {stacks} 层 {status}。", ("affected", affected), ("stacks", stacks), ("status", GetStatusDisplayName(effect.statusData))));
     }
 
     private static void HandleHealRandomDamagedAllyOnEnemyDeathWithStatus(
@@ -195,7 +195,7 @@ public static partial class RelicSystem
         BattleAllyController selected = candidates[Random.Range(0, candidates.Count)];
         int healed = selected.Heal(Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount)));
         if (healed > 0)
-            AddRelicFeedback(context, relicData, $"{selected.GetDebugDisplayName()} 恢复 {healed} 点生命。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.heal_random_damaged_ally_on_enemy_death_with_status", "{actor} 恢复 {healed} 点生命。", ("actor", GetActorDisplayName(selected)), ("healed", healed)));
     }
 
     private static void HandleReflectEnemyStatusStacksDamageAfterTakingAttackDamage(
@@ -285,7 +285,7 @@ public static partial class RelicSystem
                 target.AddStatus(effect.statusData, effect.statusData.StatusId, effect.statusData.DisplayName, stacks);
         }
 
-        AddRelicFeedback(context, relicData, $"{target.GetDebugDisplayName()} 借由 {donor.GetDebugDisplayName()} 的生命幸存。");
+        AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.prevent_lethal_damage_by_transferring_highest_hp_ally_health", "{actor} 借由 {target} 的生命幸存。", ("actor", GetActorDisplayName(target)), ("target", GetActorDisplayName(donor))));
     }
 
     private static void HandleApplyStatusOnTransferredLethalProtectionWhenEnemyStatusAtLeast(

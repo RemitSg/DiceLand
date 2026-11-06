@@ -6207,7 +6207,8 @@ public partial class BattleButton : MonoBehaviour
         EncounterDropResults dropResults = RollEncounterDrops(activeEncounter, settlementLootTables);
         List<RunLootState> lootRewards = dropResults.lootRewards;
         List<BattleSettlementPartyProgression> partyProgressions = BuildPartyProgressions(allies, expReward);
-        string retreatSubtitle = $"{retreatingEnemy.GetDebugDisplayName()} 脱离了战斗，剩余可行动角色：{livingAllies}";
+        string retreatSubtitle = GameText.Format("battle.settlement.enemy_retreat_summary", "{enemy} 脱离了战斗，剩余可行动角色：{count}",
+            ("enemy", retreatingEnemy.enemyData != null ? retreatingEnemy.enemyData.LocalizedName : retreatingEnemy.name), ("count", livingAllies));
 
         BattleEncounterResolutionWriter.ApplyForcedRetreatResolution(
             activeEncounter,

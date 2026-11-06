@@ -32,15 +32,15 @@ public static partial class RelicSystem
         if (affectedAllyCount <= 0)
             return;
 
-        string defeatedName = defeatedAlly != null ? defeatedAlly.GetDebugDisplayName() : "友方角色";
+        string defeatedName = defeatedAlly != null ? GetActorDisplayName(defeatedAlly) : GameText.Get("relic.feedback.apply_status_to_remaining_allies_on_player_death", "友方角色");
         if (effect.statusApplyTiming == Relic_SO.RelicStatusApplyTiming.NextRoundStart)
         {
             int delayRounds = Mathf.Max(1, effect.applyAfterRoundStarts);
-            AddRelicFeedback(context, relicData, $"{defeatedName} 死亡后，其余 {affectedAllyCount} 名友方将于下 {delayRounds} 个回合开始时获得 {allyDeathStacksToApply} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.apply_status_to_remaining_allies_on_player_death.2", "{defeatedName} 死亡后，其余 {affectedAllyCount} 名友方将于下 {delayRounds} 个回合开始时获得 {allyDeathStacksToApply} 层 {status}。", ("defeatedName", defeatedName), ("affectedAllyCount", affectedAllyCount), ("delayRounds", delayRounds), ("allyDeathStacksToApply", allyDeathStacksToApply), ("status", GetStatusDisplayName(effect.statusData))));
         }
         else
         {
-            AddRelicFeedback(context, relicData, $"{defeatedName} 死亡后，其余 {affectedAllyCount} 名友方获得 {allyDeathStacksToApply} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.apply_status_to_remaining_allies_on_player_death.3", "{defeatedName} 死亡后，其余 {affectedAllyCount} 名友方获得 {allyDeathStacksToApply} 层 {status}。", ("defeatedName", defeatedName), ("affectedAllyCount", affectedAllyCount), ("allyDeathStacksToApply", allyDeathStacksToApply), ("status", GetStatusDisplayName(effect.statusData))));
         }
     }
 
@@ -68,6 +68,6 @@ public static partial class RelicSystem
         AddRelicFeedback(
             context,
             relicData,
-            $"{defeatedSource.GetDebugDisplayName()} 的 {transferredStacks} 层 {GetStatusDisplayName(effect.statusData)} 转移给了 {highestHpRecipient.GetDebugDisplayName()}。");
+            GameText.Format("relic.feedback.transfer_status_to_highest_hp_ally_on_player_death", "{actor} 的 {transferredStacks} 层 {status} 转移给了 {target}。", ("actor", GetActorDisplayName(defeatedSource)), ("transferredStacks", transferredStacks), ("status", GetStatusDisplayName(effect.statusData)), ("target", GetActorDisplayName(highestHpRecipient))));
     }
 }

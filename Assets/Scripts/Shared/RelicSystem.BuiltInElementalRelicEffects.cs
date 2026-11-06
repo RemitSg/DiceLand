@@ -113,7 +113,7 @@ public static partial class RelicSystem
         }
 
         if (affectedEnemies > 0)
-            AddRelicFeedback(context, relicData, $"{affectedEnemies} 名敌人的 {GetStatusDisplayName(effect.conditionStatusData)} 被维持到至少 {minimumStacks} 层。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.set_enemy_status_minimum_stacks", "{affectedEnemies} 名敌人的 {status} 被维持到至少 {minimumStacks} 层。", ("affectedEnemies", affectedEnemies), ("status", GetStatusDisplayName(effect.conditionStatusData)), ("minimumStacks", minimumStacks)));
     }
 
     public static int ResolveEnemyRoundStartStatusDamage(

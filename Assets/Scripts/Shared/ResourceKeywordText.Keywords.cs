@@ -73,6 +73,15 @@ public static partial class ResourceKeywordText
 
     public static Sprite HealthIcon => KeywordIcon("Health");
 
+    public static string AttributeLabel(string name)
+    {
+        if (string.IsNullOrEmpty(name) || !IsEnglishLetter(name[0])) return name;
+        foreach (Keyword word in Keywords)
+            if (word.Attribute && string.Equals(word.Word, name, StringComparison.OrdinalIgnoreCase))
+                return "[[" + word.IconName + "|" + name + "]]";
+        return name;
+    }
+
     private static Sprite IconFor(Keyword word)
     {
         if (word.Status) return StatusIcon(word.Source);

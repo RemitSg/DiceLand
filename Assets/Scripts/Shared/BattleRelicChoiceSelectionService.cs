@@ -12,10 +12,10 @@ public static class BattleRelicChoiceSelectionService
         if (choice.rewardApplied) return true;
         if (choice.selectedChoice == null || choice.selectedChoice.relicData == null || !choice.choices.Contains(choice.selectedChoice))
         {
-            error = "请先选择一个遗物。";
+            error = GameText.Get("battle.relic.choose_first", "请先选择一个遗物。");
             return false;
         }
-        if (encounter == null) { error = "战斗结算上下文缺失。"; return false; }
+        if (encounter == null) { error = GameText.Get("battle.relic.missing_context", "战斗结算上下文缺失。"); return false; }
         if (encounter.resolvedRelics == null) encounter.resolvedRelics = new List<RunRelicState>();
         RunRelicState existing = encounter.resolvedRelics.Find(r => r != null && r.relicData == choice.selectedChoice.relicData);
         if (existing != null) existing.amount++;

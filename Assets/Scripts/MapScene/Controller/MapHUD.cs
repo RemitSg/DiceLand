@@ -1629,7 +1629,22 @@ public partial class MapHUD : MonoBehaviour
 
     private static string GetPreviewTag(BoardTileData tile)
     {
-        if (tile.sourceSpecialDungeon == null) return tile.previewTag;
+        if (tile.sourceSpecialDungeon == null)
+        {
+            // Old saves keep the authored preview tags. Translate them only for display.
+            switch (tile.previewTag)
+            {
+                case "教程终战": return GameText.Get("map.tutorial.tag.final_battle", "教程终战");
+                case "教程战斗": return GameText.Get("map.tutorial.tag.battle", "教程战斗");
+                case "教程营地": return GameText.Get("map.tutorial.tag.rest", "教程营地");
+                case "教程商店": return GameText.Get("map.tutorial.tag.shop", "教程商店");
+                case "教程锻造": return GameText.Get("map.tutorial.tag.forge", "教程锻造");
+                case "教程钥匙": return GameText.Get("map.tutorial.tag.key", "教程钥匙");
+                case "教程首领": return GameText.Get("map.tutorial.tag.boss", "教程首领");
+                case "教程路线": return GameText.Get("map.tutorial.tag.route", "教程路线");
+                default: return tile.previewTag;
+            }
+        }
         if (tile.tileType == MapTileType.SpecialDungeonExit) return GameText.Get("map.dungeon.exit", "副本出口");
         if (tile.isSpawnTile) return GameText.Get("map.dungeon.start", "副本起点");
         return tile.sourceSpecialDungeon.LocalizeTile(tile.specialDungeonEntryIndex, "tag", tile.previewTag);
@@ -1844,7 +1859,7 @@ public partial class MapHUD : MonoBehaviour
                 continue;
 
             Color color = attribute.displayColor.a <= 0f ? tileAttributeHighlightColor : attribute.displayColor;
-            parts.Add(WrapColor(WrapFont(attribute.LocalizedName, attributeFont), color));
+            parts.Add(WrapColor(WrapFont(ResourceKeywordText.AttributeLabel(attribute.LocalizedName), attributeFont), color));
         }
 
         return string.Join("  ", parts);

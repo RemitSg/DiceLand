@@ -47,9 +47,61 @@ public static partial class ResourceKeywordText
         words.Add(new Keyword("临时破防", "E8AF8B", "DL_Status_Guardbreak", "Guardbreak", status: true));
         words.Add(new Keyword("临时虚弱", "C3AEC3", "DL_Status_Weakness", "Weakness", status: true));
         words.Add(new Keyword("临时标记", "F0B08E", "DL_Status_Target", "Target", status: true));
+        AddEnglishAliases(words, "DL_Money", "Gold", "Money", "Coin", "Coins");
+        AddEnglishAliases(words, "DL_ActionPoints", "Action Point", "Action Points", "AP");
+        AddEnglishAliases(words, "DL_Keys", "Key", "Keys");
+        AddEnglishAliases(words, "DL_Experience", "Experience", "XP");
+        AddEnglishAliases(words, "DL_Health", "Health", "Max HP", "Maximum HP", "Current HP", "Remaining HP");
+        AddEnglishAliases(words, "DL_Attribute_Flame", "Fire", "Flame");
+        AddEnglishAliases(words, "DL_Attribute_Water", "Water");
+        AddEnglishAliases(words, "DL_Attribute_Poison", "Poison", "Poison attribute", "Poison element");
+        AddEnglishAliases(words, "DL_Attribute_Blood", "Blood");
+        AddEnglishAliases(words, "DL_Attribute_Dark", "Dark");
+        AddEnglishAliases(words, "DL_Attribute_Electricity", "Lightning", "Electricity");
+        AddEnglishAliases(words, "DL_Attribute_Light", "Light");
+        AddEnglishAliases(words, "DL_Attribute_Speed", "Speed");
+        AddEnglishAliases(words, "DL_Attribute_Neutral", "Neutral");
+        AddEnglishAliases(words, "DL_Status_Bleed", "Bleed", "Bleeding");
+        AddEnglishAliases(words, "DL_Status_Burn", "Burn", "Burning");
+        AddEnglishAliases(words, "DL_Status_Chill", "Chill", "Chilled");
+        AddEnglishAliases(words, "DL_Status_Current", "Shock");
+        AddEnglishAliases(words, "DL_Status_Darkness", "Darkness");
+        AddEnglishAliases(words, "DL_Status_Debt", "Debt");
+        AddEnglishAliases(words, "DL_Status_Energy", "Charge");
+        AddEnglishAliases(words, "DL_Status_Erode", "Erosion");
+        AddEnglishAliases(words, "DL_Status_Guard", "Guard", "Temporary Guard");
+        AddEnglishAliases(words, "DL_Status_Guardbreak", "Guard Break", "Temporary Guard Break");
+        AddEnglishAliases(words, "DL_Status_Immune", "Immunity", "Immune");
+        AddEnglishAliases(words, "DL_Status_Incubation", "Incubation");
+        AddEnglishAliases(words, "DL_Status_Luck", "Luck");
+        AddEnglishAliases(words, "DL_Status_Misfortune", "Misfortune");
+        AddEnglishAliases(words, "DL_Status_Poison", "Poison", "Poisoned");
+        AddEnglishAliases(words, "DL_Status_PrismBack", "Dark Face");
+        AddEnglishAliases(words, "DL_Status_PrismFront", "Bright Face");
+        AddEnglishAliases(words, "DL_Status_RefractedMark", "Refraction Mark");
+        AddEnglishAliases(words, "DL_Status_Resistance", "Resistance");
+        AddEnglishAliases(words, "DL_Status_Shield", "Shield");
+        AddEnglishAliases(words, "DL_Status_Slowness", "Slow", "Slowed");
+        AddEnglishAliases(words, "DL_Status_Strength", "Strength", "Temporary Strength");
+        AddEnglishAliases(words, "DL_Status_Stun", "Stun", "Stunned");
+        AddEnglishAliases(words, "DL_Status_Swiftness", "Haste");
+        AddEnglishAliases(words, "DL_Status_Target", "Mark", "Marked", "Temporary Mark");
+        AddEnglishAliases(words, "DL_Status_Vulnerable", "Vulnerable", "Vulnerability");
+        AddEnglishAliases(words, "DL_Status_Weakness", "Weakness", "Temporary Weakness");
         // Full temporary-state names win over their shorter base names, and over single-character attributes.
-        words.Sort((left, right) => right.Word.Length.CompareTo(left.Word.Length));
+        words.Sort((left, right) =>
+        {
+            int length = right.Word.Length.CompareTo(left.Word.Length);
+            return length != 0 ? length : right.Status.CompareTo(left.Status);
+        });
         return words.ToArray();
+    }
+
+    private static void AddEnglishAliases(List<Keyword> words, string iconName, params string[] aliases)
+    {
+        Keyword definition = words.Find(word => word.IconName == iconName);
+        foreach (string alias in aliases)
+            words.Add(new Keyword(alias, definition.Color, definition.IconName, definition.Source, definition.Attribute, definition.Status));
     }
 
     private static Sprite StatusIcon(string key)

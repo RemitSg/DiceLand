@@ -18,7 +18,7 @@ public static partial class RelicSystem
 
         int stacks = CalculateScaledStatusStacks(relicState, effect);
         if (TryApplyStatus(ally, effect, stacks))
-            AddRelicFeedback(context, relicData, $"{ally.GetDebugDisplayName()} 将获得 {stacks} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.queue_status_to_player_on_clash_lost_against_status_target", "{actor} 将获得 {stacks} 层 {status}。", ("actor", GetActorDisplayName(ally)), ("stacks", stacks), ("status", GetStatusDisplayName(effect.statusData))));
     }
 
     private static void HandleIncreaseSharedEnergyMaxAtBattleStart(
@@ -68,7 +68,7 @@ public static partial class RelicSystem
             return;
 
         context.ignoreMoveCost = true;
-        AddRelicFeedback(context, relicData, "前往未探索的休息格不消耗行动点。");
+        AddRelicFeedback(context, relicData, GameText.Get("relic.feedback.ignore_move_cost_when_destination_unvisited_rest_tile", "前往未探索的休息格不消耗行动点。"));
     }
 
     private static void HandleGrantTemporarySharedEnergyOnSpecificRound(
@@ -112,7 +112,7 @@ public static partial class RelicSystem
 
         int stacks = CalculateScaledStatusStacks(relicState, effect);
         if (TryApplyStatus(ally, effect, stacks))
-            AddRelicFeedback(context, relicData, $"{ally.GetDebugDisplayName()} 使用临时技能，获得 {stacks} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.apply_status_to_temporary_skill_user", "{actor} 使用临时技能，获得 {stacks} 层 {status}。", ("actor", GetActorDisplayName(ally)), ("stacks", stacks), ("status", GetStatusDisplayName(effect.statusData))));
     }
 
     private static void HandlePreventBattleDefeatAndFullHealPartyOncePerRun(
@@ -129,7 +129,7 @@ public static partial class RelicSystem
         context.fullHealPartyOnDefeat = true;
         context.forceReturnToMapOnDefeat = true;
         HealAllBattleAlliesToFull(context.allies, reviveDead: true);
-        AddRelicFeedback(context, relicData, "重生发动：队伍恢复并返回地图。");
+        AddRelicFeedback(context, relicData, GameText.Get("relic.feedback.prevent_battle_defeat_and_full_heal_party_once_per_run", "重生发动：队伍恢复并返回地图。"));
     }
 
     private static void HandleModifyBattleExperiencePercentAndHealMissingHp(

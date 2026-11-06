@@ -748,15 +748,15 @@ public static class MapRunRuntime
     private static string GetLootDisplayName(LootItem_SO lootItem)
     {
         if (lootItem == null)
-            return "战利品";
+            return GameText.Get("relic.feedback.get_loot_display_name", "战利品");
 
-        return !string.IsNullOrWhiteSpace(lootItem.lootName) ? lootItem.lootName : lootItem.name;
+        return lootItem.LocalizedName;
     }
 
     private static string GetRelicDisplayName(Relic_SO relicData)
     {
         if (relicData == null)
-            return "遗物";
+            return GameText.Get("relic.feedback.get_relic_display_name", "遗物");
 
         return !string.IsNullOrWhiteSpace(relicData.DisplayName) ? relicData.LocalizedName : relicData.name;
     }

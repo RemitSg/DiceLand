@@ -148,8 +148,8 @@ public static class AbilityRunBonusRuntimeService
                 if (choiceData == null || !choiceData.HasChoices)
                     continue;
 
-                choiceData.title = "初始遗物袋：选择 1 个遗物";
-                choiceData.requiredMessage = "请先从初始遗物袋中选择一个遗物。";
+                choiceData.title = GameText.Get("run.starting_relic.title", "初始遗物袋：选择 1 个遗物");
+                choiceData.requiredMessage = GameText.Get("run.starting_relic.required", "请先从初始遗物袋中选择一个遗物。");
                 ApplyRelicChoiceRefreshBonus(runState, choiceData);
                 choices.Add(choiceData);
             }

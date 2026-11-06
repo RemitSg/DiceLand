@@ -263,7 +263,7 @@ public partial class MapInventoryDetailView
     {
         // Factories configure fonts while the modal is inactive, before TMP's first Awake.
         if (text.font == null || text.fontSharedMaterial == null) return 36;
-        return Mathf.Max(36, text.GetPreferredValues(text.text, width, 0).y + 8);
+        return Mathf.Max(36, text.GetPreferredValues(width, 0).y + 8);
     }
 
     public void ApplyViewport(Vector2 viewport, Rect safeArea)

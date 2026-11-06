@@ -23,7 +23,7 @@ public static partial class RelicSystem
 
         bool attackerStatusApplied = TryApplyStatus(singleAttackAttacker, effect, attackerStatusStacks);
         if (attackerStatusApplied)
-            AddRelicFeedback(context, relicData, $"{singleAttackAttacker.GetDebugDisplayName()} 获得 {attackerStatusStacks} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.apply_status_to_attacker_after_taking_single_attack_damage_once_per_round", "{actor} 获得 {attackerStatusStacks} 层 {status}。", ("actor", GetActorDisplayName(singleAttackAttacker)), ("attackerStatusStacks", attackerStatusStacks), ("status", GetStatusDisplayName(effect.statusData))));
     }
 
     private static void HandleChanceToQueueStatusOnHitWhenSlowerOncePerSkillUse(
@@ -63,7 +63,7 @@ public static partial class RelicSystem
                 1);
 
         if (slowerStatusApplied)
-            AddRelicFeedback(context, relicData, $"{slowerHitTarget.GetDebugDisplayName()} 将获得 {slowerHitStacks} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.chance_to_queue_status_on_hit_when_slower_once_per_skill_use", "{actor} 将获得 {slowerHitStacks} 层 {status}。", ("actor", GetActorDisplayName(slowerHitTarget)), ("slowerHitStacks", slowerHitStacks), ("status", GetStatusDisplayName(effect.statusData))));
     }
 
     private static void HandleApplyStatusToSelfOnDefenseClashWin(
@@ -91,7 +91,7 @@ public static partial class RelicSystem
 
         bool defenseWinApplied = TryApplyStatus(defenseWinSource, effect, defenseWinStacks);
         if (defenseWinApplied)
-            AddRelicFeedback(context, relicData, $"{defenseWinSource.GetDebugDisplayName()} 获得 {defenseWinStacks} 层 {GetStatusDisplayName(effect.statusData)}。");
+            AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.apply_status_to_self_on_defense_clash_win", "{actor} 获得 {defenseWinStacks} 层 {status}。", ("actor", GetActorDisplayName(defenseWinSource)), ("defenseWinStacks", defenseWinStacks), ("status", GetStatusDisplayName(effect.statusData))));
     }
 
     private static void HandleApplyStatusToSelfOnEnemyKilledByPlayer(
@@ -114,6 +114,6 @@ public static partial class RelicSystem
         if (!killSource.AddStatus(effect.statusData, effect.statusData.StatusId, effect.statusData.DisplayName, killStacks))
             return;
 
-        AddRelicFeedback(context, relicData, $"{killSource.GetDebugDisplayName()} 获得 {killStacks} 层 {GetStatusDisplayName(effect.statusData)}。");
+        AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.apply_status_to_self_on_enemy_killed_by_player", "{actor} 获得 {killStacks} 层 {status}。", ("actor", GetActorDisplayName(killSource)), ("killStacks", killStacks), ("status", GetStatusDisplayName(effect.statusData))));
     }
 }

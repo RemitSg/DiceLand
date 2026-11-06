@@ -27,6 +27,8 @@ public static partial class ResourceKeywordText
     public static Sprite IconFor(string source)
     {
         if (string.IsNullOrEmpty(source)) return null;
+        Keyword inline = FindExplicitKeyword(source);
+        if (inline != null) return IconFor(inline);
         for (int i = 0; i < Keywords.Length; i++)
             if (FindWord(source, i) >= 0) return IconFor(Keywords[i]);
         return null;
@@ -35,6 +37,8 @@ public static partial class ResourceKeywordText
     public static Color ColorFor(string source, Color fallback)
     {
         if (string.IsNullOrEmpty(source)) return fallback;
+        Keyword inline = FindExplicitKeyword(source);
+        if (inline != null && ColorUtility.TryParseHtmlString("#" + inline.Color, out Color inlineColor)) return inlineColor;
         for (int i = 0; i < Keywords.Length; i++)
             if (FindWord(source, i) >= 0 && ColorUtility.TryParseHtmlString("#" + Keywords[i].Color, out Color color)) return color;
         return fallback;
@@ -124,6 +128,20 @@ public static partial class ResourceKeywordText
         return false;
     }
 
+    private static Keyword FindExplicitKeyword(string source)
+    {
+        int start = source.IndexOf("[[DL_", StringComparison.Ordinal);
+        if (start >= 0 && TryReadInlineKeyword(source, start, out Keyword keyword, out _, out _)) return keyword;
+        const string linkPrefix = "<link=\"dl-resource-";
+        start = source.IndexOf(linkPrefix, StringComparison.Ordinal);
+        if (start < 0) return null;
+        start += linkPrefix.Length;
+        int end = source.IndexOf('"', start);
+        if (end < 0) return null;
+        string iconName = source.Substring(start, end - start);
+        return Array.Find(Keywords, word => word.IconName == iconName);
+    }
+
     private static void AppendKeyword(StringBuilder output, Keyword keyword, string source, int start, int length, bool includeIcons)
     {
         output.Append("<nobr><link=\"dl-resource-").Append(keyword.IconName).Append("\"><color=#").Append(keyword.Color).Append('>');
@@ -138,10 +156,10 @@ public static partial class ResourceKeywordText
     {
         Keyword keyword = Keywords[word];
         string value = keyword.Word;
-        bool english = value == "EXP" || value == "HP";
+        bool english = IsEnglishLetter(value[0]);
         if (at + value.Length > source.Length || string.Compare(source, at, value, 0, value.Length,
             english ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) != 0) return false;
-        if (keyword.Attribute) return IsAttributeMention(source, at);
+        if (keyword.Attribute && !english) return IsAttributeMention(source, at);
         if (!english) return true;
         // Numeric forms such as 13EXP / 20HP are valid; identifiers such as Expert / HPool are not.
         return (at == 0 || !IsEnglishLetter(source[at - 1])) &&

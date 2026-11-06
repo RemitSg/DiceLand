@@ -236,6 +236,6 @@ public partial class BattleSkillInfoOverlay
     }
     private static float SkillTextHeight(TMP_Text text, float width, float minimum = 0)
     {
-        return Mathf.Max(minimum, text.GetPreferredValues(text.text, Mathf.Max(40, width), float.PositiveInfinity).y + 6);
+        return Mathf.Max(minimum, text.GetPreferredValues(Mathf.Max(40, width), float.PositiveInfinity).y + 6);
     }
 }

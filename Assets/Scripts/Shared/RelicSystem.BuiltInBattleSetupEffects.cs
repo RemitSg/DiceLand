@@ -18,7 +18,7 @@ public static partial class RelicSystem
             return;
 
         context.runState.QueueNextBattleAllyStatusGrant(effect.statusData, calamityQueuedStacks);
-        AddRelicFeedback(context, relicData, $"下一场战斗时，所有友方将获得 {calamityQueuedStacks} 层 {GetStatusDisplayName(effect.statusData)}。");
+        AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.queue_next_battle_ally_status_on_calamity", "下一场战斗时，所有友方将获得 {calamityQueuedStacks} 层 {status}。", ("calamityQueuedStacks", calamityQueuedStacks), ("status", GetStatusDisplayName(effect.statusData))));
         return;
     }
 
@@ -47,7 +47,7 @@ public static partial class RelicSystem
         }
 
         context.runState.SyncLegacyPlayerFieldsFromParty();
-        AddRelicFeedback(context, relicData, $"所有友方最大生命 +{hpGain}，并回复相同数值。");
+        AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.increase_party_max_hp_and_heal_on_calamity", "所有友方最大生命 +{hpGain}，并回复相同数值。", ("hpGain", hpGain)));
         return;
     }
 
@@ -69,7 +69,7 @@ public static partial class RelicSystem
             return;
 
         context.additionalSharedEnergyRecovery += extraEnergy;
-        AddRelicFeedback(context, relicData, $"本回合额外回复 {extraEnergy} 点能量。");
+        AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.restore_shared_energy_at_battle_start_in_elite_or_boss", "本回合额外回复 {extraEnergy} 点能量。", ("extraEnergy", extraEnergy)));
         return;
     }
 
@@ -87,7 +87,7 @@ public static partial class RelicSystem
             return;
 
         context.additionalTemporaryAllySpeedButtons += extraButtons;
-        AddRelicFeedback(context, relicData, $"首回合所有友方额外获得 {extraButtons} 个速度按钮。");
+        AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.grant_temporary_extra_ally_speed_buttons_on_first_round", "首回合所有友方额外获得 {extraButtons} 个速度按钮。", ("extraButtons", extraButtons)));
         return;
     }
 
@@ -108,7 +108,7 @@ public static partial class RelicSystem
         if (!defeatedSpeedSource.TransferInheritableSpeedButtonsTo(lowestHpRecipient))
             return;
 
-        AddRelicFeedback(context, relicData, $"{defeatedSpeedSource.GetDebugDisplayName()} 的速度按钮转移给了 {lowestHpRecipient.GetDebugDisplayName()}。");
+        AddRelicFeedback(context, relicData, GameText.Format("relic.feedback.transfer_speed_buttons_to_lowest_hp_ally_on_player_death", "{actor} 的速度按钮转移给了 {target}。", ("actor", GetActorDisplayName(defeatedSpeedSource)), ("target", GetActorDisplayName(lowestHpRecipient))));
         return;
     }
 }
