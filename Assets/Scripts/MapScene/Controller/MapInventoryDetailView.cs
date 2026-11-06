@@ -153,6 +153,11 @@ public partial class MapInventoryDetailView : MonoBehaviour
         if (rarityFace != null) { rarityFace.accent = rarityColor; rarityFace.SetVerticesDirty(); }
         if (categoryFace != null) { categoryFace.electricElement = item is LootItem_SO loot && loot.attribute != null
             && loot.attribute.attributeId == LootAttribute_SO.ElectricityId; categoryFace.SetVerticesDirty(); }
+        if (item is EnemyData_SO enemy && !string.IsNullOrWhiteSpace(enemy.LocalizedDescription))
+        {
+            string narrative = enemy.LocalizedDescription;
+            description = description?.Replace(narrative, "<noparse>" + narrative + "</noparse>");
+        }
         if (descriptionText != null) descriptionText.text = string.IsNullOrWhiteSpace(description) ? GameText.Get("ui.no_description", "暂无描述。") : description;
         SetRelicAdditionalDescription(additional);
         BeginPresentation(changed);

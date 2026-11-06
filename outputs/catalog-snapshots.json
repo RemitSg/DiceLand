@@ -74,7 +74,7 @@
         152
       ],
       "scope": "Diagonal movement unlock is persisted and repaired from owned boots when restoring map snapshots or legacy saves. Configuration export remains the 2026-10-29 snapshot.",
-      "validation": "Reproduced lost unlock after save round-trip while the relic remained owned. Scripts compiled. Seven regression cases added; test runner results unavailable after the editor domain reload disconnected MCP. Catalog and workbook checks passed."
+      "validation": "Reproduced lost unlock after save round-trip while the relic remained owned. Scripts compiled. All seven NUnit regression cases passed when directly invoked in the editor through MCP, covering battle return, legacy saves, unlock persistence after consumption, zero ownership and invalid effects. Catalog and workbook checks passed."
     }
   },
   "note": "The enemy catalog remains the 2026-10-26 historical snapshot and does not include the merged Blood Spore stat update. The relic catalog was refreshed on 2026-10-29; consult its coverage note and Assets/Data for current gameplay values."

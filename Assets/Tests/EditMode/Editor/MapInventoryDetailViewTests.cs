@@ -65,6 +65,31 @@ public sealed class MapInventoryDetailViewTests
     }
 
     [Test]
+    public void EnemyNarrativeSkipsKeywordsWhileStatsAndPassiveKeepThem()
+    {
+        var enemy = ScriptableObject.CreateInstance<EnemyData_SO>();
+        try
+        {
+            enemy.enemyDescription = "以自残血礼为信条的癫信者。向目标追索生命。";
+            string narrative = enemy.LocalizedDescription;
+            string description = "最大生命：20\n" + narrative + "\n被动：恢复生命。";
+            typeof(MapInventoryDetailView).GetMethod("PresentItem", Private).Invoke(view,
+                new object[] { enemy, null, "裂肤信徒", string.Empty, Color.white, "敌人", 0, description, string.Empty });
+
+            TMP_Text text = Field<TMP_Text>("descriptionText");
+            string formatted = text.textPreprocessor.PreprocessText(text.text);
+            StringAssert.Contains("<noparse>" + narrative + "</noparse>", formatted);
+            Assert.AreEqual(2, formatted.Split(new[] { "<link=\"dl-resource-DL_Health\">" }, StringSplitOptions.None).Length - 1);
+            text.ForceMeshUpdate(true, true);
+            StringAssert.Contains(narrative, text.GetParsedText());
+        }
+        finally
+        {
+            Object.DestroyImmediate(enemy);
+        }
+    }
+
+    [Test]
     public void ChangingItemClearsOldEquipmentActionAndPreservesAllFourKindsOfContent()
     {
         CraftingBlueprint_SO recipe = AssetDatabase.FindAssets("t:CraftingBlueprint_SO", new[] { "Assets/Data/Scroll" })
