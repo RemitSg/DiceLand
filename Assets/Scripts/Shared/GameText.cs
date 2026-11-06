@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Localization;
@@ -111,9 +112,52 @@ public static class GameText
 
     public static string Format(string key, string source, params (string name, object value)[] arguments)
     {
-        var values = new Dictionary<string, object>(arguments.Length, StringComparer.Ordinal);
-        foreach (var argument in arguments) values.Add(argument.name, argument.value);
         string template = Get(key, source);
+        var values = new Dictionary<string, object>(arguments.Length, StringComparer.Ordinal);
+        foreach (var argument in arguments)
+        {
+            object value = argument.value;
+            if (value is string text && template.Contains("{" + argument.name + ":plural"))
+                value = new DisplayCount(text);
+            values.Add(argument.name, value);
+        }
         return Smart.Default.Format(CultureInfo.GetCultureInfo(LanguageCode), template, values);
+    }
+
+    // Skill details pass colored quantities. Keep their markup for display while
+    // giving SmartFormat a numeric value for the locale's plural rules.
+    private sealed class DisplayCount : IConvertible, IFormattable
+    {
+        private readonly string text;
+        private readonly decimal number;
+        private IConvertible Numeric => number;
+
+        public DisplayCount(string text)
+        {
+            this.text = text;
+            string plain = Regex.Replace(text, "<[^>]+>", string.Empty);
+            if (!decimal.TryParse(plain, NumberStyles.Number, CultureInfo.InvariantCulture, out number))
+                number = 2; // Ranges and symbolic quantities use the non-singular form.
+        }
+
+        public override string ToString() => text;
+        public string ToString(string format, IFormatProvider provider) => string.IsNullOrEmpty(format) ? text : number.ToString(format, provider);
+        public TypeCode GetTypeCode() => TypeCode.Decimal;
+        public bool ToBoolean(IFormatProvider provider) => Numeric.ToBoolean(provider);
+        public byte ToByte(IFormatProvider provider) => Numeric.ToByte(provider);
+        public char ToChar(IFormatProvider provider) => Numeric.ToChar(provider);
+        public DateTime ToDateTime(IFormatProvider provider) => Numeric.ToDateTime(provider);
+        public decimal ToDecimal(IFormatProvider provider) => number;
+        public double ToDouble(IFormatProvider provider) => Numeric.ToDouble(provider);
+        public short ToInt16(IFormatProvider provider) => Numeric.ToInt16(provider);
+        public int ToInt32(IFormatProvider provider) => Numeric.ToInt32(provider);
+        public long ToInt64(IFormatProvider provider) => Numeric.ToInt64(provider);
+        public sbyte ToSByte(IFormatProvider provider) => Numeric.ToSByte(provider);
+        public float ToSingle(IFormatProvider provider) => Numeric.ToSingle(provider);
+        public string ToString(IFormatProvider provider) => text;
+        public object ToType(Type type, IFormatProvider provider) => type == typeof(string) ? text : Numeric.ToType(type, provider);
+        public ushort ToUInt16(IFormatProvider provider) => Numeric.ToUInt16(provider);
+        public uint ToUInt32(IFormatProvider provider) => Numeric.ToUInt32(provider);
+        public ulong ToUInt64(IFormatProvider provider) => Numeric.ToUInt64(provider);
     }
 }

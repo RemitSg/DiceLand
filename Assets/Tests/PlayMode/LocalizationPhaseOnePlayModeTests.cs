@@ -95,6 +95,7 @@ public sealed class LocalizationPhaseOnePlayModeTests
         Assert.AreEqual("新游戏", MenuButton(forest, "NewGame").transform.Find("Label").GetComponent<Text>().text);
         yield return ChangeLanguage(forest, settings, 1, "en");
 
+        AssertEnglishLabels("menu after changing language, including legacy menu items");
         yield return WaitFor(() => !(bool)Get(forest, "IsPageTransitioning"), "menu return");
         MenuButton(forest, "Tutorial").onClick.Invoke();
         object tutorial = Get(menu, "tutorialOverlay");
@@ -150,6 +151,8 @@ public sealed class LocalizationPhaseOnePlayModeTests
         yield return WaitFor(() => SceneManager.GetActiveScene().name == "SampleScene", "first tutorial battle", 75f);
         yield return WaitFor(TransitionFinished, "battle transition", 20f);
         Component battle = Find("BattleButton");
+        Assert.IsFalse(battle.GetComponent<Image>().enabled, "English mode replaces the baked Chinese prepare artwork.");
+        Assert.AreEqual("Prepare", Get(battle.transform.Find("LocalizedReadyButton/Label").GetComponent<Graphic>(), "text"));
         object guide = Get(battle, "tutorialBattleGuideOverlay");
         Call(battle, "TryShowPendingTutorialStep");
         yield return WaitFor(() => (bool)Get(guide, "IsModalVisible"), "battle introduction");
@@ -173,6 +176,7 @@ public sealed class LocalizationPhaseOnePlayModeTests
         Assert.IsFalse((bool)Get(RuntimeType("TutorialBattleRuntime"), "IsActive"));
         Assert.IsFalse((bool)Get(RuntimeType("BattlePauseMenuOverlay"), "IsOpen"));
         Assert.AreEqual(2, Convert.ToInt32(Get(Get(settingsStore, "Current"), "battleAdvanceMode")));
+        AssertEnglishReadyRaycast(battle);
         object settlement = Get(battle, "battleSettlementOverlay");
         for (int round = 0; round < 5 && !(bool)Get(enemy, "IsDead"); round++)
         {
@@ -198,6 +202,8 @@ public sealed class LocalizationPhaseOnePlayModeTests
         Assert.IsTrue((bool)Get(enemy, "IsDead"));
         yield return WaitFor(() => (bool)Get(settlement, "IsVisible"), "victory settlement", 12f);
         Assert.AreEqual("Victory", Label(settlement, "titleText"));
+        Assert.IsFalse(((Image)Get(settlement, "victoryIntroImage")).enabled, "English mode replaces the baked Chinese victory banner.");
+        Assert.AreEqual("Victory", Label(settlement, "localizedVictoryIntro"));
         StringAssert.Contains("Gold", Label(settlement, "moneyRewardText"));
         StringAssert.Contains("XP", Label(settlement, "expText"));
     }
@@ -545,6 +551,28 @@ public sealed class LocalizationPhaseOnePlayModeTests
         Assert.IsFalse(MenuButton(forest, "Continue").IsInteractable());
     }
 
+    [UnityTest]
+    public IEnumerator EnglishFormattedCountsPreserveColoredNumbersAndPluralForms()
+    {
+        Call(gameText, "Select", "en", null);
+        yield return WaitFor(() => (string)Get(gameText, "LanguageCode") == "en" && !(bool)Get(gameText, "IsChanging"), "English plural rules");
+        string key = "battle.skill.rules.grant_stacks_of_to";
+        foreach (string count in new[] { "1", "2", "0", "1–2" })
+        {
+            string colored = "<color=#F47E73>" + count + "</color>";
+            string text = (string)Call(gameText, "Format", key, string.Empty, new (string, object)[]
+            {
+                ("diceEffectLabel", "Attack Die 1"), ("triggerLabel", "[On Hit]"), ("conditionPrefix", ""),
+                ("stackLabel", colored), ("statusLabel", "Burn"), ("targetLabel", "the enemy")
+            });
+            StringAssert.Contains(colored + (count == "1" ? " stack of Burn" : " stacks of Burn"), text);
+            Assert.IsFalse(text.Contains("{stackLabel"), "Plural formatting must finish before keyword preprocessing.");
+        }
+        string timing = (string)Call(gameText, "Format", "battle.skill.rules.the_start_of_the_round_in_rounds", string.Empty,
+            new (string, object)[] { ("max", 1) });
+        Assert.AreEqual("the start of the round in 1 round", timing);
+    }
+
     private static string[] AssetPaths(string type)
     {
         Type assets = RuntimeType("UnityEditor.AssetDatabase");
@@ -572,6 +600,13 @@ public sealed class LocalizationPhaseOnePlayModeTests
             object skill = LoadAsset(path, "EnemySkill_SO");
             string detail = (string)Call(overlay, "DescribeSkillRules", skill, false);
             Assert.IsFalse(Regex.IsMatch(detail, "[\u3400-\u9fff]"), path + "\n" + detail);
+            string compact = (string)Call(overlay, "BuildCompactSkillHoverDetail", skill, false);
+            foreach (string description in new[] { detail, compact })
+            {
+                string plain = Regex.Replace(description, "<[^>]+>", string.Empty);
+                Assert.IsFalse(Regex.IsMatch(plain, @"\b(?:enemy|ally|user|target)(?:next round|the start)|\brounds?apply", RegexOptions.IgnoreCase),
+                    "Delayed status timing must remain separate from its target and action.\n" + path + "\n" + plain);
+            }
         }
 
         object previewMember = Call(partyMember, "Clone");
@@ -606,6 +641,20 @@ public sealed class LocalizationPhaseOnePlayModeTests
         return Object.FindObjectsOfType<Graphic>().Where(label => label.gameObject.scene == scene && label.isActiveAndEnabled)
             .Where(label => label is Text || label.GetType().Name == "TextMeshProUGUI")
             .Select(label => (string)Get(label, "text")).ToArray();
+    }
+
+    private static void AssertEnglishReadyRaycast(Component battle)
+    {
+        var face = (RectTransform)battle.transform.Find("LocalizedReadyButton");
+        var canvas = battle.GetComponentInParent<Canvas>();
+        Camera camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+        var pointer = new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current)
+        {
+            position = RectTransformUtility.WorldToScreenPoint(camera, face.TransformPoint(face.rect.center))
+        };
+        var hits = new System.Collections.Generic.List<UnityEngine.EventSystems.RaycastResult>();
+        UnityEngine.EventSystems.EventSystem.current.RaycastAll(pointer, hits);
+        Assert.IsTrue(hits.Any(hit => hit.gameObject.transform == face), "The English button face must remain an input target.");
     }
 
     private static string ProfilePath(string name) => Path.Combine(Application.persistentDataPath, name);

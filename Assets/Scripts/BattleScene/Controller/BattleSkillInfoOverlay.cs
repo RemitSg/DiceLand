@@ -1340,7 +1340,7 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
         string consumedStatusLabel = BuildColoredToken(GetStatusLabel(stackOperation), targetHighlightColor);
         string appliedStackLabel = BuildColoredToken(statusEffect.stackAmount.ToString(), valueHighlightColor);
         string appliedStatusLabel = BuildColoredToken(GetStatusLabel(statusEffect), valueHighlightColor);
-        string timingLabel = BuildConsumedStatusStatusEffectTimingLabel(statusEffect);
+        string timingLabel = BuildConsumedGainStatusTimingText(statusEffect);
 
         effectLines.Add(GameText.Format("battle.skill.rules.spend_stacks_of_on_to_grant_stacks_of", "{diceEffectLabel}：{triggerLabel} 消耗{targetLabel} {consumedStackLabel} 层{consumedStatusLabel}，使{targetLabel2}{timingLabel}获得 {appliedStackLabel} 层{appliedStatusLabel}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("targetLabel", targetLabel), ("consumedStackLabel", consumedStackLabel), ("consumedStatusLabel", consumedStatusLabel), ("targetLabel2", targetLabel), ("timingLabel", timingLabel), ("appliedStackLabel", appliedStackLabel), ("appliedStatusLabel", appliedStatusLabel)));
     }

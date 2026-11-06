@@ -13947,6 +13947,10 @@ MonoBehaviour:
     m_Key: ui.encyclopedia.loot
     m_Metadata:
       m_Items: []
+  - m_Id: 316768992702464
+    m_Key: battle.action.prepare
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

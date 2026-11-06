@@ -509,14 +509,14 @@ public class MainMenuSceneController : MonoBehaviour
         if (continueItem == null)
             return;
 
-        string label = continueLabel;
+        string label = GameText.Get("ui.menu.continue", continueLabel);
         if (!hasSave)
             label += GameText.Get("ui.menu.no_save_suffix", noSaveSuffix);
 
         if (continueItem.text != null)
             continueItem.text.text = label;
 
-        continueItem.levelName = continueLabel;
+        continueItem.levelName = GameText.Get("ui.menu.continue", continueLabel);
 
         Collider2D collider = continueItem.GetComponent<Collider2D>();
         if (collider != null)
@@ -915,9 +915,14 @@ public class MainMenuSceneController : MonoBehaviour
 
     private void RefreshLanguage()
     {
-        if (forestMenu == null) return;
-        forestMenu.RefreshLanguage(GetDisplayLabel);
-        forestMenu.Canvas.enabled = true;
+        foreach (KeyValuePair<GalleryLevelView, MenuAction> pair in menuActions)
+            if (pair.Key != null && pair.Key.text != null)
+                pair.Key.text.text = GetDisplayLabel(pair.Value);
+        if (forestMenu != null)
+        {
+            forestMenu.RefreshLanguage(GetDisplayLabel);
+            forestMenu.Canvas.enabled = true;
+        }
         RefreshContinueState();
     }
 

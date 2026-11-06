@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 /// <summary>Owns the ready button's artwork and safe-area layout, leaving its input handlers intact.</summary>
 [DisallowMultipleComponent]
@@ -19,6 +20,9 @@ public sealed class BattleActionButtonLook : MonoBehaviour
     private bool ownsVisibilityGroup, suppressed;
     private float previousAlpha;
     private bool previousBlocksRaycasts, previousInteractable;
+    private bool originalImageEnabled;
+    private RectTransform localizedFace;
+    private TextMeshProUGUI localizedLabel;
 
     public static void Apply(BattleButton owner)
     {
@@ -58,6 +62,7 @@ public sealed class BattleActionButtonLook : MonoBehaviour
         originalIdle = switcher.unpressedSprite;
         originalPressed = switcher.pressedSprite;
         originalImage = image.sprite;
+        originalImageEnabled = image.enabled;
         originalAnchorMin = rect.anchorMin;
         originalAnchorMax = rect.anchorMax;
         originalPivot = rect.pivot;
@@ -69,6 +74,7 @@ public sealed class BattleActionButtonLook : MonoBehaviour
 
     private void OnEnable()
     {
+        GameText.Changed += RefreshLocalizedFace;
         if (configured) ApplySkin();
     }
 
@@ -88,6 +94,7 @@ public sealed class BattleActionButtonLook : MonoBehaviour
             }
         }
         applied = true;
+        RefreshLocalizedFace();
         SetResolvingPresentation(battleOwner != null && battleOwner.IsResolvingCombat);
         RefreshLayout();
     }
@@ -96,6 +103,8 @@ public sealed class BattleActionButtonLook : MonoBehaviour
     {
         if (!applied || canvasRect == null) return;
         SetResolvingPresentation(battleOwner != null && battleOwner.IsResolvingCombat);
+        if (localizedFace != null && localizedFace.gameObject.activeSelf)
+            localizedFace.localScale = Vector3.one * (image.sprite == pressed ? .97f : 1f);
         Vector2 screen = new Vector2(Screen.width, Screen.height);
         if (previousSafeArea != Screen.safeArea || previousScreen != screen || previousCanvasSize != canvasRect.rect.size)
             RefreshLayout();
@@ -147,6 +156,8 @@ public sealed class BattleActionButtonLook : MonoBehaviour
             if (switcher.pressedSprite == pressed) switcher.pressedSprite = originalPressed;
         }
         if (image != null && (image.sprite == idle || image.sprite == pressed)) image.sprite = originalImage;
+        if (image != null) image.enabled = originalImageEnabled;
+        if (localizedFace != null) localizedFace.gameObject.SetActive(false);
         if (rect != null)
         {
             rect.anchorMin = originalAnchorMin;
@@ -196,7 +207,40 @@ public sealed class BattleActionButtonLook : MonoBehaviour
         configured = false;
     }
 
-    private void OnDisable() => RestoreSkin();
+    private void RefreshLocalizedFace()
+    {
+        if (!applied || image == null) return;
+        bool translated = GameText.LanguageCode != GameText.Chinese;
+        image.enabled = translated ? false : originalImageEnabled;
+        if (translated && localizedFace == null)
+        {
+            var face = new GameObject("LocalizedReadyButton", typeof(RectTransform), typeof(MapCraftingFrameGraphic));
+            localizedFace = face.GetComponent<RectTransform>();
+            localizedFace.SetParent(rect, false);
+            localizedFace.anchorMin = Vector2.zero; localizedFace.anchorMax = Vector2.one;
+            localizedFace.offsetMin = new Vector2(10, 12); localizedFace.offsetMax = new Vector2(-10, -12);
+            face.GetComponent<MapCraftingFrameGraphic>().craftingStyle = MapCraftingFrameGraphic.Style.Action;
+            var label = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+            label.transform.SetParent(face.transform, false);
+            localizedLabel = label.GetComponent<TextMeshProUGUI>();
+            localizedLabel.rectTransform.anchorMin = Vector2.zero; localizedLabel.rectTransform.anchorMax = Vector2.one;
+            localizedLabel.rectTransform.offsetMin = new Vector2(20, 5); localizedLabel.rectTransform.offsetMax = new Vector2(-20, -5);
+            MapBattlePreviewTheme theme = Resources.Load<MapBattlePreviewTheme>("MapUI/BattlePreviewTheme");
+            if (theme != null && theme.actionFont != null) localizedLabel.font = theme.actionFont;
+            localizedLabel.alignment = TextAlignmentOptions.Center;
+            localizedLabel.enableAutoSizing = true; localizedLabel.fontSizeMin = 24; localizedLabel.fontSizeMax = 68;
+            localizedLabel.color = new Color32(245, 219, 157, 255);
+            localizedLabel.raycastTarget = false;
+        }
+        if (localizedFace != null) localizedFace.gameObject.SetActive(translated);
+        if (localizedLabel != null) localizedLabel.text = GameText.Get("battle.action.prepare", "准备");
+    }
+
+    private void OnDisable()
+    {
+        GameText.Changed -= RefreshLocalizedFace;
+        RestoreSkin();
+    }
     private void OnDestroy()
     {
         RestoreSkin();

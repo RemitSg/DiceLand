@@ -279,8 +279,8 @@ MonoBehaviour:
       characterData: {fileID: 0}
       weaponData: {fileID: 0}
   - nodeId: start-scroll
-    displayName: "\u521D\u59CB\u5377\u8F74"
-    description: "\u521D\u59CB\u83B7\u5F97\u4E00\u5F20\u968F\u673A\u5377\u8F74"
+    displayName: "\u521d\u59cb\u56fe\u7eb8"
+    description: "\u521d\u59cb\u83b7\u5f97\u4e00\u5f20\u968f\u673a\u56fe\u7eb8"
     cost: 5
     position: {x: 1424.333, y: 180}
     isToggleable: 0
@@ -597,7 +597,7 @@ MonoBehaviour:
       weaponData: {fileID: 0}
   - nodeId: start-with-Man
     displayName: "Man \u7684\u5DE8\u65A7"
-    description: "\u56FA\u5B9A\u9009\u62E9 Molly \u4F5C\u4E3A\u521D\u59CB\u4F19\u4F34"
+    description: "\u56fa\u5b9a\u9009\u62e9 Man \u4f5c\u4e3a\u521d\u59cb\u4f19\u4f34"
     cost: 5
     position: {x: 2276.3333, y: -176.66666}
     isToggleable: 1

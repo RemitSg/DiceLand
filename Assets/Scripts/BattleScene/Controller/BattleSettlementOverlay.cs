@@ -284,6 +284,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
     private RectTransform buttonRoot;
     private RectTransform victoryIntroRoot;
     private Image victoryIntroImage;
+    private TextMeshProUGUI localizedVictoryIntro;
     private readonly List<GameObject> spawnedRows = new List<GameObject>();
     private readonly List<Button> spawnedButtons = new List<Button>();
     private readonly List<SummaryRowView> rowViews = new List<SummaryRowView>();
@@ -891,6 +892,17 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         victoryIntroRoot.pivot = new Vector2(0.5f, 0.5f);
         victoryIntroRoot.sizeDelta = GetVictoryIntroSize();
         victoryIntroRoot.anchoredPosition = victoryIntroOffset;
+        localizedVictoryIntro = CreateLabel(victoryIntroRoot, "LocalizedVictoryIntro", 180, new Color32(245, 205, 110, 255), string.Empty);
+        localizedVictoryIntro.rectTransform.anchorMin = Vector2.zero;
+        localizedVictoryIntro.rectTransform.anchorMax = Vector2.one;
+        localizedVictoryIntro.rectTransform.offsetMin = Vector2.zero;
+        localizedVictoryIntro.rectTransform.offsetMax = Vector2.zero;
+        localizedVictoryIntro.alignment = TextAlignmentOptions.Center;
+        localizedVictoryIntro.enableAutoSizing = true;
+        localizedVictoryIntro.fontSizeMin = 40;
+        localizedVictoryIntro.fontSizeMax = 180;
+        localizedVictoryIntro.fontStyle = FontStyles.Bold;
+        localizedVictoryIntro.raycastTarget = false;
         SetVictoryIntroVisible(false);
         ConfigureForestView();
         SetVisible(false);
@@ -1696,6 +1708,13 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         victoryIntroRoot.anchoredPosition = victoryIntroOffset;
         victoryIntroImage.sprite = victoryIntroSprite;
         victoryIntroImage.preserveAspect = true;
+        bool translated = GameText.LanguageCode != GameText.Chinese;
+        victoryIntroImage.enabled = !translated;
+        localizedVictoryIntro.gameObject.SetActive(translated);
+        localizedVictoryIntro.text = GameText.Get("battle.settlement.victory", "战斗胜利");
+        if (titleFont != null) localizedVictoryIntro.font = titleFont;
+        localizedVictoryIntro.outlineColor = new Color32(51, 30, 10, 255);
+        localizedVictoryIntro.outlineWidth = .15f;
         SetVictoryIntroVisible(true);
 
         float duration = Mathf.Max(0.01f, victoryIntroFadeDuration);
@@ -1703,6 +1722,7 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         Color color = targetColor;
         color.a = 0f;
         victoryIntroImage.color = color;
+        SetLocalizedVictoryAlpha(color.a);
         victoryIntroRoot.localScale = Vector3.one * Mathf.Max(0.01f, victoryIntroStartScale);
 
         for (float time = 0f; time < duration; time += Time.unscaledDeltaTime)
@@ -1713,12 +1733,14 @@ public partial class BattleSettlementOverlay : MonoBehaviour
             Color frameColor = targetColor;
             frameColor.a = Mathf.Lerp(0f, targetColor.a, eased);
             victoryIntroImage.color = frameColor;
+            SetLocalizedVictoryAlpha(frameColor.a);
             float scale = Mathf.Lerp(victoryIntroStartScale, victoryIntroEndScale, eased);
             victoryIntroRoot.localScale = Vector3.one * scale;
             yield return null;
         }
 
         victoryIntroImage.color = targetColor;
+        SetLocalizedVictoryAlpha(targetColor.a);
         victoryIntroRoot.localScale = Vector3.one * victoryIntroEndScale;
 
         if (victoryIntroHoldDuration > 0f)
@@ -1879,6 +1901,11 @@ public partial class BattleSettlementOverlay : MonoBehaviour
     private Vector2 GetVictoryIntroSize()
     {
         float safeScale = Mathf.Max(0.01f, victoryIntroScale);
+        if (GameText.LanguageCode != GameText.Chinese)
+        {
+            float width = victoryIntroSprite != null ? Mathf.Max(512, victoryIntroSprite.rect.width * safeScale) : 760;
+            return new Vector2(width, width * .34f);
+        }
         if (victoryIntroSprite == null)
             return new Vector2(512f, 256f) * safeScale;
 
@@ -1886,6 +1913,14 @@ public partial class BattleSettlementOverlay : MonoBehaviour
         return new Vector2(
             Mathf.Max(1f, spriteRect.width) * safeScale,
             Mathf.Max(1f, spriteRect.height) * safeScale);
+    }
+
+    private void SetLocalizedVictoryAlpha(float alpha)
+    {
+        if (localizedVictoryIntro == null) return;
+        Color color = localizedVictoryIntro.color;
+        color.a = alpha;
+        localizedVictoryIntro.color = color;
     }
 
     private void EnsureEventSystem()

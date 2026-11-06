@@ -1950,11 +1950,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910601
-    m_Localized: Flame Moth Ignite
+    m_Localized: Ignite
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910602
-    m_Localized: Flame Moth Swing
+    m_Localized: Wingbeat
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910603
@@ -1974,7 +1974,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910607
-    m_Localized: Swirl
+    m_Localized: Rapid Spin
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910608
@@ -1982,7 +1982,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910609
-    m_Localized: Magtronic Burst
+    m_Localized: Discharge
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910610
@@ -1990,7 +1990,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910611
-    m_Localized: Magtronic Conduct
+    m_Localized: Conduct
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910612
@@ -1998,7 +1998,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910613
-    m_Localized: Blood Thrust
+    m_Localized: Blood Spike
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910614
@@ -2006,7 +2006,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910615
-    m_Localized: Suck
+    m_Localized: Blood Drain
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910616
@@ -2014,7 +2014,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910617
-    m_Localized: Cataract
+    m_Localized: Cataract Break
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910618
@@ -2030,7 +2030,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910621
-    m_Localized: Wave Reconstruct
+    m_Localized: Re-form the Tide
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910622
@@ -2038,7 +2038,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910623
-    m_Localized: Wave Splash
+    m_Localized: Tidal Slam
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910624
@@ -2046,7 +2046,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910625
-    m_Localized: Douse
+    m_Localized: Rekindle
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910626
@@ -2054,7 +2054,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910627
-    m_Localized: Dusk Dart
+    m_Localized: Ember Dart
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910628
@@ -2062,7 +2062,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910629
-    m_Localized: Fireball
+    m_Localized: Wickfire
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910630
@@ -2070,7 +2070,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910631
-    m_Localized: Lamp Prison
+    m_Localized: Lantern Cage
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910632
@@ -2078,7 +2078,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910633
-    m_Localized: Creep
+    m_Localized: Spread
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910634
@@ -2086,7 +2086,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910635
-    m_Localized: End
+    m_Localized: Arrival
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910636
@@ -2118,7 +2118,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910643
-    m_Localized: He's a Dead Man
+    m_Localized: Skyshatter Thrust
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910644
@@ -2126,7 +2126,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910645
-    m_Localized: One Shot at the World
+    m_Localized: Worldpiercer
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910646
@@ -2134,7 +2134,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910647
-    m_Localized: The Thunder Is On the Ground
+    m_Localized: Thunderous Oblivion
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910648
@@ -2142,7 +2142,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910649
-    m_Localized: Magnetic Thunderlock
+    m_Localized: Magnetic Shackles
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910650
@@ -2150,7 +2150,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910651
-    m_Localized: The Thunderstorm Is Out
+    m_Localized: Skybreaker Bolt
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910652
@@ -2158,7 +2158,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910653
-    m_Localized: I'll Be Punished By the Death Penalty
+    m_Localized: Heavenly Judgment
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910654
@@ -2166,7 +2166,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910655
-    m_Localized: Thunder Strike
+    m_Localized: Thunderstrike Thrust
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910656
@@ -2174,7 +2174,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910657
-    m_Localized: I'll Cut It Straight
+    m_Localized: Radiant Cleave
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910658
@@ -2183,7 +2183,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910659
-    m_Localized: St. Light Is Locked in Prison
+    m_Localized: Radiant Prison
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910660
@@ -2210,7 +2210,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910665
-    m_Localized: Tow
+    m_Localized: Maul
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910666
@@ -2226,7 +2226,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910669
-    m_Localized: Fire!
+    m_Localized: Aimed Shot
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910670
@@ -2262,7 +2262,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910677
-    m_Localized: Execute
+    m_Localized: Bloodclot Execution
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910678
@@ -2270,7 +2270,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910679
-    m_Localized: Rend Feast
+    m_Localized: Vein-Rending Pounce
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910680
@@ -2278,7 +2278,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910681
-    m_Localized: Siphon
+    m_Localized: Blood Siphon
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910682
@@ -2286,7 +2286,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910683
-    m_Localized: Vein Pierce
+    m_Localized: Bloodthread Pierce
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910684
@@ -2344,7 +2344,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910697
-    m_Localized: Cold Ember Flutter
+    m_Localized: Frostwing Flutter
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910698
@@ -2352,7 +2352,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910699
-    m_Localized: Dimming Scale Dust
+    m_Localized: Dimming Dust
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910700
@@ -2361,7 +2361,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910701
-    m_Localized: Ember Huddle
+    m_Localized: Ember Extinction
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910702
@@ -2370,7 +2370,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910703
-    m_Localized: Current Halo
+    m_Localized: Shock Halo
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910704
@@ -2396,7 +2396,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910709
-    m_Localized: Bone Tide Reclaim
+    m_Localized: Bone-Tide Reclamation
     m_Metadata:
       m_Items: []
   - m_Id: 22781559910710
@@ -2423,7 +2423,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104707
-    m_Localized: Rot Fragrance Breath
+    m_Localized: Rotting Fragrance
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104708
@@ -2455,7 +2455,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104715
-    m_Localized: Skin Riven Liturgy
+    m_Localized: Rites of Flayed Skin
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104716
@@ -2463,7 +2463,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104717
-    m_Localized: Reverse Wind Arrow
+    m_Localized: Headwind Arrow
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104718
@@ -2479,7 +2479,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104721
-    m_Localized: Side Step
+    m_Localized: Sidestep
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104722
@@ -2487,7 +2487,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104723
-    m_Localized: Atonement Transfer
+    m_Localized: Transfer Penance
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104724
@@ -2503,7 +2503,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104727
-    m_Localized: Broken Horn Charge
+    m_Localized: Broken-Horn Charge
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104728
@@ -2519,7 +2519,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104731
-    m_Localized: Shield Horn Intercept
+    m_Localized: Shield Intercept
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104732
@@ -2544,7 +2544,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104737
-    m_Localized: Superconduct
+    m_Localized: Superconductivity
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104738
@@ -2553,7 +2553,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104739
-    m_Localized: Transformer
+    m_Localized: Voltage Shift
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104740
@@ -2570,7 +2570,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104743
-    m_Localized: Sin Litany
+    m_Localized: Litany of Reflected Sins
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104744
@@ -2587,7 +2587,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104747
-    m_Localized: Curl Counter
+    m_Localized: Curling Counter
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104748
@@ -2630,7 +2630,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104757
-    m_Localized: Blood Thread Snare
+    m_Localized: Bloodthread Snare
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104758
@@ -2860,7 +2860,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104809
-    m_Localized: Dusk Face Return
+    m_Localized: Dark-Face Return
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104810
@@ -2869,7 +2869,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104811
-    m_Localized: Front Face Cleave
+    m_Localized: Bright-Face Cleave
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104812
@@ -2878,7 +2878,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104813
-    m_Localized: Prism Return Mapping
+    m_Localized: Prismatic Reflection
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104814
@@ -2904,7 +2904,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104819
-    m_Localized: Blood in a Thousand
+    m_Localized: Thousand-Thread Bloodbind
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104820
@@ -2913,15 +2913,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104821
-    m_Localized: The Ancient War
+    m_Localized: Ancient Blood Mire
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104822
-    m_Localized: There's No Blood in the World
+    m_Localized: Desperate Blood Burial
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104823
-    m_Localized: Blood Is Cut
+    m_Localized: Blood-Eroding Cleave
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104824
@@ -2929,39 +2929,39 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104825
-    m_Localized: Bleeding
+    m_Localized: Bloodbone Impact
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104826
-    m_Localized: King of the Dead
+    m_Localized: Fallen King's Worldfire
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104827
-    m_Localized: The Thorns
+    m_Localized: Ember Thrust
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104828
-    m_Localized: The Fire Cage
+    m_Localized: Flame-Shadow Cage
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104829
-    m_Localized: The Cold Water Curtain
+    m_Localized: Frosttide Veil
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104830
-    m_Localized: The Clairvoyant
+    m_Localized: Abyssal Veinlock
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104831
-    m_Localized: There's No Peace
+    m_Localized: Silence of the False Court
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104832
-    m_Localized: The Scavity
+    m_Localized: Corrosive Tide Thrust
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104833
-    m_Localized: The Shadow of the Vanity
+    m_Localized: Illusory Tide
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104834
@@ -2974,7 +2974,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104836
-    m_Localized: Wooden Sword Block
+    m_Localized: Block
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104837
@@ -2982,7 +2982,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104838
-    m_Localized: Wooden Sword Normal
+    m_Localized: Slash
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104839
@@ -2990,11 +2990,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104840
-    m_Localized: Wooden Sword Slash
+    m_Localized: Sweeping Slash
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104841
-    m_Localized: Swing
+    m_Localized: Slash
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104842
@@ -3002,7 +3002,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104843
-    m_Localized: Chop
+    m_Localized: Sweeping Slash
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104844
@@ -3010,7 +3010,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104845
-    m_Localized: Swing
+    m_Localized: Slash
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104846
@@ -3018,7 +3018,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104847
-    m_Localized: He's Burning Up and He's Cutting Out
+    m_Localized: Scorching Cleave
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104848
@@ -3027,7 +3027,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104849
-    m_Localized: Fire
+    m_Localized: Ignite
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104850
@@ -3035,7 +3035,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104851
-    m_Localized: The Cold Is Cold
+    m_Localized: Frost Cleave
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104852
@@ -3052,7 +3052,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104855
-    m_Localized: Swing
+    m_Localized: Slash
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104856
@@ -3060,7 +3060,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104857
-    m_Localized: Swing
+    m_Localized: Slash
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104858
@@ -3068,7 +3068,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104859
-    m_Localized: Poison
+    m_Localized: Venom Bite
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104860
@@ -3076,7 +3076,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104861
-    m_Localized: He's Dead
+    m_Localized: Bone-Eroding Cleave
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104862
@@ -3084,7 +3084,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104863
-    m_Localized: I Swear
+    m_Localized: Oath Reclaimed
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104864
@@ -3093,7 +3093,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104865
-    m_Localized: Don't Think About It
+    m_Localized: Sever the Will
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104866
@@ -3101,7 +3101,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104867
-    m_Localized: The Stuns Are Stunned
+    m_Localized: Crimson Thread Pursuit
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104868
@@ -3109,7 +3109,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104869
-    m_Localized: Blood Test
+    m_Localized: Blood Trial
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104870
@@ -3117,7 +3117,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104871
-    m_Localized: The Puncture
+    m_Localized: Purifying Thrust
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104872
@@ -3125,7 +3125,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104873
-    m_Localized: He's Dead!
+    m_Localized: Judgment Flurry
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104874
@@ -3133,7 +3133,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104875
-    m_Localized: Morning
+    m_Localized: Dawn Slash
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104876
@@ -3141,7 +3141,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104877
-    m_Localized: Clean
+    m_Localized: Cleanse
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104878
@@ -3149,7 +3149,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104879
-    m_Localized: The Crowned Fire
+    m_Localized: Crownfire Judgment
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104880
@@ -3158,7 +3158,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104881
-    m_Localized: Firesticks
+    m_Localized: Emberpress Thrust
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104882
@@ -3167,7 +3167,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104883
-    m_Localized: Back to the Ashes
+    m_Localized: Returning Ember Guard
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104884
@@ -3176,7 +3176,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104885
-    m_Localized: Fire
+    m_Localized: Flamebrush Slash
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104886
@@ -3184,7 +3184,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104887
-    m_Localized: The Lights Are Still On
+    m_Localized: Light-Silencing Guard
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104888
@@ -3202,7 +3202,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104891
-    m_Localized: Behead
+    m_Localized: Dusk Slash
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104892
@@ -3210,7 +3210,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104893
-    m_Localized: The Back of the Light
+    m_Localized: Backlight Thrust
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104894
@@ -3218,7 +3218,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104895
-    m_Localized: Jab!
+    m_Localized: Stab
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104896
@@ -3226,7 +3226,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104897
-    m_Localized: Back
+    m_Localized: Backstab
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104898
@@ -3258,7 +3258,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104905
-    m_Localized: Quick Electrocution
+    m_Localized: Lightning Cut
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104906
@@ -3266,7 +3266,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104907
-    m_Localized: Tssss
+    m_Localized: Flash Thrust
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104908
@@ -3274,7 +3274,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104909
-    m_Localized: Ray's a Prick
+    m_Localized: Arcing Thrusts
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104910
@@ -3282,7 +3282,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104911
-    m_Localized: Fire Cut the Throat
+    m_Localized: Ember Throatcut
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104912
@@ -3291,7 +3291,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104913
-    m_Localized: The Fire
+    m_Localized: Ember Sweep
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104914
@@ -3299,7 +3299,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104915
-    m_Localized: The Burns Are Pierced
+    m_Localized: Scorchmark Flurry
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104916
@@ -3307,7 +3307,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104917
-    m_Localized: Shade the Moment
+    m_Localized: Shadowcut
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104918
@@ -3316,7 +3316,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104919
-    m_Localized: Sprint
+    m_Localized: Quickstep Thrust
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104920
@@ -3325,7 +3325,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104921
-    m_Localized: The Wind Is Out of Place
+    m_Localized: Windcut Dodge
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104922
@@ -3333,7 +3333,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104923
-    m_Localized: Misshooting
+    m_Localized: Offbeat Flurry
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104924
@@ -3342,7 +3342,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104925
-    m_Localized: The Casket
+    m_Localized: Seal the Coffin
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104926
@@ -3351,7 +3351,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104927
-    m_Localized: The Nails!
+    m_Localized: Pull the Nail
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104928
@@ -3360,7 +3360,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104929
-    m_Localized: Nail
+    m_Localized: Nail Thrust
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104930
@@ -3369,7 +3369,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104931
-    m_Localized: Chop
+    m_Localized: Wild Chop
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104932
@@ -3378,7 +3378,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104933
-    m_Localized: Big Bang
+    m_Localized: Heavy Smash
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104934
@@ -3387,7 +3387,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104935
-    m_Localized: Blood Sweep
+    m_Localized: Bloodmark Sweep
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104936
@@ -3396,7 +3396,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104937
-    m_Localized: Bloodburst
+    m_Localized: Blood-Shattering Slash
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104938
@@ -3405,7 +3405,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104939
-    m_Localized: Bone Cleave
+    m_Localized: Bone-Splitting Chop
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104940
@@ -3414,7 +3414,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104941
-    m_Localized: The Electric Field
+    m_Localized: Electric Field
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104942
@@ -3422,7 +3422,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104943
-    m_Localized: Electricity Through
+    m_Localized: Shock Pierce
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104944
@@ -3438,7 +3438,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104947
-    m_Localized: Juice
+    m_Localized: Reduce the Sauce
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104948
@@ -3446,7 +3446,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104949
-    m_Localized: The Fire
+    m_Localized: Furnace Break
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104950
@@ -3454,7 +3454,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104951
-    m_Localized: Slash
+    m_Localized: Searing Chop
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104952
@@ -3462,7 +3462,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104953
-    m_Localized: Molar Throat
+    m_Localized: Molten Throatcleaver
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104954
@@ -3470,7 +3470,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104955
-    m_Localized: Kill Him in the Dead
+    m_Localized: Shadowpin Slash
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104956
@@ -3479,7 +3479,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104957
-    m_Localized: "\u266A I'll Take the Light \u266A"
+    m_Localized: Lightseeking Chop
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104958
@@ -3488,7 +3488,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104959
-    m_Localized: The Hunting Beheads
+    m_Localized: Lighthunter's Beheading
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104960
@@ -3497,7 +3497,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104961
-    m_Localized: The Shire of the Sea
+    m_Localized: Radiant Shield Guard
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104962
@@ -3514,7 +3514,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104965
-    m_Localized: Do What You Want
+    m_Localized: Casual Casting
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104966
@@ -3522,7 +3522,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104967
-    m_Localized: '- I''m Not Going to Be a Man'
+    m_Localized: Casual Guard
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104968
@@ -3530,7 +3530,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104969
-    m_Localized: Fill
+    m_Localized: Charge Up
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104970
@@ -3538,7 +3538,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104971
-    m_Localized: Cold Rays
+    m_Localized: Chill Ray
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104972
@@ -3546,7 +3546,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104973
-    m_Localized: The Sun
+    m_Localized: 'Starburst: Frost'
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104974
@@ -3563,7 +3563,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104977
-    m_Localized: Dark
+    m_Localized: Devour Darkness
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104978
@@ -3571,7 +3571,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104979
-    m_Localized: Night
+    m_Localized: Nightfall
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104980
@@ -3579,7 +3579,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104981
-    m_Localized: Darkstream
+    m_Localized: Undercurrent
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104982
@@ -3587,7 +3587,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104983
-    m_Localized: Lingering Incense
+    m_Localized: Lingering Fragrance
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104984
@@ -3596,7 +3596,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104985
-    m_Localized: Flowers
+    m_Localized: Floral Miasma
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104986
@@ -3605,7 +3605,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104987
-    m_Localized: I'm Going to Die
+    m_Localized: Bramblebloom's End
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104988
@@ -3622,7 +3622,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104991
-    m_Localized: A Echo Needle
+    m_Localized: Returning Needle
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104992
@@ -3631,7 +3631,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104993
-    m_Localized: The Current
+    m_Localized: Channel the Current
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104994
@@ -3640,7 +3640,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104995
-    m_Localized: Power
+    m_Localized: Draw Lightning
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104996
@@ -3649,7 +3649,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104997
-    m_Localized: The Drop of the Thunder
+    m_Localized: Lightning Convergence
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104998
@@ -3658,7 +3658,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564104999
-    m_Localized: The Electrical Barrier
+    m_Localized: Thunderhowl Barrier
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105000
@@ -3676,7 +3676,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105003
-    m_Localized: Thunder Strike
+    m_Localized: Phase-Shift Lightning
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105004
@@ -3685,7 +3685,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105005
-    m_Localized: Ming
+    m_Localized: Howl
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105006
@@ -3694,23 +3694,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105007
-    m_Localized: ThunderLord
+    m_Localized: Thunderlord
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105008
-    m_Localized: DrownedBoneCollector
+    m_Localized: "Drowned Bonepicker \xD73"
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105009
-    m_Localized: Drowning scavengers x 3
+    m_Localized: "Drowned Bonepicker \xD73"
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105010
-    m_Localized: AshPriest
+    m_Localized: Ash Priest
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105011
-    m_Localized: The Grey priest x 1
+    m_Localized: "Ash Priest \xD71"
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105012
@@ -3718,15 +3718,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105013
-    m_Localized: Echo x1
+    m_Localized: "Echo \xD71"
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105014
-    m_Localized: Small Monsters 1
+    m_Localized: Small Monsters I
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105015
-    m_Localized: Small Monsters 2
+    m_Localized: Small Monsters II
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105016
@@ -3734,31 +3734,31 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105017
-    m_Localized: 'The enemy of the incident: the Bei'
+    m_Localized: 'Event encounter: Gambler.'
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105018
-    m_Localized: Prince of Blood
+    m_Localized: Bloodbone Heir
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105019
-    m_Localized: Kitty
+    m_Localized: Little Cat
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105020
-    m_Localized: LoomingDark
+    m_Localized: Encroaching Darkness
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105021
-    m_Localized: PuppetMaster
+    m_Localized: Puppet Troupe
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105022
-    m_Localized: Puppets 2 and Puppets 1
+    m_Localized: "Mindless Puppet \xD72, Stringmaster \xD71"
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105023
-    m_Localized: RedSlime
+    m_Localized: Red Slime
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105024
@@ -3766,24 +3766,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105025
-    m_Localized: The Reborn Aristocrat
+    m_Localized: Revenant Noble
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105026
-    m_Localized: The New King of Defection
+    m_Localized: Rebel King
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105027
-    m_Localized: InterlockingPrismServants
+    m_Localized: Prism Sentinels
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105028
-    m_Localized: 'The glimmer of the glimmer: the murmur of the face and the murmur
-      of the face.'
+    m_Localized: 'Interlocking Prisms: Bright Prism Sentinel and Dark Prism Sentinel.'
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105029
-    m_Localized: HornedGatekeeper
+    m_Localized: Broken-Horn Gatekeeper
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105030
@@ -3791,23 +3790,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105031
-    m_Localized: BlackCoffin
+    m_Localized: Black Coffin
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105032
-    m_Localized: Black coffin x 1
+    m_Localized: "Black Coffin \xD71"
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105033
-    m_Localized: TideAnchorGuard
+    m_Localized: Ocean Current
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105034
-    m_Localized: Currents x1
+    m_Localized: "Ocean Current \xD71"
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105035
-    m_Localized: ThunderWolf
+    m_Localized: "Thunderwolf \xD72"
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105036
@@ -3815,11 +3814,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105037
-    m_Localized: EmberScaleLizard
+    m_Localized: Embermark Lizard
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105038
-    m_Localized: FrozenAshMoth
+    m_Localized: Frostash Moth
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105039
@@ -3827,19 +3826,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105040
-    m_Localized: GiantGreenSlime
+    m_Localized: Giant Green Slime
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105041
-    m_Localized: HeadwindRanger
+    m_Localized: Headwind Ranger
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105042
-    m_Localized: Windwards x 1
+    m_Localized: "Headwind Ranger \xD71"
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105043
-    m_Localized: IronThreadPuppet
+    m_Localized: Wire Puppet
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105044
@@ -3847,19 +3846,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105045
-    m_Localized: MirrorBearer
+    m_Localized: Mirror Bearer
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105046
-    m_Localized: Rotblossom
+    m_Localized: Rotbloom
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105047
-    m_Localized: Scavengers x 1
+    m_Localized: "Rotbloom \xD71"
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105048
-    m_Localized: SkinRivenDisciple
+    m_Localized: Flayed Disciple
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105049
@@ -3867,63 +3866,63 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105050
-    m_Localized: Bloodpearl X1
+    m_Localized: Blood Spore
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105051
-    m_Localized: BloodRatx3
+    m_Localized: "Bloodthirsty Rat \xD73"
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105052
-    m_Localized: FlameMoth X1
+    m_Localized: Ember Moth
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105053
-    m_Localized: Fire moths x 1
+    m_Localized: "Ember Moth \xD71"
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105054
-    m_Localized: GreenSlime X2
+    m_Localized: "Green Slime \xD72"
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105055
-    m_Localized: Magtronic X2
+    m_Localized: "Lodestone \xD72"
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105056
-    m_Localized: SSSnail X2
+    m_Localized: "Whirl Snail \xD72"
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105057
-    m_Localized: WaterManx1
+    m_Localized: Water Snowman
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105058
-    m_Localized: BadQueen'sHunter
+    m_Localized: The Queen's Hunting Party
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105059
-    m_Localized: CallOfBeyond
+    m_Localized: Call from Beyond
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105060
-    m_Localized: CrimsonBroodmother
+    m_Localized: Crimson Broodmother
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105061
-    m_Localized: Her pulmonary carnage x 1
+    m_Localized: "Crimson Broodmother \xD71"
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105062
-    m_Localized: LightKnight
+    m_Localized: Radiant Knight
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105063
-    m_Localized: RedLamp
+    m_Localized: Red Lantern
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105064
-    m_Localized: Waveling
+    m_Localized: Tide Spirit
     m_Metadata:
       m_Items: []
   - m_Id: 22781564105065
@@ -6368,7 +6367,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781572493402
-    m_Localized: On pickup, gain 200 gold, 3 random relics, and 3 random scrolls.
+    m_Localized: On pickup, gain 200 Gold, 3 random relics, and 3 random blueprints.
     m_Metadata:
       m_Items: []
   - m_Id: 22781572493403
@@ -6943,7 +6942,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781572493543
-    m_Localized: The Doors That Appear Again and Again
+    m_Localized: The Recurring Door
     m_Metadata:
       m_Items: []
   - m_Id: 22781572493544
@@ -7459,7 +7458,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781572493663
-    m_Localized: "Gain 1\u20132 pieces of Poison loot."
+    m_Localized: "Gain 1\u20132 pieces of [[DL_Attribute_Poison|Poison]] loot."
     m_Metadata:
       m_Items: []
   - m_Id: 22781572493664
@@ -9926,7 +9925,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576687868
-    m_Localized: Enter Square Root of One.
+    m_Localized: Enter Square Root 1.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576687869
@@ -11613,219 +11612,219 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688207
-    m_Localized: I
+    m_Localized: Funding I
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688208
-    m_Localized: The initial gold is set up + 10.
+    m_Localized: Start each run with 10 more Gold.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688209
-    m_Localized: II. Financial Support
+    m_Localized: Funding II
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688210
-    m_Localized: The initial gold is set up + 10.
+    m_Localized: Start each run with 10 more Gold.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688211
-    m_Localized: III. Financial Support
+    m_Localized: Funding III
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688212
-    m_Localized: The initial gold is set up + 10.
+    m_Localized: Start each run with 10 more Gold.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688213
-    m_Localized: Action
+    m_Localized: Action Prep I
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688214
-    m_Localized: +1 for the initial AP cap.
+    m_Localized: Increase starting max AP by 1.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688215
-    m_Localized: Operation II
+    m_Localized: Action Prep II
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688216
-    m_Localized: +1 for the initial AP cap.
+    m_Localized: Increase starting max AP by 1.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688217
-    m_Localized: The Journey
+    m_Localized: The Journey Begins
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688218
-    m_Localized: Welcome to the Grand Duss!
+    m_Localized: Welcome to DiceLand!
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688219
-    m_Localized: Operation Three
+    m_Localized: Action Prep III
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688220
-    m_Localized: +1 for the initial AP cap.
+    m_Localized: Increase starting max AP by 1.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688221
-    m_Localized: I'm Strong
+    m_Localized: Vitality I
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688222
-    m_Localized: Max HP value of the team +1.
+    m_Localized: All starting party members gain 1 max HP.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688223
-    m_Localized: I'm Strong
+    m_Localized: Vitality II
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688224
-    m_Localized: Max HP value of the team +1.
+    m_Localized: All starting party members gain 1 max HP.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688225
-    m_Localized: Strong Body III
+    m_Localized: Vitality III
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688226
-    m_Localized: Max HP of the team +1
+    m_Localized: All starting party members gain 1 max HP.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688227
-    m_Localized: Weapons Upgrade
+    m_Localized: Weapon Upgrade
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688228
-    m_Localized: Chara's initial weapon was replaced by the Iron Sword.
+    m_Localized: Chara starts each run with an Iron Sword.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688229
-    m_Localized: Initials
+    m_Localized: Starting Relic
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688230
-    m_Localized: The first possession of a random object
+    m_Localized: Start each run by choosing a relic from a random relic bag.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688231
-    m_Localized: Members
+    m_Localized: Shop Membership
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688232
-    m_Localized: Get 1 free restock when you enter an unexplored shop.
+    m_Localized: Gain one free restock in each new shop.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688233
-    m_Localized: Original Scroll
+    m_Localized: Starting Blueprint
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688234
-    m_Localized: An initial random scroll
+    m_Localized: Start each run with one random blueprint.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688235
-    m_Localized: Energy Eruption
+    m_Localized: Energy Surge
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688236
-    m_Localized: At the start of the battle, we will have 2 points of temporary energy.
+    m_Localized: Gain 2 temporary Energy at the start of each battle.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688237
-    m_Localized: Operation Readiness, IV
+    m_Localized: Action Prep IV
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688238
-    m_Localized: +1 for the initial AP cap.
+    m_Localized: Increase starting max AP by 1.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688239
-    m_Localized: Action
+    m_Localized: Action Prep V
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688240
-    m_Localized: +1 for the initial AP cap.
+    m_Localized: Increase starting max AP by 1.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688241
-    m_Localized: Financial Support IV
+    m_Localized: Funding IV
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688242
-    m_Localized: The initial gold is set up + 10.
+    m_Localized: Start each run with 10 more Gold.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688243
-    m_Localized: V Financial Support
+    m_Localized: Funding V
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688244
-    m_Localized: The initial gold is set up + 10.
+    m_Localized: Start each run with 10 more Gold.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688245
-    m_Localized: Financial Support
+    m_Localized: Funding VI
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688246
-    m_Localized: The initial gold is set up + 10.
+    m_Localized: Start each run with 10 more Gold.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688247
-    m_Localized: Financial Support
+    m_Localized: Funding VII
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688248
-    m_Localized: The initial gold is set up + 10.
+    m_Localized: Start each run with 10 more Gold.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688249
-    m_Localized: VIII
+    m_Localized: Funding VIII
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688250
-    m_Localized: The initial gold is set up + 10.
+    m_Localized: Start each run with 10 more Gold.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688251
-    m_Localized: IX Financial Support
+    m_Localized: Funding IX
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688252
-    m_Localized: The initial gold is set up + 10.
+    m_Localized: Start each run with 10 more Gold.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688253
-    m_Localized: Financial Support X
+    m_Localized: Funding X
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688254
-    m_Localized: The initial gold is set up + 10.
+    m_Localized: Start each run with 10 more Gold.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688255
-    m_Localized: Strong Body IV
+    m_Localized: Vitality IV
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688256
-    m_Localized: Max HP of the team +1
+    m_Localized: All starting party members gain 1 max HP.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688257
-    m_Localized: New Partners
+    m_Localized: A New Companion
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688258
-    m_Localized: +1 for the initial team.
+    m_Localized: Start each run with one additional party member.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688259
-    m_Localized: Jenny's Scepter
+    m_Localized: Jenny's Staff
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688260
-    m_Localized: A choice. Jenny as the original partner.
+    m_Localized: Always choose Jenny as your starting companion.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688261
@@ -11833,43 +11832,43 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688262
-    m_Localized: The selection of Molly as the initial partner
+    m_Localized: Always choose Molly as your starting companion.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688263
-    m_Localized: Man's Ax
+    m_Localized: Man's Greataxe
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688264
-    m_Localized: The selection of Molly as the initial partner
+    m_Localized: Always choose Man as your starting companion.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688265
-    m_Localized: Again
+    m_Localized: Another Chance
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688266
-    m_Localized: We're Ready for Action, VI
+    m_Localized: Action Prep VI
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688267
-    m_Localized: +1 for the initial AP cap.
+    m_Localized: Increase starting max AP by 1.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688268
-    m_Localized: Operation Readiness
+    m_Localized: Action Prep VII
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688269
-    m_Localized: +1 for the initial AP cap.
+    m_Localized: Increase starting max AP by 1.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688270
-    m_Localized: Half Price
+    m_Localized: Half-Price Deal
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688271
-    m_Localized: First shopping at a shop at a half price
+    m_Localized: Your first shop purchase of each run costs half price.
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688272
@@ -12093,7 +12092,8 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781580881933
-    m_Localized: 'Requires {need} stacks of {localizedName} (current stacks: {getStatusStacks})'
+    m_Localized: 'Requires {need} {need:plural:stack|stacks} of {localizedName} (current
+      stacks: {getStatusStacks})'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12199,7 +12199,8 @@ MonoBehaviour:
   - m_Id: 22781580881957
     m_Localized: '
 
-      Requires {requiredStacks} stacks of {localizedName}{currentSuffix}{consumeSuffix}'
+      Requires {requiredStacks} {requiredStacks:plural:stack|stacks}
+      of {localizedName}{currentSuffix}{consumeSuffix}'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12234,13 +12235,13 @@ MonoBehaviour:
       - rid: 5043701850270335003
   - m_Id: 22781580881960
     m_Localized: '{diceEffectLabel}: {triggerLabel} {conditionPrefix}Grant {stackLabel}
-      stacks of {statusLabel} to {targetLabel} at {timingLabel}.'
+      {stackLabel:plural:stack|stacks} of {statusLabel} to {targetLabel} at {timingLabel}.'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781580881961
     m_Localized: '{diceEffectLabel}: {triggerLabel} {conditionPrefix}Grant {stackLabel}
-      stacks of {statusLabel} to {targetLabel}.'
+      {stackLabel:plural:stack|stacks} of {statusLabel} to {targetLabel}.'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12264,8 +12265,8 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781580881965
-    m_Localized: '{diceEffectLabel}: {triggerLabel} Remove {valueLabel} stacks of
-      {statusLabel} from {targetLabel}.'
+    m_Localized: '{diceEffectLabel}: {triggerLabel} Remove {valueLabel} {valueLabel:plural:stack|stacks}
+      of {statusLabel} from {targetLabel}.'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12350,7 +12351,7 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076239
-    m_Localized: '{diceEffectLabel}: {triggerLabel} Remove {buildColoredToken} stacks
+    m_Localized: '{diceEffectLabel}: {triggerLabel} Remove {buildColoredToken} {buildColoredToken:plural:stack|stacks}
       of {statusLabel} from {targetLabel}.'
     m_Metadata:
       m_Items:
@@ -12389,13 +12390,14 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076246
-    m_Localized: '{diceEffectLabel}: {triggerLabel} Spend {consumedStackLabel} stacks
+    m_Localized: '{diceEffectLabel}: {triggerLabel} Spend {consumedStackLabel} {consumedStackLabel:plural:stack|stacks}
       of {consumedStatusLabel} on {consumeTargetLabel} to {gainText}.'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076247
-    m_Localized: grant {buildColoredToken} stacks of {buildColoredToken2} to {targetLabel}{buildConsumedGainStatusTimingText}
+    m_Localized: grant {buildColoredToken} {buildColoredToken:plural:stack|stacks}
+      of {buildColoredToken2} to {targetLabel}{buildConsumedGainStatusTimingText}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12427,16 +12429,17 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076253
-    m_Localized: '{diceEffectLabel}: {triggerLabel} {timingLabel}Apply {baseStackLabel}
-      stacks of {baseStatusLabel} to {targetLabel}.
+    m_Localized: '{diceEffectLabel}: {triggerLabel} Apply {baseStackLabel} {baseStackLabel:plural:stack|stacks}
+      of {baseStatusLabel} to {targetLabel} at {timingLabel}.
 
 '
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076254
-    m_Localized: If {targetLabel} has {conditionStatusLabel}, {timingLabel}apply
-      {markedStackLabel} stacks of {markedStatusLabel} to {targetLabel2} instead.
+    m_Localized: If {targetLabel} has {conditionStatusLabel}, apply {markedStackLabel}
+      {markedStackLabel:plural:stack|stacks} of {markedStatusLabel} to {targetLabel2}
+      at {timingLabel} instead.
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12446,7 +12449,8 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076256
-    m_Localized: grant {buildColoredToken} stacks of {buildColoredToken2} to {targetLabel}{buildConsumedGainBuiltInTimingText}
+    m_Localized: grant {buildColoredToken} {buildColoredToken:plural:stack|stacks}
+      of {buildColoredToken2} to {targetLabel}{buildConsumedGainBuiltInTimingText}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12460,12 +12464,12 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076259
-    m_Localized: the start of the next {max} rounds
+    m_Localized: the start of the next {max} {max:plural:round|rounds}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076260
-    m_Localized: the start of the round in {max} rounds
+    m_Localized: the start of the round in {max} {max:plural:round|rounds}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12475,16 +12479,16 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076262
-    m_Localized: the start of the next {repeatCount} rounds
+    m_Localized: the start of the next {repeatCount} {repeatCount:plural:round|rounds}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076263
-    m_Localized: next round
+    m_Localized: the start of the next round
     m_Metadata:
       m_Items: []
   - m_Id: 22781585076264
-    m_Localized: the start of the round in {delayRounds} rounds
+    m_Localized: the start of the round in {delayRounds} {delayRounds:plural:round|rounds}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12499,16 +12503,16 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076267
-    m_Localized: '{diceEffectLabel}: {triggerLabel} Spend {consumedStackLabel} stacks
-      of {consumedStatusLabel} on {targetLabel} to grant {appliedStackLabel} stacks
+    m_Localized: '{diceEffectLabel}: {triggerLabel} Spend {consumedStackLabel} {consumedStackLabel:plural:stack|stacks}
+      of {consumedStatusLabel} on {targetLabel} to grant {appliedStackLabel} {appliedStackLabel:plural:stack|stacks}
       of {appliedStatusLabel} to {targetLabel2}{timingLabel}.'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076268
     m_Localized: '{diceEffectLabel}: {triggerLabel} Spend the enemy''s {statusLabel}.
-      For each {stackLabel} stacks of {statusLabel2} spent from {targetLabel}, die
-      Power {powerLabel}{buildPowerModifierCapSuffix}.'
+      For each {stackLabel} {stackLabel:plural:stack|stacks} of {statusLabel2} spent
+      from {targetLabel}, die Power {powerLabel}{buildPowerModifierCapSuffix}.'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12539,18 +12543,19 @@ MonoBehaviour:
       - rid: 5043701850270335003
   - m_Id: 22781585076274
     m_Localized: '{diceEffectLabel}: {triggerLabel} {conditionPrefix}Grant {buildColoredToken}
-      stacks of {buildColoredToken2} to {targetLabel}{buildBuiltInTimingPrefix}.'
+      {buildColoredToken:plural:stack|stacks} of {buildColoredToken2} to {targetLabel}{buildBuiltInTimingPrefix}.'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076275
     m_Localized: '{diceEffectLabel}: {triggerLabel} {conditionPrefix}Transfer {buildColoredToken}
-      stacks of a random debuff from the user to {targetLabel}.'
+      {buildColoredToken:plural:stack|stacks} of a random debuff from the user to
+      {targetLabel}.'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076276
-    m_Localized: ' If no debuff can be transferred, grant {buildColoredToken2} stacks
+    m_Localized: ' If no debuff can be transferred, grant {buildColoredToken2} {buildColoredToken2:plural:stack|stacks}
       of {buildColoredToken3} to {buildColoredToken}{buildBuiltInTimingPrefix}.'
     m_Metadata:
       m_Items:
@@ -12566,12 +12571,13 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076279
-    m_Localized: equal to {targetLabel}'s {statusLabel} stacks / {buildColoredToken}
+    m_Localized: equal to {targetLabel}'s {statusLabel} {statusLabel:plural:stack|stacks}
+      / {buildColoredToken}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076280
-    m_Localized: equal to {buildColoredToken2} damage per {buildColoredToken} stacks
+    m_Localized: equal to {buildColoredToken2} damage per {buildColoredToken} {buildColoredToken:plural:stack|stacks}
       of {statusLabel} on {targetLabel}
     m_Metadata:
       m_Items:
@@ -12680,7 +12686,8 @@ MonoBehaviour:
   - m_Id: 22781585076303
     m_Localized: '
 
-      Target priority: Targets with {stacks} stacks of {statusLabel}'
+      Target priority: Targets with {stacks} {stacks:plural:stack|stacks}
+      of {statusLabel}'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12748,22 +12755,22 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076315
-    m_Localized: the user has more than {max} stacks of {getHealingConditionStatusLabel}
+    m_Localized: the user has more than {max} {max:plural:stack|stacks} of {getHealingConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076316
-    m_Localized: the user has at least {max} stacks of {getHealingConditionStatusLabel}
+    m_Localized: the user has at least {max} {max:plural:stack|stacks} of {getHealingConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076317
-    m_Localized: the user has fewer than {max} stacks of {getHealingConditionStatusLabel}
+    m_Localized: the user has fewer than {max} {max:plural:stack|stacks} of {getHealingConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076318
-    m_Localized: the user has at most {max} stacks of {getHealingConditionStatusLabel}
+    m_Localized: the user has at most {max} {max:plural:stack|stacks} of {getHealingConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12773,18 +12780,18 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076320
-    m_Localized: the target has at least {max} stacks of {getHealingConditionStatusLabel}
+    m_Localized: the target has at least {max} {max:plural:stack|stacks} of {getHealingConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076321
-    m_Localized: the target has at most {max} stacks of {getHealingConditionStatusLabel}
+    m_Localized: the target has at most {max} {max:plural:stack|stacks} of {getHealingConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076322
-    m_Localized: for every {max} stacks of {getHealingConditionStatusLabel} on the
-      target
+    m_Localized: for every {max} {max:plural:stack|stacks} of {getHealingConditionStatusLabel}
+      on the target
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12813,22 +12820,22 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076328
-    m_Localized: the user has more than {max} stacks of {getStatusEffectConditionStatusLabel}
+    m_Localized: the user has more than {max} {max:plural:stack|stacks} of {getStatusEffectConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076329
-    m_Localized: the user has at least {max} stacks of {getStatusEffectConditionStatusLabel}
+    m_Localized: the user has at least {max} {max:plural:stack|stacks} of {getStatusEffectConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076330
-    m_Localized: the user has fewer than {max} stacks of {getStatusEffectConditionStatusLabel}
+    m_Localized: the user has fewer than {max} {max:plural:stack|stacks} of {getStatusEffectConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076331
-    m_Localized: the user has at most {max} stacks of {getStatusEffectConditionStatusLabel}
+    m_Localized: the user has at most {max} {max:plural:stack|stacks} of {getStatusEffectConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12838,17 +12845,17 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076333
-    m_Localized: the target has at least {max} stacks of {getStatusEffectConditionStatusLabel}
+    m_Localized: the target has at least {max} {max:plural:stack|stacks} of {getStatusEffectConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076334
-    m_Localized: the target has at most {max} stacks of {getStatusEffectConditionStatusLabel}
+    m_Localized: the target has at most {max} {max:plural:stack|stacks} of {getStatusEffectConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076335
-    m_Localized: for every {max} stacks of {getStatusEffectConditionStatusLabel}
+    m_Localized: for every {max} {max:plural:stack|stacks} of {getStatusEffectConditionStatusLabel}
       on the target
     m_Metadata:
       m_Items:
@@ -12859,22 +12866,26 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076337
-    m_Localized: the target has at least {requiredStacks} stacks of {statusLabel}
+    m_Localized: the target has at least {requiredStacks} {requiredStacks:plural:stack|stacks}
+      of {statusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076338
-    m_Localized: any target has at least {requiredStacks} stacks of {statusLabel}
+    m_Localized: any target has at least {requiredStacks} {requiredStacks:plural:stack|stacks}
+      of {statusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076339
-    m_Localized: any ally has at least {requiredStacks} stacks of {statusLabel}
+    m_Localized: any ally has at least {requiredStacks} {requiredStacks:plural:stack|stacks}
+      of {statusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076340
-    m_Localized: the user has at least {requiredStacks} stacks of {statusLabel}
+    m_Localized: the user has at least {requiredStacks} {requiredStacks:plural:stack|stacks}
+      of {statusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12888,12 +12899,12 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781585076343
-    m_Localized: ' at the start of the next {repeatCount} rounds'
+    m_Localized: ' at the start of the next {repeatCount} {repeatCount:plural:round|rounds}'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076344
-    m_Localized: ' at the start of the round in {delayRounds} rounds'
+    m_Localized: ' at the start of the round in {delayRounds} {delayRounds:plural:round|rounds}'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12903,22 +12914,22 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076346
-    m_Localized: the user has more than {max} stacks of {getBuiltInGeneralConditionStatusLabel}
+    m_Localized: the user has more than {max} {max:plural:stack|stacks} of {getBuiltInGeneralConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076347
-    m_Localized: the user has at least {max} stacks of {getBuiltInGeneralConditionStatusLabel}
+    m_Localized: the user has at least {max} {max:plural:stack|stacks} of {getBuiltInGeneralConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076348
-    m_Localized: the user has fewer than {max} stacks of {getBuiltInGeneralConditionStatusLabel}
+    m_Localized: the user has fewer than {max} {max:plural:stack|stacks} of {getBuiltInGeneralConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076349
-    m_Localized: the user has at most {max} stacks of {getBuiltInGeneralConditionStatusLabel}
+    m_Localized: the user has at most {max} {max:plural:stack|stacks} of {getBuiltInGeneralConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12928,12 +12939,12 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076351
-    m_Localized: the target has at least {max} stacks of {getBuiltInGeneralConditionStatusLabel}
+    m_Localized: the target has at least {max} {max:plural:stack|stacks} of {getBuiltInGeneralConditionStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076352
-    m_Localized: for every {max} stacks of {getBuiltInGeneralConditionStatusLabel}
+    m_Localized: for every {max} {max:plural:stack|stacks} of {getBuiltInGeneralConditionStatusLabel}
       on the target
     m_Metadata:
       m_Items:
@@ -12963,22 +12974,22 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076358
-    m_Localized: the user has more than {max} stacks of {getPowerModifierStatusLabel}
+    m_Localized: the user has more than {max} {max:plural:stack|stacks} of {getPowerModifierStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076359
-    m_Localized: the user has at least {max} stacks of {getPowerModifierStatusLabel}
+    m_Localized: the user has at least {max} {max:plural:stack|stacks} of {getPowerModifierStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076360
-    m_Localized: the user has fewer than {max} stacks of {getPowerModifierStatusLabel}
+    m_Localized: the user has fewer than {max} {max:plural:stack|stacks} of {getPowerModifierStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076361
-    m_Localized: the user has at most {max} stacks of {getPowerModifierStatusLabel}
+    m_Localized: the user has at most {max} {max:plural:stack|stacks} of {getPowerModifierStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -12988,17 +12999,18 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076363
-    m_Localized: the target has at least {max} stacks of {getPowerModifierStatusLabel}
+    m_Localized: the target has at least {max} {max:plural:stack|stacks} of {getPowerModifierStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076364
-    m_Localized: the target has at most {max} stacks of {getPowerModifierStatusLabel}
+    m_Localized: the target has at most {max} {max:plural:stack|stacks} of {getPowerModifierStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076365
-    m_Localized: for every {max} stacks of {getPowerModifierStatusLabel} on the target
+    m_Localized: for every {max} {max:plural:stack|stacks} of {getPowerModifierStatusLabel}
+      on the target
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -13013,22 +13025,22 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076368
-    m_Localized: the user has more than {max} stacks of {getRangeModifierStatusLabel}
+    m_Localized: the user has more than {max} {max:plural:stack|stacks} of {getRangeModifierStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076369
-    m_Localized: the user has at least {max} stacks of {getRangeModifierStatusLabel}
+    m_Localized: the user has at least {max} {max:plural:stack|stacks} of {getRangeModifierStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076370
-    m_Localized: the user has fewer than {max} stacks of {getRangeModifierStatusLabel}
+    m_Localized: the user has fewer than {max} {max:plural:stack|stacks} of {getRangeModifierStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076371
-    m_Localized: the user has at most {max} stacks of {getRangeModifierStatusLabel}
+    m_Localized: the user has at most {max} {max:plural:stack|stacks} of {getRangeModifierStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -13038,17 +13050,18 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076373
-    m_Localized: the target has at least {max} stacks of {getRangeModifierStatusLabel}
+    m_Localized: the target has at least {max} {max:plural:stack|stacks} of {getRangeModifierStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076374
-    m_Localized: the target has at most {max} stacks of {getRangeModifierStatusLabel}
+    m_Localized: the target has at most {max} {max:plural:stack|stacks} of {getRangeModifierStatusLabel}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781585076375
-    m_Localized: for every {max} stacks of {getRangeModifierStatusLabel} on the target
+    m_Localized: for every {max} {max:plural:stack|stacks} of {getRangeModifierStatusLabel}
+      on the target
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -14008,7 +14021,7 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781589270544
-    m_Localized: A Calamity descends. Choose one of {count} options.
+    m_Localized: A Calamity descends. Choose one of {count} {count:plural:option|options}.
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -14167,7 +14180,7 @@ MonoBehaviour:
     m_Localized: 'Start reforging?
 
       You can reforge up to {maxReforgeCount}
-      times per rest visit.'
+      {maxReforgeCount:plural:time|times} per rest visit.'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -14711,7 +14724,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781589270701
-    m_Localized: The catalog has no {weaponRarity} weapons.
+    m_Localized: The catalog has no {weaponRarity} {weaponRarity:plural:weapon|weapons}.
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -14791,12 +14804,12 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781589270720
-    m_Localized: Restocked {refreshed} items.
+    m_Localized: Restocked {refreshed} {refreshed:plural:item|items}.
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 22781589270721
-    m_Localized: Restocked {refreshed}/{total} items.
+    m_Localized: Restocked {refreshed}/{total} {total:plural:item|items}.
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -15504,7 +15517,7 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 285509440581648
-    m_Localized: '{affected} allies gained {stacks} {status}.'
+    m_Localized: '{affected} {affected:plural:ally|allies} gained {stacks} {status}.'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -15582,8 +15595,8 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 285509440581663
-    m_Localized: An enemy fell. {healedCount} allies each recovered {healAllAmount}
-      HP.
+    m_Localized: An enemy fell. {healedCount} {healedCount:plural:ally|allies} each
+      recovered {healAllAmount} HP.
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -15627,7 +15640,7 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 285509440581672
     m_Localized: After {defeatedName} fell, {affectedAllyCount} other allies will
-      gain {allyDeathStacksToApply} {status} at round start in {delayRounds} rounds.
+      gain {allyDeathStacksToApply} {status} at round start in {delayRounds} {delayRounds:plural:round|rounds}.
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -15664,7 +15677,7 @@ MonoBehaviour:
       - rid: 5043701850270335003
   - m_Id: 285509440581679
     m_Localized: '{actor} will gain {stacksToApply} {status} at round start in {delayRounds}
-      rounds.'
+      {delayRounds:plural:round|rounds}.'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -15675,7 +15688,7 @@ MonoBehaviour:
       - rid: 5043701850270335003
   - m_Id: 285509440581681
     m_Localized: '{roundRangeText}, {appliedEnemyCount} enemies will gain {enemyStacksToApply}
-      {status} at round start in {delayRounds} rounds.'
+      {status} at round start in {delayRounds} {delayRounds:plural:round|rounds}.'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -15686,14 +15699,14 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 285509440581683
-    m_Localized: '{roundRangeText}, {appliedAllyCount} allies will gain {allyStacksToApply}
-      {status} at round start in {delayRounds} rounds.'
+    m_Localized: '{roundRangeText}, {appliedAllyCount} {appliedAllyCount:plural:ally|allies}
+      will gain {allyStacksToApply} {status} at round start in {delayRounds} {delayRounds:plural:round|rounds}.'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 285509440581684
-    m_Localized: '{roundRangeText}, {appliedAllyCount} allies gained {allyStacksToApply}
-      {status}.'
+    m_Localized: '{roundRangeText}, {appliedAllyCount} {appliedAllyCount:plural:ally|allies}
+      gained {allyStacksToApply} {status}.'
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -15708,7 +15721,7 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 285509440581687
-    m_Localized: At the start of an odd-numbered round, {oddRoundAffectedCount} allies
+    m_Localized: At the start of an odd-numbered round, {oddRoundAffectedCount} {oddRoundAffectedCount:plural:ally|allies}
       gained {oddRoundStacks} {status}.
     m_Metadata:
       m_Items:
@@ -15809,7 +15822,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 72000000000110
-    m_Localized: "Speed {min}\u2013{max} \xB7 Speed dice {slots}"
+    m_Localized: "Speed {min}\u2013{max} \xB7 Speed Slots {slots}"
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
@@ -15819,12 +15832,16 @@ MonoBehaviour:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 72000000000112
-    m_Localized: Speed dice {slots}
+    m_Localized: Speed Slots {slots}
     m_Metadata:
       m_Items:
       - rid: 5043701850270335003
   - m_Id: 72000000000113
     m_Localized: Loot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 316768992702464
+    m_Localized: Prepare
     m_Metadata:
       m_Items: []
   references:
