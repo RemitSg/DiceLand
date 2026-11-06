@@ -134,6 +134,20 @@ public partial class MapInventoryDetailView : MonoBehaviour
     private void PresentItem(Object item, Sprite icon, string title, string rarity, Color rarityColor,
         string category, int amount, string description, string additional)
     {
+        PresentItemCore(item, icon, title, rarity, rarityColor, category, amount, description, additional, false);
+    }
+
+    private void PresentItemCore(Object item, Sprite icon, string title, string rarity, Color rarityColor,
+        string category, int amount, string description, string additional, bool isEncyclopedia)
+    {
+        encyclopediaEntry = isEncyclopedia;
+        if (!isEncyclopedia && modalRoot != null)
+        {
+            encyclopediaTextOnly = false;
+            quantityText.transform.parent.gameObject.SetActive(true);
+            displayEngraving.gameObject.SetActive(true);
+            rarityFace.gameObject.SetActive(true);
+        }
         ResetPresentationLabels();
         bool changed = displayedItem != item;
         if (changed) ConfigureActionButton(string.Empty, false, null, string.Empty);
@@ -272,7 +286,7 @@ public partial class MapInventoryDetailView : MonoBehaviour
         }
     }
 
-    private static Color GetLootRarityColor(LootRarity rarity)
+    internal static Color GetLootRarityColor(LootRarity rarity)
     {
         switch (rarity)
         {

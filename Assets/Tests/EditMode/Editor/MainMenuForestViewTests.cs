@@ -41,6 +41,7 @@ public class MainMenuForestViewTests
     [TestCase(MenuAction.NewGame)]
     [TestCase(MenuAction.Continue)]
     [TestCase(MenuAction.Ability)]
+    [TestCase(MenuAction.Encyclopedia)]
     [TestCase(MenuAction.Tutorial)]
     [TestCase(MenuAction.Settings)]
     [TestCase(MenuAction.Contributors)]

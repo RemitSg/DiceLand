@@ -316,7 +316,8 @@ public class RunGameManager : MonoBehaviour
         AbilityRunBonus abilityBonus = BuildAbilityRunBonus();
         activeDifficultyConfig = config;
         runState = RunBootstrapService.CreateNormalRun(GetStartingConfiguration(config), abilityBonus,
-            DateTimeOffset.UtcNow.ToUnixTimeSeconds(), out List<BattleSettlementRelicChoiceData> startingChoices);
+            DateTimeOffset.UtcNow.ToUnixTimeSeconds(), out List<BattleSettlementRelicChoiceData> startingChoices,
+            Application.isPlaying ? EncyclopediaProgress.Current : null);
         EnqueueStartingRelicBagChoices(startingChoices);
 
         actionPointSystem.Initialize(Mathf.Max(1, ResolveActionPointLimitForTier(config, 0) + abilityBonus.startingActionPointLimitFlat));
@@ -368,6 +369,8 @@ public class RunGameManager : MonoBehaviour
             settlementStats = new RunSettlementStats { runStartedUnixSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds() }
         };
 
+        if (Application.isPlaying)
+            runState.TrackEncyclopedia(EncyclopediaProgress.Current);
         ApplyStartingInventory(runState);
         runState.SyncLegacyPlayerFieldsFromParty();
 
@@ -422,6 +425,9 @@ public class RunGameManager : MonoBehaviour
         runState = snapshot.runState != null ? snapshot.runState.Clone() : null;
         if (runState == null)
             return false;
+
+        if (Application.isPlaying)
+            runState.TrackEncyclopedia(EncyclopediaProgress.Current);
 
         activeDifficultyConfig = ResolvePreferredDifficultyForRestore(runState != null ? runState.difficultyName : string.Empty);
         isTutorialRun = MainMenuRuntime.TutorialActive;

@@ -257,6 +257,7 @@ public partial class RunState
             partyMembers = new List<RunPartyMemberState>();
 
         partyMembers.Add(member);
+        encyclopedia?.Record(member.weaponData);
         SyncLegacyPlayerFieldsFromParty();
     }
 
@@ -297,6 +298,7 @@ public partial class RunState
                 continue;
 
             stack.amount += amount;
+            encyclopedia?.Record(lootItem);
             return;
         }
 
@@ -305,6 +307,7 @@ public partial class RunState
             lootItem = lootItem,
             amount = amount
         });
+        encyclopedia?.Record(lootItem);
     }
 
     public void AddMoney(int amount, bool countAsRunGain = true)
@@ -349,6 +352,7 @@ public partial class RunState
                 continue;
 
             stack.amount += amount;
+            encyclopedia?.Record(weaponData);
             return;
         }
 
@@ -357,6 +361,7 @@ public partial class RunState
             weaponData = weaponData,
             amount = amount
         });
+        encyclopedia?.Record(weaponData);
     }
 
     public int GetWeaponAmount(Weapon_SO weaponData)
@@ -526,6 +531,7 @@ public partial class RunState
 
             stack.amount += amount;
             added = true;
+            encyclopedia?.Record(relicData);
             if (processAcquireEffects)
                 RelicTriggerDispatcher.ProcessRelicAcquired(this, relicData, amount);
             return;
@@ -537,6 +543,7 @@ public partial class RunState
             amount = amount
         });
         added = true;
+        encyclopedia?.Record(relicData);
 
         if (added && processAcquireEffects)
             RelicTriggerDispatcher.ProcessRelicAcquired(this, relicData, amount);
@@ -672,6 +679,7 @@ public partial class RunState
             calamityData = calamityData,
             acquiredAtTier = Mathf.Max(1, acquiredTier)
         });
+        encyclopedia?.Record(calamityData);
         RunPartyMemberMaxHpService.RecalculateParty(this);
     }
 
@@ -892,6 +900,7 @@ public partial class RunState
         }
 
         clone.itemAcquisitions = itemAcquisitions != null ? itemAcquisitions.Clone() : null;
+        clone.encyclopedia = encyclopedia;
         return clone;
     }
 }

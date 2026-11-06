@@ -21,7 +21,7 @@ public sealed class RunStartingConfiguration
 public static class RunBootstrapService
 {
     public static RunState CreateNormalRun(RunStartingConfiguration definition, AbilityRunBonus bonus,
-        long startedUnixSeconds, out List<BattleSettlementRelicChoiceData> startingChoices)
+        long startedUnixSeconds, out List<BattleSettlementRelicChoiceData> startingChoices, EncyclopediaProgress encyclopedia = null)
     {
         if (definition == null || definition.difficulty == null) throw new System.ArgumentException("A difficulty configuration is required.");
         bonus = bonus ?? new AbilityRunBonus();
@@ -35,6 +35,7 @@ public static class RunBootstrapService
         };
         AbilityRunBonusRuntimeService.ApplyPersistentRunBonuses(state, bonus);
         ApplyAbilityStartingPartyBonuses(state, bonus, definition.recruitRoster);
+        state.TrackEncyclopedia(encyclopedia);
         ApplyStartingInventory(state, definition.inventory);
         startingChoices = ApplyAbilityStartingInventory(state, bonus);
         state.SyncLegacyPlayerFieldsFromParty();

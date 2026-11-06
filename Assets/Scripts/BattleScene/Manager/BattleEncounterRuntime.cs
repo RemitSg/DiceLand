@@ -52,6 +52,7 @@ public sealed class BattleEncounterData
     public bool returnToMainMenuOnVictory;
     public bool restartBattleOnDefeat = true;
     public bool returnToMapOnDefeat;
+    [NonSerialized] internal EncyclopediaProgress encyclopedia;
     [NonSerialized] public bool battleStartAllyStatusGrantsApplied;
     [NonSerialized] private HashSet<string> roundRelicProcKeys;
     [NonSerialized] private HashSet<string> battleRelicProcKeys;

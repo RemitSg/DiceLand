@@ -13611,6 +13611,62 @@ MonoBehaviour:
     m_Key: map.dungeon.start
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000100
+    m_Key: ui.encyclopedia.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000101
+    m_Key: ui.encyclopedia.details
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000102
+    m_Key: ui.encyclopedia.enemies
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000103
+    m_Key: ui.encyclopedia.weapons
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000104
+    m_Key: ui.encyclopedia.calamities
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000105
+    m_Key: ui.encyclopedia.progress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000106
+    m_Key: ui.encyclopedia.empty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000107
+    m_Key: ui.encyclopedia.locked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000108
+    m_Key: ui.encyclopedia.effect
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000109
+    m_Key: ui.encyclopedia.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000110
+    m_Key: ui.encyclopedia.enemy_speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000111
+    m_Key: ui.encyclopedia.stage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000112
+    m_Key: ui.encyclopedia.speed_slots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000113
+    m_Key: ui.encyclopedia.loot
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

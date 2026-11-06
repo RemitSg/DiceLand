@@ -115,7 +115,10 @@ public sealed class MainMenuForestView : MonoBehaviour
 
         menuPage = Rect("Menu", composition, Vector2.zero, new Vector2(760f, 1080f)).gameObject;
         menuGroup = menuPage.AddComponent<CanvasGroup>();
-        selectionFrame = Rect("SelectionFrame", menuPage.transform, new Vector2(84f, 342f), new Vector2(636f, 108f));
+        const float firstEntryY = 315f;
+        const float entryHeight = 94f;
+        const float entryStep = 102f;
+        selectionFrame = Rect("SelectionFrame", menuPage.transform, new Vector2(84f, firstEntryY), new Vector2(636f, entryHeight));
         Graphic selectionGraphic;
         if (parchmentFrame != null)
         {
@@ -132,14 +135,15 @@ public sealed class MainMenuForestView : MonoBehaviour
             selectionGraphic = frame;
         }
         selectionGraphic.raycastTarget = false;
-        MenuAction[] primary = { MenuAction.NewGame, MenuAction.Continue, MenuAction.Ability, MenuAction.Tutorial, MenuAction.Settings };
+        MenuAction[] primary = { MenuAction.NewGame, MenuAction.Continue, MenuAction.Ability, MenuAction.Encyclopedia,
+            MenuAction.Tutorial, MenuAction.Settings };
         MainMenuOrnament.Shape[] icons = { MainMenuOrnament.Shape.Diamond, MainMenuOrnament.Shape.Book,
-            MainMenuOrnament.Shape.Ability, MainMenuOrnament.Shape.Book, MainMenuOrnament.Shape.Settings };
+            MainMenuOrnament.Shape.Ability, MainMenuOrnament.Shape.Book, MainMenuOrnament.Shape.Book, MainMenuOrnament.Shape.Settings };
         for (int i = 0; i < primary.Length; i++)
         {
             MenuAction id = primary[i];
-            Button button = MenuButton(id.ToString(), menuPage.transform, new Vector2(84f, 342f + i * 112f),
-                new Vector2(636f, 108f), Label(labels, id), icons[i], false, 58);
+            Button button = MenuButton(id.ToString(), menuPage.transform, new Vector2(84f, firstEntryY + i * entryStep),
+                new Vector2(636f, entryHeight), Label(labels, id), icons[i], false, 54);
             button.transition = Selectable.Transition.None;
             button.targetGraphic.color = Color.clear;
             Text label = button.transform.Find("Label").GetComponent<Text>();
@@ -154,9 +158,9 @@ public sealed class MainMenuForestView : MonoBehaviour
             buttons[id] = button;
             button.onClick.AddListener(() => Dispatch(id));
         }
-        continueStatus = Text("SaveStatus", buttons[MenuAction.Continue].transform, new Vector2(408f, 16f), new Vector2(210f, 76f),
+        continueStatus = Text("SaveStatus", buttons[MenuAction.Continue].transform, new Vector2(408f, 10f), new Vector2(210f, 74f),
             GameText.Get("ui.menu.no_save", "暂无存档"), 28, new Color(0.64f, 0.64f, 0.58f));
-        buttons[MenuAction.Continue].transform.Find("Label").GetComponent<RectTransform>().sizeDelta = new Vector2(274f, 90f);
+        buttons[MenuAction.Continue].transform.Find("Label").GetComponent<RectTransform>().sizeDelta = new Vector2(274f, 76f);
 
         AddUtility(MenuAction.Contributors, new Vector2(88f, 960f), new Vector2(310f, 72f), MainMenuOrnament.Shape.People, labels);
         Text("UtilityDivider", menuPage.transform, new Vector2(406f, 970f), new Vector2(24f, 50f), "|", 30, Gold, TextAnchor.MiddleCenter);

@@ -168,7 +168,12 @@ public sealed class MainMenuMotionPlayModeTests
         yield return Until(() => !Get<bool>(Motion(page), "IsTransitioning"));
         start.onClick.Invoke();
         start.onClick.Invoke();
+        yield return Until(() => started == 1);
         Assert.AreEqual(1, started);
+        Assert.IsFalse(Get<bool>(tutorial, "IsVisible"));
+        Invoke(tutorial, "Show", null, (Action)(() => started++), (Action)(() => returned++), null, null, null, null, true);
+        Show(page, null);
+        yield return Until(() => !Get<bool>(Motion(page), "IsTransitioning"));
         Invoke(tutorial, "Hide");
         Invoke(tutorial, "Hide");
         Assert.IsTrue(Get<bool>(tutorial, "IsVisible"));

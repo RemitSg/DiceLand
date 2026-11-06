@@ -53,7 +53,8 @@ public partial class MapInventoryDetailView
         // Only the art breathes; its frame, quantity and text remain still.
         if (iconImage != null)
         {
-            iconImage.rectTransform.anchoredPosition = new Vector2(220, -226 - selection * 10 + Mathf.Sin(displayAge * 1.3f) * 2);
+            iconImage.rectTransform.anchoredPosition = iconRestPosition
+                + Vector2.up * (-selection * 10 + Mathf.Sin(displayAge * 1.3f) * 2);
             iconImage.rectTransform.localScale = Vector3.one * (1 - selection * 0.035f);
             iconImage.color = new Color(1, 1, 1, 1 - selection * 0.45f);
         }

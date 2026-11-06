@@ -91,8 +91,11 @@ public sealed class RunItemAcquisitionPlayModeTests
         Assert.AreEqual(2,Pending());
         host.SetActive(true); Invoke(overlay,"ProcessPending");
         Assert.AreEqual("获得图纸",Text("Heading"));
-        yield return new WaitForSecondsRealtime(.3f); Click(Find("CloseButton"));
-        yield return new WaitForSecondsRealtime(.26f);
+        var panel = (CanvasGroup)Get(detail,"panelGroup");
+        yield return WaitForPresentation(() => panel.alpha > .99f, "The reopened blueprint must finish opening before it is clicked.");
+        yield return WaitForPresentation(() => ((Func<bool>)Get(detail,"DismissAllowed"))(), "The reopened reward must finish its click-through protection before dismissal.");
+        Click(Find("CloseButton"));
+        yield return WaitForPresentation(() => Text("Heading") == "获得遗物", "Closing the blueprint should show the relic granted during the previous close.");
         Assert.AreEqual("获得遗物",Text("Heading")); Assert.AreEqual("本次获得 ×1",Text("Quantity"));
         Assert.AreEqual(3,Invoke(state,"GetRelicAmount",relic));
     }

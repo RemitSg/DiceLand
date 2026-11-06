@@ -97,6 +97,7 @@ public static class MainMenuVisualTools
             var labels = new Dictionary<MenuAction, string>
             {
                 { MenuAction.NewGame, "新游戏" }, { MenuAction.Continue, "继续游戏" }, { MenuAction.Ability, "能力" },
+                { MenuAction.Encyclopedia, "图鉴" },
                 { MenuAction.Tutorial, "教程" }, { MenuAction.Settings, "设置" }, { MenuAction.Contributors, "制作人员" },
                 { MenuAction.Exit, "退出" }, { MenuAction.DemoTest, "测试战斗" }
             };

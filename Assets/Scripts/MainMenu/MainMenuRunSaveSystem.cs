@@ -354,6 +354,27 @@ public static class MainMenuRunSaveSystem
         return true;
     }
 
+    internal static void RestoreEncyclopediaOwnership(EncyclopediaCatalog encyclopedia, EncyclopediaProgress progress)
+    {
+        if (encyclopedia == null || !TryReadSaveData(out SavedRunData saved) || saved.snapshot == null)
+            return;
+
+        var catalog = new MainMenuSaveAssetCatalog();
+        foreach (EncyclopediaCatalog.Entry entry in encyclopedia.Entries)
+        {
+            switch (entry.Asset)
+            {
+                case Weapon_SO weapon: catalog.Add(weapon); break;
+                case LootItem_SO loot: catalog.Add(loot); break;
+                case Relic_SO relic: catalog.Add(relic); break;
+                case Calamity_SO calamity: catalog.Add(calamity); break;
+            }
+        }
+
+        progress.RecordOwned(DeserializeRunState(saved.snapshot.runState, catalog));
+        progress.RecordOwned(DeserializeRunState(saved.snapshot.specialDungeonContext?.mainMapSnapshot?.runState, catalog));
+    }
+
     public static void SaveSnapshot(
         string sceneName,
         RunState runState,

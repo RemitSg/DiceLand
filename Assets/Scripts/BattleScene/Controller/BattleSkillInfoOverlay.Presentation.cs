@@ -104,6 +104,8 @@ public partial class BattleSkillInfoOverlay
         summaryRoot = SkillRect(detailRegion, "DiceOverview");
         bodyArea = SkillRect(detailRegion, "DetailArea");
         detailScrollRect = BuildSkillScroll(bodyArea, "Detail", out detailViewport, out detailContent, out _);
+        requirementsText.transform.SetParent(detailContent, false);
+        summaryRoot.SetParent(detailContent, false);
         detailText = SkillText(detailContent, "EnemyData", 27, SkillIvory, string.Empty); detailText.enableWordWrapping = true;
         descriptionHeading = SkillText(detailContent, "DescriptionHeading", 26, SkillGold, GameText.Get("ui.description", "描述"));
         descriptionBody = SkillText(detailContent, "Description", SkillDescriptionSize, SkillIvory, string.Empty); descriptionBody.enableWordWrapping = true;
@@ -145,7 +147,7 @@ public partial class BattleSkillInfoOverlay
         SetEnemyProfileVisible(profile);
         if (profile) { LayoutEnemyProfile(false); return; }
         bool ally = viewMode == SkillViewMode.Ally;
-        frameState = new SkillFrameState { width = ally ? 1420 : 980, height = ally ? 820 : viewMode == SkillViewMode.EnemySkill ? 680 : 730, listWidth = 340 };
+        frameState = new SkillFrameState { width = ally ? 1480 : 1240, height = 880, listWidth = 310 };
         float w = frameState.width, h = frameState.height;
         panelRoot.sizeDelta = new Vector2(w, h);
         PlaceSkill(titlePlaque, (w - 450) / 2, -22, 450, 76);
@@ -154,10 +156,10 @@ public partial class BattleSkillInfoOverlay
         PlaceSkill(contextText.rectTransform, w - 570, 80, 430, 34); contextText.gameObject.SetActive(viewMode != SkillViewMode.EnemyData);
         PlaceSkill((RectTransform)panelRoot.Find("HeaderRule"), 40, 130, w - 80, 5);
         listArea.gameObject.SetActive(ally); listHeading.gameObject.SetActive(ally); columnRule.gameObject.SetActive(ally);
-        PlaceSkill(listHeading, 46, 152, 330, 42);
+        PlaceSkill(listHeading, 46, 152, frameState.listWidth, 42);
         PlaceSkill(listArea, 42, 200, frameState.listWidth, h - 300);
-        PlaceSkill(columnRule, 405, 154, 2, h - 274);
-        float x = ally ? 442 : 46;
+        PlaceSkill(columnRule, 375, 154, 2, h - 274);
+        float x = ally ? 410 : 46;
         detailWidth = w - x - 46;
         PlaceSkill(detailRegion, x, 154, detailWidth, h - 270);
         PlaceSkill(footerRule, 40, h - 100, w - 80, 5);

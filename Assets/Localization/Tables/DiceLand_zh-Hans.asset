@@ -14301,6 +14301,62 @@ MonoBehaviour:
     m_Localized: "\u526F\u672C\u8D77\u70B9"
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000100
+    m_Localized: "\u56FE\u9274"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000101
+    m_Localized: "\u56FE\u9274\u8BE6\u60C5"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000102
+    m_Localized: "\u654C\u4EBA"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000103
+    m_Localized: "\u6B66\u5668"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000104
+    m_Localized: "\u707E\u5384"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000105
+    m_Localized: "\u6536\u96C6\u8FDB\u5EA6"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000106
+    m_Localized: "\u6682\u65E0\u6761\u76EE"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000107
+    m_Localized: "\u672A\u89E3\u9501"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000108
+    m_Localized: "\u6548\u679C"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000109
+    m_Localized: "\u8BE6\u7EC6\u4FE1\u606F"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000110
+    m_Localized: "\u901F\u5EA6 {min}\u2013{max} \xB7 \u901F\u5EA6\u9AB0 {slots}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000111
+    m_Localized: "\u9636\u6BB5 {stage} \xB7 {speed}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000112
+    m_Localized: "\u901F\u5EA6\u9AB0 {slots}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000113
+    m_Localized: "\u6218\u5229\u54C1"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

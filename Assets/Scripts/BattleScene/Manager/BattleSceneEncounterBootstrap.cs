@@ -155,6 +155,8 @@ public partial class BattleSceneEncounterBootstrap : MonoBehaviour
 
         SpawnAllies(encounterData.Allies);
         SpawnEnemies(encounterData.Enemies, encounterData.encounterLabel);
+        if (!headlessExecution)
+            encounterData.encyclopedia?.Record(encounterData.Enemies);
     }
 
     private void SpawnAllies(IReadOnlyList<RunPartyMemberState> allies)
@@ -250,6 +252,8 @@ public partial class BattleSceneEncounterBootstrap : MonoBehaviour
         {
             if (battleManager.ManagedData.EnemyCount <= previousEnemyCount)
                 battleManager.ManagedData.EnemyCount = previousEnemyCount + 1;
+            if (!headlessExecution)
+                BattleEncounterRuntime.ActiveEncounter?.encyclopedia?.Record(enemyData);
             return spawnedEnemy;
         }
 

@@ -29,6 +29,7 @@ public static class MapEventEncounterService
 
         encounterData = new BattleEncounterData
         {
+            encyclopedia = runState.Encyclopedia,
             sourceSceneName = sourceSceneName,
             targetSceneName = battleSceneName,
             encounterLabel = GameText.Format("map.event.event_encounter", "事件遭遇：{groupName}", ("groupName", encounterGroup.LocalizedName)),

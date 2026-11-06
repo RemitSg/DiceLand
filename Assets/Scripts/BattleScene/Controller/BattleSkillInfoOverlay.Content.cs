@@ -162,25 +162,27 @@ public partial class BattleSkillInfoOverlay
         }
         bool requirements = !dataMode && !string.IsNullOrEmpty(requirementsText.text);
         requirementsText.gameObject.SetActive(requirements);
-        if (requirements)
-        {
-            float height = SkillTextHeight(requirementsText, detailWidth, 32);
-            PlaceSkill(requirementsText.rectTransform, 0, y, detailWidth, height); y += height + 12;
-        }
-        int count = !dataMode && displayedSkill != null ? Mathf.Max(0, displayedSkill.diceCount) : 0;
-        summaryHeight = 0;
-        if (count > 1)
-        {
-            int columns = Mathf.Max(1, Mathf.FloorToInt(detailWidth / 230));
-            float width = (detailWidth - (columns - 1) * 10) / columns;
-            for (int i = 0; i < count; i++) PlaceSkill((RectTransform)diceLinks[i].transform, (i % columns) * (width + 10), (i / columns) * 52, width, 42);
-            summaryHeight = Mathf.Ceil(count / (float)columns) * 52;
-            PlaceSkill(summaryRoot, 0, y, detailWidth, summaryHeight); y += summaryHeight + 4;
-        }
+        // Keep the title and metadata fixed; all variable-length rules share the reading area.
         bodyTop = y; bodyWidth = detailWidth - 17;
         float available = Mathf.Max(90, frameState.height - 270 - y);
         PlaceSkill(bodyArea, 0, y, detailWidth, available);
         float cursor = 0;
+        if (requirements)
+        {
+            float height = SkillTextHeight(requirementsText, bodyWidth, 32);
+            PlaceSkill(requirementsText.rectTransform, 0, cursor, bodyWidth, height); cursor += height + 16;
+        }
+        int count = !dataMode && displayedSkill != null ? Mathf.Max(0, displayedSkill.diceCount) : 0;
+        summaryRoot.gameObject.SetActive(count > 1);
+        summaryHeight = 0;
+        if (count > 1)
+        {
+            int columns = Mathf.Max(1, Mathf.FloorToInt(bodyWidth / 230));
+            float width = (bodyWidth - (columns - 1) * 10) / columns;
+            for (int i = 0; i < count; i++) PlaceSkill((RectTransform)diceLinks[i].transform, (i % columns) * (width + 10), (i / columns) * 52, width, 42);
+            summaryHeight = Mathf.Ceil(count / (float)columns) * 52;
+            PlaceSkill(summaryRoot, 0, cursor, bodyWidth, summaryHeight); cursor += summaryHeight + 4;
+        }
         if (dataMode)
         {
             float height = SkillTextHeight(detailText, bodyWidth, 40);

@@ -117,7 +117,7 @@ public sealed class MapInventoryDetailViewTests
         try
         {
             relic.relicName = "用于验证标题自动换行的非常长的森林遗物名称";
-            relic.description = string.Join("\n", Enumerable.Repeat("获得金币并恢复行动点，保留完整的多段机制说明。", 16));
+            relic.description = string.Join("\n", Enumerable.Repeat("获得金币并恢复行动点，保留完整的多段机制说明。", 32));
             relic.additionalDescription = "补充规则：每场战斗重置。\n" + string.Join("\n", Enumerable.Repeat("特殊条件与联动说明。", 8));
             var state = new RunRelicState { relicData = relic, amount = 2 };
             view.Show(state); Layout();
@@ -134,6 +134,39 @@ public sealed class MapInventoryDetailViewTests
             Assert.IsFalse(Bounds(Find("DescriptionWell")).Overlaps(Bounds(Find("CloseButton"))));
             view.Show(new RunLootState { lootItem = item, amount = 1 });
             Assert.That(scroll.content.anchoredPosition.y, Is.EqualTo(0).Within(0.1f));
+        }
+        finally { Object.DestroyImmediate(relic); }
+    }
+
+    [TestCase(2340, 1080)]
+    [TestCase(1920, 1080)]
+    [TestCase(1080, 1920)]
+    public void ReadingAreaFitsSeveralLinesAndUsesAvailableWidth(int width, int height)
+    {
+        Layout(width, height);
+        ScrollRect scroll = Field<ScrollRect>("descriptionScroll");
+        Assert.GreaterOrEqual(scroll.viewport.rect.height, 300, "Long descriptions need a useful reading area.");
+        Assert.Greater(scroll.viewport.rect.width, 450);
+        Assert.IsFalse(Bounds(Find("QuantityBadge")).Overlaps(Bounds(Find("DescriptionWell"))));
+    }
+
+    [Test]
+    public void InGameRelicsAndWeaponsKeepOriginalWindowWhileBlueprintsUseLargeReadingArea()
+    {
+        Relic_SO relic = ScriptableObject.CreateInstance<Relic_SO>();
+        try
+        {
+            relic.relicName = "遗物窗口验证";
+            view.Show(new RunRelicState { relicData = relic, amount = 1 }); Layout();
+            Assert.AreEqual(new Vector2(1000, 560), ((RectTransform)view.transform).rect.size);
+            Assert.AreEqual(136, Field<ScrollRect>("descriptionScroll").viewport.rect.height);
+            CraftingBlueprint_SO blueprint = AssetDatabase.FindAssets("t:CraftingBlueprint_SO", new[] { "Assets/Data/Scroll" })
+                .Select(g => AssetDatabase.LoadAssetAtPath<CraftingBlueprint_SO>(AssetDatabase.GUIDToAssetPath(g))).First(b => b.blueprintID == 202);
+            view.Show(new RunWeaponState { weaponData = blueprint.targetWeapon, amount = 1 }); Layout();
+            Assert.AreEqual(new Vector2(1000, 560), ((RectTransform)view.transform).rect.size);
+            view.Show(new RunBlueprintState { blueprintData = blueprint, amount = 1 }); Layout();
+            Assert.Greater(((RectTransform)view.transform).rect.width, 1200);
+            Assert.Greater(Field<ScrollRect>("descriptionScroll").viewport.rect.height, 400);
         }
         finally { Object.DestroyImmediate(relic); }
     }

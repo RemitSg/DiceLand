@@ -116,7 +116,7 @@ public sealed class BattleSkillForestUiTests
     }
 
     [Test]
-    public void MixedDiceAndLongRulesScrollWithoutMovingOverviewOrFooter()
+    public void MixedDiceAndLongRulesScrollTogetherWithoutMovingTitleOrFooter()
     {
         BattleAllyController ally = Ally("Assets/Data/Weapons/000 WoodenSword/WoodenSword_Data.asset");
         EnemySkill_SO skill = ScriptableObject.CreateInstance<EnemySkill_SO>(); transient.Add(skill);
@@ -136,7 +136,9 @@ public sealed class BattleSkillForestUiTests
         Vector3 position = footer.position; scroll.verticalNormalizedPosition = 0; Canvas.ForceUpdateCanvases();
         Assert.AreEqual(position, footer.position);
         Assert.LessOrEqual(Get<TMP_Text>("descriptionBody").rectTransform.anchoredPosition.y * -1 + Get<TMP_Text>("descriptionBody").rectTransform.rect.height, scroll.content.rect.height + 1);
-        Assert.IsFalse(Get<RectTransform>("summaryRoot").IsChildOf(scroll.content));
+        Assert.IsTrue(Get<RectTransform>("summaryRoot").IsChildOf(scroll.content));
+        Assert.IsFalse(Get<TMP_Text>("skillNameText").transform.IsChildOf(scroll.content));
+        Assert.Greater(scroll.viewport.rect.height, 400);
     }
 
     [TestCase(1920, 1080, 100, 30, 1700, 1000)]

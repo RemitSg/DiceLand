@@ -30,7 +30,8 @@ public class MainMenuSceneController : MonoBehaviour
         Settings = 5,
         Exit = 6,
         DemoTest = 7,
-        Ability = 8
+        Ability = 8,
+        Encyclopedia = 9
     }
 
     [Header("Difficulty Configs")]
@@ -98,6 +99,7 @@ public class MainMenuSceneController : MonoBehaviour
     private AbilityMenuOverlay abilityOverlay;
     private MainMenuContributorsOverlay contributorsOverlay;
     private MainMenuSettingsOverlay settingsOverlay;
+    private MainMenuEncyclopediaOverlay encyclopediaOverlay;
     private readonly Dictionary<GalleryLevelView, MenuAction> menuActions = new Dictionary<GalleryLevelView, MenuAction>();
     private readonly Dictionary<GalleryLevelView, DifficultyConfig_SO> difficultyLookup = new Dictionary<GalleryLevelView, DifficultyConfig_SO>();
     private int lastCenteredMainMenuIndex = -1;
@@ -225,14 +227,23 @@ public class MainMenuSceneController : MonoBehaviour
         bool abilityVisibleAtStart = abilityOverlay != null && abilityOverlay.IsVisible;
         bool contributorsVisibleAtStart = contributorsOverlay != null && contributorsOverlay.IsVisible;
         bool settingsVisibleAtStart = settingsOverlay != null && settingsOverlay.IsVisible;
+        bool encyclopediaVisibleAtStart = encyclopediaOverlay != null && encyclopediaOverlay.IsVisible;
 
-        SetGalleryInputEnabled(!(tutorialVisibleAtStart || abilityVisibleAtStart || contributorsVisibleAtStart || settingsVisibleAtStart));
+        SetGalleryInputEnabled(!(tutorialVisibleAtStart || abilityVisibleAtStart || contributorsVisibleAtStart ||
+            settingsVisibleAtStart || encyclopediaVisibleAtStart));
 
-        if (forestMenu == null && !tutorialVisibleAtStart && !abilityVisibleAtStart && !contributorsVisibleAtStart && !settingsVisibleAtStart)
+        if (forestMenu == null && !IsBlockingOverlayVisible())
             HandleFocusedMenuOverlayState();
 
         if (!Input.GetKeyDown(KeyCode.Escape))
         {
+            TrackOverlayVisibilityState();
+            return;
+        }
+
+        if (encyclopediaVisibleAtStart)
+        {
+            encyclopediaOverlay.Back();
             TrackOverlayVisibilityState();
             return;
         }
@@ -553,6 +564,10 @@ public class MainMenuSceneController : MonoBehaviour
                 ShowAbilityOverlay();
                 break;
 
+            case MenuAction.Encyclopedia:
+                ShowEncyclopediaOverlay();
+                break;
+
             case MenuAction.Contributors:
                 if (settingsOverlay != null && settingsOverlay.IsVisible)
                     settingsOverlay.Hide();
@@ -610,6 +625,9 @@ public class MainMenuSceneController : MonoBehaviour
 
     private void StartNewGame(DifficultyConfig_SO config)
     {
+        if (Application.isPlaying && MainMenuRunSaveSystem.HasSavedRun())
+            MainMenuRunSaveSystem.RestoreEncyclopediaOwnership(
+                Resources.Load<EncyclopediaCatalog>(EncyclopediaCatalog.ResourcePath), EncyclopediaProgress.Current);
         MainMenuRuntime.ClearContinueRequest();
         MainMenuRuntime.ClearTutorialRequest();
         MainMenuRuntime.SetSelectedDifficulty(config);
@@ -780,6 +798,20 @@ public class MainMenuSceneController : MonoBehaviour
         });
     }
 
+    private void ShowEncyclopediaOverlay()
+    {
+        if (encyclopediaOverlay == null)
+            encyclopediaOverlay = gameObject.AddComponent<MainMenuEncyclopediaOverlay>();
+
+        EncyclopediaCatalog catalog = Resources.Load<EncyclopediaCatalog>(EncyclopediaCatalog.ResourcePath);
+        EncyclopediaProgress progress = EncyclopediaProgress.Current;
+        if (Application.isPlaying)
+            MainMenuRunSaveSystem.RestoreEncyclopediaOwnership(catalog, progress);
+        encyclopediaOverlay.Show(catalog, progress, TrackOverlayVisibilityState);
+        AnimatePage(encyclopediaOverlay.PresentationCanvas);
+        SetGalleryInputEnabled(false);
+    }
+
     private void StartTutorialFromMenu()
     {
         PrepareTutorialRun();
@@ -823,7 +855,8 @@ public class MainMenuSceneController : MonoBehaviour
         return (tutorialOverlay != null && tutorialOverlay.IsVisible)
             || (abilityOverlay != null && abilityOverlay.IsVisible)
             || (contributorsOverlay != null && contributorsOverlay.IsVisible)
-            || (settingsOverlay != null && settingsOverlay.IsVisible);
+            || (settingsOverlay != null && settingsOverlay.IsVisible)
+            || (encyclopediaOverlay != null && encyclopediaOverlay.IsVisible);
     }
 
     private void SetGalleryInputEnabled(bool enabled)
@@ -977,6 +1010,10 @@ public class MainMenuSceneController : MonoBehaviour
             case "能力":
                 return MenuAction.Ability;
 
+            case "encyclopedia":
+            case "图鉴":
+                return MenuAction.Encyclopedia;
+
             case "credits":
             case "contributors":
             case "制作人员":
@@ -1020,6 +1057,8 @@ public class MainMenuSceneController : MonoBehaviour
                 return ("ui.menu.tutorial", tutorialLabel);
             case MenuAction.Ability:
                 return ("ui.menu.abilities", abilityLabel);
+            case MenuAction.Encyclopedia:
+                return ("ui.encyclopedia.title", "图鉴");
             case MenuAction.Contributors:
                 return ("ui.menu.contributors", contributorsLabel);
             case MenuAction.Settings:
@@ -1048,7 +1087,18 @@ public class MainMenuSceneController : MonoBehaviour
 
         EnsureTutorialMenuItem(items);
         EnsureAbilityMenuItem(items);
+        if (!useForestMenu)
+            EnsureEncyclopediaMenuItem(items);
         return items;
+    }
+
+    private void EnsureEncyclopediaMenuItem(List<GalleryLevelView> items)
+    {
+        if (items.Exists(item => ResolveMenuAction(item) == MenuAction.Encyclopedia))
+            return;
+        GalleryLevelView prototype = FindTutorialPrototype(items);
+        if (prototype != null)
+            items.Insert(DetermineAbilityInsertIndex(items), CreateRuntimeMenuItem(prototype, "Encyclopedia", "图鉴"));
     }
 
     private void EnsureTutorialMenuItem(List<GalleryLevelView> items)

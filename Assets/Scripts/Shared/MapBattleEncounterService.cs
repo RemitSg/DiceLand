@@ -64,6 +64,7 @@ public static class MapBattleEncounterService
         BoardTileData tile = request.tile;
         BattleEncounterData encounterData = new BattleEncounterData
         {
+            encyclopedia = request.runState.Encyclopedia,
             sourceSceneName = string.IsNullOrWhiteSpace(request.sourceSceneName)
                 ? SceneManager.GetActiveScene().name
                 : request.sourceSceneName,

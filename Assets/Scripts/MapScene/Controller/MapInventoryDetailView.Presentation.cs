@@ -11,8 +11,8 @@ public partial class MapInventoryDetailView
     private static readonly Color DetailIvory = new Color32(242, 231, 200, 255);
     private static readonly Color DetailGold = new Color32(220, 182, 97, 255);
     private TMP_FontAsset detailHeadingFont, detailBodyFont;
-    private TextMeshProUGUI categoryText, quantityText, headingText, descriptionHeading, extraHeading, closeLabel, actionLabel;
-    private RectTransform modalRoot, detailSafeArea, detailRect, titlePlaque, descriptionWell, footerRule;
+    private TextMeshProUGUI categoryText, quantityText, headingText, descriptionHeading, extraHeading, closeLabel, actionLabel, readingHint;
+    private RectTransform modalRoot, detailSafeArea, detailRect, titlePlaque, descriptionWell, footerRule, columnRule, nameRule;
     private Image detailBackdrop;
     private CanvasGroup panelGroup;
     private ScrollRect descriptionScroll;
@@ -24,11 +24,13 @@ public partial class MapInventoryDetailView
     private Vector2 layoutViewport, layoutCanvasSize;
     private Rect layoutSafeArea;
     private float detailScale = 1;
+    private Vector2 iconRestPosition;
     private bool hasDescriptionLayout;
     public event Action Hidden;
     public RectTransform ModalRoot => modalRoot;
     public Image Backdrop => detailBackdrop;
     public bool IsVisible => modalRoot != null ? modalRoot.gameObject.activeSelf : gameObject.activeSelf;
+    private bool UsesClassicItemLayout => !encyclopediaEntry && (displayedItem is Relic_SO || displayedItem is Weapon_SO);
 
     /// <summary>Both inventory and battle settlement use this same runtime view.</summary>
     public static MapInventoryDetailView Create(RectTransform parent, string name)
@@ -66,7 +68,7 @@ public partial class MapInventoryDetailView
         StretchDetail(headingText.rectTransform, 44, 7); headingText.alignment = TextAlignmentOptions.Midline;
         closeXButton = DetailButton(detailRect, "CloseXButton", "×", false, Hide, out _);
         PlaceDetail((RectTransform)closeXButton.transform, 920, 20, 58, 58);
-        RectTransform rule = DetailRect(detailRect, "ColumnRule"); PlaceDetail(rule, 416, 66, 6, 376); DetailRule(rule);
+        columnRule = DetailRect(detailRect, "ColumnRule"); PlaceDetail(columnRule, 416, 66, 6, 376); DetailRule(columnRule);
         RectTransform display = DetailRect(detailRect, "DisplayEngraving"); PlaceDetail(display, 48, 66, 344, 330);
         displayEngraving = DetailCustomFace(display, MapItemDetailFrameGraphic.DetailStyle.Engraving);
         iconImage = DetailRect(detailRect, "Icon").gameObject.AddComponent<Image>();
@@ -82,7 +84,7 @@ public partial class MapInventoryDetailView
         titleText.enableAutoSizing = true; titleText.fontSizeMin = 24; titleText.fontSizeMax = 48;
         titleText.enableWordWrapping = true;
         titleText.alignment = TextAlignmentOptions.MidlineLeft;
-        RectTransform titleRule = DetailRect(detailRect, "NameRule"); PlaceDetail(titleRule, 460, 142, 470, 6); DetailRule(titleRule);
+        nameRule = DetailRect(detailRect, "NameRule"); PlaceDetail(nameRule, 460, 142, 470, 6); DetailRule(nameRule);
         RectTransform rarity = DetailRect(detailRect, "RarityBadge"); PlaceDetail(rarity, 460, 164, 164, 46);
         rarityFace = DetailCustomFace(rarity, MapItemDetailFrameGraphic.DetailStyle.Rarity);
         metaText = DetailText(rarity, "Meta", 28, DetailIvory, string.Empty);
@@ -112,6 +114,9 @@ public partial class MapInventoryDetailView
         relicAdditionalDescriptionText = DetailText(content, "RelicAdditionalDescription", AdditionalDescriptionSize, new Color32(188, 202, 168, 255), string.Empty);
         relicAdditionalDescriptionText.enableWordWrapping = true;
         BuildDescriptionScrollbar();
+        readingHint = DetailText(descriptionWell, "ReadingHint", 20, new Color32(182, 197, 167, 255), string.Empty);
+        readingHint.alignment = TextAlignmentOptions.MidlineRight;
+        descriptionScroll.onValueChanged.AddListener(_ => UpdateReadingHint());
         footerRule = DetailRect(detailRect, "FooterRule"); PlaceDetail(footerRule, 36, 462, 928, 6); DetailRule(footerRule);
         actionStatusText = DetailText(detailRect, "ActionStatus", 22, new Color32(182, 197, 167, 255), string.Empty);
         actionStatusText.enableWordWrapping = true; actionStatusText.alignment = TextAlignmentOptions.Midline;
@@ -136,7 +141,7 @@ public partial class MapInventoryDetailView
     private void ApplyPresentationFonts()
     {
         if (modalRoot == null) return;
-        foreach (TMP_Text text in new TMP_Text[] { headingText, categoryText, quantityText, descriptionHeading, extraHeading, actionLabel, closeLabel })
+        foreach (TMP_Text text in new TMP_Text[] { headingText, categoryText, quantityText, descriptionHeading, extraHeading, actionLabel, closeLabel, readingHint })
             ApplyFont(text, detailBodyFont);
         ApplyFont(headingText, detailHeadingFont);
         ApplyFont(titleText, detailBodyFont);
@@ -151,11 +156,15 @@ public partial class MapInventoryDetailView
         relicAdditionalDescriptionText.fontSize = MainMenuSettingsPersistence.DetailFontSize(AdditionalDescriptionSize);
         bool action = actionButton.gameObject.activeSelf;
         bool status = actionStatusText != null && !string.IsNullOrWhiteSpace(actionStatusText.text);
-        float wellHeight = status ? 177 : 204;
-        PlaceDetail(descriptionWell, 454, 238, 492, wellHeight);
-        PlaceDetail((RectTransform)descriptionScroll.transform, 22, 52, 444, wellHeight - 68);
-        PlaceDetail((RectTransform)descriptionScrollbar.transform, 474, 54, 7, wellHeight - 74);
-        float width = 438;
+        float panelWidth = detailRect.rect.width, panelHeight = detailRect.rect.height;
+        float wellWidth, wellHeight;
+        LayoutDetailHeader(status, out wellWidth, out wellHeight);
+        float bottomPadding = UsesClassicItemLayout ? 68 : 84;
+        PlaceDetail(descriptionHeading.rectTransform, 22, UsesClassicItemLayout ? 9 : 6, UsesClassicItemLayout ? 390 : wellWidth - 44, 38);
+        PlaceDetail((RectTransform)descriptionScroll.transform, 22, UsesClassicItemLayout ? 52 : 50, wellWidth - 48, wellHeight - bottomPadding);
+        PlaceDetail((RectTransform)descriptionScrollbar.transform, wellWidth - 18, UsesClassicItemLayout ? 54 : 52, 7, wellHeight - bottomPadding - 6);
+        PlaceDetail(readingHint.rectTransform, 22, wellHeight - 31, wellWidth - 44, 26);
+        float width = wellWidth - 54;
         float descriptionHeight = PreferredDetailHeight(descriptionText, width);
         PlaceDetail(descriptionText.rectTransform, 0, 0, width, descriptionHeight);
         bool extra = relicAdditionalDescriptionText.gameObject.activeSelf && !string.IsNullOrWhiteSpace(relicAdditionalDescriptionText.text);
@@ -169,11 +178,16 @@ public partial class MapInventoryDetailView
             height += 56 + extraHeight;
         }
         descriptionScroll.content.sizeDelta = new Vector2(0, height);
-        descriptionScrollbar.gameObject.SetActive(height > wellHeight - 68 + 1);
+        descriptionScrollbar.gameObject.SetActive(height > wellHeight - bottomPadding + 1);
         actionStatusText.gameObject.SetActive(status);
-        PlaceDetail(actionStatusText.rectTransform, 446, 418, 502, 38);
-        PlaceDetail((RectTransform)actionButton.transform, 514, 484, 260, 56);
-        PlaceDetail((RectTransform)closeButton.transform, action ? 226 : 370, 484, 260, 56);
+        if (UsesClassicItemLayout) PlaceDetail(actionStatusText.rectTransform, 446, 418, 502, 38);
+        else PlaceDetail(actionStatusText.rectTransform, 44, panelHeight - 152, panelWidth - 88, 38);
+        float footerTop = panelHeight - 100 + (UsesClassicItemLayout ? 2 : 0);
+        PlaceDetail(footerRule, 36, footerTop, panelWidth - 72, 5);
+        float buttonWidth = Mathf.Min(260, (panelWidth - 108) / 2);
+        PlaceDetail((RectTransform)actionButton.transform, panelWidth / 2 + 14, footerTop + 22, buttonWidth, 56);
+        PlaceDetail((RectTransform)closeButton.transform, action ? panelWidth / 2 - buttonWidth - 14
+            : (panelWidth - buttonWidth) / 2, footerTop + 22, buttonWidth, 56);
         if (reset || !hasDescriptionLayout)
         {
             descriptionScroll.StopMovement();
@@ -181,6 +195,68 @@ public partial class MapInventoryDetailView
             descriptionScroll.verticalNormalizedPosition = 1;
         }
         hasDescriptionLayout = true;
+        UpdateReadingHint();
+    }
+
+    private void LayoutDetailHeader(bool status, out float wellWidth, out float wellHeight)
+    {
+        if (UsesClassicItemLayout)
+        {
+            PlaceDetail(titlePlaque, 298, -18, 404, 70);
+            PlaceDetail((RectTransform)closeXButton.transform, 920, 20, 58, 58);
+            PlaceDetail(titleText.rectTransform, 460, 62, 432, 78);
+            PlaceDetail(nameRule, 460, 142, 470, 6);
+            PlaceDetail(rarityFace.rectTransform, 460, 164, 164, 46);
+            PlaceDetail(categoryFace.rectTransform, 648, 164, 200, 46);
+            PlaceDetail(displayEngraving.rectTransform, 48, 66, 344, 330);
+            PlaceDetail(iconImage.rectTransform, 94, 100, 252, 252);
+            iconRestPosition = iconImage.rectTransform.anchoredPosition;
+            PlaceDetail((RectTransform)quantityText.transform.parent, 122, 400, 196, 44);
+            columnRule.gameObject.SetActive(true);
+            PlaceDetail(columnRule, 416, 66, 6, 376);
+            wellWidth = 492; wellHeight = status ? 177 : 204;
+            PlaceDetail(descriptionWell, 454, 238, wellWidth, wellHeight);
+            return;
+        }
+        float panelWidth = detailRect.rect.width, panelHeight = detailRect.rect.height;
+        bool compact = panelWidth < 1100;
+        float textLeft = encyclopediaTextOnly ? 44 : compact ? 216 : 380;
+        float textWidth = panelWidth - textLeft - 44;
+        float summaryTop = 68;
+        float titleHeight = compact ? 90 : 78;
+        PlaceDetail(titlePlaque, (panelWidth - 404) / 2, -18, 404, 70);
+        PlaceDetail((RectTransform)closeXButton.transform, panelWidth - 78, 16, 58, 58);
+        PlaceDetail(titleText.rectTransform, textLeft, summaryTop, textWidth - 24, titleHeight);
+        PlaceDetail(nameRule, textLeft, summaryTop + titleHeight + 6, textWidth, 4);
+        float badgeTop = summaryTop + titleHeight + 22;
+        float rarityWidth = compact ? Mathf.Min(150, textWidth * .4f) : 174;
+        float categoryLeft = textLeft + (rarityFace.gameObject.activeSelf ? rarityWidth + 12 : 0);
+        PlaceDetail(rarityFace.rectTransform, textLeft, badgeTop, rarityWidth, 44);
+        PlaceDetail(categoryFace.rectTransform, categoryLeft, badgeTop,
+            Mathf.Min(240, panelWidth - 44 - categoryLeft), 44);
+        float artSize = compact ? 156 : 304;
+        float artTop = compact ? 66 : 122;
+        PlaceDetail(displayEngraving.rectTransform, 34, artTop, artSize + 12, artSize + 12);
+        PlaceDetail(iconImage.rectTransform, 54, artTop + 20, artSize - 28, artSize - 28);
+        iconRestPosition = iconImage.rectTransform.anchoredPosition;
+        PlaceDetail((RectTransform)quantityText.transform.parent, compact ? 34 : 94,
+            artTop + artSize + 30, compact ? 170 : 196, 44);
+        columnRule.gameObject.SetActive(!compact && !encyclopediaTextOnly);
+        PlaceDetail(columnRule, 354, 70, 4, panelHeight - 194);
+        float wellLeft = compact || encyclopediaTextOnly ? 38 : 374;
+        float wellTop = compact && !encyclopediaTextOnly ? 324 : badgeTop + 66;
+        wellWidth = panelWidth - wellLeft - 38;
+        wellHeight = panelHeight - wellTop - (status ? 158 : 118);
+        PlaceDetail(descriptionWell, wellLeft, wellTop, wellWidth, wellHeight);
+    }
+
+    private void UpdateReadingHint()
+    {
+        if (readingHint == null) return;
+        readingHint.gameObject.SetActive(!UsesClassicItemLayout && descriptionScrollbar.gameObject.activeSelf);
+        readingHint.text = descriptionScroll.verticalNormalizedPosition > .015f
+            ? GameText.Get("ui.scroll_more", "向下滚动查看更多")
+            : GameText.Get("battle.skill.rules.end_of_details", "已显示全部内容");
     }
 
     private static float PreferredDetailHeight(TMP_Text text, float width)
@@ -202,8 +278,20 @@ public partial class MapInventoryDetailView
         float parentHeight = modalRoot.rect.height > 1 ? modalRoot.rect.height : 1080;
         layoutCanvasSize = modalRoot.rect.size;
         float availableWidth = parentWidth * safeArea.width / w, availableHeight = parentHeight * safeArea.height / h;
-        detailScale = Mathf.Min(1.2f, Mathf.Min((availableWidth - 64) / 1000, (availableHeight - 100) / 578));
+        if (UsesClassicItemLayout)
+        {
+            detailRect.sizeDelta = new Vector2(1000, 560);
+            detailScale = Mathf.Min(1.2f, Mathf.Min((availableWidth - 64) / 1000, (availableHeight - 100) / 578));
+        }
+        else
+        {
+            detailRect.sizeDelta = new Vector2(Mathf.Clamp(availableWidth - 96, 620, 1480),
+                Mathf.Clamp(availableHeight - 110, 700, 880));
+            detailScale = Mathf.Min(1, Mathf.Min((availableWidth - 48) / detailRect.sizeDelta.x,
+                (availableHeight - 90) / (detailRect.sizeDelta.y + 18)));
+        }
         detailScale = Mathf.Max(0.05f, detailScale);
+        RefreshDescriptionLayout(false);
         ApplyDetailMotion();
     }
 
