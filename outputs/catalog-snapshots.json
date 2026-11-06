@@ -17,7 +17,11 @@
     "snapshotDate": "2026-10-29",
     "latestTextRevision": {
       "date": "2026-11-05",
-      "catalogNumbers": [12, 15, 16],
+      "catalogNumbers": [
+        12,
+        15,
+        16
+      ],
       "scope": "Supplemental descriptions synchronized with the assets. The configuration export remains the 2026-10-29 snapshot."
     },
     "relicCount": 161,
@@ -63,6 +67,14 @@
         "failed": 1,
         "unrelatedFailure": "MerchantWhiteSlip expects money=0; unchanged debt purchase logic returns -98."
       }
+    },
+    "latestMechanicsRevision": {
+      "date": "2026-11-06",
+      "catalogNumbers": [
+        152
+      ],
+      "scope": "Diagonal movement unlock is persisted and repaired from owned boots when restoring map snapshots or legacy saves. Configuration export remains the 2026-10-29 snapshot.",
+      "validation": "Reproduced lost unlock after save round-trip while the relic remained owned. Scripts compiled. Seven regression cases added; test runner results unavailable after the editor domain reload disconnected MCP. Catalog and workbook checks passed."
     }
   },
   "note": "The enemy catalog remains the 2026-10-26 historical snapshot and does not include the merged Blood Spore stat update. The relic catalog was refreshed on 2026-10-29; consult its coverage note and Assets/Data for current gameplay values."

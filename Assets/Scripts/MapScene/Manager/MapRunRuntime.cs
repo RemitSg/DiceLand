@@ -90,6 +90,7 @@ public static class MapRunRuntime
             string.Equals(currentSnapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase))
         {
             snapshot = currentSnapshot.Clone();
+            RelicSystem.RestoreDiagonalMapMovement(snapshot.runState);
             return true;
         }
 

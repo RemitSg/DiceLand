@@ -38,6 +38,13 @@ if (revisedDescriptions.length) {
     lines.push(`- ${relic.additionalDescriptionUpdatedAt} · ${relic.id} ${cell(relic.relicName)} · ${cell(relic.additionalDescription)}`);
   }
 }
+const laterReviews = relics.filter(relic => relic.codeReviewedAt > catalog.date);
+if (laterReviews.length) {
+  lines.push('', '## 后续机制复核', '');
+  for (const relic of laterReviews) {
+    lines.push(`- ${relic.codeReviewedAt} · ${relic.id} ${cell(relic.relicName)} · ${cell(relic.note)}`);
+  }
+}
 await fs.writeFile(`${dir}/遗物体系完整表.md`,lines.join('\n').trimEnd()+'\n');
 const icons={};
 for(const r of relics){if(!r.iconPath||icons[r.iconGuid])continue;const meta=await sharp(r.iconPath).metadata();let img=sharp(r.iconPath);const [x,y,w,h]=r.iconRect||[0,0,meta.width,meta.height];const [tw,th]=r.iconTextureSize?.length===2?r.iconTextureSize:[meta.width,meta.height];const sx=meta.width/tw,sy=meta.height/th;if(w&&h)img=img.extract({left:Math.round(x*sx),top:Math.round((th-y-h)*sy),width:Math.min(meta.width,Math.round(w*sx)),height:Math.min(meta.height,Math.round(h*sy))});icons[r.iconGuid]='data:image/webp;base64,'+(await img.resize(96,96,{fit:'contain',background:{r:0,g:0,b:0,alpha:0}}).webp({quality:85}).toBuffer()).toString('base64');}

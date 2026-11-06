@@ -173,6 +173,7 @@ internal sealed class SavedRunState
     public int playerExperience;
     public int calamityTier;
     public int currentCycle;
+    public bool allowDiagonalMapMovement;
     public List<SavedPartyMemberState> partyMembers = new List<SavedPartyMemberState>();
     public List<SavedItemStack> lootInventory = new List<SavedItemStack>();
     public List<SavedWeaponStack> weaponInventory = new List<SavedWeaponStack>();
@@ -464,6 +465,7 @@ public static class MainMenuRunSaveSystem
             playerExperience = runState.playerExperience,
             calamityTier = runState.calamityTier,
             currentCycle = runState.currentCycle,
+            allowDiagonalMapMovement = runState.allowDiagonalMapMovement,
             abilityMerchantFreeRefreshPerShop = runState.abilityMerchantFreeRefreshPerShop,
             abilityFirstMerchantPurchaseHalfDiscountAvailable = runState.abilityFirstMerchantPurchaseHalfDiscountAvailable,
             abilityFirstMerchantPurchaseHalfDiscountConsumed = runState.abilityFirstMerchantPurchaseHalfDiscountConsumed,
@@ -848,6 +850,7 @@ public static class MainMenuRunSaveSystem
             playerExperience = savedState.playerExperience,
             calamityTier = savedState.calamityTier,
             currentCycle = savedState.currentCycle,
+            allowDiagonalMapMovement = savedState.allowDiagonalMapMovement,
             abilityMerchantFreeRefreshPerShop = savedState.abilityMerchantFreeRefreshPerShop,
             abilityFirstMerchantPurchaseHalfDiscountAvailable = savedState.abilityFirstMerchantPurchaseHalfDiscountAvailable,
             abilityFirstMerchantPurchaseHalfDiscountConsumed = savedState.abilityFirstMerchantPurchaseHalfDiscountConsumed,
@@ -972,6 +975,7 @@ public static class MainMenuRunSaveSystem
         if (savedState.drawnEventIds != null)
             runState.drawnEventIds = new List<string>(savedState.drawnEventIds);
 
+        RelicSystem.RestoreDiagonalMapMovement(runState);
         runState.SyncLegacyPlayerFieldsFromParty();
         return runState;
     }
