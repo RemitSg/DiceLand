@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class PlayerMapController : MonoBehaviour
+public partial class PlayerMapController : MonoBehaviour
 {
     [Header("Roots")]
     [SerializeField] private Transform unitsRoot;
@@ -73,6 +73,7 @@ public class PlayerMapController : MonoBehaviour
 
     public void Initialize(Transform root, BoardManager board, ActionPointSystem points, TileResolver resolver, RunState state)
     {
+        StopTeleportPresentation();
         CompletePendingBattlePreviewArrival();
         InvalidateBattlePreview(true);
         unitsRoot = root != null ? root : unitsRoot;
@@ -93,6 +94,7 @@ public class PlayerMapController : MonoBehaviour
 
     public void SetSpawn(BoardTileData spawnTile)
     {
+        StopTeleportPresentation();
         CompletePendingBattlePreviewArrival();
         InvalidateBattlePreview(true);
         if (spawnTile == null || boardManager == null || runState == null)
@@ -106,6 +108,7 @@ public class PlayerMapController : MonoBehaviour
 
     public void SetPosition(BoardTileData tile, bool playLandingEffect = false)
     {
+        StopTeleportPresentation();
         CompletePendingBattlePreviewArrival();
         InvalidateBattlePreview(true);
         if (tile == null || boardManager == null || runState == null)
@@ -522,6 +525,7 @@ public class PlayerMapController : MonoBehaviour
 
     private void OnDisable()
     {
+        StopTeleportPresentation();
         CompletePendingBattlePreviewArrival();
         InvalidateBattlePreview(true);
     }

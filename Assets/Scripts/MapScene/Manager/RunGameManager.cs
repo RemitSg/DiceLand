@@ -241,6 +241,7 @@ public class RunGameManager : MonoBehaviour
 
     private void TryConsumePendingMapRegenerationFromRelic()
     {
+        if (playerMapController != null && playerMapController.IsTeleporting) return;
         if (runState == null || !runState.pendingMapRegenerationFromRelic)
             return;
         if (boardManager == null)
@@ -2053,6 +2054,7 @@ public class RunGameManager : MonoBehaviour
 
     private bool IsGameplayOverlayVisible()
     {
+        if (playerMapController != null && playerMapController.IsTeleporting) return true;
         if (mapHUD != null && mapHUD.IsInventoryVisible) return true;
         if (RunItemAcquisitionOverlay.IsBlockingInput) return true;
         if (mapBattleTilePreviewController != null && mapBattleTilePreviewController.IsActive)
@@ -2430,6 +2432,7 @@ public class RunGameManager : MonoBehaviour
 
     private void TryPresentPendingCalamity()
     {
+        if (playerMapController != null && playerMapController.IsTeleporting) return;
         if (runState == null || mapCalamityOverlay == null)
             return;
         if (runFlowState.DeferPendingCalamityUntilMapResume)
@@ -2495,7 +2498,13 @@ public class RunGameManager : MonoBehaviour
     private List<string> ApplyChosenCalamityBuiltInMapEffects(Calamity_SO calamity)
     {
         return CalamitySelectionService.ApplyBuiltInMapEffects(calamity, runState, boardManager, enemyRoster,
-            destination => mapHUD?.ShowTile(destination, GetMoveCost(destination), true));
+            destination =>
+            {
+                MapTeleportEffect presentation = playerMapController?.TeleportTo(destination, mapViewController, Application.isPlaying);
+                if (presentation != null)
+                    presentation.Completed += () => { if (this != null && isActiveAndEnabled) TryPresentPendingCalamity(); };
+                mapHUD?.ShowTile(destination, GetMoveCost(destination), true);
+            });
     }
 
     private bool WillSpendExhaustCurrentCycle(int moveCost)

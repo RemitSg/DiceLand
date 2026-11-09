@@ -64,6 +64,7 @@ public class MapViewController : MonoBehaviour
     private float overviewAspect;
     private Vector3 panSmoothVelocity;
     private float zoomSmoothVelocity;
+    private Vector2 revealedPanExtent;
 
     private bool pointerActive;
     private Vector2 pointerStartScreenPosition;
@@ -111,6 +112,7 @@ public class MapViewController : MonoBehaviour
             CompleteBattlePreviewRestore();
 
         configured = false;
+        revealedPanExtent = Vector2.zero;
         battlePreviewActive = false;
         hasPreBattlePreviewState = false;
         targetCamera = mapCamera;
@@ -703,12 +705,29 @@ public class MapViewController : MonoBehaviour
         ClampTargetCameraToBoard();
     }
 
-    private void ApplyCameraSmoothing()
+    public void FocusOnPosition(Vector3 position, bool immediate = false)
+    {
+        if (!configured || targetCamera == null) return;
+        if (introRoutine != null) StopCoroutine(introRoutine);
+        introRoutine = null;
+        if (battlePreviewActive) RestoreBattlePreviewImmediate();
+        ResetPointerState();
+        // Permit an edge destination to reach the usable center, away from the fixed HUD panels.
+        revealedPanExtent = new Vector2(Mathf.Max(Mathf.Abs(position.x), Mathf.Abs(targetCamera.transform.position.x)),
+            Mathf.Max(Mathf.Abs(position.y), Mathf.Abs(targetCamera.transform.position.y)));
+        targetCameraPosition = new Vector3(position.x, position.y, -10);
+        panSmoothVelocity = Vector3.zero;
+        if (immediate) ApplyCameraStateImmediate();
+    }
+
+    private void ApplyCameraSmoothing() => AdvanceCameraSmoothing(Time.unscaledDeltaTime);
+
+    public void AdvanceCameraSmoothing(float deltaTime)
     {
         if (targetCamera == null)
             return;
 
-        float deltaTime = Mathf.Max(0.0001f, Time.unscaledDeltaTime);
+        deltaTime = Mathf.Max(0.0001f, deltaTime);
         float smoothZoomTime = Mathf.Max(0.0001f, zoomSmoothTime);
         float smoothPanTime = Mathf.Max(0.0001f, panSmoothTime);
 
@@ -760,8 +779,8 @@ public class MapViewController : MonoBehaviour
         float visibleHalfHeight = orthographicSize;
         float visibleHalfWidth = visibleHalfHeight * targetCamera.aspect;
 
-        float maxX = Mathf.Max(0f, extent - visibleHalfWidth);
-        float maxY = Mathf.Max(0f, extent - visibleHalfHeight);
+        float maxX = Mathf.Max(revealedPanExtent.x, extent - visibleHalfWidth);
+        float maxY = Mathf.Max(revealedPanExtent.y, extent - visibleHalfHeight);
 
         position.x = Mathf.Clamp(position.x, -maxX, maxX);
         position.y = Mathf.Clamp(position.y, -maxY, maxY);

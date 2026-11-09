@@ -107,6 +107,7 @@ public static class CalamitySelectionService
         {
             if (tile == null
                 || tile.isVisited
+                || tile.coord == runState.playerGridPosition
                 || tile.isSpawnTile
                 || tile.dangerBand != MapDangerBand.Outer
                 || tile.tileType == MapTileType.Boss
