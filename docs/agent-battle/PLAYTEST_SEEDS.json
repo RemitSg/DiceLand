@@ -48,6 +48,18 @@
       "actions": 17,
       "battles": 1,
       "rounds": 5
+    },
+    {
+      "run": "easy-20261109-run7",
+      "seed": 2026110907,
+      "outcome": "defeat",
+      "profile": "easy-run7-20261109-6a77cbbbf3",
+      "scope": "All decisions by model;305 public actions verified,14 battles/13 wins,39 rounds/71 clash messages. Crafted two weapons and recruited four-member party;Boss75HP lost round8 at12HP. No reload,reroll or extra fresh run.",
+      "score": 1290,
+      "abilityPoints": 1,
+      "actions": 305,
+      "battles": 14,
+      "rounds": 39
     }
   ]
 }

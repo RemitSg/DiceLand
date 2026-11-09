@@ -1,0 +1,496 @@
+{
+  "run": "easy-20261109-run7",
+  "seed": 2026110907,
+  "outcome": "defeat",
+  "currentRunCandidates": [
+    {
+      "id": "DAMAGE_LOG_MULTIPLIER",
+      "priority": "P2",
+      "category": "日志 / 展示",
+      "title": "伤害文案未反映当头棒倍率后的实际伤害",
+      "confidence": "本局未饱和伤害实例确认显示差异；原生重放一致、共享日志代码路径相符。未修改。",
+      "firstStep": 46,
+      "observed": "第3战第1轮Chara横砍掷4，当头棒使基础damage事件为8，另有横砍额外1；焰蛾10→1。日志仍写“造成4伤害”，剩余HP1正确。",
+      "expectedOrQuestion": "文案应区分骰点/追击威力、倍率修正后的伤害和受剩余生命限制的实际扣血，不能把基础4直接标成造成4伤害。",
+      "cause": "ResolveClashImpactPlan获得的实际dealtDamage局部值未回传给BuildClashPostLog；后者仍把预先计算的allyHitPower传入格式化函数。实际伤害管线会另行应用遗物倍率。",
+      "reproduction": [
+        "依本局回放到步骤45。",
+        "提交步骤46，比较enemy_0的8和1两条damage、生命10→1及“造成4伤害”的日志。",
+        "使用未饱和的8点包作主证据；不以目标血量不足时的截断差额判错。"
+      ],
+      "evidence": {
+        "step": 46,
+        "beforeHp": 10,
+        "afterDamagePacketHp": 2,
+        "afterExtraDamageHp": 1,
+        "events": [
+          {
+            "index": 7,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "◆◆◆ 战斗结算阶段 ◆◆◆"
+          },
+          {
+            "index": 8,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "[拼点] 0[新手木剑][横砍(1 dice, ranges: 1:2~4)] vs 焰蛾(ID:2)[点燃(1 dice, ranges: 1:2~2)]"
+          },
+          {
+            "index": 9,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "enemy_0",
+            "amount": 8,
+            "message": ""
+          },
+          {
+            "index": 10,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "enemy_0",
+            "amount": 1,
+            "message": ""
+          },
+          {
+            "index": 11,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "词条触发：0[新手木剑][横砍] 对 焰蛾(ID:2) 造成 1 额外伤害，剩余HP 1/10"
+          },
+          {
+            "index": 12,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "第 1 段拼点：0[新手木剑](4) vs 焰蛾(ID:2)(2)"
+          },
+          {
+            "index": 13,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "-> 友方胜！追击威力 4 ，对 焰蛾(ID:2) 造成 4 伤害，剩余HP 1/10"
+          },
+          {
+            "index": 14,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "[拼点] character.man[“无敌”][狂砍(2 dice, ranges: 1:1~3, 2:1~2)] vs 焰蛾(ID:2)[挥翅(1 dice, ranges: 1:1~3)]"
+          },
+          {
+            "index": 15,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "ally_1",
+            "amount": 3,
+            "message": ""
+          },
+          {
+            "index": 16,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "第 1 段拼点：character.man[“无敌”](1) vs 焰蛾(ID:2)(3)"
+          },
+          {
+            "index": 17,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "-> 敌方胜！追击威力 3 ，焰蛾(ID:2) 对 character.man[“无敌”] 造成 3 伤害，剩余HP 16/23"
+          },
+          {
+            "index": 18,
+            "round": 1,
+            "kind": "damage",
+            "actorId": "enemy_0",
+            "amount": 1,
+            "message": ""
+          },
+          {
+            "index": 19,
+            "round": 1,
+            "kind": "death",
+            "actorId": "enemy_0",
+            "amount": 0,
+            "message": ""
+          },
+          {
+            "index": 20,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "第 2 段（友方余骰单方面）：character.man[“无敌”][狂砍(2 dice, ranges: 1:1~3, 2:1~2)](2) -> 焰蛾(ID:2)，剩余HP 0/10"
+          },
+          {
+            "index": 21,
+            "round": 1,
+            "kind": "log",
+            "actorId": "",
+            "amount": 0,
+            "message": "Battle finished. Victory, EXP +10, Money +20."
+          }
+        ],
+        "source": [
+          {
+            "path": "Assets/Scripts/BattleScene/Controller/BattleButton.cs",
+            "start": 2832,
+            "end": 2843,
+            "sha256": "986142a8f2f9942c3a914463c0c819e2019860d0c8febc943645e456be9b09dc",
+            "text": "        if (impactPlan.ApplyAllyHit)\n        {\n            int dealtDamage = ApplyAllyHit(ally, enemy, impactPlan.AllyHitPower, diceIndex, false, impactPlan.AllyHitPowerModifier);\n            if (allyHitTracker != null)\n                allyHitTracker.HitCount++;\n        }\n\n        if (impactPlan.ApplyEnemyHit)\n        {\n            int dealtDamage = ApplyEnemyHit(enemy, ally, impactPlan.EnemyHitPower, diceIndex, false, impactPlan.EnemyHitPowerModifier);\n            if (enemyHitTracker != null)\n                enemyHitTracker.HitCount++;"
+          },
+          {
+            "path": "Assets/Scripts/BattleScene/Controller/BattleButton.cs",
+            "start": 2878,
+            "end": 2885,
+            "sha256": "986142a8f2f9942c3a914463c0c819e2019860d0c8febc943645e456be9b09dc",
+            "text": "            case BattleClashPostLogType.AllyAttackWinFollowUp:\n                return BattleClashLogService.FormatAllyAttackWinFollowUp(\n                    allyFollowUpBasePower,\n                    allyWinAttackBonus,\n                    enemy.GetDebugDisplayName(),\n                    allyHitPower,\n                    enemy.CurrentHP,\n                    enemy.MaxHP);"
+          },
+          {
+            "path": "Assets/Scripts/BattleScene/Controller/BattleButton.cs",
+            "start": 3306,
+            "end": 3321,
+            "sha256": "986142a8f2f9942c3a914463c0c819e2019860d0c8febc943645e456be9b09dc",
+            "text": "            BattleLog(BattleClashLogService.FormatClashDice(i, ally.GetDebugDisplayName(), allyBasePower, allyBonusPower, enemy.GetDebugDisplayName(), enemyBasePower, enemyBonusPower));\n            // The presentation invokes the real impact callback. Read HP only after it has resolved.\n            BattleLog(BuildClashPostLog(\n                presentationPlan,\n                ally,\n                enemy,\n                allyFollowUpBasePower,\n                enemyFollowUpBasePower,\n                allyWinAttackBonus,\n                enemyWinAttackBonus,\n                allyHitPower,\n                enemyHitPower,\n                allyPower,\n                enemyPower,\n                restoredDefenseEnergy));\n        }"
+          },
+          {
+            "path": "Assets/Scripts/BattleScene/Controller/BattleButton.cs",
+            "start": 3795,
+            "end": 3802,
+            "sha256": "986142a8f2f9942c3a914463c0c819e2019860d0c8febc943645e456be9b09dc",
+            "text": "        BattleAllyHitDamagePipelinePlan plan = BattleAllyHitDamagePipelinePlanService.Resolve();\n        BattleEncounterData activeEncounter = BattleEncounterRuntime.ActiveEncounter;\n        AppendSources(percentSources, CalamitySystem.GetAllyDamageModifierSources(activeEncounter != null ? activeEncounter.activeCalamities : null));\n        AppendSources(percentSources, CalamitySystem.GetEnemyIncomingDamageModifierSources(activeEncounter != null ? activeEncounter.activeCalamities : null));\n        return BattleAllyHitDamagePipelineDispatcher.Dispatch(\n            baseDamage,\n            plan,\n            damage => ApplyPlayerRelicOutgoingDamageModifiers(attacker, target, diceIndex, damage, percentSources, flatSources));"
+          },
+          {
+            "path": "Assets/Scripts/Shared/BattleClashLogService.cs",
+            "start": 14,
+            "end": 24,
+            "sha256": "295dc06c1b3c676df0bb3078076e210613cf03a25b0efd26078deafbb7de9697",
+            "text": "\n    public static string FormatAllyAttackWinFollowUp(\n        int followUpBasePower,\n        int winAttackBonus,\n        string targetName,\n        int hitPower,\n        int targetCurrentHp,\n        int targetMaxHp)\n    {\n        return $\"-> 友方胜！追击威力 {BattlePowerCalculationService.FormatPowerWithBonus(followUpBasePower, winAttackBonus)} ，对 {targetName} 造成 {hitPower} 伤害，剩余HP {targetCurrentHp}/{targetMaxHp}\";\n    }"
+          }
+        ]
+      }
+    },
+    {
+      "id": "SKILL_CONSUMPTION_MOJIBAKE",
+      "priority": "P3",
+      "category": "日志 / 文字编码",
+      "title": "蓄能消耗提示前缀出现乱码",
+      "confidence": "本局两种前缀重复出现；冻结源码中可直接读到相同乱码字符串。技能消耗与伤害正常。未修改。",
+      "firstStep": 150,
+      "occurrences": 9,
+      "observed": "星芒·寒消耗蓄能的提示出现“[鎷肩偣]”或“[鍙嬫柟鍗曟柟闈㈡敾鍑籡”。",
+      "expectedOrQuestion": "应显示可读的中文上下文，例如拼点或友方单方面攻击。",
+      "cause": "BattleButton两条TryConsumeAllySkillRequirement调用传入的前缀字面量已经乱码，报告原样保留而非日志文件读取转码造成。",
+      "reproduction": [
+        "执行至第150步星芒·寒消耗蓄能。",
+        "查看event49及后续单方面星芒消耗日志；对照蓄能由2降至0等实际状态。"
+      ],
+      "evidence": {
+        "occurrences": [
+          {
+            "battle": 9,
+            "round": 2,
+            "step": 150,
+            "event": {
+              "index": 49,
+              "round": 2,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "[鎷肩偣]：character.jenny[寒芒杖] 施放 星芒 · 寒 消耗 2 层 蓄能，当前 蓄能 0 层。"
+            }
+          },
+          {
+            "battle": 10,
+            "round": 2,
+            "step": 167,
+            "event": {
+              "index": 49,
+              "round": 2,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "[鎷肩偣]：character.jenny[寒芒杖] 施放 星芒 · 寒 消耗 2 层 蓄能，当前 蓄能 0 层。"
+            }
+          },
+          {
+            "battle": 11,
+            "round": 2,
+            "step": 181,
+            "event": {
+              "index": 59,
+              "round": 2,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "[鎷肩偣]：character.jenny[寒芒杖] 施放 星芒 · 寒 消耗 2 层 蓄能，当前 蓄能 0 层。"
+            }
+          },
+          {
+            "battle": 11,
+            "round": 5,
+            "step": 197,
+            "event": {
+              "index": 234,
+              "round": 5,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "[鎷肩偣]：character.jenny[寒芒杖] 施放 星芒 · 寒 消耗 2 层 蓄能，当前 蓄能 1 层。"
+            }
+          },
+          {
+            "battle": 12,
+            "round": 3,
+            "step": 226,
+            "event": {
+              "index": 126,
+              "round": 3,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "[鍙嬫柟鍗曟柟闈㈡敾鍑籡：character.jenny[寒芒杖] 施放 星芒 · 寒 消耗 2 层 蓄能，当前 蓄能 1 层。"
+            }
+          },
+          {
+            "battle": 13,
+            "round": 2,
+            "step": 248,
+            "event": {
+              "index": 68,
+              "round": 2,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "[鍙嬫柟鍗曟柟闈㈡敾鍑籡：character.jenny[寒芒杖] 施放 星芒 · 寒 消耗 2 层 蓄能，当前 蓄能 0 层。"
+            }
+          },
+          {
+            "battle": 14,
+            "round": 2,
+            "step": 272,
+            "event": {
+              "index": 65,
+              "round": 2,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "[鎷肩偣]：character.jenny[寒芒杖] 施放 星芒 · 寒 消耗 2 层 蓄能，当前 蓄能 0 层。"
+            }
+          },
+          {
+            "battle": 14,
+            "round": 4,
+            "step": 285,
+            "event": {
+              "index": 208,
+              "round": 4,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "[鍙嬫柟鍗曟柟闈㈡敾鍑籡：character.jenny[寒芒杖] 施放 星芒 · 寒 消耗 2 层 蓄能，当前 蓄能 0 层。"
+            }
+          },
+          {
+            "battle": 14,
+            "round": 6,
+            "step": 298,
+            "event": {
+              "index": 304,
+              "round": 6,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "[鎷肩偣]：character.jenny[寒芒杖] 施放 星芒 · 寒 消耗 2 层 蓄能，当前 蓄能 0 层。"
+            }
+          }
+        ],
+        "source": [
+          {
+            "path": "Assets/Scripts/BattleScene/Controller/BattleButton.cs",
+            "start": 3155,
+            "end": 3164,
+            "sha256": "986142a8f2f9942c3a914463c0c819e2019860d0c8febc943645e456be9b09dc",
+            "text": "        pendingAllyNextDicePowerBonus = 0;\n        pendingEnemyNextDicePowerBonus = 0;\n        ally.ActivateSelectedSkillForButton(allyButton);\n        ProcessPlayerSkillUsedRelics(ally, enemy);\n\n        if (!TryConsumeAllySkillRequirement(ally, ally.SelectedSkill, \"[鎷肩偣]\", true))\n        {\n            yield return ResolveEnemySingleAttackAction(enemy, ally, enemyButton);\n            yield break;\n        }"
+          },
+          {
+            "path": "Assets/Scripts/BattleScene/Controller/BattleButton.cs",
+            "start": 3487,
+            "end": 3497,
+            "sha256": "986142a8f2f9942c3a914463c0c819e2019860d0c8febc943645e456be9b09dc",
+            "text": "\n        Vector3 allyStartPosition = ally.transform.position;\n        Vector3 enemyStartPosition = enemy.transform.position;\n        bool needsReturnToOrigin = false;\n\n        if (!TryConsumeAllySkillRequirement(ally, ally.SelectedSkill, \"[鍙嬫柟鍗曟柟闈㈡敾鍑籡\", true))\n            yield break;\n\n        ally.MarkCurrentRoundSkillUsed();\n        int allyDiceCount = ally.DiceCount;\n        int firstAttackDiceIndex = BattleSingleAttackPresentationStartService.FindFirstAttackDiceIndex(ally.SelectedSkill, allyDiceCount);"
+          }
+        ]
+      }
+    }
+  ],
+  "agentMistakes": [
+    {
+      "step": 5,
+      "title": "资金不足时提前进入一次性营地",
+      "detail": "44金币小于首次招募50，且合法动作没有免费离开。第6步满血治疗消耗营地，减少后续治疗和招募余地。应在进入前核实预算和营地动作约定。"
+    },
+    {
+      "step": 24,
+      "title": "当头棒的次数范围最初判断错误",
+      "detail": "当头棒是一场战斗首次伤害包加倍，不能按每个敌人各一次。后续根据真实事件修正；保留原始判断，不归为遗物失效。"
+    },
+    {
+      "step": 118,
+      "title": "第二次付费刷新没有足够确定收益",
+      "detail": "购买首份旋速液与雪铃、寒芒图纸后，再花20金币找第二份旋速液未命中，拖后第四人招募。应更早比较地图剩余旋速螺遭遇与固定招募预算，降低刷新优先级。"
+    },
+    {
+      "step": 125,
+      "title": "没有按当前地图核实目的地",
+      "detail": "把(0,6)记成普通战，实际从初始地图起就是铁匠。属于路线记忆错误，并非地图变形。"
+    },
+    {
+      "step": 151,
+      "title": "把材料掉落预期写成确定领取",
+      "detail": "返回理由提到旋速液掉落，但该战实际未掉。后续库存按真实观察修正；同类敌人的材料并非保证掉落。"
+    },
+    {
+      "step": 161,
+      "title": "没有完整计算首笔伤害的行动顺序",
+      "detail": "速度4的Man单方面攻击早于速度3的Chara拼点消耗当头棒，原先预计Chara一轮击杀7HP不成立。应按实际速度和当前槽安排首笔伤害。"
+    },
+    {
+      "step": 259,
+      "title": "进入Boss时缺少对三槽高骰的完整应对能力",
+      "detail": "虽然组齐四人并制作两把武器，Man与Molly仍是初始武器，且没有保留回血营地或建立足以压制高点多骰的防御能力。Boss第2、3轮连续一枪贯世造成大量全队伤害后，后半程免费骰上限不足，战斗陷入纯承伤。需要更早按Boss阶段的拼点门槛和能量续航规划全队装备与恢复。"
+    },
+    {
+      "step": 273,
+      "title": "Boss第3轮防守配置牺牲了过多输出",
+      "detail": "双贯世轮让Man与充能Jenny分别承接，两名输出者只打6伤害，Boss45→39，同时四次全队额外伤害令全队各失8。前面的资源与装备准备决定了当时缺少高点双骰；此处应比较更积极削血与分配承伤的收益，不能把减伤和蓄能等同于阻止命中全队词条。"
+    }
+  ],
+  "otherObservations": [
+    {
+      "id": "REST_EXIT",
+      "firstStep": 5,
+      "category": "P3 / 交互设计建议，未确认接口缺陷",
+      "title": "营地没有不消耗访问的直接离开动作",
+      "detail": "本局44金币进入后只能治疗、回AP、重铸等；接口RestActions确实不提供leave。只读查看正式RestSceneRuntime也仅见治疗、回AP、招募与重铸确认返回，不能据此断言接口偏离正式规则。建议明确提示一次性选择或评估新增离开功能。"
+    },
+    {
+      "id": "BLUEPRINT_LABEL",
+      "firstStep": 116,
+      "category": "P3 / 元数据一致性观察",
+      "title": "图纸背包名与目录显示名不同",
+      "detail": "相同GUID的寒芒图纸在目录/配方叫“寒芒之卷”，库存叫“FrostGleam”；蚀毒图纸库存有编号前缀。合成材料、目标武器和实际合成一致，没有按名称差异重复计数。"
+    },
+    {
+      "id": "EMPTY_ITEM_DESCRIPTION",
+      "firstStep": 15,
+      "category": "P3 / 接口信息完整性观察",
+      "title": "部分库存遗物与材料description为空",
+      "detail": "名称和稳定ID可用，商店、目录可补完整描述；空描述本身未造成结算异常。"
+    },
+    {
+      "id": "CALAMITY_DEFERRED",
+      "firstStep": 234,
+      "category": "符合规则，非bug",
+      "title": "耗完行动点入战后，灾厄选择延至返回",
+      "detail": "第234步周期6、AP20但仍在战斗；第257步返回后正常弹出选择。未将暂时没有choices误判为漏发。"
+    },
+    {
+      "id": "DIAGONAL_COVERED",
+      "firstStep": 51,
+      "category": "既有修复自然覆盖",
+      "title": "神行靴允许实际斜向移动",
+      "detail": "第49步自然获得神行靴，第51步(5,2)→(6,1)，之后多次对角移动；不是注入遗物的定向测试。"
+    },
+    {
+      "id": "LEVEL_HEAL",
+      "firstStep": 94,
+      "category": "策略规则校正，非bug",
+      "title": "升级不能一概当成全队满血",
+      "detail": "第94步Chara10/22→23/25，并未回满；后来Jenny升5达到31/31。后续始终读取实际HP。"
+    },
+    {
+      "id": "GUARD_AND_USE_TRIGGERS",
+      "firstStep": 170,
+      "category": "符合已读规则，非bug",
+      "title": "腐花防御增益与召唤、施毒按触发时机处理",
+      "detail": "临时重防提高防御骰而非直接减伤。使用时召唤/施毒即使拼点失败仍会执行；未将赢骰后的召唤或下轮中毒误报为错误。"
+    },
+    {
+      "id": "CURRENT_NO_BURST",
+      "firstStep": 259,
+      "category": "本局观察边界",
+      "title": "电流堆叠未在本场触发爆发",
+      "detail": "电流没有自然回合衰减，本局最高记录Jenny10层；Boss实际显示的本局技能主要加层与伤害，没有看到爆发事件。不能仅凭层数断言有额外扣血或漏爆发。"
+    }
+  ],
+  "contemporaneousNotes": [
+    {
+      "revision": 46,
+      "time": "2026-11-09T08:22:30.467Z",
+      "note": "疑似日志bug：第三战第1轮（步骤46）横砍掷4，当头棒使damage事件为8，额外横砍事件1，焰蛾10→1；拼点文案仍写造成4伤害。伤害结算与剩余HP相符，疑点在文案未反映伤害倍率。第一战步骤23也有饱和扣血与文案差异，优先以步骤46未饱和实例作证。"
+    },
+    {
+      "revision": 94,
+      "time": "2026-11-09T08:32:08.905Z",
+      "note": "升级恢复观察：步骤94 Chara由10/22升到23/25，未全满；Man21/29→32/32，Jenny13/18→24/24。后续不能把升级当作保证全队满血。"
+    },
+    {
+      "revision": 125,
+      "time": "2026-11-09T08:38:44.428Z",
+      "note": "导航失误：步骤125把(0,6)误记成普通战，实际初始公开地图就是Forge。结果正确打开铁匠，未发生地图类型变化；这是模型路线记忆失误，不是游戏bug。今后每段路线重新读取实际地图。"
+    },
+    {
+      "revision": 150,
+      "time": "2026-11-09T08:44:32.934Z",
+      "note": "新增显示疑点：步骤150 第9战第2轮星芒消耗蓄能日志前缀为“[鎷肩偣]”，其余中文正常；完整原文在event index49。同时状态由蓄能2正确消耗到0，判为文字编码候选。"
+    },
+    {
+      "revision": 151,
+      "time": "2026-11-09T08:45:01.923Z",
+      "note": "第151步返回没有新增旋速液。其理由把“旋速液掉落”写成了预期领取，实际背包确认未获得；同类敌人掉落不是保证，后续不按这个预期编造材料。"
+    },
+    {
+      "revision": 161,
+      "time": "2026-11-09T08:47:48.173Z",
+      "note": "战斗决策误算：第10战首轮步骤161，Man速度4的单方面攻击先于Chara速度3的拼点使用当头棒，Chara实际只有3+2伤害，未如预判击杀7HP。遗物不是每个敌人各一次，也不能只按拼点优先估计首笔伤害，应按实际行动顺序分配倍率。"
+    },
+    {
+      "revision": 234,
+      "time": "2026-11-09T09:05:53.967Z",
+      "note": "第234步进入战斗时行动点已回满20、周期6，但calamityChoices为空、calamityTier=5，未弹选择；需战后观察是否延后处理，不能直接断言漏选灾厄。冻烬蛾免疫寒冷，雪铃没有给它留下寒冷状态，属预期。"
+    },
+    {
+      "revision": 257,
+      "time": "2026-11-09T09:07:05.148Z",
+      "note": "第257步战后正确弹出周期6灾厄选择，说明第234步只是战斗期间延后展示，非漏发灾厄。Jenny升5实际31/31，Molly升3实际23/23，训练目的已实现。"
+    }
+  ],
+  "untested": [
+    "run6唯一存活队员眩晕零槽问题（本局未遇到）",
+    "旧赌桌结束事件修复",
+    "不屈与治疗延迟死亡",
+    "精英和副本",
+    "重铸",
+    "Boss胜利及胜利结算",
+    "当前主工程的并行新改动"
+  ],
+  "rulesModified": false,
+  "assetsModified": false,
+  "additionalFreshRunForReproduction": false,
+  "evidenceBoundary": "结论针对本局冻结快照；两项日志候选未在本任务修复。没有把策略失误、正常使用时效果或历史缺项报成新增战斗数值bug。"
+}

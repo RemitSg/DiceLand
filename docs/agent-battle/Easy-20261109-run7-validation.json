@@ -1,0 +1,306 @@
+{
+  "date": "2026-11-09",
+  "scope": "One fresh model-directed Easy playthrough, actual defeat, settled and native replay verified.",
+  "summary": {
+    "run": "easy-20261109-run7",
+    "seed": 2026110907,
+    "difficulty": "Easy",
+    "sourceCommitAtStart": "8270409ffd07a03957e07c78078ba78870290b38",
+    "snapshotBasis": "Reused isolated snapshot, synchronized at task startup before concurrent main-workspace edits. Frozen snapshot compared against the prior run; see differences.",
+    "snapshotChangesVersusRun6": [],
+    "mainWorkspaceDriftDuringPreparation": [
+      "Assets/Data/Enemies/Skill/EnemySkill_SO.cs",
+      "Assets/Scripts/BattleScene/Controller/BattleButton.cs",
+      "Assets/Scripts/BattleScene/Controller/BattleEnemyController.cs",
+      "Assets/Scripts/BattleScene/Controller/BattleSkillInfoOverlay.cs",
+      "Assets/Scripts/ScriptableObject/EnemyData_SO.cs",
+      "Assets/Scripts/Shared/BattleSummonEffectService.cs"
+    ],
+    "profile": "easy-run7-20261109-6a77cbbbf3",
+    "decisionSource": "model",
+    "automatedPolicySelectorUsed": false,
+    "outcome": "defeat",
+    "victory": false,
+    "actions": 305,
+    "decisions": 306,
+    "battles": 14,
+    "wins": 13,
+    "rounds": 39,
+    "clashDiceMessages": 71,
+    "bossRounds": 8,
+    "enemy": "雷寰霸主",
+    "finalEnemyHP": 12,
+    "enemyMaxHP": 75,
+    "score": 1290,
+    "abilityPointsGained": 1,
+    "durationSeconds": 3782,
+    "finalParty": [
+      {
+        "id": "0",
+        "name": "Chara",
+        "character": "27e817266af382946804dea6afd2e374",
+        "weapon": "1f36f0dbb0b248e42afa902de71201fa",
+        "hp": 0,
+        "maxHp": 30,
+        "level": 5,
+        "experience": 0
+      },
+      {
+        "id": "character.man",
+        "name": "Man",
+        "character": "fce426096f554744093a4718f5aa0f45",
+        "weapon": "66e425e32f62902418159abffd6dedc5",
+        "hp": 0,
+        "maxHp": 36,
+        "level": 5,
+        "experience": 0
+      },
+      {
+        "id": "character.jenny",
+        "name": "Jenny",
+        "character": "658e22cc7dec223479091c6817751025",
+        "weapon": "f60b6206ee3430d4e94f6a8395de2b62",
+        "hp": 0,
+        "maxHp": 31,
+        "level": 5,
+        "experience": 0
+      },
+      {
+        "id": "character.molly",
+        "name": "Molly",
+        "character": "5121d91a4381d6748a08ee2236cc03fd",
+        "weapon": "ab25e1c01dd01ad4c8eac113e9dc47c7",
+        "hp": 0,
+        "maxHp": 23,
+        "level": 3,
+        "experience": 10
+      }
+    ],
+    "progress": {
+      "runStartedUnixSeconds": 1794212013,
+      "normalBattleOuterCleared": 10,
+      "normalBattleMidCleared": 3,
+      "normalBattleInnerCleared": 0,
+      "normalBattleCoreCleared": 0,
+      "eliteBattleOuterCleared": 0,
+      "eliteBattleMidCleared": 0,
+      "eliteBattleInnerCleared": 0,
+      "eliteBattleCoreCleared": 0,
+      "specialDungeonCleared": 0,
+      "specialDungeonScoreTotal": 0,
+      "totalMoneyGained": 528,
+      "craftedWeaponCount": 2,
+      "eventTilesCompleted": 5,
+      "eventBattlesCompleted": 0,
+      "unexploredTilesVisited": 35,
+      "keysCollected": 3,
+      "bossesDefeated": 0
+    },
+    "settlement": {
+      "completed": true,
+      "policy": "shared_score",
+      "data": {
+        "runCleared": false,
+        "scoreResult": {
+          "baseScore": 1290,
+          "finalScore": 1290,
+          "gainedAbilityPoints": 1,
+          "finalMultiplier": 1,
+          "displayStats": {
+            "durationSeconds": 3782,
+            "normalBattleOuterCleared": 10,
+            "normalBattleMidCleared": 3,
+            "normalBattleInnerCleared": 0,
+            "normalBattleCoreCleared": 0,
+            "eliteBattleOuterCleared": 0,
+            "eliteBattleMidCleared": 0,
+            "eliteBattleInnerCleared": 0,
+            "eliteBattleCoreCleared": 0,
+            "specialDungeonCleared": 0,
+            "partyMemberCount": 4,
+            "totalMoneyGained": 528,
+            "craftedWeaponCount": 2,
+            "eventTilesCompleted": 5,
+            "eventBattlesCompleted": 0,
+            "unexploredTilesVisited": 35,
+            "relicCount": 3,
+            "keysCollected": 3,
+            "calamityTier": 5,
+            "bossesDefeated": 0,
+            "calamityScoreCounted": false
+          },
+          "debugLines": [
+            "Normal Battle Outer: count=10, each=20, score=200",
+            "Normal Battle Mid: count=3, each=50, score=150",
+            "Normal Battle Inner: count=0, each=100, score=0",
+            "Normal Battle Core: count=0, each=200, score=0",
+            "Elite Battle Outer: count=0, each=50, score=0",
+            "Elite Battle Mid: count=0, each=150, score=0",
+            "Elite Battle Inner: count=0, each=250, score=0",
+            "Elite Battle Core: count=0, each=500, score=0",
+            "Special Dungeon: cleared=0, score=0",
+            "Party Members: count=4, score=200",
+            "Money: gained=528, multiplier=0.2, score=105",
+            "Crafted Weapons: count=2, each=100, score=200",
+            "Event Tiles: count=5, each=10, score=50",
+            "Event Battles: count=0, each=50, score=0",
+            "Unexplored Tiles: count=35, each=5, score=175",
+            "Relics: count=3, each=20, score=60",
+            "Keys: count=3, each=50, score=150",
+            "Calamity skipped: tier=5, score=0",
+            "Bosses: count=0, each=1000, score=0",
+            "Final: base=1290, duration=3782, multiplier=1, final=1290, abilityPoints=1"
+          ]
+        },
+        "displayStats": {
+          "durationSeconds": 3782,
+          "normalBattleOuterCleared": 10,
+          "normalBattleMidCleared": 3,
+          "normalBattleInnerCleared": 0,
+          "normalBattleCoreCleared": 0,
+          "eliteBattleOuterCleared": 0,
+          "eliteBattleMidCleared": 0,
+          "eliteBattleInnerCleared": 0,
+          "eliteBattleCoreCleared": 0,
+          "specialDungeonCleared": 0,
+          "partyMemberCount": 4,
+          "totalMoneyGained": 528,
+          "craftedWeaponCount": 2,
+          "eventTilesCompleted": 5,
+          "eventBattlesCompleted": 0,
+          "unexploredTilesVisited": 35,
+          "relicCount": 3,
+          "keysCollected": 3,
+          "calamityTier": 5,
+          "bossesDefeated": 0,
+          "calamityScoreCounted": false
+        },
+        "abilityPointsBefore": 0,
+        "gainedAbilityPoints": 1,
+        "abilityPointsAfter": 1,
+        "returnSceneName": "Menu Selection"
+      }
+    },
+    "activeCalamities": [
+      {
+        "id": "be9448bcaa0b90646b97b081c9df75e2",
+        "name": "劲敌 · 伤害强化 I",
+        "description": "所有敌人造成伤害额外增加 10%",
+        "limitation": ""
+      },
+      {
+        "id": "770a06e1efab4bb08a848a55d0ef3232",
+        "name": "探索 · 价格提升 II",
+        "description": "商店中的商品价格额外提升 15%",
+        "limitation": ""
+      },
+      {
+        "id": "b7ca3a946df60804b8f66e6529929124",
+        "name": "探索 · 伏击",
+        "description": "前往已探索的空格子将有 10% 概率触发对应区域的普通敌人战斗。",
+        "limitation": ""
+      },
+      {
+        "id": "2756a600016dcb940a1894364bd20319",
+        "name": "劲敌 · 血量强化 IV",
+        "description": "所有敌人基础血量额外增加 40%。",
+        "limitation": ""
+      },
+      {
+        "id": "0b941cb7ff5da244a8a19e6cecefe266",
+        "name": "弱化 · 震慑",
+        "description": "战斗开始时，所有友方角色损失 2 生命值。",
+        "limitation": ""
+      }
+    ],
+    "verification": {
+      "verified": true,
+      "commandsChecked": 305,
+      "finalStateHash": "2ef74de62bcabf3abfbeb4bda6981dc1392b4eab92f2e58fffe82736509e83f2"
+    },
+    "profileVerification": {
+      "before": {
+        "ability_points.json": "f9fc2b149a0171c895234c868551141499db3a4f87590781adfb3d3b23ab76fc",
+        "committed.json": "1d5a661814bf2a55e81c269452fd167cee9e6481305e1196a2c5a103cc521153",
+        "lease.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "ability_points.json": "f9fc2b149a0171c895234c868551141499db3a4f87590781adfb3d3b23ab76fc",
+        "committed.json": "1d5a661814bf2a55e81c269452fd167cee9e6481305e1196a2c5a103cc521153",
+        "lease.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "unchanged": true,
+      "profile": "easy-run7-20261109-6a77cbbbf3",
+      "firstAttemptResponseLost": false
+    },
+    "contentHash": "8d84b22803ebf5c8f6fa08956752fd6c0010eb73180400f6d1942e94534766de",
+    "engineVersion": "2022.3.62t6",
+    "language": "zh-Hans",
+    "frozenContentFiles": 3689,
+    "frozenSnapshotUnchanged": true,
+    "sessionClosed": true,
+    "noReloadOrReroll": true,
+    "noResourceOrOutcomeInjection": true,
+    "onlyPublicCommands": true,
+    "allActionsWereOffered": true,
+    "initialPoints": 0,
+    "initialUnlockedNodes": 0,
+    "recruits": 3,
+    "craftedWeapons": 2,
+    "keys": 3,
+    "bossEncountered": true,
+    "coverageLimit": "一局真实败北；覆盖外围10战、中层3战、Boss、商店、三人招募、两次合成、装备切换、对角移动和事件。未覆盖精英、副本、重铸、胜利奖励与胜利结算；未验证并行修改后的最新主工程或正式图形界面。",
+    "verificationNote": "305条原生命令重放全部一致，核验前后已提交隔离档案文件哈希不变。原始游玩无读档、重掷、额外开局。"
+  },
+  "checks": {
+    "actionsLegal": true,
+    "allReasonsPresent": true,
+    "revisionChain": true,
+    "replayRequestIdsMatch": true,
+    "nativeCommandsVerified": 305,
+    "sourceSnapshotUnchanged": true,
+    "sourceFiles": 3689,
+    "transportUnchanged": true,
+    "committedProfileUnchangedDuringVerification": true,
+    "htmlAnchors": true,
+    "embeddedStates": 306,
+    "zipIntegrity": true,
+    "browserPreview": "not performed; static checks only",
+    "unitTests": "not run; no gameplay implementation changed",
+    "inlineJavaScriptSyntax": true,
+    "isolatedHostClosed": true,
+    "originalEditorPid44800Preserved": true
+  },
+  "artifacts": {
+    "play-log.html": {
+      "path": "C:\\DiceLand\\outputs\\agent-battle\\easy-20261109-run7\\play-log.html",
+      "sha256": "a32a776fd6e5da66318867e69e3ebd31f03694d4afcadf8f9b254e5f1d8e2971",
+      "bytes": 13835638
+    },
+    "bug-report.html": {
+      "path": "C:\\DiceLand\\outputs\\agent-battle\\easy-20261109-run7\\bug-report.html",
+      "sha256": "db27e1c7a865c95fd2bb0c4a789fca14c739960157ca970ce91834f6a1560071",
+      "bytes": 26304
+    },
+    "play-log.txt": {
+      "path": "C:\\DiceLand\\outputs\\agent-battle\\easy-20261109-run7\\play-log.txt",
+      "sha256": "d37ba6948bc1b9e92506209412ff5b8284a231d615afcf5fa8da33ab73445d28",
+      "bytes": 3839335
+    },
+    "replay.json": {
+      "path": "C:\\DiceLand\\outputs\\agent-battle\\easy-20261109-run7\\replay.json",
+      "sha256": "81357437cb395dc274b6dcf52ab201f250e6ee0fcc68ff792d2abd458cfd3aec",
+      "bytes": 232095
+    },
+    "observations.jsonl.gz": {
+      "path": "C:\\DiceLand\\outputs\\agent-battle\\easy-20261109-run7\\observations.jsonl.gz",
+      "sha256": "c8f38956172d91b3811a6e02a737be6b8114f096e1ad48b3d2cfef8d55f8908a",
+      "bytes": 7900143
+    },
+    "easy-20261109-run7-full-log.zip": {
+      "path": "C:\\DiceLand\\outputs\\agent-battle\\easy-20261109-run7\\easy-20261109-run7-full-log.zip",
+      "sha256": "83f475708d04d1f2dde2a4400cb60a2c414fae7fba5076915b74e8d7258d5d5a",
+      "bytes": 9355264
+    }
+  }
+}
