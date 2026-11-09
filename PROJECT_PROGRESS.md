@@ -1959,3 +1959,9 @@ Root CLAUDE.md references the same AGENTS.md convention so Claude-based agents s
 - 失效时取消该槽主动连线并释放能量预留，保留敌方入射意图；眩晕敌方不选技或自动攻击，对其攻击按单方面攻击处理。战斗队列执行前再次检查失效状态，必要时将拼点降为仍能行动一方的单方面攻击。
 - 同步 Stun / Stun_RelicProxy 中英文说明，敌人 012「耀光突进」、034「静默」、041「千丝血缚」的正式清单、JSON、摘要索引和 HTML，以及遗物 091「坍缩」的 JSON、Markdown、Excel、HTML 与快照范围。保留历史配置日期，未宣称全部历史内容重导出。目录备注支持从正式 JSON 增量重建，避免旧临时导出覆盖后续文本修订。
 - 团结隔离工程整合回归 EditMode 116/116 通过；新增 PlayMode 用例验证失效槽拒绝旧面板选择、拒绝重开与恢复。扩展 PlayMode 22 项中 16 项失败，均在未修改的 8270409ff 源码上逐项复现；原有白条金额预期差异另列，不据此宣称全量测试通过。正式按钮样式和遗物 Excel 变更区域已查看，未做本轮 Android 真机验收。证据与范围见 docs/agent-battle/Stun-20261109-validation.json。
+
+
+## 2026-11-09 按要求移除 16 项旧 PlayMode 测试
+
+- 按用户要求删除前述失败清单中的 16 个测试方法：BattleFlowPlayModeTests 10 项、BattleSkillForestPlayModeTests 6 项，并清理后者不再使用的 ShowProfile 辅助方法。保留这两个测试类的其余 6 项，测试主体原样保留。
+- 团结 2022.3.62t6 隔离工程重新运行剩余 PlayMode 6/6 通过，已核对测试源码与工作区一致。原失败结果作为历史记录保留，在 docs/agent-battle/Stun-20261109-validation.json 中补充删除状态和本次验证结果。

@@ -69,5 +69,42 @@
   },
   "visualReview": "正式 Button.prefab 的正常、眩晕、恢复状态已渲染检查；眩晕状态不显示数字或叉号。",
   "androidDeviceTested": false,
-  "evidenceDirectory": "outputs/agent-battle/stun-20261109/ (ignored local evidence)"
+  "evidenceDirectory": "outputs/agent-battle/stun-20261109/ (ignored local evidence)",
+  "testRemoval": {
+    "date": "2026-11-09",
+    "reason": "用户明确要求删除 extendedPlayMode.sameFailureNames 中列出的 16 项测试。",
+    "removedCount": 16,
+    "removedFrom": {
+      "Assets/Tests/PlayMode/BattleFlowPlayModeTests.cs": 10,
+      "Assets/Tests/PlayMode/BattleSkillForestPlayModeTests.cs": 6
+    },
+    "unusedHelperRemoved": "BattleSkillForestPlayModeTests.ShowProfile",
+    "remainingTests": [
+      "BattleFlowPlayModeTests.BattleButtonClick_EntersTargetingPhaseAndAutoConnectsEnemy",
+      "BattleFlowPlayModeTests.RoundStart_WhenBurningStatusExists_AppliesTickBeforeTargetingInput",
+      "BattleSkillForestPlayModeTests.StunnedSlotRejectsOpenAndStaleSkillChoiceThenRecovers",
+      "BattleSkillForestPlayModeTests.PausedClosingBlocksUnderlyingInputAndNotifiesOnce",
+      "BattleSkillForestPlayModeTests.ReopeningCancelsCloseAndDisablingReleasesSuppression",
+      "BattleSkillForestPlayModeTests.PressFeedbackUsesUnscaledTimeAndSelectionUpdatesInPlace"
+    ],
+    "historicalResults": "extendedPlayMode 保留删除前的原始结果；其中列出的 16 个失败用例已从测试源码移除，不再是待运行测试。",
+    "validation": {
+      "engine": "Tuanjie 2022.3.62t6",
+      "platform": "PlayMode",
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "sourceFiles": [
+        {
+          "path": "Assets/Tests/PlayMode/BattleFlowPlayModeTests.cs",
+          "sha256": "bfecc77395690171448bb2df81e0a6d28f3bf3d7e149d580507191b82206b65f"
+        },
+        {
+          "path": "Assets/Tests/PlayMode/BattleSkillForestPlayModeTests.cs",
+          "sha256": "8aed7ba1f35a4cb0b5673259b4618de9c4dc1d043dbd2a15b29616d60a6b5f9e"
+        }
+      ],
+      "evidenceDirectory": "outputs/agent-battle/remove-obsolete-playmode-20261109/ (ignored local evidence)"
+    }
+  }
 }
