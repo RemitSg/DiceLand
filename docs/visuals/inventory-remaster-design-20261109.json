@@ -1,0 +1,95 @@
+{
+  "date": "2026-11-09",
+  "timezone": "Asia/Singapore",
+  "generator": "OpenAI built-in image_gen",
+  "status": "Design references",
+  "interaction": "背包中央展示完整物品网格。点击物品后使用独立详情弹窗。",
+  "design": {
+    "layout": "居中大窗，四个分类标签，全宽物品格，底部关闭按钮，右上角独立关闭按钮。",
+    "style": "森林遗迹、深绿皮革底、胡桃木标题、柔和金边、少量藤叶与青绿宝石。",
+    "entry": "深绿金边方形按钮，棕色皮革背包、搭扣和卷起的地图。",
+    "exampleGrid": "参考图采用 8 列 × 3 行展示，表示视觉排布。",
+    "illustrativeContent": "物品图标、名称、数量和勾选状态用于构图示意，展示格数不定义背包容量。正式文本与数据由游戏配置提供。"
+  },
+  "sourceReferences": [
+    "C:/Users/Karmas/Documents/xwechat_files/wxid_rs05v648c5z332_ef93/temp/RWTemp/2026-11/9e20f478899dc29eb19741386f9343c8/46c37e4f518f913f43bd0317ba9bd915.jpg",
+    "C:/DiceLand/docs/visuals/tutorial-welcome-ideal-reference-20261105.png",
+    "C:/DiceLand/docs/visuals/treasure-choice-ideal-reference-20261104.png"
+  ],
+  "outputs": [
+    {
+      "kind": "loot",
+      "title": "战利品",
+      "path": "docs/visuals/inventory-loot-ideal-reference-20261109.png",
+      "generatedFilename": "exec-b47a613b-0348-4259-af39-f576927f57ea.png",
+      "transparentBackground": false,
+      "prompt": "Use case: ui-mockup. Edit the FIRST supplied DiceLand inventory concept screenshot to honor the user's corrected interaction. The SECOND supplied image is the final backpack entrance icon. Output one beautiful finished landscape in-game reference at the SAME approximately 2.17:1 aspect ratio.\n\nCRITICAL REQUEST: eliminate the entire right-hand item-detail / preview card. This backpack screen must have ONE FULL-WIDTH ITEM GRID with no selected-item illustration, description, parchment detail pane, split view or side panel. In the actual game clicking an item opens a separate detail popup; this screenshot shows the inventory with no detail popup open. Use all the former preview space for larger, more comfortably spaced item slots.\n\nKeep the existing centered, large forest-green and antique-gold modal, the restrained ivy at corners, tiny turquoise gems, warm walnut title plaque \"冒险背包\" with its small satchel, the top-right square X, and the bottom-center wooden \"关闭\" button. Preserve the exact same elegant painted fantasy style and crisp Chinese typography. The modal occupies about 82% of screen width and 86% height. Below its title, exactly four equal-width generous tabs extend across the entire content width, in order \"战利品\", \"武器\", \"图纸\", \"遗物\". Only \"战利品\" is warm cream parchment and gold; others are dark green with ivory labels and small pictograms. Tabs have no counters or capacity.\n\nUnder tabs, centered small section label \"战利品\" with thin gold rules. ONE broad collection well spans the entire inside width, with an evenly spaced 8-COLUMN by 3-ROW grid. Twenty-four slots, consistent moderately sized square insets of deep emerald green with slim gold edges. Most importantly the grid occupies and balances the ENTIRE panel interior, including the former detail region, leaving comfortable breathing space around all sides. Show around 14 distinct occupied slots distributed across the first two rows and the rest subtle empty insets. Item icon art is vivid and beautifully painted, kept inside its slots. Short ivory Chinese names appear below the icons, and neat x-counts sit at bottom right of each occupied slot. Clear sample material icons are gray iron ore, green slime mucus, fiery moth wing, blue water orb, amber electric crystal, dark claw, blue energy core, blood-red spore, blue feather, brown root, nail, bundle of wires, bone pendant, pink crystal. Correct labels can include \"铁矿\", \"史莱姆粘液\", \"焰翅\", \"水球\", \"磁电晶\", \"影爪碎片\", \"浪涌核心\", \"凝血孢\", \"霜翅残片\", \"荆腐根茎\", \"棺钉\", \"铁线束\", \"忠犬骨坠\". Quantities are illustrative x12, x8, x3, etc. The first ore slot has a soft warm-gold focused edge, with no popup or preview triggered. The grid can scroll vertically using a single restrained slender gold scrollbar at the far right of this full-width well. At bottom left, below the grid but within the modal, show \"点击物品查看详情\". Keep the centered bottom \"关闭\" button.\n\nBACKGROUND CLEANUP: Remove the old small inventory panel behind this new modal at screen right. Fill that area with the same forest ruins and map backdrop. Only ONE inventory window appears. Dim and softly defocus the map, resource HUD and party behind the modal. Keep a small backpack entrance button at the screen upper right outside the modal, using the SECOND image's icon at HUD scale. No shop, item detail, character equipment screen, search, sale, discard, inventory weight or capacity limit. The output is a practical, spacious full-grid inventory reference screenshot.",
+      "size": [
+        1847,
+        851
+      ],
+      "mode": "RGB",
+      "sha256": "128305c52aa30d179e832a889d4f75518383313e9e610e35ae81f4f765ed032f"
+    },
+    {
+      "kind": "weapons",
+      "title": "武器",
+      "path": "docs/visuals/inventory-weapons-ideal-reference-20261109.png",
+      "generatedFilename": "exec-50e3e046-42d9-4c8a-834f-ef62aafa6bb2.png",
+      "transparentBackground": false,
+      "prompt": "Use case: ui-mockup. Edit the FIRST supplied image, the user's corrected full-grid DiceLand backpack concept. The SECOND image is the final standalone backpack entrance icon. Keep the exact same approximately 2.17:1 landscape composition, large CENTERED window, forest-green inset, fine gold frame, warm wood title \"冒险背包\", turquoise rivets and ivy corner accents, crisp ivory typography, scrim-blurred forest-map backdrop, top-right X and bottom-center \"关闭\". Keep the FOUR equal tabs in order \"战利品\", \"武器\", \"图纸\", \"遗物\". Keep the collection well at FULL WIDTH, with exactly 8 columns by 3 rows of generous square slots and a restrained vertical scrollbar. Keep the footer hint \"点击物品查看详情\". In this screenshot no detail popup is open. Clicking an item opens a separate modal in the actual game. Absolutely no right-hand preview or detail panel, no split view, no big selected-item art, no description card, no equipment portrait, no crafting or equip buttons on the inventory page. This screenshot shows ONLY the collection. All item icon art should be professional hand-painted fantasy sprites within tidy slots. Only the active category uses the cream/gold selected tab. All other tabs return to dark green. Preserve the exact same large readable grid and comfortable spacing. Samples of inventory quantities are illustrative. No search, sorting, selling, inventory capacity, wear or extra systems. The small top-right backpack entry remains as in the corrected first reference, matching the second icon.\nMake this the WEAPONS tab. Select only \"武器\", and change the centered collection heading to \"武器\". Replace every material icon and material name with an equipped-weapon inventory. Show 12 distinctly painted weapons in the first row of eight slots and first four slots of the second row; all other slots empty. Include a simple wooden sword, plain steel sword, fire-red sword, icy pale blue sword, black-green venom sword, large iron axe, plain dagger, glowing blue staff, long bow, black-red ceremonial sword, red dagger, old wooden wand. Show short Chinese names such as \"新手木剑\", \"铁剑\", \"炎铁剑\", \"霜铁剑\", \"蚀毒剑\", \"破旧匕首\", \"老旧法杖\". Each has small lower-right x1 or x2. The steel sword slot, second in the first row, has the thin luminous gold focus border. Small tasteful jade checkmark badge on the wooden sword slot can denote currently equipped. Retain all empty slots and outer controls at original positions. The right half must be more item slots, never a preview.",
+      "size": [
+        1847,
+        851
+      ],
+      "mode": "RGB",
+      "sha256": "e95dc7d0c3c83844796d45bb72cb56fbb94715af4c15a69eb9926aeb602d39cd"
+    },
+    {
+      "kind": "blueprints",
+      "title": "图纸",
+      "path": "docs/visuals/inventory-blueprints-ideal-reference-20261109.png",
+      "generatedFilename": "exec-7e324c6d-4dbb-40a2-b7a4-6cd12f2c73ea.png",
+      "transparentBackground": false,
+      "prompt": "Use case: ui-mockup. Edit the FIRST supplied image, the user's corrected full-grid DiceLand backpack concept. The SECOND image is the final standalone backpack entrance icon. Keep the exact same approximately 2.17:1 landscape composition, large CENTERED window, forest-green inset, fine gold frame, warm wood title \"冒险背包\", turquoise rivets and ivy corner accents, crisp ivory typography, scrim-blurred forest-map backdrop, top-right X and bottom-center \"关闭\". Keep the FOUR equal tabs in order \"战利品\", \"武器\", \"图纸\", \"遗物\". Keep the collection well at FULL WIDTH, with exactly 8 columns by 3 rows of generous square slots and a restrained vertical scrollbar. Keep the footer hint \"点击物品查看详情\". In this screenshot no detail popup is open. Clicking an item opens a separate modal in the actual game. Absolutely no right-hand preview or detail panel, no split view, no big selected-item art, no description card, no equipment portrait, no crafting or equip buttons on the inventory page. This screenshot shows ONLY the collection. All item icon art should be professional hand-painted fantasy sprites within tidy slots. Only the active category uses the cream/gold selected tab. All other tabs return to dark green. Preserve the exact same large readable grid and comfortable spacing. Samples of inventory quantities are illustrative. No search, sorting, selling, inventory capacity, wear or extra systems. The small top-right backpack entry remains as in the corrected first reference, matching the second icon.\nMake this the BLUEPRINTS tab. Select only \"图纸\", and change the centered collection heading to \"图纸\". Replace all materials with eight beautifully painted curled parchment crafting recipes, occupying the eight slots in the FIRST row only. Each recipe features a different fine little blue, red, green, ochre or purple ink weapon diagram, a distinct ribbon or wax seal, still clearly reading as a rolled blueprint. Name labels include \"钢铁之卷\", \"熔铁之卷\", \"霜铁之卷\" and shorter weapon-scroll labels. Quantities lower-right x1 or x2. The steel sword scroll in the first slot is selected with a restrained warm gold focus. All second and third row slots are empty green insets. The large window stays as spacious as the source, no collapsed layout. Keep footer \"点击物品查看详情\". No materials recipe list, crafting button, description or produced-weapon preview on this collection screen. Those details belong to the separate popup after an item is clicked.",
+      "size": [
+        1847,
+        851
+      ],
+      "mode": "RGB",
+      "sha256": "cc8b18a41b1fb70e07c055d472e57e03acd4669103ee6cc7e47bd5e63b629a9b"
+    },
+    {
+      "kind": "relics",
+      "title": "遗物",
+      "path": "docs/visuals/inventory-relics-ideal-reference-20261109.png",
+      "generatedFilename": "exec-9f42f6c5-1065-45a2-be4f-959a8c89d2a6.png",
+      "transparentBackground": false,
+      "prompt": "Use case: ui-mockup. Edit the FIRST supplied image, the user's corrected full-grid DiceLand backpack concept. The SECOND image is the final standalone backpack entrance icon. Keep the exact same approximately 2.17:1 landscape composition, large CENTERED window, forest-green inset, fine gold frame, warm wood title \"冒险背包\", turquoise rivets and ivy corner accents, crisp ivory typography, scrim-blurred forest-map backdrop, top-right X and bottom-center \"关闭\". Keep the FOUR equal tabs in order \"战利品\", \"武器\", \"图纸\", \"遗物\". Keep the collection well at FULL WIDTH, with exactly 8 columns by 3 rows of generous square slots and a restrained vertical scrollbar. Keep the footer hint \"点击物品查看详情\". In this screenshot no detail popup is open. Clicking an item opens a separate modal in the actual game. Absolutely no right-hand preview or detail panel, no split view, no big selected-item art, no description card, no equipment portrait, no crafting or equip buttons on the inventory page. This screenshot shows ONLY the collection. All item icon art should be professional hand-painted fantasy sprites within tidy slots. Only the active category uses the cream/gold selected tab. All other tabs return to dark green. Preserve the exact same large readable grid and comfortable spacing. Samples of inventory quantities are illustrative. No search, sorting, selling, inventory capacity, wear or extra systems. The small top-right backpack entry remains as in the corrected first reference, matching the second icon.\nMake this the RELICS tab. Select only \"遗物\", and change the centered collection heading to \"遗物\". Replace material icons with 14 distinct ornate but readable artifact sprites over the first row of eight slots and first six slots of the second row. Include rolled partly opened world map, warm amber pendant, brass spring boot, jade four-leaf clover, blue snowflake amulet, white shard stone, blood-red heart gemstone, antique coin, gold feather, small turquoise coil ring, an ivory die, bronze key, black-red crystal and a tiny vial. Correct short labels include \"世界地图\", \"晨露琥珀\", \"弹簧靴\", \"四叶草\", \"寒霜护符\", \"钟乳石\", \"不死心\", \"优惠券\", \"流云翎\", \"蓄能线圈\". Small lower-right x1 and occasional x2, rarity hinted only through very subtle accent on each slot. The first map slot has the warm gold focused border. Remaining slots empty. Keep footer \"点击物品查看详情\". No relic description, effect text, activation controls or right-hand preview in this screenshot; the existing game opens those in a separate popup.",
+      "size": [
+        1847,
+        851
+      ],
+      "mode": "RGB",
+      "sha256": "e066bce21e827e04eab1b939b9d88c0df4df3c6061bfb92b7c1b03a68fade7cf"
+    },
+    {
+      "kind": "entry",
+      "title": "背包入口图标",
+      "path": "docs/visuals/inventory-entry-icon-ideal-reference-20261109.png",
+      "generatedFilename": "exec-0b707ab2-cbe5-42ca-bd88-0b40323444c7.png",
+      "transparentBackground": true,
+      "prompt": "Use case: stylized-concept. Create ONE standalone inventory / backpack entry button reference asset for DiceLand, a hand-painted 2D Chinese fantasy forest adventure RPG. The supplied references show the game's forest-green UI, softly beveled antique-gold outlines, warm wood and tiny turquoise gems. Make a single square icon on a genuine transparent alpha background, presented front-on and cleanly centered at high resolution around 1024x1024. The button itself is an approximately square antique-gold bronze frame with gently clipped corners, a very narrow warm walnut lip, an inset matte deep emerald-green field and a small brown/caramel leather adventurer's backpack. The bag should occupy about 75% of its field so the meaning is immediately legible at 76px. The leather backpack has a rounded flap, 2 clear seams and ONE broad gold buckle, small side pockets, a cream rolled map peeking out over its left shoulder and a single tiny embossed gold leaf on the flap. Add one restrained tiny teal diamond rivet at the top of the frame, and very small ivy at ONE lower outside corner only. Distinct sculpted edges, readable warm highlights and rich dark seams, premium painted mobile-game UI sprite, warm ochre leather harmonizing with gold and forest green. The bag's silhouette must read as a travel backpack, with no three-bar menu glyph. Rich and beautiful but low enough detail to remain readable at small scale. Fully visible frame with clear transparent exterior margins. No text, letters, numbers, labels, coin counts, glow cloud, scenery, cast shadow outside the button, watermark, multiple buttons or reference-board background. Use the project references for stylistic consistency.",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "sha256": "cb2df2a43dff0136cbb29608198749929365930c421d671c7cc50916191abb08"
+    }
+  ]
+}
