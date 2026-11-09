@@ -27,6 +27,26 @@ MCP EditMode **24/24** 通过，覆盖实际资产、阶段阈值、周期选技
 
 立绘由内置 ImageGen 生成透明 PNG，提示词保存在 `image-prompts/044-withered-court.txt` 与 `image-prompts/4401-new-bud.txt`，正式源图和 Unity Sprite 元数据位于 `Assets/Data/Enemies/Enemies/044 WitheredCourt/`。
 
+### 枯枝王庭与新芽的技能姿态图
+
+2026-11-09 补齐七张透明技能姿态图，配置到八颗骰子的 `dicePresentationSettings.skillSpriteOverride`。每次切换持续 0.5 秒，按原立绘的高度等比校正缩放，位置与旋转偏移为 0；分解两颗骰子共用其专属姿态。技能数值、阶段与触发机制保持原配置。
+
+| 技能 | 正式图片（相对 `Assets/Data/Enemies/Enemies/044 WitheredCourt/`） | 使用骰子 |
+| --- | --- | --- |
+| 生长 | `044_Growth.png` | 第 1 防御骰 |
+| 野长 | `044_WildGrowth.png` | 第 1 防御骰 |
+| 茂盛 | `044_Flourish.png` | 第 1 攻击骰 |
+| 繁茂 | `044_Lush.png` | 第 1 攻击骰 |
+| 分解 | `044_Decomposition.png` | 第 1、2 攻击骰 |
+| 成长 | `4401 NewBud/4401_Budding.png` | 第 1 攻击骰 |
+| 断枝 | `4401 NewBud/4401_SeverBranch.png` | 第 1 攻击骰 |
+
+全部通过内置 ImageGen 以原立绘为参照生成，完整提示词、参考图与输出路径保存在 [`image-prompts/044-skill-poses.json`](image-prompts/044-skill-poses.json)。离线 HTML 在对应技能详情中内嵌姿态图，展开即可查看，不依赖项目图片目录或网络连接。
+
+通过 MCP 使用实际资产与 `BattlePresentationSystem` 的切图协程检查全部八颗骰子：技能图正确显示，原立绘、缩放、位置、朝向及排序在结束后恢复；以 EditMode 手动推进等待段，不代表对实时动画节奏的完整试玩。
+
+补图后全图鉴回归 **195/195** 通过；另逐一解码七张内嵌技能图，检查分解的双骰关联及 1512px、390px、320px 下的详情布局，远程请求和页面异常均为 0。
+
 ## 2026-11-05 页面验证
 
 2026-11-09 增量修订 012 耀光骑士「耀光突进」、034 回响「静默」、041 血骸王储「千丝血缚」的眩晕机制说明。每层使一个速度按钮失效，保留按钮与受击目标，禁止选技、主动连线和行动，回合结束恢复。JSON、摘要索引、清单与离线 HTML 使用同一说明；其他数值、投放和已知历史缺项保留原快照范围。

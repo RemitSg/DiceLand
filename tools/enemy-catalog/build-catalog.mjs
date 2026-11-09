@@ -51,15 +51,27 @@ for (const guid of new Set(enemies.map(enemy => enemy.portrait).filter(Boolean))
   portraits[guid] = `data:image/webp;base64,${bytes.toString('base64')}`;
 }
 
+const skillArt = {};
+for (const presentation of enemies.flatMap(enemy => enemy.skills.flatMap(skill => skill.presentations || []))) {
+  const {sprite_guid: guid, sprite_path: sourcePath} = presentation;
+  if (skillArt[guid]) continue;
+  assert.ok(guid && sourcePath, '技能姿态图缺少实际 GUID 或资产路径');
+  const bytes = await sharp(path.join(root, sourcePath)).trim()
+    .resize(480, 480, {fit: 'inside', withoutEnlargement: true})
+    .webp({quality: 88}).toBuffer();
+  skillArt[guid] = `data:image/webp;base64,${bytes.toString('base64')}`;
+}
+
 const data = {
   date: snapshots.enemyCatalog.snapshotDate,
   summary: catalog.summary,
   enemies,
-  portraits
+  portraits,
+  skillArt
 };
 const html = template
   .replace('/*__STYLE__*/', () => css.trim())
   .replace('/*__CATALOG_DATA__*/', () => JSON.stringify(data).replaceAll('<', '\\u003c'))
   .replace('/*__SCRIPT__*/', () => script.trim());
 await fs.writeFile(path.join(output, '敌人与技能完整图鉴.html'), html);
-console.log(`${enemies.length} 个敌人资产，${uniqueSkills.size} 个技能，${Object.keys(portraits).length} 张内嵌立绘。`);
+console.log(`${enemies.length} 个敌人资产，${uniqueSkills.size} 个技能，${Object.keys(portraits).length} 张内嵌立绘，${Object.keys(skillArt).length} 张技能姿态图。`);

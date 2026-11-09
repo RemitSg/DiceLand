@@ -31,7 +31,40 @@
       "scope": "新增 044 枯枝王庭与召唤物 4401 新芽：完整核对实际资产、GUID、两阶段、被动、七个技能及 Boss 池投放；其他历史内容仍沿用原快照和已单列的增量修订。",
       "validation": "MCP EditMode 24/24 通过；使用实际敌群执行 8 回合定向战斗检查，覆盖第 1/4/7 回合召唤、第二阶段、个人第四回合断枝与次回合献祭。非完整通关或难度平衡验证。"
     },
-    "coverage": "以 2026-10-26 历史快照的 50 个敌人资产、129 个关联技能为基础，2026-11-09 完整增补 044 枯枝王庭与 4401 新芽的 2 个资产及 7 个技能，合计 52 个敌人资产、136 个关联技能。历史血孢子等未复核条目仍保留原快照，不代表全部内容已重新导出。"
+    "coverage": "以 2026-10-26 历史快照的 50 个敌人资产、129 个关联技能为基础，2026-11-09 完整增补 044 枯枝王庭与 4401 新芽的 2 个资产及 7 个技能，合计 52 个敌人资产、136 个关联技能。历史血孢子等未复核条目仍保留原快照，不代表全部内容已重新导出。",
+    "latest_presentation_revision": {
+      "date": "2026-11-09",
+      "enemyNumbers": [
+        44,
+        4401
+      ],
+      "skillCount": 7,
+      "dicePresentations": 8,
+      "spriteCount": 7,
+      "scope": "补齐枯枝王庭与新芽七个技能的透明战斗姿态图，实际配置至全部八颗骰子的 skillSpriteOverride；分解两颗骰子共用其专属动作图。每次显示 0.5 秒，按原立绘高度校正缩放，位置和旋转偏移为 0，结束后恢复原立绘。不改变技能数值、机制或投放。",
+      "validation": {
+        "mcpDieSpriteSwaps": {
+          "passed": 8,
+          "failed": 0,
+          "scope": "Actual assets and BattlePresentationSystem iterator; wait advanced manually in EditMode."
+        },
+        "offlineCatalog": {
+          "passed": 195,
+          "failed": 0
+        },
+        "skillArtUi": {
+          "skills": 7,
+          "diceSlots": 8,
+          "widths": [
+            1512,
+            390,
+            320
+          ],
+          "remoteRequests": 0,
+          "pageErrors": 0
+        }
+      }
+    }
   },
   "enemies": [
     {
@@ -34720,7 +34753,79 @@
                 "maxPower": 5
               }
             ],
-            "dicePresentationSettings": [],
+            "dicePresentationSettings": [
+              {
+                "clashEffectPrefab": {
+                  "fileID": 0
+                },
+                "hitEffectPrefab": {
+                  "fileID": 0
+                },
+                "clashOffsetSpace": 0,
+                "clashPositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashScale": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashSortingOrderOffset": 0,
+                "overrideClashDuration": false,
+                "clashDuration": 0.0,
+                "hitOffsetSpace": 0,
+                "hitPositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitScale": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitSortingOrderOffset": 0,
+                "overrideHitDamageDelay": false,
+                "hitDamageDelay": 0.0,
+                "overrideHitReactionDelay": false,
+                "hitReactionDelay": 0.0,
+                "skillSpriteOverride": {
+                  "fileID": 21300000,
+                  "guid": "5b6c4c503831a144cbe31012362508b1",
+                  "type": 3
+                },
+                "skillSpritePositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "skillSpriteRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "skillSpriteScale": {
+                  "x": 1.0,
+                  "y": 1.0,
+                  "z": 1.0
+                },
+                "skillSpriteSortingOrderOffset": 0,
+                "overrideSkillSpriteDuration": true,
+                "skillSpriteDuration": 0.5
+              }
+            ],
             "diceEffectSettings": [
               {
                 "damageEffects": [],
@@ -34739,7 +34844,25 @@
               0
             ],
             "m_Name": "Flourish"
-          }
+          },
+          "presentations": [
+            {
+              "die": 1,
+              "sprite_guid": "5b6c4c503831a144cbe31012362508b1",
+              "sprite_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Flourish.png",
+              "duration_seconds": 0.5,
+              "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+              },
+              "offset": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+              }
+            }
+          ]
         },
         {
           "guid": "417dc619263038b4ba178a4c422e18a5",
@@ -34796,7 +34919,79 @@
                 "maxPower": 5
               }
             ],
-            "dicePresentationSettings": [],
+            "dicePresentationSettings": [
+              {
+                "clashEffectPrefab": {
+                  "fileID": 0
+                },
+                "hitEffectPrefab": {
+                  "fileID": 0
+                },
+                "clashOffsetSpace": 0,
+                "clashPositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashScale": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashSortingOrderOffset": 0,
+                "overrideClashDuration": false,
+                "clashDuration": 0.0,
+                "hitOffsetSpace": 0,
+                "hitPositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitScale": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitSortingOrderOffset": 0,
+                "overrideHitDamageDelay": false,
+                "hitDamageDelay": 0.0,
+                "overrideHitReactionDelay": false,
+                "hitReactionDelay": 0.0,
+                "skillSpriteOverride": {
+                  "fileID": 21300000,
+                  "guid": "d73da6499b25f7f48be4cc2f02159cc5",
+                  "type": 3
+                },
+                "skillSpritePositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "skillSpriteRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "skillSpriteScale": {
+                  "x": 1.0,
+                  "y": 1.0,
+                  "z": 1.0
+                },
+                "skillSpriteSortingOrderOffset": 0,
+                "overrideSkillSpriteDuration": true,
+                "skillSpriteDuration": 0.5
+              }
+            ],
             "diceEffectSettings": [
               {
                 "damageEffects": [],
@@ -34815,7 +35010,25 @@
               0
             ],
             "m_Name": "Lush"
-          }
+          },
+          "presentations": [
+            {
+              "die": 1,
+              "sprite_guid": "d73da6499b25f7f48be4cc2f02159cc5",
+              "sprite_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Lush.png",
+              "duration_seconds": 0.5,
+              "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+              },
+              "offset": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+              }
+            }
+          ]
         },
         {
           "guid": "8607fa1ef90c2c54bac220ff778922b5",
@@ -34876,7 +35089,150 @@
                 "maxPower": 4
               }
             ],
-            "dicePresentationSettings": [],
+            "dicePresentationSettings": [
+              {
+                "clashEffectPrefab": {
+                  "fileID": 0
+                },
+                "hitEffectPrefab": {
+                  "fileID": 0
+                },
+                "clashOffsetSpace": 0,
+                "clashPositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashScale": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashSortingOrderOffset": 0,
+                "overrideClashDuration": false,
+                "clashDuration": 0.0,
+                "hitOffsetSpace": 0,
+                "hitPositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitScale": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitSortingOrderOffset": 0,
+                "overrideHitDamageDelay": false,
+                "hitDamageDelay": 0.0,
+                "overrideHitReactionDelay": false,
+                "hitReactionDelay": 0.0,
+                "skillSpriteOverride": {
+                  "fileID": 21300000,
+                  "guid": "70469364576bdc5458b5eb4f1d6e6d45",
+                  "type": 3
+                },
+                "skillSpritePositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "skillSpriteRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "skillSpriteScale": {
+                  "x": 1.0,
+                  "y": 1.0,
+                  "z": 1.0
+                },
+                "skillSpriteSortingOrderOffset": 0,
+                "overrideSkillSpriteDuration": true,
+                "skillSpriteDuration": 0.5
+              },
+              {
+                "clashEffectPrefab": {
+                  "fileID": 0
+                },
+                "hitEffectPrefab": {
+                  "fileID": 0
+                },
+                "clashOffsetSpace": 0,
+                "clashPositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashScale": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashSortingOrderOffset": 0,
+                "overrideClashDuration": false,
+                "clashDuration": 0.0,
+                "hitOffsetSpace": 0,
+                "hitPositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitScale": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitSortingOrderOffset": 0,
+                "overrideHitDamageDelay": false,
+                "hitDamageDelay": 0.0,
+                "overrideHitReactionDelay": false,
+                "hitReactionDelay": 0.0,
+                "skillSpriteOverride": {
+                  "fileID": 21300000,
+                  "guid": "70469364576bdc5458b5eb4f1d6e6d45",
+                  "type": 3
+                },
+                "skillSpritePositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "skillSpriteRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "skillSpriteScale": {
+                  "x": 1.0,
+                  "y": 1.0,
+                  "z": 1.0
+                },
+                "skillSpriteSortingOrderOffset": 0,
+                "overrideSkillSpriteDuration": true,
+                "skillSpriteDuration": 0.5
+              }
+            ],
             "diceEffectSettings": [
               {
                 "damageEffects": [],
@@ -34908,7 +35264,41 @@
               0
             ],
             "m_Name": "Decomposition"
-          }
+          },
+          "presentations": [
+            {
+              "die": 1,
+              "sprite_guid": "70469364576bdc5458b5eb4f1d6e6d45",
+              "sprite_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Decomposition.png",
+              "duration_seconds": 0.5,
+              "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+              },
+              "offset": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+              }
+            },
+            {
+              "die": 2,
+              "sprite_guid": "70469364576bdc5458b5eb4f1d6e6d45",
+              "sprite_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Decomposition.png",
+              "duration_seconds": 0.5,
+              "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+              },
+              "offset": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+              }
+            }
+          ]
         },
         {
           "guid": "6b8271a9084061348af22d69a1b4065b",
@@ -34961,7 +35351,79 @@
                 "maxPower": 3
               }
             ],
-            "dicePresentationSettings": [],
+            "dicePresentationSettings": [
+              {
+                "clashEffectPrefab": {
+                  "fileID": 0
+                },
+                "hitEffectPrefab": {
+                  "fileID": 0
+                },
+                "clashOffsetSpace": 0,
+                "clashPositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashScale": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashSortingOrderOffset": 0,
+                "overrideClashDuration": false,
+                "clashDuration": 0.0,
+                "hitOffsetSpace": 0,
+                "hitPositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitScale": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitSortingOrderOffset": 0,
+                "overrideHitDamageDelay": false,
+                "hitDamageDelay": 0.0,
+                "overrideHitReactionDelay": false,
+                "hitReactionDelay": 0.0,
+                "skillSpriteOverride": {
+                  "fileID": 21300000,
+                  "guid": "cce8394ef28c4704ba852892993468ec",
+                  "type": 3
+                },
+                "skillSpritePositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "skillSpriteRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "skillSpriteScale": {
+                  "x": 1.0,
+                  "y": 1.0,
+                  "z": 1.0
+                },
+                "skillSpriteSortingOrderOffset": 0,
+                "overrideSkillSpriteDuration": true,
+                "skillSpriteDuration": 0.5
+              }
+            ],
             "diceEffectSettings": [
               {
                 "damageEffects": [],
@@ -34992,7 +35454,25 @@
               1
             ],
             "m_Name": "Growth"
-          }
+          },
+          "presentations": [
+            {
+              "die": 1,
+              "sprite_guid": "cce8394ef28c4704ba852892993468ec",
+              "sprite_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Growth.png",
+              "duration_seconds": 0.5,
+              "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+              },
+              "offset": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+              }
+            }
+          ]
         },
         {
           "guid": "253e40966af7598409c94c86993d3b3b",
@@ -35045,7 +35525,79 @@
                 "maxPower": 3
               }
             ],
-            "dicePresentationSettings": [],
+            "dicePresentationSettings": [
+              {
+                "clashEffectPrefab": {
+                  "fileID": 0
+                },
+                "hitEffectPrefab": {
+                  "fileID": 0
+                },
+                "clashOffsetSpace": 0,
+                "clashPositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashScale": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashSortingOrderOffset": 0,
+                "overrideClashDuration": false,
+                "clashDuration": 0.0,
+                "hitOffsetSpace": 0,
+                "hitPositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitScale": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitSortingOrderOffset": 0,
+                "overrideHitDamageDelay": false,
+                "hitDamageDelay": 0.0,
+                "overrideHitReactionDelay": false,
+                "hitReactionDelay": 0.0,
+                "skillSpriteOverride": {
+                  "fileID": 21300000,
+                  "guid": "ab35e2c99878a4642bc320960a603fe1",
+                  "type": 3
+                },
+                "skillSpritePositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "skillSpriteRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "skillSpriteScale": {
+                  "x": 1.0049760341644287,
+                  "y": 1.0049760341644287,
+                  "z": 1.0049760341644287
+                },
+                "skillSpriteSortingOrderOffset": 0,
+                "overrideSkillSpriteDuration": true,
+                "skillSpriteDuration": 0.5
+              }
+            ],
             "diceEffectSettings": [
               {
                 "damageEffects": [],
@@ -35076,7 +35628,25 @@
               1
             ],
             "m_Name": "WildGrowth"
-          }
+          },
+          "presentations": [
+            {
+              "die": 1,
+              "sprite_guid": "ab35e2c99878a4642bc320960a603fe1",
+              "sprite_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_WildGrowth.png",
+              "duration_seconds": 0.5,
+              "scale": {
+                "x": 1.004976,
+                "y": 1.004976,
+                "z": 1.004976
+              },
+              "offset": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+              }
+            }
+          ]
         }
       ],
       "raw": {
@@ -35345,7 +35915,79 @@
                 "maxPower": 4
               }
             ],
-            "dicePresentationSettings": [],
+            "dicePresentationSettings": [
+              {
+                "clashEffectPrefab": {
+                  "fileID": 0
+                },
+                "hitEffectPrefab": {
+                  "fileID": 0
+                },
+                "clashOffsetSpace": 0,
+                "clashPositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashScale": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashSortingOrderOffset": 0,
+                "overrideClashDuration": false,
+                "clashDuration": 0.0,
+                "hitOffsetSpace": 0,
+                "hitPositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitScale": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitSortingOrderOffset": 0,
+                "overrideHitDamageDelay": false,
+                "hitDamageDelay": 0.0,
+                "overrideHitReactionDelay": false,
+                "hitReactionDelay": 0.0,
+                "skillSpriteOverride": {
+                  "fileID": 21300000,
+                  "guid": "836cb364d69f0894eb52a26f65444710",
+                  "type": 3
+                },
+                "skillSpritePositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "skillSpriteRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "skillSpriteScale": {
+                  "x": 1.0,
+                  "y": 1.0,
+                  "z": 1.0
+                },
+                "skillSpriteSortingOrderOffset": 0,
+                "overrideSkillSpriteDuration": true,
+                "skillSpriteDuration": 0.5
+              }
+            ],
             "diceEffectSettings": [
               {
                 "damageEffects": [],
@@ -35364,7 +36006,25 @@
               0
             ],
             "m_Name": "Budding"
-          }
+          },
+          "presentations": [
+            {
+              "die": 1,
+              "sprite_guid": "836cb364d69f0894eb52a26f65444710",
+              "sprite_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/4401_Budding.png",
+              "duration_seconds": 0.5,
+              "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+              },
+              "offset": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+              }
+            }
+          ]
         },
         {
           "guid": "c678d1c8fd4a1d64b9eb3dc179489caf",
@@ -35421,7 +36081,79 @@
                 "maxPower": 4
               }
             ],
-            "dicePresentationSettings": [],
+            "dicePresentationSettings": [
+              {
+                "clashEffectPrefab": {
+                  "fileID": 0
+                },
+                "hitEffectPrefab": {
+                  "fileID": 0
+                },
+                "clashOffsetSpace": 0,
+                "clashPositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashScale": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "clashSortingOrderOffset": 0,
+                "overrideClashDuration": false,
+                "clashDuration": 0.0,
+                "hitOffsetSpace": 0,
+                "hitPositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitScale": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "hitSortingOrderOffset": 0,
+                "overrideHitDamageDelay": false,
+                "hitDamageDelay": 0.0,
+                "overrideHitReactionDelay": false,
+                "hitReactionDelay": 0.0,
+                "skillSpriteOverride": {
+                  "fileID": 21300000,
+                  "guid": "39f776ee6f2c2c740ab90903a8e3034a",
+                  "type": 3
+                },
+                "skillSpritePositionOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "skillSpriteRotationOffset": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                },
+                "skillSpriteScale": {
+                  "x": 1.0,
+                  "y": 1.0,
+                  "z": 1.0
+                },
+                "skillSpriteSortingOrderOffset": 0,
+                "overrideSkillSpriteDuration": true,
+                "skillSpriteDuration": 0.5
+              }
+            ],
             "diceEffectSettings": [
               {
                 "damageEffects": [],
@@ -35440,7 +36172,25 @@
               0
             ],
             "m_Name": "SeverBranch"
-          }
+          },
+          "presentations": [
+            {
+              "die": 1,
+              "sprite_guid": "39f776ee6f2c2c740ab90903a8e3034a",
+              "sprite_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/4401_SeverBranch.png",
+              "duration_seconds": 0.5,
+              "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+              },
+              "offset": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+              }
+            }
+          ]
         }
       ],
       "raw": {

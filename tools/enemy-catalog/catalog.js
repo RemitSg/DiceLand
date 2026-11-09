@@ -252,6 +252,7 @@ function renderSkill(skill) {
       </span>
     </span></summary>
     <div class="skill-body">
+      ${renderSkillArt(skill)}
       ${skill.dice.length ? `<div class="dice">${skill.dice.map(die => `<span class="die ${die.type === '防御骰' ? 'defense' : 'attack'}"><span>${die.number} · ${die.type}</span><b>${rangeLabel(die.low, die.high)}</b></span>`).join('')}</div>` : ''}
       <div class="skill-roles">
         ${skill.roles.map(role => `<div>${highlight(role)}</div>`).join('')}
@@ -268,6 +269,19 @@ function renderSkill(skill) {
       </details>
     </div>
   </details>`;
+}
+
+function renderSkillArt(skill) {
+  const poses = new Map();
+  for (const pose of skill.presentations || []) {
+    if (!data.skillArt?.[pose.sprite_guid]) continue;
+    if (!poses.has(pose.sprite_guid)) poses.set(pose.sprite_guid, {...pose, dice: []});
+    poses.get(pose.sprite_guid).dice.push(pose.die);
+  }
+  return [...poses.values()].map(pose => `<figure class="skill-art">
+    <img src="${escape(data.skillArt[pose.sprite_guid])}" alt="${escape(skill.name)}的战斗姿态" loading="lazy">
+    <figcaption>第 ${pose.dice.join('、')} 颗骰子 · 技能姿态 · ${escape(pose.duration_seconds)} 秒</figcaption>
+  </figure>`).join('');
 }
 
 function ruleBlock(title, lines, empty) {

@@ -273,6 +273,9 @@ mark { color: #294837; background: #e4edcf; border-radius: 2px; }
   .detail-hero h2 { font-size: 23px; }
   .drawer-section, .skill-card { scroll-margin-top: 107px; }
 }
+.skill-art { margin: 0 0 18px; padding: 16px; border: 1px solid #dce2d3; border-radius: 10px; background: #eaf0e3; text-align: center; }
+.skill-art img { display: block; width: 100%; height: 260px; margin: 0 auto; object-fit: contain; }
+.skill-art figcaption { margin-top: 10px; color: #657359; font-size: 12px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
 }

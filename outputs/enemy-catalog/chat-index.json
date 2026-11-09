@@ -1246,7 +1246,44 @@
       "生长〔条件〕",
       "野长〔条件〕"
     ],
-    "granted_to_player": []
+    "granted_to_player": [],
+    "skill_presentations": [
+      {
+        "name": "茂盛",
+        "guid": "afb863e8ea1d2a045a700d7b25f52931",
+        "sprites": [
+          "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Flourish.png"
+        ]
+      },
+      {
+        "name": "繁茂",
+        "guid": "417dc619263038b4ba178a4c422e18a5",
+        "sprites": [
+          "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Lush.png"
+        ]
+      },
+      {
+        "name": "分解",
+        "guid": "8607fa1ef90c2c54bac220ff778922b5",
+        "sprites": [
+          "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Decomposition.png"
+        ]
+      },
+      {
+        "name": "生长",
+        "guid": "6b8271a9084061348af22d69a1b4065b",
+        "sprites": [
+          "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Growth.png"
+        ]
+      },
+      {
+        "name": "野长",
+        "guid": "253e40966af7598409c94c86993d3b3b",
+        "sprites": [
+          "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_WildGrowth.png"
+        ]
+      }
+    ]
   },
   {
     "number": 4401,
@@ -1268,7 +1305,23 @@
       "成长",
       "断枝〔条件〕"
     ],
-    "granted_to_player": []
+    "granted_to_player": [],
+    "skill_presentations": [
+      {
+        "name": "成长",
+        "guid": "9d3caf0543ed62a4a91b315d998b8f25",
+        "sprites": [
+          "Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/4401_Budding.png"
+        ]
+      },
+      {
+        "name": "断枝",
+        "guid": "c678d1c8fd4a1d64b9eb3dc179489caf",
+        "sprites": [
+          "Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/4401_SeverBranch.png"
+        ]
+      }
+    ]
   },
   {
     "number": 9000,

@@ -2929,6 +2929,9 @@ GUID：6d9df9f8bace72d47b7e655cb72ea809
 适用阶段：1
 技能资产：Assets/Data/Enemies/Enemies/044 WitheredCourt/Flourish.asset
 技能 GUID：afb863e8ea1d2a045a700d7b25f52931
+技能表现：第 1 颗骰子使用专属技能姿态图；显示 0.5 秒后恢复原立绘。
+姿态图：Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Flourish.png（GUID 5b6c4c503831a144cbe31012362508b1）
+姿态变换：等比缩放 1，按原立绘高度校正；位置和旋转偏移均为 0。
 茂盛
 技能：茂盛
 能耗：0
@@ -2946,6 +2949,9 @@ GUID：6d9df9f8bace72d47b7e655cb72ea809
 适用阶段：2
 技能资产：Assets/Data/Enemies/Enemies/044 WitheredCourt/Lush.asset
 技能 GUID：417dc619263038b4ba178a4c422e18a5
+技能表现：第 1 颗骰子使用专属技能姿态图；显示 0.5 秒后恢复原立绘。
+姿态图：Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Lush.png（GUID d73da6499b25f7f48be4cc2f02159cc5）
+姿态变换：等比缩放 1，按原立绘高度校正；位置和旋转偏移均为 0。
 繁茂
 技能：繁茂
 能耗：0
@@ -2963,6 +2969,9 @@ GUID：6d9df9f8bace72d47b7e655cb72ea809
 适用阶段：1、2
 技能资产：Assets/Data/Enemies/Enemies/044 WitheredCourt/Decomposition.asset
 技能 GUID：8607fa1ef90c2c54bac220ff778922b5
+技能表现：第 1、2 颗骰子使用专属技能姿态图；显示 0.5 秒后恢复原立绘。
+姿态图：Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Decomposition.png（GUID 70469364576bdc5458b5eb4f1d6e6d45）
+姿态变换：等比缩放 1，按原立绘高度校正；位置和旋转偏移均为 0。
 分解
 技能：分解
 能耗：0
@@ -2981,6 +2990,9 @@ GUID：6d9df9f8bace72d47b7e655cb72ea809
 适用阶段：1
 技能资产：Assets/Data/Enemies/Enemies/044 WitheredCourt/Growth.asset
 技能 GUID：6b8271a9084061348af22d69a1b4065b
+技能表现：第 1 颗骰子使用专属技能姿态图；显示 0.5 秒后恢复原立绘。
+姿态图：Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Growth.png（GUID cce8394ef28c4704ba852892993468ec）
+姿态变换：等比缩放 1，按原立绘高度校正；位置和旋转偏移均为 0。
 生长
 技能：生长
 能耗：0
@@ -2998,6 +3010,9 @@ GUID：6d9df9f8bace72d47b7e655cb72ea809
 适用阶段：2
 技能资产：Assets/Data/Enemies/Enemies/044 WitheredCourt/WildGrowth.asset
 技能 GUID：253e40966af7598409c94c86993d3b3b
+技能表现：第 1 颗骰子使用专属技能姿态图；显示 0.5 秒后恢复原立绘。
+姿态图：Assets/Data/Enemies/Enemies/044 WitheredCourt/044_WildGrowth.png（GUID ab35e2c99878a4642bc320960a603fe1）
+姿态变换：等比缩放 1.00498，按原立绘高度校正；位置和旋转偏移均为 0。
 野长
 技能：野长
 能耗：0
@@ -3040,6 +3055,9 @@ GUID：287b85e512ed82c46af70b0b313c7818
 适用阶段：1
 技能资产：Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/Budding.asset
 技能 GUID：9d3caf0543ed62a4a91b315d998b8f25
+技能表现：第 1 颗骰子使用专属技能姿态图；显示 0.5 秒后恢复原立绘。
+姿态图：Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/4401_Budding.png（GUID 836cb364d69f0894eb52a26f65444710）
+姿态变换：等比缩放 1，按原立绘高度校正；位置和旋转偏移均为 0。
 成长
 技能：成长
 能耗：0
@@ -3053,6 +3071,9 @@ GUID：287b85e512ed82c46af70b0b313c7818
 适用阶段：1
 技能资产：Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/SeverBranch.asset
 技能 GUID：c678d1c8fd4a1d64b9eb3dc179489caf
+技能表现：第 1 颗骰子使用专属技能姿态图；显示 0.5 秒后恢复原立绘。
+姿态图：Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/4401_SeverBranch.png（GUID 39f776ee6f2c2c740ab90903a8e3034a）
+姿态变换：等比缩放 1，按原立绘高度校正；位置和旋转偏移均为 0。
 断枝
 技能：断枝
 能耗：0

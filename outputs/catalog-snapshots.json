@@ -35,7 +35,40 @@
       "scope": "新增 044 枯枝王庭与召唤物 4401 新芽：完整核对实际资产、GUID、两阶段、被动、七个技能及 Boss 池投放；其他历史内容仍沿用原快照和已单列的增量修订。",
       "validation": "MCP EditMode 24/24 通过；使用实际敌群执行 8 回合定向战斗检查，覆盖第 1/4/7 回合召唤、第二阶段、个人第四回合断枝与次回合献祭。非完整通关或难度平衡验证。"
     },
-    "coverage": "以 2026-10-26 历史快照的 50 个敌人资产、129 个关联技能为基础，2026-11-09 完整增补 044 枯枝王庭与 4401 新芽的 2 个资产及 7 个技能，合计 52 个敌人资产、136 个关联技能。历史血孢子等未复核条目仍保留原快照，不代表全部内容已重新导出。"
+    "coverage": "以 2026-10-26 历史快照的 50 个敌人资产、129 个关联技能为基础，2026-11-09 完整增补 044 枯枝王庭与 4401 新芽的 2 个资产及 7 个技能，合计 52 个敌人资产、136 个关联技能。历史血孢子等未复核条目仍保留原快照，不代表全部内容已重新导出。",
+    "latestPresentationRevision": {
+      "date": "2026-11-09",
+      "enemyNumbers": [
+        44,
+        4401
+      ],
+      "skillCount": 7,
+      "dicePresentations": 8,
+      "spriteCount": 7,
+      "scope": "补齐枯枝王庭与新芽七个技能的透明战斗姿态图，实际配置至全部八颗骰子的 skillSpriteOverride；分解两颗骰子共用其专属动作图。每次显示 0.5 秒，按原立绘高度校正缩放，位置和旋转偏移为 0，结束后恢复原立绘。不改变技能数值、机制或投放。",
+      "validation": {
+        "mcpDieSpriteSwaps": {
+          "passed": 8,
+          "failed": 0,
+          "scope": "Actual assets and BattlePresentationSystem iterator; wait advanced manually in EditMode."
+        },
+        "offlineCatalog": {
+          "passed": 195,
+          "failed": 0
+        },
+        "skillArtUi": {
+          "skills": 7,
+          "diceSlots": 8,
+          "widths": [
+            1512,
+            390,
+            320
+          ],
+          "remoteRequests": 0,
+          "pageErrors": 0
+        }
+      }
+    }
   },
   "relicCatalog": {
     "directory": "outputs/relic-catalog",

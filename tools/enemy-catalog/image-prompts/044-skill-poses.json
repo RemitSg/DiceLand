@@ -1,0 +1,71 @@
+{
+  "tool": "built-in ImageGen",
+  "transparent_background": true,
+  "images": [
+    {
+      "name": "生长",
+      "asset": "Assets/Data/Enemies/Enemies/044 WitheredCourt/Growth.asset",
+      "output": "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Growth.png",
+      "references": [
+        "C:/DiceLand/Assets/Data/Enemies/Enemies/044 WitheredCourt/044_WitheredCourt.png",
+        "C:/DiceLand/Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/4401_NewBud.png"
+      ],
+      "prompt": "Use the supplied reference image as the exact character identity and art-style reference, not as a background. Produce ONE full-body combat action sprite of the SAME Withered Court tree king. Preserve its twisted gray-brown bark, hollow stern face, crooked bronze crown, muted violet shelf fungi, moss-green sap and massive throne-shaped root base. Keep the same three-quarter camera facing slightly left, body proportions, painted linework, bark detail and lighting. Entire character including crown, branch tips and roots visible, with a small transparent safety margin. Root base at bottom-center; stable body scale so the image can replace the idle sprite without a camera jump. Dark fantasy illustrated RPG art matching the reference. Output genuinely transparent RGBA background. No scenery, opaque floor, ground shadow plane, frame, UI, letters, symbols, numbers, captions or watermark. This is an actor action pose, not a square ability icon. Action: GROWTH, a defensive summoning stance. The king bends both clawlike branch hands down toward its front roots, enclosing and guarding TWO clearly separated tiny fresh sapling shoots emerging from the front roots. Each tiny sapling echoes the plant in reference image 2 but remains small compared with the king. Very restrained green sap light around the two shoots. Main tree king remains the dominant large silhouette, its crown and face unobstructed. Make the lowered protective arm pose visibly different from the idle reference."
+    },
+    {
+      "name": "野长",
+      "asset": "Assets/Data/Enemies/Enemies/044 WitheredCourt/WildGrowth.asset",
+      "output": "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_WildGrowth.png",
+      "references": [
+        "C:/DiceLand/Assets/Data/Enemies/Enemies/044 WitheredCourt/044_WitheredCourt.png",
+        "C:/DiceLand/Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/4401_NewBud.png"
+      ],
+      "prompt": "Use the supplied reference image as the exact character identity and art-style reference, not as a background. Produce ONE full-body combat action sprite of the SAME Withered Court tree king. Preserve its twisted gray-brown bark, hollow stern face, crooked bronze crown, muted violet shelf fungi, moss-green sap and massive throne-shaped root base. Keep the same three-quarter camera facing slightly left, body proportions, painted linework, bark detail and lighting. Entire character including crown, branch tips and roots visible, with a small transparent safety margin. Root base at bottom-center; stable body scale so the image can replace the idle sprite without a camera jump. Dark fantasy illustrated RPG art matching the reference. Output genuinely transparent RGBA background. No scenery, opaque floor, ground shadow plane, frame, UI, letters, symbols, numbers, captions or watermark. This is an actor action pose, not a square ability icon. Action: WILD GROWTH, a forceful second-stage summoning stance. The king arches its upper trunk and spreads both large branch arms upward and outward like a jagged canopy while FOUR small distinct young sapling shoots erupt from its front root base, evenly separated enough to count. The saplings echo reference image 2 and remain tiny compared with the king. A few fresh green leaves open along the raised arms and restrained green sap streaks flow down its bark. Preserve its wooden identity and crown, full rooted body. Different from a lowered-hand protective growth pose."
+    },
+    {
+      "name": "茂盛",
+      "asset": "Assets/Data/Enemies/Enemies/044 WitheredCourt/Flourish.asset",
+      "output": "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Flourish.png",
+      "references": [
+        "C:/DiceLand/Assets/Data/Enemies/Enemies/044 WitheredCourt/044_WitheredCourt.png"
+      ],
+      "prompt": "Use the supplied reference image as the exact character identity and art-style reference, not as a background. Produce ONE full-body combat action sprite of the SAME Withered Court tree king. Preserve its twisted gray-brown bark, hollow stern face, crooked bronze crown, muted violet shelf fungi, moss-green sap and massive throne-shaped root base. Keep the same three-quarter camera facing slightly left, body proportions, painted linework, bark detail and lighting. Entire character including crown, branch tips and roots visible, with a small transparent safety margin. Root base at bottom-center; stable body scale so the image can replace the idle sprite without a camera jump. Dark fantasy illustrated RPG art matching the reference. Output genuinely transparent RGBA background. No scenery, opaque floor, ground shadow plane, frame, UI, letters, symbols, numbers, captions or watermark. This is an actor action pose, not a square ability icon. Action: FLOURISH, a brief life-giving attacking branch sweep. Lean the upper trunk slightly forward toward the left; extend the forward clawlike branch arm horizontally toward the left and curl the other arm inward toward the chest. A narrow fresh vine and a small cluster of three new green leaves unfurl around the extended claw, with just a few drifting green leaf motes near the hand. The sparse, temporary growth effect is localized to the hand. Keep crown, face and root base readable. Do not add other creatures."
+    },
+    {
+      "name": "繁茂",
+      "asset": "Assets/Data/Enemies/Enemies/044 WitheredCourt/Lush.asset",
+      "output": "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Lush.png",
+      "references": [
+        "C:/DiceLand/Assets/Data/Enemies/Enemies/044 WitheredCourt/044_WitheredCourt.png"
+      ],
+      "prompt": "Use the supplied reference image as the exact character identity and art-style reference, not as a background. Produce ONE full-body combat action sprite of the SAME Withered Court tree king. Preserve its twisted gray-brown bark, hollow stern face, crooked bronze crown, muted violet shelf fungi, moss-green sap and massive throne-shaped root base. Keep the same three-quarter camera facing slightly left, body proportions, painted linework, bark detail and lighting. Entire character including crown, branch tips and roots visible, with a small transparent safety margin. Root base at bottom-center; stable body scale so the image can replace the idle sprite without a camera jump. Dark fantasy illustrated RPG art matching the reference. Output genuinely transparent RGBA background. No scenery, opaque floor, ground shadow plane, frame, UI, letters, symbols, numbers, captions or watermark. This is an actor action pose, not a square ability icon. Action: LUSH, an empowered second-stage life-giving attack stance. The king thrusts both branch claws diagonally forward to the left, the upper arm higher and the lower arm lower, as vigorous leafy vines spiral along both wooden forearms. Several fresh green leaf clusters, visibly fuller than sparse budding, show lasting flourishing strength. Thin restrained green sap highlights along the forearms and chest. Keep the trunk still mostly dead wood, crown and hollow face fully visible, roots planted. Strong asymmetrical forward action, distinct from the idle pose. No other creatures."
+    },
+    {
+      "name": "分解",
+      "asset": "Assets/Data/Enemies/Enemies/044 WitheredCourt/Decomposition.asset",
+      "output": "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Decomposition.png",
+      "references": [
+        "C:/DiceLand/Assets/Data/Enemies/Enemies/044 WitheredCourt/044_WitheredCourt.png"
+      ],
+      "prompt": "Use the supplied reference image as the exact character identity and art-style reference, not as a background. Produce ONE full-body combat action sprite of the SAME Withered Court tree king. Preserve its twisted gray-brown bark, hollow stern face, crooked bronze crown, muted violet shelf fungi, moss-green sap and massive throne-shaped root base. Keep the same three-quarter camera facing slightly left, body proportions, painted linework, bark detail and lighting. Entire character including crown, branch tips and roots visible, with a small transparent safety margin. Root base at bottom-center; stable body scale so the image can replace the idle sprite without a camera jump. Dark fantasy illustrated RPG art matching the reference. Output genuinely transparent RGBA background. No scenery, opaque floor, ground shadow plane, frame, UI, letters, symbols, numbers, captions or watermark. This is an actor action pose, not a square ability icon. Action: DECOMPOSITION, a two-hit root-and-claw attack shown as ONE decisive combat pose. The king lowers and leans its trunk slightly toward the left, one long jagged branch claw rakes down and forward and several thick hooked root tendrils lash forward along the lower left. A handful of dark decaying leaf fragments and muted violet-green sap flecks trace the claw and root tips, suggesting stolen vitality returning toward its trunk. Keep the entire hooked root extension within frame, full crown and root base visible, no victim, no gore, no separate target, no other creature. Dynamic but clear silhouette."
+    },
+    {
+      "name": "成长",
+      "asset": "Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/Budding.asset",
+      "output": "Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/4401_Budding.png",
+      "references": [
+        "C:/DiceLand/Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/4401_NewBud.png"
+      ],
+      "prompt": "Use the supplied reference image as the exact character identity and art-style reference, not as a background. Produce ONE full-body action sprite of the SAME New Bud plant creature. Preserve its short gray-brown twig trunk, two dark eye hollows, small root feet, twig arms and three moss-green crown leaves; preserve the painted bark detail, subtle muted violet cracks, colors, lighting and dark fantasy illustrated RPG linework. Keep the same three-quarter view facing slightly left and the same body proportions. Entire creature and leaves visible with a small transparent safety margin, root feet at bottom-center. Output genuinely transparent RGBA background. No scenery, opaque floor, ground shadow plane, UI, frame, text, numbers, captions or watermark. This is an actor combat pose, not an ability icon. Action: BUDDING, the creature's simple attacking swipe. Lean forward toward the left with the left/front root foot planted, one sharp twig claw extended in a short leftward slash, the other arm drawn back for balance. Its three leaf crown stretches upward with one tiny additional fresh leaf beginning to open, making its growing strength visible. Keep a compact simple silhouette, actual wooden body clearly readable and no magical cloud. Clearly change the limb pose from the idle reference."
+    },
+    {
+      "name": "断枝",
+      "asset": "Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/SeverBranch.asset",
+      "output": "Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/4401_SeverBranch.png",
+      "references": [
+        "C:/DiceLand/Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/4401_NewBud.png"
+      ],
+      "prompt": "Use the supplied reference image as the exact character identity and art-style reference, not as a background. Produce ONE full-body action sprite of the SAME New Bud plant creature. Preserve its short gray-brown twig trunk, two dark eye hollows, small root feet, twig arms and three moss-green crown leaves; preserve the painted bark detail, subtle muted violet cracks, colors, lighting and dark fantasy illustrated RPG linework. Keep the same three-quarter view facing slightly left and the same body proportions. Entire creature and leaves visible with a small transparent safety margin, root feet at bottom-center. Output genuinely transparent RGBA background. No scenery, opaque floor, ground shadow plane, UI, frame, text, numbers, captions or watermark. This is an actor combat pose, not an ability icon. Action: SEVER BRANCH, a sacrificial attack before dying next round. The living sapling twists toward the left and thrusts one jagged twig claw forward while its other branch arm is freshly snapped at the elbow; a short detached twig piece floats immediately beside the broken stump and a few tiny wooden splinters mark the clean break. A thin pale green sap thread trails inward from the break toward its torso, leaves starting to droop slightly. Keep its eyes visible and creature still standing and active, not already dead, no gore, no blood, no additional creatures. Visibly different twisted action pose, not an idle copy."
+    }
+  ]
+}
