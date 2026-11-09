@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "DiceLand Agent Adventure API",
-    "version": "0.8.5",
-    "description": "Shared-rule, editor-backed full adventure: menu difficulties, map/economy/events/dungeons, battles, terminal settlement, isolated earned progression and next runs; playable save/load, atomic profile recovery and timestamped isolated replay. One session per host; engine required. health/catalog and battle DTOs are documented in openapi.json. See AGENT_GUIDE.md for the command loop and retry rules."
+    "version": "0.8.6",
+    "description": "Shared-rule, editor-backed full adventure: menu difficulties, map/economy/events/dungeons, battles, terminal settlement, isolated earned progression and next runs; playable save/load, atomic profile recovery and timestamped isolated replay. One session per host; engine required. health/catalog and battle DTOs are documented in openapi.json. See AGENT_GUIDE.md for the command loop and retry rules. Model-directed play uses agent_play_client.py; copy legalActions for diagonal movement and map/event/rest equipment changes. Legacy demo is a heuristic regression sample."
   },
   "servers": [
     {
@@ -522,7 +522,8 @@
               }
             ]
           }
-        ]
+        ],
+        "description": "Copy an offered action with current transport identity. run_move destinations may be diagonal after the formal movement unlock. run_equip is offered in map, event, event_result and rest; it uses the shared automatic compatible-owner selection and preserves the current visit/event. Combat and the locked reforge modal do not offer equipment changes. Names/descriptions are display data; use IDs and indices from the current observation."
       },
       "AgentAdventureAction": {
         "type": "object",
@@ -591,7 +592,8 @@
         },
         "required": [
           "op"
-        ]
+        ],
+        "description": "Copy an offered action with current transport identity. run_move destinations may be diagonal after the formal movement unlock. run_equip is offered in map, event, event_result and rest; it uses the shared automatic compatible-owner selection and preserves the current visit/event. Combat and the locked reforge modal do not offer equipment changes. Names/descriptions are display data; use IDs and indices from the current observation."
       },
       "AgentAdventureResponse": {
         "type": "object",
@@ -996,7 +998,8 @@
               "$ref": "#/components/schemas/AgentAdventureMaterial"
             }
           }
-        }
+        },
+        "description": "Current material requirements and availability. canCraft is authoritative for execution only in phase forge; false in other phases does not establish an unusable recipe."
       },
       "AgentAdventureRecruit": {
         "type": "object",

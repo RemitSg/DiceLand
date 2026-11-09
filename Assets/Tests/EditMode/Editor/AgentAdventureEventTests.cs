@@ -37,7 +37,7 @@ public sealed class AgentAdventureEventTests
     {
         var state = session.Observe();
         return new AgentAdventureRequest { sessionId = state.sessionId, revision = state.revision, requestId = Guid.NewGuid().ToString("N"),
-            op = action.op, choiceIndex = action.choiceIndex, x = action.x, y = action.y, battleAction = action.battleAction };
+            op = action.op, assetId = action.assetId, choiceIndex = action.choiceIndex, x = action.x, y = action.y, battleAction = action.battleAction };
     }
     private AgentAdventureObservation Act(string op, int choice = 0) => session.Act(Command(new AgentAdventureAction { op = op, choiceIndex = choice })).state;
     private AgentAdventureObservation Enter(MapEvent_SO ev)
@@ -46,6 +46,28 @@ public sealed class AgentAdventureEventTests
         return session.Act(Command(new AgentAdventureAction { op = "run_move", x = tile.coord.x, y = tile.coord.y })).state;
     }
     private BoardTileData Tile => Map.Snapshot.tiles.Single(t => t.coord == Map.Snapshot.runState.playerGridPosition);
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void EventInventory_EquipsWithoutResolvingOrReapplyingTheEvent(bool afterChoice)
+    {
+        Open();
+        var member = Map.Snapshot.runState.partyMembers[0];
+        var weapon = Find<Weapon_SO>(w => w != member.weaponData && w.weaponType == member.characterData.compatibleWeaponType);
+        Map.Snapshot.runState.AddWeapon(weapon);
+        var before = Enter(Event(Option()));
+        if (afterChoice) before = Act("run_choose_event");
+        var equip = before.legalActions.Single(a => a.op == "run_equip" && a.assetId == AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(weapon)));
+        var request = Command(equip); string eventBefore = JsonUtility.ToJson(before.mapEvent);
+        int completed = Map.Snapshot.runState.settlementStats.eventTilesCompleted;
+        var response = session.Act(request);
+        Assert.AreSame(weapon, member.weaponData);
+        Assert.AreEqual(before.phase, response.state.phase); Assert.AreEqual(eventBefore, JsonUtility.ToJson(response.state.mapEvent));
+        Assert.AreEqual(before.money, response.state.money); Assert.AreEqual(before.actionPoints, response.state.actionPoints);
+        Assert.AreEqual(completed, Map.Snapshot.runState.settlementStats.eventTilesCompleted);
+        Assert.AreEqual(JsonUtility.ToJson(response), JsonUtility.ToJson(session.Act(request)));
+        Assert.IsTrue(response.state.legalActions.Any(a => a.op == (afterChoice ? "run_continue_event" : "run_choose_event")));
+    }
 
     [Test] public void MoneyCostsUsePreSelectionBalanceAndRetriesDoNotPayTwice()
     {

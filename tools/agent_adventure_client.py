@@ -173,7 +173,7 @@ def demo(client, args):
         if getattr(args, "replay_slot", None):
             client.call(op="run_export", sessionId=session_id, slotId=args.replay_slot)
         saved = client.call(op="run_save", sessionId=session_id, slotId=args.save_slot)["save"] if getattr(args, "save_slot", None) else None
-        return {"phase": state["phase"], "outcome": state.get("outcome"), "moves": moved, "actions": len(trace),
+        return {"decisionSource": "legacy-script-heuristic", "phase": state["phase"], "outcome": state.get("outcome"), "moves": moved, "actions": len(trace),
                 "cycle": state["cycle"], "money": state["money"], "keys": state["keys"], "party": state["party"],
                 "configurationIssues": state["configurationIssues"], "settlement": state["settlement"], "meta": state["meta"],
                 "trace": args.output, "replaySlot": getattr(args, "replay_slot", None), "save": saved}
@@ -187,7 +187,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--url", default="http://127.0.0.1:8091/v1/command")
     commands = parser.add_subparsers(dest="mode", required=True)
-    play = commands.add_parser("demo")
+    play = commands.add_parser("demo", help="Legacy heuristic smoke test; not model-directed play. Use agent_play_client.py for manual decisions.")
     play.add_argument("--seed", type=int, default=1234)
     play.add_argument("--max-rounds", type=int, default=1000)
     play.add_argument("--max-moves", type=int, default=2)

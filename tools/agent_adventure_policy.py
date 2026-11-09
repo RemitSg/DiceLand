@@ -9,6 +9,7 @@ def crafting_plan(state, blueprint, catalogue=None):
         raise ValueError("Expected one blueprint ID or exact name")
     recipe = matches[0]
     actual = next((r for r in state.get("recipes", []) if r["id"] == recipe["id"]), None)
+    at_forge = state.get("phase") == "forge"
     owned = {m["id"]: m["amount"] for m in state.get("loot", [])}
     materials = actual["materials"] if actual else [dict(m, required=m["amount"], available=owned.get(m["id"], 0)) for m in recipe["materials"]]
     materials = [dict(m, missing=max(0, m["required"] - m["available"])) for m in materials]
@@ -17,9 +18,9 @@ def crafting_plan(state, blueprint, catalogue=None):
     return {"blueprint": recipe["id"], "weapon": recipe.get("weapon"), "materials": materials,
             "missingMaterials": [m for m in materials if m["missing"]], "cost": cost,
             "moneyShortfall": max(0, cost - state.get("money", 0)), "validRecipe": valid,
-            "canCraft": actual["canCraft"] if actual else None,
+            "canCraft": actual["canCraft"] if actual and at_forge else None,
             "materialsReady": valid and not any(m["missing"] for m in materials),
-            "authority": "forge" if actual else "catalogue estimate; inspect forge before crafting"}
+            "authority": "forge" if actual and at_forge else "material checklist; inspect forge before crafting"}
 
 
 def relic_value(item, state):

@@ -65,6 +65,31 @@ public sealed class AgentAdventureMapRuntimeTests
         Assert.AreEqual(random, JsonUtility.ToJson(Random.state));
     }
 
+    [Test] public void Boots_ExposeAndExecuteDiagonalMovesThroughTheFormalMover()
+    {
+        Open();
+        Vector2Int start = map.Snapshot.runState.playerGridPosition;
+        BoardTileData diagonal = map.Board.GetAllTiles().First(t =>
+            Mathf.Abs(t.coord.x - start.x) == 1 && Mathf.Abs(t.coord.y - start.y) == 1);
+        diagonal.tileType = MapTileType.Empty; diagonal.isVisited = true; diagonal.isResolved = true;
+        Assert.IsFalse(map.LegalDestinations().Contains(diagonal));
+        Assert.IsFalse(map.TryMove(diagonal.coord));
+        var boots = AssetDatabase.LoadAssetAtPath<Relic_SO>("Assets/Data/Relics/152 神行靴/神行靴.asset");
+        Assert.IsNotNull(boots);
+        map.Snapshot.runState.AddRelic(boots);
+        string before = JsonUtility.ToJson(map.Snapshot); string random = JsonUtility.ToJson(Random.state);
+        Assert.IsTrue(map.LegalDestinations().Contains(diagonal));
+        Assert.AreEqual(before, JsonUtility.ToJson(map.Snapshot));
+        Assert.AreEqual(random, JsonUtility.ToJson(Random.state));
+        int points = map.Points.CurrentPoints, cost = map.GetMoveCost(diagonal);
+        Assert.IsTrue(map.TryMove(diagonal.coord));
+        Assert.AreEqual(diagonal.coord, map.Snapshot.runState.playerGridPosition);
+        Assert.AreEqual(points - cost, map.Points.CurrentPoints);
+        Assert.IsTrue(map.Snapshot.runState.TryConsumeRelic(boots, 1));
+        Assert.IsTrue(map.LegalDestinations().Any(t => t.coord == start), "The acquired unlock survives consuming boots.");
+        Assert.AreEqual(random, JsonUtility.ToJson(Random.state));
+    }
+
     [Test] public void NewKeyWithOnePoint_UsesSharedOverflowCycleAndCollectsOnlyOnce()
     {
         Open(); Vector2Int spawn = map.Snapshot.runState.playerGridPosition;

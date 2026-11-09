@@ -168,7 +168,6 @@ public sealed partial class AgentAdventureSession : IDisposable
             foreach (BoardTileData tile in map.LegalDestinations()) yield return new AgentAdventureAction { op = "run_move", x = tile.coord.x, y = tile.coord.y };
             map.Board.TryGetTile(map.Snapshot.runState.playerGridPosition, out BoardTileData tileHere);
             if (CanInteract(tileHere)) yield return new AgentAdventureAction { op = "run_interact" };
-            foreach (AgentAdventureAction equip in EquipmentActions()) yield return equip;
         }
         else if (phase == "battle")
         {
@@ -190,6 +189,10 @@ public sealed partial class AgentAdventureSession : IDisposable
             foreach (AgentAdventureAction action in EconomyActions()) yield return action;
             yield return new AgentAdventureAction { op = "run_leave_location" };
         }
+        // The formal event overlay and rest lobby expose the same inventory as the map.
+        // Reforge is a locked modal and combat cannot change equipment.
+        if (phase == "map" || phase == "event" || phase == "event_result" || phase == "rest")
+            foreach (AgentAdventureAction equip in EquipmentActions()) yield return equip;
     }
 
     private bool CanInteract(BoardTileData tile)

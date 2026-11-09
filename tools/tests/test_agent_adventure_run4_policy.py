@@ -56,12 +56,20 @@ class Run4PolicyTests(unittest.TestCase):
         self.assertEqual(before, s)
 
     def test_forge_can_craft_and_cost_override_catalog_estimate(self):
-        s = dict(money=2, craftingCost=0, recipes=[dict(id="axe", cost=7, canCraft=False,
+        s = dict(phase="forge", money=2, craftingCost=0, recipes=[dict(id="axe", cost=7, canCraft=False,
             materials=[dict(id="wing", name="Wing", required=1, available=1)])])
         plan = crafting_plan(s, "axe", self.recipe())
         self.assertEqual(5, plan["moneyShortfall"])
         self.assertTrue(plan["materialsReady"])
         self.assertFalse(plan["canCraft"])
+
+    def test_map_recipe_false_does_not_mean_unusable_at_the_forge(self):
+        s = dict(phase="map", money=10, recipes=[dict(id="axe", cost=0, canCraft=False,
+            materials=[dict(id="wing", name="Wing", required=1, available=1)])])
+        plan = crafting_plan(s, "axe", self.recipe())
+        self.assertTrue(plan["materialsReady"])
+        self.assertIsNone(plan["canCraft"])
+        self.assertNotEqual("forge", plan["authority"])
 
     def test_empty_recipe_is_not_a_free_weapon(self):
         cat = self.recipe(); cat["blueprintDetails"][0]["materials"] = []

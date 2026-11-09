@@ -78,7 +78,7 @@ public sealed class AgentAdventureMapRuntime : IDisposable
     public IEnumerable<BoardTileData> LegalDestinations()
     {
         if (disposed) throw new ObjectDisposedException(nameof(AgentAdventureMapRuntime));
-        return Board.GetAllTiles().Where(t => Board.IsAdjacent(Snapshot.runState.playerGridPosition, t.coord)
+        return Board.GetAllTiles().Where(t => Board.IsAdjacent(Snapshot.runState.playerGridPosition, t.coord, Snapshot.runState.allowDiagonalMapMovement)
             && MapMovementService.CanAttemptMove(Snapshot.runState, Points, t, GetMoveCost(t))).ToArray();
     }
 

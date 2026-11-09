@@ -127,4 +127,25 @@ public sealed class AgentAdventureRestTests
         Enter(); for (int i = 0; i < 5; i++) session.Observe(); Act("run_rest_heal");
         Assert.AreEqual(before, JsonUtility.ToJson(Global.GetValue(null))); Assert.AreEqual(pending, RestSceneRuntime.HasPendingVisit);
     }
+
+    [Test] public void RestInventory_EquipsWithoutConsumingTheVisitOrHealingOnRetry()
+    {
+        var member = Map.Snapshot.runState.partyMembers[0];
+        var weapon = AssetDatabase.FindAssets("t:Weapon_SO").Select(g => AssetDatabase.LoadAssetAtPath<Weapon_SO>(AssetDatabase.GUIDToAssetPath(g)))
+            .First(w => w != null && w != member.weaponData && w.weaponType == member.characterData.compatibleWeaponType);
+        Map.Snapshot.runState.AddWeapon(weapon); member.currentHP = 1;
+        var before = Enter();
+        var request = Command("run_equip", asset: AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(weapon)));
+        Assert.IsTrue(before.legalActions.Any(a => a.op == "run_equip" && a.assetId == request.assetId));
+        var response = session.Act(request);
+        Assert.AreEqual("rest", response.state.phase); Assert.AreEqual(1, response.state.party[0].hp);
+        Assert.AreEqual(before.actionPoints, response.state.actionPoints); Assert.AreEqual(before.money, response.state.money);
+        Assert.AreSame(weapon, member.weaponData);
+        Assert.IsFalse(response.state.tiles.Single(t => t.x == response.state.x && t.y == response.state.y).resolved);
+        Assert.IsTrue(response.state.legalActions.Any(a => a.op == "run_rest_heal"));
+        Assert.AreEqual(JsonUtility.ToJson(response), JsonUtility.ToJson(session.Act(request)));
+        Act("run_open_reforge");
+        Assert.IsFalse(session.Observe().legalActions.Any(a => a.op == "run_equip"), "Locked reforge modal does not expose inventory actions.");
+        Assert.Throws<ArgumentException>(() => Act("run_equip", asset: request.assetId));
+    }
 }

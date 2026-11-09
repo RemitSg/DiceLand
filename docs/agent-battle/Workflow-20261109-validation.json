@@ -1,0 +1,737 @@
+{
+  "date": "2026-11-09",
+  "beforeCommit": "df66717f7bdfb37add6cfac3c47e5c8c4ea7bf04",
+  "scope": "Review and update the model-directed agent play workflow against current shared gameplay and UI changes. No new autonomous playthrough.",
+  "decisionOwner": "model; scripts only perform transport, unique legal-action matching, arithmetic and complete recording",
+  "changes": [
+    "Legal map destinations pass the acquired allowDiagonalMapMovement flag to the shared Board.IsAdjacent overload. Actual movement still uses the formal map mover.",
+    "Expose existing shared run_equip in event, event_result and rest, as well as map. Equipment keeps the current event/visit and does not consume healing, AP or event choices; combat and locked reforge remain excluded.",
+    "crafting_plan treats canCraft as authoritative only in phase forge; outside it reports material readiness and canCraft:null instead of declaring the recipe unusable.",
+    "Add tools/agent_play_client.py: explicit one-action selectors, full observations/catalogue, persist the exact request before sending, explicit same-request retry and re-observe after cached responses. Ambiguous selectors and missing rationale are rejected. No policy imports, route/skill selection or turn loops.",
+    "Block run_next in the model execution tool to avoid its default seed 1. A fresh run requires separate explicit creation with a newly registered seed. Recovery and definitive rejection need the documented raw-command workflow; the tool does not automatically replace sessions or discard pending commands.",
+    "Label legacy adventure demo as legacy-script-heuristic. Update guide with current IDs/localization boundaries, dynamic equipment/material budgets, conditional effects, all speed slots, current battle HP and formal settlement.",
+    "OpenAPI descriptions updated to document phase-sensitive crafting, diagonal movement and equipment availability; document version 0.8.6, wire apiVersion remains 1."
+  ],
+  "tests": {
+    "repairBefore": {
+      "total": 4,
+      "passed": 0,
+      "failed": 4,
+      "skipped": 0,
+      "durationSeconds": 8.7639508,
+      "cases": [
+        {
+          "name": "AgentAdventureEventTests.EventInventory_EquipsWithoutResolvingOrReapplyingTheEvent(False)",
+          "result": "Failed",
+          "failure": "System.InvalidOperationException : Sequence contains no matching element"
+        },
+        {
+          "name": "AgentAdventureEventTests.EventInventory_EquipsWithoutResolvingOrReapplyingTheEvent(True)",
+          "result": "Failed",
+          "failure": "System.InvalidOperationException : Sequence contains no matching element"
+        },
+        {
+          "name": "AgentAdventureMapRuntimeTests.Boots_ExposeAndExecuteDiagonalMovesThroughTheFormalMover",
+          "result": "Failed",
+          "failure": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "name": "AgentAdventureRestTests.RestInventory_EquipsWithoutConsumingTheVisitOrHealingOnRetry",
+          "result": "Failed",
+          "failure": "  Expected: True\n  But was:  False\n"
+        }
+      ]
+    },
+    "relatedEditModeAfter": {
+      "total": 124,
+      "passed": 124,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 336.7478733,
+      "cases": [
+        {
+          "name": "AgentAdventureBattleBridgeTests.AcquiredPackage_UsesSeededRandomInsteadOfWallClock",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureBattleBridgeTests.BossWithoutKeys_IsRejectedBeforeStartingBattle",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureBattleBridgeTests.ConfiguredLevelAndMoneyRewards_PersistIntoTheNextBattle",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureBattleBridgeTests.CopiedTile_CannotSpoofTheAdventureBattleContext",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureBattleBridgeTests.Defeat_ReturnsActualDeadPartyAndDoesNotClearTheTileOrGrantVictoryMoney",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureBattleBridgeTests.EliteReward_MustBeChosenAndAcquisitionEffectIsAppliedOnceOnReturn",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureBattleBridgeTests.RealEncounter_PreservesHpExperienceAndIdentityAcrossTwoBattles",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureBattleBridgeTests.RefreshReward_ExcludesCurrentChoicesConsumesOneRefreshAndIsIdempotent",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureBattleBridgeTests.ResultApplication_IsIdempotentAndDoesNotReplaceUiSnapshot",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureBattleBridgeTests.RewardSelection_RejectsForeignChoiceAndCannotApplyTwice",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureBattleBridgeTests.UnlockedBoss_UsesBossContextAndClearsItsActualTile",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureDungeonTests.ASecondDungeonEntryInsideTheDungeonDoesNotReplaceTheOuterContext",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureDungeonTests.DungeonActivityFlagSurvivesWireSerializationAtEntryAndExit",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureDungeonTests.DungeonBattleUsesSharedCombatAndSettledPartySurvivesBoardRestoration",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureDungeonTests.EntryLoadsTheSharedLinearBoardAndEveryDungeonMoveCostsZero",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureDungeonTests.FixedDungeonMerchantCannotRefreshAndPurchasedItemsCarryBack",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureDungeonTests.InvalidDungeonMoveAndStaleExitDoNotChangeBoardOrAp",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureDungeonTests.LeftExitRestoresTheOuterBoardPositionAndActionPointsWithoutCompletionScore",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureDungeonTests.ObservationAndEntryDoNotReplaceTheUiSnapshotOrTheExternalRandomStream",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureDungeonTests.PendingEntryCalamityReturnsExactlyOnceAfterLeavingTheDungeon",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureDungeonTests.RightExitCarriesRealTreasureAndScoresOnceEvenWhenTheMoveIsRetried",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEconomyTests.Forge_CraftsOnlyOwnedAffordableRecipesAndRejectsDuplicateRetryConsumption",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEconomyTests.InsufficientMoneyOrMaterials_AreNotListedAsLegalActions",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEconomyTests.MerchantStock_PersistsAfterClosingAndReopeningWithoutAnExtraMoveCost",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEconomyTests.Purchase_UsesQuotedPriceAndRetriesDoNotBuyTwice",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEconomyTests.Refresh_ChargesOnceReplacesStockAndAdvancesCostTier",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEconomyTests.RepeatedObservations_WithChanceBasedDiscounts_DoNotChangeStateOrRng",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.BuiltInFailureRefundsSelectionCostWithoutCompletingTheEvent",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.BuiltInMoneyLossClampsToZeroWhenBalanceIsInsufficient",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.ClosingBeforeEventBattleDestroysGeneratedGroupButPreservesAssetGroups",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.DiscardPreviewIsFrozenAndObservationDoesNotChangeEitherRandomStreamOrUiSnapshot",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.EventActionPointLossQueuesCalamityUntilResultIsAcknowledged",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.EventEncounterUsesActualBattleAndGrantsQueuedLootOnlyOnVictory(False)",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.EventEncounterUsesActualBattleAndGrantsQueuedLootOnlyOnVictory(True)",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.EventInventory_EquipsWithoutResolvingOrReapplyingTheEvent(False)",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.EventInventory_EquipsWithoutResolvingOrReapplyingTheEvent(True)",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.EventRelicRollUsesTheScopedRandomStreamInsteadOfTheWallClock",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.InvalidAndUnavailableOptionsCannotSpendOrAdvanceRevision",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.MoneyCostsUsePreSelectionBalanceAndRetriesDoNotPayTwice",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.MoneyLossAboveBalanceUsesDevClampAndKeepsTheOptionSelectable",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.MoneyPreflightUsesTheSameOrderedIncomeAndSelectionFeeRules",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.NestedLimitIsVisibleAndDoesNotContinueUnbounded",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.NonResolvingChoiceAllowsAnotherVisitButCannotRepeatWithinTheResultStep",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.OldGamblingTable_DeclineThenLeaveCompletesTileAndDoesNotReopenOnReturn",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.RandomIncomeAndHighPercentageLossFollowClampedMoneyRules",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.WeightedFollowUpDefersCompletionUntilTheLastChoiceAndKeepsResultText",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureEventTests.WeightedMoneyPreflightMatchesClampedLossWithoutDrawingOrAdvancingRandomness",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureMapRuntimeTests.Boots_ExposeAndExecuteDiagonalMovesThroughTheFormalMover",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureMapRuntimeTests.HostileArrival_QueuesCalamityForAfterBattleAndDoesNotAwardPlaceholderExperience",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureMapRuntimeTests.InvalidMovement_IsRejectedBeforeSpendingOrChangingRandom",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureMapRuntimeTests.NewKeyWithOnePoint_UsesSharedOverflowCycleAndCollectsOnlyOnce",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureMapRuntimeTests.NormalConfiguration_ReadsSavedPartyAndGeneratesActualBoardWithoutViews",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureMapRuntimeTests.SameSeed_GeneratesSameActualMapAndPreservesOutsideRandom",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureMapRuntimeTests.SecondMap_IsRejectedWithoutDestroyingTheFirst",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureMapRuntimeTests.SharedBootstrap_AppliesStartingBonusesEquipmentInventoryAndClock",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReforgeTests.AdditionalReforgeRelicKeepsTheVisitOpenAfterTwoSuccessfulReforges",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReforgeTests.EmptyHigherTierPoolDoesNotOfferAConfirmAction",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReforgeTests.ExplicitReforgeWriterLeavesTheUiSnapshotUntouched",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReforgeTests.LootPreviewAndSelectionAreReadOnlyAndFirstSuccessLocksTheVisit",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReforgeTests.OneMaterialAndInvalidAssetsCannotBeSelectedAsASecondStack",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReforgeTests.OpeningAndCancellingBeforeSuccessDoesNotConsumeTheRestVisit",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReforgeTests.RelicAcquisitionRunsOnceAndDuplicateConfirmDoesNotGrantAnotherPackage",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReforgeTests.RelicPreviewMatchesResultAndSecondSuccessAutomaticallyConsumesTheRest",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.Disconnect_UsesOuterRevisionAndSurvivesFullAdventureReplay",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.JournalClonesRequestsAndIncludesOnlyAcceptedFirstExecutions",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.MidBattleReplaysSameTargetsDiceEventsAndCallerRandomState",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.NormalDefeatSettlementFreeUnlockAndNextRunReplayWithRecordedWallClock",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.PersistentInitialProfileIsReplayedInTemporaryStorageWithoutSpendingAgain",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.PublicVerificationRequiresClosingTheActiveSessionAndExportIsReadOnly",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.SlotRejectsPathsAndDeviceNames(null)",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.SlotRejectsPathsAndDeviceNames(\"\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.SlotRejectsPathsAndDeviceNames(\"../player\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.SlotRejectsPathsAndDeviceNames(\"C:/player\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.SlotRejectsPathsAndDeviceNames(\"NUL\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.SlotRoundTripIsAtomicOnReplacementAndDoesNotShareMutableObjects",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.TamperedActionOrStateHashFailsAtItsRevisionAndReleasesRuntime",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.VersionMismatchRejectsBeforeCreatingAnyRuntime(\"format\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.VersionMismatchRejectsBeforeCreatingAnyRuntime(\"api\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.VersionMismatchRejectsBeforeCreatingAnyRuntime(\"engine\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureReplayTests.VersionMismatchRejectsBeforeCreatingAnyRuntime(\"content\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureRestTests.ActionPointRestore_AfterExactExhaustionCancelsOneDeferredCalamity",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureRestTests.ActionPointRestore_AfterOverflowKeepsTheCalamityChoice",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureRestTests.Equip_UsesTheFormalCompatibleMemberSelectionAndNextBattleLoadout",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureRestTests.Healing_RespectsCalamityConsumesVisitAndRetriesDoNotHealAgain",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureRestTests.Recruit_SpendsConfiguredCostAndCarriesTheNewPartyIntoCombat",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureRestTests.RecruitCandidates_AreStableAndUnaffordableOrLimitReachedChoicesAreRejected",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureRestTests.RestAndRecruitQuotes_DoNotReplaceTheUiSnapshotOrRestVisit",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureRestTests.RestInventory_EquipsWithoutConsumingTheVisitOrHealingOnRetry",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.AuthoredStartingRelicAbilityRestoresPendingBagAndDoesNotAcquireTwice",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.CorruptCanonicalProfileRejectsWithoutZeroingWorkingWallet",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.CorruptLegacyProfileIsNotMigratedAsZeroProgress(\"ability_points.json\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.CorruptLegacyProfileIsNotMigratedAsZeroProgress(\"ability_progression.json\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.FailedSaveReplacementKeepsThePriorSlotAndLiveSessionUsable",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.InterruptedAbilityPurchaseRecoversBothFilesAndRetriesExactlyOnce(\"before_replace\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.InterruptedAbilityPurchaseRecoversBothFilesAndRetriesExactlyOnce(\"after_replace\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.MidBattleSaveRestoresTargetsAndRetryCacheThenContinuesAtLiveTime",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.NewAdventureInvalidatesPreviousOwnerEvenWithIdenticalWallet",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.NormalTreasureDecisionRestoresAndPaysOnlyOnce(\"treasure\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.NormalTreasureDecisionRestoresAndPaysOnlyOnce(\"treasure_result\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.NormalTreasureDecisionRestoresAndPaysOnlyOnce(\"map\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.PersistentRecoveryUsesLastAcceptedCommandWithoutAnExplicitSave",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.PositiveWalletAwardUsesOneAtomicCommitPoint(\"before_replace\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.PositiveWalletAwardUsesOneAtomicCommitPoint(\"after_replace\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.ProfileLeasePreventsASecondHostFromMutatingTheSameProfile",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.PublicSaveLoadAndRecoveryRespectTheSingleSessionBoundary",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.SavedConfigurationDirectoryChangesInvalidateTheJournalVersion",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.TransientWindowsSharingFailureRetriesWithoutDeletingTheCommittedSave",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.UnknownRecoveryDoesNotCreateAnEmptyProfile",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.ValidJsonWithChangedCanonicalPointsFailsItsIntegrityCheck",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSaveTests.ZeroRewardSettlementInvalidatesOlderProgressionGeneration",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSessionTests.CalamityMapEffects_UseSharedTeleportRelicLossAndRestConversion",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSessionTests.CreateRun_UsesNormalContentAndShowsRealMovesAndConfigurationGaps",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSessionTests.EventArrival_ShowsRealOptionsWithoutGrantingRewards",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSessionTests.ExhaustedCycle_RequiresAnActualCalamityChoiceAndRetriesDoNotApplyTwice",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSessionTests.RealMapBattle_ReturnsCarriedStateThroughTheSameRewardWriter",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSessionTests.RetriedMove_DoesNotSpendTwiceOrOpenAnotherBattle",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "AgentAdventureSessionTests.VisitedEmptyAmbush_UsesActualCalamityAndEnemyRoster",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "DiagonalMapMovementPersistenceTests.BattleReturn_PreservesOrRecoversDiagonalMovement(True)",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "DiagonalMapMovementPersistenceTests.BattleReturn_PreservesOrRecoversDiagonalMovement(False)",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "DiagonalMapMovementPersistenceTests.LegacySave_WithBootsRecoversUnlockWithoutReplayingAcquisitionRewards",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "DiagonalMapMovementPersistenceTests.LegacySave_ZeroBootsDoesNotUnlockDiagonalMovement",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "DiagonalMapMovementPersistenceTests.SaveRoundTrip_PreservesUnlockAfterBootsAreConsumed",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "DiagonalMapMovementPersistenceTests.SnapshotAndSave_WithoutAnEnabledBootsEffectKeepCardinalMovement(0)",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "DiagonalMapMovementPersistenceTests.SnapshotAndSave_WithoutAnEnabledBootsEffectKeepCardinalMovement(1)",
+          "result": "Passed",
+          "failure": null
+        }
+      ]
+    },
+    "relatedFixtures": [
+      "AgentAdventureMapRuntimeTests",
+      "AgentAdventureRestTests",
+      "AgentAdventureEventTests",
+      "AgentAdventureReplayTests",
+      "AgentAdventureSaveTests",
+      "AgentAdventureDungeonTests",
+      "AgentAdventureSessionTests",
+      "DiagonalMapMovementPersistenceTests",
+      "AgentAdventureReforgeTests",
+      "AgentAdventureEconomyTests",
+      "AgentAdventureBattleBridgeTests"
+    ],
+    "python": {
+      "command": "python -B -X utf8 -m unittest discover -s tools/tests -p test_agent*.py",
+      "total": 66,
+      "passed": 66,
+      "failed": 0
+    },
+    "contract": {
+      "openapi": "0.8.6",
+      "schemas": 54,
+      "fields": 446,
+      "result": "passed",
+      "specifications": 2,
+      "wireApiVersion": 1,
+      "dtoFieldDrift": false,
+      "operationEnumDrift": false
+    },
+    "fullEditMode": "Not rerun. This report covers the 124 selected related cases only.",
+    "playModeAndUI": "Not run. No claim of tutorial, animation, inventory presentation or localization UI coverage.",
+    "freshPlaythrough": "Not started. Seed registry and historical play logs unchanged."
+  },
+  "environment": {
+    "engine": "Tuanjie 2022.3.62t6",
+    "isolatedProject": "outputs/agent-battle/b005b-validation-project",
+    "mainEditor": "Existing PID 44800 kept running; never stopped or saved by this task.",
+    "contentSnapshot": "Isolated Assets/Packages/ProjectSettings synchronized from the actual working tree before testing, including pre-existing unrelated content. Those unrelated changes are not part of this delivery. Red test uses HEAD versions of the two adapter files with the new tests; green uses the fixed adapters under identical content.",
+    "startupNotes": [
+      "Initial red startup blocked on old package cache; copied the missing exact-version packages and project resolver cache read-only from the source project, then retried successfully.",
+      "The completed red process lingered during shutdown, causing the first green launch to reject the occupied isolated project. Stopped only the verified completed isolated process and relaunched successfully. No failed startup counted as a test result."
+    ],
+    "validatedSourceSha256": {
+      "Assets/Scripts/Editor/AgentBattle/AgentAdventureMapRuntime.cs": "7d579bf2a00e25c2d2dd64b1fdccc52b50bac0a2bc7a803959a39b2e72afee2b",
+      "Assets/Scripts/Editor/AgentBattle/AgentAdventureSession.cs": "f64d111d11d913ce01b2495f57a511c050bddb6f2ea532b94e5c223f672196c4",
+      "Assets/Tests/EditMode/Editor/AgentAdventureEventTests.cs": "19d00b8be75a1fb78a369933ea404151bdae1267857e29a145b415e83eecb5a6",
+      "Assets/Tests/EditMode/Editor/AgentAdventureMapRuntimeTests.cs": "3cdf440d5684054e4aba3b39f4dc4665983a5d98ca3af9f32f8500544328b1f5",
+      "Assets/Tests/EditMode/Editor/AgentAdventureRestTests.cs": "495b7479592b42fbbd768793e7094d72c981611ca09ebcdc9a93717b55a43fd4"
+    }
+  },
+  "knownLimitations": [
+    "Effects, trigger conditions, per-target/per-character limits and state conversions do not yet have a unified machine-readable contract. The model must read current full descriptions and actual state; legacy keyword scores are not a cross-language rule engine.",
+    "Some IDs/names/descriptions originate from different localization paths. Associate current GUIDs, actor IDs and indices instead of hardcoded Chinese names or historical prices/HP.",
+    "Native ContentHash does not include Assets/Localization and replay does not record locale changes. Keep and log a fixed locale and original content snapshot; cross-locale replay is not verified.",
+    "Historical enemy/relic catalogues are not declared fully refreshed by this audit. No enemy, skill or relic asset/effect was changed, so content catalogue regeneration is outside this delivery.",
+    "The transport records full raw state and brief action rationales; it does not automatically produce a play-log HTML report or decide how to recover rejected/expired pending requests."
+  ],
+  "evidence": {
+    "outputs/agent-battle/workflow-20261109/before.xml": "f0edae493a1dcfc85f60a719cc6600cfff98d4537486365af1dc8cb40eb29562",
+    "outputs/agent-battle/workflow-20261109/after.xml": "14992af342d3deec0d5b84eae201e9095a60ab81e6989d8277b8fd2caff98af0",
+    "outputs/agent-battle/workflow-20261109/python-tests.log": "2cc073107d1103cce69af2d6747ffaa888f4f5357213943fc6079d8eb49e9e6a",
+    "outputs/agent-battle/workflow-20261109/contract.json": "edb0a1700ef0f1d93e7f353c6f560f9c451bcad2fd65f2d5733f59deb47cf033"
+  }
+}

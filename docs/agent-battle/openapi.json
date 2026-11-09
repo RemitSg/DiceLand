@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "DiceLand Agent Battle API",
-    "version": "0.8.5",
+    "version": "0.8.6",
     "description": "Shared-rule editor-backed single battles and shared health/catalog discovery. adventure-openapi.json documents complete adventure, persistence and progression on the same endpoint. One battle or adventure session per host; engine required."
   },
   "servers": [
