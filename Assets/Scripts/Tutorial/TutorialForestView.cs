@@ -252,7 +252,7 @@ public sealed class TutorialForestView : IDisposable
         float w=Mathf.Min(welcome?(stack?880:1200):focused?660:960,Mathf.Max(320,SafeRect.width-64));
         float contentWidth=welcome?(stack?w-96:w-466):w-96;
         float titleHeight=Mathf.Clamp(Height(Title,welcome?contentWidth:w-164,56),56,144);
-        float bodyHeight=Height(Body,contentWidth-14,45);
+        float bodyHeight=string.IsNullOrWhiteSpace(GetText(Body))?0:Height(Body,contentWidth-14,45);
         float bodyTop=welcome?(stack?316:86)+titleHeight+14:72+titleHeight+18;
         float maxBody=welcome?(CatalogVisible?180:240):360;
         float readHeight=Mathf.Min(bodyHeight,maxBody);
@@ -270,6 +270,7 @@ public sealed class TutorialForestView : IDisposable
         if(welcome)Place(illustration,stack?(w-238)*.5f:52,stack?65:95,stack?238:330,stack?228:325);
         else Place(symbol,42,73,48,48);
         Place((RectTransform)Title.transform,welcome?x:108,welcome?(stack?316:86):72,welcome?contentWidth:w-154,titleHeight);
+        BodyArea.gameObject.SetActive(bodyHeight>0);
         Place(BodyArea,x,bodyTop,contentWidth,readHeight);
         Place((RectTransform)Body.transform,0,0,contentWidth-14,bodyHeight);
         BodyContent.sizeDelta=new Vector2(0,bodyHeight);

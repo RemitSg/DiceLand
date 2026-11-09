@@ -1,4 +1,6 @@
 using NUnit.Framework;
+using System.Reflection;
+using UnityEngine;
 
 public class MapTutorialFlowServiceTests
 {
@@ -20,13 +22,46 @@ public class MapTutorialFlowServiceTests
         Assert.That(forge.body, Does.Contain("装备"));
 
         Assert.IsTrue(MapTutorialFlowService.TryConsumeArrivalGuide(state, MapTileType.Elite, out MapTutorialGuideContent elite));
-        Assert.That(elite.body, Does.Contain("最后"));
-        Assert.That(elite.body, Does.Contain("教程"));
-        Assert.That(elite.body, Does.Contain("精英"));
+        Assert.AreEqual("终战", elite.title);
+        Assert.AreEqual("这里就是最后一站了，迎接最后一道考验吧！", elite.body);
         Assert.IsFalse(MapTutorialFlowService.TryConsumeArrivalGuide(state, MapTileType.Elite, out _));
 
         Assert.IsFalse(MapTutorialFlowService.TryConsumeArrivalGuide(state, MapTileType.Battle, out _));
         Assert.IsFalse(MapTutorialFlowService.TryConsumeArrivalGuide(state, MapTileType.Key, out _));
         Assert.IsFalse(MapTutorialFlowService.TryConsumeArrivalGuide(state, MapTileType.Boss, out _));
+    }
+
+    [Test]
+    public void RevisedMapSequenceContinuesDirectlyPastRemovedLessons()
+    {
+        float previousTime = Time.timeScale;
+        var managerHost = new GameObject("RevisedTutorialManager");
+        managerHost.SetActive(false);
+        var overlayHost = new GameObject("RevisedTutorialOverlay");
+        try
+        {
+            var manager = managerHost.AddComponent<RunGameManager>();
+            var guide = overlayHost.AddComponent<MapTutorialGuideOverlay>();
+            const BindingFlags fields = BindingFlags.Instance | BindingFlags.NonPublic;
+            typeof(RunGameManager).GetField("mapTutorialGuideOverlay", fields).SetValue(manager, guide);
+            typeof(RunGameManager).GetMethod("ShowMapMoneyGuide", fields).Invoke(manager, null);
+            Assert.AreEqual("金币", TutorialForestView.GetText(guide.Presentation.Title));
+            guide.Presentation.Primary.onClick.Invoke();
+            Assert.AreEqual("查看格子详情", TutorialForestView.GetText(guide.Presentation.Title));
+
+            typeof(RunGameManager).GetMethod("ContinueAfterBattleTileInspected", fields).Invoke(manager, null);
+            foreach (string title in new[] { "格子详情", "坐标与类型", "移动消耗", "敌人属性", "危险度与区域" })
+            {
+                Assert.AreEqual(title, TutorialForestView.GetText(guide.Presentation.Title));
+                guide.Presentation.Primary.onClick.Invoke();
+            }
+            Assert.AreEqual("进入战斗", TutorialForestView.GetText(guide.Presentation.Title));
+        }
+        finally
+        {
+            Object.DestroyImmediate(overlayHost);
+            Object.DestroyImmediate(managerHost);
+            Time.timeScale = previousTime;
+        }
     }
 }

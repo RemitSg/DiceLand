@@ -97,6 +97,31 @@ public class MainMenuTutorialOverlayTests
     }
 
     [Test]
+    public void Show_ExplicitEmptyBodyHidesReadingAreaAndReopensWithText()
+    {
+        var host = new GameObject("Host");
+        var overlay = host.AddComponent<MainMenuTutorialOverlay>();
+        var catalog = ScriptableObject.CreateInstance<TutorialMenuCatalog_SO>();
+        try
+        {
+            catalog.summaryBody = "Catalog fallback must not replace an explicitly empty confirmation.";
+            overlay.Show(catalog, null, null, titleOverride: "是否开始教程？", bodyOverride: "", hideSections: true);
+            Assert.AreEqual("", overlay.DebugSummaryBodyText.text);
+            Assert.IsFalse(overlay.Presentation.BodyArea.gameObject.activeSelf);
+            Assert.IsTrue(overlay.Presentation.Primary.IsInteractable());
+            Assert.IsTrue(overlay.Presentation.Secondary.IsInteractable());
+            overlay.Hide();
+            overlay.Show(catalog, null, null, bodyOverride: "Visible explanation", hideSections: true);
+            Assert.AreEqual("Visible explanation", overlay.DebugSummaryBodyText.text);
+            Assert.IsTrue(overlay.Presentation.BodyArea.gameObject.activeSelf);
+        }
+        finally
+        {
+            Object.DestroyImmediate(catalog);
+        }
+    }
+
+    [Test]
     public void Show_UsesIndependentCanvasWhenLegacyGalleryIsHidden()
     {
         var gallery = new GameObject("LegacyGallery", typeof(RectTransform), typeof(Canvas), typeof(CanvasGroup));

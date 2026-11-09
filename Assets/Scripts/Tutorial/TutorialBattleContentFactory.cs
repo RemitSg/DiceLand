@@ -67,7 +67,7 @@ public static class TutorialBattleContentFactory
             "battle01_intro_enemy_detail",
             0,
             "第一场战斗",
-            "接下来是激动人心的战斗内容！你将学会如何与敌人战斗。\n\n先点击敌人的本体，查看当前敌人的基础信息。",
+            "接下来是激动人心的战斗内容！\n先点击敌人的本体，查看当前敌人的基础信息。",
             TutorialBattleEventType.EnemyDetailViewed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "请先点击敌人的本体，查看敌人详情。"));
@@ -75,7 +75,7 @@ public static class TutorialBattleContentFactory
             "battle01_press_prepare",
             10,
             "准备开始战斗",
-            "你已经了解了当前敌人的基础信息，接下来准备开始战斗。\n\n点击屏幕下方的准备按钮，让双方生成本回合的速度按钮。",
+            "你已经了解了当前敌人的基础信息，接下来准备开始战斗。\n点击屏幕下方的准备按钮。",
             TutorialBattleEventType.CombatExecutePressed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "请先点击准备按钮，进入本回合的目标指定阶段。",
@@ -84,7 +84,7 @@ public static class TutorialBattleContentFactory
             "battle01_read_enemy_skill",
             20,
             "读取敌人的行动",
-            "敌人头顶的六边形按钮就是它的速度按钮，按钮上方的数字代表速度。\n\n速度按钮也可以理解为技能槽：速度按钮越多，敌人一回合能做的事就越多。现在点击敌人的速度按钮，查看它准备用什么技能。",
+            "敌人头顶的六边形按钮是它的速度按钮，也是技能槽，按钮上方的数字代表速度。\n现在点击敌人的速度按钮，查看它准备用什么技能。",
             TutorialBattleEventType.EnemySkillViewed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "请点击敌人的速度按钮，查看敌人技能。",
@@ -92,8 +92,8 @@ public static class TutorialBattleContentFactory
         definition.Steps.Add(Step(
             "battle01_start_enemy_attack",
             30,
-            "先看一次敌人的攻击",
-            "敌人的技能由若干颗骰子组成。攻击骰子会造成伤害，防御骰子会抵挡即将到来的伤害。\n\n“1 - 2” 这样的数值范围叫做威力范围，代表结算时会在 1 和 2 之间随机。现在关闭技能面板，再点击准备按钮。",
+            "敌人的攻击",
+            "敌人的技能会由若干颗骰子组成。\n“1 - 2” 这样的数值范围叫做威力范围，代表结算时威力会在 1 到 2 之间随机。\n现在关闭技能面板，再点击准备按钮。",
             TutorialBattleEventType.CombatExecutePressed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "请先查看敌人速度按钮上的技能，再点击准备按钮开始结算。"));
@@ -109,8 +109,8 @@ public static class TutorialBattleContentFactory
         definition.Steps.Add(Step(
             "battle01_view_ally_skill",
             50,
-            "轮到我们反击",
-            "我们不能这样坐以待毙！展开有效反击来化解敌人的攻击。\n\n点击友方角色的速度按钮，查看我们有什么技能可以使用。",
+            "反击",
+            "我们不能这样坐以待毙！展开有效反击来化解敌人的攻击！\n点击友方角色的速度按钮，查看我们有什么技能可以使用。",
             TutorialBattleEventType.AllySkillViewed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "请点击友方角色的速度按钮，查看友方技能。",
@@ -119,15 +119,15 @@ public static class TutorialBattleContentFactory
             "battle01_draw_clash_line",
             60,
             "指定攻击目标",
-            "左侧列出了该名友方角色拥有的技能，右侧面板会显示当前技能的详细信息。\n\n选择并了解技能后，关闭技能面板。随后拖拽友方角色的速度按钮，把目标指定到敌人的速度按钮上。",
+            "左侧列出了该角色拥有的技能，右侧面板会显示当前技能的详细信息。\n了解技能后，关闭技能面板。\n拖拽友方角色的速度按钮，把目标指定到敌人的速度按钮上。",
             TutorialBattleEventType.LineCreated,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "请拖拽友方速度按钮，连到敌人的速度按钮。"));
         definition.Steps.Add(Step(
             "battle01_start_clash",
             70,
-            "开始拼点",
-            "如果敌人的攻击线和友方角色的攻击线正好对上，线会变成黄色，这意味着双方将展开一次拼点。\n\n现在万事俱备，点击准备按钮进行结算。",
+            "拼点",
+            "如果敌人的攻击线和友方角色的攻击线正好对上，线会变成黄色，这意味着双方将展开一次拼点。\n现在万事俱备，点击准备按钮进行结算。",
             TutorialBattleEventType.CombatExecutePressed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "请先完成连线，再点击准备按钮开始拼点结算。",
@@ -138,19 +138,19 @@ public static class TutorialBattleContentFactory
             0,
             TutorialBattleEventType.ClashResolved,
             "这就是拼点",
-            "可以看到我方角色的威力范围更高，这意味着这次拼点非常稳定。\n\n在攻击骰子拼点中，胜利的一方会摧毁失败方的骰子，并打出自己骰子的伤害。拼点可以化解对手攻击，也可能让你失去进攻机会，需要仔细斟酌。"));
+            "我方角色的威力范围更高，这意味着这次拼点非常稳定。\n在攻击骰子拼点中，胜利的一方会摧毁失败方的骰子，并打出自己骰子的伤害。\n拼点可以化解对手攻击，也可能让你失去进攻机会。"));
         definition.Reactions.Add(Reaction(
             "battle01_enemy_single_explained",
             10,
             TutorialBattleEventType.EnemyOneSidedAttackResolved,
-            "敌人的单方面攻击",
+            "单方面攻击",
             "敌人刚才对友方角色造成了伤害。伤害取决于骰子的威力，威力越高，伤害越高。\n\n下一回合我们会主动连线，用拼点来化解这类攻击。"));
         definition.Reactions.Add(Reaction(
             "battle01_victory",
             20,
             TutorialBattleEventType.BattleWon,
             "恭喜你！",
-            "你已经了解了基础战斗玩法：查看敌人、读取速度按钮、观察威力范围、拖拽连线并进行拼点。\n\n接下来的战斗就交给你自己了！"));
+            "你已经了解了基础战斗玩法！"));
         TutorialBattleReactionDefinition enemySingleReaction = definition.Reactions.Find(reaction =>
             reaction != null && reaction.reactionId == "battle01_enemy_single_explained");
         if (enemySingleReaction != null)
@@ -168,8 +168,8 @@ public static class TutorialBattleContentFactory
         definition.Steps.Add(Step(
             "battle02_press_prepare",
             -10,
-            "先准备这一回合",
-            "Molly 已经残血了，敌人的斩杀会优先寻找血量最低的目标。\n\n先点击准备按钮，生成本回合双方的速度按钮，再查看敌人和队友的行动内容。",
+            "不好！",
+            "看样子 Molly 已经残血了，先点击准备按钮。",
             TutorialBattleEventType.CombatExecutePressed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "请先点击准备按钮，生成本回合的速度按钮。",
@@ -177,8 +177,8 @@ public static class TutorialBattleContentFactory
         definition.Steps.Add(Step(
             "battle02_read_execution",
             0,
-            "救下残血的同伴",
-            "快看，Molly 已经残血了，而敌人的斩杀即将指向血量最低的目标。\n\n先点击敌人的速度按钮，看看它准备用什么技能。",
+            "观察战场",
+            "点击敌人的速度按钮，看看它准备用什么技能。",
             TutorialBattleEventType.EnemySkillViewed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "请先点击敌人的速度按钮，查看斩杀的目标偏好。",
@@ -186,33 +186,33 @@ public static class TutorialBattleContentFactory
         definition.Steps.Add(Step(
             "battle02_view_molly_skill",
             10,
-            "Molly 的反击不够稳",
-            "斩杀会优先攻击血量最低的目标。现在 Molly 只有 1 点生命，如果不处理这条线，她很可能会被击倒。\n\n先点击 Molly 的速度按钮，查看她能不能自己挡住这次攻击。",
+            "危机",
+            "不好，斩杀会优先攻击血量最低的目标。现在 Molly 只有 1 点生命，如果不处理，她很可能会被击倒。\n点击 Molly 的速度按钮，查看她能不能自己挡住这次攻击。",
             TutorialBattleEventType.AllySkillViewed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
-            "请点击 Molly 的速度按钮，查看轻击的威力范围。",
+            "请点击 Molly 的速度按钮，查看技能。",
             TutorialBattleHighlightTarget.FirstAllySpeedButton));
         definition.Steps.Add(Step(
             "battle02_probe_with_molly",
             20,
-            "先试着让 Molly 接敌人",
-            "Molly 的轻击最多只能投出 2 点，而敌人的斩杀威力是 2 - 4。直接让 Molly 接上去并不可靠。\n\n先拖拽 Molly 的速度按钮连到敌人的速度按钮，观察当前目标关系。",
+            "展开拼点",
+            "Molly 的轻击最多只能投出 2 点，而敌人的斩杀威力是 2 - 4。直接让 Molly 接上去并不可靠。\n先拖拽 Molly 的速度按钮连到敌人的速度按钮。",
             TutorialBattleEventType.LineCreated,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "请先用 Molly 的速度按钮连到敌人的速度按钮。"));
         definition.Steps.Add(Step(
             "battle02_view_chara_guard",
             30,
-            "看看 Chara 的守护",
-            "这样下去还不够稳。再看看 Chara 的技能能不能破局。\n\n点击 Chara 的速度按钮，查看守护技能。",
+            "支援",
+            "别忘了我们还有另一名友方角色。\n点击 Chara 的速度按钮，看看他有什么技能可以用。",
             TutorialBattleEventType.AllySkillViewed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
-            "请点击 Chara 的速度按钮，查看守护。"));
+            "请点击 Chara 的速度按钮。"));
         definition.Steps.Add(Step(
             "battle02_redirect_with_guard",
             40,
-            "用高速角色接管目标",
-            "守护是防御技能，适合拿来拦截敌人的攻击。\n\n用 Chara 的速度按钮连到敌人的速度按钮。因为 Chara 的速度更高，她可以把敌人的目标从残血 Molly 转移到自己身上。",
+            "接管拼点",
+            "守护是一个防御技能，适合拿来拦截敌人的攻击。\n因为 Chara 的速度更高，可以把敌人的目标从残血 Molly 转移到自己身上。\n用 Chara 的速度按钮连到敌人的速度按钮。",
             TutorialBattleEventType.LineCreated,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "请用 Chara 的速度按钮连到敌人的速度按钮。"));
@@ -220,7 +220,7 @@ public static class TutorialBattleContentFactory
             "battle02_execute_guard",
             50,
             "开始结算",
-            "注意到了吗？敌人的斩杀原本会找血量最低的 Molly，但现在目标已经被更快的 Chara 接走。\n\n熟练运用高速度角色的技能拉取目标，可以在关键时刻保护脆弱队友。现在点击准备按钮进行结算。",
+            "注意到了吗？敌人的斩杀原本会找血量最低的 Molly，但现在目标已经被更快的 Chara 接走。\n熟练运用高速度角色的技能拉取目标，可以在关键时刻保护脆弱队友。\n现在点击准备按钮进行结算。",
             TutorialBattleEventType.CombatExecutePressed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "请先完成守护连线，再点击准备按钮开始结算。",
@@ -229,14 +229,14 @@ public static class TutorialBattleContentFactory
             "battle02_guard_clash",
             0,
             TutorialBattleEventType.ClashResolved,
-            "目标已经被转移",
-            "原本会与残血 Molly 拼点的敌人，被高速的 Chara 接走了。\n\n这就是速度的另一个重要作用：速度更高的一方，可以更主动地改变目标关系，让危险攻击打到更适合承受的人身上。"));
+            "目标转移",
+            "速度更高的一方，可以更主动地改变目标关系，让危险攻击打到更适合承受的人身上。"));
         definition.Reactions.Add(Reaction(
             "battle02_victory",
             10,
             TutorialBattleEventType.BattleWon,
             "恭喜你！",
-            "你已经理解了速度在目标转移中的作用。接下来遇到危险攻击时，先看谁被锁定，再判断有没有更快、更适合的人可以接走它。"));
+            "你已经理解了速度在目标转移中的作用。"));
         return definition;
     }
 
@@ -246,8 +246,8 @@ public static class TutorialBattleContentFactory
         definition.Steps.Add(Step(
             "battle03_press_prepare",
             -10,
-            "先准备这一回合",
-            "这一战会学习技能选择和能量消耗。\n\n先点击准备按钮，生成本回合的速度按钮，再查看我方角色当前可用的技能。",
+            "准备",
+            "先点击准备按钮，生成本回合的速度按钮。",
             TutorialBattleEventType.CombatExecutePressed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "请先点击准备按钮，生成本回合的速度按钮。",
@@ -255,24 +255,24 @@ public static class TutorialBattleContentFactory
         definition.Steps.Add(Step(
             "battle03_view_ally_skill",
             0,
-            "查看我方技能",
-            "从现在开始，友方角色的技能选择应该成为决策的一部分。点击我方角色的速度按钮，看清当前有哪些技能、它们分别消耗多少能量、适合用来做什么。",
+            "查看技能",
+            "从现在开始，友方角色的技能选择应该成为决策的一部分。\n点击我方角色的速度按钮，看清当前有哪些技能、它们分别消耗多少能量、适合用来做什么。",
             TutorialBattleEventType.AllySkillViewed,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "先点开我方技能列表。"));
         definition.Steps.Add(Step(
             "battle03_switch_skill",
             10,
-            "先切换一次技能",
-            "请主动切换一次技能。连线之前就要先决定你打算用哪一招，强力技能通常会占用更多能量。",
+            "切换技能",
+            "请主动切换一次技能。\n强力技能通常会消耗更多能量。",
             TutorialBattleEventType.SkillSwitched,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "先切换一次技能，再继续操作。"));
         definition.Steps.Add(Step(
             "battle03_reserve_energy",
             20,
-            "用消耗能量的技能完成连线",
-            "当你用有能耗的技能去接线时，能量会被消耗。能量不够时，就不能使用更高费用的技能。队伍的能量是共享的，因此需要仔细考虑应该让谁打出强力的技能，谁来负责能量的续航，保存更多能量。能量默认会在每回合开始时回复一点",
+            "能耗",
+            "队伍的能量是共享的，因此需要仔细考虑应该让谁打出强力的技能，谁来负责能量的续航，保存更多能量。\n能量默认会在每回合开始时回复 1 点。",
             TutorialBattleEventType.EnergyLineCreated,
             TutorialBattleInputPolicy.RequireBeforeCombat,
             "请用一招会消耗能量的技能完成连线。"));

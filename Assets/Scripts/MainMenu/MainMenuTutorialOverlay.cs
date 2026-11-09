@@ -70,7 +70,7 @@ public class MainMenuTutorialOverlay : MonoBehaviour
         summaryTitleText.text = !string.IsNullOrEmpty(titleOverride)
             ? titleOverride
             : (!string.IsNullOrEmpty(safeCatalog != null ? safeCatalog.summaryTitle : null) ? GameText.Get("tutorial.catalog.summaryTitle", safeCatalog.summaryTitle) : GameText.Get("ui.menu.tutorial", DefaultTitle));
-        summaryBodyText.text = !string.IsNullOrEmpty(bodyOverride)
+        summaryBodyText.text = bodyOverride != null
             ? bodyOverride
             : (!string.IsNullOrEmpty(safeCatalog != null ? safeCatalog.summaryBody : null) ? GameText.Get("tutorial.catalog.summaryBody", safeCatalog.summaryBody) : GameText.Get("tutorial.catalog.empty", DefaultBody));
         startButtonText.text = !string.IsNullOrEmpty(startButtonLabelOverride)

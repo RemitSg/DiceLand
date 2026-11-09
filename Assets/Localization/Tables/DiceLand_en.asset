@@ -460,13 +460,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946651
-    m_Localized: 'Your ally had the higher power range, making this clash favorable.
-
-
-      When
-      two attack dice clash, the winner destroys the losing die and deals its own
-      damage. A clash can stop an enemy attack, but it can also cost you a chance
-      to attack.'
+    m_Localized: "Our ally has a higher Power range, making this Clash very reliable.\nIn a Clash between Attack Dice, the winner destroys the losing die and deals damage with its own die.\nClashing can counter an enemy attack, but it can also cost you your chance to attack."
     m_Metadata:
       m_Items: []
   - m_Id: 2986946652
@@ -474,12 +468,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946653
-    m_Localized: 'The left side lists your ally''s skills. The right side shows the
-      selected skill''s details.
-
-
-      Pick a skill, close the panel, then drag
-      from your ally''s speed button to the enemy''s speed button.'
+    m_Localized: "The left side lists this character's skills. The right side shows the current skill's details.\nRead the skill, then close the skill panel.\nDrag the ally's Speed button onto the enemy's Speed button to assign a target."
     m_Metadata:
       m_Items: []
   - m_Id: 2986946654
@@ -492,15 +481,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946656
-    m_Localized: A One-Sided Attack
+    m_Localized: "One-Sided Attack"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946657
-    m_Localized: 'Let''s learn how battles work.
-
-
-      Select the enemy itself
-      to inspect its profile.'
+    m_Localized: "Now for the exciting part: combat!\nFirst, click the enemy itself to view its basic information."
     m_Metadata:
       m_Items: []
   - m_Id: 2986946658
@@ -508,8 +493,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946659
-    m_Localized: Now that you've inspected the enemy, select the Prepare button at
-      the bottom of the screen to roll speed for both sides.
+    m_Localized: "You have learned about this enemy. Now get ready for battle.\nClick Prepare at the bottom of the screen."
     m_Metadata:
       m_Items: []
   - m_Id: 2986946660
@@ -517,13 +501,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946661
-    m_Localized: 'The hexagon above the enemy is a speed button. The number above
-      it is the speed roll.
-
-
-      Each speed button is a skill slot. More buttons
-      mean more actions each round. Select the enemy''s speed button to see which
-      skill it''s using.'
+    m_Localized: "The hexagon above the enemy is its Speed button and Skill Slot. The number above it shows its Speed.\nClick the enemy's Speed button to see which skill it plans to use."
     m_Metadata:
       m_Items: []
   - m_Id: 2986946662
@@ -531,33 +509,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946663
-    m_Localized: 'When both sides target each other, the line turns yellow and a
-      clash will occur.
-
-
-      Select Prepare to resolve the clash.'
+    m_Localized: "When the enemy's attack line and the ally's attack line point at each other, the line turns yellow. This means they will Clash.\nEverything is ready. Click Prepare to resolve the actions."
     m_Metadata:
       m_Items: []
   - m_Id: 2986946664
-    m_Localized: Start a Clash
+    m_Localized: "Clash"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946665
-    m_Localized: "Skills use dice. Attack dice deal damage. Defense dice block incoming
-      damage.\n\nA range such as 1\u20132 means the die rolls either 1 or 2. Close
-      the skill panel, then select Prepare to resolve the attack."
+    m_Localized: "An enemy skill consists of one or more dice.\nA range such as \"1 - 2\" is its Power range. Its Power will be rolled between 1 and 2 during resolution.\nClose the skill panel, then click Prepare."
     m_Metadata:
       m_Items: []
   - m_Id: 2986946666
-    m_Localized: Watch the Enemy Attack
+    m_Localized: "The Enemy's Attack"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946667
-    m_Localized: 'You can now inspect enemies, read speed and power ranges, connect
-      targets, and resolve clashes.
-
-
-      You''re ready for your next battle.'
+    m_Localized: "You have learned the basics of combat!"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946668
@@ -565,15 +533,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946669
-    m_Localized: 'You can counter the enemy''s attack.
-
-
-      Select your ally''s
-      speed button to see their available skills.'
+    m_Localized: "We cannot just sit here! Fight back to counter the enemy's attack!\nClick an ally's Speed button to see which skills we can use."
     m_Metadata:
       m_Items: []
   - m_Id: 2986946670
-    m_Localized: Time to Counterattack
+    m_Localized: "Fight Back"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946671
@@ -581,8 +545,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946672
-    m_Localized: The upper-left panel shows your current [[DL_ActionPoints|action
-      points]]. Moving to another tile costs action points.
+    m_Localized: "This shows your current AP. Moving consumes AP."
     m_Metadata:
       m_Items: []
   - m_Id: 2986946673
@@ -590,11 +553,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946674
-    m_Localized: 'Battle tiles list the attributes of the enemies stationed there.
-
-
-      Check
-      them before you enter so you can plan a route or prepare suitable equipment.'
+    m_Localized: "Since this is a \"Battle\" tile, the remaining information is specific to battle tiles.\nEnemy Attribute shows the attribute of the enemies stationed here."
     m_Metadata:
       m_Items: []
   - m_Id: 2986946675
@@ -602,12 +561,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946676
-    m_Localized: You've inspected the first battle tile. Select it again to enter
-      the first tutorial battle.
+    m_Localized: "Click the battle tile on the right to enter your first battle!"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946677
-    m_Localized: Enter the First Battle
+    m_Localized: "Enter Battle"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946678
@@ -615,8 +573,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946679
-    m_Localized: The top line shows the tile's coordinates and type. A <color=#F19A86>Battle</color>
-      tile starts a fight when you enter it.
+    m_Localized: "The first line shows the tile type. For example, \"Battle\" means that entering this tile starts a battle."
     m_Metadata:
       m_Items: []
   - m_Id: 2986946680
@@ -624,8 +581,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946681
-    m_Localized: This line shows the cost to enter a tile. A new tile normally costs
-      2 action points. Returning to an explored tile normally costs 1.
+    m_Localized: "Exploring a new tile usually costs 2 AP, while moving to an explored tile costs only 1 AP."
     m_Metadata:
       m_Items: []
   - m_Id: 2986946682
@@ -633,12 +589,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946683
-    m_Localized: 'Danger tells you how tough the enemies on this tile are. Pay attention
-      before taking on a fight.
-
-
-      The map has an outer ring, middle ring, inner
-      ring, and core. Enemies grow more dangerous as you get closer to the boss.'
+    m_Localized: "Danger shows how dangerous the enemies on this tile are.\nThe closer you get to the Boss, the deeper the area and the greater the danger.\nKeep an eye on Danger, or you may fall to enemies far beyond your current strength!"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946684
@@ -663,8 +614,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946689
-    m_Localized: Use [[DL_Money|gold]] at shops or in events to get the supplies
-      you need.
+    m_Localized: "Shiny gold! Use it to buy the resources you need."
     m_Metadata:
       m_Items: []
   - m_Id: 2986946690
@@ -702,8 +652,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946697
-    m_Localized: Tile details show what you'll find and what it costs to enter. Check
-      them before moving.
+    m_Localized: "Reading tile details carefully is one of the secrets to completing the game!"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946698
@@ -711,8 +660,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946699
-    m_Localized: Let's start with the map controls. Drag to pan, and use the mouse
-      wheel or a two-finger pinch to zoom.
+    m_Localized: "This is the map.\nTry dragging the view, scrolling the mouse wheel, or pinching with two fingers to look around!"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946700
@@ -720,8 +668,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946701
-    m_Localized: Learn the basics of DiceLand, from moving across the map and fighting
-      battles to managing resources and growing your party.
+    m_Localized: ""
     m_Metadata:
       m_Items: []
   - m_Id: 2986946702
@@ -729,7 +676,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946703
-    m_Localized: Start the Tutorial?
+    m_Localized: "Start the Tutorial?"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946704
@@ -10673,16 +10620,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688006
-    m_Localized: Prepare the Round
+    m_Localized: "Oh No!"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688007
-    m_Localized: 'Molly is low on HP, and the enemy''s Execution targets whoever
-      has the least HP.
-
-
-      Press Prepare to roll speed slots for both sides.
-      Then inspect what each combatant can do.'
+    m_Localized: "Molly looks badly hurt. Click Prepare first."
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688008
@@ -10690,15 +10632,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688009
-    m_Localized: Save Your Ally
+    m_Localized: "Survey the Battlefield"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688010
-    m_Localized: 'Molly is low on HP, and Execution is about to target the weakest
-      combatant.
-
-
-      Select the enemy''s speed slot to see what it plans to use.'
+    m_Localized: "Click the enemy's Speed button to see which skill it plans to use."
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688011
@@ -10706,30 +10644,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688012
-    m_Localized: Molly's Counter Is Risky
+    m_Localized: "In Danger"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688013
-    m_Localized: 'Execution targets the combatant with the lowest HP. Molly has only
-      1 HP. If no one intercepts this attack, she''ll probably go down.
-
-
-      Select
-      her speed slot to see whether she can stop it herself.'
+    m_Localized: "Oh no! Execution prioritizes the target with the lowest HP. Molly has only 1 HP. If we do nothing, she may be defeated.\nClick Molly's Speed button to see whether she can block this attack herself."
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688014
-    m_Localized: Select Molly's speed slot to check Light Strike's Power.
+    m_Localized: "Click Molly's Speed button to view her skill."
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688015
-    m_Localized: Try Connecting Molly
+    m_Localized: "Start a Clash"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688016
-    m_Localized: "Molly's Light Strike rolls at most 2, while Execution rolls 2\u20134.
-      She can't reliably win that clash.\n\nDrag from Molly's speed slot to the enemy's
-      slot and see who the enemy is targeting."
+    m_Localized: "Molly's Light Strike can roll at most 2, while the enemy's Execution has a Power range of 2 - 4. Having Molly face it directly is unreliable.\nDrag Molly's Speed button onto the enemy's Speed button."
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688017
@@ -10737,32 +10668,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688018
-    m_Localized: Inspect Chara's Guard
+    m_Localized: "Support"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688019
-    m_Localized: 'Molly still isn''t safe. See what Chara can do.
-
-
-      Select
-      Chara''s speed slot and inspect Guard.'
+    m_Localized: "Don't forget that we have another ally.\nClick Chara's Speed button to see which skills he can use."
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688020
-    m_Localized: Select Chara's speed slot to inspect Guard.
+    m_Localized: "Click Chara's Speed button."
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688021
-    m_Localized: Redirect with a Faster Ally
+    m_Localized: "Take Over the Clash"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688022
-    m_Localized: 'Guard is a defense skill, ideal for intercepting attacks.
-
-
-      Connect
-      Chara''s speed slot to the enemy''s. Because Chara is faster, she can draw
-      the attack away from Molly and onto herself.'
+    m_Localized: "Guard is a Defense skill suited to intercepting enemy attacks.\nSince Chara is faster, he can redirect the enemy's attack from the injured Molly to himself.\nConnect Chara's Speed button to the enemy's Speed button."
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688023
@@ -10774,12 +10696,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688025
-    m_Localized: 'Execution was aimed at Molly, who has the lowest HP. Faster Chara
-      is now taking that attack instead.
-
-
-      Use faster allies to protect teammates
-      from dangerous attacks. Press Prepare to resolve the round.'
+    m_Localized: "Did you notice? The enemy's Execution was targeting Molly, who has the lowest HP. Now the faster Chara has taken over that attack.\nUsing a fast character's skill to redirect a target can protect vulnerable allies at a crucial moment.\nClick Prepare to resolve the actions."
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688026
@@ -10787,16 +10704,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688027
-    m_Localized: Prepare the Round
+    m_Localized: "Prepare"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688028
-    m_Localized: 'This battle teaches skill selection and Energy costs.
-
-
-      Press
-      Prepare to roll this round''s speed slots, then inspect the ally''s available
-      skills.'
+    m_Localized: "Click Prepare to generate this round's Speed buttons."
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688029
@@ -10804,12 +10716,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688030
-    m_Localized: Inspect Allied Skills
+    m_Localized: "View Skills"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688031
-    m_Localized: Skill choice matters. Select an ally's speed slot to see which skills
-      they can use, how much Energy each costs, and what each does.
+    m_Localized: "From now on, an ally's skill selection should be part of your decisions.\nClick an ally's Speed button to see the available skills, their Energy costs, and what they are suited for."
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688032
@@ -10817,12 +10728,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688033
-    m_Localized: Switch Skills
+    m_Localized: "Switch Skills"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688034
-    m_Localized: Switch to a different skill. Decide what to use before connecting
-      a target. More powerful skills usually cost more Energy.
+    m_Localized: "Switch to a different skill.\nPowerful skills usually consume more Energy."
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688035
@@ -10830,18 +10740,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688036
-    m_Localized: Connect an Energy-Costing Skill
+    m_Localized: "Energy Cost"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688037
-    m_Localized: 'Connecting a skill with an Energy cost spends Energy. You can''t
-      use expensive skills if you don''t have enough.
-
-
-      Your party shares an
-      Energy pool. Decide who should use the stronger skills and who can use cheaper
-      ones to save Energy. By default, you recover 1 Energy at the start of each
-      round.'
+    m_Localized: "Energy is shared by the entire team. Think carefully about who should use powerful skills and who should sustain the team's Energy and conserve it.\nBy default, the team recovers 1 Energy at the start of each round."
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688038
@@ -11044,16 +10947,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688072
-    m_Localized: Attack Redirected
+    m_Localized: "Redirecting Targets"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688073
-    m_Localized: 'The enemy was going to clash with low-HP Molly. Faster Chara took
-      over.
-
-
-      Speed lets you redirect a dangerous attack to someone better
-      able to handle it.'
+    m_Localized: "The faster side can change target assignments more actively, directing dangerous attacks toward characters better suited to take them."
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688074
@@ -11061,8 +10959,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688075
-    m_Localized: You learned how Speed redirects attacks. When you see a dangerous
-      attack, check who is targeted and see whether a faster ally can take it instead.
+    m_Localized: "You have learned how Speed helps redirect targets."
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688076
@@ -13860,17 +13757,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781585076561
-    m_Localized: Final Elite Battle
+    m_Localized: "Final Battle"
     m_Metadata:
       m_Items: []
   - m_Id: 22781585076562
-    m_Localized: 'This last tutorial battle brings together Speed, clashes, one-sided
-      attacks, skill switching, Energy, and status effects.
-
-
-      Read the enemy''s
-      moves first. Decide which attacks to intercept, which to let through, and which
-      skills are worth the Energy.'
+    m_Localized: "This is the last stop. Face your final test!"
     m_Metadata:
       m_Items: []
   - m_Id: 22781585076563

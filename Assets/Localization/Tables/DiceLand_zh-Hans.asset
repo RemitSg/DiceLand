@@ -450,7 +450,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946651
-    m_Localized: "\u53EF\u4EE5\u770B\u5230\u6211\u65B9\u89D2\u8272\u7684\u5A01\u529B\u8303\u56F4\u66F4\u9AD8\uFF0C\u8FD9\u610F\u5473\u7740\u8FD9\u6B21\u62FC\u70B9\u975E\u5E38\u7A33\u5B9A\u3002\n\n\u5728\u653B\u51FB\u9AB0\u5B50\u62FC\u70B9\u4E2D\uFF0C\u80DC\u5229\u7684\u4E00\u65B9\u4F1A\u6467\u6BC1\u5931\u8D25\u65B9\u7684\u9AB0\u5B50\uFF0C\u5E76\u6253\u51FA\u81EA\u5DF1\u9AB0\u5B50\u7684\u4F24\u5BB3\u3002\u62FC\u70B9\u53EF\u4EE5\u5316\u89E3\u5BF9\u624B\u653B\u51FB\uFF0C\u4E5F\u53EF\u80FD\u8BA9\u4F60\u5931\u53BB\u8FDB\u653B\u673A\u4F1A\uFF0C\u9700\u8981\u4ED4\u7EC6\u659F\u914C\u3002"
+    m_Localized: "我方角色的威力范围更高，这意味着这次拼点非常稳定。\n在攻击骰子拼点中，胜利的一方会摧毁失败方的骰子，并打出自己骰子的伤害。\n拼点可以化解对手攻击，也可能让你失去进攻机会。"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946652
@@ -458,7 +458,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946653
-    m_Localized: "\u5DE6\u4FA7\u5217\u51FA\u4E86\u8BE5\u540D\u53CB\u65B9\u89D2\u8272\u62E5\u6709\u7684\u6280\u80FD\uFF0C\u53F3\u4FA7\u9762\u677F\u4F1A\u663E\u793A\u5F53\u524D\u6280\u80FD\u7684\u8BE6\u7EC6\u4FE1\u606F\u3002\n\n\u9009\u62E9\u5E76\u4E86\u89E3\u6280\u80FD\u540E\uFF0C\u5173\u95ED\u6280\u80FD\u9762\u677F\u3002\u968F\u540E\u62D6\u62FD\u53CB\u65B9\u89D2\u8272\u7684\u901F\u5EA6\u6309\u94AE\uFF0C\u628A\u76EE\u6807\u6307\u5B9A\u5230\u654C\u4EBA\u7684\u901F\u5EA6\u6309\u94AE\u4E0A\u3002"
+    m_Localized: "左侧列出了该角色拥有的技能，右侧面板会显示当前技能的详细信息。\n了解技能后，关闭技能面板。\n拖拽友方角色的速度按钮，把目标指定到敌人的速度按钮上。"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946654
@@ -470,11 +470,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946656
-    m_Localized: "\u654C\u4EBA\u7684\u5355\u65B9\u9762\u653B\u51FB"
+    m_Localized: "单方面攻击"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946657
-    m_Localized: "\u63A5\u4E0B\u6765\u662F\u6FC0\u52A8\u4EBA\u5FC3\u7684\u6218\u6597\u5185\u5BB9\uFF01\u4F60\u5C06\u5B66\u4F1A\u5982\u4F55\u4E0E\u654C\u4EBA\u6218\u6597\u3002\n\n\u5148\u70B9\u51FB\u654C\u4EBA\u7684\u672C\u4F53\uFF0C\u67E5\u770B\u5F53\u524D\u654C\u4EBA\u7684\u57FA\u7840\u4FE1\u606F\u3002"
+    m_Localized: "接下来是激动人心的战斗内容！\n先点击敌人的本体，查看当前敌人的基础信息。"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946658
@@ -482,7 +482,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946659
-    m_Localized: "\u4F60\u5DF2\u7ECF\u4E86\u89E3\u4E86\u5F53\u524D\u654C\u4EBA\u7684\u57FA\u7840\u4FE1\u606F\uFF0C\u63A5\u4E0B\u6765\u51C6\u5907\u5F00\u59CB\u6218\u6597\u3002\n\n\u70B9\u51FB\u5C4F\u5E55\u4E0B\u65B9\u7684\u51C6\u5907\u6309\u94AE\uFF0C\u8BA9\u53CC\u65B9\u751F\u6210\u672C\u56DE\u5408\u7684\u901F\u5EA6\u6309\u94AE\u3002"
+    m_Localized: "你已经了解了当前敌人的基础信息，接下来准备开始战斗。\n点击屏幕下方的准备按钮。"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946660
@@ -490,7 +490,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946661
-    m_Localized: "\u654C\u4EBA\u5934\u9876\u7684\u516D\u8FB9\u5F62\u6309\u94AE\u5C31\u662F\u5B83\u7684\u901F\u5EA6\u6309\u94AE\uFF0C\u6309\u94AE\u4E0A\u65B9\u7684\u6570\u5B57\u4EE3\u8868\u901F\u5EA6\u3002\n\n\u901F\u5EA6\u6309\u94AE\u4E5F\u53EF\u4EE5\u7406\u89E3\u4E3A\u6280\u80FD\u69FD\uFF1A\u901F\u5EA6\u6309\u94AE\u8D8A\u591A\uFF0C\u654C\u4EBA\u4E00\u56DE\u5408\u80FD\u505A\u7684\u4E8B\u5C31\u8D8A\u591A\u3002\u73B0\u5728\u70B9\u51FB\u654C\u4EBA\u7684\u901F\u5EA6\u6309\u94AE\uFF0C\u67E5\u770B\u5B83\u51C6\u5907\u7528\u4EC0\u4E48\u6280\u80FD\u3002"
+    m_Localized: "敌人头顶的六边形按钮是它的速度按钮，也是技能槽，按钮上方的数字代表速度。\n现在点击敌人的速度按钮，查看它准备用什么技能。"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946662
@@ -498,25 +498,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946663
-    m_Localized: "\u5982\u679C\u654C\u4EBA\u7684\u653B\u51FB\u7EBF\u548C\u53CB\u65B9\u89D2\u8272\u7684\u653B\u51FB\u7EBF\u6B63\u597D\u5BF9\u4E0A\uFF0C\u7EBF\u4F1A\u53D8\u6210\u9EC4\u8272\uFF0C\u8FD9\u610F\u5473\u7740\u53CC\u65B9\u5C06\u5C55\u5F00\u4E00\u6B21\u62FC\u70B9\u3002\n\n\u73B0\u5728\u4E07\u4E8B\u4FF1\u5907\uFF0C\u70B9\u51FB\u51C6\u5907\u6309\u94AE\u8FDB\u884C\u7ED3\u7B97\u3002"
+    m_Localized: "如果敌人的攻击线和友方角色的攻击线正好对上，线会变成黄色，这意味着双方将展开一次拼点。\n现在万事俱备，点击准备按钮进行结算。"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946664
-    m_Localized: "\u5F00\u59CB\u62FC\u70B9"
+    m_Localized: "拼点"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946665
-    m_Localized: "\u654C\u4EBA\u7684\u6280\u80FD\u7531\u82E5\u5E72\u9897\u9AB0\u5B50\u7EC4\u6210\u3002\u653B\u51FB\u9AB0\u5B50\u4F1A\u9020\u6210\u4F24\u5BB3\uFF0C\u9632\u5FA1\u9AB0\u5B50\u4F1A\u62B5\u6321\u5373\u5C06\u5230\u6765\u7684\u4F24\u5BB3\u3002\n\n\u201C1
-      - 2\u201D \u8FD9\u6837\u7684\u6570\u503C\u8303\u56F4\u53EB\u505A\u5A01\u529B\u8303\u56F4\uFF0C\u4EE3\u8868\u7ED3\u7B97\u65F6\u4F1A\u5728
-      1 \u548C 2 \u4E4B\u95F4\u968F\u673A\u3002\u73B0\u5728\u5173\u95ED\u6280\u80FD\u9762\u677F\uFF0C\u518D\u70B9\u51FB\u51C6\u5907\u6309\u94AE\u3002"
+    m_Localized: "敌人的技能会由若干颗骰子组成。\n“1 - 2” 这样的数值范围叫做威力范围，代表结算时威力会在 1 到 2 之间随机。\n现在关闭技能面板，再点击准备按钮。"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946666
-    m_Localized: "\u5148\u770B\u4E00\u6B21\u654C\u4EBA\u7684\u653B\u51FB"
+    m_Localized: "敌人的攻击"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946667
-    m_Localized: "\u4F60\u5DF2\u7ECF\u4E86\u89E3\u4E86\u57FA\u7840\u6218\u6597\u73A9\u6CD5\uFF1A\u67E5\u770B\u654C\u4EBA\u3001\u8BFB\u53D6\u901F\u5EA6\u6309\u94AE\u3001\u89C2\u5BDF\u5A01\u529B\u8303\u56F4\u3001\u62D6\u62FD\u8FDE\u7EBF\u5E76\u8FDB\u884C\u62FC\u70B9\u3002\n\n\u63A5\u4E0B\u6765\u7684\u6218\u6597\u5C31\u4EA4\u7ED9\u4F60\u81EA\u5DF1\u4E86\uFF01"
+    m_Localized: "你已经了解了基础战斗玩法！"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946668
@@ -524,11 +522,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946669
-    m_Localized: "\u6211\u4EEC\u4E0D\u80FD\u8FD9\u6837\u5750\u4EE5\u5F85\u6BD9\uFF01\u5C55\u5F00\u6709\u6548\u53CD\u51FB\u6765\u5316\u89E3\u654C\u4EBA\u7684\u653B\u51FB\u3002\n\n\u70B9\u51FB\u53CB\u65B9\u89D2\u8272\u7684\u901F\u5EA6\u6309\u94AE\uFF0C\u67E5\u770B\u6211\u4EEC\u6709\u4EC0\u4E48\u6280\u80FD\u53EF\u4EE5\u4F7F\u7528\u3002"
+    m_Localized: "我们不能这样坐以待毙！展开有效反击来化解敌人的攻击！\n点击友方角色的速度按钮，查看我们有什么技能可以使用。"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946670
-    m_Localized: "\u8F6E\u5230\u6211\u4EEC\u53CD\u51FB"
+    m_Localized: "反击"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946671
@@ -536,7 +534,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946672
-    m_Localized: "\u5DE6\u4E0A\u89D2\u7684\u72B6\u6001\u680F\u663E\u793A\u4E86\u4F60\u5F53\u524D\u7684\u884C\u52A8\u70B9\uFF0C\u79FB\u52A8\u5230\u5176\u5B83\u683C\u5B50\u90FD\u4F1A\u6D88\u8017\u4F60\u7684\u884C\u52A8\u70B9\u3002"
+    m_Localized: "这里显示了你当前的行动点，移动会消耗你的行动点。"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946673
@@ -544,7 +542,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946674
-    m_Localized: "\u7531\u4E8E\u5F53\u524D\u662F\u201C\u6218\u6597\u683C\u201D\uFF0C\u5269\u4F59\u7684\u4FE1\u606F\u662F\u6218\u6597\u683C\u7279\u6709\u7684\u5185\u5BB9\u3002\n\n\u654C\u4EBA\u5C5E\u6027\u8BB0\u5F55\u9A7B\u624E\u5728\u5F53\u524D\u683C\u5B50\u654C\u4EBA\u7684\u5C5E\u6027\u3002\u63D0\u524D\u4E86\u89E3\u654C\u4EBA\u7684\u5C5E\u6027\uFF0C\u53EF\u4EE5\u5E2E\u52A9\u4F60\u89C4\u5212\u8DEF\u7EBF\uFF0C\u6216\u662F\u51C6\u5907\u6218\u6597\u6240\u9700\u7684\u88C5\u5907\u3002"
+    m_Localized: "由于当前是“战斗格”，剩余的信息是战斗格特有的内容。\n敌人属性记录驻扎在当前格子敌人的属性。"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946675
@@ -552,11 +550,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946676
-    m_Localized: "\u8FD9\u6761\u6559\u7A0B\u8DEF\u7EBF\u4F1A\u76F4\u63A5\u4ECE\u7B2C\u4E00\u573A\u6218\u6597\u5F00\u59CB\u3002\u4F60\u5DF2\u7ECF\u63D0\u524D\u770B\u8FC7\u5B83\u7684\u8BE6\u60C5\u4E86\uFF0C\u7EE7\u7EED\u70B9\u51FB\u53F3\u4FA7\u6218\u6597\u683C\uFF0C\u8FDB\u5165\u7B2C\u4E00\u573A\u6559\u7A0B\u6218\u6597\u3002"
+    m_Localized: "点击右侧战斗格，进入你的第一场战斗吧！"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946677
-    m_Localized: "\u51C6\u5907\u8FDB\u5165\u6218\u6597"
+    m_Localized: "进入战斗"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946678
@@ -564,7 +562,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946679
-    m_Localized: "\u7B2C\u4E00\u884C\u5305\u62EC\u683C\u5B50\u7684\u5750\u6807\u4E0E\u7C7B\u578B\u3002\u201C\u6218\u6597\u201D\u4EE3\u8868\u4F60\u4F1A\u5728\u8FDB\u5165\u8BE5\u683C\u5B50\u65F6\u5F00\u542F\u4E00\u573A\u6218\u6597\u3002"
+    m_Localized: "第一行包括格子的类型。例如 “战斗” 代表你会在进入该格子时开启一场战斗。"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946680
@@ -572,9 +570,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946681
-    m_Localized: "\u7B2C\u4E09\u884C\u663E\u793A\u8FDB\u5165\u683C\u5B50\u6240\u9700\u7684\u884C\u52A8\u70B9\u3002\u901A\u5E38\u63A2\u7D22\u4E00\u4E2A\u65B0\u7684\u683C\u5B50\u9700\u8981\u6D88\u8017
-      2 \u884C\u52A8\u70B9\uFF0C\u800C\u79FB\u52A8\u5230\u5DF2\u63A2\u7D22\u7684\u683C\u5B50\u53EA\u9700\u8981
-      1 \u884C\u52A8\u70B9\u3002"
+    m_Localized: "通常探索一个新的格子需要消耗 2 行动点，而移动到已探索的格子只需要 1 行动点。"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946682
@@ -582,8 +578,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946683
-    m_Localized: "\u5371\u9669\u5EA6\u8BB0\u5F55\u5F53\u524D\u683C\u5B50\u654C\u4EBA\u7684\u5371\u9669\u7A0B\u5EA6\u3002\u65F6\u523B\u6CE8\u610F\u89C2\u5BDF\u5371\u9669\u5EA6\uFF0C\u5426\u5219\u4F60\u53EF\u80FD\u4F1A\u8D25\u5728\u5371\u9669\u7A0B\u5EA6\u8FDC\u9AD8\u4E8E\u4F60\u5F53\u524D\u80FD\u529B\u7684\u654C\u4EBA\u624B\u4E0B\uFF01\n\n\u533A\u57DF\u8BB0\u5F55\u5F53\u524D\u683C\u5B50\u6240\u5728\u7684\u4F4D\u7F6E\uFF1A\u5916\u56F4\u3001\u4E2D\u5C42\u3001\u5185\u5C42\u3001\u6838\u5FC3\u3002\u8D8A\u9760\u8FD1
-      Boss\uFF0C\u533A\u57DF\u8D8A\u6DF1\u5165\uFF0C\u654C\u4EBA\u7684\u5371\u9669\u5EA6\u4E5F\u4F1A\u9010\u6E10\u589E\u52A0\u3002"
+    m_Localized: "危险度记录当前格子敌人的危险程度。\n越靠近 Boss，区域越深入，敌人的危险度也会逐渐增加。\n时刻注意观察危险度，否则你可能会败在危险程度远高于你当前能力的敌人手下！"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946684
@@ -607,7 +602,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946689
-    m_Localized: "\u91D1\u5E01\u662F\u6E38\u620F\u7684\u5FC5\u8981\u8D44\u6E90\uFF01\u4F60\u53EF\u4EE5\u7528\u91D1\u5E01\u5728\u5546\u5E97\u6216\u4E8B\u4EF6\u4E2D\u6362\u53D6\u4F60\u9700\u8981\u7684\u8D44\u6E90\u3002"
+    m_Localized: "金闪闪的金币！你可以用金币购买你需要的资源。"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946690
@@ -640,7 +635,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946697
-    m_Localized: "\u683C\u5B50\u8BE6\u60C5\u4E2D\u4F1A\u6709\u591A\u79CD\u4F60\u9700\u8981\u4E86\u89E3\u7684\u4FE1\u606F\uFF0C\u4ED4\u7EC6\u89C2\u5BDF\u683C\u5B50\u8BE6\u60C5\u662F\u4F60\u901A\u5173\u6E38\u620F\u7684\u4E00\u5927\u79D8\u7C4D\uFF01"
+    m_Localized: "仔细观察格子详情是通关游戏的一大秘籍！"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946698
@@ -648,7 +643,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946699
-    m_Localized: "\u8FD9\u91CC\u4F1A\u5E26\u4F60\u5B66\u4F1A\u8FDB\u5165\u5730\u56FE\u540E\u7684\u57FA\u672C\u64CD\u4F5C\u3002\u9996\u5148\u8BD5\u7740\u62D6\u52A8\u753B\u9762\u3001\u6EDA\u52A8\u9F20\u6807\u6EDA\u8F6E\uFF0C\u6216\u7528\u53CC\u6307\u7F29\u653E\u6765\u89C2\u5BDF\u5730\u56FE\u3002"
+    m_Localized: "这里是地图页面。\n试着拖动画面、滚动鼠标滚轮，或用双指缩放来观察地图吧！"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946700
@@ -656,7 +651,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946701
-    m_Localized: "\u8FDB\u5165\u6559\u7A0B\u4F1A\u8BA9\u4F60\u4E86\u89E3\u6218\u6597\u89C4\u5219\u3001\u57FA\u672C\u73A9\u6CD5\u3001\u6E38\u620F\u7CFB\u7EDF\u7B49\u3002\u6559\u7A0B\u4F1A\u4ECE\u5730\u56FE\u63A8\u8FDB\u5F00\u59CB\uFF0C\u9010\u6B65\u5E26\u4F60\u719F\u6089\u79FB\u52A8\u3001\u6218\u6597\u3001\u8D44\u6E90\u7BA1\u7406\u4E0E\u6210\u957F\u6D41\u7A0B\u3002"
+    m_Localized: ""
     m_Metadata:
       m_Items: []
   - m_Id: 2986946702
@@ -664,7 +659,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2986946703
-    m_Localized: "\u5373\u5C06\u5F00\u59CB\u6559\u7A0B\uFF0C\u662F\u5426\u5F00\u59CB\uFF1F"
+    m_Localized: "是否开始教程？"
     m_Metadata:
       m_Items: []
   - m_Id: 2986946704
@@ -9694,11 +9689,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688006
-    m_Localized: "\u5148\u51C6\u5907\u8FD9\u4E00\u56DE\u5408"
+    m_Localized: "不好！"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688007
-    m_Localized: "Molly \u5DF2\u7ECF\u6B8B\u8840\u4E86\uFF0C\u654C\u4EBA\u7684\u65A9\u6740\u4F1A\u4F18\u5148\u5BFB\u627E\u8840\u91CF\u6700\u4F4E\u7684\u76EE\u6807\u3002\n\n\u5148\u70B9\u51FB\u51C6\u5907\u6309\u94AE\uFF0C\u751F\u6210\u672C\u56DE\u5408\u53CC\u65B9\u7684\u901F\u5EA6\u6309\u94AE\uFF0C\u518D\u67E5\u770B\u654C\u4EBA\u548C\u961F\u53CB\u7684\u884C\u52A8\u5185\u5BB9\u3002"
+    m_Localized: "看样子 Molly 已经残血了，先点击准备按钮。"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688008
@@ -9706,11 +9701,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688009
-    m_Localized: "\u6551\u4E0B\u6B8B\u8840\u7684\u540C\u4F34"
+    m_Localized: "观察战场"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688010
-    m_Localized: "\u5FEB\u770B\uFF0CMolly \u5DF2\u7ECF\u6B8B\u8840\u4E86\uFF0C\u800C\u654C\u4EBA\u7684\u65A9\u6740\u5373\u5C06\u6307\u5411\u8840\u91CF\u6700\u4F4E\u7684\u76EE\u6807\u3002\n\n\u5148\u70B9\u51FB\u654C\u4EBA\u7684\u901F\u5EA6\u6309\u94AE\uFF0C\u770B\u770B\u5B83\u51C6\u5907\u7528\u4EC0\u4E48\u6280\u80FD\u3002"
+    m_Localized: "点击敌人的速度按钮，看看它准备用什么技能。"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688011
@@ -9718,28 +9713,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688012
-    m_Localized: "Molly \u7684\u53CD\u51FB\u4E0D\u591F\u7A33"
+    m_Localized: "危机"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688013
-    m_Localized: "\u65A9\u6740\u4F1A\u4F18\u5148\u653B\u51FB\u8840\u91CF\u6700\u4F4E\u7684\u76EE\u6807\u3002\u73B0\u5728
-      Molly \u53EA\u6709 1 \u70B9\u751F\u547D\uFF0C\u5982\u679C\u4E0D\u5904\u7406\u8FD9\u6761\u7EBF\uFF0C\u5979\u5F88\u53EF\u80FD\u4F1A\u88AB\u51FB\u5012\u3002\n\n\u5148\u70B9\u51FB
-      Molly \u7684\u901F\u5EA6\u6309\u94AE\uFF0C\u67E5\u770B\u5979\u80FD\u4E0D\u80FD\u81EA\u5DF1\u6321\u4F4F\u8FD9\u6B21\u653B\u51FB\u3002"
+    m_Localized: "不好，斩杀会优先攻击血量最低的目标。现在 Molly 只有 1 点生命，如果不处理，她很可能会被击倒。\n点击 Molly 的速度按钮，查看她能不能自己挡住这次攻击。"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688014
-    m_Localized: "\u8BF7\u70B9\u51FB Molly \u7684\u901F\u5EA6\u6309\u94AE\uFF0C\u67E5\u770B\u8F7B\u51FB\u7684\u5A01\u529B\u8303\u56F4\u3002"
+    m_Localized: "请点击 Molly 的速度按钮，查看技能。"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688015
-    m_Localized: "\u5148\u8BD5\u7740\u8BA9 Molly \u63A5\u654C\u4EBA"
+    m_Localized: "展开拼点"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688016
-    m_Localized: "Molly \u7684\u8F7B\u51FB\u6700\u591A\u53EA\u80FD\u6295\u51FA 2
-      \u70B9\uFF0C\u800C\u654C\u4EBA\u7684\u65A9\u6740\u5A01\u529B\u662F 2 - 4\u3002\u76F4\u63A5\u8BA9
-      Molly \u63A5\u4E0A\u53BB\u5E76\u4E0D\u53EF\u9760\u3002\n\n\u5148\u62D6\u62FD
-      Molly \u7684\u901F\u5EA6\u6309\u94AE\u8FDE\u5230\u654C\u4EBA\u7684\u901F\u5EA6\u6309\u94AE\uFF0C\u89C2\u5BDF\u5F53\u524D\u76EE\u6807\u5173\u7CFB\u3002"
+    m_Localized: "Molly 的轻击最多只能投出 2 点，而敌人的斩杀威力是 2 - 4。直接让 Molly 接上去并不可靠。\n先拖拽 Molly 的速度按钮连到敌人的速度按钮。"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688017
@@ -9747,28 +9737,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688018
-    m_Localized: "\u770B\u770B Chara \u7684\u5B88\u62A4"
+    m_Localized: "支援"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688019
-    m_Localized: "\u8FD9\u6837\u4E0B\u53BB\u8FD8\u4E0D\u591F\u7A33\u3002\u518D\u770B\u770B
-      Chara \u7684\u6280\u80FD\u80FD\u4E0D\u80FD\u7834\u5C40\u3002\n\n\u70B9\u51FB
-      Chara \u7684\u901F\u5EA6\u6309\u94AE\uFF0C\u67E5\u770B\u5B88\u62A4\u6280\u80FD\u3002"
+    m_Localized: "别忘了我们还有另一名友方角色。\n点击 Chara 的速度按钮，看看他有什么技能可以用。"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688020
-    m_Localized: "\u8BF7\u70B9\u51FB Chara \u7684\u901F\u5EA6\u6309\u94AE\uFF0C\u67E5\u770B\u5B88\u62A4\u3002"
+    m_Localized: "请点击 Chara 的速度按钮。"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688021
-    m_Localized: "\u7528\u9AD8\u901F\u89D2\u8272\u63A5\u7BA1\u76EE\u6807"
+    m_Localized: "接管拼点"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688022
-    m_Localized: "\u5B88\u62A4\u662F\u9632\u5FA1\u6280\u80FD\uFF0C\u9002\u5408\u62FF\u6765\u62E6\u622A\u654C\u4EBA\u7684\u653B\u51FB\u3002\n\n\u7528
-      Chara \u7684\u901F\u5EA6\u6309\u94AE\u8FDE\u5230\u654C\u4EBA\u7684\u901F\u5EA6\u6309\u94AE\u3002\u56E0\u4E3A
-      Chara \u7684\u901F\u5EA6\u66F4\u9AD8\uFF0C\u5979\u53EF\u4EE5\u628A\u654C\u4EBA\u7684\u76EE\u6807\u4ECE\u6B8B\u8840
-      Molly \u8F6C\u79FB\u5230\u81EA\u5DF1\u8EAB\u4E0A\u3002"
+    m_Localized: "守护是一个防御技能，适合拿来拦截敌人的攻击。\n因为 Chara 的速度更高，可以把敌人的目标从残血 Molly 转移到自己身上。\n用 Chara 的速度按钮连到敌人的速度按钮。"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688023
@@ -9780,9 +9765,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688025
-    m_Localized: "\u6CE8\u610F\u5230\u4E86\u5417\uFF1F\u654C\u4EBA\u7684\u65A9\u6740\u539F\u672C\u4F1A\u627E\u8840\u91CF\u6700\u4F4E\u7684
-      Molly\uFF0C\u4F46\u73B0\u5728\u76EE\u6807\u5DF2\u7ECF\u88AB\u66F4\u5FEB\u7684
-      Chara \u63A5\u8D70\u3002\n\n\u719F\u7EC3\u8FD0\u7528\u9AD8\u901F\u5EA6\u89D2\u8272\u7684\u6280\u80FD\u62C9\u53D6\u76EE\u6807\uFF0C\u53EF\u4EE5\u5728\u5173\u952E\u65F6\u523B\u4FDD\u62A4\u8106\u5F31\u961F\u53CB\u3002\u73B0\u5728\u70B9\u51FB\u51C6\u5907\u6309\u94AE\u8FDB\u884C\u7ED3\u7B97\u3002"
+    m_Localized: "注意到了吗？敌人的斩杀原本会找血量最低的 Molly，但现在目标已经被更快的 Chara 接走。\n熟练运用高速度角色的技能拉取目标，可以在关键时刻保护脆弱队友。\n现在点击准备按钮进行结算。"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688026
@@ -9790,11 +9773,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688027
-    m_Localized: "\u5148\u51C6\u5907\u8FD9\u4E00\u56DE\u5408"
+    m_Localized: "准备"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688028
-    m_Localized: "\u8FD9\u4E00\u6218\u4F1A\u5B66\u4E60\u6280\u80FD\u9009\u62E9\u548C\u80FD\u91CF\u6D88\u8017\u3002\n\n\u5148\u70B9\u51FB\u51C6\u5907\u6309\u94AE\uFF0C\u751F\u6210\u672C\u56DE\u5408\u7684\u901F\u5EA6\u6309\u94AE\uFF0C\u518D\u67E5\u770B\u6211\u65B9\u89D2\u8272\u5F53\u524D\u53EF\u7528\u7684\u6280\u80FD\u3002"
+    m_Localized: "先点击准备按钮，生成本回合的速度按钮。"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688029
@@ -9802,11 +9785,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688030
-    m_Localized: "\u67E5\u770B\u6211\u65B9\u6280\u80FD"
+    m_Localized: "查看技能"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688031
-    m_Localized: "\u4ECE\u73B0\u5728\u5F00\u59CB\uFF0C\u53CB\u65B9\u89D2\u8272\u7684\u6280\u80FD\u9009\u62E9\u5E94\u8BE5\u6210\u4E3A\u51B3\u7B56\u7684\u4E00\u90E8\u5206\u3002\u70B9\u51FB\u6211\u65B9\u89D2\u8272\u7684\u901F\u5EA6\u6309\u94AE\uFF0C\u770B\u6E05\u5F53\u524D\u6709\u54EA\u4E9B\u6280\u80FD\u3001\u5B83\u4EEC\u5206\u522B\u6D88\u8017\u591A\u5C11\u80FD\u91CF\u3001\u9002\u5408\u7528\u6765\u505A\u4EC0\u4E48\u3002"
+    m_Localized: "从现在开始，友方角色的技能选择应该成为决策的一部分。\n点击我方角色的速度按钮，看清当前有哪些技能、它们分别消耗多少能量、适合用来做什么。"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688032
@@ -9814,11 +9797,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688033
-    m_Localized: "\u5148\u5207\u6362\u4E00\u6B21\u6280\u80FD"
+    m_Localized: "切换技能"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688034
-    m_Localized: "\u8BF7\u4E3B\u52A8\u5207\u6362\u4E00\u6B21\u6280\u80FD\u3002\u8FDE\u7EBF\u4E4B\u524D\u5C31\u8981\u5148\u51B3\u5B9A\u4F60\u6253\u7B97\u7528\u54EA\u4E00\u62DB\uFF0C\u5F3A\u529B\u6280\u80FD\u901A\u5E38\u4F1A\u5360\u7528\u66F4\u591A\u80FD\u91CF\u3002"
+    m_Localized: "请主动切换一次技能。\n强力技能通常会消耗更多能量。"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688035
@@ -9826,11 +9809,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688036
-    m_Localized: "\u7528\u6D88\u8017\u80FD\u91CF\u7684\u6280\u80FD\u5B8C\u6210\u8FDE\u7EBF"
+    m_Localized: "能耗"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688037
-    m_Localized: "\u5F53\u4F60\u7528\u6709\u80FD\u8017\u7684\u6280\u80FD\u53BB\u63A5\u7EBF\u65F6\uFF0C\u80FD\u91CF\u4F1A\u88AB\u6D88\u8017\u3002\u80FD\u91CF\u4E0D\u591F\u65F6\uFF0C\u5C31\u4E0D\u80FD\u4F7F\u7528\u66F4\u9AD8\u8D39\u7528\u7684\u6280\u80FD\u3002\u961F\u4F0D\u7684\u80FD\u91CF\u662F\u5171\u4EAB\u7684\uFF0C\u56E0\u6B64\u9700\u8981\u4ED4\u7EC6\u8003\u8651\u5E94\u8BE5\u8BA9\u8C01\u6253\u51FA\u5F3A\u529B\u7684\u6280\u80FD\uFF0C\u8C01\u6765\u8D1F\u8D23\u80FD\u91CF\u7684\u7EED\u822A\uFF0C\u4FDD\u5B58\u66F4\u591A\u80FD\u91CF\u3002\u80FD\u91CF\u9ED8\u8BA4\u4F1A\u5728\u6BCF\u56DE\u5408\u5F00\u59CB\u65F6\u56DE\u590D\u4E00\u70B9"
+    m_Localized: "队伍的能量是共享的，因此需要仔细考虑应该让谁打出强力的技能，谁来负责能量的续航，保存更多能量。\n能量默认会在每回合开始时回复 1 点。"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688038
@@ -9982,12 +9965,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688072
-    m_Localized: "\u76EE\u6807\u5DF2\u7ECF\u88AB\u8F6C\u79FB"
+    m_Localized: "目标转移"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688073
-    m_Localized: "\u539F\u672C\u4F1A\u4E0E\u6B8B\u8840 Molly \u62FC\u70B9\u7684\u654C\u4EBA\uFF0C\u88AB\u9AD8\u901F\u7684
-      Chara \u63A5\u8D70\u4E86\u3002\n\n\u8FD9\u5C31\u662F\u901F\u5EA6\u7684\u53E6\u4E00\u4E2A\u91CD\u8981\u4F5C\u7528\uFF1A\u901F\u5EA6\u66F4\u9AD8\u7684\u4E00\u65B9\uFF0C\u53EF\u4EE5\u66F4\u4E3B\u52A8\u5730\u6539\u53D8\u76EE\u6807\u5173\u7CFB\uFF0C\u8BA9\u5371\u9669\u653B\u51FB\u6253\u5230\u66F4\u9002\u5408\u627F\u53D7\u7684\u4EBA\u8EAB\u4E0A\u3002"
+    m_Localized: "速度更高的一方，可以更主动地改变目标关系，让危险攻击打到更适合承受的人身上。"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688074
@@ -9995,7 +9977,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688075
-    m_Localized: "\u4F60\u5DF2\u7ECF\u7406\u89E3\u4E86\u901F\u5EA6\u5728\u76EE\u6807\u8F6C\u79FB\u4E2D\u7684\u4F5C\u7528\u3002\u63A5\u4E0B\u6765\u9047\u5230\u5371\u9669\u653B\u51FB\u65F6\uFF0C\u5148\u770B\u8C01\u88AB\u9501\u5B9A\uFF0C\u518D\u5224\u65AD\u6709\u6CA1\u6709\u66F4\u5FEB\u3001\u66F4\u9002\u5408\u7684\u4EBA\u53EF\u4EE5\u63A5\u8D70\u5B83\u3002"
+    m_Localized: "你已经理解了速度在目标转移中的作用。"
     m_Metadata:
       m_Items: []
   - m_Id: 22781576688076
@@ -12745,11 +12727,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781585076561
-    m_Localized: "\u7CBE\u82F1\u7EC8\u6218"
+    m_Localized: "终战"
     m_Metadata:
       m_Items: []
   - m_Id: 22781585076562
-    m_Localized: "\u6700\u540E\u4E00\u573A\u6559\u7A0B\u6218\u6597\u6765\u4E86\u3002\u8FD9\u91CC\u4F1A\u7EFC\u5408\u8003\u9A8C\u901F\u5EA6\u3001\u62FC\u70B9\u3001\u5355\u65B9\u9762\u653B\u51FB\u3001\u6280\u80FD\u5207\u6362\u3001\u80FD\u91CF\u548C\u72B6\u6001\u6548\u679C\u3002\n\n\u5148\u770B\u654C\u4EBA\u8981\u505A\u4EC0\u4E48\uFF0C\u518D\u51B3\u5B9A\u54EA\u6761\u7EBF\u5FC5\u987B\u63A5\u3001\u54EA\u6761\u7EBF\u53EF\u4EE5\u653E\u3001\u54EA\u4E00\u62DB\u503C\u5F97\u6D88\u8017\u80FD\u91CF\u3002"
+    m_Localized: "这里就是最后一站了，迎接最后一道考验吧！"
     m_Metadata:
       m_Items: []
   - m_Id: 22781585076563

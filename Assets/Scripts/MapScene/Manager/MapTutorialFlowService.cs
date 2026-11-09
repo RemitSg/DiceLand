@@ -53,8 +53,8 @@ public static class MapTutorialFlowService
 
                 state.eliteGuideShown = true;
                 content = new MapTutorialGuideContent(
-                    GameText.Get("ui.map_tutorial_flow.final_elite_battle", "精英终战"),
-                    GameText.Get("ui.map_tutorial_flow.this_last_tutorial_battle_brings_together_speed_clashes", "最后一场教程战斗来了。这里会综合考验速度、拼点、单方面攻击、技能切换、能量和状态效果。\n\n先看敌人要做什么，再决定哪条线必须接、哪条线可以放、哪一招值得消耗能量。"));
+                    GameText.Get("ui.map_tutorial_flow.final_elite_battle", "终战"),
+                    GameText.Get("ui.map_tutorial_flow.this_last_tutorial_battle_brings_together_speed_clashes", "这里就是最后一站了，迎接最后一道考验吧！"));
                 return true;
 
             default:

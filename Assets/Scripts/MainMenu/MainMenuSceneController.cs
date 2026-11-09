@@ -765,8 +765,8 @@ public class MainMenuSceneController : MonoBehaviour
             TrackOverlayVisibilityState,
             GameText.Get("tutorial.menu.start", "开始教程"),
             GameText.Get("ui.main_menu", "返回主菜单"),
-            GameText.Get("tutorial.menu.title", "即将开始教程，是否开始？"),
-            GameText.Get("tutorial.menu.body", "进入教程会让你了解战斗规则、基本玩法、游戏系统等。教程会从地图推进开始，逐步带你熟悉移动、战斗、资源管理与成长流程。"),
+            GameText.Get("tutorial.menu.title", "是否开始教程？"),
+            GameText.Get("tutorial.menu.body", ""),
             true);
         SetGalleryInputEnabled(false);
     }
