@@ -184,7 +184,7 @@ public class BattleStatusTodoTests
     }
 
     [Test]
-    public void StunStatus_ReducesSpeedButtonsByStacksAndExpiresAtRoundEnd_ForAlliesAndEnemies()
+    public void StunStatus_DisablesSpeedButtonsByStacksAndExpiresAtRoundEnd_ForAlliesAndEnemies()
     {
         EnemySkill_SO skill = CreateSkill("Stun Test", 2, 5);
         BattleStatus_SO stun = CreateStatus(
@@ -218,14 +218,23 @@ public class BattleStatusTodoTests
         ally.AddStatus(stun, stun.StatusId, stun.DisplayName, 2);
         enemy.AddStatus(stun, stun.StatusId, stun.DisplayName, 2);
 
-        Assert.AreEqual(1, ally.SpeedButtons.Count);
-        Assert.AreEqual(1, enemy.SpeedButtons.Count);
+        Assert.AreEqual(3, ally.SpeedButtons.Count);
+        Assert.AreEqual(3, enemy.SpeedButtons.Count);
+        Assert.AreEqual(1, ally.EffectiveSpeedButtonCount);
+        Assert.AreEqual(1, enemy.EffectiveSpeedButtonCount);
+        Assert.IsFalse(ally.SpeedButtons[0].IsActionDisabled);
+        Assert.IsTrue(ally.SpeedButtons[1].IsActionDisabled);
+        Assert.IsTrue(enemy.SpeedButtons[2].IsActionDisabled);
 
         ally.AddStatus(stun, stun.StatusId, stun.DisplayName, 2);
         enemy.AddStatus(stun, stun.StatusId, stun.DisplayName, 2);
 
-        Assert.AreEqual(0, ally.SpeedButtons.Count);
-        Assert.AreEqual(0, enemy.SpeedButtons.Count);
+        Assert.AreEqual(3, ally.SpeedButtons.Count);
+        Assert.AreEqual(3, enemy.SpeedButtons.Count);
+        Assert.AreEqual(0, ally.EffectiveSpeedButtonCount);
+        Assert.AreEqual(0, enemy.EffectiveSpeedButtonCount);
+        foreach (SpeedButton button in ally.SpeedButtons) Assert.IsTrue(button.IsActionDisabled);
+        foreach (SpeedButton button in enemy.SpeedButtons) Assert.IsTrue(button.IsActionDisabled);
 
         Assert.IsTrue(ally.ConsumeRoundEndStatusEffects());
         Assert.IsTrue(enemy.ConsumeRoundEndStatusEffects());
@@ -233,6 +242,8 @@ public class BattleStatusTodoTests
         Assert.AreEqual(0, enemy.GetStatusStacks(stun));
         Assert.AreEqual(3, ally.SpeedButtons.Count);
         Assert.AreEqual(3, enemy.SpeedButtons.Count);
+        foreach (SpeedButton button in ally.SpeedButtons) Assert.IsFalse(button.IsActionDisabled);
+        foreach (SpeedButton button in enemy.SpeedButtons) Assert.IsFalse(button.IsActionDisabled);
     }
 
     [Test]
@@ -382,6 +393,113 @@ public class BattleStatusTodoTests
         Assert.AreEqual(1, enemy.GetStatusStacks(resistance));
         Assert.AreEqual(2, ally.GetStatusStacks(shield));
         Assert.AreEqual(2, enemy.GetStatusStacks(shield));
+    }
+
+    [Test]
+    public void StunnedAlly_RemainsAnEnemyTarget_ButCannotSelectOrExecuteASkill()
+    {
+        EnemySkill_SO skill = CreateSkill("Targetable stun", 3, 3);
+        skill.energyCost = 2;
+        BattleAllyController ally = CreateAlly("Ally", 12, skill);
+        BattleEnemyController enemy = CreateEnemy("Enemy", 12, skill);
+        ally.RegisterSpeedButtons(new[] { CreateSpeedButton(ally.transform, "Ally slot") });
+        enemy.RegisterSpeedButtons(new[] { CreateSpeedButton(enemy.transform, "Enemy slot") });
+        SpeedButton.CombatLocked = false;
+        SpeedButton.InputSuppressed = false;
+        SpeedButton a = ally.speedButton, e = enemy.speedButton;
+        BattleTargetingSpeedButtonStateService.PrepareForTargeting(new[] { ally }, new[] { enemy });
+        BattleTargetingSpeedButtonStateService.EnableLivingAllyButtons(new[] { ally });
+        e.EnemyDrawLineTo(a);
+        Assert.IsTrue(a.TryAssignTarget(e));
+        Assert.AreEqual(2, BattleSharedEnergyReservationCollectorService.CalculateReservedEnergyForAlly(ally));
+
+        BattleStatus_SO stun = CreateStatus("stun", "眩晕", SpeedButtonPenaltyBehaviorType, 1, BattleStatus_SO.StackDecayMode.LoseAll);
+        ally.AddStatus(stun, "stun", "眩晕", 1);
+        Assert.IsTrue(a.gameObject.activeInHierarchy);
+        Assert.IsFalse(a.IsInteractable);
+        Assert.IsFalse(a.TryAssignTarget(e));
+        Assert.IsFalse(ally.SetSelectedSkillIndexForButton(a, 0));
+        Assert.IsNull(ally.GetSelectedSkillForButton(a));
+        Assert.AreEqual(0, BattleSharedEnergyReservationCollectorService.CalculateReservedEnergyForAlly(ally));
+        Assert.AreSame(a, e.ConnectedTarget, "Stun must retain incoming intent.");
+        Assert.IsNull(a.ConnectedTarget);
+
+        List<SpeedButton> targets = BattleTargetingSpeedButtonStateService.EnableLivingAllyButtons(new[] { ally });
+        Assert.Contains(a, targets, "The target pool must include disabled slots.");
+        Assert.IsFalse(a.IsInteractable, "The targeting phase must not re-enable a stunned slot.");
+        enemy.AutoConnectToRandomAlly(targets);
+        int sequence = 0;
+        var clashes = new HashSet<SpeedButton>();
+        Assert.IsEmpty(BattleCombatActionCollectorService.CollectAllyActions(new[] { ally }, clashes, ref sequence));
+        var enemyActions = BattleCombatActionCollectorService.CollectEnemyActions(new[] { enemy }, clashes, ref sequence);
+        Assert.AreEqual(1, enemyActions.Count);
+        Assert.AreSame(ally, enemyActions[0].TargetAlly);
+
+        ally.ConsumeRoundEndStatusEffects();
+        Assert.IsFalse(a.IsActionDisabled);
+        Assert.IsTrue(a.IsInteractable);
+        Assert.IsTrue(ally.SetSelectedSkillIndexForButton(a, 0));
+        Assert.AreSame(skill, ally.GetSelectedSkillForButton(a));
+    }
+
+    [Test]
+    public void StunnedEnemy_HasNoIntentOrAction_AndCanReceiveASingleAttack()
+    {
+        EnemySkill_SO skill = CreateSkill("Disabled enemy", 3, 3);
+        BattleAllyController ally = CreateAlly("Ally", 12, skill);
+        BattleEnemyController enemy = CreateEnemy("Enemy", 12, skill);
+        ally.RegisterSpeedButtons(new[] { CreateSpeedButton(ally.transform, "Ally slot") });
+        enemy.RegisterSpeedButtons(new[] { CreateSpeedButton(enemy.transform, "Enemy slot") });
+        SpeedButton.CombatLocked = false;
+        SpeedButton.InputSuppressed = false;
+        BattleTargetingSpeedButtonStateService.PrepareForTargeting(new[] { ally }, new[] { enemy });
+        BattleTargetingSpeedButtonStateService.EnableLivingAllyButtons(new[] { ally });
+        enemy.speedButton.EnemyDrawLineTo(ally.speedButton);
+        Assert.IsTrue(ally.speedButton.TryAssignTarget(enemy.speedButton));
+        Assert.IsTrue(ally.speedButton.IsContestedConnection);
+        BattleStatus_SO stun = CreateStatus("stun", "眩晕", SpeedButtonPenaltyBehaviorType, 1, BattleStatus_SO.StackDecayMode.LoseAll);
+        enemy.AddStatus(stun, "stun", "眩晕", 1);
+        enemy.SelectRandomSkills(2);
+        enemy.AutoConnectToRandomAlly(new List<SpeedButton> { ally.speedButton });
+        Assert.IsNull(enemy.speedButton.ConnectedTarget);
+        Assert.IsNull(enemy.GetSelectedSkillForButton(enemy.speedButton));
+        Assert.IsFalse(ally.speedButton.IsContestedConnection);
+        Assert.IsTrue(ally.speedButton.TryAssignTarget(enemy.speedButton));
+        int sequence = 0;
+        var clashes = new HashSet<SpeedButton>();
+        var actions = BattleCombatActionCollectorService.CollectAllyActions(new[] { ally }, clashes, ref sequence);
+        Assert.AreEqual(1, actions.Count);
+        Assert.AreEqual(BattleCombatActionType.AllySingleAttack, actions[0].Type);
+        Assert.IsEmpty(BattleCombatActionCollectorService.CollectEnemyActions(new[] { enemy }, clashes, ref sequence));
+        enemy.ConsumeRoundEndStatusEffects();
+        enemy.SelectRandomSkills(3);
+        Assert.AreSame(skill, enemy.GetSelectedSkillForButton(enemy.speedButton));
+    }
+
+    [Test]
+    public void StunStyle_RestoresOriginalBodyAndSpeedLabel()
+    {
+        SpeedButton button = CreateSpeedButton(null, "Visual slot");
+        GameObject body = new GameObject("Body", typeof(SpriteRenderer));
+        body.transform.SetParent(button.transform, false);
+        SpriteRenderer renderer = body.GetComponent<SpriteRenderer>();
+        Color original = new Color(0.7f, 0.3f, 0.1f, 1f);
+        renderer.color = original;
+        button.unpressedButton = body;
+        button.Speed = 5;
+        button.SetActionDisabled(true);
+        button.ShowForTargeting();
+        Assert.AreNotEqual(original, renderer.color);
+        Assert.IsFalse(button.speedText.activeSelf, "A stunned slot has no speed label or cross.");
+        Assert.IsTrue(body.activeSelf);
+        button.SetActionDisabled(false);
+        Assert.AreEqual(original, renderer.color);
+        Assert.IsTrue(button.speedText.activeSelf);
+        Assert.AreEqual("5", button.speedText.GetComponent<TMPro.TextMeshPro>().text);
+        button.HideForCombat();
+        button.SetActionDisabled(true);
+        button.SetActionDisabled(false);
+        Assert.IsFalse(button.speedText.activeSelf, "Recovery during combat must not reveal a hidden label.");
     }
 
     private BattleAllyController CreateAlly(string name, int maxHp, EnemySkill_SO skill)

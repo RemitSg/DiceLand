@@ -7132,8 +7132,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781572493601
-    m_Localized: Lose Speed Slots equal to the stack count. All stacks are lost at
-      round end.
+    m_Localized: "Each stack disables one Speed Slot. Only the greyed-out button remains, with no speed number. It cannot select skills or act, but can still be attacked. All stacks are lost at round end."
     m_Metadata:
       m_Items: []
   - m_Id: 22781572493602
@@ -7141,8 +7140,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22781572493603
-    m_Localized: Lose Speed Slots equal to the stack count. All stacks are lost at
-      round end.
+    m_Localized: "Each stack disables one Speed Slot. Only the greyed-out button remains, with no speed number. It cannot select skills or act, but can still be attacked. All stacks are lost at round end."
     m_Metadata:
       m_Items: []
   - m_Id: 22781572493604

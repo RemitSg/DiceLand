@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 [RequireComponent(typeof(LineRenderer))]
-public class SpeedButton : MonoBehaviour
+public partial class SpeedButton : MonoBehaviour
 {
     [SerializeField, HideInInspector] private bool headlessExecution;
     public bool UsesHeadlessExecution => headlessExecution;
@@ -148,7 +148,7 @@ public class SpeedButton : MonoBehaviour
 
     public bool IsInteractable
     {
-        get => isInteractable;
+        get => isInteractable && !IsActionDisabled;
         set => isInteractable = value;
     }
 
@@ -325,6 +325,7 @@ public class SpeedButton : MonoBehaviour
     // 当鼠标/手指按下此物体（需要挂载 Collider）时触发
     private void OnMouseDown()
     {
+        if (IsActionDisabled) return;
         if (CombatLocked || InputSuppressed) return;
         if (!IsScreenPointAllowedByTutorialHighlight(Input.mousePosition)) return;
         if (buttonType == ButtonType.Ally && !isInteractable) return;
@@ -415,6 +416,7 @@ public class SpeedButton : MonoBehaviour
     /// </summary>
     public void StartCurve()
     {
+        if (IsActionDisabled) return;
         isPointerPressed = false;
         isDragging = true;
         lineRenderer.enabled = true;
@@ -478,6 +480,7 @@ public class SpeedButton : MonoBehaviour
     /// </summary>
     public void HideForCombat()
     {
+        isShownForTargeting = false;
         EnsureRuntimeReferences();
         isHovering = false;
         isPointerPressed = false;
@@ -505,6 +508,7 @@ public class SpeedButton : MonoBehaviour
     /// </summary>
     public void ShowForTargeting()
     {
+        isShownForTargeting = true;
         EnsureRuntimeReferences();
         EnsureSpeedTextObject();
         isPointerPressed = false;
@@ -516,7 +520,7 @@ public class SpeedButton : MonoBehaviour
         if (pressedButton != null)
             pressedButton.SetActive(false);
         if (speedText != null)
-            speedText.SetActive(true);
+            speedText.SetActive(!IsActionDisabled);
 
         ApplySpeedTextPresentation();
         UpdateSpeedText();
@@ -559,6 +563,7 @@ public class SpeedButton : MonoBehaviour
     /// </summary>
     public void EnemyDrawLineTo(SpeedButton allyTarget)
     {
+        if (IsActionDisabled) return;
         if (buttonType != ButtonType.Enemy || allyTarget == null) return;
         contestingAllyButton = null;
         autoTargetAlly = allyTarget;  // 记录本轮初始目标，供断线时恢复
@@ -570,6 +575,7 @@ public class SpeedButton : MonoBehaviour
     /// </summary>
     public void RestoreAutoConnection()
     {
+        if (IsActionDisabled) return;
         if (buttonType != ButtonType.Enemy)
             return;
 
@@ -608,7 +614,7 @@ public class SpeedButton : MonoBehaviour
         // 先断开当前连线（若先前有黄色连线，此处会恢复被吸收的敌方连线）
         DisconnectFromTarget();
 
-        if (speed >= enemy.speed || enemy.ConnectedTarget == this)
+        if (!enemy.IsActionDisabled && (speed >= enemy.speed || enemy.ConnectedTarget == this))
         {
             // 友方速度占优或双方互相瞄准：该友方成为唯一的拼点连线
             enemy.RegisterContestingAlly(this);
@@ -647,7 +653,7 @@ public class SpeedButton : MonoBehaviour
         for (int i = 0; i < allButtons.Length; i++)
         {
             SpeedButton allyButton = allButtons[i];
-            if (allyButton == null || allyButton == this)
+            if (allyButton == null || allyButton == this || allyButton.IsActionDisabled)
                 continue;
             if (allyButton.buttonType != ButtonType.Ally)
                 continue;
@@ -881,6 +887,7 @@ public class SpeedButton : MonoBehaviour
 
     private void Update()
     {
+        if (IsActionDisabled) return;
         if (hoverOutlineRenderer != null)
             UpdateHoverOutlineGeometry();
 
@@ -1137,7 +1144,7 @@ public class SpeedButton : MonoBehaviour
     {
         if (headlessExecution) return;
         if (hoverOutlineRenderer == null) return;
-        hoverOutlineRenderer.enabled = isHovering && !isDragging;
+        hoverOutlineRenderer.enabled = isHovering && !isDragging && !IsActionDisabled;
     }
 
     private void UpdateHoverOutlineGeometry()

@@ -39,7 +39,7 @@ public class BattleAllyWeaponSpeedButtonTests
     }
 
     [Test]
-    public void StatusPenalty_ReducesWeaponGrantedSpeedButtons()
+    public void StatusPenalty_DisablesButPreservesWeaponGrantedSpeedButtons()
     {
         BattleAllyController ally = CreateAllyWithWeaponSpeedButtons(3);
         BattleStatus_SO stun = CreateSpeedButtonPenaltyStatus();
@@ -48,7 +48,10 @@ public class BattleAllyWeaponSpeedButtonTests
 
         Assert.AreEqual(3, ally.BaseSpeedButtonCount);
         Assert.AreEqual(1, ally.EffectiveSpeedButtonCount);
-        Assert.AreEqual(1, ally.SpeedButtons.Count);
+        Assert.AreEqual(3, ally.SpeedButtons.Count);
+        Assert.IsFalse(ally.SpeedButtons[0].IsActionDisabled);
+        Assert.IsTrue(ally.SpeedButtons[1].IsActionDisabled);
+        Assert.IsTrue(ally.SpeedButtons[2].IsActionDisabled);
     }
 
     private BattleAllyController CreateAllyWithWeaponSpeedButtons(int speedButtonCount)

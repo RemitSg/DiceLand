@@ -1,0 +1,73 @@
+{
+  "date": "2026-11-09",
+  "engine": "Tuanjie 2022.3.62t6",
+  "scope": "眩晕每层使一个速度按钮失效；按钮保留、灰显、隐藏速度数字，不能选技、主动连线或行动，仍可被攻击；回合结束恢复。",
+  "integratedBaseCommit": "3e59406115947773149b373a4c3f7bfb34ba5985",
+  "editMode": {
+    "total": 116,
+    "passed": 116,
+    "failed": 0,
+    "coverage": [
+      "按层失效、全部失效、回合结束恢复",
+      "武器额外槽位、独立技能",
+      "敌方仍能锁定眩晕友方、眩晕敌方无行动",
+      "拼点降级与执行前复查、能量预留释放",
+      "隐藏速度标签、灰色材质、光晕与碰撞盒恢复",
+      "与枯枝王庭技能共用代码整合"
+    ]
+  },
+  "playModeFocused": {
+    "total": 1,
+    "passed": 1,
+    "scope": "旧面板选项不能为失效槽选技，失效时不能重新打开，恢复后正常选技",
+    "source": "最终整合源码运行通过，测试报告 playmode-integrated.xml"
+  },
+  "extendedPlayMode": {
+    "total": 22,
+    "passed": 6,
+    "failed": 16,
+    "baselineCommit": "8270409ff",
+    "baselineRetestTotal": 16,
+    "baselineRetestFailed": 16,
+    "sameFailureNames": [
+      "BattleFlowPlayModeTests.AllySingleAttackRound_WhenEnemyDoesNotContest_DamagesEnemyAndReturnsReady",
+      "BattleFlowPlayModeTests.ClashVictory_WhenSkillHasOnUseAndOnHitStatusEffects_AppliesEachEffectOnce",
+      "BattleFlowPlayModeTests.ContestedRound_WhenAllyWinsAndEnemyHpFallsToZero_ShowsSettlement",
+      "BattleFlowPlayModeTests.DefeatSettlement_WhenRetryClicked_RequeuesEncounterAndHidesSettlement",
+      "BattleFlowPlayModeTests.EliteRelicChoice_WhenPlayerSelectsChoice_RecordsSelectionAndClosesModal",
+      "BattleFlowPlayModeTests.EliteRelicChoice_WhenReturningBeforeSelection_BlocksReturnAndShowsRequiredChoice",
+      "BattleFlowPlayModeTests.EliteVictory_WhenRelicChoiceEnabled_SettlementContainsRelicChoice",
+      "BattleFlowPlayModeTests.EnemySingleAttackRound_WhenAllyDies_ShowsDefeatSettlement",
+      "BattleFlowPlayModeTests.RoundStart_WhenEnemyRetreats_ShowsSettlementWithoutCombatInput",
+      "BattleFlowPlayModeTests.TutorialPolicy_WhenCombatBlocked_DoesNotEnterResolvingCombat",
+      "BattleSkillForestPlayModeTests.EnemyProfilePassiveHoverUsesUnscaledFeedbackWithoutMovingText",
+      "BattleSkillForestPlayModeTests.EnemyProfileRevealsAndCancelsWhilePausedAndRestoresPreviousFocus",
+      "BattleSkillForestPlayModeTests.EnemyProfileTouchAndWheelReadToEndWhilePortraitAndCloseStayFixed",
+      "BattleSkillForestPlayModeTests.HoverAutoScrollReachesItsLastRuleWhileDiceRemainFixed",
+      "BattleSkillForestPlayModeTests.OpenEnemyDescriptionReflowsWhenDetailTextGetsLarger",
+      "BattleSkillForestPlayModeTests.TouchAndWheelReachLongDescriptionWhileFooterStaysFixed"
+    ],
+    "note": "旧战斗流程与详情面板用例在未修改版本逐项复现，不报告为全量 PlayMode 通过。"
+  },
+  "knownExtendedEditModeFailure": "MerchantWhiteSlip_AllowsPurchaseWhenMoneyPositiveAndSpendsRemainingMoney 期望 0，现有白条实现返回 -98；此前目录维护已记录，本次未修改。",
+  "catalogs": {
+    "enemyNumbers": [
+      12,
+      34,
+      41
+    ],
+    "enemyAssets": 52,
+    "relatedSkills": 136,
+    "relicNumbers": [
+      91
+    ],
+    "relicCount": 161,
+    "offlineRelicChecks": 61,
+    "excel": "已重新导入核对 161 条记录，保留两张表、列宽、冻结窗格与原有表格，仅更新 091 备注和该行高度。",
+    "historicalSnapshotDatesPreserved": true,
+    "offlineEnemyChecks": 195
+  },
+  "visualReview": "正式 Button.prefab 的正常、眩晕、恢复状态已渲染检查；眩晕状态不显示数字或叉号。",
+  "androidDeviceTested": false,
+  "evidenceDirectory": "outputs/agent-battle/stun-20261109/ (ignored local evidence)"
+}

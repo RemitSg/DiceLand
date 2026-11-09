@@ -66,10 +66,25 @@ public static class BattleCombatActionExecutionDispatcher
         switch (action.Type)
         {
             case BattleCombatActionType.Clash:
+                bool allyDisabled = action.AllyButton != null && action.AllyButton.IsActionDisabled;
+                bool enemyDisabled = action.EnemyButton != null && action.EnemyButton.IsActionDisabled;
+                if (allyDisabled && enemyDisabled)
+                    return null;
+                if (allyDisabled)
+                {
+                    action.TargetAlly = action.Ally;
+                    return resolveEnemySingleAttack?.Invoke(action);
+                }
+                if (enemyDisabled)
+                    return resolveAllySingleAttack?.Invoke(action);
                 return resolveClash?.Invoke(action);
             case BattleCombatActionType.AllySingleAttack:
+                if (action.AllyButton != null && action.AllyButton.IsActionDisabled)
+                    return null;
                 return resolveAllySingleAttack?.Invoke(action);
             case BattleCombatActionType.EnemySingleAttack:
+                if (action.EnemyButton != null && action.EnemyButton.IsActionDisabled)
+                    return null;
                 return resolveEnemySingleAttack?.Invoke(action);
             default:
                 return null;

@@ -17,7 +17,7 @@ public class BattleEnemyController : MonoBehaviour
     public int MinSpeed => enemyData != null ? enemyData.GetStageMinSpeed(CurrentStageIndex) : 0;
     public int MaxSpeed => enemyData != null ? enemyData.GetStageMaxSpeed(CurrentStageIndex) : 0;
     public int BaseSpeedButtonCount => enemyData != null ? enemyData.GetStageSpeedButtonCount(CurrentStageIndex) : 0;
-    public int EffectiveSpeedButtonCount => ResolveDesiredActiveSpeedButtonCount();
+    public int EffectiveSpeedButtonCount => Mathf.Max(0, ResolveDesiredActiveSpeedButtonCount() - ResolveStatusSpeedButtonPenalty());
 
     public int Speed { get; private set; }
     public int CurrentHP { get; private set; }
@@ -344,7 +344,7 @@ public class BattleEnemyController : MonoBehaviour
         for (int i = 0; i < activeSpeedButtons.Count; i++)
         {
             SpeedButton button = activeSpeedButtons[i];
-            if (button == null)
+            if (button == null || button.IsActionDisabled)
                 continue;
 
             SpeedButton target = ResolvePreferredTargetButton(button, allyButtons);
@@ -415,6 +415,11 @@ public class BattleEnemyController : MonoBehaviour
 
         for (int slotIndex = 0; slotIndex < selectedSkillsPerButton.Count; slotIndex++)
         {
+            if (slotIndex < activeSpeedButtons.Count && activeSpeedButtons[slotIndex].IsActionDisabled)
+            {
+                selectedSkillsPerButton[slotIndex] = null;
+                continue;
+            }
             EnemySkill_SO slotSkill = ResolveRandomSkillForSlot(roundPrefix, roundNumber, slotIndex, selectedRuleCounts, consumedRuleIndicesThisRound, selectedSkillCounts);
             selectedSkillsPerButton[slotIndex] = slotSkill;
             if (slotSkill != null)
@@ -543,12 +548,16 @@ public class BattleEnemyController : MonoBehaviour
 
     public EnemySkill_SO GetSelectedSkillForButton(SpeedButton button)
     {
+        if (button != null && button.IsActionDisabled)
+            return null;
         int buttonIndex = GetSpeedButtonIndex(button);
         return GetSelectedSkillForButtonIndex(buttonIndex);
     }
 
     public EnemySkill_SO GetSelectedSkillForButtonIndex(int buttonIndex)
     {
+        if (buttonIndex >= 0 && buttonIndex < activeSpeedButtons.Count && activeSpeedButtons[buttonIndex].IsActionDisabled)
+            return null;
         EnsureSelectedSkillSlots();
         if (buttonIndex < 0 || buttonIndex >= selectedSkillsPerButton.Count)
             return SelectedSkill;
@@ -2053,6 +2062,7 @@ public class BattleEnemyController : MonoBehaviour
         EnsureSpeedButtonCountForCurrentStage();
         activeSpeedButtons.Clear();
         int desiredCount = ResolveDesiredActiveSpeedButtonCount();
+        int usableCount = Mathf.Max(0, desiredCount - ResolveStatusSpeedButtonPenalty());
         float topLocalY = CalculateCurrentStageTopLocalY();
         Vector2 resolvedSpeedButtonOffset = ResolveSpeedButtonOffset();
         float effectiveSpacing = Mathf.Abs(speedButtonHorizontalSpacing);
@@ -2066,6 +2076,7 @@ public class BattleEnemyController : MonoBehaviour
 
             bool shouldBeActive = i < desiredCount;
             button.gameObject.SetActive(shouldBeActive);
+            button.SetActionDisabled(shouldBeActive && i >= usableCount);
             if (!shouldBeActive)
             {
                 button.HideForCombat();
@@ -2098,7 +2109,7 @@ public class BattleEnemyController : MonoBehaviour
             ? temporarySpeedButtonCountOverride
             : enemyData != null ? enemyData.GetStageSpeedButtonCount(CurrentStageIndex) : speedButtons.Count;
         int baseCount = Mathf.Max(1, configuredBaseCount);
-        return Mathf.Max(0, baseCount - ResolveStatusSpeedButtonPenalty());
+        return baseCount;
     }
 
     private void EnsureSpeedButtonCountForCurrentStage()
@@ -2134,6 +2145,7 @@ public class BattleEnemyController : MonoBehaviour
 
             created.SetButtonType(speedButtonType);
             created.IsInteractable = false;
+            created.RestoreClonedBodyStyle(speedButtonTemplateObject.GetComponent<SpeedButton>());
             speedButtons.Add(created);
         }
     }

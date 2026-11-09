@@ -17,6 +17,7 @@ public sealed class BattleSpeedButtonLook : MonoBehaviour
     private static readonly int IntensityId = Shader.PropertyToID("_Intensity");
     private static readonly int BoundsId = Shader.PropertyToID("_BadgeBounds");
     private static readonly int PressedId = Shader.PropertyToID("_Pressed");
+    private static readonly int DisabledId = Shader.PropertyToID("_Disabled");
 
     public void Configure(Material material, Mesh quad)
     {
@@ -55,14 +56,15 @@ public sealed class BattleSpeedButtonLook : MonoBehaviour
             if (halos[i] == null || bodies[i] == null)
                 continue;
             halos[i].gameObject.layer = bodies[i].gameObject.layer;
-            halos[i].enabled = bodies[i].enabled;
+            halos[i].enabled = bodies[i].enabled && !button.IsActionDisabled;
             halos[i].sortingLayerID = bodies[i].sortingLayerID;
             halos[i].sortingOrder = bodies[i].sortingOrder - 1;
-            properties.SetFloat(IntensityId, i == 1 ? 1.25f : button.ConnectedTarget != null ? 1.15f : 1f);
+            properties.SetFloat(IntensityId, button.IsActionDisabled ? 0.12f : i == 1 ? 1.25f : button.ConnectedTarget != null ? 1.15f : 1f);
             halos[i].SetPropertyBlock(properties);
             bodies[i].GetPropertyBlock(badgeProperties);
             badgeProperties.SetVector(BoundsId, badgeBounds[i]);
             badgeProperties.SetFloat(PressedId, i == 1 ? 1f : 0f);
+            badgeProperties.SetFloat(DisabledId, button.IsActionDisabled ? 1f : 0f);
             bodies[i].SetPropertyBlock(badgeProperties);
         }
     }

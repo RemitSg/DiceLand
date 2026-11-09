@@ -32,7 +32,7 @@ public class BattleAllyController : MonoBehaviour
     public IReadOnlyList<BattleStatusRuntimeEntry> StatusEntries => statusEntries;
     public IReadOnlyList<SpeedButton> SpeedButtons => activeSpeedButtons;
     public int BaseSpeedButtonCount => ResolveBaseSpeedButtonCount();
-    public int EffectiveSpeedButtonCount => GetDesiredActiveSpeedButtonCount();
+    public int EffectiveSpeedButtonCount => Mathf.Max(0, GetDesiredActiveSpeedButtonCount() - ResolveStatusSpeedButtonPenalty());
     public bool HasTemporarySkills => temporarySkills.Count > 0;
     public bool TemporarySkillsOverrideWeaponPool => temporarySkillsOverrideWeaponPool;
     public Vector3 LastHitDirection { get; private set; } = Vector3.up;
@@ -328,6 +328,9 @@ public class BattleAllyController : MonoBehaviour
 
     public bool SetSelectedSkillIndexForButton(SpeedButton button, int skillIndex, int roundNumber = -1)
     {
+        SpeedButton source = button != null ? button : speedButton;
+        if (source != null && source.IsActionDisabled)
+            return false;
         EnemySkill_SO[] activeSkillPool = BuildActiveSkillPool();
         if (activeSkillPool == null || activeSkillPool.Length == 0)
             return false;
@@ -356,12 +359,16 @@ public class BattleAllyController : MonoBehaviour
 
     public EnemySkill_SO GetSelectedSkillForButton(SpeedButton button)
     {
+        if (button != null && button.IsActionDisabled)
+            return null;
         int buttonIndex = GetSpeedButtonIndex(button);
         return GetSelectedSkillForButtonIndex(buttonIndex);
     }
 
     public EnemySkill_SO GetSelectedSkillForButtonIndex(int buttonIndex)
     {
+        if (buttonIndex >= 0 && buttonIndex < activeSpeedButtons.Count && activeSpeedButtons[buttonIndex].IsActionDisabled)
+            return null;
         EnsureSelectedSkillSlots();
         if (buttonIndex < 0 || buttonIndex >= selectedSkillsPerButton.Count)
             return SelectedSkill;
@@ -381,6 +388,11 @@ public class BattleAllyController : MonoBehaviour
 
     public void ActivateSelectedSkillForButton(SpeedButton button)
     {
+        if (button != null && button.IsActionDisabled)
+        {
+            SelectedSkill = null;
+            return;
+        }
         int buttonIndex = GetSpeedButtonIndex(button);
         EnsureSelectedSkillSlots();
         if (buttonIndex < 0 || buttonIndex >= selectedSkillsPerButton.Count)
@@ -1309,7 +1321,7 @@ public class BattleAllyController : MonoBehaviour
             return 0;
 
         int baseCount = Mathf.Max(0, ResolveBaseSpeedButtonCount() + inheritedExtraSpeedButtons + temporaryExtraSpeedButtons);
-        return Mathf.Max(0, baseCount - ResolveStatusSpeedButtonPenalty());
+        return baseCount;
     }
 
     private int ResolveBaseSpeedButtonCount()
@@ -1352,6 +1364,7 @@ public class BattleAllyController : MonoBehaviour
         activeSpeedButtons.Clear();
 
         int desiredCount = GetDesiredActiveSpeedButtonCount();
+        int usableCount = Mathf.Max(0, desiredCount - ResolveStatusSpeedButtonPenalty());
         float effectiveSpacing = Mathf.Abs(speedButtonHorizontalSpacing);
         float xStart = -((Mathf.Max(1, desiredCount) - 1) * effectiveSpacing) * 0.5f;
 
@@ -1363,6 +1376,7 @@ public class BattleAllyController : MonoBehaviour
 
             bool shouldBeActive = i < desiredCount;
             button.gameObject.SetActive(shouldBeActive);
+            button.SetActionDisabled(shouldBeActive && i >= usableCount);
             if (!shouldBeActive)
             {
                 button.ResetConnection();
@@ -1380,7 +1394,6 @@ public class BattleAllyController : MonoBehaviour
             buttonTransform.localRotation = Quaternion.identity;
             buttonTransform.localScale = Vector3.one;
             button.SetButtonType(SpeedButton.ButtonType.Ally);
-            button.IsInteractable = false;
             button.Speed = Speed;
             activeSpeedButtons.Add(button);
         }
@@ -1421,6 +1434,7 @@ public class BattleAllyController : MonoBehaviour
 
             created.SetButtonType(SpeedButton.ButtonType.Ally);
             created.IsInteractable = false;
+            created.RestoreClonedBodyStyle(speedButtonTemplateObject.GetComponent<SpeedButton>());
             speedButtons.Add(created);
         }
     }

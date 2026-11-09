@@ -49,6 +49,25 @@ public sealed class BattleSkillForestPlayModeTests
     }
 
     [UnityTest]
+    public IEnumerator StunnedSlotRejectsOpenAndStaleSkillChoiceThenRecovers()
+    {
+        yield return new WaitForSecondsRealtime(0.30f);
+        object selected = Call(ally, "GetSelectedSkillForButton", sourceButton);
+        Button choice = host.GetComponentsInChildren<Button>().First(b => b.name == "Skill_0");
+        Call(sourceButton, "SetActionDisabled", true);
+        choice.onClick.Invoke();
+        Assert.IsNull(Call(ally, "GetSelectedSkillForButton", sourceButton));
+        Call(overlay, "Hide", false);
+        Call(overlay, "ShowAllySkillSelection", ally, sourceButton);
+        Assert.IsFalse(Visible(), "A stunned speed slot cannot reopen the skill selector.");
+        Call(sourceButton, "SetActionDisabled", false);
+        Assert.AreSame(selected, Call(ally, "GetSelectedSkillForButton", sourceButton));
+        Call(overlay, "ShowAllySkillSelection", ally, sourceButton);
+        yield return new WaitForSecondsRealtime(0.30f);
+        Assert.IsTrue(Visible());
+    }
+
+    [UnityTest]
     public IEnumerator PausedClosingBlocksUnderlyingInputAndNotifiesOnce()
     {
         Time.timeScale = 0; yield return new WaitForSecondsRealtime(0.30f);

@@ -22123,7 +22123,7 @@
       "role": "战亡群晕",
       "rarityName": "史诗",
       "tags": "击杀、战亡与召唤、战亡群晕、眩晕",
-      "note": "",
+      "note": "2026-11-09 增量复核：友方战亡时向当时存活敌人排队下回合开始获得 3×持有数量层眩晕。每层眩晕使一个速度按钮失效，按钮保留、置灰且隐藏速度数字，不能选择技能或行动，但仍可被攻击；层数超过槽数则全部失效。回合结束清空眩晕并恢复按钮。状态仍遵循免疫与抵抗规则；本次不更改触发、延迟或原有层数。",
       "triggerNames": "玩家死亡时",
       "effectNames": [
         "QueueStatusToAllEnemiesOnPlayerDeathNextRound"
@@ -22258,7 +22258,7 @@
       ],
       "isNew": false,
       "configVerifiedAt": "2026-10-29",
-      "codeReviewedAt": "2026-10-27",
+      "codeReviewedAt": "2026-11-09",
       "iconTextureSize": [
         980,
         980

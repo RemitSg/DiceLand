@@ -142,7 +142,7 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
     public void ShowAllySkillSelection(BattleAllyController ally) { ShowAllySkillSelection(ally, null); }
     public void ShowAllySkillSelection(BattleAllyController ally, SpeedButton sourceButton)
     {
-        if (ally == null) return;
+        if (ally == null || (sourceButton != null ? sourceButton.IsActionDisabled : ally.speedButton != null && ally.speedButton.IsActionDisabled)) return;
         EnsureUi(); currentAlly = ally; currentEnemy = null; currentAllySourceButton = sourceButton;
         currentEnemySourceButton = null; viewMode = SkillViewMode.Ally;
         OpenForestPanel(); RenderCurrentSkill(true); RebuildSkillButtons(ally, sourceButton);

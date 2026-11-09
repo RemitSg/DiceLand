@@ -28,7 +28,7 @@ public static class BattleCombatActionCollectorService
             for (int buttonIndex = 0; buttonIndex < allyButtons.Count; buttonIndex++)
             {
                 SpeedButton allyButton = allyButtons[buttonIndex];
-                if (allyButton == null)
+                if (allyButton == null || allyButton.IsActionDisabled)
                     continue;
 
                 SpeedButton enemyButton = allyButton.ConnectedTarget;
@@ -48,7 +48,7 @@ public static class BattleCombatActionCollectorService
                     SequenceIndex = sequenceIndex++
                 };
 
-                if (allyButton.IsContestedConnection && !clashEnemyButtons.Contains(enemyButton))
+                if (!enemyButton.IsActionDisabled && allyButton.IsContestedConnection && !clashEnemyButtons.Contains(enemyButton))
                 {
                     action.Type = BattleCombatActionType.Clash;
                     action.PrioritySpeed = Mathf.Max(ally.Speed, enemy.Speed);
@@ -95,7 +95,7 @@ public static class BattleCombatActionCollectorService
             for (int buttonIndex = 0; buttonIndex < enemyButtons.Count; buttonIndex++)
             {
                 SpeedButton enemyButton = enemyButtons[buttonIndex];
-                if (enemyButton == null || clashEnemyButtons.Contains(enemyButton))
+                if (enemyButton == null || enemyButton.IsActionDisabled || clashEnemyButtons.Contains(enemyButton))
                     continue;
 
                 SpeedButton targetAllyButton = enemyButton.ConnectedTarget;

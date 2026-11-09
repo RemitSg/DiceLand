@@ -20,6 +20,29 @@ public sealed class BattleSpeedButtonLookTests
     }
 
     [Test]
+    public void StunGreysBadgeAndHidesGlowWhileColliderAndRecoveryRemainAvailable()
+    {
+        SpeedButton button = root.GetComponent<SpeedButton>();
+        BattleSpeedButtonLook look = root.GetComponent<BattleSpeedButtonLook>();
+        button.ShowForTargeting();
+        look.RefreshLook();
+        button.SetActionDisabled(true);
+        look.RefreshLook();
+        Assert.IsFalse(button.speedText.activeSelf);
+        Assert.IsTrue(root.GetComponent<PolygonCollider2D>().enabled);
+        Assert.IsFalse(root.GetComponentsInChildren<MeshRenderer>(true)
+            .Any(renderer => renderer.name == "Speed badge soft glow" && renderer.enabled));
+        MaterialPropertyBlock properties = new MaterialPropertyBlock();
+        button.unpressedButton.GetComponent<SpriteRenderer>().GetPropertyBlock(properties);
+        Assert.AreEqual(1f, properties.GetFloat("_Disabled"));
+        button.SetActionDisabled(false);
+        look.RefreshLook();
+        button.unpressedButton.GetComponent<SpriteRenderer>().GetPropertyBlock(properties);
+        Assert.AreEqual(0f, properties.GetFloat("_Disabled"));
+        Assert.IsTrue(button.unpressedButton.GetComponentInChildren<MeshRenderer>().enabled);
+    }
+
+    [Test]
     public void BothBadgeStatesHaveBrightArtworkAndSharedNonInteractiveHalos()
     {
         SpeedButton button = root.GetComponent<SpeedButton>();

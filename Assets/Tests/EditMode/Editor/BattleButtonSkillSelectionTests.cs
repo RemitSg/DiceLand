@@ -110,6 +110,7 @@ public class BattleButtonSkillSelectionTests
         EnemySkill_SO firstSkill = CreateSkill("First Skill", 0);
         EnemySkill_SO secondSkill = CreateSkill("Second Skill", 0);
 
+        ally.SetInheritedExtraSpeedButtons(1);
         ally.RegisterSpeedButtons(new[] { firstButton, secondButton });
         ally.GrantTemporarySkill(firstSkill, true);
         ally.GrantTemporarySkill(secondSkill, true);

@@ -4,26 +4,29 @@ import io
 import json
 import re
 import subprocess
+import sys
 import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
 
 root = Path('outputs/relic-catalog')
 data = json.loads((root / 'catalog.json').read_text(encoding='utf-8'))
-raw = json.loads((root / 'relics-raw.json').read_text(encoding='utf-8-sig'))
+from_catalog = '--from-catalog' in sys.argv
+raw = None if from_catalog else json.loads((root / 'relics-raw.json').read_text(encoding='utf-8-sig'))
 html = (root / '遗物完整图鉴.html').read_text(encoding='utf-8')
 embedded = json.loads(re.search(r'<script id="catalog-data" type="application/json">(.*?)</script>', html, re.S)[1])
 icons = embedded.pop('icons')
 assert embedded == data
 assert len(data['relics']) == data['count'] == sum(g['count'] for g in data['groups'])
 assert 'instanceID' not in (root / 'catalog.json').read_text(encoding='utf-8')
-raw_by_path = {r['path']: r for r in raw['rows']}
+raw_by_path = {} if raw is None else {r['path']: r for r in raw['rows']}
 for relic in data['relics']:
-    source = raw_by_path[relic['path']]
-    for key in ['guid', 'description', 'additionalDescription', 'rarity', 'iconGuid']:
-        assert source[key] == relic[key], (relic['id'], key)
     assert Path(relic['path']).is_file()
-    assert len(relic['resolvedEffects']) == len(source['effects'])
+    if raw is not None:
+        source = raw_by_path[relic['path']]
+        for key in ['guid', 'description', 'additionalDescription', 'rarity', 'iconGuid']:
+            assert source[key] == relic[key], (relic['id'], key)
+        assert len(relic['resolvedEffects']) == len(source['effects'])
     for effect in relic['resolvedEffects']:
         for reference in effect['references'].values():
             if reference['valid']:
@@ -77,4 +80,4 @@ if csv_path.exists():
     assert all(r['完整效果'] == by_id[int(r['序号'])]['description'] for r in exported)
 metadata = json.loads(Path('outputs/catalog-snapshots.json').read_text(encoding='utf-8'))
 assert metadata['relicCatalog']['relicCount'] == data['count']
-print(f"PASS: {data['count']} source configs, {len(data['groups'])} categories, HTML/Markdown/Excel values, original widths/freeze panes, CSV and metadata; {len(icons)} embedded icons.")
+print(f"PASS ({'versioned catalog' if from_catalog else 'raw export'}): {data['count']} configs, {len(data['groups'])} categories, HTML/Markdown/Excel values, original widths/freeze panes, CSV and metadata; {len(icons)} embedded icons.")

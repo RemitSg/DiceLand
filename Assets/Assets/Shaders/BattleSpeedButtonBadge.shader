@@ -8,6 +8,7 @@ Shader "DiceLand/Speed Button Badge"
         _EdgeLight ("Bright gold rim", Range(0,2)) = 1
         [HideInInspector] _BadgeBounds ("Tight sprite bounds", Vector) = (-1,-1,2,2)
         [HideInInspector] _Pressed ("Pressed state", Float) = 0
+        [HideInInspector] _Disabled ("Disabled action slot", Float) = 0
         [PerRendererData] _AlphaTex ("External alpha", 2D) = "white" {}
         [PerRendererData] _EnableExternalAlpha ("Enable external alpha", Float) = 0
     }
@@ -30,7 +31,7 @@ Shader "DiceLand/Speed Button Badge"
             CBUFFER_START(UnityPerMaterial)
             float4 _MainTex_ST, _BadgeBounds;
             half4 _Color;
-            float _CoreLight, _EdgeLight, _Pressed, _EnableExternalAlpha;
+            float _CoreLight, _EdgeLight, _Pressed, _Disabled, _EnableExternalAlpha;
             CBUFFER_END
             TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
             TEXTURE2D(_AlphaTex); SAMPLER(sampler_AlphaTex);
@@ -65,6 +66,8 @@ Shader "DiceLand/Speed Button Badge"
                 float catchLight = saturate(0.5 + input.badge.y * 0.4 - input.badge.x * 0.2);
                 color.rgb += half3(0.22,0.12,0.018) * inner * _CoreLight * lerp(1.0,0.55,_Pressed);
                 color.rgb += half3(0.9,0.58,0.18) * rim * (0.6 + catchLight * 0.5) * _EdgeLight;
+                half grey = dot(color.rgb, half3(0.299,0.587,0.114));
+                color.rgb = lerp(color.rgb, grey.xxx * 0.7, saturate(_Disabled));
                 return color;
             }
             ENDHLSL

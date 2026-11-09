@@ -689,6 +689,8 @@ public partial class BattleButton : MonoBehaviour
     {
         if (ally == null || skill == null)
             return GameText.Get("ui.battle_button.no_skill_equipped", "技能未配置");
+        if (button != null && button.IsActionDisabled)
+            return GameText.Get("status.stun.stun.name", "眩晕");
 
         bool hasEnoughEnergy = button != null
             ? BattleAllySkillEnergyAvailabilityService.HasEnoughEnergyForSkillOnButton(

@@ -127,6 +127,34 @@ public class BattleCombatActionExecutionDispatcherTests
         Assert.IsTrue(context.Result.BattleCompletedDuringAction);
     }
 
+    [TestCase(true, false, "enemy")]
+    [TestCase(false, true, "ally")]
+    [TestCase(true, true, "")]
+    public void Dispatch_RechecksStunBeforeQueuedClash(bool allyDisabled, bool enemyDisabled, string expected)
+    {
+        var allyObject = new UnityEngine.GameObject("Queued ally");
+        var enemyObject = new UnityEngine.GameObject("Queued enemy");
+        try
+        {
+            SpeedButton ally = allyObject.AddComponent<SpeedButton>();
+            SpeedButton enemy = enemyObject.AddComponent<SpeedButton>();
+            var action = new BattleCombatAction { Type = BattleCombatActionType.Clash, AllyButton = ally, EnemyButton = enemy };
+            // The queue was built while both slots could act.
+            ally.SetActionDisabled(allyDisabled);
+            enemy.SetActionDisabled(enemyDisabled);
+            List<string> calls = new List<string>();
+            Drain(BattleCombatActionExecutionDispatcher.Dispatch(new[] { action },
+                a => RecordAction(calls, "clash"), a => RecordAction(calls, "ally"),
+                a => RecordAction(calls, "enemy"), () => false, null));
+            CollectionAssert.AreEqual(expected.Length == 0 ? new string[0] : new[] { expected + ":start", expected + ":end" }, calls);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(allyObject);
+            UnityEngine.Object.DestroyImmediate(enemyObject);
+        }
+    }
+
     private static IEnumerator RecordAction(List<string> calls, string label)
     {
         calls.Add($"{label}:start");
