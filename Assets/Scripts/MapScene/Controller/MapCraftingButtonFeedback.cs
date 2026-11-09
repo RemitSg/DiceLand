@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public sealed class MapCraftingButtonFeedback : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     IPointerDownHandler, IPointerUpHandler, ISelectHandler, IDeselectHandler
 {
+    public bool scaleFeedback = true;
     private Button button;
     private bool hovered, pressed, selected;
     private float amount = 1;
@@ -19,7 +20,7 @@ public sealed class MapCraftingButtonFeedback : MonoBehaviour, IPointerEnterHand
         bool active = button != null && button.IsInteractable();
         float target = active ? (pressed ? 0.965f : hovered || selected ? 1.018f : 1) : 1;
         amount = Mathf.Lerp(amount, target, 1 - Mathf.Exp(-22 * Time.unscaledDeltaTime));
-        transform.localScale = Vector3.one * amount;
+        transform.localScale = Vector3.one * (scaleFeedback ? amount : 1);
         if (button != null && button.targetGraphic != null)
         {
             float brightness = active && (hovered || selected) && !pressed ? 1.12f : 1;

@@ -15876,6 +15876,26 @@ MonoBehaviour:
     m_Localized: Elite
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000300
+    m_Localized: Journey Paused
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000301
+    m_Localized: Volume changes apply immediately
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000302
+    m_Localized: Return to the journey
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000303
+    m_Localized: Retry restarts the current battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000304
+    m_Localized: Save your journey and continue from the title screen.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

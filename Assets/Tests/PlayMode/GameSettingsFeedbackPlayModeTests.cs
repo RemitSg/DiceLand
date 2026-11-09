@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -221,6 +222,60 @@ public sealed class GameSettingsFeedbackPlayModeTests
                 Assert.IsTrue(pauseInput.interactable);
                 Object.Destroy(menuHost);
                 yield return null;
+            }
+        }
+        finally
+        {
+            if (previousFile == null) File.Delete(path);
+            else File.WriteAllBytes(path, previousFile);
+        }
+    }
+
+    [UnityTest]
+    public IEnumerator PauseActionsKeepTheirAlignedBoundsDuringPointerFeedbackAtTimeScaleZero()
+    {
+        string path = Path.Combine(Application.persistentDataPath, "main_menu_settings.json");
+        byte[] previousFile = File.Exists(path) ? File.ReadAllBytes(path) : null;
+        try
+        {
+            Time.timeScale = 0;
+            foreach (string type in new[] { "MapPauseMenuOverlay", "BattlePauseMenuOverlay" })
+            {
+                var menuHost = new GameObject(type + " alignment fixture");
+                menuHost.transform.SetParent(host.transform);
+                Component pause = menuHost.AddComponent(TypeOf(type));
+                Invoke(pause, "Show");
+                Canvas canvas = (Canvas)Get(pause, "canvas");
+                Component view = canvas.GetComponent(TypeOf("PauseMenuView"));
+                float deadline = Time.realtimeSinceStartup + 4;
+                while ((float)Get(view, "openAmount") < 1 && Time.realtimeSinceStartup < deadline) yield return null;
+                Assert.AreEqual(1f, (float)Get(view, "openAmount"), "The entrance must finish while paused.");
+                var buttons = new[] { "ResumeButton", "SettingsButton", type == "MapPauseMenuOverlay" ? "SaveAndReturnButton" : "RetryButton", "AbandonButton" }
+                    .Select(name => canvas.GetComponentsInChildren<Button>().Single(button => button.name == name)).ToArray();
+                Func<Transform, Rect> bounds = target =>
+                {
+                    var corners = new Vector3[4]; ((RectTransform)target).GetWorldCorners(corners);
+                    return Rect.MinMaxRect(corners[0].x, corners[0].y, corners[2].x, corners[2].y);
+                };
+                Rect[] before = buttons.Select(button => bounds(button.transform)).ToArray();
+                var pointer = new PointerEventData(EventSystem.current) { button = PointerEventData.InputButton.Left };
+                foreach (Button button in buttons)
+                {
+                    ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
+                    ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerDownHandler);
+                    yield return new WaitForSecondsRealtime(.12f);
+                    ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerUpHandler);
+                    ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerExitHandler);
+                }
+                for (int i = 0; i < buttons.Length; i++)
+                {
+                    Rect after = bounds(buttons[i].transform);
+                    Assert.AreEqual(before[i].x, after.x, .01f); Assert.AreEqual(before[i].y, after.y, .01f);
+                    Assert.AreEqual(before[i].width, after.width, .01f); Assert.AreEqual(before[i].height, after.height, .01f);
+                }
+                ExecuteEvents.Execute(buttons[0].gameObject, pointer, ExecuteEvents.pointerClickHandler);
+                Assert.IsFalse((bool)Get(pause, "IsVisible"));
+                Object.Destroy(menuHost); yield return null;
             }
         }
         finally

@@ -15,14 +15,6 @@ public class MapPauseMenuOverlay : MonoBehaviour
     [SerializeField] private int canvasSortOrder = 9400;
     [SerializeField] private Vector2 referenceResolution = new Vector2(1920f, 1080f);
 
-    [Header("Panel")]
-    [SerializeField] private Vector2 panelSize = new Vector2(640f, 700f);
-    [SerializeField] private Color backdropColor = new Color(0f, 0f, 0f, 0.62f);
-    [SerializeField] private Color panelColor = new Color(0.08f, 0.1f, 0.14f, 0.97f);
-    [SerializeField] private Sprite panelBackgroundSprite;
-    [SerializeField] private Vector2 panelPadding = new Vector2(44f, 40f);
-    [SerializeField] private float panelSpacing = 22f;
-
     [Header("Text")]
     [SerializeField] private string titleLabel = "地图菜单";
     [SerializeField] private string resumeLabel = "继续游戏";
@@ -38,39 +30,9 @@ public class MapPauseMenuOverlay : MonoBehaviour
     [SerializeField] private Font titleFont;
     [SerializeField] private Font bodyFont;
     [SerializeField] private Font buttonFont;
-    [SerializeField] private int titleFontSize = 42;
-    [SerializeField] private int labelFontSize = 25;
-    [SerializeField] private int valueFontSize = 21;
-    [SerializeField] private int buttonFontSize = 25;
-    [SerializeField] private int statusFontSize = 20;
 
-    [Header("Colors")]
-    [SerializeField] private Color titleColor = Color.white;
-    [SerializeField] private Color labelColor = new Color(0.9f, 0.94f, 1f, 1f);
-    [SerializeField] private Color valueColor = new Color(0.82f, 0.88f, 0.94f, 1f);
-    [SerializeField] private Color statusColor = new Color(1f, 0.78f, 0.48f, 1f);
-    [SerializeField] private Color buttonColor = new Color(0.18f, 0.24f, 0.34f, 1f);
-    [SerializeField] private Color saveButtonColor = new Color(0.2f, 0.36f, 0.26f, 1f);
-    [SerializeField] private Color abandonButtonColor = new Color(0.48f, 0.16f, 0.15f, 1f);
-    [SerializeField] private Color buttonTextColor = Color.white;
-    [SerializeField] private Color sliderBackgroundColor = new Color(0.16f, 0.17f, 0.2f, 1f);
-    [SerializeField] private Color sliderFillColor = new Color(0.28f, 0.78f, 1f, 1f);
-    [SerializeField] private Color sliderHandleColor = Color.white;
-
-    [Header("Sprites")]
-    [SerializeField] private Sprite buttonBackgroundSprite;
-    [SerializeField] private Sprite saveButtonBackgroundSprite;
-    [SerializeField] private Sprite abandonButtonBackgroundSprite;
-    [SerializeField] private Sprite sliderBackgroundSprite;
-    [SerializeField] private Sprite sliderFillSprite;
-    [SerializeField] private Sprite sliderHandleSprite;
-
-    [Header("Layout")]
-    [SerializeField] private Vector2 buttonSize = new Vector2(430f, 58f);
-    [SerializeField] private Vector2 sliderSize = new Vector2(330f, 24f);
-    [SerializeField] private Vector2 sliderRowSize = new Vector2(500f, 52f);
-    [SerializeField] private float buttonSpacing = 14f;
-
+    private Font settingsFont;
+    private PauseMenuView view;
     private Canvas canvas;
     private RectTransform panelRect;
     private Slider musicSlider;
@@ -88,6 +50,8 @@ public class MapPauseMenuOverlay : MonoBehaviour
     private bool awaitingAbandonConfirmation;
 
     public bool IsVisible => canvas != null && canvas.gameObject.activeSelf;
+    public Canvas PresentationCanvas => canvas;
+    public void ApplyViewport(Vector2 size, Rect safeArea) => view?.ApplyViewport(size, safeArea);
 
     private void Awake()
     {
@@ -124,8 +88,9 @@ public class MapPauseMenuOverlay : MonoBehaviour
 
     public void ConfigureSettingsFont(Font font)
     {
+        settingsFont = font;
         EnsureUi();
-        settingsButtonText.font = font != null ? font : ResolveButtonFont();
+        view.ConfigureFonts(ResolveTitleFont(), ResolveBodyFont(), ResolveButtonFont());
     }
 
     private void ShowSettings()
@@ -140,6 +105,7 @@ public class MapPauseMenuOverlay : MonoBehaviour
     public void Show()
     {
         EnsureUi();
+        RefreshPresentation();
         ApplyCurrentSettingsToSliders();
         ResetAbandonConfirmation();
         SetVisible(true);
@@ -169,6 +135,7 @@ public class MapPauseMenuOverlay : MonoBehaviour
         if (!awaitingAbandonConfirmation)
         {
             awaitingAbandonConfirmation = true;
+            view.SetWarning(true);
             if (statusText != null)
                 statusText.text = GameText.Get("map.pause.abandon_warning", abandonWarningText);
             if (abandonButtonText != null)
@@ -184,8 +151,8 @@ public class MapPauseMenuOverlay : MonoBehaviour
     private void ResetAbandonConfirmation()
     {
         awaitingAbandonConfirmation = false;
-        if (statusText != null)
-            statusText.text = string.Empty;
+        if (view != null)
+            view.SetWarning(false);
         if (abandonButtonText != null)
             abandonButtonText.text = GameText.Get("map.pause.abandon", abandonLabel);
     }
@@ -233,230 +200,45 @@ public class MapPauseMenuOverlay : MonoBehaviour
     {
         if (!visible && settingsOverlay != null)
             settingsOverlay.HideImmediately();
-        if (canvas != null)
-            canvas.gameObject.SetActive(visible);
+        if (view != null)
+            view.SetVisible(visible);
     }
 
     private void EnsureUi()
     {
-        if (canvas != null)
-            return;
-
-        GameObject canvasGo = new GameObject("MapPauseMenuCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
-        canvasGo.transform.SetParent(transform, false);
-        canvas = canvasGo.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = canvasSortOrder;
-
-        CanvasScaler scaler = canvasGo.GetComponent<CanvasScaler>();
-        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = referenceResolution;
-        scaler.matchWidthOrHeight = 0.5f;
-
-        RectTransform rootRect = canvasGo.GetComponent<RectTransform>();
-        rootRect.anchorMin = Vector2.zero;
-        rootRect.anchorMax = Vector2.one;
-        rootRect.offsetMin = Vector2.zero;
-        rootRect.offsetMax = Vector2.zero;
-
-        Image backdrop = CreateImage(rootRect, "Backdrop", backdropColor, null);
-        RectTransform backdropRect = backdrop.rectTransform;
-        backdropRect.anchorMin = Vector2.zero;
-        backdropRect.anchorMax = Vector2.one;
-        backdropRect.offsetMin = Vector2.zero;
-        backdropRect.offsetMax = Vector2.zero;
-
-        Image panelImage = CreateImage(rootRect, "Panel", panelColor, panelBackgroundSprite);
-        panelRect = panelImage.rectTransform;
-        panelRect.anchorMin = new Vector2(0.5f, 0.5f);
-        panelRect.anchorMax = new Vector2(0.5f, 0.5f);
-        panelRect.pivot = new Vector2(0.5f, 0.5f);
-        panelRect.anchoredPosition = Vector2.zero;
-        panelRect.sizeDelta = panelSize + Vector2.up * (buttonSize.y + buttonSpacing);
-
-        VerticalLayoutGroup panelLayout = panelRect.gameObject.AddComponent<VerticalLayoutGroup>();
-        panelLayout.padding = new RectOffset(
-            Mathf.RoundToInt(panelPadding.x),
-            Mathf.RoundToInt(panelPadding.x),
-            Mathf.RoundToInt(panelPadding.y),
-            Mathf.RoundToInt(panelPadding.y));
-        panelLayout.spacing = panelSpacing;
-        panelLayout.childAlignment = TextAnchor.UpperCenter;
-        panelLayout.childControlWidth = false;
-        panelLayout.childControlHeight = false;
-        panelLayout.childForceExpandWidth = false;
-        panelLayout.childForceExpandHeight = false;
-
-        Text titleText = CreateText(panelRect, "Title", GameText.Get("map.pause.title", titleLabel), titleFontSize, ResolveTitleFont(), titleColor, TextAnchor.MiddleCenter);
-        AddLayoutElement(titleText.rectTransform, panelSize.x - panelPadding.x * 2f, 72f);
-
-        musicSlider = CreateSliderRow(GameText.Get("ui.pause.music", musicLabel), out musicValueText);
-        sfxSlider = CreateSliderRow(GameText.Get("ui.pause.sfx", sfxLabel), out sfxValueText);
-
-        statusText = CreateText(panelRect, "Status", string.Empty, statusFontSize, ResolveBodyFont(), statusColor, TextAnchor.MiddleCenter);
-        AddLayoutElement(statusText.rectTransform, panelSize.x - panelPadding.x * 2f, 44f);
-
-        Vector2 buttonsSize = new Vector2(buttonSize.x, buttonSize.y * 5f + buttonSpacing * 4f);
-        RectTransform buttonsRoot = CreateRect("Buttons", panelRect, buttonsSize);
-        VerticalLayoutGroup buttonsLayout = buttonsRoot.gameObject.AddComponent<VerticalLayoutGroup>();
-        buttonsLayout.spacing = buttonSpacing;
-        buttonsLayout.childAlignment = TextAnchor.UpperCenter;
-        buttonsLayout.childControlWidth = false;
-        buttonsLayout.childControlHeight = false;
-        buttonsLayout.childForceExpandWidth = false;
-        buttonsLayout.childForceExpandHeight = false;
-        AddLayoutElement(buttonsRoot, buttonsSize.x, buttonsSize.y);
-
-        CreateButton(buttonsRoot, "ResumeButton", GameText.Get("ui.resume", resumeLabel), buttonColor, buttonBackgroundSprite, Hide);
-        Button settingsButton = CreateButton(buttonsRoot, "SettingsButton", GameText.Get("ui.menu.settings", "设置"), buttonColor, buttonBackgroundSprite, ShowSettings);
-        settingsButtonText = settingsButton.GetComponentInChildren<Text>(true);
-        CreateButton(buttonsRoot, "SaveAndReturnButton", GameText.Get("map.pause.save_return", saveAndReturnLabel), saveButtonColor, saveButtonBackgroundSprite, HandleSaveAndReturnClicked);
-        Button abandonButton = CreateButton(buttonsRoot, "AbandonButton", GameText.Get("map.pause.abandon", abandonLabel), abandonButtonColor, abandonButtonBackgroundSprite, HandleAbandonClicked);
-        abandonButtonText = abandonButton.GetComponentInChildren<Text>(true);
-        CreateButton(buttonsRoot, "CloseButton", GameText.Get("ui.close", closeLabel), buttonColor, buttonBackgroundSprite, Hide);
-
+        if (canvas != null) return;
+        view = PauseMenuView.Create(transform, "MapPauseMenuCanvas", canvasSortOrder, referenceResolution,
+            false, Hide, ShowSettings, HandleSaveAndReturnClicked, HandleAbandonClicked);
+        canvas = view.Canvas;
+        panelRect = view.Panel;
+        musicSlider = view.MusicSlider;
+        sfxSlider = view.SfxSlider;
+        musicValueText = view.MusicValue;
+        sfxValueText = view.SfxValue;
+        settingsButtonText = view.SettingsText;
+        statusText = view.StatusText;
+        abandonButtonText = view.AbandonText;
+        view.ConfigureFonts(ResolveTitleFont(), ResolveBodyFont(), ResolveButtonFont());
+        RefreshPresentation();
         musicSlider.onValueChanged.AddListener(HandleSliderChanged);
         sfxSlider.onValueChanged.AddListener(HandleSliderChanged);
     }
 
-    private Slider CreateSliderRow(string label, out Text valueText)
+    private void RefreshPresentation()
     {
-        RectTransform row = CreateRect($"{label}Row", panelRect, sliderRowSize);
-        HorizontalLayoutGroup rowLayout = row.gameObject.AddComponent<HorizontalLayoutGroup>();
-        rowLayout.spacing = 16f;
-        rowLayout.childAlignment = TextAnchor.MiddleCenter;
-        rowLayout.childControlWidth = false;
-        rowLayout.childControlHeight = false;
-        rowLayout.childForceExpandWidth = false;
-        rowLayout.childForceExpandHeight = false;
-        AddLayoutElement(row, sliderRowSize.x, sliderRowSize.y);
-
-        Text labelText = CreateText(row, "Label", label, labelFontSize, ResolveBodyFont(), labelColor, TextAnchor.MiddleLeft);
-        AddLayoutElement(labelText.rectTransform, 88f, sliderRowSize.y);
-
-        Slider slider = CreateSlider(row, $"{label}Slider", sliderSize);
-        AddLayoutElement(slider.GetComponent<RectTransform>(), sliderSize.x, sliderRowSize.y);
-
-        valueText = CreateText(row, "Value", "100%", valueFontSize, ResolveBodyFont(), valueColor, TextAnchor.MiddleRight);
-        AddLayoutElement(valueText.rectTransform, 74f, sliderRowSize.y);
-
-        return slider;
-    }
-
-    private Button CreateButton(Transform parent, string name, string label, Color color, Sprite sprite, Action onClick)
-    {
-        RectTransform rect = CreateRect(name, parent, buttonSize);
-        Image image = rect.gameObject.AddComponent<Image>();
-        image.color = color;
-        image.sprite = sprite;
-        image.type = sprite != null ? Image.Type.Sliced : Image.Type.Simple;
-
-        Button button = rect.gameObject.AddComponent<Button>();
-        button.targetGraphic = image;
-        button.onClick.AddListener(() => onClick?.Invoke());
-
-        Text text = CreateText(rect, "Text", label, buttonFontSize, ResolveButtonFont(), buttonTextColor, TextAnchor.MiddleCenter);
-        RectTransform textRect = text.rectTransform;
-        textRect.anchorMin = Vector2.zero;
-        textRect.anchorMax = Vector2.one;
-        textRect.offsetMin = Vector2.zero;
-        textRect.offsetMax = Vector2.zero;
-        text.raycastTarget = false;
-
-        AddLayoutElement(rect, buttonSize.x, buttonSize.y);
-        return button;
-    }
-
-    private Slider CreateSlider(Transform parent, string name, Vector2 size)
-    {
-        RectTransform root = CreateRect(name, parent, size);
-        Image background = root.gameObject.AddComponent<Image>();
-        background.color = sliderBackgroundColor;
-        background.sprite = sliderBackgroundSprite;
-        background.type = sliderBackgroundSprite != null ? Image.Type.Sliced : Image.Type.Simple;
-
-        RectTransform fillArea = CreateRect("Fill Area", root, size);
-        fillArea.anchorMin = Vector2.zero;
-        fillArea.anchorMax = Vector2.one;
-        fillArea.offsetMin = new Vector2(8f, 4f);
-        fillArea.offsetMax = new Vector2(-8f, -4f);
-
-        Image fillImage = CreateImage(fillArea, "Fill", sliderFillColor, sliderFillSprite);
-        RectTransform fillRect = fillImage.rectTransform;
-        fillRect.anchorMin = Vector2.zero;
-        fillRect.anchorMax = Vector2.one;
-        fillRect.offsetMin = Vector2.zero;
-        fillRect.offsetMax = Vector2.zero;
-
-        Image handleImage = CreateImage(root, "Handle", sliderHandleColor, sliderHandleSprite);
-        RectTransform handleRect = handleImage.rectTransform;
-        handleRect.anchorMin = new Vector2(0.5f, 0.5f);
-        handleRect.anchorMax = new Vector2(0.5f, 0.5f);
-        handleRect.pivot = new Vector2(0.5f, 0.5f);
-        handleRect.sizeDelta = new Vector2(26f, 26f);
-
-        Slider slider = root.gameObject.AddComponent<Slider>();
-        slider.minValue = 0f;
-        slider.maxValue = 1f;
-        slider.fillRect = fillRect;
-        slider.handleRect = handleRect;
-        slider.targetGraphic = handleImage;
-        slider.direction = Slider.Direction.LeftToRight;
-        return slider;
-    }
-
-    private static Image CreateImage(Transform parent, string name, Color color, Sprite sprite)
-    {
-        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image));
-        go.transform.SetParent(parent, false);
-        Image image = go.GetComponent<Image>();
-        image.color = color;
-        image.sprite = sprite;
-        image.type = sprite != null ? Image.Type.Sliced : Image.Type.Simple;
-        return image;
-    }
-
-    private static RectTransform CreateRect(string name, Transform parent, Vector2 size)
-    {
-        GameObject go = new GameObject(name, typeof(RectTransform));
-        go.transform.SetParent(parent, false);
-        RectTransform rect = go.GetComponent<RectTransform>();
-        rect.sizeDelta = size;
-        return rect;
-    }
-
-    private static Text CreateText(Transform parent, string name, string value, int fontSize, Font font, Color color, TextAnchor alignment)
-    {
-        RectTransform rect = CreateRect(name, parent, Vector2.zero);
-        Text text = rect.gameObject.AddComponent<ResourceKeywordLegacyText>();
-        text.font = font;
-        text.fontSize = fontSize;
-        text.alignment = alignment;
-        text.color = color;
-        text.text = value;
-        return text;
-    }
-
-    private static void AddLayoutElement(RectTransform rect, float width, float height)
-    {
-        LayoutElement layoutElement = rect.gameObject.GetComponent<LayoutElement>();
-        if (layoutElement == null)
-            layoutElement = rect.gameObject.AddComponent<LayoutElement>();
-
-        layoutElement.preferredWidth = width;
-        layoutElement.minWidth = width;
-        layoutElement.preferredHeight = height;
-        layoutElement.minHeight = height;
+        view.RefreshLabels(GameText.Get("map.pause.title", titleLabel), GameText.Get("ui.resume", resumeLabel),
+            GameText.Get("map.pause.save_return", saveAndReturnLabel), GameText.Get("map.pause.abandon", abandonLabel),
+            GameText.Get("ui.close", closeLabel), GameText.Get("ui.pause.music", musicLabel), GameText.Get("ui.pause.sfx", sfxLabel));
     }
 
     private Font ResolveTitleFont()
     {
-        return titleFont != null ? titleFont : ResolveFallbackFont();
+        return titleFont != null ? titleFont : ResolveBodyFont();
     }
 
     private Font ResolveBodyFont()
     {
-        return bodyFont != null ? bodyFont : ResolveFallbackFont();
+        return bodyFont != null ? bodyFont : settingsFont != null ? settingsFont : ResolveFallbackFont();
     }
 
     private Font ResolveButtonFont()
@@ -465,7 +247,7 @@ public class MapPauseMenuOverlay : MonoBehaviour
             return buttonFont;
         if (bodyFont != null)
             return bodyFont;
-        return ResolveFallbackFont();
+        return ResolveBodyFont();
     }
 
     private static Font ResolveFallbackFont()
@@ -479,6 +261,6 @@ public class MapPauseMenuOverlay : MonoBehaviour
             return;
 
         GameObject eventSystemGo = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
-        DontDestroyOnLoad(eventSystemGo);
+        if (Application.isPlaying) DontDestroyOnLoad(eventSystemGo);
     }
 }

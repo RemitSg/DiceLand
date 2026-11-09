@@ -13983,6 +13983,26 @@ MonoBehaviour:
     m_Key: ui.encyclopedia.enemy_elite
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000300
+    m_Key: ui.pause.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000301
+    m_Key: ui.pause.audio_hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000302
+    m_Key: ui.pause.return_hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000303
+    m_Key: ui.pause.retry_hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000304
+    m_Key: ui.pause.save_hint
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
