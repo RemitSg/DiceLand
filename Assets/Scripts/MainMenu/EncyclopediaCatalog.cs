@@ -13,6 +13,20 @@ public enum EncyclopediaCategory
     Calamities
 }
 
+public enum EncyclopediaEnemyGroup
+{
+    OuterStandard,
+    OuterElite,
+    MidStandard,
+    MidElite,
+    InnerStandard,
+    InnerElite,
+    CoreStandard,
+    CoreElite,
+    Boss,
+    Special
+}
+
 public sealed class EncyclopediaCatalog : ScriptableObject
 {
     public const string ResourcePath = "MainMenu/EncyclopediaCatalog";
@@ -23,15 +37,18 @@ public sealed class EncyclopediaCatalog : ScriptableObject
     {
         [SerializeField] private string id;
         [SerializeField] private ScriptableObject asset;
+        [SerializeField] private EncyclopediaEnemyGroup enemyGroup = EncyclopediaEnemyGroup.Special;
 
-        public Entry(string id, ScriptableObject asset)
+        public Entry(string id, ScriptableObject asset, EncyclopediaEnemyGroup enemyGroup = EncyclopediaEnemyGroup.Special)
         {
             this.id = id;
             this.asset = asset;
+            this.enemyGroup = enemyGroup;
         }
 
         public string Id => id;
         public ScriptableObject Asset => asset;
+        public EncyclopediaEnemyGroup EnemyGroup => enemyGroup;
         public EncyclopediaCategory Category => asset switch
         {
             EnemyData_SO _ => EncyclopediaCategory.Enemies,

@@ -43,12 +43,84 @@ public sealed class EncyclopediaTests
     {
         EncyclopediaCatalog.Entry[] expected = EncyclopediaCatalogBuilder.FindEntries();
         CollectionAssert.AreEqual(expected.Select(entry => entry.Id), catalog.Entries.Select(entry => entry.Id));
+        CollectionAssert.AreEqual(expected.Select(entry => entry.EnemyGroup), catalog.Entries.Select(entry => entry.EnemyGroup));
         Assert.AreEqual(EncyclopediaCatalogBuilder.BuildIdentityIndex(expected), identities.text.Replace("\r\n", "\n"));
         Assert.AreEqual(catalog.Entries.Count, catalog.Entries.Select(entry => entry.Id).Distinct().Count());
         Assert.AreEqual(5, catalog.Entries.Select(entry => entry.Category).Distinct().Count());
         Assert.IsTrue(catalog.Entries.All(entry => (entry.Icon == null) == (entry.Category == EncyclopediaCategory.Calamities)));
         Assert.IsNotNull(catalog.HeadingFont);
         Assert.IsNotNull(catalog.BodyFont);
+    }
+
+    [Test]
+    public void EnemyPlacementsUseRosterMembershipAndBossPriorityWithoutCombiningAssetsWithTheSameId()
+    {
+        var first = ScriptableObject.CreateInstance<EnemyData_SO>();
+        var second = ScriptableObject.CreateInstance<EnemyData_SO>();
+        var normal = ScriptableObject.CreateInstance<EnemyGroup_SO>();
+        var elite = ScriptableObject.CreateInstance<EnemyGroup_SO>();
+        var boss = ScriptableObject.CreateInstance<EnemyGroup_SO>();
+        var roster = ScriptableObject.CreateInstance<EnemyRoster_SO>();
+        try
+        {
+            first.enemyID = second.enemyID = 999;
+            normal.enemies.Add(first);
+            elite.enemies.Add(second);
+            boss.enemies.Add(first);
+            typeof(EnemyRoster_SO).GetField("pools", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(roster, new System.Collections.Generic.List<EnemyRoster_SO.DangerPool>
+                {
+                    new EnemyRoster_SO.DangerPool { dangerBand = MapDangerBand.Mid,
+                        standardGroups = new System.Collections.Generic.List<EnemyGroup_SO> { normal },
+                        eliteGroups = new System.Collections.Generic.List<EnemyGroup_SO> { elite } }
+                });
+            typeof(EnemyRoster_SO).GetField("bossGroups", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(roster, new System.Collections.Generic.List<EnemyGroup_SO> { boss });
+            var placements = EncyclopediaCatalogBuilder.BuildEnemyGroups(new[] { roster });
+            Assert.AreEqual(2, placements.Count);
+            Assert.AreEqual(EncyclopediaEnemyGroup.Boss, placements[first]);
+            Assert.AreEqual(EncyclopediaEnemyGroup.MidElite, placements[second]);
+        }
+        finally
+        {
+            foreach (Object asset in new Object[] { roster, boss, elite, normal, second, first }) Object.DestroyImmediate(asset);
+        }
+    }
+
+    [Test]
+    public void EnemyBrowserGroupsAreasAndPoolsKeepsOneSlotPerAssetAndPreservesCollectionTotals()
+    {
+        EncyclopediaCatalog.Entry[] enemies = Entries(EncyclopediaCategory.Enemies);
+        var unlocked = enemies.First(entry => entry.EnemyGroup == EncyclopediaEnemyGroup.OuterElite);
+        progress.Record(unlocked.Asset);
+        host = new GameObject("Enemy classification test");
+        var overlay = host.AddComponent<MainMenuEncyclopediaOverlay>();
+        overlay.Show(catalog, progress, null);
+        overlay.PresentationCanvas.renderMode = RenderMode.WorldSpace;
+        Resize(overlay, 2340, 1080);
+        Transform root = overlay.PresentationCanvas.transform;
+        Assert.AreEqual(enemies.Length, root.GetComponentsInChildren<RectTransform>(true).Count(rect => rect.name.StartsWith("Entry_")));
+        StringAssert.StartsWith("1 / " + enemies.Length, Find(root, "ProgressCount").GetComponent<TMP_Text>().text);
+        var outer = Find(root, "EnemyArea_Outer");
+        var normal = Find(root, "EnemyPool_OuterStandard");
+        var elite = Find(root, "EnemyPool_OuterElite");
+        var mid = Find(root, "EnemyArea_Mid");
+        var boss = Find(root, "EnemyArea_Boss");
+        var special = Find(root, "EnemyArea_Special");
+        Assert.Greater(outer.anchoredPosition.y, normal.anchoredPosition.y);
+        Assert.Greater(normal.anchoredPosition.y, elite.anchoredPosition.y);
+        Assert.Greater(elite.anchoredPosition.y, mid.anchoredPosition.y);
+        Assert.Greater(mid.anchoredPosition.y, boss.anchoredPosition.y);
+        Assert.Greater(boss.anchoredPosition.y, special.anchoredPosition.y);
+        int outerCount = enemies.Count(entry => entry.EnemyGroup == EncyclopediaEnemyGroup.OuterStandard || entry.EnemyGroup == EncyclopediaEnemyGroup.OuterElite);
+        StringAssert.StartsWith("1 / " + outerCount, outer.Find("Count").GetComponent<TMP_Text>().text);
+        Assert.IsNull(root.GetComponentsInChildren<RectTransform>(true).FirstOrDefault(rect => rect.name == "EnemyArea_Inner"));
+        var order = enemies.Select(entry => Find(root, "Entry_" + entry.Id).GetSiblingIndex()).ToArray();
+        Find(root, "RelicsTab").GetComponent<Button>().onClick.Invoke();
+        Find(root, "EnemiesTab").GetComponent<Button>().onClick.Invoke();
+        CollectionAssert.AreEqual(order, enemies.Select(entry => Find(root, "Entry_" + entry.Id).GetSiblingIndex()).ToArray());
+        Find(root, "Entry_" + unlocked.Id).GetComponent<Button>().onClick.Invoke();
+        Assert.IsTrue(root.GetComponentInChildren<MapInventoryDetailView>(true).IsVisible);
     }
 
     [Test]

@@ -13951,6 +13951,38 @@ MonoBehaviour:
     m_Key: battle.action.prepare
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000200
+    m_Key: ui.encyclopedia.outer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000201
+    m_Key: ui.encyclopedia.mid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000202
+    m_Key: ui.encyclopedia.inner
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000203
+    m_Key: ui.encyclopedia.core
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000204
+    m_Key: ui.encyclopedia.boss
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000205
+    m_Key: ui.encyclopedia.special
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000206
+    m_Key: ui.encyclopedia.enemy_standard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000207
+    m_Key: ui.encyclopedia.enemy_elite
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

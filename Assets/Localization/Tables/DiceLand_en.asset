@@ -15844,6 +15844,38 @@ MonoBehaviour:
     m_Localized: Prepare
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000200
+    m_Localized: Outer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000201
+    m_Localized: Middle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000202
+    m_Localized: Inner
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000203
+    m_Localized: Core
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000204
+    m_Localized: BOSS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000205
+    m_Localized: Special Encounters
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000206
+    m_Localized: Normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000207
+    m_Localized: Elite
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

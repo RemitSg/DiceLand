@@ -26,6 +26,7 @@ public sealed class MainMenuEncyclopediaOverlay : MonoBehaviour
     private sealed class Section
     {
         public RectTransform header;
+        public bool headingOnly;
         public readonly List<RectTransform> cards = new List<RectTransform>();
     }
 
@@ -277,23 +278,62 @@ public sealed class MainMenuEncyclopediaOverlay : MonoBehaviour
         progressFill.offsetMin = progressFill.offsetMax = Vector2.zero;
         emptyLabel.gameObject.SetActive(entries.Length == 0);
 
-        foreach (var group in entries.GroupBy(entry => entry.Rarity).OrderBy(group => RarityOrder(group.Key)))
-            BuildSection(group.Key, group.ToArray());
+        if (category == EncyclopediaCategory.Enemies)
+            BuildEnemySections(entries);
+        else
+            foreach (var group in entries.GroupBy(entry => entry.Rarity).OrderBy(group => RarityOrder(group.Key)))
+                BuildSection(group.Key, group.ToArray());
+    }
+
+    private void BuildEnemySections(EncyclopediaCatalog.Entry[] entries)
+    {
+        BuildArea("Outer", GameText.Get("ui.encyclopedia.outer", "外层"), EncyclopediaEnemyGroup.OuterStandard, EncyclopediaEnemyGroup.OuterElite);
+        BuildArea("Mid", GameText.Get("ui.encyclopedia.mid", "中层"), EncyclopediaEnemyGroup.MidStandard, EncyclopediaEnemyGroup.MidElite);
+        BuildArea("Inner", GameText.Get("ui.encyclopedia.inner", "内层"), EncyclopediaEnemyGroup.InnerStandard, EncyclopediaEnemyGroup.InnerElite);
+        BuildArea("Core", GameText.Get("ui.encyclopedia.core", "核心"), EncyclopediaEnemyGroup.CoreStandard, EncyclopediaEnemyGroup.CoreElite);
+        BuildSingle("Boss", GameText.Get("ui.encyclopedia.boss", "BOSS"), EncyclopediaEnemyGroup.Boss);
+        BuildSingle("Special", GameText.Get("ui.encyclopedia.special", "特殊遭遇"), EncyclopediaEnemyGroup.Special);
+
+        void BuildArea(string key, string label, EncyclopediaEnemyGroup standard, EncyclopediaEnemyGroup elite)
+        {
+            var area = entries.Where(entry => entry.EnemyGroup == standard || entry.EnemyGroup == elite).ToArray();
+            if (area.Length == 0) return;
+            BuildSection("EnemyArea_" + key, label, Gold, area, true);
+            BuildPool(standard, GameText.Get("ui.encyclopedia.enemy_standard", "普通"), Jade);
+            BuildPool(elite, GameText.Get("ui.encyclopedia.enemy_elite", "精英"), new Color32(222, 156, 112, 255));
+        }
+        void BuildPool(EncyclopediaEnemyGroup group, string label, Color accent)
+        {
+            var pool = entries.Where(entry => entry.EnemyGroup == group).ToArray();
+            if (pool.Length > 0) BuildSection("EnemyPool_" + group, label, accent, pool, false, true);
+        }
+        void BuildSingle(string key, string label, EncyclopediaEnemyGroup group)
+        {
+            var pool = entries.Where(entry => entry.EnemyGroup == group).ToArray();
+            if (pool.Length > 0) BuildSection("EnemyArea_" + key, label, Gold, pool);
+        }
     }
 
     private void BuildSection(LootRarity? rarity, EncyclopediaCatalog.Entry[] entries)
     {
-        var section = new Section { header = MakeRect(content, "Section_" + rarity) };
-        sections.Add(section);
         Color accent = rarity.HasValue
             ? Color.Lerp(MapInventoryDetailView.GetLootRarityColor(rarity.Value), Ivory, .28f) : Gold;
-        TMP_Text name = Label(section.header, "Rarity", 27, accent, TextAlignmentOptions.MidlineLeft, true);
-        name.text = rarity.HasValue ? MapInventoryDetailView.EncyclopediaRarityLabel(rarity.Value) : CategoryLabel(category);
-        Place(name.rectTransform, 0, 0, 157, 37);
+        BuildSection("Section_" + rarity,
+            rarity.HasValue ? MapInventoryDetailView.EncyclopediaRarityLabel(rarity.Value) : CategoryLabel(category), accent, entries);
+    }
+
+    private void BuildSection(string key, string label, Color accent, EncyclopediaCatalog.Entry[] entries,
+        bool headingOnly = false, bool subgroup = false)
+    {
+        var section = new Section { header = MakeRect(content, key), headingOnly = headingOnly };
+        sections.Add(section);
+        TMP_Text name = Label(section.header, "Rarity", headingOnly ? 31 : subgroup ? 25 : 27, accent, TextAlignmentOptions.MidlineLeft, true);
+        name.text = label;
+        Place(name.rectTransform, subgroup ? 20 : 0, 0, 157, 37);
         RectTransform rule = MakeRect(section.header, "SectionRule");
         rule.anchorMin = new Vector2(0, .5f);
         rule.anchorMax = new Vector2(1, .5f);
-        rule.offsetMin = new Vector2(163, -1);
+        rule.offsetMin = new Vector2(subgroup ? 183 : 163, -1);
         rule.offsetMax = new Vector2(-186, 1);
         var ruleImage = rule.gameObject.AddComponent<Image>();
         ruleImage.color = new Color(accent.r, accent.g, accent.b, .54f);
@@ -304,8 +344,9 @@ public sealed class MainMenuEncyclopediaOverlay : MonoBehaviour
         count.rectTransform.pivot = Vector2.one;
         count.rectTransform.sizeDelta = new Vector2(180, 37);
 
-        foreach (EncyclopediaCatalog.Entry entry in entries)
-            section.cards.Add(BuildCard(entry, accent));
+        if (!headingOnly)
+            foreach (EncyclopediaCatalog.Entry entry in entries)
+                section.cards.Add(BuildCard(entry, accent));
     }
 
     private RectTransform BuildCard(EncyclopediaCatalog.Entry entry, Color accent)
@@ -417,6 +458,7 @@ public sealed class MainMenuEncyclopediaOverlay : MonoBehaviour
         {
             Place(section.header, 0, y, gridWidth, 38);
             y += 42;
+            if (section.headingOnly) continue;
             for (int i = 0; i < section.cards.Count; i++)
                 Place(section.cards[i], i % columns * (cellWidth + CardGap), y + i / columns * (cellHeight + CardGap), cellWidth, cellHeight);
             y += Mathf.CeilToInt((float)section.cards.Count / columns) * (cellHeight + CardGap) + 10;
