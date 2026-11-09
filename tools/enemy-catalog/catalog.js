@@ -253,6 +253,7 @@ function renderSkill(skill) {
     </span></summary>
     <div class="skill-body">
       ${renderSkillArt(skill)}
+      ${skill.visual_effects ? `<p class="skill-rule"><a href="../${escape(skill.visual_effects.preview_path.replace(/^outputs\//, ''))}" target="_blank" rel="noopener">▶ ${escape(skill.visual_effects.name)} · 命中特效预览（${skill.visual_effects.frames.length} 帧 / ${skill.visual_effects.duration} 秒）</a></p>` : ''}
       ${skill.dice.length ? `<div class="dice">${skill.dice.map(die => `<span class="die ${die.type === '防御骰' ? 'defense' : 'attack'}"><span>${die.number} · ${die.type}</span><b>${rangeLabel(die.low, die.high)}</b></span>`).join('')}</div>` : ''}
       <div class="skill-roles">
         ${skill.roles.map(role => `<div>${highlight(role)}</div>`).join('')}

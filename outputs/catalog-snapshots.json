@@ -76,6 +76,39 @@
         42
       ],
       "scope": "仅复核事件 031 随机入口移除对 041 血骸王储、042 叛变的新王关联事件可达性的影响；原事件／副本／敌群配置保留，其他历史数据未重导出。"
+    },
+    "latestVfxRevision": {
+      "date": "2026-11-09",
+      "enemyNumbers": [
+        44
+      ],
+      "skillNames": [
+        "分解"
+      ],
+      "effectName": "枯根撕裂",
+      "scope": "仅增补分解的命中表现：16 帧、32 FPS、0.5 秒透明序列帧预制体，适用两颗骰子；受击位置播放，命中与受击反馈在 0.125 秒结算，末帧透明。不改变技能伤害数值、治疗量、目标或阶段。",
+      "validation": {
+        "unityPrefabSampling": {
+          "passed": 21,
+          "failed": 0,
+          "scope": "Actual prefab, sixteen animation samples, final alpha and both die configurations; no full battle playthrough."
+        },
+        "offlinePreview": {
+          "passed": 21,
+          "failed": 0,
+          "widths": [
+            1280,
+            390,
+            320
+          ],
+          "remoteRequests": 0,
+          "pageErrors": 0
+        },
+        "offlineCatalog": {
+          "passed": 195,
+          "failed": 0
+        }
+      }
     }
   },
   "relicCatalog": {

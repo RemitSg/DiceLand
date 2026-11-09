@@ -1287,6 +1287,21 @@
           "Assets/Data/Enemies/Enemies/044 WitheredCourt/044_WildGrowth.png"
         ]
       }
+    ],
+    "skill_vfx": [
+      {
+        "name": "分解",
+        "effect": "枯根撕裂",
+        "frames": 16,
+        "fps": 32,
+        "duration": 0.5,
+        "dice": [
+          1,
+          2
+        ],
+        "prefab": "Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/DecompositionRootRend.prefab",
+        "preview": "outputs/enemy-vfx/044-分解-枯根撕裂.html"
+      }
     ]
   },
   {
