@@ -69,6 +69,30 @@ public static class MapInventoryVisualTools
         return state;
     }
 
+    public static string CaptureWeaponDetails(string name, int width, int height,
+        string weaponPath = "Assets/Data/Weapons/006 曦誓剑/006 曦誓剑.asset", Rect? safeArea = null)
+    {
+        return MapVisualTools.Capture(name, width, height, MapBackgroundPhase.Morning, false, 1, safeArea, (host, camera) =>
+        {
+            Weapon_SO weapon = AssetDatabase.LoadAssetAtPath<Weapon_SO>(weaponPath);
+            if (weapon == null) throw new ArgumentException("Weapon asset not found: " + weaponPath);
+            MapHUD hud = host.GetComponent<MapHUD>();
+            MapTreasureArt theme = MapTreasureArt.Load(); hud.ConfigureFonts(theme.headingFont, theme.bodyFont);
+            RunState state = CreateState();
+            state.weaponInventory.RemoveAll(entry => entry.weaponData == weapon);
+            state.weaponInventory.Insert(0, new RunWeaponState { weaponData = weapon, amount = 1 });
+            CharacterData_SO member = Load<CharacterData_SO>().Where(data => data.compatibleWeaponType == weapon.weaponType)
+                .OrderBy(data => data.characterName == "Chara" ? 0 : 1).FirstOrDefault();
+            if (member != null) state.partyMembers.Add(new RunPartyMemberState { memberId = "WeaponPreview", characterData = member,
+                level = 1, currentHP = 20, maxHP = 20 });
+            hud.Refresh(state, null); hud.ShowInventoryPanel();
+            ((Button)typeof(MapHUD).GetField("weaponTabButton", Private).GetValue(hud)).onClick.Invoke();
+            hud.GetComponentsInChildren<Button>().Single(button => button.name == "Slot_0").onClick.Invoke();
+            hud.GetComponentInChildren<MapInventoryDetailView>().ApplyViewport(new Vector2(width, height),
+                safeArea ?? new Rect(0, 0, width, height));
+        });
+    }
+
     private static T[] Load<T>() where T : UnityEngine.Object => AssetDatabase.FindAssets("t:" + typeof(T).Name, new[] { "Assets/Data" })
         .Select(guid => AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guid))).Where(data => data != null).ToArray();
 }

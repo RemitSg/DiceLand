@@ -28,12 +28,13 @@ public partial class MapInventoryDetailView
     private void LateUpdate()
     {
         if (modalRoot == null || !IsVisible) return;
-        if (descriptionText.fontSize != MainMenuSettingsPersistence.DetailFontSize(DescriptionSize))
+        if (descriptionText.fontSize != MainMenuSettingsPersistence.DetailFontSize(UsesWeaponLayout ? 24 : DescriptionSize))
             RefreshDescriptionLayout(false);
         Vector2 viewport = new Vector2(Screen.width, Screen.height);
         if (viewport != layoutViewport || Screen.safeArea != layoutSafeArea || modalRoot.rect.size != layoutCanvasSize)
             ApplyViewport(viewport, Screen.safeArea);
         float delta = Time.unscaledDeltaTime;
+        AdvanceWeaponPresentation(delta);
         openProgress = Mathf.MoveTowards(openProgress, closing ? 0 : 1, delta / (closing ? 0.16f : 0.24f));
         switchProgress = Mathf.MoveTowards(switchProgress, 1, delta / 0.2f);
         displayAge += delta;
@@ -72,6 +73,7 @@ public partial class MapInventoryDetailView
         SetRelicAdditionalDescription(string.Empty);
         ConfigureActionButton(string.Empty, false, null, string.Empty);
         if (descriptionScroll != null) descriptionScroll.StopMovement();
+        if (weaponScroll != null) weaponScroll.StopMovement();
         if (modalRoot != null) modalRoot.gameObject.SetActive(false); else gameObject.SetActive(false);
         if (previousSelection != null && previousSelection.activeInHierarchy && EventSystem.current != null)
             EventSystem.current.SetSelectedGameObject(previousSelection);

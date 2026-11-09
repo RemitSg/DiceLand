@@ -175,6 +175,7 @@ public partial class MapInventoryDetailView : MonoBehaviour
         }
         if (descriptionText != null) descriptionText.text = string.IsNullOrWhiteSpace(description) ? GameText.Get("ui.no_description", "暂无描述。") : description;
         SetRelicAdditionalDescription(additional);
+        PrepareWeaponPresentation(item as Weapon_SO, amount, changed);
         BeginPresentation(changed);
     }
 
@@ -210,6 +211,7 @@ public partial class MapInventoryDetailView : MonoBehaviour
             closing = true;
             panelGroup.interactable = false;
             if (descriptionScroll != null) descriptionScroll.StopMovement();
+            if (weaponScroll != null) weaponScroll.StopMovement();
         }
     }
 

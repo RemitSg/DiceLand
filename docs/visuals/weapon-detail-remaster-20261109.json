@@ -1,0 +1,123 @@
+{
+  "date": "2026-11-09",
+  "timezone": "Asia/Singapore",
+  "status": "Implemented and validated",
+  "reference": "docs/visuals/weapon-detail-ideal-reference-20261109.png",
+  "scope": "Inventory and battle-loot weapon details use the shared existing detail view and equipment callbacks; no weapon, skill, enemy or relic gameplay configuration changed.",
+  "implementation": {
+    "surface": "Shared forest window and walnut title artwork, opaque emerald backing, brass skill cards and gold equipment controls.",
+    "sourceOfTruth": [
+      "Weapon_SO: localized name/description, rarity, type, speedButtonCount, icon, inventory quantity and skillPool.",
+      "EnemySkill_SO: localized skill name/description, energyCost, GetDicePowerRange and GetDiceSkillCategory per die.",
+      "The existing BattleSkillInfoOverlay rule formatter: triggers, conditions, targets, status stacks, damage and extra rules; configuration values without battle modifiers or an invented current stack count."
+    ],
+    "layout": "Two aligned skill columns in wide viewports; a single scrolling column in narrower layouts; compact profile across the top when needed; safe-area-aware positioning; persistent footer actions.",
+    "overflow": "Every die and its complete actual rules are always in the skill reading area. Extra skill narrative expands/collapses on card tap. Weapon narrative has its own independent scroll area.",
+    "functionality": "Existing equipment/disabled-state/inventory callbacks retained. Same-weapon equipment refresh retains reading position and description expansion. Switching to other item categories restores the original presentation.",
+    "motion": "Unscaled 0.24-second open and 0.16-second close, staggered card reveal, 0.16-second description disclosure, soft hover rims and existing mouse/touch button feedback. Works while the game is paused."
+  },
+  "validation": {
+    "unity": "Tuanjie Unity 2022.3.62t6 via Unity MCP",
+    "actualWeaponAssetsVerified": 26,
+    "editMode": {
+      "jobId": "b7f3d37788fc45e3865c8c766918377c",
+      "summary": {
+        "total": 53,
+        "passed": 52,
+        "failed": 1,
+        "skipped": 0,
+        "durationSeconds": 33.0280787,
+        "resultState": "Failed(Child)"
+      },
+      "groups": [
+        "MapWeaponDetailViewTests",
+        "MapInventoryDetailViewTests",
+        "MapItemIconFitTests",
+        "MapInventoryForestTests",
+        "EncyclopediaTests",
+        "RunItemAcquisitionViewTests"
+      ],
+      "knownUnrelatedFailure": {
+        "test": "EncyclopediaTests.ShippedIndexUsesUniqueAssetIdentitiesAndCoversEachCategory",
+        "reason": "Existing shipped encyclopedia index order differs from the current asset scan at index 74. This test only compares catalog/identity data and does not invoke the inventory/detail UI.",
+        "expected": {
+          "guid": "287b85e512ed82c46af70b0b313c7818",
+          "asset": "Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/NewBud.asset"
+        },
+        "actual": {
+          "guid": "a2982bf583b2257468cdbc69a9a99734",
+          "asset": "Assets/Data/Enemies/Enemies/041 GhostofPrince/GhostOfPrince.asset"
+        },
+        "handling": "Recorded without changing unrelated catalog/content files."
+      }
+    },
+    "playMode": {
+      "jobId": "b5d43262439142b9b936221366137170",
+      "summary": {
+        "total": 9,
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "durationSeconds": 15.5153838,
+        "resultState": "Passed"
+      },
+      "groups": [
+        "MapWeaponDetailPlayModeTests",
+        "MapInventoryDetailPlayModeTests",
+        "MapInventoryForestPlayModeTests"
+      ]
+    },
+    "coverage": [
+      "All 26 actual Weapon_SO assets and each configured distinct skill, energy cost, die count, die category and range.",
+      "Two-die per-segment conditions and all-attacks-hit shield; required status thresholds and consume/keep policy.",
+      "Long mixed attack/defense dice rules, 90 configured effects, long names/narrative, null/duplicate pools, no-skill fallback and zero dice.",
+      "Normal inventory slot raycast, card disclosure, physical equipment-button raycast and original equipment action.",
+      "Paused wheel/drag scrolling, closing while paused, modal input lifecycle, reading offset preservation and equipment persistence in the authored rest scene.",
+      "2340x1080, 1920x1080, 1600x1200, 2400x1080 with asymmetric safe insets, and 1080x1920 with safe insets."
+    ],
+    "renderedPreviews": [
+      {
+        "size": [
+          2340,
+          1080
+        ],
+        "file": "outputs/agent-battle/map-ui-20261102/weapon-detail-remaster-grid.png"
+      },
+      {
+        "size": [
+          1600,
+          1200
+        ],
+        "file": "outputs/agent-battle/map-ui-20261102/weapon-detail-remaster-tablet.png"
+      },
+      {
+        "size": [
+          2400,
+          1080
+        ],
+        "safeArea": [
+          140,
+          24,
+          2210,
+          1032
+        ],
+        "file": "outputs/agent-battle/map-ui-20261102/weapon-detail-remaster-notched.png"
+      },
+      {
+        "size": [
+          1080,
+          1920
+        ],
+        "safeArea": [
+          30,
+          24,
+          1026,
+          1872
+        ],
+        "file": "outputs/agent-battle/map-ui-20261102/weapon-detail-remaster-portrait.png"
+      }
+    ],
+    "previewPolicy": "Previews and intermediate logs stay local; formal code, metadata, tests and this validation record are committed.",
+    "finalConsoleErrors": 0
+  }
+}

@@ -151,7 +151,7 @@ public sealed class MapInventoryDetailViewTests
     }
 
     [Test]
-    public void InGameRelicsAndWeaponsKeepOriginalWindowWhileBlueprintsUseLargeReadingArea()
+    public void RelicsKeepOriginalWindowWhileWeaponsAndBlueprintsUseLargerReadingAreas()
     {
         Relic_SO relic = ScriptableObject.CreateInstance<Relic_SO>();
         try
@@ -163,7 +163,8 @@ public sealed class MapInventoryDetailViewTests
             CraftingBlueprint_SO blueprint = AssetDatabase.FindAssets("t:CraftingBlueprint_SO", new[] { "Assets/Data/Scroll" })
                 .Select(g => AssetDatabase.LoadAssetAtPath<CraftingBlueprint_SO>(AssetDatabase.GUIDToAssetPath(g))).First(b => b.blueprintID == 202);
             view.Show(new RunWeaponState { weaponData = blueprint.targetWeapon, amount = 1 }); Layout();
-            Assert.AreEqual(new Vector2(1000, 560), ((RectTransform)view.transform).rect.size);
+            Assert.Greater(((RectTransform)view.transform).rect.width, 1480);
+            Assert.IsTrue(view.transform.Find("WeaponPresentation").gameObject.activeSelf);
             view.Show(new RunBlueprintState { blueprintData = blueprint, amount = 1 }); Layout();
             Assert.Greater(((RectTransform)view.transform).rect.width, 1200);
             Assert.Greater(Field<ScrollRect>("descriptionScroll").viewport.rect.height, 400);

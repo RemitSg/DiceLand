@@ -30,7 +30,7 @@ public partial class MapInventoryDetailView
     public RectTransform ModalRoot => modalRoot;
     public Image Backdrop => detailBackdrop;
     public bool IsVisible => modalRoot != null ? modalRoot.gameObject.activeSelf : gameObject.activeSelf;
-    private bool UsesClassicItemLayout => !encyclopediaEntry && (displayedItem is Relic_SO || displayedItem is Weapon_SO);
+    private bool UsesClassicItemLayout => !encyclopediaEntry && displayedItem is Relic_SO;
 
     /// <summary>Both inventory and battle settlement use this same runtime view.</summary>
     public static MapInventoryDetailView Create(RectTransform parent, string name)
@@ -146,12 +146,14 @@ public partial class MapInventoryDetailView
         ApplyFont(headingText, detailHeadingFont);
         ApplyFont(titleText, detailBodyFont);
         foreach (TMP_Text text in closeXButton.GetComponentsInChildren<TMP_Text>(true)) ApplyFont(text, detailBodyFont);
+        ApplyWeaponFonts();
         RefreshDescriptionLayout(false);
     }
 
     private void RefreshDescriptionLayout(bool reset)
     {
         if (modalRoot == null) return;
+        if (UsesWeaponLayout) { RefreshWeaponLayout(reset); return; }
         descriptionText.fontSize = MainMenuSettingsPersistence.DetailFontSize(DescriptionSize);
         relicAdditionalDescriptionText.fontSize = MainMenuSettingsPersistence.DetailFontSize(AdditionalDescriptionSize);
         bool action = actionButton.gameObject.activeSelf;
@@ -278,7 +280,14 @@ public partial class MapInventoryDetailView
         float parentHeight = modalRoot.rect.height > 1 ? modalRoot.rect.height : 1080;
         layoutCanvasSize = modalRoot.rect.size;
         float availableWidth = parentWidth * safeArea.width / w, availableHeight = parentHeight * safeArea.height / h;
-        if (UsesClassicItemLayout)
+        if (UsesWeaponLayout)
+        {
+            detailRect.sizeDelta = new Vector2(Mathf.Clamp(availableWidth - 140, 900, 1980),
+                Mathf.Clamp(availableHeight - 130, 800, 930));
+            detailScale = Mathf.Min(1, Mathf.Min((availableWidth - 48) / detailRect.sizeDelta.x,
+                (availableHeight - 100) / (detailRect.sizeDelta.y + 24)));
+        }
+        else if (UsesClassicItemLayout)
         {
             detailRect.sizeDelta = new Vector2(1000, 560);
             detailScale = Mathf.Min(1.2f, Mathf.Min((availableWidth - 64) / 1000, (availableHeight - 100) / 578));
