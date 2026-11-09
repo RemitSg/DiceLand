@@ -52,3 +52,4 @@ MonoBehaviour:
     eliteGroups: []
   bossGroups:
   - {fileID: 11400000, guid: a8df06d99102ea7408c19bf4a2c6312e, type: 2}
+  - {fileID: 11400000, guid: 5f7c2e81c73a06f4ca544f12623bd932, type: 2}

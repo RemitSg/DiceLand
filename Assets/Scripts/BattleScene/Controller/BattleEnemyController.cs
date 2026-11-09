@@ -60,6 +60,9 @@ public class BattleEnemyController : MonoBehaviour
     private static int aliveBleedDecayPreventerCount;
     private int pendingStageTransitionIndex = -1;
     private bool consumedHealthBasedStageTransition;
+    private int firstSkillSelectionRound = -1;
+    private EnemyData_SO pendingSacrificeBeneficiary;
+    private BattleStatus_SO pendingSacrificeStatus;
     private bool consumedRoundStartRetreat;
     private bool registeredAsBleedDecayPreventer;
     private int pendingNextAttackSkillPowerBonus;
@@ -259,6 +262,9 @@ public class BattleEnemyController : MonoBehaviour
         consumedConditionalSkillRules.Clear();
         pendingStageTransitionIndex = -1;
         consumedHealthBasedStageTransition = false;
+        firstSkillSelectionRound = -1;
+        pendingSacrificeBeneficiary = null;
+        pendingSacrificeStatus = null;
         consumedRoundStartRetreat = false;
         pendingNextAttackSkillPowerBonus = 0;
         activeAttackSkillPowerBonus = 0;
@@ -399,15 +405,23 @@ public class BattleEnemyController : MonoBehaviour
         }
 
         string roundPrefix = roundNumber > 0 ? $"[Round {roundNumber}] " : string.Empty;
+        if (firstSkillSelectionRound < 0 && roundNumber > 0)
+            firstSkillSelectionRound = roundNumber;
         EnsureSelectedSkillSlots();
         activeAttackSkillPowerBonus = 0;
         Dictionary<int, int> selectedRuleCounts = new Dictionary<int, int>();
+        Dictionary<EnemySkill_SO, int> selectedSkillCounts = new Dictionary<EnemySkill_SO, int>();
         List<int> consumedRuleIndicesThisRound = new List<int>();
 
         for (int slotIndex = 0; slotIndex < selectedSkillsPerButton.Count; slotIndex++)
         {
-            EnemySkill_SO slotSkill = ResolveRandomSkillForSlot(roundPrefix, roundNumber, slotIndex, selectedRuleCounts, consumedRuleIndicesThisRound);
+            EnemySkill_SO slotSkill = ResolveRandomSkillForSlot(roundPrefix, roundNumber, slotIndex, selectedRuleCounts, consumedRuleIndicesThisRound, selectedSkillCounts);
             selectedSkillsPerButton[slotIndex] = slotSkill;
+            if (slotSkill != null)
+            {
+                selectedSkillCounts.TryGetValue(slotSkill, out int count);
+                selectedSkillCounts[slotSkill] = count + 1;
+            }
         }
 
         for (int i = 0; i < consumedRuleIndicesThisRound.Count; i++)
@@ -636,6 +650,23 @@ public class BattleEnemyController : MonoBehaviour
         CurrentHP = 0;
         HealthChanged?.Invoke(this);
         Die();
+    }
+
+    internal void QueueBranchSacrifice(EnemyData_SO beneficiary, BattleStatus_SO rewardStatus)
+    {
+        if (IsDead || beneficiary == null || pendingSacrificeBeneficiary != null)
+            return;
+        pendingSacrificeBeneficiary = beneficiary;
+        pendingSacrificeStatus = rewardStatus;
+    }
+
+    internal bool TryConsumeBranchSacrifice(out EnemyData_SO beneficiary, out BattleStatus_SO rewardStatus)
+    {
+        beneficiary = pendingSacrificeBeneficiary;
+        rewardStatus = pendingSacrificeStatus;
+        pendingSacrificeBeneficiary = null;
+        pendingSacrificeStatus = null;
+        return !IsDead && beneficiary != null;
     }
 
     public bool TryApplyPendingCalamityDelayedDeath()
@@ -1087,6 +1118,10 @@ public class BattleEnemyController : MonoBehaviour
 
         PendingRoundStartSpeedBonus = 0;
         AppliedPendingStageTransitionThisRoundStart = false;
+        if (pendingSacrificeBeneficiary != null)
+            BattleWitheredCourtSkillService.ResolvePendingSacrifice(this, FindObjectsOfType<BattleEnemyController>(false));
+        if (IsDead)
+            return results;
         ApplyPendingStageTransitionIfNeeded();
         ResolvePendingStatusesAtRoundStart();
         if (statusEntries.Count == 0)
@@ -1274,14 +1309,16 @@ public class BattleEnemyController : MonoBehaviour
         int roundNumber,
         int slotIndex,
         Dictionary<int, int> selectedRuleCounts,
-        List<int> consumedRuleIndicesThisRound)
+        List<int> consumedRuleIndicesThisRound,
+        Dictionary<EnemySkill_SO, int> selectedSkillCounts)
     {
         EnemySkill_SO conditionalSkill = TrySelectConditionalSkill(
             roundPrefix,
             roundNumber,
             slotIndex,
             selectedRuleCounts,
-            consumedRuleIndicesThisRound);
+            consumedRuleIndicesThisRound,
+            selectedSkillCounts);
         if (conditionalSkill != null)
             return conditionalSkill;
 
@@ -1296,6 +1333,9 @@ public class BattleEnemyController : MonoBehaviour
         {
             EnemySkill_SO candidate = enemyData.skillPool[i];
             if (candidate == null || !candidate.IsUsableInEnemyStage(CurrentStageIndex))
+                continue;
+            if (candidate.maxUsesPerEnemyRound > 0 && selectedSkillCounts.TryGetValue(candidate, out int uses) &&
+                uses >= candidate.maxUsesPerEnemyRound)
                 continue;
 
             usableSkills.Add(candidate);
@@ -1326,7 +1366,9 @@ public class BattleEnemyController : MonoBehaviour
             return resultingHP;
 
         int thresholdHP = Mathf.CeilToInt(MaxHP * Mathf.Clamp01(enemyData.healthBasedTransitionThresholdNormalized));
-        thresholdHP = Mathf.Clamp(thresholdHP, 1, MaxHP);
+        if (enemyData.healthBasedTransitionStrictlyBelowThreshold)
+            thresholdHP--;
+        thresholdHP = Mathf.Clamp(thresholdHP, enemyData.healthBasedTransitionStrictlyBelowThreshold ? 0 : 1, MaxHP);
         bool crossedThreshold = previousHP > thresholdHP && resultingHP <= thresholdHP;
         bool alreadyBelowThreshold = previousHP <= thresholdHP && resultingHP > 0;
         if (!crossedThreshold && !alreadyBelowThreshold)
@@ -1412,7 +1454,8 @@ public class BattleEnemyController : MonoBehaviour
         int roundNumber,
         int slotIndex,
         Dictionary<int, int> selectedRuleCounts,
-        List<int> consumedRuleIndicesThisRound)
+        List<int> consumedRuleIndicesThisRound,
+        Dictionary<EnemySkill_SO, int> selectedSkillCounts)
     {
         if (enemyData == null || enemyData.conditionalSkillRules == null || enemyData.conditionalSkillRules.Count == 0)
             return null;
@@ -1427,6 +1470,9 @@ public class BattleEnemyController : MonoBehaviour
             if (rule.skill == null)
                 continue;
             if (!rule.skill.IsUsableInEnemyStage(CurrentStageIndex))
+                continue;
+            if (rule.skill.maxUsesPerEnemyRound > 0 && selectedSkillCounts.TryGetValue(rule.skill, out int uses) &&
+                uses >= rule.skill.maxUsesPerEnemyRound)
                 continue;
             if (rule.useOncePerBattle && consumedConditionalSkillRules.Contains(i))
                 continue;
@@ -1512,15 +1558,18 @@ public class BattleEnemyController : MonoBehaviour
                 float currentRatio = (float)CurrentHP / MaxHP;
                 return currentRatio <= Mathf.Clamp01(rule.healthThresholdNormalized);
             case EnemyData_SO.ConditionalSkillConditionType.RoundSequence:
+            case EnemyData_SO.ConditionalSkillConditionType.PersonalRoundSequence:
                 if (roundNumber <= 0)
                     return false;
 
+                int evaluatedRound = rule.conditionType == EnemyData_SO.ConditionalSkillConditionType.PersonalRoundSequence
+                    ? roundNumber - firstSkillSelectionRound + 1 : roundNumber;
                 int firstRound = Mathf.Max(1, rule.firstTriggerRound);
                 int repeatInterval = Mathf.Max(1, rule.repeatEveryNRounds);
-                if (roundNumber < firstRound)
+                if (evaluatedRound < firstRound)
                     return false;
 
-                return (roundNumber - firstRound) % repeatInterval == 0;
+                return (evaluatedRound - firstRound) % repeatInterval == 0;
             case EnemyData_SO.ConditionalSkillConditionType.AliveEnemyCountAtMost:
                 return CountAliveEnemiesOnBattlefield() <= Mathf.Max(1, rule.requiredAliveEnemyCount);
             case EnemyData_SO.ConditionalSkillConditionType.SelfHasStatus:

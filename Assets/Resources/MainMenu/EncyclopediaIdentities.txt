@@ -75,6 +75,8 @@ enemy:4002	6c6ecf6b5fab7f84f9dd1867e8902b55
 enemy:41	a2982bf583b2257468cdbc69a9a99734
 enemy:42	e7d14ea9edacd2540b45e15fee560727
 enemy:43	293df36a850452048a2fd6b9eab269cc
+enemy:enemy.withered_court.new_bud	287b85e512ed82c46af70b0b313c7818
+enemy:enemy.withered_court	6d9df9f8bace72d47b7e655cb72ea809
 loot:loot.slime_mucus	ea9793b0c90ae0c4f9dbaf13a832f375
 loot:1	1a247d2fcfd14c141bd79e8a82154b1f
 loot:2	f7d97cfbea961c84ebb552d194bd09f1

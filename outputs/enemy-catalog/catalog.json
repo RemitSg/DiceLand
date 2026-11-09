@@ -1,12 +1,28 @@
 {
   "summary": {
-    "enemy_assets": 50,
-    "unique_enemy_names": 49,
-    "related_unique_skills": 129,
-    "all_skill_assets": 215,
+    "enemy_assets": 52,
+    "unique_enemy_names": 51,
+    "related_unique_skills": 136,
+    "all_skill_assets": 222,
     "missing_references": [],
     "source": "Unity AssetDatabase + ScriptableObject YAML + existing BattleSkillInfoOverlay.BuildSkillDetail",
-    "timestamp": "2026-10-26T18:45:03.180361+08:00"
+    "timestamp": "2026-10-26T18:45:03.180361+08:00",
+    "latest_content_revision": {
+      "date": "2026-11-09",
+      "enemyNumbers": [
+        44,
+        4401
+      ],
+      "enemyIds": [
+        44,
+        4401
+      ],
+      "newEnemyAssets": 2,
+      "newRelatedSkills": 7,
+      "scope": "新增 044 枯枝王庭与召唤物 4401 新芽：完整核对实际资产、GUID、两阶段、被动、七个技能及 Boss 池投放；其他历史内容仍沿用原快照和已单列的增量修订。",
+      "validation": "MCP EditMode 24/24 通过；使用实际敌群执行 8 回合定向战斗检查，覆盖第 1/4/7 回合召唤、第二阶段、个人第四回合断枝与次回合献祭。非完整通关或难度平衡验证。"
+    },
+    "coverage": "以 2026-10-26 历史快照的 50 个敌人资产、129 个关联技能为基础，2026-11-09 完整增补 044 枯枝王庭与 4401 新芽的 2 个资产及 7 个技能，合计 52 个敌人资产、136 个关联技能。历史血孢子等未复核条目仍保留原快照，不代表全部内容已重新导出。"
   },
   "enemies": [
     {
@@ -34601,6 +34617,938 @@
         ],
         "conditionalSkillRules": []
       }
+    },
+    {
+      "guid": "6d9df9f8bace72d47b7e655cb72ea809",
+      "number": 44,
+      "enemy_id": 44,
+      "name": "枯枝王庭",
+      "path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/WitheredCourt.asset",
+      "hp": 60,
+      "stages": [
+        {
+          "number": 1,
+          "name": "第一阶段",
+          "speed": "2–6",
+          "slots": 2
+        },
+        {
+          "number": 2,
+          "name": "第二阶段",
+          "speed": "2–6",
+          "slots": 2
+        }
+      ],
+      "placements": [
+        "Boss池"
+      ],
+      "attributes": [
+        "毒"
+      ],
+      "special_references": [],
+      "passives": [
+        "落红无情：血量低于上限的50%时，进入第二阶段。",
+        "落地生根：每三回合召唤「新芽」。",
+        "枯萎：免疫中毒。"
+      ],
+      "description": "枯木仍戴着旧王冠，每一株新芽都是它尚未结束的统治。",
+      "skills": [
+        {
+          "guid": "afb863e8ea1d2a045a700d7b25f52931",
+          "name": "茂盛",
+          "path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/Flourish.asset",
+          "roles": [
+            "普通技能池"
+          ],
+          "stage_restriction": [
+            1
+          ],
+          "transform_stage": -1,
+          "ally_grant": false,
+          "detail": "茂盛\n技能：茂盛\n能耗：0\n骰子数：1\n第 1 攻击骰：3 ~ 5\n\n词条：\n每名敌人每回合最多使用 1 次。\n[使用时] 使场上所有存活的新芽在下回合开始时获得 1 层临时强壮。\n\n描述：\n枝叶舒展，将王庭的短暂生机分给新芽。",
+          "raw": {
+            "skillName": "茂盛",
+            "localizationKey": "skill.withered_court.flourish",
+            "mechanic": 5,
+            "mechanicEnemyData": {
+              "fileID": 11400000,
+              "guid": "287b85e512ed82c46af70b0b313c7818",
+              "type": 2
+            },
+            "mechanicStatusData": {
+              "fileID": 11400000,
+              "guid": "d7f98e43df6b46d7a67f2b97cb5d7ed2",
+              "type": 2
+            },
+            "maxUsesPerEnemyRound": 1,
+            "description": "枝叶舒展，将王庭的短暂生机分给新芽。",
+            "skillCategory": 0,
+            "energyCost": 0,
+            "requiredSelfStatusData": {
+              "fileID": 0
+            },
+            "requiredSelfStatusStacks": 0,
+            "keepRequiredSelfStatusAfterUse": false,
+            "transformEnemyToStageIndex": -1,
+            "allowedEnemyStages": [
+              1
+            ],
+            "targetPriorityMode": 0,
+            "targetPriorityStatusData": {
+              "fileID": 0
+            },
+            "targetPriorityStatusType": 0,
+            "targetPriorityRequiredStacks": 1,
+            "minPower": 3,
+            "maxPower": 5,
+            "diceCount": 1,
+            "dicePowerRanges": [
+              {
+                "minPower": 3,
+                "maxPower": 5
+              }
+            ],
+            "dicePresentationSettings": [],
+            "diceEffectSettings": [
+              {
+                "damageEffects": [],
+                "statusEffects": [],
+                "powerModifiers": [],
+                "statusBurstEffects": [],
+                "healingEffects": [],
+                "builtInEffects": [],
+                "rangeModifiers": [],
+                "statusStackOperationEffects": [],
+                "enemyStageTransitionEffects": [],
+                "summonEffects": []
+              }
+            ],
+            "diceSkillCategories": [
+              0
+            ],
+            "m_Name": "Flourish"
+          }
+        },
+        {
+          "guid": "417dc619263038b4ba178a4c422e18a5",
+          "name": "繁茂",
+          "path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/Lush.asset",
+          "roles": [
+            "普通技能池"
+          ],
+          "stage_restriction": [
+            2
+          ],
+          "transform_stage": -1,
+          "ally_grant": false,
+          "detail": "繁茂\n技能：繁茂\n能耗：0\n骰子数：1\n第 1 攻击骰：4 ~ 5\n\n词条：\n每名敌人每回合最多使用 1 次。\n[使用时] 使场上所有存活的新芽在下回合开始时获得 1 层强壮。\n\n描述：\n旧根中的生机流入新芽，扎下更深的脉络。",
+          "raw": {
+            "skillName": "繁茂",
+            "localizationKey": "skill.withered_court.lush",
+            "mechanic": 5,
+            "mechanicEnemyData": {
+              "fileID": 11400000,
+              "guid": "287b85e512ed82c46af70b0b313c7818",
+              "type": 2
+            },
+            "mechanicStatusData": {
+              "fileID": 11400000,
+              "guid": "876070f0ec664a02a8c175b8de80baf1",
+              "type": 2
+            },
+            "maxUsesPerEnemyRound": 1,
+            "description": "旧根中的生机流入新芽，扎下更深的脉络。",
+            "skillCategory": 0,
+            "energyCost": 0,
+            "requiredSelfStatusData": {
+              "fileID": 0
+            },
+            "requiredSelfStatusStacks": 0,
+            "keepRequiredSelfStatusAfterUse": false,
+            "transformEnemyToStageIndex": -1,
+            "allowedEnemyStages": [
+              2
+            ],
+            "targetPriorityMode": 0,
+            "targetPriorityStatusData": {
+              "fileID": 0
+            },
+            "targetPriorityStatusType": 0,
+            "targetPriorityRequiredStacks": 1,
+            "minPower": 4,
+            "maxPower": 5,
+            "diceCount": 1,
+            "dicePowerRanges": [
+              {
+                "minPower": 4,
+                "maxPower": 5
+              }
+            ],
+            "dicePresentationSettings": [],
+            "diceEffectSettings": [
+              {
+                "damageEffects": [],
+                "statusEffects": [],
+                "powerModifiers": [],
+                "statusBurstEffects": [],
+                "healingEffects": [],
+                "builtInEffects": [],
+                "rangeModifiers": [],
+                "statusStackOperationEffects": [],
+                "enemyStageTransitionEffects": [],
+                "summonEffects": []
+              }
+            ],
+            "diceSkillCategories": [
+              0
+            ],
+            "m_Name": "Lush"
+          }
+        },
+        {
+          "guid": "8607fa1ef90c2c54bac220ff778922b5",
+          "name": "分解",
+          "path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/Decomposition.asset",
+          "roles": [
+            "普通技能池"
+          ],
+          "stage_restriction": [
+            1,
+            2
+          ],
+          "transform_stage": -1,
+          "ally_grant": false,
+          "detail": "分解\n技能：分解\n能耗：0\n骰子数：2\n第 1 攻击骰：2 ~ 4\n第 2 攻击骰：3 ~ 4\n\n词条：\n第 1 攻击骰：[命中时] 为所有存活的新芽恢复相当于该次实际伤害量的生命，最高恢复至生命上限。\n第 2 攻击骰：[命中时] 为所有存活的新芽恢复相当于该次实际伤害量的生命，最高恢复至生命上限。\n\n描述：\n根须分解伤口中流失的生命，化为所有新芽的养分。",
+          "raw": {
+            "skillName": "分解",
+            "localizationKey": "skill.withered_court.decomposition",
+            "mechanic": 6,
+            "mechanicEnemyData": {
+              "fileID": 11400000,
+              "guid": "287b85e512ed82c46af70b0b313c7818",
+              "type": 2
+            },
+            "mechanicStatusData": {
+              "fileID": 0
+            },
+            "maxUsesPerEnemyRound": 0,
+            "description": "根须分解伤口中流失的生命，化为所有新芽的养分。",
+            "skillCategory": 0,
+            "energyCost": 0,
+            "requiredSelfStatusData": {
+              "fileID": 0
+            },
+            "requiredSelfStatusStacks": 0,
+            "keepRequiredSelfStatusAfterUse": false,
+            "transformEnemyToStageIndex": -1,
+            "allowedEnemyStages": [
+              1,
+              2
+            ],
+            "targetPriorityMode": 0,
+            "targetPriorityStatusData": {
+              "fileID": 0
+            },
+            "targetPriorityStatusType": 0,
+            "targetPriorityRequiredStacks": 1,
+            "minPower": 2,
+            "maxPower": 4,
+            "diceCount": 2,
+            "dicePowerRanges": [
+              {
+                "minPower": 2,
+                "maxPower": 4
+              },
+              {
+                "minPower": 3,
+                "maxPower": 4
+              }
+            ],
+            "dicePresentationSettings": [],
+            "diceEffectSettings": [
+              {
+                "damageEffects": [],
+                "statusEffects": [],
+                "powerModifiers": [],
+                "statusBurstEffects": [],
+                "healingEffects": [],
+                "builtInEffects": [],
+                "rangeModifiers": [],
+                "statusStackOperationEffects": [],
+                "enemyStageTransitionEffects": [],
+                "summonEffects": []
+              },
+              {
+                "damageEffects": [],
+                "statusEffects": [],
+                "powerModifiers": [],
+                "statusBurstEffects": [],
+                "healingEffects": [],
+                "builtInEffects": [],
+                "rangeModifiers": [],
+                "statusStackOperationEffects": [],
+                "enemyStageTransitionEffects": [],
+                "summonEffects": []
+              }
+            ],
+            "diceSkillCategories": [
+              0,
+              0
+            ],
+            "m_Name": "Decomposition"
+          }
+        },
+        {
+          "guid": "6b8271a9084061348af22d69a1b4065b",
+          "name": "生长",
+          "path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/Growth.asset",
+          "roles": [
+            "条件技能"
+          ],
+          "stage_restriction": [
+            1
+          ],
+          "transform_stage": -1,
+          "ally_grant": false,
+          "detail": "生长\n技能：生长\n能耗：0\n骰子数：1\n第 1 防御骰：3 ~ 3\n\n词条：\n第 1 防御骰词条：[ 使用时 ] 召唤 2 个 新芽\n场上最多同时存在 4 个存活的新芽。\n\n描述：\n旧根翻开泥土，两株新芽循着王命生长。",
+          "raw": {
+            "skillName": "生长",
+            "localizationKey": "skill.withered_court.growth",
+            "mechanic": 0,
+            "mechanicEnemyData": {
+              "fileID": 0
+            },
+            "mechanicStatusData": {
+              "fileID": 0
+            },
+            "maxUsesPerEnemyRound": 0,
+            "description": "旧根翻开泥土，两株新芽循着王命生长。",
+            "skillCategory": 1,
+            "energyCost": 0,
+            "requiredSelfStatusData": {
+              "fileID": 0
+            },
+            "requiredSelfStatusStacks": 0,
+            "keepRequiredSelfStatusAfterUse": false,
+            "transformEnemyToStageIndex": -1,
+            "allowedEnemyStages": [
+              1
+            ],
+            "targetPriorityMode": 0,
+            "targetPriorityStatusData": {
+              "fileID": 0
+            },
+            "targetPriorityStatusType": 0,
+            "targetPriorityRequiredStacks": 1,
+            "minPower": 3,
+            "maxPower": 3,
+            "diceCount": 1,
+            "dicePowerRanges": [
+              {
+                "minPower": 3,
+                "maxPower": 3
+              }
+            ],
+            "dicePresentationSettings": [],
+            "diceEffectSettings": [
+              {
+                "damageEffects": [],
+                "statusEffects": [],
+                "powerModifiers": [],
+                "statusBurstEffects": [],
+                "healingEffects": [],
+                "builtInEffects": [],
+                "rangeModifiers": [],
+                "statusStackOperationEffects": [],
+                "enemyStageTransitionEffects": [],
+                "summonEffects": [
+                  {
+                    "effectName": "",
+                    "trigger": 3,
+                    "enemyData": {
+                      "fileID": 11400000,
+                      "guid": "287b85e512ed82c46af70b0b313c7818",
+                      "type": 2
+                    },
+                    "summonCount": 2,
+                    "maxAliveSummons": 4
+                  }
+                ]
+              }
+            ],
+            "diceSkillCategories": [
+              1
+            ],
+            "m_Name": "Growth"
+          }
+        },
+        {
+          "guid": "253e40966af7598409c94c86993d3b3b",
+          "name": "野长",
+          "path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/WildGrowth.asset",
+          "roles": [
+            "条件技能"
+          ],
+          "stage_restriction": [
+            2
+          ],
+          "transform_stage": -1,
+          "ally_grant": false,
+          "detail": "野长\n技能：野长\n能耗：0\n骰子数：1\n第 1 防御骰：3 ~ 3\n\n词条：\n第 1 防御骰词条：[ 使用时 ] 召唤 4 个 新芽\n场上最多同时存在 4 个存活的新芽。\n\n描述：\n枯枝裂开，四株新芽从根隙争相涌出。",
+          "raw": {
+            "skillName": "野长",
+            "localizationKey": "skill.withered_court.wildgrowth",
+            "mechanic": 0,
+            "mechanicEnemyData": {
+              "fileID": 0
+            },
+            "mechanicStatusData": {
+              "fileID": 0
+            },
+            "maxUsesPerEnemyRound": 0,
+            "description": "枯枝裂开，四株新芽从根隙争相涌出。",
+            "skillCategory": 1,
+            "energyCost": 0,
+            "requiredSelfStatusData": {
+              "fileID": 0
+            },
+            "requiredSelfStatusStacks": 0,
+            "keepRequiredSelfStatusAfterUse": false,
+            "transformEnemyToStageIndex": -1,
+            "allowedEnemyStages": [
+              2
+            ],
+            "targetPriorityMode": 0,
+            "targetPriorityStatusData": {
+              "fileID": 0
+            },
+            "targetPriorityStatusType": 0,
+            "targetPriorityRequiredStacks": 1,
+            "minPower": 3,
+            "maxPower": 3,
+            "diceCount": 1,
+            "dicePowerRanges": [
+              {
+                "minPower": 3,
+                "maxPower": 3
+              }
+            ],
+            "dicePresentationSettings": [],
+            "diceEffectSettings": [
+              {
+                "damageEffects": [],
+                "statusEffects": [],
+                "powerModifiers": [],
+                "statusBurstEffects": [],
+                "healingEffects": [],
+                "builtInEffects": [],
+                "rangeModifiers": [],
+                "statusStackOperationEffects": [],
+                "enemyStageTransitionEffects": [],
+                "summonEffects": [
+                  {
+                    "effectName": "",
+                    "trigger": 3,
+                    "enemyData": {
+                      "fileID": 11400000,
+                      "guid": "287b85e512ed82c46af70b0b313c7818",
+                      "type": 2
+                    },
+                    "summonCount": 4,
+                    "maxAliveSummons": 4
+                  }
+                ]
+              }
+            ],
+            "diceSkillCategories": [
+              1
+            ],
+            "m_Name": "WildGrowth"
+          }
+        }
+      ],
+      "raw": {
+        "enemyID": 44,
+        "enemyName": "枯枝王庭",
+        "localizationKey": "enemy.withered_court",
+        "baseHP": 60,
+        "damageReductionPercent": 0.0,
+        "minSpeed": 2,
+        "maxSpeed": 6,
+        "baseSpeedButtonCount": 2,
+        "enemySprite": {
+          "fileID": 21300000,
+          "guid": "47f0b98d466b74946a40e4349cdbb444",
+          "type": 3
+        },
+        "stageSprites": [
+          {
+            "stageName": "第一阶段",
+            "stageSprite": {
+              "fileID": 21300000,
+              "guid": "47f0b98d466b74946a40e4349cdbb444",
+              "type": 3
+            },
+            "minSpeedOverride": 2,
+            "maxSpeedOverride": 6,
+            "speedButtonCountOverride": 2
+          },
+          {
+            "stageName": "第二阶段",
+            "stageSprite": {
+              "fileID": 21300000,
+              "guid": "47f0b98d466b74946a40e4349cdbb444",
+              "type": 3
+            },
+            "minSpeedOverride": 2,
+            "maxSpeedOverride": 6,
+            "speedButtonCountOverride": 2
+          }
+        ],
+        "enableHealthBasedStageTransition": true,
+        "healthBasedTransitionThresholdNormalized": 0.5,
+        "healthBasedTransitionStrictlyBelowThreshold": true,
+        "healthBasedTransitionTargetStageIndex": 1,
+        "lockHPAtHealthTransitionThreshold": false,
+        "statusStageTransitionRules": [],
+        "statusImmunityRules": [
+          {
+            "statusData": {
+              "fileID": 11400000,
+              "guid": "5c2d83ddce914792abd7211bb94635f6",
+              "type": 2
+            },
+            "allowApplicationWhileImmune": false
+          }
+        ],
+        "battleStartGrantedAllySkills": [],
+        "battleStartStatusGains": [],
+        "onSpecificEnemyDeathStatusGains": [],
+        "repeatRoundStartStatusGains": [],
+        "roundStartRetreatRule": {
+          "enabled": false,
+          "triggerRound": 1,
+          "settlementLootTables": []
+        },
+        "preventAllyBleedDecayOnHitWhileAlive": false,
+        "surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp": false,
+        "transformToEnemyDataWhenStatusMissing": {
+          "fileID": 0
+        },
+        "transformMissingStatusData": {
+          "fileID": 0
+        },
+        "copyOpponentLastRoundSpeedDiceCount": false,
+        "copyOpponentLastRoundSkills": false,
+        "reflectionSkillTemplate": {
+          "fileID": 0
+        },
+        "enemyDescription": "枯木仍戴着旧王冠，每一株新芽都是它尚未结束的统治。",
+        "passiveDescriptions": [
+          {
+            "passiveName": "落红无情",
+            "displayColorType": 0,
+            "description": "血量低于上限的50%时，进入第二阶段。"
+          },
+          {
+            "passiveName": "落地生根",
+            "displayColorType": 1,
+            "description": "每三回合召唤「新芽」。"
+          },
+          {
+            "passiveName": "枯萎",
+            "displayColorType": 1,
+            "description": "免疫中毒。"
+          }
+        ],
+        "enemyVisualScale": 1.0,
+        "enemyVisualOffset": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "speedButtonOffset": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "skillPool": [
+          {
+            "fileID": 11400000,
+            "guid": "afb863e8ea1d2a045a700d7b25f52931",
+            "type": 2
+          },
+          {
+            "fileID": 11400000,
+            "guid": "417dc619263038b4ba178a4c422e18a5",
+            "type": 2
+          },
+          {
+            "fileID": 11400000,
+            "guid": "8607fa1ef90c2c54bac220ff778922b5",
+            "type": 2
+          }
+        ],
+        "conditionalSkillRules": [
+          {
+            "ruleName": "落地生根·生长",
+            "skill": {
+              "fileID": 11400000,
+              "guid": "6b8271a9084061348af22d69a1b4065b",
+              "type": 2
+            },
+            "conditionType": 1,
+            "healthThresholdNormalized": 0.0,
+            "firstTriggerRound": 1,
+            "repeatEveryNRounds": 3,
+            "priority": 100,
+            "maxSlotsPerRound": 1,
+            "useOncePerBattle": false,
+            "requiredAliveEnemyCount": 1,
+            "conditionStatusData": {
+              "fileID": 0
+            }
+          },
+          {
+            "ruleName": "落地生根·野长",
+            "skill": {
+              "fileID": 11400000,
+              "guid": "253e40966af7598409c94c86993d3b3b",
+              "type": 2
+            },
+            "conditionType": 1,
+            "healthThresholdNormalized": 0.0,
+            "firstTriggerRound": 1,
+            "repeatEveryNRounds": 3,
+            "priority": 100,
+            "maxSlotsPerRound": 1,
+            "useOncePerBattle": false,
+            "requiredAliveEnemyCount": 1,
+            "conditionStatusData": {
+              "fileID": 0
+            }
+          }
+        ],
+        "m_Name": "WitheredCourt"
+      },
+      "catalog_revision": "2026-11-09",
+      "granted_to_player": [],
+      "groups": [
+        {
+          "name": "枯枝王庭",
+          "path": "Assets/Data/Enemies/EnemyGroup/Boss/WitheredCourt.asset",
+          "guid": "5f7c2e81c73a06f4ca544f12623bd932",
+          "placement": [
+            "Boss池"
+          ]
+        }
+      ],
+      "attribute_sources": [
+        "毒属性来自敌群 Assets/Data/Enemies/EnemyGroup/Boss/WitheredCourt.asset（GUID 5f7c2e81c73a06f4ca544f12623bd932），召唤单位继承该敌群的属性。"
+      ],
+      "configured_mechanics": [
+        "落红无情（RED）：生命严格低于上限 50% 时，排队在下回合开始切换第二阶段；60 上限时 30 生命不触发，29 或更低触发。无阈值锁血；排队后治疗不取消切换，死亡不会进入第二阶段。",
+        "第二阶段沿用生命上限 60、速度 2–6、速度槽 2 与同一立绘；生长替换为野长，茂盛替换为繁茂，分解继续可用。",
+        "落地生根（ORANGE）：通过条件技能在战斗全局第 1、4、7……回合固定占用一个速度槽，第一阶段使用生长、第二阶段使用野长，每回合最多一个召唤技能；阶段切换不重置回合周期。被动不会另行重复召唤。",
+        "生长使用时召唤 2 个、野长使用时召唤 4 个实际 enemyID=4401 的新芽；按 NewBud.asset 精确引用统计存活数量，上限为 4，死亡新芽不占容量。新召唤物从下一回合开始行动。",
+        "茂盛／繁茂各仅限对应阶段，每名敌人每回合最多选取并使用 1 次；施放时对当时存活的新芽排队，下回合开始各获得 1 层临时强壮／强壮。之后才召唤的新芽不补发；已死亡新芽不获益。",
+        "分解的两颗攻击骰分别在命中时，为每个存活新芽恢复该次实际造成的伤害量，逐颗结算、不平分，最高恢复至各自生命上限；不治疗王庭、不复活新芽。",
+        "枯萎（ORANGE）：通过 Poison.asset（GUID 5c2d83ddce914792abd7211bb94635f6）状态免疫规则阻止中毒施加，allowApplicationWhileImmune=false；不授予新芽相同免疫。",
+        "投放：EnemyRoster 的 bossGroups 新增敌群枯枝王庭（groupID=44，saveId=enemy_group.withered_court），初始仅王庭本体；当前项目两个难度配置均标为 Easy，共用该 Boss 池。未单独配置事件、副本、遗物生成、危险区域、音乐覆盖或独立掉落表。",
+        "不向玩家授予技能；技能资产能耗均为 0，敌人自身使用时沿用不消耗玩家能量的通用规则。"
+      ]
+    },
+    {
+      "guid": "287b85e512ed82c46af70b0b313c7818",
+      "number": 4401,
+      "enemy_id": 4401,
+      "name": "新芽",
+      "path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/NewBud.asset",
+      "hp": 10,
+      "stages": [
+        {
+          "number": 1,
+          "name": "阶段 1",
+          "speed": "1–3",
+          "slots": 1
+        }
+      ],
+      "placements": [],
+      "attributes": [
+        "毒"
+      ],
+      "special_references": [],
+      "passives": [
+        "剪枝：自身存活的第四回合使用特殊技能。"
+      ],
+      "description": "从王庭的旧根中萌发，最终仍要归还给旧根。",
+      "skills": [
+        {
+          "guid": "9d3caf0543ed62a4a91b315d998b8f25",
+          "name": "成长",
+          "path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/Budding.asset",
+          "roles": [
+            "普通技能池"
+          ],
+          "stage_restriction": [
+            1
+          ],
+          "transform_stage": -1,
+          "ally_grant": false,
+          "detail": "成长\n技能：成长\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n描述：\n柔软的新枝开始长出锋利的边缘。",
+          "raw": {
+            "skillName": "成长",
+            "localizationKey": "skill.withered_court.budding",
+            "mechanic": 0,
+            "mechanicEnemyData": {
+              "fileID": 0
+            },
+            "mechanicStatusData": {
+              "fileID": 0
+            },
+            "maxUsesPerEnemyRound": 0,
+            "description": "柔软的新枝开始长出锋利的边缘。",
+            "skillCategory": 0,
+            "energyCost": 0,
+            "requiredSelfStatusData": {
+              "fileID": 0
+            },
+            "requiredSelfStatusStacks": 0,
+            "keepRequiredSelfStatusAfterUse": false,
+            "transformEnemyToStageIndex": -1,
+            "allowedEnemyStages": [
+              1
+            ],
+            "targetPriorityMode": 0,
+            "targetPriorityStatusData": {
+              "fileID": 0
+            },
+            "targetPriorityStatusType": 0,
+            "targetPriorityRequiredStacks": 1,
+            "minPower": 2,
+            "maxPower": 4,
+            "diceCount": 1,
+            "dicePowerRanges": [
+              {
+                "minPower": 2,
+                "maxPower": 4
+              }
+            ],
+            "dicePresentationSettings": [],
+            "diceEffectSettings": [
+              {
+                "damageEffects": [],
+                "statusEffects": [],
+                "powerModifiers": [],
+                "statusBurstEffects": [],
+                "healingEffects": [],
+                "builtInEffects": [],
+                "rangeModifiers": [],
+                "statusStackOperationEffects": [],
+                "enemyStageTransitionEffects": [],
+                "summonEffects": []
+              }
+            ],
+            "diceSkillCategories": [
+              0
+            ],
+            "m_Name": "Budding"
+          }
+        },
+        {
+          "guid": "c678d1c8fd4a1d64b9eb3dc179489caf",
+          "name": "断枝",
+          "path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/SeverBranch.asset",
+          "roles": [
+            "条件技能"
+          ],
+          "stage_restriction": [
+            1
+          ],
+          "transform_stage": -1,
+          "ally_grant": false,
+          "detail": "断枝\n技能：断枝\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n[使用时] 下回合开始时死亡，为存活的枯枝王庭恢复死亡前剩余生命值，并使其获得 1 层临时强壮。提前被击杀时献祭失效。\n\n描述：\n枝条主动折断，将最后的生机送回王庭。",
+          "raw": {
+            "skillName": "断枝",
+            "localizationKey": "skill.withered_court.sever_branch",
+            "mechanic": 7,
+            "mechanicEnemyData": {
+              "fileID": 11400000,
+              "guid": "6d9df9f8bace72d47b7e655cb72ea809",
+              "type": 2
+            },
+            "mechanicStatusData": {
+              "fileID": 11400000,
+              "guid": "d7f98e43df6b46d7a67f2b97cb5d7ed2",
+              "type": 2
+            },
+            "maxUsesPerEnemyRound": 0,
+            "description": "枝条主动折断，将最后的生机送回王庭。",
+            "skillCategory": 0,
+            "energyCost": 0,
+            "requiredSelfStatusData": {
+              "fileID": 0
+            },
+            "requiredSelfStatusStacks": 0,
+            "keepRequiredSelfStatusAfterUse": false,
+            "transformEnemyToStageIndex": -1,
+            "allowedEnemyStages": [
+              1
+            ],
+            "targetPriorityMode": 0,
+            "targetPriorityStatusData": {
+              "fileID": 0
+            },
+            "targetPriorityStatusType": 0,
+            "targetPriorityRequiredStacks": 1,
+            "minPower": 2,
+            "maxPower": 4,
+            "diceCount": 1,
+            "dicePowerRanges": [
+              {
+                "minPower": 2,
+                "maxPower": 4
+              }
+            ],
+            "dicePresentationSettings": [],
+            "diceEffectSettings": [
+              {
+                "damageEffects": [],
+                "statusEffects": [],
+                "powerModifiers": [],
+                "statusBurstEffects": [],
+                "healingEffects": [],
+                "builtInEffects": [],
+                "rangeModifiers": [],
+                "statusStackOperationEffects": [],
+                "enemyStageTransitionEffects": [],
+                "summonEffects": []
+              }
+            ],
+            "diceSkillCategories": [
+              0
+            ],
+            "m_Name": "SeverBranch"
+          }
+        }
+      ],
+      "raw": {
+        "enemyID": 4401,
+        "enemyName": "新芽",
+        "localizationKey": "enemy.withered_court.new_bud",
+        "baseHP": 10,
+        "damageReductionPercent": 0.0,
+        "minSpeed": 1,
+        "maxSpeed": 3,
+        "baseSpeedButtonCount": 1,
+        "enemySprite": {
+          "fileID": 21300000,
+          "guid": "db727b271228fe9449f97dd28f9c6d39",
+          "type": 3
+        },
+        "stageSprites": [],
+        "enableHealthBasedStageTransition": false,
+        "healthBasedTransitionThresholdNormalized": 0.20000000298023224,
+        "healthBasedTransitionStrictlyBelowThreshold": false,
+        "healthBasedTransitionTargetStageIndex": 1,
+        "lockHPAtHealthTransitionThreshold": false,
+        "statusStageTransitionRules": [],
+        "statusImmunityRules": [],
+        "battleStartGrantedAllySkills": [],
+        "battleStartStatusGains": [],
+        "onSpecificEnemyDeathStatusGains": [],
+        "repeatRoundStartStatusGains": [],
+        "roundStartRetreatRule": {
+          "enabled": false,
+          "triggerRound": 1,
+          "settlementLootTables": []
+        },
+        "preventAllyBleedDecayOnHitWhileAlive": false,
+        "surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp": false,
+        "transformToEnemyDataWhenStatusMissing": {
+          "fileID": 0
+        },
+        "transformMissingStatusData": {
+          "fileID": 0
+        },
+        "copyOpponentLastRoundSpeedDiceCount": false,
+        "copyOpponentLastRoundSkills": false,
+        "reflectionSkillTemplate": {
+          "fileID": 0
+        },
+        "enemyDescription": "从王庭的旧根中萌发，最终仍要归还给旧根。",
+        "passiveDescriptions": [
+          {
+            "passiveName": "剪枝",
+            "displayColorType": 0,
+            "description": "自身存活的第四回合使用特殊技能。"
+          }
+        ],
+        "enemyVisualScale": 1.0,
+        "enemyVisualOffset": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "speedButtonOffset": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "skillPool": [
+          {
+            "fileID": 11400000,
+            "guid": "9d3caf0543ed62a4a91b315d998b8f25",
+            "type": 2
+          }
+        ],
+        "conditionalSkillRules": [
+          {
+            "ruleName": "剪枝",
+            "skill": {
+              "fileID": 11400000,
+              "guid": "c678d1c8fd4a1d64b9eb3dc179489caf",
+              "type": 2
+            },
+            "conditionType": 4,
+            "healthThresholdNormalized": 0.0,
+            "firstTriggerRound": 4,
+            "repeatEveryNRounds": 1,
+            "priority": 100,
+            "maxSlotsPerRound": 1,
+            "useOncePerBattle": true,
+            "requiredAliveEnemyCount": 1,
+            "conditionStatusData": {
+              "fileID": 0
+            }
+          }
+        ],
+        "m_Name": "NewBud"
+      },
+      "catalog_revision": "2026-11-09",
+      "granted_to_player": [],
+      "groups": [],
+      "attribute_sources": [
+        "由枯枝王庭的生长／野长召唤，继承毒属性敌群 Assets/Data/Enemies/EnemyGroup/Boss/WitheredCourt.asset 的属性；自身没有独立属性字段。"
+      ],
+      "summoned_by": [
+        {
+          "enemy_guid": "6d9df9f8bace72d47b7e655cb72ea809",
+          "enemy_id": 44,
+          "skill_names": [
+            "生长",
+            "野长"
+          ],
+          "group_path": "Assets/Data/Enemies/EnemyGroup/Boss/WitheredCourt.asset"
+        }
+      ],
+      "configured_mechanics": [
+        "剪枝（RED）：以首次参与回合选技的回合为自身存活第 1 回合，第 4 回合固定选用断枝，优先级 100，最多占用一个速度槽且每场战斗仅选用一次；其他回合使用成长。规则类型为 PersonalRoundSequence，不使用战斗全局第 4 回合。",
+        "召唤后的首个可行动回合计作第 1 回合；例如全局第 1 回合召唤，则第 2 回合首次行动、第 5 回合使用断枝、第 6 回合开始献祭。",
+        "断枝使用时排队：下回合开始、状态回合结算前，读取此时剩余生命后死亡。为所有存活且资产精确匹配 WitheredCourt.asset 的枯枝王庭恢复该生命值，并各施加 1 层临时强壮；治疗不超过生命上限。",
+        "献祭前被击杀的新芽不返还生命或强壮；献祭不复活已死亡王庭。没有存活王庭时仍会按时死亡。状态加成只结算一次。",
+        "实际 enemyID=4401；4001 已被其他敌人使用，未覆盖该旧资产。仅由 044 的生长／野长生成，不是 Boss 敌群初始成员，不独立加入随机遭遇池或事件／副本。",
+        "由毒属性敌群生成，继承毒属性；不继承王庭的中毒免疫，未配置额外被动免疫、阶段或独立掉落表。",
+        "不向玩家授予技能；成长与断枝的技能资产能耗为 0。"
+      ]
     },
     {
       "guid": "0aec55315c6c6da43ad4a1355f241bad",

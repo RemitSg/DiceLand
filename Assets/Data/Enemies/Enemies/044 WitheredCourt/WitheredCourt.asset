@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: WitheredCourt
+  m_EditorClassIdentifier:
+  enemyID: 44
+  enemyName: "\u67AF\u679D\u738B\u5EAD"
+  localizationKey: enemy.withered_court
+  baseHP: 60
+  damageReductionPercent: 0
+  minSpeed: 2
+  maxSpeed: 6
+  baseSpeedButtonCount: 2
+  enemySprite: {fileID: 21300000, guid: 47f0b98d466b74946a40e4349cdbb444, type: 3}
+  stageSprites:
+  - stageName: "\u7B2C\u4E00\u9636\u6BB5"
+    stageSprite: {fileID: 21300000, guid: 47f0b98d466b74946a40e4349cdbb444, type: 3}
+    minSpeedOverride: 2
+    maxSpeedOverride: 6
+    speedButtonCountOverride: 2
+  - stageName: "\u7B2C\u4E8C\u9636\u6BB5"
+    stageSprite: {fileID: 21300000, guid: 47f0b98d466b74946a40e4349cdbb444, type: 3}
+    minSpeedOverride: 2
+    maxSpeedOverride: 6
+    speedButtonCountOverride: 2
+  enableHealthBasedStageTransition: 1
+  healthBasedTransitionThresholdNormalized: 0.5
+  healthBasedTransitionStrictlyBelowThreshold: 1
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules:
+  - statusData: {fileID: 11400000, guid: 5c2d83ddce914792abd7211bb94635f6, type: 2}
+    allowApplicationWhileImmune: 0
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains: []
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 0
+    settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  transformToEnemyDataWhenStatusMissing: {fileID: 0}
+  transformMissingStatusData: {fileID: 0}
+  copyOpponentLastRoundSpeedDiceCount: 0
+  copyOpponentLastRoundSkills: 0
+  reflectionSkillTemplate: {fileID: 0}
+  enemyDescription: "\u67AF\u6728\u4ECD\u6234\u7740\u65E7\u738B\u51A0\uFF0C\u6BCF\u4E00\u682A\u65B0\u82BD\u90FD\u662F\u5B83\u5C1A\u672A\u7ED3\u675F\u7684\u7EDF\u6CBB\u3002"
+  passiveDescriptions:
+  - passiveName: "\u843D\u7EA2\u65E0\u60C5"
+    displayColorType: 0
+    description: "\u8840\u91CF\u4F4E\u4E8E\u4E0A\u9650\u768450%\u65F6\uFF0C\u8FDB\u5165\u7B2C\u4E8C\u9636\u6BB5\u3002"
+  - passiveName: "\u843D\u5730\u751F\u6839"
+    displayColorType: 1
+    description: "\u6BCF\u4E09\u56DE\u5408\u53EC\u5524\u300C\u65B0\u82BD\u300D\u3002"
+  - passiveName: "\u67AF\u840E"
+    displayColorType: 1
+    description: "\u514D\u75AB\u4E2D\u6BD2\u3002"
+  enemyVisualScale: 1
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: afb863e8ea1d2a045a700d7b25f52931, type: 2}
+  - {fileID: 11400000, guid: 417dc619263038b4ba178a4c422e18a5, type: 2}
+  - {fileID: 11400000, guid: 8607fa1ef90c2c54bac220ff778922b5, type: 2}
+  conditionalSkillRules:
+  - ruleName: "\u843D\u5730\u751F\u6839\xB7\u751F\u957F"
+    skill: {fileID: 11400000, guid: 6b8271a9084061348af22d69a1b4065b, type: 2}
+    conditionType: 1
+    healthThresholdNormalized: 0
+    firstTriggerRound: 1
+    repeatEveryNRounds: 3
+    priority: 100
+    maxSlotsPerRound: 1
+    useOncePerBattle: 0
+    requiredAliveEnemyCount: 0
+    conditionStatusData: {fileID: 0}
+  - ruleName: "\u843D\u5730\u751F\u6839\xB7\u91CE\u957F"
+    skill: {fileID: 11400000, guid: 253e40966af7598409c94c86993d3b3b, type: 2}
+    conditionType: 1
+    healthThresholdNormalized: 0
+    firstTriggerRound: 1
+    repeatEveryNRounds: 3
+    priority: 100
+    maxSlotsPerRound: 1
+    useOncePerBattle: 0
+    requiredAliveEnemyCount: 0
+    conditionStatusData: {fileID: 0}

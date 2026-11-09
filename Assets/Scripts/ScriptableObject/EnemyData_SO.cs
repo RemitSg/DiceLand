@@ -34,7 +34,8 @@ public class EnemyData_SO : ScriptableObject
         HealthBelowPercent = 0,
         RoundSequence = 1,
         AliveEnemyCountAtMost = 2,
-        SelfHasStatus = 3
+        SelfHasStatus = 3,
+        PersonalRoundSequence = 4
     }
 
     public enum StageStatusTargetMode
@@ -157,6 +158,7 @@ public class EnemyData_SO : ScriptableObject
     [Range(0f, 1f)]
     [Tooltip("Trigger threshold based on remaining HP ratio.")]
     public float healthBasedTransitionThresholdNormalized = 0.2f;
+    public bool healthBasedTransitionStrictlyBelowThreshold;
     [Tooltip("Which stage index should be entered after the threshold is reached.")]
     public int healthBasedTransitionTargetStageIndex = 1;
     [Tooltip("When enabled, damage that crosses the threshold will stop at the threshold HP until the next-round transition happens.")]

@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: WildGrowth
+  m_EditorClassIdentifier:
+  skillName: "\u91CE\u957F"
+  localizationKey: skill.withered_court.wildgrowth
+  mechanic: 0
+  mechanicEnemyData: {fileID: 0}
+  mechanicStatusData: {fileID: 0}
+  maxUsesPerEnemyRound: 0
+  description: "\u67AF\u679D\u88C2\u5F00\uFF0C\u56DB\u682A\u65B0\u82BD\u4ECE\u6839\u9699\u4E89\u76F8\u6D8C\u51FA\u3002"
+  skillCategory: 1
+  energyCost: 0
+  requiredSelfStatusData: {fileID: 0}
+  requiredSelfStatusStacks: 0
+  keepRequiredSelfStatusAfterUse: 0
+  transformEnemyToStageIndex: -1
+  allowedEnemyStages: 02000000
+  targetPriorityMode: 0
+  targetPriorityStatusData: {fileID: 0}
+  targetPriorityStatusType: 0
+  targetPriorityRequiredStacks: 1
+  minPower: 3
+  maxPower: 3
+  diceCount: 1
+  dicePowerRanges:
+  - minPower: 3
+    maxPower: 3
+  dicePresentationSettings: []
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects:
+    - effectName:
+      trigger: 3
+      enemyData: {fileID: 11400000, guid: 287b85e512ed82c46af70b0b313c7818, type: 2}
+      summonCount: 4
+      maxAliveSummons: 4
+  diceSkillCategories: 01000000

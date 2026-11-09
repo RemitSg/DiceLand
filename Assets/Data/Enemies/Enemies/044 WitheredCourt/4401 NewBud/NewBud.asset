@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f9a7cafcec2b04b98f8307bada87d0, type: 3}
+  m_Name: NewBud
+  m_EditorClassIdentifier:
+  enemyID: 4401
+  enemyName: "\u65B0\u82BD"
+  localizationKey: enemy.withered_court.new_bud
+  baseHP: 10
+  damageReductionPercent: 0
+  minSpeed: 1
+  maxSpeed: 3
+  baseSpeedButtonCount: 1
+  enemySprite: {fileID: 21300000, guid: db727b271228fe9449f97dd28f9c6d39, type: 3}
+  stageSprites: []
+  enableHealthBasedStageTransition: 0
+  healthBasedTransitionThresholdNormalized: 0.2
+  healthBasedTransitionStrictlyBelowThreshold: 0
+  healthBasedTransitionTargetStageIndex: 1
+  lockHPAtHealthTransitionThreshold: 0
+  statusStageTransitionRules: []
+  statusImmunityRules: []
+  battleStartGrantedAllySkills: []
+  battleStartStatusGains: []
+  onSpecificEnemyDeathStatusGains: []
+  repeatRoundStartStatusGains: []
+  roundStartRetreatRule:
+    enabled: 0
+    triggerRound: 0
+    settlementLootTables: []
+  preventAllyBleedDecayOnHitWhileAlive: 0
+  surviveAtOneHpUntilAllLivingAlliesAtOrBelowOneHp: 0
+  transformToEnemyDataWhenStatusMissing: {fileID: 0}
+  transformMissingStatusData: {fileID: 0}
+  copyOpponentLastRoundSpeedDiceCount: 0
+  copyOpponentLastRoundSkills: 0
+  reflectionSkillTemplate: {fileID: 0}
+  enemyDescription: "\u4ECE\u738B\u5EAD\u7684\u65E7\u6839\u4E2D\u840C\u53D1\uFF0C\u6700\u7EC8\u4ECD\u8981\u5F52\u8FD8\u7ED9\u65E7\u6839\u3002"
+  passiveDescriptions:
+  - passiveName: "\u526A\u679D"
+    displayColorType: 0
+    description: "\u81EA\u8EAB\u5B58\u6D3B\u7684\u7B2C\u56DB\u56DE\u5408\u4F7F\u7528\u7279\u6B8A\u6280\u80FD\u3002"
+  enemyVisualScale: 1
+  enemyVisualOffset: {x: 0, y: 0, z: 0}
+  speedButtonOffset: {x: 0, y: 0}
+  skillPool:
+  - {fileID: 11400000, guid: 9d3caf0543ed62a4a91b315d998b8f25, type: 2}
+  conditionalSkillRules:
+  - ruleName: "\u526A\u679D"
+    skill: {fileID: 11400000, guid: c678d1c8fd4a1d64b9eb3dc179489caf, type: 2}
+    conditionType: 4
+    healthThresholdNormalized: 0
+    firstTriggerRound: 4
+    repeatEveryNRounds: 1
+    priority: 100
+    maxSlotsPerRound: 1
+    useOncePerBattle: 1
+    requiredAliveEnemyCount: 0
+    conditionStatusData: {fileID: 0}

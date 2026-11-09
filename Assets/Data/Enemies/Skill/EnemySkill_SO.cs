@@ -7,7 +7,10 @@ public enum BattleSkillMechanic
     SpiderPregnancy = 1,
     SpiderKinFeast = 2,
     BlendIntoShadow = 3,
-    Gamble = 4
+    Gamble = 4,
+    WitheredCourtFlourish = 5,
+    WitheredCourtDecomposition = 6,
+    BudBranchSacrifice = 7
 }
 
 [CreateAssetMenu(fileName = "New EnemySkill", menuName = "Enemies/EnemySkill")]
@@ -640,6 +643,10 @@ public class EnemySkill_SO : ScriptableObject
         [Min(1)]
         [Tooltip("How many copies should be summoned.")]
         public int summonCount;
+
+        [Min(0)]
+        [Tooltip("Maximum living copies of this enemy on the battlefield. Zero keeps summons unlimited.")]
+        public int maxAliveSummons;
     }
 
     [System.Serializable]
@@ -744,6 +751,9 @@ public class EnemySkill_SO : ScriptableObject
     public string skillName = "Basic Attack";
     public string localizationKey;
     public BattleSkillMechanic mechanic;
+    public EnemyData_SO mechanicEnemyData;
+    public BattleStatus_SO mechanicStatusData;
+    [Min(0)] public int maxUsesPerEnemyRound;
     public string LocalizedName => GameText.Content(localizationKey, "name", skillName);
     public string LocalizedDescription => GameText.Content(localizationKey, "description", description);
 

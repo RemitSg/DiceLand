@@ -17,6 +17,22 @@ public static class BattleSummonEffectService
         return Mathf.Max(1, summonCount);
     }
 
+    public static int ResolveSummonCount(EnemySkill_SO.SummonEnemyEffectEntry effect, IReadOnlyList<BattleEnemyController> enemies)
+    {
+        int requested = NormalizeSummonCount(effect.summonCount);
+        if (effect.maxAliveSummons <= 0)
+            return requested;
+
+        int livingCopies = 0;
+        for (int i = 0; enemies != null && i < enemies.Count; i++)
+        {
+            BattleEnemyController enemy = enemies[i];
+            if (enemy != null && !enemy.IsDead && enemy.enemyData == effect.enemyData)
+                livingCopies++;
+        }
+        return Mathf.Min(requested, Mathf.Max(0, effect.maxAliveSummons - livingCopies));
+    }
+
     public static string BuildLabel(EnemySkill_SO.SummonEnemyEffectEntry effect, int effectIndex)
     {
         if (!string.IsNullOrWhiteSpace(effect.effectName))

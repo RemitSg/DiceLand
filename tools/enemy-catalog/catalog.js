@@ -369,8 +369,9 @@ function renderPrint() {
 
 $('enemy-total').textContent = enemies.length;
 $('skill-total').textContent = data.summary.related_unique_skills;
-$('snapshot-date').textContent = `${data.date} 数据快照`;
-$('coverage').textContent = `收录 ${data.date} 快照中的 ${enemies.length} 个敌人资产与 ${data.summary.related_unique_skills} 个关联技能。${data.date === '2026-10-26' ? '血孢子沿用此快照中的数值。' : ''}`;
+const contentRevision = data.summary.latest_content_revision;
+$('snapshot-date').textContent = contentRevision ? `${contentRevision.date} 增量更新` : `${data.date} 数据快照`;
+$('coverage').textContent = data.summary.coverage || `收录 ${data.date} 快照中的 ${enemies.length} 个敌人资产与 ${data.summary.related_unique_skills} 个关联技能。${data.date === '2026-10-26' ? '血孢子沿用此快照中的数值。' : ''}`;
 for (const attribute of attributes) $('attribute').add(new Option(attribute, attribute));
 $('categories').innerHTML = categories.map(category => {
   const count = category.key === 'all' ? enemies.length : enemies.filter(enemy => enemy.categoryKeys.includes(category.key)).length;

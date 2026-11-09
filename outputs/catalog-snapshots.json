@@ -3,14 +3,30 @@
   "enemyCatalog": {
     "directory": "outputs/enemy-catalog",
     "snapshotDate": "2026-10-26",
-    "enemyAssets": 50,
-    "relatedUniqueSkills": 129,
+    "enemyAssets": 52,
+    "relatedUniqueSkills": 136,
     "deliverables": [
       "敌人与技能完整图鉴.html",
       "敌人与技能完整清单.txt",
       "catalog.json",
       "chat-index.json"
-    ]
+    ],
+    "latestContentRevision": {
+      "date": "2026-11-09",
+      "enemyNumbers": [
+        44,
+        4401
+      ],
+      "enemyIds": [
+        44,
+        4401
+      ],
+      "newEnemyAssets": 2,
+      "newRelatedSkills": 7,
+      "scope": "新增 044 枯枝王庭与召唤物 4401 新芽：完整核对实际资产、GUID、两阶段、被动、七个技能及 Boss 池投放；其他历史内容仍沿用原快照和已单列的增量修订。",
+      "validation": "MCP EditMode 24/24 通过；使用实际敌群执行 8 回合定向战斗检查，覆盖第 1/4/7 回合召唤、第二阶段、个人第四回合断枝与次回合献祭。非完整通关或难度平衡验证。"
+    },
+    "coverage": "以 2026-10-26 历史快照的 50 个敌人资产、129 个关联技能为基础，2026-11-09 完整增补 044 枯枝王庭与 4401 新芽的 2 个资产及 7 个技能，合计 52 个敌人资产、136 个关联技能。历史血孢子等未复核条目仍保留原快照，不代表全部内容已重新导出。"
   },
   "relicCatalog": {
     "directory": "outputs/relic-catalog",
@@ -77,5 +93,5 @@
       "validation": "Reproduced lost unlock after save round-trip while the relic remained owned. Scripts compiled. All seven NUnit regression cases passed when directly invoked in the editor through MCP, covering battle return, legacy saves, unlock persistence after consumption, zero ownership and invalid effects. Catalog and workbook checks passed."
     }
   },
-  "note": "The enemy catalog remains the 2026-10-26 historical snapshot and does not include the merged Blood Spore stat update. The relic catalog was refreshed on 2026-10-29; consult its coverage note and Assets/Data for current gameplay values."
+  "note": "The enemy catalog remains the 2026-10-26 historical snapshot and does not include the merged Blood Spore stat update. The relic catalog was refreshed on 2026-10-29; consult its coverage note and Assets/Data for current gameplay values. 2026-11-09 完整增补敌人 044/4401 及其七个技能，当前敌人目录合计 52 个资产、136 个关联技能，其余内容仍以历史快照及各增量说明为准。"
 }

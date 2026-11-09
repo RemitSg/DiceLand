@@ -413,6 +413,7 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
     {
         List<string> effectLines = new List<string>();
         string diceEffectLabel = BuildDiceEffectLabel(skill, diceIndex);
+        effectLines.AddRange(BattleWitheredCourtSkillService.Describe(skill, diceIndex));
         EnemySkill_SO.DiceEffectSettings effectSettings = skill.GetDiceEffectSettings(diceIndex);
         HashSet<int> mergedStatusEffectIndices = new HashSet<int>();
         HashSet<int> mergedPowerModifierIndices = new HashSet<int>();
@@ -1595,6 +1596,8 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
             string countLabel = BuildColoredToken(BattleSummonEffectService.NormalizeSummonCount(effect.summonCount).ToString(), valueHighlightColor);
             string enemyLabel = BuildColoredToken(GetSummonEnemyLabel(effect, effectIndex), targetHighlightColor);
             effectLines.Add(GameText.Format("battle.skill.rules.summon", "{diceEffectLabel}：{triggerLabel} 召唤 {countLabel} 个 {enemyLabel}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("countLabel", countLabel), ("enemyLabel", enemyLabel)));
+            if (effect.maxAliveSummons > 0)
+                effectLines.Add($"场上最多同时存在 {effect.maxAliveSummons} 个存活的{effect.enemyData.LocalizedName}。");
         }
     }
 

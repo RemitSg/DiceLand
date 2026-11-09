@@ -11,9 +11,21 @@ node tools/enemy-catalog/build-catalog.mjs
 node tools/enemy-catalog/check-catalog.mjs
 ```
 
-生成器读取正式 `outputs/enemy-catalog/catalog.json` 和 `outputs/catalog-snapshots.json`，以同一份数据生成 HTML。Sprite 路径来自团结 AssetDatabase 按快照引用的实际 GUID 与 fileID 核对，路径登记在 `portraits.json`。46 个引用均为完整单图 Sprite，生成时裁去透明留白、缩小并内嵌 WebP。更新快照的 Sprite 引用时，也应核对这份路径表。
+生成器读取正式 `outputs/enemy-catalog/catalog.json` 和 `outputs/catalog-snapshots.json`，以同一份数据生成 HTML。Sprite 路径来自团结 AssetDatabase 按快照引用的实际 GUID 与 fileID 核对，路径登记在 `portraits.json`。48 个引用均为完整单图 Sprite，生成时裁去透明留白、缩小并内嵌 WebP。更新快照的 Sprite 引用时，也应核对这份路径表。
 
 生成需要 Node.js 和 Sharp。检查需要 Playwright 和 Chromium 系浏览器，默认使用本机 Microsoft Edge，可用 `BROWSER_EXECUTABLE` 指定路径。两个脚本可复用 `tools/relic-catalog/` 现有依赖。查看已生成的 HTML 只需要浏览器。
+
+## 2026-11-09 内容增补
+
+新增 **044 枯枝王庭（enemyID=44）** 与 **4401 新芽（enemyID=4401）**，包括七个技能的完整配置、被动名称与颜色、两阶段、延迟强化、召唤上限、个人第四回合断枝及 Boss 池引用。新芽仅在战斗中召唤，不作为敌群初始成员。正式 JSON、摘要索引、完整清单、离线 HTML 与 `outputs/catalog-snapshots.json` 同步为 **52 个敌人资产、136 个关联技能**。
+
+基础快照日期仍为 **2026-10-26**，页面单列最新内容增补的日期与覆盖范围；其他历史条目未在本次完整重导出，血孢子等已知历史缺项继续保留。游戏内图鉴通过 `EncyclopediaCatalogBuilder.Rebuild()` 加入两个新敌人。
+
+MCP EditMode **24/24** 通过，覆盖实际资产、阶段阈值、周期选技、限次、召唤容量、延迟状态、逐次命中治疗、断枝与免疫。实际战斗流程运行 **8 回合定向检查**，验证第 1/4/7 回合召唤、次回合转阶段、新芽第四个可行动回合断枝与次回合返还剩余生命。此检查未验证正常通关难度和平衡。
+
+重新生成后的 Edge 离线页面验证 **195/195** 通过，覆盖全部 52 个敌人详情与 136 个关联技能，包含筛选、检索、排序与移动布局；远程请求与页面脚本异常均为 0。
+
+立绘由内置 ImageGen 生成透明 PNG，提示词保存在 `image-prompts/044-withered-court.txt` 与 `image-prompts/4401-new-bud.txt`，正式源图和 Unity Sprite 元数据位于 `Assets/Data/Enemies/Enemies/044 WitheredCourt/`。
 
 ## 2026-11-05 页面验证
 

@@ -4490,6 +4490,8 @@ public partial class BattleButton : MonoBehaviour
             ApplyBloodSpiderKinFeastEffects(attacker);
             ApplyWanderingPhantomBlendIntoShadowEffects(attacker);
         }
+        BattleWitheredCourtSkillService.Apply(attacker, attacker != null ? attacker.SelectedSkill : null,
+            trigger, dealtDamage, GetLivingEnemies(), BattleLog);
     }
 
     private void ApplyAllyStatusEffectsOnly(BattleAllyController attacker, BattleEnemyController currentTarget, int diceIndex, EnemySkill_SO.DiceEffectTrigger trigger, bool conditionalOnly)
@@ -5547,7 +5549,7 @@ public partial class BattleButton : MonoBehaviour
             if (!BattleSummonEffectService.ShouldProcess(effect, trigger))
                 continue;
 
-            int summonCount = BattleSummonEffectService.NormalizeSummonCount(effect.summonCount);
+            int summonCount = BattleSummonEffectService.ResolveSummonCount(effect, GetLivingEnemies());
             int summoned = 0;
             for (int summonIndex = 0; summonIndex < summonCount; summonIndex++)
             {

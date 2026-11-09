@@ -244,6 +244,12 @@ MonoBehaviour:
   - id: 293df36a850452048a2fd6b9eab269cc
     asset: {fileID: 11400000, guid: 293df36a850452048a2fd6b9eab269cc, type: 2}
     enemyGroup: 9
+  - id: 287b85e512ed82c46af70b0b313c7818
+    asset: {fileID: 11400000, guid: 287b85e512ed82c46af70b0b313c7818, type: 2}
+    enemyGroup: 9
+  - id: 6d9df9f8bace72d47b7e655cb72ea809
+    asset: {fileID: 11400000, guid: 6d9df9f8bace72d47b7e655cb72ea809, type: 2}
+    enemyGroup: 8
   - id: ea9793b0c90ae0c4f9dbaf13a832f375
     asset: {fileID: 11400000, guid: ea9793b0c90ae0c4f9dbaf13a832f375, type: 2}
     enemyGroup: 9

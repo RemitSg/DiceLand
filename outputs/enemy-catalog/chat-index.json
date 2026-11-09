@@ -1204,6 +1204,61 @@
     "granted_to_player": []
   },
   {
+    "number": 44,
+    "id": 44,
+    "name": "枯枝王庭",
+    "hp": 60,
+    "speed": "2–6",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "第一阶段",
+        "speed": "2–6",
+        "slots": 2
+      },
+      {
+        "number": 2,
+        "name": "第二阶段",
+        "speed": "2–6",
+        "slots": 2
+      }
+    ],
+    "placement": [
+      "Boss池"
+    ],
+    "skills": [
+      "茂盛",
+      "繁茂",
+      "分解",
+      "生长〔条件〕",
+      "野长〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
+    "number": 4401,
+    "id": 4401,
+    "name": "新芽",
+    "hp": 10,
+    "speed": "1–3",
+    "slots": 1,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "1–3",
+        "slots": 1
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "成长",
+      "断枝〔条件〕"
+    ],
+    "granted_to_player": []
+  },
+  {
     "number": 9000,
     "id": 9000,
     "name": "断线傀儡",
