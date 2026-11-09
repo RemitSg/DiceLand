@@ -186,7 +186,7 @@ public sealed class MainMenuForestView : MonoBehaviour
 
     private void RefreshWordmark()
     {
-        bool showImage = GameText.LanguageCode == GameText.Chinese && logo.texture != null;
+        bool showImage = logo.texture != null;
         logo.enabled = showImage;
         logoWordmark.enabled = !showImage;
         logoWordmark.text = GameText.Get("ui.game_name", "骰掷大陆");

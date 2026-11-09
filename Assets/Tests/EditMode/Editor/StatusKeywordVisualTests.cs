@@ -48,6 +48,10 @@ public sealed class StatusKeywordVisualTests
     public void EveryEnglishStatusNameUsesTheSameKeywordAndSpriteAsChinese()
     {
         var english = AssetDatabase.LoadAssetAtPath<UnityEngine.Localization.Tables.StringTable>("Assets/Localization/Tables/DiceLand_en.asset");
+        var go = new GameObject("English status colours", typeof(RectTransform)); go.transform.SetParent(host.transform, false);
+        var text = go.AddComponent<TextMeshProUGUI>(); text.font = font; text.fontSize = 32;
+        text.rectTransform.sizeDelta = new Vector2(800, 160);
+        ResourceKeywordText.Attach(text);
         foreach (string guid in AssetDatabase.FindAssets("t:BattleStatus_SO", new[] { "Assets/Data" }))
         {
             var status = AssetDatabase.LoadAssetAtPath<BattleStatus_SO>(AssetDatabase.GUIDToAssetPath(guid));
@@ -61,6 +65,11 @@ public sealed class StatusKeywordVisualTests
             Assert.AreEqual(1, Regex.Matches(markup, "<sprite ").Count, name);
             StringAssert.Contains("DL_Status_" + status.IconSprite.name, markup);
             Assert.AreEqual(markup, ResourceKeywordText.Format(markup), name);
+            text.text = name;
+            text.ForceMeshUpdate(true, true);
+            Color32 expected = ResourceKeywordText.ColorFor(status.DisplayName, Color.magenta);
+            Assert.IsTrue(text.textInfo.characterInfo.Take(text.textInfo.characterCount)
+                .Where(c => c.isVisible && c.elementType == TMP_TextElementType.Character).All(c => c.color.Equals(expected)), name);
         }
     }
 

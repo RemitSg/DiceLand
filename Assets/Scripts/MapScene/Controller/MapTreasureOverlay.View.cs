@@ -106,7 +106,9 @@ public partial class MapTreasureOverlay
         crest.sprite = art != null ? art.header : MapForestArt.Get("Treasure"); crest.preserveAspect = true; crest.raycastTarget = false;
         titleText = ForestText(panel, "Title", (panelSize.x - 560) * 0.5f, 24, 560, 91, 72, ForestGold, string.Empty, true);
         titleText.alignment = TextAlignmentOptions.Midline;
-        titleText.enableAutoSizing = true; titleText.fontSizeMin = 36; titleText.fontSizeMax = 72;
+        titleText.enableAutoSizing = true; titleText.fontSizeMin = 24; titleText.fontSizeMax = 72;
+        titleText.characterSpacing = 0;
+        titleText.margin = new Vector4(48, 0, 48, 0);
         subtitleText = ForestText(panel, "Subtitle", 100, 139, panelSize.x - 200, 42, 30, ForestGold, string.Empty);
         subtitleText.alignment = TextAlignmentOptions.Center; subtitleText.enableWordWrapping = true;
         cardRoot = Box(panel, "CardRoot", 60, 175, panelSize.x - 120, 592);
@@ -295,7 +297,7 @@ public partial class MapTreasureOverlay
     private static string CompactRelicTitle(string source)
     {
         if (string.IsNullOrWhiteSpace(source)) return GameText.Get("ui.map_treasure.relic_reward", "遗物馈赠");
-        int separator = source.IndexOfAny(new[] { ':', '：', '\n', '\r' });
+        int separator = source.IndexOfAny(new[] { ':', '：', '—', '–', '\n', '\r' });
         return separator > 0 ? source.Substring(0, separator).Trim() : source;
     }
 
@@ -343,7 +345,8 @@ public partial class MapTreasureOverlay
         TextMeshProUGUI result = CreateText(parent, name, new Vector2(x, -y), new Vector2(width, height), size, color, text, keyword);
         if (name == "Title" || name == "ChoiceTitle" || name == "Category") result.textPreprocessor = null;
         if (name == "Title" || name == "ChoiceTitle") result.fontStyle = FontStyles.Bold;
-        if (color == ParchmentInk) result.overrideColorTags = true;
+        if (color == ParchmentInk && result.textPreprocessor != null)
+            ResourceKeywordText.Attach(result, lightBackground: true);
         return result;
     }
 

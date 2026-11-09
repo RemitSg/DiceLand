@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -136,6 +137,10 @@ public partial class MapMerchantOverlay
         MapMerchantFrameGraphic metaFrame = card.metaBadge.gameObject.AddComponent<MapMerchantFrameGraphic>();
         metaFrame.style = MapMerchantFrameGraphic.Style.Badge; metaFrame.raycastTarget = false;
         card.meta = Text(rect, "Meta", 24, Muted, GetGoodsTypeLabel(offer.itemType) + " · " + ResolveOfferRarityLabel(offer));
+        card.meta.enableWordWrapping = false;
+        card.meta.enableAutoSizing = true;
+        card.meta.fontSizeMin = 16;
+        card.meta.fontSizeMax = 24;
         card.soldOutBadge = Rect(rect, "SoldOutBadge");
         MapMerchantFrameGraphic soldOutFrame = card.soldOutBadge.gameObject.AddComponent<MapMerchantFrameGraphic>();
         soldOutFrame.style = MapMerchantFrameGraphic.Style.Badge; soldOutFrame.raycastTarget = false;
@@ -187,18 +192,21 @@ public partial class MapMerchantOverlay
             for (int column = 0; column < 2 && i + column < cards.Count; column++)
             {
                 OfferCard card = cards[i + column];
-                float nameHeight = Preferred(card.name, cardWidth - 194);
-                float metaHeight = Preferred(card.meta, cardWidth - 192);
-                float priceHeight = Preferred(card.price, cardWidth - 176);
+                float textWidth = cardWidth - 162;
+                float nameWidth = textWidth - 16; // Leave the upper-right selection mark clear.
+                FitNameWords(card.name, nameWidth, 30);
+                float nameHeight = Preferred(card.name, nameWidth);
+                float metaHeight = 34;
+                float priceHeight = Preferred(card.price, textWidth);
                 rowHeight = Mathf.Max(rowHeight, 58 + nameHeight + metaHeight + priceHeight);
-                Place(card.iconWell.rectTransform, 14, 14, 132, 164);
-                Place(card.icon.rectTransform, 22, 28, 116, 136);
-                Place(card.name.rectTransform, 154, 16, cardWidth - 194, nameHeight + 2);
-                float badgeWidth = Mathf.Min(cardWidth - 176, Mathf.Max(128, card.meta.GetPreferredValues().x + 20));
-                Place(card.metaBadge, 152, 24 + nameHeight, badgeWidth, metaHeight + 8);
-                Place(card.meta.rectTransform, 160, 27 + nameHeight, badgeWidth - 16, metaHeight + 2);
-                Place(card.soldOutBadge, 152, 40 + nameHeight + metaHeight, cardWidth - 176, priceHeight + 6);
-                Place(card.price.rectTransform, 154, 42 + nameHeight + metaHeight, cardWidth - 176, priceHeight + 4);
+                Place(card.iconWell.rectTransform, 14, 14, 116, 164);
+                Place(card.icon.rectTransform, 22, 28, 100, 136);
+                Place(card.name.rectTransform, 138, 16, nameWidth, nameHeight + 2);
+                float badgeWidth = textWidth + 8;
+                Place(card.metaBadge, 136, 24 + nameHeight, badgeWidth, metaHeight + 8);
+                Place(card.meta.rectTransform, 144, 27 + nameHeight, badgeWidth - 16, metaHeight + 2);
+                Place(card.soldOutBadge, 136, 40 + nameHeight + metaHeight, textWidth + 8, priceHeight + 6);
+                Place(card.price.rectTransform, 138, 42 + nameHeight + metaHeight, textWidth, priceHeight + 4);
             }
             for (int column = 0; column < 2 && i + column < cards.Count; column++)
                 Place((RectTransform)cards[i + column].button.transform, column * (cardWidth + 16), rowsHeight, cardWidth, rowHeight);
@@ -222,6 +230,7 @@ public partial class MapMerchantOverlay
         descriptionText.fontSize = MainMenuSettingsPersistence.DetailFontSize(bodyFontSize);
         flavorText.fontSize = MainMenuSettingsPersistence.DetailFontSize(FlavorSize);
         float width = Mathf.Max(40, detailViewport.rect.width - 6);
+        FitNameWords(goodsNameText, width - 204, 38);
         float nameHeight = Preferred(goodsNameText, width - 204), metaHeight = Preferred(metaText, width - 222);
         Place(detailIconWell, 0, 0, 178, 198);
         Place(iconImage.rectTransform, 10, 12, 158, 174);
@@ -232,9 +241,13 @@ public partial class MapMerchantOverlay
         Place(detailMetaBadge, 204, nameHeight + 22, badgeWidth, metaHeight + 12);
         Place(metaText.rectTransform, 218, nameHeight + 27, badgeWidth - 28, metaHeight + 4);
         float top = Mathf.Max(198, nameHeight + metaHeight + 40) + 30;
-        Place(effectLabel.rectTransform, 0, top, 148, 42);
-        Place(descriptionRule, 156, top + 17, Mathf.Max(20, width - 156), 12);
-        top += 54;
+        float headingWidth = Mathf.Min(width, Mathf.Max(148, effectLabel.GetPreferredValues().x + 8));
+        float headingHeight = Mathf.Max(42, Preferred(effectLabel, headingWidth) + 4);
+        Place(effectLabel.rectTransform, 0, top, headingWidth, headingHeight);
+        bool hasRule = width - headingWidth > 40;
+        descriptionRule.gameObject.SetActive(hasRule);
+        if (hasRule) Place(descriptionRule, headingWidth + 8, top + 17, width - headingWidth - 8, 12);
+        top += headingHeight + 12;
         top = Flow(descriptionText, top, width, 18);
         bool flavor = !string.IsNullOrWhiteSpace(flavorText.text);
         flavorRule.gameObject.SetActive(flavor);
@@ -256,6 +269,18 @@ public partial class MapMerchantOverlay
     }
 
     private static float Preferred(TMP_Text text, float width) => text.GetPreferredValues(Mathf.Max(40, width), 0).y;
+
+    private static void FitNameWords(TMP_Text text, float width, float size)
+    {
+        // TMP otherwise falls back to splitting an English word between characters.
+        // Keep the normal multiline layout, fitting only the longest complete word.
+        text.fontSize = size;
+        float longest = 0;
+        foreach (Match word in Regex.Matches(text.text, @"[A-Za-z]+(?:['’\-][A-Za-z]+)*"))
+            longest = Mathf.Max(longest, text.GetPreferredValues(word.Value, Mathf.Infinity, 0).x);
+        if (longest > width - 4)
+            text.fontSize = size * Mathf.Max(1, width - 4) / longest;
+    }
 
     private void ApplyFonts()
     {

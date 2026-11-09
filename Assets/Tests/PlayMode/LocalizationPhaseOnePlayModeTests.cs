@@ -88,10 +88,18 @@ public sealed class LocalizationPhaseOnePlayModeTests
         Component menu = Find("MainMenuSceneController");
         object forest = Get(menu, "forestMenu");
         object settings = Get(menu, "settingsOverlay");
+        RawImage logo = (RawImage)Get(forest, "logo");
+        Texture titleArt = logo.texture;
+        Assert.IsNotNull(titleArt);
         yield return ChangeLanguage(forest, settings, 1, "en");
+        Assert.IsTrue(logo.enabled, "The English wordmark artwork is shared by both languages.");
+        Assert.AreSame(titleArt, logo.texture);
+        Assert.IsFalse(((Text)Get(forest, "logoWordmark")).enabled);
         Assert.AreEqual("en", Get(Call(settingsStore, "Load"), "languageCode"));
         Assert.AreEqual("New Game", MenuButton(forest, "NewGame").transform.Find("Label").GetComponent<Text>().text);
         yield return ChangeLanguage(forest, settings, 0, "zh-Hans");
+        Assert.IsTrue(logo.enabled);
+        Assert.AreSame(titleArt, logo.texture);
         Assert.AreEqual("新游戏", MenuButton(forest, "NewGame").transform.Find("Label").GetComponent<Text>().text);
         yield return ChangeLanguage(forest, settings, 1, "en");
 

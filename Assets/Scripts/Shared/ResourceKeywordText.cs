@@ -44,22 +44,25 @@ public static partial class ResourceKeywordText
         return fallback;
     }
 
-    public static void Attach(TMP_Text text, bool includeIcons = true)
+    public static void Attach(TMP_Text text, bool includeIcons = true, bool lightBackground = false)
     {
         if (text == null) return;
         // This HUD already has its own icons, sizes and resource colours.
         for (Transform parent = text.transform; parent != null; parent = parent.parent)
             if (parent.name == "TopLeftPanel") return;
         if (text.textPreprocessor is Preprocessor current)
+        {
             current.includeIcons = includeIcons;
+            current.lightBackground = lightBackground;
+        }
         else
-            text.textPreprocessor = new Preprocessor(text.textPreprocessor, includeIcons);
+            text.textPreprocessor = new Preprocessor(text.textPreprocessor, includeIcons, lightBackground);
         text.richText = true;
         if (includeIcons) text.spriteAsset = WithResourceSprites(text.spriteAsset);
         text.SetAllDirty();
     }
 
-    public static string Format(string source, bool includeIcons = true)
+    public static string Format(string source, bool includeIcons = true, bool lightBackground = false)
     {
         if (!ContainsKeyword(source)) return source;
         StringBuilder output = new StringBuilder(source.Length + 96);
@@ -84,7 +87,7 @@ public static partial class ResourceKeywordText
             bool matched = false;
             if (noParseDepth == 0 && resourceLinkDepth == 0 && TryReadInlineKeyword(source, i, out Keyword inline, out int labelStart, out int labelEnd))
             {
-                AppendKeyword(output, inline, source, labelStart, labelEnd - labelStart, includeIcons);
+                AppendKeyword(output, inline, source, labelStart, labelEnd - labelStart, includeIcons, lightBackground);
                 i = labelEnd + 2;
                 continue;
             }
@@ -94,7 +97,7 @@ public static partial class ResourceKeywordText
                     Keyword keyword = Keywords[word];
                     string value = keyword.Word;
                     if (!MatchesWord(source, i, word)) continue;
-                    AppendKeyword(output, keyword, source, i, value.Length, includeIcons);
+                    AppendKeyword(output, keyword, source, i, value.Length, includeIcons, lightBackground);
                     i += value.Length;
                     matched = true;
                     break;
@@ -142,12 +145,20 @@ public static partial class ResourceKeywordText
         return Array.Find(Keywords, word => word.IconName == iconName);
     }
 
-    private static void AppendKeyword(StringBuilder output, Keyword keyword, string source, int start, int length, bool includeIcons)
+    private static void AppendKeyword(StringBuilder output, Keyword keyword, string source, int start, int length, bool includeIcons, bool lightBackground)
     {
-        output.Append("<nobr><link=\"dl-resource-").Append(keyword.IconName).Append("\"><color=#").Append(keyword.Color).Append('>');
+        output.Append("<nobr><link=\"dl-resource-").Append(keyword.IconName).Append("\"><color=#").Append(lightBackground ? InkColor(keyword.Color) : keyword.Color).Append('>');
         if (includeIcons && (!keyword.Status || StatusIcon(keyword.Source) != null))
             output.Append("<sprite name=\"").Append(keyword.IconName).Append("\" tint=0>");
         output.Append(source, start, length).Append("</color></link></nobr>");
+    }
+
+    private static string InkColor(string hex)
+    {
+        // Preserve each keyword's hue on parchment, with enough contrast to read.
+        ColorUtility.TryParseHtmlString("#" + hex, out Color color);
+        Color.RGBToHSV(color, out float hue, out float saturation, out _);
+        return ColorUtility.ToHtmlStringRGB(Color.HSVToRGB(hue, saturation < .12f ? saturation : Mathf.Max(.78f, saturation), .5f));
     }
 
     public static Sprite ExperienceIcon => Resources.Load<Sprite>("MapUI/ExperienceStar");
@@ -290,17 +301,18 @@ public static partial class ResourceKeywordText
     private sealed class Preprocessor : ITextPreprocessor
     {
         private readonly ITextPreprocessor previous;
-        public bool includeIcons;
+        public bool includeIcons, lightBackground;
         private string lastInput, lastOutput;
-        private bool lastIcons;
-        public Preprocessor(ITextPreprocessor previous, bool includeIcons) { this.previous = previous; this.includeIcons = includeIcons; }
+        private bool lastIcons, lastLightBackground;
+        public Preprocessor(ITextPreprocessor previous, bool includeIcons, bool lightBackground) { this.previous = previous; this.includeIcons = includeIcons; this.lightBackground = lightBackground; }
         public string PreprocessText(string text)
         {
             string source = previous != null ? previous.PreprocessText(text) : text;
-            if (source == lastInput && lastIcons == includeIcons && lastOutput != null) return lastOutput;
+            if (source == lastInput && lastIcons == includeIcons && lastLightBackground == lightBackground && lastOutput != null) return lastOutput;
             lastInput = source;
             lastIcons = includeIcons;
-            return lastOutput = Format(source, includeIcons);
+            lastLightBackground = lightBackground;
+            return lastOutput = Format(source, includeIcons, lightBackground);
         }
     }
 }

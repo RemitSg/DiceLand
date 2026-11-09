@@ -125,6 +125,53 @@ public sealed class MapMerchantPanelTests
         Assert.AreEqual(3, description.textInfo.characterInfo.Take(description.textInfo.characterCount).Count(c => c.elementType == TMP_TextElementType.Sprite));
     }
 
+    [TestCase(2640, 1216, 1540, 950)]
+    [TestCase(1920, 1080, 1540, 950)]
+    [TestCase(1600, 1200, 1540, 950)]
+    [TestCase(2640, 1216, 1440, 900)]
+    [TestCase(1920, 1080, 1440, 900)]
+    [TestCase(1600, 1200, 1440, 900)]
+    public void EnglishNamesKeepWholeWordsAndEffectHeadingClearsTheDescription(int width, int height, int panelWidth, int panelHeight)
+    {
+        typeof(MapMerchantOverlay).GetField("panelSize", Private).SetValue(overlay, new Vector2(panelWidth, panelHeight));
+        string[] names = { "Flesh Bearing", "Bloodcleaver Blueprint", "Iron Ore", "Corroded Fang", "Chrysanthemum Pendant", "Counterweight" };
+        for (int i = 0; i < names.Length; i++) tile.merchantOffers[i].lootItem.lootName = names[i];
+        Show();
+        Get<TMP_Text>("effectLabel").text = "Item Effect";
+        foreach (Transform card in Cards()) card.Find("Meta").GetComponent<TMP_Text>().text = "Blueprints · Fine";
+        Layout(width, height);
+        foreach (Transform card in Cards())
+        {
+            TMP_Text name = card.Find("Name").GetComponent<TMP_Text>();
+            AssertWholeWords(name);
+            Assert.GreaterOrEqual(name.fontSize, 20, name.text);
+            Assert.IsFalse(Bounds(name.transform).Overlaps(Bounds(card.Find("MetaBadge"))));
+            TMP_Text meta = card.Find("Meta").GetComponent<TMP_Text>();
+            meta.ForceMeshUpdate(true, true);
+            Assert.AreEqual(1, meta.textInfo.lineCount);
+            Assert.IsFalse(meta.isTextOverflowing, meta.text);
+        }
+        TMP_Text heading = Get<TMP_Text>("effectLabel");
+        heading.ForceMeshUpdate(true, true);
+        Assert.AreEqual(1, heading.textInfo.lineCount);
+        Assert.Greater(Bounds(heading.transform).yMin, Bounds(Get<TMP_Text>("descriptionText").transform).yMax);
+        AssertWholeWords(Get<TMP_Text>("goodsNameText"));
+    }
+
+    private static void AssertWholeWords(TMP_Text text)
+    {
+        text.ForceMeshUpdate(true, true);
+        Assert.AreEqual(text.text.Length, text.textInfo.characterCount, text.text);
+        for (int i = 1; i < text.textInfo.characterCount; i++)
+        {
+            TMP_CharacterInfo previous = text.textInfo.characterInfo[i - 1], current = text.textInfo.characterInfo[i];
+            if (char.IsLetter(previous.character) && char.IsLetter(current.character))
+                Assert.AreEqual(previous.lineNumber, current.lineNumber, text.text);
+            if (current.isVisible)
+                Assert.LessOrEqual(current.topRight.x, text.rectTransform.rect.xMax + 1, text.text);
+        }
+    }
+
     [Test]
     public void LongNamesDescriptionsAndFeedbackScrollWithoutCoveringPurchase()
     {

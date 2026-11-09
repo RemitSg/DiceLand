@@ -110,6 +110,51 @@ public sealed class MapTreasureRemasterTests
         Assert.AreEqual(1, confirmed); Assert.IsTrue(data.rewardApplied); Assert.IsTrue(tile.isResolved); Assert.IsTrue(tile.isVisited);
     }
 
+    [TestCase("Starting Relic Bag — Choose 1 Relic", "Starting Relic Bag")]
+    [TestCase("Elite Reward – Choose 1 Relic", "Elite Reward")]
+    [TestCase("精英奖励：选择 1 个遗物", "精英奖励")]
+    public void RelicTitleFitsTheCrestWithoutRepeatingTheSelectionInstruction(string source, string expected)
+    {
+        var data = RelicChoices();
+        data.title = source;
+        overlay.ShowRelicChoice(data, (BattleSettlementRelicChoiceData c, out string message) => { message = "ok"; return true; });
+        TMP_Text title = Find("Title").GetComponent<TMP_Text>();
+        title.ForceMeshUpdate(true, true);
+        Assert.AreEqual(expected, title.text);
+        Assert.AreEqual(expected.Length, title.textInfo.characterCount);
+        Assert.AreEqual(1, title.textInfo.lineCount);
+        Assert.IsFalse(title.isTextOverflowing);
+        Assert.IsTrue(title.textInfo.characterInfo.Take(title.textInfo.characterCount).Where(c => c.isVisible)
+            .All(c => c.bottomLeft.x >= title.rectTransform.rect.xMin - 1 && c.topRight.x <= title.rectTransform.rect.xMax + 1));
+    }
+
+    [TestCase("Burn", "燃烧", "DL_Status_Burn")]
+    [TestCase("Shock", "电流", "DL_Status_Current")]
+    [TestCase("Poison", "中毒", "DL_Status_Poison")]
+    [TestCase("Gold", "金币", "DL_Money")]
+    public void ParchmentKeywordsRenderMatchingChineseAndEnglishColours(string english, string chinese, string icon)
+    {
+        var data = RelicChoices();
+        data.choices[0].description = "Apply " + english + " to an enemy.";
+        data.choices[1].description = "向敌人施加" + chinese + "。";
+        overlay.ShowRelicChoice(data, (BattleSettlementRelicChoiceData c, out string message) => { message = "ok"; return true; });
+        Color32[] colours = new Color32[2];
+        for (int i = 0; i < 2; i++)
+        {
+            TMP_Text description = Find("TreasureRelicChoice_" + i).Find("DescriptionViewport/DescriptionContent/ChoiceDetail").GetComponent<TMP_Text>();
+            description.ForceMeshUpdate(true, true);
+            Assert.IsFalse(description.overrideColorTags);
+            TMP_LinkInfo link = description.textInfo.linkInfo.Take(description.textInfo.linkCount).Single(l => l.GetLinkID() == "dl-resource-" + icon);
+            TMP_CharacterInfo character = description.textInfo.characterInfo.Skip(link.linkTextfirstCharacterIndex)
+                .Take(link.linkTextLength).First(c => c.elementType == TMP_TextElementType.Character && c.isVisible);
+            colours[i] = character.color;
+            Assert.AreNotEqual((Color32)description.color, character.color, "Keyword colour must survive the parchment text style.");
+            Assert.Less(((Color)character.color).maxColorComponent, .6f, "Parchment uses a readable darker shade.");
+            Assert.IsTrue(description.textInfo.characterInfo.Take(description.textInfo.characterCount).Any(c => c.elementType == TMP_TextElementType.Sprite));
+        }
+        Assert.AreEqual(colours[0], colours[1]);
+    }
+
     [Test]
     public void InitialRelicChoiceKeepsItsDirectConfirmationCallback()
     {
