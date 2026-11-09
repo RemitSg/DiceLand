@@ -81,17 +81,24 @@
       "skillNames": [
         "分解"
       ],
-      "effectName": "枯根撕裂",
-      "scope": "仅增补分解的命中表现：16 帧、32 FPS、0.5 秒透明序列帧预制体，适用两颗骰子；受击位置播放，命中与受击反馈在 0.125 秒结算，末帧透明。不改变技能伤害数值、治疗量、目标或阶段。",
+      "effectName": "枯根撕裂·Blender版",
+      "source": "Blender 5.2.3 LTS via MCP",
+      "scope": "将分解双骰当前命中特效切换为 Blender 建模、形态键动画、程序化树皮材质和正交透明渲染的版本。24 帧、48 FPS、0.5 秒；512px 渲染以 Lanczos3 缩为 384px 并打包 6×4 图集。灰褐树皮、苔绿边缘、象牙高光、淡紫碎屑沿用项目配色。命中与受击反馈仍延迟 0.125 秒，伤害、治疗、目标及阶段规则不变。原 ImageGen 初稿保留作历史原型。",
       "validation": {
         "unityPrefabSampling": {
-          "passed": 21,
+          "passed": 29,
           "failed": 0,
-          "scope": "Actual prefab, sixteen animation samples, final alpha and both die configurations; no full battle playthrough."
+          "frames": 24,
+          "scope": "Actual imported prefab and animation sampled; source sprite height, shader, final alpha and both skill dice checked."
+        },
+        "productionSceneComposition": {
+          "checked": true,
+          "scope": "Imported Blender frame 8 with project stage, character, current skill pose, material and postprocessing; additive scene and UI states restored. No full combat playthrough."
         },
         "offlinePreview": {
           "passed": 21,
           "failed": 0,
+          "frames": 24,
           "widths": [
             1280,
             390,
@@ -105,7 +112,42 @@
           "failed": 0
         }
       }
-    }
+    },
+    "vfx_revision_history": [
+      {
+        "date": "2026-11-09",
+        "enemyNumbers": [
+          44
+        ],
+        "skillNames": [
+          "分解"
+        ],
+        "effectName": "枯根撕裂",
+        "scope": "仅增补分解的命中表现：16 帧、32 FPS、0.5 秒透明序列帧预制体，适用两颗骰子；受击位置播放，命中与受击反馈在 0.125 秒结算，末帧透明。不改变技能伤害数值、治疗量、目标或阶段。",
+        "validation": {
+          "unityPrefabSampling": {
+            "passed": 21,
+            "failed": 0,
+            "scope": "Actual prefab, sixteen animation samples, final alpha and both die configurations; no full battle playthrough."
+          },
+          "offlinePreview": {
+            "passed": 21,
+            "failed": 0,
+            "widths": [
+              1280,
+              390,
+              320
+            ],
+            "remoteRequests": 0,
+            "pageErrors": 0
+          },
+          "offlineCatalog": {
+            "passed": 195,
+            "failed": 0
+          }
+        }
+      }
+    ]
   },
   "enemies": [
     {
@@ -35142,8 +35184,8 @@
                   "fileID": 0
                 },
                 "hitEffectPrefab": {
-                  "fileID": 4961336155034717856,
-                  "guid": "cdcefa59bb55e7a42b60ba933d20bc8c",
+                  "fileID": 1403243601434078007,
+                  "guid": "4117acadd9a69ae41b156e007348e576",
                   "type": 3
                 },
                 "clashOffsetSpace": 0,
@@ -35215,8 +35257,8 @@
                   "fileID": 0
                 },
                 "hitEffectPrefab": {
-                  "fileID": 4961336155034717856,
-                  "guid": "cdcefa59bb55e7a42b60ba933d20bc8c",
+                  "fileID": 1403243601434078007,
+                  "guid": "4117acadd9a69ae41b156e007348e576",
                   "type": 3
                 },
                 "clashOffsetSpace": 0,
@@ -35351,163 +35393,235 @@
             }
           ],
           "visual_effects": {
-            "atlas_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/044_Decomposition_RootRend_4x4.png",
-            "atlas_guid": "94b0d52c2979126439fd313832c6de93",
-            "prefab_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/DecompositionRootRend.prefab",
-            "prefab_guid": "cdcefa59bb55e7a42b60ba933d20bc8c",
-            "clip_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/DecompositionRootRend.anim",
-            "clip_guid": "6f48d5b849a89f346b758b8b9269ce45",
-            "controller_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/DecompositionRootRend.controller",
-            "controller_guid": "d2a7dc9152008a142ade3ddb1385caed",
+            "atlas_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/Blender/044_RootRend_Blender_6x4.png",
+            "atlas_guid": "986964be2d5f0b94ebf2fd3f57001723",
+            "prefab_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/Blender/DecompositionRootRendBlender.prefab",
+            "prefab_guid": "4117acadd9a69ae41b156e007348e576",
+            "clip_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/Blender/DecompositionRootRendBlender.anim",
+            "clip_guid": "3c8ec3ea627d3494c9251380779b0ce0",
+            "controller_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/Blender/DecompositionRootRendBlender.controller",
+            "controller_guid": "dd1a102d45f7149448378cfe4237709a",
             "frames": [
               {
                 "frame": 0,
                 "time": 0.0,
-                "name": "RootRend_00",
+                "name": "RootRendBlender_00",
                 "x": 0.0,
-                "y": 940.5,
-                "width": 313.5,
-                "height": 313.5
+                "y": 1152.0,
+                "width": 384.0,
+                "height": 384.0
               },
               {
                 "frame": 1,
-                "time": 0.03125,
-                "name": "RootRend_01",
-                "x": 313.5,
-                "y": 940.5,
-                "width": 313.5,
-                "height": 313.5
+                "time": 0.020833334,
+                "name": "RootRendBlender_01",
+                "x": 384.0,
+                "y": 1152.0,
+                "width": 384.0,
+                "height": 384.0
               },
               {
                 "frame": 2,
-                "time": 0.0625,
-                "name": "RootRend_02",
-                "x": 627.0,
-                "y": 940.5,
-                "width": 313.5,
-                "height": 313.5
+                "time": 0.0416666679,
+                "name": "RootRendBlender_02",
+                "x": 768.0,
+                "y": 1152.0,
+                "width": 384.0,
+                "height": 384.0
               },
               {
                 "frame": 3,
-                "time": 0.09375,
-                "name": "RootRend_03",
-                "x": 940.5,
-                "y": 940.5,
-                "width": 313.5,
-                "height": 313.5
+                "time": 0.0625,
+                "name": "RootRendBlender_03",
+                "x": 1152.0,
+                "y": 1152.0,
+                "width": 384.0,
+                "height": 384.0
               },
               {
                 "frame": 4,
-                "time": 0.125,
-                "name": "RootRend_04",
-                "x": 0.0,
-                "y": 627.0,
-                "width": 313.5,
-                "height": 313.5
+                "time": 0.0833333358,
+                "name": "RootRendBlender_04",
+                "x": 1536.0,
+                "y": 1152.0,
+                "width": 384.0,
+                "height": 384.0
               },
               {
                 "frame": 5,
-                "time": 0.15625,
-                "name": "RootRend_05",
-                "x": 313.5,
-                "y": 627.0,
-                "width": 313.5,
-                "height": 313.5
+                "time": 0.104166664,
+                "name": "RootRendBlender_05",
+                "x": 1920.0,
+                "y": 1152.0,
+                "width": 384.0,
+                "height": 384.0
               },
               {
                 "frame": 6,
-                "time": 0.1875,
-                "name": "RootRend_06",
-                "x": 627.0,
-                "y": 627.0,
-                "width": 313.5,
-                "height": 313.5
+                "time": 0.125,
+                "name": "RootRendBlender_06",
+                "x": 0.0,
+                "y": 768.0,
+                "width": 384.0,
+                "height": 384.0
               },
               {
                 "frame": 7,
-                "time": 0.21875,
-                "name": "RootRend_07",
-                "x": 940.5,
-                "y": 627.0,
-                "width": 313.5,
-                "height": 313.5
+                "time": 0.145833328,
+                "name": "RootRendBlender_07",
+                "x": 384.0,
+                "y": 768.0,
+                "width": 384.0,
+                "height": 384.0
               },
               {
                 "frame": 8,
-                "time": 0.25,
-                "name": "RootRend_08",
-                "x": 0.0,
-                "y": 313.5,
-                "width": 313.5,
-                "height": 313.5
+                "time": 0.166666672,
+                "name": "RootRendBlender_08",
+                "x": 768.0,
+                "y": 768.0,
+                "width": 384.0,
+                "height": 384.0
               },
               {
                 "frame": 9,
-                "time": 0.28125,
-                "name": "RootRend_09",
-                "x": 313.5,
-                "y": 313.5,
-                "width": 313.5,
-                "height": 313.5
+                "time": 0.1875,
+                "name": "RootRendBlender_09",
+                "x": 1152.0,
+                "y": 768.0,
+                "width": 384.0,
+                "height": 384.0
               },
               {
                 "frame": 10,
-                "time": 0.3125,
-                "name": "RootRend_10",
-                "x": 627.0,
-                "y": 313.5,
-                "width": 313.5,
-                "height": 313.5
+                "time": 0.208333328,
+                "name": "RootRendBlender_10",
+                "x": 1536.0,
+                "y": 768.0,
+                "width": 384.0,
+                "height": 384.0
               },
               {
                 "frame": 11,
-                "time": 0.34375,
-                "name": "RootRend_11",
-                "x": 940.5,
-                "y": 313.5,
-                "width": 313.5,
-                "height": 313.5
+                "time": 0.229166672,
+                "name": "RootRendBlender_11",
+                "x": 1920.0,
+                "y": 768.0,
+                "width": 384.0,
+                "height": 384.0
               },
               {
                 "frame": 12,
-                "time": 0.375,
-                "name": "RootRend_12",
+                "time": 0.25,
+                "name": "RootRendBlender_12",
                 "x": 0.0,
-                "y": 0.0,
-                "width": 313.5,
-                "height": 313.5
+                "y": 384.0,
+                "width": 384.0,
+                "height": 384.0
               },
               {
                 "frame": 13,
-                "time": 0.40625,
-                "name": "RootRend_13",
-                "x": 313.5,
-                "y": 0.0,
-                "width": 313.5,
-                "height": 313.5
+                "time": 0.270833343,
+                "name": "RootRendBlender_13",
+                "x": 384.0,
+                "y": 384.0,
+                "width": 384.0,
+                "height": 384.0
               },
               {
                 "frame": 14,
-                "time": 0.4375,
-                "name": "RootRend_14",
-                "x": 627.0,
-                "y": 0.0,
-                "width": 313.5,
-                "height": 313.5
+                "time": 0.291666657,
+                "name": "RootRendBlender_14",
+                "x": 768.0,
+                "y": 384.0,
+                "width": 384.0,
+                "height": 384.0
               },
               {
                 "frame": 15,
-                "time": 0.46875,
-                "name": "RootRend_15",
-                "x": 940.5,
+                "time": 0.3125,
+                "name": "RootRendBlender_15",
+                "x": 1152.0,
+                "y": 384.0,
+                "width": 384.0,
+                "height": 384.0
+              },
+              {
+                "frame": 16,
+                "time": 0.333333343,
+                "name": "RootRendBlender_16",
+                "x": 1536.0,
+                "y": 384.0,
+                "width": 384.0,
+                "height": 384.0
+              },
+              {
+                "frame": 17,
+                "time": 0.354166657,
+                "name": "RootRendBlender_17",
+                "x": 1920.0,
+                "y": 384.0,
+                "width": 384.0,
+                "height": 384.0
+              },
+              {
+                "frame": 18,
+                "time": 0.375,
+                "name": "RootRendBlender_18",
+                "x": 0.0,
                 "y": 0.0,
-                "width": 313.5,
-                "height": 313.5
+                "width": 384.0,
+                "height": 384.0
+              },
+              {
+                "frame": 19,
+                "time": 0.395833343,
+                "name": "RootRendBlender_19",
+                "x": 384.0,
+                "y": 0.0,
+                "width": 384.0,
+                "height": 384.0
+              },
+              {
+                "frame": 20,
+                "time": 0.416666657,
+                "name": "RootRendBlender_20",
+                "x": 768.0,
+                "y": 0.0,
+                "width": 384.0,
+                "height": 384.0
+              },
+              {
+                "frame": 21,
+                "time": 0.4375,
+                "name": "RootRendBlender_21",
+                "x": 1152.0,
+                "y": 0.0,
+                "width": 384.0,
+                "height": 384.0
+              },
+              {
+                "frame": 22,
+                "time": 0.458333343,
+                "name": "RootRendBlender_22",
+                "x": 1536.0,
+                "y": 0.0,
+                "width": 384.0,
+                "height": 384.0
+              },
+              {
+                "frame": 23,
+                "time": 0.479166657,
+                "name": "RootRendBlender_23",
+                "x": 1920.0,
+                "y": 0.0,
+                "width": 384.0,
+                "height": 384.0
               }
             ],
-            "fps": 32.0,
+            "fps": 48.0,
             "duration": 0.5,
-            "name": "枯根撕裂",
+            "name": "枯根撕裂·Blender版",
             "trigger": "每颗攻击骰命中时，在受击者位置播放一次",
             "dice": [
               1,
@@ -35519,8 +35633,199 @@
             "loop": false,
             "final_frame_alpha": 0,
             "preview_path": "outputs/enemy-vfx/044-分解-枯根撕裂.html",
-            "source": "built-in ImageGen; reference is the existing Decomposition pose; original PNG retained without pixel edits"
-          }
+            "source": "Blender native meshes, baked shape keys, procedural bark materials and orthographic EEVEE RGBA renders; Lanczos3 atlas packing",
+            "source_label": "Blender 5.2.3 · EEVEE 正交透明渲染",
+            "generator": "Blender",
+            "blender_version": "5.2.3 LTS",
+            "source_blend": "source-art/enemies/044-root-rend/RootRendAnime.blend",
+            "source_scene": "DiceLand_RootRend_Anime",
+            "source_meshes": 39,
+            "source_scripts": [
+              "tools/enemy-catalog/blender/create-root-rend-anime.py",
+              "tools/enemy-catalog/blender/render-root-rend-anime.py",
+              "tools/enemy-catalog/blender/build-root-rend-atlas.mjs"
+            ],
+            "render_resolution": 512,
+            "render_samples": 64,
+            "atlas_cell_size": 384,
+            "atlas_columns": 6,
+            "atlas_rows": 4
+          },
+          "visual_effect_prototypes": [
+            {
+              "atlas_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/044_Decomposition_RootRend_4x4.png",
+              "atlas_guid": "94b0d52c2979126439fd313832c6de93",
+              "prefab_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/DecompositionRootRend.prefab",
+              "prefab_guid": "cdcefa59bb55e7a42b60ba933d20bc8c",
+              "clip_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/DecompositionRootRend.anim",
+              "clip_guid": "6f48d5b849a89f346b758b8b9269ce45",
+              "controller_path": "Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/DecompositionRootRend.controller",
+              "controller_guid": "d2a7dc9152008a142ade3ddb1385caed",
+              "frames": [
+                {
+                  "frame": 0,
+                  "time": 0.0,
+                  "name": "RootRend_00",
+                  "x": 0.0,
+                  "y": 940.5,
+                  "width": 313.5,
+                  "height": 313.5
+                },
+                {
+                  "frame": 1,
+                  "time": 0.03125,
+                  "name": "RootRend_01",
+                  "x": 313.5,
+                  "y": 940.5,
+                  "width": 313.5,
+                  "height": 313.5
+                },
+                {
+                  "frame": 2,
+                  "time": 0.0625,
+                  "name": "RootRend_02",
+                  "x": 627.0,
+                  "y": 940.5,
+                  "width": 313.5,
+                  "height": 313.5
+                },
+                {
+                  "frame": 3,
+                  "time": 0.09375,
+                  "name": "RootRend_03",
+                  "x": 940.5,
+                  "y": 940.5,
+                  "width": 313.5,
+                  "height": 313.5
+                },
+                {
+                  "frame": 4,
+                  "time": 0.125,
+                  "name": "RootRend_04",
+                  "x": 0.0,
+                  "y": 627.0,
+                  "width": 313.5,
+                  "height": 313.5
+                },
+                {
+                  "frame": 5,
+                  "time": 0.15625,
+                  "name": "RootRend_05",
+                  "x": 313.5,
+                  "y": 627.0,
+                  "width": 313.5,
+                  "height": 313.5
+                },
+                {
+                  "frame": 6,
+                  "time": 0.1875,
+                  "name": "RootRend_06",
+                  "x": 627.0,
+                  "y": 627.0,
+                  "width": 313.5,
+                  "height": 313.5
+                },
+                {
+                  "frame": 7,
+                  "time": 0.21875,
+                  "name": "RootRend_07",
+                  "x": 940.5,
+                  "y": 627.0,
+                  "width": 313.5,
+                  "height": 313.5
+                },
+                {
+                  "frame": 8,
+                  "time": 0.25,
+                  "name": "RootRend_08",
+                  "x": 0.0,
+                  "y": 313.5,
+                  "width": 313.5,
+                  "height": 313.5
+                },
+                {
+                  "frame": 9,
+                  "time": 0.28125,
+                  "name": "RootRend_09",
+                  "x": 313.5,
+                  "y": 313.5,
+                  "width": 313.5,
+                  "height": 313.5
+                },
+                {
+                  "frame": 10,
+                  "time": 0.3125,
+                  "name": "RootRend_10",
+                  "x": 627.0,
+                  "y": 313.5,
+                  "width": 313.5,
+                  "height": 313.5
+                },
+                {
+                  "frame": 11,
+                  "time": 0.34375,
+                  "name": "RootRend_11",
+                  "x": 940.5,
+                  "y": 313.5,
+                  "width": 313.5,
+                  "height": 313.5
+                },
+                {
+                  "frame": 12,
+                  "time": 0.375,
+                  "name": "RootRend_12",
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 313.5,
+                  "height": 313.5
+                },
+                {
+                  "frame": 13,
+                  "time": 0.40625,
+                  "name": "RootRend_13",
+                  "x": 313.5,
+                  "y": 0.0,
+                  "width": 313.5,
+                  "height": 313.5
+                },
+                {
+                  "frame": 14,
+                  "time": 0.4375,
+                  "name": "RootRend_14",
+                  "x": 627.0,
+                  "y": 0.0,
+                  "width": 313.5,
+                  "height": 313.5
+                },
+                {
+                  "frame": 15,
+                  "time": 0.46875,
+                  "name": "RootRend_15",
+                  "x": 940.5,
+                  "y": 0.0,
+                  "width": 313.5,
+                  "height": 313.5
+                }
+              ],
+              "fps": 32.0,
+              "duration": 0.5,
+              "name": "枯根撕裂",
+              "trigger": "每颗攻击骰命中时，在受击者位置播放一次",
+              "dice": [
+                1,
+                2
+              ],
+              "damage_delay_seconds": 0.125,
+              "reaction_delay_seconds": 0.125,
+              "world_height": 2.6,
+              "loop": false,
+              "final_frame_alpha": 0,
+              "preview_path": "outputs/enemy-vfx/044-分解-枯根撕裂.html",
+              "source": "built-in ImageGen; reference is the existing Decomposition pose; original PNG retained without pixel edits",
+              "is_current": false,
+              "preview_status": "历史原型；preview_path 页面现已更新为当前 Blender 版。旧图集、动画与预制体仍可按各自资产路径查看。"
+            }
+          ]
         },
         {
           "guid": "6b8271a9084061348af22d69a1b4065b",

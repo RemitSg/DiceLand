@@ -85,17 +85,24 @@
       "skillNames": [
         "分解"
       ],
-      "effectName": "枯根撕裂",
-      "scope": "仅增补分解的命中表现：16 帧、32 FPS、0.5 秒透明序列帧预制体，适用两颗骰子；受击位置播放，命中与受击反馈在 0.125 秒结算，末帧透明。不改变技能伤害数值、治疗量、目标或阶段。",
+      "effectName": "枯根撕裂·Blender版",
+      "source": "Blender 5.2.3 LTS via MCP",
+      "scope": "将分解双骰当前命中特效切换为 Blender 建模、形态键动画、程序化树皮材质和正交透明渲染的版本。24 帧、48 FPS、0.5 秒；512px 渲染以 Lanczos3 缩为 384px 并打包 6×4 图集。灰褐树皮、苔绿边缘、象牙高光、淡紫碎屑沿用项目配色。命中与受击反馈仍延迟 0.125 秒，伤害、治疗、目标及阶段规则不变。原 ImageGen 初稿保留作历史原型。",
       "validation": {
         "unityPrefabSampling": {
-          "passed": 21,
+          "passed": 29,
           "failed": 0,
-          "scope": "Actual prefab, sixteen animation samples, final alpha and both die configurations; no full battle playthrough."
+          "frames": 24,
+          "scope": "Actual imported prefab and animation sampled; source sprite height, shader, final alpha and both skill dice checked."
+        },
+        "productionSceneComposition": {
+          "checked": true,
+          "scope": "Imported Blender frame 8 with project stage, character, current skill pose, material and postprocessing; additive scene and UI states restored. No full combat playthrough."
         },
         "offlinePreview": {
           "passed": 21,
           "failed": 0,
+          "frames": 24,
           "widths": [
             1280,
             390,
@@ -109,7 +116,42 @@
           "failed": 0
         }
       }
-    }
+    },
+    "vfxRevisionHistory": [
+      {
+        "date": "2026-11-09",
+        "enemyNumbers": [
+          44
+        ],
+        "skillNames": [
+          "分解"
+        ],
+        "effectName": "枯根撕裂",
+        "scope": "仅增补分解的命中表现：16 帧、32 FPS、0.5 秒透明序列帧预制体，适用两颗骰子；受击位置播放，命中与受击反馈在 0.125 秒结算，末帧透明。不改变技能伤害数值、治疗量、目标或阶段。",
+        "validation": {
+          "unityPrefabSampling": {
+            "passed": 21,
+            "failed": 0,
+            "scope": "Actual prefab, sixteen animation samples, final alpha and both die configurations; no full battle playthrough."
+          },
+          "offlinePreview": {
+            "passed": 21,
+            "failed": 0,
+            "widths": [
+              1280,
+              390,
+              320
+            ],
+            "remoteRequests": 0,
+            "pageErrors": 0
+          },
+          "offlineCatalog": {
+            "passed": 195,
+            "failed": 0
+          }
+        }
+      }
+    ]
   },
   "relicCatalog": {
     "directory": "outputs/relic-catalog",

@@ -40,7 +40,7 @@ MonoBehaviour:
     maxPower: 4
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 0}
-    hitEffectPrefab: {fileID: 4961336155034717856, guid: cdcefa59bb55e7a42b60ba933d20bc8c, type: 3}
+    hitEffectPrefab: {fileID: 1403243601434078007, guid: 4117acadd9a69ae41b156e007348e576, type: 3}
     clashOffsetSpace: 0
     clashPositionOffset: {x: 0, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}
@@ -65,7 +65,7 @@ MonoBehaviour:
     overrideSkillSpriteDuration: 1
     skillSpriteDuration: 0.5
   - clashEffectPrefab: {fileID: 0}
-    hitEffectPrefab: {fileID: 4961336155034717856, guid: cdcefa59bb55e7a42b60ba933d20bc8c, type: 3}
+    hitEffectPrefab: {fileID: 1403243601434078007, guid: 4117acadd9a69ae41b156e007348e576, type: 3}
     clashOffsetSpace: 0
     clashPositionOffset: {x: 0, y: 0, z: 0}
     clashRotationOffset: {x: 0, y: 0, z: 0}

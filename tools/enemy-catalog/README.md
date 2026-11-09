@@ -49,7 +49,9 @@ MCP EditMode **24/24** 通过，覆盖实际资产、阶段阈值、周期选技
 
 补图后全图鉴回归 **195/195** 通过；另逐一解码七张内嵌技能图，检查分解的双骰关联及 1512px、390px、320px 下的详情布局，远程请求和页面异常均为 0。
 
-### 分解命中特效样例：枯根撕裂
+### 分解命中特效样例：枯根撕裂（ImageGen 历史初稿）
+
+本节记录最初的 ImageGen 原型。当前分解双骰使用下节的 Blender 版本；本节资产保留，供比较与回溯。
 
 2026-11-09 为分解的两颗攻击骰配置专属命中特效：木质根须爪痕带毒绿色边缘光，命中后散成腐叶、绿色与淡紫色微粒。内置 ImageGen 以已有分解姿态为风格参考，生成一张 4×4、16 帧的透明图集，原始 PNG 保持完整。提示词记录在 [`image-prompts/044-decomposition-root-rend-vfx.txt`](image-prompts/044-decomposition-root-rend-vfx.txt)。
 
@@ -68,6 +70,23 @@ node tools/enemy-catalog/build-vfx-preview.mjs
 ```
 
 MCP 实际预制体与动画采样 **21/21** 通过（16 帧、尺寸、透明收尾、材质与双骰配置）；离线预览 **21/21** 通过，含播放、逐帧、背景、速度、尺寸及 1280／390／320px 布局；全图鉴回归 **195/195** 通过。预览远程请求与脚本异常均为 0。采样检查未替代完整战斗试玩。
+
+### 当前接入：Blender 动漫风格版本
+
+2026-11-09 根据现有王庭立绘、技能姿态与战斗场景配色，在 **Blender 5.2.3 LTS** 中原生搭建三道树皮内芯斩痕、弯钩、描边、苔绿色刃缘、象牙高光、飞叶与淡紫碎屑。共 39 个网格；斩痕用逐帧形态键沿曲线划出及从根部擦除，树皮采用程序化纹理。工作在独立的 `DiceLand_RootRend_Anime` 场景中，保留用户原场景。
+
+可编辑源文件：[`source-art/enemies/044-root-rend/RootRendAnime.blend`](../../source-art/enemies/044-root-rend/RootRendAnime.blend)。当前采用 **24 帧、48 FPS、0.5 秒**，EEVEE 64 样本、正交相机、512×512 RGBA 渲染；经 Lanczos3 缩至每帧 384px，打包为 6×4 图集。团结运行时以现有 SpriteRenderer / Animator 特效预制体播放；`Decomposition.asset` 的两颗攻击骰均引用新预制体，命中及受击延迟仍为 0.125 秒。
+
+正式运行资产位于 `Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/Blender/`：`044_RootRend_Blender_6x4.png`、`DecompositionRootRendBlender.anim`、`.controller`、`.prefab`，附完整 Unity 元数据。单帧完整矩形高度 2.6 世界单位、末帧透明、不循环。原 ImageGen 版本归入 JSON 的原型历史，不再作为双骰当前引用。
+
+制作与重建流程：
+
+1. 在 Blender 中通过 MCP 执行 [`blender/create-root-rend-anime.py`](blender/create-root-rend-anime.py) 建立源场景；已有同名场景时脚本停止，保护手工修改。
+2. 在源场景中执行 [`blender/render-root-rend-anime.py`](blender/render-root-rend-anime.py)；可修改首尾帧分批渲染。中间 PNG 输出到 Git 已忽略的 `outputs/agent-battle/blender-root-rend-20261109/frames/`。
+3. 执行 `node tools/enemy-catalog/blender/build-root-rend-atlas.mjs`，以源帧重建正式图集。当前团结中的切片与动画配置已保存为正式资产。
+4. 更新对应目录后执行 `build-catalog.mjs`、`build-vfx-preview.mjs`；[离线动画预览](../../outputs/enemy-vfx/044-分解-枯根撕裂.html)使用真实帧数、FPS、来源及图集，支持逐帧和速度检查。
+
+验证：团结实际预制体采样 **29/29** 通过，覆盖全部 24 帧、尺寸、材质、透明收尾与双骰引用；离线预览 **21/21**、全图鉴 **195/195** 通过。额外以项目真实战斗场景、角色、材质、后处理与当前技能姿态捕获构图，检查了受击位置的大小、颜色和遮挡；临时打开的战斗场景及 UI 状态均恢复。此项为编辑器采样与构图检查，不代表完整战斗试玩。源帧首尾完全透明，全部 24 帧均留有安全边距。
 
 ## 2026-11-05 页面验证
 

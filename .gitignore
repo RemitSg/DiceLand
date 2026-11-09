@@ -114,3 +114,6 @@ __pycache__/
 /outputs/relic-catalog/*-preview.png
 /outputs/relic-catalog/relics-raw.json
 /tools/relic-catalog/node_modules/
+
+# Local incremental backups of editable Blender source files.
+/source-art/**/*.blend[0-9]

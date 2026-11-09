@@ -1291,15 +1291,16 @@
     "skill_vfx": [
       {
         "name": "分解",
-        "effect": "枯根撕裂",
-        "frames": 16,
-        "fps": 32,
+        "effect": "枯根撕裂·Blender版",
+        "frames": 24,
+        "fps": 48,
         "duration": 0.5,
         "dice": [
           1,
           2
         ],
-        "prefab": "Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/DecompositionRootRend.prefab",
+        "prefab": "Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/Blender/DecompositionRootRendBlender.prefab",
+        "source_blend": "source-art/enemies/044-root-rend/RootRendAnime.blend",
         "preview": "outputs/enemy-vfx/044-分解-枯根撕裂.html"
       }
     ]
