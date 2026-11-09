@@ -150,4 +150,31 @@ public static class MapEventEffectSequenceBuilder
                 return false;
         }
     }
+
+    public static bool IsRewardEffect(MapEventBuiltInEffectData effect)
+    {
+        if (effect == null) return false;
+        switch (effect.effectType)
+        {
+            case MapEventOptionBuiltInEffectType.GainMoney:
+            case MapEventOptionBuiltInEffectType.GainRandomMoney:
+            case MapEventOptionBuiltInEffectType.GainMoneyPercentOfPreSelectionMoney:
+            case MapEventOptionBuiltInEffectType.RerollAllMoneyByPercentRange:
+            case MapEventOptionBuiltInEffectType.HealAllPartyMembers:
+            case MapEventOptionBuiltInEffectType.RestoreAllActionPoints:
+            case MapEventOptionBuiltInEffectType.GainActionPoints:
+            case MapEventOptionBuiltInEffectType.GainLoot:
+            case MapEventOptionBuiltInEffectType.GainRandomLootFromList:
+            case MapEventOptionBuiltInEffectType.GainRelics:
+            case MapEventOptionBuiltInEffectType.GainBlueprints:
+            case MapEventOptionBuiltInEffectType.GainExperience:
+            case MapEventOptionBuiltInEffectType.GainWeapons:
+            case MapEventOptionBuiltInEffectType.ReforgeOwnedRandomRelicsSameRarity:
+                return true;
+            case MapEventOptionBuiltInEffectType.AdjustAllPartyMembersHpByMaxHpPercent:
+                return effect.effectAmount > 0;
+            default:
+                return false;
+        }
+    }
 }

@@ -16,6 +16,7 @@ MonoBehaviour:
   eventName: "\u76E5\u6D17\u5BA4"
   eventContent: "\u4F60\u7684\u51FA\u751F\u70B9\u662F\u4E2A\u5395\u6240\uFF0C\u4F60\u5DEE\u70B9\u6389\u8FDB\u5751\u91CC\u3002\u628A\u6454\u6210\u516B\u74E3\u7684\u5C41\u80A1\u62FC\u8D77\u6765\uFF0C\u770B\u7740\u4E24\u5EA7\u5927\u95E8\uFF0C\u4F60\u51B3\u5B9A\uFF1A"
   eventIllustration: {fileID: 0}
+  hideConsequences: 1
   options:
   - optionId: 1
     optionLabel: "\u201C\u53BB\u5DE6\u8FB9\u7684\u623F\u95F4\u770B\u770B\u3002\u201D"
@@ -48,9 +49,10 @@ MonoBehaviour:
     encounterEnemyCountMax: 0
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
-    nextEvent: {fileID: 11400000, guid: 50f09205fcf659f4a95b12f75772c5a8, type: 2}
+    nextEvent: {fileID: 0}
     resolveEvent: 0
     customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: 1
   - optionId: 2
     optionLabel: "\u201C\u53BB\u53F3\u8FB9\u7684\u623F\u95F4\u770B\u770B\u3002\u201D"
     requiredMoney: 0
@@ -82,9 +84,10 @@ MonoBehaviour:
     encounterEnemyCountMax: 0
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
-    nextEvent: {fileID: 11400000, guid: a8d66d43887463943a3e790e6bfcf869, type: 2}
+    nextEvent: {fileID: 0}
     resolveEvent: 0
     customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: 2
   - optionId: 3
     optionLabel: "\u201C\u5728\u5395\u6240\u91CC\u591A\u5446\u4E00\u5929\u3002\u201D"
     requiredMoney: 0
@@ -116,6 +119,7 @@ MonoBehaviour:
     encounterEnemyCountMax: 0
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
-    nextEvent: {fileID: 11400000}
+    nextEvent: {fileID: 0}
     resolveEvent: 0
     customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: 0

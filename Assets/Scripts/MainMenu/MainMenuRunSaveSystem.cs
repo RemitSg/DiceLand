@@ -263,6 +263,7 @@ internal sealed class SavedBoardTileData
     public List<SavedMerchantOfferState> merchantOffers = new List<SavedMerchantOfferState>();
     public string sourceSpecialDungeonId;
     public int specialDungeonEntryIndex = -1;
+    public List<string> claimedEventOptionRewards = new List<string>();
     public List<SavedSpecialDungeonTreasureOptionEntry> specialDungeonTreasureOptions = new List<SavedSpecialDungeonTreasureOptionEntry>();
 }
 
@@ -283,6 +284,7 @@ internal sealed class SavedSpecialDungeonRuntimeContext
 {
     public bool isActive;
     public string activeDungeonId;
+    public bool eventNavigationStarted;
     public SavedVector2Int returnEventCoord;
     public SavedMainMapSnapshot mainMapSnapshot;
     public List<int> deferredCalamityTiers = new List<int>();
@@ -629,7 +631,8 @@ public static class MainMenuRunSaveSystem
             merchantRefreshCount = tile.merchantRefreshCount,
             merchantPurchaseDiscountStacks = tile.merchantPurchaseDiscountStacks,
             sourceSpecialDungeonId = GetSpecialDungeonId(tile.sourceSpecialDungeon),
-            specialDungeonEntryIndex = tile.specialDungeonEntryIndex
+            specialDungeonEntryIndex = tile.specialDungeonEntryIndex,
+            claimedEventOptionRewards = tile.claimedEventOptionRewards != null ? new List<string>(tile.claimedEventOptionRewards) : new List<string>()
         };
 
         if (tile.merchantOffers != null)
@@ -674,6 +677,7 @@ public static class MainMenuRunSaveSystem
         SavedSpecialDungeonRuntimeContext saved = new SavedSpecialDungeonRuntimeContext
         {
             isActive = context.isActive,
+            eventNavigationStarted = context.eventNavigationStarted,
             activeDungeonId = !string.IsNullOrWhiteSpace(context.activeDungeonId)
                 ? context.activeDungeonId
                 : GetSpecialDungeonId(context.activeDungeon),
@@ -1021,7 +1025,8 @@ public static class MainMenuRunSaveSystem
             merchantRefreshCount = savedTile.merchantRefreshCount,
             merchantPurchaseDiscountStacks = savedTile.merchantPurchaseDiscountStacks,
             sourceSpecialDungeon = catalog.ResolveSpecialDungeon(savedTile.sourceSpecialDungeonId),
-            specialDungeonEntryIndex = savedTile.specialDungeonEntryIndex
+            specialDungeonEntryIndex = savedTile.specialDungeonEntryIndex,
+            claimedEventOptionRewards = savedTile.claimedEventOptionRewards != null ? new List<string>(savedTile.claimedEventOptionRewards) : new List<string>()
         };
 
         if (savedTile.merchantOffers != null)
@@ -1091,6 +1096,7 @@ public static class MainMenuRunSaveSystem
         SpecialDungeonRuntimeContext context = new SpecialDungeonRuntimeContext
         {
             isActive = saved.isActive,
+            eventNavigationStarted = saved.eventNavigationStarted,
             activeDungeonId = saved.activeDungeonId,
             activeDungeon = catalog.ResolveSpecialDungeon(saved.activeDungeonId),
             returnEventCoord = saved.returnEventCoord.ToVector2Int(),

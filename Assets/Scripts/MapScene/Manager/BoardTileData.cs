@@ -46,6 +46,7 @@ public class BoardTileData
     public List<MerchantOfferState> merchantOffers = new List<MerchantOfferState>();
     public SpecialDungeon_SO sourceSpecialDungeon;
     public int specialDungeonEntryIndex = -1;
+    public List<string> claimedEventOptionRewards = new List<string>();
     public List<SpecialDungeonTreasureOptionEntry> specialDungeonTreasureOptions = new List<SpecialDungeonTreasureOptionEntry>();
 
     public bool IsHostileTile =>
@@ -75,6 +76,7 @@ public class BoardTileData
             merchantOffers = CloneMerchantOffers(),
             sourceSpecialDungeon = sourceSpecialDungeon,
             specialDungeonEntryIndex = specialDungeonEntryIndex,
+            claimedEventOptionRewards = claimedEventOptionRewards != null ? new List<string>(claimedEventOptionRewards) : new List<string>(),
             specialDungeonTreasureOptions = CloneSpecialDungeonTreasureOptions()
         };
     }

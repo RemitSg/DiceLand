@@ -16,6 +16,7 @@ MonoBehaviour:
   eventName: "\u79D1\u76EE\u56DB"
   eventContent: "\u4F60\u6765\u5230\u4E86\u201C\u79D1\u76EE\u56DB\u201D\uFF0C\u4E0D\u7BA1\u4F60\u600E\u4E48\u8FDB\u6765\u7684\uFF0C\u4F46\u4F60\u603B\u7B97\u8FDB\u6765\u4E86\u3002\u8DDD\u79BB\u62FF\u5230\u9A7E\u7167\u53EA\u6709\u4E00\u6B65\u4E4B\u9065\uFF0C\u4F60\u5174\u51B2\u51B2\u5730\u62FF\u8D77\u4E86\u684C\u5B50\u4E0A\u7684\u4E66\uFF0C\u4E66\u540D\u53EB\u300A\u79D1\u76EE\u56DB\u8003\u8BD5\u5927\u7EB2\u300B\u3002\r\n\r\n\u4F60\u51B3\u5B9A\uFF1A"
   eventIllustration: {fileID: 0}
+  hideConsequences: 1
   options:
   - optionId: 1
     optionLabel: "\u201C\u6211\u6709\u79D1\u76EE\u4E00\u57FA\u7840\uFF0C\u770B\u4E2A\u9B3C\u554A\uFF01\u201D"
@@ -82,9 +83,10 @@ MonoBehaviour:
       weaponPickCountMin: 1
       weaponPickCountMax: 1
     possibleResults: []
-    nextEvent: {fileID: 11400000, guid: 24065cf65e374984da865ab1c21058e6, type: 2}
+    nextEvent: {fileID: 0}
     resolveEvent: 0
     customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: 0
   - optionId: 2
     optionLabel: "\u201C\u8FD8\u662F\u5B66\u5B66\u5427\u201D"
     requiredMoney: 0
@@ -139,9 +141,10 @@ MonoBehaviour:
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
     possibleResults: []
-    nextEvent: {fileID: 11400000, guid: c1dae8b633c5dff49a548be3a76e1c5c, type: 2}
+    nextEvent: {fileID: 0}
     resolveEvent: 0
     customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: 9
   - optionId: 3
     optionLabel: "\u201C\u79D1\u76EE\u4E00\u6211\u5C31\u8FD9\u4E48\u56DE\u7B54\uFF0C\u73B0\u5728\u6211\u8FD8\u8FD9\u4E48\u56DE\u7B54\uFF1A\u6211\u4E0D\u5B66\u4E5F\u4E0D\u4E0A\u8DEF\uFF01\u4F60\u80FD\u62FF\u6211\u600E\u4E48\u6837\uFF1F\u201D"
     requiredMoney: 0
@@ -175,6 +178,7 @@ MonoBehaviour:
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
     possibleResults: []
-    nextEvent: {fileID: 11400000, guid: e43af416c6afa824d990f2481d3d04f1, type: 2}
+    nextEvent: {fileID: 0}
     resolveEvent: 0
     customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: 8

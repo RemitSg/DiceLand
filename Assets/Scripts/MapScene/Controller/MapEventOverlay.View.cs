@@ -168,11 +168,17 @@ public partial class MapEventOverlay
         Place(headerDivider, 30f, headerHeight, width - 60f, 1.5f);
 
         float rowsHeight = 0f, rowWidth = width - 82f;
+        bool hideConsequences = currentEvent != null && currentEvent.hideConsequences;
+        consequenceTitleText.gameObject.SetActive(!hideConsequences);
+        consequenceScrollRect.gameObject.SetActive(!hideConsequences);
         foreach (OptionRow row in optionRows)
         {
             row.detail.fontSize = detailSize;
-            float labelHeight = PreferredHeight(row.label, 240f);
-            float detailHeight = PreferredHeight(row.detail, rowWidth - 444f);
+            float labelWidth = hideConsequences ? rowWidth - 184f : 240f;
+            float labelHeight = PreferredHeight(row.label, labelWidth);
+            float detailHeight = hideConsequences ? 0f : PreferredHeight(row.detail, rowWidth - 444f);
+            row.detail.gameObject.SetActive(!hideConsequences);
+            row.face.SetDetailVisible(!hideConsequences);
             float rowHeight = Mathf.Max(82f, Mathf.Max(labelHeight, detailHeight) + 24f);
             bool tall = rowHeight > 110f;
             row.number.alignment = tall ? TextAlignmentOptions.Top : TextAlignmentOptions.Midline;
@@ -180,14 +186,14 @@ public partial class MapEventOverlay
             row.detail.alignment = tall ? TextAlignmentOptions.TopLeft : TextAlignmentOptions.MidlineLeft;
             Place((RectTransform)row.button.transform, 0f, rowsHeight, rowWidth, rowHeight);
             Place(row.number.rectTransform, 10f, 10f, 74f, rowHeight - 20f);
-            Place(row.label.rectTransform, 112f, 10f, 240f, rowHeight - 20f);
+            Place(row.label.rectTransform, 112f, 10f, labelWidth, rowHeight - 20f);
             Place(row.detail.rectTransform, 382f, 10f, rowWidth - 444f, rowHeight - 20f);
             rowsHeight += rowHeight + 10f;
         }
         rowsHeight = Mathf.Max(0f, rowsHeight - 10f);
         float statusHeight = string.IsNullOrWhiteSpace(statusText.text) ? 0f : PreferredHeight(statusText, width - 88f) + 14f;
         float footerTop = height - 118f - statusHeight;
-        float optionsHeight = Mathf.Clamp(rowsHeight, 82f, 230f);
+        float optionsHeight = Mathf.Clamp(rowsHeight, 82f, hideConsequences ? 360f : 230f);
         float optionsTop = footerTop - 18f - optionsHeight;
         float contentTop = headerHeight + 26f;
         float contentBottom = isShowingResultStep ? footerTop - 24f : optionsTop - 58f;

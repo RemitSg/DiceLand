@@ -110,6 +110,8 @@ public class SpecialDungeon_SO : ScriptableObject
     public string dungeonName = "Special Dungeon";
     [TextArea(3, 8)] public string description;
     [Min(0)] public int settlementScoreValue = 200;
+    public bool eventDrivenNavigation;
+    public bool eventRewardsOnce;
     public List<SpecialDungeonTileEntry> entries = new List<SpecialDungeonTileEntry>();
 
     public string DisplayName => string.IsNullOrWhiteSpace(dungeonName) ? name : dungeonName;

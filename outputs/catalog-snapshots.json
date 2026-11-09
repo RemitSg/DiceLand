@@ -68,6 +68,14 @@
           "pageErrors": 0
         }
       }
+    },
+    "latestEventPlacementRevision": {
+      "date": "2026-11-09",
+      "enemyNumbers": [
+        41,
+        42
+      ],
+      "scope": "仅复核事件 031 随机入口移除对 041 血骸王储、042 叛变的新王关联事件可达性的影响；原事件／副本／敌群配置保留，其他历史数据未重导出。"
     }
   },
   "relicCatalog": {

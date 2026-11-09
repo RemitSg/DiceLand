@@ -46,6 +46,8 @@ public sealed class SpecialDungeonSOEditor : Editor
         EditorGUILayout.PropertyField(dungeonIdProperty, new GUIContent("副本 ID"));
         EditorGUILayout.PropertyField(dungeonNameProperty, new GUIContent("显示名称"));
         EditorGUILayout.PropertyField(descriptionProperty, new GUIContent("描述"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("eventDrivenNavigation"), new GUIContent("按事件选项跳转"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("eventRewardsOnce"), new GUIContent("每格每选项奖励仅一次"));
         EditorGUILayout.Space(8f);
     }
 

@@ -13,6 +13,7 @@ public sealed partial class AgentAdventureSession
     private AgentAdventureEventOption[] eventOptions = Array.Empty<AgentAdventureEventOption>();
     private BattleEncounterData pendingEventEncounter;
     private SpecialDungeon_SO pendingEventDungeon;
+    private int pendingEventDungeonDestination = SpecialDungeonEventNavigationService.NoDestination;
 
     private bool OpenEventLocation(BoardTileData tile)
     {
@@ -21,6 +22,7 @@ public sealed partial class AgentAdventureSession
         map.WithRandom(() => { MapEventAssignmentService.EnsureTileAssignedEvent(map.Configuration.events, map.Snapshot.runState, tile); return true; });
         if (tile.assignedEvent == null)
         { message = "当前未配置可触发事件。"; return false; }
+        SpecialDungeonEventNavigationService.MarkEventStarted(map.Snapshot.specialDungeonContext, tile);
         currentEvent = tile.assignedEvent; nextEvent = null; eventDepth = 0;
         eventResultContent = eventResultMessage = null;
         eventDiscardCache.Clear();
@@ -38,7 +40,8 @@ public sealed partial class AgentAdventureSession
             MapEventOptionPreview preview = MapEventOptionService.BuildPreview(map.Snapshot.runState, option, eventDiscardCache);
             bool supported = option.customHandler == null;
             return new AgentAdventureEventOption { index = index, id = option.optionId, label = option.DisplayLabel,
-                consequence = option.consequenceDescription, requiredMoney = preview.requiredMoney, additionalDetail = preview.additionalDetail,
+                consequence = currentEvent.hideConsequences ? null : option.consequenceDescription, requiredMoney = preview.requiredMoney,
+                additionalDetail = currentEvent.hideConsequences ? null : preview.additionalDetail,
                 nextEvent = option.nextEvent != null ? option.nextEvent.DisplayName : null,
                 selectable = preview.isSelectable && supported,
                 unavailableReason = supported ? preview.unavailableReason : "This custom event handler requires a headless adapter." };
@@ -79,11 +82,19 @@ public sealed partial class AgentAdventureSession
             ReleasePendingEventEncounter();
             pendingEventEncounter = result.pendingEncounterData; pendingEventDungeon = result.pendingSpecialDungeon;
             if (!success) throw new InvalidOperationException(result.message);
+            pendingEventDungeonDestination = result.pendingSpecialDungeonEntryIndex;
             eventResultMessage = message = result.message;
             eventResultContent = !string.IsNullOrWhiteSpace(result.resultContent) ? result.resultContent
                 : !string.IsNullOrWhiteSpace(option.resultContent) ? option.resultContent
                 : !string.IsNullOrWhiteSpace(result.message) ? result.message : option.consequenceDescription;
             nextEvent = result.nextEventOverride != null ? result.nextEventOverride : option.nextEvent;
+            if (currentEvent.hideConsequences)
+            {
+                eventResultMessage = null;
+                if (string.IsNullOrWhiteSpace(option.resultContent) && string.IsNullOrWhiteSpace(result.resultContent))
+                    eventResultContent = GameText.Get("ui.event.resolved", "事件已触发。");
+                message = eventResultContent;
+            }
             return true;
         });
         phase = "event_result";
@@ -99,6 +110,21 @@ public sealed partial class AgentAdventureSession
             return;
         }
         eventDiscardCache.Clear(); eventOptions = Array.Empty<AgentAdventureEventOption>();
+        if (pendingEventDungeonDestination != SpecialDungeonEventNavigationService.NoDestination)
+        {
+            int destinationIndex = pendingEventDungeonDestination;
+            pendingEventDungeonDestination = SpecialDungeonEventNavigationService.NoDestination;
+            if (!map.NavigateSpecialDungeon(destinationIndex, out BoardTileData destination))
+                throw new InvalidOperationException("Cannot follow this dungeon event destination.");
+            phase = "map";
+            if (destination.tileType == MapTileType.SpecialDungeonExit)
+            {
+                if (!map.ExitSpecialDungeon(out string exitMessage)) throw new InvalidOperationException(exitMessage);
+                message = exitMessage; ClearDeferrals(); PresentCalamity();
+            }
+            else if (!OpenEventLocation(destination)) throw new InvalidOperationException("Cannot open the dungeon destination event.");
+            return;
+        }
         if (pendingEventEncounter != null)
         {
             bool ownsGroup = !EditorUtility.IsPersistent(pendingEventEncounter.enemyGroup);

@@ -79,6 +79,7 @@ public sealed class AgentAdventureMapRuntime : IDisposable
     {
         if (disposed) throw new ObjectDisposedException(nameof(AgentAdventureMapRuntime));
         return Board.GetAllTiles().Where(t => Board.IsAdjacent(Snapshot.runState.playerGridPosition, t.coord, Snapshot.runState.allowDiagonalMapMovement)
+            && SpecialDungeonEventNavigationService.CanPlayerMove(Snapshot.specialDungeonContext, Snapshot.runState.playerGridPosition, t)
             && MapMovementService.CanAttemptMove(Snapshot.runState, Points, t, GetMoveCost(t))).ToArray();
     }
 
@@ -181,6 +182,14 @@ public sealed class AgentAdventureMapRuntime : IDisposable
         });
         message = resultMessage;
         return success;
+    }
+
+    public bool NavigateSpecialDungeon(int entryIndex, out BoardTileData destination)
+    {
+        bool moved = SpecialDungeonEventNavigationService.TryNavigate(Snapshot.specialDungeonContext, entryIndex,
+            Snapshot.runState, Board, mover, out destination);
+        if (moved) SynchronizeSnapshot();
+        return moved;
     }
 
     private void LoadSnapshotBoard()

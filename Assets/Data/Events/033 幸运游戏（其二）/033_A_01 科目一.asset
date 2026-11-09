@@ -16,6 +16,7 @@ MonoBehaviour:
   eventName: "\u79D1\u76EE\u4E00"
   eventContent: "\u4F60\u8D70\u8FDB\u79D1\u76EE\u4E00\uFF0C\u53D1\u73B0\u91CC\u9762\u6709\u4E00\u5F20\u684C\u5B50\uFF0C\u684C\u4E0A\u6709\u4E00\u672C\u539A\u539A\u7684\u4E66\u3002\u5C01\u76AE\u662F\u5199\u7740\u300A\u79D1\u76EE\u4E00\u8003\u8BD5\u5927\u7EB2\u300B\u3002\r\n\r\n\u4F60\u51B3\u5B9A\uFF1A"
   eventIllustration: {fileID: 0}
+  hideConsequences: 1
   options:
   - optionId: 1
     optionLabel: "\u201C\u5B66\u5B66\u53C8\u80FD\u548B\u6837\uFF1F\u201D"
@@ -71,9 +72,10 @@ MonoBehaviour:
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
     possibleResults: []
-    nextEvent: {fileID: 11400000, guid: f1014dcb742cf0d4bbe5f06d9e3ca755, type: 2}
+    nextEvent: {fileID: 0}
     resolveEvent: 0
     customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: 3
   - optionId: 2
     optionLabel: "\u201C\u4E0D\u5B66\u4E86\uFF0C\u76F4\u63A5\u4E0A\u8DEF\uFF01\u201D"
     requiredMoney: 0
@@ -139,9 +141,10 @@ MonoBehaviour:
       weaponPickCountMin: 1
       weaponPickCountMax: 1
     possibleResults: []
-    nextEvent: {fileID: 11400000, guid: 24065cf65e374984da865ab1c21058e6, type: 2}
+    nextEvent: {fileID: 0}
     resolveEvent: 0
     customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: 0
   - optionId: 3
     optionLabel: "\u201C\u6211\u4E0D\u5B66\u4E5F\u4E0D\u4E0A\u8DEF\uFF01\u8FD9\u4F60\u80FD\u62FF\u6211\u600E\u4E48\u6837\uFF1F\u201D"
     requiredMoney: 0
@@ -175,6 +178,7 @@ MonoBehaviour:
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
     possibleResults: []
-    nextEvent: {fileID: 11400000, guid: 58b1b39bb0dbd2d4d89695ca0f070457, type: 2}
+    nextEvent: {fileID: 0}
     resolveEvent: 0
     customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: 4

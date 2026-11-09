@@ -43,6 +43,13 @@ public static class MapEventOptionService
         { result.message = GameText.Get("map.event.could_not_resolve_the_event", "事件执行失败。"); return false; }
         RunState state = request.runState;
         MapEventOptionData option = request.optionData;
+        if (!SpecialDungeonEventNavigationService.IsValidDestination(request.currentEventTile, option.specialDungeonDestinationEntryIndex))
+        { result.message = GameText.Get("map.event.could_not_resolve_the_event", "事件执行失败。"); return false; }
+        BoardTileData rewardTile = request.currentEventTile;
+        bool rewardsOnce = rewardTile.sourceSpecialDungeon != null && rewardTile.sourceSpecialDungeon.eventRewardsOnce;
+        string rewardKey = eventData.eventId + "::" + option.optionId;
+        request.skipRewardEffects = rewardsOnce && rewardTile.claimedEventOptionRewards != null
+            && rewardTile.claimedEventOptionRewards.Contains(rewardKey);
         request.moneyBeforeSelection = Mathf.Max(0, state.money);
         int cost = request.selectionMoneyCost = RequiredMoney(option, request.moneyBeforeSelection);
         if (!MapEventBuiltInEffectExecutorService.CanAffordMoneyEffects(state, option, cost, out string moneyReason))
@@ -81,6 +88,12 @@ public static class MapEventOptionService
                 state.settlementStats.eventTilesCompleted++;
             }
         }
+        if (rewardsOnce && !request.skipRewardEffects)
+        {
+            if (rewardTile.claimedEventOptionRewards == null) rewardTile.claimedEventOptionRewards = new List<string>();
+            rewardTile.claimedEventOptionRewards.Add(rewardKey);
+        }
+        result.pendingSpecialDungeonEntryIndex = option.specialDungeonDestinationEntryIndex;
         if (cost > 0) result.message = GameText.Format("map.event.paid_gold", "支付 {cost} 金钱。", ("cost", cost)) + (string.IsNullOrWhiteSpace(result.message) ? "" : "\n" + result.message);
         result.success = true;
         return true;

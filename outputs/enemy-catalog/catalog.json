@@ -64,6 +64,14 @@
           "pageErrors": 0
         }
       }
+    },
+    "latest_event_placement_revision": {
+      "date": "2026-11-09",
+      "enemyNumbers": [
+        41,
+        42
+      ],
+      "scope": "仅复核事件 031 随机入口移除对 041 血骸王储、042 叛变的新王关联事件可达性的影响；原事件／副本／敌群配置保留，其他历史数据未重导出。"
     }
   },
   "enemies": [
@@ -31313,7 +31321,9 @@
         "王子的背叛（Assets/Data/Events/031 王储的遗产/031_B_02 王子的背叛.asset）"
       ],
       "passives": [],
-      "configured_mechanics": [],
+      "configured_mechanics": [
+        "2026-11-09 事件投放复核：事件 031「王储的遗产」（入口副本「王储的复仇」）已移出 MapEventPool 随机事件池。关联事件、特殊副本和敌群资产保留；本次不删除已生成格子或旧档中的引用。"
+      ],
       "description": "日记本中王储的最后回忆\n那深沉无比的怨恨足以吞噬一切\n绝望吧！\n你无法活着离开",
       "skills": [
         {
@@ -32581,7 +32591,8 @@
           }
         ],
         "conditionalSkillRules": []
-      }
+      },
+      "event_placement_reviewed_at": "2026-11-09"
     },
     {
       "guid": "e7d14ea9edacd2540b45e15fee560727",
@@ -32611,7 +32622,9 @@
         "完成遗愿？（Assets/Data/Events/031 王储的遗产/031_D_01 完成遗愿.asset）"
       ],
       "passives": [],
-      "configured_mechanics": [],
+      "configured_mechanics": [
+        "2026-11-09 事件投放复核：事件 031「王储的遗产」（入口副本「王储的复仇」）已移出 MapEventPool 随机事件池。关联事件、特殊副本和敌群资产保留；本次不删除已生成格子或旧档中的引用。"
+      ],
       "description": "存在于历史中的二王子，为了从兄长手中夺取王位，派兵弑父并嫁祸于其兄长。奸诈的枭雄。",
       "skills": [
         {
@@ -33347,7 +33360,8 @@
           }
         ],
         "conditionalSkillRules": []
-      }
+      },
+      "event_placement_reviewed_at": "2026-11-09"
     },
     {
       "guid": "293df36a850452048a2fd6b9eab269cc",

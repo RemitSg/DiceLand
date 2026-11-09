@@ -1,0 +1,71 @@
+{
+  "date": "2026-11-09",
+  "engine": "Tuanjie 2022.3.62t6",
+  "integratedBaseCommit": "5110fb347",
+  "scope": [
+    "事件 031 王储的遗产（王储的复仇入口）移出随机事件池，保留既有资产和旧档引用",
+    "幸运游戏（其二）入口和十个房间转换为特殊副本格子跳转，保持原事件 ID、选项 ID、故事和效果配置",
+    "仅初次入场允许移动到首个事件格，之后由选项跳转推进",
+    "隐藏选项后果和独立效果说明，保留故事结果",
+    "每格每选项奖励仅一次，重复选择仍执行原有费用、惩罚和跳转，领取记录与移动锁可存档"
+  ],
+  "editMode": {
+    "selection": "LuckyMazeDungeonTests|SpecialDungeon|MapEvent|MainMenuRunSaveSystemTests|RunSave",
+    "total": 80,
+    "passed": 80,
+    "failed": 0,
+    "resultFile": "editmode-delivery.xml",
+    "coverage": [
+      "实际事件池、十房间全部 30 个跳转及两个入口选项",
+      "初始合法移动、触发后禁止自由移动以及快照锁保持",
+      "金币、治疗、战利品、最终遗物重复领取限制和不同房间独立记账",
+      "重复错误选项继续扣钱、扣血",
+      "实际私有存档序列化、JSON 往返及恢复后的奖励去重",
+      "超过 16 次格子跳转、到达出口以及隐藏后果界面对普通事件的恢复",
+      "既有特殊副本、事件和存档相关回归"
+    ]
+  },
+  "playMode": {
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "resultFile": "playmode-delivery.xml",
+    "tests": [
+      "LocalizationPhaseOnePlayModeTests.LuckyMazeUsesRoomChoicesWithoutConsequencesOrRepeatedRewards",
+      "MapEventOverlayPlayModeTests.NativeRaycastSelectsChoiceAndBackdropBlocksUnderlyingMap",
+      "MapEventOverlayPlayModeTests.ResultRestoresReadingPositionAndNativeContinueClosesOnce",
+      "MapEventOverlayPlayModeTests.StoryChoicesAndPreviewScrollIndependentlyWhilePaused"
+    ],
+    "coverage": "真实 MapScene、RunGameManager 与事件窗口：禁止错误初始移动，初次进入盥洗室，自环 18 次仍可推进且不重复治疗，多房间往返不重复领钱，实际存档写入领取标识，跳转不耗行动点，最终领奖后回到主地图；另含事件窗口原生点击、结果继续、暂停滚动回归。",
+    "determinism": "流程用例固定初始金币与生命，并直接进入实际副本资产；未替代随机抽中入口的整局试玩。"
+  },
+  "assetReview": {
+    "eventAssets": 11,
+    "roomEntries": 10,
+    "optionsReviewed": 32,
+    "originalNarrativeAndEffectConfigurationPreserved": true,
+    "validatedAssetAndSourceFiles": 34,
+    "validatedChangeSetMatchesTestedCopies": true
+  },
+  "catalogs": {
+    "enemyNumbers": [41, 42],
+    "scope": "仅补充王储入口随机投放移除说明；JSON、摘要索引、清单、HTML 与快照范围同步，保留历史日期和其余内容。",
+    "enemyAssets": 52,
+    "relatedSkills": 136,
+    "offlineEnemyChecks": 195,
+    "remoteRequests": 0,
+    "pageErrors": 0,
+    "relicEffectsChanged": false
+  },
+  "visualReview": {
+    "screens": [
+      { "file": "lucky-choices-wide.png", "width": 2340, "height": 1080 },
+      { "file": "lucky-choices-tablet.png", "width": 1600, "height": 1200 },
+      { "file": "lucky-result-wide.png", "width": 2340, "height": 1080 }
+    ],
+    "result": "实际地图事件窗口渲染已逐张查看：隐藏后果列、分栏线和后果页脚；长选项完整换行、避开选中标识，故事结果与继续按钮正常。"
+  },
+  "androidDeviceTested": false,
+  "packageBuilt": false,
+  "evidenceDirectory": "outputs/agent-battle/lucky-dungeon-20261109/ (ignored local evidence)"
+}

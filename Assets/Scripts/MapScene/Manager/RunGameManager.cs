@@ -583,7 +583,8 @@ public class RunGameManager : MonoBehaviour
             return;
         }
 
-        if (!boardManager.IsAdjacent(runState.playerGridPosition, tile.coord, runState != null && runState.allowDiagonalMapMovement))
+        if (!SpecialDungeonEventNavigationService.CanPlayerMove(activeSpecialDungeonContext, runState.playerGridPosition, tile)
+            || !boardManager.IsAdjacent(runState.playerGridPosition, tile.coord, runState != null && runState.allowDiagonalMapMovement))
         {
             mapHUD.ShowStatus(GameText.Get("map.feedback.this_tile_is_out_of_reach_you_can", "该格子不在可进入范围内，已显示详细信息。"));
             return;
@@ -1325,7 +1326,8 @@ public class RunGameManager : MonoBehaviour
 
     private bool CanAttemptMove(BoardTileData tile, int moveCost)
     {
-        return MapMovementService.CanAttemptMove(runState, actionPointSystem, tile, moveCost);
+        return SpecialDungeonEventNavigationService.CanPlayerMove(activeSpecialDungeonContext, runState.playerGridPosition, tile)
+            && MapMovementService.CanAttemptMove(runState, actionPointSystem, tile, moveCost);
     }
 
     private bool CanPotentiallyIgnoreMoveCostViaRelic(BoardTileData tile)
@@ -1381,6 +1383,8 @@ public class RunGameManager : MonoBehaviour
 
     private bool TryExecuteMove(BoardTileData tile, int moveCost)
     {
+        if (!SpecialDungeonEventNavigationService.CanPlayerMove(activeSpecialDungeonContext, runState.playerGridPosition, tile))
+            return false;
         MapMovementCycleFlags previousFlags = CaptureMovementCycleFlags();
         bool wasPreviouslyExploredEmptyTile = tile != null
             && tile.tileType == MapTileType.Empty
@@ -1703,6 +1707,7 @@ public class RunGameManager : MonoBehaviour
         }
 
         eventRandomLootDiscardPreviewCache.Clear();
+        SpecialDungeonEventNavigationService.MarkEventStarted(activeSpecialDungeonContext, tile);
         mapEventOverlay.Show(tile, tile.assignedEvent, HandleEventOptionSelected, BuildEventOptionPreview);
         RefreshHUD(GameText.Format("map.feedback.event", "触发事件：{displayName}", ("displayName", tile.assignedEvent.LocalizedName)));
         return true;
@@ -1768,10 +1773,13 @@ public class RunGameManager : MonoBehaviour
         message = result.message; resultContent = result.resultContent; nextEventOverride = result.nextEventOverride;
         runFlowState.PendingEventEncounterData = success ? result.pendingEncounterData : null;
         runFlowState.PendingSpecialDungeon = success ? result.pendingSpecialDungeon : null;
+        runFlowState.PendingSpecialDungeonEntryIndex = success ? result.pendingSpecialDungeonEntryIndex : SpecialDungeonEventNavigationService.NoDestination;
         if (!success) return false;
         boardManager.RefreshTile(tile.coord);
         mapHUD.ShowTile(tile, GetMoveCost(tile), true);
         RefreshHUD(message);
+        if (tile.sourceSpecialDungeon != null && tile.sourceSpecialDungeon.eventRewardsOnce)
+            PersistCurrentRunSave();
         return true;
     }
 
@@ -1779,6 +1787,23 @@ public class RunGameManager : MonoBehaviour
     {
         eventRandomLootDiscardPreviewCache.Clear();
         runFlowState.DeferPendingCalamityUntilOverlayClosed = false;
+        if (runFlowState.PendingSpecialDungeonEntryIndex != SpecialDungeonEventNavigationService.NoDestination)
+        {
+            int destinationIndex = runFlowState.PendingSpecialDungeonEntryIndex;
+            runFlowState.PendingSpecialDungeonEntryIndex = SpecialDungeonEventNavigationService.NoDestination;
+            if (SpecialDungeonEventNavigationService.TryNavigate(activeSpecialDungeonContext, destinationIndex,
+                    runState, boardManager, playerMapController, out BoardTileData destination))
+            {
+                if (destination.tileType == MapTileType.SpecialDungeonExit) ExitSpecialDungeon();
+                else
+                {
+                    mapHUD.ShowTile(destination, 0, true);
+                    OpenEventPanel(destination);
+                    PersistCurrentRunSave();
+                }
+            }
+            return;
+        }
         if (runFlowState.PendingEventEncounterData != null)
         {
             StartPendingEventEncounter();

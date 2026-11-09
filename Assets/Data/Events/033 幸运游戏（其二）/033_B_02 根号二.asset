@@ -16,6 +16,7 @@ MonoBehaviour:
   eventName: "\u6839\u53F7\u4E8C"
   eventContent: "\u4F60\u8FDB\u5165\u201C\u6839\u53F7\u4E8C\u201D\uFF0C\u4E0D\u7BA1\u4F60\u600E\u4E48\u8FDB\u6765\u7684\uFF0C\u53CD\u6B63\u5C31\u662F\u8FDB\u6765\u4E86\u3002\u4F60\u53D1\u73B0\u623F\u95F4\u6B63\u4E2D\u592E\u6446\u7740\u4E00\u672C\u4E66\uFF0C\u4E66\u7684\u5C01\u76AE\u4E0A\u9664\u4E86\u4E00\u4E2A\u5927\u5927\u7684\u6839\u53F7\u4E8C\u4EC0\u4E48\u4E5F\u6CA1\u5199\u3002\u4E00\u4E2A\u7EFF\u8138\u8001\u5934\u5750\u5728\u4E66\u524D\u5927\u54ED\u5927\u95F9\uFF1A\u201C\u5929\u54EA\uFF01\u8FD9\u7A76\u7ADF\u662F\u4EC0\u4E48\uFF01\u201D\r\n\r\n\u4ED6\u770B\u89C1\u4E86\u4F60\uFF0C\u4E00\u6B65\u51B2\u4E0A\u6765\u6293\u4F4F\u4F60\u7684\u624B\uFF1A\u201C\u5E74\u8F7B\u4EBA\uFF0C\u5E2E\u8001\u5934\u5B50\u770B\u770B\u8FD9\u662F\u4EC0\u4E48\uFF1F\u201D\r\n\r\n\u4F60\u51B3\u5B9A\uFF1A"
   eventIllustration: {fileID: 0}
+  hideConsequences: 1
   options:
   - optionId: 1
     optionLabel: "\u201C\u6211\u770B\u5C01\u76AE\u4E0A\u5199\u7740\u6839\u53F7\u4E8C\u3002\u201D"
@@ -48,9 +49,10 @@ MonoBehaviour:
     encounterEnemyCountMax: 0
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
-    nextEvent: {fileID: 11400000, guid: ec502bb5bb5d9994abf2abeb0b09a90c, type: 2}
+    nextEvent: {fileID: 0}
     resolveEvent: 0
     customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: 6
   - optionId: 2
     optionLabel: "\u201C\u6211\u770B\u4E0D\u61C2\u554A\uFF01\u201D"
     requiredMoney: 0
@@ -107,9 +109,10 @@ MonoBehaviour:
       encounterEnemyCountMin: 0
       encounterEnemyCountMax: 0
       specialDungeon: {fileID: 0}
-    nextEvent: {fileID: 11400000, guid: 24065cf65e374984da865ab1c21058e6, type: 2}
+    nextEvent: {fileID: 0}
     resolveEvent: 0
     customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: 0
   - optionId: 3
     optionLabel: "\u201C\u56DE\u54E5\u8C2D\u5427\uFF0C\u8759\u8760\u4FA0\u8BF4\u4ED6\u4E0D\u6253\u4F60\u4E86\u3002\u201D"
     requiredMoney: 0
@@ -141,6 +144,7 @@ MonoBehaviour:
     encounterEnemyCountMax: 0
     specialDungeon: {fileID: 0}
     additionalBuiltInEffects: []
-    nextEvent: {fileID: 11400000, guid: ac38cc8f25127d149a4da023dfe0fe17, type: 2}
+    nextEvent: {fileID: 0}
     resolveEvent: 0
     customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: 5

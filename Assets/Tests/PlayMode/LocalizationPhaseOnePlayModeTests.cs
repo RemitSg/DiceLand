@@ -665,6 +665,73 @@ public sealed class LocalizationPhaseOnePlayModeTests
         Assert.IsTrue(hits.Any(hit => hit.gameObject.transform == face), "The English button face must remain an input target.");
     }
 
+    [UnityTest]
+    public IEnumerator LuckyMazeUsesRoomChoicesWithoutConsequencesOrRepeatedRewards()
+    {
+        Call(RuntimeType("MainMenuRuntime"), "ClearTutorialRequest");
+        Call(RuntimeType("MainMenuRuntime"), "ClearContinueRequest");
+        Call(RuntimeType("MapRunRuntime"), "Clear", (object)null);
+        yield return SceneManager.LoadSceneAsync("MapScene");
+        Component map = Find("RunGameManager");
+        yield return WaitFor(() => map != null && Get(map, "runState") != null, "map initialization", 30f);
+        Call(map, "StartRun");
+        object treasure = Get(map, "mapTreasureOverlay");
+        if (treasure != null) Call(treasure, "Hide");
+        Call(Get(map, "pendingStartingRelicBagChoices"), "Clear");
+        object dungeon = LoadAsset("Assets/Data/Events/033 幸运游戏（其二）/033 幸运迷宫.asset", "SpecialDungeon_SO");
+        object flow = Get(map, "runFlowState");
+        flow.GetType().GetProperty("PendingSpecialDungeon").SetValue(flow, dungeon);
+        object state = Get(map, "runState"); Vector2Int mainCoord = (Vector2Int)Get(state, "playerGridPosition");
+        Set(state, "money", 1000);
+        object member = ((IEnumerable)Get(state, "partyMembers")).Cast<object>().First();
+        Set(member, "maxHP", 100); Set(member, "currentHP", 20);
+        Call(map, "EnterPendingSpecialDungeon");
+        object board = Get(map, "boardManager"), overlay = Get(map, "mapEventOverlay");
+        Func<int, object> room = index => ((IEnumerable)Call(board, "GetAllTiles")).Cast<object>()
+            .Single(tile => (int)Get(tile, "specialDungeonEntryIndex") == index);
+        Assert.IsFalse((bool)Call(map, "TryExecuteMove", room(1), 0));
+        int ap = (int)Get(Get(map, "actionPointSystem"), "CurrentPoints");
+        Assert.IsTrue((bool)Call(map, "TryExecuteMove", room(0), 0));
+        yield return WaitFor(() => (bool)Get(overlay, "IsVisible"), "first maze room", 15f);
+        Assert.AreEqual("033_A_00", Get(Get(overlay, "currentEvent"), "eventId"));
+        Assert.IsFalse(((Component)Get(overlay, "consequenceTitleText")).gameObject.activeSelf);
+        Action<int> choose = index =>
+        {
+            object current = Get(overlay, "currentEvent");
+            object option = ((IEnumerable)Get(current, "options")).Cast<object>().ElementAt(index);
+            Call(overlay, "SelectOption", option);
+            Call(overlay, "OnConfirmClicked");
+            Assert.IsTrue((bool)Get(overlay, "isShowingResultStep"));
+            Assert.IsFalse(((Component)Get(overlay, "consequenceScrollRect")).gameObject.activeSelf);
+            Call(overlay, "OnConfirmClicked");
+        };
+        choose(2); Assert.AreEqual(100, Get(member, "currentHP"));
+        Set(member, "currentHP", 45);
+        for (int i = 0; i < 18; i++)
+        {
+            choose(2);
+            Assert.AreEqual("033_A_00", Get(Get(overlay, "currentEvent"), "eventId"));
+            Assert.AreEqual(45, Get(member, "currentHP"));
+        }
+        Assert.IsFalse((bool)Call(map, "TryExecuteMove", room(1), 0), "Free movement stays locked after the first event.");
+        choose(0); Assert.AreEqual("033_A_01", Get(Get(overlay, "currentEvent"), "eventId"));
+        choose(2); Assert.AreEqual("033_B_02", Get(Get(overlay, "currentEvent"), "eventId"));
+        choose(0); Assert.AreEqual("033_C_02", Get(Get(overlay, "currentEvent"), "eventId"));
+        choose(1); Assert.AreEqual("033_A_00", Get(Get(overlay, "currentEvent"), "eventId"));
+        choose(0); choose(2);
+        int beforeRepeat = (int)Get(state, "money");
+        choose(0);
+        Assert.AreEqual(beforeRepeat, Get(state, "money"), "Returning to a room must not award its option twice.");
+        StringAssert.Contains("033_B_02::1", File.ReadAllText(ProfilePath("menu_continue_save.json")));
+        choose(2); Assert.AreEqual("033_D_02", Get(Get(overlay, "currentEvent"), "eventId"));
+        choose(1); Assert.AreEqual("033_E_01", Get(Get(overlay, "currentEvent"), "eventId"));
+        Assert.AreEqual(ap, Get(Get(map, "actionPointSystem"), "CurrentPoints"));
+        choose(1);
+        Assert.IsFalse((bool)Call(map, "IsInSpecialDungeon"));
+        Assert.AreEqual(mainCoord, Get(Get(map, "runState"), "playerGridPosition"));
+        Assert.IsFalse((bool)Get(overlay, "IsVisible"));
+    }
+
     private static string ProfilePath(string name) => Path.Combine(Application.persistentDataPath, name);
     private static byte[] ReadProfile(string name) => File.Exists(ProfilePath(name)) ? File.ReadAllBytes(ProfilePath(name)) : null;
     private static void RestoreProfile(string name, byte[] contents)

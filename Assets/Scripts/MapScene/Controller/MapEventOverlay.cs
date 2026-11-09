@@ -194,6 +194,7 @@ public partial class MapEventOverlay : MonoBehaviour
         optionSection.gameObject.SetActive(false);
         string result = !string.IsNullOrWhiteSpace(resultContent) ? resultContent
             : !string.IsNullOrWhiteSpace(option?.resultContent) ? currentEvent.LocalizeOption(option, "result", option.resultContent)
+            : currentEvent.hideConsequences ? GameText.Get("ui.event.resolved", "事件已触发。")
             : !string.IsNullOrWhiteSpace(message) ? message : currentEvent.LocalizeOption(option, "preview", option?.consequenceDescription);
         contentText.text = string.IsNullOrWhiteSpace(result) ? GameText.Get("ui.event.resolved", "事件已触发。") : result;
         eventMetaText.text = GameText.Get("ui.event.result", "事件结果");
@@ -229,6 +230,7 @@ public partial class MapEventOverlay : MonoBehaviour
 
     private string FormatOptionDetail(MapEventOptionData option, EventOptionPreviewData preview)
     {
+        if (currentEvent != null && currentEvent.hideConsequences) return string.Empty;
         string empty = GameText.Get("ui.event.no_preview", "暂无后果说明。");
         if (option == null) return empty;
         string detail = !string.IsNullOrWhiteSpace(option.consequenceDescription)

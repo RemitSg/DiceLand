@@ -16,6 +16,7 @@ public sealed class MapEventBuiltInEffectExecutionRequest
     public IDictionary<string, MapEventLootDiscardPreview> randomLootDiscardPreviewCache;
     public int moneyBeforeSelection;
     public int selectionMoneyCost;
+    public bool skipRewardEffects;
 }
 
 public sealed class MapEventBuiltInEffectExecutionResult
@@ -28,6 +29,7 @@ public sealed class MapEventBuiltInEffectExecutionResult
     public bool resolveEventOverride;
     public BattleEncounterData pendingEncounterData;
     public SpecialDungeon_SO pendingSpecialDungeon;
+    public int pendingSpecialDungeonEntryIndex = SpecialDungeonEventNavigationService.NoDestination;
 }
 
 public static class MapEventBuiltInEffectExecutorService
@@ -125,6 +127,8 @@ public static class MapEventBuiltInEffectExecutorService
             MapEventBuiltInEffectData effectData = allEffects[i];
             if (effectData == null || i == encounterEffectIndex)
                 continue;
+            if (request.skipRewardEffects && MapEventEffectSequenceBuilder.IsRewardEffect(effectData))
+                continue;
 
             if (encounterEffectIndex >= 0 && MapEventEffectSequenceBuilder.IsDeferredEncounterVictoryRewardEffect(effectData.effectType))
             {
@@ -149,6 +153,7 @@ public static class MapEventBuiltInEffectExecutorService
 
         result.message = effectMessages.Count > 0
             ? string.Join("\n", effectMessages)
+            : request.skipRewardEffects ? GameText.Get("ui.event.resolved", "事件已触发。")
             : BuildFallbackMessage(request.eventData, request.optionData, selectedResult);
         result.success = true;
         return true;

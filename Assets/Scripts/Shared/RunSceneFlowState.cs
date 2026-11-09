@@ -9,6 +9,7 @@ public sealed class RunSceneFlowState
     public bool SuppressPendingCalamityOnNextRestActionPointRestore { get; set; }
     public BattleEncounterData PendingEventEncounterData { get; set; }
     public SpecialDungeon_SO PendingSpecialDungeon { get; set; }
+    public int PendingSpecialDungeonEntryIndex { get; set; } = SpecialDungeonEventNavigationService.NoDestination;
 
     public void Reset()
     {
@@ -18,6 +19,7 @@ public sealed class RunSceneFlowState
         SuppressPendingCalamityOnNextRestActionPointRestore = false;
         PendingEventEncounterData = null;
         PendingSpecialDungeon = null;
+        PendingSpecialDungeonEntryIndex = SpecialDungeonEventNavigationService.NoDestination;
     }
 
     public void RestorePendingCalamityTiers(IEnumerable<int> pendingTiers)

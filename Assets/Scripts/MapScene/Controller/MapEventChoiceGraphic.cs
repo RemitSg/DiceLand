@@ -5,7 +5,14 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CanvasRenderer))]
 public sealed class MapEventChoiceGraphic : MaskableGraphic
 {
-    private bool selected, available = true;
+    private bool selected, available = true, detailVisible = true;
+
+    public void SetDetailVisible(bool visible)
+    {
+        if (detailVisible == visible) return;
+        detailVisible = visible;
+        SetVerticesDirty();
+    }
 
     public void SetState(bool isSelected, bool isAvailable)
     {
@@ -26,7 +33,8 @@ public sealed class MapEventChoiceGraphic : MaskableGraphic
         Polygon(vh, new Rect(r.x + border, r.y + border, r.width - border * 2f, r.height - border * 2f), 8f, fill);
         Color rule = new Color(edge.r, edge.g, edge.b, 0.65f);
         Stroke(vh, new Vector2(r.xMin + 96f, r.yMin + 18f), new Vector2(r.xMin + 96f, r.yMax - 18f), 1f, rule);
-        Stroke(vh, new Vector2(r.xMin + 366f, r.yMin + 18f), new Vector2(r.xMin + 366f, r.yMax - 18f), 1f, rule);
+        if (detailVisible)
+            Stroke(vh, new Vector2(r.xMin + 366f, r.yMin + 18f), new Vector2(r.xMin + 366f, r.yMax - 18f), 1f, rule);
         Vector2 center = new Vector2(r.xMax - 33f, r.yMax - Mathf.Min(41f, r.height * 0.5f));
         Color mark = selected ? new Color(0.56f, 0.87f, 0.69f) : new Color(0.45f, 0.48f, 0.42f);
         for (int i = 0; i < 40; i++)

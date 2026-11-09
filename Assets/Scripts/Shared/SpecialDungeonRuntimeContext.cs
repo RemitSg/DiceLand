@@ -8,6 +8,7 @@ public sealed class SpecialDungeonRuntimeContext
     public bool isActive;
     public string activeDungeonId;
     public SpecialDungeon_SO activeDungeon;
+    public bool eventNavigationStarted;
     public Vector2Int returnEventCoord;
     public MapRunSnapshot mainMapSnapshot;
     public List<int> deferredCalamityTiers = new List<int>();
@@ -36,6 +37,7 @@ public sealed class SpecialDungeonRuntimeContext
             isActive = isActive,
             activeDungeonId = activeDungeonId,
             activeDungeon = activeDungeon,
+            eventNavigationStarted = eventNavigationStarted,
             returnEventCoord = returnEventCoord,
             mainMapSnapshot = mainMapSnapshot != null ? mainMapSnapshot.CloneWithoutSpecialDungeonContext() : null,
             deferredCalamityTiers = deferredCalamityTiers != null ? new List<int>(deferredCalamityTiers) : new List<int>()

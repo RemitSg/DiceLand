@@ -147,6 +147,8 @@ public class MapEventOptionData
     public MapEvent_SO nextEvent;
     public bool resolveEvent = true;
     public MapEventOptionHandler_SO customHandler;
+    [Tooltip("特殊副本跳转：-1 不跳转，-2 完成并离开副本，0 起为有效格子列表索引。")]
+    public int specialDungeonDestinationEntryIndex = -1;
 
     public string DisplayLabel => string.IsNullOrWhiteSpace(optionLabel)
         ? GameText.Get("ui.event.unnamed_choice", "未命名选项") : optionLabel;
@@ -159,6 +161,7 @@ public class MapEvent_SO : ScriptableObject
     public string eventName = "事件";
     [TextArea(4, 10)] public string eventContent;
     public Sprite eventIllustration;
+    public bool hideConsequences;
     public List<MapEventOptionData> options = new List<MapEventOptionData>();
 
     public string DisplayName => string.IsNullOrWhiteSpace(eventName) ? name : eventName;
