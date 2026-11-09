@@ -19,9 +19,8 @@ public sealed class MapEventFrameGraphic : MaskableGraphic
         }
         else
         {
-            Band(vh, Inset(r, 2f), 14f, 3f, new Color(0.60f, 0.45f, 0.21f));
-            Band(vh, Inset(r, 7f), 10f, 1.3f, new Color(0.90f, 0.75f, 0.42f));
-            Band(vh, Inset(r, 13f), 6f, 1f, new Color(0.31f, 0.30f, 0.17f));
+            Band(vh, Inset(r, 2f), 14f, 1.2f, new Color(.60f, .45f, .21f, .85f));
+            Band(vh, Inset(r, 7f), 10f, 1f, new Color(.90f, .75f, .42f, .85f));
         }
         float inset = buttonFace ? 11f : 20f;
         float length = buttonFace ? 9f : 22f;

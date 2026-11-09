@@ -60,7 +60,7 @@ public static class MapEventVisualTools
         }
     }
 
-    public static string Capture(string name, int width, int height, bool longContent = false, bool unavailable = false, bool result = false, Rect? safe = null, string eventName = "熄灭的营火")
+    public static string Capture(string name, int width, int height, bool longContent = false, bool unavailable = false, bool result = false, Rect? safe = null, string eventName = "熄灭的营火", Action<MapEventOverlay, Camera> customize = null)
     {
         MapEvent_SO campfire = null;
         foreach (string guid in AssetDatabase.FindAssets("t:MapEvent_SO", new[] { "Assets/Data/Events" }))
@@ -91,6 +91,7 @@ public static class MapEventVisualTools
                 eventHost.transform.SetParent(host.transform, false);
                 MapEventOverlay overlay = eventHost.AddComponent<MapEventOverlay>();
                 CopyProductionSettings(overlay);
+                overlay.ConfigureInventory(host.GetComponent<MapHUD>());
                 overlay.Show(tile, sample, PreviewChoice, (t, e, option) => unavailable && option == sample.options[0]
                     ? new MapEventOverlay.EventOptionPreviewData { isSelectable = false, unavailableReason = "当前不满足该选项的执行条件。" } : null);
                 Canvas canvas = overlay.GetComponentInChildren<Canvas>();
@@ -103,11 +104,12 @@ public static class MapEventVisualTools
                 rect.position = new Vector3(0f, 0f, -3f);
                 rect.localScale = Vector3.one * (camera.orthographicSize / 540f);
                 overlay.ApplyViewport(new Vector2(width, height), safe ?? new Rect(0f, 0f, width, height));
-                if (result) canvas.transform.Find("SafeArea/Panel/ConfirmButton").GetComponent<Button>().onClick.Invoke();
+                if (result) canvas.GetComponentsInChildren<Button>(true).Single(b => b.name == "ConfirmButton").onClick.Invoke();
                 typeof(MapEventOverlay).GetMethod("RefreshLayout", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(overlay, null);
                 Canvas.ForceUpdateCanvases();
                 foreach (TextMeshProUGUI text in canvas.GetComponentsInChildren<TextMeshProUGUI>()) text.ForceMeshUpdate(true, true);
                 foreach (Graphic graphic in canvas.GetComponentsInChildren<Graphic>()) graphic.Rebuild(CanvasUpdate.PreRender);
+                customize?.Invoke(overlay, camera);
             });
             Directory.CreateDirectory(OutputPath);
             string destination = Path.Combine(OutputPath, name);

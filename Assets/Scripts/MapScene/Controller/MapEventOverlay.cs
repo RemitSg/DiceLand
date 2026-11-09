@@ -59,6 +59,8 @@ public partial class MapEventOverlay : MonoBehaviour
     public void Show(BoardTileData tile, MapEvent_SO eventData, EventOptionSelectionHandler onSelect, EventOptionPreviewHandler onPreview = null)
     {
         EnsureUi();
+        HideOwnedInventory();
+        ResetPresentation();
         currentTile = tile;
         currentEvent = eventData;
         selectionHandler = onSelect;
@@ -75,11 +77,14 @@ public partial class MapEventOverlay : MonoBehaviour
         SelectOption(GetFirstSelectableOption());
         ApplyViewport(new Vector2(Screen.width, Screen.height), Screen.safeArea);
         RefreshLayout();
+        ChangeIllustration(eventData);
+        BeginNarration(true);
     }
 
     public void Hide()
     {
         bool wasVisible = IsVisible;
+        ResetPresentation();
         HideOwnedInventory();
         isShowingResultStep = false;
         selectedOption = null;
@@ -102,7 +107,7 @@ public partial class MapEventOverlay : MonoBehaviour
         optionScrollRect.gameObject.SetActive(true);
         optionSection.gameObject.SetActive(true);
         consequenceTitleText.text = GameText.Get("ui.event.preview", "后果预览");
-        SetButtonLabel(GameText.Get("ui.confirm", "确定"));
+        SetButtonLabel(StoryText("confirm_choice", "确认选择", "Confirm choice"));
         ResetScroll(contentScrollRect);
         layoutDirty = true;
     }
@@ -139,6 +144,9 @@ public partial class MapEventOverlay : MonoBehaviour
     {
         if (option != null && optionPreviewLookup.TryGetValue(option, out EventOptionPreviewData preview) && preview != null && !preview.isSelectable) return;
         selectedOption = option;
+        previewedOption = option;
+        statusText.text = string.Empty;
+        consequenceTitleText.text = GameText.Get("ui.event.preview", "后果预览");
         RefreshOptionButtonVisuals();
         EventOptionPreviewData selectedPreview = null;
         if (option != null) optionPreviewLookup.TryGetValue(option, out selectedPreview);
@@ -157,33 +165,48 @@ public partial class MapEventOverlay : MonoBehaviour
 
     private void OnConfirmClicked()
     {
+        if (!CanReceiveStoryInput || executingSelection) return;
+        if (!IsNarrationComplete) { AdvanceDialogue(); return; }
         if (isShowingResultStep)
         {
             if (pendingNextEvent != null)
             {
                 if (nestedEventDepth >= MaxNestedEventDepth)
                 {
-                    statusText.text = GameText.Get("map.event.this_event_has_too_many_nested_branches", "事件嵌套层数过深，请检查事件配置。");
-                    layoutDirty = true;
+                    pendingNextEvent = null;
+                    contentText.text = GameText.Get("map.event.this_event_has_too_many_nested_branches", "事件嵌套层数过深，请检查事件配置。");
+                    RefreshLayout();
+                    BeginNarration(false);
                     return;
                 }
                 ShowFollowUpEvent(pendingNextEvent);
                 return;
             }
-            Hide();
+            BeginClose();
             return;
         }
+        if (!AreChoicesReady) return;
         if (selectedOption == null || selectionHandler == null || currentTile == null || currentEvent == null) return;
-        using (MapFeedbackOrigin.FromText(consequenceText, confirmButton.transform as RectTransform))
+        RefreshOptionAvailability();
+        if (!confirmButton.interactable) return;
+        executingSelection = true;
+        try
         {
-            if (selectionHandler.Invoke(currentTile, currentEvent, selectedOption, out string message, out string resultContent, out MapEvent_SO nextEventOverride))
-                ShowResultStep(selectedOption, message, resultContent, nextEventOverride);
-            else
+            using (MapFeedbackOrigin.FromText(consequenceText, confirmButton.transform as RectTransform))
             {
-                statusText.text = string.IsNullOrWhiteSpace(message) ? GameText.Get("ui.event.choice_failed", "当前选项未能执行。") : message;
-                layoutDirty = true;
+                if (selectionHandler.Invoke(currentTile, currentEvent, selectedOption, out string message, out string resultContent, out MapEvent_SO nextEventOverride))
+                    ShowResultStep(selectedOption, message, resultContent, nextEventOverride);
+                else
+                {
+                    string reason = string.IsNullOrWhiteSpace(message) ? GameText.Get("ui.event.choice_failed", "当前选项未能执行。") : message;
+                    consequenceTitleText.text = StoryText("failed", "暂时无法执行", "Unable to proceed");
+                    consequenceText.text = reason + "\n\n" + consequenceText.text;
+                    ResetScroll(consequenceScrollRect);
+                    layoutDirty = true;
+                }
             }
         }
+        finally { executingSelection = false; }
     }
 
     private void ShowResultStep(MapEventOptionData option, string message, string resultContent, MapEvent_SO nextEventOverride)
@@ -197,16 +220,18 @@ public partial class MapEventOverlay : MonoBehaviour
             : currentEvent.hideConsequences ? GameText.Get("ui.event.resolved", "事件已触发。")
             : !string.IsNullOrWhiteSpace(message) ? message : currentEvent.LocalizeOption(option, "preview", option?.consequenceDescription);
         contentText.text = string.IsNullOrWhiteSpace(result) ? GameText.Get("ui.event.resolved", "事件已触发。") : result;
+        if (!string.IsNullOrWhiteSpace(message) && !contentText.text.Contains(message)) contentText.text += "\n\n" + message;
         eventMetaText.text = GameText.Get("ui.event.result", "事件结果");
         consequenceTitleText.text = GameText.Get("ui.event.outcome", "选择结果");
         consequenceText.text = !string.IsNullOrWhiteSpace(message) ? message : GameText.Get("ui.event.continue_hint", "请选择继续以收起事件界面。");
         statusText.text = string.Empty;
-        SetButtonLabel(GameText.Get("ui.continue", "继续"));
+        SetButtonLabel(pendingNextEvent != null ? GameText.Get("ui.continue", "继续") : StoryText("finish", "结束事件", "Finish event"));
         SetConfirmButtonInteractable(true);
         ResetScroll(contentScrollRect);
         ResetScroll(consequenceScrollRect);
         layoutDirty = true;
         RefreshLayout();
+        BeginNarration(false);
     }
 
     private void ShowFollowUpEvent(MapEvent_SO eventData)
@@ -220,6 +245,8 @@ public partial class MapEventOverlay : MonoBehaviour
         RefreshOptionList();
         SelectOption(GetFirstSelectableOption());
         RefreshLayout();
+        ChangeIllustration(eventData);
+        BeginNarration(false);
     }
 
     private string FormatOptionLabel(MapEventOptionData option, EventOptionPreviewData preview)

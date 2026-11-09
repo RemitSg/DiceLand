@@ -26,16 +26,23 @@ public sealed class MapEventChoiceGraphic : MaskableGraphic
         vh.Clear();
         Rect r = GetPixelAdjustedRect();
         Color edge = selected ? new Color(0.91f, 0.76f, 0.40f) : new Color(0.43f, 0.36f, 0.23f);
-        Color fill = selected ? new Color(0.065f, 0.15f, 0.105f) : new Color(0.025f, 0.043f, 0.035f);
+        Color fill = selected ? new Color(.018f, .105f, .074f, .98f) : new Color(.006f, .035f, .026f, .96f);
         if (!available) { edge *= 0.7f; fill *= 0.7f; }
         Polygon(vh, r, 9f, edge);
         float border = selected ? 2.5f : 1.2f;
         Polygon(vh, new Rect(r.x + border, r.y + border, r.width - border * 2f, r.height - border * 2f), 8f, fill);
         Color rule = new Color(edge.r, edge.g, edge.b, 0.65f);
-        Stroke(vh, new Vector2(r.xMin + 96f, r.yMin + 18f), new Vector2(r.xMin + 96f, r.yMax - 18f), 1f, rule);
+        Stroke(vh, new Vector2(r.xMin + 78f, r.yMin + 18f), new Vector2(r.xMin + 78f, r.yMax - 18f), 1f, rule);
         if (detailVisible)
             Stroke(vh, new Vector2(r.xMin + 366f, r.yMin + 18f), new Vector2(r.xMin + 366f, r.yMax - 18f), 1f, rule);
         Vector2 center = new Vector2(r.xMax - 33f, r.yMax - Mathf.Min(41f, r.height * 0.5f));
+        if (!detailVisible)
+        {
+            center.y = r.center.y;
+            Stroke(vh, center + new Vector2(-5, -10), center + new Vector2(5, 0), 2.3f, edge);
+            Stroke(vh, center + new Vector2(5, 0), center + new Vector2(-5, 10), 2.3f, edge);
+            return;
+        }
         Color mark = selected ? new Color(0.56f, 0.87f, 0.69f) : new Color(0.45f, 0.48f, 0.42f);
         for (int i = 0; i < 40; i++)
         {
@@ -57,7 +64,12 @@ public sealed class MapEventChoiceGraphic : MaskableGraphic
             new Vector2(r.xMin + cut, r.yMax), new Vector2(r.xMin, r.yMax - cut), new Vector2(r.xMin, r.yMin + cut) };
         int start = vh.currentVertCount;
         Vertex(vh, r.center, tint);
-        foreach (Vector2 point in points) Vertex(vh, point, tint);
+        foreach (Vector2 point in points)
+        {
+            Color shade = tint * Mathf.Lerp(.88f, 1.12f, Mathf.InverseLerp(r.yMin, r.yMax, point.y));
+            shade.a = tint.a;
+            Vertex(vh, point, shade);
+        }
         for (int i = 0; i < points.Length; i++) vh.AddTriangle(start, start + 1 + i, start + 1 + (i + 1) % points.Length);
     }
 

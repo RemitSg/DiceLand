@@ -16,7 +16,7 @@ public partial class MapEventOverlay
     {
         inventoryEntry = MapInventoryEntry.Create(safeAreaRect, () =>
         {
-            if (inventoryHud == null || !IsVisible) return;
+            if (inventoryHud == null || !CanReceiveStoryInput) return;
             openedInventory = true;
             inventoryHud.ShowInventoryPanel(EventOverlayCanvasSortingOrder + 20);
         });
@@ -29,5 +29,5 @@ public partial class MapEventOverlay
         openedInventory = false;
     }
 
-    private void OnDisable() { HideOwnedInventory(); }
+    private void OnDisable() { HideOwnedInventory(); ResetPresentation(); }
 }

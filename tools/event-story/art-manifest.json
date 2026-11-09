@@ -1,0 +1,239 @@
+{
+  "version": 1,
+  "date": "2026-11-09",
+  "generator": "Built-in image_gen",
+  "scope": "33 main event families; authored follow-ups inherit their family illustration unless eventIllustration explicitly overrides it.",
+  "items": [
+    {
+      "id": "001",
+      "name": "泥潭",
+      "path": "Assets/Resources/EventUI/Scenes/001.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: Poisonous forest bog: a thick dark green mud pool beside an overgrown woodland path, faint poisonous violet wisps, roots sinking into mud, reed reflections, perilous but subtly beautiful. No people or body parts.",
+      "sha256": "41c1dd687f0e4ee859184034b552f764edda235b871a4b88293faa26d22fcbe0"
+    },
+    {
+      "id": "002",
+      "name": "发光的树洞",
+      "path": "Assets/Resources/EventUI/Scenes/002.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A giant old hollow tree with an open cavity filled with hundreds of tiny softly glowing cyan-green worms. The luminous cavity is the unmistakable focal point, surrounded by moss, ferns, twisting bark, sunlit ivy, no people.",
+      "sha256": "09454370d695398e2328da070eb16c3f236c3495f3139bc4ae8183d388c27f4e"
+    },
+    {
+      "id": "003",
+      "name": "废弃矿井",
+      "path": "Assets/Resources/EventUI/Scenes/003.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: An abandoned timber-braced mine entrance, old rails lead into blue-black darkness, rusted cart and forgotten lantern, damp rock and forest roots, faint amber light, no people.",
+      "sha256": "a5dab2acbcc92f249c71cbe74f7fa02d3245da5895fb951ee5eb22bba048624c"
+    },
+    {
+      "id": "004",
+      "name": "吟游诗人",
+      "path": "Assets/Resources/EventUI/Scenes/004.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A warm charming male wandering bard at a forest roadside with a lute, travel cloak and a mischievous friendly smile. Tasteful anime painterly character design in a beautifully painted environment, small travel bags, afternoon sun.",
+      "sha256": "4075941872fdf3f09133900acab218d55a08706c1235ce49ffaa138dca93fef4"
+    },
+    {
+      "id": "005",
+      "name": "会说话的蘑菇",
+      "path": "Assets/Resources/EventUI/Scenes/005.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A colorful living magical mushroom, one charismatic mushroom with an expressive tiny friendly face and a vivid multicolor cap, growing on a mossy stump, enchanting warm sunlit woodland, little spores.",
+      "sha256": "4d006aba0380a0c3d0139727bc3604149b3f0990a3190f9c7c21bca9ec0ec1fb"
+    },
+    {
+      "id": "006",
+      "name": "漂浮的灵魂碎片",
+      "path": "Assets/Resources/EventUI/Scenes/006.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A floating translucent fragment of a soul, an irregular luminous turquoise crystal shard with a faint expressive spectral face, suspended above weathered roots in a shaded forest shrine, cyan wisps and quiet golden dust.",
+      "sha256": "7b8e7001b04a87b07db44fc4eba792f27acb0661d9932bc0df05df7cd78bec5d"
+    },
+    {
+      "id": "007",
+      "name": "小猫咪",
+      "path": "Assets/Resources/EventUI/Scenes/007.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A small cute but defensive hissing tabby kitten beside an ivy-covered forest stone, arched back, fluffy raised tail, forest flowers and warm dappled light, charming storybook illustration.",
+      "sha256": "21ff023c2d189ae7abf39190fbbb0e54e6bb3e857b83058829182322808e4f4a"
+    },
+    {
+      "id": "008",
+      "name": "发狂啮群",
+      "path": "Assets/Resources/EventUI/Scenes/008.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: An approaching wave of frenzied small dark forest rodents spilling over a woodland path, a few clearly detailed rodents in the foreground and many silhouettes receding into the woods, dynamic but readable, no gore.",
+      "sha256": "3873a958a51cad68e430c7a64266d19802342291bc4206531b12005013b773b6"
+    },
+    {
+      "id": "009",
+      "name": "尖刺陷阱",
+      "path": "Assets/Resources/EventUI/Scenes/009.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A concealed forest pit trap with a broken leafy camouflage mat, revealed rows of sharpened wooden spikes below, snapped branches at the rim, clear environmental storytelling, no injuries or people.",
+      "sha256": "6378e26fdee886782c24fd692097ef370a0f1f0a876728472dd610ed45bc0f16"
+    },
+    {
+      "id": "010",
+      "name": "路边的陶罐",
+      "path": "Assets/Resources/EventUI/Scenes/010.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: Several ancient earthenware pots half buried in soft earth beside a forest path, thin warm golden light escaping cracked rims, small scattered pottery shards, lush moss and tiny flowers.",
+      "sha256": "1b2dd1eec4d02252a8a5079a01a1701c43c1103dd13ea31e8aec4cb66e70c082"
+    },
+    {
+      "id": "011",
+      "name": "海边的指路牌",
+      "path": "Assets/Resources/EventUI/Scenes/011.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: An old crooked wooden signpost on a quiet rocky seashore, completely illegible abstract carvings with NO readable writing, a tiny dried crimson stain, branching paths and confused tracks in pale sand, sea mist and cool turquoise ocean.",
+      "sha256": "dcfcbf4bb2d3d2aab71e8919811b012db74e752ca2f721e4955958defb47d053"
+    },
+    {
+      "id": "012",
+      "name": "宝箱",
+      "path": "Assets/Resources/EventUI/Scenes/012.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: An enticing CLOSED weathered wooden treasure chest with tarnished brass bands, sitting on a mossy stone beneath an ancient tree, a tiny golden gleam at its latch, ivy, ferns and a distant ruined arch, warm dappled afternoon sunlight.",
+      "sha256": "7d398240b526ab2c70992f07a06a72b647e87d054a7aece34da806c2d11f0bad"
+    },
+    {
+      "id": "013",
+      "name": "断桥",
+      "path": "Assets/Resources/EventUI/Scenes/013.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A damaged rope suspension bridge spanning a deep misty forest canyon, one third of its wooden planks missing, frayed ropes, beautiful distant cliffs, wind-stirred leaves, precarious environmental storytelling, no people.",
+      "sha256": "9f767f4e13cd66094039fdcb832a71767b8c0c95090f00ce486656c6e5fc5f23"
+    },
+    {
+      "id": "014",
+      "name": "低语井",
+      "path": "Assets/Resources/EventUI/Scenes/014.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A moss-covered whispering stone well in a quiet old Chinese-inspired mountain village awaiting flooding, distant reservoir water and empty wooden houses. A young adult woman in simple travel clothing stands near the well with a lantern, seen quietly in three-quarter back view. Dusk, melancholy cyan mist and soft amber lantern light.",
+      "sha256": "2233939ff2c4de5e2d46f18a2dede58a3784b532b038d8d248d3516836c2ba28"
+    },
+    {
+      "id": "015",
+      "name": "残破车厢",
+      "path": "Assets/Resources/EventUI/Scenes/015.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A broken medieval horse carriage half sunken in forest mud, a partly open door reveals waterlogged wooden boxes and an impossibly deep dark interior, beautifully detailed old wood and metal, muted humid afternoon light.",
+      "sha256": "4d526d03af0423655f96cc00fbc8647546cb573d3a3d253335d5a4f4905e7d68"
+    },
+    {
+      "id": "016",
+      "name": "锈蚀祭坛",
+      "path": "Assets/Resources/EventUI/Scenes/016.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: An ancient rust-covered iron altar standing in the middle of an overgrown forest path, a shaped socket at the center awaiting an offering, oxidized copper and iron, moss, tiny amber motes and atmospheric shafts of light.",
+      "sha256": "087cf79b6e8b3277f9bb20d4126189f30060ab631d21679cee0a220458b9b375"
+    },
+    {
+      "id": "017",
+      "name": "倒影",
+      "path": "Assets/Resources/EventUI/Scenes/017.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A shallow still puddle on a hot forest path reflects a vaguely human shadow standing unnaturally still, while no person is visibly standing above it. Subtle uncanny visual mystery, humid summer light, beautiful painterly forest.",
+      "sha256": "79a2e5ea23d0acc618c5e98b83929e1912cb63cb98fdf639aef86e6898fe4ac5"
+    },
+    {
+      "id": "018",
+      "name": "盲盒商人",
+      "path": "Assets/Resources/EventUI/Scenes/018.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A mysterious medieval roadside merchant stall without a sign, many identical beautifully wrapped mystery boxes, a hooded friendly vendor stands behind the counter, cloth canopy, mossy forest ruins, welcoming amber lanterns.",
+      "sha256": "854c401cb06ee8bf4891beded9484e0b54dad6a2e6ee6ee30f770f7acfb397b5"
+    },
+    {
+      "id": "019",
+      "name": "无主的信件",
+      "path": "Assets/Resources/EventUI/Scenes/019.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A sealed deep crimson envelope tucked into the crack of an old forest signpost, intact wax seal, no writing on envelope or sign, faint unnatural red glow, dark green leaves, beautiful mysterious golden hour light.",
+      "sha256": "72ff55d364bbd97378448ac7140951318420f12fbe9b5e829f90069c39bcfa09"
+    },
+    {
+      "id": "020",
+      "name": "倾斜的钟楼",
+      "path": "Assets/Resources/EventUI/Scenes/020.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A small ancient stone bell tower leaning against a wooded hillside, an old brass bell hanging at an angle, ivy and weathered stone, oddly suspended drifting leaves, timeless soft light, no people.",
+      "sha256": "46824fe6b40a70952f6ef7d3a67bf7ab133b099db09758407c653e8931e5f922"
+    },
+    {
+      "id": "021",
+      "name": "熄灭的营火",
+      "path": "Assets/Resources/EventUI/Scenes/021.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A recently extinguished campfire in a stone ring in a quiet forest campsite, thin delicate smoke curling from dark embers, abandoned bedroll and small supply satchel nearby, warm morning sunlight and mossy ruins, no active flames, no people.",
+      "sha256": "a562ec119e1875646fd6d22226092ecc90142bcded7b235a935d713b9a6033b8"
+    },
+    {
+      "id": "022",
+      "name": "缠线木偶",
+      "path": "Assets/Resources/EventUI/Scenes/022.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A carved wooden theatrical marionette sitting upright on a low mossy stump, loose decorative puppet strings resting on bark and winding away toward a shaded forest trail. Clearly a small crafted wooden toy, visible articulated wooden joints and a painted wooden smile. Tranquil fairy-tale mystery, warm scattered sunlight and cool emerald foliage. All craft strings lie loose over the stump and surrounding leaves.",
+      "sha256": "b31f32e8492bda407d99d7322e7f4411f081066e9afd6bfd7e0d5e711d077651"
+    },
+    {
+      "id": "023",
+      "name": "医疗箱",
+      "path": "Assets/Resources/EventUI/Scenes/023.png",
+      "prompt": "Production game background illustration, one full bleed 16:9 landscape 1920x1080 painting for a premium illustrated fantasy JRPG narrative event. No UI, no text, no lettering, no frame, no watermark. A calm ancient forest clearing, moss-covered stones and ferns, ivy overhead, distant ruined stone arch, soft warm late afternoon sunlight against emerald shadows. Focal subject at x32% y54%: an antique WHITE PAINTED MEDICAL SUPPLY CHEST resting on a mossy flat stone, lid slightly open, immaculate rolled bandages and herbal medicines, soft warm amber light inside; small blank wooden price placard beside it with NO writing. Absolutely no people. Beautiful rich painterly textures, lovingly crafted weathered wood and stone, coherent storybook fantasy rather than photographic realism. Strong depth, subtle golden dust motes, tasteful muted palette, comfortable light. Keep the rightmost 36% mostly subdued forest and distant architecture with low visual contrast to receive game choices; bottom 25% unobtrusive dark foreground undergrowth to receive dialogue. Do not paint any user interface or typographic elements.",
+      "sha256": "a704a039b2aa9d6020dcf6b3a0f8ed3c03c9360ed1a6c30722401485adf72f52"
+    },
+    {
+      "id": "024",
+      "name": "石缝里的光",
+      "path": "Assets/Resources/EventUI/Scenes/024.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A narrow passage between tall weathered rock faces, a small mysterious warm light shines from a deep crack in the left rock wall as if a lantern were hidden inside the stone, moss and cool shaded ferns, no people.",
+      "sha256": "787bcdbe31def7bd0bb8d3725620daa6fd7611ae2fb498d861bee1b687d8fe3b"
+    },
+    {
+      "id": "025",
+      "name": "旧赌桌",
+      "path": "Assets/Resources/EventUI/Scenes/025.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: An abandoned old gambling table in a forest clearing with three upside down cups, one cup tilting subtly by itself, no dealer, atmospheric amber light, weathered wood, scattered leaves and mossy stones.",
+      "sha256": "9573a197065522fad2968782d7547ccf8bbbb457001ffd0bb1ed34a4af689e6a"
+    },
+    {
+      "id": "026",
+      "name": "反复出现的门",
+      "path": "Assets/Resources/EventUI/Scenes/026.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: One solitary ornate wooden door with a brass handle and a freestanding stone doorframe in the middle of a forest path, absolutely no surrounding wall or room, the path curves mysteriously behind it, softly uncanny sunbeams.",
+      "sha256": "7cc7546440d8b77ec52bd38f0314862fe1d17800c30be3bdb981579349e81956"
+    },
+    {
+      "id": "027",
+      "name": "赌徒",
+      "path": "Assets/Resources/EventUI/Scenes/027.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A sly friendly medieval gambler at a forest roadside table, displaying three worn inverted ceramic bowls in a straight row, worn travel clothes and a knowing smile, painterly fantasy character, warm forest dusk.",
+      "sha256": "d193d6972b2afa63eb04823a985a978ef16a89892907619881993a3018541717"
+    },
+    {
+      "id": "028",
+      "name": "投资",
+      "path": "Assets/Resources/EventUI/Scenes/028.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A small surprisingly refined medieval investment office front on an old wooded street, an open account ledger and tidy coin stacks on an outdoor desk, blank parchment notices without any readable text, rich but slightly suspicious warm light.",
+      "sha256": "0d6caf1a340d8a751c509f187714cf74eeb06c2fb7806b43da2bcbcc7e72e04e"
+    },
+    {
+      "id": "029",
+      "name": "为鱼呣",
+      "path": "Assets/Resources/EventUI/Scenes/029.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A cheerful mysterious fantasy benefactor with an amused kind smile offers a small glowing gift box at a mossy forest rest spot, subtly whimsical charming anime painterly design, warm welcoming light, no modern objects or text.",
+      "sha256": "aa31d95cac8d86cfdcba267b634bf3139651236173bad54fb7229fd4957b8a59"
+    },
+    {
+      "id": "030",
+      "name": "贵族的遗产",
+      "path": "Assets/Resources/EventUI/Scenes/030.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A dilapidated noble castle gate, heavy wooden doors crooked on hinges, a rotten blank wooden sign hanging beside the entrance, overgrown ivy, cloudy late afternoon and warm interior hints, melancholic forgotten grandeur.",
+      "sha256": "7454f4bf9667c952046a0647cc01d93fa849d36e128338821d74700bbaed3972"
+    },
+    {
+      "id": "031",
+      "name": "王储的遗产",
+      "path": "Assets/Resources/EventUI/Scenes/031.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: An imposing ruined royal castle entrance, a large violent hole in the heavy wooden doors, a rotten blank sign planted in the earth, faint violet-amber glow beckoning from the deep hall, ancient ivy and long-forgotten royal motifs, no readable words.",
+      "sha256": "0cabbbc361347c054a6059d23c3222857a52e1ad9efcaccc611af7ef48555b6b"
+    },
+    {
+      "id": "032",
+      "name": "幸运游戏（其一）",
+      "path": "Assets/Resources/EventUI/Scenes/032.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A charismatic adult witch in a rich violet travel cloak approaches on a forest path, offering a luminous cyan crystal ball, playful knowing expression, painterly anime character against elaborate forest ruins, restrained gold ornaments, no symbols or letters.",
+      "sha256": "50ff6d6cd417fdd197a15181cd31be8d1ee94f670f2ab0c0eed17685cc0e7ec2"
+    },
+    {
+      "id": "033",
+      "name": "幸运游戏（其二）",
+      "path": "Assets/Resources/EventUI/Scenes/033.png",
+      "prompt": "Production game background illustration, ONE full-bleed 16:9 landscape painting at 1920x1080 for an atmospheric illustrated fantasy JRPG narrative event. No UI, no text, no letters, no typography, no frame, no watermark. Beautiful rich painterly concept art, finely crafted materials and foliage, strong layered depth and subtle drifting motes; emerald forest shadows and restrained antique amber light, comfortable atmospheric readability, storybook fantasy rather than photography. Place the distinctive focal subject LEFT OF CENTER at x32% y50%, fully above the bottom quarter. Keep the rightmost 36% subdued with a coherent low-contrast continuation of the environment for game choices, and the bottom 25% dark unobtrusive foreground for dialogue. Paint environmental details edge to edge, no blank panel areas. Scene: A charismatic adult witch in a violet cloak with a knowing grin presents a glowing rose-gold crystal ball at the entrance to an enchanted hedge and stone labyrinth, winding mysterious passages, moonlit emerald foliage and a few warm lanterns.",
+      "sha256": "cf629b66b7f8d930fbe23f3bc793222c4491387fc41d41a4029d9cf31c9703a4"
+    }
+  ]
+}
