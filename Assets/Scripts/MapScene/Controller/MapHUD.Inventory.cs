@@ -76,16 +76,19 @@ public partial class MapHUD
         frame.pixelsPerUnitMultiplier = 3.4f;
         frame.raycastTarget = false;
 
-        inventoryTitle = CreateRect("WoodTitle", inventoryPanelRect, new Vector2(0.5f, 1f), new Vector2(0f, 12f), new Vector2(650f, 160f));
+        inventoryTitle = CreateRect("WoodTitle", inventoryPanelRect, new Vector2(0.5f, 1f), new Vector2(0f, 12f), new Vector2(650f, 140f));
         inventoryTitle.pivot = new Vector2(0.5f, 0.5f);
         Image wood = inventoryTitle.gameObject.AddComponent<Image>();
         wood.sprite = Resources.Load<Sprite>("TutorialUI/WoodTitle");
         wood.preserveAspect = true;
         wood.raycastTarget = false;
-        Image titleIcon = CreateCenteredImage(inventoryTitle, "BackpackEmblem", new Vector2(-224f, 0), new Vector2(118f, 118f), Resources.Load<Sprite>("InventoryUI/EntryButton"), Color.white);
+        MapItemIconFit.Attach(wood);
+        Image titleIcon = CreateCenteredImage(inventoryTitle, "BackpackEmblem", new Vector2(-205f, 0), new Vector2(76f, 76f), Resources.Load<Sprite>("InventoryUI/EntryButton"), Color.white);
         titleIcon.preserveAspect = true; titleIcon.raycastTarget = false;
-        InventoryLabel(inventoryTitle, "Title", new Vector2(54f, 0), new Vector2(370f, 74f), 56,
+        TextMeshProUGUI title = InventoryLabel(inventoryTitle, "Title", Vector2.zero, new Vector2(338f, 74f), 56,
             InventoryText("冒险背包", "Adventurer's Pack"), true);
+        title.alignment = TextAlignmentOptions.Midline;
+        title.fontSizeMin = 24;
 
         inventoryTabRoot = CreateRect("TabRoot", inventoryPanelRect, new Vector2(0f, 1f), Vector2.zero, Vector2.zero);
         lootTabButton = BuildTabButton(inventoryTabRoot, "LootTab", Vector2.zero, GameText.Get("battle.settlement.build_loot_section.loot", "战利品"), () => SetInventoryTab(InventoryTab.Loot));
@@ -193,10 +196,18 @@ public partial class MapHUD
         inventoryPanelSize = new Vector2(Mathf.Min(1880, available.x - (available.x < 1100 ? 40 : 130)), Mathf.Min(924, available.y - 136));
         inventoryPanelSize = Vector2.Max(new Vector2(280, 500), inventoryPanelSize);
         inventoryPanelRect.sizeDelta = inventoryPanelSize;
-        inventoryTitle.sizeDelta = new Vector2(Mathf.Min(650, inventoryPanelSize.x * 0.74f), 160);
-        inventoryTitle.Find("BackpackEmblem").gameObject.SetActive(inventoryPanelSize.x >= 850);
+        float titleWidth = Mathf.Min(650, inventoryPanelSize.x * 0.74f);
+        inventoryTitle.sizeDelta = new Vector2(titleWidth, 140);
+        RectTransform titleEmblem = (RectTransform)inventoryTitle.Find("BackpackEmblem");
+        bool showEmblem = inventoryPanelSize.x >= 850;
+        titleEmblem.gameObject.SetActive(showEmblem);
+        titleEmblem.anchoredPosition = new Vector2(-titleWidth * 0.315f, 0);
         TMP_Text title = inventoryTitle.GetComponentInChildren<TMP_Text>();
-        if (title != null) { title.rectTransform.anchoredPosition = new Vector2(inventoryPanelSize.x >= 850 ? 54 : 0, 0); title.rectTransform.sizeDelta = new Vector2(Mathf.Min(370, inventoryTitle.sizeDelta.x - 50), 74); }
+        if (title != null)
+        {
+            title.rectTransform.anchoredPosition = Vector2.zero;
+            title.rectTransform.sizeDelta = new Vector2(titleWidth * (showEmblem ? 0.52f : 0.68f), 74);
+        }
         float innerWidth = inventoryPanelSize.x - 96;
         inventoryTabSize = new Vector2((innerWidth - 36) / 4, 84);
         ApplyRect(inventoryTabRoot, new Vector2(0, 1), new Vector2(48, -66), new Vector2(innerWidth, 84));
