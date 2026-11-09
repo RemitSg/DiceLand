@@ -127,6 +127,7 @@ public class SpeedButton : MonoBehaviour
     public static bool InputSuppressed = false;
     private static bool tutorialAllowedScreenRectActive;
     private static Rect tutorialAllowedScreenRect;
+    private static Rect tutorialAllowedAdditionalScreenRect;
 
     public event Action<SpeedButton> AllyLongPressed;
     public event Action<SpeedButton> EnemyClicked;
@@ -169,18 +170,26 @@ public class SpeedButton : MonoBehaviour
     public static void SetTutorialAllowedScreenRect(Rect screenRect)
     {
         tutorialAllowedScreenRect = screenRect;
-        tutorialAllowedScreenRectActive = screenRect.width > 0.5f && screenRect.height > 0.5f;
+        tutorialAllowedAdditionalScreenRect = default;
+        tutorialAllowedScreenRectActive = true;
+    }
+
+    public static void SetTutorialAllowedAdditionalScreenRect(Rect screenRect)
+    {
+        tutorialAllowedAdditionalScreenRect = screenRect;
     }
 
     public static void ClearTutorialAllowedScreenRect()
     {
         tutorialAllowedScreenRect = default;
+        tutorialAllowedAdditionalScreenRect = default;
         tutorialAllowedScreenRectActive = false;
     }
 
     public static bool IsScreenPointAllowedByTutorialHighlight(Vector2 screenPoint)
     {
-        return !tutorialAllowedScreenRectActive || tutorialAllowedScreenRect.Contains(screenPoint);
+        return !tutorialAllowedScreenRectActive || tutorialAllowedScreenRect.Contains(screenPoint)
+            || tutorialAllowedAdditionalScreenRect.Contains(screenPoint);
     }
 
     public bool TryGetScreenHighlightRect(out Rect rect)
@@ -360,6 +369,13 @@ public class SpeedButton : MonoBehaviour
 
         if (isDragging && buttonType == ButtonType.Ally && isInteractable)
         {
+            if (!IsScreenPointAllowedByTutorialHighlight(Input.mousePosition))
+            {
+                DisconnectFromTarget();
+                isDragging = false;
+                ResetPointerPressState();
+                return;
+            }
             // 优先使用敌方按钮自身 OnMouseEnter 写入的静态字段（与 Unity 鼠标系统同源，最可靠）
             // 再用 Update 中缓存的 hoveredEnemyButton 兜底
             SpeedButton target = currentlyHoveredEnemy ?? hoveredEnemyButton ?? GetEnemyButtonAtMouse();
@@ -881,9 +897,8 @@ public class SpeedButton : MonoBehaviour
             return;
         }
 
-        if (!IsScreenPointAllowedByTutorialHighlight(Input.mousePosition))
+        if (!isDragging && !IsScreenPointAllowedByTutorialHighlight(Input.mousePosition))
         {
-            if (isDragging) StopCurve();
             return;
         }
 

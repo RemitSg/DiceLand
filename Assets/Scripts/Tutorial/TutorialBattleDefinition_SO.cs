@@ -34,7 +34,11 @@ public enum TutorialBattleHighlightTarget
     None = 0,
     BattleButton = 1,
     FirstEnemySpeedButton = 2,
-    FirstAllySpeedButton = 3
+    FirstAllySpeedButton = 3,
+    FirstEnemyBody = 4,
+    SkillSelection = 5,
+    CloseInformation = 6,
+    Connection = 7
 }
 
 [Serializable]

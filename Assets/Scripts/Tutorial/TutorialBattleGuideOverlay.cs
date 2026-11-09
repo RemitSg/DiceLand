@@ -54,8 +54,10 @@ public class TutorialBattleGuideOverlay : MonoBehaviour
     }
 
     public void TrackTarget(Func<Rect?> provider) { EnsureUi(); view.TrackTarget(provider); }
+    public void TrackAdditionalTarget(Func<Rect?> provider) { EnsureUi(); view.TrackAdditionalTarget(provider); }
     private Rect? ResolveStaticTarget() => activeTargetScreenRect;
-    public bool IsScreenPointInsideTarget(Vector2 screenPoint) => !IsTargetHighlightVisible || view.HasFocus && view.FocusScreenRect.Contains(screenPoint);
+    public bool IsScreenPointInsideTarget(Vector2 screenPoint) => !IsTargetHighlightVisible ||
+        view.HasFocus && (view.FocusScreenRect.Contains(screenPoint) || view.AdditionalFocusScreenRect.Contains(screenPoint));
     public void Hide() { Hide(true); }
     public void Hide(bool invokeCallback)
     {
@@ -83,7 +85,11 @@ public class TutorialBattleGuideOverlay : MonoBehaviour
     public void AdvancePresentation(float delta)
     {
         view?.Advance(delta);
-        if (IsTargetHighlightVisible) SpeedButton.SetTutorialAllowedScreenRect(view.HasFocus ? view.FocusScreenRect : Rect.zero);
+        if (IsTargetHighlightVisible)
+        {
+            SpeedButton.SetTutorialAllowedScreenRect(view.HasFocus ? view.FocusScreenRect : Rect.zero);
+            SpeedButton.SetTutorialAllowedAdditionalScreenRect(view.AdditionalFocusScreenRect);
+        }
     }
     private void OnDisable() { CompleteHide(false); }
     private void OnDestroy() { CompleteHide(false); view?.Dispose(); }

@@ -157,6 +157,8 @@ public partial class BattleButton : MonoBehaviour
 
     private void OnDisable()
     {
+        tutorialInteractionArmed = false;
+        HideTutorialTargetHighlightIfVisible();
         ClearActiveRoundCombatants();
     }
 
@@ -228,9 +230,11 @@ public partial class BattleButton : MonoBehaviour
             }
 
             HideTutorialTargetHighlightIfVisible();
+            CompleteTutorialInteraction(TutorialBattleInteraction.Prepare);
             SetupTargetingPhase(allies, enemies);
             currentPhase = BattlePhase.Targeting;
             TryShowPendingTutorialStep();
+            RefreshTutorialInteractionGuidance();
             return;
         }
 
@@ -243,6 +247,7 @@ public partial class BattleButton : MonoBehaviour
         }
 
         HideTutorialTargetHighlightIfVisible();
+        CompleteTutorialInteraction(TutorialBattleInteraction.Execute);
         StartCoroutine(ExecuteCombatPhaseRoutine(allies, enemies));
     }
 
@@ -764,7 +769,10 @@ public partial class BattleButton : MonoBehaviour
         RefreshSharedEnergyReservations(activeRoundAllies);
         ShowSharedEnergySpendPopupIfNeeded(ally, previousReserved, reservedSharedEnergy);
         battleSkillInfoOverlay?.RefreshCurrentView();
+        if (battleSkillInfoOverlay != null && battleSkillInfoOverlay.IsAllySelectionVisible)
+            CompleteTutorialInteraction(TutorialBattleInteraction.SwitchSkill);
         HandleTutorialProgress(TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.SkillSwitched), false);
+        RefreshTutorialInteractionGuidance();
     }
 
     private void HandleAllyConnectionChanged(SpeedButton button)
@@ -795,7 +803,13 @@ public partial class BattleButton : MonoBehaviour
         if (button.ConnectedTarget != null)
         {
             HideTutorialTargetHighlightIfVisible();
-            TutorialBattleProgressResult progress = TutorialBattleRuntime.NotifyEvent(GetReservedEnergyCostForAlly(ally) > 0
+            CompleteTutorialInteraction(pendingTutorialInteraction == TutorialBattleInteraction.Redirect
+                ? TutorialBattleInteraction.Redirect : TutorialBattleInteraction.Connect);
+            if (selectedSkill != null && selectedSkill.energyCost > 0)
+                CompleteTutorialInteraction(TutorialBattleInteraction.EnergyConnect);
+            TutorialBattleProgressResult progress = TutorialBattleRuntime.NotifyEvent(
+                TutorialBattleRuntime.CurrentStep?.completionEvent != TutorialBattleEventType.LineCreated &&
+                selectedSkill != null && selectedSkill.energyCost > 0
                 ? TutorialBattleEventType.EnergyLineCreated
                 : TutorialBattleEventType.LineCreated);
             HandleTutorialProgress(progress, true);
@@ -818,11 +832,6 @@ public partial class BattleButton : MonoBehaviour
 
         HandleTutorialProgress(TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.StatusApplied), false);
         TryLogAllEnemyStatusDrivenStageTransitions();
-    }
-
-    private int GetReservedEnergyCostForAlly(BattleAllyController ally)
-    {
-        return BattleSharedEnergyReservationCollectorService.CalculateReservedEnergyForAlly(ally);
     }
 
     private void RefreshSharedEnergyReservations(BattleAllyController[] allies)
@@ -5970,25 +5979,34 @@ public partial class BattleButton : MonoBehaviour
 
     private void HandleSkillInfoOverlayHidden()
     {
+        CompleteTutorialInteraction(tutorialPanelCloseInteraction);
+        tutorialPanelCloseInteraction = TutorialBattleInteraction.None;
         TryShowPendingTutorialStep();
+        RefreshTutorialInteractionGuidance();
     }
 
     private void HandleAllySkillSelectionShown(BattleAllyController ally)
     {
-        HideTutorialTargetHighlightIfVisible();
+        CompleteTutorialInteraction(TutorialBattleInteraction.AllySkill);
+        tutorialPanelCloseInteraction = TutorialBattleInteraction.CloseAllySkill;
         HandleTutorialProgress(TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.AllySkillViewed), false);
+        RefreshTutorialInteractionGuidance();
     }
 
     private void HandleEnemySkillInfoShown(BattleEnemyController enemy, SpeedButton sourceButton)
     {
-        HideTutorialTargetHighlightIfVisible();
+        CompleteTutorialInteraction(TutorialBattleInteraction.EnemySkill);
+        tutorialPanelCloseInteraction = TutorialBattleInteraction.CloseEnemySkill;
         HandleTutorialProgress(TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.EnemySkillViewed), false);
+        RefreshTutorialInteractionGuidance();
     }
 
     private void HandleEnemyDetailShown(BattleEnemyController enemy)
     {
-        HideTutorialTargetHighlightIfVisible();
+        CompleteTutorialInteraction(TutorialBattleInteraction.EnemyDetail);
+        tutorialPanelCloseInteraction = TutorialBattleInteraction.CloseEnemyDetail;
         HandleTutorialProgress(TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.EnemyDetailViewed), false);
+        RefreshTutorialInteractionGuidance();
     }
 
     private void HandleTutorialProgress(TutorialBattleProgressResult progress, bool showPendingImmediately)
@@ -6024,7 +6042,7 @@ public partial class BattleButton : MonoBehaviour
             GameText.Content(key, "body", step.body), GameText.Get("ui.continue", step.continueButtonLabel), () =>
         {
             TutorialBattleRuntime.NotifyEvent(TutorialBattleEventType.ContinuePressed);
-            ShowTutorialTargetHighlightIfNeeded(step.highlightAfterContinue);
+            ArmTutorialInteractionGuidance();
             TryShowPendingTutorialStep();
         });
     }
@@ -6038,28 +6056,12 @@ public partial class BattleButton : MonoBehaviour
         tutorialBattleGuideOverlay.Show(GameText.Content(key, "title", reaction.title),
             GameText.Content(key, "body", reaction.body), GameText.Get("tutorial.got_it", reaction.continueButtonLabel), () =>
         {
-            if (ShowTutorialTargetHighlightIfNeeded(reaction.highlightAfterContinue))
+            ArmTutorialInteractionGuidance();
+            if (tutorialBattleGuideOverlay.IsTargetHighlightVisible)
                 return;
 
             TryShowPendingTutorialStep();
         });
-    }
-
-    private bool ShowTutorialTargetHighlightIfNeeded(TutorialBattleHighlightTarget target)
-    {
-        if (tutorialBattleGuideOverlay == null || target == TutorialBattleHighlightTarget.None)
-            return false;
-
-        if (TryResolveTutorialHighlightRect(target, out Rect screenRect))
-        {
-            activeTutorialHighlightTarget = target;
-            tutorialBattleGuideOverlay.ShowTargetHighlight(screenRect);
-            tutorialBattleGuideOverlay.TrackTarget(() => TryResolveTutorialHighlightRect(target, out Rect current) ? current : (Rect?)null);
-            return true;
-        }
-
-        activeTutorialHighlightTarget = TutorialBattleHighlightTarget.None;
-        return false;
     }
 
     private void HideTutorialTargetHighlightIfVisible()
@@ -6078,10 +6080,18 @@ public partial class BattleButton : MonoBehaviour
         if (currentStep == null)
             return true;
 
-        if (currentStep.completionEvent == TutorialBattleEventType.CombatExecutePressed)
-            return true;
-
-        return activeTutorialHighlightTarget != TutorialBattleHighlightTarget.BattleButton;
+        switch (currentStep.completionEvent)
+        {
+            case TutorialBattleEventType.AllySkillViewed:
+            case TutorialBattleEventType.EnemySkillViewed:
+            case TutorialBattleEventType.SkillSwitched:
+            case TutorialBattleEventType.LineCreated:
+            case TutorialBattleEventType.EnergyLineCreated:
+                // These actions need the speed buttons generated by preparation.
+                return false;
+            default:
+                return true;
+        }
     }
 
     private bool TryResolveTutorialHighlightRect(TutorialBattleHighlightTarget target, out Rect screenRect)
@@ -6094,7 +6104,14 @@ public partial class BattleButton : MonoBehaviour
             case TutorialBattleHighlightTarget.FirstEnemySpeedButton:
                 return TryGetFirstEnemySpeedButtonScreenRect(out screenRect);
             case TutorialBattleHighlightTarget.FirstAllySpeedButton:
-                return TryGetFirstAllySpeedButtonScreenRect(out screenRect);
+            case TutorialBattleHighlightTarget.Connection:
+                return TryGetTutorialAllyButtonRect(out screenRect);
+            case TutorialBattleHighlightTarget.FirstEnemyBody:
+                return TryGetTutorialEnemyBodyRect(out screenRect);
+            case TutorialBattleHighlightTarget.SkillSelection:
+                return battleSkillInfoOverlay != null && battleSkillInfoOverlay.TryGetTutorialSkillListRect(out screenRect);
+            case TutorialBattleHighlightTarget.CloseInformation:
+                return battleSkillInfoOverlay != null && battleSkillInfoOverlay.TryGetTutorialCloseRect(out screenRect);
             default:
                 return false;
         }
@@ -6125,25 +6142,6 @@ public partial class BattleButton : MonoBehaviour
         for (int enemyIndex = 0; enemyIndex < enemies.Length; enemyIndex++)
         {
             IReadOnlyList<SpeedButton> buttons = BattleSpeedButtonListService.GetEnemyButtons(enemies[enemyIndex]);
-            for (int buttonIndex = 0; buttonIndex < buttons.Count; buttonIndex++)
-            {
-                if (buttons[buttonIndex] != null && buttons[buttonIndex].gameObject.activeInHierarchy)
-                    return buttons[buttonIndex].TryGetScreenHighlightRect(out screenRect);
-            }
-        }
-
-        return false;
-    }
-
-    private bool TryGetFirstAllySpeedButtonScreenRect(out Rect screenRect)
-    {
-        screenRect = default;
-        BattleAllyController[] allies = activeRoundAllies != null && activeRoundAllies.Length > 0
-            ? activeRoundAllies
-            : FindObjectsOfType<BattleAllyController>(true);
-        for (int allyIndex = 0; allyIndex < allies.Length; allyIndex++)
-        {
-            IReadOnlyList<SpeedButton> buttons = BattleSpeedButtonListService.GetAllyButtons(allies[allyIndex]);
             for (int buttonIndex = 0; buttonIndex < buttons.Count; buttonIndex++)
             {
                 if (buttons[buttonIndex] != null && buttons[buttonIndex].gameObject.activeInHierarchy)

@@ -19,16 +19,19 @@ public sealed class TutorialForestView : IDisposable
     public bool IsClosing { get; private set; }
     public bool HasFocus { get; private set; }
     public Rect FocusScreenRect { get; private set; }
+    public Rect AdditionalFocusScreenRect { get; private set; }
     public Rect SafeRect { get; private set; }
     private readonly bool tmp, welcome;
     private readonly Graphic bannerLabel;
     private readonly RectTransform banner, illustration, topics, rule, symbol;
     private readonly CanvasGroup group;
     private readonly TutorialForestGraphic focusFace, leader, symbolFace;
+    private readonly TutorialForestGraphic additionalFocusFace;
     private readonly RectTransform[] topicItems = new RectTransform[3];
     private readonly Graphic[] topicLabels = new Graphic[3];
     private readonly Scrollbar scrollbar;
     private Func<Rect?> targetProvider, avoidanceProvider;
+    private Func<Rect?> additionalTargetProvider;
     private Rect? legacyTarget;
     private bool focused, targetOnly, dirty = true, viewportOverride;
     private Vector2 pixels, lastRootSize, center;
@@ -52,6 +55,9 @@ public sealed class TutorialForestView : IDisposable
         Shade = shade.gameObject.AddComponent<TutorialSpotlightGraphic>(); Shade.color = new Color(.005f,.015f,.009f,.58f);
         RectTransform line = Rect(Root,"GuideLeader"); Stretch(line); leader = Face(line,TutorialForestGraphic.TutorialStyle.Leader);
         Focus = Rect(Root,"HighlightFrame"); focusFace = Face(Focus,TutorialForestGraphic.TutorialStyle.Focus); Focus.gameObject.SetActive(false);
+        RectTransform additionalFocus = Rect(Root, "AdditionalHighlightFrame");
+        additionalFocusFace = Face(additionalFocus, TutorialForestGraphic.TutorialStyle.Focus);
+        additionalFocus.gameObject.SetActive(false);
         Panel = Rect(Root,"Panel"); Panel.anchorMin = Panel.anchorMax = Panel.pivot = Vector2.one*.5f;
         var hit = Panel.gameObject.AddComponent<Image>(); hit.color = Color.clear;
         group = Panel.gameObject.AddComponent<CanvasGroup>();
@@ -104,6 +110,7 @@ public sealed class TutorialForestView : IDisposable
     public void MarkLayoutDirty() { dirty=true; }
     public void Show(bool highlight=false,Func<Rect?> target=null,Func<Rect?> keepClear=null)
     {
+        TrackAdditionalTarget(null);
         bool wasVisible=Canvas.gameObject.activeSelf && Panel.gameObject.activeSelf;
         if(!wasVisible && EventSystem.current!=null)previousSelection=EventSystem.current.currentSelectedGameObject;
         focused=highlight;targetOnly=false;targetProvider=target;avoidanceProvider=keepClear;legacyTarget=null;
@@ -122,6 +129,7 @@ public sealed class TutorialForestView : IDisposable
     }
     public void ShowTarget(Func<Rect?> target)
     {
+        TrackAdditionalTarget(null);
         if(Panel.gameObject.activeSelf)RestoreSelection();
         focused=true;targetOnly=true;targetProvider=target;avoidanceProvider=null;legacyTarget=null;
         targetReveal=Application.isPlaying?0:1;
@@ -129,6 +137,13 @@ public sealed class TutorialForestView : IDisposable
         UnityEngine.Canvas.ForceUpdateCanvases();RefreshGeometry();ApplyMotion();
     }
     public void TrackTarget(Func<Rect?> target,Func<Rect?> keepClear=null) { targetProvider=target;avoidanceProvider=keepClear;legacyTarget=null;focused=true;RefreshGeometry(); }
+    public void TrackAdditionalTarget(Func<Rect?> target)
+    {
+        additionalTargetProvider = target;
+        AdditionalFocusScreenRect = default;
+        Shade.SetAdditionalHole(default, false);
+        additionalFocusFace.gameObject.SetActive(false);
+    }
     public void Close(Action afterClose)
     {
         if(IsClosing)return;
@@ -137,6 +152,7 @@ public sealed class TutorialForestView : IDisposable
     }
     public void HideImmediately()
     {
+        TrackAdditionalTarget(null);
         completed=null;IsClosing=false;progress=0;targetProvider=avoidanceProvider=null;legacyTarget=null;focused=targetOnly=HasFocus=false;
         if(Canvas==null)return;
         Reading.StopMovement();Shade.SetHole(default,false,true);Focus.gameObject.SetActive(false);Canvas.gameObject.SetActive(false);RestoreSelection();
@@ -164,6 +180,9 @@ public sealed class TutorialForestView : IDisposable
         float spotlightAlpha=targetOnly?targetReveal:ease;
         Shade.color=new Color(.005f,.015f,.009f,(targetOnly?.62f:.58f)*spotlightAlpha);
         focusFace.glow=.5f+.5f*Mathf.Sin(pulse*3.9f);focusFace.color=new Color(1,1,1,spotlightAlpha);focusFace.SetVerticesDirty();
+        additionalFocusFace.glow = focusFace.glow;
+        additionalFocusFace.color = focusFace.color;
+        additionalFocusFace.SetVerticesDirty();
         leader.color=new Color(1,1,1,Mathf.SmoothStep(0,1,Mathf.Clamp01((progress-.4f)/.6f)));
     }
     public void ApplyViewport(Vector2 viewport,Rect safe)
@@ -202,12 +221,30 @@ public sealed class TutorialForestView : IDisposable
         Rect? avoid=avoidanceProvider?.Invoke();
         if(avoid.HasValue && TutorialHighlightCoordinateUtility.TryScreenRectToLocal(Root,avoid.Value,out Rect a))avoidLocal=a;
         Shade.SetHole(focus,HasFocus,!targetOnly);
+        RefreshAdditionalFocus(root);
         Focus.gameObject.SetActive(HasFocus);if(HasFocus)SetLocalRect(Focus,focus);
         if(dirty){Layout();dirty=false;}
         Vector2 scaled=Panel.sizeDelta*fit;
         center=HasFocus&&!targetOnly?ChoosePosition(SafeRect,avoidLocal,scaled):SafeRect.center;
         Panel.anchoredPosition=center+Vector2.down*(Mathf.Pow(1-progress,3)*14*fit);
         UpdateLeader(scaled);
+    }
+
+    private void RefreshAdditionalFocus(Rect root)
+    {
+        AdditionalFocusScreenRect = default;
+        Rect additional = default;
+        Rect? screen = targetOnly && HasFocus ? additionalTargetProvider?.Invoke() : null;
+        bool visible = screen.HasValue &&
+            TutorialHighlightCoordinateUtility.TryScreenRectToLocal(Root, screen.Value, out additional) &&
+            TutorialHighlightCoordinateUtility.Intersect(additional, root, out additional);
+        if (visible)
+        {
+            AdditionalFocusScreenRect = screen.Value;
+            SetLocalRect(additionalFocusFace.rectTransform, additional);
+        }
+        Shade.SetAdditionalHole(additional, visible);
+        additionalFocusFace.gameObject.SetActive(visible);
     }
     private void Layout()
     {

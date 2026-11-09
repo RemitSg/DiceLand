@@ -7,6 +7,16 @@ public sealed class TutorialSpotlightGraphic : MaskableGraphic, ICanvasRaycastFi
 {
     public Rect hole;
     public bool hasHole, blockHole = true;
+    private Rect additionalHole;
+    private bool hasAdditionalHole;
+
+    public void SetAdditionalHole(Rect value, bool visible)
+    {
+        if (additionalHole == value && hasAdditionalHole == visible) return;
+        additionalHole = value;
+        hasAdditionalHole = visible;
+        SetVerticesDirty();
+    }
     public void SetHole(Rect value, bool visible, bool modal)
     {
         if (hole == value && hasHole == visible && blockHole == modal) return;
@@ -16,10 +26,23 @@ public sealed class TutorialSpotlightGraphic : MaskableGraphic, ICanvasRaycastFi
     {
         vh.Clear(); Rect r = rectTransform.rect;
         if (!hasHole) { Quad(vh, r); return; }
-        Quad(vh, Rect.MinMaxRect(r.xMin, hole.yMax, r.xMax, r.yMax));
-        Quad(vh, Rect.MinMaxRect(r.xMin, r.yMin, r.xMax, hole.yMin));
-        Quad(vh, Rect.MinMaxRect(r.xMin, hole.yMin, hole.xMin, hole.yMax));
-        Quad(vh, Rect.MinMaxRect(hole.xMax, hole.yMin, r.xMax, hole.yMax));
+        OutsideAdditionalHole(vh, Rect.MinMaxRect(r.xMin, hole.yMax, r.xMax, r.yMax));
+        OutsideAdditionalHole(vh, Rect.MinMaxRect(r.xMin, r.yMin, r.xMax, hole.yMin));
+        OutsideAdditionalHole(vh, Rect.MinMaxRect(r.xMin, hole.yMin, hole.xMin, hole.yMax));
+        OutsideAdditionalHole(vh, Rect.MinMaxRect(hole.xMax, hole.yMin, r.xMax, hole.yMax));
+    }
+
+    private void OutsideAdditionalHole(VertexHelper vh, Rect rect)
+    {
+        if (!hasAdditionalHole || !TutorialHighlightCoordinateUtility.Intersect(rect, additionalHole, out Rect cut))
+        {
+            Quad(vh, rect);
+            return;
+        }
+        Quad(vh, Rect.MinMaxRect(rect.xMin, cut.yMax, rect.xMax, rect.yMax));
+        Quad(vh, Rect.MinMaxRect(rect.xMin, rect.yMin, rect.xMax, cut.yMin));
+        Quad(vh, Rect.MinMaxRect(rect.xMin, cut.yMin, cut.xMin, cut.yMax));
+        Quad(vh, Rect.MinMaxRect(cut.xMax, cut.yMin, rect.xMax, cut.yMax));
     }
     private void Quad(VertexHelper vh, Rect r)
     {
@@ -32,6 +55,8 @@ public sealed class TutorialSpotlightGraphic : MaskableGraphic, ICanvasRaycastFi
     public bool IsRaycastLocationValid(Vector2 screenPoint, Camera eventCamera)
     {
         if (blockHole || !hasHole) return true;
-        return !RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform,screenPoint,eventCamera,out Vector2 local) || !hole.Contains(local);
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, screenPoint, eventCamera, out Vector2 local))
+            return true;
+        return !hole.Contains(local) && !(hasAdditionalHole && additionalHole.Contains(local));
     }
 }

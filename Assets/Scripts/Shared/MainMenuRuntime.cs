@@ -37,6 +37,7 @@ public static class MainMenuRuntime
 
     public static void RequestTutorialStart(string returnSceneName = null)
     {
+        TutorialBattleInteractionGuidance.Reset();
         TutorialRequested = true;
         TutorialActive = false;
         TutorialReturnSceneName = returnSceneName;
@@ -53,6 +54,7 @@ public static class MainMenuRuntime
 
     public static void ClearTutorialRequest()
     {
+        TutorialBattleInteractionGuidance.Reset();
         TutorialRequested = false;
         TutorialActive = false;
         TutorialReturnSceneName = null;
