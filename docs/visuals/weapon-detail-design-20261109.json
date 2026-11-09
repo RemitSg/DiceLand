@@ -1,0 +1,127 @@
+{
+  "date": "2026-11-09",
+  "timezone": "Asia/Singapore",
+  "generator": "OpenAI built-in image_gen",
+  "useCase": "ui-mockup",
+  "status": "Design reference",
+  "output": "docs/visuals/weapon-detail-ideal-reference-20261109.png",
+  "generatedFilename": "exec-4585f837-d001-485b-bee9-0d981540956e.png",
+  "scope": "A proposed standalone weapon detail popup opened from inventory. Runtime UI and gameplay data were not changed.",
+  "layout": {
+    "header": "Centered 武器详情 plaque and close control.",
+    "left": "Weapon name, rarity, type, illustration, speed-slot count, skill count, illustrative quantity and description.",
+    "right": "Four complete skill cards with energy costs, ordered individual dice, ranges, trigger conditions, targets, and numerical effects.",
+    "footer": "Return to inventory and existing equipment action.",
+    "overflow": "Long descriptions wrap and the skill reading area scrolls.",
+    "numbers": "Weapon skill base ranges. Do not present the legacy no-skill fallback as a universal weapon attack stat.",
+    "inventoryQuantity": {
+      "value": 1,
+      "illustrative": true
+    }
+  },
+  "sourceWeapon": {
+    "path": "Assets/Data/Weapons/006 曦誓剑/006 曦誓剑.asset",
+    "guid": "60f938b00f1b42e19b517f1e12b86d06",
+    "name": "曦誓剑",
+    "rarity": "Rare",
+    "rarityLabel": "稀有",
+    "type": "Sword",
+    "typeLabel": "剑",
+    "speedButtonCount": 1,
+    "skillCount": 4,
+    "icon": "Assets/Data/Weapons/006 曦誓剑/曦誓剑.png",
+    "description": "剑身并不炽烈，只在挥落时留下短暂的白光。它更像审判，不像屠戮。",
+    "legacyFallbackPower": {
+      "min": 2,
+      "max": 4,
+      "onlyWithoutConfiguredSkills": true
+    }
+  },
+  "sourceSkills": [
+    {
+      "name": "晨辉斩",
+      "path": "Assets/Data/Weapons/006 曦誓剑/晨辉斩.asset",
+      "guid": "e7ce34d765904e3da5e283eaa04ccb78",
+      "defaultSkill": true,
+      "energyCost": 0,
+      "dice": [
+        {
+          "type": "Attack",
+          "min": 3,
+          "max": 4,
+          "effects": [
+            "【命中时】使全体友方获得1层护盾",
+            "【使用该技能时】若自身拥有护盾，则威力+1"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "涤净",
+      "path": "Assets/Data/Weapons/006 曦誓剑/涤净.asset",
+      "guid": "f8d88a4f8ad14ad3991224c3b6118f41",
+      "energyCost": 1,
+      "dice": [
+        {
+          "type": "Attack",
+          "min": 2,
+          "max": 3,
+          "effects": [
+            "【使用时】使血量最低的友方获得2层护盾"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "净曜突刺",
+      "path": "Assets/Data/Weapons/006 曦誓剑/净曜突刺.asset",
+      "guid": "00cc4d2de0054281ad2cbdf6dc02f86d",
+      "energyCost": 1,
+      "dice": [
+        {
+          "type": "Attack",
+          "min": 2,
+          "max": 5,
+          "effects": [
+            "【命中时】若目标拥有至少2种负面状态，则对目标额外造成3点伤害"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "圣裁连斩",
+      "path": "Assets/Data/Weapons/006 曦誓剑/圣裁连斩.asset",
+      "guid": "53015610107b4e1786be79bf2a0125d1",
+      "energyCost": 3,
+      "dice": [
+        {
+          "type": "Attack",
+          "min": 2,
+          "max": 4,
+          "effects": [
+            "【命中时】若目标拥有至少2种负面状态，则对目标额外造成2点伤害"
+          ]
+        },
+        {
+          "type": "Attack",
+          "min": 2,
+          "max": 4,
+          "effects": [
+            "【命中时】若目标拥有至少2种负面状态，则对目标额外造成2点伤害",
+            "【全部攻击段命中时】使全体友方获得2层护盾"
+          ]
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "method": "Actual Weapon_SO and skillPool loaded through Unity MCP; numerical ranges queried with GetDicePowerRange; triggered rules read using BattleSkillInfoOverlay.DescribeSkillRules(skill, true).",
+    "visualReview": "Checked weapon identity, rarity, slot and skill counts, all four costs, five individual dice ranges, conditional damage and shield values, separate multi-dice rows, and retained equipment controls."
+  },
+  "references": [
+    "C:/DiceLand/outputs/agent-battle/map-ui-20261102/inventory-title-centered-wide.png",
+    "C:/DiceLand/docs/visuals/battle-skill-multidice-reference-20261105.png",
+    "C:/DiceLand/Assets/Data/Weapons/006 曦誓剑/曦誓剑.png"
+  ],
+  "prompt": "Use case: ui-mockup.\nAsset type: Finished DiceLand weapon-detail modal design reference, a polished Chinese fantasy game screenshot in landscape approximately 2.17:1 (aim for 2640x1216).\nPrimary request: Redesign the equipment information popup to include the real weapon's complete skill pool, exact energy costs, individual dice ranges and detailed triggered effects. Beautiful, refined and immediately readable. This is the inventory weapon DETAILS popup, not the weapons inventory grid and not the battle skill-selection screen.\nInput images: Image 1 is the EDIT TARGET and the current inventory/map backdrop, preserving its established game world and art direction while adding the redesigned frontmost modal. Image 2 is a supporting style reference for ornate forest skill UI, typography, readable red dice and colored trigger clauses; do not copy its character, skill names, combat stats or layout wholesale. Image 3 is the supporting weapon illustration: reproduce the central silver-white blade, delicate gold filigree, curved gold/silver guard and blue diamond gem faithfully; ignore the source image's empty/striped transparent padding and never draw a square background behind the sword.\n\nScene/backdrop: Original game's lush forest ruins and inventory dimmed and softly defocused behind the front modal. Background headings and item labels should be subdued; the main popup has a single prominent centered title.\nStyle: High-end hand-painted fantasy RPG interface matching these references. Deep emerald leather and dark green wood, warm walnut title plaque, finely beveled antique-gold frame, restrained ivy only at corners, tiny turquoise diamond inlays. Elegant ivory Chinese brush/serif headings with crisp highly legible Chinese body text, deliberate spacing, rich materials and precise thin rules. No modern dashboard, flat blue buttons, plastic panels, neon bloom or excessive decoration.\n\nComposition: One large, perfectly level, centered modal taking roughly 86% of screen width and 85% of screen height. Symmetric golden outline. Its top wood plaque reads exactly “武器详情”, geometrically centered over the whole window, no oversized icon displacing the title. Discreet gold square close X at upper right. Divide the interior about 27% left weapon portrait/profile and 73% right skills, with a slim gold divider.\nLEFT: “曦誓剑” large and beautiful. Two small badges “稀有” (blue-tinted rarity accent) and “剑”. Show the supplied weapon vertically at generous scale on a subtle circular engraved halo, tip up, hilt down, no distortion. Compact stat plaques “速度槽 1” and “技能 4”, small quantity “持有 ×1”. Under the art include the actual flavor text: “剑身并不炽烈，只在挥落时留下短暂的白光。它更像审判，不像屠戮。” Keep it readable and neatly wrapped. Do not invent attack/defense totals, crit, upgrade levels, stars, durability, comparison deltas or price. The 1 is number of speed slots, NOT a speed value or range.\nRIGHT: Heading “武器技能” with a quiet small “基础数值” label. Four generous skill cards in a balanced two-column/two-row collection. Upper row cards slightly shorter; lower row tall enough for the multi-dice card. Each card has a dark jade inset, restrained brass corner ornaments, skill name, small gold lightning energy badge, a red attack-die icon plus clear range, and readable effect clauses. Skill card 4 must show BOTH dice separately and all their conditions, not collapse them into a combined power or damage value. Long clauses wrap with comfortable line height; a slender scrollbar on the right indicates that longer future content can scroll without truncation. All the exact important text below should be visible in this example.\nEach skill's name appears once; no duplicate skill-selector column. No ability to cast a skill, no “使用技能” or “切换技能” buttons in this inventory detail view.\n\nExact skill content, taken from the actual game assets; do not change numbers or status/trigger semantics:\nCARD 1 top left:\n“晨辉斩” with a small “默认” tag, “能耗 0”.\n“第1攻击骰” and “3 ~ 4”.\n“【命中时】全体友方获得1层护盾”\n“【使用时】自身拥有护盾时，威力+1”\n\nCARD 2 top right:\n“涤净”, “能耗 1”.\n“第1攻击骰” and “2 ~ 3”.\n“【使用时】血量最低的友方获得2层护盾”\n\nCARD 3 bottom left:\n“净曜突刺”, “能耗 1”.\n“第1攻击骰” and “2 ~ 5”.\n“【命中时】目标至少拥有2种负面状态时，额外造成3点伤害”\n\nCARD 4 bottom right:\n“圣裁连斩”, “能耗 3”.\nTwo ordered, clearly separated internal dice rows, NOT one shared range:\n“第1攻击骰” with “2 ~ 4”\n“【命中时】目标至少拥有2种负面状态时，额外造成2点伤害”\n“第2攻击骰” with “2 ~ 4”\n“【命中时】目标至少拥有2种负面状态时，额外造成2点伤害”\n“【全部攻击段命中时】全体友方获得2层护盾”\nThe final all-hits clause is visually associated with the second die.\n\nTypography and color coding: Range numbers and extra damage coral-red; trigger names muted golden yellow; friendly targets and 护盾 in turquoise/jade; ordinary text warm ivory. Bold numerals easy to scan. Keep effects in full readable words, no lorem ipsum or nonsensical tiny text.\nFOOTER: Fine gold divider. Bottom center restrained walnut “返回背包” button, bottom right cream-gold primary “装备” button. These retain the original inventory/equipment flow. No skill activation in the footer. The close X and both buttons have tactile beveled edges.\n\nConstraints: Preserve this game's illustrated fantasy aesthetic, not a generic website. Make the main modal perfectly centered and level, with a strong clear hierarchy. This should look like a desirable finished in-game weapon inspection screen. The sword is the only hero illustration. No people, additional weapons, extra statuses or fictional stats. Render Chinese text cleanly and exactly. No watermark, annotations, developer comments, version numbers or design callouts."
+}
