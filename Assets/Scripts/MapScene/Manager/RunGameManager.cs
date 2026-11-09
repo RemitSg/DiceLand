@@ -889,6 +889,7 @@ public class RunGameManager : MonoBehaviour
         mapMerchantOverlay.Hidden -= HandleMapMerchantOverlayHidden;
         mapMerchantOverlay.Hidden += HandleMapMerchantOverlayHidden;
         mapEventOverlay = GetOrCreateEventOverlay();
+        mapEventOverlay.ConfigureInventory(mapHUD);
         if (mapKeywordFont != null || mapBodyFont != null)
             mapEventOverlay.ConfigureFonts(mapKeywordFont, mapBodyFont);
         mapEventOverlay.Hidden -= HandleMapEventOverlayHidden;
@@ -2027,6 +2028,7 @@ public class RunGameManager : MonoBehaviour
 
     private bool IsGameplayOverlayVisible()
     {
+        if (mapHUD != null && mapHUD.IsInventoryVisible) return true;
         if (RunItemAcquisitionOverlay.IsBlockingInput) return true;
         if (mapBattleTilePreviewController != null && mapBattleTilePreviewController.IsActive)
             return true;
@@ -2051,6 +2053,7 @@ public class RunGameManager : MonoBehaviour
     private bool CanPresentItemAcquisition()
     {
         return runState != null && !IsSceneTransitionInProgress()
+            && !(mapHUD != null && mapHUD.IsInventoryVisible)
             && !(mapBattleTilePreviewController != null && mapBattleTilePreviewController.IsActive)
             && !(mapEventOverlay != null && mapEventOverlay.IsVisible)
             && !(mapMerchantOverlay != null && mapMerchantOverlay.IsVisible)

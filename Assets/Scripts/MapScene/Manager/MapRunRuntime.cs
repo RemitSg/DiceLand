@@ -69,6 +69,14 @@ public static class MapRunRuntime
 {
     private static MapRunSnapshot currentSnapshot;
 
+    // Inventory may equip weapons during a rest visit. Bind that UI to the owned run rather
+    // than a TryGetSnapshot clone, so equipment survives the return to the map.
+    internal static RunState GetRunStateForInventory(string sceneName)
+    {
+        return currentSnapshot != null && string.Equals(currentSnapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase)
+            ? currentSnapshot.runState : null;
+    }
+
     internal static RunState GetRunStateForAcquisitionDisplay(string sceneName)
     {
         return currentSnapshot != null && string.Equals(currentSnapshot.sceneName, sceneName, StringComparison.OrdinalIgnoreCase)

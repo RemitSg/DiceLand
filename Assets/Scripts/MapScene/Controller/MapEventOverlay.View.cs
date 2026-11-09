@@ -88,6 +88,7 @@ public partial class MapEventOverlay
         Stretch(frame);
         MapEventFrameGraphic border = frame.gameObject.AddComponent<MapEventFrameGraphic>();
         border.raycastTarget = false;
+        BuildInventoryEntry();
         ApplyFonts();
         layoutDirty = true;
     }

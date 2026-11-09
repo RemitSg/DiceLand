@@ -256,7 +256,7 @@ public partial class MapHUD : MonoBehaviour
     public void Initialize()
     {
         EnsureUi();
-        if (Application.isPlaying)
+        if (Application.isPlaying && !inventoryOnly)
         {
             if (resourceFeedback == null) resourceFeedback = GetComponent<MapResourceFeedback>() ?? gameObject.AddComponent<MapResourceFeedback>();
             resourceFeedback.Bind(currentRunState, moneyText);
@@ -267,7 +267,6 @@ public partial class MapHUD : MonoBehaviour
         ApplyTilePanelLayout();
         ApplyInventoryPanelLayout();
         RefreshPartyPanel();
-        RefreshInventoryView();
     }
 
     public void ConfigureFont(TMP_FontAsset fontAsset)
@@ -442,10 +441,13 @@ public partial class MapHUD : MonoBehaviour
         forestSafeArea.offsetMin = forestSafeArea.offsetMax = Vector2.zero;
         rootRect = CreateRect("MapHudContent", forestSafeArea, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(2340f, 1080f));
 
-        BuildTopLeftHud();
-        BuildPartyPanel();
-        BuildTilePanel();
-        BuildStatusText();
+        if (!inventoryOnly)
+        {
+            BuildTopLeftHud();
+            BuildPartyPanel();
+            BuildTilePanel();
+            BuildStatusText();
+        }
         BuildInventoryButton();
         BuildInventoryPanel();
         BuildInventoryDetail();
@@ -512,65 +514,6 @@ public partial class MapHUD : MonoBehaviour
         hint.rectTransform.anchorMin = hint.rectTransform.anchorMax = hint.rectTransform.pivot = Vector2.zero;
     }
 
-    private void BuildInventoryButton()
-    {
-        RectTransform rect = CreateRect("InventoryButton", rootRect, new Vector2(1f, 1f), inventoryButtonOffset, inventoryButtonFallbackSize);
-        Image image = rect.gameObject.AddComponent<Image>();
-        image.color = inventoryButtonSprite != null ? inventoryButtonSpriteColor : inventoryButtonFallbackColor;
-        if (inventoryButtonSprite != null)
-        {
-            image.sprite = inventoryButtonSprite;
-            image.type = Image.Type.Sliced;
-            image.pixelsPerUnitMultiplier = 2f;
-        }
-        else
-        {
-            image.type = Image.Type.Simple;
-        }
-        BuildInventoryButtonFallbackGlyph(rect);
-
-        inventoryButton = rect.gameObject.AddComponent<Button>();
-        inventoryButton.transition = Selectable.Transition.ColorTint;
-        inventoryButton.onClick.AddListener(ToggleInventoryPanel);
-    }
-
-    private void BuildInventoryButtonFallbackGlyph(RectTransform parent)
-    {
-        Vector2 barSize = new Vector2(
-            Mathf.Max(12f, inventoryButtonFallbackSize.x * 0.48f),
-            Mathf.Max(3f, inventoryButtonFallbackSize.y * 0.09f));
-        float spacing = Mathf.Max(6f, inventoryButtonFallbackSize.y * 0.2f);
-
-        for (int i = 0; i < 3; i++)
-        {
-            float y = (1 - i) * spacing;
-            Image bar = CreateCenteredImage(
-                parent,
-                "FallbackMenuBar",
-                new Vector2(0f, y),
-                barSize,
-                null,
-                inventoryButtonFallbackGlyphColor);
-            bar.raycastTarget = false;
-        }
-    }
-
-    private void BuildInventoryPanel()
-    {
-        inventoryPanelRect = CreateRect("InventoryPanel", rootRect, new Vector2(1f, 1f), inventoryPanelOffset, inventoryPanelSize);
-        inventoryPanelImage = inventoryPanelRect.gameObject.AddComponent<Image>();
-        inventoryPanelImage.type = Image.Type.Sliced;
-
-        inventoryTabRoot = CreateRect("TabRoot", inventoryPanelRect, new Vector2(0f, 1f), inventoryTabRootOffset, new Vector2(inventoryPanelSize.x - 36f, inventoryTabSize.y));
-        lootTabButton = BuildTabButton(inventoryTabRoot, "LootTab", Vector2.zero, GameText.Get("battle.settlement.build_loot_section.loot", "战利品"), () => SetInventoryTab(InventoryTab.Loot));
-        weaponTabButton = BuildTabButton(inventoryTabRoot, "WeaponTab", Vector2.zero, GameText.Get("ui.map_crafting.weapon", "武器"), () => SetInventoryTab(InventoryTab.Weapons));
-        blueprintTabButton = BuildTabButton(inventoryTabRoot, "BlueprintTab", Vector2.zero, GameText.Get("ui.map_hud.blueprints", "图纸"), () => SetInventoryTab(InventoryTab.Blueprints));
-        relicTabButton = BuildTabButton(inventoryTabRoot, "RelicTab", Vector2.zero, GameText.Get("ui.map_hud.relics", "遗物"), () => SetInventoryTab(InventoryTab.Relics));
-
-        BuildInventoryScrollArea();
-        inventoryPanelRect.gameObject.SetActive(false);
-    }
-
     private void BuildInventoryScrollArea()
     {
         Vector2 viewportSize = ResolveInventoryViewportSize();
@@ -587,7 +530,7 @@ public partial class MapHUD : MonoBehaviour
         inventoryViewportRoot = CreateRect("InventoryViewport", inventoryScrollRoot, new Vector2(0f, 1f), Vector2.zero, ResolveInventoryViewportContentSize(viewportSize));
         inventoryViewportRoot.gameObject.AddComponent<RectMask2D>();
 
-        inventoryGridRoot = CreateRect("InventoryGrid", inventoryViewportRoot, new Vector2(0f, 1f), Vector2.zero, ResolveInventoryContentSize(0));
+        inventoryGridRoot = CreateRect("InventoryGrid", inventoryViewportRoot, new Vector2(0f, 1f), Vector2.zero, Vector2.one);
         inventoryScrollRect.viewport = inventoryViewportRoot;
         inventoryScrollRect.content = inventoryGridRoot;
 
@@ -640,7 +583,7 @@ public partial class MapHUD : MonoBehaviour
 
     private void BuildInventoryDetail()
     {
-        runtimeInventoryDetailView = MapInventoryDetailView.Create((RectTransform)canvas.transform, "InventoryDetail");
+        runtimeInventoryDetailView = MapInventoryDetailView.Create(inventoryLayer, "InventoryDetail");
         runtimeInventoryDetailView.ConfigureFonts(keywordFont, bodyFont);
         runtimeInventoryDetailView.Hidden += () => selectedInventoryState = null;
     }
@@ -855,6 +798,8 @@ public partial class MapHUD : MonoBehaviour
         EnsureFontFallback(partyStatFont, keywordFont);
 
         ApplyForestFonts();
+        foreach (TextMeshProUGUI label in inventoryLabels)
+            if (label != null) ApplyFont(label, label.name == "ItemName" || label.name == "Count" || label.name == "InventoryHint" || label.name == "EmptyInventory" ? bodyFont : keywordFont);
         ApplyFont(actionPointText, keywordFont);
         ApplyFont(moneyText, keywordFont);
         ApplyFont(keysText, keywordFont);
@@ -954,84 +899,6 @@ public partial class MapHUD : MonoBehaviour
             ApplyPartyMemberCardLayout(partyMemberViews[i], i);
     }
 
-    private void ApplyInventoryPanelLayout()
-    {
-        if (inventoryPanelRect == null)
-            return;
-
-        inventoryPanelRect.anchorMin = new Vector2(1f, 1f);
-        inventoryPanelRect.anchorMax = new Vector2(1f, 1f);
-        inventoryPanelRect.pivot = new Vector2(1f, 1f);
-        inventoryPanelRect.anchoredPosition = inventoryPanelOffset;
-        inventoryPanelRect.sizeDelta = inventoryPanelSize;
-
-        if (inventoryPanelImage != null)
-        {
-            inventoryPanelImage.sprite = inventoryPanelBackgroundSprite;
-            inventoryPanelImage.color = inventoryPanelBackgroundSprite != null ? Color.white : inventoryPanelColor;
-            inventoryPanelImage.type = Image.Type.Sliced;
-        }
-
-        if (inventoryTabRoot != null)
-            ApplyRect(inventoryTabRoot, new Vector2(0f, 1f), inventoryTabRootOffset, new Vector2(inventoryPanelSize.x - 36f, inventoryTabSize.y));
-
-        PositionTabButton(lootTabButton, inventoryTabRoot, 0, lootTabOffset);
-        PositionTabButton(weaponTabButton, inventoryTabRoot, 1, weaponTabOffset);
-        PositionTabButton(blueprintTabButton, inventoryTabRoot, 2, blueprintTabOffset);
-        PositionTabButton(relicTabButton, inventoryTabRoot, 3, relicTabOffset);
-
-        UpdateInventoryScrollLayout(false);
-
-        if (runtimeInventoryDetailView != null)
-            runtimeInventoryDetailView.ApplyViewport(new Vector2(Screen.width, Screen.height), Screen.safeArea);
-    }
-
-    private void ToggleInventoryPanel()
-    {
-        if (inventoryPanelRect == null)
-            return;
-
-        bool nextState = !inventoryPanelRect.gameObject.activeSelf;
-        inventoryPanelRect.gameObject.SetActive(nextState);
-        if (!nextState)
-        {
-            selectedInventoryState = null;
-            if (runtimeInventoryDetailView != null) runtimeInventoryDetailView.HideImmediately();
-            ResetCanvasSortOrder();
-        }
-        else
-            RefreshInventoryView();
-    }
-
-    public void ShowInventoryPanel(int sortOrderOverride = -1)
-    {
-        Initialize();
-        if (canvas != null)
-            canvas.sortingOrder = sortOrderOverride > 0 ? sortOrderOverride : DefaultCanvasSortingOrder;
-
-        if (inventoryPanelRect == null)
-            return;
-
-        inventoryPanelRect.gameObject.SetActive(true);
-        RefreshInventoryView();
-    }
-
-    public void HideInventoryPanel()
-    {
-        if (inventoryPanelRect != null)
-            inventoryPanelRect.gameObject.SetActive(false);
-
-        selectedInventoryState = null;
-        if (runtimeInventoryDetailView != null) runtimeInventoryDetailView.HideImmediately();
-        ResetCanvasSortOrder();
-    }
-
-    public void ResetCanvasSortOrder()
-    {
-        if (canvas != null)
-            canvas.sortingOrder = DefaultCanvasSortingOrder;
-    }
-
     private void HideInventoryDetail()
     {
         selectedInventoryState = null;
@@ -1041,9 +908,12 @@ public partial class MapHUD : MonoBehaviour
 
     private void SetInventoryTab(InventoryTab tab)
     {
+        if (currentInventoryTab == tab) return;
         currentInventoryTab = tab;
+        inventoryPageReveal = Application.isPlaying ? 0 : 1;
         selectedInventoryState = null;
         RefreshInventoryView();
+        UpdateInventoryScrollLayout(true);
         HideInventoryDetail();
     }
 
@@ -1058,12 +928,19 @@ public partial class MapHUD : MonoBehaviour
         ApplyTabVisual(relicTabButton, currentInventoryTab == InventoryTab.Relics);
 
         foreach (GameObject slotObject in inventorySlotObjects)
-            Destroy(slotObject);
+        {
+            if (slotObject == null) continue;
+            slotObject.SetActive(false);
+            if (Application.isPlaying) Destroy(slotObject);
+            else DestroyImmediate(slotObject);
+        }
         inventorySlotObjects.Clear();
+        inventoryLabels.RemoveAll(text => text == null || text.transform.IsChildOf(inventoryGridRoot));
 
         if (!inventoryPanelRect.gameObject.activeSelf || currentRunState == null)
         {
-            UpdateInventoryScrollLayout(true);
+            UpdateInventoryScrollLayout(false);
+            RefreshInventoryEmptySlots();
             return;
         }
 
@@ -1083,7 +960,8 @@ public partial class MapHUD : MonoBehaviour
                 break;
         }
 
-        UpdateInventoryScrollLayout(true);
+        UpdateInventoryScrollLayout(false);
+        RefreshInventoryEmptySlots();
         RefreshSelectedInventoryDetail();
     }
 
@@ -1098,7 +976,7 @@ public partial class MapHUD : MonoBehaviour
             if (lootState == null || lootState.lootItem == null || lootState.amount <= 0)
                 continue;
 
-            CreateInventorySlot(visibleIndex++, lootState.lootItem.icon, lootState.amount.ToString(), () =>
+            CreateInventorySlot(visibleIndex++, lootState.lootItem.icon, lootState.amount.ToString(), lootState.DisplayName, false, () =>
             {
                 if (Equals(selectedInventoryState, lootState))
                 {
@@ -1124,7 +1002,7 @@ public partial class MapHUD : MonoBehaviour
             if (weaponState == null || weaponState.weaponData == null || weaponState.amount <= 0)
                 continue;
 
-            CreateInventorySlot(visibleIndex++, weaponState.weaponData.icon, weaponState.amount.ToString(), () =>
+            CreateInventorySlot(visibleIndex++, weaponState.weaponData.icon, weaponState.amount.ToString(), weaponState.DisplayName, currentRunState.GetEquippedMember(weaponState.weaponData) != null, () =>
             {
                 if (Equals(selectedInventoryState, weaponState))
                 {
@@ -1150,7 +1028,7 @@ public partial class MapHUD : MonoBehaviour
             if (blueprintState == null || blueprintState.blueprintData == null || blueprintState.amount <= 0)
                 continue;
 
-            CreateInventorySlot(visibleIndex++, blueprintState.blueprintData.DisplayIcon, blueprintState.amount.ToString(), () =>
+            CreateInventorySlot(visibleIndex++, blueprintState.blueprintData.DisplayIcon, blueprintState.amount.ToString(), blueprintState.blueprintData.LocalizedName, false, () =>
             {
                 if (Equals(selectedInventoryState, blueprintState))
                 {
@@ -1176,7 +1054,7 @@ public partial class MapHUD : MonoBehaviour
             if (relicState == null || relicState.relicData == null || relicState.amount <= 0)
                 continue;
 
-            CreateInventorySlot(visibleIndex++, relicState.relicData.icon, relicState.amount.ToString(), () =>
+            CreateInventorySlot(visibleIndex++, relicState.relicData.icon, relicState.amount.ToString(), relicState.relicData.LocalizedName, false, () =>
             {
                 if (Equals(selectedInventoryState, relicState))
                 {
@@ -1189,184 +1067,6 @@ public partial class MapHUD : MonoBehaviour
                 runtimeInventoryDetailView.ConfigureActionButton(string.Empty, false, null, string.Empty);
             });
         }
-    }
-
-    private void CreateInventorySlot(int index, Sprite iconSprite, string countText, UnityEngine.Events.UnityAction onClick)
-    {
-        int columns = Mathf.Max(1, inventoryGridColumns);
-        int row = index / columns;
-        int column = index % columns;
-        float x = column * (inventorySlotSize.x + inventoryGridSpacing.x);
-        float y = row * (inventorySlotSize.y + inventoryGridSpacing.y);
-        Vector2 slotPosition = new Vector2(x + inventorySlotOffset.x, -y + inventorySlotOffset.y);
-
-        RectTransform slotRect = CreateRect($"Slot_{index}", inventoryGridRoot, new Vector2(0f, 1f), slotPosition, inventorySlotSize);
-        Image slotImage = slotRect.gameObject.AddComponent<Image>();
-        slotImage.sprite = inventorySlotBackgroundSprite;
-        slotImage.type = Image.Type.Sliced;
-        slotImage.color = inventorySlotBackgroundSprite != null ? inventorySlotSpriteColor : inventorySlotColor;
-
-        Button button = slotRect.gameObject.AddComponent<Button>();
-        button.onClick.AddListener(onClick);
-
-        Image icon = CreateCenteredImage(
-            slotRect,
-            "Icon",
-            Vector2.zero,
-            inventoryIconSize,
-            iconSprite != null ? iconSprite : GetFallbackSprite(),
-            Color.white);
-        icon.preserveAspect = true;
-        MapItemIconFit.Attach(icon);
-
-        TextMeshProUGUI count = CreateText(slotRect, "Count", new Vector2(0f, -(inventorySlotSize.y - 34f)), new Vector2(inventorySlotSize.x - 10f, 24f), bodyFontSize - 2, inventoryCountColor, $"x{countText}", keywordFont);
-        count.alignment = TextAlignmentOptions.BottomRight;
-        count.raycastTarget = false;
-
-        inventorySlotObjects.Add(slotRect.gameObject);
-    }
-
-    private Vector2 ResolveInventoryViewportSize()
-    {
-        Vector2 defaultSize = new Vector2(
-            Mathf.Max(1f, inventoryPanelSize.x - 36f),
-            Mathf.Max(1f, inventoryPanelSize.y - inventoryTabSize.y - 54f));
-
-        return new Vector2(
-            inventoryViewportSize.x > 0f ? inventoryViewportSize.x : defaultSize.x,
-            inventoryViewportSize.y > 0f ? inventoryViewportSize.y : defaultSize.y);
-    }
-
-    private Vector2 ResolveInventoryViewportContentSize(Vector2 viewportSize)
-    {
-        float reservedScrollbarWidth = Mathf.Max(0f, inventoryScrollbarWidth);
-        float width = Mathf.Max(1f, viewportSize.x - reservedScrollbarWidth - Mathf.Max(0f, inventoryScrollbarOffset.x));
-        return new Vector2(width, Mathf.Max(1f, viewportSize.y));
-    }
-
-    private Vector2 ResolveInventoryContentSize(int slotCount)
-    {
-        Vector2 viewportSize = ResolveInventoryViewportSize();
-        Vector2 contentViewportSize = ResolveInventoryViewportContentSize(viewportSize);
-        int columns = Mathf.Max(1, inventoryGridColumns);
-        int rows = slotCount > 0 ? Mathf.CeilToInt(slotCount / (float)columns) : 0;
-        float occupiedWidth = columns * inventorySlotSize.x + Mathf.Max(0, columns - 1) * inventoryGridSpacing.x + Mathf.Max(0f, inventoryContentSizePadding.x);
-        float occupiedHeight = rows > 0
-            ? rows * inventorySlotSize.y + Mathf.Max(0, rows - 1) * inventoryGridSpacing.y + Mathf.Abs(inventorySlotOffset.y) + Mathf.Max(0f, inventoryContentSizePadding.y)
-            : contentViewportSize.y;
-
-        return new Vector2(
-            Mathf.Max(contentViewportSize.x, occupiedWidth),
-            Mathf.Max(contentViewportSize.y, occupiedHeight));
-    }
-
-    private void UpdateInventoryScrollLayout(bool resetToTop)
-    {
-        if (inventoryScrollRoot == null || inventoryGridRoot == null)
-            return;
-
-        Vector2 viewportSize = ResolveInventoryViewportSize();
-        Vector2 viewportContentSize = ResolveInventoryViewportContentSize(viewportSize);
-        Vector2 contentSize = ResolveInventoryContentSize(inventorySlotObjects.Count);
-        bool hasOverflow = contentSize.y > viewportContentSize.y + 0.01f;
-
-        ApplyRect(inventoryScrollRoot, new Vector2(0f, 1f), inventoryGridOffset, viewportSize);
-
-        if (inventoryViewportRoot != null)
-            ApplyRect(inventoryViewportRoot, new Vector2(0f, 1f), Vector2.zero, viewportContentSize);
-
-        ApplyRect(inventoryGridRoot, new Vector2(0f, 1f), Vector2.zero, contentSize);
-
-        if (inventoryScrollRect != null)
-        {
-            inventoryScrollRect.horizontal = false;
-            inventoryScrollRect.vertical = hasOverflow;
-            inventoryScrollRect.scrollSensitivity = inventoryScrollSensitivity;
-            inventoryScrollRect.movementType = ScrollRect.MovementType.Clamped;
-            inventoryScrollRect.viewport = inventoryViewportRoot;
-            inventoryScrollRect.content = inventoryGridRoot;
-            inventoryScrollRect.verticalScrollbarVisibility = inventoryScrollbarAlwaysVisible
-                ? ScrollRect.ScrollbarVisibility.Permanent
-                : ScrollRect.ScrollbarVisibility.AutoHide;
-
-            if (resetToTop)
-                inventoryScrollRect.verticalNormalizedPosition = 1f;
-        }
-
-        ApplyInventoryScrollbarLayout(viewportSize, hasOverflow);
-    }
-
-    private void ApplyInventoryScrollbarLayout(Vector2 viewportSize, bool hasOverflow)
-    {
-        if (inventoryScrollbarRoot == null)
-            return;
-
-        bool showScrollbar = inventoryScrollbarAlwaysVisible || hasOverflow;
-        inventoryScrollbarRoot.gameObject.SetActive(showScrollbar);
-        ApplyRect(inventoryScrollbarRoot, new Vector2(1f, 1f), inventoryScrollbarOffset, new Vector2(inventoryScrollbarWidth, viewportSize.y));
-        inventoryScrollbarRoot.anchorMin = new Vector2(1f, 0f);
-        inventoryScrollbarRoot.anchorMax = new Vector2(1f, 1f);
-        inventoryScrollbarRoot.pivot = new Vector2(1f, 1f);
-        inventoryScrollbarRoot.sizeDelta = new Vector2(inventoryScrollbarWidth, 0f);
-
-        if (inventoryScrollbarTrackImage != null)
-        {
-            inventoryScrollbarTrackImage.sprite = inventoryScrollbarTrackSprite;
-            inventoryScrollbarTrackImage.type = inventoryScrollbarTrackSprite != null ? Image.Type.Sliced : Image.Type.Simple;
-            inventoryScrollbarTrackImage.color = inventoryScrollbarTrackColor;
-        }
-
-        if (inventoryScrollbarHandleRoot != null)
-            inventoryScrollbarHandleRoot.sizeDelta = new Vector2(0f, Mathf.Max(1f, inventoryScrollbarHandleMinHeight));
-
-        if (inventoryScrollbarHandleImage != null)
-        {
-            inventoryScrollbarHandleImage.sprite = inventoryScrollbarHandleSprite;
-            inventoryScrollbarHandleImage.type = inventoryScrollbarHandleSprite != null ? Image.Type.Sliced : Image.Type.Simple;
-            inventoryScrollbarHandleImage.color = inventoryScrollbarHandleColor;
-        }
-    }
-
-    private Button BuildTabButton(RectTransform parent, string name, Vector2 anchoredPosition, string label, UnityEngine.Events.UnityAction onClick)
-    {
-        RectTransform rect = CreateRect(name, parent, new Vector2(0f, 1f), anchoredPosition, inventoryTabSize);
-        Image image = rect.gameObject.AddComponent<Image>();
-        image.type = Image.Type.Sliced;
-        Button button = rect.gameObject.AddComponent<Button>();
-        button.onClick.AddListener(onClick);
-
-        TextMeshProUGUI text = CreateText(rect, "Label", Vector2.zero, inventoryTabSize, bodyFontSize, Color.black, label, keywordFont);
-        text.alignment = TextAlignmentOptions.Center;
-        return button;
-    }
-
-    private void ApplyTabVisual(Button button, bool selected)
-    {
-        if (button == null)
-            return;
-
-        Image image = button.GetComponent<Image>();
-        if (image != null)
-        {
-            image.sprite = selected ? (inventoryTabSelectedSprite != null ? inventoryTabSelectedSprite : inventoryTabSprite) : inventoryTabSprite;
-            image.color = Color.white;
-        }
-
-        TMP_Text text = button.GetComponentInChildren<TMP_Text>(true);
-        if (text != null)
-        {
-            ApplyFont(text, keywordFont);
-            text.color = selected ? Color.black : bodyColor;
-        }
-    }
-
-    private void PositionTabButton(Button button, RectTransform parent, int index, Vector2 extraOffset)
-    {
-        if (button == null || parent == null)
-            return;
-
-        float baseX = index * (inventoryTabSize.x + inventoryTabSpacing);
-        ApplyRect(button.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(baseX + extraOffset.x, extraOffset.y), inventoryTabSize);
     }
 
     private Button BuildSimpleButton(RectTransform parent, string name, Vector2 anchoredPosition, Vector2 size, string label, UnityEngine.Events.UnityAction onClick)
@@ -1800,6 +1500,7 @@ public partial class MapHUD : MonoBehaviour
                 ? GameText.Format("ui.map_hud.on_equip_selected_weapon.equipped", "{displayName} 已装备 {localizedName}。", ("displayName", equippedMember.DisplayName), ("localizedName", weaponState.weaponData.LocalizedName))
                 : GameText.Format("ui.map_hud.on_equip_selected_weapon.equipped_2", "{localizedName} 已装备。", ("localizedName", weaponState.weaponData.LocalizedName));
             ShowStatus(successMessage);
+            RefreshInventoryView();
         }
         else if (!string.IsNullOrWhiteSpace(errorMessage))
         {

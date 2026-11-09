@@ -120,7 +120,7 @@ public class MapHUDTilePresentationTests
     }
 
     [Test]
-    public void Initialize_WhenInventoryButtonSpriteMissing_BuildsVisibleFallbackMenuGlyph()
+    public void Initialize_UsesPaintedBackpackEntryAndInteractionFeedback()
     {
         GameObject go = new GameObject("MapHUD");
         try
@@ -131,7 +131,9 @@ public class MapHUDTilePresentationTests
 
             Image buttonImage = FindImage(go.transform, "InventoryButton");
             Image[] glyphBars = FindImages(go.transform, "FallbackMenuBar");
-            Assert.AreEqual(3, glyphBars.Length);
+            Assert.AreEqual(0, glyphBars.Length);
+            Assert.AreSame(Resources.Load<Sprite>("InventoryUI/EntryButton"), buttonImage.sprite);
+            Assert.IsNotNull(buttonImage.GetComponent<MapCraftingButtonFeedback>());
             Assert.Greater(buttonImage.color.r, 0.35f);
             Assert.Greater(buttonImage.color.g, 0.2f);
             Assert.Greater(buttonImage.color.b, 0.1f);

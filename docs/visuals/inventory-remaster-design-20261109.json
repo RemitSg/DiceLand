@@ -91,5 +91,50 @@
       ],
       "sha256": "cb2df2a43dff0136cbb29608198749929365930c421d671c7cc50916191abb08"
     }
-  ]
+  ],
+  "runtimeAssets": [
+    {
+      "path": "Assets/Resources/InventoryUI/EntryButton.png",
+      "source": "docs/visuals/inventory-entry-icon-ideal-reference-20261109.png",
+      "usage": "Shared map, event, and rest-scene inventory entry. Original RGBA artwork, imported as a sprite."
+    }
+  ],
+  "implementation": {
+    "date": "2026-11-09",
+    "views": [
+      "MapHUD.Inventory",
+      "MapEventOverlay.Inventory",
+      "RestSceneInventory"
+    ],
+    "layout": "Centered full-width collection, 2–8 adaptive columns, scrolling without a capacity limit; separate existing item details and equipment action.",
+    "motion": "Unscaled 0.24s opening, 0.16s closing, 0.16s category fade; icon hover and press feedback; backdrop blocks input until closing finishes.",
+    "validation": {
+      "EditMode": {
+        "total": 36,
+        "passed": 36,
+        "failed": 0,
+        "jobId": "618daa78b80c4e3aa4064d421448ec3d",
+        "groups": [
+          "MapInventoryForestTests",
+          "MapHUDTilePresentationTests",
+          "MapItemIconFitTests",
+          "MapInventoryDetailViewTests",
+          "MapEventOverlayTests"
+        ]
+      },
+      "PlayMode": {
+        "total": 12,
+        "passed": 12,
+        "failed": 0,
+        "jobId": "cdf12c1e4a354560b686092b9ea0d38f",
+        "groups": [
+          "MapInventoryForestPlayModeTests",
+          "MapInventoryDetailPlayModeTests",
+          "RestSceneForestPlayModeTests"
+        ]
+      },
+      "MCP": "Rendered map inventory at 2340x1080, 1920x1080 details and 1600x1200 tablet layout. Verified event layering and rest-scene entry/open UI in disposed preview scenes. Rest play test clicks the authored scene entry and confirms equipment persistence without consuming the visit.",
+      "consoleErrorsAfterFinalPreview": 0
+    }
+  }
 }

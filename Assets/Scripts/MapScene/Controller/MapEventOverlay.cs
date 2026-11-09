@@ -80,6 +80,7 @@ public partial class MapEventOverlay : MonoBehaviour
     public void Hide()
     {
         bool wasVisible = IsVisible;
+        HideOwnedInventory();
         isShowingResultStep = false;
         selectedOption = null;
         pendingNextEvent = null;

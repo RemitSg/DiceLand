@@ -67,6 +67,7 @@ public sealed class RestSceneForestView : MonoBehaviour
     private void Start()
     {
         if (!Application.isPlaying) return;
+        if (GetComponent<RestSceneInventory>() == null) gameObject.AddComponent<RestSceneInventory>();
         LocalizeSigns();
         StyleExistingModals();
         RefreshInteractionState();

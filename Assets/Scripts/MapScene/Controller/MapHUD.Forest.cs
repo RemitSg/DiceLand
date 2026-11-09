@@ -95,11 +95,13 @@ public partial class MapHUD
         forestLastViewport = viewport;
         forestLastSafeArea = safePixels;
         ApplyPartyPanelLayout();
+        ApplyInventoryPanelLayout();
     }
 
     private void Update()
     {
         if (canvas == null) return;
+        AdvanceInventoryPresentation(Time.unscaledDeltaTime);
         Vector2 viewport = new Vector2(Screen.width, Screen.height);
         if (viewport != forestLastViewport || Screen.safeArea != forestLastSafeArea)
             ApplyViewport(viewport, Screen.safeArea);
