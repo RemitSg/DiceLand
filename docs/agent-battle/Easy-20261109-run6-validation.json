@@ -1,0 +1,2936 @@
+{
+  "date": "2026-11-09",
+  "scope": "One fresh Easy autonomous playthrough using the updated model-directed workflow; ended in actual defeat, fully settled and replay verified.",
+  "summary": {
+    "run": "easy-20261109-run6",
+    "seed": 2026110906,
+    "difficulty": "Easy",
+    "sourceCommit": "388b42fae783e397cfda9e4d86eaeb70a47874bd",
+    "profile": "easy-run6-20261109-e12da1437f",
+    "decisionSource": "model",
+    "automatedPolicySelectorUsed": false,
+    "outcome": "defeat",
+    "victory": false,
+    "actions": 17,
+    "decisions": 18,
+    "battles": 1,
+    "wins": 0,
+    "rounds": 5,
+    "clashDiceMessages": 4,
+    "clashWins": 1,
+    "clashLosses": 3,
+    "clashTies": 0,
+    "score": 15,
+    "abilityPointsGained": 0,
+    "durationSeconds": 325,
+    "finalParty": [
+      {
+        "id": "0",
+        "name": "Chara",
+        "character": "27e817266af382946804dea6afd2e374",
+        "weapon": "9b8c5d177c240334a9734636830a139f",
+        "hp": 0,
+        "maxHp": 16,
+        "level": 1,
+        "experience": 0
+      }
+    ],
+    "finalEnemyHP": 16,
+    "enemyMaxHP": 20,
+    "enemy": "耀光骑士",
+    "enemyAssetName": "LightKnight",
+    "event": "贵族的遗产",
+    "position": [
+      0,
+      5
+    ],
+    "settlement": {
+      "completed": true,
+      "policy": "shared_score",
+      "data": {
+        "runCleared": false,
+        "scoreResult": {
+          "baseScore": 15,
+          "finalScore": 15,
+          "gainedAbilityPoints": 0,
+          "finalMultiplier": 1,
+          "displayStats": {
+            "durationSeconds": 325,
+            "normalBattleOuterCleared": 0,
+            "normalBattleMidCleared": 0,
+            "normalBattleInnerCleared": 0,
+            "normalBattleCoreCleared": 0,
+            "eliteBattleOuterCleared": 0,
+            "eliteBattleMidCleared": 0,
+            "eliteBattleInnerCleared": 0,
+            "eliteBattleCoreCleared": 0,
+            "specialDungeonCleared": 0,
+            "partyMemberCount": 1,
+            "totalMoneyGained": 0,
+            "craftedWeaponCount": 0,
+            "eventTilesCompleted": 1,
+            "eventBattlesCompleted": 0,
+            "unexploredTilesVisited": 1,
+            "relicCount": 0,
+            "keysCollected": 0,
+            "calamityTier": 0,
+            "bossesDefeated": 0,
+            "calamityScoreCounted": false
+          },
+          "debugLines": [
+            "Normal Battle Outer: count=0, each=20, score=0",
+            "Normal Battle Mid: count=0, each=50, score=0",
+            "Normal Battle Inner: count=0, each=100, score=0",
+            "Normal Battle Core: count=0, each=200, score=0",
+            "Elite Battle Outer: count=0, each=50, score=0",
+            "Elite Battle Mid: count=0, each=150, score=0",
+            "Elite Battle Inner: count=0, each=250, score=0",
+            "Elite Battle Core: count=0, each=500, score=0",
+            "Special Dungeon: cleared=0, score=0",
+            "Party Members: count=1, score=0",
+            "Money: gained=0, multiplier=0.2, score=0",
+            "Crafted Weapons: count=0, each=100, score=0",
+            "Event Tiles: count=1, each=10, score=10",
+            "Event Battles: count=0, each=50, score=0",
+            "Unexplored Tiles: count=1, each=5, score=5",
+            "Relics: count=0, each=20, score=0",
+            "Keys: count=0, each=50, score=0",
+            "Calamity skipped: tier=0, score=0",
+            "Bosses: count=0, each=1000, score=0",
+            "Final: base=15, duration=325, multiplier=1, final=15, abilityPoints=0"
+          ]
+        },
+        "displayStats": {
+          "durationSeconds": 325,
+          "normalBattleOuterCleared": 0,
+          "normalBattleMidCleared": 0,
+          "normalBattleInnerCleared": 0,
+          "normalBattleCoreCleared": 0,
+          "eliteBattleOuterCleared": 0,
+          "eliteBattleMidCleared": 0,
+          "eliteBattleInnerCleared": 0,
+          "eliteBattleCoreCleared": 0,
+          "specialDungeonCleared": 0,
+          "partyMemberCount": 1,
+          "totalMoneyGained": 0,
+          "craftedWeaponCount": 0,
+          "eventTilesCompleted": 1,
+          "eventBattlesCompleted": 0,
+          "unexploredTilesVisited": 1,
+          "relicCount": 0,
+          "keysCollected": 0,
+          "calamityTier": 0,
+          "bossesDefeated": 0,
+          "calamityScoreCounted": false
+        },
+        "abilityPointsBefore": 0,
+        "gainedAbilityPoints": 0,
+        "abilityPointsAfter": 0,
+        "returnSceneName": "Menu Selection"
+      }
+    },
+    "verification": {
+      "verified": true,
+      "commandsChecked": 17,
+      "finalStateHash": "53b8aa2472211cd3c40fe96255243e8bbeef738e281577d56b6e25091f62ddf6"
+    },
+    "profileVerification": {
+      "beforeRetry": "484ad4e527e42552a21b9cfbc12eb3425638b8769d33bbe74412947cf9ddcf69",
+      "afterRetry": "484ad4e527e42552a21b9cfbc12eb3425638b8769d33bbe74412947cf9ddcf69",
+      "unchangedDuringRetry": true,
+      "firstAttemptResponseLost": true
+    },
+    "contentHash": "8d84b22803ebf5c8f6fa08956752fd6c0010eb73180400f6d1942e94534766de",
+    "engineVersion": "2022.3.62t6",
+    "language": "zh-Hans",
+    "frozenContentFiles": 3689,
+    "frozenSnapshotUnchanged": true,
+    "sessionClosed": true,
+    "noReloadOrReroll": true,
+    "noResourceOrOutcomeInjection": true,
+    "onlyPublicCommands": true,
+    "allActionsWereOffered": true,
+    "initialPoints": 0,
+    "initialUnlockedNodes": 0,
+    "recruits": 0,
+    "craftedWeapons": 0,
+    "keys": 0,
+    "bossEncountered": false,
+    "coverageLimit": "首场事件战败北；未覆盖商店、材料收集、锻造、招募、换装、斜向移动、副本、钥匙和Boss。完整日志意味着完整记录本局，不意味着通关或全功能覆盖。",
+    "verificationNote": "第一次核验客户端的本地1秒执行限时导致响应未保存；核验重试17条通过，重试期间正式档案哈希不变。没有重开游玩或重掷。",
+    "hostGracefullyStopped": true,
+    "originalEditorUntouched": true
+  },
+  "roundSummary": [
+    {
+      "round": 1,
+      "step": 8,
+      "reason": "已确认横砍连到圣光锁狱且contested=true，预留能量3/10；以较有利的拼点争取先削敌血，接受另一个未反制攻击。",
+      "beforeActors": [
+        {
+          "id": "ally_0",
+          "hp": 16,
+          "maxHp": 16,
+          "dead": false,
+          "status": [],
+          "slots": [
+            {
+              "index": 0,
+              "speed": 4,
+              "skillIndex": 1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "f3931f99f39b4a248a779ab007733565",
+                "name": "横砍",
+                "description": "横砍\n技能：横砍\n能耗：3\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 1 点伤害\n\n描述：\n暂无描述。",
+                "energyCost": 3,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "enemy_0",
+              "targetButtonIndex": 1,
+              "contested": true
+            }
+          ]
+        },
+        {
+          "id": "enemy_0",
+          "hp": 20,
+          "maxHp": 20,
+          "dead": false,
+          "status": [],
+          "slots": [
+            {
+              "index": 0,
+              "speed": 4,
+              "skillIndex": -1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "727a4b67800455e4da3fe0a9365a958e",
+                "name": "耀光突进",
+                "description": "耀光突进\n技能：耀光突进\n能耗：0\n骰子数：1\n第 1 攻击骰：3 ~ 4\n目标偏好：优先攻击拥有至少 2 种负面状态的目标\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 若 目标拥有至少 1 种负面状态 ，则 使 当前目标 于 下 1 个回合开始时 获得 1 层 眩晕\n\n描述：\n金白的轨迹穿过战场，只奔向已经露出裂缝的人。",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 3,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 3,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "ally_0",
+              "targetButtonIndex": 0,
+              "contested": false
+            },
+            {
+              "index": 1,
+              "speed": 4,
+              "skillIndex": -1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "7f39129c50d2edb4ca64c3beb44efb24",
+                "name": "圣光锁狱",
+                "description": "圣光锁狱\n技能：圣光锁狱\n能耗：0\n骰子数：1\n第 1 攻击骰：1 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 使用时 ] 使 所有目标 于 下 1 个回合开始时 获得 1 层 缓慢\n\n描述：\n光锁从地面合拢，把逃离的脚步一寸寸拖慢。",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 1,
+                    "max": 5,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 1,
+                    "max": 5,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "ally_0",
+              "targetButtonIndex": 0,
+              "contested": false
+            }
+          ]
+        }
+      ],
+      "afterActors": [
+        {
+          "id": "ally_0",
+          "hp": 9,
+          "maxHp": 16,
+          "dead": false,
+          "status": [
+            {
+              "id": "slowness",
+              "name": "缓慢",
+              "stacks": 1
+            }
+          ],
+          "slotCount": 1
+        },
+        {
+          "id": "enemy_0",
+          "hp": 20,
+          "maxHp": 20,
+          "dead": false,
+          "status": [],
+          "slotCount": 2
+        }
+      ],
+      "events": [
+        {
+          "index": 6,
+          "round": 1,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "◆◆◆ 战斗结算阶段 ◆◆◆"
+        },
+        {
+          "index": 7,
+          "round": 1,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "[拼点] 0[新手木剑][横砍(1 dice, ranges: 1:2~4)] vs 耀光骑士(ID:12)[圣光锁狱(1 dice, ranges: 1:1~5)]"
+        },
+        {
+          "index": 8,
+          "round": 1,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "词条触发：耀光骑士(ID:12)[锁狱] 将在 下 1 个回合开始时 使 0[新手木剑] 获得 1 层 缓慢"
+        },
+        {
+          "index": 9,
+          "round": 1,
+          "kind": "damage",
+          "actorId": "ally_0",
+          "amount": 4,
+          "message": ""
+        },
+        {
+          "index": 10,
+          "round": 1,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "第 1 段拼点：0[新手木剑](2) vs 耀光骑士(ID:12)(4)"
+        },
+        {
+          "index": 11,
+          "round": 1,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "-> 敌方胜！追击威力 4 ，耀光骑士(ID:12) 对 0[新手木剑] 造成 4 伤害，剩余HP 12/16"
+        },
+        {
+          "index": 12,
+          "round": 1,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "[敌方单方面攻击] 耀光骑士(ID:12)[耀光突进(1 dice, ranges: 1:3~4)] -> 0[新手木剑]"
+        },
+        {
+          "index": 13,
+          "round": 1,
+          "kind": "damage",
+          "actorId": "ally_0",
+          "amount": 3,
+          "message": ""
+        },
+        {
+          "index": 14,
+          "round": 1,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "第 1 段：耀光骑士(ID:12)[耀光突进(1 dice, ranges: 1:3~4)](3) -> 0[新手木剑]，剩余HP 9/16"
+        },
+        {
+          "index": 15,
+          "round": 1,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "── 回合结算汇总 ──"
+        },
+        {
+          "index": 16,
+          "round": 1,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "友方 0[新手木剑] HP 9/16"
+        },
+        {
+          "index": 17,
+          "round": 1,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方 耀光骑士(ID:12) HP 20/20"
+        },
+        {
+          "index": 18,
+          "round": 1,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "再次按下战斗按钮开始下一回合目标指定。"
+        },
+        {
+          "index": 19,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "◆◆◆ 目标指定阶段 ◆◆◆ 友方 1 名 / 敌方 1 名"
+        },
+        {
+          "index": 20,
+          "round": 2,
+          "kind": "status_changed",
+          "actorId": "ally_0",
+          "amount": 0,
+          "message": ""
+        },
+        {
+          "index": 21,
+          "round": 2,
+          "kind": "status_changed",
+          "actorId": "ally_0",
+          "amount": 0,
+          "message": ""
+        },
+        {
+          "index": 22,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "状态触发：0[新手木剑] 受到 1 点 缓慢 速度降低，当前 缓慢 1 层"
+        },
+        {
+          "index": 23,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "友方 0[新手木剑] 速度=1 HP=9/16"
+        },
+        {
+          "index": 24,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方 耀光骑士(ID:12) 速度=3 HP=20/20"
+        },
+        {
+          "index": 25,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方 耀光骑士(ID:12) [按钮 1] 已锁定目标 -> 0[新手木剑] | 技能 圣光锁狱(1 dice, ranges: 1:1~5)"
+        },
+        {
+          "index": 26,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方 耀光骑士(ID:12) [按钮 2] 已锁定目标 -> 0[新手木剑] | 技能 耀光突进(1 dice, ranges: 1:3~4)"
+        },
+        {
+          "index": 27,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方已完成自动指定目标。请玩家完成画线后再次按下战斗按钮进入结算。"
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "step": 10,
+      "reason": "低速反击连线已被正式规则接受，突进contested=true；能量8预留3，优先争取抵挡带眩晕的命中，记录另一槽锁狱的实际伤害。",
+      "beforeActors": [
+        {
+          "id": "ally_0",
+          "hp": 9,
+          "maxHp": 16,
+          "dead": false,
+          "status": [
+            {
+              "id": "slowness",
+              "name": "缓慢",
+              "stacks": 1
+            }
+          ],
+          "slots": [
+            {
+              "index": 0,
+              "speed": 1,
+              "skillIndex": 1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "f3931f99f39b4a248a779ab007733565",
+                "name": "横砍",
+                "description": "横砍\n技能：横砍\n能耗：3\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 1 点伤害\n\n描述：\n暂无描述。",
+                "energyCost": 3,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "enemy_0",
+              "targetButtonIndex": 1,
+              "contested": true
+            }
+          ]
+        },
+        {
+          "id": "enemy_0",
+          "hp": 20,
+          "maxHp": 20,
+          "dead": false,
+          "status": [],
+          "slots": [
+            {
+              "index": 0,
+              "speed": 3,
+              "skillIndex": -1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "7f39129c50d2edb4ca64c3beb44efb24",
+                "name": "圣光锁狱",
+                "description": "圣光锁狱\n技能：圣光锁狱\n能耗：0\n骰子数：1\n第 1 攻击骰：1 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 使用时 ] 使 所有目标 于 下 1 个回合开始时 获得 1 层 缓慢\n\n描述：\n光锁从地面合拢，把逃离的脚步一寸寸拖慢。",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 1,
+                    "max": 5,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 1,
+                    "max": 5,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "ally_0",
+              "targetButtonIndex": 0,
+              "contested": false
+            },
+            {
+              "index": 1,
+              "speed": 3,
+              "skillIndex": -1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "727a4b67800455e4da3fe0a9365a958e",
+                "name": "耀光突进",
+                "description": "耀光突进\n技能：耀光突进\n能耗：0\n骰子数：1\n第 1 攻击骰：3 ~ 4\n目标偏好：优先攻击拥有至少 2 种负面状态的目标\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 若 目标拥有至少 1 种负面状态 ，则 使 当前目标 于 下 1 个回合开始时 获得 1 层 眩晕\n\n描述：\n金白的轨迹穿过战场，只奔向已经露出裂缝的人。",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 3,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 3,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "ally_0",
+              "targetButtonIndex": 0,
+              "contested": false
+            }
+          ]
+        }
+      ],
+      "afterActors": [
+        {
+          "id": "ally_0",
+          "hp": 5,
+          "maxHp": 16,
+          "dead": false,
+          "status": [
+            {
+              "id": "slowness",
+              "name": "缓慢",
+              "stacks": 1
+            },
+            {
+              "id": "stun",
+              "name": "眩晕",
+              "stacks": 1
+            }
+          ],
+          "slotCount": 0
+        },
+        {
+          "id": "enemy_0",
+          "hp": 20,
+          "maxHp": 20,
+          "dead": false,
+          "status": [],
+          "slotCount": 2
+        }
+      ],
+      "events": [
+        {
+          "index": 28,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "◆◆◆ 战斗结算阶段 ◆◆◆"
+        },
+        {
+          "index": 29,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "[拼点] 0[新手木剑][横砍(1 dice, ranges: 1:2~4)] vs 耀光骑士(ID:12)[耀光突进(1 dice, ranges: 1:3~4)]"
+        },
+        {
+          "index": 30,
+          "round": 2,
+          "kind": "damage",
+          "actorId": "ally_0",
+          "amount": 3,
+          "message": ""
+        },
+        {
+          "index": 31,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "词条触发：耀光骑士(ID:12)[耀光镇压] 将在 下 1 个回合开始时 使 0[新手木剑] 获得 1 层 眩晕"
+        },
+        {
+          "index": 32,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "第 1 段拼点：0[新手木剑](2) vs 耀光骑士(ID:12)(3)"
+        },
+        {
+          "index": 33,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "-> 敌方胜！追击威力 3 ，耀光骑士(ID:12) 对 0[新手木剑] 造成 3 伤害，剩余HP 6/16"
+        },
+        {
+          "index": 34,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "[敌方单方面攻击] 耀光骑士(ID:12)[圣光锁狱(1 dice, ranges: 1:1~5)] -> 0[新手木剑]"
+        },
+        {
+          "index": 35,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "词条触发：耀光骑士(ID:12)[锁狱] 将在 下 1 个回合开始时 使 0[新手木剑] 获得 1 层 缓慢"
+        },
+        {
+          "index": 36,
+          "round": 2,
+          "kind": "damage",
+          "actorId": "ally_0",
+          "amount": 1,
+          "message": ""
+        },
+        {
+          "index": 37,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "第 1 段：耀光骑士(ID:12)[圣光锁狱(1 dice, ranges: 1:1~5)](1) -> 0[新手木剑]，剩余HP 5/16"
+        },
+        {
+          "index": 38,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "── 回合结算汇总 ──"
+        },
+        {
+          "index": 39,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "友方 0[新手木剑] HP 5/16"
+        },
+        {
+          "index": 40,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方 耀光骑士(ID:12) HP 20/20"
+        },
+        {
+          "index": 41,
+          "round": 2,
+          "kind": "status_changed",
+          "actorId": "ally_0",
+          "amount": 0,
+          "message": ""
+        },
+        {
+          "index": 42,
+          "round": 2,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "再次按下战斗按钮开始下一回合目标指定。"
+        },
+        {
+          "index": 43,
+          "round": 3,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "◆◆◆ 目标指定阶段 ◆◆◆ 友方 1 名 / 敌方 1 名"
+        },
+        {
+          "index": 44,
+          "round": 3,
+          "kind": "status_changed",
+          "actorId": "ally_0",
+          "amount": 0,
+          "message": ""
+        },
+        {
+          "index": 45,
+          "round": 3,
+          "kind": "status_changed",
+          "actorId": "ally_0",
+          "amount": 0,
+          "message": ""
+        },
+        {
+          "index": 46,
+          "round": 3,
+          "kind": "status_changed",
+          "actorId": "ally_0",
+          "amount": 0,
+          "message": ""
+        },
+        {
+          "index": 47,
+          "round": 3,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "状态触发：0[新手木剑] 受到 1 点 缓慢 速度降低，当前 缓慢 1 层"
+        },
+        {
+          "index": 48,
+          "round": 3,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "友方 0[新手木剑] 速度=1 HP=5/16"
+        },
+        {
+          "index": 49,
+          "round": 3,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方 耀光骑士(ID:12) 速度=3 HP=20/20"
+        },
+        {
+          "index": 50,
+          "round": 3,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方已完成自动指定目标。请玩家完成画线后再次按下战斗按钮进入结算。"
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "step": 11,
+      "reason": "第3轮Chara因眩晕没有行动槽，公开列表仅能提交或放弃；不放弃本局，推进状态到下一轮。敌方两个攻击槽当前目标为空，需记录这是否导致眩晕反而免受攻击。",
+      "beforeActors": [
+        {
+          "id": "ally_0",
+          "hp": 5,
+          "maxHp": 16,
+          "dead": false,
+          "status": [
+            {
+              "id": "slowness",
+              "name": "缓慢",
+              "stacks": 1
+            },
+            {
+              "id": "stun",
+              "name": "眩晕",
+              "stacks": 1
+            }
+          ],
+          "slots": []
+        },
+        {
+          "id": "enemy_0",
+          "hp": 20,
+          "maxHp": 20,
+          "dead": false,
+          "status": [],
+          "slots": [
+            {
+              "index": 0,
+              "speed": 3,
+              "skillIndex": -1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "7f39129c50d2edb4ca64c3beb44efb24",
+                "name": "圣光锁狱",
+                "description": "圣光锁狱\n技能：圣光锁狱\n能耗：0\n骰子数：1\n第 1 攻击骰：1 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 使用时 ] 使 所有目标 于 下 1 个回合开始时 获得 1 层 缓慢\n\n描述：\n光锁从地面合拢，把逃离的脚步一寸寸拖慢。",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 1,
+                    "max": 5,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 1,
+                    "max": 5,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "",
+              "targetButtonIndex": -1,
+              "contested": false
+            },
+            {
+              "index": 1,
+              "speed": 3,
+              "skillIndex": -1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "727a4b67800455e4da3fe0a9365a958e",
+                "name": "耀光突进",
+                "description": "耀光突进\n技能：耀光突进\n能耗：0\n骰子数：1\n第 1 攻击骰：3 ~ 4\n目标偏好：优先攻击拥有至少 2 种负面状态的目标\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 若 目标拥有至少 1 种负面状态 ，则 使 当前目标 于 下 1 个回合开始时 获得 1 层 眩晕\n\n描述：\n金白的轨迹穿过战场，只奔向已经露出裂缝的人。",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 3,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 3,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "",
+              "targetButtonIndex": -1,
+              "contested": false
+            }
+          ]
+        }
+      ],
+      "afterActors": [
+        {
+          "id": "ally_0",
+          "hp": 5,
+          "maxHp": 16,
+          "dead": false,
+          "status": [
+            {
+              "id": "slowness",
+              "name": "缓慢",
+              "stacks": 0
+            },
+            {
+              "id": "stun",
+              "name": "眩晕",
+              "stacks": 0
+            }
+          ],
+          "slotCount": 1
+        },
+        {
+          "id": "enemy_0",
+          "hp": 20,
+          "maxHp": 20,
+          "dead": false,
+          "status": [],
+          "slotCount": 2
+        }
+      ],
+      "events": [
+        {
+          "index": 51,
+          "round": 3,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "◆◆◆ 战斗结算阶段 ◆◆◆"
+        },
+        {
+          "index": 52,
+          "round": 3,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "0[新手木剑] 未指定目标，本回合跳过。"
+        },
+        {
+          "index": 53,
+          "round": 3,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "── 回合结算汇总 ──"
+        },
+        {
+          "index": 54,
+          "round": 3,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "友方 0[新手木剑] HP 5/16"
+        },
+        {
+          "index": 55,
+          "round": 3,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方 耀光骑士(ID:12) HP 20/20"
+        },
+        {
+          "index": 56,
+          "round": 3,
+          "kind": "status_changed",
+          "actorId": "ally_0",
+          "amount": 0,
+          "message": ""
+        },
+        {
+          "index": 57,
+          "round": 3,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "再次按下战斗按钮开始下一回合目标指定。"
+        },
+        {
+          "index": 58,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "◆◆◆ 目标指定阶段 ◆◆◆ 友方 1 名 / 敌方 1 名"
+        },
+        {
+          "index": 59,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "友方 0[新手木剑] 速度=2 HP=5/16"
+        },
+        {
+          "index": 60,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方 耀光骑士(ID:12) 速度=3 HP=20/20"
+        },
+        {
+          "index": 61,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方 耀光骑士(ID:12) [按钮 1] 已锁定目标 -> 0[新手木剑] | 技能 裁决之盾(1 dice, ranges: 1:3~4)"
+        },
+        {
+          "index": 62,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方 耀光骑士(ID:12) [按钮 2] 已锁定目标 -> 0[新手木剑] | 技能 光刃直劈(1 dice, ranges: 1:2~4)"
+        },
+        {
+          "index": 63,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方已完成自动指定目标。请玩家完成画线后再次按下战斗按钮进入结算。"
+        }
+      ]
+    },
+    {
+      "round": 4,
+      "step": 13,
+      "reason": "确认横砍对直劈形成反击、预留3/7能量；继续争取拼赢削血且避免流血，裁决盾不是本轮的直接伤害主因。",
+      "beforeActors": [
+        {
+          "id": "ally_0",
+          "hp": 5,
+          "maxHp": 16,
+          "dead": false,
+          "status": [
+            {
+              "id": "slowness",
+              "name": "缓慢",
+              "stacks": 0
+            },
+            {
+              "id": "stun",
+              "name": "眩晕",
+              "stacks": 0
+            }
+          ],
+          "slots": [
+            {
+              "index": 0,
+              "speed": 2,
+              "skillIndex": 1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "f3931f99f39b4a248a779ab007733565",
+                "name": "横砍",
+                "description": "横砍\n技能：横砍\n能耗：3\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 1 点伤害\n\n描述：\n暂无描述。",
+                "energyCost": 3,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "enemy_0",
+              "targetButtonIndex": 1,
+              "contested": true
+            }
+          ]
+        },
+        {
+          "id": "enemy_0",
+          "hp": 20,
+          "maxHp": 20,
+          "dead": false,
+          "status": [],
+          "slots": [
+            {
+              "index": 0,
+              "speed": 3,
+              "skillIndex": -1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "a09522cbe5435c747b3d600fa30fa0b2",
+                "name": "裁决之盾",
+                "description": "裁决之盾\n技能：裁决之盾\n能耗：0\n骰子数：1\n第 1 防御骰：3 ~ 4\n\n词条：\n第 1 防御骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧\n第 1 防御骰词条：[ 使用时 ] 若 任意敌方目标拥有至少 1 种负面状态 ，则 使自己获得 3 层护盾\n\n描述：\n骑士举起盾面，光辉从被审判者身上折返回来。",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 3,
+                    "max": 4,
+                    "category": "Defense"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 3,
+                    "max": 4,
+                    "category": "Defense"
+                  }
+                ]
+              },
+              "targetId": "ally_0",
+              "targetButtonIndex": 0,
+              "contested": false
+            },
+            {
+              "index": 1,
+              "speed": 3,
+              "skillIndex": -1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "db140ec1037a1934bb4f2bc47f9fb223",
+                "name": "光刃直劈",
+                "description": "光刃直劈\n技能：光刃直劈\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 流血\n\n描述：\n圣光压进剑锋，在伤口里留下一道迟来的裁罚。",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "ally_0",
+              "targetButtonIndex": 0,
+              "contested": false
+            }
+          ]
+        }
+      ],
+      "afterActors": [
+        {
+          "id": "ally_0",
+          "hp": 5,
+          "maxHp": 16,
+          "dead": false,
+          "status": [
+            {
+              "id": "slowness",
+              "name": "缓慢",
+              "stacks": 0
+            },
+            {
+              "id": "stun",
+              "name": "眩晕",
+              "stacks": 0
+            }
+          ],
+          "slotCount": 1
+        },
+        {
+          "id": "enemy_0",
+          "hp": 16,
+          "maxHp": 20,
+          "dead": false,
+          "status": [],
+          "slotCount": 2
+        }
+      ],
+      "events": [
+        {
+          "index": 64,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "◆◆◆ 战斗结算阶段 ◆◆◆"
+        },
+        {
+          "index": 65,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "[拼点] 0[新手木剑][横砍(1 dice, ranges: 1:2~4)] vs 耀光骑士(ID:12)[光刃直劈(1 dice, ranges: 1:2~4)]"
+        },
+        {
+          "index": 66,
+          "round": 4,
+          "kind": "damage",
+          "actorId": "enemy_0",
+          "amount": 3,
+          "message": ""
+        },
+        {
+          "index": 67,
+          "round": 4,
+          "kind": "damage",
+          "actorId": "enemy_0",
+          "amount": 1,
+          "message": ""
+        },
+        {
+          "index": 68,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "词条触发：0[新手木剑][横砍] 对 耀光骑士(ID:12) 造成 1 额外伤害，剩余HP 16/20"
+        },
+        {
+          "index": 69,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "第 1 段拼点：0[新手木剑](3) vs 耀光骑士(ID:12)(2)"
+        },
+        {
+          "index": 70,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "-> 友方胜！追击威力 3 ，对 耀光骑士(ID:12) 造成 3 伤害，剩余HP 16/20"
+        },
+        {
+          "index": 71,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "[敌方单方面攻击] 耀光骑士(ID:12)[裁决之盾(1 dice, ranges: 1:3~4)] 为防御技能，未与攻击骰拼点，不会造成拼点/伤害结算，但【使用时】词条会正常生效。"
+        },
+        {
+          "index": 72,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "第 1 段：耀光骑士(ID:12)[裁决之盾(1 dice, ranges: 1:3~4)] 为防御技能，本段仅触发【使用时】词条。"
+        },
+        {
+          "index": 73,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "── 回合结算汇总 ──"
+        },
+        {
+          "index": 74,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "友方 0[新手木剑] HP 5/16"
+        },
+        {
+          "index": 75,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方 耀光骑士(ID:12) HP 16/20"
+        },
+        {
+          "index": 76,
+          "round": 4,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "再次按下战斗按钮开始下一回合目标指定。"
+        },
+        {
+          "index": 77,
+          "round": 5,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "◆◆◆ 目标指定阶段 ◆◆◆ 友方 1 名 / 敌方 1 名"
+        },
+        {
+          "index": 78,
+          "round": 5,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "友方 0[新手木剑] 速度=4 HP=5/16"
+        },
+        {
+          "index": 79,
+          "round": 5,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方 耀光骑士(ID:12) 速度=4 HP=16/20"
+        },
+        {
+          "index": 80,
+          "round": 5,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方 耀光骑士(ID:12) [按钮 1] 已锁定目标 -> 0[新手木剑] | 技能 光刃直劈(1 dice, ranges: 1:2~4)"
+        },
+        {
+          "index": 81,
+          "round": 5,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方 耀光骑士(ID:12) [按钮 2] 已锁定目标 -> 0[新手木剑] | 技能 圣光锁狱(1 dice, ranges: 1:1~5)"
+        },
+        {
+          "index": 82,
+          "round": 5,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "敌方已完成自动指定目标。请玩家完成画线后再次按下战斗按钮进入结算。"
+        }
+      ]
+    },
+    {
+      "round": 5,
+      "step": 15,
+      "reason": "横砍已对直劈形成拼点，预留3/5能量；继续争取保留行动能力和输出，锁狱的使用时缓慢无法靠拼点取消。",
+      "beforeActors": [
+        {
+          "id": "ally_0",
+          "hp": 5,
+          "maxHp": 16,
+          "dead": false,
+          "status": [
+            {
+              "id": "slowness",
+              "name": "缓慢",
+              "stacks": 0
+            },
+            {
+              "id": "stun",
+              "name": "眩晕",
+              "stacks": 0
+            }
+          ],
+          "slots": [
+            {
+              "index": 0,
+              "speed": 4,
+              "skillIndex": 1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "f3931f99f39b4a248a779ab007733565",
+                "name": "横砍",
+                "description": "横砍\n技能：横砍\n能耗：3\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 1 点伤害\n\n描述：\n暂无描述。",
+                "energyCost": 3,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "enemy_0",
+              "targetButtonIndex": 0,
+              "contested": true
+            }
+          ]
+        },
+        {
+          "id": "enemy_0",
+          "hp": 16,
+          "maxHp": 20,
+          "dead": false,
+          "status": [],
+          "slots": [
+            {
+              "index": 0,
+              "speed": 4,
+              "skillIndex": -1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "db140ec1037a1934bb4f2bc47f9fb223",
+                "name": "光刃直劈",
+                "description": "光刃直劈\n技能：光刃直劈\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 流血\n\n描述：\n圣光压进剑锋，在伤口里留下一道迟来的裁罚。",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 2,
+                    "max": 4,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "ally_0",
+              "targetButtonIndex": 0,
+              "contested": false
+            },
+            {
+              "index": 1,
+              "speed": 4,
+              "skillIndex": -1,
+              "selectedSkill": {
+                "index": -1,
+                "id": "7f39129c50d2edb4ca64c3beb44efb24",
+                "name": "圣光锁狱",
+                "description": "圣光锁狱\n技能：圣光锁狱\n能耗：0\n骰子数：1\n第 1 攻击骰：1 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 使用时 ] 使 所有目标 于 下 1 个回合开始时 获得 1 层 缓慢\n\n描述：\n光锁从地面合拢，把逃离的脚步一寸寸拖慢。",
+                "energyCost": 0,
+                "dice": [
+                  {
+                    "min": 1,
+                    "max": 5,
+                    "category": "Attack"
+                  }
+                ],
+                "displayedDice": [
+                  {
+                    "min": 1,
+                    "max": 5,
+                    "category": "Attack"
+                  }
+                ]
+              },
+              "targetId": "ally_0",
+              "targetButtonIndex": 0,
+              "contested": false
+            }
+          ]
+        }
+      ],
+      "afterActors": [
+        {
+          "id": "ally_0",
+          "hp": 0,
+          "maxHp": 16,
+          "dead": true,
+          "status": [
+            {
+              "id": "slowness",
+              "name": "缓慢",
+              "stacks": 0
+            },
+            {
+              "id": "stun",
+              "name": "眩晕",
+              "stacks": 0
+            },
+            {
+              "id": "bleed",
+              "name": "流血",
+              "stacks": 1
+            }
+          ],
+          "slotCount": 0
+        },
+        {
+          "id": "enemy_0",
+          "hp": 16,
+          "maxHp": 20,
+          "dead": false,
+          "status": [],
+          "slotCount": 2
+        }
+      ],
+      "events": [
+        {
+          "index": 83,
+          "round": 5,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "◆◆◆ 战斗结算阶段 ◆◆◆"
+        },
+        {
+          "index": 84,
+          "round": 5,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "[拼点] 0[新手木剑][横砍(1 dice, ranges: 1:2~4)] vs 耀光骑士(ID:12)[光刃直劈(1 dice, ranges: 1:2~4)]"
+        },
+        {
+          "index": 85,
+          "round": 5,
+          "kind": "damage",
+          "actorId": "ally_0",
+          "amount": 4,
+          "message": ""
+        },
+        {
+          "index": 86,
+          "round": 5,
+          "kind": "status_changed",
+          "actorId": "ally_0",
+          "amount": 0,
+          "message": ""
+        },
+        {
+          "index": 87,
+          "round": 5,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "词条触发：耀光骑士(ID:12)[状态效果#1] 使 0[新手木剑] 获得 2 层 流血，当前 流血 2 层"
+        },
+        {
+          "index": 88,
+          "round": 5,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "第 1 段拼点：0[新手木剑](3) vs 耀光骑士(ID:12)(4)"
+        },
+        {
+          "index": 89,
+          "round": 5,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "-> 敌方胜！追击威力 4 ，耀光骑士(ID:12) 对 0[新手木剑] 造成 4 伤害，剩余HP 1/16"
+        },
+        {
+          "index": 90,
+          "round": 5,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "[敌方单方面攻击] 耀光骑士(ID:12)[圣光锁狱(1 dice, ranges: 1:1~5)] -> 0[新手木剑]"
+        },
+        {
+          "index": 91,
+          "round": 5,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "词条触发：耀光骑士(ID:12)[锁狱] 将在 下 1 个回合开始时 使 0[新手木剑] 获得 1 层 缓慢"
+        },
+        {
+          "index": 92,
+          "round": 5,
+          "kind": "damage",
+          "actorId": "ally_0",
+          "amount": 1,
+          "message": ""
+        },
+        {
+          "index": 93,
+          "round": 5,
+          "kind": "death",
+          "actorId": "ally_0",
+          "amount": 0,
+          "message": ""
+        },
+        {
+          "index": 94,
+          "round": 5,
+          "kind": "status_changed",
+          "actorId": "ally_0",
+          "amount": 0,
+          "message": ""
+        },
+        {
+          "index": 95,
+          "round": 5,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "状态触发：0[新手木剑] 受到 2 点 流血 伤害，当前 流血 1 层，剩余HP 0/16"
+        },
+        {
+          "index": 96,
+          "round": 5,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "第 1 段：耀光骑士(ID:12)[圣光锁狱(1 dice, ranges: 1:1~5)](2) -> 0[新手木剑]，剩余HP 0/16"
+        },
+        {
+          "index": 97,
+          "round": 5,
+          "kind": "log",
+          "actorId": "",
+          "amount": 0,
+          "message": "Battle finished. Defeat."
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "step": 0,
+      "request": {
+        "op": "create_run",
+        "seed": 2026110906,
+        "difficultyId": "4f6f34f8c8bf4cc0b5d8d5d65d4790e1",
+        "profileId": "easy-run6-20261109-e12da1437f"
+      },
+      "reason": "按用户要求使用未用过的种子2026110906，新建零进度Easy档案；全部游玩行动由模型选择。",
+      "decisionSource": "model",
+      "after": {
+        "revision": 0,
+        "phase": "map",
+        "x": 1,
+        "y": 5,
+        "actionPoints": 5,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      }
+    },
+    {
+      "step": 1,
+      "time": "2026-11-09T07:50:49.488283+00:00",
+      "request": {
+        "op": "run_move",
+        "assetId": "",
+        "x": 0,
+        "y": 5,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 0,
+        "requestId": "6ada8181b1d74de3aa463431b45a216e"
+      },
+      "reason": "先检查出生点旁的外围事件，避免单人木剑开局直接进入未知战斗；左上钥匙可随后顺路取得，营地留待有钱招募或受伤后使用。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 0,
+        "phase": "map",
+        "x": 1,
+        "y": 5,
+        "actionPoints": 5,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      },
+      "after": {
+        "revision": 1,
+        "phase": "event",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 3,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      }
+    },
+    {
+      "step": 2,
+      "time": "2026-11-09T07:50:59.413508+00:00",
+      "request": {
+        "op": "run_choose_event",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 1,
+        "requestId": "130a5e5b51c04b43a964169b30ccf7a4"
+      },
+      "reason": "付出1点行动查看城堡的下一页信息；目前满血，先收集公开选项，若要求高风险战斗再考虑撤出。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 1,
+        "phase": "event",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 3,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      },
+      "after": {
+        "revision": 2,
+        "phase": "event_result",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 2,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      }
+    },
+    {
+      "step": 3,
+      "time": "2026-11-09T07:51:04.242536+00:00",
+      "request": {
+        "op": "run_continue_event",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 2,
+        "requestId": "619055bb92154cfd8d18584ee5295bdb"
+      },
+      "reason": "继续阅读已付费打开的遗产选项，确认继承的实际代价。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 2,
+        "phase": "event_result",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 2,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      },
+      "after": {
+        "revision": 3,
+        "phase": "event",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 2,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      }
+    },
+    {
+      "step": 4,
+      "time": "2026-11-09T07:51:12.820622+00:00",
+      "request": {
+        "op": "run_choose_event",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 3,
+        "requestId": "c0be1016d6cd4136a583ea06e0f6817f"
+      },
+      "reason": "当前两项都会进入艰难战斗，拒绝并不能撤离；选择继承额外花1点行动，换取胜利遗物奖励，提升这场被迫战斗的回报。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 3,
+        "phase": "event",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 2,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      },
+      "after": {
+        "revision": 4,
+        "phase": "event_result",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      }
+    },
+    {
+      "step": 5,
+      "time": "2026-11-09T07:51:26.593325+00:00",
+      "request": {
+        "op": "run_continue_event",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 4,
+        "requestId": "1b2aa5c0131f4d988c0eafe8f06f18ac"
+      },
+      "reason": "事件已锁定光辉骑士遭遇，进入战斗后根据实际技能和意图求生，不通过读档重选抹去开局失误。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 4,
+        "phase": "event_result",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      },
+      "after": {
+        "revision": 5,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      }
+    },
+    {
+      "step": 6,
+      "time": "2026-11-09T07:51:59.903945+00:00",
+      "request": {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "set_skill",
+          "actorId": "ally_0",
+          "buttonIndex": 0,
+          "skillIndex": 1,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 5,
+        "requestId": "d669376b5fa541e3a27d35c3a7d963db"
+      },
+      "reason": "横砍2～4优于挥砍2～3，命中还可追加1点伤害；单敌下仍是木剑最强输出，当前10点能量足够支付3。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 5,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      },
+      "after": {
+        "revision": 6,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      }
+    },
+    {
+      "step": 7,
+      "time": "2026-11-09T07:52:06.767133+00:00",
+      "request": {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "target",
+          "actorId": "ally_0",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "enemy_0",
+          "targetButtonIndex": 1,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 6,
+        "requestId": "05dee489758d4fa08456fc8e7911d5ef"
+      },
+      "reason": "反制1～5的圣光锁狱，比对3～4的耀光突进更有机会拼赢并造成横砍追加伤害；另一槽只能承受，当前没有第二行动槽可同时拦截。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 6,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      },
+      "after": {
+        "revision": 7,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      }
+    },
+    {
+      "step": 8,
+      "time": "2026-11-09T07:52:13.323411+00:00",
+      "request": {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "commit",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 7,
+        "requestId": "974522de6da34042a3da7967edf9c3a7"
+      },
+      "reason": "已确认横砍连到圣光锁狱且contested=true，预留能量3/10；以较有利的拼点争取先削敌血，接受另一个未反制攻击。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 7,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      },
+      "after": {
+        "revision": 8,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      }
+    },
+    {
+      "step": 9,
+      "time": "2026-11-09T07:52:43.533376+00:00",
+      "request": {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "target",
+          "actorId": "ally_0",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "enemy_0",
+          "targetButtonIndex": 1,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 8,
+        "requestId": "b15194e202e648bca7caa4b75238182b"
+      },
+      "reason": "本轮已带缓慢，耀光突进若命中会追加下轮眩晕，风险高于首轮；用保留的横砍反制该槽，争取平点或拼赢阻止命中控制，保留后续行动机会。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 8,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      },
+      "after": {
+        "revision": 9,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      }
+    },
+    {
+      "step": 10,
+      "time": "2026-11-09T07:52:50.114036+00:00",
+      "request": {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "commit",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 9,
+        "requestId": "4c7b321eb08c465a9c14a9a100f8ccfe"
+      },
+      "reason": "低速反击连线已被正式规则接受，突进contested=true；能量8预留3，优先争取抵挡带眩晕的命中，记录另一槽锁狱的实际伤害。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 9,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      },
+      "after": {
+        "revision": 10,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      }
+    },
+    {
+      "step": 11,
+      "time": "2026-11-09T07:53:07.539372+00:00",
+      "request": {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "commit",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 10,
+        "requestId": "713802760fd649d2a60ac15bfde6533f"
+      },
+      "reason": "第3轮Chara因眩晕没有行动槽，公开列表仅能提交或放弃；不放弃本局，推进状态到下一轮。敌方两个攻击槽当前目标为空，需记录这是否导致眩晕反而免受攻击。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 10,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      },
+      "after": {
+        "revision": 11,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      }
+    },
+    {
+      "step": 12,
+      "time": "2026-11-09T07:54:15.118265+00:00",
+      "request": {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "target",
+          "actorId": "ally_0",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "enemy_0",
+          "targetButtonIndex": 1,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 11,
+        "requestId": "26797e7ecb6540009adbb23b27071b57"
+      },
+      "reason": "第四轮改为反制2～4的光刃直劈，与横砍同范围，比进攻3～4防御盾更有胜算；阻止流血命中比降低盾收益更紧迫，当前5HP不能承受额外消耗。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 11,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      },
+      "after": {
+        "revision": 12,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      }
+    },
+    {
+      "step": 13,
+      "time": "2026-11-09T07:54:25.605272+00:00",
+      "request": {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "commit",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 12,
+        "requestId": "6acf37ede6314c979069878a45805212"
+      },
+      "reason": "确认横砍对直劈形成反击、预留3/7能量；继续争取拼赢削血且避免流血，裁决盾不是本轮的直接伤害主因。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 12,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      },
+      "after": {
+        "revision": 13,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      }
+    },
+    {
+      "step": 14,
+      "time": "2026-11-09T07:54:46.284566+00:00",
+      "request": {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "target",
+          "actorId": "ally_0",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "enemy_0",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 13,
+        "requestId": "2644a4b971de4ed7a5fc4de472d55152"
+      },
+      "reason": "第五轮优先拦截带2层流血的光刃直劈，横砍同范围可争取平或胜；若让它单方面命中，当前5HP很难再承受流血消耗。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 13,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      },
+      "after": {
+        "revision": 14,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      }
+    },
+    {
+      "step": 15,
+      "time": "2026-11-09T07:54:53.248711+00:00",
+      "request": {
+        "op": "run_battle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "commit",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 14,
+        "requestId": "22690e1e24574f3fa36c6d4f9f2c8af2"
+      },
+      "reason": "横砍已对直劈形成拼点，预留3/5能量；继续争取保留行动能力和输出，锁狱的使用时缓慢无法靠拼点取消。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 14,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      },
+      "after": {
+        "revision": 15,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      }
+    },
+    {
+      "step": 16,
+      "time": "2026-11-09T07:55:30.452888+00:00",
+      "request": {
+        "op": "run_return",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 15,
+        "requestId": "a65e4c5d3bfc402cb3eaa5a4977efa98"
+      },
+      "reason": "第五轮Chara已死亡，战斗正式判败；返回冒险回写实际0HP并进入失败结算，不将外层旧16HP误当成存活。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 15,
+        "phase": "battle",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 16,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": ""
+      },
+      "after": {
+        "revision": 16,
+        "phase": "defeat_pending_settlement",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 0,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": "defeat"
+      }
+    },
+    {
+      "step": 17,
+      "time": "2026-11-09T07:55:36.047752+00:00",
+      "request": {
+        "op": "run_settle",
+        "assetId": "",
+        "x": 0,
+        "y": 0,
+        "choiceIndex": 0,
+        "battleAction": {
+          "op": "",
+          "actorId": "",
+          "buttonIndex": 0,
+          "skillIndex": 0,
+          "targetId": "",
+          "targetButtonIndex": 0,
+          "choiceIndex": 0
+        },
+        "sessionId": "d3c39b17cea34b878716f4f949870ae1",
+        "revision": 16,
+        "requestId": "b7293bacd0aa43d3be091ff5acb9aafd"
+      },
+      "reason": "按正式失败结算记录真实分数与能力点，保存本局失败，不自动另开新种子或读档替换结果。",
+      "decisionSource": "model",
+      "before": {
+        "revision": 16,
+        "phase": "defeat_pending_settlement",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 0,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": "defeat"
+      },
+      "after": {
+        "revision": 17,
+        "phase": "finished",
+        "x": 0,
+        "y": 5,
+        "actionPoints": 1,
+        "maxActionPoints": 5,
+        "money": 0,
+        "keys": 0,
+        "party": [
+          {
+            "id": "0",
+            "name": "Chara",
+            "character": "27e817266af382946804dea6afd2e374",
+            "weapon": "9b8c5d177c240334a9734636830a139f",
+            "hp": 0,
+            "maxHp": 16,
+            "level": 1,
+            "experience": 0
+          }
+        ],
+        "relics": [],
+        "outcome": "defeat"
+      }
+    }
+  ],
+  "checks": {
+    "decisions": 18,
+    "actions": 17,
+    "rounds": 5,
+    "clashes": 4,
+    "allActionsLegal": true,
+    "allReasonsPresent": true,
+    "sourceSnapshotUnchanged": true,
+    "wireReplayVerified": true,
+    "htmlAnchorChecks": true,
+    "sourceFiles": 3689,
+    "artifacts": {
+      "play-log.html": "bc935260fb7bfa97ad659a6da39cca44c5bbc98858e55ca421f109a30f0a3fee",
+      "bug-report.html": "8840326a8a86070d4e4114b9eeb1596d7f594163efff17b4cc138390bd9cfdb7",
+      "play-log.txt": "52993054655b5edb6dd91bc81b16d64f4e985684fbf54006532e29ccd153da8e",
+      "replay.json": "804a725c66e7df8b82d70a2d93e95cd264477de275b4f41ea524f8ce03f6e964",
+      "observations.jsonl.gz": "3534d3f9a16980437abb011f3c582e8af49fbaa6331b5a82e622b5ce5b853b69"
+    },
+    "browserPreview": "Not completed: in-app browser startup timed out, Edge minimized; user pressed physical Escape during recovery. Computer Use stopped. HTML parsed and local anchors checked; no visual or live filter validation claim.",
+    "previewStoppedByUser": true,
+    "archiveSelfHashExcluded": true,
+    "archiveSha256": "3fa1ffa797161b18584ced696117cc824329bb686ebdcd4ee3d403ca31994b60"
+  },
+  "bugReport": "Easy-20261109-run6-bug-report.json",
+  "localArtifacts": "C:\\DiceLand\\outputs\\agent-battle\\easy-20261109-run6",
+  "limitations": [
+    "One short event fight only; no claim of crafting, recruitment, changed equipment access, diagonal movement, other routes or Boss coverage.",
+    "Visual preview stopped by the user; no browser rendering/search interaction validation claim.",
+    "Native ContentHash omits localization; an additional fixed 3689-file snapshot including localization was matched before and after the run. Locale zh-Hans remained unchanged.",
+    "The first replay verification response was lost to a local 1-second tool execution limit. Verification retried successfully; formal profile unchanged during the completed retry.",
+    "No game rule, enemy, skill or relic asset changed; catalog refresh not part of this playthrough."
+  ]
+}

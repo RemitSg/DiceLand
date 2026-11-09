@@ -1,0 +1,1620 @@
+{
+  "run": "easy-20261109-run6",
+  "seed": 2026110906,
+  "outcome": "defeat",
+  "currentRunCandidates": [
+    {
+      "id": "STUN_NO_TARGET",
+      "title": "唯一存活队员眩晕归零行动槽时，敌方整轮没有攻击目标",
+      "category": "P2 / 战斗规则交互 / 待确认设计",
+      "confidence": "自然对局已观察一次，原生重放一致，共享代码路径相符；零槽队员应否仍可受击尚需确认。未修复。",
+      "firstStep": 11,
+      "round": 3,
+      "occurrences": 1,
+      "observed": "Chara 5/16HP、眩晕1、存活但slots=[]；敌方两个攻击槽均targetId为空。提交后无伤害，Chara仍5/16HP，眩晕归零，第四轮敌方恢复正常选目标。",
+      "expectedOrQuestion": "眩晕资产说明只描述按层数减少速度按钮、回合结束清空，并未描述不可被选中。若其规则意图只是失去行动，则敌方应能攻击仍存活的零槽队员。",
+      "cause": "活动速度按钮数减到0后，传给敌方自动选目标的按钮列表为空；BattleEnemyController.AutoConnectToRandomAlly在列表为空时直接返回，没有按存活单位选择的兜底。",
+      "reproduction": [
+        "沿本局原生日志执行至第10步（第二轮结束）。",
+        "第3轮观察存活Chara HP5、眩晕1、行动槽0；敌方2个攻击槽无目标。",
+        "执行第11步commit，读取本回合事件：没有damage，生命仍5；第4轮眩晕归零、连线恢复。"
+      ],
+      "evidence": {
+        "step": 11,
+        "round": {
+          "battle": 1,
+          "step": 11,
+          "round": 3,
+          "before": {
+            "sessionId": "d899e5430a78494d9ffa31ebada54923",
+            "revision": 5,
+            "seed": 1922653832,
+            "round": 3,
+            "phase": "targeting",
+            "outcome": "",
+            "energy": 6,
+            "temporaryEnergy": 0,
+            "reservedEnergy": 0,
+            "actors": [
+              {
+                "id": "ally_0",
+                "side": "ally",
+                "name": "0[新手木剑]",
+                "hp": 5,
+                "maxHp": 16,
+                "stage": 0,
+                "dead": false,
+                "pendingDelayedDeath": false,
+                "stageName": "",
+                "passives": [],
+                "statuses": [
+                  {
+                    "id": "slowness",
+                    "name": "缓慢",
+                    "stacks": 1
+                  },
+                  {
+                    "id": "stun",
+                    "name": "眩晕",
+                    "stacks": 1
+                  }
+                ],
+                "skills": [
+                  {
+                    "index": 0,
+                    "id": "3672ea937dbc5e64bb1187640f7a9370",
+                    "name": "挥砍",
+                    "description": "挥砍\n技能：挥砍\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n描述：\n借力挥砍，简单的招式",
+                    "energyCost": 0,
+                    "dice": [
+                      {
+                        "min": 2,
+                        "max": 3,
+                        "category": "Attack"
+                      }
+                    ],
+                    "displayedDice": [
+                      {
+                        "min": 2,
+                        "max": 3,
+                        "category": "Attack"
+                      }
+                    ]
+                  },
+                  {
+                    "index": 1,
+                    "id": "f3931f99f39b4a248a779ab007733565",
+                    "name": "横砍",
+                    "description": "横砍\n技能：横砍\n能耗：3\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 1 点伤害\n\n描述：\n暂无描述。",
+                    "energyCost": 3,
+                    "dice": [
+                      {
+                        "min": 2,
+                        "max": 4,
+                        "category": "Attack"
+                      }
+                    ],
+                    "displayedDice": [
+                      {
+                        "min": 2,
+                        "max": 4,
+                        "category": "Attack"
+                      }
+                    ]
+                  },
+                  {
+                    "index": 2,
+                    "id": "acb988a65745364459695da95e246fad",
+                    "name": "格挡",
+                    "description": "格挡\n技能：格挡\n能耗：0\n骰子数：1\n第 1 防御骰：1 ~ 2\n\n描述：\n简单的剑技，用于减少即将到来的伤害",
+                    "energyCost": 0,
+                    "dice": [
+                      {
+                        "min": 1,
+                        "max": 2,
+                        "category": "Defense"
+                      }
+                    ],
+                    "displayedDice": [
+                      {
+                        "min": 1,
+                        "max": 2,
+                        "category": "Defense"
+                      }
+                    ]
+                  }
+                ],
+                "slots": []
+              },
+              {
+                "id": "enemy_0",
+                "side": "enemy",
+                "name": "耀光骑士(ID:12)",
+                "hp": 20,
+                "maxHp": 20,
+                "stage": 0,
+                "dead": false,
+                "pendingDelayedDeath": false,
+                "stageName": "",
+                "passives": [
+                  "审判锁定：耀光突进会优先指定拥有两种及以上负面状态的目标。",
+                  "裁决回光：若任意目标拥有负面状态，裁决之盾会为自身获得护盾。"
+                ],
+                "statuses": [],
+                "skills": [],
+                "slots": [
+                  {
+                    "index": 0,
+                    "speed": 3,
+                    "skillIndex": -1,
+                    "selectedSkill": {
+                      "index": -1,
+                      "id": "7f39129c50d2edb4ca64c3beb44efb24",
+                      "name": "圣光锁狱",
+                      "description": "圣光锁狱\n技能：圣光锁狱\n能耗：0\n骰子数：1\n第 1 攻击骰：1 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 使用时 ] 使 所有目标 于 下 1 个回合开始时 获得 1 层 缓慢\n\n描述：\n光锁从地面合拢，把逃离的脚步一寸寸拖慢。",
+                      "energyCost": 0,
+                      "dice": [
+                        {
+                          "min": 1,
+                          "max": 5,
+                          "category": "Attack"
+                        }
+                      ],
+                      "displayedDice": [
+                        {
+                          "min": 1,
+                          "max": 5,
+                          "category": "Attack"
+                        }
+                      ]
+                    },
+                    "targetId": "",
+                    "targetButtonIndex": -1,
+                    "contested": false
+                  },
+                  {
+                    "index": 1,
+                    "speed": 3,
+                    "skillIndex": -1,
+                    "selectedSkill": {
+                      "index": -1,
+                      "id": "727a4b67800455e4da3fe0a9365a958e",
+                      "name": "耀光突进",
+                      "description": "耀光突进\n技能：耀光突进\n能耗：0\n骰子数：1\n第 1 攻击骰：3 ~ 4\n目标偏好：优先攻击拥有至少 2 种负面状态的目标\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 若 目标拥有至少 1 种负面状态 ，则 使 当前目标 于 下 1 个回合开始时 获得 1 层 眩晕\n\n描述：\n金白的轨迹穿过战场，只奔向已经露出裂缝的人。",
+                      "energyCost": 0,
+                      "dice": [
+                        {
+                          "min": 3,
+                          "max": 4,
+                          "category": "Attack"
+                        }
+                      ],
+                      "displayedDice": [
+                        {
+                          "min": 3,
+                          "max": 4,
+                          "category": "Attack"
+                        }
+                      ]
+                    },
+                    "targetId": "",
+                    "targetButtonIndex": -1,
+                    "contested": false
+                  }
+                ]
+              }
+            ],
+            "relics": [],
+            "events": [
+              {
+                "index": 0,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "◆◆◆ 目标指定阶段 ◆◆◆ 友方 1 名 / 敌方 1 名"
+              },
+              {
+                "index": 1,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "友方 0[新手木剑] 速度=4 HP=16/16"
+              },
+              {
+                "index": 2,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) 速度=4 HP=20/20"
+              },
+              {
+                "index": 3,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) [按钮 1] 已锁定目标 -> 0[新手木剑] | 技能 耀光突进(1 dice, ranges: 1:3~4)"
+              },
+              {
+                "index": 4,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) [按钮 2] 已锁定目标 -> 0[新手木剑] | 技能 圣光锁狱(1 dice, ranges: 1:1~5)"
+              },
+              {
+                "index": 5,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方已完成自动指定目标。请玩家完成画线后再次按下战斗按钮进入结算。"
+              },
+              {
+                "index": 6,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "◆◆◆ 战斗结算阶段 ◆◆◆"
+              },
+              {
+                "index": 7,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "[拼点] 0[新手木剑][横砍(1 dice, ranges: 1:2~4)] vs 耀光骑士(ID:12)[圣光锁狱(1 dice, ranges: 1:1~5)]"
+              },
+              {
+                "index": 8,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "词条触发：耀光骑士(ID:12)[锁狱] 将在 下 1 个回合开始时 使 0[新手木剑] 获得 1 层 缓慢"
+              },
+              {
+                "index": 9,
+                "round": 1,
+                "kind": "damage",
+                "actorId": "ally_0",
+                "amount": 4,
+                "message": ""
+              },
+              {
+                "index": 10,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "第 1 段拼点：0[新手木剑](2) vs 耀光骑士(ID:12)(4)"
+              },
+              {
+                "index": 11,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "-> 敌方胜！追击威力 4 ，耀光骑士(ID:12) 对 0[新手木剑] 造成 4 伤害，剩余HP 12/16"
+              },
+              {
+                "index": 12,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "[敌方单方面攻击] 耀光骑士(ID:12)[耀光突进(1 dice, ranges: 1:3~4)] -> 0[新手木剑]"
+              },
+              {
+                "index": 13,
+                "round": 1,
+                "kind": "damage",
+                "actorId": "ally_0",
+                "amount": 3,
+                "message": ""
+              },
+              {
+                "index": 14,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "第 1 段：耀光骑士(ID:12)[耀光突进(1 dice, ranges: 1:3~4)](3) -> 0[新手木剑]，剩余HP 9/16"
+              },
+              {
+                "index": 15,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "── 回合结算汇总 ──"
+              },
+              {
+                "index": 16,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "友方 0[新手木剑] HP 9/16"
+              },
+              {
+                "index": 17,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) HP 20/20"
+              },
+              {
+                "index": 18,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "再次按下战斗按钮开始下一回合目标指定。"
+              },
+              {
+                "index": 19,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "◆◆◆ 目标指定阶段 ◆◆◆ 友方 1 名 / 敌方 1 名"
+              },
+              {
+                "index": 20,
+                "round": 2,
+                "kind": "status_changed",
+                "actorId": "ally_0",
+                "amount": 0,
+                "message": ""
+              },
+              {
+                "index": 21,
+                "round": 2,
+                "kind": "status_changed",
+                "actorId": "ally_0",
+                "amount": 0,
+                "message": ""
+              },
+              {
+                "index": 22,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "状态触发：0[新手木剑] 受到 1 点 缓慢 速度降低，当前 缓慢 1 层"
+              },
+              {
+                "index": 23,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "友方 0[新手木剑] 速度=1 HP=9/16"
+              },
+              {
+                "index": 24,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) 速度=3 HP=20/20"
+              },
+              {
+                "index": 25,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) [按钮 1] 已锁定目标 -> 0[新手木剑] | 技能 圣光锁狱(1 dice, ranges: 1:1~5)"
+              },
+              {
+                "index": 26,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) [按钮 2] 已锁定目标 -> 0[新手木剑] | 技能 耀光突进(1 dice, ranges: 1:3~4)"
+              },
+              {
+                "index": 27,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方已完成自动指定目标。请玩家完成画线后再次按下战斗按钮进入结算。"
+              },
+              {
+                "index": 28,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "◆◆◆ 战斗结算阶段 ◆◆◆"
+              },
+              {
+                "index": 29,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "[拼点] 0[新手木剑][横砍(1 dice, ranges: 1:2~4)] vs 耀光骑士(ID:12)[耀光突进(1 dice, ranges: 1:3~4)]"
+              },
+              {
+                "index": 30,
+                "round": 2,
+                "kind": "damage",
+                "actorId": "ally_0",
+                "amount": 3,
+                "message": ""
+              },
+              {
+                "index": 31,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "词条触发：耀光骑士(ID:12)[耀光镇压] 将在 下 1 个回合开始时 使 0[新手木剑] 获得 1 层 眩晕"
+              },
+              {
+                "index": 32,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "第 1 段拼点：0[新手木剑](2) vs 耀光骑士(ID:12)(3)"
+              },
+              {
+                "index": 33,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "-> 敌方胜！追击威力 3 ，耀光骑士(ID:12) 对 0[新手木剑] 造成 3 伤害，剩余HP 6/16"
+              },
+              {
+                "index": 34,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "[敌方单方面攻击] 耀光骑士(ID:12)[圣光锁狱(1 dice, ranges: 1:1~5)] -> 0[新手木剑]"
+              },
+              {
+                "index": 35,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "词条触发：耀光骑士(ID:12)[锁狱] 将在 下 1 个回合开始时 使 0[新手木剑] 获得 1 层 缓慢"
+              },
+              {
+                "index": 36,
+                "round": 2,
+                "kind": "damage",
+                "actorId": "ally_0",
+                "amount": 1,
+                "message": ""
+              },
+              {
+                "index": 37,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "第 1 段：耀光骑士(ID:12)[圣光锁狱(1 dice, ranges: 1:1~5)](1) -> 0[新手木剑]，剩余HP 5/16"
+              },
+              {
+                "index": 38,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "── 回合结算汇总 ──"
+              },
+              {
+                "index": 39,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "友方 0[新手木剑] HP 5/16"
+              },
+              {
+                "index": 40,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) HP 20/20"
+              },
+              {
+                "index": 41,
+                "round": 2,
+                "kind": "status_changed",
+                "actorId": "ally_0",
+                "amount": 0,
+                "message": ""
+              },
+              {
+                "index": 42,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "再次按下战斗按钮开始下一回合目标指定。"
+              },
+              {
+                "index": 43,
+                "round": 3,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "◆◆◆ 目标指定阶段 ◆◆◆ 友方 1 名 / 敌方 1 名"
+              },
+              {
+                "index": 44,
+                "round": 3,
+                "kind": "status_changed",
+                "actorId": "ally_0",
+                "amount": 0,
+                "message": ""
+              },
+              {
+                "index": 45,
+                "round": 3,
+                "kind": "status_changed",
+                "actorId": "ally_0",
+                "amount": 0,
+                "message": ""
+              },
+              {
+                "index": 46,
+                "round": 3,
+                "kind": "status_changed",
+                "actorId": "ally_0",
+                "amount": 0,
+                "message": ""
+              },
+              {
+                "index": 47,
+                "round": 3,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "状态触发：0[新手木剑] 受到 1 点 缓慢 速度降低，当前 缓慢 1 层"
+              },
+              {
+                "index": 48,
+                "round": 3,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "友方 0[新手木剑] 速度=1 HP=5/16"
+              },
+              {
+                "index": 49,
+                "round": 3,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) 速度=3 HP=20/20"
+              },
+              {
+                "index": 50,
+                "round": 3,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方已完成自动指定目标。请玩家完成画线后再次按下战斗按钮进入结算。"
+              }
+            ],
+            "legalActions": [
+              {
+                "op": "commit",
+                "actorId": "",
+                "buttonIndex": 0,
+                "skillIndex": 0,
+                "targetId": "",
+                "targetButtonIndex": 0,
+                "choiceIndex": 0
+              }
+            ],
+            "rewards": {
+              "experience": 0,
+              "money": 0,
+              "refreshesRemaining": 0,
+              "loot": [],
+              "relics": [],
+              "blueprints": [],
+              "weapons": [],
+              "choices": [],
+              "party": []
+            }
+          },
+          "after": {
+            "sessionId": "d899e5430a78494d9ffa31ebada54923",
+            "revision": 6,
+            "seed": 1922653832,
+            "round": 4,
+            "phase": "targeting",
+            "outcome": "",
+            "energy": 7,
+            "temporaryEnergy": 0,
+            "reservedEnergy": 0,
+            "actors": [
+              {
+                "id": "ally_0",
+                "side": "ally",
+                "name": "0[新手木剑]",
+                "hp": 5,
+                "maxHp": 16,
+                "stage": 0,
+                "dead": false,
+                "pendingDelayedDeath": false,
+                "stageName": "",
+                "passives": [],
+                "statuses": [
+                  {
+                    "id": "slowness",
+                    "name": "缓慢",
+                    "stacks": 0
+                  },
+                  {
+                    "id": "stun",
+                    "name": "眩晕",
+                    "stacks": 0
+                  }
+                ],
+                "skills": [
+                  {
+                    "index": 0,
+                    "id": "3672ea937dbc5e64bb1187640f7a9370",
+                    "name": "挥砍",
+                    "description": "挥砍\n技能：挥砍\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n描述：\n借力挥砍，简单的招式",
+                    "energyCost": 0,
+                    "dice": [
+                      {
+                        "min": 2,
+                        "max": 3,
+                        "category": "Attack"
+                      }
+                    ],
+                    "displayedDice": [
+                      {
+                        "min": 2,
+                        "max": 3,
+                        "category": "Attack"
+                      }
+                    ]
+                  },
+                  {
+                    "index": 1,
+                    "id": "f3931f99f39b4a248a779ab007733565",
+                    "name": "横砍",
+                    "description": "横砍\n技能：横砍\n能耗：3\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 1 点伤害\n\n描述：\n暂无描述。",
+                    "energyCost": 3,
+                    "dice": [
+                      {
+                        "min": 2,
+                        "max": 4,
+                        "category": "Attack"
+                      }
+                    ],
+                    "displayedDice": [
+                      {
+                        "min": 2,
+                        "max": 4,
+                        "category": "Attack"
+                      }
+                    ]
+                  },
+                  {
+                    "index": 2,
+                    "id": "acb988a65745364459695da95e246fad",
+                    "name": "格挡",
+                    "description": "格挡\n技能：格挡\n能耗：0\n骰子数：1\n第 1 防御骰：1 ~ 2\n\n描述：\n简单的剑技，用于减少即将到来的伤害",
+                    "energyCost": 0,
+                    "dice": [
+                      {
+                        "min": 1,
+                        "max": 2,
+                        "category": "Defense"
+                      }
+                    ],
+                    "displayedDice": [
+                      {
+                        "min": 1,
+                        "max": 2,
+                        "category": "Defense"
+                      }
+                    ]
+                  }
+                ],
+                "slots": [
+                  {
+                    "index": 0,
+                    "speed": 2,
+                    "skillIndex": 1,
+                    "selectedSkill": {
+                      "index": -1,
+                      "id": "f3931f99f39b4a248a779ab007733565",
+                      "name": "横砍",
+                      "description": "横砍\n技能：横砍\n能耗：3\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 1 点伤害\n\n描述：\n暂无描述。",
+                      "energyCost": 3,
+                      "dice": [
+                        {
+                          "min": 2,
+                          "max": 4,
+                          "category": "Attack"
+                        }
+                      ],
+                      "displayedDice": [
+                        {
+                          "min": 2,
+                          "max": 4,
+                          "category": "Attack"
+                        }
+                      ]
+                    },
+                    "targetId": "",
+                    "targetButtonIndex": -1,
+                    "contested": false
+                  }
+                ]
+              },
+              {
+                "id": "enemy_0",
+                "side": "enemy",
+                "name": "耀光骑士(ID:12)",
+                "hp": 20,
+                "maxHp": 20,
+                "stage": 0,
+                "dead": false,
+                "pendingDelayedDeath": false,
+                "stageName": "",
+                "passives": [
+                  "审判锁定：耀光突进会优先指定拥有两种及以上负面状态的目标。",
+                  "裁决回光：若任意目标拥有负面状态，裁决之盾会为自身获得护盾。"
+                ],
+                "statuses": [],
+                "skills": [],
+                "slots": [
+                  {
+                    "index": 0,
+                    "speed": 3,
+                    "skillIndex": -1,
+                    "selectedSkill": {
+                      "index": -1,
+                      "id": "a09522cbe5435c747b3d600fa30fa0b2",
+                      "name": "裁决之盾",
+                      "description": "裁决之盾\n技能：裁决之盾\n能耗：0\n骰子数：1\n第 1 防御骰：3 ~ 4\n\n词条：\n第 1 防御骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧\n第 1 防御骰词条：[ 使用时 ] 若 任意敌方目标拥有至少 1 种负面状态 ，则 使自己获得 3 层护盾\n\n描述：\n骑士举起盾面，光辉从被审判者身上折返回来。",
+                      "energyCost": 0,
+                      "dice": [
+                        {
+                          "min": 3,
+                          "max": 4,
+                          "category": "Defense"
+                        }
+                      ],
+                      "displayedDice": [
+                        {
+                          "min": 3,
+                          "max": 4,
+                          "category": "Defense"
+                        }
+                      ]
+                    },
+                    "targetId": "ally_0",
+                    "targetButtonIndex": 0,
+                    "contested": false
+                  },
+                  {
+                    "index": 1,
+                    "speed": 3,
+                    "skillIndex": -1,
+                    "selectedSkill": {
+                      "index": -1,
+                      "id": "db140ec1037a1934bb4f2bc47f9fb223",
+                      "name": "光刃直劈",
+                      "description": "光刃直劈\n技能：光刃直劈\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 流血\n\n描述：\n圣光压进剑锋，在伤口里留下一道迟来的裁罚。",
+                      "energyCost": 0,
+                      "dice": [
+                        {
+                          "min": 2,
+                          "max": 4,
+                          "category": "Attack"
+                        }
+                      ],
+                      "displayedDice": [
+                        {
+                          "min": 2,
+                          "max": 4,
+                          "category": "Attack"
+                        }
+                      ]
+                    },
+                    "targetId": "ally_0",
+                    "targetButtonIndex": 0,
+                    "contested": false
+                  }
+                ]
+              }
+            ],
+            "relics": [],
+            "events": [
+              {
+                "index": 0,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "◆◆◆ 目标指定阶段 ◆◆◆ 友方 1 名 / 敌方 1 名"
+              },
+              {
+                "index": 1,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "友方 0[新手木剑] 速度=4 HP=16/16"
+              },
+              {
+                "index": 2,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) 速度=4 HP=20/20"
+              },
+              {
+                "index": 3,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) [按钮 1] 已锁定目标 -> 0[新手木剑] | 技能 耀光突进(1 dice, ranges: 1:3~4)"
+              },
+              {
+                "index": 4,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) [按钮 2] 已锁定目标 -> 0[新手木剑] | 技能 圣光锁狱(1 dice, ranges: 1:1~5)"
+              },
+              {
+                "index": 5,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方已完成自动指定目标。请玩家完成画线后再次按下战斗按钮进入结算。"
+              },
+              {
+                "index": 6,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "◆◆◆ 战斗结算阶段 ◆◆◆"
+              },
+              {
+                "index": 7,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "[拼点] 0[新手木剑][横砍(1 dice, ranges: 1:2~4)] vs 耀光骑士(ID:12)[圣光锁狱(1 dice, ranges: 1:1~5)]"
+              },
+              {
+                "index": 8,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "词条触发：耀光骑士(ID:12)[锁狱] 将在 下 1 个回合开始时 使 0[新手木剑] 获得 1 层 缓慢"
+              },
+              {
+                "index": 9,
+                "round": 1,
+                "kind": "damage",
+                "actorId": "ally_0",
+                "amount": 4,
+                "message": ""
+              },
+              {
+                "index": 10,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "第 1 段拼点：0[新手木剑](2) vs 耀光骑士(ID:12)(4)"
+              },
+              {
+                "index": 11,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "-> 敌方胜！追击威力 4 ，耀光骑士(ID:12) 对 0[新手木剑] 造成 4 伤害，剩余HP 12/16"
+              },
+              {
+                "index": 12,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "[敌方单方面攻击] 耀光骑士(ID:12)[耀光突进(1 dice, ranges: 1:3~4)] -> 0[新手木剑]"
+              },
+              {
+                "index": 13,
+                "round": 1,
+                "kind": "damage",
+                "actorId": "ally_0",
+                "amount": 3,
+                "message": ""
+              },
+              {
+                "index": 14,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "第 1 段：耀光骑士(ID:12)[耀光突进(1 dice, ranges: 1:3~4)](3) -> 0[新手木剑]，剩余HP 9/16"
+              },
+              {
+                "index": 15,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "── 回合结算汇总 ──"
+              },
+              {
+                "index": 16,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "友方 0[新手木剑] HP 9/16"
+              },
+              {
+                "index": 17,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) HP 20/20"
+              },
+              {
+                "index": 18,
+                "round": 1,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "再次按下战斗按钮开始下一回合目标指定。"
+              },
+              {
+                "index": 19,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "◆◆◆ 目标指定阶段 ◆◆◆ 友方 1 名 / 敌方 1 名"
+              },
+              {
+                "index": 20,
+                "round": 2,
+                "kind": "status_changed",
+                "actorId": "ally_0",
+                "amount": 0,
+                "message": ""
+              },
+              {
+                "index": 21,
+                "round": 2,
+                "kind": "status_changed",
+                "actorId": "ally_0",
+                "amount": 0,
+                "message": ""
+              },
+              {
+                "index": 22,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "状态触发：0[新手木剑] 受到 1 点 缓慢 速度降低，当前 缓慢 1 层"
+              },
+              {
+                "index": 23,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "友方 0[新手木剑] 速度=1 HP=9/16"
+              },
+              {
+                "index": 24,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) 速度=3 HP=20/20"
+              },
+              {
+                "index": 25,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) [按钮 1] 已锁定目标 -> 0[新手木剑] | 技能 圣光锁狱(1 dice, ranges: 1:1~5)"
+              },
+              {
+                "index": 26,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) [按钮 2] 已锁定目标 -> 0[新手木剑] | 技能 耀光突进(1 dice, ranges: 1:3~4)"
+              },
+              {
+                "index": 27,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方已完成自动指定目标。请玩家完成画线后再次按下战斗按钮进入结算。"
+              },
+              {
+                "index": 28,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "◆◆◆ 战斗结算阶段 ◆◆◆"
+              },
+              {
+                "index": 29,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "[拼点] 0[新手木剑][横砍(1 dice, ranges: 1:2~4)] vs 耀光骑士(ID:12)[耀光突进(1 dice, ranges: 1:3~4)]"
+              },
+              {
+                "index": 30,
+                "round": 2,
+                "kind": "damage",
+                "actorId": "ally_0",
+                "amount": 3,
+                "message": ""
+              },
+              {
+                "index": 31,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "词条触发：耀光骑士(ID:12)[耀光镇压] 将在 下 1 个回合开始时 使 0[新手木剑] 获得 1 层 眩晕"
+              },
+              {
+                "index": 32,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "第 1 段拼点：0[新手木剑](2) vs 耀光骑士(ID:12)(3)"
+              },
+              {
+                "index": 33,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "-> 敌方胜！追击威力 3 ，耀光骑士(ID:12) 对 0[新手木剑] 造成 3 伤害，剩余HP 6/16"
+              },
+              {
+                "index": 34,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "[敌方单方面攻击] 耀光骑士(ID:12)[圣光锁狱(1 dice, ranges: 1:1~5)] -> 0[新手木剑]"
+              },
+              {
+                "index": 35,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "词条触发：耀光骑士(ID:12)[锁狱] 将在 下 1 个回合开始时 使 0[新手木剑] 获得 1 层 缓慢"
+              },
+              {
+                "index": 36,
+                "round": 2,
+                "kind": "damage",
+                "actorId": "ally_0",
+                "amount": 1,
+                "message": ""
+              },
+              {
+                "index": 37,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "第 1 段：耀光骑士(ID:12)[圣光锁狱(1 dice, ranges: 1:1~5)](1) -> 0[新手木剑]，剩余HP 5/16"
+              },
+              {
+                "index": 38,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "── 回合结算汇总 ──"
+              },
+              {
+                "index": 39,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "友方 0[新手木剑] HP 5/16"
+              },
+              {
+                "index": 40,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) HP 20/20"
+              },
+              {
+                "index": 41,
+                "round": 2,
+                "kind": "status_changed",
+                "actorId": "ally_0",
+                "amount": 0,
+                "message": ""
+              },
+              {
+                "index": 42,
+                "round": 2,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "再次按下战斗按钮开始下一回合目标指定。"
+              },
+              {
+                "index": 43,
+                "round": 3,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "◆◆◆ 目标指定阶段 ◆◆◆ 友方 1 名 / 敌方 1 名"
+              },
+              {
+                "index": 44,
+                "round": 3,
+                "kind": "status_changed",
+                "actorId": "ally_0",
+                "amount": 0,
+                "message": ""
+              },
+              {
+                "index": 45,
+                "round": 3,
+                "kind": "status_changed",
+                "actorId": "ally_0",
+                "amount": 0,
+                "message": ""
+              },
+              {
+                "index": 46,
+                "round": 3,
+                "kind": "status_changed",
+                "actorId": "ally_0",
+                "amount": 0,
+                "message": ""
+              },
+              {
+                "index": 47,
+                "round": 3,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "状态触发：0[新手木剑] 受到 1 点 缓慢 速度降低，当前 缓慢 1 层"
+              },
+              {
+                "index": 48,
+                "round": 3,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "友方 0[新手木剑] 速度=1 HP=5/16"
+              },
+              {
+                "index": 49,
+                "round": 3,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) 速度=3 HP=20/20"
+              },
+              {
+                "index": 50,
+                "round": 3,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方已完成自动指定目标。请玩家完成画线后再次按下战斗按钮进入结算。"
+              },
+              {
+                "index": 51,
+                "round": 3,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "◆◆◆ 战斗结算阶段 ◆◆◆"
+              },
+              {
+                "index": 52,
+                "round": 3,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "0[新手木剑] 未指定目标，本回合跳过。"
+              },
+              {
+                "index": 53,
+                "round": 3,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "── 回合结算汇总 ──"
+              },
+              {
+                "index": 54,
+                "round": 3,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "友方 0[新手木剑] HP 5/16"
+              },
+              {
+                "index": 55,
+                "round": 3,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) HP 20/20"
+              },
+              {
+                "index": 56,
+                "round": 3,
+                "kind": "status_changed",
+                "actorId": "ally_0",
+                "amount": 0,
+                "message": ""
+              },
+              {
+                "index": 57,
+                "round": 3,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "再次按下战斗按钮开始下一回合目标指定。"
+              },
+              {
+                "index": 58,
+                "round": 4,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "◆◆◆ 目标指定阶段 ◆◆◆ 友方 1 名 / 敌方 1 名"
+              },
+              {
+                "index": 59,
+                "round": 4,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "友方 0[新手木剑] 速度=2 HP=5/16"
+              },
+              {
+                "index": 60,
+                "round": 4,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) 速度=3 HP=20/20"
+              },
+              {
+                "index": 61,
+                "round": 4,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) [按钮 1] 已锁定目标 -> 0[新手木剑] | 技能 裁决之盾(1 dice, ranges: 1:3~4)"
+              },
+              {
+                "index": 62,
+                "round": 4,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方 耀光骑士(ID:12) [按钮 2] 已锁定目标 -> 0[新手木剑] | 技能 光刃直劈(1 dice, ranges: 1:2~4)"
+              },
+              {
+                "index": 63,
+                "round": 4,
+                "kind": "log",
+                "actorId": "",
+                "amount": 0,
+                "message": "敌方已完成自动指定目标。请玩家完成画线后再次按下战斗按钮进入结算。"
+              }
+            ],
+            "legalActions": [
+              {
+                "op": "commit",
+                "actorId": "",
+                "buttonIndex": 0,
+                "skillIndex": 0,
+                "targetId": "",
+                "targetButtonIndex": 0,
+                "choiceIndex": 0
+              },
+              {
+                "op": "set_skill",
+                "actorId": "ally_0",
+                "buttonIndex": 0,
+                "skillIndex": 0,
+                "targetId": "",
+                "targetButtonIndex": 0,
+                "choiceIndex": 0
+              },
+              {
+                "op": "set_skill",
+                "actorId": "ally_0",
+                "buttonIndex": 0,
+                "skillIndex": 1,
+                "targetId": "",
+                "targetButtonIndex": 0,
+                "choiceIndex": 0
+              },
+              {
+                "op": "set_skill",
+                "actorId": "ally_0",
+                "buttonIndex": 0,
+                "skillIndex": 2,
+                "targetId": "",
+                "targetButtonIndex": 0,
+                "choiceIndex": 0
+              },
+              {
+                "op": "target",
+                "actorId": "ally_0",
+                "buttonIndex": 0,
+                "skillIndex": 0,
+                "targetId": "enemy_0",
+                "targetButtonIndex": 0,
+                "choiceIndex": 0
+              },
+              {
+                "op": "target",
+                "actorId": "ally_0",
+                "buttonIndex": 0,
+                "skillIndex": 0,
+                "targetId": "enemy_0",
+                "targetButtonIndex": 1,
+                "choiceIndex": 0
+              }
+            ],
+            "rewards": {
+              "experience": 0,
+              "money": 0,
+              "refreshesRemaining": 0,
+              "loot": [],
+              "relics": [],
+              "blueprints": [],
+              "weapons": [],
+              "choices": [],
+              "party": []
+            }
+          },
+          "newEvents": [
+            {
+              "index": 51,
+              "round": 3,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "◆◆◆ 战斗结算阶段 ◆◆◆"
+            },
+            {
+              "index": 52,
+              "round": 3,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "0[新手木剑] 未指定目标，本回合跳过。"
+            },
+            {
+              "index": 53,
+              "round": 3,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "── 回合结算汇总 ──"
+            },
+            {
+              "index": 54,
+              "round": 3,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "友方 0[新手木剑] HP 5/16"
+            },
+            {
+              "index": 55,
+              "round": 3,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "敌方 耀光骑士(ID:12) HP 20/20"
+            },
+            {
+              "index": 56,
+              "round": 3,
+              "kind": "status_changed",
+              "actorId": "ally_0",
+              "amount": 0,
+              "message": ""
+            },
+            {
+              "index": 57,
+              "round": 3,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "再次按下战斗按钮开始下一回合目标指定。"
+            },
+            {
+              "index": 58,
+              "round": 4,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "◆◆◆ 目标指定阶段 ◆◆◆ 友方 1 名 / 敌方 1 名"
+            },
+            {
+              "index": 59,
+              "round": 4,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "友方 0[新手木剑] 速度=2 HP=5/16"
+            },
+            {
+              "index": 60,
+              "round": 4,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "敌方 耀光骑士(ID:12) 速度=3 HP=20/20"
+            },
+            {
+              "index": 61,
+              "round": 4,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "敌方 耀光骑士(ID:12) [按钮 1] 已锁定目标 -> 0[新手木剑] | 技能 裁决之盾(1 dice, ranges: 1:3~4)"
+            },
+            {
+              "index": 62,
+              "round": 4,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "敌方 耀光骑士(ID:12) [按钮 2] 已锁定目标 -> 0[新手木剑] | 技能 光刃直劈(1 dice, ranges: 1:2~4)"
+            },
+            {
+              "index": 63,
+              "round": 4,
+              "kind": "log",
+              "actorId": "",
+              "amount": 0,
+              "message": "敌方已完成自动指定目标。请玩家完成画线后再次按下战斗按钮进入结算。"
+            }
+          ],
+          "reason": "第3轮Chara因眩晕没有行动槽，公开列表仅能提交或放弃；不放弃本局，推进状态到下一轮。敌方两个攻击槽当前目标为空，需记录这是否导致眩晕反而免受攻击。"
+        },
+        "source": {
+          "Assets/Scripts/BattleScene/Controller/BattleAllyController.cs:1306": {
+            "sha256": "3c8e9f735bf978ba8adb28cde44650780d8a0e335879764f106317338dc272d5",
+            "text": "    private int GetDesiredActiveSpeedButtonCount()\n    {\n        if (IsDead)\n            return 0;\n\n        int baseCount = Mathf.Max(0, ResolveBaseSpeedButtonCount() + inheritedExtraSpeedButtons + temporaryExtraSpeedButtons);\n        return Mathf.Max(0, baseCount - ResolveStatusSpeedButtonPenalty());\n    }"
+          },
+          "Assets/Scripts/BattleScene/Controller/BattleAllyController.cs:1349": {
+            "sha256": "3c8e9f735bf978ba8adb28cde44650780d8a0e335879764f106317338dc272d5",
+            "text": "    private void RefreshActiveSpeedButtons()\n    {\n        EnsureSpeedButtonCount();\n        activeSpeedButtons.Clear();\n\n        int desiredCount = GetDesiredActiveSpeedButtonCount();\n        float effectiveSpacing = Mathf.Abs(speedButtonHorizontalSpacing);\n        float xStart = -((Mathf.Max(1, desiredCount) - 1) * effectiveSpacing) * 0.5f;\n\n        for (int i = 0; i < speedButtons.Count; i++)\n        {\n            SpeedButton button = speedButtons[i];\n            if (button == null)\n                continue;\n\n            bool shouldBeActive = i < desiredCount;\n            button.gameObject.SetActive(shouldBeActive);\n            if (!shouldBeActive)\n            {\n                button.ResetConnection();\n                button.HideForCombat();\n                button.IsInteractable = false;\n                continue;\n            }\n\n            float x = speedButtonBaseOffset.x + (desiredCount > 1 ? speedButtonMultiGroupOffset.x + xStart + i * effectiveSpacing : 0f);\n            float y = speedButtonTopLocalY + speedButtonBaseOffset.y + (desiredCount > 1 ? speedButtonMultiGroupOffset.y : 0f);\n            Transform buttonTransform = button.transform;\n            if (buttonTransform.parent != transform)\n                buttonTransform.SetParent(transform, true);\n            buttonTransform.localPosition = new Vector3(x, y, buttonTransform.localPosition.z);\n            buttonTransform.localRotation = Quaternion.identity;\n            buttonTransform.localScale = Vector3.one;\n            button.SetButtonType(SpeedButton.ButtonType.Ally);\n            button.IsInteractable = false;\n            button.Speed = Speed;\n            activeSpeedButtons.Add(button);\n        }\n\n        speedButton = activeSpeedButtons.Count > 0 ? activeSpeedButtons[0] : null;\n        EnsureSelectedSkillSlots();\n        if (!IsDead)\n            lastLivingActiveSpeedButtonCount = Mathf.Max(0, activeSpeedButtons.Count);\n    }\n\n    private void EnsureSpeedButtonCount()\n    {\n        int desiredCount = Mathf.Max(1, ResolveBaseSpeedButtonCount() + inheritedExtraSpeedButtons + temporaryExtraSpeedButtons);"
+          },
+          "Assets/Scripts/Shared/BattleTargetingSpeedButtonStateService.cs:13": {
+            "sha256": "d78daf4a5418dbdb87bb233ad37b2e9b8f1f3a943ce0251755b3b96fb2b551dd",
+            "text": "    public static List<SpeedButton> EnableLivingAllyButtons(IReadOnlyList<BattleAllyController> allies)\n    {\n        List<SpeedButton> interactableButtons = new List<SpeedButton>();\n        if (allies == null)\n            return interactableButtons;\n\n        for (int allyIndex = 0; allyIndex < allies.Count; allyIndex++)\n        {\n            BattleAllyController ally = allies[allyIndex];\n            if (ally == null || ally.IsDead)\n                continue;\n\n            IReadOnlyList<SpeedButton> allyButtons = BattleSpeedButtonListService.GetAllyButtons(ally);\n            for (int buttonIndex = 0; buttonIndex < allyButtons.Count; buttonIndex++)\n            {\n                SpeedButton allyButton = allyButtons[buttonIndex];\n                if (allyButton == null)\n                    continue;\n\n                allyButton.IsInteractable = true;\n                interactableButtons.Add(allyButton);\n            }\n        }\n\n        return interactableButtons;\n    }\n\n    private static void PrepareAllyButtons(IReadOnlyList<BattleAllyController> allies)"
+          },
+          "Assets/Scripts/Shared/BattleTargetingEnemyAutoTargetService.cs:5": {
+            "sha256": "8fcf1d3c61e6e87adfd778c3d6e5f2517f74d95012a190c89cf17aa7028d2b01",
+            "text": "    public static List<string> AutoConnectAndBuildLogEntries(\n        IReadOnlyList<BattleEnemyController> enemies,\n        List<SpeedButton> interactableAllyButtons)\n    {\n        if (enemies != null)\n        {\n            for (int i = 0; i < enemies.Count; i++)\n            {\n                BattleEnemyController enemy = enemies[i];\n                if (enemy == null || enemy.IsDead)\n                    continue;\n\n                enemy.AutoConnectToRandomAlly(interactableAllyButtons);\n            }"
+          },
+          "Assets/Scripts/BattleScene/Controller/BattleEnemyController.cs:333": {
+            "sha256": "735fe57b81c8d66c22b8bee0a452634495047cf025adc2b38490160ad90ad2eb",
+            "text": "    public void AutoConnectToRandomAlly(List<SpeedButton> allyButtons)\n    {\n        if (IsDead || allyButtons == null || allyButtons.Count == 0)\n            return;\n\n        for (int i = 0; i < activeSpeedButtons.Count; i++)\n        {\n            SpeedButton button = activeSpeedButtons[i];\n            if (button == null)\n                continue;\n\n            SpeedButton target = ResolvePreferredTargetButton(button, allyButtons);\n            if (target == null)\n                target = allyButtons[UnityEngine.Random.Range(0, allyButtons.Count)];\n            button.EnemyDrawLineTo(target);\n        }\n    }"
+          },
+          "Assets/Data/Battle/Stun/Stun.asset": {
+            "sha256": "a25a8ed43a303f34f708b2b97ba0db7ee20c580ea190359aa5c4ee518fabfa46",
+            "text": "%YAML 1.1\n%TAG !u! tag:yousandi.cn,2023:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: e392a4d75ff41fd4b82ace7efd8b72e3, type: 3}\n  m_Name: Stun\n  m_EditorClassIdentifier: \n  statusId: stun\n  localizationKey: status.stun.stun\n  displayName: \"\\u7729\\u6655\"\n  description: \"\\u62E5\\u6709\\u6B64\\u72B6\\u6001\\u7684\\u89D2\\u8272\\u51CF\\u5C11\\u76F8\\u5F53\\u4E8E\\u5C42\\u6570\\u7684\\u901F\\u5EA6\\u6309\\u94AE\\uFF0C\\u56DE\\u5408\\u7ED3\\u675F\\u65F6\\u5931\\u53BB\\u6240\\u6709\\u5C42\\u6570\"\n  iconSprite: {fileID: -1296544319, guid: c79818a78794dae47ae9ed090310c8d3, type: 3}\n  accentColor: {r: 0.95, g: 0.9, b: 0.35, a: 1}\n  tickEffectPrefab: {fileID: 0}\n  tickEffectPositionOffset: {x: 0, y: 0, z: 0}\n  tickEffectRotationOffset: {x: 0, y: 0, z: 0}\n  tickEffectScale: {x: 1, y: 1, z: 1}\n  tickEffectSortingOrderOffset: 0\n  overrideTickEffectDuration: 0\n  tickEffectDuration: 0.5\n  behaviorType: 15\n  powerPerStack: 1\n  linkedStatusData: {fileID: 0}\n  onHitDecayMode: 0\n  roundStartDecayMode: 0\n  roundEndDecayMode: 2\n"
+          }
+        }
+      },
+      "gameplayModifiedForInvestigation": false,
+      "scope": "本次仅记录并只读定位；未另开定向测试或改变本局规则。"
+    }
+  ],
+  "agentMistakes": [
+    {
+      "step": 2,
+      "title": "单人木剑阶段深入未知事件",
+      "detail": "入口公开后果只有失去1行动点，仍有安全离开选项。选择深入时没有强制战斗的已知信息，却把后续可以撤离作为准备假设；第二页两个选项均为艰难战斗，已无法退出。开局应优先成长、招募、获得可控收益，或在这个入口直接离开。"
+    },
+    {
+      "step": 4,
+      "title": "锁定后的补救无法弥补准备不足",
+      "detail": "看到两项都会战斗后，选择多花1AP换遗物奖励。其后只有继续进入战斗；这一步的奖励比较不改变单人16HP木剑对20HP双行动槽敌人的劣势。应把失误定位到此前深入入口，不能把拒绝继承虚构为当时仍可撤离。"
+    }
+  ],
+  "otherObservations": [
+    {
+      "id": "EVENT_RISK_DISCLOSURE",
+      "category": "P3 / 交互设计建议",
+      "title": "遗产入口未提示深入后可能无法撤离",
+      "detail": "第1步入口“进去看看”后果只写失去1行动点；第3步后续页面的接受、拒绝都明确写艰难战斗。与当前事件配置一致，建议在入口补充风险提示，是否保持陷阱式设计由用户决定。"
+    },
+    {
+      "id": "ALLY_DEBUG_LABEL",
+      "category": "P3 / 接口显示观察",
+      "title": "战斗友方名称为0[新手木剑]，冒险队员为Chara",
+      "detail": "保留稳定ally_0与party[0]关联。该显示名来自GetDebugDisplayName，不据此认为角色错误或属性错误。"
+    },
+    {
+      "id": "POST_RETURN_PARTY_HP",
+      "category": "符合接口约定",
+      "title": "战斗结束前外层party仍为16HP，返回后变0HP",
+      "detail": "战斗中以battle.actors为准，第16步run_return正式回写为0。未把旧快照当作复活。"
+    },
+    {
+      "id": "COMPOUND_DAMAGE_LOG",
+      "category": "未判为bug",
+      "title": "第4轮3点基础伤害加1点横砍额外伤害",
+      "detail": "两个damage事件合计4，敌方20→16；基础伤害日志发生在额外伤害回调后，剩余HP16与当时真实状态相符，不将此复合伤害误报为扣血错误。"
+    }
+  ],
+  "untested": [
+    "旧赌桌事件重入修复",
+    "不屈与回复的延迟死亡",
+    "神行靴斜向移动",
+    "事件/营地换装",
+    "锻造阶段canCraft解释",
+    "装备材料规划与购买",
+    "副本与Boss"
+  ],
+  "scope": "仅本局公开观察与结束后的只读配置/源码核对；规则意图待确认项保持候选，不把决策失误归为游戏bug。"
+}

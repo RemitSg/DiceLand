@@ -36,6 +36,18 @@
       "profile": "easy-run5-20261029-85542ae989",
       "score": 4560,
       "abilityPoints": 4
+    },
+    {
+      "run": "easy-20261109-run6",
+      "seed": 2026110906,
+      "outcome": "defeat",
+      "profile": "easy-run6-20261109-e12da1437f",
+      "scope": "All decisions by model;17 public actions verified,first event battle against LightKnight lost round5 at enemy16/20HP. No reload, no extra fresh run.",
+      "score": 15,
+      "abilityPoints": 0,
+      "actions": 17,
+      "battles": 1,
+      "rounds": 5
     }
   ]
 }
