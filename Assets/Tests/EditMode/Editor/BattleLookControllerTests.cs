@@ -1,5 +1,6 @@
 using System.Reflection;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -14,6 +15,8 @@ public sealed class BattleLookControllerTests
     private Volume volume;
     private Camera overview;
     private Camera closeup;
+    private EnemyData_SO framingEnemyData;
+    private RenderTexture framingTarget;
 
     [SetUp]
     public void SetUp()
@@ -55,6 +58,8 @@ public sealed class BattleLookControllerTests
         Object.DestroyImmediate(original);
         Object.DestroyImmediate(sprite);
         Object.DestroyImmediate(texture);
+        if (framingEnemyData != null) Object.DestroyImmediate(framingEnemyData);
+        if (framingTarget != null) Object.DestroyImmediate(framingTarget);
     }
 
     [Test]
@@ -167,6 +172,190 @@ public sealed class BattleLookControllerTests
             field.SetValue(button, null);
             Object.DestroyImmediate(arrow);
         }
+    }
+
+    [TestCase(1.333333f, false)]
+    [TestCase(1.777778f, false)]
+    [TestCase(2.171946f, false)]
+    [TestCase(2.444444f, false)]
+    [TestCase(1.333333f, true)]
+    [TestCase(2.444444f, true)]
+    public void LargeEnemyWidensOverviewAndKeepsTheWholeSpeedRowAboveItsHead(float aspect, bool orthographic)
+    {
+        bool previousLock = SpeedButton.CombatLocked;
+        try
+        {
+            SpeedButton.CombatLocked = false;
+            ConfigureFramingCamera(aspect, orthographic);
+            look.PrepareCamera(overview);
+            Vector3 normalPosition = overview.transform.position;
+            float normalSize = overview.orthographicSize;
+            BattleEnemyController enemy = CreateFramingEnemy();
+            Vector3 actorPosition = enemy.transform.position;
+            float authoredX = enemy.SpeedButtons[0].transform.localPosition.x;
+            // Reproduce the existing sideways fallback before the camera gets a chance to widen.
+            enemy.FitSpeedButtonsToCamera(overview, Screen.safeArea);
+            look.PrepareCamera(overview);
+            Assert.IsTrue(BattleActorVisualUtility.TryGetActorSpriteBounds(enemy.transform, out Bounds body));
+            Rect bodyRect = ProjectFramingBounds(body);
+            Rect safe = BattleEnemyController.GetSpeedButtonSafeArea(overview, Screen.safeArea);
+            foreach (SpeedButton button in enemy.SpeedButtons)
+            {
+                Rect badge = ProjectFramingBounds(button.GetViewportBounds());
+                Assert.Greater(badge.yMin, bodyRect.yMax + 5f, "A large enemy still needs its badges above its head.");
+                Assert.GreaterOrEqual(badge.xMin, safe.xMin - 0.1f);
+                Assert.LessOrEqual(badge.xMax, safe.xMax + 0.1f);
+                Assert.LessOrEqual(badge.yMax, safe.yMax + 0.1f);
+            }
+            Assert.GreaterOrEqual(bodyRect.xMin, safe.xMin - 0.1f);
+            Assert.LessOrEqual(bodyRect.xMax, safe.xMax + 0.1f);
+            Assert.GreaterOrEqual(bodyRect.yMin, safe.yMin - 0.1f);
+            Assert.That(enemy.SpeedButtons[0].transform.localPosition.x, Is.EqualTo(authoredX).Within(0.001f));
+            Assert.AreEqual(actorPosition, enemy.transform.position);
+            if (orthographic) Assert.Greater(overview.orthographicSize, normalSize);
+            else Assert.Less(overview.transform.position.z, normalPosition.z);
+
+            Vector3 fittedPosition = overview.transform.position;
+            float fittedSize = overview.orthographicSize;
+            for (int frame = 0; frame < 120; frame++) look.PrepareCamera(overview);
+            Assert.That(Vector3.Distance(fittedPosition, overview.transform.position), Is.LessThan(0.001f));
+            Assert.That(overview.orthographicSize, Is.EqualTo(fittedSize).Within(0.001f));
+            Camera overlay = root.transform.Find("Battle World UI Camera").GetComponent<Camera>();
+            Assert.AreEqual(overview.projectionMatrix, overlay.projectionMatrix);
+            Assert.AreEqual(overview.transform.position, overlay.transform.position);
+
+            // The same enemy changing to a small form must release the extra view space.
+            framingEnemyData.enemyVisualScale = 0.25f;
+            enemy.GetComponentInChildren<SpriteRenderer>().transform.localScale = new Vector3(0.25f, 0.25f, 1f);
+            enemy.ApplyEnemyData(framingEnemyData);
+            look.PrepareCamera(overview);
+            Assert.That(Vector3.Distance(normalPosition, overview.transform.position), Is.LessThan(0.001f));
+            Assert.That(overview.orthographicSize, Is.EqualTo(normalSize).Within(0.001f));
+        }
+        finally { SpeedButton.CombatLocked = previousLock; }
+    }
+
+    [Test]
+    public void OverviewFramingSurvivesAspectChangesAndLeavesCombatCameraMotionIntact()
+    {
+        bool previousLock = SpeedButton.CombatLocked;
+        try
+        {
+            SpeedButton.CombatLocked = false;
+            ConfigureFramingCamera(2.444444f, false);
+            BattleEnemyController enemy = CreateFramingEnemy();
+            foreach (float aspect in new[] { 2.444444f, 1.333333f, 2.171946f })
+            {
+                overview.aspect = aspect;
+                look.PrepareCamera(overview);
+                Rect body = ProjectFramingBounds(enemy.GetComponentInChildren<SpriteRenderer>().bounds);
+                Assert.Greater(ProjectFramingBounds(enemy.SpeedButtons[0].GetViewportBounds()).yMin, body.yMax + 5f);
+            }
+            Vector3 fittedPosition = overview.transform.position;
+            SpeedButton.CombatLocked = true;
+            overview.transform.position += Vector3.right * 0.3f;
+            Vector3 impactPosition = overview.transform.position;
+            look.PrepareCamera(overview);
+            Assert.AreEqual(impactPosition, overview.transform.position);
+            Vector3 closeupPosition = closeup.transform.position;
+            float closeupSize = closeup.orthographicSize;
+            look.PrepareCamera(closeup);
+            Assert.AreEqual(closeupPosition, closeup.transform.position);
+            Assert.AreEqual(closeupSize, closeup.orthographicSize);
+            overview.transform.position = fittedPosition;
+            SpeedButton.CombatLocked = false;
+            look.ReleaseLook();
+            Assert.That(overview.transform.position.z, Is.EqualTo(-24f).Within(0.001f));
+        }
+        finally { SpeedButton.CombatLocked = previousLock; }
+    }
+
+    [TestCase(1.777778f)]
+    [TestCase(2.171946f)]
+    [TestCase(2.444444f)]
+    public void ThunderLordArtworkAndItsConfiguredNegativeOffsetKeepTheBadgesAboveTheHead(float aspect)
+    {
+        bool previousLock = SpeedButton.CombatLocked;
+        try
+        {
+            SpeedButton.CombatLocked = false;
+            ConfigureFramingCamera(aspect, false);
+            EnemyData_SO source = AssetDatabase.LoadAssetAtPath<EnemyData_SO>("Assets/Data/Enemies/Enemies/011 ThunderLord/ThunderLord.asset");
+            BattleEnemyController enemy = CreateFramingEnemy(source);
+            look.PrepareCamera(overview);
+            Assert.IsTrue(BattleActorVisualUtility.TryGetActorSpriteBounds(enemy.transform, out Bounds body));
+            Rect bodyRect = ProjectFramingBounds(body);
+            Rect safe = BattleEnemyController.GetSpeedButtonSafeArea(overview, Screen.safeArea);
+            foreach (SpeedButton button in enemy.SpeedButtons)
+            {
+                Rect badge = ProjectFramingBounds(button.GetViewportBounds());
+                Assert.Greater(badge.yMin, bodyRect.yMax + 5f);
+                Assert.LessOrEqual(badge.yMax, safe.yMax + 0.1f);
+            }
+            float spacing = enemy.SpeedButtons[1].transform.localPosition.x - enemy.SpeedButtons[0].transform.localPosition.x;
+            Assert.That(spacing, Is.EqualTo(0.82f).Within(0.001f));
+        }
+        finally { SpeedButton.CombatLocked = previousLock; }
+    }
+
+    private void ConfigureFramingCamera(float aspect, bool orthographic)
+    {
+        overview.orthographic = orthographic;
+        overview.transform.SetPositionAndRotation(new Vector3(0f, 3f, -24f), Quaternion.Euler(3f, 0f, 0f));
+        framingTarget = new RenderTexture(Mathf.RoundToInt(1080f * aspect), 1080, 0);
+        overview.targetTexture = framingTarget;
+        overview.aspect = aspect;
+    }
+
+    private BattleEnemyController CreateFramingEnemy(EnemyData_SO source = null)
+    {
+        GameObject group = new GameObject("Framing enemies");
+        group.transform.SetParent(root.transform, false);
+        Set("enemies", group.transform);
+        GameObject actor = new GameObject("Oversized enemy");
+        actor.SetActive(false);
+        actor.transform.SetParent(group.transform, false);
+        actor.transform.position = new Vector3(6f, 0f, 0f);
+        actor.AddComponent<PolygonCollider2D>();
+        GameObject body = new GameObject("Body", typeof(SpriteRenderer));
+        body.transform.SetParent(actor.transform, false);
+        framingEnemyData = source != null ? Object.Instantiate(source) : ScriptableObject.CreateInstance<EnemyData_SO>();
+        if (source == null)
+        {
+            framingEnemyData.enemySprite = sprite;
+            framingEnemyData.enemyVisualScale = 9f;
+            framingEnemyData.baseHP = 20;
+            framingEnemyData.baseSpeedButtonCount = 2;
+        }
+        float scale = source != null ? 1.15f * source.enemyVisualScale : 9f;
+        body.transform.localScale = new Vector3(scale, scale, 1f);
+        body.GetComponent<SpriteRenderer>().sprite = framingEnemyData.enemySprite;
+        BattleEnemyController enemy = actor.AddComponent<BattleEnemyController>();
+        enemy.enemyData = framingEnemyData;
+        var buttons = new System.Collections.Generic.List<SpeedButton>();
+        for (int i = 0; i < 2; i++)
+        {
+            GameObject badge = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Button.prefab"), actor.transform);
+            buttons.Add(badge.GetComponent<SpeedButton>());
+        }
+        enemy.RegisterSpeedButtons(buttons);
+        enemy.ConfigureSpeedButtonLayout(buttons[0], SpeedButton.ButtonType.Enemy, new Vector2(0f, 0.8f), Vector2.zero, 0.82f);
+        actor.SetActive(true);
+        foreach (SpeedButton button in buttons) button.GetComponent<BattleSpeedButtonLook>().RefreshLook();
+        return enemy;
+    }
+
+    private Rect ProjectFramingBounds(Bounds bounds)
+    {
+        Vector2 min = Vector2.one * float.PositiveInfinity, max = Vector2.one * float.NegativeInfinity;
+        for (int corner = 0; corner < 8; corner++)
+        {
+            Vector3 screen = overview.WorldToScreenPoint(bounds.center + Vector3.Scale(bounds.extents,
+                new Vector3((corner & 1) == 0 ? -1f : 1f, (corner & 2) == 0 ? -1f : 1f, (corner & 4) == 0 ? -1f : 1f)));
+            min = Vector2.Min(min, screen);
+            max = Vector2.Max(max, screen);
+        }
+        return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
     }
 
     private Camera CreateCamera(string name, Vector3 position)

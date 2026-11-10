@@ -76,14 +76,13 @@ public class BattleEnemyController : MonoBehaviour
             FitSpeedButtonsToCamera(Camera.main, Screen.safeArea);
     }
 
-    /// <summary>Keep the whole speed group below the HUD without moving the enemy or its targets.</summary>
-    public void FitSpeedButtonsToCamera(Camera camera, Rect safePixels)
+    public static Rect GetSpeedButtonSafeArea(Camera camera, Rect safePixels)
     {
-        if (camera == null || SpeedButton.CombatLocked || activeSpeedButtons.Count == 0)
-            return;
+        if (camera == null)
+            return default;
         Rect viewport = camera.pixelRect;
         if (viewport.width <= 0f || viewport.height <= 0f)
-            return;
+            return default;
         if (safePixels.width <= 0f || safePixels.height <= 0f)
             safePixels = viewport;
         else if (camera.targetTexture != null && safePixels == Screen.safeArea)
@@ -94,16 +93,57 @@ public class BattleEnemyController : MonoBehaviour
                 safePixels.width * scale.x, safePixels.height * scale.y);
         }
         float padding = Mathf.Max(8f, viewport.height / 60f);
-        Rect visible = Rect.MinMaxRect(Mathf.Max(viewport.xMin, safePixels.xMin) + padding,
+        return Rect.MinMaxRect(Mathf.Max(viewport.xMin, safePixels.xMin) + padding,
             Mathf.Max(viewport.yMin, safePixels.yMin) + padding,
             Mathf.Min(viewport.xMax, safePixels.xMax) - padding,
             Mathf.Min(viewport.yMax, safePixels.yMax) - Mathf.Max(padding, viewport.height * 0.12f));
+    }
+
+    /// <summary>Include the authored head row, even when the previous frame moved it beside the body.</summary>
+    public bool TryGetOverviewFramingBounds(out Bounds bounds)
+    {
+        bounds = default;
+        if (IsDead)
+            return false;
+        bool found = false;
+        for (int i = 0; i < activeSpeedButtons.Count; i++)
+        {
+            SpeedButton button = activeSpeedButtons[i];
+            if (button == null || button.UsesHeadlessExecution || !button.gameObject.activeInHierarchy)
+                continue;
+            Bounds badge = button.GetViewportBounds();
+            Vector3 local = GetSpeedButtonLocalPosition(i, activeSpeedButtons.Count, button.transform.localPosition.z);
+            badge.center += transform.TransformPoint(local) - button.transform.position;
+            if (found) bounds.Encapsulate(badge);
+            else { bounds = badge; found = true; }
+        }
+        if (found && TryGetSpeedLayoutBodyBounds(out Bounds body))
+        {
+            float gap = Mathf.Max(0.2f, bounds.size.y * 0.2f);
+            bounds.center += Vector3.up * Mathf.Max(0f, body.max.y + gap - bounds.min.y);
+            bounds.Encapsulate(body);
+        }
+        return found;
+    }
+
+    private Vector3 GetSpeedButtonLocalPosition(int index, int count, float depth)
+    {
+        Vector2 offset = ResolveSpeedButtonOffset();
+        float spacing = Mathf.Abs(speedButtonHorizontalSpacing);
+        float x = offset.x + (count > 1 ? speedButtonMultiGroupOffset.x + (index - (count - 1) * 0.5f) * spacing : 0f);
+        float y = CalculateCurrentStageTopLocalY() + offset.y + (count > 1 ? speedButtonMultiGroupOffset.y : 0f);
+        return new Vector3(x, y, depth);
+    }
+
+    /// <summary>Keep the whole speed group below the HUD without moving the enemy or its targets.</summary>
+    public void FitSpeedButtonsToCamera(Camera camera, Rect safePixels)
+    {
+        if (camera == null || SpeedButton.CombatLocked || activeSpeedButtons.Count == 0)
+            return;
+        Rect visible = GetSpeedButtonSafeArea(camera, safePixels);
         if (visible.width <= 0f || visible.height <= 0f)
             return;
-        Vector2 offset = ResolveSpeedButtonOffset();
-        float top = CalculateCurrentStageTopLocalY();
-        float spacing = Mathf.Abs(speedButtonHorizontalSpacing);
-        float start = -(activeSpeedButtons.Count - 1) * spacing * 0.5f;
+        float padding = Mathf.Max(8f, camera.pixelRect.height / 60f);
         Vector2 min = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
         Vector2 max = new Vector2(float.NegativeInfinity, float.NegativeInfinity);
         bool found = false;
@@ -115,9 +155,7 @@ public class BattleEnemyController : MonoBehaviour
             if (button == null || button.UsesHeadlessExecution || !button.gameObject.activeInHierarchy)
                 continue;
             // Rebuild from the authored anchor every time so aspect changes can undo the clamp.
-            bool multiple = activeSpeedButtons.Count > 1;
-            button.transform.localPosition = new Vector3(offset.x + (multiple ? speedButtonMultiGroupOffset.x + start + i * spacing : 0f),
-                top + offset.y + (multiple ? speedButtonMultiGroupOffset.y : 0f), button.transform.localPosition.z);
+            button.transform.localPosition = GetSpeedButtonLocalPosition(i, activeSpeedButtons.Count, button.transform.localPosition.z);
             Bounds bounds = button.GetViewportBounds();
             for (int corner = 0; corner < 8; corner++)
             {

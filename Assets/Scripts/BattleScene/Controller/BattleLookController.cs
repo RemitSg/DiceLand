@@ -21,10 +21,14 @@ public sealed class BattleLookController : MonoBehaviour
     [SerializeField, Min(1f)] private float overviewReferenceAspect = 1.777778f;
     [SerializeField, Range(0.1f, 0.4f)] private float groundViewportHeight = 0.22f;
     private float previousOverviewAspect = -1f;
+    private Vector3 overviewFramingOffset;
+    private float overviewFramingSizeOffset;
 
     private readonly List<SpriteRenderer> actorRenderers = new List<SpriteRenderer>();
     private readonly List<SpriteRenderer> scratchRenderers = new List<SpriteRenderer>();
     private readonly List<BattleEnemyController> scratchEnemies = new List<BattleEnemyController>();
+    private readonly List<BattleAllyController> scratchAllies = new List<BattleAllyController>();
+    private BattlePresentationSystem presentation;
     private VolumeProfile runtimeProfile;
     private VolumeProfile originalProfile;
     private DepthOfField depthOfField;
@@ -60,6 +64,8 @@ public sealed class BattleLookController : MonoBehaviour
             foliageWindBounds.Initialize(midground.transform.parent != null ? midground.transform.parent : midground.transform);
         InitializeWorldUiCamera();
         RefreshActors();
+        foreach (BattlePresentationSystem candidate in FindObjectsOfType<BattlePresentationSystem>())
+            if (candidate.gameObject.scene == gameObject.scene) { presentation = candidate; break; }
         RenderPipelineManager.beginCameraRendering += BeforeCameraRendering;
     }
 
@@ -74,20 +80,8 @@ public sealed class BattleLookController : MonoBehaviour
     {
         if (camera == null || depthOfField == null)
             return;
-        if (camera == overviewCamera && !camera.orthographic && Mathf.Abs(camera.aspect - previousOverviewAspect) > 0.001f)
-        {
-            // Preserve horizontal formation coverage on wide phones, rather than shrinking the actors.
-            float fieldOfView = CalculateOverviewFieldOfView(overviewReferenceFieldOfView, overviewReferenceAspect, camera.aspect);
-            float pitch = camera.transform.eulerAngles.x * Mathf.Deg2Rad;
-            float slope = (2f * groundViewportHeight - 1f) * Mathf.Tan(fieldOfView * 0.5f * Mathf.Deg2Rad);
-            Vector3 position = camera.transform.position;
-            float denominator = Mathf.Cos(pitch) + slope * Mathf.Sin(pitch);
-            if (Mathf.Abs(denominator) > 0.1f)
-                position.y = 0.045f - position.z * (Mathf.Sin(pitch) - slope * Mathf.Cos(pitch)) / denominator;
-            camera.transform.position = position;
-            camera.fieldOfView = fieldOfView;
-            previousOverviewAspect = camera.aspect;
-        }
+        if (camera == overviewCamera && !SpeedButton.CombatLocked && (presentation == null || !presentation.IsPlayingDeathCamera))
+            PrepareOverviewFraming(camera);
         if (worldUiCamera != null && (camera == overviewCamera || camera == closeupCamera))
         {
             if (!SpeedButton.CombatLocked && enemies != null)
@@ -172,6 +166,114 @@ public sealed class BattleLookController : MonoBehaviour
     {
         float halfHeight = Mathf.Tan(referenceFieldOfView * 0.5f * Mathf.Deg2Rad);
         return Mathf.Clamp(2f * Mathf.Atan(halfHeight * referenceAspect / Mathf.Max(0.5f, aspect)) * Mathf.Rad2Deg, 15f, 60f);
+    }
+
+    private void PrepareOverviewFraming(Camera camera)
+    {
+        RestoreOverviewFraming();
+        if (!camera.orthographic && Mathf.Abs(camera.aspect - previousOverviewAspect) > 0.001f)
+        {
+            float fieldOfView = CalculateOverviewFieldOfView(overviewReferenceFieldOfView, overviewReferenceAspect, camera.aspect);
+            float pitch = camera.transform.eulerAngles.x * Mathf.Deg2Rad;
+            float slope = (2f * groundViewportHeight - 1f) * Mathf.Tan(fieldOfView * 0.5f * Mathf.Deg2Rad);
+            Vector3 position = camera.transform.position;
+            float denominator = Mathf.Cos(pitch) + slope * Mathf.Sin(pitch);
+            if (Mathf.Abs(denominator) > 0.1f)
+                position.y = 0.045f - position.z * (Mathf.Sin(pitch) - slope * Mathf.Cos(pitch)) / denominator;
+            camera.transform.position = position;
+            camera.fieldOfView = fieldOfView;
+            previousOverviewAspect = camera.aspect;
+        }
+        if (!TryGetOverviewBounds(out Bounds bounds))
+            return;
+        Rect viewport = camera.pixelRect;
+        Rect safe = BattleEnemyController.GetSpeedButtonSafeArea(camera, Screen.safeArea);
+        if (safe.width <= 0f || safe.height <= 0f)
+            return;
+        // Leave extra room for the minimum pixel gap applied by speed-button fitting.
+        float margin = Mathf.Min(viewport.height * 0.015f, Mathf.Min(safe.width, safe.height) * 0.1f);
+        float left = 2f * (safe.xMin + margin - viewport.xMin) / viewport.width - 1f;
+        float right = 2f * (safe.xMax - margin - viewport.xMin) / viewport.width - 1f;
+        float bottom = 2f * (safe.yMin + margin - viewport.yMin) / viewport.height - 1f;
+        float top = 2f * (safe.yMax - margin - viewport.yMin) / viewport.height - 1f;
+        if (left >= 0f || right <= 0f)
+            return;
+        float ground = Mathf.Clamp(2f * groundViewportHeight - 1f, bottom + 0.01f, top - 0.01f);
+        float halfHeight = camera.orthographic ? camera.orthographicSize : Mathf.Tan(camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+        float required = camera.orthographic ? halfHeight : 0f;
+        Quaternion inverseRotation = Quaternion.Inverse(camera.transform.rotation);
+        for (int corner = 0; corner < 8; corner++)
+        {
+            Vector3 point = bounds.center + Vector3.Scale(bounds.extents,
+                new Vector3((corner & 1) == 0 ? -1f : 1f, (corner & 2) == 0 ? -1f : 1f, (corner & 4) == 0 ? -1f : 1f));
+            Vector3 local = inverseRotation * (point - camera.transform.position);
+            if (camera.orthographic)
+            {
+                required = Mathf.Max(required, Mathf.Max(local.x / (left * camera.aspect), local.x / (right * camera.aspect)));
+                required = Mathf.Max(required, (local.y - ground * halfHeight) / (top - ground));
+                required = Mathf.Max(required, (ground * halfHeight - local.y) / (ground - bottom));
+            }
+            else
+            {
+                required = Mathf.Max(required, Mathf.Max(local.x / (left * halfHeight * camera.aspect), local.x / (right * halfHeight * camera.aspect)) - local.z);
+                required = Mathf.Max(required, (local.y - top * halfHeight * local.z) / (halfHeight * (top - ground)));
+                required = Mathf.Max(required, (bottom * halfHeight * local.z - local.y) / (halfHeight * (ground - bottom)));
+                required = Mathf.Max(required, camera.nearClipPlane + 0.1f - local.z);
+            }
+        }
+        if (camera.orthographic)
+        {
+            overviewFramingSizeOffset = required - halfHeight;
+            camera.orthographicSize = required;
+            overviewFramingOffset = -camera.transform.up * (ground * overviewFramingSizeOffset);
+        }
+        else
+        {
+            // Dolly back and lift together so feet keep their ground row as the view widens.
+            overviewFramingOffset = (-camera.transform.forward - camera.transform.up * (ground * halfHeight)) * required;
+        }
+        camera.transform.position += overviewFramingOffset;
+    }
+
+    private bool TryGetOverviewBounds(out Bounds bounds)
+    {
+        bounds = default;
+        bool found = false;
+        scratchEnemies.Clear();
+        if (enemies != null) enemies.GetComponentsInChildren(false, scratchEnemies);
+        foreach (BattleEnemyController enemy in scratchEnemies)
+        {
+            if (!enemy.isActiveAndEnabled || !enemy.TryGetOverviewFramingBounds(out Bounds enemyBounds))
+                continue;
+            if (found) bounds.Encapsulate(enemyBounds);
+            else { bounds = enemyBounds; found = true; }
+        }
+        if (!found)
+            return false;
+        scratchAllies.Clear();
+        if (allies != null) allies.GetComponentsInChildren(false, scratchAllies);
+        foreach (BattleAllyController ally in scratchAllies)
+        {
+            if (!ally.isActiveAndEnabled || ally.IsDead)
+                continue;
+            if (BattleActorVisualUtility.TryGetActorSpriteBounds(ally.transform, out Bounds body))
+                bounds.Encapsulate(body);
+            foreach (SpeedButton button in ally.SpeedButtons)
+                if (button != null && !button.UsesHeadlessExecution && button.gameObject.activeInHierarchy)
+                    bounds.Encapsulate(button.GetViewportBounds());
+        }
+        return true;
+    }
+
+    private void RestoreOverviewFraming()
+    {
+        if (overviewCamera != null)
+        {
+            overviewCamera.transform.position -= overviewFramingOffset;
+            overviewCamera.orthographicSize -= overviewFramingSizeOffset;
+        }
+        overviewFramingOffset = Vector3.zero;
+        overviewFramingSizeOffset = 0f;
     }
 
     private void InitializeWorldUiCamera()
@@ -276,6 +378,7 @@ public sealed class BattleLookController : MonoBehaviour
 
     public void ReleaseLook()
     {
+        RestoreOverviewFraming();
         foliageWindBounds.Release();
         RenderPipelineManager.beginCameraRendering -= BeforeCameraRendering;
         foreach (KeyValuePair<GameObject, int> entry in originalUiLayers)
