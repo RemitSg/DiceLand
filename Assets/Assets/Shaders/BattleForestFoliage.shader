@@ -12,6 +12,7 @@ Shader "DiceLand/Battle Forest Foliage"
         [HideInInspector] _SrcBlend ("Source blend", Float) = 1
         [HideInInspector] _DstBlend ("Destination blend", Float) = 0
         [HideInInspector] _ZWrite ("Depth write", Float) = 1
+        [Enum(UnityEngine.Rendering.CompareFunction)] _ZTest ("Depth test", Float) = 4
         _HighlightGain ("Sunlit canopy highlight gain", Range(1,2)) = 1
         _PaintedFill ("Painted shadow color and strength", Color) = (0.36,0.40,0.32,0)
         _SceneLightingWeight ("World canopy lighting", Range(0,1)) = 0
@@ -42,7 +43,7 @@ Shader "DiceLand/Battle Forest Foliage"
         float4 _MainTex_ST, _MainTex_TexelSize;
         half4 _Color, _PaintedFill;
         float _Cutoff, _EnableExternalAlpha, _SwayAmplitude, _DefocusTexels, _HighlightGain, _SceneLightingWeight, _LocalWindStrength;
-        float _SoftSilhouette, _SrcBlend, _DstBlend, _ZWrite;
+        float _SoftSilhouette, _SrcBlend, _DstBlend, _ZWrite, _ZTest;
         float _CanopyResponse, _ResponseWeight, _BarkLightGain, _LeafTransmission, _LeafGlossStrength;
         CBUFFER_END
         TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
@@ -154,6 +155,8 @@ Shader "DiceLand/Battle Forest Foliage"
         Pass
         {
             Tags { "LightMode"="UniversalForward" }
+            // Near framing cards may overlay terrain; other foliage keeps its normal depth test.
+            ZTest [_ZTest]
             HLSLPROGRAM
             #pragma vertex Vert
             #pragma fragment Frag

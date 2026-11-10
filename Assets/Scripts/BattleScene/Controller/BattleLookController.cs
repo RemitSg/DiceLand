@@ -41,6 +41,7 @@ public sealed class BattleLookController : MonoBehaviour
     private readonly List<Transform> scratchTransforms = new List<Transform>();
     private const int WorldUiLayer = 5; // Built-in UI layer; no project layer changes.
     private readonly BattleForestFoliageWindBounds foliageWindBounds = new BattleForestFoliageWindBounds();
+    private readonly BattleForestForegroundFraming foregroundFraming = new BattleForestForegroundFraming();
 
     private void OnEnable()
     {
@@ -60,8 +61,12 @@ public sealed class BattleLookController : MonoBehaviour
         runtimeProfile.TryGet(out depthOfField);
         runtimeProfile.TryGet(out motionBlur);
         lookVolume.sharedProfile = runtimeProfile;
-        if (Application.isPlaying && midground != null)
-            foliageWindBounds.Initialize(midground.transform.parent != null ? midground.transform.parent : midground.transform);
+        if (midground != null)
+        {
+            Transform scenery = midground.transform.parent != null ? midground.transform.parent : midground.transform;
+            if (Application.isPlaying) foliageWindBounds.Initialize(scenery);
+            foregroundFraming.Initialize(scenery);
+        }
         InitializeWorldUiCamera();
         RefreshActors();
         foreach (BattlePresentationSystem candidate in FindObjectsOfType<BattlePresentationSystem>())
@@ -82,6 +87,8 @@ public sealed class BattleLookController : MonoBehaviour
             return;
         if (camera == overviewCamera && !SpeedButton.CombatLocked && (presentation == null || !presentation.IsPlayingDeathCamera))
             PrepareOverviewFraming(camera);
+        if (camera == overviewCamera || camera == closeupCamera)
+            foregroundFraming.PrepareCamera(camera);
         if (worldUiCamera != null && (camera == overviewCamera || camera == closeupCamera))
         {
             if (!SpeedButton.CombatLocked && enemies != null)
@@ -380,6 +387,7 @@ public sealed class BattleLookController : MonoBehaviour
     {
         RestoreOverviewFraming();
         foliageWindBounds.Release();
+        foregroundFraming.Release();
         RenderPipelineManager.beginCameraRendering -= BeforeCameraRendering;
         foreach (KeyValuePair<GameObject, int> entry in originalUiLayers)
             if (entry.Key != null)

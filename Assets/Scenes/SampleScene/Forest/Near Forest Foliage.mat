@@ -131,6 +131,7 @@ Material:
     - _SwayAmplitude: 0.025
     - _WorkflowMode: 1
     - _WrapAroundFactor: 0.5
+    - _ZTest: 8
     - _ZWrite: 0
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}

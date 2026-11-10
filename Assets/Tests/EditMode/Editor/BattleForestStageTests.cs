@@ -1,9 +1,89 @@
 using System.Linq;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public sealed class BattleForestStageTests
 {
+    [TestCase(1.333333f, false)]
+    [TestCase(2.171053f, false)]
+    [TestCase(2.444444f, false)]
+    [TestCase(2.171053f, true)]
+    public void NearFoliageSurvivesTerrainDepthWhileOrdinaryFoliageRemainsOccluded(float aspect, bool orthographic)
+    {
+        if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+            Assert.Ignore("This regression needs a graphics device.");
+        Material source = AssetDatabase.LoadAssetAtPath<Material>("Assets/Scenes/SampleScene/Forest/Near Forest Foliage.mat");
+        Assert.NotNull(source);
+        GameObject root = new GameObject("Foreground depth regression");
+        Texture2D texture = new Texture2D(2, 2);
+        texture.SetPixels(Enumerable.Repeat(Color.white, 4).ToArray()); texture.Apply();
+        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, 2, 2), Vector2.one * .5f, 1f);
+        Material near = new Material(source);
+        Material ordinary = new Material(Shader.Find("DiceLand/Battle Forest Foliage"));
+        Material opaque = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+        RenderTexture target = new RenderTexture(32, 32, 24, RenderTextureFormat.ARGB32);
+        Texture2D pixels = new Texture2D(32, 32, TextureFormat.RGB24, false);
+        try
+        {
+            Assert.AreEqual((float)CompareFunction.Always, near.GetFloat("_ZTest"));
+            Assert.AreEqual(0f, near.GetFloat("_ZWrite"));
+            Assert.IsFalse(near.GetShaderPassEnabled("DepthOnly"));
+            Assert.AreEqual((int)RenderQueue.Transparent, near.renderQueue);
+            Assert.AreEqual((float)CompareFunction.LessEqual, ordinary.GetFloat("_ZTest"));
+            foreach (Material material in new[] { near, ordinary })
+            {
+                material.SetColor("_Color", Color.red);
+                material.SetFloat("_DefocusTexels", 0f);
+                material.SetFloat("_SwayAmplitude", 0f);
+                material.SetFloat("_LocalWindStrength", 0f);
+            }
+            opaque.SetColor("_BaseColor", Color.blue);
+            GameObject wall = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            wall.transform.SetParent(root.transform); wall.layer = 31;
+            wall.transform.position = new Vector3(0, 0, -1);
+            wall.transform.localScale = Vector3.one * 4;
+            wall.GetComponent<MeshRenderer>().sharedMaterial = opaque;
+            SpriteRenderer card = new GameObject("Near foliage card").AddComponent<SpriteRenderer>();
+            card.transform.SetParent(root.transform); card.gameObject.layer = 31; card.sprite = sprite;
+            Camera camera = new GameObject("Foreground probe camera").AddComponent<Camera>();
+            camera.transform.SetParent(root.transform);
+            camera.transform.position = new Vector3(0, 0, -5);
+            camera.orthographic = orthographic; camera.orthographicSize = 2f; camera.fieldOfView = 40f;
+            camera.aspect = aspect; camera.nearClipPlane = .1f; camera.farClipPlane = 10f;
+            camera.clearFlags = CameraClearFlags.SolidColor; camera.backgroundColor = Color.black;
+            camera.cullingMask = 1 << 31; camera.targetTexture = target;
+            camera.GetUniversalAdditionalCameraData().renderPostProcessing = false;
+            target.Create();
+            card.sharedMaterial = ordinary;
+            Color blocked = ReadForegroundProbe(camera, target, pixels);
+            Assert.Greater(blocked.b, blocked.r + .4f, "Ordinary foliage must still be hidden behind opaque scenery.");
+            card.sharedMaterial = near;
+            Color visible = ReadForegroundProbe(camera, target, pixels);
+            Assert.Greater(visible.r, visible.b + .4f, "Near framing foliage must not be sliced by terrain depth.");
+        }
+        finally
+        {
+            Object.DestroyImmediate(root); Object.DestroyImmediate(sprite); Object.DestroyImmediate(texture);
+            Object.DestroyImmediate(near); Object.DestroyImmediate(ordinary); Object.DestroyImmediate(opaque);
+            target.Release(); Object.DestroyImmediate(target); Object.DestroyImmediate(pixels);
+        }
+    }
+
+    private static Color ReadForegroundProbe(Camera camera, RenderTexture target, Texture2D pixels)
+    {
+        RenderTexture previous = RenderTexture.active;
+        try
+        {
+            camera.Render(); RenderTexture.active = target;
+            pixels.ReadPixels(new Rect(0, 0, target.width, target.height), 0, 0); pixels.Apply();
+            return pixels.GetPixel(target.width / 2, target.height / 2);
+        }
+        finally { RenderTexture.active = previous; }
+    }
+
     [TestCase(true, 0.65f, 0.8f, true)]
     [TestCase(false, 0.65f, 0.8f, false)]
     [TestCase(true, 0f, 0f, true)]

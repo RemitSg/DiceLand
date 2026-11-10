@@ -401,6 +401,7 @@ public static class BattleLookPreviewTools
         nearMaterial.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
         nearMaterial.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
         nearMaterial.SetFloat("_ZWrite", 0f);
+        nearMaterial.SetFloat("_ZTest", (float)CompareFunction.Always);
         nearMaterial.SetShaderPassEnabled("DepthOnly", false);
         nearMaterial.SetOverrideTag("RenderType", "Transparent");
         nearMaterial.renderQueue = (int)RenderQueue.Transparent;
