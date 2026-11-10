@@ -35,7 +35,7 @@
       "scope": "新增 044 枯枝王庭与召唤物 4401 新芽：完整核对实际资产、GUID、两阶段、被动、七个技能及 Boss 池投放；其他历史内容仍沿用原快照和已单列的增量修订。",
       "validation": "MCP EditMode 24/24 通过；使用实际敌群执行 8 回合定向战斗检查，覆盖第 1/4/7 回合召唤、第二阶段、个人第四回合断枝与次回合献祭。非完整通关或难度平衡验证。"
     },
-    "coverage": "以 2026-10-26 历史快照的 50 个敌人资产、129 个关联技能为基础，2026-11-09 完整增补 044 枯枝王庭与 4401 新芽的 2 个资产及 7 个技能，合计 52 个敌人资产、136 个关联技能。历史血孢子等未复核条目仍保留原快照，不代表全部内容已重新导出。",
+    "coverage": "以 2026-10-26 历史快照的 50 个敌人资产、129 个关联技能为基础，2026-11-09 完整增补 044 枯枝王庭与 4401 新芽的 2 个资产及 7 个技能，合计 52 个敌人资产、136 个关联技能。历史血孢子等未复核条目仍保留原快照，不代表全部内容已重新导出。 2026-11-10 仅修订 4401 新芽的战斗体型：enemyVisualScale 从 1 调整至 0.12，普通立绘与成长／断枝姿态统一继承该倍率；其他历史条目未重新导出，敌人资产 52、关联技能 136 的数量不变。",
     "latestPresentationRevision": {
       "date": "2026-11-09",
       "enemyNumbers": [
@@ -151,7 +151,17 @@
           }
         }
       }
-    ]
+    ],
+    "latestVisualScaleRevision": {
+      "date": "2026-11-10",
+      "enemyNumbers": [
+        4401
+      ],
+      "enemyIds": [
+        4401
+      ],
+      "scope": "2026-11-10 仅修订 4401 新芽的战斗体型：enemyVisualScale 从 1 调整至 0.12，普通立绘与成长／断枝姿态统一继承该倍率；其他历史条目未重新导出，敌人资产 52、关联技能 136 的数量不变。"
+    }
   },
   "relicCatalog": {
     "directory": "outputs/relic-catalog",
@@ -225,5 +235,5 @@
       "scope": "眩晕改为使速度按钮失效且保留可攻击目标；坍缩的死亡触发、下回合延迟与基础 3 层配置不变。其他配置仍为 2026-10-29 快照，保留此前的增量复核说明。"
     }
   },
-  "note": "The enemy catalog remains the 2026-10-26 historical snapshot and does not include the merged Blood Spore stat update. The relic catalog was refreshed on 2026-10-29; consult its coverage note and Assets/Data for current gameplay values. 2026-11-09 仅追加敌人 012/034/041 及遗物 091 的眩晕机制复核，不代表完整刷新全部历史内容。 2026-11-09 完整增补敌人 044/4401 及其七个技能，当前敌人目录合计 52 个资产、136 个关联技能，其余内容仍以历史快照及各增量说明为准。"
+  "note": "The enemy catalog remains the 2026-10-26 historical snapshot and does not include the merged Blood Spore stat update. The relic catalog was refreshed on 2026-10-29; consult its coverage note and Assets/Data for current gameplay values. 2026-11-09 仅追加敌人 012/034/041 及遗物 091 的眩晕机制复核，不代表完整刷新全部历史内容。 2026-11-09 完整增补敌人 044/4401 及其七个技能，当前敌人目录合计 52 个资产、136 个关联技能，其余内容仍以历史快照及各增量说明为准。 2026-11-10 仅修订 4401 新芽的战斗体型：enemyVisualScale 从 1 调整至 0.12，普通立绘与成长／断枝姿态统一继承该倍率；其他历史条目未重新导出，敌人资产 52、关联技能 136 的数量不变。"
 }

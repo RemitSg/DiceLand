@@ -49,7 +49,7 @@ MonoBehaviour:
   - passiveName: "\u526A\u679D"
     displayColorType: 0
     description: "\u81EA\u8EAB\u5B58\u6D3B\u7684\u7B2C\u56DB\u56DE\u5408\u4F7F\u7528\u7279\u6B8A\u6280\u80FD\u3002"
-  enemyVisualScale: 1
+  enemyVisualScale: 0.12
   enemyVisualOffset: {x: 0, y: 0, z: 0}
   speedButtonOffset: {x: 0, y: 0}
   skillPool:
