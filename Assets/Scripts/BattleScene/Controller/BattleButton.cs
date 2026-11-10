@@ -6504,7 +6504,7 @@ public partial class BattleButton : MonoBehaviour
 
         results.lootRewards = BattleRewardAggregationService.BuildLootRewardsFromAggregation(aggregated);
 
-        ApplyRelicChoiceRefreshRelics(encounter, results.relicChoice);
+        BattleRelicChoiceSelectionService.ApplyRelicRefreshBonus(encounter != null ? encounter.relicInventory : null, results.relicChoice);
         AbilityRunBonusRuntimeService.ApplyRelicChoiceRefreshBonus(encounter, results.relicChoice);
 
         BattleBonusLootRewardService.ApplyBonusLootRewards(
@@ -6518,31 +6518,6 @@ public partial class BattleButton : MonoBehaviour
 
         if (headlessExecution) headlessRelicChoice = results.relicChoice;
         return results;
-    }
-
-    private static void ApplyRelicChoiceRefreshRelics(BattleEncounterData encounter, BattleSettlementRelicChoiceData relicChoice)
-    {
-        if (encounter == null || relicChoice == null || encounter.relicInventory == null)
-            return;
-
-        for (int i = 0; i < encounter.relicInventory.Count; i++)
-        {
-            RunRelicState relicState = encounter.relicInventory[i];
-            Relic_SO relic = relicState != null ? relicState.relicData : null;
-            if (relic == null || relicState.amount <= 0 || relic.builtInEffects == null)
-                continue;
-
-            for (int j = 0; j < relic.builtInEffects.Count; j++)
-            {
-                Relic_SO.RelicBuiltInEffectEntry effect = relic.builtInEffects[j];
-                if (effect == null
-                    || effect.trigger != Relic_SO.RelicTrigger.OnRelicChoiceRewardGenerated
-                    || effect.effectType != Relic_SO.RelicBuiltInEffectType.IncreaseRelicChoiceRefreshCount)
-                    continue;
-
-                relicChoice.refreshesRemaining += Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount));
-            }
-        }
     }
 
     private RelicTable_SO ResolveEliteRelicChoiceFallbackTable(BattleEncounterData encounter)

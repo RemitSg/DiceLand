@@ -5,6 +5,26 @@ using UnityEngine;
 // Reward mutations shared by the settlement UI and non-graphical drivers.
 public static class BattleRelicChoiceSelectionService
 {
+    // Apply once when creating a new choice reward, before showing its UI.
+    public static void ApplyRelicRefreshBonus(IReadOnlyList<RunRelicState> inventory, BattleSettlementRelicChoiceData choice)
+    {
+        if (inventory == null || choice == null) return;
+        for (int i = 0; i < inventory.Count; i++)
+        {
+            RunRelicState stack = inventory[i];
+            Relic_SO relic = stack != null ? stack.relicData : null;
+            if (relic == null || stack.amount <= 0 || relic.builtInEffects == null) continue;
+            foreach (Relic_SO.RelicBuiltInEffectEntry effect in relic.builtInEffects)
+            {
+                if (effect == null
+                    || effect.trigger != Relic_SO.RelicTrigger.OnRelicChoiceRewardGenerated
+                    || effect.effectType != Relic_SO.RelicBuiltInEffectType.IncreaseRelicChoiceRefreshCount)
+                    continue;
+                choice.refreshesRemaining += Mathf.Max(0, effect.amount * Mathf.Max(1, stack.amount));
+            }
+        }
+    }
+
     public static bool TryApply(BattleEncounterData encounter, BattleSettlementRelicChoiceData choice, out string error)
     {
         error = null;

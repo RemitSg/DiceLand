@@ -113,6 +113,83 @@ public sealed class AgentAdventureTreasureTests
         Assert.Throws<ArgumentException>(() => Act("run_refresh_treasure_relics"));
     }
 
+    [TestCase(false, 1, 0)]
+    [TestCase(true, 1, 0)]
+    [TestCase(false, 2, 1)]
+    [TestCase(true, 2, 1)]
+    [TestCase(false, 0, 0)]
+    [TestCase(true, 0, 2)]
+    public void AgainRelicRefreshesNormalAndSpecialDungeonBags(bool special, int copies, int abilityRefreshes)
+    {
+        Open();
+        var relics = Relics(8).Where(r => r.relicId != "85").Take(6).ToList();
+        Assert.AreEqual(6, relics.Count);
+        ConfigureBag(relics);
+        Relic_SO again = Find<Relic_SO>(r => r.relicId == "85");
+        if (copies > 0) Map.Snapshot.runState.AddRelic(again, copies);
+        Map.Snapshot.runState.abilityRelicChoiceRefreshCount = abilityRefreshes;
+        Enter(tile =>
+        {
+            if (!special) return;
+            tile.sourceSpecialDungeon = Temp<SpecialDungeon_SO>();
+            tile.specialDungeonTreasureOptions = new List<SpecialDungeonTreasureOptionEntry>
+            {
+                new SpecialDungeonTreasureOptionEntry
+                {
+                    rewardType = SpecialDungeonTreasureRewardType.RelicBag,
+                    relicTable = RelicTable(relics), relicBagRarity = relics[0].rarity, relicBagChoiceCount = 3
+                }
+            };
+        });
+        var state = Act("run_choose_treasure", special ? 0 : 2);
+        int expected = copies + abilityRefreshes;
+        Assert.AreEqual(expected, state.treasure.refreshesRemaining);
+        for (int remaining = expected; remaining > 0; remaining--)
+        {
+            Assert.IsTrue(state.treasure.canRefresh);
+            string[] before = state.treasure.relicChoices.Select(r => r.id).ToArray();
+            var command = Command("run_refresh_treasure_relics");
+            var result = session.Act(command);
+            Assert.AreEqual(JsonUtility.ToJson(result), JsonUtility.ToJson(session.Act(command)), "Retrying a request must not spend another refresh.");
+            state = result.state;
+            Assert.AreEqual(remaining - 1, state.treasure.refreshesRemaining);
+            Assert.IsFalse(state.treasure.relicChoices.Any(r => before.Contains(r.id)));
+            Assert.IsTrue(state.treasure.relicChoices.All(r => relics.Any(eligible => Id(eligible) == r.id)));
+        }
+        Assert.IsFalse(state.treasure.canRefresh);
+        Assert.IsFalse(Tile.isResolved);
+        Assert.AreEqual(copies, Map.Snapshot.runState.GetRelicAmount(again));
+        Assert.Throws<ArgumentException>(() => Act("run_refresh_treasure_relics"));
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void AgainRelicDoesNotSpendARefreshWhenTheBagHasNoAlternatives(bool special)
+    {
+        Open();
+        var relics = Relics(5).Where(r => r.relicId != "85").Take(3).ToList();
+        ConfigureBag(relics);
+        Map.Snapshot.runState.AddRelic(Find<Relic_SO>(r => r.relicId == "85"), 1);
+        Enter(tile =>
+        {
+            if (!special) return;
+            tile.sourceSpecialDungeon = Temp<SpecialDungeon_SO>();
+            tile.specialDungeonTreasureOptions = new List<SpecialDungeonTreasureOptionEntry>
+            {
+                new SpecialDungeonTreasureOptionEntry
+                {
+                    rewardType = SpecialDungeonTreasureRewardType.RelicBag,
+                    relicTable = RelicTable(relics), relicBagRarity = relics[0].rarity, relicBagChoiceCount = 3
+                }
+            };
+        });
+        var state = Act("run_choose_treasure", special ? 0 : 2);
+        Assert.AreEqual(1, state.treasure.refreshesRemaining);
+        Assert.IsFalse(state.treasure.canRefresh);
+        Assert.Throws<ArgumentException>(() => Act("run_refresh_treasure_relics"));
+        Assert.AreEqual(1, session.Observe().treasure.refreshesRemaining);
+    }
+
     [Test] public void ExhaustedRefreshPoolDoesNotOfferARefreshOrConsumeTheBonus()
     {
         Open(); ConfigureBag(Relics(3)); Map.Snapshot.runState.abilityRelicChoiceRefreshCount = 2;

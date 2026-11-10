@@ -4,6 +4,41 @@ const dir='outputs/relic-catalog',file=`${dir}/DiceLand遗物体系表.xlsx`;
 const data=JSON.parse(await fs.readFile(`${dir}/catalog.json`,'utf8'));
 const wb=await SpreadsheetFile.importXlsx(await FileBlob.load(file));
 const summary=wb.worksheets.getItem('体系总览'),detail=wb.worksheets.getItem('遗物完整表');
+if(process.argv.includes('--notes-only')){
+ const ids=process.argv.slice(2).filter(value=>/^\d+$/.test(value)).map(Number);
+ if(!ids.length)throw Error('Pass at least one relic ID with --notes-only');
+ const range=`A8:J${7+data.count}`;
+ const before=detail.getRange(range).values;
+ const summaryBefore=JSON.stringify(summary.getUsedRange().values);
+ const formulasBefore=JSON.stringify(detail.getRange(range).formulas);
+ const changedRows=new Set();
+ for(const id of ids){
+  const relic=data.relics.find(r=>r.id===id),index=before.findIndex(row=>row[0]===id);
+  if(!relic||index<0)throw Error(`Missing relic ${id}`);
+  const row=index+8;
+  detail.getRange(`I${row}`).values=[[relic.note||'']];
+  const band=detail.getRange(`A${row}:J${row}`),height=band.format.rowHeight;
+  band.format.rowHeight=Math.max(typeof height==='number'?height:44,Math.ceil((relic.note||'').length/45)*15+12);
+  changedRows.add(index);
+ }
+ wb.recalculate();
+ const after=detail.getRange(range).values;
+ for(let row=0;row<before.length;row++)for(let col=0;col<10;col++){
+  if(changedRows.has(row)&&col===8)continue;
+  if(before[row][col]!==after[row][col])throw Error(`Unrelated cell changed at ${row+8},${col+1}`);
+ }
+ if(summaryBefore!==JSON.stringify(summary.getUsedRange().values)||formulasBefore!==JSON.stringify(detail.getRange(range).formulas))throw Error('Unrelated summary or formulas changed');
+ for(const id of ids){
+  const row=8+after.findIndex(value=>value[0]===id);
+  const note=data.relics.find(r=>r.id===id).note||'';
+  if(detail.getRange(`I${row}`).values[0][0]!==note)throw Error(`Note mismatch for relic ${id}`);
+  const blob=await wb.render({sheetName:'遗物完整表',range:`F${row}:J${row}`,scale:1,format:'png'});
+  await fs.writeFile(`${dir}/relic-${id}-preview.png`,new Uint8Array(await blob.arrayBuffer()));
+ }
+ console.log((await wb.inspect({kind:'match',searchTerm:'#REF!|#DIV/0!|#VALUE!|#NAME\\?|#N/A|#NUM!|#NULL!|#SPILL!|#CALC!',options:{useRegex:true,maxResults:20},summary:'final formula error scan'})).ndjson);
+ const output=await SpreadsheetFile.exportXlsx(wb);await output.save(file);
+ console.log(JSON.stringify({sheets:['体系总览','遗物完整表'],rows:after.length,noteIds:ids,otherValuesAndFormulasUnchanged:true}));
+}else{
 summary.getRange('A4').values=[[`${data.count} 件遗物，${data.groups.length} 个主体系。每件只计一次，跨体系效果见联动标签。`]];
 summary.getRange('A5').values=[['2026-10-29。161 件当前配置；新入库 19 件及 8 件历史遗物已核对主要机制，含暗礁、碎潮盐瓶与浪鸣调整。其余历史备注沿用；编辑器验证，未完整试玩。']];
 summary.getRange('A8:E24').values=data.groups.map(g=>[g.name,g.count,g.summary,g.examples,g.play]);
@@ -38,3 +73,4 @@ for(const [sheetName,range,name]of[['体系总览','A2:E15','summary'],...detail
 }
 const output=await SpreadsheetFile.exportXlsx(wb);await output.save(file);
 console.log(JSON.stringify({sheets:['体系总览','遗物完整表'],rows:values.length,newCount:data.newIds.length,lastRow:7+data.count}));
+}

@@ -83,7 +83,10 @@ public static class TreasureRewardService
             : ApplyChoice(state, AbilityRunBonusRuntimeService.ResolveTreasureRewardTable(state, table), choice, tile.encounterSeed);
         if (!result.success) return result;
         if (result.relicChoiceData != null && result.relicChoiceData.HasChoices)
+        {
+            BattleRelicChoiceSelectionService.ApplyRelicRefreshBonus(state.relicInventory, result.relicChoiceData);
             AbilityRunBonusRuntimeService.ApplyRelicChoiceRefreshBonus(state, result.relicChoiceData);
+        }
         else { tile.isVisited = true; tile.isResolved = true; }
         return result;
     }
