@@ -382,7 +382,10 @@ public class BattlePresentationSystem : MonoBehaviour
 
         PlaneData plane = BuildPlane(attacker, defender, singleAttackPlaneReference);
         Vector3 defenderTarget = plane.secondProjected;
-        Vector3 attackerTarget = plane.secondProjected + FlatDir(plane.secondProjected, plane.firstProjected, plane.z) * singleAttackStopDistance;
+        // Large illustrated attackers need the same body clearance as clashes.
+        float stopDistance = CalculateClashVisualSeparation(attacker, defender, plane.direction,
+            singleAttackStopDistance, clashMinimumGap);
+        Vector3 attackerTarget = defenderTarget - plane.direction * stopDistance;
         attackerTarget.z = plane.z;
 
         Color hitColor = attackerIsAlly ? allyHitColor : enemyHitColor;
