@@ -298,6 +298,39 @@ public sealed class BattleLookControllerTests
         finally { SpeedButton.CombatLocked = previousLock; }
     }
 
+    [Test]
+    public void CloseupKeepsForestForegroundInItsAuthoredPositionWhileTheCameraMoves()
+    {
+        look.ReleaseLook();
+        SpriteRenderer midground = new GameObject("Forest midground").AddComponent<SpriteRenderer>();
+        midground.transform.SetParent(root.transform, false);
+        SpriteRenderer foreground = new GameObject("Left foreground foliage").AddComponent<SpriteRenderer>();
+        foreground.transform.SetParent(root.transform, false);
+        Vector3 authoredPosition = new Vector3(-8.3f, 2.7f, -8.4f);
+        foreground.transform.localPosition = authoredPosition;
+        foreground.sprite = sprite;
+        foreground.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/Scenes/SampleScene/Forest/Near Forest Foliage.mat");
+        Set("midground", midground);
+        look.InitializeLook();
+
+        overview.aspect = closeup.aspect = 16f / 9f;
+        closeup.orthographicSize = 5f;
+        closeup.transform.position = new Vector3(-8f, 3f, -11f);
+        look.PrepareCamera(overview);
+        Vector3 overviewPosition = foreground.transform.localPosition;
+        Assert.AreNotEqual(authoredPosition, overviewPosition);
+
+        look.PrepareCamera(closeup);
+        Assert.AreEqual(authoredPosition, foreground.transform.localPosition);
+        closeup.transform.position += new Vector3(2f, -0.5f, 0f);
+        closeup.orthographicSize = 6f;
+        look.PrepareCamera(closeup);
+        Assert.AreEqual(authoredPosition, foreground.transform.localPosition);
+
+        look.PrepareCamera(overview);
+        Assert.AreEqual(overviewPosition, foreground.transform.localPosition);
+    }
+
     private void ConfigureFramingCamera(float aspect, bool orthographic)
     {
         overview.orthographic = orthographic;

@@ -85,10 +85,14 @@ public sealed class BattleLookController : MonoBehaviour
     {
         if (camera == null || depthOfField == null)
             return;
-        if (camera == overviewCamera && !SpeedButton.CombatLocked && (presentation == null || !presentation.IsPlayingDeathCamera))
-            PrepareOverviewFraming(camera);
-        if (camera == overviewCamera || camera == closeupCamera)
+        if (camera == overviewCamera)
+        {
+            if (!SpeedButton.CombatLocked && (presentation == null || !presentation.IsPlayingDeathCamera))
+                PrepareOverviewFraming(camera);
             foregroundFraming.PrepareCamera(camera);
+        }
+        else if (camera == closeupCamera)
+            foregroundFraming.RestorePositions();
         if (worldUiCamera != null && (camera == overviewCamera || camera == closeupCamera))
         {
             if (!SpeedButton.CombatLocked && enemies != null)

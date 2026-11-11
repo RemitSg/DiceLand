@@ -73,11 +73,19 @@ public sealed class BattleForestForegroundFraming
         }
     }
 
-    public void Release()
+    public void RestorePositions()
     {
         foreach (Card card in cards)
-            if (card.renderer != null && card.renderer.transform.localPosition == card.applied)
+        {
+            if (card.renderer != null && card.applied != card.original && card.renderer.transform.localPosition == card.applied)
                 card.renderer.transform.localPosition = card.original;
+            card.applied = card.original;
+        }
+    }
+
+    public void Release()
+    {
+        RestorePositions();
         cards.Clear();
     }
 }
