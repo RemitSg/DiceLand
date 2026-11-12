@@ -13,7 +13,9 @@ public static class BattlePowerModifierService
         Func<string, int> getSelfStatusStacksById,
         Func<BattleStatus_SO, int> getTargetStatusStacksByAsset,
         Func<string, int> getTargetStatusStacksById,
-        EnemySkill_SO targetSkill = null)
+        EnemySkill_SO targetSkill = null,
+        bool hasTarget = true,
+        Action<string, int> onApplied = null)
     {
         if (skill == null)
             return 0;
@@ -29,22 +31,16 @@ public static class BattlePowerModifierService
             if (modifier.trigger != trigger)
                 continue;
 
-            if (!modifier.useCondition)
-            {
-                if (modifier.powerBonus != 0)
-                    totalBonus += modifier.powerBonus;
+            if (!hasTarget && modifier.useCondition && BattleModifierConditionService.RequiresTarget(modifier.condition))
                 continue;
-            }
 
-            totalBonus += EvaluateConditionalPowerModifier(
-                modifier,
-                selfSpeed,
-                targetSpeed,
-                getSelfStatusStacksByAsset,
-                getSelfStatusStacksById,
-                getTargetStatusStacksByAsset,
-                getTargetStatusStacksById,
-                targetSkill);
+            int bonus = modifier.useCondition
+                ? EvaluateConditionalPowerModifier(modifier, selfSpeed, targetSpeed, getSelfStatusStacksByAsset,
+                    getSelfStatusStacksById, getTargetStatusStacksByAsset, getTargetStatusStacksById, targetSkill)
+                : modifier.powerBonus;
+            totalBonus += bonus;
+            if (bonus != 0)
+                onApplied?.Invoke(modifier.effectName, bonus);
         }
 
         return totalBonus;

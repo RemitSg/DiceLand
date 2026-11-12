@@ -84,6 +84,8 @@ public sealed class BattleEncounterData
         return roundRelicProcKeys.Add(key);
     }
 
+    internal bool HasRoundRelicProc(string key) => roundRelicProcKeys?.Contains(key) == true;
+
     public bool TryRegisterBattleRelicProc(string key)
     {
         if (string.IsNullOrWhiteSpace(key))

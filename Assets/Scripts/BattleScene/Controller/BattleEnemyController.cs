@@ -518,18 +518,33 @@ public class BattleEnemyController : MonoBehaviour
 
     public EnemySkill_SO.DicePowerRange GetDisplayedDicePowerRange(EnemySkill_SO skill, int diceIndex)
     {
+        return GetDisplayedDicePowerRange(skill, diceIndex, null);
+    }
+
+    private EnemySkill_SO.DicePowerRange GetDisplayedDicePowerRange(
+        EnemySkill_SO skill, int diceIndex, BattleDiceRangeBreakdown breakdown)
+    {
         int queuedBonus = skill != null && skill == SelectedSkill
             ? ResolveActiveAttackSkillPowerBonus(skill)
             : pendingNextAttackSkillPowerBonus;
-        return ApplyQueuedAttackSkillPowerBonus(ResolveSkillBaseDiceRange(skill, diceIndex), skill, queuedBonus);
+        EnemySkill_SO.DicePowerRange range = ResolveSkillBaseDiceRange(skill, diceIndex);
+        if (skill != null && !skill.IsDefenseSkill && queuedBonus != 0)
+            breakdown?.Add(GameText.Get("battle.skill.rules.broken_horn", GameText.LanguageCode == GameText.English ? "Broken Horn" : "断角"), null, queuedBonus, queuedBonus, true);
+        return ApplyQueuedAttackSkillPowerBonus(range, skill, queuedBonus);
     }
 
     public EnemySkill_SO.DicePowerRange GetEffectiveDisplayedDicePowerRange(EnemySkill_SO skill, int diceIndex)
     {
-        EnemySkill_SO.DicePowerRange range = GetDisplayedDicePowerRange(skill, diceIndex);
+        return GetEffectiveDisplayedDicePowerRange(skill, diceIndex, null);
+    }
+
+    internal EnemySkill_SO.DicePowerRange GetEffectiveDisplayedDicePowerRange(
+        EnemySkill_SO skill, int diceIndex, BattleDiceRangeBreakdown breakdown)
+    {
+        EnemySkill_SO.DicePowerRange range = GetDisplayedDicePowerRange(skill, diceIndex, breakdown);
         bool isDefenseSkill = skill != null
             && skill.GetDiceSkillCategory(diceIndex) == EnemySkill_SO.SkillCategory.Defense;
-        return ApplyStatusDiceRangeModifiers(range, isDefenseSkill);
+        return BattleStatusDicePowerService.ApplyRangeModifiers(range, isDefenseSkill, statusEntries, breakdown, IsStatusEffectSuppressed);
     }
 
     private int ResolveActiveAttackSkillPowerBonus(EnemySkill_SO skill)
@@ -541,6 +556,8 @@ public class BattleEnemyController : MonoBehaviour
             ? activeAttackSkillPowerBonus
             : pendingNextAttackSkillPowerBonus;
     }
+
+    internal int GetSpeedClashPowerBonus(int targetSpeed) => EnemyID == 24 && Speed > targetSpeed ? 1 : 0;
 
     public void QueueNextAttackSkillPowerBonus(int bonusAmount)
     {
@@ -844,92 +861,14 @@ public class BattleEnemyController : MonoBehaviour
         return false;
     }
 
-    private EnemySkill_SO.DicePowerRange ApplyStatusDiceRangeModifiers(EnemySkill_SO.DicePowerRange baseRange, bool isDefenseSkill)
-    {
-        int flatPowerBonus = isDefenseSkill
-            ? ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType.DefensePowerBonusFlat)
-            : ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType.PowerBonusFlat);
-        int flatPowerPenalty = isDefenseSkill
-            ? ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType.DefensePowerPenaltyFlat)
-            : ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType.PowerPenaltyFlat);
-        int netPowerAdjustment = flatPowerBonus - flatPowerPenalty;
-        int minPowerPenalty = ResolveStatusMinPowerPenalty();
-        int maxPowerPenalty = ResolveStatusMaxPowerPenalty();
-        int minPower = Mathf.Max(1, baseRange.minPower + netPowerAdjustment - minPowerPenalty);
-        int maxPower = Mathf.Max(minPower, baseRange.maxPower + netPowerAdjustment - maxPowerPenalty);
-        return new EnemySkill_SO.DicePowerRange
-        {
-            minPower = minPower,
-            maxPower = maxPower
-        };
-    }
-
-    private int ResolveStatusMinPowerPenalty()
-    {
-        if (statusEntries.Count == 0)
-            return 0;
-
-        int totalPenalty = 0;
-        for (int i = 0; i < statusEntries.Count; i++)
-        {
-            BattleStatusRuntimeEntry entry = statusEntries[i];
-            if (entry == null || entry.stacks <= 0 || entry.statusData == null)
-                continue;
-            if (IsStatusEffectSuppressed(entry))
-                continue;
-            if (entry.statusData.BehaviorType != BattleStatus_SO.StatusBehaviorType.MinPowerPenalty)
-                continue;
-
-            totalPenalty += entry.stacks * Mathf.Max(0, entry.statusData.PowerPerStack);
-        }
-
-        return Mathf.Max(0, totalPenalty);
-    }
-
-    private int ResolveStatusMaxPowerPenalty()
-    {
-        if (statusEntries.Count == 0)
-            return 0;
-
-        int totalPenalty = 0;
-        for (int i = 0; i < statusEntries.Count; i++)
-        {
-            BattleStatusRuntimeEntry entry = statusEntries[i];
-            if (entry == null || entry.stacks <= 0 || entry.statusData == null)
-                continue;
-            if (IsStatusEffectSuppressed(entry))
-                continue;
-            if (entry.statusData.BehaviorType != BattleStatus_SO.StatusBehaviorType.MaxPowerPenalty)
-                continue;
-
-            totalPenalty += entry.stacks * Mathf.Max(0, entry.statusData.PowerPerStack);
-        }
-
-        return Mathf.Max(0, totalPenalty);
-    }
-
     public BattleDiceRollService.ForcedRollMode ResolveForcedRollMode()
     {
-        bool forceMax = false;
-        for (int i = 0; i < statusEntries.Count; i++)
-        {
-            BattleStatusRuntimeEntry entry = statusEntries[i];
-            if (entry == null || entry.stacks <= 0 || entry.statusData == null)
-                continue;
-            if (IsStatusEffectSuppressed(entry))
-                continue;
+        return ResolveForcedRollMode(out _);
+    }
 
-            switch (entry.statusData.BehaviorType)
-            {
-                case BattleStatus_SO.StatusBehaviorType.ForceRollToMin:
-                    return BattleDiceRollService.ForcedRollMode.Min;
-                case BattleStatus_SO.StatusBehaviorType.ForceRollToMax:
-                    forceMax = true;
-                    break;
-            }
-        }
-
-        return forceMax ? BattleDiceRollService.ForcedRollMode.Max : BattleDiceRollService.ForcedRollMode.None;
+    internal BattleDiceRollService.ForcedRollMode ResolveForcedRollMode(out BattleStatusRuntimeEntry source)
+    {
+        return BattleStatusDicePowerService.ResolveForcedRollMode(statusEntries, out source, IsStatusEffectSuppressed);
     }
 
     private int ResolveStatusFlatPowerAmount(BattleStatus_SO.StatusBehaviorType behaviorType)

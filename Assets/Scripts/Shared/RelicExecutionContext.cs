@@ -43,6 +43,9 @@ public sealed partial class RelicExecutionContext
     public int additionalMinPowerBonus;
     public int additionalMaxPowerBonus;
     public int additionalTargetMinPowerBonus;
+    internal HashSet<string> previewRoundRelicProcs;
+    internal BattleDiceRangeBreakdown previewDiceBreakdown;
+    internal bool previewDiceForTarget;
 
     // Incoming damage context.
     public int incomingDamage;

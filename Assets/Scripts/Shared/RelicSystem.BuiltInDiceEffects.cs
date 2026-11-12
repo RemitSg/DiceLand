@@ -20,9 +20,8 @@ public static partial class RelicSystem
             return;
 
         int relicAmount = Mathf.Max(1, relicState.amount);
-        context.additionalPowerBonus += effect.powerAmount * relicAmount;
-        context.additionalMinPowerBonus += effect.minPowerAmount * relicAmount;
-        context.additionalMaxPowerBonus += effect.maxPowerAmount * relicAmount;
+        context.AddPlayerDiceModifier(relicData, effect.minPowerAmount * relicAmount,
+            effect.maxPowerAmount * relicAmount, effect.powerAmount * relicAmount);
         return;
     }
 
@@ -44,7 +43,7 @@ public static partial class RelicSystem
             return;
 
         bool sameAsLastRound = sourceAlly.LastRoundUsedSkill != null && sourceAlly.LastRoundUsedSkill == context.skillData;
-        context.additionalPowerBonus += sameAsLastRound ? -magnitude : magnitude;
+        context.AddPlayerDiceModifier(relicData, power: sameAsLastRound ? -magnitude : magnitude);
         return;
     }
 
@@ -69,7 +68,7 @@ public static partial class RelicSystem
         if (clashBonus <= 0)
             return;
 
-        context.additionalPowerBonus += clashBonus;
+        context.AddPlayerDiceModifier(relicData, power: clashBonus, clashOnlyPower: true);
         return;
     }
 
@@ -94,7 +93,7 @@ public static partial class RelicSystem
         if (targetMinReduction <= 0)
             return;
 
-        context.additionalTargetMinPowerBonus -= targetMinReduction;
+        context.AddPlayerDiceModifier(relicData, targetMin: -targetMinReduction);
         return;
     }
 
@@ -118,8 +117,9 @@ public static partial class RelicSystem
         if (skillChainPowerBonus <= 0)
             return;
 
-        context.additionalPowerBonus += skillChainPowerBonus;
-        skillChainAlly.MarkConsecutiveSkillResetAfterCurrentUse(context.skillData);
+        context.AddPlayerDiceModifier(relicData, power: skillChainPowerBonus);
+        if (context.previewRoundRelicProcs == null)
+            skillChainAlly.MarkConsecutiveSkillResetAfterCurrentUse(context.skillData);
         return;
     }
 
@@ -140,7 +140,7 @@ public static partial class RelicSystem
         if (defenseMaxBonus <= 0)
             return;
 
-        context.additionalMaxPowerBonus += defenseMaxBonus;
+        context.AddPlayerDiceModifier(relicData, max: defenseMaxBonus);
         return;
     }
 }

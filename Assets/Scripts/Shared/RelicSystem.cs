@@ -25,7 +25,7 @@ public static partial class RelicSystem
 
             ApplyBuiltInEffects(relicState.relicData, relicState, context);
 
-            if (relicState.relicData.customEffectHandler == null)
+            if (context.previewRoundRelicProcs != null || relicState.relicData.customEffectHandler == null)
                 continue;
 
             relicState.relicData.customEffectHandler.TryApply(relicState.relicData, relicState, context, out _);

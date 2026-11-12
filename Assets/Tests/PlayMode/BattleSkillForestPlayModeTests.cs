@@ -113,6 +113,28 @@ public sealed class BattleSkillForestPlayModeTests
         Assert.Greater(button.transform.localScale.x, 1);
     }
 
+    [UnityTest]
+    public IEnumerator RangeDetailsCanBeOpenedByPointerWhileOverlayOwnsInput()
+    {
+        yield return new WaitForSecondsRealtime(0.30f);
+        Canvas.ForceUpdateCanvases();
+        Button toggle = host.GetComponentsInChildren<Button>().First(b => b.name == "DiceRangeToggle");
+        Transform table = toggle.transform.parent.Find("DiceRangeBreakdown");
+        Assert.IsFalse(table.gameObject.activeSelf);
+        var rect = (RectTransform)toggle.transform;
+        Vector2 point = RectTransformUtility.WorldToScreenPoint(null, rect.TransformPoint(rect.rect.center));
+        Assert.AreEqual(toggle.gameObject, Hits(point).First().gameObject);
+
+        var pointer = new PointerEventData(events) { position = point, button = PointerEventData.InputButton.Left };
+        ExecuteEvents.Execute(toggle.gameObject, pointer, ExecuteEvents.pointerClickHandler);
+        Assert.IsTrue(table.gameObject.activeSelf);
+        Assert.IsTrue(Visible());
+        Assert.IsTrue(StaticFlag("InputSuppressed"));
+
+        ExecuteEvents.Execute(toggle.gameObject, pointer, ExecuteEvents.pointerClickHandler);
+        Assert.IsFalse(table.gameObject.activeSelf);
+    }
+
     private bool Visible() => (bool)Get(overlay, "IsVisible");
 
     private List<RaycastResult> Hits(Vector2 point)

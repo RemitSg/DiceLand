@@ -39,10 +39,15 @@ public static partial class RelicSystem
         if (activeEncounter == null)
             return true;
 
+        return activeEncounter.TryRegisterRoundRelicProc(BuildRoundRelicProcKey(relicData, suffix));
+    }
+
+    private static string BuildRoundRelicProcKey(Relic_SO relicData, string suffix)
+    {
         string relicIdentity = relicData != null && !string.IsNullOrWhiteSpace(relicData.relicId)
             ? relicData.relicId
             : (relicData != null ? relicData.name : "relic");
-        return activeEncounter.TryRegisterRoundRelicProc($"{relicIdentity}:{suffix}");
+        return $"{relicIdentity}:{suffix}";
     }
 
     private static BattleAllyController ResolveHighestHpLivingAlly(BattleAllyController[] allies, BattleAllyController excluded)

@@ -176,7 +176,7 @@ public static partial class RelicSystem
         if (ally == null)
             return;
 
-        ally.QueueNextRoundMinPowerBonusIfUnused(Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount)));
+        ally.QueueNextRoundMinPowerBonusIfUnused(Mathf.Max(0, effect.amount * Mathf.Max(1, relicState.amount)), relicData);
     }
 
     private static void HandleHealPartyPercentAfterBattleInSpecialDungeon(

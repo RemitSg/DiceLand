@@ -14,6 +14,20 @@ public static partial class RelicSystem
     private static readonly Dictionary<Relic_SO.RelicBuiltInEffectType, BuiltInEffectApplicator> BuiltInEffectApplicators =
         CreateBuiltInEffectApplicators();
 
+    // These handlers can evaluate a dice preview without changing battle state.
+    private static readonly Dictionary<Relic_SO.RelicBuiltInEffectType, BuiltInEffectApplicator> DicePreparedEffectApplicators =
+        new Dictionary<Relic_SO.RelicBuiltInEffectType, BuiltInEffectApplicator>
+        {
+            { Relic_SO.RelicBuiltInEffectType.ModifyPlayerDiceWhenSelfHasStatus, HandleModifyPlayerDiceWhenSelfHasStatus },
+            { Relic_SO.RelicBuiltInEffectType.ModifyPlayerDiceBasedOnLastRoundSkillMatch, HandleModifyPlayerDiceBasedOnLastRoundSkillMatch },
+            { Relic_SO.RelicBuiltInEffectType.ModifyPlayerClashDiceWhenFasterThanTarget, HandleModifyPlayerClashDiceWhenFasterThanTarget },
+            { Relic_SO.RelicBuiltInEffectType.ReduceTargetClashMinPowerWhenTargetHasStatus, HandleReduceTargetClashMinPowerWhenTargetHasStatus },
+            { Relic_SO.RelicBuiltInEffectType.ModifyPlayerDiceWhenSkillUsedConsecutively, HandleModifyPlayerDiceWhenSkillUsedConsecutively },
+            { Relic_SO.RelicBuiltInEffectType.ModifyDefenseSkillMaxPower, HandleModifyDefenseSkillMaxPower },
+            { Relic_SO.RelicBuiltInEffectType.ModifyPlayerClashDiceWhenTargetHasStatus, HandleModifyPlayerClashDiceWhenTargetHasStatus },
+            { Relic_SO.RelicBuiltInEffectType.ModifyPlayerClashDiceWhenTargetHasStatusOncePerRound, HandleModifyPlayerClashDiceWhenTargetHasStatusOncePerRound },
+        };
+
     public static bool IsBuiltInEffectRegistered(Relic_SO.RelicBuiltInEffectType effectType)
     {
         return effectType != Relic_SO.RelicBuiltInEffectType.None
@@ -44,14 +58,10 @@ public static partial class RelicSystem
             { Relic_SO.RelicBuiltInEffectType.ChanceToIgnoreMoveCost, HandleChanceToIgnoreMoveCost },
             { Relic_SO.RelicBuiltInEffectType.IgnoreMoveCostWhenDestinationVisited, HandleIgnoreMoveCostWhenDestinationVisited },
             { Relic_SO.RelicBuiltInEffectType.AddExtraStatusStacksOnApply, HandleAddExtraStatusStacksOnApply },
-            { Relic_SO.RelicBuiltInEffectType.ModifyPlayerDiceWhenSelfHasStatus, HandleModifyPlayerDiceWhenSelfHasStatus },
             { Relic_SO.RelicBuiltInEffectType.ReduceIncomingSingleAttackDamageFlat, HandleReduceIncomingSingleAttackDamageFlat },
             { Relic_SO.RelicBuiltInEffectType.ReduceIncomingSingleAttackDamagePercentWhenAttackerSlowerThanTarget, HandleReduceIncomingSingleAttackDamagePercentWhenAttackerSlowerThanTarget },
             { Relic_SO.RelicBuiltInEffectType.ReduceIncomingAttackDamagePercentWhenAttackerSlowerThanTarget, HandleReduceIncomingAttackDamagePercentWhenAttackerSlowerThanTarget },
             { Relic_SO.RelicBuiltInEffectType.ReduceIncomingDamagePercentWhenSpeedGreaterThan, HandleReduceIncomingDamagePercentWhenSpeedGreaterThan },
-            { Relic_SO.RelicBuiltInEffectType.ModifyPlayerDiceBasedOnLastRoundSkillMatch, HandleModifyPlayerDiceBasedOnLastRoundSkillMatch },
-            { Relic_SO.RelicBuiltInEffectType.ModifyPlayerClashDiceWhenFasterThanTarget, HandleModifyPlayerClashDiceWhenFasterThanTarget },
-            { Relic_SO.RelicBuiltInEffectType.ReduceTargetClashMinPowerWhenTargetHasStatus, HandleReduceTargetClashMinPowerWhenTargetHasStatus },
             { Relic_SO.RelicBuiltInEffectType.PreserveRandomRelicMaterialOnReforge, HandlePreserveRandomRelicMaterialOnReforge },
             { Relic_SO.RelicBuiltInEffectType.GrantRandomLootOfSameRarityOnLootReforge, HandleGrantRandomLootOfSameRarityOnLootReforge },
             { Relic_SO.RelicBuiltInEffectType.IncreaseRestReforgeLimit, HandleIncreaseRestReforgeLimit },
@@ -69,7 +79,6 @@ public static partial class RelicSystem
             { Relic_SO.RelicBuiltInEffectType.ModifyOutgoingDamagePercentWhenTargetHasDistinctStatuses, HandleModifyOutgoingDamagePercentWhenTargetHasDistinctStatuses },
             { Relic_SO.RelicBuiltInEffectType.ModifyOutgoingDamageFlatWhenTargetHasStatus, HandleModifyOutgoingDamageFlatWhenTargetHasStatus },
             { Relic_SO.RelicBuiltInEffectType.SurviveLethalDamageOncePerBattleAndApplyStatus, HandleSurviveLethalDamageOncePerBattleAndApplyStatus },
-            { Relic_SO.RelicBuiltInEffectType.ModifyPlayerDiceWhenSkillUsedConsecutively, HandleModifyPlayerDiceWhenSkillUsedConsecutively },
             { Relic_SO.RelicBuiltInEffectType.HealPartyPercentOnEnteringUnvisitedMerchantTile, HandleHealPartyPercentOnEnteringUnvisitedMerchantTile },
             { Relic_SO.RelicBuiltInEffectType.ReduceIncomingAttackDamagePercentWhenAttackerHasStatus, HandleReduceIncomingAttackDamagePercentWhenAttackerHasStatus },
             { Relic_SO.RelicBuiltInEffectType.RestoreActionPointsOnKeyCollectedByPercentMax, HandleRestoreActionPointsOnKeyCollectedByPercentMax },
@@ -88,14 +97,12 @@ public static partial class RelicSystem
             { Relic_SO.RelicBuiltInEffectType.RestoreSharedEnergyAtBattleStartInEliteOrBoss, HandleRestoreSharedEnergyAtBattleStartInEliteOrBoss },
             { Relic_SO.RelicBuiltInEffectType.GrantTemporaryExtraAllySpeedButtonsOnFirstRound, HandleGrantTemporaryExtraAllySpeedButtonsOnFirstRound },
             { Relic_SO.RelicBuiltInEffectType.TransferSpeedButtonsToLowestHpAllyOnPlayerDeath, HandleTransferSpeedButtonsToLowestHpAllyOnPlayerDeath },
-            { Relic_SO.RelicBuiltInEffectType.ModifyDefenseSkillMaxPower, HandleModifyDefenseSkillMaxPower },
             { Relic_SO.RelicBuiltInEffectType.SetEnemyBurnRoundStartDecayPercent, HandlePassiveMarker },
             { Relic_SO.RelicBuiltInEffectType.ApplyStatusToLowestHpEnemyOnBattleRoundStart, HandleApplyStatusToLowestHpEnemyOnBattleRoundStart },
             { Relic_SO.RelicBuiltInEffectType.ApplyStatusToEnemyOnFirstPlayerHitEachRound, HandleApplyStatusToEnemyOnFirstPlayerHitEachRound },
             { Relic_SO.RelicBuiltInEffectType.TriggerStatusDamageWhenEnemyStatusReachesStacksOncePerBattle, HandleTriggerStatusDamageWhenEnemyStatusReachesStacksOncePerBattle },
             { Relic_SO.RelicBuiltInEffectType.ChanceApplyStatusToEnemiesWithStatusOnBattleRoundStart, HandleChanceApplyStatusToEnemiesWithStatusOnBattleRoundStart },
             { Relic_SO.RelicBuiltInEffectType.ApplyStatusToAttackerAfterTakingSingleAttackDamageLimitedPerRound, HandleApplyStatusToAttackerAfterTakingSingleAttackDamageLimitedPerRound },
-            { Relic_SO.RelicBuiltInEffectType.ModifyPlayerClashDiceWhenTargetHasStatus, HandleModifyPlayerClashDiceWhenTargetHasStatus },
             { Relic_SO.RelicBuiltInEffectType.HealSourceWhenPlayerAppliesStatusToEnemy, HandleHealSourceWhenPlayerAppliesStatusToEnemy },
             { Relic_SO.RelicBuiltInEffectType.ApplyStatusToAllAlliesWhenStatusBearerCountAtLeast, HandleApplyStatusToAllAlliesWhenStatusBearerCountAtLeast },
             { Relic_SO.RelicBuiltInEffectType.TransferStatusToLowestHpEnemyOnEnemyDeath, HandleTransferStatusToLowestHpEnemyOnEnemyDeath },
@@ -151,7 +158,6 @@ public static partial class RelicSystem
             { Relic_SO.RelicBuiltInEffectType.PreventEnemyHealingWhenHasStatus, HandlePassiveMarker },
             { Relic_SO.RelicBuiltInEffectType.PreventLethalDamageByTransferringHighestHpAllyHealth, HandlePreventLethalDamageByTransferringHighestHpAllyHealth },
             { Relic_SO.RelicBuiltInEffectType.ApplyStatusOnTransferredLethalProtectionWhenEnemyStatusAtLeast, HandleApplyStatusOnTransferredLethalProtectionWhenEnemyStatusAtLeast },
-            { Relic_SO.RelicBuiltInEffectType.ModifyPlayerClashDiceWhenTargetHasStatusOncePerRound, HandleModifyPlayerClashDiceWhenTargetHasStatusOncePerRound },
             { Relic_SO.RelicBuiltInEffectType.ModifyOutgoingDamagePercentWhenTargetHasStatus, HandleModifyOutgoingDamagePercentWhenTargetHasStatus },
             { Relic_SO.RelicBuiltInEffectType.SetStatusBurstConsumptionPercent, HandlePassiveMarker },
             { Relic_SO.RelicBuiltInEffectType.ChanceTriggerNonConsumingStatusBurstWhenDamagingStatusTarget, HandleChanceTriggerNonConsumingStatusBurstWhenDamagingStatusTarget },
@@ -194,13 +200,23 @@ public static partial class RelicSystem
             if (effect == null || effect.trigger != context.trigger)
                 continue;
 
-            // This effect rolls separately for each living ally in its handler.
-            bool rollsChancePerAlly = effect.effectType == Relic_SO.RelicBuiltInEffectType.ChanceApplyStatusToAllAlliesOnBattleRoundStart;
-            if (!rollsChancePerAlly && effect.chance < 1f && Random.value > Mathf.Clamp01(effect.chance))
-                continue;
+            BuiltInEffectApplicator applicator;
+            if (context.previewRoundRelicProcs != null)
+            {
+                if (effect.chance < 1f || !DicePreparedEffectApplicators.TryGetValue(effect.effectType, out applicator))
+                    continue;
+            }
+            else
+            {
+                // This effect rolls separately for each living ally in its handler.
+                bool rollsChancePerAlly = effect.effectType == Relic_SO.RelicBuiltInEffectType.ChanceApplyStatusToAllAlliesOnBattleRoundStart;
+                if (!rollsChancePerAlly && effect.chance < 1f && Random.value > Mathf.Clamp01(effect.chance))
+                    continue;
 
-            if (!BuiltInEffectApplicators.TryGetValue(effect.effectType, out BuiltInEffectApplicator applicator))
-                continue;
+                if (!BuiltInEffectApplicators.TryGetValue(effect.effectType, out applicator)
+                    && !DicePreparedEffectApplicators.TryGetValue(effect.effectType, out applicator))
+                    continue;
+            }
 
             applicator(relicData, relicState, context, effect);
         }

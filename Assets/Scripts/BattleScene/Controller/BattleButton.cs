@@ -3221,8 +3221,7 @@ public partial class BattleButton : MonoBehaviour
                 ally.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClash, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks, enemy.SelectedSkill);
             int enemyClashOnlyBonus = BattleDicePowerModifierCollectionService.GetActionBonus(
                 enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClash, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks, ally.SelectedSkill);
-            if (enemy.EnemyID == 24 && enemy.Speed > ally.Speed)
-                enemyClashOnlyBonus += 1;
+            enemyClashOnlyBonus += enemy.GetSpeedClashPowerBonus(ally.Speed);
             BattleDicePowerPreparation allyPowerInput = BattleDicePowerPreparationService.Resolve(allyBasePower, allyStatusPowerModifier, 0, allySkillUseBonus, allyClashOnlyBonus, allyRelicModifier.powerBonus);
             BattleDicePowerPreparation enemyPowerInput = BattleDicePowerPreparationService.Resolve(enemyBasePower, enemyStatusPowerModifier, 0, enemySkillUseBonus, enemyClashOnlyBonus);
             int allyBonusPower = allyPowerInput.BonusPower;

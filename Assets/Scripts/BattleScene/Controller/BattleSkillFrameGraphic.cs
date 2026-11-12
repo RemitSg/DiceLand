@@ -5,7 +5,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CanvasRenderer))]
 public sealed class BattleSkillFrameGraphic : MapMerchantFrameGraphic
 {
-    public enum SkillStyle { Choice, Die, Attack, Defense, Check, HoverPanel }
+    public enum SkillStyle { Choice, Die, Attack, Defense, Check, HoverPanel, Chevron }
     public SkillStyle skillStyle;
     public bool defense;
     private static readonly Color Gold = new Color32(230, 188, 98, 255);
@@ -35,6 +35,13 @@ public sealed class BattleSkillFrameGraphic : MapMerchantFrameGraphic
             return;
         }
         float size = Mathf.Min(r.width, r.height); Vector2 c = r.center;
+        if (skillStyle == SkillStyle.Chevron)
+        {
+            Vector2 point = c + Vector2.down * size * 0.16f;
+            Stroke(vh, c + new Vector2(-0.37f, 0.19f) * size, point, size * 0.13f, Gold);
+            Stroke(vh, point, c + new Vector2(0.37f, 0.19f) * size, size * 0.13f, Gold);
+            return;
+        }
         Color tint = defense || skillStyle == SkillStyle.Defense ? new Color32(109, 183, 238, 255) : new Color32(238, 105, 94, 255);
         if (skillStyle == SkillStyle.Check)
         {

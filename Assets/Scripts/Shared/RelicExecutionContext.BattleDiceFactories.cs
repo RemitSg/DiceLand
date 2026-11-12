@@ -4,6 +4,28 @@ using Object = UnityEngine.Object;
 
 public sealed partial class RelicExecutionContext
 {
+    internal void AddPlayerDiceModifier(Relic_SO relic, int min = 0, int max = 0, int power = 0, int targetMin = 0, bool clashOnlyPower = false)
+    {
+        additionalMinPowerBonus += min;
+        additionalMaxPowerBonus += max;
+        additionalPowerBonus += power;
+        additionalTargetMinPowerBonus += targetMin;
+        if (previewDiceBreakdown == null)
+            return;
+
+        string name = relic.LocalizedName;
+        if (previewDiceForTarget)
+        {
+            previewDiceBreakdown.Add(name, relic.icon, targetMin, 0);
+            return;
+        }
+
+        int sharedPower = clashOnlyPower ? 0 : power;
+        previewDiceBreakdown.Add(name, relic.icon, min + sharedPower, max + sharedPower);
+        if (clashOnlyPower)
+            previewDiceBreakdown.Add(name, relic.icon, power, power, clashOnly: true);
+    }
+
     public static RelicExecutionContext CreatePlayerDicePrepared(
         RunState runState,
         EnemySkill_SO skillData,

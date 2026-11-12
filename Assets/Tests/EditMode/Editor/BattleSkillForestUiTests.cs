@@ -72,6 +72,109 @@ public sealed class BattleSkillForestUiTests
     }
 
     [Test]
+    public void RangeDetailsShowActualSourcesWithoutSpendingTheRoundRelicProc()
+    {
+        BattleAllyController ally = Ally("Assets/Data/Weapons/203 热铁板/203 热铁板.asset");
+        BattleEnemyController enemy = ProfileEnemy();
+        EnemySkill_SO skill = Asset<EnemySkill_SO>("Assets/Data/Weapons/203 热铁板/熔喉斩.asset");
+        Relic_SO relic = Asset<Relic_SO>("Assets/Data/Relics/118 苦根药袋/苦根药袋.asset");
+        SpeedButton button = LinkForClash(ally, enemy, 1);
+        Assert.IsTrue(ally.SetSelectedSkillIndexForButton(button, System.Array.IndexOf(ally.GetAvailableSkills(), skill)));
+        BattleStatus_SO strength = Asset<BattleStatus_SO>("Assets/Data/Battle/Strength/Strength.asset");
+        BattleStatus_SO weakness = Asset<BattleStatus_SO>("Assets/Data/Battle/Weakness/Weakness.asset");
+        BattleStatus_SO burn = Asset<BattleStatus_SO>("Assets/Data/Battle/Burn/Burn.asset");
+        BattleStatus_SO poison = Asset<BattleStatus_SO>("Assets/Data/Battle/Poison/Poison.asset");
+        ally.AddStatus(strength, strength.StatusId, strength.DisplayName, 1);
+        ally.AddStatus(weakness, weakness.StatusId, weakness.DisplayName, 1);
+        enemy.AddStatus(burn, burn.StatusId, burn.DisplayName, 4);
+        enemy.AddStatus(poison, poison.StatusId, poison.DisplayName, 1);
+        var encounter = new BattleEncounterData { relicInventory = { new RunRelicState { relicData = relic, amount = 1 } } };
+        BattleEncounterData oldActive = BattleEncounterRuntime.ActiveEncounter;
+        BattleEncounterData oldPending = BattleEncounterRuntime.CurrentEncounter;
+        try
+        {
+            BattleEncounterRuntime.SetEncounter(encounter);
+            BattleEncounterRuntime.ConsumeEncounter();
+            overlay.ShowAllySkillSelection(ally, button);
+            Layout();
+            Transform card = Cards()[0];
+            Assert.AreEqual("6 ~ 8", ReadText(card, "DiceRange"));
+            Assert.AreEqual("最终范围", ReadText(card, "DiceRangeCaption"));
+            Assert.AreEqual("查看修正 · 4 项", ReadText(card, "DiceRangeToggle/ToggleLabel"));
+            Transform table = card.Find("DiceRangeBreakdown");
+            Assert.IsFalse(table.gameObject.activeSelf);
+            Button toggle = card.Find("DiceRangeToggle").GetComponent<Button>();
+            toggle.onClick.Invoke();
+            Assert.IsTrue(table.gameObject.activeSelf);
+            Assert.AreEqual("收起明细", ReadText(card, "DiceRangeToggle/ToggleLabel"));
+            Assert.AreEqual("3", ReadText(table, "RangeRow_1/Minimum"));
+            Transform relicRow = RangeRow(table, relic.LocalizedName);
+            Assert.AreSame(relic.icon, relicRow.Find("SourceIcon").GetComponent<Image>().sprite);
+            Assert.AreEqual("0", ReadText(relicRow, "Minimum"));
+            Assert.AreEqual("+1", ReadText(relicRow, "Maximum"));
+            Assert.AreEqual(new Color32(250, 210, 110, 255), (Color32)relicRow.Find("Maximum").GetComponent<TMP_Text>().color);
+            Assert.AreEqual("-1", ReadText(RangeRow(table, "虚弱 ×1"), "Minimum"));
+            Assert.AreEqual("+1", ReadText(RangeRow(table, "强壮 ×1"), "Maximum"));
+            Assert.AreEqual("+3", ReadText(RangeRow(table, "熔喉压炉"), "Minimum"));
+
+            overlay.RefreshCurrentView();
+            Assert.IsTrue(table.gameObject.activeSelf);
+            var prepared = RelicTriggerDispatcher.ProcessPlayerDicePrepared(encounter, null, skill, 0, true, ally, enemy);
+            Assert.AreEqual(1, prepared.additionalMaxPowerBonus);
+            overlay.RefreshCurrentView();
+            Assert.AreEqual("6 ~ 7", ReadText(card, "DiceRange"));
+            Assert.IsFalse(table.Cast<Transform>().Any(t => t.name.StartsWith("RangeRow_") && t.gameObject.activeSelf && ReadText(t, "Source") == relic.LocalizedName));
+            toggle.onClick.Invoke();
+            Assert.IsFalse(table.gameObject.activeSelf);
+        }
+        finally
+        {
+            BattleEncounterRuntime.SetEncounter(oldActive);
+            BattleEncounterRuntime.ConsumeEncounter();
+            BattleEncounterRuntime.SetEncounter(oldPending);
+        }
+    }
+
+    [Test]
+    public void RangeDetailsFlagClashOnlyPowerAndUseSingleAttackModifiersForExtraDice()
+    {
+        BattleAllyController ally = Ally("Assets/Data/Weapons/000 WoodenSword/WoodenSword_Data.asset");
+        BattleEnemyController enemy = ProfileEnemy();
+        SpeedButton button = LinkForClash(ally, enemy);
+        EnemySkill_SO skill = ScriptableObject.CreateInstance<EnemySkill_SO>();
+        transient.Add(skill);
+        skill.skillName = "两段试斩";
+        skill.diceCount = 2;
+        skill.dicePowerRanges = new[] { Range(2, 4), Range(2, 4) };
+        var effects = new EnemySkill_SO.DiceEffectSettings
+        {
+            powerModifiers = new[]
+            {
+                new EnemySkill_SO.ConditionalPowerModifierEntry { effectName = "使用加成", trigger = EnemySkill_SO.DiceEffectTrigger.OnSkillUse, powerBonus = 1 },
+                new EnemySkill_SO.ConditionalPowerModifierEntry { effectName = "拼点加成", trigger = EnemySkill_SO.DiceEffectTrigger.OnClash, powerBonus = 2 },
+                new EnemySkill_SO.ConditionalPowerModifierEntry { effectName = "单方面加成", trigger = EnemySkill_SO.DiceEffectTrigger.OnSingleAttack, powerBonus = 4 },
+                new EnemySkill_SO.ConditionalPowerModifierEntry { effectName = "命中加成", trigger = EnemySkill_SO.DiceEffectTrigger.OnHit, powerBonus = 8 }
+            }
+        };
+        skill.diceEffectSettings = new[] { effects, effects };
+        ally.GrantTemporarySkill(skill, true);
+        overlay.ShowAllySkillSelection(ally, button);
+        Layout();
+        List<Transform> cards = Cards();
+        Assert.AreEqual("5 ~ 7", ReadText(cards[0], "DiceRange"));
+        Assert.AreEqual("7 ~ 9", ReadText(cards[1], "DiceRange"));
+        foreach (Transform card in cards)
+            card.Find("DiceRangeToggle").GetComponent<Button>().onClick.Invoke();
+
+        Transform first = cards[0].Find("DiceRangeBreakdown");
+        Transform second = cards[1].Find("DiceRangeBreakdown");
+        Assert.AreEqual("+1", ReadText(RangeRow(first, "使用加成"), "Minimum"));
+        Assert.AreEqual("+2", ReadText(RangeRow(first, "【仅拼点】拼点加成"), "Maximum"));
+        Assert.AreEqual("+4", ReadText(RangeRow(second, "单方面加成"), "Maximum"));
+        Assert.IsFalse(first.Cast<Transform>().Any(t => t.name.StartsWith("RangeRow_") && ReadText(t, "Source") == "命中加成"));
+    }
+
+    [Test]
     public void EnergyFailureCannotBeBypassedAndSelectionKeepsOtherSpeedSlots()
     {
         BattleAllyController ally = Ally("Assets/Data/Weapons/000 WoodenSword/WoodenSword_Data.asset");
@@ -310,6 +413,24 @@ public sealed class BattleSkillForestUiTests
 
     private BattleEnemyController ProfileEnemy() => BattleSkillVisualTools.CreateEnemy(host.transform,
         Asset<EnemyData_SO>("Assets/Data/Enemies/Enemies/014 BloodRat/BloodRat.asset"), Asset<EnemySkill_SO>("Assets/Data/Enemies/Enemies/014 BloodRat/RotfangBite.asset"));
+    private static SpeedButton LinkForClash(BattleAllyController ally, BattleEnemyController enemy, int slot = 0)
+    {
+        ally.gameObject.SetActive(true);
+        enemy.gameObject.SetActive(true);
+        SpeedButton source = ally.SpeedButtons[slot];
+        SpeedButton target = enemy.SpeedButtons[0];
+        source.ConfigureHeadlessExecution();
+        target.ConfigureHeadlessExecution();
+        source.IsInteractable = true;
+        source.Speed = 6;
+        target.Speed = 3;
+        Assert.IsTrue(source.TryAssignTarget(target));
+        Assert.IsTrue(source.IsContestedConnection);
+        return source;
+    }
+    private static Transform RangeRow(Transform table, string label) => table.Cast<Transform>().Single(t =>
+        t.name.StartsWith("RangeRow_") && t.gameObject.activeSelf && ReadText(t, "Source") == label);
+    private static string ReadText(Transform root, string path) => root.Find(path).GetComponent<TMP_Text>().text;
     private List<Transform> PassiveCards() => Get<RectTransform>("enemyProfileContent").Cast<Transform>().Where(t => t.name.StartsWith("EnemyPassive_") && t.gameObject.activeSelf).ToList();
     private static T Asset<T>(string path) where T : Object { T asset = AssetDatabase.LoadAssetAtPath<T>(path); Assert.IsNotNull(asset, path); return asset; }
     private T Get<T>(string field) => (T)typeof(BattleSkillInfoOverlay).GetField(field, Private).GetValue(overlay);

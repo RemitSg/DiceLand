@@ -45,7 +45,12 @@ public partial class BattleSkillInfoOverlay
             : defense ? GameText.Get("battle.skill.defense", "防御") : GameText.Get("battle.skill.attack", "攻击");
         energyMetadata.text = SkillEnergyLabel(skill);
         diceMetadata.text = GameText.Format("battle.skill.dice_count", "骰子数 {count}", ("count", skill != null ? Mathf.Max(0, skill.diceCount) : 0));
-        requirementsText.text = BuildSkillRequirements(skill);
+        SpeedButton sourceButton = viewMode == SkillViewMode.Ally ? currentAllySourceButton : currentEnemySourceButton;
+        BattleDiceRangePreview preview = BattleDiceRangePreview.Build(skill, currentAlly, currentEnemy, sourceButton);
+        string requirements = BuildSkillRequirements(skill);
+        string target = preview.Dice.Length > 0 ? GetDiceTargetLabel(preview) : string.Empty;
+        requirementsText.text = string.IsNullOrEmpty(requirements) ? target
+            : string.IsNullOrEmpty(target) ? requirements : requirements + "\n" + target;
         bool dataMode = viewMode == SkillViewMode.EnemyData;
         detailText.gameObject.SetActive(dataMode);
         if (dataMode) detailText.text = BuildEnemyDataDetail(currentEnemy);
@@ -53,14 +58,14 @@ public partial class BattleSkillInfoOverlay
         descriptionBody.gameObject.SetActive(!dataMode);
         descriptionBody.text = skill != null && !string.IsNullOrWhiteSpace(skill.description)
             ? skill.LocalizedDescription : GameText.Get("ui.no_description", "暂无描述。");
-        int count = !dataMode && skill != null ? Mathf.Max(0, skill.diceCount) : 0;
+        int count = preview.Dice.Length;
         EnsureDiceCards(count);
         for (int i = 0; i < diceCards.Count; i++)
         {
             DiceCardView card = diceCards[i]; card.rect.gameObject.SetActive(i < count);
             if (i >= count) continue;
             card.heading.text = GetDicePrefixLabel(skill, i);
-            card.range.text = BuildDiceRangeLabel(skill, i, skill.GetDicePowerRange(i), DisplayedSkillRange(skill, i));
+            RenderDiceRange(card, preview.Dice[i], GetDicePowerDisplayColor(skill, i), changed);
             card.icon.defense = skill.GetDiceSkillCategory(i) == EnemySkill_SO.SkillCategory.Defense; card.icon.SetVerticesDirty();
             List<string> rules = BuildDiceRuleLines(skill, i, viewMode == SkillViewMode.Ally, false);
             card.clauses.text = rules.Count > 0 ? "<color=#E2BB65>" + GameText.Get("battle.skill.effects", "词条") + "</color>\n" + string.Join("\n", rules)
@@ -74,13 +79,6 @@ public partial class BattleSkillInfoOverlay
     private static string SkillEnergyLabel(EnemySkill_SO skill)
     {
         return GameText.Format("battle.skill.energy_cost", "能耗 {cost}", ("cost", skill != null ? Mathf.Max(0, skill.energyCost) : 0));
-    }
-
-    private EnemySkill_SO.DicePowerRange DisplayedSkillRange(EnemySkill_SO skill, int index)
-    {
-        if (viewMode == SkillViewMode.Ally && currentAlly != null) return currentAlly.GetDisplayedDicePowerRange(skill, index);
-        if (currentEnemy != null) return currentEnemy.GetEffectiveDisplayedDicePowerRange(skill, index);
-        return skill.GetDicePowerRange(index);
     }
 
     private string BuildSkillRequirements(EnemySkill_SO skill)
@@ -111,6 +109,7 @@ public partial class BattleSkillInfoOverlay
             card.rule = SkillRect(rect, "Rule"); AddSkillRule(card.rule);
             card.clauses = SkillText(rect, "DiceClauses", DiceClauseSize, SkillIvory, string.Empty);
             card.clauses.enableWordWrapping = true; card.clauses.alignment = TextAlignmentOptions.TopLeft; card.clauses.paragraphSpacing = 7;
+            BuildDiceRangeDetails(card);
             diceCards.Add(card);
         }
     }
@@ -136,7 +135,7 @@ public partial class BattleSkillInfoOverlay
             {
                 bool defense = displayedSkill.GetDiceSkillCategory(i) == EnemySkill_SO.SkillCategory.Defense;
                 diceLinkLabels[i].text = (i + 1) + " · " + (defense ? GameText.Get("battle.skill.rules.defense", "防御 ") : GameText.Get("battle.skill.rules.attack", "攻击 "))
-                    + BuildDiceRangeLabel(displayedSkill, i, displayedSkill.GetDicePowerRange(i), DisplayedSkillRange(displayedSkill, i));
+                    + BuildColoredToken(diceCards[i].range.text, diceCards[i].range.color);
             }
         }
         summaryRoot.gameObject.SetActive(count > 0);
@@ -194,14 +193,8 @@ public partial class BattleSkillInfoOverlay
             {
                 DiceCardView card = diceCards[i]; card.top = cursor;
                 card.clauses.fontSize = MainMenuSettingsPersistence.DetailFontSize(DiceClauseSize);
-                float rulesHeight = SkillTextHeight(card.clauses, bodyWidth - 48, 34);
-                float height = 100 + rulesHeight;
+                float height = LayoutDiceCard(card);
                 PlaceSkill(card.rect, 0, cursor, bodyWidth, height);
-                PlaceSkill(card.heading.rectTransform, 24, 15, bodyWidth - 280, 42);
-                PlaceSkill((RectTransform)card.icon.transform, bodyWidth - 255, 16, 42, 42);
-                PlaceSkill(card.range.rectTransform, bodyWidth - 205, 15, 181, 44);
-                PlaceSkill(card.rule, 22, 70, bodyWidth - 44, 3);
-                PlaceSkill(card.clauses.rectTransform, 24, 86, bodyWidth - 48, rulesHeight);
                 cursor += height + 16;
             }
             PlaceSkill(descriptionHeading.rectTransform, 6, cursor + 2, bodyWidth - 12, 38); cursor += 48;

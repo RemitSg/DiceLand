@@ -341,9 +341,8 @@ public static partial class RelicSystem
             return;
 
         int relicAmount = Mathf.Max(1, relicState.amount);
-        context.additionalPowerBonus += effect.powerAmount * relicAmount;
-        context.additionalMinPowerBonus += effect.minPowerAmount * relicAmount;
-        context.additionalMaxPowerBonus += effect.maxPowerAmount * relicAmount;
+        context.AddPlayerDiceModifier(relicData, effect.minPowerAmount * relicAmount,
+            effect.maxPowerAmount * relicAmount, effect.powerAmount * relicAmount, clashOnlyPower: true);
     }
 
     private static void HandleHealSourceWhenPlayerAppliesStatusToEnemy(

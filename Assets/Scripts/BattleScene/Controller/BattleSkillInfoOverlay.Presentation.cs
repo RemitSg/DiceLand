@@ -47,6 +47,12 @@ public partial class BattleSkillInfoOverlay
         public RectTransform rect, rule;
         public TextMeshProUGUI heading, range, clauses;
         public BattleSkillFrameGraphic icon;
+        public TextMeshProUGUI rangeCaption, rangeToggleLabel;
+        public RectTransform rangeTable, rangeTableRule, rangeToggleArrow;
+        public Button rangeToggle;
+        public readonly List<DiceRangeRowView> rangeRows = new List<DiceRangeRowView>();
+        public BattleDiceRangeBreakdown breakdown;
+        public bool rangeExpanded;
         public float top;
     }
 

@@ -13,7 +13,9 @@ public static class BattleDiceRangeModifierService
         Func<string, int> getSelfStatusStacksById,
         Func<BattleStatus_SO, int> getTargetStatusStacksByAsset,
         Func<string, int> getTargetStatusStacksById,
-        EnemySkill_SO targetSkill = null)
+        EnemySkill_SO targetSkill = null,
+        bool hasTarget = true,
+        Action<string, int, int> onApplied = null)
     {
         if (skill == null)
             return range;
@@ -24,16 +26,21 @@ public static class BattleDiceRangeModifierService
 
         for (int i = 0; i < settings.rangeModifiers.Length; i++)
         {
+            EnemySkill_SO.ConditionalDiceRangeModifierEntry modifier = settings.rangeModifiers[i];
+            if (!hasTarget && modifier.useCondition && BattleModifierConditionService.RequiresTarget(modifier.condition))
+                continue;
+
             range = EvaluateConditionalRangeModifier(
                 range,
-                settings.rangeModifiers[i],
+                modifier,
                 selfSpeed,
                 targetSpeed,
                 getSelfStatusStacksByAsset,
                 getSelfStatusStacksById,
                 getTargetStatusStacksByAsset,
                 getTargetStatusStacksById,
-                targetSkill);
+                targetSkill,
+                onApplied);
         }
 
         return range;
@@ -48,7 +55,8 @@ public static class BattleDiceRangeModifierService
         Func<string, int> getSelfStatusStacksById,
         Func<BattleStatus_SO, int> getTargetStatusStacksByAsset,
         Func<string, int> getTargetStatusStacksById,
-        EnemySkill_SO targetSkill)
+        EnemySkill_SO targetSkill,
+        Action<string, int, int> onApplied)
     {
         bool conditionMet = !modifier.useCondition;
         if (!conditionMet)
@@ -86,7 +94,8 @@ public static class BattleDiceRangeModifierService
                     return ApplyPerThresholdRangeModifier(
                         range,
                         modifier,
-                        ResolveTargetStatusStacks(modifier, getTargetStatusStacksByAsset, getTargetStatusStacksById));
+                        ResolveTargetStatusStacks(modifier, getTargetStatusStacksByAsset, getTargetStatusStacksById),
+                        onApplied);
                 case EnemySkill_SO.PowerModifierCondition.TargetNegativeStatusTypesAtLeast:
                     conditionMet = BattleNegativeStatusService.HasAtLeastNegativeStatusTypes(getTargetStatusStacksById, modifier.requiredStatusStacks);
                     break;
@@ -99,6 +108,7 @@ public static class BattleDiceRangeModifierService
         if (!conditionMet)
             return range;
 
+        onApplied?.Invoke(modifier.effectName, modifier.minPowerBonus, modifier.maxPowerBonus);
         range.minPower = Mathf.Max(0, range.minPower + modifier.minPowerBonus);
         range.maxPower = Mathf.Max(range.minPower, range.maxPower + modifier.maxPowerBonus);
         return range;
@@ -107,7 +117,8 @@ public static class BattleDiceRangeModifierService
     private static EnemySkill_SO.DicePowerRange ApplyPerThresholdRangeModifier(
         EnemySkill_SO.DicePowerRange range,
         EnemySkill_SO.ConditionalDiceRangeModifierEntry modifier,
-        int statusStacks)
+        int statusStacks,
+        Action<string, int, int> onApplied)
     {
         int threshold = Mathf.Max(1, modifier.requiredStatusStacks);
         int steps = Mathf.Max(0, statusStacks) / threshold;
@@ -121,6 +132,7 @@ public static class BattleDiceRangeModifierService
         if (modifier.maxPowerBonusCap > 0 && maxBonus > 0)
             maxBonus = Mathf.Min(maxBonus, modifier.maxPowerBonusCap);
 
+        onApplied?.Invoke(modifier.effectName, minBonus, maxBonus);
         range.minPower = Mathf.Max(0, range.minPower + minBonus);
         range.maxPower = Mathf.Max(range.minPower, range.maxPower + maxBonus);
         return range;
