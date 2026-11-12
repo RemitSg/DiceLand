@@ -46,6 +46,8 @@ public sealed partial class RelicExecutionContext
     internal HashSet<string> previewRoundRelicProcs;
     internal BattleDiceRangeBreakdown previewDiceBreakdown;
     internal bool previewDiceForTarget;
+    internal int previewConsecutiveSkillUses;
+    internal bool previewResetsConsecutiveSkill;
 
     // Incoming damage context.
     public int incomingDamage;

@@ -46,9 +46,10 @@ public partial class BattleSkillInfoOverlay
         energyMetadata.text = SkillEnergyLabel(skill);
         diceMetadata.text = GameText.Format("battle.skill.dice_count", "骰子数 {count}", ("count", skill != null ? Mathf.Max(0, skill.diceCount) : 0));
         SpeedButton sourceButton = viewMode == SkillViewMode.Ally ? currentAllySourceButton : currentEnemySourceButton;
-        BattleDiceRangePreview preview = BattleDiceRangePreview.Build(skill, currentAlly, currentEnemy, sourceButton);
+        BattleDiceRangePreview preview = skill != null ? BattleDiceRangePreview.Build(skill, currentAlly, currentEnemy, sourceButton) : null;
         string requirements = BuildSkillRequirements(skill);
-        string target = preview.Dice.Length > 0 ? GetDiceTargetLabel(preview) : string.Empty;
+        int count = preview?.Dice.Length ?? 0;
+        string target = count > 0 ? GetDiceTargetLabel(preview) : string.Empty;
         requirementsText.text = string.IsNullOrEmpty(requirements) ? target
             : string.IsNullOrEmpty(target) ? requirements : requirements + "\n" + target;
         bool dataMode = viewMode == SkillViewMode.EnemyData;
@@ -58,7 +59,6 @@ public partial class BattleSkillInfoOverlay
         descriptionBody.gameObject.SetActive(!dataMode);
         descriptionBody.text = skill != null && !string.IsNullOrWhiteSpace(skill.description)
             ? skill.LocalizedDescription : GameText.Get("ui.no_description", "暂无描述。");
-        int count = preview.Dice.Length;
         EnsureDiceCards(count);
         for (int i = 0; i < diceCards.Count; i++)
         {

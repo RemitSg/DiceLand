@@ -110,7 +110,10 @@ public static partial class RelicSystem
         if (skillChainAlly == null || context.skillData == null)
             return;
 
-        if (skillChainAlly.GetCompletedConsecutiveSkillUses(context.skillData) < Mathf.Max(1, effect.requiredConsecutiveSkillUses))
+        int completedUses = context.previewRoundRelicProcs != null
+            ? context.previewConsecutiveSkillUses
+            : skillChainAlly.GetCompletedConsecutiveSkillUses(context.skillData);
+        if (completedUses < Mathf.Max(1, effect.requiredConsecutiveSkillUses))
             return;
 
         int skillChainPowerBonus = Mathf.Max(0, effect.powerAmount * Mathf.Max(1, relicState.amount));
@@ -120,6 +123,8 @@ public static partial class RelicSystem
         context.AddPlayerDiceModifier(relicData, power: skillChainPowerBonus);
         if (context.previewRoundRelicProcs == null)
             skillChainAlly.MarkConsecutiveSkillResetAfterCurrentUse(context.skillData);
+        else
+            context.previewResetsConsecutiveSkill = true;
         return;
     }
 

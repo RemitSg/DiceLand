@@ -60,9 +60,8 @@ public class BattleAllyController : MonoBehaviour
     private readonly HashSet<string> consumedLethalProtectionRelicIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     private const string BurnStatusId = "burn";
     private const string BleedStatusId = "bleed";
-    private EnemySkill_SO consecutiveSkillTracker;
-    private int consecutiveSkillUseCount;
-    private EnemySkill_SO pendingConsecutiveSkillResetSkill;
+    private ConsecutiveSkillUsage consecutiveSkillUsage;
+    internal ConsecutiveSkillUsage SkillUsage => consecutiveSkillUsage;
     private GameObject speedButtonTemplateObject;
     private float speedButtonTopLocalY;
     private Vector2 speedButtonBaseOffset = new Vector2(0f, 1f);
@@ -407,7 +406,7 @@ public class BattleAllyController : MonoBehaviour
 
     public void MarkCurrentRoundSkillUsed()
     {
-        RegisterCurrentSkillUsage(SelectedSkill);
+        consecutiveSkillUsage.Register(SelectedSkill);
         CurrentRoundUsedSkill = SelectedSkill;
         if (SelectedSkill != null)
             currentRoundUsedSkills.Add(SelectedSkill);
@@ -426,18 +425,12 @@ public class BattleAllyController : MonoBehaviour
 
     public int GetCompletedConsecutiveSkillUses(EnemySkill_SO skill)
     {
-        if (skill == null || consecutiveSkillTracker != skill)
-            return 0;
-
-        return Mathf.Max(0, consecutiveSkillUseCount);
+        return consecutiveSkillUsage.GetUses(skill);
     }
 
     public void MarkConsecutiveSkillResetAfterCurrentUse(EnemySkill_SO skill)
     {
-        if (skill == null)
-            return;
-
-        pendingConsecutiveSkillResetSkill = skill;
+        consecutiveSkillUsage.ResetOnNextUse(skill);
     }
 
     public bool HasConsumedLethalProtection(string relicId)
@@ -577,7 +570,7 @@ public class BattleAllyController : MonoBehaviour
         return BattleStatusDicePowerService.ApplyRangeModifiers(range, isDefenseSkill, statusEntries, breakdown);
     }
 
-    private EnemySkill_SO.DicePowerRange ResolveSkillBaseDiceRange(EnemySkill_SO skill, int diceIndex)
+    internal EnemySkill_SO.DicePowerRange ResolveSkillBaseDiceRange(EnemySkill_SO skill, int diceIndex)
     {
         EnemySkill_SO.DicePowerRange range;
         if (skill != null)
@@ -1378,28 +1371,28 @@ public class BattleAllyController : MonoBehaviour
         }
     }
 
-    private void RegisterCurrentSkillUsage(EnemySkill_SO skill)
+    internal struct ConsecutiveSkillUsage
     {
-        if (skill == null)
-            return;
+        private EnemySkill_SO currentSkill;
+        private EnemySkill_SO pendingReset;
+        private int uses;
 
-        if (pendingConsecutiveSkillResetSkill == skill)
+        public int GetUses(EnemySkill_SO skill) => skill != null && currentSkill == skill ? Mathf.Max(0, uses) : 0;
+
+        public void Register(EnemySkill_SO skill)
         {
-            consecutiveSkillTracker = skill;
-            consecutiveSkillUseCount = 0;
-            pendingConsecutiveSkillResetSkill = null;
-            return;
+            if (skill == null)
+                return;
+            uses = pendingReset == skill ? 0 : GetUses(skill) + 1;
+            currentSkill = skill;
+            pendingReset = null;
         }
 
-        if (consecutiveSkillTracker == skill)
-            consecutiveSkillUseCount = consecutiveSkillUseCount > 0 ? consecutiveSkillUseCount + 1 : 1;
-        else
+        public void ResetOnNextUse(EnemySkill_SO skill)
         {
-            consecutiveSkillTracker = skill;
-            consecutiveSkillUseCount = 1;
+            if (skill != null)
+                pendingReset = skill;
         }
-
-        pendingConsecutiveSkillResetSkill = null;
     }
 
     private void EnsureSelectedSkillSlots(EnemySkill_SO[] activeSkillPool = null)

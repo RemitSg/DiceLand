@@ -18,6 +18,8 @@ internal sealed class BattleDiceRangeBreakdown
 
     public EnemySkill_SO.DicePowerRange BaseRange { get; }
     public EnemySkill_SO.DicePowerRange Range { get; private set; }
+    public EnemySkill_SO.DicePowerRange RollRange { get; private set; }
+    public int PowerBonus { get; private set; }
     public IReadOnlyList<Modifier> Modifiers => modifiers;
     public bool WillRoll { get; }
 
@@ -44,8 +46,15 @@ internal sealed class BattleDiceRangeBreakdown
             Add($"{entry.statusData.LocalizedName} ×{entry.stacks}", entry.statusData.IconSprite, minimum, maximum);
     }
 
-    public void SetFinalRange(EnemySkill_SO.DicePowerRange range)
+    public void SetRollOutcome(EnemySkill_SO.DicePowerRange rollRange, int powerBonus)
     {
+        RollRange = rollRange;
+        PowerBonus = powerBonus;
+        var range = new EnemySkill_SO.DicePowerRange
+        {
+            minPower = BattlePowerCalculationService.ClampFinalPower(rollRange.minPower, powerBonus),
+            maxPower = BattlePowerCalculationService.ClampFinalPower(rollRange.maxPower, powerBonus)
+        };
         // Keep the displayed deltas additive even when the combat calculation clamps an endpoint.
         Add(GameText.LanguageCode == GameText.English ? "Range limits" : "范围校正", null,
             range.minPower - BaseRange.minPower - minimumDelta, range.maxPower - BaseRange.maxPower - maximumDelta);

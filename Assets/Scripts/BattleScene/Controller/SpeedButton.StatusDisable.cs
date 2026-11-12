@@ -15,6 +15,7 @@ public partial class SpeedButton
             return;
 
         IsActionDisabled = disabled;
+        MarkTargetingChanged();
         if (disabled)
         {
             EnsureRuntimeReferences();

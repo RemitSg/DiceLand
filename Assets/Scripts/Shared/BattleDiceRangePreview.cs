@@ -6,6 +6,7 @@ internal sealed class BattleDiceRangePreview
     public readonly BattleDiceRangeBreakdown[] Dice;
     public readonly string TargetName;
     public readonly bool IsClash;
+    public bool ResetsConsecutiveSkill { get; private set; }
 
     private BattleDiceRangePreview(int count, string targetName, bool isClash)
     {
@@ -14,9 +15,10 @@ internal sealed class BattleDiceRangePreview
         IsClash = isClash;
     }
 
-    public static BattleDiceRangePreview Build(EnemySkill_SO skill, BattleAllyController ally, BattleEnemyController enemy, SpeedButton sourceButton)
+    public static BattleDiceRangePreview Build(EnemySkill_SO skill, BattleAllyController ally, BattleEnemyController enemy,
+        SpeedButton sourceButton, HashSet<string> previewProcs = null, bool includeQueuedBonus = true, int? consecutiveSkillUses = null)
     {
-        if (skill == null)
+        if (ally == null && enemy == null)
             return new BattleDiceRangePreview(0, null, false);
 
         bool isAlly = ally != null;
@@ -56,18 +58,27 @@ internal sealed class BattleDiceRangePreview
             ? ally.ResolveForcedRollMode(out BattleStatusRuntimeEntry forcedBy)
             : enemy.ResolveForcedRollMode(out forcedBy);
 
-        var preview = new BattleDiceRangePreview(Math.Max(0, skill.diceCount), targetName, isClash);
-        var previewProcs = new HashSet<string>(StringComparer.Ordinal);
+        var preview = new BattleDiceRangePreview(Math.Max(0, skill?.diceCount ?? 1), targetName, isClash);
+        previewProcs ??= new HashSet<string>(StringComparer.Ordinal);
         BattleEncounterData encounter = BattleEncounterRuntime.ActiveEncounter;
+        if (isAlly && !consecutiveSkillUses.HasValue)
+        {
+            BattleAllyController.ConsecutiveSkillUsage usage = ally.SkillUsage;
+            usage.Register(skill);
+            consecutiveSkillUses = usage.GetUses(skill);
+        }
         for (int i = 0; i < preview.Dice.Length; i++)
         {
             bool clashDie = i < clashDice;
-            bool willRoll = hasTarget && (clashDie || skill.GetDiceSkillCategory(i) == EnemySkill_SO.SkillCategory.Attack);
-            var breakdown = new BattleDiceRangeBreakdown(skill.GetDicePowerRange(i), willRoll);
+            bool willRoll = hasTarget && (clashDie || skill?.GetDiceSkillCategory(i) == EnemySkill_SO.SkillCategory.Attack);
+            EnemySkill_SO.DicePowerRange baseRange = isAlly
+                ? ally.ResolveSkillBaseDiceRange(skill, i)
+                : BattleEnemyController.ResolveSkillBaseDiceRange(skill, i);
+            var breakdown = new BattleDiceRangeBreakdown(baseRange, willRoll);
             preview.Dice[i] = breakdown;
             EnemySkill_SO.DicePowerRange range = isAlly
                 ? ally.GetDisplayedDicePowerRange(skill, i, breakdown)
-                : enemy.GetEffectiveDisplayedDicePowerRange(skill, i, breakdown);
+                : enemy.GetEffectiveDisplayedDicePowerRange(skill, i, breakdown, includeQueuedBonus);
 
             void RecordSkill(string name, int min, int max, bool clashOnly = false)
             {
@@ -77,7 +88,7 @@ internal sealed class BattleDiceRangePreview
 
             range = BattleDiceRangeModifierService.ApplyRangeModifiers(skill, i, range, selfSpeed, targetSpeed,
                 selfByAsset, selfById, targetByAsset, targetById, targetSkill, hasTarget, (name, min, max) => RecordSkill(name, min, max));
-            if (isAlly && i == 0 && ally.CurrentRoundRelicMinPowerBonus != 0)
+            if (isAlly && i == 0 && includeQueuedBonus && ally.CurrentRoundRelicMinPowerBonus != 0)
             {
                 Relic_SO relic = ally.CurrentRoundMinPowerRelic;
                 int bonus = ally.CurrentRoundRelicMinPowerBonus;
@@ -93,7 +104,9 @@ internal sealed class BattleDiceRangePreview
                 context.previewRoundRelicProcs = previewProcs;
                 context.previewDiceBreakdown = breakdown;
                 context.previewDiceForTarget = !isAlly;
+                context.previewConsecutiveSkillUses = consecutiveSkillUses.GetValueOrDefault();
                 RelicSystem.Process(encounter.relicInventory, context);
+                preview.ResetsConsecutiveSkill |= isAlly && context.previewResetsConsecutiveSkill;
                 range = isAlly
                     ? BattleDiceRollService.ApplyRangeBonus(range, context.additionalMinPowerBonus, context.additionalMaxPowerBonus)
                     : BattleDiceRollService.ApplyRangeBonus(range, context.additionalTargetMinPowerBonus, 0);
@@ -133,10 +146,7 @@ internal sealed class BattleDiceRangePreview
                 }
             }
 
-            int totalPower = relicPower + skillUsePower + actionPower;
-            range.minPower = BattlePowerCalculationService.ClampFinalPower(range.minPower, totalPower);
-            range.maxPower = BattlePowerCalculationService.ClampFinalPower(range.maxPower, totalPower);
-            breakdown.SetFinalRange(range);
+            breakdown.SetRollOutcome(range, relicPower + skillUsePower + actionPower);
         }
         return preview;
     }

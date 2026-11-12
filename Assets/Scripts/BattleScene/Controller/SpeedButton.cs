@@ -121,6 +121,9 @@ public partial class SpeedButton : MonoBehaviour
     private Vector3 lastCurveStart;
     private Vector3 lastCurveEnd;
     private bool hasCurveProjection;
+    private Color committedCurveColor = Color.white;
+    private float roundPreviewEmphasis = 1f;
+    internal static int TargetingRevision { get; private set; }
 
     /// <summary>全局战斗锁 —— 战斗结算阶段禁止所有按钮交互与画线</summary>
     public static bool CombatLocked = false;
@@ -327,6 +330,7 @@ public partial class SpeedButton : MonoBehaviour
     {
         if (IsActionDisabled) return;
         if (CombatLocked || InputSuppressed) return;
+        if (BattleRoundPreviewOverlay.ContainsPointer(Input.mousePosition)) return;
         if (!IsScreenPointAllowedByTutorialHighlight(Input.mousePosition)) return;
         if (buttonType == ButtonType.Ally && !isInteractable) return;
 
@@ -700,6 +704,7 @@ public partial class SpeedButton : MonoBehaviour
         DrawConnectedCurve(Color.yellow);
         lineRenderer.enabled = true;
         UpdateConnectedCurveStyleWithColor(Color.yellow);
+        MarkTargetingChanged();
     }
 
     private void DowngradeFromContestedConnection(SpeedButton enemyButton)
@@ -713,6 +718,7 @@ public partial class SpeedButton : MonoBehaviour
         DrawConnectedCurve(allySubordinateColor);
         lineRenderer.enabled = true;
         UpdateConnectedCurveStyleWithColor(allySubordinateColor);
+        MarkTargetingChanged();
     }
 
     /// <summary>
@@ -741,6 +747,7 @@ public partial class SpeedButton : MonoBehaviour
 
         // 更新曲线样式为实线
         UpdateConnectedCurveStyleWithColor(lineColor);
+        MarkTargetingChanged();
         ConnectionChanged?.Invoke(this);
     }
 
@@ -768,7 +775,10 @@ public partial class SpeedButton : MonoBehaviour
             prevAbsorbedEnemy.RestoreAutoConnection();
 
         if (hadConnection)
+        {
+            MarkTargetingChanged();
             ConnectionChanged?.Invoke(this);
+        }
     }
 
     private void HideConnectionVisual()
@@ -853,9 +863,46 @@ public partial class SpeedButton : MonoBehaviour
             ApplyDashMaterialST(1f, 0f);
         }
         lineRenderer.textureMode = LineTextureMode.Stretch;
-        lineRenderer.startColor = color;
-        lineRenderer.endColor = color;
-        lineRenderer.widthMultiplier = 0.1f;
+        committedCurveColor = color;
+        ApplyRoundPreviewEmphasis();
+    }
+
+    private static void MarkTargetingChanged() => TargetingRevision = unchecked(TargetingRevision + 1);
+
+    internal void SetRoundPreviewEmphasis(float emphasis)
+    {
+        if (Mathf.Approximately(roundPreviewEmphasis, emphasis))
+            return;
+        roundPreviewEmphasis = emphasis;
+        if (isConnected && !isDragging && lineRenderer != null)
+            ApplyRoundPreviewEmphasis();
+    }
+
+    private void ApplyRoundPreviewEmphasis()
+    {
+        Color tint = committedCurveColor;
+        tint.a *= Mathf.Min(1f, roundPreviewEmphasis);
+        lineRenderer.startColor = lineRenderer.endColor = tint;
+        lineRenderer.widthMultiplier = 0.1f * roundPreviewEmphasis;
+        if (arrowMaterial != null)
+            arrowMaterial.color = tint;
+    }
+
+    internal bool TryGetRoundPreviewAnchor(Camera camera, float fraction, out Vector2 screenAnchor)
+    {
+        screenAnchor = default;
+        if (headlessExecution || camera == null || !isConnected || lineRenderer == null || !lineRenderer.enabled
+            || lineRenderer.positionCount < 2)
+            return false;
+
+        RefreshIntentForCamera(camera);
+        int index = Mathf.RoundToInt((lineRenderer.positionCount - 1) * fraction);
+        Vector3 viewport = camera.WorldToViewportPoint(lineRenderer.GetPosition(index));
+        if (viewport.z <= 0 || viewport.x < 0 || viewport.x > 1 || viewport.y < 0 || viewport.y > 1)
+            return false;
+        Rect rect = camera.rect;
+        screenAnchor = rect.min + Vector2.Scale(rect.size, new Vector2(viewport.x, viewport.y));
+        return true;
     }
 
     /// <summary>
@@ -1328,7 +1375,7 @@ public partial class SpeedButton : MonoBehaviour
         // Validation and hot reload may run after targeting. Rebuild resources without
         // turning a committed red/yellow/blue connection back into a drag-preview dash.
         if (isConnected && connectedButton != null && !isDragging)
-            UpdateConnectedCurveStyleWithColor(lineRenderer.startColor);
+            UpdateConnectedCurveStyleWithColor(committedCurveColor);
         else
             UpdateUnconnectedCurveStyle();
     }

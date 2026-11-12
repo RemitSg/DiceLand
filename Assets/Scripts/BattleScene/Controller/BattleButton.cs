@@ -261,6 +261,8 @@ public partial class BattleButton : MonoBehaviour
 
     private void ClearActiveRoundCombatants()
     {
+        roundPreview?.Clear();
+        roundPreviewDirty = true;
         UnbindActiveRoundCombatantEvents();
         activeRoundAllies = null;
         activeRoundEnemies = null;
@@ -293,11 +295,13 @@ public partial class BattleButton : MonoBehaviour
 
     private void HandleActiveRoundAllyDied(BattleAllyController defeatedAlly)
     {
+        roundPreviewDirty = true;
         ApplyPlayerDeathRelics(defeatedAlly, activeRoundAllies, activeRoundEnemies);
     }
 
     private void HandleActiveRoundEnemyDied(BattleEnemyController defeatedEnemy)
     {
+        roundPreviewDirty = true;
         ApplyEnemyDeathTriggeredStatusGains(defeatedEnemy);
         ApplyEnemyDeathCalamityStatusGains(defeatedEnemy);
         ApplyEnemyDeathRelics(defeatedEnemy, activeRoundAllies, activeRoundEnemies);
@@ -733,6 +737,7 @@ public partial class BattleButton : MonoBehaviour
 
     private void HandleAllySelectedSkillChanged(BattleAllyController ally)
     {
+        roundPreviewDirty = true;
         if (ally == null)
             return;
 
@@ -820,6 +825,7 @@ public partial class BattleButton : MonoBehaviour
 
     private void HandleAllyStatusChanged(BattleAllyController ally)
     {
+        roundPreviewDirty = true;
         if (ally == null || ally.StatusEntries == null || ally.StatusEntries.Count == 0)
             return;
 
@@ -829,6 +835,7 @@ public partial class BattleButton : MonoBehaviour
 
     private void HandleEnemyStatusChanged(BattleEnemyController enemy)
     {
+        roundPreviewDirty = true;
         if (enemy == null || enemy.StatusEntries == null || enemy.StatusEntries.Count == 0)
             return;
 

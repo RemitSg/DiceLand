@@ -9,6 +9,7 @@ public partial class BattleButton
     private void LateUpdate()
     {
         RefreshTutorialInteractionGuidance();
+        RefreshRoundPreview();
     }
 
     private void ArmTutorialInteractionGuidance()

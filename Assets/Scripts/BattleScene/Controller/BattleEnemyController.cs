@@ -539,9 +539,11 @@ public class BattleEnemyController : MonoBehaviour
     }
 
     internal EnemySkill_SO.DicePowerRange GetEffectiveDisplayedDicePowerRange(
-        EnemySkill_SO skill, int diceIndex, BattleDiceRangeBreakdown breakdown)
+        EnemySkill_SO skill, int diceIndex, BattleDiceRangeBreakdown breakdown, bool includeQueuedBonus = true)
     {
-        EnemySkill_SO.DicePowerRange range = GetDisplayedDicePowerRange(skill, diceIndex, breakdown);
+        EnemySkill_SO.DicePowerRange range = includeQueuedBonus
+            ? GetDisplayedDicePowerRange(skill, diceIndex, breakdown)
+            : ResolveSkillBaseDiceRange(skill, diceIndex);
         bool isDefenseSkill = skill != null
             && skill.GetDiceSkillCategory(diceIndex) == EnemySkill_SO.SkillCategory.Defense;
         return BattleStatusDicePowerService.ApplyRangeModifiers(range, isDefenseSkill, statusEntries, breakdown, IsStatusEffectSuppressed);
@@ -1848,7 +1850,7 @@ public class BattleEnemyController : MonoBehaviour
         return null;
     }
 
-    private EnemySkill_SO.DicePowerRange ResolveSkillBaseDiceRange(EnemySkill_SO skill, int diceIndex)
+    internal static EnemySkill_SO.DicePowerRange ResolveSkillBaseDiceRange(EnemySkill_SO skill, int diceIndex)
     {
         if (skill == null)
         {
