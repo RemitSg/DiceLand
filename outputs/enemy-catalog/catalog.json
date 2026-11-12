@@ -31,7 +31,7 @@
       "scope": "新增 044 枯枝王庭与召唤物 4401 新芽：完整核对实际资产、GUID、两阶段、被动、七个技能及 Boss 池投放；其他历史内容仍沿用原快照和已单列的增量修订。",
       "validation": "MCP EditMode 24/24 通过；使用实际敌群执行 8 回合定向战斗检查，覆盖第 1/4/7 回合召唤、第二阶段、个人第四回合断枝与次回合献祭。非完整通关或难度平衡验证。"
     },
-    "coverage": "以 2026-10-26 历史快照的 50 个敌人资产、129 个关联技能为基础，2026-11-09 完整增补 044 枯枝王庭与 4401 新芽的 2 个资产及 7 个技能，合计 52 个敌人资产、136 个关联技能。历史血孢子等未复核条目仍保留原快照，不代表全部内容已重新导出。 2026-11-10 仅修订 4401 新芽的战斗体型：enemyVisualScale 从 1 调整至 0.12，普通立绘与成长／断枝姿态统一继承该倍率；其他历史条目未重新导出，敌人资产 52、关联技能 136 的数量不变。",
+    "coverage": "以 2026-10-26 历史快照的 50 个敌人资产、129 个关联技能为基础，2026-11-09 完整增补 044 枯枝王庭与 4401 新芽的 2 个资产及 7 个技能，合计 52 个敌人资产、136 个关联技能。历史血孢子等未复核条目仍保留原快照，不代表全部内容已重新导出。 2026-11-10 仅修订 4401 新芽的战斗体型：enemyVisualScale 从 1 调整至 0.12，普通立绘与成长／断枝姿态统一继承该倍率；其他历史条目未重新导出，敌人资产 52、关联技能 136 的数量不变。 2026-11-12 增量调整 044 枯枝王庭的战斗体型（1 → 0.7）与 4401 新芽「成长」的攻击骰（2–4 → 2–3）。其他历史条目未重新导出，仍收录 52 个敌人资产与 136 个关联技能。",
     "latest_presentation_revision": {
       "date": "2026-11-09",
       "enemyNumbers": [
@@ -149,14 +149,27 @@
       }
     ],
     "latest_visual_scale_revision": {
-      "date": "2026-11-10",
+      "date": "2026-11-12",
+      "enemyNumbers": [
+        44
+      ],
+      "enemyIds": [
+        44
+      ],
+      "scope": "仅调整 044 枯枝王庭的战斗体型。战斗体型为原来的 70%（enemyVisualScale=0.7）。两个阶段的立绘与技能姿态均沿用该倍率。"
+    },
+    "latest_skill_balance_revision": {
+      "date": "2026-11-12",
       "enemyNumbers": [
         4401
       ],
       "enemyIds": [
         4401
       ],
-      "scope": "2026-11-10 仅修订 4401 新芽的战斗体型：enemyVisualScale 从 1 调整至 0.12，普通立绘与成长／断枝姿态统一继承该倍率；其他历史条目未重新导出，敌人资产 52、关联技能 136 的数量不变。"
+      "skillNames": [
+        "成长"
+      ],
+      "scope": "仅调整 4401 新芽的成长。第 1 颗攻击骰由 2–4 改为 2–3，断枝仍为 2–4。"
     }
   },
   "enemies": [
@@ -36280,7 +36293,7 @@
             "description": "免疫中毒。"
           }
         ],
-        "enemyVisualScale": 1.0,
+        "enemyVisualScale": 0.7,
         "enemyVisualOffset": {
           "x": 0.0,
           "y": 0.0,
@@ -36349,7 +36362,7 @@
         ],
         "m_Name": "WitheredCourt"
       },
-      "catalog_revision": "2026-11-09",
+      "catalog_revision": "2026-11-12",
       "granted_to_player": [],
       "groups": [
         {
@@ -36365,6 +36378,7 @@
         "毒属性来自敌群 Assets/Data/Enemies/EnemyGroup/Boss/WitheredCourt.asset（GUID 5f7c2e81c73a06f4ca544f12623bd932），召唤单位继承该敌群的属性。"
       ],
       "configured_mechanics": [
+        "战斗体型为原来的 70%（enemyVisualScale=0.7）。两个阶段的立绘与技能姿态均沿用该倍率。",
         "落红无情（RED）：生命严格低于上限 50% 时，排队在下回合开始切换第二阶段；60 上限时 30 生命不触发，29 或更低触发。无阈值锁血；排队后治疗不取消切换，死亡不会进入第二阶段。",
         "第二阶段沿用生命上限 60、速度 2–6、速度槽 2 与同一立绘；生长替换为野长，茂盛替换为繁茂，分解继续可用。",
         "落地生根（ORANGE）：通过条件技能在战斗全局第 1、4、7……回合固定占用一个速度槽，第一阶段使用生长、第二阶段使用野长，每回合最多一个召唤技能；阶段切换不重置回合周期。被动不会另行重复召唤。",
@@ -36413,7 +36427,7 @@
           ],
           "transform_stage": -1,
           "ally_grant": false,
-          "detail": "成长\n技能：成长\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n描述：\n柔软的新枝开始长出锋利的边缘。",
+          "detail": "成长\n技能：成长\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n描述：\n柔软的新枝开始长出锋利的边缘。",
           "raw": {
             "skillName": "成长",
             "localizationKey": "skill.withered_court.budding",
@@ -36444,12 +36458,12 @@
             "targetPriorityStatusType": 0,
             "targetPriorityRequiredStacks": 1,
             "minPower": 2,
-            "maxPower": 4,
+            "maxPower": 3,
             "diceCount": 1,
             "dicePowerRanges": [
               {
                 "minPower": 2,
-                "maxPower": 4
+                "maxPower": 3
               }
             ],
             "dicePresentationSettings": [
@@ -36822,7 +36836,7 @@
         ],
         "m_Name": "NewBud"
       },
-      "catalog_revision": "2026-11-10",
+      "catalog_revision": "2026-11-12",
       "granted_to_player": [],
       "groups": [],
       "attribute_sources": [

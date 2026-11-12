@@ -31,11 +31,11 @@ MonoBehaviour:
   targetPriorityStatusType: 0
   targetPriorityRequiredStacks: 1
   minPower: 2
-  maxPower: 4
+  maxPower: 3
   diceCount: 1
   dicePowerRanges:
   - minPower: 2
-    maxPower: 4
+    maxPower: 3
   dicePresentationSettings:
   - clashEffectPrefab: {fileID: 0}
     hitEffectPrefab: {fileID: 0}
