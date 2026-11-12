@@ -42,6 +42,21 @@ public sealed class LuckyMazeDungeonTests
     }
 
     [Test]
+    public void EachMazeRoomResolvesItsOwnIllustration()
+    {
+        Sprite entrance = MapEventSceneArt.Resolve(Event("033 幸运游戏（其二）.asset"));
+        var illustrations = new HashSet<Sprite>();
+        foreach (SpecialDungeonTileEntry entry in Dungeon.GetValidEntries())
+        {
+            MapEvent_SO room = entry.eventData;
+            Sprite illustration = MapEventSceneArt.Resolve(room);
+            Assert.IsNotNull(illustration, room.eventId);
+            Assert.AreNotSame(entrance, illustration, room.eventId);
+            Assert.IsTrue(illustrations.Add(illustration), $"Duplicate room illustration: {room.eventId}");
+        }
+    }
+
+    [Test]
     public void InitialMovement_OnlyReachesFirstEvent_AndStaysLockedAfterReturningToSpawn()
     {
         var built = SpecialDungeonBoardBuilder.Build(Dungeon, 123);
@@ -146,16 +161,16 @@ public sealed class LuckyMazeDungeonTests
         var go = new GameObject("HiddenLuckyConsequences"); temporary.Add(go);
         var overlay = go.AddComponent<MapEventOverlay>(); MapEvent_SO room = Event("033_D_01 科目四.asset");
         overlay.Show(Tile(room), room, null);
-        Assert.IsFalse(Field<TMP_Text>(overlay, "consequenceTitleText").gameObject.activeSelf);
-        Assert.IsFalse(Field<UnityEngine.UI.ScrollRect>(overlay, "consequenceScrollRect").gameObject.activeSelf);
+        Assert.IsFalse(Field<TMP_Text>(overlay, "consequenceTitleText").gameObject.activeInHierarchy);
+        Assert.IsFalse(Field<UnityEngine.UI.ScrollRect>(overlay, "consequenceScrollRect").gameObject.activeInHierarchy);
         Assert.IsTrue(go.GetComponentsInChildren<TMP_Text>(true).Where(t => t.gameObject.name == "Detail").All(t => !t.gameObject.activeSelf && string.IsNullOrEmpty(t.text)));
         typeof(MapEventOverlay).GetMethod("ShowResultStep", BindingFlags.Instance | BindingFlags.NonPublic)
             .Invoke(overlay, new object[] { room.options[1], "获得奖励", "故事结果", null });
-        Assert.IsFalse(Field<UnityEngine.UI.ScrollRect>(overlay, "consequenceScrollRect").gameObject.activeSelf);
+        Assert.IsFalse(Field<UnityEngine.UI.ScrollRect>(overlay, "consequenceScrollRect").gameObject.activeInHierarchy);
         var normal = ScriptableObject.CreateInstance<MapEvent_SO>(); temporary.Add(normal);
         normal.options.Add(new MapEventOptionData { consequenceDescription = "正常后果预览" });
         overlay.Show(Tile(normal), normal, null);
-        Assert.IsTrue(Field<UnityEngine.UI.ScrollRect>(overlay, "consequenceScrollRect").gameObject.activeSelf);
+        Assert.IsTrue(Field<UnityEngine.UI.ScrollRect>(overlay, "consequenceScrollRect").gameObject.activeInHierarchy);
     }
 
     private static MapEvent_SO Event(string filename) => AssetDatabase.LoadAssetAtPath<MapEvent_SO>(Folder + filename);

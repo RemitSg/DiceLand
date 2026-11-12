@@ -15,7 +15,7 @@ MonoBehaviour:
   eventId: 033_A_00
   eventName: "\u76E5\u6D17\u5BA4"
   eventContent: "\u4F60\u7684\u51FA\u751F\u70B9\u662F\u4E2A\u5395\u6240\uFF0C\u4F60\u5DEE\u70B9\u6389\u8FDB\u5751\u91CC\u3002\u628A\u6454\u6210\u516B\u74E3\u7684\u5C41\u80A1\u62FC\u8D77\u6765\uFF0C\u770B\u7740\u4E24\u5EA7\u5927\u95E8\uFF0C\u4F60\u51B3\u5B9A\uFF1A"
-  eventIllustration: {fileID: 0}
+  eventIllustration: {fileID: 21300000, guid: c9ddaf99c61c0084e95ab89dc90e90c5, type: 3}
   hideConsequences: 1
   options:
   - optionId: 1

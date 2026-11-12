@@ -6,7 +6,7 @@ The event screen uses the existing event selection and effect services. Event te
 
 `MapEventSceneArt.Resolve` first uses an event's existing `eventIllustration`. Otherwise it loads `Assets/Resources/EventUI/Scenes/NNN.png` using the numeric event family. Both underscore branches (`031_A_01`) and legacy hyphen branches (`014-1`, `025-1`) are supported. Non-numeric custom events without an illustration use the forest backdrop.
 
-The 33 paintings cover the 33 current main event families. All 74 authored event assets resolve to their family painting or an explicit override. Follow-ups within a story retain the family's scene; authors can assign `eventIllustration` when a branch needs a different location. For a new main family, add its own painting and update `art-manifest.json`; the coverage regression will flag missing art.
+The 33 main paintings cover the 33 current event families. All 74 authored event assets resolve to their family painting or an explicit override. The ten Lucky Maze rooms each assign an `eventIllustration` sprite from `Assets/Resources/EventUI/Scenes/033_*.png`. The two Lucky Game entrances use `032.png` and `033.png`. The room filenames match their event IDs. Other follow-ups use the family scene by default. For a new main family, add its own painting and update `art-manifest.json`. The coverage test flags missing art.
 
 `art-manifest.json` records the built-in image generation prompts, asset paths and original PNG SHA-256 checksums. The PNGs are unmodified generated paintings; Unity imports them as opaque, clamped sprites with mipmaps disabled and a 2048 maximum texture size.
 
