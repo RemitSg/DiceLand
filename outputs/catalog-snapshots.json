@@ -253,6 +253,14 @@
         85
       ],
       "scope": "2026-11-10 仅增量复核 085「再来一次！」的遗物袋刷新：将已有战斗结算的遗物刷新计算共享给普通宝藏与特殊副本宝藏，按持有数量增加次数并与天赋叠加；未修改遗物资产配置或重新审计其他历史条目，仍为 161 件、17 个主体系。"
+    },
+    "latestEventPlacementRevision": {
+      "date": "2026-11-12",
+      "eventId": "034",
+      "eventName": "矮人铁匠",
+      "relicTable": "Assets/Data/Relics/OuterEliteRelicLoot.asset",
+      "rewardCount": 144,
+      "scope": "增量同步矮人铁匠事件的遗物获取途径。一次免费交换消耗一件自选遗物，从产物表随机获得另一件同品质遗物。保留 2026-10-29 遗物配置快照及 161 件、17 个主体系的目录范围。"
     }
   },
   "note": "The enemy catalog remains the 2026-10-26 historical snapshot and does not include the merged Blood Spore stat update. The relic catalog was refreshed on 2026-10-29; consult its coverage note and Assets/Data for current gameplay values. 2026-11-09 仅追加敌人 012/034/041 及遗物 091 的眩晕机制复核，不代表完整刷新全部历史内容。 2026-11-09 完整增补敌人 044/4401 及其七个技能，当前敌人目录合计 52 个资产、136 个关联技能，其余内容仍以历史快照及各增量说明为准。 2026-11-10 仅修订 4401 新芽的战斗体型：enemyVisualScale 从 1 调整至 0.12，普通立绘与成长／断枝姿态统一继承该倍率；其他历史条目未重新导出，敌人资产 52、关联技能 136 的数量不变。 2026-11-12 增量调整 044 枯枝王庭的战斗体型（1 → 0.7）与 4401 新芽「成长」的攻击骰（2–4 → 2–3）。其他历史条目未重新导出，仍收录 52 个敌人资产与 136 个关联技能。"

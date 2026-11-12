@@ -17,6 +17,7 @@ public sealed class MapEventBuiltInEffectExecutionRequest
     public int moneyBeforeSelection;
     public int selectionMoneyCost;
     public bool skipRewardEffects;
+    public ScriptableObject selectedInventoryItem;
 }
 
 public sealed class MapEventBuiltInEffectExecutionResult
@@ -223,6 +224,10 @@ public static class MapEventBuiltInEffectExecutorService
                 return ExecuteStartSpecialDungeon(effectData, result, out message);
             case MapEventOptionBuiltInEffectType.ReforgeOwnedRandomRelicsSameRarity:
                 return ExecuteReforgeOwnedRandomRelicsSameRarity(request.runState, effectData, out message);
+            case MapEventOptionBuiltInEffectType.ReforgeSelectedRelicSameRarity:
+            case MapEventOptionBuiltInEffectType.ReforgeSelectedBlueprintSameRarity:
+            case MapEventOptionBuiltInEffectType.ReforgeSelectedLootSameRarity:
+                return MapEventInventoryReforgeService.TryReforge(request.runState, effectData, request.selectedInventoryItem, out message);
             default:
                 message = GameText.Get("map.event.unknown_event_effect", "未知事件效果。");
                 return false;

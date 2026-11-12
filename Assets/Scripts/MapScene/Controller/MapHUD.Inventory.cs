@@ -16,6 +16,9 @@ public partial class MapHUD
     private Button inventoryCloseButton, inventoryDismissButton;
     private float inventoryReveal, inventoryPageReveal = 1f;
     private GameObject inventoryPreviousSelection;
+    private InventoryTab inventoryTabBeforeSelection;
+    private Func<ScriptableObject, bool> inventorySelectionFilter;
+    private Action<ScriptableObject> inventorySelectionHandler;
     private readonly List<GameObject> inventoryEmptySlots = new List<GameObject>();
     private readonly List<TextMeshProUGUI> inventoryLabels = new List<TextMeshProUGUI>();
 
@@ -178,7 +181,8 @@ public partial class MapHUD
     private void ApplyTabVisual(Button button, bool selected)
     {
         if (button == null) return;
-        button.GetComponent<MapInventoryGraphic>().SetState(selected, true);
+        button.interactable = inventorySelectionHandler == null || selected;
+        button.GetComponent<MapInventoryGraphic>().SetState(selected, button.interactable);
         TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
         if (label != null) label.color = selected ? new Color(0.20f, 0.12f, 0.035f) : ForestIvory;
     }
@@ -266,6 +270,28 @@ public partial class MapHUD
 
     public void ShowInventoryPanel(int sortOrderOverride = -1)
     {
+        if (inventorySelectionHandler != null) return;
+        ShowInventoryPanelCore(lootTabButton, sortOrderOverride);
+    }
+
+    internal bool ShowInventorySelection(InventoryTab tab, Func<ScriptableObject, bool> filter,
+        Action<ScriptableObject> onSelected, int sortOrderOverride)
+    {
+        if (IsInventoryVisible || filter == null || onSelected == null) return false;
+        Initialize();
+        inventoryTabBeforeSelection = currentInventoryTab;
+        inventorySelectionFilter = filter;
+        inventorySelectionHandler = onSelected;
+        currentInventoryTab = tab;
+        selectedInventoryState = null;
+        Button focusedTab = tab == InventoryTab.Relics ? relicTabButton : tab == InventoryTab.Blueprints ? blueprintTabButton : lootTabButton;
+        ShowInventoryPanelCore(focusedTab, sortOrderOverride);
+        UpdateInventoryScrollLayout(true);
+        return true;
+    }
+
+    private void ShowInventoryPanelCore(Button focusedTab, int sortOrderOverride)
+    {
         Initialize();
         bool wasVisible = IsInventoryVisible;
         if (!wasVisible && EventSystem.current != null) inventoryPreviousSelection = EventSystem.current.currentSelectedGameObject;
@@ -276,9 +302,30 @@ public partial class MapHUD
         inventoryClosing = false;
         inventoryGroup.interactable = inventoryGroup.blocksRaycasts = true;
         if (!wasVisible) inventoryReveal = Application.isPlaying ? 0 : 1;
+        inventoryHint.text = inventorySelectionHandler != null
+            ? GameText.Get("ui.event.reforge.inventory_hint", "打开物品详情后点「选中」。")
+            : InventoryText("点击物品查看详情", "Select an item to view its details");
         RefreshInventoryView();
         ApplyInventoryPanelLayout();
-        if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(lootTabButton.gameObject);
+        if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject((focusedTab != null ? focusedTab : lootTabButton).gameObject);
+    }
+
+    private void ConfigureInventorySelectionAction(ScriptableObject item)
+    {
+        if (inventorySelectionHandler == null)
+        {
+            runtimeInventoryDetailView.ConfigureActionButton(string.Empty, false, null, string.Empty);
+            return;
+        }
+
+        bool canSelect = inventorySelectionFilter(item);
+        runtimeInventoryDetailView.ConfigureActionButton(GameText.Get("ui.event.reforge.select", "选中"), canSelect, () =>
+        {
+            Action<ScriptableObject> onSelected = inventorySelectionHandler;
+            if (onSelected == null || !IsInventoryVisible || inventoryClosing || !inventorySelectionFilter(item)) return;
+            HideInventoryPanel();
+            onSelected(item);
+        }, canSelect ? string.Empty : GameText.Get("ui.event.reforge.no_replacement", "没有其他同品质的物品可供重铸。"));
     }
 
     public void CloseInventoryPanel()
@@ -295,6 +342,9 @@ public partial class MapHUD
     {
         bool wasVisible = IsInventoryVisible;
         selectedInventoryState = null;
+        if (inventorySelectionHandler != null) currentInventoryTab = inventoryTabBeforeSelection;
+        inventorySelectionFilter = null;
+        inventorySelectionHandler = null;
         runtimeInventoryDetailView?.HideImmediately();
         inventoryClosing = false; inventoryReveal = 0;
         if (inventoryModal != null) inventoryModal.gameObject.SetActive(false);

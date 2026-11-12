@@ -507,6 +507,28 @@ public partial class RunState
         return 0;
     }
 
+    public bool TryConsumeBlueprint(CraftingBlueprint_SO blueprintData, int amount)
+    {
+        if (blueprintData == null || amount <= 0 || blueprintInventory == null)
+            return false;
+
+        for (int i = 0; i < blueprintInventory.Count; i++)
+        {
+            RunBlueprintState stack = blueprintInventory[i];
+            if (stack == null || stack.blueprintData != blueprintData)
+                continue;
+            if (stack.amount < amount)
+                return false;
+
+            stack.amount -= amount;
+            if (stack.amount == 0)
+                blueprintInventory.RemoveAt(i);
+            return true;
+        }
+
+        return false;
+    }
+
     public void AddRelic(Relic_SO relicData, int amount = 1, bool processAcquireEffects = true)
     {
         AddRelicCore(relicData, amount, processAcquireEffects, 0);

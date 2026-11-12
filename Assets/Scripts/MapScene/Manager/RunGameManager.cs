@@ -1774,7 +1774,8 @@ public class RunGameManager : MonoBehaviour
         {
             runState = runState, actionPointSystem = actionPointSystem, currentEventTile = tile, optionData = optionData,
             levelTable = levelTable, sourceSceneName = SceneManager.GetActiveScene().name, battleSceneName = battleSceneName,
-            encounterSeedSalt = Environment.TickCount, randomLootDiscardPreviewCache = eventRandomLootDiscardPreviewCache
+            encounterSeedSalt = Environment.TickCount, randomLootDiscardPreviewCache = eventRandomLootDiscardPreviewCache,
+            selectedInventoryItem = mapEventOverlay?.SelectedReforgeItem
         }, eventData, this, out MapEventBuiltInEffectExecutionResult result);
         message = result.message; resultContent = result.resultContent; nextEventOverride = result.nextEventOverride;
         runFlowState.PendingEventEncounterData = success ? result.pendingEncounterData : null;
@@ -1784,7 +1785,7 @@ public class RunGameManager : MonoBehaviour
         boardManager.RefreshTile(tile.coord);
         mapHUD.ShowTile(tile, GetMoveCost(tile), true);
         RefreshHUD(message);
-        if (tile.sourceSpecialDungeon != null && tile.sourceSpecialDungeon.eventRewardsOnce)
+        if (MapEventInventoryReforgeService.RequiresItem(optionData) || (tile.sourceSpecialDungeon != null && tile.sourceSpecialDungeon.eventRewardsOnce))
             PersistCurrentRunSave();
         return true;
     }

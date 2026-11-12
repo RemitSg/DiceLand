@@ -180,7 +180,7 @@ B003b 在相同 HTTP 地址提供以下命令，协议见 `adventure-openapi.jso
 | `run_reforge_confirm` | 执行共享的抽取与写入，扣除材料、触发遗物效果并增加成功次数 |
 | `run_reforge_cancel` | 首次成功前关闭重铸，回到营地而不消耗本次访问 |
 | `run_reforge_finish` | 首次成功后结束重铸，消耗营地并返回地图；达到次数上限时自动执行 |
-| `run_choose_event` | 按合法 `choiceIndex` 支付事件费用并执行正式效果，进入结果步骤 |
+| `run_choose_event` | 按合法 `choiceIndex` 执行选项。矮人铁匠另传 `assetId` 选择材料，候选列在 `materialIds` 中。 |
 | `run_continue_event` | 确认事件结果，进入后续事件/战斗/特殊副本或返回地图 |
 | `run_choose_treasure` | 按合法 `choiceIndex` 选择金币、图纸或遗物袋；副本宝藏也支持直接遗物 |
 | `run_choose_treasure_relic` | 从已打开的袋中选择一个遗物，调用正式获得效果并完成宝藏 |

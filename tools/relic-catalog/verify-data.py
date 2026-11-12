@@ -36,6 +36,12 @@ for relic in data['relics']:
 md = (root / '遗物体系完整表.md').read_text(encoding='utf-8')
 ids = [int(s) for s in re.findall(r'^\|(\d+)\|', md, re.M)]
 assert len(ids) == data['count'] and set(ids) == {r['id'] for r in data['relics']}
+event_acquisition = data.get('eventAcquisition', [])
+for event in event_acquisition:
+    assert Path(event['eventPath']).is_file()
+    assert Path(event['relicTable']).is_file()
+    assert event['rule'] in md
+    assert event['rewardIds'] == [r['id'] for r in data['relics'] if event['relicTable'] in r['referencedByRelicTables']]
 ns = {'x': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
 with zipfile.ZipFile(root / 'DiceLand遗物体系表.xlsx') as archive:
     assert archive.testzip() is None
@@ -55,7 +61,15 @@ with zipfile.ZipFile(root / 'DiceLand遗物体系表.xlsx') as archive:
     columns = {'B': 'relicName', 'C': 'category', 'D': 'rarityName', 'E': 'role', 'F': 'description', 'G': 'tags', 'H': 'triggerNames', 'I': 'note', 'J': 'additionalDescription'}
     for relic in data['relics']:
         for col, key in columns.items():
-            assert rows[relic['id']].get(col, '') == str(relic.get(key, '') or ''), (relic['id'], key)
+            expected = relic.get(key) or ''
+            if key == 'note':
+                expected = ' '.join(filter(None, [expected, *(e['shortNote'] for e in event_acquisition if relic['id'] in e['rewardIds'])]))
+            assert rows[relic['id']].get(col, '') == str(expected), (relic['id'], key)
+    if event_acquisition:
+        for tab in ['sheet1', 'sheet2']:
+            view = ET.fromstring(archive.read(f'xl/worksheets/{tab}.xml'))
+            event_summary = value(view.find('.//x:c[@r="A6"]', ns))
+            assert all(e['rule'] in event_summary for e in event_acquisition), tab
     assert ET.fromstring(archive.read('xl/tables/table2.xml')).get('ref') == f"A7:J{7 + data['count']}"
     assert not sheet.findall('.//x:c[@t="e"]', ns)
     baseline = subprocess.run(['git', 'show', 'HEAD:outputs/relic-catalog/DiceLand遗物体系表.xlsx'], capture_output=True, check=True).stdout
@@ -80,4 +94,8 @@ if csv_path.exists():
     assert all(r['完整效果'] == by_id[int(r['序号'])]['description'] for r in exported)
 metadata = json.loads(Path('outputs/catalog-snapshots.json').read_text(encoding='utf-8'))
 assert metadata['relicCatalog']['relicCount'] == data['count']
+if event_acquisition:
+    latest = metadata['relicCatalog']['latestEventPlacementRevision']
+    event = next(e for e in event_acquisition if e['eventId'] == latest['eventId'])
+    assert latest['relicTable'] == event['relicTable'] and latest['rewardCount'] == len(event['rewardIds'])
 print(f"PASS ({'versioned catalog' if from_catalog else 'raw export'}): {data['count']} configs, {len(data['groups'])} categories, HTML/Markdown/Excel values, original widths/freeze panes, CSV and metadata; {len(icons)} embedded icons.")

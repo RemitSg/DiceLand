@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public sealed class MapEventOptionPreview
@@ -32,6 +33,12 @@ public static class MapEventOptionService
         preview.unavailableReason = enough ? loot.unavailableReason : GameText.Format("map.event.build_preview.you_need_gold", "金钱不足，需要 {requiredMoney} 金钱。", ("requiredMoney", preview.requiredMoney));
         if (preview.isSelectable && !MapEventBuiltInEffectExecutorService.CanAffordMoneyEffects(state, option, preview.requiredMoney, out string moneyReason))
         { preview.isSelectable = false; preview.unavailableReason = moneyReason; }
+        if (preview.isSelectable && MapEventInventoryReforgeService.RequiresItem(option)
+            && !MapEventInventoryReforgeService.GetEligibleMaterials(state, option).Any())
+        {
+            preview.isSelectable = false;
+            preview.unavailableReason = GameText.Get("ui.event.reforge.no_materials", "背包里没有可以重铸的物品。");
+        }
         return preview;
     }
 
@@ -43,6 +50,11 @@ public static class MapEventOptionService
         { result.message = GameText.Get("map.event.could_not_resolve_the_event", "事件执行失败。"); return false; }
         RunState state = request.runState;
         MapEventOptionData option = request.optionData;
+        if (request.currentEventTile.isResolved && MapEventInventoryReforgeService.RequiresItem(option))
+        {
+            result.message = GameText.Get("ui.event.reforge.already_used", "炉火已经用完了。");
+            return false;
+        }
         if (!SpecialDungeonEventNavigationService.IsValidDestination(request.currentEventTile, option.specialDungeonDestinationEntryIndex))
         { result.message = GameText.Get("map.event.could_not_resolve_the_event", "事件执行失败。"); return false; }
         BoardTileData rewardTile = request.currentEventTile;

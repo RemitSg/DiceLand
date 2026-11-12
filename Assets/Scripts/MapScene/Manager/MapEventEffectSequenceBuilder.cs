@@ -59,6 +59,7 @@ public static class MapEventEffectSequenceBuilder
             randomOwnedLootAmountMin = optionData.randomOwnedLootAmountMin,
             randomOwnedLootAmountMax = optionData.randomOwnedLootAmountMax,
             lootRewards = optionData.lootRewards != null ? new List<MapEventLootRewardEntry>(optionData.lootRewards) : new List<MapEventLootRewardEntry>(),
+            lootReforgeTable = optionData.lootReforgeTable,
             lootPickCountMin = optionData.lootPickCountMin,
             lootPickCountMax = optionData.lootPickCountMax,
             relicTable = optionData.relicTable,
@@ -94,6 +95,7 @@ public static class MapEventEffectSequenceBuilder
             randomOwnedLootAmountMin = effectData.randomOwnedLootAmountMin,
             randomOwnedLootAmountMax = effectData.randomOwnedLootAmountMax,
             lootRewards = effectData.lootRewards != null ? new List<MapEventLootRewardEntry>(effectData.lootRewards) : new List<MapEventLootRewardEntry>(),
+            lootReforgeTable = effectData.lootReforgeTable,
             lootPickCountMin = effectData.lootPickCountMin,
             lootPickCountMax = effectData.lootPickCountMax,
             relicTable = effectData.relicTable,
@@ -170,6 +172,9 @@ public static class MapEventEffectSequenceBuilder
             case MapEventOptionBuiltInEffectType.GainExperience:
             case MapEventOptionBuiltInEffectType.GainWeapons:
             case MapEventOptionBuiltInEffectType.ReforgeOwnedRandomRelicsSameRarity:
+            case MapEventOptionBuiltInEffectType.ReforgeSelectedRelicSameRarity:
+            case MapEventOptionBuiltInEffectType.ReforgeSelectedBlueprintSameRarity:
+            case MapEventOptionBuiltInEffectType.ReforgeSelectedLootSameRarity:
                 return true;
             case MapEventOptionBuiltInEffectType.AdjustAllPartyMembersHpByMaxHpPercent:
                 return effect.effectAmount > 0;

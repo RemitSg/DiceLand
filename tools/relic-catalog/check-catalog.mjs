@@ -33,6 +33,14 @@ try{
  await page.locator('[data-open="159"]').click();equal(await page.locator('#detail').evaluate(d=>d.open),true);assert.match(await page.locator('#detail-content').textContent(),/yin_yang_fish/);checks++;
  await page.reload();equal(await page.locator('#detail').evaluate(d=>d.open),true);equal(await page.locator('#detail-name').textContent(),'阴阳鱼');
  await page.locator('[data-related="157"]').click();equal(await page.locator('#detail-name').textContent(),'阴鱼');await page.keyboard.press('Escape');equal(await page.locator('#detail').evaluate(d=>d.open),false);
+ await reset();
+ for(const event of data.eventAcquisition||[]){
+  for(const relic of [data.relics.find(r=>event.rewardIds.includes(r.id)),data.relics.find(r=>!event.rewardIds.includes(r.id))].filter(Boolean)){
+   await page.locator(`[data-open="${relic.id}"]`).click();
+   equal((await page.locator('#detail-content .acquisition').allTextContents()).some(text=>text.includes(event.rule)),event.rewardIds.includes(relic.id));
+   await page.locator('#close').click();
+  }
+ }
  await reset();await page.locator('#rarity').selectOption('5');equal(await ids(),data.relics.filter(r=>r.rarity===5).map(r=>r.id));
  await reset();await page.locator('#query').fill('１４３–１５９');equal(await ids(),data.newIds.filter(id=>id<=159));
  await page.locator('#query').fill('#159');equal(await ids(),[159]);

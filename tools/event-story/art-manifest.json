@@ -2,7 +2,7 @@
   "version": 1,
   "date": "2026-11-12",
   "generator": "Built-in image_gen",
-  "scope": "33 main event family paintings and 10 Lucky Maze room illustrations. Other follow-ups inherit their family illustration unless eventIllustration explicitly overrides it.",
+  "scope": "34 main event family paintings and 10 Lucky Maze room illustrations. Other follow-ups inherit their family illustration unless eventIllustration explicitly overrides it.",
   "items": [
     {
       "id": "001",
@@ -306,6 +306,17 @@
       "prompt": "Use case: illustration-story. One full-bleed opaque 16:9 landscape painting for a whimsical dark-fantasy JRPG event inside an enchanted hedge-and-stone labyrinth. Hand-painted concept art with naturalistic mossy masonry, fine brass and wood, elegant semi-realistic anime characters, layered depth, cinematic light. Main face and storytelling props in the left-middle above the lower quarter; foreground and right show subdued painted scenery. Clean uninterrupted environment from edge to edge, no graphical panels, typography, frames, logos, watermark, or decorative interface. The supplied 033 entrance painting is a character and rendering style reference. Move the same adult witch into a welcoming stone lounge INSIDE the maze; match her recognizable silver wavy hair, gold-embroidered violet cloak, amethyst jewelry and broad violet hat with a purple rose and feather. With an amused approving smile, she offers an OPEN, EMPTY palm to the unseen player as if asking them to hand her something. No crystal ball, no gifts, no exterior gate. Show her at left of center, head and hand clearly visible in the upper half. Beyond her: an indoor glowing fireplace, plush burgundy bench and a dim tea table; soft gold and plum, cozy relief after the tests.",
       "reference": "Assets/Resources/EventUI/Scenes/033.png",
       "sha256": "b4f3afafb1f8285d8d4ad04a9ec73fcdd2549315b21463b121b28ab6241d47a0"
+    },
+    {
+      "id": "034",
+      "name": "矮人铁匠",
+      "path": "Assets/Resources/EventUI/Scenes/034.png",
+      "prompt": "Use case: illustration-story. Create the original full-bleed opaque 16:9 landscape event painting for DiceLand's Dwarf Blacksmith encounter. Image 1 is only a style reference for how the game paints fantasy characters and roadside encounters. Image 2 is only a style reference for aged materials, forest depth and lantern color. Paint a different scene. From the eye level of a traveler at the doorway of a small open-front stone shed beside an old forest road, show a short, stocky adult dwarf blacksmith in a worn leather apron, broad hands and a braided dark auburn beard. He has just noticed the visitor and glances toward them with dry, understated warmth. One pair of iron tongs rests clearly across a battered anvil within his reach, next to a simple smith's hammer. At the glowing forge mouth just behind him, two small round golden flatbreads toast on a dark iron ledge, with a faint wisp of steam. This everyday baking detail should read instantly. Lichen on the rough stacked-stone wall, soot-blackened stone above the hearth, wooden rafters, and an opening to a mossy forest path. Mid-wide cinematic composition: put the dwarf's face, upper body, anvil and bread comfortably within the left-middle two thirds and above the lower quarter, clearly readable through the warm bounce light. Leave the far right and lowest quarter as subdued real scenery for the in-game dialogue and choices. Semi-realistic anime character design in lush, hand-painted fantasy concept art, earthy pine green and weathered stone against natural amber firelight, fine texture and grounded depth. Cozy and gently humorous, like arriving just before supper. One character. No interface, lettering, frame, logo, watermark, or weapon display.",
+      "references": [
+        "Assets/Resources/EventUI/Scenes/018.png",
+        "Assets/Resources/EventUI/Scenes/003.png"
+      ],
+      "sha256": "e6c7cce893200c5ce004b0b4ab96714235ed92b8569719d6567acaadc46f15c9"
     }
   ]
 }

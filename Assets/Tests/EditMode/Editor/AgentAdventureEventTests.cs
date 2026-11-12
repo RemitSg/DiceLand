@@ -85,6 +85,41 @@ public sealed class AgentAdventureEventTests
         Assert.IsFalse(session.Observe().legalActions.Any(a => a.op == "run_interact"));
     }
 
+    [Test] public void DwarfBlacksmithUsesTheMaterialInTheLegalAction()
+    {
+        Open();
+        var data = Find<MapEvent_SO>(item => item.eventId == "034");
+        var table = data.options[2].lootReforgeTable.LootItems;
+        var material = table.First(item => item != null && table.Any(other => other != null && other != item && other.rarity == item.rarity));
+        var run = Map.Snapshot.runState;
+        run.lootInventory.Clear(); run.AddLoot(material, 2);
+        var state = Enter(data);
+        string id = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(material));
+        CollectionAssert.AreEqual(new[] { id }, state.mapEvent.options[2].materialIds);
+        Assert.Throws<ArgumentException>(() => Act("run_choose_event", 2));
+
+        var action = state.legalActions.Single(a => a.op == "run_choose_event" && a.choiceIndex == 2);
+        var request = Command(action);
+        var result = session.Act(request);
+        Assert.AreEqual("event_result", result.state.phase);
+        Assert.AreEqual(1, run.GetLootAmount(material));
+        Assert.AreEqual(material.rarity, run.lootInventory.Single(stack => stack.lootItem != material).lootItem.rarity);
+        Assert.AreEqual(JsonUtility.ToJson(result), JsonUtility.ToJson(session.Act(request)));
+        Assert.AreEqual(1, run.GetLootAmount(material));
+    }
+
+    [Test] public void DwarfBlacksmithCanBeLeftWithoutUsingTheForgeWhenNoMaterialIsOwned()
+    {
+        Open();
+        var run = Map.Snapshot.runState;
+        run.lootInventory.Clear(); run.blueprintInventory.Clear(); run.relicInventory.Clear();
+        var state = Enter(Find<MapEvent_SO>(item => item.eventId == "034"));
+        Assert.IsFalse(state.mapEvent.options.Any(option => option.selectable));
+        Assert.AreEqual("map", Act("run_continue_event").phase);
+        Assert.IsFalse(Tile.isResolved);
+        Assert.AreEqual(0, run.settlementStats.eventTilesCompleted);
+    }
+
     [Test] public void InvalidAndUnavailableOptionsCannotSpendOrAdvanceRevision()
     {
         Open(); var paid = Option(); paid.requiredMoney = 1; var free = Option();

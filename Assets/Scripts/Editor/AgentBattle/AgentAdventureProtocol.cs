@@ -111,6 +111,7 @@ using System;
 {
     public int index, requiredMoney;
     public string id, label, consequence, additionalDetail, unavailableReason, nextEvent;
+    public string[] materialIds;
     public bool selectable;
 }
 [Serializable] public sealed class AgentAdventureReforge

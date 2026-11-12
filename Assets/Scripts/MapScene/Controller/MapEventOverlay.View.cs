@@ -156,7 +156,12 @@ public partial class MapEventOverlay
         Button button = rect.gameObject.AddComponent<Button>();
         button.targetGraphic = face; button.transition = Selectable.Transition.None;
         button.interactable = preview == null || preview.isSelectable;
-        button.onClick.AddListener(() => { if (CanReceiveStoryInput && AreChoicesReady) SelectOption(option); });
+        button.onClick.AddListener(() =>
+        {
+            if (!CanReceiveStoryInput || !AreChoicesReady) return;
+            SelectOption(option);
+            if (button.interactable && option == reforgeMaterialOption && reforgeMaterial != null) OpenReforgePicker(option);
+        });
         rect.gameObject.AddComponent<MapCraftingButtonFeedback>();
         rect.gameObject.AddComponent<MapEventChoiceFeedback>().Initialize(this, option);
         OptionRow row = new OptionRow { button = button, face = face };

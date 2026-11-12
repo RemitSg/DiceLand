@@ -39,10 +39,14 @@ public sealed partial class AgentAdventureSession
         {
             MapEventOptionPreview preview = MapEventOptionService.BuildPreview(map.Snapshot.runState, option, eventDiscardCache);
             bool supported = option.customHandler == null;
+            string[] materials = MapEventInventoryReforgeService.RequiresItem(option)
+                ? MapEventInventoryReforgeService.GetEligibleMaterials(map.Snapshot.runState, option).Select(AssetId).ToArray()
+                : null;
             return new AgentAdventureEventOption { index = index, id = option.optionId, label = option.DisplayLabel,
                 consequence = currentEvent.hideConsequences ? null : option.consequenceDescription, requiredMoney = preview.requiredMoney,
                 additionalDetail = currentEvent.hideConsequences ? null : preview.additionalDetail,
                 nextEvent = option.nextEvent != null ? option.nextEvent.DisplayName : null,
+                materialIds = materials,
                 selectable = preview.isSelectable && supported,
                 unavailableReason = supported ? preview.unavailableReason : "This custom event handler requires a headless adapter." };
         }).ToArray());
@@ -62,13 +66,23 @@ public sealed partial class AgentAdventureSession
     private IEnumerable<AgentAdventureAction> EventActions()
     {
         if (phase == "event")
+        {
             foreach (var option in eventOptions.Where(o => o.selectable))
-                yield return new AgentAdventureAction { op = "run_choose_event", choiceIndex = option.index };
+            {
+                if (option.materialIds == null)
+                    yield return new AgentAdventureAction { op = "run_choose_event", choiceIndex = option.index };
+                else
+                    foreach (string id in option.materialIds)
+                        yield return new AgentAdventureAction { op = "run_choose_event", choiceIndex = option.index, assetId = id };
+            }
+            if (eventOptions.Length > 0 && eventOptions.All(o => o.materialIds != null && !o.selectable))
+                yield return new AgentAdventureAction { op = "run_continue_event" };
+        }
         else if (phase == "event_result" && (nextEvent == null || eventDepth < MapEventOptionService.MaxNestedEventDepth))
             yield return new AgentAdventureAction { op = "run_continue_event" };
     }
 
-    private void ChooseEvent(int index)
+    private void ChooseEvent(int index, string materialId)
     {
         MapEventOptionData option = currentEvent.GetValidOptions()[index];
         map.WithRandom(() =>
@@ -77,7 +91,9 @@ public sealed partial class AgentAdventureSession
             {
                 runState = map.Snapshot.runState, actionPointSystem = map.Points, currentEventTile = CurrentTile, optionData = option,
                 levelTable = map.Configuration.levels, sourceSceneName = map.Snapshot.sceneName, battleSceneName = "AgentBattleSandbox",
-                encounterSeedSalt = UnityEngine.Random.Range(int.MinValue, int.MaxValue), randomLootDiscardPreviewCache = eventDiscardCache
+                encounterSeedSalt = UnityEngine.Random.Range(int.MinValue, int.MaxValue), randomLootDiscardPreviewCache = eventDiscardCache,
+                selectedInventoryItem = MapEventInventoryReforgeService.GetEligibleMaterials(map.Snapshot.runState, option)
+                    .FirstOrDefault(item => AssetId(item) == materialId)
             }, currentEvent, null, out MapEventBuiltInEffectExecutionResult result);
             ReleasePendingEventEncounter();
             pendingEventEncounter = result.pendingEncounterData; pendingEventDungeon = result.pendingSpecialDungeon;

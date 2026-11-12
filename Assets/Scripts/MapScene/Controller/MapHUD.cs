@@ -27,7 +27,7 @@ public partial class MapHUD : MonoBehaviour
         public TextMeshProUGUI expText;
     }
 
-    private enum InventoryTab
+    internal enum InventoryTab
     {
         Loot,
         Weapons,
@@ -908,7 +908,7 @@ public partial class MapHUD : MonoBehaviour
 
     private void SetInventoryTab(InventoryTab tab)
     {
-        if (currentInventoryTab == tab) return;
+        if (inventorySelectionHandler != null || currentInventoryTab == tab) return;
         currentInventoryTab = tab;
         inventoryPageReveal = Application.isPlaying ? 0 : 1;
         selectedInventoryState = null;
@@ -985,8 +985,7 @@ public partial class MapHUD : MonoBehaviour
                 }
 
                 selectedInventoryState = lootState;
-                runtimeInventoryDetailView.Show(lootState, GetFallbackSprite());
-                runtimeInventoryDetailView.ConfigureActionButton(string.Empty, false, null, string.Empty);
+                RefreshSelectedInventoryDetail();
             });
         }
     }
@@ -1011,7 +1010,6 @@ public partial class MapHUD : MonoBehaviour
                 }
 
                 selectedInventoryState = weaponState;
-                runtimeInventoryDetailView.Show(weaponState, GetFallbackSprite());
                 RefreshSelectedInventoryDetail();
             });
         }
@@ -1037,8 +1035,7 @@ public partial class MapHUD : MonoBehaviour
                 }
 
                 selectedInventoryState = blueprintState;
-                runtimeInventoryDetailView.Show(blueprintState, GetFallbackSprite());
-                runtimeInventoryDetailView.ConfigureActionButton(string.Empty, false, null, string.Empty);
+                RefreshSelectedInventoryDetail();
             });
         }
     }
@@ -1063,8 +1060,7 @@ public partial class MapHUD : MonoBehaviour
                 }
 
                 selectedInventoryState = relicState;
-                runtimeInventoryDetailView.Show(relicState, GetFallbackSprite());
-                runtimeInventoryDetailView.ConfigureActionButton(string.Empty, false, null, string.Empty);
+                RefreshSelectedInventoryDetail();
             });
         }
     }
@@ -1445,21 +1441,21 @@ public partial class MapHUD : MonoBehaviour
         if (selectedInventoryState is RunLootState lootState)
         {
             runtimeInventoryDetailView.Show(lootState, GetFallbackSprite());
-            runtimeInventoryDetailView.ConfigureActionButton(string.Empty, false, null, string.Empty);
+            ConfigureInventorySelectionAction(lootState.lootItem);
             return;
         }
 
         if (selectedInventoryState is RunBlueprintState blueprintState)
         {
             runtimeInventoryDetailView.Show(blueprintState, GetFallbackSprite());
-            runtimeInventoryDetailView.ConfigureActionButton(string.Empty, false, null, string.Empty);
+            ConfigureInventorySelectionAction(blueprintState.blueprintData);
             return;
         }
 
         if (selectedInventoryState is RunRelicState relicState)
         {
             runtimeInventoryDetailView.Show(relicState, GetFallbackSprite());
-            runtimeInventoryDetailView.ConfigureActionButton(string.Empty, false, null, string.Empty);
+            ConfigureInventorySelectionAction(relicState.relicData);
         }
     }
 

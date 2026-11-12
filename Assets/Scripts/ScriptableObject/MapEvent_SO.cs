@@ -26,7 +26,10 @@ public enum MapEventOptionBuiltInEffectType
     GainMoneyPercentOfPreSelectionMoney = 19,
     RerollAllMoneyByPercentRange = 20,
     GainWeapons = 21,
-    ReforgeOwnedRandomRelicsSameRarity = 22
+    ReforgeOwnedRandomRelicsSameRarity = 22,
+    ReforgeSelectedRelicSameRarity = 23,
+    ReforgeSelectedBlueprintSameRarity = 24,
+    ReforgeSelectedLootSameRarity = 25
 }
 
 public enum MapEventEncounterSelectionMode
@@ -66,6 +69,7 @@ public class MapEventBuiltInEffectData
     [Min(1)] public int randomOwnedLootAmountMin = 1;
     [Min(1)] public int randomOwnedLootAmountMax = 1;
     public List<MapEventLootRewardEntry> lootRewards = new List<MapEventLootRewardEntry>();
+    public LootItemTable_SO lootReforgeTable;
     [Min(1)] public int lootPickCountMin = 1;
     [Min(1)] public int lootPickCountMax = 1;
     public RelicTable_SO relicTable;
@@ -123,6 +127,7 @@ public class MapEventOptionData
     [Min(1)] public int randomOwnedLootAmountMin = 1;
     [Min(1)] public int randomOwnedLootAmountMax = 1;
     public List<MapEventLootRewardEntry> lootRewards = new List<MapEventLootRewardEntry>();
+    public LootItemTable_SO lootReforgeTable;
     [Min(1)] public int lootPickCountMin = 1;
     [Min(1)] public int lootPickCountMax = 1;
     public RelicTable_SO relicTable;

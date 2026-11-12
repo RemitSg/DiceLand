@@ -28,12 +28,23 @@ Object.assign(groups.find(g=>g.name==='锻造与重铸'),{summary:'保留材料�
 Object.assign(groups.find(g=>g.name==='防御与反击'),{summary:'单方面攻击减伤、反击、防御骰子与护盾的产生和消耗。',play:'盾灵逐回合供盾，护甲保养剂开局供盾，安全感强化有盾防御骰，盾反利用失盾反伤。反击刺刃按每角色每回合一次提供下回合临时强壮。'});
 const catalog={date:'2026-10-29',count:relics.length,coverage:'161 件当前资产配置由团结编辑器导出；新增目录序号 143–161，以及历史序号 12、19、30、59、79、112、134、138 的主要机制已核对。已按设计反馈修订凰的反复保命、反击刺刃限次、福灵剂逐角色概率与当头棒文案，并修复阵亡队员在后续战斗结算后丢失的问题。本次屏蔽笼、寒霜护符、疾病减伤为 10%，幽影斗篷、驰隙时序环为 20%，并修正屏蔽笼触发时机。其余历史 134 件保留原机制备注，未重新逐项审计全部历史实现；新增罕见遗物 161 暗礁（水蚀目标每回合获得缓慢），以及稀有遗物 160 碎潮盐瓶（每次敌方水蚀施加改为基础 15 层易伤），浪鸣调整为每层水蚀视为额外 5 层易伤；验证范围见维护说明，未做完整试玩。',exportedAt:raw?.exportedAt??old.exportedAt,newIds:relics.filter(r=>r.isNew).map(r=>r.id),groups,relics};
 if(fromCatalog) Object.assign(catalog,{...old,count:relics.length,groups,relics});
+catalog.eventAcquisition = (old.eventAcquisition || []).map(event => ({
+  ...event,
+  rewardIds: relics.filter(relic => relic.referencedByRelicTables.includes(event.relicTable)).map(relic => relic.id)
+}));
 await fs.writeFile(`${dir}/catalog.json`,JSON.stringify(catalog,null,2)+'\n');
 const cell=v=>String(v??'').replaceAll('|','\\|').replaceAll('\n','<br>');
 const lines=['# DiceLand 现有遗物体系表','',`更新日期：${catalog.date}。共 ${catalog.count} 件遗物，${groups.length} 个主体系。每件只计入一个主体系，跨体系关系保留在联动标签中。`,'',catalog.coverage,'','来源：当前项目 Relic_SO 配置、LootRarity 枚举及 RelicSystem、地图与重铸实现。离线交互入口：[遗物完整图鉴](遗物完整图鉴.html)。','', '2026-10-29 新入库共 19 件：143–158、阴阳鱼（目录序号 159，实际 relicId 为 `yin_yang_fish`）、稀有遗物 160 碎潮盐瓶与罕见遗物 161 暗礁。浪鸣的每层水蚀额外易伤已由 10 调整为 5。本次修订凰的反复保命、反击刺刃每角色每回合限次、福灵剂逐角色独立概率与当头棒“伤害 +100%”文案，并保留阵亡队员的队伍位置。阴阳鱼当前没有配置战斗效果。','','| 主体系 | 数量 | 主要玩法 |','|---|---:|---|',...groups.map(g=>`|${g.name}|${g.count}|${g.summary}|`)];
 for(const g of groups){lines.push('',`## ${g.name}（${g.count}件）`,'',g.play,'','| ID | 遗物 | 稀有度 | 定位 | 完整效果 | 联动与备注 |','|---:|---|---|---|---|---|');for(const r of relics.filter(r=>r.category===g.name))lines.push(`|${r.id}|${cell(r.relicName)}|${r.rarityName}|${cell(r.role)}|${cell(r.description)}|${cell([r.tags,r.note].filter(Boolean).join('；'))}|`);}
 lines.push('','## 本次新增及修订的机制与来源核对','');
 for(const r of relics.filter(r=>r.mechanics)){lines.push(`### ${r.id} · ${r.relicName}`,'',`- 实际 relicId：\`${r.relicId}\`；GUID：\`${r.guid}\`。`,`- 资产：\`${r.path}\`。`,`- 触发：${r.triggerNames}。`,`- 条件与目标：${r.mechanics.condition}；${r.mechanics.target}。`,`- 次数与叠加：${r.mechanics.limit}；${r.mechanics.stacking}。`,`- 机制备注：${r.note}`,`- 遗物表引用：${r.referencedByRelicTables.length?r.referencedByRelicTables.map(p=>'`'+p+'`').join('、'):'无 RelicTable_SO 直接引用；固定重铸产物。'}`,'');}
+if (catalog.eventAcquisition.length) {
+  lines.push('', '## 事件获取', '');
+  for (const event of catalog.eventAcquisition) {
+    lines.push(`- ${event.date} · ${event.eventId} ${event.name}。${event.rule} 产物表为 \`${event.relicTable}\`，共收录 ${event.rewardIds.length} 件候选。`,
+      `  候选目录序号 ${event.rewardIds.join('、')}。`);
+  }
+}
 const revisedDescriptions = relics.filter(relic => relic.additionalDescriptionUpdatedAt);
 if (revisedDescriptions.length) {
   lines.push('', '## 补充描述修订', '');

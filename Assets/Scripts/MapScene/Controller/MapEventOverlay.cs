@@ -60,6 +60,7 @@ public partial class MapEventOverlay : MonoBehaviour
     {
         EnsureUi();
         HideOwnedInventory();
+        ClearReforgeSelection();
         ResetPresentation();
         currentTile = tile;
         currentEvent = eventData;
@@ -86,6 +87,7 @@ public partial class MapEventOverlay : MonoBehaviour
         bool wasVisible = IsVisible;
         ResetPresentation();
         HideOwnedInventory();
+        ClearReforgeSelection();
         isShowingResultStep = false;
         selectedOption = null;
         pendingNextEvent = null;
@@ -136,6 +138,7 @@ public partial class MapEventOverlay : MonoBehaviour
             optionButtons.Add(button);
             optionLookup[button] = option;
         }
+        UpdateReforgeAvailability();
         ResetScroll(optionScrollRect);
         layoutDirty = true;
     }
@@ -150,8 +153,10 @@ public partial class MapEventOverlay : MonoBehaviour
         RefreshOptionButtonVisuals();
         EventOptionPreviewData selectedPreview = null;
         if (option != null) optionPreviewLookup.TryGetValue(option, out selectedPreview);
-        consequenceText.text = option != null ? FormatOptionDetail(option, selectedPreview) : GameText.Get("ui.event.no_choices", "当前事件暂无可选项。");
-        SetConfirmButtonInteractable(option != null && (selectedPreview == null || selectedPreview.isSelectable));
+        consequenceText.text = option != null ? FormatOptionDetail(option, selectedPreview) : canLeaveReforgeEvent
+            ? GameText.Get("ui.event.reforge.no_materials", "背包里没有可以重铸的物品。") : GameText.Get("ui.event.no_choices", "当前事件暂无可选项。");
+        SetConfirmButtonInteractable(canLeaveReforgeEvent || (option != null && (selectedPreview == null || selectedPreview.isSelectable)));
+        UpdateChoiceButtonLabel();
         ResetScroll(consequenceScrollRect);
         layoutDirty = true;
     }
@@ -186,9 +191,15 @@ public partial class MapEventOverlay : MonoBehaviour
             return;
         }
         if (!AreChoicesReady) return;
-        if (selectedOption == null || selectionHandler == null || currentTile == null || currentEvent == null) return;
         RefreshOptionAvailability();
+        if (canLeaveReforgeEvent) { BeginClose(); return; }
+        if (selectedOption == null || selectionHandler == null || currentTile == null || currentEvent == null) return;
         if (!confirmButton.interactable) return;
+        if (MapEventInventoryReforgeService.RequiresItem(selectedOption) && SelectedReforgeItem == null)
+        {
+            OpenReforgePicker(selectedOption);
+            return;
+        }
         executingSelection = true;
         try
         {
@@ -236,6 +247,7 @@ public partial class MapEventOverlay : MonoBehaviour
 
     private void ShowFollowUpEvent(MapEvent_SO eventData)
     {
+        ClearReforgeSelection();
         currentEvent = eventData;
         nestedEventDepth++;
         selectedOption = null;
@@ -265,6 +277,8 @@ public partial class MapEventOverlay : MonoBehaviour
         if (option.requiredMoney > 0) detail = GameText.Format("map.event.cost_gold", "需要支付 {requiredMoney} 金钱\n{detail}", ("requiredMoney", option.requiredMoney), ("detail", detail));
         if (option.requiredMoneyPercent > 0) detail = GameText.Format("map.event.cost_of_your_gold", "需要支付当前金钱的 {requiredMoneyPercent}%\n{detail}", ("requiredMoneyPercent", option.requiredMoneyPercent), ("detail", detail));
         if (option.nextEvent != null) detail += GameText.Format("map.event.next_event", "\n继续事件：{localizedName}", ("localizedName", option.nextEvent.LocalizedName));
+        if (option == reforgeMaterialOption && reforgeMaterial != null)
+            detail += "\n\n" + GameText.Format("ui.event.reforge.selected", "已选材料：{name}\n点击此选项可更换。", ("name", MapEventInventoryReforgeService.ItemName(reforgeMaterial)));
         if (preview != null)
         {
             if (!string.IsNullOrWhiteSpace(preview.additionalDetail)) detail += "\n" + preview.additionalDetail;

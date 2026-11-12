@@ -187,7 +187,7 @@ public partial class MapEventOverlay
         }
         bool valid = selectedOption != null && (!optionPreviewLookup.TryGetValue(selectedOption, out EventOptionPreviewData preview) || preview == null || preview.isSelectable);
         if (previewedOption != null && optionPreviewLookup.TryGetValue(previewedOption, out EventOptionPreviewData hovered) && hovered != null && !hovered.isSelectable) valid = false;
-        SetConfirmButtonInteractable(CanReceiveStoryInput && ready && (isShowingResultStep || valid));
+        SetConfirmButtonInteractable(CanReceiveStoryInput && ready && (isShowingResultStep || valid || canLeaveReforgeEvent));
         confirmButton.gameObject.SetActive(ready && !isShowingResultStep);
         dialogueHint.text = typing ? StoryText("reveal", "点击显示本段", "Click to reveal")
             : !ready ? StoryText("next", "点击继续", "Click to continue")
@@ -202,7 +202,7 @@ public partial class MapEventOverlay
         if (!CanReceiveStoryInput || !AreChoicesReady || option == null) return;
         previewedOption = option;
         if (!optionPreviewLookup.TryGetValue(option, out EventOptionPreviewData preview) || preview == null || preview.isSelectable) SelectOption(option);
-        else { consequenceText.text = FormatOptionDetail(option, preview); SetConfirmButtonInteractable(false); RefreshOptionButtonVisuals(); layoutDirty = true; }
+        else { consequenceText.text = FormatOptionDetail(option, preview); SetConfirmButtonInteractable(canLeaveReforgeEvent); RefreshOptionButtonVisuals(); layoutDirty = true; }
     }
 
     private void RefreshOptionAvailability()
@@ -216,6 +216,8 @@ public partial class MapEventOverlay
             row.button.interactable = preview == null || preview.isSelectable;
             row.label.text = FormatOptionLabel(option, preview);
         }
+        UpdateReforgeAvailability();
+        UpdateChoiceButtonLabel();
         if (selectedOption != null)
         {
             optionPreviewLookup.TryGetValue(selectedOption, out EventOptionPreviewData preview);

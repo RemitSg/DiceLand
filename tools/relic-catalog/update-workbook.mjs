@@ -4,7 +4,43 @@ const dir='outputs/relic-catalog',file=`${dir}/DiceLand遗物体系表.xlsx`;
 const data=JSON.parse(await fs.readFile(`${dir}/catalog.json`,'utf8'));
 const wb=await SpreadsheetFile.importXlsx(await FileBlob.load(file));
 const summary=wb.worksheets.getItem('体系总览'),detail=wb.worksheets.getItem('遗物完整表');
-if(process.argv.includes('--notes-only')){
+const acquisition=data.eventAcquisition||[];
+const noteFor=relic=>[relic.note,...acquisition.filter(event=>event.rewardIds.includes(relic.id)).map(event=>event.shortNote)].filter(Boolean).join(' ');
+
+function writeAcquisitionSummary() {
+ if (!acquisition.length) return;
+ const text=acquisition.map(event=>`${event.date} · ${event.eventId} ${event.name}（${event.rewardIds.length} 件候选）。${event.rule}`).join(' ');
+ for(const sheet of [summary,detail]){
+  const line=sheet.getRange('A6');
+  line.copyFrom(sheet.getRange('A5'),'all');
+  line.values=[[text]];
+ }
+}
+
+if(process.argv.includes('--event-acquisition')){
+ writeAcquisitionSummary();
+ const byId=new Map(data.relics.map(relic=>[relic.id,relic]));
+ const values=detail.getRange(`A8:J${7+data.count}`).values;
+ const changed=[];
+ for(let i=0;i<values.length;i++){
+  const relic=byId.get(values[i][0]);
+  const note=noteFor(relic);
+  if(note===(values[i][8]||''))continue;
+  const row=i+8;
+  detail.getRange(`I${row}`).values=[[note]];
+  const format=detail.getRange(`A${row}:J${row}`).format;
+  format.rowHeight=Math.max(format.rowHeight||44,Math.ceil(note.length/32)*15+12);
+  changed.push(row);
+ }
+ wb.recalculate();
+ const row=changed[0]||8;
+ for(const [sheetName,range,name] of [['体系总览','A2:E9','acquisition-summary'],['遗物完整表',`F${row}:J${row}`,'acquisition-detail']]){
+  const preview=await wb.render({sheetName,range,scale:1,format:'png'});
+  await fs.writeFile(`${dir}/${name}-preview.png`,new Uint8Array(await preview.arrayBuffer()));
+ }
+ const output=await SpreadsheetFile.exportXlsx(wb);await output.save(file);
+ console.log(JSON.stringify({eventAcquisition:acquisition.map(event=>event.eventId),updatedRows:changed.length}));
+}else if(process.argv.includes('--notes-only')){
  const ids=process.argv.slice(2).filter(value=>/^\d+$/.test(value)).map(Number);
  if(!ids.length)throw Error('Pass at least one relic ID with --notes-only');
  const range=`A8:J${7+data.count}`;
@@ -16,9 +52,10 @@ if(process.argv.includes('--notes-only')){
   const relic=data.relics.find(r=>r.id===id),index=before.findIndex(row=>row[0]===id);
   if(!relic||index<0)throw Error(`Missing relic ${id}`);
   const row=index+8;
-  detail.getRange(`I${row}`).values=[[relic.note||'']];
+  const note=noteFor(relic);
+  detail.getRange(`I${row}`).values=[[note]];
   const band=detail.getRange(`A${row}:J${row}`),height=band.format.rowHeight;
-  band.format.rowHeight=Math.max(typeof height==='number'?height:44,Math.ceil((relic.note||'').length/45)*15+12);
+  band.format.rowHeight=Math.max(typeof height==='number'?height:44,Math.ceil(note.length/32)*15+12);
   changedRows.add(index);
  }
  wb.recalculate();
@@ -30,7 +67,7 @@ if(process.argv.includes('--notes-only')){
  if(summaryBefore!==JSON.stringify(summary.getUsedRange().values)||formulasBefore!==JSON.stringify(detail.getRange(range).formulas))throw Error('Unrelated summary or formulas changed');
  for(const id of ids){
   const row=8+after.findIndex(value=>value[0]===id);
-  const note=data.relics.find(r=>r.id===id).note||'';
+  const note=noteFor(data.relics.find(r=>r.id===id));
   if(detail.getRange(`I${row}`).values[0][0]!==note)throw Error(`Note mismatch for relic ${id}`);
   const blob=await wb.render({sheetName:'遗物完整表',range:`F${row}:J${row}`,scale:1,format:'png'});
   await fs.writeFile(`${dir}/relic-${id}-preview.png`,new Uint8Array(await blob.arrayBuffer()));
@@ -44,24 +81,25 @@ summary.getRange('A5').values=[['2026-10-29。161 件当前配置；新入库 19
 summary.getRange('A8:E24').values=data.groups.map(g=>[g.name,g.count,g.summary,g.examples,g.play]);
 summary.getRange('B25').values=[[data.count]];
 detail.getRange('A5').values=[['2026-10-29：161 件当前配置；143–161 及 12、19、30、59、79、112、134、138 已核对主要机制并同步调整。阴阳鱼实际 ID 为 yin_yang_fish；验证为针对性 EditMode 回归。']];
+writeAcquisitionSummary();
 const order=new Map(data.groups.map((g,i)=>[g.name,i]));
 const sorted=[...data.relics].sort((a,b)=>order.get(a.category)-order.get(b.category)||a.id-b.id);
 const table=detail.tables.items[0];
 const previous=detail.getUsedRange().values.slice(7).filter(row=>row[0]!==null&&row[0]!=='').length;
 if(previous<sorted.length)table.rows.add(null,Array.from({length:sorted.length-previous},()=>Array(10).fill(null)));
 for(let row=8+previous;row<=7+sorted.length;row++)detail.getRange(`A${row}:J${row}`).copyFrom(detail.getRange(`A${7+previous}:J${7+previous}`),'all');
-detail.getRange(`A8:J${7+sorted.length}`).values=sorted.map(r=>[r.id,r.relicName,r.category,r.rarityName,r.role,r.description,r.tags,r.triggerNames,r.note||'',r.additionalDescription||'']);
+detail.getRange(`A8:J${7+sorted.length}`).values=sorted.map(r=>[r.id,r.relicName,r.category,r.rarityName,r.role,r.description,r.tags,r.triggerNames,noteFor(r),r.additionalDescription||'']);
 for(let i=0;i<sorted.length;i++){
  const r=sorted[i],row=i+8;
  // Existing widths and table style remain; longer new mechanism notes need room.
- const lines=Math.max(Math.ceil(r.description.length/55),Math.ceil((r.note||'').length/45),Math.ceil((r.additionalDescription||'').length/37));
+ const lines=Math.max(Math.ceil(r.description.length/55),Math.ceil(noteFor(r).length/32),Math.ceil((r.additionalDescription||'').length/37));
  detail.getRange(`A${row}:J${row}`).format.rowHeight=Math.max(44,lines*15+12);
 }
 wb.recalculate();
 if(summary.getRange('B25').values[0][0]!==data.count)throw Error('Summary count mismatch');
 const values=detail.getRange(`A8:J${7+data.count}`).values;
 if(values.length!==data.count||new Set(values.map(r=>r[0])).size!==data.count)throw Error('Workbook identity mismatch');
-for(let i=0;i<sorted.length;i++)if(values[i][1]!==sorted[i].relicName||values[i][8]!==String(sorted[i].note||''))throw Error(`Workbook row mismatch ${i}`);
+for(let i=0;i<sorted.length;i++)if(values[i][1]!==sorted[i].relicName||values[i][8]!==noteFor(sorted[i]))throw Error(`Workbook row mismatch ${i}`);
 const previewIds=process.argv.slice(2).map(Number);
 const detailPreviews=(previewIds.length?previewIds:[146]).map(id=>{
  const row=8+sorted.findIndex(r=>r.id===id);

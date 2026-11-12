@@ -545,6 +545,9 @@ public static class RunSaveAssetCatalogBuilder
             return;
 
         AddEventLootRewardAssets(catalog, effectData.lootRewards);
+        if (effectData.lootReforgeTable?.LootItems != null)
+            foreach (LootItem_SO item in effectData.lootReforgeTable.LootItems)
+                catalog.Add(item);
         AddEventRelicRewardAssets(catalog, effectData.relicTable);
         AddExplicitEventRelicRewardAssets(catalog, effectData.relicRewards);
         AddEventBlueprintRewardAssets(catalog, effectData.blueprintTable);

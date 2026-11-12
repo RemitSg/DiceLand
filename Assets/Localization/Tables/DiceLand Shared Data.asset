@@ -14003,6 +14003,98 @@ MonoBehaviour:
     m_Key: ui.pause.save_hint
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000305
+    m_Key: event.034.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000306
+    m_Key: event.034.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000307
+    m_Key: event.034.option.1.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000308
+    m_Key: event.034.option.1.preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000309
+    m_Key: event.034.option.1.result
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000310
+    m_Key: event.034.option.2.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000311
+    m_Key: event.034.option.2.preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000312
+    m_Key: event.034.option.2.result
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000313
+    m_Key: event.034.option.3.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000314
+    m_Key: event.034.option.3.preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000315
+    m_Key: event.034.option.3.result
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000316
+    m_Key: ui.event.reforge.already_used
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000317
+    m_Key: ui.event.reforge.choose_material
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000318
+    m_Key: ui.event.reforge.confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000319
+    m_Key: ui.event.reforge.inventory_hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000320
+    m_Key: ui.event.reforge.leave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000321
+    m_Key: ui.event.reforge.material_unavailable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000322
+    m_Key: ui.event.reforge.no_materials
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000323
+    m_Key: ui.event.reforge.no_replacement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000324
+    m_Key: ui.event.reforge.pick_material
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000325
+    m_Key: ui.event.reforge.result
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000326
+    m_Key: ui.event.reforge.select
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000327
+    m_Key: ui.event.reforge.selected
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

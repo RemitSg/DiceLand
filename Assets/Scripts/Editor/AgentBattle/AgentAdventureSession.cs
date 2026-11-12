@@ -128,7 +128,7 @@ public sealed partial class AgentAdventureSession : IDisposable
                 case "run_choose_starting_relic": case "run_refresh_starting_relics": ExecuteStartingRelic(request); break;
                 case "run_choose_treasure": case "run_choose_treasure_relic": case "run_refresh_treasure_relics": case "run_continue_treasure":
                     ExecuteTreasureAction(request); break;
-                case "run_choose_event": ChooseEvent(request.choiceIndex); break;
+                case "run_choose_event": ChooseEvent(request.choiceIndex, request.assetId); break;
                 case "run_continue_event": ContinueEvent(); break;
                 case "run_choose_calamity": ChooseCalamity(request.choiceIndex); break;
                 case "run_buy": case "run_refresh_shop": case "run_craft": ExecuteEconomyAction(request); break;
@@ -289,7 +289,8 @@ public sealed partial class AgentAdventureSession : IDisposable
         if (a.op == "run_choose_starting_relic") return a.choiceIndex == r.choiceIndex;
         if (a.op == "run_unlock_ability") return a.assetId == r.assetId;
         if (a.op == "run_set_ability") return a.assetId == r.assetId && a.choiceIndex == r.choiceIndex;
-        if (a.op == "run_buy" || a.op == "run_recruit" || a.op == "run_choose_event" || a.op == "run_choose_treasure" || a.op == "run_choose_treasure_relic") return a.choiceIndex == r.choiceIndex;
+        if (a.op == "run_choose_event") return a.choiceIndex == r.choiceIndex && (string.IsNullOrEmpty(a.assetId) || a.assetId == r.assetId);
+        if (a.op == "run_buy" || a.op == "run_recruit" || a.op == "run_choose_treasure" || a.op == "run_choose_treasure_relic") return a.choiceIndex == r.choiceIndex;
         if (a.op == "run_craft" || a.op == "run_equip") return a.assetId == r.assetId;
         if (a.op == "run_reforge_first" || a.op == "run_reforge_second" || a.op == "run_reforge_attribute") return a.assetId == r.assetId;
         if (a.op == "run_battle") return JsonUtility.ToJson(a.battleAction) == JsonUtility.ToJson(r.battleAction);

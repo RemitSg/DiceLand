@@ -15785,6 +15785,98 @@ MonoBehaviour:
     m_Localized: Save your journey and continue from the title screen.
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000305
+    m_Localized: "The Dwarf Blacksmith"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000306
+    m_Localized: "Following the sound of a hammer, you find a stone shed by the road. A dwarf is turning flatbreads by the forge with a pair of tongs. When he sees you at the door, he nudges the bread closer to the fire and sets the tongs on his anvil.\n\n\u201CI've got enough fire for one more reforge. What'll it be? This one's on me.\u201D\n\nYou decide to\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000307
+    m_Localized: "Reforge a relic"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000308
+    m_Localized: "Choose a relic to exchange for another relic of the same rarity."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000309
+    m_Localized: "The dwarf smacks his lips, picks up your new relic with his tongs and wraps it up, then goes back to his bread."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000310
+    m_Localized: "Reforge a blueprint"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000311
+    m_Localized: "Choose a blueprint to exchange for another blueprint of the same rarity."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000312
+    m_Localized: "You're about to say that a blueprint can't survive a hammer and a forge when the dwarf brings his hammer down on the paper.\n\nTo your amazement, the lines come to life, slowly reshaping themselves into an entirely new design.\n\n\u201CLet the ink dry before you roll it up, or you'll ruin the whole thing.\u201D\n\nA master of his craft, you think. Next time you need something forged, you'll come back to him."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000313
+    m_Localized: "Reforge a piece of loot"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000314
+    m_Localized: "Choose a piece of loot to exchange for another of the same rarity."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000315
+    m_Localized: "The dwarf frowns at the oddly shaped piece of loot you've handed him, unsure where to begin.\n\nAfter a long hesitation, he gathers his strength and gives it one solid whack.\n\n\u201CThat's wrong\u2026 Ah! No, no! My bread!\u201D\n\nHe rushes back to the forge to find the flatbread burnt to charcoal.\n\nYou take the half-finished piece and leave."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000316
+    m_Localized: "The forge fire has gone out."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000317
+    m_Localized: "Choose an item"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000318
+    m_Localized: "Confirm reforge"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000319
+    m_Localized: "Open an item's details and press Select."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000320
+    m_Localized: "Leave"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000321
+    m_Localized: "This item is no longer in your inventory."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000322
+    m_Localized: "You have no items that can be reforged."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000323
+    m_Localized: "No other item of this rarity is available."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000324
+    m_Localized: "Select the item to reforge from your inventory."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000325
+    m_Localized: "{material} \u2192 {result}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000326
+    m_Localized: "Select"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000327
+    m_Localized: "Selected item: {name}\nClick this choice to pick a different item."
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:
