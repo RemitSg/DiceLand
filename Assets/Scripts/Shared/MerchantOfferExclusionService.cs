@@ -32,7 +32,7 @@ public static class MerchantOfferExclusionService
             if (weapon == null || weapon.weaponData == null || weapon.amount <= 0)
                 continue;
 
-            owned.Add(weapon.weaponData);
+            owned.Add(weapon.weaponData.BaseWeapon);
         }
 
         return owned;

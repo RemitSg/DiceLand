@@ -5,7 +5,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CanvasRenderer))]
 public sealed class MapCraftingFrameGraphic : MapMerchantFrameGraphic
 {
-    public new enum Style { Window, Title, Blueprint, Material, IconWell, Preview, Engraving, Badge, Action, Secondary }
+    public new enum Style { Window, Title, Blueprint, Material, IconWell, Preview, Engraving, Badge, Action, Secondary, ForgeTab, FusionWeapon, FusionSkill }
     public Style craftingStyle;
     public float glow;
     private static readonly Color Brass = new Color32(186, 138, 60, 255);
@@ -78,6 +78,45 @@ public sealed class MapCraftingFrameGraphic : MapMerchantFrameGraphic
             case Style.Secondary:
                 Surface(vh, r, 10, new Color32(246, 213, 151, 255), new Color32(180, 133, 65, 255));
                 ButtonTrim(vh, r, LightGold);
+                break;
+            case Style.ForgeTab:
+                Surface(vh, r, 10, selected ? new Color32(46, 97, 65, 255) : new Color32(28, 43, 28, 255),
+                    selected ? new Color32(19, 58, 36, 255) : new Color32(11, 24, 17, 255));
+                ButtonTrim(vh, r, selected ? LightGold : Brass);
+                if (selected)
+                {
+                    Gem(vh, new Vector2(r.xMin + 22, r.center.y), 7);
+                    Gem(vh, new Vector2(r.xMax - 22, r.center.y), 7);
+                }
+                break;
+            case Style.FusionWeapon:
+                Surface(vh, r, 10, selected ? new Color32(246, 213, 151, 255) : new Color32(25, 41, 27, 255),
+                    selected ? new Color32(180, 133, 65, 255) : new Color32(11, 25, 17, 255));
+                ButtonTrim(vh, r, available ? LightGold : Brass);
+                Vector2 chevron = new Vector2(r.xMax - 27, r.center.y);
+                Color mark = selected ? new Color32(79, 54, 19, 255) : Brass;
+                Stroke(vh, chevron + new Vector2(-9, 4), chevron + new Vector2(0, -5), 3, mark);
+                Stroke(vh, chevron + new Vector2(0, -5), chevron + new Vector2(9, 4), 3, mark);
+                break;
+            case Style.FusionSkill:
+                Surface(vh, r, 8, selected ? new Color32(40, 88, 61, 255) : new Color32(26, 42, 26, 255),
+                    selected ? new Color32(16, 52, 34, 255) : new Color32(11, 25, 16, 255));
+                Band(vh, Inset(r, 1), 8, selected ? 3f : 1.4f, selected ? LightGold : Brass, true);
+                CornerCaps(vh, Inset(r, 5), 10, selected ? LightGold : Brass);
+                Vector2 choice = new Vector2(r.xMax - 27, r.center.y);
+                if (selected) Gem(vh, choice, 10);
+                else
+                {
+                    Color ring = available ? LightGold : new Color32(113, 113, 85, 255);
+                    const int sides = 24;
+                    for (int i = 0; i < sides; i++)
+                    {
+                        float a = i * 2f * Mathf.PI / sides;
+                        float b = (i + 1) * 2f * Mathf.PI / sides;
+                        Stroke(vh, choice + 11 * new Vector2(Mathf.Cos(a), Mathf.Sin(a)),
+                            choice + 11 * new Vector2(Mathf.Cos(b), Mathf.Sin(b)), 1.4f, ring);
+                    }
+                }
                 break;
         }
     }

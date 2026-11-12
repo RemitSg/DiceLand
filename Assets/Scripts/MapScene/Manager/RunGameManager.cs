@@ -224,7 +224,10 @@ public class RunGameManager : MonoBehaviour
         if (mapMerchantOverlay != null)
             mapMerchantOverlay.Hidden -= HandleMapMerchantOverlayHidden;
         if (mapCraftingOverlay != null)
+        {
             mapCraftingOverlay.Hidden -= HandleMapCraftingOverlayHidden;
+            mapCraftingOverlay.WeaponFused -= RefreshHUD;
+        }
         if (mapTreasureOverlay != null)
             mapTreasureOverlay.Hidden -= HandleMapTreasureOverlayHidden;
     }
@@ -885,6 +888,8 @@ public class RunGameManager : MonoBehaviour
             mapCraftingOverlay.ConfigureFonts(mapKeywordFont, mapBodyFont);
         mapCraftingOverlay.Hidden -= HandleMapCraftingOverlayHidden;
         mapCraftingOverlay.Hidden += HandleMapCraftingOverlayHidden;
+        mapCraftingOverlay.WeaponFused -= RefreshHUD;
+        mapCraftingOverlay.WeaponFused += RefreshHUD;
         mapMerchantOverlay = GetOrCreateMerchantOverlay();
         if (mapKeywordFont != null || mapBodyFont != null)
             mapMerchantOverlay.ConfigureFonts(mapKeywordFont, mapBodyFont);

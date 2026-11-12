@@ -97,10 +97,15 @@ public partial class MapInventoryDetailView : MonoBehaviour
         }
 
         Weapon_SO weapon = weaponState.weaponData;
+        string description = weapon.LocalizedDescription;
+        if (weapon.FusionLimit > 1)
+            description += GameText.LanguageCode == GameText.Chinese
+                ? $"\n\n可作为主体融合 {weapon.FusionLimit} 次。"
+                : $"\n\nCan be used as the base for {weapon.FusionLimit} fusions.";
         PresentItem(weapon, weapon.icon != null ? weapon.icon : fallbackSprite,
             weaponState.DisplayName,
             GetWeaponRarityLabel(weapon.rarity), GetWeaponRarityColor(weapon.rarity), GetWeaponTypeLabel(weapon.weaponType),
-            weaponState.amount, weapon.LocalizedDescription, string.Empty);
+            weaponState.amount, description, string.Empty);
     }
 
     public void Show(RunBlueprintState blueprintState, Sprite fallbackSprite = null)

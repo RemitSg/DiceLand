@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum Rarity
@@ -27,7 +29,9 @@ public class Weapon_SO : ScriptableObject
     public string saveId;
     public string legacySaveId;
     public string weaponName;
-    public string LocalizedName => Localize("name", weaponName);
+    private const string FusionSuffix = " · 融合";
+    public string LocalizedName => IsFused ? FusedDisplayName : Localize("name", weaponName);
+    public string FusedDisplayName => BaseWeapon.LocalizedName + (GameText.LanguageCode == GameText.Chinese ? FusionSuffix : " · Fusion");
     public string LocalizedDescription => Localize("description", description);
 
     private string Localize(string field, string source) => id > 0
@@ -57,6 +61,38 @@ public class Weapon_SO : ScriptableObject
     [Header("Skills")]
     [Tooltip("武器技能列表。当前战斗默认使用第一个技能")]
     public EnemySkill_SO[] skillPool;
+
+    [Min(1)]
+    [Tooltip("这把武器作为主体可融合的次数。普通武器为 1。")]
+    public int maxFusionCount = 1;
+
+    private Weapon_SO fusionBase;
+    public Weapon_SO BaseWeapon => fusionBase != null ? fusionBase : this;
+    public string FusionInstanceId { get; private set; }
+    public int FusionCount { get; private set; }
+    public int FusionLimit => Mathf.Max(1, BaseWeapon.maxFusionCount);
+    public IReadOnlyList<InheritedWeaponSkill> InheritedSkills { get; private set; } = Array.Empty<InheritedWeaponSkill>();
+    public bool IsFused => !string.IsNullOrEmpty(FusionInstanceId);
+
+    // All existing equipment and battle consumers can use the fused weapon as usual.
+    // A new variant is created for each fusion, so snapshots can share its reference.
+    internal static Weapon_SO CreateFusedCopy(Weapon_SO template, List<InheritedWeaponSkill> inherited, string instanceId, int fusionCount)
+    {
+        Weapon_SO baseWeapon = template.BaseWeapon;
+        Weapon_SO copy = Instantiate(baseWeapon);
+        copy.name = baseWeapon.name;
+        copy.weaponName = baseWeapon.weaponName + FusionSuffix;
+        copy.hideFlags = HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
+        copy.fusionBase = baseWeapon;
+        copy.FusionInstanceId = instanceId;
+        copy.FusionCount = fusionCount;
+        copy.InheritedSkills = new List<InheritedWeaponSkill>(inherited).AsReadOnly();
+        var skills = new List<EnemySkill_SO>(baseWeapon.skillPool ?? Array.Empty<EnemySkill_SO>());
+        foreach (InheritedWeaponSkill entry in inherited)
+            skills.Add(entry.Skill);
+        copy.skillPool = skills.ToArray();
+        return copy;
+    }
 
     public EnemySkill_SO GetDefaultSkill()
     {

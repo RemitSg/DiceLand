@@ -143,6 +143,72 @@ public sealed class MapCraftingOverlayPlayModeTests
         Assert.Greater(((CanvasGroup)Get(overlay, "panelGroup")).alpha, 0.99f);
     }
 
+    [UnityTest]
+    public IEnumerator FusionTabFiltersDonorsPreviewsTheChoiceAndCommitsOnlyOnce()
+    {
+        ScriptableObject original = Make("EnemySkill_SO");
+        Set(original, "skillName", "挥砍");
+        ScriptableObject unchosen = Make("EnemySkill_SO");
+        Set(unchosen, "skillName", "寒风");
+        ScriptableObject inherited = Make("EnemySkill_SO");
+        Set(inherited, "skillName", "寒气横斩");
+        ScriptableObject subject = MakeFusionWeapon("熔火铁剑", "Sword", original);
+        ScriptableObject donor = MakeFusionWeapon("霜铁剑", "Sword", unchosen, inherited);
+        ScriptableObject staff = MakeFusionWeapon("测试法杖", "Wand", inherited);
+        Invoke(state, "AddWeapon", subject, 1);
+        Invoke(state, "AddWeapon", donor, 1);
+        Invoke(state, "AddWeapon", staff, 1);
+        Set(state, "money", 126);
+        int fusions = 0;
+        overlay.GetType().GetEvent("WeaponFused").AddEventHandler(overlay, (Action<string>)(_ => fusions++));
+
+        yield return new WaitForSecondsRealtime(0.3f);
+        Click(Find("FusionTab"));
+        yield return null;
+        Transform confirm = Find("ConfirmFusion");
+        Assert.IsFalse(confirm.GetComponent<Button>().interactable);
+        Click(Find("FusionSubject"));
+        yield return null;
+        Click(Find("PickerWeapon_00"));
+        yield return null;
+        Click(Find("FusionDonor"));
+        yield return null;
+        Assert.AreEqual(1, host.GetComponentsInChildren<Transform>().Count(t => t.name.StartsWith("PickerWeapon_", StringComparison.Ordinal)));
+        Click(Find("PickerWeapon_00"));
+        yield return null;
+        Click(Find("FusionSkill_01"));
+        yield return null;
+        Assert.AreEqual("熔火铁剑 · 融合", Get(Get(overlay, "fusionPreviewName"), "text"));
+        Assert.AreEqual("寒气横斩", Get(Get(overlay, "fusionSkillName"), "text"));
+        Assert.IsTrue(confirm.GetComponent<Button>().interactable);
+
+        Click(confirm);
+        Click(confirm);
+        Assert.AreEqual(1, fusions);
+        Assert.AreEqual(76, Get(state, "money"));
+        Assert.AreEqual(0, Invoke(state, "GetWeaponAmount", donor));
+        Assert.AreEqual(1, Invoke(state, "GetWeaponAmount", staff));
+        object result = Get(overlay, "fusionSubject");
+        var fused = (ScriptableObject)Get(result, "weaponData");
+        owned.Add(fused);
+        CollectionAssert.AreEqual(new[] { original, inherited }, (IEnumerable)Get(fused, "skillPool"));
+        Assert.IsFalse(Find("FusionDonor").GetComponent<Button>().interactable);
+        StringAssert.Contains("寒气横斩", (string)Get(Get(overlay, "fusionStatus"), "text"));
+        Click(Find("ForgeTab"));
+        Assert.IsTrue(Find("Blueprint_00").gameObject.activeInHierarchy);
+    }
+
+    private ScriptableObject MakeFusionWeapon(string name, string type, params ScriptableObject[] skills)
+    {
+        ScriptableObject weapon = Make("Weapon_SO");
+        Set(weapon, "weaponName", name);
+        Set(weapon, "weaponType", Enum.Parse(TypeOf("WeaponType"), type));
+        Array pool = Array.CreateInstance(TypeOf("EnemySkill_SO"), skills.Length);
+        for (int i = 0; i < skills.Length; i++) pool.SetValue(skills[i], i);
+        Set(weapon, "skillPool", pool);
+        return weapon;
+    }
+
     private void Show() => Invoke(overlay, "Show", state, (Func<object, string>)(recipe =>
     {
         calls++;

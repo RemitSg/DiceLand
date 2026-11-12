@@ -27,8 +27,17 @@ public sealed class MainMenuSaveAssetCatalog
 
     public void Add(Weapon_SO weapon)
     {
+        if (weapon == null)
+            return;
+        if (weapon.IsFused)
+        {
+            Add(weapon.BaseWeapon);
+            foreach (InheritedWeaponSkill skill in weapon.InheritedSkills)
+                Add(skill.SourceWeapon);
+            return;
+        }
         Add(weapons, MainMenuRunSaveSystem.GetWeaponId(weapon), weapon);
-        if (weapon != null) Add(weapons, weapon.legacySaveId, weapon);
+        Add(weapons, weapon.legacySaveId, weapon);
     }
 
     public void Add(LootItem_SO loot)
@@ -199,6 +208,7 @@ internal sealed class SavedPartyMemberState
     public string memberId;
     public string characterId;
     public string weaponId;
+    public string weaponInstanceId;
     public int level;
     public int experience;
     public int maxHPFlatBonus;
@@ -219,6 +229,17 @@ internal sealed class SavedWeaponStack
 {
     public string weaponId;
     public int amount;
+    public string weaponInstanceId;
+    public int fusionCount;
+    public List<SavedInheritedWeaponSkill> inheritedSkills;
+}
+
+[Serializable]
+internal sealed class SavedInheritedWeaponSkill
+{
+    public string sourceWeaponId;
+    public string skillKey;
+    public int skillIndex;
 }
 
 [Serializable]
@@ -513,6 +534,7 @@ public static class MainMenuRunSaveSystem
                     memberId = member.memberId,
                     characterId = GetCharacterId(member.characterData),
                     weaponId = GetWeaponId(member.weaponData),
+                    weaponInstanceId = member.weaponData != null ? member.weaponData.FusionInstanceId : null,
                     level = member.level,
                     experience = member.experience,
                     maxHPFlatBonus = member.maxHPFlatBonus,
@@ -550,7 +572,10 @@ public static class MainMenuRunSaveSystem
                 savedState.weaponInventory.Add(new SavedWeaponStack
                 {
                     weaponId = GetWeaponId(weapon.weaponData),
-                    amount = weapon.amount
+                    amount = weapon.amount,
+                    weaponInstanceId = weapon.weaponData != null ? weapon.weaponData.FusionInstanceId : null,
+                    fusionCount = weapon.weaponData != null ? weapon.weaponData.FusionCount : 0,
+                    inheritedSkills = SerializeInheritedSkills(weapon.weaponData)
                 });
             }
         }
@@ -857,6 +882,88 @@ public static class MainMenuRunSaveSystem
         return snapshot;
     }
 
+    private static List<SavedInheritedWeaponSkill> SerializeInheritedSkills(Weapon_SO weapon)
+    {
+        if (weapon == null || !weapon.IsFused)
+            return null;
+
+        var savedSkills = new List<SavedInheritedWeaponSkill>(weapon.InheritedSkills.Count);
+        foreach (InheritedWeaponSkill inherited in weapon.InheritedSkills)
+        {
+            savedSkills.Add(new SavedInheritedWeaponSkill
+            {
+                sourceWeaponId = GetWeaponId(inherited.SourceWeapon),
+                skillKey = GetInheritedSkillKey(inherited.Skill),
+                skillIndex = Array.IndexOf(inherited.SourceWeapon.skillPool, inherited.Skill)
+            });
+        }
+        return savedSkills;
+    }
+
+    private static string GetInheritedSkillKey(EnemySkill_SO skill)
+    {
+        if (skill == null) return null;
+        if (!string.IsNullOrWhiteSpace(skill.localizationKey)) return skill.localizationKey;
+        return !string.IsNullOrWhiteSpace(skill.name) ? skill.name : skill.skillName;
+    }
+
+    private static EnemySkill_SO ResolveInheritedSkill(Weapon_SO source, SavedInheritedWeaponSkill saved)
+    {
+        EnemySkill_SO[] skills = source?.skillPool;
+        if (skills == null) return null;
+        if (saved.skillIndex >= 0 && saved.skillIndex < skills.Length &&
+            GetInheritedSkillKey(skills[saved.skillIndex]) == saved.skillKey)
+            return skills[saved.skillIndex];
+        if (string.IsNullOrEmpty(saved.skillKey)) return null;
+        return Array.Find(skills, skill => GetInheritedSkillKey(skill) == saved.skillKey);
+    }
+
+    private static Dictionary<string, Weapon_SO> DeserializeWeaponInventory(SavedRunState savedState, RunState runState,
+        MainMenuSaveAssetCatalog catalog)
+    {
+        var fusedWeapons = new Dictionary<string, Weapon_SO>(StringComparer.Ordinal);
+        if (savedState.weaponInventory == null) return fusedWeapons;
+
+        foreach (SavedWeaponStack saved in savedState.weaponInventory)
+        {
+            if (saved == null || saved.amount <= 0) continue;
+            Weapon_SO weapon = catalog.ResolveWeapon(saved.weaponId);
+            if (weapon == null) continue;
+            if (!string.IsNullOrEmpty(saved.weaponInstanceId))
+            {
+                if (fusedWeapons.ContainsKey(saved.weaponInstanceId)) continue;
+                var inherited = new List<InheritedWeaponSkill>();
+                if (saved.inheritedSkills != null)
+                {
+                    foreach (SavedInheritedWeaponSkill entry in saved.inheritedSkills)
+                    {
+                        if (entry == null) continue;
+                        Weapon_SO source = catalog.ResolveWeapon(entry.sourceWeaponId);
+                        if (source == null || source.weaponType != weapon.weaponType) continue;
+                        EnemySkill_SO skill = ResolveInheritedSkill(source, entry);
+                        if (skill != null && !RunWeaponFusionService.HasSkill(weapon, skill) &&
+                            !inherited.Exists(existing => existing.Skill == skill))
+                            inherited.Add(new InheritedWeaponSkill(source, skill));
+                    }
+                }
+                int fusionCount = Math.Max(1, Math.Max(saved.fusionCount, saved.inheritedSkills?.Count ?? 0));
+                weapon = Weapon_SO.CreateFusedCopy(weapon, inherited, saved.weaponInstanceId, fusionCount);
+                fusedWeapons.Add(saved.weaponInstanceId, weapon);
+            }
+            runState.weaponInventory.Add(new RunWeaponState { weaponData = weapon, amount = saved.amount });
+        }
+        return fusedWeapons;
+    }
+
+    private static Weapon_SO ResolveSavedEquipment(SavedPartyMemberState member, MainMenuSaveAssetCatalog catalog,
+        Dictionary<string, Weapon_SO> fusedWeapons)
+    {
+        Weapon_SO template = catalog.ResolveWeapon(member.weaponId);
+        if (string.IsNullOrEmpty(member.weaponInstanceId)) return template;
+        return fusedWeapons.TryGetValue(member.weaponInstanceId, out Weapon_SO fused) && fused.BaseWeapon == template
+            ? fused : null;
+    }
+
     private static RunState DeserializeRunState(SavedRunState savedState, MainMenuSaveAssetCatalog catalog)
     {
         if (savedState == null || catalog == null)
@@ -887,6 +994,7 @@ public static class MainMenuRunSaveSystem
             settlementStats = savedState.settlementStats != null ? savedState.settlementStats.Clone() : new RunSettlementStats()
         };
 
+        Dictionary<string, Weapon_SO> fusedWeapons = DeserializeWeaponInventory(savedState, runState, catalog);
         if (savedState.partyMembers != null)
         {
             for (int i = 0; i < savedState.partyMembers.Count; i++)
@@ -899,7 +1007,7 @@ public static class MainMenuRunSaveSystem
                 {
                     memberId = member.memberId,
                     characterData = catalog.ResolveCharacter(member.characterId),
-                    weaponData = catalog.ResolveWeapon(member.weaponId),
+                    weaponData = ResolveSavedEquipment(member, catalog, fusedWeapons),
                     level = member.level,
                     experience = member.experience,
                     maxHPFlatBonus = member.maxHPFlatBonus,
@@ -923,23 +1031,6 @@ public static class MainMenuRunSaveSystem
                 {
                     lootItem = lootItem,
                     amount = loot.amount
-                });
-            }
-        }
-
-        if (savedState.weaponInventory != null)
-        {
-            for (int i = 0; i < savedState.weaponInventory.Count; i++)
-            {
-                SavedWeaponStack weapon = savedState.weaponInventory[i];
-                Weapon_SO weaponData = catalog.ResolveWeapon(weapon != null ? weapon.weaponId : string.Empty);
-                if (weaponData == null || weapon == null || weapon.amount <= 0)
-                    continue;
-
-                runState.weaponInventory.Add(new RunWeaponState
-                {
-                    weaponData = weaponData,
-                    amount = weapon.amount
                 });
             }
         }
@@ -1139,6 +1230,7 @@ public static class MainMenuRunSaveSystem
     {
         if (weapon == null)
             return string.Empty;
+        weapon = weapon.BaseWeapon;
         if (!string.IsNullOrWhiteSpace(weapon.saveId)) return weapon.saveId;
         return weapon.id > 0 ? weapon.id.ToString(CultureInfo.InvariantCulture) : (!string.IsNullOrWhiteSpace(weapon.weaponName) ? weapon.weaponName : weapon.name);
     }

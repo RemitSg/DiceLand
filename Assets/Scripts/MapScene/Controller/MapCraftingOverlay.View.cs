@@ -13,6 +13,8 @@ public partial class MapCraftingOverlay
     private Canvas canvas;
     private Image backdrop;
     private CanvasGroup panelGroup, previewGroup;
+    private RectTransform forgePage;
+    private const float ForgeTabSpace = 56;
     private RectTransform safeAreaRect, panelRect, titlePlaque, previewRoot, metaBadge, blueprintArtRoot;
     private ScrollRect blueprintScroll, materialScroll, descriptionScroll;
     private TextMeshProUGUI titleText, weaponNameText, metaText, descriptionText, availabilityText, statusText, emptyText, materialEmptyText, craftLabel;
@@ -46,7 +48,7 @@ public partial class MapCraftingOverlay
     {
         if (canvas != null) return;
         // Older scenes may have serialized the compact, two-column panel size.
-        panelSize = new Vector2(Mathf.Max(1480, panelSize.x), Mathf.Max(840, panelSize.y));
+        panelSize = new Vector2(Mathf.Max(1480, panelSize.x), Mathf.Max(840, panelSize.y) + ForgeTabSpace);
         RectTransform root = Rect(transform, "CraftingOverlayCanvas");
         canvas = root.gameObject.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -71,25 +73,27 @@ public partial class MapCraftingOverlay
         titleText.alignment = TextAlignmentOptions.Midline;
         Button closeX = Action(panelRect, "CloseXButton", "×", Hide, false);
         Place((RectTransform)closeX.transform, panelSize.x - 86, 20, 62, 62);
-        Rule(panelRect, "HeaderRule", 30, 104, panelSize.x - 60, 8);
+        Rule(panelRect, "HeaderRule", 30, 104 + ForgeTabSpace, panelSize.x - 60, 8);
+        forgePage = Rect(panelRect, "ForgePage");
+        Stretch(forgePage);
         string[] labels = { GameText.Get("ui.map_crafting.blueprints", "图纸列表"), GameText.Get("ui.map_crafting.weapon_preview", "成品预览"), GameText.Get("ui.map_crafting.materials", "所需材料") };
         for (int i = 0; i < headings.Length; i++)
         {
-            headings[i] = Rect(panelRect, "Heading_" + i);
+            headings[i] = Rect(forgePage, "Heading_" + i);
             TextMeshProUGUI label = Text(headings[i], "Label", 32, Ivory, labels[i]);
             Stretch(label.rectTransform); label.alignment = TextAlignmentOptions.Center;
         }
         for (int i = 0; i < separators.Length; i++)
-            separators[i] = Rule(panelRect, "ColumnRule_" + i, 0, 0, 8, 500);
-        blueprintScroll = ScrollArea(panelRect, "BlueprintScroll");
+            separators[i] = Rule(forgePage, "ColumnRule_" + i, 0, 0, 8, 500);
+        blueprintScroll = ScrollArea(forgePage, "BlueprintScroll");
         emptyText = Text(blueprintScroll.viewport, "EmptyBlueprints", 29, Muted, GameText.Get("ui.map_crafting.no_blueprints_owned", "尚未拥有图纸"));
         Inset(emptyText.rectTransform, 14, 18); emptyText.alignment = TextAlignmentOptions.Center;
-        blueprintArtRoot = Rect(panelRect, "BlueprintArt");
+        blueprintArtRoot = Rect(forgePage, "BlueprintArt");
         blueprintImage = Icon(blueprintArtRoot, "BlueprintIcon", null); Stretch(blueprintImage.rectTransform);
-        descriptionScroll = ScrollArea(panelRect, "DescriptionScroll");
+        descriptionScroll = ScrollArea(forgePage, "DescriptionScroll");
         descriptionText = Text(descriptionScroll.content, "Description", Mathf.Max(27, bodyFontSize), Ivory, string.Empty);
         descriptionText.alignment = TextAlignmentOptions.Top;
-        previewRoot = Rect(panelRect, "Preview");
+        previewRoot = Rect(forgePage, "Preview");
         Face(previewRoot, MapCraftingFrameGraphic.Style.Preview);
         RectTransform seal = Rect(previewRoot, "EngravedSeal");
         engraving = Face(seal, MapCraftingFrameGraphic.Style.Engraving);
@@ -109,23 +113,24 @@ public partial class MapCraftingOverlay
             spark.color = new Color(1, 0.81f, 0.36f, 0); spark.raycastTarget = false;
             sparks[i].pivot = new Vector2(0.5f, 0.5f);
         }
-        materialScroll = ScrollArea(panelRect, "MaterialScroll");
+        materialScroll = ScrollArea(forgePage, "MaterialScroll");
         materialEmptyText = Text(materialScroll.viewport, "EmptyMaterials", 28, Muted, string.Empty);
         Inset(materialEmptyText.rectTransform, 14, 20); materialEmptyText.alignment = TextAlignmentOptions.Top;
-        availabilityText = Text(panelRect, "Availability", 29, Coral, string.Empty);
+        availabilityText = Text(forgePage, "Availability", 29, Coral, string.Empty);
         availabilityText.alignment = TextAlignmentOptions.Center;
-        Rule(panelRect, "MaterialStatusRule", panelSize.x * 0.69f + 12, panelSize.y - 226, panelSize.x * 0.31f - 60, 8);
+        Rule(forgePage, "MaterialStatusRule", panelSize.x * 0.69f + 12, panelSize.y - 226, panelSize.x * 0.31f - 60, 8);
         Rule(panelRect, "FooterRule", 24, panelSize.y - 116, panelSize.x - 48, 8);
-        TextMeshProUGUI note = Text(panelRect, "ConsumptionNote", 25, Muted, GameText.Get("ui.map_crafting.forging_consumes_the_listed_materials_and_keeps_the", "锻造将消耗所列材料，图纸保留"));
+        TextMeshProUGUI note = Text(forgePage, "ConsumptionNote", 25, Muted, GameText.Get("ui.map_crafting.forging_consumes_the_listed_materials_and_keeps_the", "锻造将消耗所列材料，图纸保留"));
         Place(note.rectTransform, 46, panelSize.y - 91, 720, 36);
-        statusText = Text(panelRect, "Status", 27, Jade, string.Empty);
+        statusText = Text(forgePage, "Status", 27, Jade, string.Empty);
         Place(statusText.rectTransform, 46, panelSize.y - 54, 742, 42);
-        craftButton = Action(panelRect, "CraftButton", GameText.Get("map.forge.craft", craftButtonLabel), OnCraftClicked, true);
+        craftButton = Action(forgePage, "CraftButton", GameText.Get("map.forge.craft", craftButtonLabel), OnCraftClicked, true);
         craftFace = craftButton.GetComponent<MapCraftingFrameGraphic>();
         craftLabel = craftButton.GetComponentInChildren<TextMeshProUGUI>();
         craftIcon = Icon(craftButton.transform, "Hammer", MapForestArt.Get("Forge"));
         craftLabel.rectTransform.anchorMin = craftLabel.rectTransform.anchorMax = craftLabel.rectTransform.pivot = new Vector2(0, 1);
-        closeButton = Action(panelRect, "CloseButton", GameText.Get("ui.close", closeButtonLabel), Hide, false);
+        closeButton = Action(forgePage, "CloseButton", GameText.Get("ui.close", closeButtonLabel), Hide, false);
+        BuildFusionUi();
         ApplyFonts();
     }
 
@@ -159,26 +164,28 @@ public partial class MapCraftingOverlay
         float bodyBottom = panelSize.y - 138;
         Place(titlePlaque, (panelSize.x - 440) * 0.5f, -30, 440, 118);
         float[] xs = { leftX, centerX, rightX }, widths = { leftWidth, centerWidth, rightWidth };
-        for (int i = 0; i < 3; i++) Place(headings[i], xs[i], 120, widths[i], 52);
-        Place(separators[0], centerX - 18, 120, 8, bodyBottom - 118);
-        Place(separators[1], rightX - 18, 120, 8, bodyBottom - 118);
+        float headingTop = 120 + ForgeTabSpace, listTop = 188 + ForgeTabSpace, previewTop = 184 + ForgeTabSpace;
+        for (int i = 0; i < 3; i++) Place(headings[i], xs[i], headingTop, widths[i], 52);
+        Place(separators[0], centerX - 18, headingTop, 8, bodyBottom - headingTop + 2);
+        Place(separators[1], rightX - 18, headingTop, 8, bodyBottom - headingTop + 2);
         bool multiple = blueprintCards.Count > 1;
-        float listHeight = multiple ? bodyBottom - 274 : 86;
-        Place((RectTransform)blueprintScroll.transform, leftX, 188, leftWidth, listHeight);
+        float listHeight = multiple ? bodyBottom - listTop - 86 : 86;
+        Place((RectTransform)blueprintScroll.transform, leftX, listTop, leftWidth, listHeight);
         for (int i = 0; i < blueprintCards.Count; i++)
             Place((RectTransform)blueprintCards[i].button.transform, 3, i * 86 + 3, leftWidth - 24, 78);
         blueprintScroll.content.sizeDelta = new Vector2(0, Mathf.Max(listHeight, blueprintCards.Count * 86 - 2));
-        float artTop = 200 + listHeight;
+        float artTop = listTop + 12 + listHeight;
         blueprintArtRoot.gameObject.SetActive(!multiple && selectedBlueprint != null);
         Place(blueprintArtRoot, leftX + 26, artTop, leftWidth - 52, Mathf.Max(32, bodyBottom - artTop - 112));
         Place((RectTransform)descriptionScroll.transform, leftX + 4, bodyBottom - (multiple ? 78 : 100), leftWidth - 8, multiple ? 74 : 96);
-        Place(previewRoot, centerX, 184, centerWidth, bodyBottom - 184);
+        Place(previewRoot, centerX, previewTop, centerWidth, bodyBottom - previewTop);
         Place(weaponNameText.rectTransform, 14, 6, centerWidth - 28, 66);
         Place(metaBadge, (centerWidth - 190) * 0.5f, 76, 190, 44);
-        Place(iconImage.rectTransform, 24, 128, centerWidth - 48, bodyBottom - 184 - 142);
-        Place(engraving.rectTransform, 24, 128, centerWidth - 48, bodyBottom - 184 - 142);
+        Place(iconImage.rectTransform, 24, 128, centerWidth - 48, bodyBottom - previewTop - 142);
+        Place(engraving.rectTransform, 24, 128, centerWidth - 48, bodyBottom - previewTop - 142);
         weaponRestingPosition = iconImage.rectTransform.anchoredPosition;
-        Place((RectTransform)materialScroll.transform, rightX, 188, rightWidth, bodyBottom - 296);
+        float materialHeight = bodyBottom - listTop - 108;
+        Place((RectTransform)materialScroll.transform, rightX, listTop, rightWidth, materialHeight);
         float materialY = 0;
         foreach (MaterialRow row in materialRows)
         {
@@ -192,7 +199,7 @@ public partial class MapCraftingOverlay
             Place(row.count.rectTransform, rightWidth - 134, (height - 48) * 0.5f, 98, 48);
             materialY += height + 14;
         }
-        materialScroll.content.sizeDelta = new Vector2(0, Mathf.Max(bodyBottom - 296, materialY - 10));
+        materialScroll.content.sizeDelta = new Vector2(0, Mathf.Max(materialHeight, materialY - 10));
         Place(availabilityText.rectTransform, rightX + 10, bodyBottom - 80, rightWidth - 20, 70);
         Place((RectTransform)craftButton.transform, panelSize.x - 640, panelSize.y - 92, 320, 70);
         Place((RectTransform)closeButton.transform, panelSize.x - 292, panelSize.y - 92, 252, 70);

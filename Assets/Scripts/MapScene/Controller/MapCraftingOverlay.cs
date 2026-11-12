@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public partial class MapCraftingOverlay : MonoBehaviour
 {
     public event Action Hidden;
+    public event Action<string> WeaponFused;
 
     [Header("Fonts")]
     [SerializeField] private TMP_FontAsset keywordFont;
@@ -51,6 +52,8 @@ public partial class MapCraftingOverlay : MonoBehaviour
         feedbackTime = 0;
         panelGroup.interactable = true;
         statusText.text = string.Empty;
+        ResetFusion();
+        ShowFusionTab(false);
         RefreshBlueprintList();
         SelectBlueprint(ResolveSelection(selectedBlueprint), false);
         ApplyViewport(new Vector2(Screen.width, Screen.height), Screen.safeArea);
@@ -73,6 +76,8 @@ public partial class MapCraftingOverlay : MonoBehaviour
         canvas.gameObject.SetActive(false);
         closing = false;
         craftHandler = null;
+        ResetFusion();
+        currentRunState = null;
         Hidden?.Invoke();
     }
 
@@ -176,7 +181,7 @@ public partial class MapCraftingOverlay : MonoBehaviour
 
     private void OnCraftClicked()
     {
-        if (!IsVisible || closing || handlingAction || feedbackTime > 0 || craftHandler == null ||
+        if (!IsVisible || showingFusion || closing || handlingAction || feedbackTime > 0 || craftHandler == null ||
             !RunCraftingService.CanCraft(currentRunState, selectedBlueprint, out _)) return;
         handlingAction = true;
         try
