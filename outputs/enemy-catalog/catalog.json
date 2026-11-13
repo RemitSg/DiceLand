@@ -170,6 +170,19 @@
         "成长"
       ],
       "scope": "仅调整 4401 新芽的成长。第 1 颗攻击骰由 2–4 改为 2–3，断枝仍为 2–4。"
+    },
+    "latest_localization_revision": {
+      "date": "2026-11-13",
+      "enemyNumbers": [
+        44,
+        4401
+      ],
+      "enemyIds": [
+        44,
+        4401
+      ],
+      "skillCount": 7,
+      "scope": "补录 044 枯枝王庭、4401 新芽、关联 Boss 敌群及七个技能的英文名称和描述，以及被动和技能规则的英文译文。本次只核对这两个敌人的本地化，目录仍收录 52 个敌人资产和 136 个关联技能。"
     }
   },
   "enemies": [
@@ -34974,7 +34987,11 @@
                 "z": 0.0
               }
             }
-          ]
+          ],
+          "english": {
+            "name": "Flourish",
+            "description": "The branches unfurl and share the Court’s fleeting vitality with its New Buds."
+          }
         },
         {
           "guid": "417dc619263038b4ba178a4c422e18a5",
@@ -35140,7 +35157,11 @@
                 "z": 0.0
               }
             }
-          ]
+          ],
+          "english": {
+            "name": "Lush Growth",
+            "description": "Vitality flows from the old roots into the New Buds, setting their veins deeper."
+          }
         },
         {
           "guid": "8607fa1ef90c2c54bac220ff778922b5",
@@ -35848,7 +35869,11 @@
               "is_current": false,
               "preview_status": "历史原型；preview_path 页面现已更新为当前 Blender 版。旧图集、动画与预制体仍可按各自资产路径查看。"
             }
-          ]
+          ],
+          "english": {
+            "name": "Decomposition",
+            "description": "The roots break down the life drained from wounds and feed it to every New Bud."
+          }
         },
         {
           "guid": "6b8271a9084061348af22d69a1b4065b",
@@ -36022,7 +36047,11 @@
                 "z": 0.0
               }
             }
-          ]
+          ],
+          "english": {
+            "name": "Growth",
+            "description": "Old roots turn the soil, and two New Buds grow at the Court’s command."
+          }
         },
         {
           "guid": "253e40966af7598409c94c86993d3b3b",
@@ -36196,7 +36225,11 @@
                 "z": 0.0
               }
             }
-          ]
+          ],
+          "english": {
+            "name": "Wild Growth",
+            "description": "Dead branches crack as four New Buds burst out between the roots."
+          }
         }
       ],
       "raw": {
@@ -36371,7 +36404,11 @@
           "guid": "5f7c2e81c73a06f4ca544f12623bd932",
           "placement": [
             "Boss池"
-          ]
+          ],
+          "english": {
+            "name": "Withered Court",
+            "description": "The Withered Court and the New Buds it summons in battle."
+          }
         }
       ],
       "attribute_sources": [
@@ -36388,7 +36425,25 @@
         "枯萎（ORANGE）：通过 Poison.asset（GUID 5c2d83ddce914792abd7211bb94635f6）状态免疫规则阻止中毒施加，allowApplicationWhileImmune=false；不授予新芽相同免疫。",
         "投放：EnemyRoster 的 bossGroups 新增敌群枯枝王庭（groupID=44，saveId=enemy_group.withered_court），初始仅王庭本体；当前项目两个难度配置均标为 Easy，共用该 Boss 池。未单独配置事件、副本、遗物生成、危险区域、音乐覆盖或独立掉落表。",
         "不向玩家授予技能；技能资产能耗均为 0，敌人自身使用时沿用不消耗玩家能量的通用规则。"
-      ]
+      ],
+      "english": {
+        "name": "Withered Court",
+        "description": "Dead wood still wears its old crown. Every New Bud extends a reign that has yet to end.",
+        "passives": [
+          {
+            "name": "Pitiless Fall",
+            "description": "Enters Phase 2 when HP drops below 50% of its maximum."
+          },
+          {
+            "name": "Take Root",
+            "description": "Summons New Buds every three rounds."
+          },
+          {
+            "name": "Wither",
+            "description": "Immune to Poison."
+          }
+        ]
+      }
     },
     {
       "guid": "287b85e512ed82c46af70b0b313c7818",
@@ -36575,7 +36630,11 @@
                 "z": 0.0
               }
             }
-          ]
+          ],
+          "english": {
+            "name": "Budding",
+            "description": "Sharp edges begin to form on the tender new branches."
+          }
         },
         {
           "guid": "c678d1c8fd4a1d64b9eb3dc179489caf",
@@ -36741,7 +36800,11 @@
                 "z": 0.0
               }
             }
-          ]
+          ],
+          "english": {
+            "name": "Sever Branch",
+            "description": "The branch snaps itself off and sends the last of its vitality back to the Court."
+          }
         }
       ],
       "raw": {
@@ -36862,7 +36925,17 @@
         "实际 enemyID=4401；4001 已被其他敌人使用，未覆盖该旧资产。仅由 044 的生长／野长生成，不是 Boss 敌群初始成员，不独立加入随机遭遇池或事件／副本。",
         "由毒属性敌群生成，继承毒属性；不继承王庭的中毒免疫，未配置额外被动免疫、阶段或独立掉落表。",
         "不向玩家授予技能；成长与断枝的技能资产能耗为 0。"
-      ]
+      ],
+      "english": {
+        "name": "New Bud",
+        "description": "It sprouts from the Court’s old roots and will one day return to them.",
+        "passives": [
+          {
+            "name": "Pruning",
+            "description": "Uses its special skill on its fourth round alive."
+          }
+        ]
+      }
     },
     {
       "guid": "0aec55315c6c6da43ad4a1355f241bad",

@@ -348,6 +348,96 @@ public sealed class LocalizationPhaseOnePlayModeTests
     }
 
     [UnityTest]
+    public IEnumerator EnglishDwarfBlacksmithRendersChoicesAndReforgesThroughTheBackpack()
+    {
+        Call(gameText, "Select", "en", null);
+        yield return WaitFor(() => (string)Get(gameText, "LanguageCode") == "en" && !(bool)Get(gameText, "IsChanging"), "English event table");
+        Call(RuntimeType("MainMenuRuntime"), "ClearTutorialRequest");
+        Call(RuntimeType("MainMenuRuntime"), "ClearContinueRequest");
+        Call(RuntimeType("MapRunRuntime"), "Clear", (object)null);
+        yield return SceneManager.LoadSceneAsync("MapScene");
+        yield return WaitFor(() => Find("RunGameManager") != null && Get(Find("RunGameManager"), "runState") != null, "map initialization", 30f);
+        Component map = Find("RunGameManager");
+        object treasure = Get(map, "mapTreasureOverlay");
+        if (treasure != null) Call(treasure, "Hide");
+        Call(Get(map, "pendingStartingRelicBagChoices"), "Clear");
+
+        object data = LoadAsset("Assets/Data/Events/034 矮人铁匠/034 矮人铁匠.asset", "MapEvent_SO");
+        object[] options = ((IEnumerable)Call(data, "GetValidOptions")).Cast<object>().ToArray();
+        string[] titles = { "Reforge a relic", "Reforge a blueprint", "Reforge a piece of loot" };
+        for (int i = 0; i < options.Length; i++)
+        {
+            Assert.AreEqual(titles[i], Call(data, "LocalizeOption", options[i], "label", Get(options[i], "optionLabel")));
+            StringAssert.Contains("same rarity", (string)Call(data, "LocalizeOption", options[i], "preview", Get(options[i], "consequenceDescription")));
+            string result = (string)Call(data, "LocalizeOption", options[i], "result", Get(options[i], "resultContent"));
+            Assert.IsNotEmpty(result);
+            Assert.IsFalse(Regex.IsMatch(result, "[\u3400-\u9fff]"), titles[i]);
+        }
+
+        object run = Get(map, "runState");
+        object blueprint = ((IEnumerable)Get(Get(options[1], "blueprintTable"), "Blueprints")).Cast<object>()
+            .First(item => item != null && (bool)Call(RuntimeType("MapEventInventoryReforgeService"), "HasReplacement", options[1], item));
+        ((IList)Get(run, "blueprintInventory")).Clear();
+        Call(run, "AddBlueprint", blueprint, 1);
+        object tile = ((IEnumerable)Call(Get(map, "boardManager"), "GetAllTiles")).Cast<object>().First(value => (bool)Get(value, "isSpawnTile"));
+        Set(tile, "tileType", Enum.Parse(RuntimeType("MapTileType"), "Event"));
+        Set(tile, "assignedEvent", data);
+        Set(tile, "isResolved", false);
+        Assert.IsTrue((bool)Call(map, "OpenEventPanel", tile));
+        object overlay = Get(map, "mapEventOverlay"), hud = Get(map, "mapHUD");
+        Call(overlay, "CompleteNarration");
+        yield return WaitFor(() => ((Button)Get(overlay, "confirmButton")).interactable, "blacksmith choices");
+        Assert.AreEqual("The Dwarf Blacksmith", Label(overlay, "titleText"));
+        StringAssert.Contains("Following the sound of a hammer", Label(overlay, "contentText"));
+
+        Call(overlay, "SelectOption", options[1]);
+        var confirm = (Button)Get(overlay, "confirmButton");
+        CollectionAssert.Contains(ActiveLabels(), "Choose an item");
+        confirm.onClick.Invoke();
+        Assert.IsTrue((bool)Get(hud, "IsInventoryVisible"));
+        var slot = ((IEnumerable)Get(hud, "inventorySlotObjects")).Cast<GameObject>().Single();
+        slot.GetComponent<Button>().onClick.Invoke();
+        object detail = Get(hud, "runtimeInventoryDetailView");
+        var select = (Button)Get(detail, "actionButton");
+        CollectionAssert.Contains(ActiveLabels(), "Select");
+        select.onClick.Invoke();
+        Assert.IsFalse((bool)Get(hud, "IsInventoryVisible"));
+        Assert.AreEqual(1, Call(run, "GetBlueprintAmount", blueprint));
+        StringAssert.Contains("Selected item: " + Get(blueprint, "LocalizedName"), Label(overlay, "consequenceText"));
+        CollectionAssert.Contains(ActiveLabels(), "Confirm reforge");
+        confirm.onClick.Invoke();
+        Assert.IsTrue((bool)Get(tile, "isResolved"));
+        Assert.AreEqual(0, Call(run, "GetBlueprintAmount", blueprint));
+        StringAssert.Contains("the lines come to life", Label(overlay, "contentText"));
+        Assert.IsFalse(Regex.IsMatch(Label(overlay, "contentText"), "[\u3400-\u9fff]"));
+        Call(overlay, "Hide");
+    }
+
+    [UnityTest]
+    public IEnumerator EnglishWitheredCourtSkillDetailsIncludeLocalizedRules()
+    {
+        Call(gameText, "Select", "en", null);
+        yield return WaitFor(() => (string)Get(gameText, "LanguageCode") == "en" && !(bool)Get(gameText, "IsChanging"), "English skill table");
+        var host = new GameObject("English Withered Court skill details");
+        try
+        {
+            Component formatter = host.AddComponent(RuntimeType("BattleSkillInfoOverlay"));
+            var paths = AssetPaths("EnemySkill_SO").Where(path => path.Contains("/044 WitheredCourt/")).ToArray();
+            Assert.AreEqual(7, paths.Length);
+            foreach (string path in paths)
+            {
+                object skill = LoadAsset(path, "EnemySkill_SO");
+                string description = (string)Call(formatter, "DescribeSkillRules", skill, false);
+                Assert.IsFalse(Regex.IsMatch(description, "[\u3400-\u9fff]"), path + "\n" + description);
+                if (path.EndsWith("/Decomposition.asset")) StringAssert.Contains("Attack Die 2: [On Hit]", description);
+                if (path.EndsWith("/Flourish.asset")) StringAssert.Contains("Temporary Strength", description);
+                if (path.EndsWith("/Growth.asset")) StringAssert.Contains("Up to 4 copies of New Bud", description);
+            }
+        }
+        finally { Object.Destroy(host); }
+    }
+
+    [UnityTest]
     public IEnumerator EnglishTutorialDefinitionsAndBlockingPromptsCoverEveryStage()
     {
         Call(gameText, "Select", "en", null);

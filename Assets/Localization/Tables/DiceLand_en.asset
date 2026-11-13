@@ -667,10 +667,6 @@ MonoBehaviour:
     m_Localized: Welcome to DiceLand
     m_Metadata:
       m_Items: []
-  - m_Id: 2986946701
-    m_Localized: ""
-    m_Metadata:
-      m_Items: []
   - m_Id: 2986946702
     m_Localized: Start Tutorial
     m_Metadata:
@@ -15875,6 +15871,146 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 72000000000327
     m_Localized: "Selected item: {name}\nClick this choice to pick a different item."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000328
+    m_Localized: "Growth"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000329
+    m_Localized: "Old roots turn the soil, and two New Buds grow at the Court\u2019s command."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000330
+    m_Localized: "Flourish"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000331
+    m_Localized: "The branches unfurl and share the Court\u2019s fleeting vitality with its New Buds."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000332
+    m_Localized: "Decomposition"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000333
+    m_Localized: "The roots break down the life drained from wounds and feed it to every New Bud."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000334
+    m_Localized: "Lush Growth"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000335
+    m_Localized: "Vitality flows from the old roots into the New Buds, setting their veins deeper."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000336
+    m_Localized: "Wild Growth"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000337
+    m_Localized: "Dead branches crack as four New Buds burst out between the roots."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000338
+    m_Localized: "Budding"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000339
+    m_Localized: "Sharp edges begin to form on the tender new branches."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000340
+    m_Localized: "Sever Branch"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000341
+    m_Localized: "The branch snaps itself off and sends the last of its vitality back to the Court."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000342
+    m_Localized: "Withered Court"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000343
+    m_Localized: "Dead wood still wears its old crown. Every New Bud extends a reign that has yet to end."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000344
+    m_Localized: "Pitiless Fall"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000345
+    m_Localized: "Enters Phase 2 when HP drops below 50% of its maximum."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000346
+    m_Localized: "Take Root"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000347
+    m_Localized: "Summons New Buds every three rounds."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000348
+    m_Localized: "Wither"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000349
+    m_Localized: "Immune to Poison."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000350
+    m_Localized: "New Bud"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000351
+    m_Localized: "It sprouts from the Court\u2019s old roots and will one day return to them."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000352
+    m_Localized: "Pruning"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000353
+    m_Localized: "Uses its special skill on its fourth round alive."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000354
+    m_Localized: "Withered Court"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000355
+    m_Localized: "The Withered Court and the New Buds it summons in battle."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000356
+    m_Localized: "Each enemy can use this skill up to {count} {count:plural:time|times} per round."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000357
+    m_Localized: "the designated enemy"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000358
+    m_Localized: "the designated status"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000359
+    m_Localized: "[On Use] At the start of the next round, each living {target} gains 1 stack of {status}."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000360
+    m_Localized: "{die}: [On Hit] Heal each living {target} for the damage dealt by this hit, up to its maximum HP."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000361
+    m_Localized: "[On Use] At the start of the next round, the user dies. Each living {target} heals for the user\u2019s remaining HP before death and gains 1 stack of {status}. If the user is killed first, the sacrifice is canceled."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000362
+    m_Localized: "Up to {count} copies of {name} can be alive at once."
     m_Metadata:
       m_Items: []
   references:

@@ -23,7 +23,7 @@ function splitSkill(skill) {
     else if (/^能耗[：:]/.test(line)) energy = line.replace(/^能耗[：:]\s*/, '');
     else rules.push(line);
   }
-  return {...skill, dice, rules, energy, search: normalize([skill.name, skill.detail, ...skill.roles].join(' '))};
+  return {...skill, dice, rules, energy, search: normalize([skill.name, skill.english?.name, skill.english?.description, skill.detail, ...skill.roles].join(' '))};
 }
 
 const placementLabels = ['外圈普通', '外圈精英', '中圈普通', '中圈精英', 'Boss池'];
@@ -57,8 +57,9 @@ const enemies = data.enemies.map(enemy => {
     speedLabel: rangeLabel(Math.min(...speed), Math.max(...speed)),
     slotsLabel: rangeLabel(Math.min(...slots), Math.max(...slots)),
     search: normalize([
-      enemy.name, enemy.path, enemy.guid, enemy.description, ...labels, ...enemy.attributes,
+      enemy.name, enemy.english?.name, enemy.english?.description, enemy.path, enemy.guid, enemy.description, ...labels, ...enemy.attributes,
       ...enemy.passives, ...enemy.configured_mechanics, ...enemy.special_references,
+      ...(enemy.english?.passives || []).flatMap(passive => [passive.name, passive.description]),
       ...enemy.groups.flatMap(group => [group.name, group.path]),
       ...enemy.stages.map(stage => stage.name),
       ...skills.map(skill => skill.search)
@@ -244,6 +245,7 @@ function renderSkill(skill) {
   return `<details class="skill-card${hit ? ' matched' : ''}" data-skill="${skill.guid}"${hit ? ' open' : ''}>
     <summary><span>
       <span class="skill-title">${highlight(skill.name)}</span>
+      ${skill.english ? `<span class="skill-rule" lang="en"> · ${highlight(skill.english.name)}</span>` : ''}
       <span class="skill-meta">
         <span class="badge">阶段 ${escape(skill.stage_restriction.join(' / '))}</span>
         ${skill.dice.length ? `<span class="badge attr">${skill.dice.length} 骰</span>` : ''}
@@ -253,6 +255,7 @@ function renderSkill(skill) {
     </span></summary>
     <div class="skill-body">
       ${renderSkillArt(skill)}
+      ${skill.english ? `<p class="skill-rule" lang="en">${highlight(skill.english.description)}</p>` : ''}
       ${skill.visual_effects ? `<p class="skill-rule"><a href="../${escape(skill.visual_effects.preview_path.replace(/^outputs\//, ''))}" target="_blank" rel="noopener">▶ ${escape(skill.visual_effects.name)} · 命中特效预览（${skill.visual_effects.frames.length} 帧 / ${skill.visual_effects.duration} 秒）</a></p>` : ''}
       ${skill.dice.length ? `<div class="dice">${skill.dice.map(die => `<span class="die ${die.type === '防御骰' ? 'defense' : 'attack'}"><span>${die.number} · ${die.type}</span><b>${rangeLabel(die.low, die.high)}</b></span>`).join('')}</div>` : ''}
       <div class="skill-roles">
@@ -297,10 +300,12 @@ function renderDetail(enemy) {
     <div class="detail-hero">${portrait(enemy)}<div>
       <div class="card-id">NO. ${numberLabel(enemy.number)} · enemyID ${enemy.enemy_id}</div>
       <h2 id="detail-name">${highlight(enemy.name)}</h2>
+      ${enemy.english ? `<p class="skill-rule" lang="en">${highlight(enemy.english.name)}</p>` : ''}
       <div class="detail-tags">${badges(enemy)}</div>
     </div></div>
     ${stats(enemy, 'detail-stats')}
     ${enemy.description ? `<p class="description">${highlight(enemy.description)}</p>` : ''}
+    ${enemy.english ? `<p class="description" lang="en">${highlight(enemy.english.description)}</p>` : ''}
     <div class="phase-list" aria-label="各形态速度与速度槽">
       ${enemy.stages.map(stage => `<div class="phase"><strong>${escape(stage.name)}</strong><span>速度 ${escape(stage.speed)}</span><span>${stage.slots} 个速度槽</span></div>`).join('')}
     </div>
@@ -312,13 +317,14 @@ function renderDetail(enemy) {
   <section id="passives" class="drawer-section">
     <div class="section-heading"><h3>被动与机制</h3></div>
     ${ruleBlock('被动文案', enemy.passives, '快照未记录被动文案。')}
+    ${enemy.english?.passives.length ? ruleBlock('被动英文', enemy.english.passives.map(passive => `${passive.name} · ${passive.description}`), '') : ''}
     ${ruleBlock('实际机制配置', enemy.configured_mechanics, '快照未记录额外的通用机制配置。')}
   </section>
   <section id="encounters" class="drawer-section">
     <div class="section-heading"><h3>投放与来源</h3></div>
     ${ruleBlock('地图投放', enemy.placements, '快照未标记固定地图投放。')}
     <div class="rule-block"><h4>所属敌群</h4>${groups.length ? `<ul>${groups.map(group =>
-      `<li>${highlight(group.name)}${group.placement.length ? ' · ' + escape(group.placement.join('、')) : ''}<code class="source-path">${escape(group.path)}</code></li>`).join('')}</ul>` :
+      `<li>${highlight(group.name)}${group.placement.length ? ' · ' + escape(group.placement.join('、')) : ''}<code class="source-path">${escape(group.path)}</code>${group.english ? `<p lang="en">${highlight(group.english.name)} · ${highlight(group.english.description)}</p>` : ''}</li>`).join('')}</ul>` :
       '<p class="no-record">快照未记录所属敌群。</p>'}</div>
     ${ruleBlock('事件与副本引用', enemy.special_references, '快照未记录事件或副本引用。')}
     <details class="technical"><summary>敌人资产身份</summary>
@@ -389,6 +395,8 @@ $('snapshot-date').textContent = contentRevision ? `${contentRevision.date} 增�
 $('coverage').textContent = data.summary.coverage || `收录 ${data.date} 快照中的 ${enemies.length} 个敌人资产与 ${data.summary.related_unique_skills} 个关联技能。${data.date === '2026-10-26' ? '血孢子沿用此快照中的数值。' : ''}`;
 const statusRevision = data.summary.latest_status_mechanics_revision;
 if (statusRevision) $('coverage').textContent += ` ${statusRevision.date} 增量复核：${statusRevision.enemyNumbers.map(number => String(number).padStart(3, '0')).join('、')} 的眩晕机制。${statusRevision.scope}`;
+const localizationRevision = data.summary.latest_localization_revision;
+if (localizationRevision) $('coverage').textContent += ` ${localizationRevision.date} ${localizationRevision.scope}`;
 for (const attribute of attributes) $('attribute').add(new Option(attribute, attribute));
 $('categories').innerHTML = categories.map(category => {
   const count = category.key === 'all' ? enemies.length : enemies.filter(enemy => enemy.categoryKeys.includes(category.key)).length;

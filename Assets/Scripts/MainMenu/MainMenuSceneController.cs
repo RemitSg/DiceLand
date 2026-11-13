@@ -766,8 +766,8 @@ public class MainMenuSceneController : MonoBehaviour
             GameText.Get("tutorial.menu.start", "开始教程"),
             GameText.Get("ui.main_menu", "返回主菜单"),
             GameText.Get("tutorial.menu.title", "是否开始教程？"),
-            GameText.Get("tutorial.menu.body", ""),
-            true);
+            bodyOverride: string.Empty,
+            hideSections: true);
         SetGalleryInputEnabled(false);
     }
 

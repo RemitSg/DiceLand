@@ -1597,7 +1597,8 @@ public partial class BattleSkillInfoOverlay : MonoBehaviour
             string enemyLabel = BuildColoredToken(GetSummonEnemyLabel(effect, effectIndex), targetHighlightColor);
             effectLines.Add(GameText.Format("battle.skill.rules.summon", "{diceEffectLabel}：{triggerLabel} 召唤 {countLabel} 个 {enemyLabel}", ("diceEffectLabel", diceEffectLabel), ("triggerLabel", triggerLabel), ("countLabel", countLabel), ("enemyLabel", enemyLabel)));
             if (effect.maxAliveSummons > 0)
-                effectLines.Add($"场上最多同时存在 {effect.maxAliveSummons} 个存活的{effect.enemyData.LocalizedName}。");
+                effectLines.Add(GameText.Format("battle.skill.rules.summon_alive_limit", "场上最多同时存在 {count} 个存活的{name}。",
+                    ("count", effect.maxAliveSummons), ("name", effect.enemyData.LocalizedName)));
         }
     }
 

@@ -136,6 +136,15 @@ try {
   equal(await page.locator('#detail-name').textContent(), catalog.enemies[2].name);
   await page.locator('#close').click();
 
+  const newBud = catalog.enemies.find(enemy => enemy.number === 4401);
+  await fill('Sever Branch');
+  equal(await ids(), [newBud.guid]);
+  await card(newBud.guid).click();
+  equal(await page.locator('#overview [lang="en"]').first().textContent(), newBud.english.name);
+  const severBranch = newBud.skills.find(skill => skill.english.name === 'Sever Branch');
+  equal(await page.locator(`[data-skill="${severBranch.guid}"][open] .skill-body [lang="en"]`).textContent(), severBranch.english.description);
+  await page.locator('#close').click();
+
   await fill('红灯笼 燃烧');
   const lamp = catalog.enemies.find(enemy => enemy.number === 8);
   await card(lamp.guid).click();

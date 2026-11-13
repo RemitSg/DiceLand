@@ -66,20 +66,28 @@ public static class BattleWitheredCourtSkillService
         if (skill == null)
             yield break;
         if (diceIndex == 0 && skill.maxUsesPerEnemyRound > 0)
-            yield return $"每名敌人每回合最多使用 {skill.maxUsesPerEnemyRound} 次。";
+            yield return GameText.Format("battle.skill.rules.per_enemy_round_limit", "每名敌人每回合最多使用 {count} 次。",
+                ("count", skill.maxUsesPerEnemyRound));
 
-        string target = skill.mechanicEnemyData != null ? skill.mechanicEnemyData.LocalizedName : "指定敌人";
-        string status = skill.mechanicStatusData != null ? skill.mechanicStatusData.DisplayName : "指定状态";
+        string target = skill.mechanicEnemyData != null ? skill.mechanicEnemyData.LocalizedName
+            : GameText.Get("battle.skill.rules.designated_enemy", "指定敌人");
+        string status = skill.mechanicStatusData != null ? skill.mechanicStatusData.LocalizedName
+            : GameText.Get("battle.skill.rules.designated_status", "指定状态");
         switch (skill.mechanic)
         {
             case BattleSkillMechanic.WitheredCourtFlourish:
-                yield return $"[使用时] 使场上所有存活的{target}在下回合开始时获得 1 层{status}。";
+                yield return GameText.Format("battle.skill.rules.withered_court.flourish",
+                    "[使用时] 使场上所有存活的{target}在下回合开始时获得 1 层{status}。", ("target", target), ("status", status));
                 break;
             case BattleSkillMechanic.WitheredCourtDecomposition:
-                yield return $"第 {diceIndex + 1} 攻击骰：[命中时] 为所有存活的{target}恢复相当于该次实际伤害量的生命，最高恢复至生命上限。";
+                string die = GameText.Format("battle.skill.attack_die", "第 {index} 攻击骰", ("index", diceIndex + 1));
+                yield return GameText.Format("battle.skill.rules.withered_court.decomposition",
+                    "{die}：[命中时] 为所有存活的{target}恢复相当于该次实际伤害量的生命，最高恢复至生命上限。", ("die", die), ("target", target));
                 break;
             case BattleSkillMechanic.BudBranchSacrifice:
-                yield return $"[使用时] 下回合开始时死亡，为存活的{target}恢复死亡前剩余生命值，并使其获得 1 层{status}。提前被击杀时献祭失效。";
+                yield return GameText.Format("battle.skill.rules.withered_court.sever_branch",
+                    "[使用时] 下回合开始时死亡，为存活的{target}恢复死亡前剩余生命值，并使其获得 1 层{status}。提前被击杀时献祭失效。",
+                    ("target", target), ("status", status));
                 break;
         }
     }

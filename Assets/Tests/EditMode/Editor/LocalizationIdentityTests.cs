@@ -155,7 +155,7 @@ public sealed class LocalizationIdentityTests
     private static void AssertTranslated(StringTable table, string key, string source)
     {
         if (string.IsNullOrWhiteSpace(source)) return;
-        Assert.IsNotEmpty(table.GetEntry(key)?.Value, key);
+        Assert.IsFalse(string.IsNullOrWhiteSpace(table.GetEntry(key)?.Value), key);
     }
 
     private static string[] FormatArguments(string value) =>

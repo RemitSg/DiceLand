@@ -619,10 +619,6 @@ MonoBehaviour:
     m_Key: tutorial.map.welcome.title
     m_Metadata:
       m_Items: []
-  - m_Id: 2986946701
-    m_Key: tutorial.menu.body
-    m_Metadata:
-      m_Items: []
   - m_Id: 2986946702
     m_Key: tutorial.menu.start
     m_Metadata:
@@ -14093,6 +14089,146 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 72000000000327
     m_Key: ui.event.reforge.selected
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000328
+    m_Key: skill.withered_court.growth.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000329
+    m_Key: skill.withered_court.growth.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000330
+    m_Key: skill.withered_court.flourish.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000331
+    m_Key: skill.withered_court.flourish.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000332
+    m_Key: skill.withered_court.decomposition.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000333
+    m_Key: skill.withered_court.decomposition.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000334
+    m_Key: skill.withered_court.lush.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000335
+    m_Key: skill.withered_court.lush.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000336
+    m_Key: skill.withered_court.wildgrowth.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000337
+    m_Key: skill.withered_court.wildgrowth.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000338
+    m_Key: skill.withered_court.budding.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000339
+    m_Key: skill.withered_court.budding.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000340
+    m_Key: skill.withered_court.sever_branch.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000341
+    m_Key: skill.withered_court.sever_branch.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000342
+    m_Key: enemy.withered_court.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000343
+    m_Key: enemy.withered_court.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000344
+    m_Key: enemy.withered_court.passive.0.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000345
+    m_Key: enemy.withered_court.passive.0.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000346
+    m_Key: enemy.withered_court.passive.1.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000347
+    m_Key: enemy.withered_court.passive.1.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000348
+    m_Key: enemy.withered_court.passive.2.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000349
+    m_Key: enemy.withered_court.passive.2.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000350
+    m_Key: enemy.withered_court.new_bud.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000351
+    m_Key: enemy.withered_court.new_bud.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000352
+    m_Key: enemy.withered_court.new_bud.passive.0.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000353
+    m_Key: enemy.withered_court.new_bud.passive.0.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000354
+    m_Key: enemy_group.44.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000355
+    m_Key: enemy_group.44.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000356
+    m_Key: battle.skill.rules.per_enemy_round_limit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000357
+    m_Key: battle.skill.rules.designated_enemy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000358
+    m_Key: battle.skill.rules.designated_status
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000359
+    m_Key: battle.skill.rules.withered_court.flourish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000360
+    m_Key: battle.skill.rules.withered_court.decomposition
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000361
+    m_Key: battle.skill.rules.withered_court.sever_branch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000362
+    m_Key: battle.skill.rules.summon_alive_limit
     m_Metadata:
       m_Items: []
   m_Metadata:

@@ -1,4 +1,6 @@
-﻿DiceLand：当前全部敌人和技能明细
+DiceLand：当前全部敌人和技能明细
+
+2026-11-13 英文本地化增量：补录 044 枯枝王庭、4401 新芽、关联 Boss 敌群及七个技能的英文名称和描述，以及被动和技能规则的英文译文。本次只核对这两个敌人的本地化，目录仍收录 52 个敌人资产和 136 个关联技能。
 
 2026-11-12 增量调整 044 枯枝王庭的战斗体型（1 → 0.7）与 4401 新芽「成长」的攻击骰（2–4 → 2–3）。其他历史条目未重新导出，仍收录 52 个敌人资产与 136 个关联技能。
 
@@ -2904,6 +2906,12 @@
 ====================================================================
 044｜枯枝王庭（enemyID=44）
 资产：Assets/Data/Enemies/Enemies/044 WitheredCourt/WitheredCourt.asset
+英文名称：Withered Court
+英文描述：Dead wood still wears its old crown. Every New Bud extends a reign that has yet to end.
+英文被动：Pitiless Fall · Enters Phase 2 when HP drops below 50% of its maximum.
+英文被动：Take Root · Summons New Buds every three rounds.
+英文被动：Wither · Immune to Poison.
+敌群英文：Withered Court · The Withered Court and the New Buds it summons in battle.
 GUID：6d9df9f8bace72d47b7e655cb72ea809
 记录增量：2026-11-12（战斗体型）
 生命：60；属性：毒
@@ -2936,6 +2944,7 @@ GUID：6d9df9f8bace72d47b7e655cb72ea809
 茂盛 [普通技能池]
 适用阶段：1
 技能资产：Assets/Data/Enemies/Enemies/044 WitheredCourt/Flourish.asset
+英文技能：Flourish · The branches unfurl and share the Court’s fleeting vitality with its New Buds.
 技能 GUID：afb863e8ea1d2a045a700d7b25f52931
 技能表现：第 1 颗骰子使用专属技能姿态图；显示 0.5 秒后恢复原立绘。
 姿态图：Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Flourish.png（GUID 5b6c4c503831a144cbe31012362508b1）
@@ -2956,6 +2965,7 @@ GUID：6d9df9f8bace72d47b7e655cb72ea809
 繁茂 [普通技能池]
 适用阶段：2
 技能资产：Assets/Data/Enemies/Enemies/044 WitheredCourt/Lush.asset
+英文技能：Lush Growth · Vitality flows from the old roots into the New Buds, setting their veins deeper.
 技能 GUID：417dc619263038b4ba178a4c422e18a5
 技能表现：第 1 颗骰子使用专属技能姿态图；显示 0.5 秒后恢复原立绘。
 姿态图：Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Lush.png（GUID d73da6499b25f7f48be4cc2f02159cc5）
@@ -2976,6 +2986,7 @@ GUID：6d9df9f8bace72d47b7e655cb72ea809
 分解 [普通技能池]
 适用阶段：1、2
 技能资产：Assets/Data/Enemies/Enemies/044 WitheredCourt/Decomposition.asset
+英文技能：Decomposition · The roots break down the life drained from wounds and feed it to every New Bud.
 技能 GUID：8607fa1ef90c2c54bac220ff778922b5
 命中特效：枯根撕裂·Blender版；两颗攻击骰各在受击者位置播放一次，24 帧、48 FPS、0.5 秒，不循环，末帧透明；受击反馈及命中回调仍延迟 0.125 秒。
 特效图集：Assets/Data/Enemies/Enemies/044 WitheredCourt/VFX/Blender/044_RootRend_Blender_6x4.png（GUID 986964be2d5f0b94ebf2fd3f57001723），6×4 等分，左到右、上到下排列；Blender 512px 正交透明渲染以 Lanczos3 缩为每帧 384px。
@@ -3003,6 +3014,7 @@ Blender 源文件：source-art/enemies/044-root-rend/RootRendAnime.blend；Blend
 生长 [条件技能]
 适用阶段：1
 技能资产：Assets/Data/Enemies/Enemies/044 WitheredCourt/Growth.asset
+英文技能：Growth · Old roots turn the soil, and two New Buds grow at the Court’s command.
 技能 GUID：6b8271a9084061348af22d69a1b4065b
 技能表现：第 1 颗骰子使用专属技能姿态图；显示 0.5 秒后恢复原立绘。
 姿态图：Assets/Data/Enemies/Enemies/044 WitheredCourt/044_Growth.png（GUID cce8394ef28c4704ba852892993468ec）
@@ -3023,6 +3035,7 @@ Blender 源文件：source-art/enemies/044-root-rend/RootRendAnime.blend；Blend
 野长 [条件技能]
 适用阶段：2
 技能资产：Assets/Data/Enemies/Enemies/044 WitheredCourt/WildGrowth.asset
+英文技能：Wild Growth · Dead branches crack as four New Buds burst out between the roots.
 技能 GUID：253e40966af7598409c94c86993d3b3b
 技能表现：第 1 颗骰子使用专属技能姿态图；显示 0.5 秒后恢复原立绘。
 姿态图：Assets/Data/Enemies/Enemies/044 WitheredCourt/044_WildGrowth.png（GUID ab35e2c99878a4642bc320960a603fe1）
@@ -3043,6 +3056,9 @@ Blender 源文件：source-art/enemies/044-root-rend/RootRendAnime.blend；Blend
 ====================================================================
 4401｜新芽（enemyID=4401）
 资产：Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/NewBud.asset
+英文名称：New Bud
+英文描述：It sprouts from the Court’s old roots and will one day return to them.
+英文被动：Pruning · Uses its special skill on its fourth round alive.
 GUID：287b85e512ed82c46af70b0b313c7818
 记录增量：2026-11-10（战斗体型）、2026-11-12（成长攻击骰）
 生命：10；属性：毒
@@ -3070,6 +3086,7 @@ GUID：287b85e512ed82c46af70b0b313c7818
 成长 [普通技能池]
 适用阶段：1
 技能资产：Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/Budding.asset
+英文技能：Budding · Sharp edges begin to form on the tender new branches.
 技能 GUID：9d3caf0543ed62a4a91b315d998b8f25
 技能表现：第 1 颗骰子使用专属技能姿态图；显示 0.5 秒后恢复原立绘。
 姿态图：Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/4401_Budding.png（GUID 836cb364d69f0894eb52a26f65444710）
@@ -3086,6 +3103,7 @@ GUID：287b85e512ed82c46af70b0b313c7818
 断枝 [条件技能]
 适用阶段：1
 技能资产：Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/SeverBranch.asset
+英文技能：Sever Branch · The branch snaps itself off and sends the last of its vitality back to the Court.
 技能 GUID：c678d1c8fd4a1d64b9eb3dc179489caf
 技能表现：第 1 颗骰子使用专属技能姿态图；显示 0.5 秒后恢复原立绘。
 姿态图：Assets/Data/Enemies/Enemies/044 WitheredCourt/4401 NewBud/4401_SeverBranch.png（GUID 39f776ee6f2c2c740ab90903a8e3034a）
