@@ -1763,7 +1763,7 @@ public class RunGameManager : MonoBehaviour
 
     private MapEventOverlay.EventOptionPreviewData BuildEventOptionPreview(BoardTileData tile, MapEvent_SO eventData, MapEventOptionData optionData)
     {
-        MapEventOptionPreview preview = MapEventOptionService.BuildPreview(runState, optionData, eventRandomLootDiscardPreviewCache);
+        MapEventOptionPreview preview = MapEventOptionService.BuildPreview(runState, optionData, eventRandomLootDiscardPreviewCache, tile);
         return new MapEventOverlay.EventOptionPreviewData { isSelectable = preview.isSelectable,
             additionalDetail = preview.additionalDetail, unavailableReason = preview.unavailableReason };
     }

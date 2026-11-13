@@ -12,6 +12,7 @@ public sealed partial class RelicExecutionContext
     public BoardTileData tile;
     public ActionPointSystem actionPointSystem;
     public int moveCost;
+    public int eventActionPointLoss;
     public bool isDestinationUnvisited;
     public bool ignoreMoveCost;
 

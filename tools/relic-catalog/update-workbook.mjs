@@ -9,11 +9,12 @@ const noteFor=relic=>[relic.note,...acquisition.filter(event=>event.rewardIds.in
 
 function writeAcquisitionSummary() {
  if (!acquisition.length) return;
- const text=acquisition.map(event=>`${event.date} · ${event.eventId} ${event.name}（${event.rewardIds.length} 件候选）。${event.rule}`).join(' ');
+ const text=acquisition.map(event=>`${event.date} · ${event.eventId} ${event.name}${event.relicTable?`（${event.rewardIds.length} 件候选）`:''}。${event.rule}`).join('\n');
  for(const sheet of [summary,detail]){
   const line=sheet.getRange('A6');
   line.copyFrom(sheet.getRange('A5'),'all');
   line.values=[[text]];
+  if (acquisition.length > 1) line.format.rowHeight = 30;
  }
 }
 
@@ -77,10 +78,10 @@ if(process.argv.includes('--event-acquisition')){
  console.log(JSON.stringify({sheets:['体系总览','遗物完整表'],rows:after.length,noteIds:ids,otherValuesAndFormulasUnchanged:true}));
 }else{
 summary.getRange('A4').values=[[`${data.count} 件遗物，${data.groups.length} 个主体系。每件只计一次，跨体系效果见联动标签。`]];
-summary.getRange('A5').values=[['2026-10-29。161 件当前配置；新入库 19 件及 8 件历史遗物已核对主要机制，含暗礁、碎潮盐瓶与浪鸣调整。其余历史备注沿用；编辑器验证，未完整试玩。']];
+summary.getRange('A5').values=[[`${data.date} 配置快照。共 ${data.count} 件，新增 162 瓶中雾。历史机制备注沿用此前复核结果。`]];
 summary.getRange('A8:E24').values=data.groups.map(g=>[g.name,g.count,g.summary,g.examples,g.play]);
 summary.getRange('B25').values=[[data.count]];
-detail.getRange('A5').values=[['2026-10-29：161 件当前配置；143–161 及 12、19、30、59、79、112、134、138 已核对主要机制并同步调整。阴阳鱼实际 ID 为 yin_yang_fish；验证为针对性 EditMode 回归。']];
+detail.getRange('A5').values=[[`${data.date} 配置快照。共 ${data.count} 件。阴阳鱼的实际 ID 为 yin_yang_fish，瓶中雾为收雾人事件的固定奖励。`]];
 writeAcquisitionSummary();
 const order=new Map(data.groups.map((g,i)=>[g.name,i]));
 const sorted=[...data.relics].sort((a,b)=>order.get(a.category)-order.get(b.category)||a.id-b.id);

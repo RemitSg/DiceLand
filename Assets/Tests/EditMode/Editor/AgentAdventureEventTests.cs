@@ -120,6 +120,22 @@ public sealed class AgentAdventureEventTests
         Assert.AreEqual(0, run.settlementStats.eventTilesCompleted);
     }
 
+    [Test] public void MistCollectorUsesTheSameDiscountInPreviewAndResolution()
+    {
+        Open();
+        var data = Find<MapEvent_SO>(item => item.eventId == "035");
+        var mist = data.options[0].additionalBuiltInEffects.Single().relicRewards.Single().relicData;
+        Map.Snapshot.runState.AddRelic(mist);
+        var before = Enter(data);
+        StringAssert.Contains("2 → 1", before.mapEvent.options[0].additionalDetail);
+        var request = Command(before.legalActions.Single(action => action.op == "run_choose_event" && action.choiceIndex == 0));
+        var result = session.Act(request);
+        Assert.AreEqual("event_result", result.state.phase);
+        Assert.AreEqual(before.actionPoints - 1, result.state.actionPoints);
+        Assert.AreEqual(2, Map.Snapshot.runState.GetRelicAmount(mist));
+        Assert.AreEqual(JsonUtility.ToJson(result), JsonUtility.ToJson(session.Act(request)));
+    }
+
     [Test] public void InvalidAndUnavailableOptionsCannotSpendOrAdvanceRevision()
     {
         Open(); var paid = Option(); paid.requiredMoney = 1; var free = Option();

@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "035 \u6536\u96FE\u4EBA"
+  m_EditorClassIdentifier:
+  eventId: 035
+  eventName: "\u6536\u96FE\u4EBA"
+  eventContent: "\u4F60\u770B\u5230\u4E00\u4E2A\u8001\u592A\u592A\u6B63\u4E3E\u7740\u4E00\u4E2A\u73BB\u7483\u74F6\uFF0C\u5468\u56F4\u7684\u96FE\u6C14\u597D\u4F3C\u90FD\u88AB\u5438\u8FDB\u53BB\u4E86\u4E00\u6837\u3002\n\n\u300C\u54CE\u5466\uFF0C\u5E74\u8F7B\u4EBA\uFF0C\u80FD\u8BF7\u4F60\u5E2E\u6211\u8FD9\u8001\u9AA8\u5934\u4E00\u628A\u5417\uFF1F\u8FD9\u91CC\u96FE\u6C14\u592A\u91CD\u4E86\uFF0C\u4E0A\u6B21\u6709\u4E2A\u9A6C\u8F66\u770B\u4E0D\u6E05\u8DEF\u76F4\u63A5\u7FFB\u6C9F\u91CC\u4E86\u3002\u300D"
+  eventIllustration: {fileID: 0}
+  hideConsequences: 0
+  options:
+  - optionId: 1
+    optionLabel: "\u5E2E\u5FD9\u9664\u96FE"
+    requiredMoney: 0
+    requiredMoneyPercent: 0
+    consequenceDescription: "\u5931\u53BB 2 \u70B9\u884C\u52A8\u70B9\uFF0C\u83B7\u5F97 1 \u4EF6\u9057\u7269\u300C\u74F6\u4E2D\u96FE\u300D\u3002"
+    resultContent: "\u5728\u4F60\u7684\u5E2E\u5FD9\u4E0B\uFF0C\u5F88\u5FEB\u8FD9\u91CC\u5C31\u6062\u590D\u4E86\u80FD\u89C1\u5EA6\uFF0C\u4F5C\u4E3A\u611F\u8C22\uFF0C\u8001\u592A\u592A\u628A\u5979\u6536\u96C6\u7684\u96FE\u6C14\u74F6\u7ED9\u4E86\u4F60\u4E00\u74F6\u3002"
+    builtInEffectType: 9
+    effectAmount: 2
+    additionalBuiltInEffects:
+    - effectType: 11
+      relicRewards:
+      - relicData: {fileID: 11400000, guid: 45f180d707f34f15bd25b44d01f877cb, type: 2}
+        amount: 1
+    possibleResults: []
+    nextEvent: {fileID: 0}
+    resolveEvent: 1
+    customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: -1
+  - optionId: 2
+    optionLabel: "\u7EE7\u7EED\u8D76\u8DEF"
+    requiredMoney: 0
+    requiredMoneyPercent: 0
+    consequenceDescription: "\u6062\u590D 1 \u70B9\u884C\u52A8\u70B9\uFF0C\u5931\u53BB 1 \u4E2A\u968F\u673A\u6218\u5229\u54C1\u3002"
+    resultContent: "\u96FE\u6C14\u751A\u6D53\uFF0C\u4F60\u611F\u89C9\u5230\u6709\u4EC0\u4E48\u4E1C\u897F\u64E6\u80A9\u800C\u8FC7\uFF0C\u6478\u4E86\u6478\u515C\uFF0C\u597D\u50CF\u5C11\u4E86\u4EC0\u4E48\u4E1C\u897F\u2026\u2026"
+    builtInEffectType: 15
+    randomOwnedLootAmountMin: 1
+    randomOwnedLootAmountMax: 1
+    additionalBuiltInEffects:
+    - effectType: 7
+      effectAmount: 1
+    possibleResults: []
+    nextEvent: {fileID: 0}
+    resolveEvent: 1
+    customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: -1

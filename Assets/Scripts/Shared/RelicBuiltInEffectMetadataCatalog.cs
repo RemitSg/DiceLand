@@ -226,6 +226,7 @@ public static class RelicBuiltInEffectMetadataCatalog
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ConfigureFixedRelicReforgePair, numericRequirement: RelicBuiltInNumericRequirement.None);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.QueueNextBattleAllyStatusOnAcquire, requiresStatusData: true);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ReplaceEnemyStatusApplication, requiresStatusData: true, requiresConditionStatusData: true);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ReduceEventActionPointLoss);
 
         return metadata;
     }

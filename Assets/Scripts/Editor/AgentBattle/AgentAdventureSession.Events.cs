@@ -37,7 +37,7 @@ public sealed partial class AgentAdventureSession
         // Like the overlay, roll discard previews once when presenting the options, never during Observe.
         eventOptions = map.WithRandom(() => currentEvent.GetValidOptions().Select((option, index) =>
         {
-            MapEventOptionPreview preview = MapEventOptionService.BuildPreview(map.Snapshot.runState, option, eventDiscardCache);
+            MapEventOptionPreview preview = MapEventOptionService.BuildPreview(map.Snapshot.runState, option, eventDiscardCache, CurrentTile);
             bool supported = option.customHandler == null;
             string[] materials = MapEventInventoryReforgeService.RequiresItem(option)
                 ? MapEventInventoryReforgeService.GetEligibleMaterials(map.Snapshot.runState, option).Select(AssetId).ToArray()

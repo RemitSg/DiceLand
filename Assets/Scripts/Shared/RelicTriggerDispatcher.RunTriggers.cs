@@ -18,6 +18,22 @@ public static partial class RelicTriggerDispatcher
         return RelicRestReforgeService.CalculateLimit(runState, baseLimit);
     }
 
+    public static int CalculateEventActionPointLoss(RunState runState, BoardTileData tile, int baseLoss)
+    {
+        int loss = Math.Max(0, baseLoss);
+        if (loss == 0 || tile == null || tile.tileType != MapTileType.Event)
+            return loss;
+
+        var context = new RelicExecutionContext
+        {
+            trigger = Relic_SO.RelicTrigger.OnEventActionPointLossCalculated,
+            tile = tile,
+            eventActionPointLoss = loss
+        };
+        ProcessRunRelics(runState, context);
+        return context.eventActionPointLoss;
+    }
+
     public static RelicExecutionContext ProcessMoveCost(
         RunState runState,
         RunGameManager runGameManager,

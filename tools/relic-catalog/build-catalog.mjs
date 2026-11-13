@@ -5,8 +5,10 @@ const dir='outputs/relic-catalog';
 const fromCatalog=process.argv.includes('--from-catalog');
 const read=async p=>JSON.parse((await fs.readFile(p,'utf8')).replace(/^\uFEFF/,''));
 const [raw,old,curation]=await Promise.all([fromCatalog?null:read(`${dir}/relics-raw.json`),read(`${dir}/catalog.json`),read('tools/relic-catalog/curation.json')]);
+const exportDate=raw?.exportedAt.slice(0,10)??old.date;
 const triggers=['移动消耗前','状态施加时','玩家骰子准备时','即将受到单方面攻击伤害','商店价格计算时','玩家回合开始','战斗回合开始','玩家死亡时','战斗回合结束','即将受到攻击伤害','遗物重铸时','掉落物重铸时','休息格重铸上限计算时','即将受到伤害','即将造成伤害','敌人死亡时','即将受到致命伤害','商店购买完成时','收集钥匙时','触发灾厄时','受到单方面攻击伤害后','命中敌方时','防御骰拼点胜利','玩家击杀敌人时','战斗掉落奖励发放时','战斗建立时','获得遗物时','消耗行动点时','商店库存数量计算时','商店支付能力判定时','遗物选择奖励生成时','玩家拼点失败','休息格恢复行动点时','休息格重铸完成时','休息格治疗完成时','玩家使用技能时','战斗完成时','战斗失败时','玩家骰子掷出时','友方护盾层数减少时'];
 const rarityNames={Common:'普通',Uncommon:'罕见',Rare:'稀有',Epic:'史诗',Legendary:'传说',Trash:'垃圾'};
+triggers[40]='事件选项扣除行动点前';
 const byPath=new Map(old.relics.map(r=>[r.path,r]));
 const relics=[];
 if(fromCatalog) relics.push(...old.relics.map(r=>({...r,...curation[r.id]})));
@@ -16,7 +18,7 @@ for(const r of (raw?.rows||[])){
   if(!Number.isInteger(id)||(!prior.id&&!curation[id]))throw Error(`Unclassified relic ${r.path}`);
   const effects=r.effects.map(e=>({trigger:e.trigger,effect:e.effect,data:Object.fromEntries(Object.entries(e.data).map(([k,v])=>[k,k in e.references?e.references[k]:v])),references:e.references}));
   const refs=(e)=>Object.fromEntries(Object.entries(e.data).map(([k,v])=>[k,k in e.references?(e.references[k].valid?{fileID:11400000,guid:e.references[k].guid,type:2}:{fileID:0}):v]));
-  const item={...prior,...curation[id],id,relicId:r.relicId==='yin_yang_fish'?r.relicId:Number(r.relicId),relicName:r.relicName,path:r.path,guid:r.guid,description:r.description,additionalDescription:r.additionalDescription,rarity:r.rarity,rarityName:rarityNames[r.rarityName]||prior.rarityName||r.rarityName,icon:{fileID:r.iconGuid?21300000:0,...(r.iconGuid?{guid:r.iconGuid,type:3}:{})},iconPath:r.iconPath,iconGuid:r.iconGuid,iconRect:r.iconRect,iconTextureSize:r.iconTextureSize,builtInEffects:r.effects.map(refs),customEffectHandler:r.customEffectHandler?{path:r.customEffectHandler}:{fileID:0},resolvedEffects:effects,referencedByRelicTables:r.referencedByRelicTables,source:path.basename(r.path),triggerNames:[...new Set(r.effects.map(e=>triggers[e.data.trigger]||e.trigger))].join('、')||'无内置触发',effectNames:r.effects.map(e=>e.effect),isNew:id>=143,configVerifiedAt:'2026-10-29',codeReviewedAt:curation[id]?.codeReviewedAt||(id>=143?'2026-10-29':'2026-10-27')};
+  const item={...prior,...curation[id],id,relicId:r.relicId==='yin_yang_fish'?r.relicId:Number(r.relicId),relicName:r.relicName,path:r.path,guid:r.guid,description:r.description,additionalDescription:r.additionalDescription,rarity:r.rarity,rarityName:rarityNames[r.rarityName]||prior.rarityName||r.rarityName,icon:{fileID:r.iconGuid?21300000:0,...(r.iconGuid?{guid:r.iconGuid,type:3}:{})},iconPath:r.iconPath,iconGuid:r.iconGuid,iconRect:r.iconRect,iconTextureSize:r.iconTextureSize,builtInEffects:r.effects.map(refs),customEffectHandler:r.customEffectHandler?{path:r.customEffectHandler}:{fileID:0},resolvedEffects:effects,referencedByRelicTables:r.referencedByRelicTables,source:path.basename(r.path),triggerNames:[...new Set(r.effects.map(e=>triggers[e.data.trigger]||e.trigger))].join('、')||'无内置触发',effectNames:r.effects.map(e=>e.effect),isNew:id>=143,configVerifiedAt:exportDate,codeReviewedAt:curation[id]?.codeReviewedAt||prior.codeReviewedAt||exportDate};
   relics.push(item);
 }
 relics.sort((a,b)=>a.id-b.id);
@@ -26,23 +28,31 @@ if(groups.reduce((sum,g)=>sum+g.count,0)!==relics.length)throw Error('Unregister
 Object.assign(groups.find(g=>g.name==='水蚀'),{summary:'水蚀条件增益、缓慢控制与即时易伤转换。',examples:'钟乳石、浪鸣、暗礁、碎潮盐瓶',play:'保留水蚀可驱动条件增伤、减伤与急速，暗礁在回合开始对水蚀目标施加缓慢；碎潮盐瓶将每次新施加的水蚀改为基础 15 层即时易伤，放弃该次水蚀层数。浪鸣现为每层水蚀额外 5 层易伤的伤害修正。'});
 Object.assign(groups.find(g=>g.name==='锻造与重铸'),{summary:'保留材料、增加产物、提高次数，以及阴鱼与阳鱼的固定配对。',examples:'锻灵石、繁生核、矮人腕环、阴鱼、阳鱼',play:'保留既有重铸收益；阴鱼与阳鱼固定合成阴阳鱼。产物当前无战斗效果。'});
 Object.assign(groups.find(g=>g.name==='防御与反击'),{summary:'单方面攻击减伤、反击、防御骰子与护盾的产生和消耗。',play:'盾灵逐回合供盾，护甲保养剂开局供盾，安全感强化有盾防御骰，盾反利用失盾反伤。反击刺刃按每角色每回合一次提供下回合临时强壮。'});
-const catalog={date:'2026-10-29',count:relics.length,coverage:'161 件当前资产配置由团结编辑器导出；新增目录序号 143–161，以及历史序号 12、19、30、59、79、112、134、138 的主要机制已核对。已按设计反馈修订凰的反复保命、反击刺刃限次、福灵剂逐角色概率与当头棒文案，并修复阵亡队员在后续战斗结算后丢失的问题。本次屏蔽笼、寒霜护符、疾病减伤为 10%，幽影斗篷、驰隙时序环为 20%，并修正屏蔽笼触发时机。其余历史 134 件保留原机制备注，未重新逐项审计全部历史实现；新增罕见遗物 161 暗礁（水蚀目标每回合获得缓慢），以及稀有遗物 160 碎潮盐瓶（每次敌方水蚀施加改为基础 15 层易伤），浪鸣调整为每层水蚀视为额外 5 层易伤；验证范围见维护说明，未做完整试玩。',exportedAt:raw?.exportedAt??old.exportedAt,newIds:relics.filter(r=>r.isNew).map(r=>r.id),groups,relics};
-if(fromCatalog) Object.assign(catalog,{...old,count:relics.length,groups,relics});
+if(relics.some(relic=>relic.id===162)) Object.assign(groups.find(g=>g.name==='探索与行动点'),{
+  summary:'移动与事件节省行动点，钥匙回复行动点，地图和副本续航。',
+  examples:'世界地图、探路者手册、指路牌、瓶中雾',
+  play:'瓶中雾减免事件选项的行动点损失。世界地图和指路牌减少移动消耗，探路者手册在收集钥匙时回复行动点。'
+});
+const coverage="2026-11-13 由团结编辑器重新导出 162 件资产的配置，新增 162 瓶中雾及收雾人事件获取。历史机制备注沿用此前复核结果。2026-11-10 复核了 085 再来一次！的遗物袋刷新，2026-11-12 同步了矮人铁匠的重铸来源。";
+const catalog={date:exportDate,count:relics.length,coverage:fromCatalog?old.coverage:coverage,exportedAt:raw?.exportedAt??old.exportedAt,newIds:relics.filter(r=>r.isNew).map(r=>r.id),groups,relics};
 catalog.eventAcquisition = (old.eventAcquisition || []).map(event => ({
   ...event,
-  rewardIds: relics.filter(relic => relic.referencedByRelicTables.includes(event.relicTable)).map(relic => relic.id)
+  rewardIds: event.relicTable
+    ? relics.filter(relic => relic.referencedByRelicTables.includes(event.relicTable)).map(relic => relic.id)
+    : event.rewardIds
 }));
 await fs.writeFile(`${dir}/catalog.json`,JSON.stringify(catalog,null,2)+'\n');
 const cell=v=>String(v??'').replaceAll('|','\\|').replaceAll('\n','<br>');
 const lines=['# DiceLand 现有遗物体系表','',`更新日期：${catalog.date}。共 ${catalog.count} 件遗物，${groups.length} 个主体系。每件只计入一个主体系，跨体系关系保留在联动标签中。`,'',catalog.coverage,'','来源：当前项目 Relic_SO 配置、LootRarity 枚举及 RelicSystem、地图与重铸实现。离线交互入口：[遗物完整图鉴](遗物完整图鉴.html)。','', '2026-10-29 新入库共 19 件：143–158、阴阳鱼（目录序号 159，实际 relicId 为 `yin_yang_fish`）、稀有遗物 160 碎潮盐瓶与罕见遗物 161 暗礁。浪鸣的每层水蚀额外易伤已由 10 调整为 5。本次修订凰的反复保命、反击刺刃每角色每回合限次、福灵剂逐角色独立概率与当头棒“伤害 +100%”文案，并保留阵亡队员的队伍位置。阴阳鱼当前没有配置战斗效果。','','| 主体系 | 数量 | 主要玩法 |','|---|---:|---|',...groups.map(g=>`|${g.name}|${g.count}|${g.summary}|`)];
 for(const g of groups){lines.push('',`## ${g.name}（${g.count}件）`,'',g.play,'','| ID | 遗物 | 稀有度 | 定位 | 完整效果 | 联动与备注 |','|---:|---|---|---|---|---|');for(const r of relics.filter(r=>r.category===g.name))lines.push(`|${r.id}|${cell(r.relicName)}|${r.rarityName}|${cell(r.role)}|${cell(r.description)}|${cell([r.tags,r.note].filter(Boolean).join('；'))}|`);}
 lines.push('','## 本次新增及修订的机制与来源核对','');
-for(const r of relics.filter(r=>r.mechanics)){lines.push(`### ${r.id} · ${r.relicName}`,'',`- 实际 relicId：\`${r.relicId}\`；GUID：\`${r.guid}\`。`,`- 资产：\`${r.path}\`。`,`- 触发：${r.triggerNames}。`,`- 条件与目标：${r.mechanics.condition}；${r.mechanics.target}。`,`- 次数与叠加：${r.mechanics.limit}；${r.mechanics.stacking}。`,`- 机制备注：${r.note}`,`- 遗物表引用：${r.referencedByRelicTables.length?r.referencedByRelicTables.map(p=>'`'+p+'`').join('、'):'无 RelicTable_SO 直接引用；固定重铸产物。'}`,'');}
+for(const r of relics.filter(r=>r.mechanics)){lines.push(`### ${r.id} · ${r.relicName}`,'',`- 实际 relicId：\`${r.relicId}\`；GUID：\`${r.guid}\`。`,`- 资产：\`${r.path}\`。`,`- 触发：${r.triggerNames}。`,`- 条件与目标：${r.mechanics.condition}；${r.mechanics.target}。`,`- 次数与叠加：${r.mechanics.limit}；${r.mechanics.stacking}。`,`- 机制备注：${r.note}`,`- 遗物表引用：${r.referencedByRelicTables.length?r.referencedByRelicTables.map(p=>'`'+p+'`').join('、'):'无 RelicTable_SO 直接引用。'}`,'');}
 if (catalog.eventAcquisition.length) {
   lines.push('', '## 事件获取', '');
   for (const event of catalog.eventAcquisition) {
-    lines.push(`- ${event.date} · ${event.eventId} ${event.name}。${event.rule} 产物表为 \`${event.relicTable}\`，共收录 ${event.rewardIds.length} 件候选。`,
-      `  候选目录序号 ${event.rewardIds.join('、')}。`);
+    lines.push(`- ${event.date} · ${event.eventId} ${event.name}。${event.rule}`);
+    if (event.relicTable) lines.push(`  产物表为 \`${event.relicTable}\`，共收录 ${event.rewardIds.length} 件候选。候选目录序号 ${event.rewardIds.join('、')}。`);
+    else lines.push(`  固定奖励目录序号 ${event.rewardIds.join('、')}。`);
   }
 }
 const revisedDescriptions = relics.filter(relic => relic.additionalDescriptionUpdatedAt);
@@ -52,7 +62,7 @@ if (revisedDescriptions.length) {
     lines.push(`- ${relic.additionalDescriptionUpdatedAt} · ${relic.id} ${cell(relic.relicName)} · ${cell(relic.additionalDescription)}`);
   }
 }
-const laterReviews = relics.filter(relic => relic.codeReviewedAt > catalog.date);
+const laterReviews = relics.filter(relic => relic.codeReviewedAt > '2026-10-29');
 if (laterReviews.length) {
   lines.push('', '## 后续机制复核', '');
   for (const relic of laterReviews) {

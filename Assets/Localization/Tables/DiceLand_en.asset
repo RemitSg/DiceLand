@@ -16013,6 +16013,54 @@ MonoBehaviour:
     m_Localized: "Up to {count} copies of {name} can be alive at once."
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000363
+    m_Localized: "The Mist Collector"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000364
+    m_Localized: "You spot an old woman holding up a glass bottle. The mist around her seems to be drawn right into it.\n\n\u201COh, young traveler, could you give these old bones a hand? The fog's so thick here that the last coach went straight into the ditch.\u201D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000365
+    m_Localized: "Help clear the fog"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000366
+    m_Localized: "Lose 2 AP and gain one Bottled Mist relic."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000367
+    m_Localized: "With your help, the fog soon clears. To thank you, the old woman gives you one of her bottles of mist."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000368
+    m_Localized: "Keep walking"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000369
+    m_Localized: "Recover 1 AP and lose one random piece of loot."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000370
+    m_Localized: "In the thick mist, you feel something brush past your shoulder. You check your pocket. Something seems to be missing\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000371
+    m_Localized: "Bottled Mist"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000372
+    m_Localized: "Lose 1 less AP whenever an event choice costs you AP."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000373
+    m_Localized: "The mist stays in the bottle, and the road ahead clears."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000374
+    m_Localized: "AP loss for this choice: {baseLoss} \u2192 {finalLoss}."
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

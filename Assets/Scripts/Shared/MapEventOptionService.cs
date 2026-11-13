@@ -21,7 +21,7 @@ public static class MapEventOptionService
     }
 
     public static MapEventOptionPreview BuildPreview(RunState state, MapEventOptionData option,
-        IDictionary<string, MapEventLootDiscardPreview> cache)
+        IDictionary<string, MapEventLootDiscardPreview> cache, BoardTileData tile = null)
     {
         var preview = new MapEventOptionPreview();
         if (state == null || option == null) return preview;
@@ -30,6 +30,7 @@ public static class MapEventOptionService
         bool enough = preview.requiredMoney <= 0 || state.money >= preview.requiredMoney;
         preview.isSelectable = loot.isSelectable && enough;
         preview.additionalDetail = loot.additionalDetail;
+        AppendEventActionPointDiscount(preview, state, option, tile);
         preview.unavailableReason = enough ? loot.unavailableReason : GameText.Format("map.event.build_preview.you_need_gold", "金钱不足，需要 {requiredMoney} 金钱。", ("requiredMoney", preview.requiredMoney));
         if (preview.isSelectable && !MapEventBuiltInEffectExecutorService.CanAffordMoneyEffects(state, option, preview.requiredMoney, out string moneyReason))
         { preview.isSelectable = false; preview.unavailableReason = moneyReason; }
@@ -40,6 +41,27 @@ public static class MapEventOptionService
             preview.unavailableReason = GameText.Get("ui.event.reforge.no_materials", "背包里没有可以重铸的物品。");
         }
         return preview;
+    }
+
+    private static void AppendEventActionPointDiscount(MapEventOptionPreview preview, RunState state,
+        MapEventOptionData option, BoardTileData tile)
+    {
+        if (tile?.tileType != MapTileType.Event || option.possibleResults?.Any(result => result != null && result.weight > 0f) == true)
+            return;
+
+        long baseLoss = 0, finalLoss = 0;
+        foreach (MapEventBuiltInEffectData effect in MapEventEffectSequenceBuilder.BuildAllEffects(option))
+        {
+            if (effect.effectType != MapEventOptionBuiltInEffectType.LoseActionPoints || effect.effectAmount <= 0)
+                continue;
+            baseLoss += effect.effectAmount;
+            finalLoss += RelicTriggerDispatcher.CalculateEventActionPointLoss(state, tile, effect.effectAmount);
+        }
+        if (finalLoss >= baseLoss) return;
+
+        string discount = GameText.Format("ui.event.ap_loss_discount", "本选项的行动点损失：{baseLoss} → {finalLoss}。",
+            ("baseLoss", baseLoss), ("finalLoss", finalLoss));
+        preview.additionalDetail = string.IsNullOrEmpty(preview.additionalDetail) ? discount : preview.additionalDetail + "\n" + discount;
     }
 
     public static bool TryExecute(MapEventBuiltInEffectExecutionRequest request, MapEvent_SO eventData,

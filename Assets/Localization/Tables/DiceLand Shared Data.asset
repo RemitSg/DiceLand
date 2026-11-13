@@ -14231,6 +14231,54 @@ MonoBehaviour:
     m_Key: battle.skill.rules.summon_alive_limit
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000363
+    m_Key: event.035.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000364
+    m_Key: event.035.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000365
+    m_Key: event.035.option.1.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000366
+    m_Key: event.035.option.1.preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000367
+    m_Key: event.035.option.1.result
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000368
+    m_Key: event.035.option.2.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000369
+    m_Key: event.035.option.2.preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000370
+    m_Key: event.035.option.2.result
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000371
+    m_Key: relic.162.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000372
+    m_Key: relic.162.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000373
+    m_Key: relic.162.notes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000374
+    m_Key: ui.event.ap_loss_discount
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

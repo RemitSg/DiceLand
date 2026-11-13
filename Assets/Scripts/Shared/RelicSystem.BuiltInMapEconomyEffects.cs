@@ -2,6 +2,19 @@ using UnityEngine;
 
 public static partial class RelicSystem
 {
+    private static void HandleReduceEventActionPointLoss(
+        Relic_SO relicData,
+        RunRelicState relicState,
+        RelicExecutionContext context,
+        Relic_SO.RelicBuiltInEffectEntry effect)
+    {
+        if (context.trigger != Relic_SO.RelicTrigger.OnEventActionPointLossCalculated || context.tile?.tileType != MapTileType.Event)
+            return;
+
+        long reduction = (long)Mathf.Max(0, effect.amount) * relicState.amount;
+        context.eventActionPointLoss -= (int)System.Math.Min(context.eventActionPointLoss, reduction);
+    }
+
     private static void HandleChanceToIgnoreMoveCost(
         Relic_SO relicData,
         RunRelicState relicState,

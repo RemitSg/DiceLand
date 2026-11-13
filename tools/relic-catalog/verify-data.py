@@ -38,10 +38,14 @@ ids = [int(s) for s in re.findall(r'^\|(\d+)\|', md, re.M)]
 assert len(ids) == data['count'] and set(ids) == {r['id'] for r in data['relics']}
 event_acquisition = data.get('eventAcquisition', [])
 for event in event_acquisition:
-    assert Path(event['eventPath']).is_file()
-    assert Path(event['relicTable']).is_file()
+    event_asset = Path(event['eventPath']).read_text(encoding='utf-8')
     assert event['rule'] in md
-    assert event['rewardIds'] == [r['id'] for r in data['relics'] if event['relicTable'] in r['referencedByRelicTables']]
+    if event.get('relicTable'):
+        assert Path(event['relicTable']).is_file()
+        assert event['rewardIds'] == [r['id'] for r in data['relics'] if event['relicTable'] in r['referencedByRelicTables']]
+    else:
+        rewards = re.findall(r'\brelicData: \{fileID: 11400000, guid: ([a-f0-9]+), type: 2\}', event_asset)
+        assert event['rewardIds'] == [r['id'] for r in data['relics'] if r['guid'] in rewards]
 ns = {'x': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
 with zipfile.ZipFile(root / 'DiceLand遗物体系表.xlsx') as archive:
     assert archive.testzip() is None

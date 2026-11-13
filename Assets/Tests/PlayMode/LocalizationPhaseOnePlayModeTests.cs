@@ -414,6 +414,49 @@ public sealed class LocalizationPhaseOnePlayModeTests
     }
 
     [UnityTest]
+    public IEnumerator EnglishMistCollectorShowsTheDiscountAndGrantsBottledMist()
+    {
+        Call(gameText, "Select", "en", null);
+        yield return WaitFor(() => (string)Get(gameText, "LanguageCode") == "en" && !(bool)Get(gameText, "IsChanging"), "English event table");
+        Call(RuntimeType("MainMenuRuntime"), "ClearTutorialRequest");
+        Call(RuntimeType("MainMenuRuntime"), "ClearContinueRequest");
+        Call(RuntimeType("MapRunRuntime"), "Clear", (object)null);
+        yield return SceneManager.LoadSceneAsync("MapScene");
+        yield return WaitFor(() => Find("RunGameManager") != null && Get(Find("RunGameManager"), "runState") != null, "map initialization", 30f);
+
+        Component map = Find("RunGameManager");
+        Call(Get(map, "mapTreasureOverlay"), "HideImmediately");
+        Call(Get(map, "pendingStartingRelicBagChoices"), "Clear");
+        object run = Get(map, "runState"), points = Get(map, "actionPointSystem");
+        var mist = LoadAsset("Assets/Data/Relics/162 瓶中雾/瓶中雾.asset", "Relic_SO");
+        var data = LoadAsset("Assets/Data/Events/035 收雾人/035 收雾人.asset", "MapEvent_SO");
+        ((IList)Get(run, "relicInventory")).Clear();
+        Call(run, "AddRelic", mist, 1, false);
+        Call(points, "RestoreState", 6, 0, 6);
+        object tile = ((IEnumerable)Call(Get(map, "boardManager"), "GetAllTiles")).Cast<object>().First(item => (bool)Get(item, "isSpawnTile"));
+        Set(tile, "tileType", Enum.Parse(RuntimeType("MapTileType"), "Event"));
+        Set(tile, "assignedEvent", data);
+        Set(tile, "isResolved", false);
+        Assert.IsTrue((bool)Call(map, "OpenEventPanel", tile));
+        object overlay = Get(map, "mapEventOverlay");
+        Call(overlay, "CompleteNarration");
+        var confirm = (Button)Get(overlay, "confirmButton");
+        yield return WaitFor(() => confirm.interactable, "mist collector choices");
+
+        Assert.AreEqual("The Mist Collector", Label(overlay, "titleText"));
+        CollectionAssert.Contains(ActiveLabels(), "Help clear the fog");
+        StringAssert.Contains("holding up a glass bottle", Label(overlay, "contentText"));
+        StringAssert.Contains("AP loss for this choice: 2 → 1", Label(overlay, "consequenceText"));
+        confirm.onClick.Invoke();
+        Assert.AreEqual(5, Get(points, "CurrentPoints"));
+        Assert.AreEqual(2, Call(run, "GetRelicAmount", mist));
+        Assert.AreEqual("Bottled Mist", Get(mist, "LocalizedName"));
+        StringAssert.Contains("the fog soon clears", Label(overlay, "contentText"));
+        Assert.IsTrue((bool)Get(tile, "isResolved"));
+        Call(overlay, "Hide");
+    }
+
+    [UnityTest]
     public IEnumerator EnglishWitheredCourtSkillDetailsIncludeLocalizedRules()
     {
         Call(gameText, "Select", "en", null);

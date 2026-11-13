@@ -191,7 +191,7 @@
   },
   "relicCatalog": {
     "directory": "outputs/relic-catalog",
-    "snapshotDate": "2026-10-29",
+    "snapshotDate": "2026-11-13",
     "latestTextRevision": {
       "date": "2026-11-05",
       "catalogNumbers": [
@@ -201,10 +201,10 @@
       ],
       "scope": "Supplemental descriptions synchronized with the assets. The configuration export remains the 2026-10-29 snapshot."
     },
-    "relicCount": 161,
+    "relicCount": 162,
     "categoryCount": 17,
-    "newCatalogNumbers": "143–161 (159 is the fixed reforge result with actual relicId yin_yang_fish)",
-    "coverage": "All 161 current asset configurations exported from the editor. Main mechanics for 19 additions (143-161) and historical relics 12/19/30/59/79/112/134/138 reviewed; the other 134 historical mechanism notes retained. Added uncommon Hidden Reef 161: on each battle round start, each living enemy with Erode receives 1 Slowness per owned copy without consuming Erode. Added rare Tidebreaker Salt Flask 160: each positive enemy Erode application becomes base 15 Vulnerable, including queued effects; Wave Cry 79 now contributes 5 per Erode stack. Regression validation covers direct/queued/skill applications, immunity/resistance, ownership and Wave Cry interaction. No full playthrough.",
+    "newCatalogNumbers": "143–162 (159 is the fixed reforge result with actual relicId yin_yang_fish)",
+    "coverage": "The 162 current relic asset configurations were exported on 2026-11-13. This increment verifies relic 162, Bottled Mist, and its fixed reward in event 035, The Mist Collector. Prior mechanics reviews remain historical.",
     "deliverables": [
       "遗物完整图鉴.html",
       "遗物体系完整表.md",
@@ -274,7 +274,15 @@
       "relicTable": "Assets/Data/Relics/OuterEliteRelicLoot.asset",
       "rewardCount": 144,
       "scope": "增量同步矮人铁匠事件的遗物获取途径。一次免费交换消耗一件自选遗物，从产物表随机获得另一件同品质遗物。保留 2026-10-29 遗物配置快照及 161 件、17 个主体系的目录范围。"
+    },
+    "latestContentRevision": {
+      "date": "2026-11-13",
+      "catalogNumbers": [
+        162
+      ],
+      "eventId": "035",
+      "scope": "162 瓶中雾为 035 收雾人「帮忙除雾」固定奖励。事件格每笔行动点损失按持有数量减免，最低 0。当前配置由团结全量导出，历史机制说明沿用既有复核。"
     }
   },
-  "note": "The enemy catalog remains the 2026-10-26 historical snapshot and does not include the merged Blood Spore stat update. The relic catalog was refreshed on 2026-10-29; consult its coverage note and Assets/Data for current gameplay values. 2026-11-09 仅追加敌人 012/034/041 及遗物 091 的眩晕机制复核，不代表完整刷新全部历史内容。 2026-11-09 完整增补敌人 044/4401 及其七个技能，当前敌人目录合计 52 个资产、136 个关联技能，其余内容仍以历史快照及各增量说明为准。 2026-11-10 仅修订 4401 新芽的战斗体型：enemyVisualScale 从 1 调整至 0.12，普通立绘与成长／断枝姿态统一继承该倍率；其他历史条目未重新导出，敌人资产 52、关联技能 136 的数量不变。 2026-11-12 增量调整 044 枯枝王庭的战斗体型（1 → 0.7）与 4401 新芽「成长」的攻击骰（2–4 → 2–3）。其他历史条目未重新导出，仍收录 52 个敌人资产与 136 个关联技能。"
+  "note": "The enemy catalog remains the 2026-10-26 historical snapshot and does not include the merged Blood Spore stat update. The relic asset configuration snapshot was refreshed on 2026-11-13; consult its coverage note and Assets/Data for current gameplay values. 2026-11-09 仅追加敌人 012/034/041 及遗物 091 的眩晕机制复核，不代表完整刷新全部历史内容。 2026-11-09 完整增补敌人 044/4401 及其七个技能，当前敌人目录合计 52 个资产、136 个关联技能，其余内容仍以历史快照及各增量说明为准。 2026-11-10 仅修订 4401 新芽的战斗体型：enemyVisualScale 从 1 调整至 0.12，普通立绘与成长／断枝姿态统一继承该倍率；其他历史条目未重新导出，敌人资产 52、关联技能 136 的数量不变。 2026-11-12 增量调整 044 枯枝王庭的战斗体型（1 → 0.7）与 4401 新芽「成长」的攻击骰（2–4 → 2–3）。其他历史条目未重新导出，仍收录 52 个敌人资产与 136 个关联技能。"
 }

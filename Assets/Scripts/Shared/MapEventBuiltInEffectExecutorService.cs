@@ -101,6 +101,13 @@ public static class MapEventBuiltInEffectExecutorService
         List<MapEventBuiltInEffectData> allEffects = selectedResult != null
             ? MapEventEffectSequenceBuilder.BuildAllEffects(selectedResult)
             : MapEventEffectSequenceBuilder.BuildAllEffects(request.optionData);
+        if (request.actionPointSystem == null && allEffects.Exists(effect =>
+            effect.effectType == MapEventOptionBuiltInEffectType.LoseActionPoints
+            || (!request.skipRewardEffects && effect.effectType == MapEventOptionBuiltInEffectType.GainActionPoints)))
+        {
+            result.message = GameText.Get("map.event.action_points_are_unavailable", "当前未找到行动点系统。");
+            return false;
+        }
         if (selectedResult != null)
         {
             result.resultContent = request.eventData != null
@@ -196,7 +203,7 @@ public static class MapEventBuiltInEffectExecutorService
             case MapEventOptionBuiltInEffectType.GainActionPoints:
                 return ExecuteGainActionPoints(request.actionPointSystem, effectData, out message);
             case MapEventOptionBuiltInEffectType.LoseActionPoints:
-                return ExecuteLoseActionPoints(request.actionPointSystem, effectData, out message);
+                return ExecuteLoseActionPoints(request, effectData, out message);
             case MapEventOptionBuiltInEffectType.RestoreAllActionPoints:
                 return ExecuteRestoreAllActionPoints(request.actionPointSystem, out message);
             case MapEventOptionBuiltInEffectType.GainLoot:
@@ -400,18 +407,12 @@ public static class MapEventBuiltInEffectExecutorService
     }
 
     private static bool ExecuteLoseActionPoints(
-        ActionPointSystem actionPointSystem,
+        MapEventBuiltInEffectExecutionRequest request,
         MapEventBuiltInEffectData effectData,
         out string message)
     {
-        int loseAmount = Mathf.Max(0, effectData.effectAmount);
-        if (actionPointSystem == null)
-        {
-            message = GameText.Get("map.event.action_points_are_unavailable", "当前未找到行动点系统。");
-            return false;
-        }
-
-        MapMovementService.SpendActionPointsWithOverflow(actionPointSystem, loseAmount);
+        int loseAmount = RelicTriggerDispatcher.CalculateEventActionPointLoss(request.runState, request.currentEventTile, effectData.effectAmount);
+        MapMovementService.SpendActionPointsWithOverflow(request.actionPointSystem, loseAmount);
         message = GameText.Format("event.effect.lose_ap", "失去 {amount} 点行动点。", ("amount", loseAmount));
         return true;
     }

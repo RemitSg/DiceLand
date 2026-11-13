@@ -31,7 +31,7 @@ public static partial class RelicSystem
     public static bool IsBuiltInEffectRegistered(Relic_SO.RelicBuiltInEffectType effectType)
     {
         return effectType != Relic_SO.RelicBuiltInEffectType.None
-            && BuiltInEffectApplicators.ContainsKey(effectType);
+            && (BuiltInEffectApplicators.ContainsKey(effectType) || DicePreparedEffectApplicators.ContainsKey(effectType));
     }
 
     public static List<Relic_SO.RelicBuiltInEffectType> GetUnregisteredBuiltInEffectTypesForDiagnostics()
@@ -44,7 +44,7 @@ public static partial class RelicSystem
             if (effectType == Relic_SO.RelicBuiltInEffectType.None)
                 continue;
 
-            if (!BuiltInEffectApplicators.ContainsKey(effectType))
+            if (!IsBuiltInEffectRegistered(effectType))
                 missingEffects.Add(effectType);
         }
 
@@ -184,6 +184,7 @@ public static partial class RelicSystem
             { Relic_SO.RelicBuiltInEffectType.ResetKeysAndRegenerateMapOnAcquire, HandleResetKeysAndRegenerateMapOnAcquire },
             { Relic_SO.RelicBuiltInEffectType.ConfigureFixedRelicReforgePair, HandleConfigureFixedRelicReforgePair },
             { Relic_SO.RelicBuiltInEffectType.ReplaceEnemyStatusApplication, HandlePassiveMarker },
+            { Relic_SO.RelicBuiltInEffectType.ReduceEventActionPointLoss, HandleReduceEventActionPointLoss },
             { Relic_SO.RelicBuiltInEffectType.QueueNextBattleAllyStatusOnAcquire, HandleQueueNextBattleAllyStatusOnAcquire },
         };
     }

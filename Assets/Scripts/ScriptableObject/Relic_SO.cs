@@ -52,7 +52,8 @@ public class Relic_SO : ScriptableObject
         OnBattleCompletion = 36,
         OnBattleDefeat = 37,
         OnPlayerDiceRolled = 38,
-        OnPlayerShieldStacksLost = 39
+        OnPlayerShieldStacksLost = 39,
+        OnEventActionPointLossCalculated = 40
     }
 
     public enum RelicBuiltInEffectType
@@ -195,7 +196,8 @@ public class Relic_SO : ScriptableObject
         ConfigureFixedRelicReforgePair = 135,
         QueueNextBattleAllyStatusOnAcquire = 136,
         ApplyStatusToSelfOnDefenseClashWinOncePerActorPerRound = 137,
-        ReplaceEnemyStatusApplication = 138
+        ReplaceEnemyStatusApplication = 138,
+        ReduceEventActionPointLoss = 139
     }
 
     [Serializable]

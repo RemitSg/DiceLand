@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "date": "2026-11-12",
+  "date": "2026-11-13",
   "generator": "Built-in image_gen",
-  "scope": "34 main event family paintings and 10 Lucky Maze room illustrations. Other follow-ups inherit their family illustration unless eventIllustration explicitly overrides it.",
+  "scope": "35 main event family paintings and 10 Lucky Maze room illustrations. Other follow-ups inherit their family illustration unless eventIllustration explicitly overrides it.",
   "items": [
     {
       "id": "001",
@@ -317,6 +317,17 @@
         "Assets/Resources/EventUI/Scenes/003.png"
       ],
       "sha256": "e6c7cce893200c5ce004b0b4ab96714235ed92b8569719d6567acaadc46f15c9"
+    },
+    {
+      "id": "035",
+      "name": "收雾人",
+      "path": "Assets/Resources/EventUI/Scenes/035.png",
+      "prompt": "Use case: illustration-story. Create a single original, opaque, full-bleed 16:9 fantasy JRPG event painting for DiceLand. Image 1 is a rendering and character-design reference only. Image 2 is a woodland palette and depth reference only. At a traveler’s eye level on a narrow old forest road blanketed in low silver mist, show a kindly but capable elderly woman with a lived-in face, silver hair loosely tucked beneath an earth-green wool shawl and plain weathered traveling clothes. She holds a clear palm-sized old glass flask upright at about eye level in one naturally posed hand, its body rounded and squat with a slightly squared base, narrow brass-ringed neck and open mouth. Make the central story unmistakable: fine ribbons of the surrounding silver mist converge inward through the open mouth, with a miniature curl of mist already visible through the glass. Her face, gesture and flask occupy the left-middle around x35–45% and are clearly visible above the bottom quarter. Soft amber daylight on the contours of her face and hand, blue-gray fog and dark moss-green pines, layered depth, wet stones and a trail curving into the mist. Keep the right 34% and lower 28% comparatively low contrast for the real in-game choice and dialogue UI. Detailed hand-painted semi-realistic anime fantasy concept art, confident shapes and rich material texture. Quiet, human, lightly magical. One character, no carriage or extra figures, no letters, logo, watermark, UI or frame.",
+      "references": [
+        "Assets/Resources/EventUI/Scenes/034.png",
+        "Assets/Resources/EventUI/Scenes/017.png"
+      ],
+      "sha256": "e5b46a886550f1223f7428f1faf5f7d90029c7beb7a6bdddf2ca0e881a7809b0"
     }
   ]
 }
