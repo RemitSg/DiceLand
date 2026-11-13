@@ -14279,6 +14279,50 @@ MonoBehaviour:
     m_Key: ui.event.ap_loss_discount
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000375
+    m_Key: event.036.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000376
+    m_Key: event.036.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000377
+    m_Key: event.036.option.Help.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000378
+    m_Key: event.036.option.Help.preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000379
+    m_Key: event.036.option.Leave.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000380
+    m_Key: event.036.option.Leave.preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000381
+    m_Key: event.036_A_01.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000382
+    m_Key: event.036_A_01.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000383
+    m_Key: event.036_A_01.option.Tricked.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000384
+    m_Key: event.036_A_01.option.Tricked.preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000385
+    m_Key: event.036_A_01.option.Tricked.result
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

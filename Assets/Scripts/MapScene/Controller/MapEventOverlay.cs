@@ -222,8 +222,13 @@ public partial class MapEventOverlay : MonoBehaviour
 
     private void ShowResultStep(MapEventOptionData option, string message, string resultContent, MapEvent_SO nextEventOverride)
     {
-        isShowingResultStep = true;
         pendingNextEvent = nextEventOverride != null ? nextEventOverride : option?.nextEvent;
+        if (option?.openFollowUpImmediately == true && pendingNextEvent != null && nestedEventDepth < MaxNestedEventDepth)
+        {
+            ShowFollowUpEvent(pendingNextEvent);
+            return;
+        }
+        isShowingResultStep = true;
         optionScrollRect.gameObject.SetActive(false);
         optionSection.gameObject.SetActive(false);
         string result = !string.IsNullOrWhiteSpace(resultContent) ? resultContent
@@ -276,7 +281,7 @@ public partial class MapEventOverlay : MonoBehaviour
             ? currentEvent.LocalizeOption(option, "preview", option.consequenceDescription) : empty;
         if (option.requiredMoney > 0) detail = GameText.Format("map.event.cost_gold", "需要支付 {requiredMoney} 金钱\n{detail}", ("requiredMoney", option.requiredMoney), ("detail", detail));
         if (option.requiredMoneyPercent > 0) detail = GameText.Format("map.event.cost_of_your_gold", "需要支付当前金钱的 {requiredMoneyPercent}%\n{detail}", ("requiredMoneyPercent", option.requiredMoneyPercent), ("detail", detail));
-        if (option.nextEvent != null) detail += GameText.Format("map.event.next_event", "\n继续事件：{localizedName}", ("localizedName", option.nextEvent.LocalizedName));
+        if (option.nextEvent != null && !option.openFollowUpImmediately) detail += GameText.Format("map.event.next_event", "\n继续事件：{localizedName}", ("localizedName", option.nextEvent.LocalizedName));
         if (option == reforgeMaterialOption && reforgeMaterial != null)
             detail += "\n\n" + GameText.Format("ui.event.reforge.selected", "已选材料：{name}\n点击此选项可更换。", ("name", MapEventInventoryReforgeService.ItemName(reforgeMaterial)));
         if (preview != null)

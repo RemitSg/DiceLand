@@ -150,6 +150,8 @@ public class MapEventOptionData
     public List<MapEventPossibleResultData> possibleResults = new List<MapEventPossibleResultData>();
     [Header("Follow-up Event")]
     public MapEvent_SO nextEvent;
+    [Tooltip("选择后直接进入后续事件，省略中间结果页，并隐藏后续事件预告。")]
+    public bool openFollowUpImmediately;
     public bool resolveEvent = true;
     public MapEventOptionHandler_SO customHandler;
     [Tooltip("特殊副本跳转：-1 不跳转，-2 完成并离开副本，0 起为有效格子列表索引。")]

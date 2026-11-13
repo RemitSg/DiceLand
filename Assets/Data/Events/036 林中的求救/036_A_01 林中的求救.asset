@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "036_A_01 \u6797\u4E2D\u7684\u6C42\u6551"
+  m_EditorClassIdentifier:
+  eventId: 036_A_01
+  eventName: "\u6797\u4E2D\u7684\u6C42\u6551"
+  eventContent: "\u4F60\u4E0D\u5FCD\u5FC3\u5C06\u5973\u5B50\u4E00\u4E2A\u4EBA\u629B\u5728\u5982\u6B64\u51F6\u9669\u7684\u4E1B\u6797\u4E4B\u4E2D\uFF0C\u66F4\u4F55\u51B5\u5979\u8FD8\u53D7\u4E86\u4F24\u3002\n\u4F60\u7684\u4FDD\u62A4\u6B32\u7A81\u7136\u8FBE\u5230\u4E86\u9876\u5CF0\uFF0C\u53EF\u5C31\u5F53\u4F60\u9760\u8FD1\u7684\u65F6\u5019\uFF0C\u90A3\u540D\u5973\u5B50\u7A81\u7136\u8BE1\u5F02\u5730\u7AD9\u4E86\u8D77\u6765\u3002\n\u4E0D\uFF0C\u90A3\u4E0D\u662F\u771F\u7684\u201C\u7AD9\u201D\u8D77\u6765\uFF0C\u56E0\u4E3A\u4F60\u624D\u53D1\u73B0\uFF0C\u5979\u7684\u4E0B\u534A\u8EAB\u7ADF\u7136\u662F\u4E00\u6761\u86C7\u3002"
+  eventIllustration: {fileID: 21300000, guid: d08cc11f76c94a12ae5b5c47e2c0648f, type: 3}
+  hideConsequences: 0
+  options:
+  - optionId: Tricked
+    optionLabel: "\u88AB\u9A97\u4E86\uFF01"
+    requiredMoney: 0
+    requiredMoneyPercent: 0
+    consequenceDescription: "\u767D\u86C7\u5996\u7684\u6218\u6597\u6682\u672A\u5F00\u653E\u3002"
+    resultContent: "\u4F60\u8FDE\u5FD9\u9000\u56DE\u6797\u95F4\u5C0F\u8DEF\u3002\n\n\u767D\u86C7\u5996\u7684\u6218\u6597\u6682\u672A\u5F00\u653E\u3002"
+    builtInEffectType: 0
+    effectAmount: 0
+    additionalBuiltInEffects: []
+    possibleResults: []
+    nextEvent: {fileID: 0}
+    openFollowUpImmediately: 0
+    resolveEvent: 1
+    customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: -1

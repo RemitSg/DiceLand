@@ -45,7 +45,7 @@ public sealed partial class AgentAdventureSession
             return new AgentAdventureEventOption { index = index, id = option.optionId, label = option.DisplayLabel,
                 consequence = currentEvent.hideConsequences ? null : option.consequenceDescription, requiredMoney = preview.requiredMoney,
                 additionalDetail = currentEvent.hideConsequences ? null : preview.additionalDetail,
-                nextEvent = option.nextEvent != null ? option.nextEvent.DisplayName : null,
+                nextEvent = option.nextEvent != null && !option.openFollowUpImmediately ? option.nextEvent.DisplayName : null,
                 materialIds = materials,
                 selectable = preview.isSelectable && supported,
                 unavailableReason = supported ? preview.unavailableReason : "This custom event handler requires a headless adapter." };
@@ -114,6 +114,8 @@ public sealed partial class AgentAdventureSession
             return true;
         });
         phase = "event_result";
+        if (option.openFollowUpImmediately && nextEvent != null && eventDepth < MapEventOptionService.MaxNestedEventDepth)
+            ContinueEvent();
     }
 
     private void ContinueEvent()

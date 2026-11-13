@@ -16061,6 +16061,50 @@ MonoBehaviour:
     m_Localized: "AP loss for this choice: {baseLoss} \u2192 {finalLoss}."
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000375
+    m_Localized: "A Cry for Help in the Woods"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000376
+    m_Localized: "Branches and vines, shrubs and ferns make it almost impossible to get through the dense jungle.\nEvery other step, you trip over something you can\u2019t even see.\nThen you hear a faint voice calling for help.\nYou look around and spot a beautiful woman waving from beneath a nearby tree. It looks like she tripped and twisted her ankle."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000377
+    m_Localized: "I have to help!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000378
+    m_Localized: "???"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000379
+    m_Localized: "Better leave it\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000380
+    m_Localized: "Nothing happens"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000381
+    m_Localized: "A Cry for Help in the Woods"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000382
+    m_Localized: "You can\u2019t bring yourself to leave the woman alone in such a dangerous jungle, especially with an injury.\nA fierce urge to protect her comes over you. But as you draw near, she suddenly rises in a strangely fluid motion.\nShe isn\u2019t really standing, you realize. From the waist down, she\u2019s a snake."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000383
+    m_Localized: "It\u2019s a trap!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000384
+    m_Localized: "The White Snake Demon encounter is not available yet."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000385
+    m_Localized: "You hurry back to the forest trail.\n\nThe White Snake Demon encounter is not available yet."
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

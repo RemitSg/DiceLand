@@ -6,7 +6,7 @@ The event screen uses the existing event selection and effect services. Event te
 
 `MapEventSceneArt.Resolve` first uses an event's existing `eventIllustration`. Otherwise it loads `Assets/Resources/EventUI/Scenes/NNN.png` using the numeric event family. Both underscore branches (`031_A_01`) and legacy hyphen branches (`014-1`, `025-1`) are supported. Non-numeric custom events without an illustration use the forest backdrop.
 
-The 35 main paintings cover the 35 current event families. All 76 authored event assets resolve to their family painting or an explicit override. The ten Lucky Maze rooms each assign an `eventIllustration` sprite from `Assets/Resources/EventUI/Scenes/033_*.png`. The two Lucky Game entrances use `032.png` and `033.png`. The room filenames match their event IDs. Other follow-ups use the family scene by default. For a new main family, add its own painting and update `art-manifest.json`. The coverage test flags missing art.
+The 36 main paintings cover the 36 current event families. All 78 authored event assets resolve to their family painting or an explicit override. The ten Lucky Maze rooms each assign an `eventIllustration` sprite from `Assets/Resources/EventUI/Scenes/033_*.png`. The two Lucky Game entrances use `032.png` and `033.png`. The forest rescue reveal uses `036_A_01.png`. Branch illustration filenames match their event IDs. Other follow-ups use the family scene by default. For a new main family, add its own painting and update `art-manifest.json`. The coverage test flags missing art.
 
 `art-manifest.json` records the built-in image generation prompts, asset paths and original PNG SHA-256 checksums. The PNGs are unmodified generated paintings; Unity imports them as opaque, clamped sprites with mipmaps disabled and a 2048 maximum texture size.
 
@@ -17,8 +17,13 @@ The 35 main paintings cover the 35 current event families. All 76 authored event
 - Options appear after the last narrative page, with a 0.24-second fade and slide. Rows share their width and height. Long labels wrap; larger option lists and consequence previews scroll independently.
 - Hover or keyboard focus previews an option and selects it if available. A disabled option's requirements remain inspectable. The preview stays pinned for reading; hovering another available choice restores confirmation. Only confirmation calls the selection handler, and it rechecks current conditions.
 - Actual outcome text and effect feedback play in the dialogue bar. Follow-up events reuse this flow. The final close fades for 0.28 seconds before `Hidden` performs the existing encounter or scene handoff. Input stays blocked through the fade.
+- For a narrative choice that goes straight to the next scene, set `openFollowUpImmediately` on the option. The named follow-up hint and intermediate result page are omitted. The following scene starts with its own narration and choices.
 - The original backpack entry opens inventory above the event. Story progress pauses while inventory or an acquisition modal obscures it. Returning refreshes availability without changing the selected choice.
 - Story timing uses unscaled time. Mouse and touch use native UGUI buttons; Space/Enter provide dialogue progression when appropriate. Existing hidden-consequence rules are preserved.
+
+## Forest rescue encounter
+
+`036` is in the map event pool. Helping opens `036_A_01`, where choosing `Tricked` currently ends the event and reports that the encounter is pending. Once the White Snake Demon is authored, set that option's `builtInEffectType` to `StartEncounter`, assign the encounter group, and replace the temporary result and preview in the asset and both locale tables. The intended preview is “进入一场吃力的战斗”.
 
 ## Typography
 

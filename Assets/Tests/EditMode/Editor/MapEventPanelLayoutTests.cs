@@ -132,6 +132,64 @@ public sealed class MapEventPanelLayoutTests
         Assert.AreEqual(2, executions); Assert.IsFalse(overlay.IsVisible); overlay.Hide(); Assert.AreEqual(1, hidden);
     }
 
+    [TestCase(false)]
+    [TestCase(true)]
+    public void ForestHelpShowsTheRevealOnlyAfterHelpingAndBothPathsResolveTheTile(bool help)
+    {
+        var pool = AssetDatabase.LoadAssetAtPath<MapEventPool_SO>("Assets/Data/Events/MapEventPool.asset");
+        MapEvent_SO opening = pool.GetValidEvents().Single(item => item.eventId == "036");
+        MapEvent_SO reveal = opening.options[0].nextEvent;
+        Assert.AreEqual("036_A_01", reveal.eventId);
+        CollectionAssert.DoesNotContain(pool.GetValidEvents(), reveal);
+
+        var tile = new BoardTileData { tileType = MapTileType.Event, assignedEvent = opening };
+        var run = new RunState { money = 50 };
+        overlay.Show(tile, opening, (BoardTileData t, MapEvent_SO e, MapEventOptionData o, out string message, out string content, out MapEvent_SO next) =>
+        {
+            bool success = MapEventOptionService.TryExecute(new MapEventBuiltInEffectExecutionRequest
+            {
+                runState = run, currentEventTile = t, optionData = o
+            }, e, null, out var result);
+            Assert.IsNull(result.pendingEncounterData);
+            message = result.message;
+            content = result.resultContent;
+            next = result.nextEventOverride;
+            return success;
+        });
+        Layout();
+        var story = Find("ContentText").GetComponent<TMP_Text>();
+        var preview = Find("ConsequenceText").GetComponent<TMP_Text>();
+        var image = Find("Illustration").GetComponent<Image>();
+        Assert.AreEqual("？？？", preview.text);
+        Assert.AreEqual(opening.eventContent, story.text);
+        Assert.AreEqual("036", image.sprite.name);
+
+        Button confirm = Find("ConfirmButton").GetComponent<Button>();
+        if (help)
+        {
+            confirm.onClick.Invoke();
+            Assert.IsFalse(tile.isResolved);
+            Assert.AreSame(opening, tile.assignedEvent);
+            Assert.AreEqual(reveal.eventContent, story.text);
+            Assert.AreEqual("036_A_01", image.sprite.name);
+            StringAssert.Contains("白蛇妖的战斗暂未开放", preview.text);
+        }
+        else
+        {
+            Find("Option_02").GetComponent<MapEventChoiceFeedback>().OnPointerEnter(null);
+            Assert.AreEqual("无事发生", preview.text);
+        }
+
+        confirm.onClick.Invoke();
+        Assert.IsTrue(tile.isResolved);
+        Assert.IsNull(tile.assignedEvent);
+        Assert.AreEqual(1, run.settlementStats.eventTilesCompleted);
+        Assert.AreEqual(50, run.money);
+        StringAssert.Contains(help ? "白蛇妖的战斗暂未开放" : "无事发生", story.text);
+        confirm.onClick.Invoke();
+        Assert.IsFalse(overlay.IsVisible);
+    }
+
     [Test]
     public void FailedSelectionKeepsChoicesAndTheCompleteReasonInScrollablePreview()
     {

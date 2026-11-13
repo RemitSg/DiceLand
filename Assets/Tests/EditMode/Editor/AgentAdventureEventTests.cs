@@ -136,6 +136,29 @@ public sealed class AgentAdventureEventTests
         Assert.AreEqual(JsonUtility.ToJson(result), JsonUtility.ToJson(session.Act(request)));
     }
 
+    [Test] public void ForestHelpOpensTheConcealedFollowUpWithoutAnIntermediateResult()
+    {
+        Open();
+        var opening = Find<MapEvent_SO>(item => item.eventId == "036");
+        var before = Enter(opening);
+        Assert.AreEqual("？？？", before.mapEvent.options[0].consequence);
+        Assert.IsNull(before.mapEvent.options[0].nextEvent);
+
+        var reveal = Act("run_choose_event");
+        Assert.AreEqual("event", reveal.phase);
+        Assert.AreEqual(1, reveal.mapEvent.depth);
+        Assert.AreEqual("Tricked", reveal.mapEvent.options.Single().id);
+        Assert.IsFalse(Tile.isResolved);
+
+        var ending = Act("run_choose_event");
+        Assert.AreEqual("event_result", ending.phase);
+        Assert.IsFalse(ending.mapEvent.hasPendingBattle);
+        Assert.IsTrue(Tile.isResolved);
+        Assert.AreEqual(before.money, ending.money);
+        Assert.AreEqual(before.actionPoints, ending.actionPoints);
+        Assert.AreEqual("map", Act("run_continue_event").phase);
+    }
+
     [Test] public void InvalidAndUnavailableOptionsCannotSpendOrAdvanceRevision()
     {
         Open(); var paid = Option(); paid.requiredMoney = 1; var free = Option();
