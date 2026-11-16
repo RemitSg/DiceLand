@@ -11,6 +11,8 @@ const labels = {
 const rarities = {Common: '普通', Uncommon: '优秀', Rare: '稀有', Epic: '史诗', Legendary: '传说', Trash: '垃圾'};
 const types = {Sword: '剑', Axe: '斧', Bow: '弓', Wand: '法杖', Dagger: '匕首'};
 const pools = {mainPool: '主图纸池', treasurePool: '普通宝藏', shop: '普通商店'};
+const craftLabels = {weapons: '对应卷轴', blueprints: '锻造产物'};
+const emptyCraft = {weapons: '无对应卷轴', blueprints: '未配置目标武器'};
 const diceNames = {Attack: '攻击', Defense: '防御'};
 const collator = new Intl.Collator('zh-CN', {numeric: true});
 const rank = Object.keys(rarities);
@@ -230,19 +232,25 @@ function cardSummary(item, tab) {
     };
   }
   const materials = detail.materials.map(material => `${material.name} ×${material.amount}`).join(' · ');
-  return {line: materials ? `材料　${materials}` : '未配置有效材料', meta: item.weaponName || '未配置产物'};
+  return {line: materials ? `材料　${materials}` : '未配置有效材料', meta: types[itemType(item)] || ''};
 }
 
 function card(item, tab) {
   const {detail} = item;
   const {line, meta} = cardSummary(item, tab);
-  return `<button class="card" type="button" data-open="${detail.id}">
+  const label = craftLabels[tab];
+  const related = label ? craftLinks(item, tab) : '';
+  return `<article class="entry"><button class="card" type="button" data-open="${detail.id}">
     <span class="identity">${icon(item, tab)}<span>
       <span class="item-name">${escape(detail.name)}</span><span class="item-number">ID ${number(item.assetId)}</span>
     </span></span>
     <span class="card-line">${escape(line)}</span>
-    <span class="card-bottom">${rarity(item)}<span>${escape(meta)}</span></span>
-  </button>`;
+    <span class="card-bottom">${rarity(item)}${meta ? `<span>${escape(meta)}</span>` : ''}</span>
+  </button>
+  ${label ? `<div class="card-craft" role="group" aria-label="${label}">
+    ${related ? `<span aria-hidden="true">${label}</span>${related}` : `<span>${emptyCraft[tab]}</span>`}
+  </div>` : ''}
+  </article>`;
 }
 
 function section(title, content) {
@@ -254,6 +262,13 @@ function relation(tab, id, name, meta = '') {
     <span class="relation-name">${escape(name)}</span><span class="relation-action">
       ${meta ? `<span class="relation-count">${escape(meta)}</span>` : ''}
       <span aria-hidden="true">↗</span></span></button>`;
+}
+
+function craftLinks(item, tab) {
+  if (tab === 'weapons') return (recipes.get(item.detail.id) || []).map(({detail}) =>
+    relation('blueprints', detail.id, detail.name)).join('');
+  const weapon = byTab.weapons.get(item.detail.weapon)?.detail;
+  return weapon ? relation('weapons', weapon.id, weapon.name) : '';
 }
 
 function rulesWithoutRepeatedStats(skill, cost) {
@@ -281,23 +296,19 @@ function skillDetail(skill, isDefault) {
 
 function weaponDetail(item) {
   const {detail} = item;
-  const entries = recipes.get(detail.id);
   const skillRows = skills(item).map(skill => skillDetail(skill, item.hasDefaultSkill && skill.index === 0)).join('');
   return `<dl class="stats">
     <div><dt>速度槽</dt><dd>${detail.speedButtonCount}</dd></div>
     <div><dt>融合上限</dt><dd>${item.fusionLimit}</dd></div>
     <div><dt>技能数</dt><dd>${skills(item).length}</dd></div>
   </dl>
-  ${section('武器技能', skillRows || `<p>基础攻击为单骰 ${detail.fallbackMinPower}–${detail.fallbackMaxPower}。</p>`)}
-  ${entries ? section('对应图纸', entries.map(({detail}) => relation('blueprints', detail.id, detail.name)).join('')) : ''}`;
+  ${section('武器技能', skillRows || `<p>基础攻击为单骰 ${detail.fallbackMinPower}–${detail.fallbackMaxPower}。</p>`)}`;
 }
 
 function blueprintDetail(item) {
-  const weapon = byTab.weapons.get(item.detail.weapon)?.detail;
   const ingredients = item.detail.materials.map(material =>
     `<li>${relation('loot', material.id, material.name, '×' + material.amount)}</li>`).join('');
-  return section('锻造产物', weapon ? relation('weapons', weapon.id, weapon.name) : `<p>${escape(item.weaponName || '未配置目标武器')}</p>`) +
-    section('所需材料', ingredients ? `<ul class="materials">${ingredients}</ul>` : '<p>未配置有效材料，当前无法锻造。</p>');
+  return section('所需材料', ingredients ? `<ul class="materials">${ingredients}</ul>` : '<p>未配置有效材料，当前无法锻造。</p>');
 }
 
 function lootDetail(item) {
@@ -341,6 +352,7 @@ function openDetail(id) {
   const kinds = {weapons: types[detail.weaponType], blueprints: '卷轴', loot: detail.attribute};
   const fields = {weapons: 'id', blueprints: 'blueprintID', loot: 'lootID'};
   const details = {weapons: weaponDetail, blueprints: blueprintDetail, loot: lootDetail};
+  const label = craftLabels[active];
   $('detail-label').textContent = titles[active] + '详情';
   $('position').textContent = index < 0 ? '' : `${index + 1} / ${filtered.length}`;
   $('previous').disabled = index < 1;
@@ -351,6 +363,7 @@ function openDetail(id) {
       <h2 id="detail-name">${escape(detail.name)}</h2>
       ${rarity(item)} ${escape(kinds[active])}
     </div></div>
+    ${label ? section(label, craftLinks(item, active) || `<p>${emptyCraft[active]}</p>`) : ''}
     ${detail.description ? `<p class="description">${escape(detail.description)}</p>` : ''}
     ${details[active](item)}
     ${active === 'loot' ? '' : placements(item, active === 'weapons')}
@@ -396,21 +409,24 @@ $('rarity-options').addEventListener('click', event => {
 for (const button of document.querySelectorAll('[data-view]')) {
   button.addEventListener('click', () => { states[active].view = button.dataset.view; render(); });
 }
-$('results').addEventListener('click', event => {
-  const button = event.target.closest('[data-open]');
-  if (button) openDetail(button.dataset.open);
-});
-$('detail-content').addEventListener('click', event => {
-  const button = event.target.closest('[data-jump]');
-  if (!button) return;
-  if (button.dataset.jump === 'enemies') openEnemyDropSection(button.dataset.id);
-  else activate(button.dataset.jump, button.dataset.id);
-});
+for (const id of ['results', 'detail-content']) {
+  $(id).addEventListener('click', event => {
+    const button = event.target.closest('[data-open], [data-jump]');
+    if (!button) return;
+    if (button.dataset.open) openDetail(button.dataset.open);
+    else if (button.dataset.jump === 'enemies') openEnemyDropSection(button.dataset.id);
+    else activate(button.dataset.jump, button.dataset.id);
+  });
+}
 $('previous').addEventListener('click', () => step(-1));
 $('next').addEventListener('click', () => step(1));
 $('close').addEventListener('click', () => $('detail').close());
 $('detail').addEventListener('close', () => {
   if ($('detail').open) return;
+  if (selected && states[active]) {
+    const card = $('results').querySelector(`[data-open="${selected}"]`);
+    (card || $('query')).focus({preventScroll: true});
+  }
   selected = undefined;
   writeAddress();
 });

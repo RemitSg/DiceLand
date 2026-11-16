@@ -86,12 +86,17 @@ select { color: var(--ink); }
 .results-heading h2 { margin: 0; font-size: 18px; }
 .results-heading span { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(265px, 100%), 1fr)); gap: 13px; }
-.card {
-  display: grid; grid-template-rows: auto 1fr auto; gap: 12px; width: 100%;
-  padding: 15px; text-align: left; border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
-  min-width: 0; box-shadow: 0 1px 2px #202a2309;
+.entry {
+  display: flex; flex-direction: column; min-width: 0;
+  border: 1px solid var(--line); border-radius: 10px; background: var(--surface); box-shadow: 0 1px 2px #202a2309;
 }
-.card:hover { border-color: #8ca28f; background: #fffffa; }
+.entry:hover { border-color: #8ca28f; }
+.card {
+  display: grid; grid-template-rows: auto 1fr auto; gap: 12px; width: 100%; flex: 1;
+  padding: 15px; text-align: left; border: 0; border-radius: 9px; background: transparent; min-width: 0;
+}
+.card:hover { background: #fffffa; }
+.card:focus-visible { outline-offset: -3px; }
 .identity { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .identity > span:last-child, .identity > div:last-child { min-width: 0; }
 .item-name { display: block; margin: 0; font-size: 16px; font-weight: 700; overflow-wrap: anywhere; }
@@ -159,6 +164,17 @@ button.relation:hover { border-color: #91a995; }
 .relation-name { min-width: 0; overflow-wrap: anywhere; }
 .relation-action { display: inline-flex; flex: 0 0 auto; gap: 8px; align-items: baseline; color: #4a6653; }
 .relation-count { font-weight: 650; }
+.card-craft {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 3px 8px; min-height: 44px;
+  padding: 3px 14px; border-top: 1px solid #e4e8de; border-radius: 0 0 9px 9px;
+  background: #f4f6ee; color: var(--muted); font-size: 12px;
+}
+.card-craft .relation {
+  width: auto; gap: 5px; min-height: 34px; margin: 0; padding: 4px 6px; border-color: transparent;
+  background: transparent; color: #2e543d; font-size: 13px; font-weight: 650;
+}
+.card-craft .relation:hover { background: #e9efe5; border-color: #9bb09e; }
+.card-craft .relation-name { text-decoration: underline; text-underline-offset: 3px; }
 .materials, .prices, .drop-rows { list-style: none; margin: 0; padding: 0; }
 .materials li + li { margin-top: 7px; }
 .prices li, .drop-rows li { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 7px 0; border-bottom: 1px solid #e6ebe0; }
@@ -173,6 +189,11 @@ button.relation:hover { border-color: #91a995; }
 .asset { margin-top: 26px; font-size: 13px; color: var(--muted); }
 .asset dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 10px; }
 .asset dd { margin: 0; overflow-wrap: anywhere; }
+
+@media (min-width: 1050px) {
+  .list .entry { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+  .list .card-craft { max-width: 255px; border-top: 0; border-left: 1px solid #e4e8de; border-radius: 0 9px 9px 0; }
+}
 
 @media (max-width: 900px) {
   .equipment { grid-template-columns: 160px minmax(0, 1fr); }

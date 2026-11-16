@@ -47,6 +47,11 @@ const detailName = page.locator('#detail-name');
 const close = () => page.locator('#close').click();
 const frame = name => page.frameLocator('#' + name + ' iframe');
 const summary = name => page.locator('#detail').getByRole('heading', {name, exact: true});
+const gearRelations = (name, target) => results(name).locator('.entry').evaluateAll((cards, target) =>
+  cards.map(card => [card.querySelector('[data-open]').dataset.open, [...card.querySelectorAll(`[data-jump="${target}"]`)]
+    .map(button => button.dataset.id)]), target);
+const detailRelations = target => page.locator(`#detail [data-jump="${target}"]`)
+  .evaluateAll(buttons => buttons.map(button => button.dataset.id));
 
 async function decodeImages(name) {
   const count = await results(name).locator('img').evaluateAll(async images => {
@@ -84,8 +89,14 @@ try {
   const {icons, enemyIndex, ...packaged} = JSON.parse(await page.locator('#equipment-data').textContent());
   equal(packaged, equipment, 'All exported equipment fields are embedded');
   equal(await cardIds('weapons'), equipment.weapons.map(item => item.detail.id));
+  const recipeIds = id => equipment.blueprints.filter(item => item.detail.weapon === id).map(item => item.detail.id);
+  equal(await gearRelations('weapons', 'blueprints'), equipment.weapons.map(({detail: {id}}) => [id, recipeIds(id)]));
+  equal(await results('weapons').getByText('无对应卷轴', {exact: true}).count(),
+    equipment.weapons.filter(({detail: {id}}) => !recipeIds(id).length).length);
   await decodeImages('weapons');
   await checkDetails('weapons', async ({detail}) => {
+    equal(await page.locator('#detail .detail-section > h3').first().textContent(), '对应卷轴');
+    equal(await detailRelations('blueprints'), recipeIds(detail.id));
     const skills = detail.skills.filter(skill => skill?.id);
     equal(await page.locator('.skill').count(), skills.length);
     equal(await page.locator('.dice li').allTextContents(), skills.flatMap(skill => skill.dice.map((die, index) =>
@@ -105,8 +116,12 @@ try {
   await page.keyboard.press('ArrowRight');
   equal(await tab('blueprints').getAttribute('aria-selected'), 'true');
   equal(await cardIds('blueprints'), equipment.blueprints.map(item => item.detail.id));
+  equal(await gearRelations('blueprints', 'weapons'), equipment.blueprints.map(({detail}) =>
+    [detail.id, detail.weapon ? [detail.weapon] : []]));
   await decodeImages('blueprints');
   await checkDetails('blueprints', async item => {
+    equal(await page.locator('#detail .detail-section > h3').first().textContent(), '锻造产物');
+    equal(await detailRelations('weapons'), item.detail.weapon ? [item.detail.weapon] : []);
     const rows = await page.locator('.materials [data-jump="loot"]').evaluateAll(buttons => buttons.map(button => [
       button.dataset.id, button.querySelector('.relation-name').textContent, button.querySelector('.relation-count').textContent
     ]));
@@ -124,13 +139,24 @@ try {
   await results('blueprints').locator('.card').click();
   equal(await page.locator('.sources').allTextContents(), ['主图纸池普通宝藏普通商店']);
   equal(await page.locator('.prices').textContent(), '普通商店 · 15–20 金币权重 5');
-  await page.getByRole('button', {name: '避雷针', exact: true}).click();
+  await page.locator('#detail').getByRole('button', {name: '避雷针', exact: true}).click();
   equal(await detailName.textContent(), '避雷针');
   equal(await summary('武器技能').isVisible(), true);
-  await page.getByRole('button', {name: '避雷之卷', exact: true}).click();
+  await page.locator('#detail').getByRole('button', {name: '避雷之卷', exact: true}).click();
   equal(await detailName.textContent(), recipe.detail.name);
   await close();
   equal(await page.locator('#query').inputValue(), '磁电晶 避雷针', 'Switching preserves the active filter');
+  await page.locator('[data-view="list"]').click();
+  const forgeResult = results('blueprints').getByRole('group', {name: '锻造产物'}).getByRole('button', {name: '避雷针'});
+  await forgeResult.press('Enter');
+  equal(await detailName.textContent(), '避雷针', 'A scroll row links directly to its weapon');
+  await close();
+  await page.locator('#query').fill(recipe.detail.name);
+  equal(await cardIds('weapons'), [recipe.detail.weapon]);
+  await results('weapons').getByRole('group', {name: '对应卷轴'}).getByRole('button', {name: recipe.detail.name}).click();
+  equal(await detailName.textContent(), recipe.detail.name, 'A weapon card links directly to its scroll');
+  await close();
+  equal(await page.locator('#query').inputValue(), '磁电晶 避雷针');
   await page.locator('#reset').click();
   await page.locator('#rarity-options [data-rarity="Rare"]').click();
   await page.locator('#direction').click();
