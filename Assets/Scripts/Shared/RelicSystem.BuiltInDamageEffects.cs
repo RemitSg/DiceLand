@@ -2,6 +2,26 @@ using UnityEngine;
 
 public static partial class RelicSystem
 {
+    private static void HandleReduceFirstHpDamagePerAllyEachBattle(
+        Relic_SO relicData,
+        RunRelicState relicState,
+        RelicExecutionContext context,
+        Relic_SO.RelicBuiltInEffectEntry effect)
+    {
+        if (context.trigger != Relic_SO.RelicTrigger.OnPlayerAboutToTakeHpDamage || context.incomingDamage <= 0
+            || !(context.target is BattleAllyController ally) || ally.IsDead)
+            return;
+
+        int reduction = Mathf.Clamp(effect.amount, 0, 100);
+        BattleEncounterData encounter = BattleEncounterRuntime.ActiveEncounter;
+        if (reduction == 0 || encounter == null ||
+            !encounter.TryRegisterBattleRelicProc(BuildRelicProcKey(relicData, "first-hp-damage:" + GetObjectKey(ally))))
+            return;
+
+        context.incomingDamagePercentModifier += reduction;
+        context.AddIncomingDamagePercentModifierSource(-reduction, GetRelicDisplayName(relicData));
+    }
+
     private static void HandleReduceIncomingSingleAttackDamageFlat(
         Relic_SO relicData,
         RunRelicState relicState,

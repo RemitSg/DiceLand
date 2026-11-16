@@ -185,6 +185,7 @@ public static partial class RelicSystem
             { Relic_SO.RelicBuiltInEffectType.ConfigureFixedRelicReforgePair, HandleConfigureFixedRelicReforgePair },
             { Relic_SO.RelicBuiltInEffectType.ReplaceEnemyStatusApplication, HandlePassiveMarker },
             { Relic_SO.RelicBuiltInEffectType.ReduceEventActionPointLoss, HandleReduceEventActionPointLoss },
+            { Relic_SO.RelicBuiltInEffectType.ReduceFirstHpDamagePerAllyEachBattle, HandleReduceFirstHpDamagePerAllyEachBattle },
             { Relic_SO.RelicBuiltInEffectType.QueueNextBattleAllyStatusOnAcquire, HandleQueueNextBattleAllyStatusOnAcquire },
         };
     }

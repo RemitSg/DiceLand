@@ -145,11 +145,12 @@ public sealed partial class RelicExecutionContext
         int incomingDamage,
         int currentSpeed,
         Object source,
-        Object target)
+        Object target,
+        Relic_SO.RelicTrigger trigger = Relic_SO.RelicTrigger.OnPlayerAboutToTakeDamage)
     {
         return new RelicExecutionContext
         {
-            trigger = Relic_SO.RelicTrigger.OnPlayerAboutToTakeDamage,
+            trigger = trigger,
             runState = runState,
             sourceIsPlayer = false,
             source = source,

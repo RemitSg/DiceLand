@@ -1,8 +1,8 @@
 {
-  "date": "2026-11-13",
-  "count": 162,
-  "coverage": "2026-11-13 由团结编辑器重新导出 162 件资产的配置，新增 162 瓶中雾及收雾人事件获取。历史机制备注沿用此前复核结果。2026-11-10 复核了 085 再来一次！的遗物袋刷新，2026-11-12 同步了矮人铁匠的重铸来源。",
-  "exportedAt": "2026-11-13T12:26:02.9202756+08:00",
+  "date": "2026-11-16",
+  "count": 163,
+  "coverage": "2026-11-16 由团结编辑器导出 163 件资产配置。本次新增 163 白蛇蜕和白蛇妖事件的固定掉落。历史机制备注沿用此前复核，保留 085 再来一次！、矮人铁匠重铸、瓶中雾及垃圾袋商店投放的增量说明。",
+  "exportedAt": "2026-11-16T17:59:38.3318516+08:00",
   "newIds": [
     143,
     144,
@@ -23,7 +23,8 @@
     159,
     160,
     161,
-    162
+    162,
+    163
   ],
   "groups": [
     {
@@ -70,10 +71,10 @@
     },
     {
       "name": "防御与反击",
-      "count": 12,
-      "summary": "单方面攻击减伤、反击、防御骰子与护盾的产生和消耗。",
+      "count": 13,
+      "summary": "首伤保护、单方面攻击减伤、反击、防御骰子与护盾。",
       "examples": "铁壁徽章、冥龟甲、镜像棱镜、护心盾",
-      "play": "盾灵逐回合供盾，护甲保养剂开局供盾，安全感强化有盾防御骰，盾反利用失盾反伤。反击刺刃按每角色每回合一次提供下回合临时强壮。"
+      "play": "盾灵逐回合供盾，护甲保养剂开局供盾，安全感强化有盾防御骰，盾反利用失盾反伤。反击刺刃按每角色每回合一次提供下回合临时强壮。白蛇蜕让每名友方每场战斗首次生命伤害减半。"
     },
     {
       "name": "治疗与生存",
@@ -369,7 +370,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -600,7 +601,7 @@
       ],
       "referencedByRelicTables": [],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -829,7 +830,7 @@
         "Assets/Data/Relics/SpecialRelicLoot/Kitty'sPardon/Kitty'sPardon.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -1058,7 +1059,7 @@
         "Assets/Data/Relics/SpecialRelicLoot/Unbind.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -1287,7 +1288,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -1518,7 +1519,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -1749,7 +1750,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -1980,7 +1981,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -2209,7 +2210,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -2438,7 +2439,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -2667,7 +2668,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -2896,7 +2897,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "mechanics": {
         "target": "受到攻击的友方角色",
@@ -3132,7 +3133,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -3361,7 +3362,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -3590,7 +3591,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -3820,7 +3821,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -4050,7 +4051,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -4281,7 +4282,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -4510,7 +4511,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "mechanics": {
         "target": "进入通用受伤结算的友方角色",
@@ -4903,7 +4904,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -5132,7 +5133,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -5363,7 +5364,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -5592,7 +5593,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -5983,7 +5984,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -6214,7 +6215,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -6443,7 +6444,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -6674,7 +6675,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -6905,7 +6906,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -7134,7 +7135,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -7365,7 +7366,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "mechanics": {
         "target": "受到攻击的友方角色",
@@ -7602,7 +7603,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -7831,7 +7832,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -8060,7 +8061,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -8291,7 +8292,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -8522,7 +8523,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -8751,7 +8752,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -8982,7 +8983,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -9211,7 +9212,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -9442,7 +9443,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -9673,7 +9674,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -9904,7 +9905,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -10295,7 +10296,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -10524,7 +10525,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -10753,7 +10754,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -11304,7 +11305,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -11533,7 +11534,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         2048,
@@ -11762,7 +11763,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1207,
@@ -11991,7 +11992,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -12222,7 +12223,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -12453,7 +12454,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -12684,7 +12685,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -12917,7 +12918,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -13148,7 +13149,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -13379,7 +13380,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -13610,7 +13611,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -13843,7 +13844,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -14074,7 +14075,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -14305,7 +14306,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -14536,7 +14537,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "mechanics": {
         "target": "受到致命伤害的友方；消耗敌方燃烧",
@@ -14773,7 +14774,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -15004,7 +15005,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -15235,7 +15236,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -15466,7 +15467,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -15699,7 +15700,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -15930,7 +15931,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -16163,7 +16164,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1206,
@@ -16394,7 +16395,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1207,
@@ -16625,7 +16626,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -16856,7 +16857,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -17089,7 +17090,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1206,
@@ -17322,7 +17323,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1207,
@@ -17555,7 +17556,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -17788,7 +17789,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -18019,7 +18020,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1206,
@@ -18250,7 +18251,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1207,
@@ -18481,7 +18482,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -18714,7 +18715,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1215,
@@ -18945,7 +18946,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1206,
@@ -19176,7 +19177,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "mechanics": {
         "target": "受到友方伤害且实际拥有水蚀的敌方目标",
@@ -19411,7 +19412,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         980,
@@ -19640,7 +19641,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         980,
@@ -19869,7 +19870,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         980,
@@ -20098,7 +20099,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         980,
@@ -20327,7 +20328,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         980,
@@ -20556,7 +20557,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-11-10",
       "iconTextureSize": [
         980,
@@ -20791,7 +20792,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         980,
@@ -21020,7 +21021,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         980,
@@ -21411,7 +21412,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         980,
@@ -21802,7 +21803,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         980,
@@ -22033,7 +22034,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         980,
@@ -22264,7 +22265,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-11-09",
       "iconTextureSize": [
         980,
@@ -22495,7 +22496,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         980,
@@ -22726,7 +22727,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         980,
@@ -22957,7 +22958,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         980,
@@ -23190,7 +23191,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1199,
@@ -23419,7 +23420,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1173,
@@ -23648,7 +23649,7 @@
         "Assets/Data/Events/012 破箱子/希望银币.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1048,
@@ -23877,7 +23878,7 @@
         "Assets/Data/Events/012 破箱子/探索银币.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1043,
@@ -24106,7 +24107,7 @@
         "Assets/Data/Events/012 破箱子/安宁银币.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1007,
@@ -24335,7 +24336,7 @@
         "Assets/Data/Events/011 海边的指路牌/指路牌.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         952,
@@ -24562,7 +24563,7 @@
       ],
       "referencedByRelicTables": [],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1181,
@@ -24789,7 +24790,7 @@
       ],
       "referencedByRelicTables": [],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1186,
@@ -25018,7 +25019,7 @@
       ],
       "referencedByRelicTables": [],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         981,
@@ -25247,7 +25248,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1200,
@@ -25476,7 +25477,7 @@
         "Assets/Data/Events/019 无主的信件/禁忌知识.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1136,
@@ -25705,7 +25706,7 @@
       ],
       "referencedByRelicTables": [],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         834,
@@ -25934,7 +25935,7 @@
         "Assets/Data/Relics/SpecialRelicLoot/107 千术骰子.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1196,
@@ -26002,7 +26003,7 @@
         "Assets/Data/Relics/Trash.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-11-16",
       "iconTextureSize": [
         1098,
@@ -26871,7 +26872,7 @@
       ],
       "referencedByRelicTables": [],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         1179,
@@ -27100,7 +27101,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         921,
@@ -27333,7 +27334,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         626,
@@ -27564,7 +27565,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "mechanics": {
         "target": "受到中毒敌人攻击的友方角色",
@@ -27801,7 +27802,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         616,
@@ -28032,7 +28033,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         622,
@@ -28263,7 +28264,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         626,
@@ -28494,7 +28495,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         614,
@@ -28725,7 +28726,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         616,
@@ -28956,7 +28957,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         622,
@@ -29187,7 +29188,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         626,
@@ -29418,7 +29419,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         614,
@@ -29649,7 +29650,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         616,
@@ -30040,7 +30041,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         622,
@@ -30273,7 +30274,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         626,
@@ -30504,7 +30505,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         614,
@@ -30735,7 +30736,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         616,
@@ -31130,7 +31131,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         622,
@@ -31361,7 +31362,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         612,
@@ -31752,7 +31753,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         612,
@@ -31983,7 +31984,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         612,
@@ -32214,7 +32215,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         612,
@@ -32445,7 +32446,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         612,
@@ -32678,7 +32679,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         612,
@@ -32909,7 +32910,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         612,
@@ -33140,7 +33141,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "mechanics": {
         "target": "受到带电流敌人攻击的友方角色",
@@ -33377,7 +33378,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         612,
@@ -33608,7 +33609,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         612,
@@ -34003,7 +34004,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         612,
@@ -34234,7 +34235,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "mechanics": {
         "target": "下一场战斗的友方初始状态",
@@ -34473,7 +34474,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         612,
@@ -34706,7 +34707,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         612,
@@ -34939,7 +34940,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         612,
@@ -35172,7 +35173,7 @@
         "Assets/Data/Relics/OuterEliteRelicLoot.asset"
       ],
       "isNew": false,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-27",
       "iconTextureSize": [
         612,
@@ -35385,7 +35386,7 @@
         "SetMerchantInitialStockCount"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "iconTextureSize": [
         612,
@@ -35598,7 +35599,7 @@
         "RefundEnergyOnClashLostOncePerSkillPerRound"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "iconTextureSize": [
         616,
@@ -35811,7 +35812,7 @@
         "MatchLowestAllySpeedToHighestOnBattleRoundStart"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "iconTextureSize": [
         614,
@@ -36027,7 +36028,7 @@
         "ApplyStatusToSelfOnDefenseClashWinOncePerActorPerRound"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "iconTextureSize": [
         614,
@@ -36242,7 +36243,7 @@
         "ApplyStatusToLowestHpAllyOnBattleRoundStart"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "iconTextureSize": [
         612,
@@ -36455,7 +36456,7 @@
         "DamageRandomEnemyWhenAllyLosesShieldStacks"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "iconTextureSize": [
         616,
@@ -36670,7 +36671,7 @@
         "ApplyStatusToLowestHpAllyOnBattleRoundStart"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "iconTextureSize": [
         614,
@@ -36885,7 +36886,7 @@
         "ModifyDefenseDiceMinPowerWhenSelfHasStatus"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "iconTextureSize": [
         614,
@@ -37262,7 +37263,7 @@
         "GrantRandomRelicsAndBlueprintsOnAcquire"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "iconTextureSize": [
         612,
@@ -37475,7 +37476,7 @@
         "EnableDiagonalMapMovement"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-11-06",
       "iconTextureSize": [
         616,
@@ -38008,7 +38009,7 @@
         "ApplyStatusToAllAlliesAtBattleSetup"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "iconTextureSize": [
         614,
@@ -38223,7 +38224,7 @@
         "ChanceApplyStatusToAllAlliesOnBattleRoundStart"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "iconTextureSize": [
         614,
@@ -38436,7 +38437,7 @@
         "DoubleFirstEnemyDamageEachBattle"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "iconTextureSize": [
         612,
@@ -38649,7 +38650,7 @@
         "ResetKeysAndRegenerateMapOnAcquire"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "iconTextureSize": [
         616,
@@ -38868,7 +38869,7 @@
         "ConfigureFixedRelicReforgePair"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "iconTextureSize": [
         614,
@@ -39087,7 +39088,7 @@
         "ConfigureFixedRelicReforgePair"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "iconTextureSize": [
         614,
@@ -39134,7 +39135,7 @@
       "triggerNames": "无内置触发",
       "effectNames": [],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13",
+      "configVerifiedAt": "2026-11-16",
       "codeReviewedAt": "2026-10-29",
       "iconTextureSize": []
     },
@@ -39361,7 +39362,7 @@
         "ReplaceEnemyStatusApplication"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13"
+      "configVerifiedAt": "2026-11-16"
     },
     {
       "category": "水蚀",
@@ -39584,7 +39585,7 @@
         "ApplyStatusToEnemiesWhenConditionStacksAtLeastOnBattleRoundStart"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13"
+      "configVerifiedAt": "2026-11-16"
     },
     {
       "category": "探索与行动点",
@@ -39795,7 +39796,218 @@
         "ReduceEventActionPointLoss"
       ],
       "isNew": true,
-      "configVerifiedAt": "2026-11-13"
+      "configVerifiedAt": "2026-11-16"
+    },
+    {
+      "category": "防御与反击",
+      "role": "每战首伤保护",
+      "tags": "首伤减半、友方独立计次、护盾、固定事件奖励",
+      "codeReviewedAt": "2026-11-16",
+      "note": "每场战斗，每名友方第一次将因伤害扣除生命时，100% 触发一次 50% 减伤。先结算普通减伤、免疫和护盾，再减半剩余的伤害，最后判定致命伤害。伤害四舍五入，例如 7 点变成 4 点。免疫、完全吸收和零伤害均不消耗次数。",
+      "mechanics": {
+        "target": "本次将失去生命值的存活友方",
+        "condition": "至少持有 1 件白蛇蜕，护盾与免疫结算后仍有正数伤害。可减免攻击和按常规流程结算的其他伤害。",
+        "limit": "每名友方每场战斗 1 次。次数跨回合保留，新战斗重新计次。",
+        "stacking": "持有多件仍为一次 50% 减伤。在护盾和其他常规减伤之后结算。"
+      },
+      "id": 163,
+      "relicId": 163,
+      "relicName": "白蛇蜕",
+      "path": "Assets/Data/Relics/163 白蛇蜕/白蛇蜕.asset",
+      "guid": "ffe3900ab35e409fbd67bd83204baf06",
+      "description": "每场战斗，每名友方角色第一次因伤害扣除生命值时，该笔伤害减半。",
+      "additionalDescription": "蜕下的鳞衣，还能替人挡下一道伤口。",
+      "rarity": 1,
+      "rarityName": "罕见",
+      "icon": {
+        "fileID": 21300000,
+        "guid": "818805df42a14011931c5f8930c91304",
+        "type": 3
+      },
+      "iconPath": "Assets/Data/Relics/163 白蛇蜕/163_WhiteSnakeShed_Uncommon.png",
+      "iconGuid": "818805df42a14011931c5f8930c91304",
+      "iconRect": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "iconTextureSize": [
+        512,
+        512
+      ],
+      "builtInEffects": [
+        {
+          "effectName": "首伤减半",
+          "trigger": 41,
+          "effectType": 140,
+          "chance": 1,
+          "requireUnvisitedTile": false,
+          "statusData": {
+            "fileID": 0
+          },
+          "amount": 50,
+          "conditionStatusData": {
+            "fileID": 0
+          },
+          "requiredStatusStacks": 1,
+          "requiredSpeed": 1,
+          "requiredSpeedMin": 1,
+          "requiredSpeedMax": 1,
+          "statusApplyTiming": 0,
+          "applyAfterRoundStarts": 1,
+          "requiredRound": 1,
+          "requiredRoundMin": 1,
+          "requiredRoundMax": 1,
+          "powerAmount": 0,
+          "minPowerAmount": 0,
+          "maxPowerAmount": 0,
+          "maxStacks": 1,
+          "requiredDistinctStatusCount": 1,
+          "requiredConsecutiveSkillUses": 1,
+          "relicTable": {
+            "fileID": 0
+          },
+          "blueprintTable": {
+            "fileID": 0
+          },
+          "blueprintRarityWeightTable": {
+            "fileID": 0
+          },
+          "relicData": {
+            "fileID": 0
+          },
+          "enemyData": {
+            "fileID": 0
+          }
+        }
+      ],
+      "customEffectHandler": {
+        "fileID": 0
+      },
+      "resolvedEffects": [
+        {
+          "trigger": "OnPlayerAboutToTakeHpDamage",
+          "effect": "ReduceFirstHpDamagePerAllyEachBattle",
+          "data": {
+            "effectName": "首伤减半",
+            "trigger": 41,
+            "effectType": 140,
+            "chance": 1,
+            "requireUnvisitedTile": false,
+            "statusData": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "amount": 50,
+            "conditionStatusData": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "requiredStatusStacks": 1,
+            "requiredSpeed": 1,
+            "requiredSpeedMin": 1,
+            "requiredSpeedMax": 1,
+            "statusApplyTiming": 0,
+            "applyAfterRoundStarts": 1,
+            "requiredRound": 1,
+            "requiredRoundMin": 1,
+            "requiredRoundMax": 1,
+            "powerAmount": 0,
+            "minPowerAmount": 0,
+            "maxPowerAmount": 0,
+            "maxStacks": 1,
+            "requiredDistinctStatusCount": 1,
+            "requiredConsecutiveSkillUses": 1,
+            "relicTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "blueprintTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "blueprintRarityWeightTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "relicData": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "enemyData": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            }
+          },
+          "references": {
+            "statusData": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "conditionStatusData": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "relicTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "blueprintTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "blueprintRarityWeightTable": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "relicData": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            },
+            "enemyData": {
+              "name": "",
+              "path": "",
+              "guid": "",
+              "valid": false
+            }
+          }
+        }
+      ],
+      "referencedByRelicTables": [],
+      "source": "白蛇蜕.asset",
+      "triggerNames": "护盾结算后扣除生命前",
+      "effectNames": [
+        "ReduceFirstHpDamagePerAllyEachBattle"
+      ],
+      "isNew": true,
+      "configVerifiedAt": "2026-11-16"
     }
   ],
   "eventAcquisition": [
@@ -39963,6 +40175,17 @@
       "shortNote": "收雾人事件「帮忙除雾」的固定奖励。",
       "rewardIds": [
         162
+      ]
+    },
+    {
+      "eventId": "036_A_01",
+      "name": "林中的求救",
+      "date": "2026-11-16",
+      "eventPath": "Assets/Data/Events/036 林中的求救/036_A_01 林中的求救.asset",
+      "rule": "在「被骗了！」遭遇中击败白蛇妖，胜利结算固定额外掉落 1 件罕见遗物白蛇蜕。",
+      "shortNote": "在「林中的求救」击败白蛇妖后固定掉落。",
+      "rewardIds": [
+        163
       ]
     }
   ]

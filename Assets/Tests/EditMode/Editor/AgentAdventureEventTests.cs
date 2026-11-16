@@ -178,6 +178,10 @@ public sealed class AgentAdventureEventTests
         });
         var opening = Find<MapEvent_SO>(item => item.eventId == "036");
         var relicTable = AssetDatabase.LoadAssetAtPath<RelicTable_SO>("Assets/Data/Relics/OuterEliteRelicLoot.asset");
+        const string shedPath = "Assets/Data/Relics/163 白蛇蜕/白蛇蜕.asset";
+        var shed = AssetDatabase.LoadAssetAtPath<Relic_SO>(shedPath);
+        string shedGuid = AssetDatabase.AssetPathToGUID(shedPath);
+        Assert.IsNotNull(shed);
         var run = Map.Snapshot.runState;
         run.abilityRelicChoiceRefreshCount = 1;
         int initialMoney = run.money;
@@ -218,7 +222,16 @@ public sealed class AgentAdventureEventTests
         var settledMember = rewards.party.Single();
         bool gainedExperience = settledMember.level > initialLevel || settledMember.experience > initialExperience;
         Assert.AreEqual(victory, gainedExperience);
-        Assert.IsEmpty(rewards.relics);
+        Assert.AreEqual(victory ? 1 : 0, rewards.relics.Length);
+        var settlement = BattleSettlementDataFactory.BuildCompletionData(victory, BattleEncounterRuntime.ActiveEncounter,
+            victory ? 1 : 0, rewards.experience, "Battle", new List<BattleSettlementEntry>(), new List<BattleSettlementLootEntry>(), null);
+        Assert.AreEqual(victory ? 1 : 0, settlement.lootEntries.Count);
+        if (victory)
+        {
+            Assert.AreEqual(shedGuid, rewards.relics.Single().id);
+            Assert.AreEqual(1, rewards.relics.Single().amount);
+            Assert.AreSame(shed, settlement.lootEntries.Single().relicData);
+        }
         Assert.AreEqual(victory ? 3 : 0, rewards.choices.Length);
         Assert.AreEqual(victory ? 1 : 0, rewards.refreshesRemaining);
         Assert.AreEqual(initialMoney, battle.money);
@@ -233,7 +246,8 @@ public sealed class AgentAdventureEventTests
             var selection = battle.legalActions.First(action => action.op == "run_battle" && action.battleAction.op == "choose_relic");
             selectedRelic = candidates[selection.battleAction.choiceIndex];
             battle = session.Act(Command(selection)).state;
-            Assert.AreEqual(1, battle.battle.rewards.relics.Single().amount);
+            Assert.AreEqual(2, battle.battle.rewards.relics.Length);
+            Assert.AreEqual(1, battle.battle.rewards.relics.Single(relic => relic.id == shedGuid).amount);
             Assert.AreEqual(initialRelics, run.relicInventory.Sum(relic => relic.amount));
         }
 
@@ -242,7 +256,8 @@ public sealed class AgentAdventureEventTests
         Assert.AreEqual(settledMember.level, run.partyMembers.Single().level);
         Assert.AreEqual(settledMember.experience, run.partyMembers.Single().experience);
         if (victory) Assert.AreEqual(1, run.GetRelicAmount(selectedRelic));
-        Assert.AreEqual(initialRelics + (victory ? 1 : 0), run.relicInventory.Sum(relic => relic.amount));
+        Assert.AreEqual(victory ? 1 : 0, run.GetRelicAmount(shed));
+        Assert.AreEqual(initialRelics + (victory ? 2 : 0), run.relicInventory.Sum(relic => relic.amount));
         Assert.AreEqual(victory ? 1 : 0, run.settlementStats.eventBattlesCompleted);
     }
 

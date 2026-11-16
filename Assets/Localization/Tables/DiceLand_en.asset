@@ -16057,6 +16057,18 @@ MonoBehaviour:
     m_Localized: "The mist stays in the bottle, and the road ahead clears."
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000450
+    m_Localized: "White Snake Shed"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000451
+    m_Localized: "In each battle, halve the first instance of damage that would cost each ally HP."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000452
+    m_Localized: "Even after shedding, the scales can still spare someone a wound."
+    m_Metadata:
+      m_Items: []
   - m_Id: 72000000000374
     m_Localized: "AP loss for this choice: {baseLoss} \u2192 {finalLoss}."
     m_Metadata:

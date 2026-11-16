@@ -657,13 +657,14 @@ public class BattleAllyController : MonoBehaviour
 
         int originalDamage = originalReferenceDamage > 0 ? originalReferenceDamage : amount;
         amount = ApplyIncomingDamageStatusModifiers(amount);
-        amount = ApplyIncomingDamageRelicModifiers(amount);
+        amount = ApplyIncomingDamageRelicModifiers(amount, Relic_SO.RelicTrigger.OnPlayerAboutToTakeDamage);
         if (HasImmuneStatus())
         {
             LastDamageModifierRatioPercent = 0;
             return 0;
         }
         amount = ApplyShieldAbsorption(amount);
+        amount = ApplyIncomingDamageRelicModifiers(amount, Relic_SO.RelicTrigger.OnPlayerAboutToTakeHpDamage);
         if (amount <= 0)
         {
             LastDamageModifierRatioPercent = 0;
@@ -737,7 +738,7 @@ public class BattleAllyController : MonoBehaviour
         return Mathf.Max(0, baseDamage + bonusDamage);
     }
 
-    private int ApplyIncomingDamageRelicModifiers(int baseDamage)
+    private int ApplyIncomingDamageRelicModifiers(int baseDamage, Relic_SO.RelicTrigger trigger)
     {
         if (baseDamage <= 0)
             return 0;
@@ -753,18 +754,12 @@ public class BattleAllyController : MonoBehaviour
             baseDamage,
             Speed,
             null,
-            this);
+            this,
+            trigger);
         RelicTriggerDispatcher.ProcessBattleRelics(activeEncounter, context);
 
-        int adjustedDamage = Mathf.Max(0, baseDamage + context.incomingDamageFlatModifier);
-        int reductionPercent = Mathf.Max(0, context.incomingDamagePercentModifier);
-        if (reductionPercent > 0)
-        {
-            float multiplier = Mathf.Max(0f, 1f - (reductionPercent / 100f));
-            adjustedDamage = Mathf.Max(0, Mathf.FloorToInt((adjustedDamage * multiplier) + 0.5f));
-        }
-
-        return adjustedDamage;
+        return BattleDamageModifierCalculationService.ApplyIncomingReduction(
+            baseDamage, context.incomingDamageFlatModifier, context.incomingDamagePercentModifier);
     }
 
     private int ApplyShieldAbsorption(int incomingDamage)

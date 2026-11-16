@@ -14,7 +14,7 @@ function writeAcquisitionSummary() {
   const line=sheet.getRange('A6');
   line.copyFrom(sheet.getRange('A5'),'all');
   line.values=[[text]];
-  if (acquisition.length > 1) line.format.rowHeight = 30;
+  if (acquisition.length > 1) line.format.rowHeight = Math.max(30, acquisition.length * 18);
  }
 }
 
@@ -77,24 +77,43 @@ if(process.argv.includes('--event-acquisition')){
  const output=await SpreadsheetFile.exportXlsx(wb);await output.save(file);
  console.log(JSON.stringify({sheets:['体系总览','遗物完整表'],rows:after.length,noteIds:ids,otherValuesAndFormulasUnchanged:true}));
 }else{
+const latest = data.relics.find(relic => relic.id === Math.max(...data.newIds));
 summary.getRange('A4').values=[[`${data.count} 件遗物，${data.groups.length} 个主体系。每件只计一次，跨体系效果见联动标签。`]];
-summary.getRange('A5').values=[[`${data.date} 配置快照。共 ${data.count} 件，新增 162 瓶中雾。历史机制备注沿用此前复核结果。`]];
+summary.getRange('A5').values=[[`${data.date} 配置快照。共 ${data.count} 件，最新入库 ${latest.id} ${latest.relicName}。历史机制备注沿用此前复核结果。`]];
 summary.getRange('A8:E24').values=data.groups.map(g=>[g.name,g.count,g.summary,g.examples,g.play]);
 summary.getRange('B25').values=[[data.count]];
-detail.getRange('A5').values=[[`${data.date} 配置快照。共 ${data.count} 件。阴阳鱼的实际 ID 为 yin_yang_fish，瓶中雾为收雾人事件的固定奖励。`]];
+detail.getRange('A5').values=[[`${data.date} 配置快照。共 ${data.count} 件。阴阳鱼的实际 ID 为 yin_yang_fish，固定事件奖励见下行。`]];
 writeAcquisitionSummary();
 const order=new Map(data.groups.map((g,i)=>[g.name,i]));
 const sorted=[...data.relics].sort((a,b)=>order.get(a.category)-order.get(b.category)||a.id-b.id);
 const table=detail.tables.items[0];
-const previous=detail.getUsedRange().values.slice(7).filter(row=>row[0]!==null&&row[0]!=='').length;
+const existing=detail.getUsedRange().values.slice(7).filter(row=>row[0]!==null&&row[0]!=='');
+const previous=existing.length;
+const originalRows=new Map(existing.map((values,index)=>{
+ const row=index+8;
+ return [values[0],{row,values,height:detail.getRange(`A${row}:J${row}`).format.rowHeight}];
+}));
+const retainedOrder=sorted.filter(relic=>originalRows.has(relic.id)).map(relic=>relic.id);
+const preservesOrder=retainedOrder.length===previous&&existing.every(([id],index)=>id===retainedOrder[index]);
 if(previous<sorted.length)table.rows.add(null,Array.from({length:sorted.length-previous},()=>Array(10).fill(null)));
-for(let row=8+previous;row<=7+sorted.length;row++)detail.getRange(`A${row}:J${row}`).copyFrom(detail.getRange(`A${7+previous}:J${7+previous}`),'all');
+if(preservesOrder){
+ // Copy from the bottom up so an inserted relic keeps the styles of the rows it moves.
+ for(let i=sorted.length-1;i>=0;i--){
+  const row=i+8;
+  const source=originalRows.get(sorted[i].id)?.row??originalRows.get(sorted[i-1]?.id)?.row??7+previous;
+  if(row!==source)detail.getRange(`A${row}:J${row}`).copyFrom(detail.getRange(`A${source}:J${source}`),'all');
+ }
+}else{
+ for(let row=8+previous;row<=7+sorted.length;row++)detail.getRange(`A${row}:J${row}`).copyFrom(detail.getRange(`A${7+previous}:J${7+previous}`),'all');
+}
 detail.getRange(`A8:J${7+sorted.length}`).values=sorted.map(r=>[r.id,r.relicName,r.category,r.rarityName,r.role,r.description,r.tags,r.triggerNames,noteFor(r),r.additionalDescription||'']);
 for(let i=0;i<sorted.length;i++){
  const r=sorted[i],row=i+8;
- // Existing widths and table style remain; longer new mechanism notes need room.
+ const original=originalRows.get(r.id);
  const lines=Math.max(Math.ceil(r.description.length/55),Math.ceil(noteFor(r).length/32),Math.ceil((r.additionalDescription||'').length/37));
- detail.getRange(`A${row}:J${row}`).format.rowHeight=Math.max(44,lines*15+12);
+ const sameText=original&&original.values[5]===r.description&&original.values[8]===noteFor(r)
+   &&(original.values[9]||'')===(r.additionalDescription||'');
+ detail.getRange(`A${row}:J${row}`).format.rowHeight=sameText&&Number.isFinite(original.height)?original.height:Math.max(44,lines*15+12);
 }
 wb.recalculate();
 if(summary.getRange('B25').values[0][0]!==data.count)throw Error('Summary count mismatch');

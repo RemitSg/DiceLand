@@ -9,6 +9,7 @@ const exportDate=raw?.exportedAt.slice(0,10)??old.date;
 const triggers=['移动消耗前','状态施加时','玩家骰子准备时','即将受到单方面攻击伤害','商店价格计算时','玩家回合开始','战斗回合开始','玩家死亡时','战斗回合结束','即将受到攻击伤害','遗物重铸时','掉落物重铸时','休息格重铸上限计算时','即将受到伤害','即将造成伤害','敌人死亡时','即将受到致命伤害','商店购买完成时','收集钥匙时','触发灾厄时','受到单方面攻击伤害后','命中敌方时','防御骰拼点胜利','玩家击杀敌人时','战斗掉落奖励发放时','战斗建立时','获得遗物时','消耗行动点时','商店库存数量计算时','商店支付能力判定时','遗物选择奖励生成时','玩家拼点失败','休息格恢复行动点时','休息格重铸完成时','休息格治疗完成时','玩家使用技能时','战斗完成时','战斗失败时','玩家骰子掷出时','友方护盾层数减少时'];
 const rarityNames={Common:'普通',Uncommon:'罕见',Rare:'稀有',Epic:'史诗',Legendary:'传说',Trash:'垃圾'};
 triggers[40]='事件选项扣除行动点前';
+triggers[41]='护盾结算后扣除生命前';
 const byPath=new Map(old.relics.map(r=>[r.path,r]));
 const relics=[];
 if(fromCatalog) relics.push(...old.relics.map(r=>({...r,...curation[r.id]})));
@@ -28,12 +29,17 @@ if(groups.reduce((sum,g)=>sum+g.count,0)!==relics.length)throw Error('Unregister
 Object.assign(groups.find(g=>g.name==='水蚀'),{summary:'水蚀条件增益、缓慢控制与即时易伤转换。',examples:'钟乳石、浪鸣、暗礁、碎潮盐瓶',play:'保留水蚀可驱动条件增伤、减伤与急速，暗礁在回合开始对水蚀目标施加缓慢；碎潮盐瓶将每次新施加的水蚀改为基础 15 层即时易伤，放弃该次水蚀层数。浪鸣现为每层水蚀额外 5 层易伤的伤害修正。'});
 Object.assign(groups.find(g=>g.name==='锻造与重铸'),{summary:'保留材料、增加产物、提高次数，以及阴鱼与阳鱼的固定配对。',examples:'锻灵石、繁生核、矮人腕环、阴鱼、阳鱼',play:'保留既有重铸收益；阴鱼与阳鱼固定合成阴阳鱼。产物当前无战斗效果。'});
 Object.assign(groups.find(g=>g.name==='防御与反击'),{summary:'单方面攻击减伤、反击、防御骰子与护盾的产生和消耗。',play:'盾灵逐回合供盾，护甲保养剂开局供盾，安全感强化有盾防御骰，盾反利用失盾反伤。反击刺刃按每角色每回合一次提供下回合临时强壮。'});
+if (relics.some(relic => relic.id === 163)) {
+  const defense = groups.find(group => group.name === '防御与反击');
+  defense.summary = '首伤保护、单方面攻击减伤、反击、防御骰子与护盾。';
+  defense.play += '白蛇蜕让每名友方每场战斗首次生命伤害减半。';
+}
 if(relics.some(relic=>relic.id===162)) Object.assign(groups.find(g=>g.name==='探索与行动点'),{
   summary:'移动与事件节省行动点，钥匙回复行动点，地图和副本续航。',
   examples:'世界地图、探路者手册、指路牌、瓶中雾',
   play:'瓶中雾减免事件选项的行动点损失。世界地图和指路牌减少移动消耗，探路者手册在收集钥匙时回复行动点。'
 });
-const coverage="2026-11-13 由团结编辑器重新导出 162 件资产的配置，新增 162 瓶中雾及收雾人事件获取。历史机制备注沿用此前复核结果。2026-11-10 复核了 085 再来一次！的遗物袋刷新，2026-11-12 同步了矮人铁匠的重铸来源。";
+const coverage=`${exportDate} 由团结编辑器导出 ${relics.length} 件资产配置。本次新增 163 白蛇蜕和白蛇妖事件的固定掉落。历史机制备注沿用此前复核，保留 085 再来一次！、矮人铁匠重铸、瓶中雾及垃圾袋商店投放的增量说明。`;
 const catalog={date:exportDate,count:relics.length,coverage:fromCatalog?old.coverage:coverage,exportedAt:raw?.exportedAt??old.exportedAt,newIds:relics.filter(r=>r.isNew).map(r=>r.id),groups,relics};
 catalog.eventAcquisition = (old.eventAcquisition || []).map(event => ({
   ...event,

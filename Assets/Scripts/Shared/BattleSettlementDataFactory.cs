@@ -23,7 +23,7 @@ public static class BattleSettlementDataFactory
             returnSceneName = encounter != null ? encounter.sourceSceneName : "MapScene",
             retrySceneName = retrySceneName,
             partyEntries = partyEntries,
-            lootEntries = lootEntries,
+            lootEntries = IncludeFixedRelicRewards(encounter, lootEntries),
             relicChoice = relicChoice
         };
     }
@@ -50,9 +50,20 @@ public static class BattleSettlementDataFactory
             returnSceneName = BuildReturnSceneName(victory, encounter),
             retrySceneName = retrySceneName,
             partyEntries = partyEntries,
-            lootEntries = lootEntries,
+            lootEntries = victory ? IncludeFixedRelicRewards(encounter, lootEntries) : lootEntries,
             relicChoice = relicChoice
         };
+    }
+
+    private static List<BattleSettlementLootEntry> IncludeFixedRelicRewards(
+        BattleEncounterData encounter, List<BattleSettlementLootEntry> lootEntries)
+    {
+        if (encounter?.pendingVictoryRelicRewards == null || encounter.pendingVictoryRelicRewards.Count == 0)
+            return lootEntries;
+
+        var entries = lootEntries == null ? new List<BattleSettlementLootEntry>() : new List<BattleSettlementLootEntry>(lootEntries);
+        entries.AddRange(BattleSettlementLootEntryBuilder.Build(null, encounter.pendingVictoryRelicRewards));
+        return entries;
     }
 
     private static int ResolveMoney(BattleEncounterData encounter, out bool available)

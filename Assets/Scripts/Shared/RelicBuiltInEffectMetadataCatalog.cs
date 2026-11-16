@@ -227,6 +227,7 @@ public static class RelicBuiltInEffectMetadataCatalog
         Add(metadata, Relic_SO.RelicBuiltInEffectType.QueueNextBattleAllyStatusOnAcquire, requiresStatusData: true);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ReplaceEnemyStatusApplication, requiresStatusData: true, requiresConditionStatusData: true);
         Add(metadata, Relic_SO.RelicBuiltInEffectType.ReduceEventActionPointLoss);
+        Add(metadata, Relic_SO.RelicBuiltInEffectType.ReduceFirstHpDamagePerAllyEachBattle);
 
         return metadata;
     }

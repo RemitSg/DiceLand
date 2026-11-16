@@ -808,6 +808,9 @@ MonoBehaviour:
   - id: 45f180d707f34f15bd25b44d01f877cb
     asset: {fileID: 11400000, guid: 45f180d707f34f15bd25b44d01f877cb, type: 2}
     enemyGroup: 9
+  - id: ffe3900ab35e409fbd67bd83204baf06
+    asset: {fileID: 11400000, guid: ffe3900ab35e409fbd67bd83204baf06, type: 2}
+    enemyGroup: 9
   - id: 4d6ef1ce2a4d4a04b8c4585fb7744f4d
     asset: {fileID: 11400000, guid: 4d6ef1ce2a4d4a04b8c4585fb7744f4d, type: 2}
     enemyGroup: 9

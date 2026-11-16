@@ -14275,6 +14275,18 @@ MonoBehaviour:
     m_Key: relic.162.notes
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000450
+    m_Key: relic.163.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000451
+    m_Key: relic.163.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000452
+    m_Key: relic.163.notes
+    m_Metadata:
+      m_Items: []
   - m_Id: 72000000000374
     m_Key: ui.event.ap_loss_discount
     m_Metadata:

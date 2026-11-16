@@ -34,7 +34,11 @@ MonoBehaviour:
       eliteRelicChoiceTable: {fileID: 11400000, guid: 6650ae7fed330b7408b1cad987b54259, type: 2}
       useStandardBattleExperience: 1
       standardBattleExperienceBand: 1
-    additionalBuiltInEffects: []
+    additionalBuiltInEffects:
+    - effectType: 11
+      relicRewards:
+      - relicData: {fileID: 11400000, guid: ffe3900ab35e409fbd67bd83204baf06, type: 2}
+        amount: 1
     possibleResults: []
     nextEvent: {fileID: 0}
     openFollowUpImmediately: 0

@@ -15021,6 +15021,18 @@ MonoBehaviour:
     m_Localized: "\u74F6\u91CC\u7684\u96FE\u6563\u4E0D\u5F00\uFF0C\u74F6\u5916\u7684\u8DEF\u5374\u6E05\u695A\u4E86\u3002"
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000450
+    m_Localized: "\u767D\u86C7\u8715"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000451
+    m_Localized: "\u6BCF\u573A\u6218\u6597\uFF0C\u6BCF\u540D\u53CB\u65B9\u89D2\u8272\u7B2C\u4E00\u6B21\u56E0\u4F24\u5BB3\u6263\u9664\u751F\u547D\u503C\u65F6\uFF0C\u8BE5\u7B14\u4F24\u5BB3\u51CF\u534A\u3002"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000452
+    m_Localized: "\u8715\u4E0B\u7684\u9CDE\u8863\uFF0C\u8FD8\u80FD\u66FF\u4EBA\u6321\u4E0B\u4E00\u9053\u4F24\u53E3\u3002"
+    m_Metadata:
+      m_Items: []
   - m_Id: 72000000000374
     m_Localized: "\u672C\u9009\u9879\u7684\u884C\u52A8\u70B9\u635F\u5931\uFF1A{baseLoss} \u2192 {finalLoss}\u3002"
     m_Metadata:

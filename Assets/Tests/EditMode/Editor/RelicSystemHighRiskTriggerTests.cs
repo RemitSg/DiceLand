@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 public class RelicSystemHighRiskTriggerTests
 {
     private readonly List<Object> createdObjects = new List<Object>();
+    private const string WhiteSnakeShedPath = "Assets/Data/Relics/163 白蛇蜕/白蛇蜕.asset";
 
     [TearDown]
     public void TearDown()
@@ -21,6 +23,59 @@ public class RelicSystemHighRiskTriggerTests
         }
 
         createdObjects.Clear();
+    }
+
+    [Test]
+    public void WhiteSnakeShedHalvesTheFirstHpDamageForEachAllyInEachBattle()
+    {
+        Relic_SO relic = AssetDatabase.LoadAssetAtPath<Relic_SO>(WhiteSnakeShedPath);
+        Assert.IsNotNull(relic);
+        Assert.AreEqual(LootRarity.Uncommon, relic.rarity);
+        BeginBattleWithRelic(relic, 2);
+        BattleAllyController first = CreateAlly("Hero", 20, 20, 2);
+        BattleAllyController second = CreateAlly("Hero", 20, 5, 2);
+
+        Assert.AreEqual(4, first.TakeDamage(7));
+        BattleEncounterRuntime.ActiveEncounter.ResetRoundRelicProcKeys();
+        Assert.AreEqual(6, first.TakeDamage(6));
+        Assert.AreEqual(4, second.TakeDamage(8));
+        Assert.AreEqual(1, second.CurrentHP);
+
+        BeginBattleWithRelic(relic, 1);
+        Assert.AreEqual(3, first.TakeDamage(6));
+        BeginBattleWithRelic(relic, 0);
+        Assert.AreEqual(4, first.TakeDamage(4));
+    }
+
+    [Test]
+    public void WhiteSnakeShedAppliesAfterImmunityAndShieldAbsorption()
+    {
+        Relic_SO relic = AssetDatabase.LoadAssetAtPath<Relic_SO>(WhiteSnakeShedPath);
+        var immune = AssetDatabase.LoadAssetAtPath<BattleStatus_SO>("Assets/Data/Battle/Immune/Immune.asset");
+        var shield = AssetDatabase.LoadAssetAtPath<BattleStatus_SO>("Assets/Data/Battle/Shield/Shield.asset");
+        Assert.IsNotNull(relic);
+        Assert.IsNotNull(immune);
+        Assert.IsNotNull(shield);
+        BeginBattleWithRelic(relic, 1);
+        BattleAllyController ally = CreateAlly("Hero", 20, 20, 2);
+        Assert.IsTrue(ally.AddStatus(immune, "immune", "Immune", 1));
+        Assert.AreEqual(0, ally.TakeDamage(10));
+        ally.ClearStatus(immune, "immune");
+        Assert.IsTrue(ally.AddStatus(shield, "shield", "Shield", 8));
+        Assert.AreEqual(0, ally.TakeDamage(0));
+        Assert.AreEqual(0, ally.TakeDamage(3));
+        Assert.AreEqual(5, ally.GetStatusStacks(shield));
+        Assert.AreEqual(2, ally.TakeDamage(9));
+        Assert.AreEqual(0, ally.GetStatusStacks(shield));
+        Assert.AreEqual(6, ally.TakeDamage(6));
+    }
+
+    private static void BeginBattleWithRelic(Relic_SO relic, int amount)
+    {
+        var encounter = new BattleEncounterData();
+        encounter.relicInventory.Add(new RunRelicState { relicData = relic, amount = amount });
+        BattleEncounterRuntime.SetEncounter(encounter);
+        BattleEncounterRuntime.ConsumeEncounter();
     }
 
     [Test]
