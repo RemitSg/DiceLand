@@ -282,10 +282,12 @@ function renderSkillArt(skill) {
     if (!poses.has(pose.sprite_guid)) poses.set(pose.sprite_guid, {...pose, dice: []});
     poses.get(pose.sprite_guid).dice.push(pose.die);
   }
-  return [...poses.values()].map(pose => `<figure class="skill-art">
-    <img src="${escape(data.skillArt[pose.sprite_guid])}" alt="${escape(skill.name)}的战斗姿态" loading="lazy">
-    <figcaption>第 ${pose.dice.join('、')} 颗骰子 · 技能姿态 · ${escape(pose.duration_seconds)} 秒</figcaption>
+  if (!poses.size) return '';
+  const figures = [...poses.values()].map(pose => `<figure class="skill-art">
+    <img src="${escape(data.skillArt[pose.sprite_guid])}" alt="${escape(pose.label ? `${skill.name}：${pose.label}` : `${skill.name}的战斗姿态`)}" loading="lazy">
+    <figcaption>第 ${pose.dice.join('、')} 颗骰子 · ${escape(pose.label || '技能姿态')} · ${escape(pose.duration_seconds)} 秒</figcaption>
   </figure>`).join('');
+  return `<div class="skill-art-gallery">${figures}</div>`;
 }
 
 function ruleBlock(title, lines, empty) {

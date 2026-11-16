@@ -1,0 +1,61 @@
+{
+  "enemy": "045 白蛇妖 (White Snake Demon)",
+  "date": "2026-11-16",
+  "generator": "Built-in ImageGen, transparent background",
+  "poses": [
+    {
+      "name": "毒牙",
+      "dice": [
+        1
+      ],
+      "poseLabel": "突咬",
+      "asset": "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/VenomFang.asset",
+      "output": "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_VenomFang.png",
+      "references": [
+        "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_WhiteSnakeDemon.png"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: one production 2D DiceLand battle action sprite that temporarily replaces the attached idle sprite. Input image 1 is the exact character and rendering reference. Match the SAME adult East Asian White Snake Demon: the same face and warm eyes, long dark brown wavy hair, pale jade flower hairpin and pendant, ivory high-neck damask hanfu with very wide sleeves, dark jade green tied obi with gold detailing, and one continuous huge tapered ivory python body with finely drawn scales and subtle warm rim light. Preserve the original painted style, realistic facial proportions, same size of head/torso relative to snake body, costume coverage and left-facing three-quarter battle view. Illustrate a genuinely new action silhouette, not the idle pose. Full-body single subject, all of hair, sleeves, coils and tail tip in frame, small clear safety margin, on genuinely transparent RGBA. Lowest solid section of the coil at the bottom, grounded, weighted and centered as in the reference so the image can be swapped in battle without jumping. Keep the main torso near the original horizontal center. Tight, complete square or near-square crop. No landscape, shadow plane, backdrop, separate snake head, second tail, human legs, target, other character, UI, words, frame or watermark. Action: VENOM FANG. A compact forward lunge aimed toward the left, head and shoulders visibly projected in front of the low anchored coil, mouth slightly open with two short sharp serpent canines and a narrowly focused gaze. The front hand reaches as a claw near the line of attack while the other sleeve is dragged backward. Add at most two tiny muted jade venom flecks close to the fangs, no beam or cloud. Tail stays low behind her so the silhouette clearly reads as a swift bite, with an especially clear face."
+    },
+    {
+      "name": "盘身扫尾／盘身",
+      "dice": [
+        1
+      ],
+      "poseLabel": "盘身防御",
+      "asset": "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/CoilSweep.asset",
+      "output": "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_CoilGuard.png",
+      "references": [
+        "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_WhiteSnakeDemon.png"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: one production 2D DiceLand battle action sprite that temporarily replaces the attached idle sprite. Input image 1 is the exact character and rendering reference. Match the SAME adult East Asian White Snake Demon: the same face and warm eyes, long dark brown wavy hair, pale jade flower hairpin and pendant, ivory high-neck damask hanfu with very wide sleeves, dark jade green tied obi with gold detailing, and one continuous huge tapered ivory python body with finely drawn scales and subtle warm rim light. Preserve the original painted style, realistic facial proportions, same size of head/torso relative to snake body, costume coverage and left-facing three-quarter battle view. Illustrate a genuinely new action silhouette, not the idle pose. Full-body single subject, all of hair, sleeves, coils and tail tip in frame, small clear safety margin, on genuinely transparent RGBA. Lowest solid section of the coil at the bottom, grounded, weighted and centered as in the reference so the image can be swapped in battle without jumping. Keep the main torso near the original horizontal center. Tight, complete square or near-square crop. No landscape, shadow plane, backdrop, separate snake head, second tail, human legs, target, other character, UI, words, frame or watermark. Action: COIL GUARD. She lowers her head slightly but remains visibly alert and draws her arms in, forearms crossed diagonally in front of her at shoulder height, wide ivory sleeves folding inward. One thick overlapping loop of her own continuous scaled serpent body rises in front of the waist and lower chest like a living shield, with a heavy second section of the same body resting flat at the bottom. Clearly defensive, contracted, and stable, weight safely inside the coil. Keep the head and jade hairpin visible above the guard. No carried shield, glowing bubble, magic or projectile."
+    },
+    {
+      "name": "盘身扫尾／扫尾",
+      "dice": [
+        2
+      ],
+      "poseLabel": "甩尾反击",
+      "asset": "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/CoilSweep.asset",
+      "output": "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_TailSweep.png",
+      "references": [
+        "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_WhiteSnakeDemon.png"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: one production 2D DiceLand battle action sprite that temporarily replaces the attached idle sprite. Input image 1 is the exact character and rendering reference. Match the SAME adult East Asian White Snake Demon: the same face and warm eyes, long dark brown wavy hair, pale jade flower hairpin and pendant, ivory high-neck damask hanfu with very wide sleeves, dark jade green tied obi with gold detailing, and one continuous huge tapered ivory python body with finely drawn scales and subtle warm rim light. Preserve the original painted style, realistic facial proportions, same size of head/torso relative to snake body, costume coverage and left-facing three-quarter battle view. Illustrate a genuinely new action silhouette, not the idle pose. Full-body single subject, all of hair, sleeves, coils and tail tip in frame, small clear safety margin, on genuinely transparent RGBA. Lowest solid section of the coil at the bottom, grounded, weighted and centered as in the reference so the image can be swapped in battle without jumping. Keep the main torso near the original horizontal center. Tight, complete square or near-square crop. No landscape, shadow plane, backdrop, separate snake head, second tail, human legs, target, other character, UI, words, frame or watermark. Action: TAIL SWEEP COUNTER. Torso twists forcefully to the left with the leftward motion of the hips, broad sleeves open like opposing flags, hair following. From one grounded central coil the long supple body leads to a distinct, fully visible tapering tail lashing from the lower right across her foreground toward the upper left in a single broad diagonal rising arc. The tail is real clearly painted ivory-scaled anatomy, not a magical slash. Use no duplicate or ghost tail. Strong lateral motion, visible waist-to-serpent connection, no weapon or large VFX."
+    },
+    {
+      "name": "绞缠",
+      "dice": [
+        1
+      ],
+      "poseLabel": "收圈绞缠",
+      "asset": "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/Constrict.asset",
+      "output": "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_Constrict.png",
+      "references": [
+        "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_WhiteSnakeDemon.png"
+      ],
+      "initialPrompt": "Use case: stylized-concept. Asset type: one production 2D DiceLand battle action sprite that temporarily replaces the attached idle sprite. Input image 1 is the exact character and rendering reference. Match the SAME adult East Asian White Snake Demon: the same face and warm eyes, long dark brown wavy hair, pale jade flower hairpin and pendant, ivory high-neck damask hanfu with very wide sleeves, dark jade green tied obi with gold detailing, and one continuous huge tapered ivory python body with finely drawn scales and subtle warm rim light. Preserve the original painted style, realistic facial proportions, same size of head/torso relative to snake body, costume coverage and left-facing three-quarter battle view. Illustrate a genuinely new action silhouette, not the idle pose. Full-body single subject, all of hair, sleeves, coils and tail tip in frame, small clear safety margin, on genuinely transparent RGBA. Lowest solid section of the coil at the bottom, grounded, weighted and centered as in the reference so the image can be swapped in battle without jumping. Keep the main torso near the original horizontal center. Tight, complete square or near-square crop. No landscape, shadow plane, backdrop, separate snake head, second tail, human legs, target, other character, UI, words, frame or watermark. Action: CONSTRICT. Aim toward the left. She braces with one hand on a lower coil and leans toward a single clearly readable raised loop of her thick ivory-scaled tail, reaching forward and drawing it inward like a closing snare. The loop makes a strong C entering from her grounded central body, curling around a deliberately open patch of genuine transparent negative space at lower left; its one narrow tail tip curls in toward that opening. Her own torso stays to the right of the loop with face and both sleeves discernible. Diagonal effort and a focused expression, no victim, no other snake, no magic. Make the tall curved snare clearly different from a low tight defensive coil or a straight tail whip.",
+      "editTarget": "Untracked first draft generated by initialPrompt. The lower snake anatomy was redrawn to separate the tail from the arm and sleeve.",
+      "prompt": "Use case: precise-object-edit. Correct the broken serpent anatomy in Image 1, the White Snake Demon CONSTRICT attack sprite. Image 1 is the edit target. Image 2 is the original idle sprite for identity, painted style, original ivory silk, sash, and ivory scale texture. Keep her face, olive jade flower hairpin, long dark brown waves, ivory embroidered high-neck clothes and dark green obi, left-facing angle, forward-leaning focused expression and the right palm planted on thick LOWER snake body. Keep the character on true transparent alpha.\nRedraw the entire serpent body as ONE easy-to-trace unbroken taper, from waist to ONE tail tip. For the exact silhouette: directly below the centre-right obi her thick lower body descends diagonally towards the right, makes a broad easy-to-follow U-turn on the lower right, gives one thick front coil going smoothly across the bottom toward the lower left. On the LEFT END OF THE LOW GROUNDED COIL, around knee height of a human, visibly and unambiguously continue that SAME segment into the tail. This last section arches up modestly to the left and curls back inward into an open C, its thinnest pointed tip facing inward and a little down, entirely BELOW the obi line. The base of that curling section must be visible as an unbroken junction with the lower grounded coil with continuous contour, scale rows, and highlights at that junction. At no point does the curling tail touch or come from the hand, arm, sleeve, back or torso. Move the left/reaching hand and sleeve up or closer to the torso if necessary; show an unmistakable band of alpha, at least the width of a hand, between all of the curling tail and the nearest sleeve or hand. The open tail bend acts like a grounded snare; gravity still anchors the coil. Do not draw the former tall loop under the sleeve, a detached C, duplicated tail, extra snake head, detached appendage, or any ambiguous body overlaps where the tail starts.\nOne full-body centered hand-painted combat sprite, similar scale and ground height as the idle reference. Entire silhouette stays in frame, with a clear safety margin on the left and right. The lowest solid coil stays near 97 percent of the square canvas height so it can replace the idle sprite without a jump. No scenery, shadow plane, motion graphic, text, emblem, frame, second subject or opaque backdrop."
+    }
+  ]
+}

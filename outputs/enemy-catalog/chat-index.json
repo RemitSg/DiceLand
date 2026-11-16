@@ -1349,6 +1349,30 @@
       "Venom Fang",
       "Coil and Sweep",
       "Constrict"
+    ],
+    "skill_presentations": [
+      {
+        "name": "毒牙",
+        "guid": "7b55418210cd4343966ee8a834e6797b",
+        "sprites": [
+          "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_VenomFang.png"
+        ]
+      },
+      {
+        "name": "盘身扫尾",
+        "guid": "2be21eaa941c4c2496166fa21a5642f5",
+        "sprites": [
+          "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_CoilGuard.png",
+          "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_TailSweep.png"
+        ]
+      },
+      {
+        "name": "绞缠",
+        "guid": "376f88bb238d4640ae3044564b917e44",
+        "sprites": [
+          "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_Constrict.png"
+        ]
+      }
     ]
   },
   {

@@ -1,5 +1,7 @@
 DiceLand：当前全部敌人和技能明细
 
+2026-11-16 技能表现增量：补齐 045 白蛇妖三招共四张战斗姿态图，盘身扫尾的两颗骰子各用一张。覆盖范围仅此四颗骰子。
+
 2026-11-16 内容增补：新增 045 白蛇妖及 3 个技能，核对被动、速度槽、战斗结算和事件投放。历史血孢子等未复核条目仍沿用原快照。
 
 2026-11-13 英文本地化增量：补录 044 枯枝王庭、4401 新芽、关联 Boss 敌群及七个技能的英文名称和描述，以及被动和技能规则的英文译文。本次只核对这两个敌人的本地化，目录仍收录 52 个敌人资产和 136 个关联技能。
@@ -3150,8 +3152,11 @@ GUID：f87757d70244431b9a2a19a346816a60
 
 【技能详细】
 
+战斗表现：四颗骰子各引用专属透明 Sprite。拼点时显示双方当前骰子的姿态，单方面攻击时只显示攻击骰的姿态。每次切换持续 0.5 秒，倍率为 1，位置、旋转和排序偏移为 0，结束后恢复原立绘。
+
 1. 毒牙（普通技能池，阶段 1）
 资产：Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/VenomFang.asset（GUID 7b55418210cd4343966ee8a834e6797b）
+姿态图：第 1 颗骰子「突咬」— Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_VenomFang.png（GUID 1c5632618c854dbd93bf4380cf965f80）
 英文：Venom Fang — Bites into the prey and injects venom.
 毒牙
 技能：毒牙
@@ -3171,6 +3176,8 @@ GUID：f87757d70244431b9a2a19a346816a60
 
 2. 盘身扫尾（普通技能池，阶段 1）
 资产：Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/CoilSweep.asset（GUID 2be21eaa941c4c2496166fa21a5642f5）
+姿态图：第 1 颗骰子「盘身防御」— Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_CoilGuard.png（GUID 6650cf0a33f84c94aa03c54f009d89a2）
+姿态图：第 2 颗骰子「甩尾反击」— Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_TailSweep.png（GUID b6bf2e306649434186d14530c8a13cec）
 英文：Coil and Sweep — Coils up to block, then counterattacks with a tail sweep.
 盘身扫尾
 技能：盘身扫尾
@@ -3190,6 +3197,7 @@ GUID：f87757d70244431b9a2a19a346816a60
 
 3. 绞缠（条件技能，阶段 1）
 资产：Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/Constrict.asset（GUID 376f88bb238d4640ae3044564b917e44）
+姿态图：第 1 颗骰子「收圈绞缠」— Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_Constrict.png（GUID bc06a9d49d53422c9410ec855caa8953）
 英文：Constrict — Wraps her coils around the target. The power bonus compares the two speed slots involved in this action.
 绞缠
 技能：绞缠

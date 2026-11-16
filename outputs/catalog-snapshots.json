@@ -33,30 +33,37 @@
       "scope": "新增 045 白蛇妖及毒牙、盘身扫尾、绞缠。核对实际资产、属性来源、回合被动与选技、三个技能的骰子和效果，以及事件 036/036_A_01 的固定单敌遭遇。其余敌人沿用历史快照及已列增量，历史血孢子等未复核条目保留。",
       "validation": "团结 EditMode 138/139 通过，含白蛇妖定向测试 7/7 和事件分支验证；唯一失败的友方开场急速测试在改动前基线同样失败。离线图鉴 205/205 通过，远程请求和页面异常均为 0。"
     },
-    "coverage": "以 2026-10-26 历史快照的 50 个敌人资产、129 个关联技能为基础，2026-11-09 完整增补 044 枯枝王庭与 4401 新芽的 2 个资产及 7 个技能，合计 52 个敌人资产、136 个关联技能。历史血孢子等未复核条目仍保留原快照，不代表全部内容已重新导出。 2026-11-10 仅修订 4401 新芽的战斗体型：enemyVisualScale 从 1 调整至 0.12，普通立绘与成长／断枝姿态统一继承该倍率；其他历史条目未重新导出，敌人资产 52、关联技能 136 的数量不变。 2026-11-12 增量调整 044 枯枝王庭的战斗体型（1 → 0.7）与 4401 新芽「成长」的攻击骰（2–4 → 2–3）。其他历史条目未重新导出，仍收录 52 个敌人资产与 136 个关联技能。 2026-11-16 增补 045 白蛇妖及 3 个技能、被动和事件遭遇，合计 53 个敌人资产、139 个关联技能。",
+    "coverage": "以 2026-10-26 历史快照的 50 个敌人资产、129 个关联技能为基础，2026-11-09 完整增补 044 枯枝王庭与 4401 新芽的 2 个资产及 7 个技能，合计 52 个敌人资产、136 个关联技能。历史血孢子等未复核条目仍保留原快照，不代表全部内容已重新导出。 2026-11-10 仅修订 4401 新芽的战斗体型：enemyVisualScale 从 1 调整至 0.12，普通立绘与成长／断枝姿态统一继承该倍率；其他历史条目未重新导出，敌人资产 52、关联技能 136 的数量不变。 2026-11-12 增量调整 044 枯枝王庭的战斗体型（1 → 0.7）与 4401 新芽「成长」的攻击骰（2–4 → 2–3）。其他历史条目未重新导出，仍收录 52 个敌人资产与 136 个关联技能。 2026-11-16 增补 045 白蛇妖及 3 个技能、被动和事件遭遇，合计 53 个敌人资产、139 个关联技能。 2026-11-16 同步白蛇妖三招四颗骰子的专属技能姿态；敌人和关联技能数量不变。",
     "latestPresentationRevision": {
-      "date": "2026-11-09",
+      "date": "2026-11-16",
       "enemyNumbers": [
-        44,
-        4401
+        45
       ],
-      "skillCount": 7,
-      "dicePresentations": 8,
-      "spriteCount": 7,
-      "scope": "补齐枯枝王庭与新芽七个技能的透明战斗姿态图，实际配置至全部八颗骰子的 skillSpriteOverride；分解两颗骰子共用其专属动作图。每次显示 0.5 秒，按原立绘高度校正缩放，位置和旋转偏移为 0，结束后恢复原立绘。不改变技能数值、机制或投放。",
+      "enemyIds": [
+        45
+      ],
+      "skillCount": 3,
+      "dicePresentations": 4,
+      "spriteCount": 4,
+      "scope": "补齐白蛇妖三招的四张透明战斗姿态图，实际绑定四颗骰子。盘身扫尾第 1 防御骰显示盘身，第 2 攻击骰显示扫尾。每次切换 0.5 秒，保持原立绘的尺寸基准与水平朝向，结束后恢复原立绘。生命、技能数值、机制及投放不变；其他历史条目未重新导出。",
       "validation": {
-        "mcpDieSpriteSwaps": {
-          "passed": 8,
+        "playModePoseSmoke": {
+          "passed": 2,
           "failed": 0,
-          "scope": "Actual assets and BattlePresentationSystem iterator; wait advanced manually in EditMode."
+          "sequences": 5,
+          "scope": "Actual imported skill and sprite assets exercised through clash and unopposed attack presentations; original sprite and transform restored. Isolated Play Mode smoke check, not a full encounter."
+        },
+        "editModeWhiteSnake": {
+          "passed": 7,
+          "failed": 0
         },
         "offlineCatalog": {
-          "passed": 195,
+          "passed": 205,
           "failed": 0
         },
         "skillArtUi": {
-          "skills": 7,
-          "diceSlots": 8,
+          "skills": 3,
+          "diceSlots": 4,
           "widths": [
             1512,
             390,
@@ -202,6 +209,41 @@
         "scope": "新增 044 枯枝王庭与召唤物 4401 新芽：完整核对实际资产、GUID、两阶段、被动、七个技能及 Boss 池投放；其他历史内容仍沿用原快照和已单列的增量修订。",
         "validation": "MCP EditMode 24/24 通过；使用实际敌群执行 8 回合定向战斗检查，覆盖第 1/4/7 回合召唤、第二阶段、个人第四回合断枝与次回合献祭。非完整通关或难度平衡验证。"
       }
+    ],
+    "presentationRevisionHistory": [
+      {
+        "date": "2026-11-09",
+        "enemyNumbers": [
+          44,
+          4401
+        ],
+        "skillCount": 7,
+        "dicePresentations": 8,
+        "spriteCount": 7,
+        "scope": "补齐枯枝王庭与新芽七个技能的透明战斗姿态图，实际配置至全部八颗骰子的 skillSpriteOverride；分解两颗骰子共用其专属动作图。每次显示 0.5 秒，按原立绘高度校正缩放，位置和旋转偏移为 0，结束后恢复原立绘。不改变技能数值、机制或投放。",
+        "validation": {
+          "mcpDieSpriteSwaps": {
+            "passed": 8,
+            "failed": 0,
+            "scope": "Actual assets and BattlePresentationSystem iterator; wait advanced manually in EditMode."
+          },
+          "offlineCatalog": {
+            "passed": 195,
+            "failed": 0
+          },
+          "skillArtUi": {
+            "skills": 7,
+            "diceSlots": 8,
+            "widths": [
+              1512,
+              390,
+              320
+            ],
+            "remoteRequests": 0,
+            "pageErrors": 0
+          }
+        }
+      }
     ]
   },
   "relicCatalog": {
@@ -289,6 +331,13 @@
       "relicTable": "Assets/Data/Relics/OuterEliteRelicLoot.asset",
       "rewardCount": 144,
       "scope": "增量同步矮人铁匠事件的遗物获取途径。一次免费交换消耗一件自选遗物，从产物表随机获得另一件同品质遗物。保留 2026-10-29 遗物配置快照及 161 件、17 个主体系的目录范围。"
+    },
+    "latestMerchantPlacementRevision": {
+      "date": "2026-11-16",
+      "catalogNumbers": [108],
+      "merchantCatalog": "Assets/Data/Economy/MerchantCatalog.asset",
+      "relicTable": "Assets/Data/Relics/Trash.asset",
+      "scope": "增量核对 108「垃圾袋」的普通商店投放。初次进货和手动刷新时，有遗物栏且符合候选条件即按整批库存判定一次，1% 概率上架一件。已持有或已在刷新前库存中出现（含售罄）的垃圾袋会被排除。通用遗物表可以为多个栏位抽取不同的遗物。遗物资产配置口径为 2026-11-13 导出的 162 件、17 个主体系。"
     },
     "latestContentRevision": {
       "date": "2026-11-13",
