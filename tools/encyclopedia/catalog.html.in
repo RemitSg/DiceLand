@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>DiceLand · 完整图鉴</title>
+  <style>/*__STYLE__*/</style>
+</head>
+<body>
+  <header class="masthead">
+    <div class="wordmark">DiceLand <span>图鉴</span></div>
+    <nav role="tablist" aria-label="图鉴分类">
+      <button id="tab-weapons" role="tab" aria-controls="weapons" aria-selected="true">武器 <span>/*__WEAPON_COUNT__*/</span></button>
+      <button id="tab-blueprints" role="tab" aria-controls="blueprints" aria-selected="false" tabindex="-1">图纸 <span>/*__BLUEPRINT_COUNT__*/</span></button>
+      <button id="tab-loot" role="tab" aria-controls="loot" aria-selected="false" tabindex="-1">掉落物 <span>/*__LOOT_COUNT__*/</span></button>
+      <button id="tab-relics" role="tab" aria-controls="relics" aria-selected="false" tabindex="-1">遗物 <span>/*__RELIC_COUNT__*/</span></button>
+      <button id="tab-enemies" role="tab" aria-controls="enemies" aria-selected="false" tabindex="-1">敌人 <span>/*__ENEMY_COUNT__*/</span></button>
+    </nav>
+    <span class="offline">离线图鉴</span>
+  </header>
+  <main class="workspace">
+    <section id="weapons" class="panel" role="tabpanel" aria-labelledby="tab-weapons">
+      <div id="equipment" class="equipment">
+        <aside class="rail" aria-label="稀有度筛选">
+          <h2>稀有度</h2>
+          <div id="rarity-options" class="rarity-options"></div>
+        </aside>
+        <div class="collection">
+          <header class="page-heading">
+            <div>
+              <h1 id="title">武器图鉴</h1>
+              <p id="subtitle">查技能、骰面与对应图纸。</p>
+            </div>
+            <div class="collection-count"><strong id="total">/*__WEAPON_COUNT__*/</strong><span id="unit">把武器</span></div>
+          </header>
+          <div class="toolbar" aria-label="筛选和排序">
+            <div class="search">
+              <label class="sr-only" for="query">搜索图鉴</label>
+              <input type="search" id="query" placeholder="搜索名称、技能、效果或 ID…" autocomplete="off" spellcheck="false">
+              <kbd aria-hidden="true">/</kbd>
+            </div>
+            <div class="filters">
+              <label><span id="filter-label">武器类型</span><select id="filter"></select></label>
+              <label>排序
+                <select id="sort">
+                  <option value="id">资产 ID</option>
+                  <option value="name">名称</option>
+                  <option value="rarity">稀有度</option>
+                </select>
+              </label>
+              <button id="direction" class="quiet" type="button" aria-label="切换排序方向">↑ 升序</button>
+              <button id="reset" class="quiet" type="button">清除筛选</button>
+              <div class="view-buttons" role="group" aria-label="视图">
+                <button type="button" data-view="grid" aria-pressed="true">卡片</button>
+                <button type="button" data-view="list" aria-pressed="false">列表</button>
+              </div>
+            </div>
+          </div>
+          <div class="results-heading"><h2>图鉴条目</h2><span id="status" role="status"></span></div>
+          <div class="cards" id="results"><p class="empty">图鉴正在加载。</p></div>
+          <footer class="footer">
+            <details>
+              <summary>数据来源与快照范围</summary>
+              <p id="coverage"></p>
+              <p id="coverage-note"></p>
+            </details>
+          </footer>
+        </div>
+      </div>
+    </section>
+    <section id="blueprints" class="panel" role="tabpanel" aria-labelledby="tab-blueprints" hidden></section>
+    <section id="loot" class="panel" role="tabpanel" aria-labelledby="tab-loot" hidden></section>
+    <section id="relics" class="panel" role="tabpanel" aria-labelledby="tab-relics" hidden></section>
+    <section id="enemies" class="panel" role="tabpanel" aria-labelledby="tab-enemies" hidden></section>
+  </main>
+  <dialog id="detail" aria-labelledby="detail-name">
+    <div class="drawer-header">
+      <strong id="detail-label"></strong>
+      <div class="drawer-nav">
+        <button id="previous" class="quiet" type="button" aria-label="上一条">←</button>
+        <span id="position"></span>
+        <button id="next" class="quiet" type="button" aria-label="下一条">→</button>
+        <button id="close" class="quiet close" type="button" aria-label="关闭详情" autofocus>×</button>
+      </div>
+    </div>
+    <div id="detail-content" class="drawer-content"></div>
+  </dialog>
+  <script id="equipment-data" type="application/json">/*__EQUIPMENT_DATA__*/</script>
+  <script id="embedded-catalogs" type="application/json">/*__EMBEDDED_CATALOGS__*/</script>
+  <script>/*__SCRIPT__*/</script>
+</body>
+</html>

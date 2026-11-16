@@ -1,0 +1,40 @@
+const embeddedLoot = /*__BATTLE_LOOT__*/;
+const embeddedBattleSources = resolveBattleLoot(embeddedLoot.battle);
+let focusEnemyLoot = new URLSearchParams(initialCatalogHash).get('loot') === '1';
+
+function appendEnemyLoot(enemy) {
+  const related = embeddedBattleSources.filter(source => source.enemyIds.includes(enemy.guid));
+  const withLoot = related.filter(source => source.kind === 'retreat' || source.tables.some(table => table.drops.length));
+  const panel = document.createElement('section');
+  panel.id = 'battle-loot';
+  panel.className = 'drawer-section';
+  panel.innerHTML = `
+    <div class="section-heading"><h3>掉落物</h3><p>${escape(embeddedLoot.date)} · 游戏资产配置</p></div>
+    <p class="no-record">表中概率是各条目的基础判定。敌群素材在战斗结算时统一抽取，保底与额外奖励会影响实际结果。</p>
+    ${withLoot.map(source => `<div class="rule-block">
+      <h4>${escape(lootSourceName(source))}</h4>
+      ${source.tables.filter(table => table.drops.length).map(table => `<div class="enemy-drop-table">
+        <p>${escape(lootTableName(table))}</p>
+        <ul class="enemy-drop-list">${table.drops.map(drop => `<li>
+          <button type="button" class="enemy-drop-link" data-open-loot="${drop.id}">${escape(embeddedLoot.names[drop.id])} <span aria-hidden="true">↗</span></button>
+          <span>${escape(lootDropText(drop, table))}</span>
+        </li>`).join('')}</ul>
+      </div>`).join('') || (source.tables.length ? '<p>撤退结算表未配置素材。</p>' : '<p>撤退沿用敌群掉落表。</p>')}
+    </div>`).join('') || '<p class="no-record">现有敌群和特殊结算未为该敌人配置素材掉落。</p>'}`;
+  $('encounters').before(panel);
+  if (focusEnemyLoot) {
+    focusEnemyLoot = false;
+    requestAnimationFrame(() => panel.scrollIntoView({block: 'start'}));
+  }
+}
+
+document.addEventListener('click', event => {
+  const button = event.target.closest('[data-open-loot]');
+  if (button) parent.postMessage({catalog: embeddedCatalog, openLoot: button.dataset.openLoot}, '*');
+});
+
+window.addEventListener('message', event => {
+  if (event.source !== parent || typeof event.data?.openEnemyLoot !== 'string') return;
+  focusEnemyLoot = true;
+  openDetail(event.data.openEnemyLoot);
+});

@@ -1,0 +1,4884 @@
+{
+    "date": "2026-11-16",
+    "weapons": [
+        {
+            "detail": {
+                "id": "9b8c5d177c240334a9734636830a139f",
+                "name": "新手木剑",
+                "description": "最简单的武器，适合初学者使用",
+                "weaponType": "Sword",
+                "rarity": "Common",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "3672ea937dbc5e64bb1187640f7a9370",
+                        "name": "挥砍",
+                        "description": "挥砍\n技能：挥砍\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n描述：\n借力挥砍，简单的招式",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "f3931f99f39b4a248a779ab007733565",
+                        "name": "横砍",
+                        "description": "横砍\n技能：横砍\n能耗：3\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 1 点伤害\n\n描述：\n暂无描述。",
+                        "energyCost": 3,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "acb988a65745364459695da95e246fad",
+                        "name": "格挡",
+                        "description": "格挡\n技能：格挡\n能耗：0\n骰子数：1\n第 1 防御骰：1 ~ 2\n\n描述：\n简单的剑技，用于减少即将到来的伤害",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 1,
+                                "max": 2,
+                                "category": "Defense"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 0,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/000 WoodenSword/WoodenSword_Data.asset",
+            "saveId": "weapon.wooden_sword",
+            "icon": {
+                "key": "e7a36b46f5c7232418944f32380c7c55:21300000",
+                "path": "Assets/Assets/Items/WoodenSwordIcon.png",
+                "x": 0,
+                "y": 0,
+                "width": 1000,
+                "height": 1000,
+                "textureWidth": 1000,
+                "textureHeight": 1000
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "cdf2798ce1fc9ed42954b0864d1ce01f",
+                "name": "铁剑",
+                "description": "用精炼后的铁矿打造的铁剑，虽没有什么魔力，但趁手且有效",
+                "weaponType": "Sword",
+                "rarity": "Common",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 2,
+                "fallbackMaxPower": 4,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "9e003dc77410eba42b1806f317e54580",
+                        "name": "挥砍",
+                        "description": "挥砍\n技能：挥砍\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n描述：\n借力挥砍，简单的招式",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "078246cde6431a94c8b86186526d6bbd",
+                        "name": "横砍",
+                        "description": "横砍\n技能：横砍\n能耗：3\n骰子数：1\n第 1 攻击骰：3 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 1 点伤害\n\n描述：\n大力横劈，利用挥剑的广度攻击所有敌人",
+                        "energyCost": 3,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 1,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/001 IronSword/IronSword_Data.asset",
+            "saveId": "",
+            "icon": {
+                "key": "55bd9238914f124458226939d46b9397:21300000",
+                "path": "Assets/Data/Weapons/001 IronSword/IronSword_Icon.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": [
+                {
+                    "goodsId": "101",
+                    "minPrice": 35,
+                    "maxPrice": 50,
+                    "weight": 3
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "d5da31539ab1a374e9dc1f18f2f188a7",
+                "name": "熔火铁剑",
+                "description": "刀身散发着热量，偶尔有几颗火星溅射出来，不习惯的话可以戴个手套。",
+                "weaponType": "Sword",
+                "rarity": "Uncommon",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "caf2b20d2198a7f4fa1f2b07eda9b85e",
+                        "name": "挥砍",
+                        "description": "挥砍\n技能：挥砍\n能耗：0\n骰子数：1\n第 1 攻击骰：3 ~ 4\n\n描述：\n借力挥砍，简单的招式",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "6d9ef194a51bac74bbabf724ee149fc7",
+                        "name": "灼热横斩",
+                        "description": "灼热横斩\n技能：灼热横斩\n能耗：4\n骰子数：1\n第 1 攻击骰：3 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 1 点伤害\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 燃烧\n\n描述：\n用灼热的剑刃借力横劈敌人，让敌人感受双重痛苦",
+                        "energyCost": 4,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "80d648f30688ca5419a071413b90cc65",
+                        "name": "点燃",
+                        "description": "点燃\n技能：点燃\n能耗：2\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 燃烧\n\n描述：\n剑上点燃火，火点燃敌人",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 2,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/002 FireIronSword/FireIronSword.asset",
+            "saveId": "",
+            "icon": {
+                "key": "97c36b654027be641a97f3de0fd07f79:21300000",
+                "path": "Assets/Data/Weapons/002 FireIronSword/FireIronSword.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": [
+                {
+                    "goodsId": "102",
+                    "minPrice": 45,
+                    "maxPrice": 60,
+                    "weight": 1
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "4b3e2d650c5c8744181da8df8b3099f3",
+                "name": "霜铁剑",
+                "description": "剑身散发着寒冷的气息\n当握持这把剑时，手部能明显感受到一丝冷气\n“你是说免费的制冷机？”",
+                "weaponType": "Sword",
+                "rarity": "Uncommon",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 2,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "2de53aca08fe4ee4db6a0e86b2490cce",
+                        "name": "挥砍",
+                        "description": "挥砍\n技能：挥砍\n能耗：0\n骰子数：1\n第 1 攻击骰：3 ~ 4\n\n描述：\n借力挥砍，简单的招式",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "db06ded6a6c7102498681b9f68e0a8b9",
+                        "name": "寒气横斩",
+                        "description": "寒气横斩\n技能：寒气横斩\n能耗：4\n骰子数：1\n第 1 攻击骰：3 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 1 点伤害\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 寒冷\n\n描述：\n用寒冷的剑刃借力横劈敌人，让敌人感受双重痛苦",
+                        "energyCost": 4,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "884b0d9a9c6dc814c9dbf25a00a397d0",
+                        "name": "寒风",
+                        "description": "寒风\n技能：寒风\n能耗：2\n骰子数：1\n第 1 攻击骰：2 ~ 2\n\n词条：\n第 1 攻击骰词条：[ 使用时 ] 使 当前目标 于 下 1 个回合开始时 获得 2 层 寒冷\n\n描述：\n旋转武器生成一股吹向敌人的寒风",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 2,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 3,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/003 FrostIronSword/FrostIronSword.asset",
+            "saveId": "",
+            "icon": {
+                "key": "a13d4f727a9ec144c984158d6312fc1f:21300000",
+                "path": "Assets/Data/Weapons/003 FrostIronSword/FrostIronSword.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": [
+                {
+                    "goodsId": "102",
+                    "minPrice": 45,
+                    "maxPrice": 60,
+                    "weight": 1
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "1f36f0dbb0b248e42afa902de71201fa",
+                "name": "蚀毒剑",
+                "description": "剑匠说这把剑只是淬了点特别的药。你不太想知道他说的“特别”到底是从哪儿刮下来的。",
+                "weaponType": "Sword",
+                "rarity": "Uncommon",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "75675ed8454c8c5499c7df24dd6e337c",
+                        "name": "挥砍",
+                        "description": "挥砍\n技能：挥砍\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n描述：\n借力挥砍，简单的招式",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "00a8c9f16b33a254d80e5daf42558cd4",
+                        "name": "毒噬",
+                        "description": "毒噬\n技能：毒噬\n能耗：2\n骰子数：1\n第 1 攻击骰：2 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 中毒\n\n描述：\n这把剑会如毒蛇一样死死咬住敌人",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "49e381a9df1b46a4e98c1b565ad06ba9",
+                        "name": "蚀骨横斩",
+                        "description": "蚀骨横斩\n技能：蚀骨横斩\n能耗：4\n骰子数：1\n第 1 攻击骰：3 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 造成 2 点伤害\n第 1 攻击骰词条：[ 使用该技能时 ] 若 目标拥有 中毒 ，则 威力 +1\n\n描述：\n融入了毒属性的剑技，威力取决于敌人中毒的程度",
+                        "energyCost": 4,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 4,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/004 蚀毒剑/004 蚀毒剑.asset",
+            "saveId": "",
+            "icon": {
+                "key": "32fe0deed9c00a24fab581ac147499b8:21300000",
+                "path": "Assets/Data/Weapons/004 蚀毒剑/蚀毒剑_4x.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "48efe15157bc89a499885751e6498ed7",
+                "name": "渴血剑",
+                "description": "这把剑其实不渴血，它只是记得每一道它划出的伤口。握紧剑柄时，掌心似乎传来另一个心跳。",
+                "weaponType": "Sword",
+                "rarity": "Rare",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "0cfb9e479b77450685d429c2e63993a8",
+                        "name": "试血",
+                        "description": "试血\n技能：试血\n能耗：0\n骰子数：1\n第 1 攻击骰：3 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 流血\n\n描述：\n浅浅一剑，足够让剑记住对方血液的味道。",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "824797f9723a4149953895cd2961135e",
+                        "name": "绯线追刺",
+                        "description": "绯线追刺\n技能：绯线追刺\n能耗：2\n骰子数：1\n第 1 攻击骰：3 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 流血\n第 1 攻击骰词条：[ 使用该技能时 ] 若 目标拥有 流血 ，则 威力 +1\n\n描述：\n剑尖追着血线前进，像是在伤口之间穿针。",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "644835f8892a4b92aabe8b66ab92ecda",
+                        "name": "回誓",
+                        "description": "回誓\n技能：回誓\n能耗：2\n骰子数：1\n第 1 攻击骰：1 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 消耗 当前目标（敌人） 1 层 流血，来使 自己恢复 2 点生命，并使自己于 下回合 获得 1 层 临时强壮\n\n描述：\n收回那道伤口中的血，将热度重新握回掌心。",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 1,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 3,
+                        "id": "de232f05e6834c90be633bd1938805eb",
+                        "name": "扼念",
+                        "description": "扼念\n技能：扼念\n能耗：4\n骰子数：2\n第 1 攻击骰：3 ~ 5\n第 2 攻击骰：2 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 流血\n第 2 攻击骰词条：若 目标拥有至少 3 层 流血 ，则 威力范围最小值 +3\n\n描述：\n两剑，足以斩断对生的渴望。",
+                        "energyCost": 4,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 5,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 2,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 5,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/005 渴血剑/005 渴血剑.asset",
+            "saveId": "",
+            "icon": {
+                "key": "0f89efd50bf051643a5c8e52ce913aa8:21300000",
+                "path": "Assets/Data/Weapons/005 渴血剑/渴血剑_4x.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "60f938b00f1b42e19b517f1e12b86d06",
+                "name": "曦誓剑",
+                "description": "剑身并不炽烈，只在挥落时留下短暂的白光。它更像审判，不像屠戮。",
+                "weaponType": "Sword",
+                "rarity": "Rare",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 2,
+                "fallbackMaxPower": 4,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "e7ce34d765904e3da5e283eaa04ccb78",
+                        "name": "晨辉斩",
+                        "description": "晨辉斩\n技能：晨辉斩\n能耗：0\n骰子数：1\n第 1 攻击骰：3 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使全体友方获得 1 层护盾\n第 1 攻击骰词条：[ 使用该技能时 ] 若 自身拥有 护盾 ，则 威力 +1\n\n描述：\n以白光开路的一击。",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "f8d88a4f8ad14ad3991224c3b6118f41",
+                        "name": "涤净",
+                        "description": "涤净\n技能：涤净\n能耗：1\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 使用时 ] 使血量最低的友方获得 2 层护盾\n\n描述：\n把浮在剑脊上的白光指向最危险的人。",
+                        "energyCost": 1,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "00cc4d2de0054281ad2cbdf6dc02f86d",
+                        "name": "净曜突刺",
+                        "description": "净曜突刺\n技能：净曜突刺\n能耗：1\n骰子数：1\n第 1 攻击骰：2 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 若 目标拥有至少 2 种负面状态 ，则 对目标额外造成 3 点伤害\n\n描述：\n光线把敌人身上的伤口照得更清楚。",
+                        "energyCost": 1,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 3,
+                        "id": "53015610107b4e1786be79bf2a0125d1",
+                        "name": "圣裁连斩",
+                        "description": "圣裁连斩\n技能：圣裁连斩\n能耗：3\n骰子数：2\n第 1 攻击骰：2 ~ 4\n第 2 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 若 目标拥有至少 2 种负面状态 ，则 对目标额外造成 2 点伤害\n第 2 攻击骰词条：[ 命中时 ] 若 目标拥有至少 2 种负面状态 ，则 对目标额外造成 2 点伤害\n第 2 攻击骰词条：[ 全部攻击段命中时 ] 使全体友方获得 2 层护盾\n\n描述：\n审判。",
+                        "energyCost": 3,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 6,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/006 曦誓剑/006 曦誓剑.asset",
+            "saveId": "",
+            "icon": {
+                "key": "feee66fed239e174599c594022f320ba:21300000",
+                "path": "Assets/Data/Weapons/006 曦誓剑/曦誓剑.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "a3f4c8d12b9e4fa3a41b7c6d2e8f9012",
+                "name": "烬冠剑",
+                "description": "一把黑铁与赤铜混铸的单手剑，剑刃布满暗红裂纹，像冷却后的熔岩。挥动时裂纹会短暂亮起，剑尖拖出细小火星。“它把余烬埋进土里，等风吹来。”",
+                "weaponType": "Sword",
+                "rarity": "Rare",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 2,
+                "fallbackMaxPower": 4,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "b12a7e4c9d304bcba6f28e5d41c0a739",
+                        "name": "掠火斩",
+                        "description": "掠火斩\n技能：掠火斩\n能耗：0\n骰子数：1\n第 1 攻击骰：3 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧\n第 1 攻击骰词条：[ 命中时 ] 若 目标拥有 燃烧 ，则 对目标额外造成 1 点伤害\n\n描述：\n剑锋掠过伤口，把火星留在目标身上。",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "c98d0b7e61f24e8a8f36c2b5190d4a7e",
+                        "name": "压焰刺",
+                        "description": "压焰刺\n技能：压焰刺\n能耗：2\n骰子数：1\n第 1 攻击骰：3 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧\n第 1 攻击骰词条：[ 拼点时 ] 若 目标拥有至少 2 层 燃烧 ，则 威力 +1\n\n描述：\n把火压进剑尖，在对手已被点燃时更难抵挡。",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "d74f6a0c2e914b7d9c8a3f12b5e60491",
+                        "name": "回烬守势",
+                        "description": "回烬守势\n技能：回烬守势\n能耗：1\n骰子数：1\n第 1 防御骰：2 ~ 3\n\n词条：\n第 1 防御骰词条：[ 拼点时 ] 使 当前目标 获得 2 层 燃烧\n第 1 防御骰词条：[ 使用时 ] 若 自身生命值不高于 50% ，则 使自己获得 1 层护盾\n\n描述：\n剑身低垂成冠状防线，反过来把热灰压到对手脚下。",
+                        "energyCost": 1,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 3,
+                                "category": "Defense"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 3,
+                        "id": "e56b1c92a7d44e0f8b3a6c9d2f0175ab",
+                        "name": "冠焰裁断",
+                        "description": "冠焰裁断\n技能：冠焰裁断\n能耗：4\n骰子数：2\n第 1 攻击骰：3 ~ 6\n第 2 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使该技能的下一个骰子威力 +2\n第 2 攻击骰词条：[ 全部攻击段命中时 ] 使 当前目标 获得 2 层 燃烧\n第 2 攻击骰词条：[ 命中时 ] 若 目标拥有至少 4 层 燃烧 ，则 对目标额外造成 4 点伤害\n\n描述：\n先以冠形火光压住对手，再在裂纹最亮时落下裁断。",
+                        "energyCost": 4,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 6,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 7,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/007 烬冠剑/007 烬冠剑.asset",
+            "saveId": "",
+            "icon": {
+                "key": "01b5ca0dfd5f0d34ca9d46fe8e674ba9:21300000",
+                "path": "Assets/Data/Weapons/007 烬冠剑/烬冠剑.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "6260b16c0b1f408f94edbd1e3285a078",
+                "name": "晦誓剑",
+                "description": "剑身像被夜色浸过，刃线并不反光，只在挥动时留下极短的灰黑残影。护手处缠着褪色的誓绳，绳结之间渗出细小的暗色尘屑。\n\n“它不要求你发誓，只要求你记得自己背弃过什么。”",
+                "weaponType": "Sword",
+                "rarity": "Rare",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 2,
+                "fallbackMaxPower": 4,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "8d0a36bd286a4ce1bf3b3cd5df95c756",
+                        "name": "晦斩",
+                        "description": "晦斩\n技能：晦斩\n能耗：0\n骰子数：2\n第 1 攻击骰：3 ~ 4\n第 2 攻击骰：2 ~ 2\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 黑暗\n第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 黑暗\n\n描述：\n以灰黑剑影压住目标的光。",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 2,
+                                "max": 2,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "1263212c6be44eafb3698e7bb35bc5ce",
+                        "name": "背光刺",
+                        "description": "背光刺\n技能：背光刺\n能耗：1\n骰子数：2\n第 1 攻击骰：3 ~ 3\n第 2 攻击骰：2 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 使用该技能时 ] 若 目标拥有 黑暗 ，则 威力 +1\n第 2 攻击骰词条：[ 使用该技能时 ] 若 目标拥有 黑暗 ，则 威力 +1\n\n描述：\n借目标背后的暗影刺出一连击。",
+                        "energyCost": 1,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 3,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 2,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "9fd7917933c9419d928dba85a77a974e",
+                        "name": "噤光守势",
+                        "description": "噤光守势\n技能：噤光守势\n能耗：2\n骰子数：1\n第 1 防御骰：3 ~ 4\n\n词条：\n第 1 防御骰词条：[ 拼点胜利时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 临时虚弱\n第 1 防御骰词条：[ 使用该技能时 ] 若 目标拥有 黑暗 ，则 威力 +1\n\n描述：\n封住剑上的光，在防守中压低目标的攻势。",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Defense"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 3,
+                        "id": "1b3c51def6fe4bc6b4cd0f566d351354",
+                        "name": "失明",
+                        "description": "失明\n技能：失明\n能耗：4\n骰子数：2\n第 1 攻击骰：3 ~ 5\n第 2 攻击骰：2 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 使用时 ] 消耗 当前目标（敌人） 2 层 黑暗，来使 当前目标于 下回合 获得 1 层 眩晕\n第 2 攻击骰词条：若 目标拥有 黑暗 ，则 威力范围最小值 +3\n\n描述：\n剥离目标身上的黑暗，让它在下一回合短暂失去方向。",
+                        "energyCost": 4,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 5,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 2,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 8,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/008 晦誓剑/008 晦誓剑.asset",
+            "saveId": "",
+            "icon": {
+                "key": "6b557b4c0bb1a6146b13113adafe622e:21300000",
+                "path": "Assets/Data/Weapons/008 晦誓剑/晦誓剑_x4.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "ab25e1c01dd01ad4c8eac113e9dc47c7",
+                "name": "破旧匕首",
+                "description": "已经有缺口的匕首，经年的使用让刃少许打卷",
+                "weaponType": "Dagger",
+                "rarity": "Common",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "feab14f6b62d12048baf66310cc274fb",
+                        "name": "刺击",
+                        "description": "刺击\n技能：刺击\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n描述：\n用匕首刺入敌人身体，一种有效的攻击",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "7b722bc2885f1414eb9f62f93f8cd5d3",
+                        "name": "背刺",
+                        "description": "背刺\n技能：背刺\n能耗：2\n骰子数：1\n第 1 攻击骰：2 ~ 2\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 当前目标 造成 2 点伤害\n\n描述：\n背刺之所以叫背刺，是因为不背刺就打不过",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 2,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 100,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/100 Dagger/Dagger_Data.asset",
+            "saveId": "",
+            "icon": {
+                "key": "d8009cf73562d3c42ad1c2e6536078d4:21300000",
+                "path": "Assets/Data/Weapons/100 Dagger/dagger_Icon.png",
+                "x": 0,
+                "y": 0,
+                "width": 981,
+                "height": 1222,
+                "textureWidth": 981,
+                "textureHeight": 1222
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "642840a5e0c7c6c4d8a869204625c9d1",
+                "name": "掠风短匕",
+                "description": "铁匠说这把匕首快的风都能被切开——\n你觉得他纯在胡说八道。",
+                "weaponType": "Dagger",
+                "rarity": "Uncommon",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "4f46e0545514a794e946ceb2f8f9c3cb",
+                        "name": "速切",
+                        "description": "速切\n技能：速切\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 使用该技能时 ] 若 自身速度 高出 目标单位速度 2 点（含） ，则 威力 +1\n\n描述：\n以迅雷不及掩耳盗铃之势捅刀子",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "52be59ce67e18e442928e076efe6df69",
+                        "name": "花切",
+                        "description": "花切\n技能：花切\n能耗：3\n骰子数：2\n第 1 攻击骰：2 ~ 3\n第 2 攻击骰：2 ~ 2\n\n词条：\n第 1 攻击骰词条：[ 使用该技能时 ] 若 自身速度 高出 目标单位速度 1 点（含） ，则 威力 +1\n第 2 攻击骰词条：[ 拼点胜利时 ] 若 自身速度 高出 目标单位速度 1 点（含） ，则 威力 +1\n\n描述：\n精准而华丽的杀招",
+                        "energyCost": 3,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 3,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 2,
+                                "max": 2,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "0e56f4866db35f2428568776fad92119",
+                        "name": "刀舞",
+                        "description": "刀舞\n技能：刀舞\n能耗：1\n骰子数：1\n第 1 防御骰：2 ~ 3\n\n词条：\n第 1 防御骰词条：[ 使用时 ] 使 自己 于 下 1 个回合开始时 获得 2 层 急速\n\n描述：\n展示刀舞可以有效舒减压力，前提是不失败",
+                        "energyCost": 1,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 3,
+                                "category": "Defense"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 101,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/101 GaleDagger/GaleDagger.asset",
+            "saveId": "",
+            "icon": {
+                "key": "84e433b6888287b438b8cc7eab2358da:21300000",
+                "path": "Assets/Data/Weapons/101 GaleDagger/GaleDagger.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "c1ba2d469cc891548a69c457efa3cbd0",
+                "name": "疾电匕首",
+                "description": "刀刃锋利的匕首，萦绕些许流窜的电流，显得格外迅速且致命。",
+                "weaponType": "Dagger",
+                "rarity": "Uncommon",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "60444b80182546e458cfbc9e1da1d74b",
+                        "name": "闪刺",
+                        "description": "闪刺\n技能：闪刺\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流\n\n描述：\n匕首发出爆闪，下一秒就可以出现在敌人旁边。",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "2b5278fd04ef8654eb6c0f829b0625e9",
+                        "name": "疾电切",
+                        "description": "疾电切\n技能：疾电切\n能耗：2\n骰子数：1\n第 1 攻击骰：2 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 若 目标拥有至少 1 层 电流 ，则 对目标额外造成 1 点伤害\n第 1 攻击骰词条：[ 拼点时 ] 若 自身速度 高出 目标单位速度 2 点（含） ，则 威力 +1\n\n描述：\n迅捷如雷，来去如风。",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "de4e1fcc38970df40bad321964cce4af",
+                        "name": "雷弧连刺",
+                        "description": "雷弧连刺\n技能：雷弧连刺\n能耗：3\n骰子数：2\n第 1 攻击骰：1 ~ 4\n第 2 攻击骰：1 ~ 4\n\n词条：\n第 1 攻击骰词条：若 目标每拥有 1 层 电流 ，则 每达成一次条件，威力范围最小值 +1，最多 +3\n第 2 攻击骰词条：[ 命中时 ] 对 当前目标 引发 1 重 电流 爆发，造成 1 x 层数 的额外伤害，并清空 电流\n第 2 攻击骰词条：若 目标每拥有 1 层 电流 ，则 每达成一次条件，威力范围最小值 +1，最多 +3\n\n描述：\n将电流凝聚在刀尖，同时急速地连续突刺",
+                        "energyCost": 3,
+                        "dice": [
+                            {
+                                "min": 1,
+                                "max": 4,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 1,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 102,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/102 疾电匕首/102 疾电匕首.asset",
+            "saveId": "",
+            "icon": {
+                "key": "659b4481a2fba1c43af499168c0b578f:21300000",
+                "path": "Assets/Data/Weapons/102 疾电匕首/疾电匕首_4x.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "1d01aa9ffd9c3984fa238b6e18c20cd3",
+                "name": "烬吻短匕",
+                "description": "一柄刃身极薄的短匕，刀背嵌着暗红色的细小裂纹，像冷却后的炭火。被它划开的伤口不会立刻剧痛，而是慢慢泛出烫人的红光。",
+                "weaponType": "Dagger",
+                "rarity": "Uncommon",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "4c7d8724846fe944bb848cd15abca858",
+                        "name": "掠烬",
+                        "description": "掠烬\n技能：掠烬\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧\n第 1 攻击骰词条：[ 拼点时 ] 若 目标拥有 燃烧 ，则 威力 +1\n\n描述：\n匕首轻轻一挑，像从熄灭的火盆里拨起一粒灰红的星。",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "cbf704f392df93d488f652f63b760143",
+                        "name": "灼痕连刺",
+                        "description": "灼痕连刺\n技能：灼痕连刺\n能耗：3\n骰子数：2\n第 1 攻击骰：1 ~ 3\n第 2 攻击骰：1 ~ 2\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧\n第 1 攻击骰词条：[ 单方面攻击时 ] 使 当前目标 获得 1 层 燃烧\n第 2 攻击骰词条：[ 单方面攻击时 ] 对目标额外造成 相当于 目标 燃烧 层数 / 2 的伤害\n\n描述：\n它连续刺入旧伤与新伤之间，留下两点迟来的热。",
+                        "energyCost": 3,
+                        "dice": [
+                            {
+                                "min": 1,
+                                "max": 3,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 1,
+                                "max": 2,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "38b0bb9af5e49f840b871afd085eda7d",
+                        "name": "余火割喉",
+                        "description": "余火割喉\n技能：余火割喉\n能耗：4\n骰子数：1\n第 1 攻击骰：3 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 燃烧\n第 1 攻击骰词条：[ 单方面攻击时 ] 威力 +2\n\n描述：\n当余火已经埋进皮肉，最后一线橘红便贴着喉间掠过。",
+                        "energyCost": 4,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 103,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/103 烬吻短匕/103 烬吻短匕.asset",
+            "saveId": "",
+            "icon": {
+                "key": "a10819fe8cc55ab45bf44fe0b4387ffa:21300000",
+                "path": "Assets/Data/Weapons/103 烬吻短匕/烬吻短匕.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "cb69c8cb0b5a1ce4383dea0432a53f40",
+                "name": "刹影短匕",
+                "description": "一柄几乎没有重量的黑银短匕，刃面窄得像一条凝固的风线。刀背上嵌着三枚细小的青色晶片，挥动时会留下断续的残影。",
+                "weaponType": "Dagger",
+                "rarity": "Rare",
+                "speedButtonCount": 2,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "a8ab5d149e2016143b85dc12c79f85f4",
+                        "name": "掠步刺",
+                        "description": "掠步刺\n技能：掠步刺\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 拼点胜利时 ] 使 自己 于 下 1 个回合开始时 获得 1 层 急速\n第 1 攻击骰词条：[ 拼点时 ] 若 自身速度 高出 目标单位速度 1 点（含） ，则 威力 +1\n\n描述：\n残影从脚边一闪而过，刀尖已经先于呼吸抵达。",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "1add987f6f506884e9606b62a26cd540",
+                        "name": "断风闪避",
+                        "description": "断风闪避\n技能：断风闪避\n能耗：1\n骰子数：1\n第 1 防御骰：2 ~ 4\n\n词条：\n第 1 防御骰词条：[ 使用时 ] 使 自己 于 下 1 个回合开始时 获得 2 层 急速\n第 1 防御骰词条：[ 拼点胜利时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 缓慢\n\n描述：\n刀身忽然侧折，像把迎面而来的风切成两段。",
+                        "energyCost": 1,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Defense"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "26afa5e67aaa9f446b6e1af445fc3386",
+                        "name": "错拍连切",
+                        "description": "错拍连切\n技能：错拍连切\n能耗：4\n骰子数：2\n第 1 攻击骰：1 ~ 3\n第 2 攻击骰：1 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 使用该技能时 ] 若 自身速度 高出 目标单位速度 2 点（含） ，则 威力 +2\n第 2 攻击骰词条：[ 使用该技能时 ] 若 自身速度 高出 目标单位速度 2 点（含） ，则 威力 +2\n\n描述：\n第一刀切开节奏，第二刀落在对手尚未回神的空隙里。",
+                        "energyCost": 4,
+                        "dice": [
+                            {
+                                "min": 1,
+                                "max": 3,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 1,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 3,
+                        "id": "827b5948f1903e54983eb156346ce525",
+                        "name": "刹那割影",
+                        "description": "刹那割影\n技能：刹那割影\n能耗：5\n骰子数：1\n第 1 攻击骰：3 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 使用该技能时 ] 若 自身速度 高出 目标单位速度 1 点（含） ，则 每高出 1 点速度，威力 +1，最多 +5\n\n描述：\n影子只被割开一瞬，随后才轮到血色追上刀光。",
+                        "energyCost": 5,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 104,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/104 刹影短匕/104 刹影短匕.asset",
+            "saveId": "",
+            "icon": {
+                "key": "84e433b6888287b438b8cc7eab2358da:21300000",
+                "path": "Assets/Data/Weapons/101 GaleDagger/GaleDagger.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "142bc82f316aa0846b306632a64fea42",
+                "name": "棺材钉",
+                "description": "从黑棺中拔出的长钉，钉身残留着湿冷的暗息。每一次刺入，都像是在替目标慢慢合上棺盖。",
+                "weaponType": "Dagger",
+                "rarity": "Rare",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 2,
+                "fallbackMaxPower": 5,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "e9a2e7d813e7bbc4ab7df901a90170bb",
+                        "name": "钉刺",
+                        "description": "钉刺\n技能：钉刺\n能耗：0\n骰子数：2\n第 1 攻击骰：2 ~ 4\n第 2 攻击骰：2 ~ 2\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 黑暗\n第 1 攻击骰词条：[ 单方面攻击时 ] 威力 +1\n第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 黑暗\n第 2 攻击骰词条：[ 单方面攻击时 ] 威力 +1\n\n描述：\n以细长棺钉刺入目标，把阴冷的黑暗留在伤口里。",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 2,
+                                "max": 2,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "83013605e041b1646a684cb6f0e76ad8",
+                        "name": "起钉",
+                        "description": "起钉\n技能：起钉\n能耗：1\n骰子数：1\n第 1 攻击骰：3 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 使用该技能时 ] 若 目标每拥有 1 层 黑暗 ，则 每达成一次条件，威力 +1，最多 +2\n\n描述：\n顺着黑暗的缝隙撬起棺钉，目标越被阴影浸透，这一下越深。",
+                        "energyCost": 1,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "32dc530f814a86d49ab98b1b99941fa3",
+                        "name": "合棺钉",
+                        "description": "合棺钉\n技能：合棺钉\n能耗：3\n骰子数：1\n第 1 攻击骰：1 ~ 6\n\n词条：\n第 1 攻击骰词条：[ 拼点胜利时 ] 对 当前目标 造成 5 点伤害\n第 1 攻击骰词条：[ 未击中时 ] 对 自己 造成 5 点伤害\n第 1 攻击骰词条：[ 使用该技能时 ] 若 目标拥有至少 3 层 黑暗 ，则 威力 +2\n\n描述：\n将棺钉重重合入阴影，黑暗足够浓时，钉声会变成盖棺的回响。",
+                        "energyCost": 3,
+                        "dice": [
+                            {
+                                "min": 1,
+                                "max": 6,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 105,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/105 棺材钉/105 棺材钉.asset",
+            "saveId": "",
+            "icon": {
+                "key": "",
+                "path": "",
+                "x": 0,
+                "y": 0,
+                "width": 0,
+                "height": 0,
+                "textureWidth": 0,
+                "textureHeight": 0
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "66e425e32f62902418159abffd6dedc5",
+                "name": "“无敌”",
+                "description": "Man 给自己武器取的名字，你忍住了没笑出声",
+                "weaponType": "Axe",
+                "rarity": "Common",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "953e9dc7905164f489836487939a4e3a",
+                        "name": "狂砍",
+                        "description": "狂砍\n技能：狂砍\n能耗：0\n骰子数：2\n第 1 攻击骰：1 ~ 3\n第 2 攻击骰：1 ~ 2\n\n描述：\n毫无章法的胡乱挥砍，好处是敌人根本看不透动作",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 1,
+                                "max": 3,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 1,
+                                "max": 2,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "7f18467cda714594fbdad4803e861eb1",
+                        "name": "重砸",
+                        "description": "重砸\n技能：重砸\n能耗：4\n骰子数：1\n第 1 攻击骰：3 ~ 6\n\n词条：\n第 1 攻击骰词条：[ 使用时 ] 对 自己 造成 3 点伤害\n\n描述：\n双手高举斧头随后舍身攻击，对自己也有点伤害",
+                        "energyCost": 4,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 6,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 200,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/200 Enemyless/Enemyless.asset",
+            "saveId": "",
+            "icon": {
+                "key": "d453f9aecafdea443afc030b0cc2baed:21300000",
+                "path": "Assets/Data/Weapons/200 Enemyless/“无敌”.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "998e946055f570348bd95fb4c7137e5a",
+                "name": "淬血裂斧",
+                "description": "用烈火与热血淬成的巨斧，Man 的最爱",
+                "weaponType": "Axe",
+                "rarity": "Uncommon",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "d3167787aa8286541ae1c8b57d05d2c0",
+                        "name": "裂骨劈砍",
+                        "description": "裂骨劈砍\n技能：裂骨劈砍\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 使用时 ] 使 自己 获得 1 层 流血\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 流血\n\n描述：\n“我管这招叫裂骨劈砍！”\n“道理我都懂，那为什么你自己流血了？”",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "45e85b53a253a7e429339cf418bb5d80",
+                        "name": "血痕挥扫",
+                        "description": "血痕挥扫\n技能：血痕挥扫\n能耗：3\n骰子数：1\n第 1 攻击骰：3 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 使用时 ] 使 自己 获得 1 层 流血\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 流血\n\n描述：\n“我管这招叫血痕挥扫！”\n“道理我都懂，所以到底为什么是你自己流血？”",
+                        "energyCost": 3,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "229eb92eb16f4e44fa80eb2cf869c9a7",
+                        "name": "崩血斩",
+                        "description": "崩血斩\n技能：崩血斩\n能耗：6\n骰子数：1\n第 1 攻击骰：4 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 3 层 流血\n第 1 攻击骰词条：[ 命中时 ] 使 自己 于 下 1 个回合开始时 获得 1 层 临时虚弱\n\n描述：\n“崩血斩！！！！！”\n“——所以他真不知道自己喊出来的时候有多中二……？”",
+                        "energyCost": 6,
+                        "dice": [
+                            {
+                                "min": 4,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 201,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/201 Bloodcleaver/Bloodcleaver.asset",
+            "saveId": "",
+            "icon": {
+                "key": "625d45054e4d4fb48b8ddeb50141c72b:21300000",
+                "path": "Assets/Data/Weapons/201 Bloodcleaver/淬血裂斧.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "420447e608e441348810e5e73127e855",
+                "name": "电磁断斧",
+                "description": "像是把矿井里的断路器和伐木斧硬焊在了一起。挥下去时总会闻到一股焦糊味。\n“我怎么觉得这是男人味？”",
+                "weaponType": "Axe",
+                "rarity": "Uncommon",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "f89efb80615f3644591b73d9ad2f56f1",
+                        "name": "电流贯穿",
+                        "description": "电流贯穿\n技能：电流贯穿\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 电流\n\n描述：\n使用带电的斧刃劈砍敌人，让电流穿透目标。",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "a3af2ab643e5dfa4aa33df8cd5872a89",
+                        "name": "电场",
+                        "description": "电场\n技能：电场\n能耗：2\n骰子数：2\n第 1 攻击骰：3 ~ 4\n第 2 攻击骰：1 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 当前目标 造成 1 点伤害\n第 1 攻击骰词条：[ 命中时 ] 使 所有目标 获得 1 层 电流\n第 2 攻击骰词条：[ 命中时 ] 使 所有目标 获得 1 层 电流\n\n描述：\n通过制造电场来向全体敌人施加电流",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 1,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "3b0d96557384e9a43a9d00f320663e87",
+                        "name": "磁暴",
+                        "description": "磁暴\n技能：磁暴\n能耗：4\n骰子数：1\n第 1 攻击骰：3 ~ 6\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 自己 获得 2 层 电流\n第 1 攻击骰词条：[ 命中时 ] 对 所有目标 引发 1 重 电流 爆发，造成 1 x 层数 的额外伤害，并清空 电流\n\n描述：\n引发大规模磁暴来造成相当可观的电磁伤害",
+                        "energyCost": 4,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 6,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 202,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/202 ElectromagneticCleaver/电磁断斧.asset",
+            "saveId": "",
+            "icon": {
+                "key": "8b9a25b1d51e6a5408eafc9a8ed6a6b3:21300000",
+                "path": "Assets/Data/Weapons/202 ElectromagneticCleaver/Electromagnetic_Cleaver_4x.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "9b6531b8c9e74ad0b6ed32f5e448ede3",
+                "name": "热砧板",
+                "description": "一柄用黑铁和熔渣反复锻打出的宽刃战斧，斧刃中段像被烧穿过，留下喉管般的赤红裂口。每次挥下时，裂口都会短暂鼓胀发亮，像有什么东西正在里面喘息。\n\n“火不一定要烧起来。有时候，它只是在等你砍开一个出口。”",
+                "weaponType": "Axe",
+                "rarity": "Rare",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 2,
+                "fallbackMaxPower": 4,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "f1abaf7ee27f45c8873584ef80498aa9",
+                        "name": "炙劈",
+                        "description": "炙劈\n技能：炙劈\n能耗：0\n骰子数：1\n第 1 攻击骰：3 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 燃烧\n\n描述：\n用宽刃将余火劈入目标。",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "739d60666dca472b90660851f7030d61",
+                        "name": "断炉",
+                        "description": "断炉\n技能：断炉\n能耗：3\n骰子数：2\n第 1 攻击骰：3 ~ 4\n第 2 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧\n第 2 攻击骰词条：[ 命中时 ] 若 目标拥有至少 2 层 燃烧 ，则 使 其它目标 获得 1 层 燃烧\n\n描述：\n劈开已被点燃的炉口，让火星溅向其它目标。",
+                        "energyCost": 3,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "e9937b688e3742a0918c6f2aa44b40a8",
+                        "name": "熔喉斩",
+                        "description": "熔喉斩\n技能：熔喉斩\n能耗：4\n骰子数：1\n第 1 攻击骰：3 ~ 7\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 燃烧\n第 1 攻击骰词条：若 目标拥有至少 4 层 燃烧 ，则 威力范围最小值 +3\n\n描述：\n将已有的燃烧压成一次高威力重斩。",
+                        "energyCost": 4,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 7,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 3,
+                        "id": "2aadb406fbeb4144bfa440b7a84a8e85",
+                        "name": "收汁",
+                        "description": "收汁\n技能：收汁\n能耗：3\n骰子数：2\n第 1 攻击骰：3 ~ 4\n第 2 攻击骰：3 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧\n第 1 攻击骰词条：[ 命中时 ] 使 自己 获得 1 层 燃烧\n第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 燃烧\n第 2 攻击骰词条：[ 命中时 ] 使 自己 获得 1 层 燃烧\n\n描述：\n把热渣收回斧刃，同时烧伤目标与自身。",
+                        "energyCost": 3,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 203,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/203 热铁板/203 热铁板.asset",
+            "saveId": "",
+            "icon": {
+                "key": "4e0f9f9c503b732479ffe3df69908cb6:21300000",
+                "path": "Assets/Data/Weapons/203 热铁板/热铁板_x4.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "6f94a2e6f7a047c8b3f0a3c3e7040204",
+                "name": "猎光者",
+                "description": "斧刃宽大得像一片被打磨过的日冕，边缘并不锋利，却会在挥落时把光压成一道笔直的白线。它不是为了照亮黑暗而造，而是为了追上那些试图躲进光背面的东西。\n\n“光不会宽恕逃跑者。它只会把影子钉在原地。”",
+                "weaponType": "Axe",
+                "rarity": "Rare",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 2,
+                "fallbackMaxPower": 5,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "b623d6eaa94647b3917d4b7db2c80401",
+                        "name": "寻光劈",
+                        "description": "寻光劈\n技能：寻光劈\n能耗：0\n骰子数：1\n第 1 攻击骰：3 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 折光印\n\n描述：\n斧刃压下一道冷白直线，把目标钉进折光的轨迹里。",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "a54ef078d9314bc99e920f0da0bd0402",
+                        "name": "定影斩",
+                        "description": "定影斩\n技能：定影斩\n能耗：2\n骰子数：1\n第 1 攻击骰：3 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 消耗 当前目标（敌人） 1 层 折光印，来使 对目标额外造成 2 点伤害\n第 1 攻击骰词条：[ 使用时 ] 若 目标拥有至少 2 种负面状态 ，则 使 当前目标 获得 1 层 折光印\n第 1 攻击骰词条：[ 拼点时 ] 若 目标拥有 折光印 ，则 威力 +1\n\n描述：\n光线追着污浊与创痕收束，再沿折光印切出更深的白线。",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "d4704bce95374f498a0d4ce3d0ca0403",
+                        "name": "辉盾横架",
+                        "description": "辉盾横架\n技能：辉盾横架\n能耗：2\n骰子数：1\n第 1 防御骰：3 ~ 5\n\n词条：\n第 1 防御骰词条：[ 拼点胜利时 ] 消耗 当前目标（敌人） 1 层 折光印，来使 全体友方获得 1 层 护盾\n第 1 防御骰词条：[ 拼点胜利时 ] 使自己获得 2 层护盾\n\n描述：\n巨斧横起时，棱镜核心把来势分解成护在同伴身前的光面。",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 5,
+                                "category": "Defense"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 3,
+                        "id": "e21e3a77e4c24f398b651f1a2a7b0404",
+                        "name": "猎光断首",
+                        "description": "猎光断首\n技能：猎光断首\n能耗：5\n骰子数：1\n第 1 攻击骰：4 ~ 7\n目标偏好：优先攻击具有 1 层 折光印 的目标\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 消耗 当前目标（敌人） 2 层 折光印，来使 对目标额外造成 2 点伤害，并使对目标额外造成 2 点伤害\n第 1 攻击骰词条：若 目标拥有至少 2 层 折光印 ，则 威力范围最小值 +2\n\n描述：\n棱镜核心完全张开，斧刃把折光印压成一道直落的处刑白线。",
+                        "energyCost": 5,
+                        "dice": [
+                            {
+                                "min": 4,
+                                "max": 7,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 204,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/204 猎光者/204 猎光者.asset",
+            "saveId": "",
+            "icon": {
+                "key": "5e2a14b7cc943bc47bc36ea2ac51c703:21300000",
+                "path": "Assets/Data/Weapons/204 猎光者/猎光者_x4.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "6c1aed0bff9b3a74ba193a8ff2895f74",
+                "name": "老旧法杖",
+                "description": "Jenny 的母亲送给 Jenny 的，她一直使用到现在。",
+                "weaponType": "Wand",
+                "rarity": "Common",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "b60e3e1c70b6afe4a9016d18febc5b6a",
+                        "name": "随意施法",
+                        "description": "随意施法\n技能：随意施法\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 自己 获得 1 层 蓄能\n\n描述：\n简单而实用的法术，可以为随后的技能积攒力气",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "9afa03908bac668459f24e4ea4b53341",
+                        "name": "随意防御",
+                        "description": "随意防御\n技能：随意防御\n能耗：1\n骰子数：1\n第 1 防御骰：2 ~ 3\n\n词条：\n第 1 防御骰词条：[ 使用时 ] 使 自己 获得 1 层 蓄能\n\n描述：\n简单而实用的法术，可以为自身施加防御法术来抵挡攻击",
+                        "energyCost": 1,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 3,
+                                "category": "Defense"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "6f323dbfc6080254aa17d3baedb126ba",
+                        "name": "星辰冲击",
+                        "description": "星辰冲击\n技能：星辰冲击\n能耗：1\n施放条件：自身至少拥有 2 层 蓄能，施放后消耗\n骰子数：2\n第 1 攻击骰：2 ~ 5\n第 2 攻击骰：1 ~ 3\n\n描述：\nJenny 的拿手技能，她年复一年的训练就是为了现在。",
+                        "energyCost": 1,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 5,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 1,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 300,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/300 OldWand/OldWand.asset",
+            "saveId": "",
+            "icon": {
+                "key": "66562994ffac30f4dbf74955c523b086:21300000",
+                "path": "Assets/Data/Weapons/300 OldWand/OldWand.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "f60b6206ee3430d4e94f6a8395de2b62",
+                "name": "寒芒杖",
+                "description": "散发着冰冷气息的法杖，可以施展基于水与冰元素的魔法。",
+                "weaponType": "Wand",
+                "rarity": "Uncommon",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "b486a80301b2d2f44bb55e0c54f220a2",
+                        "name": "充能",
+                        "description": "充能\n技能：充能\n能耗：0\n骰子数：1\n第 1 防御骰：1 ~ 3\n\n词条：\n第 1 防御骰词条：[ 使用时 ] 使 自己 获得 2 层 蓄能\n\n描述：\n为后续的招式积攒力气",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 1,
+                                "max": 3,
+                                "category": "Defense"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "a8c9f8aebdc038244a74068d657abd32",
+                        "name": "雪花",
+                        "description": "雪花\n技能：雪花\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 寒冷\n\n描述：\n施放简单的冰属性魔法来干扰敌人",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "4e64c30a13113014282a542b2379ee7e",
+                        "name": "寒冷射线",
+                        "description": "寒冷射线\n技能：寒冷射线\n能耗：2\n骰子数：2\n第 1 攻击骰：2 ~ 4\n第 2 攻击骰：1 ~ 2\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 寒冷\n第 2 攻击骰词条：[ 命中时 ] 使 自己 获得 1 层 蓄能\n\n描述：\n基础的冰属性魔法，可以对敌人施加寒冷",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 1,
+                                "max": 2,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 3,
+                        "id": "135ced301a4091e4daae42f5dcd7a8ee",
+                        "name": "星芒 · 寒",
+                        "description": "星芒 · 寒\n技能：星芒 · 寒\n能耗：1\n施放条件：自身至少拥有 2 层 蓄能，施放后消耗\n骰子数：2\n第 1 攻击骰：3 ~ 4\n第 2 攻击骰：1 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 使用该技能时 ] 若 目标拥有 寒冷 ，则 威力 +2\n第 2 攻击骰词条：[ 使用该技能时 ] 若 目标拥有 寒冷 ，则 威力 +2\n\n描述：\nJenny 将自身的拿手技能与法杖能力结合起来的强力技能，施展需要极致的注意力。",
+                        "energyCost": 1,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 1,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 301,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/301 Frostgleam/FrostGleam_Data.asset",
+            "saveId": "",
+            "icon": {
+                "key": "56753dea3d618e64d87ed395d3c7fb1c:21300000",
+                "path": "Assets/Data/Weapons/301 Frostgleam/FrostGleam.png",
+                "x": 0,
+                "y": 0,
+                "width": 1254,
+                "height": 1254,
+                "textureWidth": 1254,
+                "textureHeight": 1254
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "6f76bd3bd3d897c4fb60cb583c146ccd",
+                "name": "蚀夜",
+                "description": "由不透光的黑枝与碎星残片缠成的法杖。握住它时，会听见遥远夜幕里的低语。它不直接撕裂敌人，而是先让命运偏斜，再在黑暗最浓处落下审判。",
+                "weaponType": "Wand",
+                "rarity": "Rare",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "09d5f472a63e7bb4d8476d7d03a177c7",
+                        "name": "夜幕",
+                        "description": "夜幕\n技能：夜幕\n能耗：0\n骰子数：1\n第 1 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 黑暗\n第 1 攻击骰词条：[ 使用时 ] 使 自己 获得 1 层 蓄能\n\n描述：\n以不透光的暗辉压低战场光线",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "a68112737d988654b8d29d8d077fe2f7",
+                        "name": "暗流",
+                        "description": "暗流\n技能：暗流\n能耗：1\n骰子数：1\n第 1 攻击骰：2 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 使用时 ] 消耗敌人的黑暗层数，每消耗当前目标（敌人） 1 层黑暗，使骰子威力 +1，最多 +2\n\n描述：\n牵动敌人体内残留的黑暗",
+                        "energyCost": 1,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "0b7c0a5bc01c959429cb82ccc4ddcb32",
+                        "name": "噬暗",
+                        "description": "噬暗\n技能：噬暗\n能耗：1\n施放条件：自身至少拥有 2 层 蓄能，施放后消耗\n骰子数：2\n第 1 攻击骰：3 ~ 6\n第 2 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 使用时 ] 消耗 当前目标（敌人） 3 层 黑暗，来使 当前目标于 下回合 获得 1 层 厄运\n第 2 攻击骰词条：[ 未击中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 临时虚弱\n\n描述：\n将积蓄的夜色压成判决",
+                        "energyCost": 1,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 6,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 302,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/302 Eclipse_Night_Staff/302 Eclipse_Night_Staff.asset",
+            "saveId": "",
+            "icon": {
+                "key": "68aedb3e76e26e245926894cbcf70b10:21300000",
+                "path": "Assets/Data/Weapons/302 Eclipse_Night_Staff/Eclipse_Night_Staff.png",
+                "x": 0,
+                "y": 0,
+                "width": 941,
+                "height": 1672,
+                "textureWidth": 941,
+                "textureHeight": 1672
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "1a4505efb8324479a1db7bc0afc30300",
+                "name": "荼蘼",
+                "description": "杖身由枯白藤蔓缠绕而成，顶端盛着一朵迟迟不肯凋谢的荼蘼。花瓣边缘泛着淡绿，香气很轻，却像能停在喉咙深处很久。\n“花开到尽头时，春天已经没有退路。”",
+                "weaponType": "Wand",
+                "rarity": "Uncommon",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "7a1d3ce0f0b24d188e4730b3b8c30301",
+                        "name": "残香",
+                        "description": "残香\n技能：残香\n能耗：0\n骰子数：2\n第 1 攻击骰：2 ~ 3\n第 2 攻击骰：1 ~ 2\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 中毒\n第 2 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 中毒\n\n描述：\n轻淡花香滞在伤口里，毒意随后才慢慢醒来。",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 3,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 1,
+                                "max": 2,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "7a1d3ce0f0b24d188e4730b3b8c30302",
+                        "name": "花瘴",
+                        "description": "花瘴\n技能：花瘴\n能耗：2\n骰子数：1\n第 1 攻击骰：3 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 使用时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 中毒\n第 1 攻击骰词条：[ 使用该技能时 ] 若 目标拥有 中毒 ，则 威力 +1\n\n描述：\n半败花瓣散作淡绿雾气，专向已有毒意的血肉深处沉下去。",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "7a1d3ce0f0b24d188e4730b3b8c30303",
+                        "name": "蔓延",
+                        "description": "蔓延\n技能：蔓延\n能耗：3\n骰子数：2\n第 1 攻击骰：2 ~ 3\n第 2 攻击骰：1 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 若 目标拥有至少 2 层 中毒 ，则 使 其它目标 于 下 1 个回合开始时 获得 1 层 中毒\n第 2 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 中毒\n\n描述：\n毒雾贴着地面铺开，先缠住眼前的猎物，再向旁侧枝蔓般伸展。",
+                        "energyCost": 3,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 3,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 1,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 3,
+                        "id": "7a1d3ce0f0b24d188e4730b3b8c30304",
+                        "name": "荼蘼尽",
+                        "description": "荼蘼尽\n技能：荼蘼尽\n能耗：4\n骰子数：1\n第 1 攻击骰：4 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 若 目标拥有至少 2 层 中毒 ，则 对目标额外造成 3 点伤害\n第 1 攻击骰词条：[ 拼点时 ] 若 目标拥有 中毒 ，则 威力 +1\n\n描述：\n最后一瓣花落下时，累积的毒意一并开到尽头。",
+                        "energyCost": 4,
+                        "dice": [
+                            {
+                                "min": 4,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 303,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/303 荼蘼/303 荼蘼.asset",
+            "saveId": "",
+            "icon": {
+                "key": "24914d1a8f8a574499327f63b5d059e8:21300000",
+                "path": "Assets/Data/Weapons/303 荼蘼/荼蘼_x4.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "2d6f4c2bb5794bb08e597a77fdc30400",
+                "name": "避雷针",
+                "description": "一柄细长得近乎危险的金属法杖，杖尖竖着一枚弯曲的导电针。它总是在阴天前微微发亮，像提前听见了云层里尚未落下的声音。\n\n“雷电不会选择善恶，它只选择最近的归处。”",
+                "weaponType": "Wand",
+                "rarity": "Uncommon",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 1,
+                "fallbackMaxPower": 3,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "8c21d56cbf39452aa3ef748a6a130401",
+                        "name": "引电",
+                        "description": "引电\n技能：引电\n能耗：0\n骰子数：1\n第 1 攻击骰：3 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 电流\n第 1 攻击骰词条：[ 命中时 ] 使 自己 获得 1 层 电流\n\n描述：\n杖尖先替雷声找到归处，也让施术者身上积起危险的回响。",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "8c21d56cbf39452aa3ef748a6a130402",
+                        "name": "回针",
+                        "description": "回针\n技能：回针\n能耗：1\n骰子数：1\n第 1 防御骰：2 ~ 4\n\n词条：\n第 1 防御骰词条：[ 拼点胜利时 ] 使 当前目标 获得 1 层 电流\n第 1 防御骰词条：[ 拼点胜利时 ] 若 自身拥有 电流 ，则 使 自己 于 下 1 个回合开始时 获得 1 层 临时强壮\n\n描述：\n导电针横在前方，把袭来的力道和雷弧一并折回。",
+                        "energyCost": 1,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Defense"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "8c21d56cbf39452aa3ef748a6a130403",
+                        "name": "导流",
+                        "description": "导流\n技能：导流\n能耗：2\n骰子数：2\n第 1 攻击骰：2 ~ 3\n第 2 攻击骰：2 ~ 3\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 1 层 电流\n第 1 攻击骰词条：[ 拼点时 ] 若 目标拥有 电流 ，则 威力 +1\n第 2 攻击骰词条：[ 命中时 ] 对 当前目标 引发 1 重 电流 爆发，造成 1 x 层数 的额外伤害，并清空 电流\n\n描述：\n蓝白电弧沿杖身成束窜出，把已带电的目标推向爆发边缘。",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 2,
+                                "max": 3,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 2,
+                                "max": 3,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 3,
+                        "id": "8c21d56cbf39452aa3ef748a6a130404",
+                        "name": "落雷归针",
+                        "description": "落雷归针\n技能：落雷归针\n能耗：4\n骰子数：1\n第 1 攻击骰：3 ~ 5\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 当前目标 引发 1 重 电流 爆发，造成 1 x 层数 的额外伤害，并清空 电流\n第 1 攻击骰词条：[ 使用时 ] 使 自己 的 电流 减少 2 层\n第 1 攻击骰词条：[ 使用该技能时 ] 若 目标拥有至少 3 层 电流 ，则 威力 +1\n第 1 攻击骰词条：[ 使用该技能时 ] 若 自身 电流 层数 至少为 2 ，则 威力 +1\n\n描述：\n云层里的雷声终于落下，又被细针强行牵回同一个焦点。",
+                        "energyCost": 4,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 5,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 304,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/304 避雷针/304 避雷针.asset",
+            "saveId": "",
+            "icon": {
+                "key": "f0d302d307214ba44bac0a07747d86fd:21300000",
+                "path": "Assets/Data/Weapons/304 避雷针/避雷针_x4.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        },
+        {
+            "detail": {
+                "id": "eea361039f44d5040930f029a1cdd86b",
+                "name": "电鸣杖",
+                "description": "对电属性极度亲和的法杖，可以轻易操纵电的力量。只是施法时 Jenny 的头发老是全部黏在上面然后全部乱糟糟的。\n“ 我真的很需要一把梳子…… ”",
+                "weaponType": "Wand",
+                "rarity": "Rare",
+                "speedButtonCount": 1,
+                "fallbackMinPower": 2,
+                "fallbackMaxPower": 5,
+                "skills": [
+                    {
+                        "index": 0,
+                        "id": "6f4a614cd078bd248bb96e081fd0eed8",
+                        "name": "磁脉冲",
+                        "description": "磁脉冲\n技能：磁脉冲\n能耗：0\n骰子数：2\n第 1 攻击骰：3 ~ 4\n第 2 攻击骰：2 ~ 2\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 自己 获得 2 层 电流\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流\n第 2 攻击骰词条：[ 命中时 ] 使 自己 获得 2 层 电流\n第 2 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流\n\n描述：\n以法杖牵出细密电弧，击中时让施法者与目标一同带电。",
+                        "energyCost": 0,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 4,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 2,
+                                "max": 2,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 1,
+                        "id": "2bedd81849c846d4e9ce02154935995e",
+                        "name": "错相雷击",
+                        "description": "错相雷击\n技能：错相雷击\n能耗：2\n骰子数：2\n第 1 攻击骰：3 ~ 5\n第 2 攻击骰：1 ~ 1\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 获得 2 层 电流\n第 2 攻击骰词条：[ 命中时 ] 对 当前目标 引发 1 重 电流 爆发，造成 1 x 层数 的额外伤害，并清空 电流\n第 2 攻击骰词条：[ 使用时 ] 使 自己 的 电流 减少 3 层\n第 2 攻击骰词条：[ 使用该技能时 ] 若 自身 电流 层数 至少为 3 ，则 威力 +3\n\n描述：\n先把电流钉进目标，再错开相位，将自身积蓄的电流压进下一击。",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 5,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 1,
+                                "max": 1,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 2,
+                        "id": "479e6f1a7e3267742817008bcc642234",
+                        "name": "电鸣屏障",
+                        "description": "电鸣屏障\n技能：电鸣屏障\n能耗：2\n骰子数：1\n第 1 防御骰：3 ~ 5\n\n词条：\n第 1 防御骰词条：[ 使用时 ] 使 自己 获得 2 层 电流\n第 1 防御骰词条：[ 拼点胜利时 ] 使 当前目标 获得 2 层 电流\n\n描述：\n让电鸣在身前织成屏障，接招时把电流反灌给目标。",
+                        "energyCost": 2,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 5,
+                                "category": "Defense"
+                            }
+                        ],
+                        "displayedDice": []
+                    },
+                    {
+                        "index": 3,
+                        "id": "62d1f1aee791ad647b0fa04a2998253a",
+                        "name": "鸣",
+                        "description": "鸣\n技能：鸣\n能耗：4\n骰子数：2\n第 1 攻击骰：3 ~ 5\n第 2 攻击骰：2 ~ 4\n\n词条：\n第 1 攻击骰词条：[ 命中时 ] 对 当前目标 引发 1 重 电流 爆发，造成 1 x 层数 的额外伤害\n第 1 攻击骰词条：[ 命中时 ] 使 自己 的 电流 减少 3 层\n第 2 攻击骰词条：[ 命中时 ] 对 当前目标 引发 1 重 电流 爆发，造成 1 x 层数 的额外伤害，并清空 电流\n第 2 攻击骰词条：[ 拼点时 ] 若 自身 电流 层数 至少为 2 ，则 威力 +1\n\n描述：\n令电流在法杖与目标之间共鸣，爆出连续的雷声。",
+                        "energyCost": 4,
+                        "dice": [
+                            {
+                                "min": 3,
+                                "max": 5,
+                                "category": "Attack"
+                            },
+                            {
+                                "min": 2,
+                                "max": 4,
+                                "category": "Attack"
+                            }
+                        ],
+                        "displayedDice": []
+                    }
+                ]
+            },
+            "assetId": 305,
+            "fusionLimit": 1,
+            "hasDefaultSkill": true,
+            "path": "Assets/Data/Weapons/305 电鸣杖/305 电鸣杖.asset",
+            "saveId": "",
+            "icon": {
+                "key": "f0d302d307214ba44bac0a07747d86fd:21300000",
+                "path": "Assets/Data/Weapons/304 避雷针/避雷针_x4.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": []
+        }
+    ],
+    "blueprints": [
+        {
+            "detail": {
+                "id": "f44c1002b74987e4c8b179a9433ab67a",
+                "name": "钢铁之卷",
+                "description": "记载了如何打造【铁剑】的图纸",
+                "rarity": "Uncommon",
+                "weapon": "cdf2798ce1fc9ed42954b0864d1ce01f",
+                "materials": [
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 2
+                    }
+                ]
+            },
+            "assetId": 1,
+            "path": "Assets/Data/Scroll/001 IronSword/IronSword.asset",
+            "weaponName": "铁剑",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "64131e360fc3c5841bb2b906e0933f43:21300000",
+                "path": "Assets/Data/Scroll/001 IronSword/IronSword_BludprintIcon.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": [
+                {
+                    "goodsId": "201",
+                    "minPrice": 10,
+                    "maxPrice": 12,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "16f9b7247ca356d4f9d1be67dd28d93d",
+                "name": "熔铁之卷",
+                "description": "记载了如何打造【熔火铁剑】的图纸",
+                "rarity": "Uncommon",
+                "weapon": "d5da31539ab1a374e9dc1f18f2f188a7",
+                "materials": [
+                    {
+                        "id": "1a247d2fcfd14c141bd79e8a82154b1f",
+                        "name": "焰翅",
+                        "amount": 2
+                    },
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 1
+                    }
+                ]
+            },
+            "assetId": 2,
+            "path": "Assets/Data/Scroll/002 FireIronSword/熔铁之卷.asset",
+            "weaponName": "熔火铁剑",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "dc5a4d4d26094d946a3242bbed049e65:21300000",
+                "path": "Assets/Data/Scroll/002 FireIronSword/熔铁之卷.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": [
+                {
+                    "goodsId": "202",
+                    "minPrice": 12,
+                    "maxPrice": 15,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "d8d55cd0cbf1b2647ac55bf326a0c9c5",
+                "name": "霜铁之卷",
+                "description": "记载着如何打造【霜铁剑】的图纸",
+                "rarity": "Uncommon",
+                "weapon": "4b3e2d650c5c8744181da8df8b3099f3",
+                "materials": [
+                    {
+                        "id": "f7d97cfbea961c84ebb552d194bd09f1",
+                        "name": "水球",
+                        "amount": 2
+                    },
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 1
+                    }
+                ]
+            },
+            "assetId": 3,
+            "path": "Assets/Data/Scroll/003 FrostIronSword/霜铁之卷.asset",
+            "weaponName": "霜铁剑",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "db15669780b1ee049a50847993ebff79:21300000",
+                "path": "Assets/Data/Scroll/003 FrostIronSword/霜铁之卷.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": [
+                {
+                    "goodsId": "203",
+                    "minPrice": 12,
+                    "maxPrice": 15,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "f3b07049a74cf51409a7e4127e06d57f",
+                "name": "蚀毒之卷",
+                "description": "记载着如何打造 【蚀毒剑】 的图纸",
+                "rarity": "Uncommon",
+                "weapon": "1f36f0dbb0b248e42afa902de71201fa",
+                "materials": [
+                    {
+                        "id": "ea9793b0c90ae0c4f9dbaf13a832f375",
+                        "name": "史莱姆粘液",
+                        "amount": 2
+                    },
+                    {
+                        "id": "868997ae4239f844f9ea876d8ad4057e",
+                        "name": "旋速液",
+                        "amount": 1
+                    },
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 1
+                    }
+                ]
+            },
+            "assetId": 4,
+            "path": "Assets/Data/Scroll/004 蚀毒剑/004 蚀毒剑.asset",
+            "weaponName": "蚀毒剑",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "36af8cf81ca9c6c4fa076aa825b47d95:21300000",
+                "path": "Assets/Data/Scroll/004 蚀毒剑/蚀毒剑_卷轴.png",
+                "x": 0,
+                "y": 0,
+                "width": 1122,
+                "height": 1402,
+                "textureWidth": 1122,
+                "textureHeight": 1402
+            },
+            "shop": [
+                {
+                    "goodsId": "208",
+                    "minPrice": 15,
+                    "maxPrice": 20,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "17799684082ecc54fa14f94058c3412d",
+                "name": "渴血之卷",
+                "description": "记载着如何打造 【渴血剑】 的卷轴",
+                "rarity": "Rare",
+                "weapon": "48efe15157bc89a499885751e6498ed7",
+                "materials": [
+                    {
+                        "id": "d1eb5424360bc9f40a2b6a89faa718cb",
+                        "name": "秽蚀尖牙",
+                        "amount": 2
+                    },
+                    {
+                        "id": "2a5a440bab2e42f499a7fabcd4b29ead",
+                        "name": "凝血孢",
+                        "amount": 2
+                    },
+                    {
+                        "id": "86cf119c5ff77594f96939517d1506a7",
+                        "name": "血肉轴承",
+                        "amount": 1
+                    },
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 1
+                    }
+                ]
+            },
+            "assetId": 5,
+            "path": "Assets/Data/Scroll/005 渴血剑/005 渴血剑.asset",
+            "weaponName": "渴血剑",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "1115119562d5a3a49ab3ac490208edef:21300000",
+                "path": "Assets/Data/Scroll/005 渴血剑/渴血剑_卷轴.png",
+                "x": 0,
+                "y": 0,
+                "width": 1024,
+                "height": 1536,
+                "textureWidth": 1024,
+                "textureHeight": 1536
+            },
+            "shop": [
+                {
+                    "goodsId": "210",
+                    "minPrice": 30,
+                    "maxPrice": 40,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "cdb2bfefecf4f254591220820465be9d",
+                "name": "曦誓之卷",
+                "description": "记载着如何打造 【曦誓剑】 的卷轴",
+                "rarity": "Rare",
+                "weapon": "60f938b00f1b42e19b517f1e12b86d06",
+                "materials": []
+            },
+            "assetId": 6,
+            "path": "Assets/Data/Scroll/006 曦誓剑/006 曦誓之卷.asset",
+            "weaponName": "曦誓剑",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "213e276dfc6c13d46ad02df71e01b5b0:21300000",
+                "path": "Assets/Data/Scroll/006 曦誓剑/曦誓剑_卷轴.png",
+                "x": 0,
+                "y": 0,
+                "width": 1024,
+                "height": 1536,
+                "textureWidth": 1024,
+                "textureHeight": 1536
+            },
+            "shop": [
+                {
+                    "goodsId": "211",
+                    "minPrice": 30,
+                    "maxPrice": 40,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "31e4ee4b4db4d4049875c4121f1b0148",
+                "name": "烬冠之卷",
+                "description": "记载着如何打造 【烬冠剑】 的卷轴",
+                "rarity": "Rare",
+                "weapon": "a3f4c8d12b9e4fa3a41b7c6d2e8f9012",
+                "materials": [
+                    {
+                        "id": "d472eb76e6a877043b3a98578a2db396",
+                        "name": "炽焰灯芯",
+                        "amount": 1
+                    },
+                    {
+                        "id": "1a247d2fcfd14c141bd79e8a82154b1f",
+                        "name": "焰翅",
+                        "amount": 3
+                    },
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 1
+                    }
+                ]
+            },
+            "assetId": 7,
+            "path": "Assets/Data/Scroll/007 烬冠剑/007 烬冠之卷.asset",
+            "weaponName": "烬冠剑",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "368b8b511f9f2c546a8303b4e5bba893:21300000",
+                "path": "Assets/Data/Scroll/007 烬冠剑/烬冠剑_卷轴.png",
+                "x": 0,
+                "y": 0,
+                "width": 1024,
+                "height": 1536,
+                "textureWidth": 1024,
+                "textureHeight": 1536
+            },
+            "shop": [
+                {
+                    "goodsId": "212",
+                    "minPrice": 30,
+                    "maxPrice": 40,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "1953a1a32e86d2f4e9cc9d5d41456b0e",
+                "name": "晦誓之卷",
+                "description": "记载着如何打造 【晦誓剑】 的卷轴",
+                "rarity": "Rare",
+                "weapon": "6260b16c0b1f408f94edbd1e3285a078",
+                "materials": [
+                    {
+                        "id": "264958ff28a8e5242b8197ce9765edbe",
+                        "name": "影爪碎片",
+                        "amount": 1
+                    },
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 2
+                    },
+                    {
+                        "id": "a86c6504bc8104048a4271c991a686c2",
+                        "name": "忠犬骨坠",
+                        "amount": 1
+                    }
+                ]
+            },
+            "assetId": 8,
+            "path": "Assets/Data/Scroll/008 晦誓剑/008 晦誓剑.asset",
+            "weaponName": "晦誓剑",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "d84cbc7ab3629dd42928e95e576c34df:21300000",
+                "path": "Assets/Data/Scroll/008 晦誓剑/晦誓之卷_x4.png",
+                "x": 0,
+                "y": 0,
+                "width": 1365,
+                "height": 2048,
+                "textureWidth": 1365,
+                "textureHeight": 2048
+            },
+            "shop": [
+                {
+                    "goodsId": "213",
+                    "minPrice": 30,
+                    "maxPrice": 40,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "92acecee0fb6482439cf2377650ec517",
+                "name": "掠风之卷",
+                "description": "记载着如何打造 【掠风短匕】 的卷轴",
+                "rarity": "Uncommon",
+                "weapon": "642840a5e0c7c6c4d8a869204625c9d1",
+                "materials": [
+                    {
+                        "id": "868997ae4239f844f9ea876d8ad4057e",
+                        "name": "旋速液",
+                        "amount": 2
+                    },
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 1
+                    }
+                ]
+            },
+            "assetId": 101,
+            "path": "Assets/Data/Scroll/101 GaleDagger/GaleDagger.asset",
+            "weaponName": "掠风短匕",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "43c23428690ed7844a2090b0e6b96304:21300000",
+                "path": "Assets/Data/Scroll/101 GaleDagger/掠风之卷.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": [
+                {
+                    "goodsId": "205",
+                    "minPrice": 15,
+                    "maxPrice": 20,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "05af046e43893f14787463bb390225a7",
+                "name": "疾电之卷",
+                "description": "记载着如何打造 【疾电匕首】 的卷轴",
+                "rarity": "Uncommon",
+                "weapon": "c1ba2d469cc891548a69c457efa3cbd0",
+                "materials": [
+                    {
+                        "id": "3e23e2fc8a9e85945adee34acbb745f4",
+                        "name": "磁电晶",
+                        "amount": 2
+                    },
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 1
+                    },
+                    {
+                        "id": "868997ae4239f844f9ea876d8ad4057e",
+                        "name": "旋速液",
+                        "amount": 1
+                    }
+                ]
+            },
+            "assetId": 102,
+            "path": "Assets/Data/Scroll/102 疾电匕首/102 疾电之卷.asset",
+            "weaponName": "疾电匕首",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "de1e802e72def5143b2d8f721953fbc8:21300000",
+                "path": "Assets/Data/Scroll/102 疾电匕首/疾电匕首_卷轴.png",
+                "x": 0,
+                "y": 0,
+                "width": 1024,
+                "height": 1536,
+                "textureWidth": 1024,
+                "textureHeight": 1536
+            },
+            "shop": [
+                {
+                    "goodsId": "214",
+                    "minPrice": 15,
+                    "maxPrice": 20,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "62f95319daf752743b234cb2af657059",
+                "name": "烬吻之卷",
+                "description": "记载着如何打造 【烬吻短匕】 的卷轴",
+                "rarity": "Uncommon",
+                "weapon": "1d01aa9ffd9c3984fa238b6e18c20cd3",
+                "materials": [
+                    {
+                        "id": "1a247d2fcfd14c141bd79e8a82154b1f",
+                        "name": "焰翅",
+                        "amount": 2
+                    },
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 1
+                    },
+                    {
+                        "id": "868997ae4239f844f9ea876d8ad4057e",
+                        "name": "旋速液",
+                        "amount": 1
+                    }
+                ]
+            },
+            "assetId": 103,
+            "path": "Assets/Data/Scroll/103 烬吻短匕/103 烬吻之卷.asset",
+            "weaponName": "烬吻短匕",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "c58d33a1fbfa08041ad276b0b6915eca:21300000",
+                "path": "Assets/Data/Scroll/103 烬吻短匕/烬吻之卷.png",
+                "x": 0,
+                "y": 0,
+                "width": 1024,
+                "height": 1536,
+                "textureWidth": 1024,
+                "textureHeight": 1536
+            },
+            "shop": [
+                {
+                    "goodsId": "215",
+                    "minPrice": 15,
+                    "maxPrice": 20,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "80be934beb18b5342b014f6991367373",
+                "name": "刹影之卷",
+                "description": "记载着如何打造 【刹影短匕】 的卷轴",
+                "rarity": "Rare",
+                "weapon": "cb69c8cb0b5a1ce4383dea0432a53f40",
+                "materials": [
+                    {
+                        "id": "a86c6504bc8104048a4271c991a686c2",
+                        "name": "忠犬骨坠",
+                        "amount": 1
+                    },
+                    {
+                        "id": "868997ae4239f844f9ea876d8ad4057e",
+                        "name": "旋速液",
+                        "amount": 3
+                    },
+                    {
+                        "id": "4298ab155e36dbe4ea7f85afe81d52fd",
+                        "name": "逆风羽",
+                        "amount": 1
+                    }
+                ]
+            },
+            "assetId": 104,
+            "path": "Assets/Data/Scroll/104 刹影短匕/104 刹影之卷.asset",
+            "weaponName": "刹影短匕",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "c158661db533fe64bbc17d1fd896b961:21300000",
+                "path": "Assets/Data/Scroll/104 刹影短匕/刹影之卷.png",
+                "x": 0,
+                "y": 0,
+                "width": 1024,
+                "height": 1536,
+                "textureWidth": 1024,
+                "textureHeight": 1536
+            },
+            "shop": [
+                {
+                    "goodsId": "216",
+                    "minPrice": 30,
+                    "maxPrice": 40,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "bdeb33f1340563042ada84d8f5030c62",
+                "name": "血斧之卷",
+                "description": "记载着如何打造 【淬血裂斧】 的卷轴",
+                "rarity": "Uncommon",
+                "weapon": "998e946055f570348bd95fb4c7137e5a",
+                "materials": [
+                    {
+                        "id": "2a5a440bab2e42f499a7fabcd4b29ead",
+                        "name": "凝血孢",
+                        "amount": 2
+                    },
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 2
+                    },
+                    {
+                        "id": "ea9793b0c90ae0c4f9dbaf13a832f375",
+                        "name": "史莱姆粘液",
+                        "amount": 1
+                    }
+                ]
+            },
+            "assetId": 201,
+            "path": "Assets/Data/Scroll/201 Bloodcleaver/Bloodcleaver.asset",
+            "weaponName": "淬血裂斧",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "0aa97b04df5cc8842a600b631f650034:21300000",
+                "path": "Assets/Data/Scroll/201 Bloodcleaver/血斧之卷.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            },
+            "shop": [
+                {
+                    "goodsId": "204",
+                    "minPrice": 15,
+                    "maxPrice": 20,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "5c9ed683542b8e54caf8c4dfb50a5867",
+                "name": "磁电之卷",
+                "description": "记载着如何打造 【电磁断斧】 的卷轴",
+                "rarity": "Uncommon",
+                "weapon": "420447e608e441348810e5e73127e855",
+                "materials": [
+                    {
+                        "id": "3e23e2fc8a9e85945adee34acbb745f4",
+                        "name": "磁电晶",
+                        "amount": 2
+                    },
+                    {
+                        "id": "1a247d2fcfd14c141bd79e8a82154b1f",
+                        "name": "焰翅",
+                        "amount": 1
+                    },
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 1
+                    }
+                ]
+            },
+            "assetId": 202,
+            "path": "Assets/Data/Scroll/202 ElectromagneticCleaver/ElectromagneticCleaver.asset",
+            "weaponName": "电磁断斧",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "de64485bf48aed14f94cea8965951dec:21300000",
+                "path": "Assets/Data/Scroll/202 ElectromagneticCleaver/ElectromagneticCleaver.png",
+                "x": 0,
+                "y": 0,
+                "width": 1024,
+                "height": 1536,
+                "textureWidth": 1024,
+                "textureHeight": 1536
+            },
+            "shop": [
+                {
+                    "goodsId": "206",
+                    "minPrice": 15,
+                    "maxPrice": 20,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "0d640c1491243c44baa30da026968261",
+                "name": "热板之卷",
+                "description": "记载着如何打造 【热铁板】 的卷轴",
+                "rarity": "Rare",
+                "weapon": "9b6531b8c9e74ad0b6ed32f5e448ede3",
+                "materials": [
+                    {
+                        "id": "1a247d2fcfd14c141bd79e8a82154b1f",
+                        "name": "焰翅",
+                        "amount": 2
+                    },
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 2
+                    },
+                    {
+                        "id": "d472eb76e6a877043b3a98578a2db396",
+                        "name": "炽焰灯芯",
+                        "amount": 1
+                    },
+                    {
+                        "id": "3e23e2fc8a9e85945adee34acbb745f4",
+                        "name": "磁电晶",
+                        "amount": 1
+                    }
+                ]
+            },
+            "assetId": 203,
+            "path": "Assets/Data/Scroll/203 热铁板/203 热铁板.asset",
+            "weaponName": "热砧板",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "ffb9a1ad12df9a64ea5580f9fc470b11:21300000",
+                "path": "Assets/Data/Scroll/203 热铁板/热板之卷_x4.png",
+                "x": 0,
+                "y": 0,
+                "width": 1365,
+                "height": 2048,
+                "textureWidth": 1365,
+                "textureHeight": 2048
+            },
+            "shop": [
+                {
+                    "goodsId": "217",
+                    "minPrice": 30,
+                    "maxPrice": 40,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "306e8d8cb6f75f6488f29771bb264b89",
+                "name": "猎光之卷",
+                "description": "记载着如何打造 【猎光者】 的卷轴",
+                "rarity": "Rare",
+                "weapon": "6f94a2e6f7a047c8b3f0a3c3e7040204",
+                "materials": [
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 2
+                    },
+                    {
+                        "id": "d0843e8639d4e334c85f8a6016c955ef",
+                        "name": "耀光水晶",
+                        "amount": 1
+                    },
+                    {
+                        "id": "2a5a440bab2e42f499a7fabcd4b29ead",
+                        "name": "凝血孢",
+                        "amount": 2
+                    }
+                ]
+            },
+            "assetId": 204,
+            "path": "Assets/Data/Scroll/204 猎光者/204 猎光之卷.asset",
+            "weaponName": "猎光者",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "062179f910f32af43a673551d9e206b6:21300000",
+                "path": "Assets/Data/Scroll/204 猎光者/猎光之卷_x4.png",
+                "x": 0,
+                "y": 0,
+                "width": 1365,
+                "height": 2048,
+                "textureWidth": 1365,
+                "textureHeight": 2048
+            },
+            "shop": [
+                {
+                    "goodsId": "218",
+                    "minPrice": 30,
+                    "maxPrice": 40,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "ed9fa5d7fef47e6469b8d7d90ee09e85",
+                "name": "寒芒之卷",
+                "description": "记载着如何制作 【寒芒杖】 的卷轴",
+                "rarity": "Uncommon",
+                "weapon": "f60b6206ee3430d4e94f6a8395de2b62",
+                "materials": [
+                    {
+                        "id": "f7d97cfbea961c84ebb552d194bd09f1",
+                        "name": "水球",
+                        "amount": 2
+                    },
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 1
+                    },
+                    {
+                        "id": "868997ae4239f844f9ea876d8ad4057e",
+                        "name": "旋速液",
+                        "amount": 1
+                    }
+                ]
+            },
+            "assetId": 301,
+            "path": "Assets/Data/Scroll/301 FrostGleam/FrostGleam.asset",
+            "weaponName": "寒芒杖",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "205356570a9629745925023aece072e7:21300000",
+                "path": "Assets/Data/Scroll/301 FrostGleam/Frost_Gleam_Scroll.png",
+                "x": 0,
+                "y": 0,
+                "width": 1024,
+                "height": 1536,
+                "textureWidth": 1024,
+                "textureHeight": 1536
+            },
+            "shop": [
+                {
+                    "goodsId": "207",
+                    "minPrice": 15,
+                    "maxPrice": 20,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "873b6a8002402544886f57db8d4b089e",
+                "name": "蚀夜之卷",
+                "description": "记载着如何打造 【蚀夜】 的卷轴",
+                "rarity": "Rare",
+                "weapon": "6f76bd3bd3d897c4fb60cb583c146ccd",
+                "materials": [
+                    {
+                        "id": "264958ff28a8e5242b8197ce9765edbe",
+                        "name": "影爪碎片",
+                        "amount": 1
+                    },
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 2
+                    },
+                    {
+                        "id": "2a5a440bab2e42f499a7fabcd4b29ead",
+                        "name": "凝血孢",
+                        "amount": 1
+                    }
+                ]
+            },
+            "assetId": 302,
+            "path": "Assets/Data/Scroll/302 蚀夜/302 蚀夜.asset",
+            "weaponName": "蚀夜",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "0e43a292900131a47978acd99bd6fe47:21300000",
+                "path": "Assets/Data/Scroll/302 蚀夜/蚀夜之卷.png",
+                "x": 0,
+                "y": 0,
+                "width": 1024,
+                "height": 1536,
+                "textureWidth": 1024,
+                "textureHeight": 1536
+            },
+            "shop": [
+                {
+                    "goodsId": "209",
+                    "minPrice": 30,
+                    "maxPrice": 40,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "c68a6433f3415af4289337a3f453206e",
+                "name": "荼蘼之卷",
+                "description": "记载着如何打造 【荼蘼】 的卷轴",
+                "rarity": "Uncommon",
+                "weapon": "1a4505efb8324479a1db7bc0afc30300",
+                "materials": [
+                    {
+                        "id": "ea9793b0c90ae0c4f9dbaf13a832f375",
+                        "name": "史莱姆粘液",
+                        "amount": 2
+                    },
+                    {
+                        "id": "d1eb5424360bc9f40a2b6a89faa718cb",
+                        "name": "秽蚀尖牙",
+                        "amount": 2
+                    }
+                ]
+            },
+            "assetId": 303,
+            "path": "Assets/Data/Scroll/303 荼蘼/303 荼蘼.asset",
+            "weaponName": "荼蘼",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "dc1f7166996d6114aaa6fb9e6535bea7:21300000",
+                "path": "Assets/Data/Scroll/303 荼蘼/荼蘼之卷_x4.png",
+                "x": 0,
+                "y": 0,
+                "width": 1366,
+                "height": 2048,
+                "textureWidth": 1366,
+                "textureHeight": 2048
+            },
+            "shop": [
+                {
+                    "goodsId": "219",
+                    "minPrice": 15,
+                    "maxPrice": 20,
+                    "weight": 5
+                }
+            ]
+        },
+        {
+            "detail": {
+                "id": "4d0bc02346198c54a99dbd46fe1265d1",
+                "name": "避雷之卷",
+                "description": "记载着如何打造 【避雷针】 的卷轴",
+                "rarity": "Uncommon",
+                "weapon": "2d6f4c2bb5794bb08e597a77fdc30400",
+                "materials": [
+                    {
+                        "id": "3e23e2fc8a9e85945adee34acbb745f4",
+                        "name": "磁电晶",
+                        "amount": 2
+                    },
+                    {
+                        "id": "6e1752dc4702a1c44905a3559cb5f924",
+                        "name": "铁矿",
+                        "amount": 1
+                    },
+                    {
+                        "id": "f7d97cfbea961c84ebb552d194bd09f1",
+                        "name": "水球",
+                        "amount": 1
+                    }
+                ]
+            },
+            "assetId": 304,
+            "path": "Assets/Data/Scroll/304 避雷针/304 避雷针.asset",
+            "weaponName": "避雷针",
+            "mainPool": true,
+            "treasurePool": true,
+            "icon": {
+                "key": "9904e867812593b46a0d6811aa9326f7:21300000",
+                "path": "Assets/Data/Scroll/304 避雷针/避雷之卷_x4.png",
+                "x": 0,
+                "y": 0,
+                "width": 1365,
+                "height": 2048,
+                "textureWidth": 1365,
+                "textureHeight": 2048
+            },
+            "shop": [
+                {
+                    "goodsId": "220",
+                    "minPrice": 15,
+                    "maxPrice": 20,
+                    "weight": 5
+                }
+            ]
+        }
+    ],
+    "loot": [
+        {
+            "detail": {
+                "id": "ea9793b0c90ae0c4f9dbaf13a832f375",
+                "name": "史莱姆粘液",
+                "description": "一坨粘液，好像隐隐还在蠕动",
+                "rarity": "Common",
+                "attribute": "毒"
+            },
+            "assetId": 0,
+            "path": "Assets/Data/Loots/LootItems/000 史莱姆粘液/SlimeMucus.asset",
+            "saveId": "loot.slime_mucus",
+            "inShop": true,
+            "icon": {
+                "key": "ccfeedbd3df65e741bde10f01cf68277:21300000",
+                "path": "Assets/Assets/Textures/ItemIcon/Slime_Mucus.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            }
+        },
+        {
+            "detail": {
+                "id": "1a247d2fcfd14c141bd79e8a82154b1f",
+                "name": "焰翅",
+                "description": "一对翅膀，燃烧着温暖但不灼人的火焰",
+                "rarity": "Common",
+                "attribute": "炎"
+            },
+            "assetId": 1,
+            "path": "Assets/Data/Loots/LootItems/001 焰翅/FlameWing.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "5c22091c627319544bc6da30264c07ef:21300000",
+                "path": "Assets/Data/Loots/LootItems/001 焰翅/FlameWing.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            }
+        },
+        {
+            "detail": {
+                "id": "f7d97cfbea961c84ebb552d194bd09f1",
+                "name": "水球",
+                "description": "一团奇特的水，不知道是什么力量将它们聚在一起",
+                "rarity": "Common",
+                "attribute": "水"
+            },
+            "assetId": 2,
+            "path": "Assets/Data/Loots/LootItems/002 水球/WaterBall.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "1e0db7ba577c8af46aca3bb1698c22fb:21300000",
+                "path": "Assets/Data/Loots/LootItems/002 水球/WaterBall.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            }
+        },
+        {
+            "detail": {
+                "id": "868997ae4239f844f9ea876d8ad4057e",
+                "name": "旋速液",
+                "description": "看起来它好像一直尝试在流动？",
+                "rarity": "Common",
+                "attribute": "速"
+            },
+            "assetId": 3,
+            "path": "Assets/Data/Loots/LootItems/003 旋速液/SSScum.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "3293747a70b883c439dfb2564766318d:21300000",
+                "path": "Assets/Data/Loots/LootItems/003 旋速液/SSScum.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            }
+        },
+        {
+            "detail": {
+                "id": "3e23e2fc8a9e85945adee34acbb745f4",
+                "name": "磁电晶",
+                "description": "拿在手上感觉有电流缓缓在皮肤上流动",
+                "rarity": "Common",
+                "attribute": "电"
+            },
+            "assetId": 4,
+            "path": "Assets/Data/Loots/LootItems/004 磁电晶/MagtronicOrb.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "3ef1220831f07e44cb5904b0c40592b5:21300000",
+                "path": "Assets/Data/Loots/LootItems/004 磁电晶/MagtronicOrb.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            }
+        },
+        {
+            "detail": {
+                "id": "2a5a440bab2e42f499a7fabcd4b29ead",
+                "name": "凝血孢",
+                "description": "血孢子掉落的结晶，意外的软，看上去像细碎的红宝石",
+                "rarity": "Common",
+                "attribute": "血"
+            },
+            "assetId": 5,
+            "path": "Assets/Data/Loots/LootItems/005 凝血孢/Clotspore.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "3d5595b58630d494793f519c1648ceea:21300000",
+                "path": "Assets/Data/Loots/LootItems/005 凝血孢/Clotspore.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            }
+        },
+        {
+            "detail": {
+                "id": "4ae5af66b58deb64bb0942a685e955c5",
+                "name": "浪涌核心",
+                "description": "一块晶莹剔透的宝石，内部似乎还有永不停息的湛蓝浪花",
+                "rarity": "Uncommon",
+                "attribute": "水"
+            },
+            "assetId": 6,
+            "path": "Assets/Data/Loots/LootItems/006 浪涌核心/WaveCore_Data.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "920034fdde426ac4bafb151b8ba338c1:21300000",
+                "path": "Assets/Data/Loots/LootItems/006 浪涌核心/WaveCore.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            }
+        },
+        {
+            "detail": {
+                "id": "d472eb76e6a877043b3a98578a2db396",
+                "name": "炽焰灯芯",
+                "description": "仍然燃烧着的灯芯，纵使再没有外壳保护，灯芯也会持续燃烧着",
+                "rarity": "Uncommon",
+                "attribute": "炎"
+            },
+            "assetId": 7,
+            "path": "Assets/Data/Loots/LootItems/007 炽焰灯芯/Blazewick.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "97c0aeb0502bae34bb96bc2497d50b77:21300000",
+                "path": "Assets/Data/Loots/LootItems/007 炽焰灯芯/BlazewickIcon.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            }
+        },
+        {
+            "detail": {
+                "id": "6e1752dc4702a1c44905a3559cb5f924",
+                "name": "铁矿",
+                "description": "还未精炼的铁矿，加工一下可以用来打造武器",
+                "rarity": "Common",
+                "attribute": "无"
+            },
+            "assetId": 8,
+            "path": "Assets/Data/Loots/LootItems/008 铁矿/Iron_Data.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "2142ec7350c0e6b46a9a5caeefcf8bdf:21300000",
+                "path": "Assets/Data/Loots/LootItems/008 铁矿/Iron.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            }
+        },
+        {
+            "detail": {
+                "id": "264958ff28a8e5242b8197ce9765edbe",
+                "name": "影爪碎片",
+                "description": "极其锋利的爪子，缠绕着些许你不愿细看的黑暗。",
+                "rarity": "Uncommon",
+                "attribute": "暗"
+            },
+            "assetId": 9,
+            "path": "Assets/Data/Loots/LootItems/009 影爪碎片/ShadowClaw.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "9732b4151f890b74ebc43791d2791d73:21300000",
+                "path": "Assets/Data/Loots/LootItems/009 影爪碎片/ShadowClaw.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            }
+        },
+        {
+            "detail": {
+                "id": "a86c6504bc8104048a4271c991a686c2",
+                "name": "忠犬骨坠",
+                "description": "猎犬项圈上的鸦骨，似乎代表着猎犬与它主人相伴的日常",
+                "rarity": "Uncommon",
+                "attribute": "速"
+            },
+            "assetId": 10,
+            "path": "Assets/Data/Loots/LootItems/010 忠犬骨坠/OathBone.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "96b260028825d26479a724891e2b23c5:21300000",
+                "path": "Assets/Data/Loots/LootItems/010 忠犬骨坠/忠犬骨坠.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            }
+        },
+        {
+            "detail": {
+                "id": "d1eb5424360bc9f40a2b6a89faa718cb",
+                "name": "秽蚀尖牙",
+                "description": "啮鼠的牙齿，常年啃咬、撕咬血肉留下了原始痕迹。有点恶心。",
+                "rarity": "Common",
+                "attribute": "血"
+            },
+            "assetId": 11,
+            "path": "Assets/Data/Loots/LootItems/011 秽蚀尖牙/秽蚀尖牙.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "4fe3049eb9157dc40a382600e42a7a05:21300000",
+                "path": "Assets/Data/Loots/LootItems/011 秽蚀尖牙/秽蚀尖牙.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            }
+        },
+        {
+            "detail": {
+                "id": "86cf119c5ff77594f96939517d1506a7",
+                "name": "血肉轴承",
+                "description": "粘有血肉的轴承，仍在嘎吱作响。\n空洞的摩擦声久久回荡，不知是否是来自彼岸的回应？",
+                "rarity": "Uncommon",
+                "attribute": "血"
+            },
+            "assetId": 12,
+            "path": "Assets/Data/Loots/LootItems/012 血肉轴承/血肉轴承.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "db15544f4658b1949895ac0a6532adf9:21300000",
+                "path": "Assets/Data/Loots/LootItems/012 血肉轴承/血肉轴承.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            }
+        },
+        {
+            "detail": {
+                "id": "6341a87cfa58ea5468dde7f6097e1937",
+                "name": "绯红孵化囊",
+                "description": "绯红的囊袋，不要深究里面到底在孵化着什么",
+                "rarity": "Uncommon",
+                "attribute": "血"
+            },
+            "assetId": 13,
+            "path": "Assets/Data/Loots/LootItems/013 绯血孵化囊/013 绯血孵化囊.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "82ab3b1302a365e429cf147b3af7b386:21300000",
+                "path": "Assets/Data/Loots/LootItems/013 绯血孵化囊/01_绯血孵化囊.png",
+                "x": 0,
+                "y": 0,
+                "width": 341,
+                "height": 383,
+                "textureWidth": 341,
+                "textureHeight": 383
+            }
+        },
+        {
+            "detail": {
+                "id": "414655eb47424bc4a9b4d191c2fe0553",
+                "name": "巨型绿色粘液",
+                "description": "再大一点就又是一个生命",
+                "rarity": "Uncommon",
+                "attribute": "毒"
+            },
+            "assetId": 14,
+            "path": "Assets/Data/Loots/LootItems/014 巨型绿色粘液/014 巨型绿色粘液.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "cb9ab7053985a1142b4f245ade2156ef:21300000",
+                "path": "Assets/Data/Loots/LootItems/014 巨型绿色粘液/02_top_middle.png",
+                "x": 0,
+                "y": 0,
+                "width": 410,
+                "height": 410,
+                "textureWidth": 410,
+                "textureHeight": 410
+            }
+        },
+        {
+            "detail": {
+                "id": "92ff176e0600c3947ac0c78608a9c60d",
+                "name": "红色粘液",
+                "description": "没人知道为什么吃了点色素的史莱姆就比普通的强这么多",
+                "rarity": "Uncommon",
+                "attribute": "毒"
+            },
+            "assetId": 15,
+            "path": "Assets/Data/Loots/LootItems/015 红色粘液/015 红色粘液.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "abe0aa895f06a434a9d6b41e05e39d10:21300000",
+                "path": "Assets/Data/Loots/LootItems/015 红色粘液/03_top_right.png",
+                "x": 0,
+                "y": 0,
+                "width": 410,
+                "height": 410,
+                "textureWidth": 410,
+                "textureHeight": 410
+            }
+        },
+        {
+            "detail": {
+                "id": "03848b90cd0c1c348b9a521cbc9087cf",
+                "name": "霜翅残片",
+                "description": "听说冻烬蛾和焰蛾可以交配，那生出来的到底是冰还是火？",
+                "rarity": "Uncommon",
+                "attribute": "水"
+            },
+            "assetId": 16,
+            "path": "Assets/Data/Loots/LootItems/016 霜翅残片/016 霜翅残片.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "c7a63734cddc4814b957a26dec097024:21300000",
+                "path": "Assets/Data/Loots/LootItems/016 霜翅残片/04_middle_left.png",
+                "x": 0,
+                "y": 0,
+                "width": 410,
+                "height": 410,
+                "textureWidth": 410,
+                "textureHeight": 410
+            }
+        },
+        {
+            "detail": {
+                "id": "7aae93eb0de368647b9b0838cc9f0ad0",
+                "name": "铁线束",
+                "description": "捆起来的铁线，其实拿铁锭敲出来也是一样的效果",
+                "rarity": "Uncommon",
+                "attribute": "电"
+            },
+            "assetId": 17,
+            "path": "Assets/Data/Loots/LootItems/017 铁线束/017 铁线束.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "689ec38b43553c542ac040f0e2630039:21300000",
+                "path": "Assets/Data/Loots/LootItems/017 铁线束/05_middle_middle.png",
+                "x": 0,
+                "y": 0,
+                "width": 410,
+                "height": 410,
+                "textureWidth": 410,
+                "textureHeight": 410
+            }
+        },
+        {
+            "detail": {
+                "id": "da452dc44c669c8408ba0c46c2c200fc",
+                "name": "腐潮脊髓",
+                "description": "腐潮脊髓剑！不知道为什么你很想这样大声喊出来。",
+                "rarity": "Uncommon",
+                "attribute": "水"
+            },
+            "assetId": 18,
+            "path": "Assets/Data/Loots/LootItems/018 腐潮脊髓/018 腐潮脊髓.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "3915f43c3f151934db1eea0b0da00e11:21300000",
+                "path": "Assets/Data/Loots/LootItems/018 腐潮脊髓/06_middle_right.png",
+                "x": 0,
+                "y": 0,
+                "width": 410,
+                "height": 410,
+                "textureWidth": 410,
+                "textureHeight": 410
+            }
+        },
+        {
+            "detail": {
+                "id": "3a4ba9525fb254343b801875708623fa",
+                "name": "荆腐根茎",
+                "description": "看上去很恶心，但它实际上甜甜的，是一种大家都很喜欢的食材。",
+                "rarity": "Uncommon",
+                "attribute": "毒"
+            },
+            "assetId": 19,
+            "path": "Assets/Data/Loots/LootItems/019 荆腐根茎/019 荆腐根茎.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "851eba5343223d04f8b783102fb7a26f:21300000",
+                "path": "Assets/Data/Loots/LootItems/019 荆腐根茎/07_bottom_left.png",
+                "x": 0,
+                "y": 0,
+                "width": 410,
+                "height": 410,
+                "textureWidth": 410,
+                "textureHeight": 410
+            }
+        },
+        {
+            "detail": {
+                "id": "5153681d7a3fed84995523c3b98540a8",
+                "name": "异教祷符",
+                "description": "上面还有鲜血的气息，你实在不明白什么人会把自残设置为一种教派信条。",
+                "rarity": "Uncommon",
+                "attribute": "血"
+            },
+            "assetId": 20,
+            "path": "Assets/Data/Loots/LootItems/020 异教祷符/020 异教祷符.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "0b125f3f912ceb24a994e98cc356cee1:21300000",
+                "path": "Assets/Data/Loots/LootItems/020 异教祷符/08_bottom_middle.png",
+                "x": 0,
+                "y": 0,
+                "width": 410,
+                "height": 410,
+                "textureWidth": 410,
+                "textureHeight": 410
+            }
+        },
+        {
+            "detail": {
+                "id": "4298ab155e36dbe4ea7f85afe81d52fd",
+                "name": "逆风羽",
+                "description": "逆风生长的羽毛最为坚挺",
+                "rarity": "Uncommon",
+                "attribute": "速"
+            },
+            "assetId": 21,
+            "path": "Assets/Data/Loots/LootItems/021 逆风羽/021 逆风羽.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "e00e7b8d3d18e8a40a0e03f718e3835f:21300000",
+                "path": "Assets/Data/Loots/LootItems/021 逆风羽/09_bottom_right.png",
+                "x": 0,
+                "y": 0,
+                "width": 410,
+                "height": 410,
+                "textureWidth": 410,
+                "textureHeight": 410
+            }
+        },
+        {
+            "detail": {
+                "id": "54ec389721584606bcd7a8933f88a65a",
+                "name": "棺钉",
+                "description": "钉身上残留着湿冷的气息，不要被这种不祥的东西扎到。",
+                "rarity": "Uncommon",
+                "attribute": "暗"
+            },
+            "assetId": 22,
+            "path": "Assets/Data/Loots/LootItems/022 CoffinNail/022 CoffinNail.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "31c38c264d878314496f10a0fd7550ca:21300000",
+                "path": "Assets/Data/Loots/LootItems/022 CoffinNail/棺钉-.png",
+                "x": 0,
+                "y": 0,
+                "width": 491,
+                "height": 608,
+                "textureWidth": 491,
+                "textureHeight": 608
+            }
+        },
+        {
+            "detail": {
+                "id": "786679dcd19c470b9c92aeba18a319b8",
+                "name": "瓶装洋流",
+                "description": "小小的瓶子里翻涌着小小的浪花，瓶中已然没有可以阻止它的东西了，如果它聚集了千倍万倍呢？",
+                "rarity": "Uncommon",
+                "attribute": "水"
+            },
+            "assetId": 23,
+            "path": "Assets/Data/Loots/LootItems/023 BottledTide/023 BottledTide.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "a28b999ee2c5de145a3a89b53a565311:21300000",
+                "path": "Assets/Data/Loots/LootItems/023 BottledTide/瓶装洋流.png",
+                "x": 0,
+                "y": 0,
+                "width": 567,
+                "height": 657,
+                "textureWidth": 567,
+                "textureHeight": 657
+            }
+        },
+        {
+            "detail": {
+                "id": "dea757009a544ee8bb1407ede929e955",
+                "name": "引电鬃毛",
+                "description": "不知为何，这些鬃毛似乎天然的亲电，这导致一把一把的毛黏在了你的身上。",
+                "rarity": "Uncommon",
+                "attribute": "电"
+            },
+            "assetId": 25,
+            "path": "Assets/Data/Loots/LootItems/025 ConductiveMane/025 ConductiveMane.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "e6296c0ad6f414f4aaa29cd04dd4aee2:21300000",
+                "path": "Assets/Data/Loots/LootItems/025 ConductiveMane/引电鬃毛.png",
+                "x": 0,
+                "y": 0,
+                "width": 554,
+                "height": 574,
+                "textureWidth": 554,
+                "textureHeight": 574
+            }
+        },
+        {
+            "detail": {
+                "id": "22aabd44e1d173445a17d7c47544e7ea",
+                "name": "交辉棱片",
+                "description": "一枚同时映出正面与背面的棱片，转动时会短暂分不清哪一面正在发光。",
+                "rarity": "Rare",
+                "attribute": "光"
+            },
+            "assetId": 26,
+            "path": "Assets/Data/Loots/LootItems/026 交辉棱片/交辉棱片.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "6a63ff7a6e2dd0a4ea82850ef843a2ff:21300000",
+                "path": "Assets/Data/Enemies/Enemies/012 LightKnight/耀光骑士.png",
+                "x": 0,
+                "y": 0,
+                "width": 2048,
+                "height": 2048,
+                "textureWidth": 2048,
+                "textureHeight": 2048
+            }
+        },
+        {
+            "detail": {
+                "id": "d0843e8639d4e334c85f8a6016c955ef",
+                "name": "耀光水晶",
+                "description": "散发着耀眼光芒的水晶，不知到底是什么在发光，竟耀眼到睁不开眼睛",
+                "rarity": "Uncommon",
+                "attribute": "光"
+            },
+            "assetId": 27,
+            "path": "Assets/Data/Loots/LootItems/027 耀光水晶/027 耀光水晶.asset",
+            "saveId": "",
+            "inShop": true,
+            "icon": {
+                "key": "afbc3f23a4af9864697fa3db08e35588:21300000",
+                "path": "Assets/Data/Loots/LootItems/027 耀光水晶/耀光水晶.png",
+                "x": 0,
+                "y": 0,
+                "width": 1254,
+                "height": 1254,
+                "textureWidth": 1254,
+                "textureHeight": 1254
+            }
+        }
+    ],
+    "battleLoot": {
+        "enemyIds": [
+            "a79c03a19f046ad478a2a1e9f339c1a2",
+            "e517ad92ec0eeaa42bf36061e2080c47",
+            "8c5fcb0e9675ea44c98e0e77c7b159ea",
+            "56cc391412d64684a8615c0c5a9a3f3d",
+            "a725d2674945f0243abd06a5acd3263d",
+            "4de8201604b8ac848a729e300c980a56",
+            "0474415e50c736a4792e9f9c1a2e7fa8",
+            "bce9980a5a4e06048bee145321515cb5",
+            "16541724884b5b94c8329a36d91767ce",
+            "a0fe55eee3cf34540b7dd3d267ea5e55",
+            "b3b81bb3843041946a16509948f716fc",
+            "a42adc3d1f844e04b84f35d476820d9e",
+            "9a20040849f4382498a1ee2a263055bd",
+            "4e9c0484068ef214fa079f5ecc3f5d64",
+            "9f60d335a3168dd499b6be146e8d9b6f",
+            "644a91785052d164390c08fd48468a74",
+            "0028fef763088bd4a87e3f925b07bc59",
+            "f3b54da2b2fd4a5584c0fb85294411ef",
+            "6317c4b61e174516a9dfceac6f801390",
+            "5a6d90a4159d4527a7db93d7b5063ed8",
+            "ffb2b149f6e14709933ab6150fa0f6ef",
+            "b9e198daf93f4449ac73a268cd913c7e",
+            "1a49f3b85f524107a97360693252d4e1",
+            "d127e63b202741d9b419bed2ddd44494",
+            "4246432425b04dd1b696aa5486e9bb71",
+            "b9c98cdadbe14da18a50cd3b457fe246",
+            "561d4c5f65934e05a5b5edb7e95ef628",
+            "a159bf42fedc40dbb1372bc5ff9387ce",
+            "e88b7a66454057c4c953d169c0b7b5cc",
+            "848efda7a30f4c90b874738f9dd57125",
+            "259c75ef475f4ff4a28caa97db0d56ad",
+            "e1d57ca10d5b47579b7b1074020bece6",
+            "93d7d9e95cae46a79b151067242e3400",
+            "6f8a374deb9f404fb62b127a9c1abdc3",
+            "33086198a9d4497cbe4960da2f52027d",
+            "acb42113d87c4660bc7692ce62d5bab3",
+            "46699482f7ec44e397b56e514c6563af",
+            "d2ad1c2d4def4738994e8da032f02377",
+            "dcb0df3d72e24c7ca82bb210784e631c",
+            "a09971cc0ec248ed9e70b9760dca5813",
+            "36a110e509b14fd1a112000000000339",
+            "494913bb50e646f7afd12beafbc49539",
+            "1feae801509547c7a1aac32bf85f2580",
+            "5441b34f8124433788fa6de01c00ab84",
+            "55b06816c17269a49b9152ced46b1384",
+            "6c6ecf6b5fab7f84f9dd1867e8902b55",
+            "a2982bf583b2257468cdbc69a9a99734",
+            "e7d14ea9edacd2540b45e15fee560727",
+            "293df36a850452048a2fd6b9eab269cc",
+            "287b85e512ed82c46af70b0b313c7818",
+            "6d9df9f8bace72d47b7e655cb72ea809",
+            "f87757d70244431b9a2a19a346816a60",
+            "0aec55315c6c6da43ad4a1355f241bad"
+        ],
+        "sources": [
+            {
+                "kind": "group",
+                "name": "ThunderLord",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Boss/ThunderLord.asset",
+                "enemyIds": [
+                    "b3b81bb3843041946a16509948f716fc"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "枯枝王庭",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Boss/WitheredCourt.asset",
+                "enemyIds": [
+                    "6d9df9f8bace72d47b7e655cb72ea809"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "DrownedBoneCollector",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/021 DrownedBoneCollector.asset",
+                "enemyIds": [
+                    "1a49f3b85f524107a97360693252d4e1",
+                    "1a49f3b85f524107a97360693252d4e1",
+                    "1a49f3b85f524107a97360693252d4e1"
+                ],
+                "tableIds": [
+                    "d961e155c1ed74243b2c2aa2df8b6bf2"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "AshPriest",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/025 AshPriest.asset",
+                "enemyIds": [
+                    "561d4c5f65934e05a5b5edb7e95ef628"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "032 陌路残影",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/032 陌路残影.asset",
+                "enemyIds": [
+                    "acb42113d87c4660bc7692ce62d5bab3",
+                    "acb42113d87c4660bc7692ce62d5bab3",
+                    "acb42113d87c4660bc7692ce62d5bab3"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "033 陌路幻影",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/033 陌路幻影.asset",
+                "enemyIds": [
+                    "46699482f7ec44e397b56e514c6563af"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "Echo",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/034 Echo.asset",
+                "enemyIds": [
+                    "d2ad1c2d4def4738994e8da032f02377"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "小型怪物组 1",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/1001 小型怪物组 1.asset",
+                "enemyIds": [
+                    "56cc391412d64684a8615c0c5a9a3f3d",
+                    "e517ad92ec0eeaa42bf36061e2080c47",
+                    "a79c03a19f046ad478a2a1e9f339c1a2"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "小型怪物组 2",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/1001 小型怪物组 2.asset",
+                "enemyIds": [
+                    "8c5fcb0e9675ea44c98e0e77c7b159ea",
+                    "a725d2674945f0243abd06a5acd3263d",
+                    "4de8201604b8ac848a729e300c980a56"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "Gambler",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/Gambler.asset",
+                "enemyIds": [
+                    "36a110e509b14fd1a112000000000339"
+                ],
+                "tableIds": [
+                    "4a169d4a3a978634dadd4974a1b497db"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "血骸王储",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/GhostOfPrince.asset",
+                "enemyIds": [
+                    "a2982bf583b2257468cdbc69a9a99734"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "Kitty",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/Kitty.asset",
+                "enemyIds": [
+                    "a0fe55eee3cf34540b7dd3d267ea5e55"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "LoomingDark",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/LoomingDark.asset",
+                "enemyIds": [
+                    "16541724884b5b94c8329a36d91767ce"
+                ],
+                "tableIds": [
+                    "4f9e3c5728ed67d4997f9762ff3d2bf0"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "PuppetMaster",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/PuppetMaster.asset",
+                "enemyIds": [
+                    "dcb0df3d72e24c7ca82bb210784e631c",
+                    "dcb0df3d72e24c7ca82bb210784e631c",
+                    "a09971cc0ec248ed9e70b9760dca5813"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "RedSlime",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/RedSlime.asset",
+                "enemyIds": [
+                    "5a6d90a4159d4527a7db93d7b5063ed8"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "Reflection",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/Reflection.asset",
+                "enemyIds": [
+                    "33086198a9d4497cbe4960da2f52027d"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "复生贵族",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/ResurrectedNobility.asset",
+                "enemyIds": [
+                    "293df36a850452048a2fd6b9eab269cc"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "叛变的新王",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/TheSecondPrince.asset",
+                "enemyIds": [
+                    "e7d14ea9edacd2540b45e15fee560727"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "白蛇妖",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Events/WhiteSnakeDemon.asset",
+                "enemyIds": [
+                    "f87757d70244431b9a2a19a346816a60"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "InterlockingPrismServants",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Mid/Elite/040 交辉双棱.asset",
+                "enemyIds": [
+                    "55b06816c17269a49b9152ced46b1384",
+                    "6c6ecf6b5fab7f84f9dd1867e8902b55"
+                ],
+                "tableIds": [
+                    "d706667deb4a3864c9f71756ffc850a2"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "BloodSpider",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Mid/Elite/BloodSpider.asset",
+                "enemyIds": [
+                    "6f8a374deb9f404fb62b127a9c1abdc3"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "HornedGatekeeper",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Mid/Elite/HornedGatekeeper.asset",
+                "enemyIds": [
+                    "a159bf42fedc40dbb1372bc5ff9387ce"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "BlackCoffin",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Mid/Standard/037 BlackCoffin.asset",
+                "enemyIds": [
+                    "494913bb50e646f7afd12beafbc49539"
+                ],
+                "tableIds": [
+                    "41ee7f1e930a4a73a43e79cf29a43811"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "TideAnchorGuard",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Mid/Standard/038 TideAnchorGuard.asset",
+                "enemyIds": [
+                    "1feae801509547c7a1aac32bf85f2580"
+                ],
+                "tableIds": [
+                    "09b7e38a9b474a49a0e8e8a2c0572e96"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "ThunderWolf",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Mid/Standard/039 ThunderWolf.asset",
+                "enemyIds": [
+                    "5441b34f8124433788fa6de01c00ab84",
+                    "5441b34f8124433788fa6de01c00ab84"
+                ],
+                "tableIds": [
+                    "1e4302dccde541669b8c45b5f2508883"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "EmberScaleLizard",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Mid/Standard/EmberLizard.asset",
+                "enemyIds": [
+                    "259c75ef475f4ff4a28caa97db0d56ad"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "FrozenAshMoth",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Mid/Standard/FrozenAshMoth.asset",
+                "enemyIds": [
+                    "ffb2b149f6e14709933ab6150fa0f6ef"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "GiantGreenSlime",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Mid/Standard/GiantGreenSlime.asset",
+                "enemyIds": [
+                    "6317c4b61e174516a9dfceac6f801390"
+                ],
+                "tableIds": [
+                    "0b492371534f471419f9d48ded4ebe5a"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "HeadwindRanger",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Mid/Standard/HeadwindRanger.asset",
+                "enemyIds": [
+                    "b9c98cdadbe14da18a50cd3b457fe246"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "IronThreadPuppet",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Mid/Standard/IronThreadPuppet.asset",
+                "enemyIds": [
+                    "b9e198daf93f4449ac73a268cd913c7e"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "MirrorBearer",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Mid/Standard/MirrorBearer.asset",
+                "enemyIds": [
+                    "848efda7a30f4c90b874738f9dd57125"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "Rotblossom",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Mid/Standard/Rotblossom.asset",
+                "enemyIds": [
+                    "d127e63b202741d9b419bed2ddd44494"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "SkinRivenDisciple",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Mid/Standard/SkinRivenDisciple.asset",
+                "enemyIds": [
+                    "4246432425b04dd1b696aa5486e9bb71"
+                ],
+                "tableIds": [],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "bloodpearl x1",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Outer/Danger1/BloodPearl x1.asset",
+                "enemyIds": [
+                    "4de8201604b8ac848a729e300c980a56"
+                ],
+                "tableIds": [
+                    "11db27f8d1f9e854ebd43bf4f4ee51d2"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "BloodRatx3",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Outer/Danger1/BloodRat x3.asset",
+                "enemyIds": [
+                    "9f60d335a3168dd499b6be146e8d9b6f",
+                    "9f60d335a3168dd499b6be146e8d9b6f",
+                    "9f60d335a3168dd499b6be146e8d9b6f"
+                ],
+                "tableIds": [
+                    "6c6e8df0672908f4797e634d4205d799"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "FlameMoth x1",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Outer/Danger1/FlameMoth x1.asset",
+                "enemyIds": [
+                    "e517ad92ec0eeaa42bf36061e2080c47"
+                ],
+                "tableIds": [
+                    "d3b2561c095852e429a81258cacc1678"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "GreenSlime x2",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Outer/Danger1/GreenSlime x2.asset",
+                "enemyIds": [
+                    "a79c03a19f046ad478a2a1e9f339c1a2",
+                    "a79c03a19f046ad478a2a1e9f339c1a2"
+                ],
+                "tableIds": [
+                    "0b492371534f471419f9d48ded4ebe5a",
+                    "0b492371534f471419f9d48ded4ebe5a"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "Magtronic x2",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Outer/Danger1/Magtronic x2.asset",
+                "enemyIds": [
+                    "a725d2674945f0243abd06a5acd3263d",
+                    "a725d2674945f0243abd06a5acd3263d"
+                ],
+                "tableIds": [
+                    "6a206a5ecc655a0458329cafc5886344"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "SSSnail x2",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Outer/Danger1/SSSnail x2.asset",
+                "enemyIds": [
+                    "56cc391412d64684a8615c0c5a9a3f3d",
+                    "56cc391412d64684a8615c0c5a9a3f3d"
+                ],
+                "tableIds": [
+                    "756c59b37a12fdf4bb928caff0b2d583"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "WaterManx1",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Outer/Danger1/WaterMan x1.asset",
+                "enemyIds": [
+                    "8c5fcb0e9675ea44c98e0e77c7b159ea"
+                ],
+                "tableIds": [
+                    "42070d5195329b6458b9f8fc629a42d9"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "BadQueen'sHunter",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Outer/Elite/BadQueen'sHunter.asset",
+                "enemyIds": [
+                    "9a20040849f4382498a1ee2a263055bd",
+                    "4e9c0484068ef214fa079f5ecc3f5d64"
+                ],
+                "tableIds": [
+                    "07a4f8f0baaaf6d43844909d1c752c64"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "CallOfBeyond",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Outer/Elite/CallOfBeyond.asset",
+                "enemyIds": [
+                    "644a91785052d164390c08fd48468a74",
+                    "644a91785052d164390c08fd48468a74"
+                ],
+                "tableIds": [
+                    "a0999eff225d6a94faf6899e7efbdcd8"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "CrimsonBroodmother",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Outer/Elite/CrimsonBroodmother.asset",
+                "enemyIds": [
+                    "f3b54da2b2fd4a5584c0fb85294411ef"
+                ],
+                "tableIds": [
+                    "96f39e34fddb4272842405c236f21872"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "LightKnight",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Outer/Elite/LightKnight.asset",
+                "enemyIds": [
+                    "a42adc3d1f844e04b84f35d476820d9e"
+                ],
+                "tableIds": [
+                    "2a57e8ddd3fb21f48a5694876a50bb26"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "RedLamp",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Outer/Elite/RedLamp.asset",
+                "enemyIds": [
+                    "bce9980a5a4e06048bee145321515cb5"
+                ],
+                "tableIds": [
+                    "01a6981d2c4feba45a9417a8b3bd7dae"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "Waveling",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Outer/Elite/Waveling.asset",
+                "enemyIds": [
+                    "0474415e50c736a4792e9f9c1a2e7fa8"
+                ],
+                "tableIds": [
+                    "7cad391b665e4854ea51425a2ce7c19b"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "group",
+                "name": "LoomingDark",
+                "label": "",
+                "path": "Assets/Data/Enemies/EnemyGroup/Outer/Events/LoomingDark.asset",
+                "enemyIds": [
+                    "16541724884b5b94c8329a36d91767ce"
+                ],
+                "tableIds": [
+                    "4f9e3c5728ed67d4997f9762ff3d2bf0"
+                ],
+                "round": 0,
+                "eventPicks": []
+            },
+            {
+                "kind": "retreat",
+                "name": "小猫咪",
+                "label": "",
+                "path": "Assets/Data/Enemies/Enemies/010 Kitty/Kitty.asset",
+                "enemyIds": [
+                    "a0fe55eee3cf34540b7dd3d267ea5e55"
+                ],
+                "tableIds": [
+                    "52e0abdf93da91c4aab509b389ee40c1"
+                ],
+                "round": 3,
+                "eventPicks": []
+            }
+        ],
+        "tables": [
+            {
+                "id": "2a57e8ddd3fb21f48a5694876a50bb26",
+                "name": "012 LightKnight",
+                "path": "Assets/Data/Loots/LootTables/012 LightKnight.asset",
+                "drops": [
+                    {
+                        "id": "d0843e8639d4e334c85f8a6016c955ef",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.800000011920929
+                    },
+                    {
+                        "id": "d0843e8639d4e334c85f8a6016c955ef",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.20000000298023225
+                    }
+                ]
+            },
+            {
+                "id": "d961e155c1ed74243b2c2aa2df8b6bf2",
+                "name": "021 DrownedBoneCollector_LootTable",
+                "path": "Assets/Data/Loots/LootTables/021 DrownedBoneCollector_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "da452dc44c669c8408ba0c46c2c200fc",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.800000011920929
+                    },
+                    {
+                        "id": "da452dc44c669c8408ba0c46c2c200fc",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.6000000238418579
+                    },
+                    {
+                        "id": "da452dc44c669c8408ba0c46c2c200fc",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.4000000059604645
+                    },
+                    {
+                        "id": "da452dc44c669c8408ba0c46c2c200fc",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.20000000298023225
+                    }
+                ]
+            },
+            {
+                "id": "4a169d4a3a978634dadd4974a1b497db",
+                "name": "036 GamblerTable",
+                "path": "Assets/Data/Loots/LootTables/036 GamblerTable.asset",
+                "drops": []
+            },
+            {
+                "id": "41ee7f1e930a4a73a43e79cf29a43811",
+                "name": "BlackCoffin",
+                "path": "Assets/Data/Loots/LootTables/037 BlackCoffin_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "54ec389721584606bcd7a8933f88a65a",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.800000011920929
+                    },
+                    {
+                        "id": "54ec389721584606bcd7a8933f88a65a",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.20000000298023225
+                    }
+                ]
+            },
+            {
+                "id": "09b7e38a9b474a49a0e8e8a2c0572e96",
+                "name": "TideAnchorGuard",
+                "path": "Assets/Data/Loots/LootTables/038 TideAnchorGuard_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "786679dcd19c470b9c92aeba18a319b8",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.800000011920929
+                    },
+                    {
+                        "id": "786679dcd19c470b9c92aeba18a319b8",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.20000000298023225
+                    }
+                ]
+            },
+            {
+                "id": "1e4302dccde541669b8c45b5f2508883",
+                "name": "ThunderWolf",
+                "path": "Assets/Data/Loots/LootTables/039 ThunderWolf_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "dea757009a544ee8bb1407ede929e955",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.800000011920929
+                    },
+                    {
+                        "id": "dea757009a544ee8bb1407ede929e955",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.20000000298023225
+                    }
+                ]
+            },
+            {
+                "id": "d706667deb4a3864c9f71756ffc850a2",
+                "name": "InterlockingPrismServants",
+                "path": "Assets/Data/Loots/LootTables/040 InterlockingPrismServants_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "22aabd44e1d173445a17d7c47544e7ea",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 1.0
+                    },
+                    {
+                        "id": "22aabd44e1d173445a17d7c47544e7ea",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.20000000298023225
+                    }
+                ]
+            },
+            {
+                "id": "07a4f8f0baaaf6d43844909d1c752c64",
+                "name": "BadQueen'sHunter",
+                "path": "Assets/Data/Loots/LootTables/BadQueensHunter.asset",
+                "drops": [
+                    {
+                        "id": "a86c6504bc8104048a4271c991a686c2",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 1.0
+                    },
+                    {
+                        "id": "a86c6504bc8104048a4271c991a686c2",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.15000000596046449
+                    }
+                ]
+            },
+            {
+                "id": "11db27f8d1f9e854ebd43bf4f4ee51d2",
+                "name": "BloodPearl",
+                "path": "Assets/Data/Loots/LootTables/BloodPearl_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "2a5a440bab2e42f499a7fabcd4b29ead",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.800000011920929
+                    },
+                    {
+                        "id": "2a5a440bab2e42f499a7fabcd4b29ead",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.15000000596046449
+                    }
+                ]
+            },
+            {
+                "id": "6c6e8df0672908f4797e634d4205d799",
+                "name": "BloodRat",
+                "path": "Assets/Data/Loots/LootTables/BloodRat_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "d1eb5424360bc9f40a2b6a89faa718cb",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 1.0
+                    },
+                    {
+                        "id": "d1eb5424360bc9f40a2b6a89faa718cb",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.5
+                    },
+                    {
+                        "id": "d1eb5424360bc9f40a2b6a89faa718cb",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.15000000596046449
+                    }
+                ]
+            },
+            {
+                "id": "a0999eff225d6a94faf6899e7efbdcd8",
+                "name": "CallOfBeyond",
+                "path": "Assets/Data/Loots/LootTables/CallOfBeyond_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "86cf119c5ff77594f96939517d1506a7",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 1.0
+                    },
+                    {
+                        "id": "86cf119c5ff77594f96939517d1506a7",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.15000000596046449
+                    }
+                ]
+            },
+            {
+                "id": "96f39e34fddb4272842405c236f21872",
+                "name": "CrimsonBroodmother",
+                "path": "Assets/Data/Loots/LootTables/CrimsonBroodmother_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "2a5a440bab2e42f499a7fabcd4b29ead",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 1.0
+                    },
+                    {
+                        "id": "2a5a440bab2e42f499a7fabcd4b29ead",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.15000000596046449
+                    }
+                ]
+            },
+            {
+                "id": "d3b2561c095852e429a81258cacc1678",
+                "name": "FlameMoth",
+                "path": "Assets/Data/Loots/LootTables/FlameMoth_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "1a247d2fcfd14c141bd79e8a82154b1f",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.800000011920929
+                    },
+                    {
+                        "id": "1a247d2fcfd14c141bd79e8a82154b1f",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.15000000596046449
+                    }
+                ]
+            },
+            {
+                "id": "52e0abdf93da91c4aab509b389ee40c1",
+                "name": "Kitty",
+                "path": "Assets/Data/Loots/LootTables/Kitty_LootTable.asset",
+                "drops": []
+            },
+            {
+                "id": "4f9e3c5728ed67d4997f9762ff3d2bf0",
+                "name": "LoomingDark",
+                "path": "Assets/Data/Loots/LootTables/LoomingDark_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "264958ff28a8e5242b8197ce9765edbe",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 1.0
+                    },
+                    {
+                        "id": "264958ff28a8e5242b8197ce9765edbe",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.15000000596046449
+                    }
+                ]
+            },
+            {
+                "id": "6a206a5ecc655a0458329cafc5886344",
+                "name": "Magtronic",
+                "path": "Assets/Data/Loots/LootTables/Magtronic_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "3e23e2fc8a9e85945adee34acbb745f4",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.800000011920929
+                    },
+                    {
+                        "id": "3e23e2fc8a9e85945adee34acbb745f4",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.15000000596046449
+                    }
+                ]
+            },
+            {
+                "id": "01a6981d2c4feba45a9417a8b3bd7dae",
+                "name": "RedLamp",
+                "path": "Assets/Data/Loots/LootTables/RedLamp_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "d472eb76e6a877043b3a98578a2db396",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.800000011920929
+                    },
+                    {
+                        "id": "d472eb76e6a877043b3a98578a2db396",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.15000000596046449
+                    }
+                ]
+            },
+            {
+                "id": "756c59b37a12fdf4bb928caff0b2d583",
+                "name": "SSSnail",
+                "path": "Assets/Data/Loots/LootTables/SSSnail_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "868997ae4239f844f9ea876d8ad4057e",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.800000011920929
+                    },
+                    {
+                        "id": "868997ae4239f844f9ea876d8ad4057e",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.15000000596046449
+                    }
+                ]
+            },
+            {
+                "id": "0b492371534f471419f9d48ded4ebe5a",
+                "name": "Slime",
+                "path": "Assets/Data/Loots/LootTables/Slime_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "ea9793b0c90ae0c4f9dbaf13a832f375",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.800000011920929
+                    },
+                    {
+                        "id": "ea9793b0c90ae0c4f9dbaf13a832f375",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.15000000596046449
+                    }
+                ]
+            },
+            {
+                "id": "42070d5195329b6458b9f8fc629a42d9",
+                "name": "WaterMan",
+                "path": "Assets/Data/Loots/LootTables/WaterMan_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "f7d97cfbea961c84ebb552d194bd09f1",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.800000011920929
+                    },
+                    {
+                        "id": "f7d97cfbea961c84ebb552d194bd09f1",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.15000000596046449
+                    }
+                ]
+            },
+            {
+                "id": "7cad391b665e4854ea51425a2ce7c19b",
+                "name": "Waveling",
+                "path": "Assets/Data/Loots/LootTables/Waveling_LootTable.asset",
+                "drops": [
+                    {
+                        "id": "4ae5af66b58deb64bb0942a685e955c5",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 1.0
+                    },
+                    {
+                        "id": "4ae5af66b58deb64bb0942a685e955c5",
+                        "min": 1,
+                        "max": 1,
+                        "chance": 0.10000000149011612
+                    }
+                ]
+            }
+        ]
+    }
+}

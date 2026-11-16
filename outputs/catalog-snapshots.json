@@ -1,5 +1,16 @@
 {
   "purpose": "Versioned reference catalogs; each is a dated snapshot rather than a live export.",
+  "equipmentCatalog": {
+    "directory": "outputs/encyclopedia",
+    "snapshotDate": "2026-11-16",
+    "weaponAssets": 26,
+    "blueprintAssets": 20,
+    "lootAssets": 27,
+    "enemyAssetsCheckedForLoot": 53,
+    "enemiesWithMaterialDrops": 22,
+    "deliverables": ["equipment.json", "DiceLand完整图鉴.html"],
+    "coverage": "通过团结 AssetDatabase 导出 Assets/Data 的 26 个武器、20 个卷轴及 27 个素材资产，按 GUID 核对全部有效配方和产物，读取三个图纸投放池及普通商店。按实际引用核对 53 个敌人、47 个敌群、21 张掉落表及小猫咪的撤退结算；22 个敌人至少关联一条素材掉落配置。事件胜利追加素材已检查，当前未配置此类条目。遗物与敌人技能沿用各自正式图鉴的历史快照及增量范围。"
+  },
   "enemyCatalog": {
     "directory": "outputs/enemy-catalog",
     "snapshotDate": "2026-10-26",

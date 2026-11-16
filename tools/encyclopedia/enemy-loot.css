@@ -1,0 +1,6 @@
+#battle-loot .enemy-drop-list { padding-left: 0; list-style: none; }
+.enemy-drop-list li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; }
+.enemy-drop-list li > span { color: var(--muted); }
+.enemy-drop-link { padding: 4px 8px; color: var(--green); }
+.enemy-drop-table + .enemy-drop-table { margin-top: 10px; }
+.enemy-drop-table > p { color: var(--muted); }

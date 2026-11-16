@@ -1,0 +1,24 @@
+const embeddedCatalog = /*__CATALOG_KEY__*/;
+const initialCatalogHash = /*__INITIAL_CATALOG_HASH__*/;
+
+function setEmbeddedCatalogHash(hash) {
+  const target = hash ? 'about:srcdoc#' + hash : 'about:srcdoc';
+  if (location.href !== target) history.replaceState(null, '', target);
+  parent.postMessage({catalog: embeddedCatalog, hash}, '*');
+}
+
+if (initialCatalogHash) setEmbeddedCatalogHash(initialCatalogHash);
+
+document.addEventListener('click', event => {
+  const link = event.target.closest('a');
+  if (!link) return;
+  if (link.dataset.openCatalog) {
+    event.preventDefault();
+    parent.postMessage({catalog: embeddedCatalog, openTab: link.dataset.openCatalog}, '*');
+  } else if (link.getAttribute('href') === '#main') {
+    event.preventDefault();
+    const main = document.getElementById('main');
+    main.focus({preventScroll: true});
+    main.scrollIntoView();
+  }
+});
