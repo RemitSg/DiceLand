@@ -14323,6 +14323,38 @@ MonoBehaviour:
     m_Key: event.036_A_01.option.Tricked.result
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000386
+    m_Key: event.037.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000387
+    m_Key: event.037.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000388
+    m_Key: event.037.option.PayForSoup.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000389
+    m_Key: event.037.option.PayForSoup.preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000390
+    m_Key: event.037.option.PayForSoup.result
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000391
+    m_Key: event.037.option.GatherFirewood.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000392
+    m_Key: event.037.option.GatherFirewood.preview
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000393
+    m_Key: event.037.option.GatherFirewood.result
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

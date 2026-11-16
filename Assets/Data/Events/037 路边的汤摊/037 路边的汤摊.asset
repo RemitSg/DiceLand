@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37bbc450bd9189847a6a4d61c848e46e, type: 3}
+  m_Name: "037 \u8DEF\u8FB9\u7684\u6C64\u644A"
+  m_EditorClassIdentifier:
+  eventId: 037
+  eventName: "\u8DEF\u8FB9\u7684\u6C64\u644A"
+  eventContent: "\u8D76\u8DEF\u65F6\uFF0C\u4F60\u95FB\u5230\u4E86\u6D53\u70C8\u7684\u9999\u5473\uFF0C\u4F3C\u4E4E\u662F\u65C1\u8FB9\u7684\u6C64\u54C1\u5C0F\u644A\u6563\u53D1\u51FA\u6765\u7684\u3002\n\n\u5728\u5927\u8111\u5F00\u59CB\u601D\u8003\u4E4B\u524D\uFF0C\u4F60\u7684\u811A\u6B65\u5DF2\u7ECF\u505C\u5230\u4E86\u644A\u524D\uFF0C\u4ECA\u5929\u4F60\u52BF\u5FC5\u8981\u5C1D\u5C1D\u7A76\u7ADF\u662F\u4EC0\u4E48\u6C64\u53EF\u4EE5\u6563\u53D1\u8FD9\u4E48\u8BF1\u4EBA\u7684\u9999\u5473\u3002\n\n\u644A\u4E3B\u70ED\u60C5\u5730\u4E0E\u4F60\u6500\u8C08\uFF1A\u300C\u5BA2\u4EBA\uFF01\u80FD\u5E2E\u6211\u6361\u4E9B\u5E72\u679D\u5417\uFF0C\u8FD9\u7897\u7B97\u8BF7\u4F60\u7684\uFF01\u300D"
+  eventIllustration: {fileID: 0}
+  hideConsequences: 0
+  options:
+  - optionId: PayForSoup
+    optionLabel: "\u4ED8\u94B1\u559D\u6C64"
+    requiredMoney: 8
+    requiredMoneyPercent: 0
+    consequenceDescription: "\u5168\u961F\u5404\u6062\u590D 15% \u6700\u5927\u751F\u547D\u503C\u3002"
+    resultContent: "\u4F60\u59D4\u5A49\u5730\u62D2\u7EDD\u4E86\u8BF7\u6C42\uFF0C\u63D0\u51FA\u4ED8\u94B1\u559D\u6C64\u3002\u644A\u4E3B\u6446\u6446\u624B\u8BA9\u4F60\u4E0D\u8981\u4ECB\u610F\uFF0C\u7136\u540E\u9012\u7ED9\u4E86\u4F60\u4E00\u7897\u70ED\u6C14\u817E\u817E\u7684\u8089\u6C64\u3002"
+    builtInEffectType: 6
+    effectAmount: 15
+    additionalBuiltInEffects: []
+    possibleResults: []
+    nextEvent: {fileID: 0}
+    resolveEvent: 1
+    customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: -1
+  - optionId: GatherFirewood
+    optionLabel: "\u53BB\u6797\u5B50\u91CC\u6361\u67F4"
+    requiredMoney: 0
+    requiredMoneyPercent: 0
+    consequenceDescription: "\u6D88\u8017 1 \u884C\u52A8\u70B9\uFF0C\u5168\u961F\u5404\u6062\u590D 15% \u6700\u5927\u751F\u547D\u503C\u3002"
+    resultContent: "\u4F60\u8D39\u4E86\u4E00\u70B9\u529F\u592B\u62B1\u56DE\u4E00\u6346\u67AF\u679D\u3002\u644A\u4E3B\u5341\u5206\u611F\u8C22\u4F60\u7684\u5E2E\u52A9\uFF0C\u7ED9\u4F60\u4EEC\u4E00\u4EBA\u76DB\u4E86\u4E00\u7897\u9999\u6C14\u56DB\u6EA2\u7684\u8089\u6C64\u3002"
+    builtInEffectType: 9
+    effectAmount: 1
+    additionalBuiltInEffects:
+    - effectType: 6
+      effectAmount: 15
+    possibleResults: []
+    nextEvent: {fileID: 0}
+    resolveEvent: 1
+    customHandler: {fileID: 0}
+    specialDungeonDestinationEntryIndex: -1

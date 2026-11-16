@@ -16105,6 +16105,38 @@ MonoBehaviour:
     m_Localized: "You hurry back to the forest trail.\n\nThe White Snake Demon encounter is not available yet."
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000386
+    m_Localized: "Roadside Soup Stall"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000387
+    m_Localized: "A rich aroma catches your attention as you travel. It seems to be coming from a little soup stall by the road.\n\nYour feet carry you to the counter before you can think twice. Whatever smells this good, you have to try it.\n\nThe stallkeeper greets you warmly. \u201CTraveler! Could you gather some dry branches for me? I\u2019ll give you a bowl on the house!\u201D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000388
+    m_Localized: "Pay for Soup"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000389
+    m_Localized: "Each party member recovers 15% of their max HP."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000390
+    m_Localized: "You politely decline and offer to pay for your soup. The stallkeeper waves away your apologies and hands you a steaming bowl of meat broth."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000391
+    m_Localized: "Gather Firewood"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000392
+    m_Localized: "Spend 1 action point. Each party member recovers 15% of their max HP."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000393
+    m_Localized: "It takes some effort, but you return with an armful of dry branches. The grateful stallkeeper serves everyone a bowl of fragrant meat broth."
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

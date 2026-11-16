@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "date": "2026-11-13",
+  "date": "2026-11-16",
   "generator": "Built-in image_gen",
-  "scope": "36 main event family paintings, 10 Lucky Maze room illustrations, and the Forest Rescue reveal. Other follow-ups inherit their family illustration unless eventIllustration explicitly overrides it.",
+  "scope": "37 main event family paintings, 10 Lucky Maze room illustrations, and the Forest Rescue reveal. Other follow-ups inherit their family illustration unless eventIllustration explicitly overrides it.",
   "items": [
     {
       "id": "001",
@@ -349,6 +349,18 @@
       "reference": "fc4c2fda600fbfb2576249dee79561d0da79d1bc:Assets/Resources/EventUI/Scenes/036_A_01.png",
       "sha256": "e920e461a99569b36933281d6cb635911fbfd9a3c5f5909cebd35c63c466015a",
       "sourcePrompt": "Use case: precise-object edit for a widescreen fantasy game event. Image 1 is the artwork to edit. Image 2 is a silhouette diagram on the same canvas, used only as an exact anatomical and placement guide for the replacement snake body. The pale shape in Image 2 begins at the waist and ends at one narrow tip. Replace the entire existing scaled lower body in Image 1 from the sash down, including BOTH the giant old scaled foreground shape that exits the lower left edge AND the old narrow raised extension. Paint moss, roots, path and dark ferns over all former scale-covered areas outside the new silhouette, especially the whole lower-left foreground. Follow the silhouette in Image 2 closely: join the thick end beneath the green sash, curve down and forward through a broad rounded, weight-bearing bend, then let the same body continue to the right and narrow steadily to its sole tip. Both outside contours must be individually traceable from the sash to that one tip, with no crossings or separate ends. Keep the complete new snake body within the frame, separated from the left and bottom borders by visible dark forest floor. The bend should look heavy and contact the ground; a tapered last part lifts modestly, backlit, around x64% y49%. Render the new shape as a three-dimensional ivory python body with small overlapping scales, realistic foreshortening and a firm contact shadow, in the exact detailed hand-painted fantasy style of Image 1. Keep the large, high adult human torso, distinctive face looking down with a knowing smile, expression, hair, jade hairpin, clothing, hands, low camera, tree canopy, lighting and the original painting's atmosphere. The face stays above the central glow and within ultrawide safe framing. At a glance this is one tall, solid snake spirit with one uninterrupted tail, dominating the low-angle view. No diagram, text, UI, border, human legs or extra figures in the final 16:9 opaque painting."
+    },
+    {
+      "id": "037",
+      "name": "路边的汤摊",
+      "path": "Assets/Resources/EventUI/Scenes/037.png",
+      "prompt": "Use case: precise object removal. Edit the attached painting as a pure scenic illustration. Remove ALL FOUR superimposed opaque graphic shapes completely: the three dark gold-edged horizontal plaques on the right AND the large dark gold-edged rectangle across the bottom. Paint over their full interiors, corners, shadows and decorative strokes. Where the plaques were, continue the naturally lit forest trail, patches of moss, small stones and soft fern foliage; keep those natural details soft and unobtrusive. Where the bottom rectangle was, reconstruct the actual continuous scene: timber and cloth at the bottom of the soup stall on the left, roots and dark woodland earth in the middle, and gently shaded stone path and moss in the lower right. The reconstructed bottom foreground should have natural shadow and visible depth, with no straight graphic edges. Preserve the original friendly cook, exact pose, fabric awning, bowl of soup, steaming cast-iron pot, wood basket, lantern, warm lighting, brushwork, and widescreen framing. The result must be one continuous landscape painting with every pixel depicting the physical world. Zero lettering, shapes, symbols, overlays, plaques, decorative frames, panels or borders.",
+      "references": [
+        "Assets/Resources/EventUI/Scenes/018.png",
+        "Assets/Resources/EventUI/Scenes/034.png"
+      ],
+      "sha256": "aee76a193d8fd4c08cbf045094e0c2c727bc90a8d6aed07cd506091ed78ae2ac",
+      "sourcePrompt": "Use case: stylized-concept. Asset type: full-bleed 16:9 DiceLand visual novel event background. Paint an original first-person encounter with a cozy roadside soup stall on an old forest trail. The two references show the game's brushwork, forest lighting, and screen composition only; make a new location and cook. At the left-center, a friendly stocky middle-aged cook with rolled-up sleeves and a muted rust-and-linen apron warmly greets travelers from behind a rough timber counter. On the counter is a clearly visible earthenware bowl of amber meat broth with small chunks and green herbs. Beside it, a cast-iron soup pot simmers on a small stone hearth; ribbons of luminous steam rise through a shaft of warm afternoon sun. A couple of dry twigs near an almost empty firewood basket quietly establish why the cook is asking for help. Simple patched ochre fabric awning, used crockery, moss-covered roots and verdant ferns; inviting, lived-in, grounded fantasy. Rich semi-realistic anime fantasy painting, hand-painted textures, earthy ochre warmth against deep moss greens. Keep the cook's face, soup and pot above the lower third and within the central horizontal 80%; let the path and softly lit woodland occupy the quieter right third behind a choice menu. Dark, low-detail foreground in the lower third for a translucent dialogue box; no dominant object at the far edges. Landscape 16:9, opaque, no lettering, UI, watermark, extra people, weapons or gift boxes."
     }
   ]
 }
