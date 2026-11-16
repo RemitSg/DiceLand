@@ -23,7 +23,7 @@ const [catalog, snapshots, sources, template, css, script] = await Promise.all([
   readJson(path.join(output, 'catalog.json')),
   readJson(path.join(output, '../catalog-snapshots.json')),
   readJson(path.join(tools, 'portraits.json')),
-  read(path.join(tools, 'catalog.template.html')),
+  read(path.join(tools, 'catalog.html.in')),
   read(path.join(tools, 'catalog.css')),
   read(path.join(tools, 'catalog.js'))
 ]);

@@ -14,7 +14,7 @@
   <div class="app">
     <aside class="rail" aria-label="敌人分类">
       <div class="brand">
-        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 27 8v8c0 6-4 10-11 13C9 26 5 22 5 16V8l11-5Z"/><path d="m11 21 10-10m-9 4 5 5m2-9h2v2m-10 8 2-2"/></svg>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" aria-hidden="true"><path d="M16 3 27 8v8c0 6-4 10-11 13C9 26 5 22 5 16V8l11-5Z"/><path d="m11 21 10-10m-9 4 5 5m2-9h2v2m-10 8 2-2"/></svg>
         <div>DICELAND<small>BESTIARY</small></div>
       </div>
       <div class="rail-label">遭遇分类</div>
@@ -41,7 +41,7 @@
       <section class="toolbar" aria-label="图鉴筛选工具">
         <div class="search-row">
           <label class="search">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 4.5 4.5"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 4.5 4.5"/></svg>
             <span class="sr-only">搜索敌人、技能、状态或编号</span>
             <input id="query" type="search" placeholder="搜索敌人、技能、状态或编号…" autocomplete="off" spellcheck="false">
             <kbd aria-hidden="true">/</kbd>
@@ -83,7 +83,9 @@
           </div>
           <p class="search-hint">搜索 <code>006</code>、<code>037–040</code> 或 <code>id:3001</code></p>
         </div>
-        <div id="results" class="grid"></div>
+        <div id="results" class="grid">
+          <p class="empty">图鉴正在加载。如果列表一直未显示，请用 Edge 或 Chrome 打开本地 HTML。<a href="敌人与技能完整清单.txt">打开完整清单</a></p>
+        </div>
       </section>
 
       <footer class="footer">
@@ -123,7 +125,6 @@
     <div id="detail-content" class="drawer-content"></div>
   </dialog>
   <div id="print-view" aria-hidden="true"></div>
-  <noscript><p class="noscript">启用 JavaScript 后可使用交互图鉴。<a href="敌人与技能完整清单.txt">打开完整清单</a></p></noscript>
   <script id="catalog-data" type="application/json">/*__CATALOG_DATA__*/</script>
   <script>
 /*__SCRIPT__*/

@@ -9,8 +9,8 @@ const normalize = value => String(value ?? '').normalize('NFKC').toLowerCase();
 const numberLabel = value => String(value).padStart(3, '0');
 const rangeLabel = (low, high) => low === high ? String(low) : `${low}–${high}`;
 const collator = new Intl.Collator('zh-CN', {numeric: true});
-const star = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9Z"/></svg>';
-const shield = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3Z"/><path d="M9 12h6m-3-3v6"/></svg>';
+const star = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9Z"/></svg>';
+const shield = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="m12 3 7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3Z"/><path d="M9 12h6m-3-3v6"/></svg>';
 
 function splitSkill(skill) {
   const dice = [], rules = [];

@@ -212,7 +212,6 @@ body:has(.drawer[open]) { overflow: hidden; }
 .source-path { display: block; color: var(--muted); }
 mark { color: #294837; background: #e4edcf; border-radius: 2px; }
 #print-view { display: none; }
-.noscript { margin: 1rem; }
 
 @media (min-width: 1600px) {
   .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -281,7 +280,7 @@ mark { color: #294837; background: #e4edcf; border-radius: 2px; }
 }
 @media print {
   :root, body { color: #000; background: #fff; }
-  .app, .skip-link, .drawer, noscript { display: none !important; }
+  .app, .skip-link, .drawer { display: none !important; }
   #print-view { display: block; }
   .print-enemy + .print-enemy { break-before: page; }
   .print-enemy h2, .print-skill h3 { break-after: avoid; }

@@ -43,6 +43,8 @@ try {
   await page.waitForFunction(() => document.querySelectorAll('#results .enemy').length > 0);
   equal((await ids()).length, catalog.summary.enemy_assets);
   equal(await page.locator('#skill-total').textContent(), String(catalog.summary.related_unique_skills));
+  const logo = await page.locator('.brand svg').boundingBox();
+  equal([logo.width, logo.height], [32, 32], 'The catalog logo fits the navigation rail');
   const embedded = await page.locator('#catalog-data').textContent().then(JSON.parse);
   equal(embedded.enemies, catalog.enemies.map(({raw, skills, ...enemy}) => ({
     ...enemy, portrait: raw.enemySprite?.guid || '', skills: skills.map(({raw, ...skill}) => skill)
@@ -174,6 +176,19 @@ try {
     await page.locator('#close').click();
     await reset();
   }
+
+  // A restricted HTML preview can omit both styles and scripts.
+  const restricted = await browser.newPage({javaScriptEnabled: false, viewport: {width: 1091, height: 816}});
+  await restricted.goto(url);
+  await restricted.evaluate(() => document.querySelector('style').remove());
+  const unstyledLogo = await restricted.locator('.brand svg').boundingBox();
+  equal([unstyledLogo.width, unstyledLogo.height], [32, 32], 'The unstyled logo cannot take up the page');
+  const fallback = restricted.getByRole('link', {name: '打开完整清单', exact: true});
+  equal(await fallback.isVisible(), true);
+  await fallback.click();
+  equal(restricted.url(), new URL('敌人与技能完整清单.txt', url).href);
+  await restricted.close();
+
   equal(requests, []);
   equal(errors, []);
   const report = {checks, enemies: catalog.enemies.length, uniqueSkills: catalog.summary.related_unique_skills, remoteRequests: requests.length, pageErrors: errors.length};
