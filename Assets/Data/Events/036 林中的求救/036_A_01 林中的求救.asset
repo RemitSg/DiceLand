@@ -22,10 +22,13 @@ MonoBehaviour:
     optionLabel: "\u88AB\u9A97\u4E86\uFF01"
     requiredMoney: 0
     requiredMoneyPercent: 0
-    consequenceDescription: "\u767D\u86C7\u5996\u7684\u6218\u6597\u6682\u672A\u5F00\u653E\u3002"
-    resultContent: "\u4F60\u8FDE\u5FD9\u9000\u56DE\u6797\u95F4\u5C0F\u8DEF\u3002\n\n\u767D\u86C7\u5996\u7684\u6218\u6597\u6682\u672A\u5F00\u653E\u3002"
-    builtInEffectType: 0
+    consequenceDescription: "\u8FDB\u5165\u4E00\u573A\u5403\u529B\u7684\u6218\u6597"
+    resultContent: "\u767D\u86C7\u5996\u8212\u5C55\u5F00\u76D8\u8E1E\u5728\u6797\u95F4\u7684\u86C7\u8EAB\uFF0C\u6321\u4F4F\u4E86\u53BB\u8DEF\u3002"
+    builtInEffectType: 10
     effectAmount: 0
+    encounterSelectionMode: 0
+    encounterEnemyGroups:
+    - {fileID: 11400000, guid: bee1450d16e54984ad0614a289e6b38d, type: 2}
     additionalBuiltInEffects: []
     possibleResults: []
     nextEvent: {fileID: 0}

@@ -1316,6 +1316,42 @@
     ]
   },
   {
+    "number": 45,
+    "id": 45,
+    "name": "白蛇妖",
+    "hp": 26,
+    "speed": "2–6",
+    "slots": 2,
+    "stages": [
+      {
+        "number": 1,
+        "name": "阶段 1",
+        "speed": "2–6",
+        "slots": 2
+      }
+    ],
+    "placement": [],
+    "skills": [
+      "毒牙",
+      "盘身扫尾",
+      "绞缠〔条件〕"
+    ],
+    "granted_to_player": [],
+    "guid": "f87757d70244431b9a2a19a346816a60",
+    "path": "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/WhiteSnakeDemon.asset",
+    "attributes": [
+      "毒"
+    ],
+    "event_placement_note": "中层普通强度。事件 036「林中的求救」从 MapEventPool 抽取，帮助后转至 036_A_01；选「被骗了！」固定遭遇 1 名白蛇妖。危险区域由实际地图格决定。",
+    "event_placement_reviewed_at": "2026-11-16",
+    "english_name": "White Snake Demon",
+    "english_skills": [
+      "Venom Fang",
+      "Coil and Sweep",
+      "Constrict"
+    ]
+  },
+  {
     "number": 4401,
     "id": 4401,
     "name": "新芽",

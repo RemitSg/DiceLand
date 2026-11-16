@@ -152,11 +152,17 @@ public sealed class AgentAdventureEventTests
 
         var ending = Act("run_choose_event");
         Assert.AreEqual("event_result", ending.phase);
-        Assert.IsFalse(ending.mapEvent.hasPendingBattle);
+        Assert.IsTrue(ending.mapEvent.hasPendingBattle);
         Assert.IsTrue(Tile.isResolved);
         Assert.AreEqual(before.money, ending.money);
         Assert.AreEqual(before.actionPoints, ending.actionPoints);
-        Assert.AreEqual("map", Act("run_continue_event").phase);
+        var after = Act("run_continue_event");
+        Assert.AreEqual("battle", after.phase);
+        var snake = after.battle.actors.Single(actor => actor.side == "enemy");
+        Assert.AreEqual("白蛇妖(ID:45)", snake.name);
+        Assert.AreEqual(26, snake.maxHp);
+        CollectionAssert.AreEquivalent(new[] { "毒牙", "盘身扫尾" }, snake.slots.Select(slot => slot.selectedSkill.name));
+        Assert.AreEqual(1, snake.statuses.Single(status => status.id == "swiftness").stacks);
     }
 
     [Test] public void InvalidAndUnavailableOptionsCannotSpendOrAdvanceRevision()

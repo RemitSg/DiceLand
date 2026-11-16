@@ -250,6 +250,9 @@ MonoBehaviour:
   - id: 6d9df9f8bace72d47b7e655cb72ea809
     asset: {fileID: 11400000, guid: 6d9df9f8bace72d47b7e655cb72ea809, type: 2}
     enemyGroup: 8
+  - id: f87757d70244431b9a2a19a346816a60
+    asset: {fileID: 11400000, guid: f87757d70244431b9a2a19a346816a60, type: 2}
+    enemyGroup: 9
   - id: ea9793b0c90ae0c4f9dbaf13a832f375
     asset: {fileID: 11400000, guid: ea9793b0c90ae0c4f9dbaf13a832f375, type: 2}
     enemyGroup: 9

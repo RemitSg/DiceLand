@@ -23,7 +23,7 @@ The 37 main paintings cover the 37 current event families. All 79 authored event
 
 ## Forest rescue encounter
 
-`036` is in the map event pool. Helping opens `036_A_01`, where choosing `Tricked` currently ends the event and reports that the encounter is pending. Once the White Snake Demon is authored, set that option's `builtInEffectType` to `StartEncounter`, assign the encounter group, and replace the temporary result and preview in the asset and both locale tables. The intended preview is “进入一场吃力的战斗”.
+`036` is in the map event pool. Helping opens `036_A_01`. The `Tricked` option previews a tough battle and starts a fixed encounter with one White Snake Demon. Walking away from the initial encounter resolves the tile without combat.
 
 ## Typography
 

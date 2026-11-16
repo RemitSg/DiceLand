@@ -14355,6 +14355,62 @@ MonoBehaviour:
     m_Key: event.037.option.GatherFirewood.result
     m_Metadata:
       m_Items: []
+  - m_Id: 72000000000394
+    m_Key: enemy.white_snake.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000395
+    m_Key: enemy.white_snake.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000396
+    m_Key: enemy.white_snake.passive.0.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000397
+    m_Key: enemy.white_snake.passive.0.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000398
+    m_Key: enemy.white_snake.passive.1.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000399
+    m_Key: enemy.white_snake.passive.1.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000400
+    m_Key: skill.white_snake.venom_fang.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000401
+    m_Key: skill.white_snake.venom_fang.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000402
+    m_Key: skill.white_snake.coil_sweep.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000403
+    m_Key: skill.white_snake.coil_sweep.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000404
+    m_Key: skill.white_snake.constrict.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000405
+    m_Key: skill.white_snake.constrict.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000406
+    m_Key: enemy_group.white_snake.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000407
+    m_Key: enemy_group.white_snake.description
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

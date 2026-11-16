@@ -1,9 +1,9 @@
 {
   "summary": {
-    "enemy_assets": 52,
-    "unique_enemy_names": 51,
-    "related_unique_skills": 136,
-    "all_skill_assets": 222,
+    "enemy_assets": 53,
+    "unique_enemy_names": 52,
+    "related_unique_skills": 139,
+    "all_skill_assets": 225,
     "missing_references": [],
     "source": "Unity AssetDatabase + ScriptableObject YAML + existing BattleSkillInfoOverlay.BuildSkillDetail",
     "timestamp": "2026-10-26T18:45:03.180361+08:00",
@@ -17,21 +17,19 @@
       "scope": "仅增量复核眩晕及关联技能的施加时机和失效按钮机制。原有生命、属性、速度、技能基础值及投放仍沿用 2026-10-26 历史快照；未补齐其他历史缺项。"
     },
     "latest_content_revision": {
-      "date": "2026-11-09",
+      "date": "2026-11-16",
       "enemyNumbers": [
-        44,
-        4401
+        45
       ],
       "enemyIds": [
-        44,
-        4401
+        45
       ],
-      "newEnemyAssets": 2,
-      "newRelatedSkills": 7,
-      "scope": "新增 044 枯枝王庭与召唤物 4401 新芽：完整核对实际资产、GUID、两阶段、被动、七个技能及 Boss 池投放；其他历史内容仍沿用原快照和已单列的增量修订。",
-      "validation": "MCP EditMode 24/24 通过；使用实际敌群执行 8 回合定向战斗检查，覆盖第 1/4/7 回合召唤、第二阶段、个人第四回合断枝与次回合献祭。非完整通关或难度平衡验证。"
+      "newEnemyAssets": 1,
+      "newRelatedSkills": 3,
+      "scope": "新增 045 白蛇妖及毒牙、盘身扫尾、绞缠。核对实际资产、属性来源、回合被动与选技、三个技能的骰子和效果，以及事件 036/036_A_01 的固定单敌遭遇。其余敌人沿用历史快照及已列增量，历史血孢子等未复核条目保留。",
+      "validation": "团结 EditMode 138/139 通过，含白蛇妖定向测试 7/7 和事件分支验证；唯一失败的友方开场急速测试在改动前基线同样失败。离线图鉴 205/205 通过，远程请求和页面异常均为 0。"
     },
-    "coverage": "以 2026-10-26 历史快照的 50 个敌人资产、129 个关联技能为基础，2026-11-09 完整增补 044 枯枝王庭与 4401 新芽的 2 个资产及 7 个技能，合计 52 个敌人资产、136 个关联技能。历史血孢子等未复核条目仍保留原快照，不代表全部内容已重新导出。 2026-11-10 仅修订 4401 新芽的战斗体型：enemyVisualScale 从 1 调整至 0.12，普通立绘与成长／断枝姿态统一继承该倍率；其他历史条目未重新导出，敌人资产 52、关联技能 136 的数量不变。 2026-11-12 增量调整 044 枯枝王庭的战斗体型（1 → 0.7）与 4401 新芽「成长」的攻击骰（2–4 → 2–3）。其他历史条目未重新导出，仍收录 52 个敌人资产与 136 个关联技能。",
+    "coverage": "以 2026-10-26 历史快照的 50 个敌人资产、129 个关联技能为基础，2026-11-09 完整增补 044 枯枝王庭与 4401 新芽的 2 个资产及 7 个技能，合计 52 个敌人资产、136 个关联技能。历史血孢子等未复核条目仍保留原快照，不代表全部内容已重新导出。 2026-11-10 仅修订 4401 新芽的战斗体型：enemyVisualScale 从 1 调整至 0.12，普通立绘与成长／断枝姿态统一继承该倍率；其他历史条目未重新导出，敌人资产 52、关联技能 136 的数量不变。 2026-11-12 增量调整 044 枯枝王庭的战斗体型（1 → 0.7）与 4401 新芽「成长」的攻击骰（2–4 → 2–3）。其他历史条目未重新导出，仍收录 52 个敌人资产与 136 个关联技能。 2026-11-16 增补 045 白蛇妖及 3 个技能、被动和事件遭遇，合计 53 个敌人资产、139 个关联技能。",
     "latest_presentation_revision": {
       "date": "2026-11-09",
       "enemyNumbers": [
@@ -183,7 +181,24 @@
       ],
       "skillCount": 7,
       "scope": "补录 044 枯枝王庭、4401 新芽、关联 Boss 敌群及七个技能的英文名称和描述，以及被动和技能规则的英文译文。本次只核对这两个敌人的本地化，目录仍收录 52 个敌人资产和 136 个关联技能。"
-    }
+    },
+    "content_revision_history": [
+      {
+        "date": "2026-11-09",
+        "enemyNumbers": [
+          44,
+          4401
+        ],
+        "enemyIds": [
+          44,
+          4401
+        ],
+        "newEnemyAssets": 2,
+        "newRelatedSkills": 7,
+        "scope": "新增 044 枯枝王庭与召唤物 4401 新芽：完整核对实际资产、GUID、两阶段、被动、七个技能及 Boss 池投放；其他历史内容仍沿用原快照和已单列的增量修订。",
+        "validation": "MCP EditMode 24/24 通过；使用实际敌群执行 8 回合定向战斗检查，覆盖第 1/4/7 回合召唤、第二阶段、个人第四回合断枝与次回合献祭。非完整通关或难度平衡验证。"
+      }
+    ]
   },
   "enemies": [
     {
@@ -36441,6 +36456,448 @@
           {
             "name": "Wither",
             "description": "Immune to Poison."
+          }
+        ]
+      }
+    },
+    {
+      "guid": "f87757d70244431b9a2a19a346816a60",
+      "number": 45,
+      "enemy_id": 45,
+      "name": "白蛇妖",
+      "path": "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/WhiteSnakeDemon.asset",
+      "hp": 26,
+      "stages": [
+        {
+          "number": 1,
+          "name": "阶段 1",
+          "speed": "2–6",
+          "slots": 2
+        }
+      ],
+      "placements": [],
+      "groups": [
+        {
+          "name": "白蛇妖",
+          "path": "Assets/Data/Enemies/EnemyGroup/Events/WhiteSnakeDemon.asset",
+          "guid": "bee1450d16e54984ad0614a289e6b38d",
+          "placement": [],
+          "english": {
+            "name": "White Snake Demon",
+            "description": "Event enemy: White Snake Demon ×1"
+          }
+        }
+      ],
+      "attributes": [
+        "毒"
+      ],
+      "attribute_sources": [
+        "毒属性来自事件敌群 Assets/Data/Enemies/EnemyGroup/Events/WhiteSnakeDemon.asset（GUID bee1450d16e54984ad0614a289e6b38d）的 attributes，引用 Assets/Data/Loots/Attributes/Poison_Attribute.asset（GUID d4ed7fcdaf0e4f7fa153118a4219a68f）。"
+      ],
+      "special_references": [
+        "林中的求救（事件 036，随机入口：Assets/Data/Events/036 林中的求救/036 林中的求救.asset，GUID 7d72aa5b921142298502abd5ab297224）",
+        "林中的求救（事件 036_A_01，「被骗了！」，固定敌群：Assets/Data/Events/036 林中的求救/036_A_01 林中的求救.asset，GUID 64f37881e3834627a2d1d5cf8ff46725）"
+      ],
+      "passives": [
+        "灵活（黄色）：奇数回合开始时，获得 1 层急速，本回合两个速度槽各 +1 速度。",
+        "柔韧（黄色）：每被一颗攻击骰命中，本回合减伤增加 10 个百分点，最高 50%。本次命中先叠减伤，再结算伤害。回合结束时清零。"
+      ],
+      "configured_mechanics": [
+        "中层普通强度。事件 036「林中的求救」从 MapEventPool 抽取，帮助后转至 036_A_01；选「被骗了！」固定遭遇 1 名白蛇妖。危险区域由实际地图格决定。",
+        "灵活（黄色）在第 1 回合开战时和第 3、5、7……回合开始时各加 1 层急速，引用 Assets/Data/Battle/Swiftness/Swiftness.asset（GUID 5ecc963d5be148b7956424cb4cd1d165）。该层在本回合速度投出前生效，两个速度槽各加 1，基础速度 2–6，奇数回合为 3–7。急速在回合结束时清空。",
+        "柔韧（黄色）在每颗直接命中的攻击骰结算伤害前增加 10 个百分点减伤，本回合最多累计 50 个百分点，回合结束清零。拼点和单方面攻击的直接命中均计数。未命中、防御骰与独立的额外或状态伤害不增加层数。减伤沿用受伤结算，减免后的伤害向下取整，护盾在减伤之后吸收。",
+        "偶数回合用条件技能规则优先为一个可行动速度槽指定绞缠（从第 2 回合开始，每隔 2 回合，优先级 100）。其余槽从毒牙、盘身扫尾中选。这三招各每回合最多一次，两个槽均可行动时，奇数回合必各用一次毒牙和盘身扫尾。",
+        "单形态，生命 26，基础减伤为 0。无转阶段、状态免疫、保命或召唤规则，玩家授技无。三招资产的能耗均为 0，敌人自身不消耗共享能量。",
+        "战斗立绘沿用事件揭晓的造型，enemyVisualScale=0.26，使用常规战斗表现。敌群未设置独立音乐、掉落表或危险评级覆盖；游戏内图鉴归为特殊敌人。"
+      ],
+      "description": "路遇求救的女子竟是盘踞林间的白蛇妖。",
+      "skills": [
+        {
+          "guid": "7b55418210cd4343966ee8a834e6797b",
+          "name": "毒牙",
+          "path": "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/VenomFang.asset",
+          "roles": [
+            "普通技能池"
+          ],
+          "stage_restriction": [
+            1
+          ],
+          "transform_stage": -1,
+          "ally_grant": false,
+          "detail": "毒牙\n技能：毒牙\n能耗：0\n骰子数：1\n第 1 攻击骰：3 ~ 5\n\n词条：\n每名敌人每回合最多使用 1 次。\n第 1 攻击骰词条：[ 命中时 ] 使 当前目标 于 下 1 个回合开始时 获得 1 层 中毒\n\n描述：\n咬中猎物，将毒液送入伤口。\n\n结算补充：\n第 1 攻击骰成功命中当前目标时，排队于下回合开始施加 1 次 1 层中毒，引用 Assets/Data/Battle/Poison/Poison.asset（GUID 5c2d83ddce914792abd7211bb94635f6）。中毒每层使技能骰最大威力减 1，最低不低于其最小威力，受中毒的这个回合结束时清空。",
+          "raw": {
+            "m_ObjectHideFlags": 0,
+            "m_CorrespondingSourceObject": {
+              "fileID": 0
+            },
+            "m_PrefabInstance": {
+              "fileID": 0
+            },
+            "m_PrefabAsset": {
+              "fileID": 0
+            },
+            "m_GameObject": {
+              "fileID": 0
+            },
+            "m_Enabled": 1,
+            "m_EditorHideFlags": 0,
+            "m_Script": {
+              "fileID": 11500000,
+              "guid": "dd9e46a03f543ee42b520031321210bf",
+              "type": 3
+            },
+            "m_Name": "VenomFang",
+            "m_EditorClassIdentifier": null,
+            "skillName": "毒牙",
+            "localizationKey": "skill.white_snake.venom_fang",
+            "maxUsesPerEnemyRound": 1,
+            "description": "咬中猎物，将毒液送入伤口。",
+            "skillCategory": 0,
+            "energyCost": 0,
+            "transformEnemyToStageIndex": -1,
+            "minPower": 3,
+            "maxPower": 5,
+            "diceCount": 1,
+            "dicePowerRanges": [
+              {
+                "minPower": 3,
+                "maxPower": 5
+              }
+            ],
+            "diceEffectSettings": [
+              {
+                "damageEffects": [],
+                "statusEffects": [
+                  {
+                    "trigger": 0,
+                    "targetMode": 0,
+                    "statusData": {
+                      "fileID": 11400000,
+                      "guid": "5c2d83ddce914792abd7211bb94635f6",
+                      "type": 2
+                    },
+                    "applyTiming": 1,
+                    "applyAfterRoundStarts": 1,
+                    "applyRepeatCount": 1,
+                    "stackAmount": 1,
+                    "randomTargetCount": 1,
+                    "useCondition": 0
+                  }
+                ],
+                "powerModifiers": [],
+                "statusBurstEffects": [],
+                "healingEffects": [],
+                "builtInEffects": [],
+                "rangeModifiers": [],
+                "statusStackOperationEffects": [],
+                "enemyStageTransitionEffects": [],
+                "summonEffects": []
+              }
+            ],
+            "diceSkillCategories": "00000000"
+          },
+          "english": {
+            "name": "Venom Fang",
+            "description": "Bites into the prey and injects venom."
+          }
+        },
+        {
+          "guid": "2be21eaa941c4c2496166fa21a5642f5",
+          "name": "盘身扫尾",
+          "path": "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/CoilSweep.asset",
+          "roles": [
+            "普通技能池"
+          ],
+          "stage_restriction": [
+            1
+          ],
+          "transform_stage": -1,
+          "ally_grant": false,
+          "detail": "盘身扫尾\n技能：盘身扫尾\n能耗：0\n骰子数：2\n第 1 防御骰：3 ~ 5\n第 2 攻击骰：2 ~ 3\n\n词条：\n每名敌人每回合最多使用 1 次。\n\n描述：\n盘起蛇身挡招，随后甩尾反击。\n\n结算补充：\n第 1 颗为标准防御骰，第 2 颗为标准攻击骰。甩尾无需先赢下防御骰；单方面攻击时只由第 2 颗骰子造成常规攻击伤害。",
+          "raw": {
+            "m_ObjectHideFlags": 0,
+            "m_CorrespondingSourceObject": {
+              "fileID": 0
+            },
+            "m_PrefabInstance": {
+              "fileID": 0
+            },
+            "m_PrefabAsset": {
+              "fileID": 0
+            },
+            "m_GameObject": {
+              "fileID": 0
+            },
+            "m_Enabled": 1,
+            "m_EditorHideFlags": 0,
+            "m_Script": {
+              "fileID": 11500000,
+              "guid": "dd9e46a03f543ee42b520031321210bf",
+              "type": 3
+            },
+            "m_Name": "CoilSweep",
+            "m_EditorClassIdentifier": null,
+            "skillName": "盘身扫尾",
+            "localizationKey": "skill.white_snake.coil_sweep",
+            "maxUsesPerEnemyRound": 1,
+            "description": "盘起蛇身挡招，随后甩尾反击。",
+            "skillCategory": 0,
+            "energyCost": 0,
+            "transformEnemyToStageIndex": -1,
+            "minPower": 2,
+            "maxPower": 5,
+            "diceCount": 2,
+            "dicePowerRanges": [
+              {
+                "minPower": 3,
+                "maxPower": 5
+              },
+              {
+                "minPower": 2,
+                "maxPower": 3
+              }
+            ],
+            "diceEffectSettings": [
+              {
+                "damageEffects": [],
+                "statusEffects": [],
+                "powerModifiers": [],
+                "statusBurstEffects": [],
+                "healingEffects": [],
+                "builtInEffects": [],
+                "rangeModifiers": [],
+                "statusStackOperationEffects": [],
+                "enemyStageTransitionEffects": [],
+                "summonEffects": []
+              },
+              {
+                "damageEffects": [],
+                "statusEffects": [],
+                "powerModifiers": [],
+                "statusBurstEffects": [],
+                "healingEffects": [],
+                "builtInEffects": [],
+                "rangeModifiers": [],
+                "statusStackOperationEffects": [],
+                "enemyStageTransitionEffects": [],
+                "summonEffects": []
+              }
+            ],
+            "diceSkillCategories": "0100000000000000"
+          },
+          "english": {
+            "name": "Coil and Sweep",
+            "description": "Coils up to block, then counterattacks with a tail sweep."
+          }
+        },
+        {
+          "guid": "376f88bb238d4640ae3044564b917e44",
+          "name": "绞缠",
+          "path": "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/Constrict.asset",
+          "roles": [
+            "条件技能"
+          ],
+          "stage_restriction": [
+            1
+          ],
+          "transform_stage": -1,
+          "ally_grant": false,
+          "detail": "绞缠\n技能：绞缠\n能耗：0\n骰子数：1\n第 1 攻击骰：3 ~ 4\n\n词条：\n每名敌人每回合最多使用 1 次。\n第 1 攻击骰词条：[ 使用该技能时 ] 若 自身速度 高出 目标单位速度 1 点（含） ，则 威力 +1\n\n描述：\n以蛇身绞缠猎物。威力条件按双方参与本次交锋的速度槽判定。\n\n结算补充：\n使用第 1 攻击骰时，对比白蛇妖此次出招的速度槽与目标被选中的速度槽。自身至少快 1 点才固定加 1 威力，平速或更慢时无加成。在拼点、单方面攻击和战斗预览中均按对应速度槽判断。",
+          "raw": {
+            "m_ObjectHideFlags": 0,
+            "m_CorrespondingSourceObject": {
+              "fileID": 0
+            },
+            "m_PrefabInstance": {
+              "fileID": 0
+            },
+            "m_PrefabAsset": {
+              "fileID": 0
+            },
+            "m_GameObject": {
+              "fileID": 0
+            },
+            "m_Enabled": 1,
+            "m_EditorHideFlags": 0,
+            "m_Script": {
+              "fileID": 11500000,
+              "guid": "dd9e46a03f543ee42b520031321210bf",
+              "type": 3
+            },
+            "m_Name": "Constrict",
+            "m_EditorClassIdentifier": null,
+            "skillName": "绞缠",
+            "localizationKey": "skill.white_snake.constrict",
+            "maxUsesPerEnemyRound": 1,
+            "description": "以蛇身绞缠猎物。威力条件按双方参与本次交锋的速度槽判定。",
+            "skillCategory": 0,
+            "energyCost": 0,
+            "transformEnemyToStageIndex": -1,
+            "minPower": 3,
+            "maxPower": 4,
+            "diceCount": 1,
+            "dicePowerRanges": [
+              {
+                "minPower": 3,
+                "maxPower": 4
+              }
+            ],
+            "diceEffectSettings": [
+              {
+                "damageEffects": [],
+                "statusEffects": [],
+                "powerModifiers": [
+                  {
+                    "trigger": 3,
+                    "useCondition": 1,
+                    "condition": 0,
+                    "requiredSpeedDifference": 1,
+                    "powerBonus": 1
+                  }
+                ],
+                "statusBurstEffects": [],
+                "healingEffects": [],
+                "builtInEffects": [],
+                "rangeModifiers": [],
+                "statusStackOperationEffects": [],
+                "enemyStageTransitionEffects": [],
+                "summonEffects": []
+              }
+            ],
+            "diceSkillCategories": "00000000"
+          },
+          "english": {
+            "name": "Constrict",
+            "description": "Wraps her coils around the target. The power bonus compares the two speed slots involved in this action."
+          }
+        }
+      ],
+      "granted_to_player": [],
+      "raw": {
+        "m_ObjectHideFlags": 0,
+        "m_CorrespondingSourceObject": {
+          "fileID": 0
+        },
+        "m_PrefabInstance": {
+          "fileID": 0
+        },
+        "m_PrefabAsset": {
+          "fileID": 0
+        },
+        "m_GameObject": {
+          "fileID": 0
+        },
+        "m_Enabled": 1,
+        "m_EditorHideFlags": 0,
+        "m_Script": {
+          "fileID": 11500000,
+          "guid": "31f9a7cafcec2b04b98f8307bada87d0",
+          "type": 3
+        },
+        "m_Name": "WhiteSnakeDemon",
+        "m_EditorClassIdentifier": null,
+        "enemyID": 45,
+        "enemyName": "白蛇妖",
+        "localizationKey": "enemy.white_snake",
+        "baseHP": 26,
+        "damageReductionPercent": 0,
+        "roundDamageReductionPerAttackHit": 10,
+        "roundDamageReductionCap": 50,
+        "minSpeed": 2,
+        "maxSpeed": 6,
+        "baseSpeedButtonCount": 2,
+        "enemySprite": {
+          "fileID": 21300000,
+          "guid": "0c9e2fe8e4c54c8a9eab5db5c6b10247",
+          "type": 3
+        },
+        "stageSprites": [],
+        "battleStartStatusGains": [
+          {
+            "statusData": {
+              "fileID": 11400000,
+              "guid": "5ecc963d5be148b7956424cb4cd1d165",
+              "type": 2
+            },
+            "stackAmount": 1
+          }
+        ],
+        "repeatRoundStartStatusGains": [
+          {
+            "statusData": {
+              "fileID": 11400000,
+              "guid": "5ecc963d5be148b7956424cb4cd1d165",
+              "type": 2
+            },
+            "stackAmount": 1,
+            "firstTriggerRound": 3,
+            "repeatEveryNRounds": 2
+          }
+        ],
+        "enemyDescription": "路遇求救的女子竟是盘踞林间的白蛇妖。",
+        "passiveDescriptions": [
+          {
+            "passiveName": "灵活",
+            "displayColorType": 2,
+            "description": "奇数回合开始时，获得 1 层急速，本回合两个速度槽各 +1 速度。"
+          },
+          {
+            "passiveName": "柔韧",
+            "displayColorType": 2,
+            "description": "每被一颗攻击骰命中，本回合减伤增加 10 个百分点，最高 50%。本次命中先叠减伤，再结算伤害。回合结束时清零。"
+          }
+        ],
+        "enemyVisualScale": 0.26,
+        "enemyVisualOffset": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "speedButtonOffset": {
+          "x": 0,
+          "y": 0
+        },
+        "skillPool": [
+          {
+            "fileID": 11400000,
+            "guid": "7b55418210cd4343966ee8a834e6797b",
+            "type": 2
+          },
+          {
+            "fileID": 11400000,
+            "guid": "2be21eaa941c4c2496166fa21a5642f5",
+            "type": 2
+          }
+        ],
+        "conditionalSkillRules": [
+          {
+            "ruleName": "偶数回合绞缠",
+            "skill": {
+              "fileID": 11400000,
+              "guid": "376f88bb238d4640ae3044564b917e44",
+              "type": 2
+            },
+            "conditionType": 1,
+            "firstTriggerRound": 2,
+            "repeatEveryNRounds": 2,
+            "priority": 100,
+            "maxSlotsPerRound": 1,
+            "useOncePerBattle": 0
+          }
+        ]
+      },
+      "catalog_revision": "2026-11-16",
+      "english": {
+        "name": "White Snake Demon",
+        "description": "The woman calling for help was a white serpent coiled in the forest.",
+        "passives": [
+          {
+            "name": "Agile",
+            "description": "At the start of odd-numbered rounds, gain 1 Haste. Both speed slots gain +1 Speed for that round."
+          },
+          {
+            "name": "Flexible",
+            "description": "Each attack die that hits increases damage reduction by 10 percentage points for the round, up to 50%. The increase applies before that hit deals damage. The bonus resets at round end."
           }
         ]
       }

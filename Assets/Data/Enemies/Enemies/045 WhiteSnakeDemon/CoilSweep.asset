@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: CoilSweep
+  m_EditorClassIdentifier:
+  skillName: "\u76D8\u8EAB\u626B\u5C3E"
+  localizationKey: skill.white_snake.coil_sweep
+  maxUsesPerEnemyRound: 1
+  description: "\u76D8\u8D77\u86C7\u8EAB\u6321\u62DB\uFF0C\u968F\u540E\u7529\u5C3E\u53CD\u51FB\u3002"
+  skillCategory: 0
+  energyCost: 0
+  transformEnemyToStageIndex: -1
+  minPower: 2
+  maxPower: 5
+  diceCount: 2
+  dicePowerRanges:
+  - minPower: 3
+    maxPower: 5
+  - minPower: 2
+    maxPower: 3
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers: []
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 0100000000000000

@@ -16098,11 +16098,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 72000000000384
-    m_Localized: "The White Snake Demon encounter is not available yet."
+    m_Localized: "Enter a tough battle"
     m_Metadata:
       m_Items: []
   - m_Id: 72000000000385
-    m_Localized: "You hurry back to the forest trail.\n\nThe White Snake Demon encounter is not available yet."
+    m_Localized: "The White Snake Demon uncoils across the trail, cutting off your escape."
     m_Metadata:
       m_Items: []
   - m_Id: 72000000000386
@@ -16135,6 +16135,62 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 72000000000393
     m_Localized: "It takes some effort, but you return with an armful of dry branches. The grateful stallkeeper serves everyone a bowl of fragrant meat broth."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000394
+    m_Localized: "White Snake Demon"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000395
+    m_Localized: "The woman calling for help was a white serpent coiled in the forest."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000396
+    m_Localized: "Agile"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000397
+    m_Localized: "At the start of odd-numbered rounds, gain 1 Haste. Both speed slots gain +1 Speed for that round."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000398
+    m_Localized: "Flexible"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000399
+    m_Localized: "Each attack die that hits increases damage reduction by 10 percentage points for the round, up to 50%. The increase applies before that hit deals damage. The bonus resets at round end."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000400
+    m_Localized: "Venom Fang"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000401
+    m_Localized: "Bites into the prey and injects venom."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000402
+    m_Localized: "Coil and Sweep"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000403
+    m_Localized: "Coils up to block, then counterattacks with a tail sweep."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000404
+    m_Localized: "Constrict"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000405
+    m_Localized: "Wraps her coils around the target. The power bonus compares the two speed slots involved in this action."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000406
+    m_Localized: "White Snake Demon"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72000000000407
+    m_Localized: "Event enemy: White Snake Demon \u00D71"
     m_Metadata:
       m_Items: []
   references:

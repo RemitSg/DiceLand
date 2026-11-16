@@ -150,7 +150,12 @@ public sealed class MapEventPanelLayoutTests
             {
                 runState = run, currentEventTile = t, optionData = o
             }, e, null, out var result);
-            Assert.IsNull(result.pendingEncounterData);
+            if (o.optionId == "Tricked")
+            {
+                Assert.IsNotNull(result.pendingEncounterData);
+                Assert.AreEqual(45, result.pendingEncounterData.enemyGroup.GetEnemies().Single().enemyID);
+            }
+            else Assert.IsNull(result.pendingEncounterData);
             message = result.message;
             content = result.resultContent;
             next = result.nextEventOverride;
@@ -172,7 +177,7 @@ public sealed class MapEventPanelLayoutTests
             Assert.AreSame(opening, tile.assignedEvent);
             Assert.AreEqual(reveal.eventContent, story.text);
             Assert.AreEqual("036_A_01", image.sprite.name);
-            StringAssert.Contains("白蛇妖的战斗暂未开放", preview.text);
+            StringAssert.Contains("进入一场吃力的战斗", preview.text);
         }
         else
         {
@@ -185,7 +190,7 @@ public sealed class MapEventPanelLayoutTests
         Assert.IsNull(tile.assignedEvent);
         Assert.AreEqual(1, run.settlementStats.eventTilesCompleted);
         Assert.AreEqual(50, run.money);
-        StringAssert.Contains(help ? "白蛇妖的战斗暂未开放" : "无事发生", story.text);
+        StringAssert.Contains(help ? "白蛇妖舒展开盘踞在林间的蛇身" : "无事发生", story.text);
         confirm.onClick.Invoke();
         Assert.IsFalse(overlay.IsVisible);
     }

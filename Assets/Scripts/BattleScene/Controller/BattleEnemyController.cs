@@ -13,7 +13,9 @@ public class BattleEnemyController : MonoBehaviour
     public int EnemyID => enemyData != null ? enemyData.enemyID : -1;
     public string EnemyName => enemyData != null ? enemyData.enemyName : "Unknown";
     public int BaseHP => enemyData != null ? enemyData.baseHP : 0;
-    public float DamageReductionPercent => enemyData != null ? Mathf.Clamp(enemyData.damageReductionPercent, 0f, 100f) : 0f;
+    public float DamageReductionPercent => enemyData != null
+        ? Mathf.Clamp(enemyData.damageReductionPercent + roundDamageReductionFromAttackHits, 0f, 100f)
+        : 0f;
     public int MinSpeed => enemyData != null ? enemyData.GetStageMinSpeed(CurrentStageIndex) : 0;
     public int MaxSpeed => enemyData != null ? enemyData.GetStageMaxSpeed(CurrentStageIndex) : 0;
     public int BaseSpeedButtonCount => enemyData != null ? enemyData.GetStageSpeedButtonCount(CurrentStageIndex) : 0;
@@ -67,6 +69,7 @@ public class BattleEnemyController : MonoBehaviour
     private bool registeredAsBleedDecayPreventer;
     private int pendingNextAttackSkillPowerBonus;
     private int activeAttackSkillPowerBonus;
+    private float roundDamageReductionFromAttackHits;
     private bool pendingCalamityDelayedDeath;
     public bool HasPendingCalamityDelayedDeath => pendingCalamityDelayedDeath && !IsDead;
 
@@ -306,6 +309,7 @@ public class BattleEnemyController : MonoBehaviour
         consumedRoundStartRetreat = false;
         pendingNextAttackSkillPowerBonus = 0;
         activeAttackSkillPowerBonus = 0;
+        roundDamageReductionFromAttackHits = 0f;
         pendingCalamityDelayedDeath = false;
         IsDead = false;
         CurrentStageIndex = 0;
@@ -646,6 +650,18 @@ public class BattleEnemyController : MonoBehaviour
         activeAttackSkillPowerBonus = SelectedSkill != null && !SelectedSkill.IsDefenseSkill
             ? pendingNextAttackSkillPowerBonus
             : 0;
+    }
+
+    public int TakeAttackDiceDamage(int amount, int powerModifierAmount, int originalReferenceDamage)
+    {
+        if (!IsDead && enemyData != null && enemyData.roundDamageReductionPerAttackHit > 0f)
+        {
+            roundDamageReductionFromAttackHits = Mathf.Min(
+                enemyData.roundDamageReductionCap,
+                roundDamageReductionFromAttackHits + enemyData.roundDamageReductionPerAttackHit);
+        }
+
+        return TakeDamage(amount, powerModifierAmount, originalReferenceDamage);
     }
 
     public int TakeDamage(int amount, int powerModifierAmount = 0, int originalReferenceDamage = -1, BattleGamblerDamageSource damageSource = BattleGamblerDamageSource.Normal)
@@ -1213,6 +1229,7 @@ public class BattleEnemyController : MonoBehaviour
 
     public bool ConsumeRoundEndStatusEffects()
     {
+        roundDamageReductionFromAttackHits = 0f;
         if (IsDead || statusEntries.Count == 0)
             return false;
 

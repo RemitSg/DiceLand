@@ -119,6 +119,17 @@ public class EnemyData_SO : ScriptableObject
     {
         public BattleStatus_SO statusData;
         [Min(1)] public int stackAmount;
+        [Min(0), Tooltip("Repeat round start only. 0 uses the default first round (2).")]
+        public int firstTriggerRound;
+        [Min(0), Tooltip("Repeat round start only. 0 grants the status every round from the first trigger.")]
+        public int repeatEveryNRounds;
+
+        public bool IsScheduledForRound(int round)
+        {
+            int firstRound = Mathf.Max(2, firstTriggerRound);
+            int interval = Mathf.Max(1, repeatEveryNRounds);
+            return round >= firstRound && (round - firstRound) % interval == 0;
+        }
     }
 
     [System.Serializable]
@@ -144,6 +155,10 @@ public class EnemyData_SO : ScriptableObject
     [Range(0f, 100f)]
     [Tooltip("Flat damage reduction percentage applied to all incoming damage after other damage calculations are finished.")]
     public float damageReductionPercent;
+    [Range(0f, 100f), Tooltip("Add this many points of damage reduction before taking each attack die hit. Resets at round end.")]
+    public float roundDamageReductionPerAttackHit;
+    [Range(0f, 100f), Tooltip("Cap on the damage reduction accumulated from attack die hits during one round.")]
+    public float roundDamageReductionCap;
     public int minSpeed;
     public int maxSpeed;
     public int baseSpeedButtonCount;
@@ -183,7 +198,7 @@ public class EnemyData_SO : ScriptableObject
     public List<OnSpecificEnemyDeathStatusGainEntry> onSpecificEnemyDeathStatusGains;
 
     [Header("Round Start Status Gains")]
-    [Tooltip("Statuses granted to this enemy at the start of each round after round 1.")]
+    [Tooltip("Statuses granted at scheduled round starts after round 1. Use Battle Start Status Gains for round 1.")]
     public List<StatusGainEntry> repeatRoundStartStatusGains;
 
     [Header("Round Start Retreat")]

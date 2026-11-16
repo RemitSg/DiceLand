@@ -48,6 +48,8 @@ internal sealed class BattleDiceRangePreview
 
         int selfSpeed = isAlly ? ally.Speed : enemy.Speed;
         int targetSpeed = !hasTarget ? 0 : isAlly ? targetEnemy.Speed : targetAlly.Speed;
+        int powerModifierSelfSpeed = !isAlly && sourceButton != null ? sourceButton.Speed : selfSpeed;
+        int powerModifierTargetSpeed = !isAlly && hasTarget ? targetButton.Speed : targetSpeed;
         Func<BattleStatus_SO, int> selfByAsset = isAlly ? (Func<BattleStatus_SO, int>)ally.GetStatusStacks : enemy.GetStatusStacks;
         Func<string, int> selfById = isAlly ? (Func<string, int>)ally.GetStatusStacks : enemy.GetStatusStacks;
         Func<BattleStatus_SO, int> targetByAsset = !hasTarget ? null : isAlly
@@ -124,14 +126,14 @@ internal sealed class BattleDiceRangePreview
             // Single-attack power evaluation does not pass an opposing skill to the combat resolver.
             EnemySkill_SO opposingSkill = clashDie ? targetSkill : null;
             int skillUsePower = BattlePowerModifierService.EvaluatePowerModifier(skill, i, EnemySkill_SO.DiceEffectTrigger.OnSkillUse,
-                selfSpeed, targetSpeed, selfByAsset, selfById, targetByAsset, targetById, opposingSkill, hasTarget,
+                powerModifierSelfSpeed, powerModifierTargetSpeed, selfByAsset, selfById, targetByAsset, targetById, opposingSkill, hasTarget,
                 (name, bonus) => RecordSkill(name, bonus, bonus));
             int actionPower = 0;
             if (willRoll)
             {
                 EnemySkill_SO.DiceEffectTrigger trigger = clashDie
                     ? EnemySkill_SO.DiceEffectTrigger.OnClash : EnemySkill_SO.DiceEffectTrigger.OnSingleAttack;
-                actionPower = BattlePowerModifierService.EvaluatePowerModifier(skill, i, trigger, selfSpeed, targetSpeed,
+                actionPower = BattlePowerModifierService.EvaluatePowerModifier(skill, i, trigger, powerModifierSelfSpeed, powerModifierTargetSpeed,
                     selfByAsset, selfById, targetByAsset, targetById, opposingSkill, hasTarget,
                     (name, bonus) => RecordSkill(name, bonus, bonus, clashDie));
             }

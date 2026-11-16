@@ -668,7 +668,8 @@ public partial class BattleButton : MonoBehaviour
                 enemy,
                 enemy.enemyData.repeatRoundStartStatusGains,
                 (statusName, appliedStacks, currentStacks) =>
-                    $"敌方回合效果：第 {currentRound} 回合开始时，{enemy.GetDebugDisplayName()} 获得 {appliedStacks} 层 {statusName}，当前 {statusName} {currentStacks} 层"),
+                    $"敌方回合效果：第 {currentRound} 回合开始时，{enemy.GetDebugDisplayName()} 获得 {appliedStacks} 层 {statusName}，当前 {statusName} {currentStacks} 层",
+                currentRound),
             enemy => ApplyEnemyCustomRepeatRoundStartEffects(enemy, allies),
             enemy => TryLogAllEnemyStatusDrivenStageTransitions());
 
@@ -1257,7 +1258,7 @@ public partial class BattleButton : MonoBehaviour
         return new BattleCombatActionExecutionContext(
             action => ResolveClashAction(action.Ally, action.Enemy, action.AllyButton, action.EnemyButton),
             action => ResolveAllySingleAttackAction(action.Ally, action.Enemy, action.AllyButton),
-            action => ResolveEnemySingleAttackAction(action.Enemy, action.TargetAlly, action.EnemyButton),
+            action => ResolveEnemySingleAttackAction(action.Enemy, action.TargetAlly, action.EnemyButton, action.AllyButton),
             () => TryHandleBattleCompletion(allies, enemies),
             () =>
             {
@@ -3025,7 +3026,8 @@ public partial class BattleButton : MonoBehaviour
         };
     }
 
-    private SingleAttackDiceInput PrepareEnemySingleAttackDice(BattleEnemyController enemy, BattleAllyController ally, int diceIndex)
+    private SingleAttackDiceInput PrepareEnemySingleAttackDice(
+        BattleEnemyController enemy, BattleAllyController ally, int diceIndex, int enemySpeed, int allySpeed)
     {
         EnemySkill_SO.DicePowerRange enemyRange = enemy.GetDicePowerRange(diceIndex);
         enemyRange = ApplyEnemyContextualDiceRangeModifiers(enemy, ally, diceIndex, enemyRange);
@@ -3042,8 +3044,8 @@ public partial class BattleButton : MonoBehaviour
             enemyBasePower,
             enemyStatusPowerModifier,
             isDefenseSkill,
-            enemy.Speed,
-            ally.Speed,
+            enemySpeed,
+            allySpeed,
             enemy.GetStatusStacks,
             enemy.GetStatusStacks,
             ally.GetStatusStacks,
@@ -3168,12 +3170,14 @@ public partial class BattleButton : MonoBehaviour
 
         if (!TryConsumeAllySkillRequirement(ally, ally.SelectedSkill, "[鎷肩偣]", true))
         {
-            yield return ResolveEnemySingleAttackAction(enemy, ally, enemyButton);
+            yield return ResolveEnemySingleAttackAction(enemy, ally, enemyButton, allyButton);
             yield break;
         }
 
         Vector3 allyStartPosition = ally.transform.position;
         Vector3 enemyStartPosition = enemy.transform.position;
+        int enemySlotSpeed = enemyButton != null ? enemyButton.Speed : enemy.Speed;
+        int allySlotSpeed = allyButton != null ? allyButton.Speed : ally.Speed;
 
         ally.MarkCurrentRoundSkillUsed();
         enemy.ActivateSelectedSkillForButton(enemyButton);
@@ -3221,13 +3225,13 @@ public partial class BattleButton : MonoBehaviour
             int allySkillUseBonus = BattleDicePowerModifierCollectionService.GetSkillUseBonus(
                 ally.SelectedSkill, i, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks, enemy.SelectedSkill);
             int enemySkillUseBonus = BattleDicePowerModifierCollectionService.GetSkillUseBonus(
-                enemy.SelectedSkill, i, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks, ally.SelectedSkill);
+                enemy.SelectedSkill, i, enemySlotSpeed, allySlotSpeed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks, ally.SelectedSkill);
             allySkillUseBonus += ConsumePendingAllyNextDicePowerBonus();
             enemySkillUseBonus += ConsumePendingEnemyNextDicePowerBonus();
             int allyClashOnlyBonus = BattleDicePowerModifierCollectionService.GetActionBonus(
                 ally.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClash, ally.Speed, enemy.Speed, ally.GetStatusStacks, ally.GetStatusStacks, enemy.GetStatusStacks, enemy.GetStatusStacks, enemy.SelectedSkill);
             int enemyClashOnlyBonus = BattleDicePowerModifierCollectionService.GetActionBonus(
-                enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClash, enemy.Speed, ally.Speed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks, ally.SelectedSkill);
+                enemy.SelectedSkill, i, EnemySkill_SO.DiceEffectTrigger.OnClash, enemySlotSpeed, allySlotSpeed, enemy.GetStatusStacks, enemy.GetStatusStacks, ally.GetStatusStacks, ally.GetStatusStacks, ally.SelectedSkill);
             enemyClashOnlyBonus += enemy.GetSpeedClashPowerBonus(ally.Speed);
             BattleDicePowerPreparation allyPowerInput = BattleDicePowerPreparationService.Resolve(allyBasePower, allyStatusPowerModifier, 0, allySkillUseBonus, allyClashOnlyBonus, allyRelicModifier.powerBonus);
             BattleDicePowerPreparation enemyPowerInput = BattleDicePowerPreparationService.Resolve(enemyBasePower, enemyStatusPowerModifier, 0, enemySkillUseBonus, enemyClashOnlyBonus);
@@ -3332,11 +3336,11 @@ public partial class BattleButton : MonoBehaviour
         if (allyRemainingFirst)
         {
             yield return ResolveRemainingAllyClashDice(ally, enemy, clashCount, allyDiceCount, allyHitTracker);
-            yield return ResolveRemainingEnemyClashDice(enemy, ally, clashCount, enemyDiceCount, enemyHitTracker);
+            yield return ResolveRemainingEnemyClashDice(enemy, ally, clashCount, enemyDiceCount, enemyHitTracker, enemySlotSpeed, allySlotSpeed);
         }
         else
         {
-            yield return ResolveRemainingEnemyClashDice(enemy, ally, clashCount, enemyDiceCount, enemyHitTracker);
+            yield return ResolveRemainingEnemyClashDice(enemy, ally, clashCount, enemyDiceCount, enemyHitTracker, enemySlotSpeed, allySlotSpeed);
             yield return ResolveRemainingAllyClashDice(ally, enemy, clashCount, allyDiceCount, allyHitTracker);
         }
 
@@ -3406,7 +3410,9 @@ public partial class BattleButton : MonoBehaviour
         }
     }
 
-    private IEnumerator ResolveRemainingEnemyClashDice(BattleEnemyController enemy, BattleAllyController ally, int startIndex, int totalDiceCount, SkillHitTracker hitTracker)
+    private IEnumerator ResolveRemainingEnemyClashDice(
+        BattleEnemyController enemy, BattleAllyController ally, int startIndex, int totalDiceCount,
+        SkillHitTracker hitTracker, int enemySlotSpeed, int allySlotSpeed)
     {
         if (enemy == null || ally == null)
             yield break;
@@ -3428,7 +3434,7 @@ public partial class BattleButton : MonoBehaviour
                 yield break;
             }
 
-            SingleAttackDiceInput diceInput = PrepareEnemySingleAttackDice(enemy, ally, i);
+            SingleAttackDiceInput diceInput = PrepareEnemySingleAttackDice(enemy, ally, i, enemySlotSpeed, allySlotSpeed);
             BattleSingleAttackResult attackResult = diceInput.AttackResult;
             BattleSingleAttackPresentationPlan presentationPlan = BattleSingleAttackPresentationPlanService.Resolve(
                 attackResult,
@@ -3593,7 +3599,8 @@ public partial class BattleButton : MonoBehaviour
         yield return ShowTutorialReactionIfNeeded(TutorialBattleEventType.AllyOneSidedAttackResolved);
     }
 
-    private IEnumerator ResolveEnemySingleAttackAction(BattleEnemyController enemy, BattleAllyController targetAlly, SpeedButton enemyButton)
+    private IEnumerator ResolveEnemySingleAttackAction(
+        BattleEnemyController enemy, BattleAllyController targetAlly, SpeedButton enemyButton, SpeedButton targetButton)
     {
         if (enemy == null || targetAlly == null || enemy.IsDead || targetAlly.IsDead)
             yield break;
@@ -3602,6 +3609,8 @@ public partial class BattleButton : MonoBehaviour
 
         Vector3 enemyStartPosition = enemy.transform.position;
         Vector3 allyStartPosition = targetAlly.transform.position;
+        int enemySlotSpeed = enemyButton != null ? enemyButton.Speed : enemy.Speed;
+        int targetSlotSpeed = targetButton != null ? targetButton.Speed : targetAlly.Speed;
         bool needsReturnToOrigin = false;
 
         enemy.ActivateSelectedSkillForButton(enemyButton);
@@ -3644,7 +3653,7 @@ public partial class BattleButton : MonoBehaviour
                 yield break;
             }
 
-            SingleAttackDiceInput diceInput = PrepareEnemySingleAttackDice(enemy, targetAlly, i);
+            SingleAttackDiceInput diceInput = PrepareEnemySingleAttackDice(enemy, targetAlly, i, enemySlotSpeed, targetSlotSpeed);
             BattleSingleAttackResult attackResult = diceInput.AttackResult;
             BattleSingleAttackPresentationPlan presentationPlan = BattleSingleAttackPresentationPlanService.Resolve(
                 attackResult,
@@ -3742,7 +3751,7 @@ public partial class BattleButton : MonoBehaviour
             return redirectedDamage;
         }
 
-        int dealtDamage = target.TakeDamage(modifiedDamage, powerModifierAmount, baseDamage);
+        int dealtDamage = target.TakeAttackDiceDamage(modifiedDamage, powerModifierAmount, baseDamage);
         LogAttackDamageFormula("友方攻击", attacker.GetDebugDisplayName(), target.GetDebugDisplayName(), baseDamage, percentSources, flatSources, dealtDamage);
         ApplyAllyHitOutcome(attacker, target, diceIndex, dealtDamage, isSingleAttack);
         return dealtDamage;
@@ -4230,14 +4239,16 @@ public partial class BattleButton : MonoBehaviour
     private bool ApplyEnemyStatusGains(
         BattleEnemyController enemy,
         List<EnemyData_SO.StatusGainEntry> entries,
-        Func<string, int, int, string> buildLogMessage)
+        Func<string, int, int, string> buildLogMessage,
+        int repeatRound = 0)
     {
         if (enemy == null || enemy.IsDead || entries == null || entries.Count == 0)
             return false;
 
         return BattleEnemyStatusGainDispatcher.Dispatch(
             entries,
-            entry => enemy.AddStatus(entry.statusData, entry.statusData.StatusId, entry.statusData.DisplayName, entry.stackAmount),
+            entry => (repeatRound == 0 || entry.IsScheduledForRound(repeatRound))
+                && enemy.AddStatus(entry.statusData, entry.statusData.StatusId, entry.statusData.DisplayName, entry.stackAmount),
             entry => enemy.GetStatusStacks(entry.statusData),
             (entry, currentStacks) =>
             {

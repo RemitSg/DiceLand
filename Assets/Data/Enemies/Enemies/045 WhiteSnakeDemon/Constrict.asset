@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9e46a03f543ee42b520031321210bf, type: 3}
+  m_Name: Constrict
+  m_EditorClassIdentifier:
+  skillName: "\u7EDE\u7F20"
+  localizationKey: skill.white_snake.constrict
+  maxUsesPerEnemyRound: 1
+  description: "\u4EE5\u86C7\u8EAB\u7EDE\u7F20\u730E\u7269\u3002\u5A01\u529B\u6761\u4EF6\u6309\u53CC\u65B9\u53C2\u4E0E\u672C\u6B21\u4EA4\u950B\u7684\u901F\u5EA6\u69FD\u5224\u5B9A\u3002"
+  skillCategory: 0
+  energyCost: 0
+  transformEnemyToStageIndex: -1
+  minPower: 3
+  maxPower: 4
+  diceCount: 1
+  dicePowerRanges:
+  - minPower: 3
+    maxPower: 4
+  diceEffectSettings:
+  - damageEffects: []
+    statusEffects: []
+    powerModifiers:
+    - trigger: 3
+      useCondition: 1
+      condition: 0
+      requiredSpeedDifference: 1
+      powerBonus: 1
+    statusBurstEffects: []
+    healingEffects: []
+    builtInEffects: []
+    rangeModifiers: []
+    statusStackOperationEffects: []
+    enemyStageTransitionEffects: []
+    summonEffects: []
+  diceSkillCategories: 00000000

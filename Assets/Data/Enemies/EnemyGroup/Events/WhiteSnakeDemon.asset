@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f714091cd55ec1458ddd822765cce08, type: 3}
+  m_Name: WhiteSnakeDemon
+  m_EditorClassIdentifier:
+  groupID: 45
+  saveId: white-snake-demon
+  groupName: "\u767D\u86C7\u5996"
+  localizationKey: enemy_group.white_snake
+  description: "\u4E8B\u4EF6\u654C\u4EBA\uFF1A\u767D\u86C7\u5996 \u00D71"
+  enemies:
+  - {fileID: 11400000, guid: f87757d70244431b9a2a19a346816a60, type: 2}
+  attributes:
+  - {fileID: 11400000, guid: d4ed7fcdaf0e4f7fa153118a4219a68f, type: 2}
+  dangerRatingOverride: 0
+  battleMusicOverride: {fileID: 0}
+  lootTables: []

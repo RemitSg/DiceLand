@@ -13,9 +13,13 @@ node tools/enemy-catalog/build-catalog.mjs
 node tools/enemy-catalog/check-catalog.mjs
 ```
 
-生成器读取正式 `outputs/enemy-catalog/catalog.json` 和 `outputs/catalog-snapshots.json`，以同一份数据生成 HTML。Sprite 路径来自团结 AssetDatabase 按快照引用的实际 GUID 与 fileID 核对，路径登记在 `portraits.json`。48 个引用均为完整单图 Sprite，生成时裁去透明留白、缩小并内嵌 WebP。更新快照的 Sprite 引用时，也应核对这份路径表。
+生成器读取正式 `outputs/enemy-catalog/catalog.json` 和 `outputs/catalog-snapshots.json`，以同一份数据生成 HTML。Sprite 路径来自团结 AssetDatabase 按快照引用的实际 GUID 与 fileID 核对，路径登记在 `portraits.json`。49 个引用均为完整单图 Sprite，生成时裁去透明留白、缩小并内嵌 WebP。更新快照的 Sprite 引用时，也应核对这份路径表。
 
 生成需要 Node.js 和 Sharp。检查需要 Playwright 和 Chromium 系浏览器，默认使用本机 Microsoft Edge，可用 `BROWSER_EXECUTABLE` 指定路径。两个脚本可复用 `tools/relic-catalog/` 现有依赖。查看已生成的 HTML 只需要浏览器。
+
+## 2026-11-16 内容增补
+
+新增 **045 白蛇妖（enemyID=45）** 与毒牙、盘身扫尾、绞缠，正式图鉴合计 **53 个敌人资产、139 个关联技能**。「林中的求救」的揭晓选项固定进入单敌遭遇，危险区域沿用触发事件的地图格。技能词条由游戏内 `BattleSkillInfoOverlay.DescribeSkillRules` 生成，目录另记奇偶回合、受击减伤、实际速度槽与中毒的结算规则。战斗立绘沿用事件揭晓图造型，提示词见 [045-white-snake-demon.txt](image-prompts/045-white-snake-demon.txt)。
 
 ## 2026-11-09 内容增补
 

@@ -112,6 +112,7 @@ public static class BattleCombatActionCollectorService
                     Enemy = enemy,
                     EnemyButton = enemyButton,
                     TargetAlly = targetAlly,
+                    AllyButton = targetAllyButton,
                     PrioritySpeed = enemy.Speed,
                     TiePriority = 1,
                     SequenceIndex = sequenceIndex++
