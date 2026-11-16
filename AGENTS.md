@@ -15,6 +15,16 @@
 
 只读任务或没有文件变更的任务不需要创建空提交。多个 agent 共享工作区时，应辨别变更来源，避免误提交或丢弃其他 agent 正在进行的工作。
 
+## 新卷轴默认加入宝藏和商店池
+
+每次新增正式卷轴（`CraftingBlueprint_SO`），默认在同一任务中将该卷轴加入以下三个池。用户明确指定限定获取途径时，按该要求投放。
+
+- 主卷轴池：`Assets/Data/Scroll/MainBlueprintTable.asset` 的 `blueprints`。
+- 普通宝藏卷轴池：`Assets/Resources/TreasureBlueprintTable.asset` 的 `blueprints`。
+- 普通商店卷轴池：`Assets/Data/Economy/MerchantCatalog.asset` 的 `blueprintEntries`。参考同品质的现有卷轴商品配置价格区间和抽取权重。
+
+提交前按真实 `blueprintID` 和资产 GUID 核对三个池引用的是同一卷轴，避免重复或空引用。商店的 `goodsId` 是商品标识，核对时使用 `blueprintData` 引用。
+
 ## 敌人、技能与遗物目录必须同步维护
 
 新增敌人或遗物时，必须按现有格式，将其详细描述记录到对应目录。这是实现任务的一部分，不需要用户再次要求，也不能只更新游戏资产、设计草稿、TODO 或进度记录。
