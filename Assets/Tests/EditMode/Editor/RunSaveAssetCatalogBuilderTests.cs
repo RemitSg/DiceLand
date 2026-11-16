@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 
 public class RunSaveAssetCatalogBuilderTests
@@ -51,6 +52,18 @@ public class RunSaveAssetCatalogBuilderTests
             });
 
         Assert.AreSame(group, catalog.ResolveEnemyGroup("cyclic-watch-group"));
+    }
+
+    [Test]
+    public void Build_ResolvesOncePerStockRelicFromMerchantCatalog()
+    {
+        MerchantCatalog_SO merchantCatalog = AssetDatabase.LoadAssetAtPath<MerchantCatalog_SO>(MerchantCatalogLiveData.CatalogPath);
+        Relic_SO trashBag = AssetDatabase.LoadAssetAtPath<Relic_SO>("Assets/Data/Relics/108 垃圾袋/垃圾袋.asset");
+        Assert.IsNotNull(trashBag);
+        MainMenuSaveAssetCatalog catalog = RunSaveAssetCatalogBuilder.Build(
+            new RunSaveAssetCatalogBuildRequest { merchantCatalog = merchantCatalog });
+
+        Assert.AreSame(trashBag, catalog.ResolveRelic(trashBag.relicId));
     }
 
     private EnemyData_SO CreateEnemy(string name)

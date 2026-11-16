@@ -117,6 +117,10 @@ public class MerchantCatalog_SO : ScriptableObject
     [Header("Relic Table Pool")]
     public List<RelicGoodsEntry> relicEntries = new List<RelicGoodsEntry>();
 
+    [Header("Relic Roll Once Per Stock")]
+    public RelicTable_SO oncePerStockRelicTable;
+    [Range(0, 100)] public int oncePerStockRelicChancePercent;
+
     [SerializeField, HideInInspector] private List<LegacyMerchantGoodsEntry> goodsEntries = new List<LegacyMerchantGoodsEntry>();
 
     public IReadOnlyList<LootGoodsEntry> GetValidLootEntries()
@@ -136,7 +140,8 @@ public class MerchantCatalog_SO : ScriptableObject
 
     public IReadOnlyList<RelicGoodsEntry> GetValidRelicEntries()
     {
-        return GetValidEntries(relicEntries, entry => entry != null && entry.IsValid && Mathf.Max(1, entry.weight) > 0);
+        return GetValidEntries(relicEntries, entry => entry != null && entry.IsValid &&
+            (oncePerStockRelicTable == null || entry.relicTable != oncePerStockRelicTable));
     }
 
     private static IReadOnlyList<TEntry> GetValidEntries<TEntry>(List<TEntry> source, Predicate<TEntry> predicate) where TEntry : class

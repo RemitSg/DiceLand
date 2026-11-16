@@ -170,7 +170,7 @@ public static class RunSaveAssetCatalogBuilder
 
         catalog.Add(treasureRewardTable);
         AddEventBlueprintRewardAssets(catalog, treasureRewardTable.BlueprintTable);
-        AddEventRelicRewardAssets(catalog, treasureRewardTable.RelicTable);
+        AddRelicTableRewardAssets(catalog, treasureRewardTable.RelicTable);
     }
 
     private static void AddRunStateAssets(MainMenuSaveAssetCatalog catalog, RunState runState)
@@ -548,7 +548,7 @@ public static class RunSaveAssetCatalogBuilder
         if (effectData.lootReforgeTable?.LootItems != null)
             foreach (LootItem_SO item in effectData.lootReforgeTable.LootItems)
                 catalog.Add(item);
-        AddEventRelicRewardAssets(catalog, effectData.relicTable);
+        AddRelicTableRewardAssets(catalog, effectData.relicTable);
         AddExplicitEventRelicRewardAssets(catalog, effectData.relicRewards);
         AddEventBlueprintRewardAssets(catalog, effectData.blueprintTable);
         AddEventWeaponCatalogAssets(catalog, effectData.weaponCatalog);
@@ -575,7 +575,7 @@ public static class RunSaveAssetCatalogBuilder
         }
     }
 
-    private static void AddEventRelicRewardAssets(MainMenuSaveAssetCatalog catalog, RelicTable_SO relicTable)
+    private static void AddRelicTableRewardAssets(MainMenuSaveAssetCatalog catalog, RelicTable_SO relicTable)
     {
         if (relicTable == null || relicTable.Relics == null)
             return;
@@ -673,7 +673,7 @@ public static class RunSaveAssetCatalogBuilder
         AddBlueprintAssets(catalog, option.blueprintData);
         catalog.Add(option.relicData);
         catalog.Add(option.relicTable);
-        AddEventRelicRewardAssets(catalog, option.relicTable);
+        AddRelicTableRewardAssets(catalog, option.relicTable);
     }
 
     private static void AddMerchantCatalogAssets(MainMenuSaveAssetCatalog catalog, MerchantCatalog_SO merchantCatalogData)
@@ -694,6 +694,7 @@ public static class RunSaveAssetCatalogBuilder
             AddBlueprintAssets(catalog, blueprintEntries[i].blueprintData);
 
         IReadOnlyList<MerchantCatalog_SO.RelicGoodsEntry> relicEntries = merchantCatalogData.GetValidRelicEntries();
+        AddRelicTableRewardAssets(catalog, merchantCatalogData.oncePerStockRelicTable);
         for (int i = 0; i < relicEntries.Count; i++)
             AddMerchantRelicEntryAssets(catalog, relicEntries[i]);
     }

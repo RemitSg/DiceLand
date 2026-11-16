@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -160,6 +162,91 @@ public class MerchantStockServiceTests
         Assert.AreSame(newRelic, FindOfferWithType(tile.merchantOffers, MerchantItemType.Relic).relicData);
     }
 
+    [TestCase(false, 2, 2, 0, 1)]
+    [TestCase(false, 2, 2, 1, 0)]
+    [TestCase(false, 3, 1, 99, 0)]
+    [TestCase(true, 2, 1, 0, 1)]
+    [TestCase(true, 2, 1, 1, 0)]
+    [TestCase(true, 3, 1, 99, 0)]
+    public void ProductionRelicTables_RollForTrashOnceAndCanFillMultipleSlots(
+        bool isRefresh, int slotCount, int guaranteedCount, int roll, int expectedTrashCount)
+    {
+        MerchantCatalog_SO asset = AssetDatabase.LoadAssetAtPath<MerchantCatalog_SO>(MerchantCatalogLiveData.CatalogPath);
+        Assert.IsNotNull(asset);
+        MerchantCatalog_SO catalog = Object.Instantiate(asset);
+        createdObjects.Add(catalog);
+        catalog.lootEntries.Clear();
+        catalog.weaponEntries.Clear();
+        catalog.blueprintEntries.Clear();
+        catalog.lootMinimumCount.minimumCount = 0;
+        catalog.weaponMinimumCount.minimumCount = 0;
+        catalog.blueprintMinimumCount.minimumCount = 0;
+        catalog.minTotalGoodsCount = slotCount;
+        catalog.maxTotalGoodsCount = slotCount;
+        catalog.relicMinimumCount.minimumCount = guaranteedCount;
+
+        RelicTable_SO generalTable = AssetDatabase.LoadAssetAtPath<RelicTable_SO>("Assets/Data/Relics/OuterEliteRelicLoot.asset");
+        Relic_SO trashBag = AssetDatabase.LoadAssetAtPath<Relic_SO>("Assets/Data/Relics/108 垃圾袋/垃圾袋.asset");
+        Assert.IsNotNull(trashBag);
+        Assert.IsNotNull(generalTable);
+        var rng = new StockChanceRandom(roll);
+        var tile = new BoardTileData { tileType = MapTileType.Merchant };
+        var state = new RunState();
+        Relic_SO[] previousRelics = generalTable.Relics.Where(relic => relic != null).Take(slotCount).ToArray();
+        if (isRefresh)
+        {
+            foreach (Relic_SO relic in previousRelics)
+                tile.merchantOffers.Add(new MerchantOfferState { itemType = MerchantItemType.Relic, relicData = relic, isSoldOut = true });
+            Assert.AreEqual(slotCount, MerchantStockService.RefreshOffers(tile, catalog, state, null, rng));
+        }
+        else
+        {
+            Assert.IsTrue(MerchantStockService.TryGenerateInitialStock(tile, catalog, state, null, rng));
+        }
+
+        Relic_SO[] offered = tile.merchantOffers.Select(offer => offer.relicData).ToArray();
+        Assert.AreEqual(1, rng.StockRolls);
+        Assert.AreEqual(slotCount, offered.Length);
+        Assert.AreEqual(expectedTrashCount, offered.Count(relic => relic == trashBag));
+        CollectionAssert.AllItemsAreUnique(offered);
+        CollectionAssert.IsSubsetOf(offered.Where(relic => relic != trashBag).ToArray(), generalTable.Relics);
+        if (isRefresh)
+            Assert.IsEmpty(offered.Intersect(previousRelics));
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void ExhaustedGeneralTable_DoesNotFallBackToTrashAfterMissedRoll(bool isRefresh)
+    {
+        Relic_SO owned = CreateRelic("Owned", LootRarity.Common);
+        Relic_SO trash = CreateRelic("Trash", LootRarity.Trash);
+        MerchantCatalog_SO catalog = CreateCatalog(1, 1);
+        catalog.relicMinimumCount.minimumCount = 1;
+        catalog.oncePerStockRelicTable = CreateRelicTable(trash);
+        catalog.oncePerStockRelicChancePercent = 1;
+        catalog.relicEntries.Add(CreateRelicGoodsEntry(CreateRelicTable(owned, trash), null));
+        var state = new RunState
+        {
+            relicInventory = new List<RunRelicState> { new RunRelicState { relicData = owned, amount = 1 } }
+        };
+        var tile = new BoardTileData { tileType = MapTileType.Merchant };
+        var rng = new StockChanceRandom(1);
+
+        if (isRefresh)
+        {
+            tile.merchantOffers.Add(new MerchantOfferState { itemType = MerchantItemType.Relic, relicData = owned, isSoldOut = true });
+            Assert.AreEqual(0, MerchantStockService.RefreshOffers(tile, catalog, state, null, rng));
+            Assert.AreSame(owned, tile.merchantOffers[0].relicData);
+            Assert.IsTrue(tile.merchantOffers[0].isSoldOut);
+        }
+        else
+        {
+            Assert.IsTrue(MerchantStockService.TryGenerateInitialStock(tile, catalog, state, null, rng));
+            Assert.IsEmpty(tile.merchantOffers);
+        }
+        Assert.AreEqual(1, rng.StockRolls);
+    }
+
     [Test]
     public void CountRefreshableOffers_CountsNonNullSlots()
     {
@@ -239,6 +326,35 @@ public class MerchantStockServiceTests
         relic.rarity = rarity;
         createdObjects.Add(relic);
         return relic;
+    }
+
+    private RelicTable_SO CreateRelicTable(params Relic_SO[] relics)
+    {
+        RelicTable_SO table = ScriptableObject.CreateInstance<RelicTable_SO>();
+        SetPrivateField(table, "relics", new List<Relic_SO>(relics));
+        createdObjects.Add(table);
+        return table;
+    }
+
+    private sealed class StockChanceRandom : System.Random
+    {
+        private readonly int stockRoll;
+
+        public int StockRolls { get; private set; }
+
+        public StockChanceRandom(int stockRoll) : base(231)
+        {
+            this.stockRoll = stockRoll;
+        }
+
+        public override int Next(int minValue, int maxValue)
+        {
+            if (minValue != 0 || maxValue != 100)
+                return base.Next(minValue, maxValue);
+
+            StockRolls++;
+            return stockRoll;
+        }
     }
 
     private static MerchantCatalog_SO.RelicGoodsEntry CreateRelicGoodsEntry(RelicTable_SO relicTable, Relic_SO legacyRelic)

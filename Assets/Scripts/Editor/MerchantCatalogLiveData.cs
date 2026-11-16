@@ -85,7 +85,7 @@ public static class MerchantCatalogLiveData
             foreach (string guid in AssetDatabase.FindAssets("t:" + Types[c], new[] { "Assets" }))
             {
                 var asset = Load(key, guid);
-                if (asset == null) continue;
+                if (asset == null || (key == "relic" && asset == catalog.oncePerStockRelicTable)) continue;
                 var info = Describe(asset);
                 known.Add(info.guid);
                 document.available.Add(new Choice { category = key, asset = info });
@@ -187,6 +187,8 @@ public static class MerchantCatalogLiveData
                     var asset = Load(change.category, change.assetGuid);
                     if (asset == null || (asset is RelicTable_SO && !((RelicTable_SO)asset).IsValid))
                         throw new ArgumentException("所选资产不存在、类型不符或遗物表为空。");
+                    if (change.category == "relic" && asset == draft.oncePerStockRelicTable)
+                        throw new ArgumentException("此遗物表已配置为每次进货只判定一次。");
                     for (int i = 0; i < pool.arraySize; i++)
                         if (pool.GetArrayElementAtIndex(i).FindPropertyRelative(References[c]).objectReferenceValue == asset)
                             throw new ArgumentException("此资产已经在商品池中。");

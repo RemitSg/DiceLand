@@ -51,24 +51,17 @@ public static class MerchantStockService
         IReadOnlyList<MerchantCatalog_SO.LootGoodsEntry> validLootEntries = catalog.GetValidLootEntries();
         IReadOnlyList<MerchantCatalog_SO.WeaponGoodsEntry> validWeaponEntries = catalog.GetValidWeaponEntries();
         IReadOnlyList<MerchantCatalog_SO.BlueprintGoodsEntry> validBlueprintEntries = catalog.GetValidBlueprintEntries();
-        IReadOnlyList<MerchantCatalog_SO.RelicGoodsEntry> validRelicEntries = catalog.GetValidRelicEntries();
         HashSet<Weapon_SO> excludedWeapons = MerchantOfferExclusionService.BuildOwnedWeaponSet(runState);
         HashSet<CraftingBlueprint_SO> excludedBlueprints = MerchantOfferExclusionService.BuildUnavailableBlueprintSet(runState, validBlueprintEntries);
         HashSet<Relic_SO> excludedRelics = MerchantOfferExclusionService.BuildOwnedRelicSet(runState);
-        List<MerchantCatalog_SO.WeaponGoodsEntry> filteredWeaponEntries =
+        List<MerchantCatalog_SO.WeaponGoodsEntry> remainingWeaponEntries =
             RewardCandidateFilterService.BuildAvailableMerchantWeaponGoodsEntries(validWeaponEntries, excludedWeapons);
-        List<MerchantCatalog_SO.BlueprintGoodsEntry> filteredBlueprintEntries =
+        List<MerchantCatalog_SO.BlueprintGoodsEntry> remainingBlueprintEntries =
             RewardCandidateFilterService.BuildAvailableMerchantBlueprintGoodsEntries(validBlueprintEntries, excludedBlueprints);
-        List<MerchantCatalog_SO.RelicGoodsEntry> filteredRelicEntries =
-            RewardCandidateFilterService.BuildAvailableMerchantRelicGoodsEntries(validRelicEntries, excludedRelics);
+        var relicPool = new RelicStockPool(catalog, excludedRelics, merchantDifficulty, rng);
 
-        bool hasAnyValidEntries =
-            (validLootEntries != null && validLootEntries.Count > 0) ||
-            (filteredWeaponEntries != null && filteredWeaponEntries.Count > 0) ||
-            (filteredBlueprintEntries != null && filteredBlueprintEntries.Count > 0) ||
-            (filteredRelicEntries != null && filteredRelicEntries.Count > 0);
-
-        if (!hasAnyValidEntries)
+        int availableCount = validLootEntries.Count + remainingWeaponEntries.Count + remainingBlueprintEntries.Count + relicPool.RemainingCount;
+        if (availableCount == 0)
         {
             tile.merchantOffers = new List<MerchantOfferState>();
             tile.merchantStockGenerated = true;
@@ -77,39 +70,24 @@ public static class MerchantStockService
 
         List<MerchantOfferState> generated = new List<MerchantOfferState>();
         List<MerchantCatalog_SO.LootGoodsEntry> remainingLootEntries = new List<MerchantCatalog_SO.LootGoodsEntry>(validLootEntries);
-        List<MerchantCatalog_SO.WeaponGoodsEntry> remainingWeaponEntries = filteredWeaponEntries != null
-            ? new List<MerchantCatalog_SO.WeaponGoodsEntry>(filteredWeaponEntries)
-            : new List<MerchantCatalog_SO.WeaponGoodsEntry>();
-        List<MerchantCatalog_SO.BlueprintGoodsEntry> remainingBlueprintEntries = filteredBlueprintEntries != null
-            ? new List<MerchantCatalog_SO.BlueprintGoodsEntry>(filteredBlueprintEntries)
-            : new List<MerchantCatalog_SO.BlueprintGoodsEntry>();
-        List<MerchantCatalog_SO.RelicGoodsEntry> remainingRelicEntries = filteredRelicEntries != null
-            ? new List<MerchantCatalog_SO.RelicGoodsEntry>(filteredRelicEntries)
-            : new List<MerchantCatalog_SO.RelicGoodsEntry>();
-
-        int targetTotalCount = MerchantOfferSelectionService.ResolveTargetTotalCount(
-            catalog,
-            remainingLootEntries.Count + remainingWeaponEntries.Count + remainingBlueprintEntries.Count + remainingRelicEntries.Count,
-            rng);
+        int targetTotalCount = MerchantOfferSelectionService.ResolveTargetTotalCount(catalog, availableCount, rng);
         targetTotalCount = Mathf.Min(
-            remainingLootEntries.Count + remainingWeaponEntries.Count + remainingBlueprintEntries.Count + remainingRelicEntries.Count,
+            availableCount,
             RelicMerchantService.CalculateMerchantStockTargetCount(runState, tile, targetTotalCount));
 
         AddGuaranteedMerchantOffersFromLootPool(generated, remainingLootEntries, catalog.lootMinimumCount, rng);
         AddGuaranteedMerchantOffersFromWeaponPool(generated, remainingWeaponEntries, catalog.weaponMinimumCount, rng);
         AddGuaranteedMerchantOffersFromBlueprintPool(generated, remainingBlueprintEntries, catalog.blueprintMinimumCount, rng);
-        AddGuaranteedMerchantOffersFromRelicPool(generated, remainingRelicEntries, catalog.relicMinimumCount, excludedRelics, merchantDifficulty, rng);
+        AddGuaranteedMerchantOffersFromRelicPool(generated, relicPool, catalog.relicMinimumCount);
 
         FillRemainingMerchantOffers(
             generated,
             remainingLootEntries,
             remainingWeaponEntries,
             remainingBlueprintEntries,
-            remainingRelicEntries,
+            relicPool,
             catalog,
             targetTotalCount,
-            excludedRelics,
-            merchantDifficulty,
             rng);
 
         MerchantOfferSelectionService.ShuffleOffers(generated, rng);
@@ -149,8 +127,13 @@ public static class MerchantStockService
         IReadOnlyList<MerchantCatalog_SO.BlueprintGoodsEntry> validBlueprintEntries = catalog.GetValidBlueprintEntries();
         HashSet<CraftingBlueprint_SO> excludedBlueprints = MerchantOfferExclusionService.BuildUnavailableBlueprintSet(runState, validBlueprintEntries);
         MerchantOfferExclusionService.AppendCurrentMerchantBlueprints(tile, excludedBlueprints, null, true);
-        HashSet<Relic_SO> excludedRelics = MerchantOfferExclusionService.BuildOwnedRelicSet(runState);
-        MerchantOfferExclusionService.AppendCurrentMerchantRelics(tile, excludedRelics, null, true);
+        RelicStockPool relicPool = null;
+        if (tile.merchantOffers.Exists(offer => offer != null && offer.itemType == MerchantItemType.Relic))
+        {
+            HashSet<Relic_SO> excludedRelics = MerchantOfferExclusionService.BuildOwnedRelicSet(runState);
+            MerchantOfferExclusionService.AppendCurrentMerchantRelics(tile, excludedRelics, null, true);
+            relicPool = new RelicStockPool(catalog, excludedRelics, merchantDifficulty, rng);
+        }
 
         int refreshedCount = 0;
         for (int i = 0; i < tile.merchantOffers.Count; i++)
@@ -159,7 +142,7 @@ public static class MerchantStockService
             if (offer == null)
                 continue;
 
-            if (TryRefreshOffer(catalog, merchantDifficulty, offer, excludedLoot, excludedWeapons, excludedBlueprints, excludedRelics, rng))
+            if (TryRefreshOffer(catalog, offer, excludedLoot, excludedWeapons, excludedBlueprints, relicPool, rng))
                 refreshedCount += 1;
         }
 
@@ -228,29 +211,16 @@ public static class MerchantStockService
 
     private static void AddGuaranteedMerchantOffersFromRelicPool(
         List<MerchantOfferState> generated,
-        List<MerchantCatalog_SO.RelicGoodsEntry> remainingEntries,
-        MerchantCatalog_SO.CategoryMinimumEntry minimumEntry,
-        HashSet<Relic_SO> excludedRelics,
-        DifficultyConfig_SO merchantDifficulty,
-        System.Random rng)
+        RelicStockPool relicPool,
+        MerchantCatalog_SO.CategoryMinimumEntry minimumEntry)
     {
-        if (generated == null || remainingEntries == null || remainingEntries.Count == 0 || minimumEntry == null)
+        if (minimumEntry == null)
             return;
 
-        int targetCount = Mathf.Clamp(minimumEntry.ResolveMinimumCount(), 0, remainingEntries.Count);
-        for (int i = 0; i < targetCount && remainingEntries.Count > 0; i++)
+        int targetCount = minimumEntry.ResolveMinimumCount();
+        for (int i = 0; i < targetCount && relicPool.TryDraw(out MerchantOfferState offer); i++)
         {
-            List<MerchantCatalog_SO.RelicGoodsEntry> availableEntries =
-                RewardCandidateFilterService.BuildAvailableMerchantRelicGoodsEntries(remainingEntries, excludedRelics);
-            if (availableEntries.Count <= 0)
-                break;
-
-            int selectedIndex = MerchantOfferSelectionService.RollWeightedEntryIndex(availableEntries, entry => entry.weight, rng);
-            MerchantCatalog_SO.RelicGoodsEntry goods = availableEntries[selectedIndex];
-            remainingEntries.Remove(goods);
-
-            if (MerchantOfferFactoryService.TryCreateRelicOffer(goods, excludedRelics, merchantDifficulty, rng, out MerchantOfferState relicOffer))
-                generated.Add(relicOffer);
+            generated.Add(offer);
         }
     }
 
@@ -259,11 +229,9 @@ public static class MerchantStockService
         List<MerchantCatalog_SO.LootGoodsEntry> remainingLootEntries,
         List<MerchantCatalog_SO.WeaponGoodsEntry> remainingWeaponEntries,
         List<MerchantCatalog_SO.BlueprintGoodsEntry> remainingBlueprintEntries,
-        List<MerchantCatalog_SO.RelicGoodsEntry> remainingRelicEntries,
+        RelicStockPool relicPool,
         MerchantCatalog_SO catalog,
         int targetTotalCount,
-        HashSet<Relic_SO> excludedRelics,
-        DifficultyConfig_SO merchantDifficulty,
         System.Random rng)
     {
         if (generated == null || rng == null)
@@ -271,13 +239,13 @@ public static class MerchantStockService
 
         while (generated.Count < targetTotalCount)
         {
-            List<MerchantCatalog_SO.RelicGoodsEntry> availableRelicEntries =
-                RewardCandidateFilterService.BuildAvailableMerchantRelicGoodsEntries(remainingRelicEntries, excludedRelics);
             int totalWeight = 0;
             int lootCategoryWeight = MerchantOfferSelectionService.GetAvailableCategoryWeight(remainingLootEntries, catalog != null ? catalog.lootMinimumCount : null);
             int weaponCategoryWeight = MerchantOfferSelectionService.GetAvailableCategoryWeight(remainingWeaponEntries, catalog != null ? catalog.weaponMinimumCount : null);
             int blueprintCategoryWeight = MerchantOfferSelectionService.GetAvailableCategoryWeight(remainingBlueprintEntries, catalog != null ? catalog.blueprintMinimumCount : null);
-            int relicCategoryWeight = MerchantOfferSelectionService.GetAvailableCategoryWeight(availableRelicEntries, catalog != null ? catalog.relicMinimumCount : null);
+            int relicCategoryWeight = relicPool.RemainingCount > 0 && catalog.relicMinimumCount != null
+                ? catalog.relicMinimumCount.ResolveRandomWeight()
+                : 0;
             totalWeight += lootCategoryWeight;
             totalWeight += weaponCategoryWeight;
             totalWeight += blueprintCategoryWeight;
@@ -319,26 +287,18 @@ public static class MerchantStockService
                 continue;
             }
 
-            roll -= blueprintCategoryWeight;
-            if (roll >= relicCategoryWeight || availableRelicEntries == null || availableRelicEntries.Count <= 0)
-                break;
-
-            int selectedRelicIndex = MerchantOfferSelectionService.RollWeightedEntryIndex(availableRelicEntries, entry => entry.weight, rng);
-            MerchantCatalog_SO.RelicGoodsEntry relicGoods = availableRelicEntries[selectedRelicIndex];
-            remainingRelicEntries.Remove(relicGoods);
-            if (MerchantOfferFactoryService.TryCreateRelicOffer(relicGoods, excludedRelics, merchantDifficulty, rng, out MerchantOfferState relicOffer))
+            if (relicPool.TryDraw(out MerchantOfferState relicOffer))
                 generated.Add(relicOffer);
         }
     }
 
     private static bool TryRefreshOffer(
         MerchantCatalog_SO catalog,
-        DifficultyConfig_SO merchantDifficulty,
         MerchantOfferState offer,
         HashSet<LootItem_SO> excludedLoot,
         HashSet<Weapon_SO> excludedWeapons,
         HashSet<CraftingBlueprint_SO> excludedBlueprints,
-        HashSet<Relic_SO> excludedRelics,
+        RelicStockPool relicPool,
         System.Random rng)
     {
         if (offer == null || catalog == null || rng == null)
@@ -353,7 +313,10 @@ public static class MerchantStockService
             case MerchantItemType.Blueprint:
                 return TryRefreshBlueprintOffer(catalog, offer, excludedBlueprints, rng);
             case MerchantItemType.Relic:
-                return TryRefreshRelicOffer(catalog, merchantDifficulty, offer, excludedRelics, rng);
+                if (!relicPool.TryDraw(out MerchantOfferState refreshedOffer))
+                    return false;
+                MerchantOfferFactoryService.ApplyOfferData(offer, refreshedOffer);
+                return true;
             default:
                 return false;
         }
@@ -434,28 +397,88 @@ public static class MerchantStockService
         return true;
     }
 
-    private static bool TryRefreshRelicOffer(
-        MerchantCatalog_SO catalog,
-        DifficultyConfig_SO merchantDifficulty,
-        MerchantOfferState offer,
-        HashSet<Relic_SO> excludedRelics,
-        System.Random rng)
+    private sealed class RelicStockPool
     {
-        IReadOnlyList<MerchantCatalog_SO.RelicGoodsEntry> validEntries = catalog.GetValidRelicEntries();
-        if (validEntries == null || validEntries.Count == 0)
-            return false;
+        private readonly List<MerchantCatalog_SO.RelicGoodsEntry> entries;
+        private readonly HashSet<Relic_SO> excludedRelics;
+        private readonly DifficultyConfig_SO difficulty;
+        private readonly System.Random rng;
+        private MerchantOfferState oncePerStockOffer;
 
-        List<MerchantCatalog_SO.RelicGoodsEntry> candidates =
-            RewardCandidateFilterService.BuildAvailableMerchantRelicGoodsEntries(validEntries, excludedRelics);
-        if (candidates.Count <= 0)
-            return false;
+        public int RemainingCount { get; private set; }
 
-        MerchantCatalog_SO.RelicGoodsEntry selected =
-            candidates[MerchantOfferSelectionService.RollWeightedEntryIndex(candidates, entry => entry.weight, rng)];
-        if (!MerchantOfferFactoryService.TryCreateRelicOffer(selected, excludedRelics, merchantDifficulty, rng, out MerchantOfferState refreshedOffer))
-            return false;
+        public RelicStockPool(
+            MerchantCatalog_SO catalog,
+            HashSet<Relic_SO> excludedRelics,
+            DifficultyConfig_SO difficulty,
+            System.Random rng)
+        {
+            entries = new List<MerchantCatalog_SO.RelicGoodsEntry>(catalog.GetValidRelicEntries());
+            this.excludedRelics = excludedRelics;
+            this.difficulty = difficulty;
+            this.rng = rng;
 
-        MerchantOfferFactoryService.ApplyOfferData(offer, refreshedOffer);
-        return true;
+            RelicTable_SO oncePerStockTable = catalog.oncePerStockRelicTable;
+            int chance = Mathf.Clamp(catalog.oncePerStockRelicChancePercent, 0, 100);
+            if (oncePerStockTable != null && oncePerStockTable.IsValid)
+            {
+                if (chance > 0 && RewardCandidateFilterService.HasAvailableRelicCandidate(oncePerStockTable, excludedRelics) &&
+                    rng.Next(0, 100) < chance)
+                {
+                    var goods = new MerchantCatalog_SO.RelicGoodsEntry { relicTable = oncePerStockTable };
+                    MerchantOfferFactoryService.TryCreateRelicOffer(goods, excludedRelics, difficulty, rng, out oncePerStockOffer);
+                }
+
+                // These relics can enter stock only through the roll above, even if another table lists them.
+                excludedRelics.UnionWith(oncePerStockTable.Relics);
+            }
+
+            var availableRelics = new HashSet<Relic_SO>();
+            foreach (MerchantCatalog_SO.RelicGoodsEntry entry in entries)
+            {
+                if (entry.relicTable != null && entry.relicTable.IsValid)
+                    availableRelics.UnionWith(entry.relicTable.Relics);
+                else
+                    availableRelics.Add(entry.LegacyRelicData);
+            }
+
+            availableRelics.Remove(null);
+            availableRelics.ExceptWith(excludedRelics);
+            RemainingCount = availableRelics.Count + (oncePerStockOffer != null ? 1 : 0);
+        }
+
+        public bool TryDraw(out MerchantOfferState offer)
+        {
+            offer = null;
+            if (RemainingCount == 0)
+                return false;
+
+            if (oncePerStockOffer != null)
+            {
+                offer = oncePerStockOffer;
+                oncePerStockOffer = null;
+                RemainingCount--;
+                return true;
+            }
+
+            List<MerchantCatalog_SO.RelicGoodsEntry> candidates =
+                RewardCandidateFilterService.BuildAvailableMerchantRelicGoodsEntries(entries, excludedRelics);
+            while (candidates.Count > 0)
+            {
+                int index = MerchantOfferSelectionService.RollWeightedEntryIndex(candidates, entry => entry.weight, rng);
+                MerchantCatalog_SO.RelicGoodsEntry goods = candidates[index];
+                if (MerchantOfferFactoryService.TryCreateRelicOffer(goods, excludedRelics, difficulty, rng, out offer))
+                {
+                    RemainingCount--;
+                    return true;
+                }
+
+                entries.Remove(goods);
+                candidates.RemoveAt(index);
+            }
+
+            RemainingCount = 0;
+            return false;
+        }
     }
 }
