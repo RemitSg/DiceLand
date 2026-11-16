@@ -39,6 +39,7 @@ public static class MapEventEncounterService
             enemyGroup = encounterGroup,
             partyMembers = new List<RunPartyMemberState>(runState.GetLivingPartyMembers()),
             seed = encounterSeed,
+            abilityRelicChoiceRefreshCount = Mathf.Max(0, runState.abilityRelicChoiceRefreshCount),
             moneyGained = 0
         };
         encounterData.isSpecialDungeonEncounter = currentEventTile != null && currentEventTile.sourceSpecialDungeon != null;

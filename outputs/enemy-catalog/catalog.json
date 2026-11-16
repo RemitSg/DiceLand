@@ -29,7 +29,7 @@
       "scope": "新增 045 白蛇妖及毒牙、盘身扫尾、绞缠。核对实际资产、属性来源、回合被动与选技、三个技能的骰子和效果，以及事件 036/036_A_01 的固定单敌遭遇。其余敌人沿用历史快照及已列增量，历史血孢子等未复核条目保留。",
       "validation": "团结 EditMode 138/139 通过，含白蛇妖定向测试 7/7 和事件分支验证；唯一失败的友方开场急速测试在改动前基线同样失败。离线图鉴 205/205 通过，远程请求和页面异常均为 0。"
     },
-    "coverage": "以 2026-10-26 历史快照的 50 个敌人资产、129 个关联技能为基础，2026-11-09 完整增补 044 枯枝王庭与 4401 新芽的 2 个资产及 7 个技能，合计 52 个敌人资产、136 个关联技能。历史血孢子等未复核条目仍保留原快照，不代表全部内容已重新导出。 2026-11-10 仅修订 4401 新芽的战斗体型：enemyVisualScale 从 1 调整至 0.12，普通立绘与成长／断枝姿态统一继承该倍率；其他历史条目未重新导出，敌人资产 52、关联技能 136 的数量不变。 2026-11-12 增量调整 044 枯枝王庭的战斗体型（1 → 0.7）与 4401 新芽「成长」的攻击骰（2–4 → 2–3）。其他历史条目未重新导出，仍收录 52 个敌人资产与 136 个关联技能。 2026-11-16 增补 045 白蛇妖及 3 个技能、被动和事件遭遇，合计 53 个敌人资产、139 个关联技能。 2026-11-16 同步白蛇妖三招四颗骰子的专属技能姿态；敌人和关联技能数量不变。",
+    "coverage": "以 2026-10-26 历史快照的 50 个敌人资产、129 个关联技能为基础，2026-11-09 完整增补 044 枯枝王庭与 4401 新芽的 2 个资产及 7 个技能，合计 52 个敌人资产、136 个关联技能。历史血孢子等未复核条目仍保留原快照，不代表全部内容已重新导出。 2026-11-10 仅修订 4401 新芽的战斗体型：enemyVisualScale 从 1 调整至 0.12，普通立绘与成长／断枝姿态统一继承该倍率；其他历史条目未重新导出，敌人资产 52、关联技能 136 的数量不变。 2026-11-12 增量调整 044 枯枝王庭的战斗体型（1 → 0.7）与 4401 新芽「成长」的攻击骰（2–4 → 2–3）。其他历史条目未重新导出，仍收录 52 个敌人资产与 136 个关联技能。 2026-11-16 增补 045 白蛇妖及 3 个技能、被动和事件遭遇，合计 53 个敌人资产、139 个关联技能。 2026-11-16 同步白蛇妖三招四颗骰子的专属技能姿态；敌人和关联技能数量不变。 2026-11-16 增量复核 045 白蛇妖事件 036_A_01 的胜利奖励，覆盖此单一事件分支。",
     "latest_presentation_revision": {
       "date": "2026-11-16",
       "enemyNumbers": [
@@ -240,7 +240,19 @@
           }
         }
       }
-    ]
+    ],
+    "latest_encounter_reward_revision": {
+      "date": "2026-11-16",
+      "enemyNumbers": [
+        45
+      ],
+      "enemyIds": [
+        45
+      ],
+      "eventId": "036_A_01",
+      "optionId": "Tricked",
+      "scope": "记录白蛇妖事件胜利奖励。基础 50 金钱，经验取当前难度的中层普通战斗配置，另有 1 个从 OuterEliteRelicLoot 抽取的精英随机遗物袋。仅复核此分支，敌人和技能数量维持 53 与 139。"
+    }
   },
   "enemies": [
     {
@@ -36538,7 +36550,8 @@
       ],
       "special_references": [
         "林中的求救（事件 036，随机入口：Assets/Data/Events/036 林中的求救/036 林中的求救.asset，GUID 7d72aa5b921142298502abd5ab297224）",
-        "林中的求救（事件 036_A_01，「被骗了！」，固定敌群：Assets/Data/Events/036 林中的求救/036_A_01 林中的求救.asset，GUID 64f37881e3834627a2d1d5cf8ff46725）"
+        "林中的求救（事件 036_A_01，「被骗了！」，固定敌群：Assets/Data/Events/036 林中的求救/036_A_01 林中的求救.asset，GUID 64f37881e3834627a2d1d5cf8ff46725）",
+        "「被骗了！」战斗胜利后获得基础 50 金钱、当前难度的中层普通战斗经验（当前简单 20、中等 16）和 1 个精英随机遗物袋。遗物袋从 OuterEliteRelicLoot 排除已拥有的遗物后抽取，最多 3 个同稀有度候选，选 1 个后返回地图领取。可用已有的能力与遗物刷新次数重抽。金钱和经验走常规结算修正，战败无这三项奖励。"
       ],
       "passives": [
         "灵活（黄色）：奇数回合开始时，获得 1 层急速，本回合两个速度槽各 +1 速度。",
@@ -37306,6 +37319,31 @@
             "description": "Each attack die that hits increases damage reduction by 10 percentage points for the round, up to 50%. The increase applies before that hit deals damage. The bonus resets at round end."
           }
         ]
+      },
+      "encounter_victory_rewards": {
+        "event_id": "036_A_01",
+        "option_id": "Tricked",
+        "event_path": "Assets/Data/Events/036 林中的求救/036_A_01 林中的求救.asset",
+        "event_guid": "64f37881e3834627a2d1d5cf8ff46725",
+        "base_money": 50,
+        "experience_reference": {
+          "source": "DifficultyConfig_SO",
+          "danger_band": "Mid",
+          "tile_type": "Battle",
+          "current_base_examples": {
+            "Easy": 20,
+            "Medium": 16
+          }
+        },
+        "elite_relic_bag": {
+          "count": 1,
+          "max_candidates": 3,
+          "selected_relics": 1,
+          "table_path": "Assets/Data/Relics/OuterEliteRelicLoot.asset",
+          "table_guid": "6650ae7fed330b7408b1cad987b54259",
+          "excludes_owned": true,
+          "inherits_refresh_bonuses": true
+        }
       }
     },
     {

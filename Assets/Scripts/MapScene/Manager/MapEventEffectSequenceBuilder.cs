@@ -77,6 +77,7 @@ public static class MapEventEffectSequenceBuilder
             encounterEnemies = optionData.encounterEnemies != null ? new List<EnemyData_SO>(optionData.encounterEnemies) : new List<EnemyData_SO>(),
             encounterEnemyCountMin = optionData.encounterEnemyCountMin,
             encounterEnemyCountMax = optionData.encounterEnemyCountMax,
+            encounterVictoryRewards = optionData.encounterVictoryRewards,
             specialDungeon = optionData.specialDungeon
         };
     }
@@ -113,6 +114,7 @@ public static class MapEventEffectSequenceBuilder
             encounterEnemies = effectData.encounterEnemies != null ? new List<EnemyData_SO>(effectData.encounterEnemies) : new List<EnemyData_SO>(),
             encounterEnemyCountMin = effectData.encounterEnemyCountMin,
             encounterEnemyCountMax = effectData.encounterEnemyCountMax,
+            encounterVictoryRewards = effectData.encounterVictoryRewards,
             specialDungeon = effectData.specialDungeon,
             moneyPercent = effectData.moneyPercent,
             randomMoneyPercentMin = effectData.randomMoneyPercentMin,

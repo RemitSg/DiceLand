@@ -1,5 +1,7 @@
 DiceLand：当前全部敌人和技能明细
 
+2026-11-16 事件奖励增量：补记 045 白蛇妖在「林中的求救」遭遇中的胜利奖励，范围仅限 036_A_01「被骗了！」分支。
+
 2026-11-16 技能表现增量：补齐 045 白蛇妖三招共四张战斗姿态图，盘身扫尾的两颗骰子各用一张。覆盖范围仅此四颗骰子。
 
 2026-11-16 内容增补：新增 045 白蛇妖及 3 个技能，核对被动、速度槽、战斗结算和事件投放。历史血孢子等未复核条目仍沿用原快照。
@@ -3135,6 +3137,7 @@ GUID：f87757d70244431b9a2a19a346816a60
 毒属性来自事件敌群 Assets/Data/Enemies/EnemyGroup/Events/WhiteSnakeDemon.asset（GUID bee1450d16e54984ad0614a289e6b38d）的 attributes，引用 Assets/Data/Loots/Attributes/Poison_Attribute.asset（GUID d4ed7fcdaf0e4f7fa153118a4219a68f）。
 事件引用：林中的求救（事件 036，随机入口：Assets/Data/Events/036 林中的求救/036 林中的求救.asset，GUID 7d72aa5b921142298502abd5ab297224）
 事件引用：林中的求救（事件 036_A_01，「被骗了！」，固定敌群：Assets/Data/Events/036 林中的求救/036_A_01 林中的求救.asset，GUID 64f37881e3834627a2d1d5cf8ff46725）
+事件胜利奖励：基础 50 金钱、当前难度的中层普通战斗经验，以及 1 个精英随机遗物袋。经验读取 `DifficultyConfig_SO` 的 Mid / Battle 项（当前简单 20、中等 16），金钱与经验走常规结算修正。遗物袋使用 Assets/Data/Relics/OuterEliteRelicLoot.asset（GUID 6650ae7fed330b7408b1cad987b54259），排除已拥有的遗物，最多提供 3 个同稀有度候选，选 1 个后返回地图领取。可用已有的能力与遗物刷新次数重抽。战败无这三项奖励。
 战斗立绘：Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_WhiteSnakeDemon.png（GUID 0c9e2fe8e4c54c8a9eab5db5c6b10247）
 描述：路遇求救的女子竟是盘踞林间的白蛇妖。
 英文：White Snake Demon — The woman calling for help was a white serpent coiled in the forest.

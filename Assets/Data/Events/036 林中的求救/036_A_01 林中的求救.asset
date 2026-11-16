@@ -29,6 +29,11 @@ MonoBehaviour:
     encounterSelectionMode: 0
     encounterEnemyGroups:
     - {fileID: 11400000, guid: bee1450d16e54984ad0614a289e6b38d, type: 2}
+    encounterVictoryRewards:
+      money: 50
+      eliteRelicChoiceTable: {fileID: 11400000, guid: 6650ae7fed330b7408b1cad987b54259, type: 2}
+      useStandardBattleExperience: 1
+      standardBattleExperienceBand: 1
     additionalBuiltInEffects: []
     possibleResults: []
     nextEvent: {fileID: 0}

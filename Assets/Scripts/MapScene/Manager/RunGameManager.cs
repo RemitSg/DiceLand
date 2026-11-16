@@ -1774,6 +1774,7 @@ public class RunGameManager : MonoBehaviour
         {
             runState = runState, actionPointSystem = actionPointSystem, currentEventTile = tile, optionData = optionData,
             levelTable = levelTable, sourceSceneName = SceneManager.GetActiveScene().name, battleSceneName = battleSceneName,
+            difficultyConfig = activeDifficultyConfig != null ? activeDifficultyConfig : difficultyConfig,
             encounterSeedSalt = Environment.TickCount, randomLootDiscardPreviewCache = eventRandomLootDiscardPreviewCache,
             selectedInventoryItem = mapEventOverlay?.SelectedReforgeItem
         }, eventData, this, out MapEventBuiltInEffectExecutionResult result);

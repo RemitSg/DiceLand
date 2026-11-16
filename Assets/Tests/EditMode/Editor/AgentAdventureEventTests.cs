@@ -165,6 +165,87 @@ public sealed class AgentAdventureEventTests
         Assert.AreEqual(1, snake.statuses.Single(status => status.id == "swiftness").stacks);
     }
 
+    [TestCase("NormalConfig.asset", 16, true)]
+    [TestCase("EasyDifficultyConfig.asset", 20, true)]
+    [TestCase("NormalConfig.asset", 16, false)]
+    public void ForestHelpSettlesItsAuthoredRewardsOnlyOnVictory(string difficultyFile, int expectedExperience, bool victory)
+    {
+        string difficultyPath = "Assets/Data/Game/" + difficultyFile;
+        session = new AgentAdventureSession(new AgentAdventureRequest
+        {
+            seed = 1234,
+            difficultyId = AssetDatabase.AssetPathToGUID(difficultyPath)
+        });
+        var opening = Find<MapEvent_SO>(item => item.eventId == "036");
+        var relicTable = AssetDatabase.LoadAssetAtPath<RelicTable_SO>("Assets/Data/Relics/OuterEliteRelicLoot.asset");
+        var run = Map.Snapshot.runState;
+        run.abilityRelicChoiceRefreshCount = 1;
+        int initialMoney = run.money;
+        int initialRelics = run.relicInventory.Sum(relic => relic.amount);
+        int initialLevel = run.partyMembers.Single().level;
+        int initialExperience = run.partyMembers.Single().experience;
+
+        Enter(opening);
+        Tile.dangerBand = MapDangerBand.Core;
+        Act("run_choose_event");
+        var pending = Act("run_choose_event");
+        Assert.IsTrue(pending.mapEvent.hasPendingBattle);
+        Assert.AreEqual(initialMoney, pending.money);
+        Assert.AreEqual(initialRelics, run.relicInventory.Sum(relic => relic.amount));
+        Assert.AreEqual(initialExperience, run.partyMembers.Single().experience);
+        var battle = Act("run_continue_event");
+        Assert.AreEqual("battle", battle.phase);
+        Assert.AreEqual(MapTileType.Event, BattleEncounterRuntime.ActiveEncounter.tileType);
+        Assert.AreEqual(MapDangerBand.Core, BattleEncounterRuntime.ActiveEncounter.dangerBand);
+
+        if (victory)
+        {
+            var snake = UnityEngine.Object.FindObjectsOfType<BattleEnemyController>(true).Single();
+            Assert.AreEqual(45, snake.EnemyID);
+            snake.TakeDamage(snake.MaxHP);
+        }
+        else
+        {
+            var ally = UnityEngine.Object.FindObjectsOfType<BattleAllyController>(true).Single();
+            ally.TakeDamage(ally.MaxHP);
+        }
+        var commit = session.Observe().legalActions.Single(action => action.op == "run_battle" && action.battleAction.op == "commit");
+        battle = session.Act(Command(commit)).state;
+        Assert.AreEqual(victory ? "victory" : "defeat", battle.battle.outcome);
+        var rewards = battle.battle.rewards;
+        Assert.AreEqual(victory ? 50 : 0, rewards.money);
+        Assert.AreEqual(victory ? expectedExperience : 0, rewards.experience);
+        var settledMember = rewards.party.Single();
+        bool gainedExperience = settledMember.level > initialLevel || settledMember.experience > initialExperience;
+        Assert.AreEqual(victory, gainedExperience);
+        Assert.IsEmpty(rewards.relics);
+        Assert.AreEqual(victory ? 3 : 0, rewards.choices.Length);
+        Assert.AreEqual(victory ? 1 : 0, rewards.refreshesRemaining);
+        Assert.AreEqual(initialMoney, battle.money);
+
+        Relic_SO selectedRelic = null;
+        if (victory)
+        {
+            Assert.IsFalse(battle.legalActions.Any(action => action.op == "run_return"));
+            var candidates = rewards.choices.Select(choice => AssetDatabase.LoadAssetAtPath<Relic_SO>(AssetDatabase.GUIDToAssetPath(choice.id))).ToArray();
+            Assert.AreEqual(candidates.Length, candidates.Distinct().Count());
+            CollectionAssert.IsSubsetOf(candidates, relicTable.Relics.ToArray());
+            var selection = battle.legalActions.First(action => action.op == "run_battle" && action.battleAction.op == "choose_relic");
+            selectedRelic = candidates[selection.battleAction.choiceIndex];
+            battle = session.Act(Command(selection)).state;
+            Assert.AreEqual(1, battle.battle.rewards.relics.Single().amount);
+            Assert.AreEqual(initialRelics, run.relicInventory.Sum(relic => relic.amount));
+        }
+
+        Assert.AreEqual(victory ? "map" : "defeat_pending_settlement", Act("run_return").phase);
+        Assert.AreEqual(initialMoney + (victory ? 50 : 0), run.money);
+        Assert.AreEqual(settledMember.level, run.partyMembers.Single().level);
+        Assert.AreEqual(settledMember.experience, run.partyMembers.Single().experience);
+        if (victory) Assert.AreEqual(1, run.GetRelicAmount(selectedRelic));
+        Assert.AreEqual(initialRelics + (victory ? 1 : 0), run.relicInventory.Sum(relic => relic.amount));
+        Assert.AreEqual(victory ? 1 : 0, run.settlementStats.eventBattlesCompleted);
+    }
+
     [Test] public void InvalidAndUnavailableOptionsCannotSpendOrAdvanceRevision()
     {
         Open(); var paid = Option(); paid.requiredMoney = 1; var free = Option();

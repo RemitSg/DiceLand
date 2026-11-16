@@ -91,6 +91,7 @@ public sealed partial class AgentAdventureSession
             {
                 runState = map.Snapshot.runState, actionPointSystem = map.Points, currentEventTile = CurrentTile, optionData = option,
                 levelTable = map.Configuration.levels, sourceSceneName = map.Snapshot.sceneName, battleSceneName = "AgentBattleSandbox",
+                difficultyConfig = map.Configuration.starting.difficulty,
                 encounterSeedSalt = UnityEngine.Random.Range(int.MinValue, int.MaxValue), randomLootDiscardPreviewCache = eventDiscardCache,
                 selectedInventoryItem = MapEventInventoryReforgeService.GetEligibleMaterials(map.Snapshot.runState, option)
                     .FirstOrDefault(item => AssetId(item) == materialId)

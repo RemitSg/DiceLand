@@ -6504,7 +6504,8 @@ public partial class BattleButton : MonoBehaviour
                 choiceData => results.relicChoice = choiceData);
         }
 
-        if (useEliteRelicChoice && !createdEliteRelicChoice)
+        bool hasEventRelicChoice = encounter.tileType == MapTileType.Event && encounter.eliteRelicChoiceTable != null;
+        if ((useEliteRelicChoice || hasEventRelicChoice) && !createdEliteRelicChoice)
         {
             createdEliteRelicChoice = BattleEliteRelicChoiceBuilderService.TryBuildAndApplyFromTable(
                 ResolveEliteRelicChoiceFallbackTable(encounter),

@@ -1373,7 +1373,8 @@
           "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/045_Constrict.png"
         ]
       }
-    ]
+    ],
+    "event_victory_reward_note": "「被骗了！」战斗胜利后获得基础 50 金钱、当前难度的中层普通战斗经验（当前简单 20、中等 16）和 1 个精英随机遗物袋。遗物袋从 OuterEliteRelicLoot 排除已拥有的遗物后抽取，最多 3 个同稀有度候选，选 1 个后返回地图领取。可用已有的能力与遗物刷新次数重抽。金钱和经验走常规结算修正，战败无这三项奖励。"
   },
   {
     "number": 4401,

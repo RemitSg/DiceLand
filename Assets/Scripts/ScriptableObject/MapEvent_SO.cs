@@ -60,6 +60,15 @@ public class MapEventBlueprintRewardEntry
 }
 
 [Serializable]
+public class MapEventEncounterVictoryRewards
+{
+    [Min(0)] public int money;
+    public RelicTable_SO eliteRelicChoiceTable;
+    public bool useStandardBattleExperience;
+    public MapDangerBand standardBattleExperienceBand;
+}
+
+[Serializable]
 public class MapEventBuiltInEffectData
 {
     public MapEventOptionBuiltInEffectType effectType = MapEventOptionBuiltInEffectType.None;
@@ -87,6 +96,7 @@ public class MapEventBuiltInEffectData
     public List<EnemyData_SO> encounterEnemies = new List<EnemyData_SO>();
     [Min(1)] public int encounterEnemyCountMin = 1;
     [Min(1)] public int encounterEnemyCountMax = 1;
+    public MapEventEncounterVictoryRewards encounterVictoryRewards = new MapEventEncounterVictoryRewards();
     public SpecialDungeon_SO specialDungeon;
     [Min(0)] public int moneyPercent;
     [Min(0)] public int randomMoneyPercentMin;
@@ -145,6 +155,7 @@ public class MapEventOptionData
     public List<EnemyData_SO> encounterEnemies = new List<EnemyData_SO>();
     [Min(1)] public int encounterEnemyCountMin = 1;
     [Min(1)] public int encounterEnemyCountMax = 1;
+    public MapEventEncounterVictoryRewards encounterVictoryRewards = new MapEventEncounterVictoryRewards();
     public SpecialDungeon_SO specialDungeon;
     public List<MapEventBuiltInEffectData> additionalBuiltInEffects = new List<MapEventBuiltInEffectData>();
     public List<MapEventPossibleResultData> possibleResults = new List<MapEventPossibleResultData>();

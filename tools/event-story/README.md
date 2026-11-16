@@ -23,7 +23,7 @@ The 37 main paintings cover the 37 current event families. All 79 authored event
 
 ## Forest rescue encounter
 
-`036` is in the map event pool. Helping opens `036_A_01`. The `Tricked` option previews a tough battle and starts a fixed encounter with one White Snake Demon. Walking away from the initial encounter resolves the tile without combat.
+`036` is in the map event pool. Helping opens `036_A_01`. The `Tricked` option previews a tough battle and starts a fixed encounter with one White Snake Demon. Victory awards 50 base gold, experience from the active difficulty's middle-ring standard battle entry, and one random elite relic bag from `OuterEliteRelicLoot`. The player chooses one relic in battle settlement. Walking away from the initial encounter resolves the tile without combat.
 
 ## Typography
 

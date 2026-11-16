@@ -10,6 +10,7 @@ public sealed class MapEventBuiltInEffectExecutionRequest
     public MapEvent_SO eventData;
     public MapEventOptionData optionData;
     public LevelTable_SO levelTable;
+    public DifficultyConfig_SO difficultyConfig;
     public string sourceSceneName;
     public string battleSceneName;
     public int encounterSeedSalt;
@@ -442,10 +443,21 @@ public static class MapEventBuiltInEffectExecutorService
             out BattleEncounterData encounterData,
             out message);
 
-        if (prepared)
-            result.pendingEncounterData = encounterData;
+        if (!prepared)
+            return false;
 
-        return prepared;
+        MapEventEncounterVictoryRewards rewards = effectData.encounterVictoryRewards;
+        if (rewards != null && !request.skipRewardEffects)
+        {
+            encounterData.moneyGained = Mathf.Max(0, rewards.money);
+            encounterData.eliteRelicChoiceTable = rewards.eliteRelicChoiceTable;
+            if (rewards.useStandardBattleExperience && request.difficultyConfig != null &&
+                request.difficultyConfig.TryGetBattleExperienceReward(rewards.standardBattleExperienceBand, MapTileType.Battle, out int experience))
+                encounterData.configuredExperienceReward = experience;
+        }
+
+        result.pendingEncounterData = encounterData;
+        return true;
     }
 
     private static bool ExecuteStartSpecialDungeon(
