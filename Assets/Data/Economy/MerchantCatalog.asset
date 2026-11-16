@@ -224,6 +224,61 @@ MonoBehaviour:
     minPrice: 30
     maxPrice: 40
     weight: 5
+  - goodsId: 210
+    blueprintData: {fileID: 11400000, guid: 17799684082ecc54fa14f94058c3412d, type: 2}
+    minPrice: 30
+    maxPrice: 40
+    weight: 5
+  - goodsId: 211
+    blueprintData: {fileID: 11400000, guid: cdb2bfefecf4f254591220820465be9d, type: 2}
+    minPrice: 30
+    maxPrice: 40
+    weight: 5
+  - goodsId: 212
+    blueprintData: {fileID: 11400000, guid: 31e4ee4b4db4d4049875c4121f1b0148, type: 2}
+    minPrice: 30
+    maxPrice: 40
+    weight: 5
+  - goodsId: 213
+    blueprintData: {fileID: 11400000, guid: 1953a1a32e86d2f4e9cc9d5d41456b0e, type: 2}
+    minPrice: 30
+    maxPrice: 40
+    weight: 5
+  - goodsId: 214
+    blueprintData: {fileID: 11400000, guid: 05af046e43893f14787463bb390225a7, type: 2}
+    minPrice: 15
+    maxPrice: 20
+    weight: 5
+  - goodsId: 215
+    blueprintData: {fileID: 11400000, guid: 62f95319daf752743b234cb2af657059, type: 2}
+    minPrice: 15
+    maxPrice: 20
+    weight: 5
+  - goodsId: 216
+    blueprintData: {fileID: 11400000, guid: 80be934beb18b5342b014f6991367373, type: 2}
+    minPrice: 30
+    maxPrice: 40
+    weight: 5
+  - goodsId: 217
+    blueprintData: {fileID: 11400000, guid: 0d640c1491243c44baa30da026968261, type: 2}
+    minPrice: 30
+    maxPrice: 40
+    weight: 5
+  - goodsId: 218
+    blueprintData: {fileID: 11400000, guid: 306e8d8cb6f75f6488f29771bb264b89, type: 2}
+    minPrice: 30
+    maxPrice: 40
+    weight: 5
+  - goodsId: 219
+    blueprintData: {fileID: 11400000, guid: c68a6433f3415af4289337a3f453206e, type: 2}
+    minPrice: 15
+    maxPrice: 20
+    weight: 5
+  - goodsId: 220
+    blueprintData: {fileID: 11400000, guid: 4d0bc02346198c54a99dbd46fe1265d1, type: 2}
+    minPrice: 15
+    maxPrice: 20
+    weight: 5
   relicEntries:
   - goodsId: 1
     relicTable: {fileID: 11400000, guid: 6650ae7fed330b7408b1cad987b54259, type: 2}
