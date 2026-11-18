@@ -1339,7 +1339,7 @@
     "granted_to_player": [],
     "guid": "f87757d70244431b9a2a19a346816a60",
     "path": "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/WhiteSnakeDemon.asset",
-    "visual_lighting_note": "森林战斗中，普通立绘和 4 张技能姿态使用 1.30 倍的材质 RGB（enemyForestColorGain），并以 0.88 的权重把原画颜色混回森林受光结果（enemyForestSourceColorWeight）。森林边缘光、雾效及地面投影仍按场景计算。",
+    "visual_lighting_note": "森林战斗中，普通立绘和 4 张技能姿态共用环境补光（enemyForestAmbientBoost=0.38，当前材质环境光强度 0.30 → 0.68），保留森林受光和阴影。",
     "attributes": [
       "毒"
     ],

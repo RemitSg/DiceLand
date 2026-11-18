@@ -20,7 +20,6 @@ Shader "Assets/Shaders/Lit"
         _WrapAroundFactor ("Wrap Around Factor", Range(0, 1)) = 0.5
         [HideInInspector] _ForestSpriteBounds ("Forest illustration bounds", Vector) = (0,0,0,0)
         [HideInInspector] _ForestSurfaceWeight ("Forest surface shaping", Range(0,1)) = 0
-        [HideInInspector] _ForestSourceColorWeight ("Forest source color weight", Range(0,1)) = 0
         [HideInInspector] _ForestIndirectStrength ("Forest indirect fill", Range(0,2)) = 1
         [HideInInspector] _ForestPigmentStrength ("Forest pigment response", Range(0,1)) = 1
         [HideInInspector] _ForestHighlightStrength ("Forest highlight shoulder", Range(0,1)) = 1
@@ -90,7 +89,6 @@ Shader "Assets/Shaders/Lit"
             float _WrapAroundFactor;
             float4 _ForestSpriteBounds;
             float _ForestSurfaceWeight;
-            float _ForestSourceColorWeight;
             float _ForestIndirectStrength;
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
@@ -198,7 +196,6 @@ Shader "Assets/Shaders/Lit"
             float _WrapAroundFactor;
             float4 _ForestSpriteBounds;
             float _ForestSurfaceWeight;
-            float _ForestSourceColorWeight;
             float _ForestIndirectStrength;
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
@@ -342,7 +339,6 @@ Shader "Assets/Shaders/Lit"
             float _WrapAroundFactor;
             float4 _ForestSpriteBounds;
             float _ForestSurfaceWeight;
-            float _ForestSourceColorWeight;
             float _ForestIndirectStrength;
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
@@ -622,8 +618,6 @@ Shader "Assets/Shaders/Lit"
                 float highlightWeight = saturate(surfaceWeight * _ForestHighlightStrength);
                 if (highlightWeight > 0.001)
                     litColor = lerp(litColor, DiceLandForestHighlightShoulder(litColor), highlightWeight);
-                float sourceColorWeight = saturate(_ForestSourceColorWeight) * step(0.001, _DiceLandForestLighting);
-                litColor = lerp(litColor, baseColor.rgb, sourceColorWeight);
                 // Only explicitly tagged material maps use A as emission. Older maps keep
                 // their silhouette alpha and never inherit this response.
                 float emission = materialWeight * saturate(_ForestEmissionWeight) * materialData.a;
@@ -710,7 +704,6 @@ Shader "Assets/Shaders/Lit"
             float _WrapAroundFactor;
             float4 _ForestSpriteBounds;
             float _ForestSurfaceWeight;
-            float _ForestSourceColorWeight;
             float _ForestIndirectStrength;
             float _ForestPigmentStrength;
             float _ForestHighlightStrength;
