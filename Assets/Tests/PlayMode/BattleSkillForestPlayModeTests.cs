@@ -85,6 +85,35 @@ public sealed class BattleSkillForestPlayModeTests
     }
 
     [UnityTest]
+    public IEnumerator EnemyBodyClickOnlyOpensDetailsAfterSkillPanelCloses()
+    {
+        object data = Asset("Assets/Data/Enemies/Enemies/014 BloodRat/BloodRat.asset", "EnemyData_SO");
+        var skill = ScriptableObject.CreateInstance(TypeOf("EnemySkill_SO"));
+        transient.Add(skill);
+        var enemy = (Component)TypeOf("BattleSkillVisualTools").GetMethod("CreateEnemy")
+            .Invoke(null, new[] { host.transform, data, skill });
+        Component clickHandler = enemy.gameObject.AddComponent(TypeOf("BattleEnemyDetailClickHandler"));
+        Call(clickHandler, "Bind", enemy);
+
+        Assert.IsTrue(Visible());
+        Assert.IsFalse(events.IsPointerOverGameObject(), "The collider callback can run before the UI updates its pointer state.");
+        Call(clickHandler, "OnMouseUpAsButton");
+        Assert.AreSame(ally, Get(overlay, "currentAlly"));
+
+        Call(overlay, "AdvancePresentation", 0.25f);
+        Call(overlay, "Hide");
+        Assert.IsTrue(Visible());
+        Call(clickHandler, "OnMouseUpAsButton");
+        Assert.IsNull(Get(overlay, "currentEnemy"));
+
+        Call(overlay, "AdvancePresentation", 0.2f);
+        Assert.IsFalse(Visible());
+        Call(clickHandler, "OnMouseUpAsButton");
+        Assert.AreSame(enemy, Get(overlay, "currentEnemy"));
+        yield return null;
+    }
+
+    [UnityTest]
     public IEnumerator ReopeningCancelsCloseAndDisablingReleasesSuppression()
     {
         yield return new WaitForSecondsRealtime(0.28f);

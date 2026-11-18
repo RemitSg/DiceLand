@@ -16,17 +16,18 @@ public class BattleEnemyDetailClickHandler : MonoBehaviour
         if (enemyController == null || enemyController.IsDead)
             return;
 
-        if (SpeedButton.CombatLocked || BattlePresentationContinueInputService.IsEnemyDetailInteractionBlocked)
+        if (SpeedButton.CombatLocked || SpeedButton.InputSuppressed || BattlePresentationContinueInputService.IsEnemyDetailInteractionBlocked)
             return;
 
-        if (!SpeedButton.IsScreenPointAllowedByTutorialHighlight(Input.mousePosition))
+        Vector2 point = Input.mousePosition;
+        if (!SpeedButton.IsScreenPointAllowedByTutorialHighlight(point) || BattleRoundPreviewOverlay.ContainsPointer(point))
             return;
 
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return;
 
         BattleSkillInfoOverlay overlay = FindObjectOfType<BattleSkillInfoOverlay>(true);
-        if (overlay == null)
+        if (overlay == null || overlay.IsVisible)
             return;
 
         overlay.ShowEnemyDetail(enemyController);

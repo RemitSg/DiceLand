@@ -197,9 +197,38 @@ public sealed class BattleRoundPreviewTests
         SpeedButton.InputSuppressed = false;
         Refresh(battle);
         Assert.IsTrue(preview.gameObject.activeSelf);
+
+        var toggle = preview.Find("RoundPreviewToggle").GetComponent<Button>();
+        var toggleRect = (RectTransform)toggle.transform;
+        var hitTest = overlay.GetType().GetMethod("ContainsPointer", BindingFlags.Public | BindingFlags.Static);
+        Vector2 panelCenter = RectTransformUtility.WorldToScreenPoint(null, panelRect.TransformPoint(panelRect.rect.center));
+        Assert.IsTrue((bool)hitTest.Invoke(null, new object[] { panelCenter }));
+
+        toggle.onClick.Invoke();
+        Refresh(battle);
+        Assert.IsFalse(panel.gameObject.activeInHierarchy);
+        Assert.IsTrue(toggle.gameObject.activeInHierarchy);
+        Assert.Less(toggleRect.rect.width, panelRect.rect.width);
+        Assert.Less(toggleRect.rect.height, panelRect.rect.height);
+        Assert.IsFalse((bool)hitTest.Invoke(null, new object[] { panelCenter }));
+        Vector2 toggleCenter = RectTransformUtility.WorldToScreenPoint(null, toggleRect.TransformPoint(toggleRect.rect.center));
+        Assert.IsTrue((bool)hitTest.Invoke(null, new object[] { toggleCenter }));
+        Assert.That(ally.SpeedButtons[0].GetComponent<LineRenderer>().widthMultiplier, Is.EqualTo(0.1f).Within(1e-5));
+
         SetField(battle, "isResolvingCombat", true);
         Refresh(battle);
         Assert.IsFalse(preview.gameObject.activeSelf);
+        overlay.GetType().GetMethod("Clear").Invoke(overlay, null);
+        SetField(battle, "roundPreviewDirty", true);
+        SetField(battle, "isResolvingCombat", false);
+        Refresh(battle);
+        Assert.IsTrue(toggle.gameObject.activeInHierarchy);
+        Assert.IsFalse(panel.gameObject.activeInHierarchy);
+
+        toggle.onClick.Invoke();
+        Refresh(battle);
+        Assert.IsTrue(panel.gameObject.activeInHierarchy);
+        Assert.AreEqual("未拦截 5", Text(panel, "Unintercepted/WarningLabel"));
     }
 
     private BattleAllyController Ally(EnemySkill_SO skill)

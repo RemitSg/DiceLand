@@ -11,13 +11,16 @@ internal sealed class BattleRoundPreviewOverlay
     private const float RowHeight = 44f;
     private const float HeaderHeight = 35f;
     private const float BadgeSize = 36f;
+    private const float ToggleHeight = 40f;
+    private const float CollapseWidth = 84f;
+    private const float ExpandWidth = 208f;
     private static readonly Color Gold = new Color32(239, 193, 101, 255);
     private static readonly Color Ivory = new Color32(246, 235, 204, 255);
     private static readonly Color Red = new Color32(255, 126, 110, 255);
     private static readonly Color Blue = new Color32(132, 207, 242, 255);
     private static readonly Color Muted = new Color32(175, 190, 167, 255);
     private static readonly float[] BadgeFractions = { 0.5f, 0.36f, 0.64f, 0.25f, 0.75f };
-    private static RectTransform pointerPanel;
+    private static RectTransform pointerPanel, pointerToggle;
 
     private sealed class Row
     {
@@ -37,15 +40,16 @@ internal sealed class BattleRoundPreviewOverlay
         public TMP_Text Number;
     }
 
-    private readonly RectTransform root, panel, titleFrame, warningFrame, viewport, content;
+    private readonly RectTransform root, panel, titleFrame, warningFrame, viewport, content, toggle;
     private readonly TMP_FontAsset bodyFont;
-    private readonly TMP_Text title, warning, position, empty;
+    private readonly TMP_Text title, warning, position, empty, toggleLabel;
     private readonly ScrollRect scroll;
     private readonly Scrollbar scrollbar;
     private readonly List<Row> rows = new List<Row>();
     private readonly Badge[] badges = new Badge[VisibleRows];
     private int count, selected = -1, warningCount;
     private bool layoutDirty = true;
+    private bool collapsed;
     private Rect previousSafeArea, previousActionBounds;
     private Vector2 previousScreen, previousCanvas;
 
@@ -108,6 +112,14 @@ internal sealed class BattleRoundPreviewOverlay
         AddButton(warningFrame, warningFace, FocusNextWarning);
         warning = Label(warningFrame, "WarningLabel", this.bodyFont, 22, Red);
         Fill(warning.rectTransform, 29, 0, 7, 0);
+
+        toggle = CreateRect(root, "RoundPreviewToggle");
+        var toggleFace = toggle.gameObject.AddComponent<MapMerchantFrameGraphic>();
+        toggleFace.style = MapMerchantFrameGraphic.Style.SecondaryButton;
+        toggleFace.jadeFace = true;
+        AddButton(toggle, toggleFace, ToggleCollapsed);
+        toggleLabel = Label(toggle, "Label", this.bodyFont, 22, Gold);
+        Fill(toggleLabel.rectTransform, 8, 0, 8, 0);
         root.gameObject.SetActive(false);
     }
 
@@ -143,6 +155,7 @@ internal sealed class BattleRoundPreviewOverlay
         }
 
         title.text = Local("回合预览", "Round preview");
+        UpdateToggleLabel();
         warning.text = Local($"未拦截 {warningCount}", $"Unopposed {warningCount}");
         warningFrame.gameObject.SetActive(warningCount > 0);
         empty.text = Local("本回合暂无行动", "No planned actions");
@@ -171,12 +184,36 @@ internal sealed class BattleRoundPreviewOverlay
             return;
         root.gameObject.SetActive(visible);
         if (visible)
+        {
             pointerPanel = panel;
+            pointerToggle = toggle;
+        }
         else if (pointerPanel == panel)
+        {
             pointerPanel = null;
+            pointerToggle = null;
+        }
         if (selected >= 0)
-            ApplyEmphasis(visible);
+            ApplyEmphasis(visible && !collapsed);
     }
+
+    private void ToggleCollapsed()
+    {
+        collapsed = !collapsed;
+        panel.gameObject.SetActive(!collapsed);
+        if (collapsed)
+        {
+            foreach (Badge badge in badges)
+                badge.Rect.gameObject.SetActive(false);
+        }
+        if (selected >= 0)
+            ApplyEmphasis(!collapsed);
+        UpdateToggleLabel();
+        layoutDirty = true;
+    }
+
+    private void UpdateToggleLabel()
+        => toggleLabel.text = collapsed ? Local("展开回合预览", "Show round preview") : Local("收起", "Hide");
 
     public void Clear()
     {
@@ -194,10 +231,10 @@ internal sealed class BattleRoundPreviewOverlay
     }
 
     public static bool ContainsPointer(Vector2 point)
-    {
-        return pointerPanel != null && pointerPanel.gameObject.activeInHierarchy
-            && RectTransformUtility.RectangleContainsScreenPoint(pointerPanel, point);
-    }
+        => ContainsPointer(pointerPanel, point) || ContainsPointer(pointerToggle, point);
+
+    private static bool ContainsPointer(RectTransform rect, Vector2 point)
+        => rect != null && rect.gameObject.activeInHierarchy && RectTransformUtility.RectangleContainsScreenPoint(rect, point);
 
     public void ApplyViewport(Rect safeArea, Vector2 pixels, Rect actionBounds)
     {
@@ -218,18 +255,26 @@ internal sealed class BattleRoundPreviewOverlay
         Vector2 max = Vector2.Scale(scale, safeArea.max);
         const float gap = 19f;
         float actionRight = actionBounds.width > 0 ? actionBounds.xMax * scale.x : (min.x + max.x) * 0.5f + 225f;
-        float width = Mathf.Min(660f, max.x - gap - actionRight - gap);
+        float right = max.x - gap;
+        float maxWidth = collapsed ? ExpandWidth : 660f;
+        float width = Mathf.Min(maxWidth, right - actionRight - gap);
         float bottom = min.y + 34f;
-        if (width < 460f)
+        if (width < (collapsed ? ExpandWidth : 460f))
         {
-            width = Mathf.Max(1f, Mathf.Min(660f, max.x - min.x - gap * 2));
-            bottom = actionBounds.height > 0 ? actionBounds.yMax * scale.y + gap : min.y + 180f;
+            width = Mathf.Max(1f, Mathf.Min(maxWidth, max.x - min.x - gap * 2));
+            bottom = actionBounds.height > 0 ? actionBounds.yMax * scale.y + gap : min.y + (collapsed ? 34f : 180f);
         }
         bool overflow = count > VisibleRows;
         float listBottom = overflow ? 33f : 12f;
-        float height = HeaderHeight + listBottom + Mathf.Clamp(count, 1, VisibleRows) * RowHeight;
+        float height = collapsed ? ToggleHeight : HeaderHeight + listBottom + Mathf.Clamp(count, 1, VisibleRows) * RowHeight;
         bottom = Mathf.Clamp(bottom, min.y + 18f, Mathf.Max(min.y + 18f, max.y - height - 24f));
-        Place(panel, Vector2.zero, Vector2.zero, new Vector2(max.x - gap - width, bottom), new Vector2(width, height));
+        if (collapsed)
+        {
+            Place(toggle, Vector2.zero, Vector2.right, new Vector2(right, bottom), new Vector2(width, height));
+            return;
+        }
+
+        Place(panel, Vector2.zero, Vector2.zero, new Vector2(right - width, bottom), new Vector2(width, height));
         Fill(viewport, 20, listBottom, overflow ? 32f : 20f, HeaderHeight);
         RectTransform bar = scrollbar.GetComponent<RectTransform>();
         bar.anchorMin = new Vector2(1, 0);
@@ -237,19 +282,26 @@ internal sealed class BattleRoundPreviewOverlay
         bar.offsetMin = new Vector2(-23, listBottom);
         bar.offsetMax = new Vector2(-16, -HeaderHeight);
 
+        const float headerInset = 15f;
+        const float headerGap = 8f;
+        float headerY = bottom + height - 1f;
+        Place(toggle, Vector2.zero, new Vector2(1, 0.5f), new Vector2(right - headerInset, headerY), new Vector2(CollapseWidth, ToggleHeight));
         float warningWidth = Mathf.Clamp(width * 0.30f, 102f, 177f);
-        float titleWidth = Mathf.Min(width * 0.44f, 202f);
-        float titleCenter = warningCount > 0
-            ? Mathf.Min(width * 0.5f, width - warningWidth - titleWidth * 0.5f - 26f)
-            : width * 0.5f;
+        float warningInset = headerInset + CollapseWidth + headerGap;
+        float titleRight = width - warningInset - (warningCount > 0 ? warningWidth + headerGap : 0f);
+        float titleWidth = Mathf.Min(Mathf.Min(width * 0.44f, 202f), Mathf.Max(1f, titleRight - headerInset));
+        float titleCenter = Mathf.Min(width * 0.5f, titleRight - titleWidth * 0.5f);
         Place(titleFrame, new Vector2(0, 1), new Vector2(0.5f, 0.5f),
             new Vector2(titleCenter, -1), new Vector2(titleWidth, 39));
         Place(warningFrame, Vector2.one, new Vector2(1, 0.5f),
-            new Vector2(-15, -1), new Vector2(warningWidth, 35));
+            new Vector2(-warningInset, -1), new Vector2(warningWidth, 35));
     }
 
     public void UpdateBadges(Camera camera)
     {
+        if (collapsed)
+            return;
+
         int first = selected >= 0 ? selected : FirstVisibleIndex();
         for (int i = 0; i < badges.Length; i++)
         {
@@ -376,7 +428,7 @@ internal sealed class BattleRoundPreviewOverlay
             row.Order.color = i == selected ? Ivory : row.Accent;
             row.Frame.SetAppearance(BattleRoundPreviewFrameGraphic.Shape.Row, row.Accent, row.Unintercepted, i == selected);
         }
-        ApplyEmphasis(root.gameObject.activeSelf && selected >= 0);
+        ApplyEmphasis(root.gameObject.activeSelf && !collapsed && selected >= 0);
     }
 
     private void ApplyEmphasis(bool focused)
