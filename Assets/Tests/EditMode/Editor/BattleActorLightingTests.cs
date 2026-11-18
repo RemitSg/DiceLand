@@ -360,6 +360,33 @@ public sealed class BattleActorLightingTests
     }
 
     [Test]
+    public void WhiteSnakeAmbientFillFollowsHerSkillPoseAndStaysOnHerRuntimeMaterial()
+    {
+        const string ambient = "_AmbientIntensity";
+        const string folder = "Assets/Data/Enemies/Enemies/045 WhiteSnakeDemon/";
+        SpriteRenderer snake = CreateActor("White Snake", enemies, Vector3.right, true);
+        SpriteRenderer other = CreateActor("Other enemy", enemies, Vector3.zero, true);
+        BattleEnemyController enemy = snake.GetComponentInParent<BattleEnemyController>();
+        enemy.enemyData = AssetDatabase.LoadAssetAtPath<EnemyData_SO>(folder + "WhiteSnakeDemon.asset");
+        snake.sprite = enemy.enemyData.enemySprite;
+        float baseIntensity = material.GetFloat(ambient);
+
+        lighting.UpdateLighting();
+        Assert.That(snake.sharedMaterial.GetFloat(ambient), Is.EqualTo(0.68f).Within(0.0001f));
+        Assert.AreEqual(baseIntensity, other.sharedMaterial.GetFloat(ambient));
+        Assert.AreEqual(baseIntensity, material.GetFloat(ambient));
+
+        snake.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(folder + "045_VenomFang.png");
+        Assert.IsNotNull(snake.sprite);
+        lighting.UpdateLighting();
+        Assert.That(snake.sharedMaterial.GetFloat(ambient), Is.EqualTo(0.68f).Within(0.0001f));
+
+        enemy.enemyData = AssetDatabase.LoadAssetAtPath<EnemyData_SO>("Assets/Data/Enemies/Enemies/014 BloodRat/BloodRat.asset");
+        lighting.UpdateLighting();
+        Assert.AreEqual(baseIntensity, snake.sharedMaterial.GetFloat(ambient));
+    }
+
+    [Test]
     public void AnExternalMaterialOverrideIsNeverReplacedByTheLightingController()
     {
         SpriteRenderer body = CreateActor("Replaced block", allies, Vector3.up * 2f, false);

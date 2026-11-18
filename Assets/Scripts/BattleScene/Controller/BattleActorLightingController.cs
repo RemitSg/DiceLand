@@ -13,6 +13,7 @@ public sealed class BattleActorLightingController : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float materialWeight = 0.85f;
     private static readonly int BoundsId = Shader.PropertyToID("_ForestSpriteBounds");
     private static readonly int WeightId = Shader.PropertyToID("_ForestSurfaceWeight");
+    private static readonly int AmbientIntensityId = Shader.PropertyToID("_AmbientIntensity");
     private static readonly int FormMapId = Shader.PropertyToID("_ForestFormMap");
     private static readonly int FormParamsId = Shader.PropertyToID("_ForestFormParams");
     private static readonly int MaterialMapId = Shader.PropertyToID("_ForestMaterialMap");
@@ -30,12 +31,14 @@ public sealed class BattleActorLightingController : MonoBehaviour
     private sealed class Entry
     {
         public SpriteRenderer renderer;
+        public BattleEnemyController enemy;
         public Material originalMaterial;
         public Material runtimeMaterial;
         public Bounds lastBounds;
         public float lastWeight = -1f;
         public float lastFormWeight = -1f;
         public float lastMaterialWeight = -1f;
+        public float lastAmbientBoost;
         public Sprite lastSprite;
         public BattleActorFormLibrary lastLibrary;
         public bool lastFlipX;
@@ -62,16 +65,19 @@ public sealed class BattleActorLightingController : MonoBehaviour
             BattleActorVisualUtility.CollectActorRoots(allies, actors);
             BattleActorVisualUtility.CollectActorRoots(enemies, actors);
             foreach (Transform actor in actors)
-            foreach (SpriteRenderer renderer in actor.GetComponentsInChildren<SpriteRenderer>(true))
             {
-                if (renderer.GetComponentInParent<SpeedButton>() != null || renderer.sharedMaterial == null
-                    || !renderer.sharedMaterial.HasProperty(WeightId) || entries.Exists(e => e.renderer == renderer))
-                    continue;
-                Material original = renderer.sharedMaterial;
-                Material runtime = new Material(original) { name = "Forest surface (runtime) " + renderer.name,
-                    hideFlags = HideFlags.HideAndDontSave };
-                renderer.sharedMaterial = runtime;
-                entries.Add(new Entry { renderer = renderer, originalMaterial = original, runtimeMaterial = runtime });
+                BattleEnemyController enemy = actor.GetComponent<BattleEnemyController>();
+                foreach (SpriteRenderer renderer in actor.GetComponentsInChildren<SpriteRenderer>(true))
+                {
+                    if (renderer.GetComponentInParent<SpeedButton>() != null || renderer.sharedMaterial == null
+                        || !renderer.sharedMaterial.HasProperty(WeightId) || entries.Exists(e => e.renderer == renderer))
+                        continue;
+                    Material original = renderer.sharedMaterial;
+                    Material runtime = new Material(original) { name = "Forest surface (runtime) " + renderer.name,
+                        hideFlags = HideFlags.HideAndDontSave };
+                    renderer.sharedMaterial = runtime;
+                    entries.Add(new Entry { renderer = renderer, enemy = enemy, originalMaterial = original, runtimeMaterial = runtime });
+                }
             }
             nextRefresh = Time.unscaledTime + 0.5f;
         }
@@ -94,6 +100,16 @@ public sealed class BattleActorLightingController : MonoBehaviour
             entry.emission.Update(renderer,formLibrary,transform,ownsMaterial
                 ? surfaceWeight * materialWeight * Mathf.Clamp01(Shader.GetGlobalFloat("_DiceLandForestLighting")) : 0f,pulse);
             if (!ownsMaterial) continue;
+
+            EnemyData_SO enemyData = entry.enemy != null ? entry.enemy.enemyData : null;
+            float ambientBoost = enemyData != null ? Mathf.Clamp01(enemyData.enemyForestAmbientBoost) : 0f;
+            if (!Mathf.Approximately(entry.lastAmbientBoost, ambientBoost) && entry.runtimeMaterial.HasProperty(AmbientIntensityId))
+            {
+                float baseIntensity = entry.originalMaterial.GetFloat(AmbientIntensityId);
+                entry.runtimeMaterial.SetFloat(AmbientIntensityId, Mathf.Clamp01(baseIntensity + ambientBoost));
+                entry.lastAmbientBoost = ambientBoost;
+            }
+
             Bounds bounds = renderer.bounds;
             if (bounds.size.x < 0.001f || bounds.size.y < 0.001f) continue;
             Vector4 packedBounds = new Vector4(bounds.min.x, bounds.min.y, bounds.size.x, bounds.size.y);
