@@ -236,8 +236,11 @@ public class EnemyData_SO : ScriptableObject
     [Tooltip("Additional local offset applied to this enemy sprite in battle.")]
     public Vector3 enemyVisualOffset = Vector3.zero;
     [Range(0f, 1f)]
-    [Tooltip("Additional ambient light on this enemy's sprite and skill poses in the forest battle scene.")]
-    public float enemyForestAmbientBoost;
+    [Tooltip("Weight of the original sprite colors when blended with the forest lighting.")]
+    public float enemyForestSourceColorWeight;
+    [Min(1f)]
+    [Tooltip("RGB tint multiplier on this enemy's forest battle sprite and skill poses.")]
+    public float enemyForestColorGain = 1f;
     [Tooltip("Additional local offset applied to this enemy's speed buttons in battle. Useful for large or floating enemies.")]
     public Vector2 speedButtonOffset = Vector2.zero;
     [Tooltip("Normal random skill pool used when no conditional rule is selected.")]

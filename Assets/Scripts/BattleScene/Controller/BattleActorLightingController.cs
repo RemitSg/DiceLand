@@ -13,7 +13,8 @@ public sealed class BattleActorLightingController : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float materialWeight = 0.85f;
     private static readonly int BoundsId = Shader.PropertyToID("_ForestSpriteBounds");
     private static readonly int WeightId = Shader.PropertyToID("_ForestSurfaceWeight");
-    private static readonly int AmbientIntensityId = Shader.PropertyToID("_AmbientIntensity");
+    private static readonly int SourceColorWeightId = Shader.PropertyToID("_ForestSourceColorWeight");
+    private static readonly int ColorId = Shader.PropertyToID("_Color");
     private static readonly int FormMapId = Shader.PropertyToID("_ForestFormMap");
     private static readonly int FormParamsId = Shader.PropertyToID("_ForestFormParams");
     private static readonly int MaterialMapId = Shader.PropertyToID("_ForestMaterialMap");
@@ -38,7 +39,8 @@ public sealed class BattleActorLightingController : MonoBehaviour
         public float lastWeight = -1f;
         public float lastFormWeight = -1f;
         public float lastMaterialWeight = -1f;
-        public float lastAmbientBoost;
+        public float lastSourceColorWeight;
+        public float lastColorGain = 1f;
         public Sprite lastSprite;
         public BattleActorFormLibrary lastLibrary;
         public bool lastFlipX;
@@ -102,12 +104,20 @@ public sealed class BattleActorLightingController : MonoBehaviour
             if (!ownsMaterial) continue;
 
             EnemyData_SO enemyData = entry.enemy != null ? entry.enemy.enemyData : null;
-            float ambientBoost = enemyData != null ? Mathf.Clamp01(enemyData.enemyForestAmbientBoost) : 0f;
-            if (!Mathf.Approximately(entry.lastAmbientBoost, ambientBoost) && entry.runtimeMaterial.HasProperty(AmbientIntensityId))
+            float sourceColorWeight = enemyData != null ? Mathf.Clamp01(enemyData.enemyForestSourceColorWeight) : 0f;
+            float colorGain = enemyData != null ? Mathf.Max(1f, enemyData.enemyForestColorGain) : 1f;
+            if (!Mathf.Approximately(entry.lastSourceColorWeight, sourceColorWeight)
+                || !Mathf.Approximately(entry.lastColorGain, colorGain))
             {
-                float baseIntensity = entry.originalMaterial.GetFloat(AmbientIntensityId);
-                entry.runtimeMaterial.SetFloat(AmbientIntensityId, Mathf.Clamp01(baseIntensity + ambientBoost));
-                entry.lastAmbientBoost = ambientBoost;
+                if (entry.runtimeMaterial.HasProperty(SourceColorWeightId))
+                    entry.runtimeMaterial.SetFloat(SourceColorWeightId, sourceColorWeight);
+                if (entry.runtimeMaterial.HasProperty(ColorId))
+                {
+                    Color tint = entry.originalMaterial.GetColor(ColorId);
+                    entry.runtimeMaterial.SetColor(ColorId, new Color(tint.r * colorGain, tint.g * colorGain, tint.b * colorGain, tint.a));
+                }
+                entry.lastSourceColorWeight = sourceColorWeight;
+                entry.lastColorGain = colorGain;
             }
 
             Bounds bounds = renderer.bounds;
